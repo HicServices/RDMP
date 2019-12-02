@@ -204,8 +204,8 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
 
         private void AddColumnToDump(PreLoadDiscardedColumn column, DbConnection con)
         {
-            var cmdAlter = DatabaseCommandHelper.GetCommand("Alter table " + _parent.GetRuntimeName() + " ADD " + column.RuntimeColumnName + " " + column.SqlDataType, con);
-            cmdAlter.ExecuteNonQuery();
+            using(var cmdAlter = DatabaseCommandHelper.GetCommand("Alter table " + _parent.GetRuntimeName() + " ADD " + column.RuntimeColumnName + " " + column.SqlDataType, con))
+                cmdAlter.ExecuteNonQuery();
         }
     }
 }

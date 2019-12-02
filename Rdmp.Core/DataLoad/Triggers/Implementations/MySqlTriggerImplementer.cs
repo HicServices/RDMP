@@ -12,8 +12,10 @@ using ReusableLibraryCode.Exceptions;
 
 namespace Rdmp.Core.DataLoad.Triggers.Implementations
 {
+    /// <inheritdoc/>
     internal class MySqlTriggerImplementer:TriggerImplementer
     {
+        /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
         public MySqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table, createDataLoadRunIDAlso)
         {
         }
@@ -29,8 +31,8 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
                 {
                     con.Open();
 
-                    var cmd = _server.GetCommand("DROP TRIGGER " + GetTriggerName(), con);
-                    cmd.ExecuteNonQuery();
+                    using(var cmd = _server.GetCommand("DROP TRIGGER " + GetTriggerName(), con))
+                        cmd.ExecuteNonQuery();
 
                     thingsThatWorkedDroppingTrigger = "Droppped trigger " + GetTriggerName();
                 }
@@ -56,8 +58,8 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
             {
                 con.Open();
 
-                var cmd = _server.GetCommand(sql, con);
-                cmd.ExecuteNonQuery();
+                using(var cmd = _server.GetCommand(sql, con))
+                    cmd.ExecuteNonQuery();
             }
 
             return creationSql;
@@ -65,10 +67,12 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
 
         protected virtual string CreateTriggerBody()
         {
+            var syntax = _server.GetQuerySyntaxHelper();
+            
             return string.Format(@"BEGIN
     INSERT INTO {0} SET {1},hic_validTo=now(),hic_userID=CURRENT_USER(),hic_status='U';
   END", _archiveTable.GetFullyQualifiedName(),
-                string.Join(",", _columns.Select(c => c.GetRuntimeName() + "=OLD." + c.GetRuntimeName())));
+                string.Join(",", _columns.Select(c =>syntax.EnsureWrapped( c.GetRuntimeName()) + "=OLD." + syntax.EnsureWrapped(c.GetRuntimeName()))));
         }
         
         public override TriggerStatus GetTriggerStatus()
@@ -82,14 +86,13 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
             {
                 con.Open();
 
-                var cmd = _server.GetCommand(string.Format("show triggers like '{0}'", _table.GetRuntimeName()), con);
-                var r = cmd.ExecuteReader();
-
-                while (r.Read())
-                {
-                    if (r["Trigger"].Equals(GetTriggerName()))
-                        return (string) r["Statement"];
-                }
+                using(var cmd = _server.GetCommand(string.Format("show triggers like '{0}'", _table.GetRuntimeName()), con))
+                    using(var r = cmd.ExecuteReader())
+                        while (r.Read())
+                        {
+                            if (r["Trigger"].Equals(GetTriggerName()))
+                                return (string) r["Statement"];
+                        }
             }
 
             return null;
@@ -97,7 +100,7 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
 
         protected virtual object GetTriggerName()
         {
-            return _table.GetRuntimeName() + "_onupdate";
+            return QuerySyntaxHelper.MakeHeaderNameSensible(_table.GetRuntimeName()) + "_onupdate";
         }
 
         public override bool CheckUpdateTriggerIsEnabledAndHasExpectedBody()

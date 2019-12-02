@@ -4,10 +4,10 @@
 
 - [Introduction](#introduction)
 - [Query Caching](#query-caching)
-  - [Background](#cache-background)
-  - [Hit/Miss](#hit-miss)
-  - [Code](#cache-code)
-- [Parameters & Renaming](#parameters)
+  - [Background](#background)
+  - [Hit/Miss](#cache-hitmiss)
+  - [Code](#code)
+- [Parameters and Renaming](#parameters-and-renaming)
 
 ## Introduction
 
@@ -17,19 +17,17 @@ See [CohortComitting](../CohortCommitting/Readme.md) for committing (saving) a f
 
 ## Query Caching
 
-<a name="cache-background"></a>
 ### Background
 
 A complicated cohort can easily include 10 or more criteria (prescribed drug X; never prescribed drug y etc).  Each criteria can involve querying a large number of records and can take some time.  The traditional approach to this problem is to use temporary tables (e.g. `tempdb`) or a scratch area (e.g. MyWorkingDb) to create tables that store results for subsections of the overall query.  RDMP automates this practice through it's query caching subsystem.
 
-The RDMP query cache also get's around [DBMS] limitations e.g. MySql not supporting Set operations (UNION / INTERSECT / EXCEPT) and enables cross server (and DBMS) query generation.
+The RDMP query cache also get's around [DBMS] limitations e.g. MySql not supporting Set operations ([UNION] / [INTERSECT] / [EXCEPT]) and enables cross server (and [DBMS]) query generation.
 
-<a name="hit-miss"></a>
 ### Cache Hit/Miss
 
 Consider the following cohort
 
-- INTERSECT 
+- [INTERSECT] 
   - People in Biochemistry with an HBA1C
   - People in Biochemistry with an NA
 
@@ -63,14 +61,14 @@ WHERE
 )
 ```
 
-A caching database can be used to store the results of each subcomponent.  The final list of identifiers is stored in an indexed table in the caching database along with the SQL used to fetch the results.  This indexed tables can be used by RDMP to run the final container (the INTERSECT).  
+A caching database can be used to store the results of each subcomponent.  The final list of identifiers is stored in an indexed table in the caching database along with the SQL used to fetch the results.  This indexed tables can be used by RDMP to run the final container (the [INTERSECT]).
 
 Caching provides the following benefits:
 
 - Parallel processing of subsets
 - Faster execution of set containers
-- Allows combining sets built on different servers / DBMS (e.g. INTERSECT an Oracle dataset with an Sql Server dataset)
-- Use set operations (UNION / INTERSECT / EXCEPT) on a DBMS that doesn't support it (MySql)
+- Allows combining sets built on different servers / [DBMS] (e.g. [INTERSECT] an Oracle dataset with an Sql Server dataset)
+- Use set operations ([UNION] / [INTERSECT] / [EXCEPT]) on a [DBMS] that doesn't support it (MySql)
 
 The following flow chart describes the process RDMP uses to build a SET container (and determine where to execute the query):
 
@@ -97,14 +95,13 @@ Caching happens automatically after executing an uncached query.  If you make a 
 
 When using the execute all button, execution will start with each subquery in order to maximise cache usage.  This is especially important when cumulative totals is enabled (which results in more component combinations being executed at once).
 
-<a name="cache-code"></a>
 ### Code
 
 The cache usage flow chart is implemented by the `CohortQueryBuilderResult` class.  The following states can be determined:
 
 |State|Description|
 |-|-|
-|MustUse| The cache must be used and all Dependencies must be cached.  This happens if dependencies are on different servers / credentials.  Or the query being built involves SET operations which are not supported by the DBMS of the dependencies (e.g. MySql UNION / INTERSECT etc).|
+|MustUse| The cache must be used and all Dependencies must be cached.  This happens if dependencies are on different servers / credentials.  Or the query being built involves SET operations which are not supported by the [DBMS] of the dependencies (e.g. MySql [UNION] / [INTERSECT] etc).|
 |Opportunistic|All dependencies are on the same server as the cache.  Therefore we can mix and match where we fetch tables from (live table or cache) depending on whether the cache contains an entry for it or not. |
 |AllOrNothing|All dependencies are on the same server but the cache is on a different server.  Therefore we can either run a fully cached set of queries or we cannot run any cached queries|
 
@@ -120,14 +117,13 @@ The following classes play a role in building and executing cohort building quer
 |CohortQueryBuilderDependency| Stores the uncached and cached (if available) SQL for the subcomponent|
 |CohortQueryBuilderHelper| Builds the uncached SQL for each atomic subcomponent (uses an `AggregateBuilder` to do most of the work)|
 
-<a name="parameters"></a>
-## Parameters & Renames
+## Parameters and Renaming
 
 Consider the following cohort identification configuration.  We have an inclusion criteria (based on HBA1C) and an exclusion criteria (based on NA - sodium).  Both filters use parameters `@code` and `@Result` but with different values.
 
 ![Flowchart showing when/if RDMP will use a cache fetch in an SQL query](./Images/renaming.png)
 
-In the ideal situation we can use the cache to avoid the colliding parameters by running each subquery seperately and then running the container (EXCEPT) from the cache:
+In the ideal situation we can use the cache to avoid the colliding parameters by running each subquery seperately and then running the container ([EXCEPT]) from the cache:
 
 ```sql
 /*Cached:cic_15_People with high HBA1C*/
@@ -193,3 +189,6 @@ Notice that the parameter has been renamed `@Result_2` and `@code_2` in the comp
 
 
 [DBMS]: ../../Documentation/CodeTutorials/Glossary.md#DBMS
+[UNION]: ../../Documentation/CodeTutorials/Glossary.md#UNION
+[INTERSECT]: ../../Documentation/CodeTutorials/Glossary.md#INTERSECT
+[EXCEPT]: ../../Documentation/CodeTutorials/Glossary.md#EXCEPT

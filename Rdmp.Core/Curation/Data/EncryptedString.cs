@@ -45,9 +45,9 @@ namespace Rdmp.Core.Curation.Data
                         {
                             _value = _encrypter.Encrypt(value);//not yet encrypted so encrypt it
                         }
-                        catch (CryptographicException e)
+                        catch (Exception e)
                         {
-                            if (e.Message.StartsWith("Bad Length"))
+                            if (e.Message.Contains("Bad Length") || e.Message.Contains("data too large for key size"))
                                 throw new InvalidOperationException("The free text Value supplied to this class was too long to be encrypted (Length of string was " + value.Length + ")", e);
 
                             //it's some other exception

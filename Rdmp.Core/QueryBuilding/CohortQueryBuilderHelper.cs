@@ -5,14 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Spontaneous;
-using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.QueryBuilding.Parameters;
 
 namespace Rdmp.Core.QueryBuilding
@@ -28,7 +26,7 @@ namespace Rdmp.Core.QueryBuilding
         /// Returns the SQL you need to include in your nested query (in UNION / EXCEPT / INTERSECT).  This does not include parameter declarations (which
         /// would appear at the very top) and includes rename operations dependant on what has been written out before by (tracked by <see cref="ParameterManager"/>).
         ///
-        /// <para>Use <paramref name="isolatedSql"/> for the original un renamed / including parameter declarations e.g. to test for cache hits</para>
+        /// <para>Use <paramref name="args"/> for the original un renamed / including parameter declarations e.g. to test for cache hits</para>
         /// </summary>
         /// <param name="aggregate"></param>
         /// <param name="args"></param>

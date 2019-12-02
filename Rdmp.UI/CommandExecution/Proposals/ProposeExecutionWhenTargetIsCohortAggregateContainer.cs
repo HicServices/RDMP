@@ -4,12 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.CommandExecution;
+
 
 namespace Rdmp.UI.CommandExecution.Proposals
 {
@@ -30,19 +31,17 @@ namespace Rdmp.UI.CommandExecution.Proposals
             
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, CohortAggregateContainer targetCohortAggregateContainer, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CohortAggregateContainer targetCohortAggregateContainer, InsertOption insertOption = InsertOption.Default)
         {
            
             //Target is a cohort container (UNION / INTERSECT / EXCEPT)
 
             //source is catalogue
-            var sourceCatalogueCommand = cmd as CatalogueCommand;
-
-            if (sourceCatalogueCommand != null)
-                return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,sourceCatalogueCommand, targetCohortAggregateContainer);
+            if (cmd is CatalogueCombineable sourceCatalogueCombineable)
+                return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,sourceCatalogueCombineable, targetCohortAggregateContainer);
 
             //source is aggregate
-            var sourceAggregateCommand = cmd as AggregateConfigurationCommand;
+            var sourceAggregateCommand = cmd as AggregateConfigurationCombineable;
 
             if (sourceAggregateCommand != null)
             {
@@ -67,7 +66,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             }
 
             //source is another container (UNION / INTERSECT / EXCEPT)
-            var sourceCohortAggregateContainerCommand = cmd as CohortAggregateContainerCommand;
+            var sourceCohortAggregateContainerCommand = cmd as CohortAggregateContainerCombineable;
 
             if (sourceCohortAggregateContainerCommand != null)
             {

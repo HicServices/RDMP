@@ -246,13 +246,14 @@ namespace Rdmp.Core.Reports
             {
                 con.Open();
                
-                var cmd = DatabaseCommandHelper.GetCommand("Select * from " + lookupTable.Name, con);
-                var da = DatabaseCommandHelper.GetDataAdapter(cmd);
+                using(var cmd = DatabaseCommandHelper.GetCommand("Select * from " + lookupTable.Name, con))
+                    using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
+                    {
+                        var dt = new System.Data.DataTable();
+                        da.Fill(dt);
 
-                var dt = new System.Data.DataTable();
-                da.Fill(dt);
-
-                return dt;
+                        return dt;
+                    }
             }
         }
 
@@ -295,14 +296,14 @@ namespace Rdmp.Core.Reports
             foreach (ExtractionInformation information in extractionInformations)
             {
                 SetTableCell(table, tableLine, 0, information.GetRuntimeName(), TextFontSize);
-                SetTableCell(table, tableLine, 1, information.ColumnInfo.Data_type, TextFontSize);
+                SetTableCell(table, tableLine, 1, information.ColumnInfo == null ? "ORPHAN":information.ColumnInfo.Data_type, TextFontSize);
                 string description = information.CatalogueItem.Description;
 
                 //a field should only ever be a foreign key to one Lookup table
-                var lookups = information.ColumnInfo.GetAllLookupForColumnInfoWhereItIsA(LookupType.ForeignKey);
+                var lookups = information.ColumnInfo?.GetAllLookupForColumnInfoWhereItIsA(LookupType.ForeignKey);
 
                 //if it has any lookups
-                if (lookups.Any())
+                if (lookups != null && lookups.Any())
                 {
                     var pkTableId = lookups.Select(l => l.PrimaryKey.TableInfo_ID).Distinct().SingleOrDefault();
 
@@ -462,16 +463,19 @@ namespace Rdmp.Core.Reports
                 sql += tableToQuery.Name;
 
                 identifierName = hasExtractionIdentifier ? bestExtractionInformation[0].GetRuntimeName() : null;
-            
-                DbCommand cmd = server.GetCommand(sql,con);
-                cmd.CommandTimeout = _args.Timeout;
 
-                DbDataReader r = cmd.ExecuteReader();
-                r.Read();
+                using (DbCommand cmd = server.GetCommand(sql, con))
+                {
+                    cmd.CommandTimeout = _args.Timeout;
 
-                count = Convert.ToInt32(r["recordCount"]);
-                distinct = hasExtractionIdentifier && _args.IncludeDistinctIdentifierCounts ? Convert.ToInt32(r["recordCountDistinct"]) : -1;
-
+                    using (DbDataReader r = cmd.ExecuteReader())
+                    {
+                        r.Read();
+                        count = Convert.ToInt32(r["recordCount"]);
+                        distinct = hasExtractionIdentifier && _args.IncludeDistinctIdentifierCounts ? Convert.ToInt32(r["recordCountDistinct"]) : -1;
+                    }
+                }
+                
                 con.Close();
             }
         }

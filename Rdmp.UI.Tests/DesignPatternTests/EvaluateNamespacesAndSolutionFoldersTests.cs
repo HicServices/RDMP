@@ -221,7 +221,8 @@ namespace Rdmp.UI.Tests.DesignPatternTests
 
                 var text = File.ReadAllLines(file);
 
-                if (text[0] != @"// Copyright (c) The University of Dundee 2018-2019")
+                if (text[0] != @"// Copyright (c) The University of Dundee 2018-2019"
+                    && text[0] != @"// This code is adapted from https://www.codeproject.com/Articles/1182358/Using-Autocomplete-in-Windows-Console-Applications")
                 {
                     changes = true;
                     sbSuggestedText.AppendLine(@"// Copyright (c) The University of Dundee 2018-2019");

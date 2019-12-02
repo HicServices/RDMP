@@ -10,6 +10,7 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;

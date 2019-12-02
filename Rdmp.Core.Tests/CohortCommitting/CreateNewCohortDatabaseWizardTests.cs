@@ -16,6 +16,7 @@ using Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.Providers;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
@@ -100,9 +101,7 @@ namespace Rdmp.Core.Tests.CohortCommitting
             Assert.IsTrue(candidate.MatchingExtractionInformations.Single().ID== _extractionInfo1.ID);
         }
 
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.Oracle)]
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void TestActuallyCreatingIt(DatabaseType type)
         {
             var db = GetCleanedServer(type);
@@ -197,7 +196,10 @@ namespace Rdmp.Core.Tests.CohortCommitting
             Assert.AreEqual("101243", dtAno.Rows[0][cohort.GetPrivateIdentifier(true)]);
             Assert.AreEqual("101243", dtAno.Rows[1][cohort.GetPrivateIdentifier(true)]);
 
-
+            //make sure that it shows up in the child provider (provides fast object access in CLI and builds tree model for UI)
+            var repo = new DataExportChildProvider(RepositoryLocator, null,new ThrowImmediatelyCheckNotifier());
+            var descendancy = repo.GetDescendancyListIfAnyFor(cohort);
+            Assert.IsNotNull(descendancy);
         }
     }
 }

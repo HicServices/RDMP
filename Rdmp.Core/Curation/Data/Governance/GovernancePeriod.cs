@@ -115,7 +115,7 @@ namespace Rdmp.Core.Curation.Data.Governance
         /// Creates a new <see cref="GovernancePeriod"/> in the database.  This grants (ethical) permission to hold datasets referenced by <see cref="GovernedCatalogues"/>.
         /// </summary>
         /// <param name="repository"></param>
-        public GovernancePeriod(IRepository repository)
+        public GovernancePeriod(ICatalogueRepository repository)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>
             {

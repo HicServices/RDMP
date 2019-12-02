@@ -81,7 +81,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
             //load the flat file
             var filepattern = FilePattern ?? "*";
 
-            var filesToLoad = LoadDirectory.ForLoading.EnumerateFiles(filepattern).ToList();
+            var filesToLoad = LoadDirectory.ForLoading.EnumerateFiles(filepattern).OrderBy(a=>a.Name,StringComparer.InvariantCultureIgnoreCase).ToList();
 
             if (!filesToLoad.Any())
             {

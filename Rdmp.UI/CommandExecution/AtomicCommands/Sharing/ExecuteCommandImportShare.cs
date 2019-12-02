@@ -8,12 +8,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
-using Rdmp.UI.Copying.Commands;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands.Sharing
@@ -27,7 +28,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.Sharing
         /// </summary>
         /// <param name="activator"></param>
         /// <param name="sourceFileCollection"></param>
-        protected ExecuteCommandImportShare(IActivateItems activator, FileCollectionCommand sourceFileCollection): base(activator)
+        protected ExecuteCommandImportShare(IActivateItems activator, FileCollectionCombineable sourceFileCollection): base(activator)
         {
             if (sourceFileCollection != null)
             {

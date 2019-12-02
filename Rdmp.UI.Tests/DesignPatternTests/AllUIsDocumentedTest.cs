@@ -10,11 +10,11 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.UI.CommandExecution.Proposals;
 using Rdmp.UI.ProjectUI;
 using Rdmp.UI.Raceway;
-using ReusableLibraryCode.CommandExecution;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
-using ReusableUIComponents.CommandExecution.Proposals;
 using Tests.Common;
 
 namespace Rdmp.UI.Tests.DesignPatternTests
@@ -62,7 +62,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
         {
             "System.ComponentModel.Design",
             "System.Windows.Forms",
-            "ReusableUIComponents.ScintillaHelper"
+            "Rdmp.UI.ScintillaHelper"
         };
 
         private IEnumerable<string> EnforceTypeBelongsInNamespace(Type InterfaceType, params string[] legalNamespaces)
@@ -72,6 +72,10 @@ namespace Rdmp.UI.Tests.DesignPatternTests
             foreach (Type type in MEF.GetAllTypes().Where(InterfaceType.IsAssignableFrom))
             {
                 if (type.Namespace == null) 
+                    continue;
+
+                //don't validate classes in testing code
+                if (type.Namespace.Contains(".Tests"))
                     continue;
 
                 //theese guys can be wherever they want

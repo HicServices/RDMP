@@ -72,12 +72,7 @@ namespace Rdmp.Core.Curation.Data.Pipelines
         /// <inheritdoc/>
         public override string ToString()
         {
-            string classLastBit = Class;
-
-            if (Class.Contains("."))
-                classLastBit = Class.Substring(Class.LastIndexOf(".") + 1);
-
-            return Name + "(" + classLastBit + ")";
+            return Name;
         }
 
         /// <summary>

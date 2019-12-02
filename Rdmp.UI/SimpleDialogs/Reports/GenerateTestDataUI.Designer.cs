@@ -1,4 +1,7 @@
-﻿namespace Rdmp.UI.SimpleDialogs.Reports
+﻿using Rdmp.UI.ChecksUI;
+using Rdmp.UI.SimpleControls;
+
+namespace Rdmp.UI.SimpleDialogs.Reports
 {
     partial class GenerateTestDataUI
     {
@@ -33,14 +36,14 @@
             this.btnBrowse = new System.Windows.Forms.Button();
             this.lblDirectory = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.ragSmileyDirectory = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmileyDirectory = new RAGSmiley();
             this.pPopulationSize = new System.Windows.Forms.Panel();
             this.tbPopulationSize = new System.Windows.Forms.TextBox();
             this.cbLookups = new System.Windows.Forms.CheckBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.ragSmileyPopulation = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmileyPopulation = new RAGSmiley();
             this.btnGenerate = new System.Windows.Forms.Button();
-            this.helpIcon1 = new ReusableUIComponents.HelpIcon();
+            this.helpIcon1 = new HelpIcon();
             this.panel1 = new System.Windows.Forms.Panel();
             this.pDatasets = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -257,13 +260,13 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox tbPopulationSize;
         private System.Windows.Forms.Label label7;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmileyPopulation;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmileyDirectory;
+        private RAGSmiley ragSmileyPopulation;
+        private RAGSmiley ragSmileyDirectory;
         private System.Windows.Forms.Panel pPopulationSize;
         private System.Windows.Forms.Panel pOutputDirectory;
         private System.Windows.Forms.Label lblDirectory;
         private System.Windows.Forms.Button btnBrowse;
-        private ReusableUIComponents.HelpIcon helpIcon1;
+        private HelpIcon helpIcon1;
         private System.Windows.Forms.CheckBox cbLookups;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel pDatasets;

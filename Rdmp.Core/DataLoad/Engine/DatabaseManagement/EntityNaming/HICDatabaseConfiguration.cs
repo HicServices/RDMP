@@ -6,6 +6,7 @@
 
 using System;
 using System.Text.RegularExpressions;
+using FAnsi;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -69,7 +70,11 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming
 
             // Default namer
             if (namer == null)
-                namer = new FixedStagingDatabaseNamer(liveDatabase.GetRuntimeName());
+                if(liveServer.DatabaseType == DatabaseType.PostgreSql)
+                    //create the DLE tables on the live database because postgres can't handle cross database references
+                    namer = new FixedStagingDatabaseNamer(liveDatabase.GetRuntimeName(),liveDatabase.GetRuntimeName()); 
+                else
+                    namer = new FixedStagingDatabaseNamer(liveDatabase.GetRuntimeName());
 
             //if there are defaults
             if (overrideRAWServer == null && defaults != null)

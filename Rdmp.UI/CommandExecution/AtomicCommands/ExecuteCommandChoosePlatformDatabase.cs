@@ -5,13 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.LocationsMenu;
-using ReusableLibraryCode.CommandExecution;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
@@ -51,7 +52,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             dialog.ShowDialog();
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Database);
         }

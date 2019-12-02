@@ -5,14 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ProjectUI;
-using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.CommandExecution;
 
 namespace Rdmp.UI.CommandExecution.Proposals
 {
@@ -33,30 +33,25 @@ namespace Rdmp.UI.CommandExecution.Proposals
                 ItemActivator.Activate<ExecuteExtractionUI, ExtractionConfiguration>(target);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, ExtractionConfiguration targetExtractionConfiguration, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExtractionConfiguration targetExtractionConfiguration, InsertOption insertOption = InsertOption.Default)
         {
             //user is trying to set the cohort of the configuration
-            var sourceExtractableCohortComand = cmd as ExtractableCohortCommand;
-
-            var sourceCatalogueCommand = cmd as CatalogueCommand;
-
-            if (sourceCatalogueCommand != null)
+            if (cmd is CatalogueCombineable sourceCatalogueCombineable)
             {
                 var dataExportChildProvider = (DataExportChildProvider)ItemActivator.CoreChildProvider;
-                var eds = dataExportChildProvider.ExtractableDataSets.SingleOrDefault(ds => ds.Catalogue_ID == sourceCatalogueCommand.Catalogue.ID);
+                var eds = dataExportChildProvider.ExtractableDataSets.SingleOrDefault(ds => ds.Catalogue_ID == sourceCatalogueCombineable.Catalogue.ID);
 
                 if (eds == null)
                     return new ImpossibleCommand("Catalogue is not Extractable");
                 
-                return new ExecuteCommandAddDatasetsToConfiguration(ItemActivator, eds,targetExtractionConfiguration);
-                
+                return new ExecuteCommandAddDatasetsToConfiguration(ItemActivator, eds,targetExtractionConfiguration);   
             }
 
-            if (sourceExtractableCohortComand != null)
-                return new ExecuteCommandAddCohortToExtractionConfiguration(ItemActivator, sourceExtractableCohortComand, targetExtractionConfiguration);
+            if (cmd is ExtractableCohortCombineable sourceExtractableCohortCombineable)
+                return new ExecuteCommandAddCohortToExtractionConfiguration(ItemActivator, sourceExtractableCohortCombineable, targetExtractionConfiguration);
 
             //user is trying to add datasets to a configuration
-            var sourceExtractableDataSetCommand = cmd as ExtractableDataSetCommand;
+            var sourceExtractableDataSetCommand = cmd as ExtractableDataSetCombineable;
 
             if (sourceExtractableDataSetCommand != null)
                 return new ExecuteCommandAddDatasetsToConfiguration(ItemActivator, sourceExtractableDataSetCommand, targetExtractionConfiguration);

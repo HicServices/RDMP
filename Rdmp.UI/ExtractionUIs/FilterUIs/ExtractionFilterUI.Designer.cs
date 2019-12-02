@@ -1,6 +1,7 @@
 ﻿using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 using Rdmp.UI.Refreshing;
-using ReusableUIComponents;
+
+using Rdmp.UI.SimpleControls;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs
 {
@@ -41,7 +42,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             this.lblWhere = new System.Windows.Forms.Label();
             this.pQueryEditor = new System.Windows.Forms.Panel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.autocompleteReminder = new ReusableUIComponents.KeyboardReminder();
+            this.autocompleteReminder = new KeyboardReminder();
             this.panel1 = new System.Windows.Forms.Panel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.pParameters = new System.Windows.Forms.Panel();

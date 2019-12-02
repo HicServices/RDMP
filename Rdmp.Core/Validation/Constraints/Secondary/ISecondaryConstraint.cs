@@ -24,6 +24,9 @@ namespace Rdmp.Core.Validation.Constraints.Secondary
         /// <param name="otherColumnNames"></param>
          ValidationFailure Validate(object value, object[] otherColumns, string[] otherColumnNames);
 
+        /// <summary>
+        /// User supplied rational for the validation rule being applied (helps understanding complicated rules e.g. regex based rules).
+        /// </summary>
         [ExpectsLotsOfText]
         string Rationale { get; set; }
     }

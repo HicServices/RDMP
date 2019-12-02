@@ -163,9 +163,14 @@ namespace Rdmp.Core.Validation.Constraints.Secondary
                 con.Open();
                 try
                 {
-                    var cmd = DatabaseCommandHelper.GetCommand("SELECT TOP 1 " + OtherColumnInfo + " FROM " + tableInfo + " WHERE " + OtherColumnInfo + " IS NOT NULL", con);
-                    cmd.CommandTimeout = 5;
-                    itemToValidate = cmd.ExecuteScalar();
+                    using (var cmd = DatabaseCommandHelper.GetCommand(
+                        "SELECT TOP 1 " + OtherColumnInfo + " FROM " + tableInfo + " WHERE " + OtherColumnInfo +
+                        " IS NOT NULL", con))
+                    {
+                        cmd.CommandTimeout = 5;
+                        itemToValidate = cmd.ExecuteScalar();
+                    }
+                    
                 }
                 catch (Exception e)
                 {
@@ -221,22 +226,24 @@ namespace Rdmp.Core.Validation.Constraints.Secondary
                 try
                 {
                     //send the select
-                    var cmd = DatabaseCommandHelper.GetCommand(sqlToFetchValues, con);
-                    var reader = cmd.ExecuteReader();
-
-                    string runtimeName = OtherColumnInfo.GetRuntimeName();
-
-                    //store the values in the HashSet
-                    while (reader.Read())
-                    {
-                        var obj = reader[runtimeName];
-                        if(obj != null && obj != DBNull.Value)
+                    using(var cmd = DatabaseCommandHelper.GetCommand(sqlToFetchValues, con))
+                        using (var reader = cmd.ExecuteReader())
                         {
-                            var strValue = obj.ToString();
-                            if(!string.IsNullOrWhiteSpace(strValue))
-                                _uniqueValues.Add(strValue);
+                            string runtimeName = OtherColumnInfo.GetRuntimeName();
+
+                            //store the values in the HashSet
+                            while (reader.Read())
+                            {
+                                var obj = reader[runtimeName];
+                                if(obj != null && obj != DBNull.Value)
+                                {
+                                    var strValue = obj.ToString();
+                                    if(!string.IsNullOrWhiteSpace(strValue))
+                                        _uniqueValues.Add(strValue);
+                                }
+                            }
                         }
-                    }
+                    
                 }
                 catch (Exception e)
                 {

@@ -23,9 +23,7 @@ namespace Rdmp.Core.Tests.Curation
             Assert.IsTrue(cata.Exists());
         }
 
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.Oracle)]
-        [TestCase(DatabaseType.MySql)]
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void Test2(DatabaseType type)
         {
             var database = GetCleanedServer(type);
@@ -35,9 +33,7 @@ namespace Rdmp.Core.Tests.Curation
             Assert.IsNotNull(database.GetRuntimeName());
         }
 
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.Oracle)]
-        [TestCase(DatabaseType.MySql)]
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void TestReadDataLowPrivileges(DatabaseType type)
         {
             var database = GetCleanedServer(type);

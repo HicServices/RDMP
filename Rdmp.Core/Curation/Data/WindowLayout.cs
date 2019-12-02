@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Annotations;
 
 namespace Rdmp.Core.Curation.Data
@@ -48,7 +49,7 @@ namespace Rdmp.Core.Curation.Data
         /// <param name="repository"></param>
         /// <param name="name">Human readable name for the layout</param>
         /// <param name="layoutXml">The layout Xml of RDMPMainForm, use GetCurrentLayoutXml to get this, cannot be null</param>
-        public WindowLayout(IRepository repository, string name, string layoutXml)
+        public WindowLayout(ICatalogueRepository repository, string name, string layoutXml)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>()
             {
@@ -61,7 +62,7 @@ namespace Rdmp.Core.Curation.Data
         }
 
         /// <inheritdoc/>
-	    public WindowLayout(IRepository repository, DbDataReader r): base(repository, r)
+	    public WindowLayout(ICatalogueRepository repository, DbDataReader r): base(repository, r)
 	    {
 		    Name = r["Name"].ToString();
 		    LayoutData = r["LayoutData"].ToString();

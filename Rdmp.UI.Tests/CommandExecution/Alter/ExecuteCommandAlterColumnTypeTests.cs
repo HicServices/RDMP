@@ -9,12 +9,12 @@ using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
-using Rdmp.UI.CommandExecution.AtomicCommands.Alter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 using Tests.Common;
 using TypeGuesser;
 
@@ -22,9 +22,7 @@ namespace Rdmp.UI.Tests.CommandExecution.Alter
 {
     class ExecuteCommandAlterColumnTypeTests:DatabaseTests
     {
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.Oracle)]
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         [UITimeout(10000)]
         public void AlterColumnType_NoArchive(DatabaseType dbType)
         {

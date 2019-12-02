@@ -4,27 +4,30 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs.Reports;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandGenerateMetadataReport:BasicUICommandExecution,IAtomicCommand
     {
-        private readonly ICatalogue _catalogue;
+        private readonly ICatalogue[] _initialSelection;
 
-        public ExecuteCommandGenerateMetadataReport(IActivateItems activator,ICatalogue initialSelection):base(activator)
+
+        public ExecuteCommandGenerateMetadataReport(IActivateItems activator, params ICatalogue[] initialSelection) : base(activator)
         {
-            _catalogue = initialSelection;
+            _initialSelection = initialSelection;
+            if(initialSelection.Length == 0)
+                SetImpossible("No Catalogues");
         }
 
         public override void Execute()
         {
             base.Execute();
 
-            MetadataReportUI dialog = new MetadataReportUI(Activator, _catalogue);
+            MetadataReportUI dialog = new MetadataReportUI(Activator, _initialSelection);
             dialog.Show();
         }
     }

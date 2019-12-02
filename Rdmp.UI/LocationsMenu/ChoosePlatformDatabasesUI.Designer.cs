@@ -1,5 +1,6 @@
 ﻿using System;
-using ReusableUIComponents;
+using Rdmp.UI.SimpleControls;
+
 
 namespace Rdmp.UI.LocationsMenu
 {
@@ -32,20 +33,20 @@ namespace Rdmp.UI.LocationsMenu
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
-            this.tbCatalogueConnectionString = new ReusableUIComponents.ConnectionStringTextBox();
+            this.tbCatalogueConnectionString = new ConnectionStringTextBox();
             this.btnSaveAndClose = new System.Windows.Forms.Button();
             this.gbUseExisting = new System.Windows.Forms.GroupBox();
             this.btnBack2 = new System.Windows.Forms.Button();
             this.pReferenceADataExport = new System.Windows.Forms.Panel();
             this.btnBrowseForDataExport = new System.Windows.Forms.Button();
-            this.tbDataExportManagerConnectionString = new ReusableUIComponents.ConnectionStringTextBox();
+            this.tbDataExportManagerConnectionString = new ConnectionStringTextBox();
             this.btnCheckDataExportManager = new System.Windows.Forms.Button();
             this.pReferenceACatalogue = new System.Windows.Forms.Panel();
             this.btnBrowseForCatalogue = new System.Windows.Forms.Button();
             this.btnCheckCatalogue = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.checksUI1 = new ReusableUIComponents.ChecksUI.ChecksUI();
+            this.checksUI1 = new ChecksUI.ChecksUI();
             this.btnCreateSuite = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.tbSuiteServer = new System.Windows.Forms.TextBox();
@@ -517,7 +518,7 @@ namespace Rdmp.UI.LocationsMenu
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button btnCheckDataExportManager;
         private System.Windows.Forms.Button btnCheckCatalogue;
-        private ReusableUIComponents.ChecksUI.ChecksUI checksUI1;
+        private ChecksUI.ChecksUI checksUI1;
         private System.Windows.Forms.Button btnCreateSuite;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox tbSuiteServer;

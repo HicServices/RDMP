@@ -55,7 +55,8 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
                 _catalogue.SaveToDatabase();
                 _extractableDataSet.RevertToDatabaseState();
 
-                var extractionDirectory = new ExtractionDirectory(@"c:\temp", _configuration);
+                
+                var extractionDirectory = new ExtractionDirectory(TestContext.CurrentContext.WorkDirectory, _configuration);
 
             
                 var ex = Assert.Throws<NotSupportedException>(() => {var dir = extractionDirectory.GetDirectoryForDataset(_extractableDataSet); });

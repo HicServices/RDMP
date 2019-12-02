@@ -53,10 +53,12 @@ namespace Rdmp.Core.DataQualityEngine.Data
                 "@pivotCategory"
                 );
 
-            var cmd = DatabaseCommandHelper.GetCommand(sql, con, transaction);
-            DatabaseCommandHelper.AddParameterWithValueToCommand("@validatorXML",cmd,validatorXml);
-            DatabaseCommandHelper.AddParameterWithValueToCommand("@pivotCategory", cmd, pivotCategory);
-            cmd.ExecuteNonQuery();
+            using (var cmd = DatabaseCommandHelper.GetCommand(sql, con, transaction))
+            {
+                DatabaseCommandHelper.AddParameterWithValueToCommand("@validatorXML",cmd,validatorXml);
+                DatabaseCommandHelper.AddParameterWithValueToCommand("@pivotCategory", cmd, pivotCategory);
+                cmd.ExecuteNonQuery();
+            }
 
             Correct = correct;
             Missing = missing;

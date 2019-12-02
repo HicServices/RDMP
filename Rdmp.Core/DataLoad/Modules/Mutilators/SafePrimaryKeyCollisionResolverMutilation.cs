@@ -73,12 +73,13 @@ False - Delete the larger value")]
             using(var con = tbl.Database.Server.GetConnection())
             {
                 con.Open();
-                var cmd = tbl.Database.Server.GetCommand(sql, con);
-                cmd.CommandTimeout = Timeout;
+                using (var cmd = tbl.Database.Server.GetCommand(sql, con))
+                {
+                    cmd.CommandTimeout = Timeout;
 
-                int affectedRows = cmd.ExecuteNonQuery();
-                
-                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Deleted " + affectedRows + " rows"));
+                    int affectedRows = cmd.ExecuteNonQuery();
+                    listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Deleted " + affectedRows + " rows"));
+                }
             }
         }
 

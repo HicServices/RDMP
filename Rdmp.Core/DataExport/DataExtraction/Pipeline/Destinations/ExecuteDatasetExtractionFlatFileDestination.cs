@@ -16,7 +16,6 @@ using Rdmp.Core.DataExport.DataExtraction.FileOutputFormats;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataFlowPipeline;
-using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;

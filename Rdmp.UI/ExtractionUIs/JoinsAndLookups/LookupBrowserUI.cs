@@ -12,10 +12,10 @@ using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.DataAccess;
-using ReusableUIComponents;
-using ReusableUIComponents.ScintillaHelper;
+
 using ScintillaNET;
 
 namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups

@@ -25,6 +25,8 @@ namespace Rdmp.UI.Collections
 
             olvProjectNumber.AspectGetter = AspectGetter_ProjectNumber;
             olvVersion.AspectGetter = AspectGetter_Version;
+            olvVersion.IsEditable = false;
+            olvProjectNumber.IsEditable = false;
         }
 
         private object AspectGetter_Version(object rowObject)

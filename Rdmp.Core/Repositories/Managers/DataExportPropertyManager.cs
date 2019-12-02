@@ -133,15 +133,19 @@ namespace Rdmp.Core.Repositories.Managers
             var repo = (TableRepository)_repository;
             using (var con = repo.GetConnection())
             {
-                DbCommand cmd = DatabaseCommandHelper.GetCommand("SELECT * from [ConfigurationProperties]",con.Connection, con.Transaction);
-                using (var reader = cmd.ExecuteReader())
+                using (DbCommand cmd = DatabaseCommandHelper.GetCommand("SELECT * from [ConfigurationProperties]",
+                    con.Connection, con.Transaction))
                 {
-                    _cacheDictionary.Clear();
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        _cacheDictionary.Clear();
 
-                    //get cache of all answers
-                    while (reader.Read())
-                        _cacheDictionary.Add(reader["Property"].ToString(), reader["Value"] as string);
+                        //get cache of all answers
+                        while (reader.Read())
+                            _cacheDictionary.Add(reader["Property"].ToString(), reader["Value"] as string);
+                    }
                 }
+                
             }
 
             _cacheOutOfDate = false;

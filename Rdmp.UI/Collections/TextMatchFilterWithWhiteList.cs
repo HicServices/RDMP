@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using BrightIdeasSoftware;
 
 namespace Rdmp.UI.Collections
@@ -16,7 +17,7 @@ namespace Rdmp.UI.Collections
     /// </summary>
     public class TextMatchFilterWithWhiteList : TextMatchFilter
     {
-        HashSet<object>  _whiteList = new HashSet<object>();
+        public HashSet<object>  WhiteList = new HashSet<object>();
         private string[] _tokens;
         private CompositeAllFilter _compositeFilter;
 
@@ -34,16 +35,21 @@ namespace Rdmp.UI.Collections
             }
 
             foreach (object o in whiteList)
-                _whiteList.Add(o);
+                WhiteList.Add(o);
         }
 
+        /// <summary>
+        /// Returns true if the object should be included in the list
+        /// </summary>
+        /// <param name="modelObject"></param>
+        /// <returns></returns>
         public override bool Filter(object modelObject)
         {
             //gets us the highlight and composite match if the user put in spaces
             bool showing = _compositeFilter != null ? _compositeFilter.Filter(modelObject) : base.Filter(modelObject);
 
             //if its in the whitelist show it
-            if (_whiteList.Contains(modelObject))
+            if (WhiteList.Contains(modelObject))
                 return true;
 
             return showing;

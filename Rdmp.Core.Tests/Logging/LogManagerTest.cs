@@ -171,5 +171,32 @@ namespace Rdmp.Core.Tests.Logging
 
             Assert.AreEqual(mostRecent.StartTime, all[0].StartTime);
         }
+
+        /// <summary>
+        /// Tests the ability of the logging database / API to maintain only one set of tasks not
+        /// one upper case and one lower or otherwise mixed cases.
+        /// </summary>
+        [Test]
+        public void TestLogging_CreateTasks_MixedCases()
+        {
+            var server = new DiscoveredServer(UnitTestLoggingConnectionString);
+            LogManager lm = new LogManager(server);
+
+            
+            lm.CreateNewLoggingTaskIfNotExists("ff");
+            
+            Assert.AreEqual(1,lm.ListDataSets().Count(s => s.Equals("ff",StringComparison.CurrentCultureIgnoreCase)));
+
+            //don't create another one just because it's changed case
+            lm.CreateNewLoggingTaskIfNotExists("FF");
+            
+            Assert.AreEqual(1,lm.ListDataSets().Count(s=>s.Equals("ff",StringComparison.CurrentCultureIgnoreCase)));
+
+            var dli1 = lm.CreateDataLoadInfo("ff","tests","hi there",null,true);
+            var dli2 = lm.CreateDataLoadInfo("FF","tests","hi there",null,true);
+
+            Assert.AreEqual(1,lm.ListDataSets().Count(s=>s.Equals("ff",StringComparison.CurrentCultureIgnoreCase)));
+
+        }
     }
 }

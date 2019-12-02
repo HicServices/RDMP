@@ -194,22 +194,19 @@ namespace Rdmp.Core.Curation.Data.Cache
 
             using (var conn = ((CatalogueRepository)Repository).GetConnection())
             {
-                var cmd =
+                using(var cmd =
                     DatabaseCommandHelper.GetCommand(@"SELECT ID FROM CacheFetchFailure 
 WHERE CacheProgress_ID = @CacheProgressID AND ResolvedOn IS NULL
 ORDER BY FetchRequestStart
 OFFSET " + start + @" ROWS
-FETCH NEXT " + batchSize + @" ROWS ONLY", conn.Connection,conn.Transaction);
+FETCH NEXT " + batchSize + @" ROWS ONLY", conn.Connection,conn.Transaction))
+                {
+                    DatabaseCommandHelper.AddParameterWithValueToCommand("@CacheProgressID",cmd, ID);
 
-                DatabaseCommandHelper.AddParameterWithValueToCommand("@CacheProgressID",cmd, ID);
-
-                
-
-                using (var reader = cmd.ExecuteReader())
-                    while (reader.Read())
-                        toReturnIds.Add(Convert.ToInt32(reader["ID"]));
-
-                cmd.Dispose();
+                    using (var reader = cmd.ExecuteReader())
+                        while (reader.Read())
+                            toReturnIds.Add(Convert.ToInt32(reader["ID"]));
+                }
             }
 
             return Repository.GetAllObjectsInIDList<CacheFetchFailure>(toReturnIds); 

@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
@@ -64,7 +65,7 @@ namespace Rdmp.UI.Tests.CommandExecution
             
             var container2= WhenIHaveA<CohortAggregateContainer>();
 
-            var cmd = new ExecuteCommandDelete(base.ItemActivator, new List<IDeleteable>(){container1,container2});
+            var cmd = new ExecuteCommandDelete(base.ItemActivator, new IDeleteable[]{container1,container2});
 
             Assert.IsTrue(cmd.IsImpossible,"expected command to be impossible");
             StringAssert.Contains("root container",cmd.ReasonCommandImpossible);

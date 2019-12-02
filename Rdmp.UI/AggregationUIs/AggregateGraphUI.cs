@@ -21,6 +21,7 @@ using FAnsi.Discovery.QuerySyntax.Aggregation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
@@ -28,14 +29,15 @@ using Rdmp.Core.Reports;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.ScintillaHelper;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Extensions;
-using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
-using ReusableUIComponents.ScintillaHelper;
+
+
 using ScintillaNET;
 
 namespace Rdmp.UI.AggregationUIs

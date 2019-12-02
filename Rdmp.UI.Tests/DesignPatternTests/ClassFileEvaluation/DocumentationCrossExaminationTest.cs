@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 
@@ -15,6 +16,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
 {
     class DocumentationCrossExaminationTest
     {
+        private readonly DirectoryInfo _slndir;
         Regex matchComments = new Regex(@"///[^;\r\n]*");
 
         private string[] _mdFiles;
@@ -22,6 +24,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
 
         //words that are in Pascal case and you can use in comments despite not being in the codebase... this is an ironic variable to be honest
         //since the very fact that you add something to _whitelist means that it is in the codebase after all!
+        #region Whitelist Terms
         private string[] _whitelist = new []
         {
             "NormalCohorts",
@@ -236,14 +239,18 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             "ObjectType",
             "UserInterfaceOverview",
             "MyPipelinePlugin",
-            "TestAnonymisationPluginsDatabaseTests"
+            "TestAnonymisationPluginsDatabaseTests",
+            "PDFs",
+            "MyPatIndexTable",
+            "MSBuild15CMD",
+            "SetupLazy",
+            "TestCaseSourceAttribute"
         };
-
+        #endregion
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)
         {
-            var mdDirectory = Path.Combine(slndir.FullName, @"Documentation", "CodeTutorials");
-
-            _mdFiles = Directory.GetFiles(mdDirectory, "*.md");
+            _slndir = slndir;
+            _mdFiles = Directory.GetFiles(slndir.FullName, "*.md",SearchOption.AllDirectories);
         }
 
         public void FindProblems(List<string> csFilesFound)
@@ -304,6 +311,10 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
                 foreach (Match m in matchMdReferences.Matches(fileContents))
                     foreach (Match word in Regex.Matches(m.Groups[1].Value, @"([A-Z]\w+){2,}"))
                         fileCommentTokens[mdFile].Add(word.Value);
+
+                EnsureMaximumGlossaryUse(mdFile,problems);
+
+                EnsureCodeBlocksCompile(mdFile, problems);
             }
 
 
@@ -327,7 +338,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
                                 continue;
                         }
                         
-                        problems.Add("FATAL PROBLEM: File '" + Path.GetFileName(kvp.Key) +" talks about something which isn't in the codebase, called a:" +Environment.NewLine + s);
+                        problems.Add("FATAL PROBLEM: File '" + kvp.Key +"' talks about something which isn't in the codebase, called a:" +Environment.NewLine + s);
                         
                     }
                 }
@@ -336,7 +347,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             if (problems.Any())
             {
                 Console.WriteLine("Found problem words in comments (Scroll down to see by file then if you think they are fine add them to DocumentationCrossExaminationTest._whitelist):");
-                foreach (var pLine in problems.Select(p => p.Split('\n')))
+                foreach (var pLine in problems.Where(l=>l.Contains('\n')).Select(p => p.Split('\n')))
                     Console.WriteLine("\"" + pLine[1] + "\",");
                 
             }
@@ -345,6 +356,143 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
                 Console.WriteLine(problem);
 
             Assert.AreEqual(0,problems.Count,"Expected there to be nothing talked about in comments that doesn't appear in the codebase somewhere");
+        }
+
+        private void EnsureCodeBlocksCompile(string mdFile, List<string> problems)
+        {
+            string codeBlocks = Path.Combine(TestContext.CurrentContext.TestDirectory,"../../../DesignPatternTests/MarkdownCodeBlockTests.cs");
+
+            Console.WriteLine("Starting " + mdFile);
+
+            var codeBlocksContent = File.ReadAllText(codeBlocks);
+
+            Regex rGuidComment = new Regex("<!--- (.{32}) --->");
+            Regex rStartCodeBlock = new Regex("```csharp");
+            Regex rEndCodeBlock = new Regex("```");
+
+            Dictionary<string,string> markdownCodeBlocks = new Dictionary<string, string>();
+            
+            var lines = File.ReadAllLines(mdFile);
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                var match = rGuidComment.Match(lines[i]);
+
+                //match a line like <!--- df7d2bb4cd6145719f933f6f15218b1a --->
+                if (match.Success)
+                {
+                    var guid = match.Groups[1].Value;
+                    var sb = new StringBuilder();
+
+                    markdownCodeBlocks.Add(guid,null);
+
+                    //consume the line and look for ```csharp on the next line
+                    if(!rStartCodeBlock.IsMatch(lines[++i]))
+                        throw new Exception($"Expected code block in markdown for GUID {guid} to be followed by a line {rStartCodeBlock}");
+
+                    //skip the ```csharp line
+                    i++;
+
+                    //consume until the closing ``` line
+                    while (!rEndCodeBlock.IsMatch(lines[i]))
+                        sb.AppendLine(lines[i++]);
+
+                    markdownCodeBlocks[guid] = sb.ToString();
+                }
+            }
+
+            foreach (var kvp in markdownCodeBlocks)
+            {
+                Regex rBlock = new Regex($"#region {kvp.Key}([^#]*)#endregion",RegexOptions.Singleline);
+                var m = rBlock.Match(codeBlocksContent);
+
+                if (!m.Success)
+                    throw new Exception(
+                        $"No code block found in {codeBlocks} for guid {kvp.Key}.  Try adding a #region section for the guid");
+
+                var code = Regex.Replace(m.Groups[1].Value, "\\s+", " ");
+                var docs = Regex.Replace(kvp.Value, "\\s+", " ");
+
+                Assert.AreEqual(code.Trim(), docs.Trim(),        
+                    $"Code in the documentation markdown (actual) did not match the corresponding compiled code (expected) for code guid {kvp.Key} markdown file was {mdFile} and code file was {codeBlocks}");
+
+                Console.WriteLine("Validated markdown block " + kvp.Key);
+            }
+            
+            Console.WriteLine("Validated " + markdownCodeBlocks.Count + " markdown blocks");
+        }
+
+        private void EnsureMaximumGlossaryUse(string mdFile, List<string> problems)
+        {
+            const string glossaryRelativePath = "./Documentation/CodeTutorials/Glossary.md";
+            
+            Regex rGlossary = new Regex("##(.*)");
+            Regex rWords = new Regex(@"\b\[?\w*\]?\b");
+            Regex rGlossaryLink = new Regex(@"^\[\w*\]:");
+
+            var glossaryPath = Path.Combine(_slndir.FullName, glossaryRelativePath);
+            
+            //don't evaluate the glossary!
+            if(Path.GetFileName(mdFile) == "Glossary.md")
+                return;
+
+            var glossaryHeaders = 
+                new HashSet<string>(
+                File.ReadAllLines(glossaryPath)
+                .Where(l=>rGlossary.IsMatch(l))
+                .Select(l=>rGlossary.Match(l).Groups[1].Value.Trim()));
+
+            bool inCodeBlock = false;
+            int lineNumber = 0;
+
+            foreach (string line in File.ReadAllLines(mdFile))
+            {
+                lineNumber++;
+
+                if(string.IsNullOrWhiteSpace(line))
+                    continue;
+                
+                //don't complain about the glossary links at the bottom of the file.
+                if(rGlossaryLink.IsMatch(line))
+                    continue;
+
+                //don't complain about keywords in code blocks
+                if(line.TrimStart().StartsWith("```"))
+                    inCodeBlock = !inCodeBlock;
+
+                
+
+                if (!inCodeBlock)
+                {
+                    foreach (Match match in rWords.Matches(line))
+                    {
+                        if (glossaryHeaders.Contains(match.Value))
+                        {
+                            //It's already got a link on it e.g. [DBMS] or it's "UNION - sometext"
+                            if(match.Index - 1 > 0 
+                               && 
+                               (line[match.Index-1] == '[' || line[match.Index-1] == '"'))
+                                continue;
+
+
+                            Uri path1 = new Uri(mdFile);
+                            Uri path2 = new Uri(glossaryPath);
+                            Uri diff = path1.MakeRelativeUri(path2);
+                            string relPath = diff.OriginalString;
+
+                            if (!relPath.StartsWith("."))
+                                relPath = "./" + relPath;
+
+                            string suggestedLine = $"[{match.Value}]: {relPath}#{match.Value}";
+
+                            problems.Add($"Glossary term should be link in {mdFile} line number {lineNumber}.  Term is {match.Value}.  Suggested link line is:\"{suggestedLine}\"" );
+                        }
+                            
+                    }
+                }
+            }
+
+
         }
     }
 }

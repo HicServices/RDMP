@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
@@ -17,7 +18,6 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Arranging;
-using Rdmp.UI.ItemActivation.Emphasis;
 using Rdmp.UI.LoadExecutionUIs;
 using WeifenLuo.WinFormsUI.Docking;
 

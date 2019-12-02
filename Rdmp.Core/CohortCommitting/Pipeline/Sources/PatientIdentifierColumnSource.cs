@@ -56,13 +56,15 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Sources
             using (var con = server.GetConnection())
             {
                 con.Open();
-                var cmd = server.GetCommand(qb.SQL, con);
-                cmd.CommandTimeout = timeout;
+                using (var cmd = server.GetCommand(qb.SQL, con))
 
-                var r = cmd.ExecuteReader();
+                {
+                    cmd.CommandTimeout = timeout;
 
-                while (r.Read())
-                    dt.Rows.Add(new[] { r[colName] });
+                    using(var r = cmd.ExecuteReader())
+                        while (r.Read())
+                            dt.Rows.Add(new[] { r[colName] });
+                }
             }
 
             return dt;

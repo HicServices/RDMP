@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.CohortUI.CohortSourceManagement
+﻿using Rdmp.UI.SimpleControls;
+
+namespace Rdmp.UI.CohortUI.CohortSourceManagement
 {
     partial class CreateNewCohortDatabaseWizardUI
     {
@@ -35,11 +37,11 @@
             this.olvNumberOfTimesSeen = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.btnDiscoverExtractionIdentifiers = new System.Windows.Forms.Button();
             this.btnNext = new System.Windows.Forms.Button();
-            this.serverDatabaseTableSelector1 = new ReusableUIComponents.ServerDatabaseTableSelector();
+            this.serverDatabaseTableSelector1 = new ServerDatabaseTableSelector();
             this.label2 = new System.Windows.Forms.Label();
             this.cbAllowNullReleaseIdentifiers = new System.Windows.Forms.CheckBox();
-            this.helpIcon1 = new ReusableUIComponents.HelpIcon();
-            this.helpIcon2 = new ReusableUIComponents.HelpIcon();
+            this.helpIcon1 = new HelpIcon();
+            this.helpIcon2 = new HelpIcon();
             ((System.ComponentModel.ISupportInitialize)(this.listView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -187,10 +189,10 @@
         private BrightIdeasSoftware.OLVColumn olvNumberOfTimesSeen;
         private System.Windows.Forms.Button btnDiscoverExtractionIdentifiers;
         public System.Windows.Forms.Button btnNext;
-        private ReusableUIComponents.ServerDatabaseTableSelector serverDatabaseTableSelector1;
+        private ServerDatabaseTableSelector serverDatabaseTableSelector1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox cbAllowNullReleaseIdentifiers;
-        private ReusableUIComponents.HelpIcon helpIcon1;
-        private ReusableUIComponents.HelpIcon helpIcon2;
+        private HelpIcon helpIcon1;
+        private HelpIcon helpIcon2;
     }
 }

@@ -15,21 +15,23 @@ using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.Icons.IconOverlays;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.AutoComplete;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.DataViewing.Collections;
-using Rdmp.UI.Icons.IconOverlays;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
-using ReusableUIComponents.ScintillaHelper;
+
+
 using ScintillaNET;
+using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.DataViewing
 {

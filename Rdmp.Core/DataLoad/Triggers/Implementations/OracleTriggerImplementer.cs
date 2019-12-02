@@ -11,8 +11,10 @@ using ReusableLibraryCode.Exceptions;
 
 namespace Rdmp.Core.DataLoad.Triggers.Implementations
 {
+    /// <inheritdoc/>
     internal class OracleTriggerImplementer:MySqlTriggerImplementer
     {
+        /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
         public OracleTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table, createDataLoadRunIDAlso)
         {
         }
@@ -23,14 +25,16 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
             {
                 con.Open();
 
-                var cmd = _server.GetCommand(string.Format("select trigger_body from all_triggers where trigger_name = UPPER('{0}')", GetTriggerName()), con);
-                ((OracleCommand)cmd).InitialLONGFetchSize = -1;
-                
-                var r = cmd.ExecuteReader();
-
-                while (r.Read())
+                using (var cmd =
+                    _server.GetCommand(
+                        string.Format("select trigger_body from all_triggers where trigger_name = UPPER('{0}')",
+                            GetTriggerName()), con))
                 {
-                    return (string) r["trigger_body"];
+                    ((OracleCommand)cmd).InitialLONGFetchSize = -1;
+                    var r = cmd.ExecuteReader();
+
+                    while (r.Read())
+                        return (string) r["trigger_body"];
                 }
             }
 
@@ -38,11 +42,13 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
         }
         protected override string CreateTriggerBody()
         {
+            var syntax = _table.GetQuerySyntaxHelper();
+
             return string.Format(@"BEGIN
     INSERT INTO {0} ({1},hic_validTo,hic_userID,hic_status) VALUES ({2},CURRENT_DATE,USER,'U');
   END", _archiveTable.GetFullyQualifiedName(),
-                string.Join(",", _columns.Select(c => c.GetRuntimeName())),
-                string.Join(",", _columns.Select(c => ":old." + c.GetRuntimeName())));
+                string.Join(",", _columns.Select(c => syntax.EnsureWrapped(c.GetRuntimeName()))),
+                string.Join(",", _columns.Select(c => ":old." + syntax.EnsureWrapped(c.GetRuntimeName()))));
         }
 
         protected override void AssertTriggerBodiesAreEqual(string sqlThen, string sqlNow)

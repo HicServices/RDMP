@@ -25,8 +25,8 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
-using ReusableUIComponents;
-using ReusableUIComponents.SqlDialogs;
+
+using Rdmp.UI.SimpleDialogs.SqlDialogs;
 
 namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement
 {
@@ -200,18 +200,22 @@ namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement
                     var qb = new QueryBuilder(null, null, new[] {ColumnInfo.TableInfo});
                     qb.AddColumn(new ColumnInfoToIColumn(new MemoryRepository(), _columnInfo));
                     qb.TopX = 10;
-
-                    DbCommand cmd = server.GetCommand(qb.SQL, con);
-                    cmd.CommandTimeout = Convert.ToInt32(ntimeout.Value);
-                    var r = cmd.ExecuteReader();
-
+                    
                     bool rowsRead = false;
-                    while (r.Read())
-                    {
-                        preview.Rows.Add(r[_columnInfo.GetRuntimeName(LoadStage.PostLoad)],DBNull.Value);
-                        rowsRead = true;
-                    }
 
+                    using (DbCommand cmd = server.GetCommand(qb.SQL, con))
+                    {
+                        cmd.CommandTimeout = Convert.ToInt32(ntimeout.Value);
+                        using (var r = cmd.ExecuteReader())
+                        {
+                            while (r.Read())
+                            {
+                                preview.Rows.Add(r[_columnInfo.GetRuntimeName(LoadStage.PostLoad)],DBNull.Value);
+                                rowsRead = true;
+                            }
+                        }
+                    }
+                    
                     if(!rowsRead)
                     {
                         lblPreviewDataIsFictional.Visible = true;

@@ -8,9 +8,9 @@ using BrightIdeasSoftware;
 using NUnit.Framework;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.Collections;
-using ReusableLibraryCode.CommandExecution;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using System;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 
 namespace Rdmp.UI.Tests
 {

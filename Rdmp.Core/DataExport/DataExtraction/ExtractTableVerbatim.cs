@@ -95,28 +95,36 @@ namespace Rdmp.Core.DataExport.DataExtraction
 
         private int ExtractSQL(string sql, string tableName, DbConnection con)
         {
-            DbCommand cmdExtract = _server.GetCommand( sql, con);
+            int linesWritten;
 
-            if (!Directory.Exists(_outputDirectory.FullName))
-                Directory.CreateDirectory(_outputDirectory.FullName);
+            using (DbCommand cmdExtract = _server.GetCommand(sql, con))
+            {
+                if (!Directory.Exists(_outputDirectory.FullName))
+                    Directory.CreateDirectory(_outputDirectory.FullName);
 
+                string filename = tableName.Replace("[", "").Replace("]", "").ToLower().Trim();
 
-            OutputFilename = _outputDirectory.FullName + "\\" +
-                                    tableName.Replace("[", "").Replace("]", "").ToLower().Trim() +
-                                    ".csv";
+                if (!filename.EndsWith(".csv"))
+                    filename += ".csv";
 
-            StreamWriter sw = new StreamWriter(OutputFilename);
+                OutputFilename = Path.Combine(_outputDirectory.FullName , filename);
 
-            cmdExtract.CommandTimeout = 500000;
+                StreamWriter sw = new StreamWriter(OutputFilename);
 
-            DbDataReader r = cmdExtract.ExecuteReader();
-            WriteHeader(sw, r, _separator, _dateTimeFormat);
-            int linesWritten = WriteBody(sw, r, _separator, _dateTimeFormat);
+                cmdExtract.CommandTimeout = 500000;
 
-            r.Close();
-            sw.Flush();
-            sw.Close();
+                using(DbDataReader r = cmdExtract.ExecuteReader())
+                {
+                    WriteHeader(sw, r, _separator, _dateTimeFormat);
+                    linesWritten = WriteBody(sw, r, _separator, _dateTimeFormat);
 
+                    r.Close();
+                }
+                
+                sw.Flush();
+                sw.Close();
+            }
+            
             return linesWritten;
         }
 

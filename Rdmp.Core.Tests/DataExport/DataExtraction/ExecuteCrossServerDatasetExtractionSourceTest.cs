@@ -85,14 +85,18 @@ SET @ProjectNumber=1;
 SELECT DISTINCT 
 
 [tempdb]..[Cohort].[ReleaseID] AS ReleaseID,
-[{0}ScratchArea]..[TestTable].[Name],
-[{0}ScratchArea]..[TestTable].[DateOfBirth]
+[{0}ScratchArea].dbo.[TestTable].[Name],
+[{0}ScratchArea].dbo.[TestTable].[DateOfBirth]
 FROM 
-[{0}ScratchArea]..[TestTable]
-INNER JOIN [tempdb]..[Cohort] ON [{0}ScratchArea]..[TestTable].[PrivateID]=[tempdb]..[Cohort].[PrivateID]
+[{0}ScratchArea].dbo.[TestTable]
+INNER JOIN [tempdb]..[Cohort] ON [{0}ScratchArea].dbo.[TestTable].[PrivateID]=[tempdb]..[Cohort].[PrivateID]
 WHERE
 [tempdb]..[Cohort].[cohortDefinition_id]=-599
 ", TestDatabaseNames.Prefix);
+
+            //cross server is only used if cohort and dataset are on different servers so pretend the cohort is on bob server
+            var ect = (ExternalCohortTable)_request.ExtractableCohort.ExternalCohortTable;
+            ect.Server = "bob";
 
             var e = DataExportRepository.GetObjectByID<ExternalCohortTable>(_request.ExtractableCohort.ExternalCohortTable_ID);
             string origValue = e.Database;

@@ -8,7 +8,7 @@
 	* [Blank Lines](#blank-lines)
 	* [Null Values](#null-values)
 	* [Trailing Nulls](#trailing-nulls)
-	* [Empty Headers](#empty-headers)
+	* [Empty Columns](#empty-columns)
 1. [Resolved According To Strategy](#resolved-according-to-strategy)
 	* [Empty Files](#empty-files)
 	* [Too Many Cells](#too-many-cells)

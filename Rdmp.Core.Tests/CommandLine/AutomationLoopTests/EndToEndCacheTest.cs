@@ -79,9 +79,8 @@ namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests
             RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
             var cachingHost = new CachingHost(CatalogueRepository);
-            var cpAsList = new ICacheProgress[] {_cp}.ToList();
-
-            cachingHost.CacheProgressList = cpAsList;
+            
+            cachingHost.CacheProgress = _cp;
             cachingHost.Start(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
             // should be numDaysToCache days in cache

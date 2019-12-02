@@ -14,9 +14,11 @@ using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.QuerySyntax.Aggregation;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.QueryBuilding.Options;
 using Rdmp.UI.AutoComplete;
@@ -24,13 +26,12 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Copying;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.ItemActivation.Emphasis;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
+using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableUIComponents;
-using ReusableUIComponents.ScintillaHelper;
+
 using ScintillaNET;
 
 namespace Rdmp.UI.AggregationUIs.Advanced
@@ -83,7 +84,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             if(VisualStudioDesignMode)
                 return;
 
-            QueryHaving = new ScintillaTextEditorFactory().Create(new RDMPCommandFactory());
+            QueryHaving = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
             
             gbHaving.Controls.Add(QueryHaving);
 
@@ -94,7 +95,31 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             olvJoin.CheckStatePutter += ForceJoinCheckStatePutter;
             olvJoinTableName.ImageGetter += ImageGetter;
 
+            olvJoinDirection.AspectGetter += JoinDirectionGetter;
+            olvJoinDirection.AspectPutter += JoinDirectionPutter;
+
             olvJoin.AddDecoration(new EditingCellBorderDecoration { UseLightbox = true });
+        }
+
+        private void JoinDirectionPutter(object rowobject, object newvalue)
+        {
+            if (rowobject is JoinableCohortAggregateConfigurationUse j)
+            {
+                if(j.JoinType == (ExtractionJoinType) newvalue)
+                    return;
+                
+                j.JoinType = (ExtractionJoinType)newvalue;
+                j.SaveToDatabase();
+                Publish();
+            }
+        }
+
+        private object JoinDirectionGetter(object rowobject)
+        {
+            if (rowobject is JoinableCohortAggregateConfigurationUse j)
+                return j.JoinType;
+
+            return null;
         }
 
         private object ImageGetter(object rowObject)

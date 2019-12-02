@@ -4,11 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.UI.DataLoadUIs.ANOUIs.PreLoadDiscarding;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.CommandExecution;
 
 namespace Rdmp.UI.CommandExecution.Proposals
 {
@@ -29,7 +28,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<PreLoadDiscardedColumnUI, PreLoadDiscardedColumn>(target);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, PreLoadDiscardedColumn target, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, PreLoadDiscardedColumn target, InsertOption insertOption = InsertOption.Default)
         {
             return null;
         }

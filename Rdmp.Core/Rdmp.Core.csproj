@@ -4,6 +4,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>7.1</LangVersion>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Databases\CatalogueDatabase\up\views\**" />
@@ -245,8 +246,10 @@
     <PackageReference Include="HIC.BadMedicine" Version="0.1.5" />
     <PackageReference Include="NPOI" Version="2.4.1" />
     <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
+    <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
     <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
     <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
+    <PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
     <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
     <PackageReference Include="System.Threading" Version="4.3.0" />
     <PackageReference Include="System.Globalization" Version="4.3.0" />
@@ -278,6 +281,21 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>GlobalStrings.resx</DependentUpon>
     </Compile>
+    <Compile Update="Icons\IconProvision\CatalogueIcons.Designer.cs">
+      <DependentUpon>CatalogueIcons.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Icons\IconProvision\ChecksAndProgressIcons.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ChecksAndProgressIcons.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Icons\IconProvision\Images.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Images.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="GlobalStrings.resx">
@@ -286,6 +304,19 @@
     </EmbeddedResource>
     <EmbeddedResource Update="GlobalStrings.zh-Hans.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Icons\IconProvision\CatalogueIcons.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>CatalogueIcons.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Icons\IconProvision\ChecksAndProgressIcons.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ChecksAndProgressIcons.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Icons\IconProvision\Images.resx">
+      <SubType>Designer</SubType>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Images.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 </Project>

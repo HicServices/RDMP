@@ -1,4 +1,7 @@
-﻿namespace Rdmp.UI.SimpleControls
+﻿using Rdmp.UI.ChecksUI;
+using Rdmp.UI.Progress;
+
+namespace Rdmp.UI.SimpleControls
 {
     partial class CheckAndExecuteUI
     {
@@ -32,14 +35,14 @@
             this.gbControls = new System.Windows.Forms.GroupBox();
             this.btnAbortLoad = new System.Windows.Forms.Button();
             this.btnExecute = new System.Windows.Forms.Button();
-            this.ragChecks = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragChecks = new RAGSmiley();
             this.label5 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.btnRunChecks = new System.Windows.Forms.Button();
             this.gbLoad = new System.Windows.Forms.GroupBox();
-            this.checksUI1 = new ReusableUIComponents.ChecksUI.ChecksUI();
-            this.loadProgressUI1 = new ReusableUIComponents.Progress.ProgressUI();
+            this.checksUI1 = new ChecksUI.ChecksUI();
+            this.loadProgressUI1 = new ProgressUI();
             this.gbControls.SuspendLayout();
             this.gbLoad.SuspendLayout();
             this.SuspendLayout();
@@ -178,13 +181,13 @@
         private System.Windows.Forms.GroupBox gbControls;
         private System.Windows.Forms.Button btnAbortLoad;
         private System.Windows.Forms.Button btnExecute;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragChecks;
+        private RAGSmiley ragChecks;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnRunChecks;
         private System.Windows.Forms.GroupBox gbLoad;
-        private ReusableUIComponents.ChecksUI.ChecksUI checksUI1;
-        private ReusableUIComponents.Progress.ProgressUI loadProgressUI1;
+        private ChecksUI.ChecksUI checksUI1;
+        private ProgressUI loadProgressUI1;
     }
 }

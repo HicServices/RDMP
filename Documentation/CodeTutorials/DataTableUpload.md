@@ -33,7 +33,7 @@ Once all data types have been determined the destination table is created with t
 If a column is always null then the column estimate will be `Boolean` (`bit`).
 
 ## Resizing
-Data is loaded into tables in batches using an appropriate `IBulkCopy` for the DBMS being targetted (e.g. Sql Server, MySql).  Each batch goes through the `Guesser` which can result in a column estimate changing.  When this occurs (assuming `AllowResizingColumnsAtUploadTime`) then an ALTER statement is issued to change the column to the new `Type`.
+Data is loaded into tables in batches using an appropriate `IBulkCopy` for the [DBMS] being targetted (e.g. Sql Server, MySql).  Each batch goes through the `Guesser` which can result in a column estimate changing.  When this occurs (assuming `AllowResizingColumnsAtUploadTime`) then an ALTER statement is issued to change the column to the new `Type`.
 
 ## Primary Keys
 The table created will have an appropriate primary key if the `DataTable` batches supplied have a PrimaryKey set or if any `ExplicitTypes` columns have `IsPrimaryKey` set.  This key will only be created when the `DataTableUploadDestination` is disposed since primary keys can affect the ability to issue ALTER statements.
@@ -43,3 +43,5 @@ See `Rdmp.Core.Tests.DataLoad.Engine.Integration.DataTableUploadDestinationTests
 
 ## Class Diagram
 ![DataTableUploadDiagram](Images/DataTableUpload/ClassDiagram.png)
+
+[DBMS]: ./Glossary.md#DBMS

@@ -7,6 +7,8 @@
 using System;
 using System.Linq;
 using BrightIdeasSoftware;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Governance;
@@ -15,7 +17,6 @@ using Rdmp.UI.Collections.Providers.Filtering;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.Collections
@@ -188,7 +189,7 @@ namespace Rdmp.UI.Collections
             RefreshUIFromDatabase(CatalogueFolder.Root);
         }
 
-        void _activator_Emphasise(object sender, ItemActivation.Emphasis.EmphasiseEventArgs args)
+        void _activator_Emphasise(object sender, EmphasiseEventArgs args)
         {
             //user wants this object emphasised
             var c = args.Request.ObjectToEmphasise as Catalogue;

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="HIC.Common.Validation.ItemValidator">
+  <Class Name="Rdmp.Core.Validation.ItemValidator">
     <Position X="3.25" Y="2" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
@@ -13,23 +13,23 @@
       <Property Name="PrimaryConstraint" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="HIC.Common.Validation.Constraints.Primary.Chi" Collapsed="true">
+  <Class Name="Rdmp.Core.Validation.Constraints.Primary.Chi" Collapsed="true">
     <Position X="13.75" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAEAAAAAACCAAAACAAAgAAAEgBAAAAAAAEAAAQAAAAA=</HashCode>
       <FileName>Constraints\Primary\Chi.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="HIC.Common.Validation.Constraints.Secondary.BoundDouble" Collapsed="true">
+  <Class Name="Rdmp.Core.Validation.Constraints.Secondary.BoundDouble" Collapsed="true">
     <Position X="5.75" Y="7.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>IAAgAAEABBCAAAAAAEAAACAAAAAAAQAAAEAAAAAKAIA=</HashCode>
       <FileName>Constraints\Secondary\BoundDouble.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="HIC.Common.Validation.ValidationFailure">
+  <Class Name="Rdmp.Core.Validation.ValidationFailure">
     <Position X="0.75" Y="6.75" Width="2.75" />
-    <AssociationLine Name="SourceItemValidator" Type="HIC.Common.Validation.ItemValidator">
+    <AssociationLine Name="SourceItemValidator" Type="Rdmp.Core.Validation.ItemValidator">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="0.548" Y="-3.055" />
       </MemberNameLabel>
@@ -42,14 +42,14 @@
       <Property Name="SourceItemValidator" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="HIC.Common.Validation.Constraints.Secondary.RegularExpression" Collapsed="true">
+  <Class Name="Rdmp.Core.Validation.Constraints.Secondary.RegularExpression" Collapsed="true">
     <Position X="6.25" Y="5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAACAAAAAAAAgAAAQAACAAAAAAEAAAAAAAAA=</HashCode>
       <FileName>Constraints\Secondary\RegularExpression.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="HIC.Common.Validation.Validator">
+  <Class Name="Rdmp.Core.Validation.Validator">
     <Position X="0.5" Y="0.5" Width="1.5" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
@@ -62,7 +62,7 @@
       <Property Name="ItemValidators" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="HIC.Common.Validation.Constraints.Primary.PrimaryConstraint">
+  <Class Name="Rdmp.Core.Validation.Constraints.Primary.PrimaryConstraint">
     <Position X="11.75" Y="2.5" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
@@ -73,7 +73,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="HIC.Common.Validation.Constraints.Secondary.Predictor.Prediction">
+  <Class Name="Rdmp.Core.Validation.Constraints.Secondary.Predictor.Prediction">
     <Position X="2.75" Y="5" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
@@ -85,28 +85,28 @@
       <FileName>Constraints\Secondary\Predictor\Prediction.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="HIC.Common.Validation.Constraints.Secondary.BoundDate" Collapsed="true">
+  <Class Name="Rdmp.Core.Validation.Constraints.Secondary.BoundDate" Collapsed="true">
     <Position X="3.75" Y="7.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAgAAEAABCAAAAAAEAAACAAAAAAAQAAAEAAAAAIAIA=</HashCode>
       <FileName>Constraints\Secondary\BoundDate.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="HIC.Common.Validation.Constraints.Secondary.Bound">
+  <Class Name="Rdmp.Core.Validation.Constraints.Secondary.Bound">
     <Position X="8.25" Y="5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAEAAAAAAAiAAAAAABAAAABAEAAAAAAAEA=</HashCode>
       <FileName>Constraints\Secondary\Bound.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="HIC.Common.Validation.Constraints.Secondary.NotNull" Collapsed="true">
+  <Class Name="Rdmp.Core.Validation.Constraints.Secondary.NotNull" Collapsed="true">
     <Position X="4.5" Y="5.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAACAAAAAAAAgAAAAAAAAAAAAAEAAAAAAAAA=</HashCode>
       <FileName>Constraints\Secondary\NotNull.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="HIC.Common.Validation.Constraints.Secondary.SecondaryConstraint" Collapsed="true">
+  <Class Name="Rdmp.Core.Validation.Constraints.Secondary.SecondaryConstraint" Collapsed="true">
     <Position X="7.5" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAACAQAAAAAAgAAAAAAAAAABAAEAAAAAAAAA=</HashCode>

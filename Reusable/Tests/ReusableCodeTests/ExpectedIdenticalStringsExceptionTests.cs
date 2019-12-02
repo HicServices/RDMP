@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using NUnit.Framework;
 using ReusableLibraryCode.Exceptions;
 
@@ -61,10 +62,15 @@ ACTUAL  :fish fly high
             var ex = new ExpectedIdenticalStringsException("These are different", @"fi
 sh", "fish");
 
+            
+            
+            string eol = Environment.NewLine.Replace("\r","\\r").Replace("\n","\\n");
+
+
             Assert.AreEqual(
-@"These are different
+$@"These are different
 Strings differ at index 2
-EXPECTED:fi\r\nsh
+EXPECTED:fi{eol}sh
 ACTUAL  :fish
 -----------^"
                 , ex.Message);
@@ -100,13 +106,30 @@ meaning
 if the queer clay bas-relief and the disjointed jottings, ramblings, and cuttings which I found? Had
 my uncle, in his latter years become credulous of the most superficial impostures? ");
 
-            Assert.AreEqual(
-@"These are different
+            //line endings change the location in the string that is different.  It also means more preview
+            //text is available since newline characters consume more/less of the preview allowance.
+            if (Environment.NewLine == "\r\n")
+            {
+                Assert.AreEqual(
+                    $@"These are different
 Strings differ at index 38
 EXPECTED: the\r\nmeaning \r\nof the que...
 ACTUAL  : the\r\nmeaning \r\nif the que...
 -----------------------------^"
-                , ex.Message);
+                    , ex.Message);
+            }
+            else
+            {
+                Assert.AreEqual(
+                    $@"These are different
+Strings differ at index 34
+EXPECTED:d be the\nmeaning \nof the que...
+ACTUAL  :d be the\nmeaning \nif the que...
+-----------------------------^"
+                    , ex.Message);
+            }
+
+            
         }
     }
 }

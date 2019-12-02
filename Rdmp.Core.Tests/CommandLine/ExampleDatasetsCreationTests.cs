@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.Curation.Data;
@@ -33,6 +34,10 @@ namespace Rdmp.Core.Tests.CommandLine
             var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
             var creator = new ExampleDatasetsCreation(RepositoryLocator);
             creator.Create(db,new ThrowImmediatelyCheckNotifier(),new PlatformDatabaseCreationOptions(){Seed = 500,DropDatabases = true });
+
+            //should be at least 2 views (marked as view)
+            var views = CatalogueRepository.GetAllObjects<TableInfo>().Count(ti => ti.IsView);
+            Assert.GreaterOrEqual(views,2);
 
             //should have at least created some catalogues, graphs etc
             Assert.GreaterOrEqual(CatalogueRepository.GetAllObjects<Catalogue>().Length,4);

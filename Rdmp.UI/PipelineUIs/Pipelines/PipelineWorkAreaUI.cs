@@ -14,8 +14,10 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.PipelineUIs.DemandsInitializationUIs;
 using Rdmp.UI.PipelineUIs.Pipelines.Models;
-using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
+using Rdmp.UI.SimpleDialogs;
+
+
+using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.PipelineUIs.Pipelines
 {

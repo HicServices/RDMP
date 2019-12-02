@@ -43,10 +43,11 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         public void CreateLinkBetween(AggregateConfiguration configuration, TableInfo tableInfo)
         {
             using (var con = _repository.GetConnection())
-                DatabaseCommandHelper.GetCommand(
-                    string.Format(
-                        "INSERT INTO AggregateForcedJoin (AggregateConfiguration_ID,TableInfo_ID) VALUES ({0},{1})",
-                        configuration.ID, tableInfo.ID), con.Connection,con.Transaction).ExecuteNonQuery();
+                using(var cmd = DatabaseCommandHelper.GetCommand(
+                        string.Format(
+                            "INSERT INTO AggregateForcedJoin (AggregateConfiguration_ID,TableInfo_ID) VALUES ({0},{1})",
+                            configuration.ID, tableInfo.ID), con.Connection,con.Transaction))
+                cmd.ExecuteNonQuery();
         }
     }
 }

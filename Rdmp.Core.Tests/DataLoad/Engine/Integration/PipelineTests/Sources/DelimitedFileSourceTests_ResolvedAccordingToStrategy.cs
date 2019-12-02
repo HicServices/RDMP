@@ -119,7 +119,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
                     var dt2 = RunGetChunk(file, strategy, true);
                     Assert.AreEqual(2,dt2.Rows.Count);
 
-                    AssertDivertFileIsExactly("Bob,He's also dynamite, seen him do a lot of good work,30\r\n");
+                    AssertDivertFileIsExactly("Bob,He's also dynamite, seen him do a lot of good work,30" +Environment.NewLine);
 
                     break;
                 default:
@@ -161,7 +161,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
                     var dt2 = RunGetChunk(file, adjust);
                     Assert.AreEqual(2, dt2.Rows.Count);
 
-                    AssertDivertFileIsExactly("\r\nOther People To Investigate\r\n");
+                    AssertDivertFileIsExactly(Environment.NewLine + "Other People To Investigate" + Environment.NewLine);
 
                     break;
                 default:
@@ -201,7 +201,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
                     var dt2 = RunGetChunk(file, adjust);
                     Assert.AreEqual(1, dt2.Rows.Count);
 
-                    AssertDivertFileIsExactly("Bob\r\n");
+                    AssertDivertFileIsExactly("Bob"+Environment.NewLine);
 
                     break;
                 default:
@@ -223,7 +223,7 @@ to be honest,20",
 
             var dt = RunGetChunk(file,s=> { s.AttemptToResolveNewLinesInRecords = true; });
             Assert.AreEqual(3, dt.Rows.Count);
-            Assert.AreEqual("He's\r\nnot too bad\r\nto be honest", dt.Rows[1][1]);
+            Assert.AreEqual($"He's{Environment.NewLine}not too bad{Environment.NewLine}to be honest", dt.Rows[1][1]);
         }
 
         [Test]

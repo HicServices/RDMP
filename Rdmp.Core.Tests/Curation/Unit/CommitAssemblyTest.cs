@@ -23,5 +23,12 @@ namespace Rdmp.Core.Tests.Curation.Unit
             
             Assert.AreEqual(s.GetType(),t);
         }
+        public enum ScheduleStrategy
+        {
+            NotSet,
+            Override,
+            Test,
+            Continuous
+        };
     }
 }

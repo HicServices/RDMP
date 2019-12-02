@@ -16,12 +16,13 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.Icons.IconOverlays;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.Collections;
-using Rdmp.UI.Icons.IconOverlays;
 using Rdmp.UI.Icons.IconProvision.StateBasedIconProviders;
 using ReusableLibraryCode.Icons.IconProvision;
 
@@ -61,6 +62,7 @@ namespace Rdmp.UI.Icons.IconProvision
             StateBasedIconProviders.Add(new CatalogueItemStateBasedIconProvider(OverlayProvider));
             StateBasedIconProviders.Add(new ReleaseabilityStateBasedIconProvider());
             StateBasedIconProviders.Add(new ExtractableCohortStateBasedIconProvider(OverlayProvider));
+            StateBasedIconProviders.Add((new PipelineComponentStateBasedIconProvider()));
 
             StateBasedIconProviders.Add(new ExtractCommandStateBasedIconProvider());
         }

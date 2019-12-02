@@ -38,28 +38,28 @@
     </ShowAsCollectionAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Rdmp.Core.Curation.QueryBuilding.ConstantParameter" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.ExtractionFilterParameterSetValue" Collapsed="true">
+    <Position X="6.25" Y="6" Width="3" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.DataExport.Data.GlobalExtractionFilterParameter" Collapsed="true">
+    <Position X="5.5" Y="1.25" Width="3.75" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.QueryBuilding.ConstantParameter" Collapsed="true">
     <Position X="11" Y="1" Width="2.25" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Rdmp.Core.Curation.Spontaneous.SpontaneouslyInventedSqlParameter" Collapsed="true">
-    <Position X="11" Y="2.5" Width="3" />
+  <Class Name="Rdmp.Core.Curation.Data.Spontaneous.SpontaneouslyInventedSqlParameter" Collapsed="true">
+    <Position X="11" Y="2.5" Width="2.75" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="Rdmp.Core.DataExport.Data.DataTables.DeployedExtractionFilterParameter" Collapsed="true">
-    <Position X="3.25" Y="8.5" Width="2.75" />
-    <TypeIdentifier />
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="Rdmp.Core.DataExport.Data.DataTables.GlobalExtractionFilterParameter" Collapsed="true">
-    <Position X="5.5" Y="1" Width="3" />
-    <TypeIdentifier />
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="Rdmp.Core.Curation.Data.ExtractionFilterParameterSetValue" Collapsed="true">
-    <Position X="6.25" Y="6" Width="3" />
+  <Class Name="Rdmp.Core.DataExport.Data.DeployedExtractionFilterParameter" Collapsed="true">
+    <Position X="3.5" Y="8.5" Width="2.5" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>

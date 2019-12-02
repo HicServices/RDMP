@@ -58,7 +58,7 @@ namespace Rdmp.Core.CommandLine.Runners
                     {
                         var cachingHost = new CachingHost(repositoryLocator.CatalogueRepository);
                         cachingHost.RetryMode = _options.RetryMode;
-                        cachingHost.CacheProgressList = new ICacheProgress[] { cp }.ToList(); //run the cp
+                        cachingHost.CacheProgress =  cp; //run the cp
 
                         //By default caching host will block 
                         cachingHost.TerminateIfOutsidePermissionWindow = true;

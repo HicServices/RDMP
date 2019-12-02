@@ -93,7 +93,7 @@ namespace Rdmp.Core.DataExport.Checks
                 return;
             }
 
-            var server = request.Catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
+            var server = request.GetDistinctLiveDatabaseServer();
             bool serverExists = server.Exists();
 
             notifier.OnCheckPerformed(new CheckEventArgs("Server " + server + " Exists:" + serverExists,

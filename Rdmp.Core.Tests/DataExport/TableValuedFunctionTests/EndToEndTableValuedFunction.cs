@@ -240,7 +240,7 @@ end
 
             var importer = new TableInfoImporter(CatalogueRepository, svr.Name,
                 _database.GetRuntimeName(), "NonTVFTable",
-                DatabaseType.MicrosoftSQLServer);
+                DatabaseType.MicrosoftSQLServer,_database.Server.ExplicitUsernameIfAny,_database.Server.ExplicitPasswordIfAny);
 
             TableInfo tbl;
             ColumnInfo[] cols;

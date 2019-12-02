@@ -39,9 +39,11 @@ namespace Rdmp.Core.DataExport.CohortDescribing
                 using (var con = server.GetConnection())
                 {
                     con.Open();
-                    var cmd = server.GetCommand(Source.GetCountsDataTableSql(), con);
-                    cmd.CommandTimeout = 120; //give it up to 2 minutes
-                    server.GetDataAdapter(cmd).Fill(DataTable);
+                    using(var cmd = server.GetCommand(Source.GetCountsDataTableSql(), con))
+                    {
+                        cmd.CommandTimeout = 120; //give it up to 2 minutes
+                        server.GetDataAdapter(cmd).Fill(DataTable);
+                    }   
                 }
                 
             });

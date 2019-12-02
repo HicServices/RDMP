@@ -8,28 +8,81 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>7.1</LangVersion>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="en_US.aff" />
+    <None Remove="en_US.dic" />
+    <None Remove="Hunspellx64.dll" />
+    <None Remove="Hunspellx86.dll" />
+    <None Remove="hyph_en_US.dic" />
+    <None Remove="Pencil.cur" />
+  </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="en_US.aff">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="en_US.dic">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Hunspellx64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Hunspellx86.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="hyph_en_US.dic">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Pencil.cur">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="AutoCompleteMenu-ScintillaNET" Version="1.6.1" />
+    <PackageReference Include="NHunspell" Version="1.2.5554.16953" />
+    <PackageReference Include="ObjectListView.Official" Version="2.9.1" />
     <PackageReference Include="SecurityCodeScan" Version="3.2.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="HIC.BadMedicine" Version="0.1.5" />
+    <PackageReference Include="System.Security.Permissions" Version="4.6.0" />
+    <PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
     <ProjectReference Include="..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
-    <ProjectReference Include="..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="ChecksUI\ChecksUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ChecksUI\ChecksUI.Designer.cs">
+      <DependentUpon>ChecksUI.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ChecksUI\PopupChecksUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="ChecksUI\PopupChecksUI.Designer.cs">
+      <DependentUpon>PopupChecksUI.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ChecksUI\RAGSmiley.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ChecksUI\RAGSmiley.Designer.cs">
+      <DependentUpon>RAGSmiley.cs</DependentUpon>
+    </Compile>
+    <Compile Update="ChecksUI\RAGSmileyToolStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Update="Collections\CatalogueCollectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -75,10 +128,140 @@
     <Compile Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.Designer.cs">
       <DependentUpon>AtomicCommandWithTargetUI.cs</DependentUpon>
     </Compile>
-    <Compile Update="Icons\IconProvision\CatalogueIcons.Designer.cs">
+    <Compile Update="SimpleControls\DatabaseTypeUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="SimpleControls\DatabaseTypeUI.Designer.cs">
+      <DependentUpon>DatabaseTypeUI.cs</DependentUpon>
+    </Compile>
+    <Compile Update="SimpleDialogs\DataTableViewerUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="SimpleDialogs\DataTableViewerUI.Designer.cs">
+      <DependentUpon>DataTableViewerUI.cs</DependentUpon>
+    </Compile>
+    <Compile Update="SimpleDialogs\ExceptionViewerStackTraceWithHyperlinks.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="SimpleDialogs\ExceptionViewerStackTraceWithHyperlinks.Designer.cs">
+      <DependentUpon>ExceptionViewerStackTraceWithHyperlinks.cs</DependentUpon>
+    </Compile>
+    <Compile Update="SimpleControls\HeatmapUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="SimpleControls\HeatmapUI.Designer.cs">
+      <DependentUpon>HeatmapUI.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Icons\ChecksAndProgressIcons.Designer.cs">
+      <DependentUpon>ChecksAndProgressIcons.resx</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>CatalogueIcons.resx</DependentUpon>
+    </Compile>
+    <Compile Update="SimpleControls\KeyboardReminder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="SimpleControls\KeyboardReminder.Designer.cs">
+      <DependentUpon>KeyboardReminder.cs</DependentUpon>
+    </Compile>
+    <Compile Update="LinkLabels\PathLinkLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Performance\PerformanceCounterResultsUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Performance\PerformanceCounterResultsUI.Designer.cs">
+      <DependentUpon>PerformanceCounterResultsUI.cs</DependentUpon>
+    </Compile>
+    <Compile Update="SimpleDialogs\PickOneOrCancelDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="SimpleDialogs\PickOneOrCancelDialog.Designer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Progress\ProgressBarsUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Progress\ProgressBarsUI.Designer.cs">
+      <DependentUpon>ProgressBarsUI.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Progress\ProgressUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Progress\ProgressUI.Designer.cs">
+      <DependentUpon>ProgressUI.cs</DependentUpon>
+    </Compile>
+    <Compile Update="RichTextBoxEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="SimpleControls\ServerDatabaseTableSelector.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="SimpleControls\ServerDatabaseTableSelector.Designer.cs">
+      <DependentUpon>ServerDatabaseTableSelector.cs</DependentUpon>
+    </Compile>
+    <Compile Update="SimpleDialogs\ServerDatabaseTableSelectorDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="SimpleDialogs\ServerDatabaseTableSelectorDialog.Designer.cs">
+      <DependentUpon>ServerDatabaseTableSelectorDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Update="SimpleDialogs\UserSettingsUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="SimpleDialogs\UserSettingsUI.Designer.cs">
+      <DependentUpon>UserSettingsUI.cs</DependentUpon>
+    </Compile>
+    <Compile Update="SimpleControls\HelpIcon.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="SimpleControls\HelpIcon.Designer.cs">
+      <DependentUpon>HelpIcon.cs</DependentUpon>
+    </Compile>
+    <Compile Update="SimpleDialogs\ExceptionViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="SimpleDialogs\SqlDialogs\SetSQLDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="SimpleDialogs\SqlDialogs\SetSQLDialog.Designer.cs">
+      <DependentUpon>SetSQLDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Update="SimpleDialogs\SqlDialogs\SQLBeforeAndAfterViewer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="SimpleDialogs\SqlDialogs\SQLBeforeAndAfterViewer.Designer.cs">
+      <DependentUpon>SQLBeforeAndAfterViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Update="SimpleDialogs\SqlDialogs\SQLPreviewWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="SimpleDialogs\SqlDialogs\SQLPreviewWindow.Designer.cs">
+      <DependentUpon>SQLPreviewWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Update="SimpleDialogs\ViewSourceCodeDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="SimpleDialogs\ViewSourceCodeDialog.Designer.cs">
+      <SubType>Form</SubType>
+      <DependentUpon>ViewSourceCodeDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Update="SimpleDialogs\WideMessageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="SimpleDialogs\WideMessageBox.Designer.cs">
+      <DependentUpon>WideMessageBox.cs</DependentUpon>
+    </Compile>
+    <Compile Update="SuggestComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="TransparentHelpSystem\HelpBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="SimpleDialogs\TypeTextOrCancelDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="SimpleDialogs\TypeTextOrCancelDialog.Designer.cs">
+      <DependentUpon>TypeTextOrCancelDialog.cs</DependentUpon>
     </Compile>
     <Compile Update="UserControl1.cs">
       <SubType>UserControl</SubType>
@@ -146,6 +329,9 @@
     <Compile Update="SubComponents\ViewCohortIdentificationConfigurationUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="SimpleDialogs\WaitUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Wizard\CreateNewDataExtractionProjectUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -179,8 +365,20 @@
     <Compile Update="Versioning/PatchingUI.Designer.cs">
       <DependentUpon>PatchingUI.cs</DependentUpon>
     </Compile>
+    <Compile Update="SimpleDialogs\YesNoYesToAllDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Update="ChecksUI\ChecksUI.resx">
+      <DependentUpon>ChecksUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ChecksUI\PopupChecksUI.resx">
+      <DependentUpon>PopupChecksUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ChecksUI\RAGSmiley.resx">
+      <DependentUpon>RAGSmiley.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Update="CohortUI\CohortSourceManagement\CreateNewCohortDatabaseWizardUI.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -210,21 +408,74 @@
       <DependentUpon>AtomicCommandWithTargetUI.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Update="Icons\IconProvision\CatalogueIcons.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>CatalogueIcons.Designer.cs</LastGenOutput>
+    <EmbeddedResource Update="SimpleControls\DatabaseTypeUI.resx">
+      <DependentUpon>DatabaseTypeUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SimpleDialogs\DataTableViewerUI.resx">
+      <DependentUpon>DataTableViewerUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SimpleDialogs\ExceptionViewerStackTraceWithHyperlinks.resx">
+      <DependentUpon>ExceptionViewerStackTraceWithHyperlinks.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SimpleControls\HeatmapUI.resx">
+      <DependentUpon>HeatmapUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SimpleControls\KeyboardReminder.resx">
+      <DependentUpon>KeyboardReminder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Performance\PerformanceCounterResultsUI.resx">
+      <DependentUpon>PerformanceCounterResultsUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="PipelineUIs\DemandsInitializationUIs\ArgumentCollectionUI.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Update="Progress\ProgressBarsUI.resx">
+      <DependentUpon>ProgressBarsUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Progress\ProgressUI.resx">
+      <DependentUpon>ProgressUI.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Update="ProjectUI\ExecuteExtractionUI.resx">
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SimpleControls\ServerDatabaseTableSelector.resx">
+      <DependentUpon>ServerDatabaseTableSelector.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SimpleDialogs\ServerDatabaseTableSelectorDialog.resx">
+      <DependentUpon>ServerDatabaseTableSelectorDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SimpleDialogs\UserSettingsUI.resx">
+      <DependentUpon>UserSettingsUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SimpleControls\HelpIcon.resx">
+      <DependentUpon>HelpIcon.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SimpleDialogs\ExceptionViewer.resx">
+      <DependentUpon>ExceptionViewer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Update="SimpleDialogs\Reports\GenerateTestDataUI.resx">
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SimpleDialogs\SqlDialogs\SetSQLDialog.resx">
+      <DependentUpon>SetSQLDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SimpleDialogs\SqlDialogs\SQLBeforeAndAfterViewer.resx">
+      <DependentUpon>SQLBeforeAndAfterViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SimpleDialogs\SqlDialogs\SQLPreviewWindow.resx">
+      <DependentUpon>SQLPreviewWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SimpleDialogs\ViewSourceCodeDialog.resx">
+      <DependentUpon>ViewSourceCodeDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SimpleDialogs\WideMessageBox.resx">
+      <DependentUpon>WideMessageBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SimpleDialogs\TypeTextOrCancelDialog.resx">
+      <DependentUpon>TypeTextOrCancelDialog.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
 </Project>

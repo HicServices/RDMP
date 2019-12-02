@@ -10,13 +10,14 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.CommandExecution.AtomicCommands.Alter;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus.MenuItems;
@@ -24,8 +25,8 @@ using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using Rdmp.UI.TransparentHelpSystem;
 using Rdmp.UI.Tutorials;
-using ReusableUIComponents.TransparentHelpSystem;
 
 namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 {
@@ -59,7 +60,8 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
         private HelpWorkflow _workflow;
         private CatalogueItem[] _catalogueItems;
         private bool _ddChangeAllChanged = false;
-        
+        private bool _importedNewTable = false;
+
         /// <summary>
         /// the Project to associate the Catalogue with to make it ProjectSpecific (probably null)
         /// </summary>
@@ -82,6 +84,8 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
         {
             ColumnInfo[] cols;
             importer.DoImport(out _tableInfo, out cols);
+
+            _importedNewTable = true;
 
             Initialize(activator,initialDescription,projectSpecificIfAny);
         }
@@ -417,17 +421,39 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
         {
             if(!_choicesFinalised)
             {
-                if (MessageBox.Show("Your data table will still exist but no Catalogue will be created",
-                    "Confirm", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                if (_importedNewTable)
                 {
-                    DialogResult = DialogResult.Cancel;
-                    _catalogue.DeleteInDatabase();
-                    _catalogue = null;
-
-                    Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(TableInfoCreated));
+                    var confirm = MessageBox.Show("The database table was created as part of this import. Do you want to keep that?",
+                        "Confirm", MessageBoxButtons.YesNoCancel);
+                    if (confirm != DialogResult.Cancel)
+                    {
+                        DialogResult = DialogResult.Cancel;
+                        _catalogue.DeleteInDatabase();
+                        _catalogue = null;
+                        if (confirm == DialogResult.No)
+                        {
+                            _tableInfo.DeleteInDatabase();
+                            _tableInfo = null;
+                        }
+                        else
+                            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(TableInfoCreated));
+                    }
+                    else
+                        e.Cancel = true;
                 }
                 else
-                    e.Cancel = true;
+                {
+                    if(MessageBox.Show(
+                            "Are you sure you want to Cancel?",
+                            "Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        DialogResult = DialogResult.Cancel;
+                        _catalogue.DeleteInDatabase();
+                        _catalogue = null;
+                    }
+                    else
+                        e.Cancel = true;
+                }
             }
             else
             {

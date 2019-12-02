@@ -17,7 +17,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Sources
     /// <inheritdoc/>
     public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
     {
-        private readonly string _sql;
+        public string Sql { get; }
         private DbDataReader _reader;
         private readonly DbConnectionStringBuilder _builder;
         private readonly int _timeout;
@@ -35,7 +35,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Sources
 
         public DbDataCommandDataFlowSource(string sql,string taskBeingPerformed, DbConnectionStringBuilder builder, int timeout)
         {
-            _sql = sql;
+            Sql = sql;
             _taskBeingPerformed = taskBeingPerformed;
             _builder = builder;
             _timeout = timeout;
@@ -54,9 +54,9 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Sources
                 _con = DatabaseCommandHelper.GetConnection(_builder);
                 _con.Open();
 
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Running SQL:" +Environment.NewLine + _sql));
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Running SQL:" +Environment.NewLine + Sql));
 
-                cmd = DatabaseCommandHelper.GetCommand(_sql, _con);
+                cmd = DatabaseCommandHelper.GetCommand(Sql, _con);
                 cmd.CommandTimeout = _timeout;
                 
                 _reader = cmd.ExecuteReaderAsync(cancellationToken.AbortToken).Result;
@@ -156,7 +156,6 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Sources
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
             CloseReader(listener);
-            
         }
 
         public void Abort(IDataLoadEventListener listener)
@@ -174,7 +173,8 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Sources
                 if (_con.State != ConnectionState.Closed)
                     _con.Close();
 
-                _reader.Dispose();
+                _reader?.Dispose();
+                cmd?.Dispose();
 
                 //do not do this more than once! which could happen if they abort then it disposes
                 _con = null;
@@ -191,13 +191,14 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Sources
             using (var con = DatabaseCommandHelper.GetConnection(_builder))
             {
                 con.Open();
-                var da = DatabaseCommandHelper.GetDataAdapter(DatabaseCommandHelper.GetCommand(_sql, con));
-
-                int read = da.Fill(0, 100, chunk);
-
-                if (read == 0)
-                    return null;
-
+                using (var da = DatabaseCommandHelper.GetDataAdapter(DatabaseCommandHelper.GetCommand(Sql, con)))
+                {
+                    int read = da.Fill(0, 100, chunk);
+                                    
+                    if (read == 0)
+                        return null;
+                }
+                
                 return chunk;
             }
         }

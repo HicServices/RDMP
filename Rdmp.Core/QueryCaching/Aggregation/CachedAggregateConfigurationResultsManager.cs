@@ -7,10 +7,12 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using FAnsi.Extensions;
 using FAnsi.Naming;
+using NLog;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
@@ -39,6 +41,8 @@ namespace Rdmp.Core.QueryCaching.Aggregation
         private readonly DiscoveredServer _server;
         private DiscoveredDatabase _database;
 
+        private readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        
         /// <summary>
         /// The name of the table in the query cache which tracks the SQL executed and the resulting tables generated when caching
         /// </summary>
@@ -54,19 +58,25 @@ namespace Rdmp.Core.QueryCaching.Aggregation
 
         public IHasFullyQualifiedNameToo GetLatestResultsTableUnsafe(AggregateConfiguration configuration,AggregateOperation operation)
         {
+            var syntax = _database.Server.GetQuerySyntaxHelper();
             var mgrTable = _database.ExpectTable(ResultsManagerTable);
 
             using (var con = _server.GetConnection())
             {
                 con.Open();
-
-                var r = DatabaseCommandHelper.GetCommand($"Select TableName from {mgrTable.GetFullyQualifiedName()} WHERE AggregateConfiguration_ID = " + configuration.ID + " AND Operation = '" +operation + "'" , con).ExecuteReader();
-                
-                if (r.Read())
+                using (var cmd = DatabaseCommandHelper.GetCommand(
+                    $@"Select {syntax.EnsureWrapped("TableName")} from {mgrTable.GetFullyQualifiedName()}
+WHERE {syntax.EnsureWrapped("AggregateConfiguration_ID")} = {configuration.ID}
+AND {syntax.EnsureWrapped("Operation")} = '{operation}'", con))
                 {
-                    string tableName =  r["TableName"].ToString();
-                    return _database.ExpectTable(tableName);
+                    using(var r = cmd.ExecuteReader())
+                        if (r.Read())
+                        {
+                            string tableName =  r["TableName"].ToString();
+                            return _database.ExpectTable(tableName);
+                        }
                 }
+                
             }
 
             return null;
@@ -74,24 +84,33 @@ namespace Rdmp.Core.QueryCaching.Aggregation
 
         public IHasFullyQualifiedNameToo GetLatestResultsTable(AggregateConfiguration configuration, AggregateOperation operation, string currentSql)
         {
+            var syntax = _database.Server.GetQuerySyntaxHelper();
             var mgrTable = _database.ExpectTable(ResultsManagerTable);
 
             using (var con = _server.GetConnection())
             {
                 con.Open();
 
-                var cmd = DatabaseCommandHelper.GetCommand($"Select TableName,SqlExecuted from {mgrTable.GetFullyQualifiedName()} WHERE AggregateConfiguration_ID = " + configuration.ID + " AND Operation = '" + operation + "'", con);
-                var r = cmd.ExecuteReader();
-
-                if (r.Read())
+                using (var cmd = DatabaseCommandHelper.GetCommand(
+                    $@"Select 
+{syntax.EnsureWrapped("TableName")},
+{syntax.EnsureWrapped("SqlExecuted")} 
+from {mgrTable.GetFullyQualifiedName()} 
+WHERE 
+{syntax.EnsureWrapped("AggregateConfiguration_ID")} = {configuration.ID} AND
+{syntax.EnsureWrapped("Operation")} = '{operation}'", con))
                 {
-                    if (IsMatchOnSqlExecuted(r, currentSql))
-                    {
-                        string tableName = r["TableName"].ToString();
-                        return _database.ExpectTable(tableName);
-                    }
-                    else
-                        return null; //this means that there was outdated SQL, we could show this to user at some point
+                    using(var r = cmd.ExecuteReader())
+                        if (r.Read())
+                        {
+                            if (IsMatchOnSqlExecuted(r, currentSql))
+                            {
+                                string tableName = r["TableName"].ToString();
+                                return _database.ExpectTable(tableName);
+                            }
+
+                            return null; //this means that there was outdated SQL, we could show this to user at some point
+                        }
                 }
             }
 
@@ -104,7 +123,18 @@ namespace Rdmp.Core.QueryCaching.Aggregation
             string standardisedDatabaseSql = Regex.Replace(r["SqlExecuted"].ToString(), @"\s+", " ");
             string standardisedUsersSql = Regex.Replace(currentSql,@"\s+"," ");
 
-            return standardisedDatabaseSql.ToLower().Trim().Equals(standardisedUsersSql.ToLower().Trim());
+            var match = standardisedDatabaseSql.ToLower().Trim().Equals(standardisedUsersSql.ToLower().Trim());
+
+            if (!match)
+            {
+                _logger.Info("Cache Miss:");
+                _logger.Info("Current Sql:");
+                _logger.Info(standardisedUsersSql);
+                _logger.Info("Cached Sql:");
+                _logger.Info(standardisedDatabaseSql);
+            }
+
+            return match;
         }
 
         public void CommitResults(CacheCommitArguments arguments)
@@ -157,20 +187,23 @@ namespace Rdmp.Core.QueryCaching.Aggregation
             var mgrTable = _database.ExpectTable(ResultsManagerTable);
 
             if (table != null)
+                using (var con = _server.GetConnection())
+                {
+                    con.Open();
 
-            using (var con = _server.GetConnection())
-            {
-                con.Open();
-
-                //drop the data
-                _database.ExpectTable(table.GetRuntimeName()).Drop();
-                
-                //delete the record!
-                int deletedRows = DatabaseCommandHelper.GetCommand($"DELETE FROM {mgrTable.GetFullyQualifiedName()} WHERE AggregateConfiguration_ID = " + configuration.ID+" AND Operation = '"+operation+"'", con).ExecuteNonQuery();
-
-                if(deletedRows != 1)
-                    throw new Exception("Expected exactly 1 record in CachedAggregateConfigurationResults to be deleted when erasing its record of operation " + operation + " but there were " + deletedRows +" affected records");
-            }
+                    //drop the data
+                    _database.ExpectTable(table.GetRuntimeName()).Drop();
+                    
+                    //delete the record!
+                    using (var cmd = DatabaseCommandHelper.GetCommand(
+                        $"DELETE FROM {mgrTable.GetFullyQualifiedName()} WHERE AggregateConfiguration_ID = " +
+                        configuration.ID + " AND Operation = '" + operation + "'", con))
+                    {
+                        int deletedRows = cmd.ExecuteNonQuery();
+                        if(deletedRows != 1)
+                            throw new Exception("Expected exactly 1 record in CachedAggregateConfigurationResults to be deleted when erasing its record of operation " + operation + " but there were " + deletedRows +" affected records");
+                    }                
+                }
         }
     }
 }

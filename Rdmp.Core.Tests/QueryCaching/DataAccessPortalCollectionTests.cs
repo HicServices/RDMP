@@ -9,8 +9,10 @@ using System.Collections.Generic;
 using System.Text;
 using FAnsi;
 using FAnsi.Implementation;
+using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
+using FAnsi.Implementations.PostgreSql;
 using Moq;
 using NUnit.Framework;
 using Rdmp.Core.QueryBuilding;
@@ -23,8 +25,10 @@ namespace Rdmp.Core.Tests.QueryCaching
         [OneTimeSetUp]
         public void LoadImplementation()
         {
-            ImplementationManager.Load<OracleImplementation>();
+            ImplementationManager.Load<MicrosoftSQLImplementation>();
             ImplementationManager.Load<MySqlImplementation>();
+            ImplementationManager.Load<OracleImplementation>();
+            ImplementationManager.Load<PostgreSqlImplementation>();
         }
 
         [TestCase(true)]
@@ -36,6 +40,30 @@ namespace Rdmp.Core.Tests.QueryCaching
                 m.Server == "loco" &&
                 m.DatabaseType == DatabaseType.Oracle));
             Assert.AreEqual(1,collection.Points.Count);
+        }
+
+        [Test]
+        public void TestTwo_SameServer_PersistDatabase()
+        {
+            var collection = new DataAccessPointCollection(true);
+
+            collection.Add(Mock.Of<IDataAccessPoint>(m =>
+                m.Server == "loco" &&
+                m.Database == "B" &&
+                m.DatabaseType == DatabaseType.Oracle && 
+                m.GetQuerySyntaxHelper() == new OracleQuerySyntaxHelper()));
+
+            collection.Add(Mock.Of<IDataAccessPoint>(m =>
+                m.Server == "loco" &&
+                m.Database == "B" &&
+                m.DatabaseType == DatabaseType.Oracle && 
+                m.GetQuerySyntaxHelper() == new OracleQuerySyntaxHelper()));
+
+            Assert.AreEqual(2, collection.Points.Count);
+
+            //they both go to B so the single server should specify B
+            var db = collection.GetDistinctServer().GetCurrentDatabase();
+            Assert.AreEqual("B",db.GetRuntimeName());
         }
 
         [Test]
@@ -54,6 +82,10 @@ namespace Rdmp.Core.Tests.QueryCaching
                 m.DatabaseType == DatabaseType.Oracle));
 
             Assert.AreEqual(2, collection.Points.Count);
+
+            //they both go to loco server so the single server should specify loco but no clear db
+            var db = collection.GetDistinctServer().GetCurrentDatabase();
+            Assert.IsNull(db);
         }
 
         [Test]

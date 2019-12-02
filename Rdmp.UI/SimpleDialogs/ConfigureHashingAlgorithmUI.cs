@@ -9,9 +9,9 @@ using System.ComponentModel;
 using Rdmp.Core.Repositories.Managers;
 using Rdmp.UI.Copying;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
-using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
 namespace Rdmp.UI.SimpleDialogs
@@ -39,7 +39,7 @@ namespace Rdmp.UI.SimpleDialogs
             if(VisualStudioDesignMode)
                 return;
 
-            QueryPreview = new ScintillaTextEditorFactory().Create(new RDMPCommandFactory());
+            QueryPreview = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
             QueryPreview.ReadOnly = true;
 
             panel2.Controls.Add(QueryPreview);

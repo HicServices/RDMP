@@ -1,4 +1,5 @@
 ﻿using Rdmp.UI.AggregationUIs;
+using Rdmp.UI.Progress;
 
 namespace Rdmp.UI.SimpleDialogs.Reports
 {
@@ -49,7 +50,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             this.aggregateGraph1 = new Rdmp.UI.AggregationUIs.AggregateGraphUI();
             this.nMaxLookupRows = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
-            this.progressBarsUI1 = new ReusableUIComponents.Progress.ProgressBarsUI();
+            this.progressBarsUI1 = new Rdmp.UI.Progress.ProgressBarsUI();
             this.gbReportOptions = new System.Windows.Forms.GroupBox();
             this.gbInclude.SuspendLayout();
             this.gbCatalogue.SuspendLayout();
@@ -85,10 +86,11 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             this.cbxCatalogues.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.cbxCatalogues.Enabled = false;
             this.cbxCatalogues.FormattingEnabled = true;
-            this.cbxCatalogues.Location = new System.Drawing.Point(113, 41);
+            this.cbxCatalogues.Location = new System.Drawing.Point(124, 41);
             this.cbxCatalogues.Name = "cbxCatalogues";
-            this.cbxCatalogues.Size = new System.Drawing.Size(282, 21);
+            this.cbxCatalogues.Size = new System.Drawing.Size(271, 21);
             this.cbxCatalogues.TabIndex = 4;
+            this.cbxCatalogues.SelectedIndexChanged += new System.EventHandler(this.cbxCatalogues_SelectedIndexChanged);
             // 
             // gbInclude
             // 
@@ -195,9 +197,9 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             this.rbSpecificCatalogue.AutoSize = true;
             this.rbSpecificCatalogue.Location = new System.Drawing.Point(7, 42);
             this.rbSpecificCatalogue.Name = "rbSpecificCatalogue";
-            this.rbSpecificCatalogue.Size = new System.Drawing.Size(100, 17);
+            this.rbSpecificCatalogue.Size = new System.Drawing.Size(111, 17);
             this.rbSpecificCatalogue.TabIndex = 3;
-            this.rbSpecificCatalogue.Text = "Only Catalogue:";
+            this.rbSpecificCatalogue.Text = "Only Catalogue(s):";
             this.rbSpecificCatalogue.UseVisualStyleBackColor = true;
             this.rbSpecificCatalogue.CheckedChanged += new System.EventHandler(this.rbSpecificCatalogue_CheckedChanged);
             // 
@@ -251,6 +253,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             this.aggregateGraph1.BackColor = System.Drawing.Color.White;
             this.aggregateGraph1.Location = new System.Drawing.Point(5, 351);
             this.aggregateGraph1.Name = "aggregateGraph1";
+            this.aggregateGraph1.Silent = false;
             this.aggregateGraph1.Size = new System.Drawing.Size(781, 501);
             this.aggregateGraph1.TabIndex = 10;
             this.aggregateGraph1.Timeout = 0;
@@ -347,7 +350,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
         private System.Windows.Forms.CheckBox cbIncludeNonExtractable;
         private System.Windows.Forms.NumericUpDown nMaxLookupRows;
         private System.Windows.Forms.Label label3;
-        private ReusableUIComponents.Progress.ProgressBarsUI progressBarsUI1;
+        private ProgressBarsUI progressBarsUI1;
         private System.Windows.Forms.Button btnPick;
         private System.Windows.Forms.GroupBox gbReportOptions;
         private System.Windows.Forms.CheckBox cbIncludeDeprecatedCatalogueItems;

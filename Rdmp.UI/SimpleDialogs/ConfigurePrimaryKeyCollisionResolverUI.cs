@@ -14,10 +14,10 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
-using ReusableUIComponents.ScintillaHelper;
+
+
 using Rdmp.Core.DataLoad.Triggers;
+using Rdmp.UI.ScintillaHelper;
 
 namespace Rdmp.UI.SimpleDialogs
 {

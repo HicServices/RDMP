@@ -8,12 +8,13 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.DashboardTabs.Construction;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableUIComponents;
+
 
 namespace Rdmp.UI.DashboardTabs
 {
@@ -100,7 +101,7 @@ namespace Rdmp.UI.DashboardTabs
             if(_editMode)
             {
                 var layout = _databaseRecord.ParentLayout;
-                Activator.DeleteWithConfirmation(this, _databaseRecord);
+                Activator.DeleteWithConfirmation(_databaseRecord);
                 Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(layout));
             }
         }

@@ -7,24 +7,24 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Copying.Commands;
+using Rdmp.UI.CommandExecution.Proposals;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.Proposals;
 
 namespace Rdmp.UI.CommandExecution
 {
     public class RDMPCommandExecutionFactory : ICommandExecutionFactory
     {
         private readonly IActivateItems _activator;
-        private Dictionary<ICommand, Dictionary<CachedDropTarget, ICommandExecution>> _cachedAnswers = new Dictionary<ICommand, Dictionary<CachedDropTarget, ICommandExecution>>();
+        private Dictionary<ICombineToMakeCommand, Dictionary<CachedDropTarget, ICommandExecution>> _cachedAnswers = new Dictionary<ICombineToMakeCommand, Dictionary<CachedDropTarget, ICommandExecution>>();
         private object oLockCachedAnswers = new object();
         private List<ICommandExecutionProposal> _proposers = new List<ICommandExecutionProposal>();
 
@@ -49,7 +49,7 @@ namespace Rdmp.UI.CommandExecution
             }
         }
 
-        public ICommandExecution Create(ICommand cmd, object targetModel,InsertOption insertOption = InsertOption.Default)
+        public ICommandExecution Create(ICombineToMakeCommand cmd, object targetModel,InsertOption insertOption = InsertOption.Default)
         {
             lock (oLockCachedAnswers)
             {
@@ -72,7 +72,7 @@ namespace Rdmp.UI.CommandExecution
             }
         }
 
-        private ICommandExecution CreateNoCache(ICommand cmd, object targetModel,InsertOption insertOption = InsertOption.Default)
+        private ICommandExecution CreateNoCache(ICombineToMakeCommand cmd, object targetModel,InsertOption insertOption = InsertOption.Default)
         {
             ///////////////Catalogue or ambiguous Drop Targets ////////////////////////
             var targetCatalogueFolder = targetModel as CatalogueFolder;
@@ -125,9 +125,9 @@ namespace Rdmp.UI.CommandExecution
             return _proposers.Any(p => p.CanActivate(target));
         }
         
-        private ICommandExecution CreateWhenTargetIsProcessTask(ICommand cmd, ProcessTask targetProcessTask, InsertOption insertOption)
+        private ICommandExecution CreateWhenTargetIsProcessTask(ICombineToMakeCommand cmd, ProcessTask targetProcessTask, InsertOption insertOption)
         {
-            var sourceProcessTaskCommand = cmd as ProcessTaskCommand;
+            var sourceProcessTaskCommand = cmd as ProcessTaskCombineable;
             if (sourceProcessTaskCommand != null)
                 return new ExecuteCommandReOrderProcessTask(_activator,sourceProcessTaskCommand, targetProcessTask, insertOption);
 
@@ -135,11 +135,11 @@ namespace Rdmp.UI.CommandExecution
         }
 
 
-        private ICommandExecution CreateWhenTargetIsFolder(ICommand cmd, CatalogueFolder targetCatalogueFolder)
+        private ICommandExecution CreateWhenTargetIsFolder(ICombineToMakeCommand cmd, CatalogueFolder targetCatalogueFolder)
         {
-            var sourceCatalogue = cmd as CatalogueCommand;
-            var sourceManyCatalogues = cmd as ManyCataloguesCommand;
-            var file = cmd as FileCollectionCommand;
+            var sourceCatalogue = cmd as CatalogueCombineable;
+            var sourceManyCatalogues = cmd as ManyCataloguesCombineable;
+            var file = cmd as FileCollectionCombineable;
 
             if (sourceCatalogue != null)
                 return new ExecuteCommandPutCatalogueIntoCatalogueFolder(_activator, sourceCatalogue, targetCatalogueFolder);
@@ -158,38 +158,32 @@ namespace Rdmp.UI.CommandExecution
             return null;
         }
 
-        private ICommandExecution CreateWhenTargetIsATableInfo(ICommand cmd, TableInfo targetTableInfo)
+        private ICommandExecution CreateWhenTargetIsATableInfo(ICombineToMakeCommand cmd, TableInfo targetTableInfo)
         {
-            var sourceDataAccessCredentialsCommand = cmd as DataAccessCredentialsCommand;
-
-            if (sourceDataAccessCredentialsCommand != null)
-                return new ExecuteCommandUseCredentialsToAccessTableInfoData(_activator,sourceDataAccessCredentialsCommand, targetTableInfo);
+            if (cmd is DataAccessCredentialsCombineable sourceDataAccessCredentialsCombineable)
+                return new ExecuteCommandUseCredentialsToAccessTableInfoData(_activator,sourceDataAccessCredentialsCombineable, targetTableInfo);
 
             return null;
         }
 
 
-        private ICommandExecution CreateWhenTargetIsJoinableCollectionNode(ICommand cmd, JoinableCollectionNode targetJoinableCollectionNode)
+        private ICommandExecution CreateWhenTargetIsJoinableCollectionNode(ICombineToMakeCommand cmd, JoinableCollectionNode targetJoinableCollectionNode)
         {
-            var sourceAggregateConfigurationCommand = cmd as AggregateConfigurationCommand;
-            if(sourceAggregateConfigurationCommand != null)
-                if (sourceAggregateConfigurationCommand.Aggregate.IsCohortIdentificationAggregate)
-                    return new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(_activator,sourceAggregateConfigurationCommand, targetJoinableCollectionNode.Configuration);
+            if(cmd is AggregateConfigurationCombineable sourceAggregateConfigurationCombineable)
+                if (sourceAggregateConfigurationCombineable.Aggregate.IsCohortIdentificationAggregate)
+                    return new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(_activator,sourceAggregateConfigurationCombineable, targetJoinableCollectionNode.Configuration);
 
-            var sourceCatalogueCommand = cmd as CatalogueCommand;
-            if (sourceCatalogueCommand != null)
-                return new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(_activator,sourceCatalogueCommand, targetJoinableCollectionNode.Configuration);
+            if (cmd is CatalogueCombineable sourceCatalogueCombineable)
+                return new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(_activator,sourceCatalogueCombineable, targetJoinableCollectionNode.Configuration);
 
             return null;
         }
 
 
-        private ICommandExecution CreateWhenTargetIsPreLoadDiscardedColumnsNode(ICommand cmd, PreLoadDiscardedColumnsNode targetPreLoadDiscardedColumnsNode)
+        private ICommandExecution CreateWhenTargetIsPreLoadDiscardedColumnsNode(ICombineToMakeCommand cmd, PreLoadDiscardedColumnsNode targetPreLoadDiscardedColumnsNode)
         {
-            var sourceColumnInfoCommand = cmd as ColumnInfoCommand;
-
-            if(sourceColumnInfoCommand != null)
-                return new ExecuteCommandCreateNewPreLoadDiscardedColumn(_activator,targetPreLoadDiscardedColumnsNode.TableInfo,sourceColumnInfoCommand);
+            if(cmd is ColumnInfoCombineable sourceColumnInfoCombineable)
+                return new ExecuteCommandCreateNewPreLoadDiscardedColumn(_activator,targetPreLoadDiscardedColumnsNode.TableInfo,sourceColumnInfoCombineable);
 
             return null;
         }

@@ -38,5 +38,26 @@ namespace Rdmp.Core.Tests.Reports
             //refreshes the file stream status
             Assert.Greater(new FileInfo(file.FullName).Length,0);
         }
+
+        [Test]
+        public void Test_OrphanExtractionInformation()
+        {
+            var ei = WhenIHaveA<ExtractionInformation>();
+
+            //make it an orphan
+            ei.CatalogueItem.ColumnInfo.DeleteInDatabase();
+            ei.CatalogueItem.ColumnInfo_ID = null;
+            ei.CatalogueItem.SaveToDatabase();
+            ei.CatalogueItem.ClearAllInjections();
+            ei.ClearAllInjections();
+
+            var reporter = new MetadataReport(Repository, 
+                new MetadataReportArgs(new[] {ei.CatalogueItem.Catalogue})
+                );
+            var file = reporter.GenerateWordFile(new ThrowImmediatelyDataLoadEventListener(), false);
+
+            Assert.IsNotNull(file);
+            Assert.IsTrue(File.Exists(file.FullName));
+        }
     }
 }

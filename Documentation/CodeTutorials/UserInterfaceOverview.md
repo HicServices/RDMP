@@ -110,7 +110,7 @@ class ProposeExecutionWhenTargetIsProject:RDMPCommandExecutionProposal<Project>
 		ItemActivator.Activate<ProjectUI.ProjectUI, Project>(target);
 	}
 
-	public override ICommandExecution ProposeExecution(ICommand cmd, Project project, InsertOption insertOption = InsertOption.Default)
+	public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Project project, InsertOption insertOption = InsertOption.Default)
 	{
 		//return null if you don't support objects being dropped on your object
 		return null;
@@ -121,11 +121,11 @@ class ProposeExecutionWhenTargetIsProject:RDMPCommandExecutionProposal<Project>
 
 ## Drag and Drop
 
-Drag and drop in tree views is handled through the `RDMPCommandExecutionProposal<T>` class (which also deals with [double clicking](#double-clicking)).  All dragged objects are encapsulated in an `ICommand` which is generated when a drag operation begins in the program.  The sequence is:
+Drag and drop in tree views is handled through the `RDMPCommandExecutionProposal<T>` class (which also deals with [double clicking](#double-clicking)).  All dragged objects are encapsulated in an `ICombineToMakeCommand` which is generated when a drag operation begins in the program.  The sequence is:
 
 1. Drag operation starts
-1. ICommand created
-1. ICommand loaded with relevant facts about object being dragged
+1. ICombineToMakeCommand created
+1. ICombineToMakeCommand loaded with relevant facts about object being dragged
 1. User drags object around and hovers over various other objects
 1. Each object hovered over has it's `RDMPCommandExecutionProposal<T>.ProposeExecution` consulted for drop legality
 1. User drops object
@@ -136,7 +136,7 @@ Drag and drop in tree views is handled through the `RDMPCommandExecutionProposal
 This advantages of this are as follows:
 
 1. Centralises all drop logic for a class in one place
-1. Front loads expensive queries at the start of the drag operation (when populating `ICommand`)
+1. Front loads expensive queries at the start of the drag operation (when populating `ICombineToMakeCommand`)
 1. Reuses `ICommandExecution` atomic commands which already exist for encapsulating atomic operations (in menus, HomeUI etc)
 1. Provides feedback to the user about the operation they are about to perform
 1. Allows unit testing of drag and drop conditions
@@ -145,7 +145,7 @@ This advantages of this are as follows:
 Here is an example drop implementation for `Project`
 
 ```csharp
-public override ICommandExecution ProposeExecution(ICommand cmd, Project project, InsertOption insertOption = InsertOption.Default)
+public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Project project, InsertOption insertOption = InsertOption.Default)
 {
 	//if user is dropping a cohort builder query
 	var cicCommand = cmd as CohortIdentificationConfigurationCommand;
@@ -169,7 +169,7 @@ public override ICommandExecution ProposeExecution(ICommand cmd, Project project
 }
 ```
 
-Adding support for dragging a new object (not currently draggable) involves creating a new `ICommand` and implementing it's construction logic in `RDMPCommandFactory`
+Adding support for dragging a new object (not currently draggable) involves creating a new `ICombineToMakeCommand` and implementing it's construction logic in `RDMPCombineableFactory`
 
 ## Menus
 

@@ -18,7 +18,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
-using ReusableUIComponents.SqlDialogs;
+using Rdmp.UI.SimpleDialogs.SqlDialogs;
 
 
 namespace Rdmp.UI.Versioning

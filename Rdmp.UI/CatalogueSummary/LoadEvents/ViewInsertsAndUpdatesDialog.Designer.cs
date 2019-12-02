@@ -34,7 +34,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
             this.btnFetchData = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpCheck = new System.Windows.Forms.TabPage();
-            this.checksUI1 = new ReusableUIComponents.ChecksUI.ChecksUI();
+            this.checksUI1 = new ChecksUI.ChecksUI();
             this.tpViewInserts = new System.Windows.Forms.TabPage();
             this.dgInserts = new System.Windows.Forms.DataGridView();
             this.tpViewUpdates = new System.Windows.Forms.TabPage();
@@ -235,7 +235,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
 
         #endregion
 
-        private ReusableUIComponents.ChecksUI.ChecksUI checksUI1;
+        private ChecksUI.ChecksUI checksUI1;
         private System.Windows.Forms.Button btnFetchData;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tpCheck;

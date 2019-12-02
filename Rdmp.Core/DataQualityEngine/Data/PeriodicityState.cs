@@ -65,40 +65,42 @@ namespace Rdmp.Core.DataQualityEngine.Data
     where
   Evaluation_ID = " + evaluation.ID + " and PivotCategory = 'ALL' ORDER BY [Year],[Month]";
 
-               var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction);
-               var r = cmd.ExecuteReader();
-
-               
-               while (r.Read())
+               using(var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction))
                {
-                   var date = new DateTime((int) r["Year"], (int) r["Month"], 1);
-                   
-                   if(!toReturn.ContainsKey(date))
-                       toReturn.Add(date,new ArchivalPeriodicityCount());
-
-                   var toIncrement = toReturn[date];
-
-                   /*
-                    *
-Correct
-InvalidatesRow
-Missing
-Wrong
-                    * */
-
-                   switch ((string)r["RowEvaluation"])
+                   using (var r = cmd.ExecuteReader())
                    {
-                       case "Correct": 
-                           toIncrement.CountGood += (int) r["CountOfRecords"];
-                           toIncrement.Total += (int)r["CountOfRecords"];
-                           break;
-                       case "InvalidatesRow": toIncrement.Total += (int)r["CountOfRecords"];
-                           break;
-                       case "Missing": toIncrement.Total += (int)r["CountOfRecords"];
-                           break;
-                       case "Wrong": toIncrement.Total += (int)r["CountOfRecords"];
-                           break;
-                       default:throw new ArgumentOutOfRangeException("Unexpected RowEvaluation '" + r["RowEvaluation"] + "'");
+                       while (r.Read())
+                       {
+                           var date = new DateTime((int) r["Year"], (int) r["Month"], 1);
+                       
+                           if(!toReturn.ContainsKey(date))
+                               toReturn.Add(date,new ArchivalPeriodicityCount());
+
+                           var toIncrement = toReturn[date];
+
+                           /*
+                            *
+        Correct
+        InvalidatesRow
+        Missing
+        Wrong
+                            * */
+
+                           switch ((string)r["RowEvaluation"])
+                           {
+                               case "Correct": 
+                                   toIncrement.CountGood += (int) r["CountOfRecords"];
+                                   toIncrement.Total += (int)r["CountOfRecords"];
+                                   break;
+                               case "InvalidatesRow": toIncrement.Total += (int)r["CountOfRecords"];
+                                   break;
+                               case "Missing": toIncrement.Total += (int)r["CountOfRecords"];
+                                   break;
+                               case "Wrong": toIncrement.Total += (int)r["CountOfRecords"];
+                                   break;
+                               default:throw new ArgumentOutOfRangeException("Unexpected RowEvaluation '" + r["RowEvaluation"] + "'");
+                           }
+                       }
                    }
                }
            }
@@ -121,13 +123,14 @@ Wrong
       ,[RowEvaluation] from PeriodicityState where Evaluation_ID=" + evaluation.ID + " AND PivotCategory = '" + pivotCategoryValue+"'";
 
 
-                var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction);
-                var da = DatabaseCommandHelper.GetDataAdapter(cmd);
+                using(var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction))
+                    using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
+                    {
+                        DataTable dt = new DataTable();
+                        da.Fill(dt);
 
-                DataTable dt = new DataTable();
-                da.Fill(dt);
-
-                return dt;
+                        return dt;
+                    }
             }
         }
 
@@ -148,10 +151,12 @@ Wrong
                         , "@RowEvaluation",
                         "@PivotCategory");
 
-                var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction);
-                DatabaseCommandHelper.AddParameterWithValueToCommand("@RowEvaluation", cmd, RowEvaluation);
-                DatabaseCommandHelper.AddParameterWithValueToCommand("@PivotCategory", cmd, pivotCategory);
-                cmd.ExecuteNonQuery();
+                using (var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction))
+                {
+                    DatabaseCommandHelper.AddParameterWithValueToCommand("@RowEvaluation", cmd, RowEvaluation);
+                    DatabaseCommandHelper.AddParameterWithValueToCommand("@PivotCategory", cmd, pivotCategory);
+                    cmd.ExecuteNonQuery();
+                }
 
                 IsCommitted = true;
             }

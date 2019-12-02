@@ -44,18 +44,20 @@ namespace Rdmp.Core.Tests.Curation.Integration
         {
             return new TriggerImplementerFactory(_database.Server.DatabaseType).Create(_table);
         }
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.Oracle)]
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void NoTriggerExists(DatabaseType dbType)
         {
             CreateTable(dbType);
-            Assert.AreEqual(TriggerStatus.Missing, GetImplementer().GetTriggerStatus());
+
+            var implementer = GetImplementer();
+
+            //most likely doesn't exist but may do
+            implementer.DropTrigger(out string _, out string _);
+
+            Assert.AreEqual(TriggerStatus.Missing, implementer.GetTriggerStatus());
         }
 
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.Oracle)]
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void CreateWithNoPks_Complain(DatabaseType dbType)
         {
             CreateTable(dbType);
@@ -64,9 +66,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             Assert.AreEqual("There must be at least 1 primary key", ex.Message);
         }
 
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.Oracle)]
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void CreateWithPks_Valid(DatabaseType dbType)
         {
             CreateTable(dbType);
@@ -78,9 +78,24 @@ namespace Rdmp.Core.Tests.Curation.Integration
             Assert.AreEqual(true, GetImplementer().CheckUpdateTriggerIsEnabledAndHasExpectedBody());
         }
 
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.Oracle)]
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
+        public void Create_WithDodgyColumnNames(DatabaseType dbType)
+        {
+            _database = GetCleanedServer(dbType);
+
+            _table =_database.CreateTable("Trol lol My Table Select * from Group by fish",new DatabaseColumnRequest[]{ 
+                new DatabaseColumnRequest("My Lovely Column Select * From Lolz",new DatabaseTypeRequest(typeof(string),30)){AllowNulls = false,IsPrimaryKey = true},
+                new DatabaseColumnRequest("ANormalColumnName",new DatabaseTypeRequest(typeof(int))),
+                new DatabaseColumnRequest("Group By Meeee Colll trollolol",new DatabaseTypeRequest(typeof(int))),
+            });
+
+            GetImplementer().CreateTrigger(new ThrowImmediatelyCheckNotifier());
+
+            Assert.AreEqual(TriggerStatus.Enabled, GetImplementer().GetTriggerStatus());
+            Assert.AreEqual(true, GetImplementer().CheckUpdateTriggerIsEnabledAndHasExpectedBody());
+        }
+
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void AlterTest_InvalidThenRecreateItAndItsValidAgain(DatabaseType dbType)
         {
             CreateWithPks_Valid(dbType);
@@ -92,17 +107,16 @@ namespace Rdmp.Core.Tests.Curation.Integration
             var ex = Assert.Throws<ExpectedIdenticalStringsException>(() => GetImplementer().CheckUpdateTriggerIsEnabledAndHasExpectedBody());
             Assert.IsNotNull(ex.Message);
 
-            string problemsDroppingTrigger, thingsThatWorkedDroppingTrigger;
             var implementer = GetImplementer();
-            implementer.DropTrigger(out problemsDroppingTrigger, out thingsThatWorkedDroppingTrigger);
+            implementer.DropTrigger(out var problemsDroppingTrigger, out _);
+            Assert.IsEmpty(problemsDroppingTrigger);
+
             implementer.CreateTrigger(new ThrowImmediatelyCheckNotifier());
 
             Assert.AreEqual(true, implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
         }
 
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.Oracle)]
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void NowTestDataInsertion(DatabaseType dbType)
         {
             AlterTest_InvalidThenRecreateItAndItsValidAgain(dbType);
@@ -138,9 +152,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             }
         }
 
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.Oracle)]
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void DiffDatabaseDataFetcherTest(DatabaseType dbType)
         {
             CreateTable(dbType);

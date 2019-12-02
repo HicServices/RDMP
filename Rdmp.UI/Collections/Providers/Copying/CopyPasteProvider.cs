@@ -27,7 +27,7 @@ namespace Rdmp.UI.Collections.Providers.Copying
         {
             if (keyEventArgs.KeyCode == Keys.C && keyEventArgs.Control)
             {
-                RDMPCommandFactory commandFactory = new RDMPCommandFactory();
+                RDMPCombineableFactory commandFactory = new RDMPCombineableFactory();
 
                 var command = commandFactory.Create(_tree.SelectedObject);
 

@@ -7,6 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Providers.Nodes;
+using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
+using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 
 namespace Rdmp.Core.Providers
 {
@@ -21,6 +25,24 @@ namespace Rdmp.Core.Providers
     /// </summary>
     public class DescendancyList
     {
+        /// <summary>
+        /// For use with <see cref="GetMostDescriptiveParent"/> these objects will be skipped when finding a descriptive parent
+        /// </summary>
+        private static HashSet<Type> TypesThatAreNotUsefulParents = new HashSet<Type>(
+            new []
+            {
+                typeof(CatalogueItemsNode),
+                typeof(DocumentationNode),
+                typeof(AggregatesNode),
+                typeof(LoadMetadataScheduleNode),
+                typeof(AllCataloguesUsedByLoadMetadataNode),
+                typeof(AllProcessTasksUsedByLoadMetadataNode),
+                typeof(LoadStageNode),
+                typeof(PreLoadDiscardedColumnsNode),
+                typeof(ProjectCataloguesNode),
+                typeof(ProjectCohortIdentificationConfigurationAssociationsNode)
+
+            });
 
         /// <summary>
         /// All objects that are above the described object in order from the root to the immediate parent.
@@ -116,6 +138,20 @@ namespace Rdmp.Core.Providers
         public object Last()
         {
             return Parents.Last();
+        }
+
+        /// <summary>
+        /// Returns the first <see cref="Parents"/> which is meaningful to the user in locating the object within
+        /// a hierarchy e.g. for <see cref="CatalogueItem"/> it returns the <see cref="Catalogue"/>
+        /// </summary>
+        /// <returns></returns>
+        public object GetMostDescriptiveParent()
+        {
+            return Parents.LastOrDefault(parent => 
+                !TypesThatAreNotUsefulParents.Contains(parent.GetType())
+                &&
+                !(parent is IContainer)
+            );
         }
     }
 }

@@ -10,12 +10,13 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.ItemActivation.Emphasis;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableUIComponents;
+
 
 namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
 {
@@ -85,7 +86,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
 
             if(d != null)
             {
-                Activator.DeleteWithConfirmation(this, d);
+                Activator.DeleteWithConfirmation(d);
                 UpdateTreeViews();
             }
         }

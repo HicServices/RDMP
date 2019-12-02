@@ -15,7 +15,8 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.ExtractionUIs.FilterUIs.Options;
-using ReusableUIComponents.Dialogs;
+using Rdmp.UI.SimpleDialogs;
+
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
 {

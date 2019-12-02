@@ -5,9 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using ReusableLibraryCode.CommandExecution;
+using Rdmp.Core.CommandExecution;
+using Rdmp.UI.TransparentHelpSystem;
 using ReusableLibraryCode.Settings;
-using ReusableUIComponents.TransparentHelpSystem;
 
 namespace Rdmp.UI.Tutorials
 {

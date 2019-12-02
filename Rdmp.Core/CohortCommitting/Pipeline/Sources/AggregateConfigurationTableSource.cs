@@ -80,11 +80,16 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Sources
                 if (listener != null)
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Connection opened, ready to send the following SQL (with Timeout " + Timeout + "s):" + Environment.NewLine + sql));
 
-                var cmd = server.GetCommand(sql, con);
-                cmd.CommandTimeout = timeout;
-
                 var dt = new DataTable();
-                server.GetDataAdapter(cmd).Fill(dt);
+
+                using (var cmd = server.GetCommand(sql, con))
+                {
+                    cmd.CommandTimeout = timeout;
+                    
+                    using(var da = server.GetDataAdapter(cmd))
+                        da.Fill(dt);
+                }
+                
 
                 dt.TableName = TableName;
 

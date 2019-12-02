@@ -20,20 +20,20 @@ namespace Rdmp.Core.Tests.Curation.Integration
         {
             using (var con = CatalogueRepository.GetConnection())
             {
-                DbCommand cmd = DatabaseCommandHelper.GetCommand(
+                using(DbCommand cmd = DatabaseCommandHelper.GetCommand(
                     "SELECT definition  FROM sysdiagrams where name = 'Catalogue_Data_Diagram' ",
-                    con.Connection, con.Transaction);
+                    con.Connection, con.Transaction))
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        //The system diagram exists
+                        Assert.IsTrue(reader.Read());
 
-                var reader = cmd.ExecuteReader();
-                
-                //The system diagram exists
-                Assert.IsTrue(reader.Read());
-
-                var bytes = (byte[]) reader[0];
-                var bytesAsString = ByteArrayToString(bytes);
-                
-                Console.WriteLine(bytesAsString);
-                Assert.Greater(bytesAsString.Length,100000);
+                        var bytes = (byte[]) reader[0];
+                        var bytesAsString = ByteArrayToString(bytes);
+                    
+                        Console.WriteLine(bytesAsString);
+                        Assert.Greater(bytesAsString.Length,100000);
+                    }
             }
         }
 

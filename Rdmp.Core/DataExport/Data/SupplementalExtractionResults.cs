@@ -101,7 +101,7 @@ namespace Rdmp.Core.DataExport.Data
         /// <param name="configuration">The configuration being extracted</param>
         /// <param name="sql">The SQL executed to generate the artifact or null if not appropriate (e.g. if it is a <see cref="SupportingDocument"/>)</param>
         /// <param name="extractedObject">The owner of the artifact being extracted (e.g. a <see cref="SupportingDocument"/> or <see cref="SupportingSQLTable"/>)</param>
-        public SupplementalExtractionResults(IRepository repository, IExtractionConfiguration configuration, string sql, IMapsDirectlyToDatabaseTable extractedObject)
+        public SupplementalExtractionResults(IDataExportRepository repository, IExtractionConfiguration configuration, string sql, IMapsDirectlyToDatabaseTable extractedObject)
         {
             Repository = repository;
             string name = extractedObject.GetType().FullName;
@@ -130,9 +130,10 @@ namespace Rdmp.Core.DataExport.Data
         /// <param name="mainAudit">The dataset extraction audit for the dataset to which this supplemental artifact belongs</param>
         /// <param name="sql">The SQL executed to generate the artifact or null if not appropriate (e.g. if it is a <see cref="SupportingDocument"/>)</param>
         /// <param name="extractedObject">The owner of the artifact being extracted (e.g. a <see cref="SupportingDocument"/> or <see cref="SupportingSQLTable"/>)</param>
-        public SupplementalExtractionResults(IRepository repository, ICumulativeExtractionResults mainAudit, string sql, IMapsDirectlyToDatabaseTable extractedObject)
+        public SupplementalExtractionResults(IDataExportRepository repository, ICumulativeExtractionResults mainAudit, string sql, IMapsDirectlyToDatabaseTable extractedObject)
         {
             Repository = repository;
+
             string name = extractedObject.GetType().FullName;
 
             if (extractedObject is INamed)

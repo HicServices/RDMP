@@ -12,8 +12,10 @@ using FAnsi.Implementation;
 using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
+using FAnsi.Implementations.PostgreSql;
 using NLog;
 using Rdmp.Core.CommandLine.DatabaseCreation;
+using Rdmp.Core.CommandLine.Gui;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.DataFlowPipeline;
@@ -23,7 +25,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using YamlDotNet.RepresentationModel;
 
-namespace rdmp
+namespace Rdmp.Core
 {
     class Program
     {
@@ -58,11 +60,10 @@ namespace rdmp
         {
             AssemblyResolver.SetupAssemblyResolver();
 
-            ImplementationManager.Load(
-                typeof(MicrosoftSQLImplementation).Assembly,
-                typeof(MySqlImplementation).Assembly,
-                typeof(OracleImplementation).Assembly
-            );
+            ImplementationManager.Load<MicrosoftSQLImplementation>();
+            ImplementationManager.Load<MySqlImplementation>();
+            ImplementationManager.Load<OracleImplementation>();
+            ImplementationManager.Load<PostgreSqlImplementation>();
         }
 
         private static int HandleArguments(string[] args)
@@ -75,23 +76,25 @@ namespace rdmp
                             DleOptions,
                             DqeOptions,
                             CacheOptions,
-                            ListOptions,
                             ExtractionOptions,
                             ReleaseOptions,
                             CohortCreationOptions,
                             PackOptions,
+                            ExecuteCommandOptions,
+                            ConsoleGuiOptions,
                             PlatformDatabaseCreationOptions>(args)
                         .MapResult(
                             //Add new verbs as options here and invoke relevant runner
                             (DleOptions opts) => Run(opts),
                             (DqeOptions opts) => Run(opts),
                             (CacheOptions opts) => Run(opts),
-                            (ListOptions opts) => Run(opts),
                             (ExtractionOptions opts) => Run(opts),
                             (ReleaseOptions opts) => Run(opts),
                             (CohortCreationOptions opts) => Run(opts),
                             (PackOptions opts) => Run(opts),
                             (PlatformDatabaseCreationOptions opts) => Run(opts),
+                            (ExecuteCommandOptions opts) => Run(opts),
+                            (ConsoleGuiOptions opts) => Run(opts),
                             errs => 1);
 
                 NLog.LogManager.GetCurrentClassLogger().Info("Exiting with code " + returnCode);
@@ -128,9 +131,10 @@ namespace rdmp
 
         private static int Run(RDMPCommandLineOptions opts)
         {
-            ImplementationManager.Load(typeof(MicrosoftSQLImplementation).Assembly,
-                                       typeof(OracleImplementation).Assembly,
-                                       typeof(MySqlImplementation).Assembly);
+            ImplementationManager.Load<MicrosoftSQLImplementation>();
+            ImplementationManager.Load<MySqlImplementation>();
+            ImplementationManager.Load<OracleImplementation>();
+            ImplementationManager.Load<PostgreSqlImplementation>();
 
             PopulateConnectionStringsFromYamlIfMissing(opts);
             
@@ -144,7 +148,9 @@ namespace rdmp
             if(opts.LogStartup && opts.Command == CommandLineActivity.check)
                 checker.Worst = LogLevel.Info;
 
-            var runner = factory.CreateRunner(opts);
+            var runner = opts is ConsoleGuiOptions g ? 
+                        new ConsoleGuiRunner(g):
+                         factory.CreateRunner(opts);
 
             int runExitCode = runner.Run(opts.GetRepositoryLocator(), listener, checker, new GracefulCancellationToken());
 

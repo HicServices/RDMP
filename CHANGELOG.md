@@ -7,7 +7,76 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Ability to generate metadata reports for subset of catalogues (e.g. all catalogues in a folder).
+- Console gui supports short code searches (e.g. "c", "ti" etc)
+
+### Changed
+
+- Updated to [FAnsiSql] 0.10.13
+- Cohort Builder now shows "No Cache" when there is no query cache server configured for a configuration instead of "0/1" (or "0/2" etc)
+
+### Fixed
+
+- Fixed various issues with new CLI gui
+- Fixed issue using the 'context menu' button on compatible keyboards to access the GoTo menu (sometimes menu would not be expandable)
+- Fixed issue where ProjectNumber and Version appeared editable in some tree controls (changes were ignored).  These cells are now correctly readonly.
+- Fixed bug in log viewer right click (introduced in 4.0.1 command refactoring)
+- TestConnection now shows obfuscated connection string when a connection cannot be established (affects RDMP API users only - not core software)
+- Fixed changing join direciton in patient index tables not triggering refresh
+
+## [4.0.1-rc2] - 2019-11-20
+
+### Added
+
+- Added interactive terminal user interface `./rdmp gui`
+
+### Changed
+
+- Cloning an Extraction Configuration no longer expands clone and names the new copy "Clone of [..]" (previously name was a guid)
+- Select object dialog now display a maximum of 1000 objects (prioritising your search text)
+- Logging tasks are now case insensitive
+
+### Fixed
+
+- Fixed Console input in CLI when running under Linux
+- Fixed issue where parallel checks could fail due to UI cross thread access
+- Fixed bugs in DLE when loading tables with dodgy column names (e.g. `[My Group by lolz]`)
+- 
 ...
+
+## [4.0.1-rc1] - 2019-11-11
+
+### Added
+
+- Support for PostgreSql databases
+
+### Changed
+
+- Sql Server `..` syntax is no longer used (now uses `.dbo.` - or whatever the table schema is).  Since references can be shared by users the default schema notation is not good idea.
+- Cohort Query Bulder will now connect to the database containing the data rather than the users default database when querying data on a single database
+- Flat file Attachers now process files in alphabetical order (case insensitive) when Pattern matches multiple files (previously order was arbitrary / OS defined)
+- Extraction source now specifies database to connect to when a dataset exists in a single database (previously connected to users default server e.g. master)
+- Updated to latest version of [FAnsiSql] (0.10.12) for Postgres support
+- 
+### Fixed
+
+- Fixed handling of credentials where password is blank (allowed)
+- Fixed race condition when there are multiple cohort databases that host cohorts for the same project
+- Extracting a dataset using Cross Server extraction source now shows the correct SQL in error message when no records are returned by the linkage
+
+## [3.2.1] - 2019-10-30
+
+### Added
+
+- SET containers ([UNION] / [INTERSECT] / [EXCEPT]) now highlight (as a `Problem`) when they will be ignored (empty) or not applied (when they contain only 1 child)
+
+## Fixed
+
+- Fixed bug generating metadata reports that include Catalogues with orphan ExtractionInformation (not mapped to an underlying ColumnInfo)
+- Fixed bug in column descriptions pie chart where navigate to CatalogueItem(s) would show all CatalogueItems instead of only those missing descriptions
+- Fixed bug in example dataset creation where views (vConditions and vOperations) were not marked IsView
 
 ## [3.2.1-rc4] - 2019-10-22
 
@@ -15,9 +84,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Errors during caching (of cohort builder results) now appear in the results control (previously could generate erro popups)
 - Patient Index Tables are no longer allowed to have parameters with the same name (but different values) of tables they are joined against
-- Sql Parameters (e.g. `@test_code`) now work properly cross DBMS (e.g. MySql / SqlServer) when using a query cache.
+- Sql Parameters (e.g. `@test_code`) now work properly cross [DBMS] (e.g. MySql / SqlServer) when using a query cache.
 - Added menu for inspecting the state of a cohort compiler (view SQL executed, build log, results etc)
-- SET containers (UNION / INTERSECT / EXCEPT) now highlight (as a `Problem`) when they will be ignored (empty) or not applied (when they contain only 1 child)
 
 ### Fixed 
 
@@ -59,7 +127,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Database patching user interface presents clearer information about what version upgrade is occuring and the patches that will be applied.
 - Updated to latest version of [FAnsiSql] (0.10.7) for task cancellation
 - Data load engine no longer lists dropping columns / anonymising in progress if there are no operations actually being performed (e.g. no ANOTables configured)
-- Delete is now disabled for the top level container (e.g. UNION - Inclusion criteria) of cohort builder configuration
+- Delete is now disabled for the top level container (e.g. "UNION - Inclusion criteria") of cohort builder configuration
 
 ### Fixed
 
@@ -104,7 +172,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed 
 - Deleting an object now clears the selection in tree views (previously selection would become an arbitrary object).
-- Fixed bug where adding/moving cohort sets between containers (INTERSECT/UNION/EXCEPT) could result in 2 objects with the same Order in the same container (resulting in ambiguous order of execution).
+- Fixed bug where adding/moving cohort sets between containers ([INTERSECT]/[UNION]/[EXCEPT]) could result in 2 objects with the same Order in the same container (resulting in ambiguous order of execution).
 - Fixed UI bug where selecting an extractable Catalogue would hide it's extractable (small green e) icon overlay
 - Fixed bug where deleting a Pinned object would not unpin the object
 - Fixed bug where database tables with brackets in the name could break synchronization (these tables are now ignored by RDMP and cannot be imported).
@@ -124,7 +192,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 - Cohort sets no longer appear under Catalogues (Find / GoTo now open the parent cohort identification configuration)
-- Removed OnlyUseOldDateTimes option on DataTableUploadDestination as it didn't actually do anything (DBMS type decisions are handled in a standard way by FAnsiSql)
+- Removed OnlyUseOldDateTimes option on DataTableUploadDestination as it didn't actually do anything ([DBMS] type decisions are handled in a standard way by FAnsiSql)
 
 ## [3.1.0] - 2019-07-31
 
@@ -233,7 +301,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v3.2.1-rc4...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.0.1-rc2...develop
+[4.0.1-rc2]: https://github.com/HicServices/RDMP/compare/v4.0.1-rc1...v4.0.1-rc2
+[4.0.1-rc1]: https://github.com/HicServices/RDMP/compare/v3.2.1...v4.0.1-rc1
+[3.2.1]: https://github.com/HicServices/RDMP/compare/v3.2.1-rc4...v3.2.1
 [3.2.1-rc4]: https://github.com/HicServices/RDMP/compare/v3.2.1-rc3...v3.2.1-rc4
 [3.2.1-rc3]: https://github.com/HicServices/RDMP/compare/v3.2.1-rc2...v3.2.1-rc3
 [3.2.1-rc2]: https://github.com/HicServices/RDMP/compare/3.2.1-rc1...v3.2.1-rc2
@@ -245,3 +316,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [3.0.16-rc]: https://github.com/HicServices/RDMP/compare/v3.0.15...v3.0.16-rc
 [FAnsiSql]: https://github.com/HicServices/FAnsiSql/
 [BadMedicine]: https://github.com/HicServices/BadMedicine/
+
+[DBMS]: ./Documentation/CodeTutorials/Glossary.md#DBMS
+[UNION]: ./Documentation/CodeTutorials/Glossary.md#UNION
+[INTERSECT]: ./Documentation/CodeTutorials/Glossary.md#INTERSECT
+[EXCEPT]: ./Documentation/CodeTutorials/Glossary.md#EXCEPT

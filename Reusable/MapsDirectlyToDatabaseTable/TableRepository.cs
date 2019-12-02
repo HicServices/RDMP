@@ -76,9 +76,14 @@ namespace MapsDirectlyToDatabaseTable
 
                 using(var con = GetConnection())
                 {
-                    DbCommand cmd = DatabaseCommandHelper.GetCommand("DELETE FROM " + oTableWrapperObject.GetType().Name + " WHERE ID =@ID", con.Connection,con.Transaction);
-                    DatabaseCommandHelper.AddParameterWithValueToCommand("@ID", cmd, oTableWrapperObject.ID);
-                    int affectedRows = cmd.ExecuteNonQuery();
+                    int affectedRows;
+                    using (DbCommand cmd = DatabaseCommandHelper.GetCommand(
+                        "DELETE FROM " + oTableWrapperObject.GetType().Name + " WHERE ID =@ID", con.Connection,
+                        con.Transaction))
+                    {
+                        DatabaseCommandHelper.AddParameterWithValueToCommand("@ID", cmd, oTableWrapperObject.ID);
+                        affectedRows = cmd.ExecuteNonQuery();
+                    }
 
                     if (affectedRows != 1)
                     {
@@ -520,7 +525,15 @@ namespace MapsDirectlyToDatabaseTable
             }
             catch (Exception e)
             {
-                throw new Exception("Testing connection failed, connection string was '" + _connectionStringBuilder.ConnectionString + "'", e);
+
+                var msg = _connectionStringBuilder.ConnectionString;
+
+                var pass = DiscoveredServer.Helper.GetExplicitPasswordIfAny(_connectionStringBuilder);
+
+                if(!string.IsNullOrWhiteSpace(pass))
+                    msg = msg.Replace(pass,"****");
+                
+                throw new Exception("Testing connection failed, connection string was '" + msg + "'", e);
             }
         }
 

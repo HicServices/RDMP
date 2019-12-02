@@ -37,7 +37,7 @@
             this.tbExeCommand = new System.Windows.Forms.TextBox();
             this.btnRunExe = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.checksUI1 = new ReusableUIComponents.ChecksUI.ChecksUI();
+            this.checksUI1 = new ChecksUI.ChecksUI();
             ((System.ComponentModel.ISupportInitialize)(this.pbFile)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -165,6 +165,6 @@
         private System.Windows.Forms.TextBox tbExeCommand;
         private System.Windows.Forms.Button btnRunExe;
         private System.Windows.Forms.Panel panel1;
-        private ReusableUIComponents.ChecksUI.ChecksUI checksUI1;
+        private ChecksUI.ChecksUI checksUI1;
     }
 }

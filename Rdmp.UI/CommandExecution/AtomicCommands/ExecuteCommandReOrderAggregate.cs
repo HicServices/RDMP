@@ -4,23 +4,22 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
-using ReusableUIComponents.CommandExecution;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     internal class ExecuteCommandReOrderAggregate : BasicUICommandExecution
     {
-        private readonly AggregateConfigurationCommand _sourceAggregateCommand;
+        private readonly AggregateConfigurationCombineable _sourceAggregateCommand;
         private CohortAggregateContainer _parentContainer;
         
         private IOrderable _targetOrder;
         private readonly InsertOption _insertOption;
 
-        public ExecuteCommandReOrderAggregate(IActivateItems activator, AggregateConfigurationCommand sourceAggregateCommand, AggregateConfiguration targetAggregateConfiguration, InsertOption insertOption) :this(activator,targetAggregateConfiguration,insertOption)
+        public ExecuteCommandReOrderAggregate(IActivateItems activator, AggregateConfigurationCombineable sourceAggregateCommand, AggregateConfiguration targetAggregateConfiguration, InsertOption insertOption) :this(activator,targetAggregateConfiguration,insertOption)
         {
             _sourceAggregateCommand = sourceAggregateCommand;
             _parentContainer = targetAggregateConfiguration.GetCohortAggregateContainerIfAny();
@@ -38,7 +37,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             }
         }
 
-        public ExecuteCommandReOrderAggregate(IActivateItems activator, AggregateConfigurationCommand sourceAggregateCommand, CohortAggregateContainer targetCohortAggregateContainer, InsertOption insertOption):this(activator,targetCohortAggregateContainer,insertOption)
+        public ExecuteCommandReOrderAggregate(IActivateItems activator, AggregateConfigurationCombineable sourceAggregateCommand, CohortAggregateContainer targetCohortAggregateContainer, InsertOption insertOption):this(activator,targetCohortAggregateContainer,insertOption)
         {
             _sourceAggregateCommand = sourceAggregateCommand;
             _parentContainer = targetCohortAggregateContainer.GetParentContainerIfAny();

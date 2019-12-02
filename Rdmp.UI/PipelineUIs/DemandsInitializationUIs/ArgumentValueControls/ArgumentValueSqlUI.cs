@@ -6,8 +6,8 @@
 
 using System.Windows.Forms;
 using Rdmp.UI.Copying;
-using ReusableUIComponents;
-using ReusableUIComponents.SqlDialogs;
+
+using Rdmp.UI.SimpleDialogs.SqlDialogs;
 
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 {
@@ -34,7 +34,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
         private void btnSetSQL_Click(object sender, System.EventArgs e)
         {
 
-            SetSQLDialog dialog = new SetSQLDialog((string)_args.InitialValue, new RDMPCommandFactory());
+            SetSQLDialog dialog = new SetSQLDialog((string)_args.InitialValue, new RDMPCombineableFactory());
             DialogResult d = dialog.ShowDialog();
 
             if (d == DialogResult.OK)

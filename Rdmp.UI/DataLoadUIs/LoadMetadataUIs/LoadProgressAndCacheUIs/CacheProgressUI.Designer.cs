@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
+﻿using Rdmp.UI.ChecksUI;
+
+namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 {
     partial class CacheProgressUI
     {
@@ -45,7 +47,7 @@
             this.tbID = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmiley1 = new RAGSmiley();
             this.tbName = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.udCacheLagDelayPeriodDuration)).BeginInit();
@@ -269,7 +271,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnEdit;
         private System.Windows.Forms.Panel pPipeline;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
+        private RAGSmiley ragSmiley1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox tbName;
         private System.Windows.Forms.Label label3;

@@ -269,7 +269,6 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             // 
             // olvJoinDirection
             // 
-            this.olvJoinDirection.AspectName = "JoinType";
             this.olvJoinDirection.Groupable = false;
             this.olvJoinDirection.Text = "Join Direction";
             this.olvJoinDirection.Width = 100;

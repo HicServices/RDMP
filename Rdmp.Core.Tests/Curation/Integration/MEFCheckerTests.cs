@@ -27,6 +27,12 @@ namespace Rdmp.Core.Tests.Curation.Integration
         }
 
         [Test]
+        public void FindClass_WrongCase_FoundAnyway()
+        {
+            Assert.AreEqual(typeof(Catalogue),Repository.MEF.GetType("catalogue"));
+        }
+
+        [Test]
         public void FindClass_EmptyString()
         {
             MEFChecker m = new MEFChecker(Repository.MEF, "", s => Assert.Fail()); 

@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Engine.DataProvider;
@@ -34,8 +35,8 @@ namespace Rdmp.UI.Menus
            AddMenu<IAttacher>("Add Attacher");
            AddMenu<IMutilateDataTables>("Add Mutilator");
 
-           Add(new ExecuteCommandCreateNewProcessTask(_activator, ProcessTaskType.SQLFile,loadStageNode.LoadMetadata, loadStageNode.LoadStage));
-           Add(new ExecuteCommandCreateNewProcessTask(_activator, ProcessTaskType.Executable, loadStageNode.LoadMetadata, loadStageNode.LoadStage));
+           Add(new ExecuteCommandCreateNewFileBasedProcessTask(_activator, ProcessTaskType.SQLFile,loadStageNode.LoadMetadata, loadStageNode.LoadStage));
+           Add(new ExecuteCommandCreateNewFileBasedProcessTask(_activator, ProcessTaskType.Executable, loadStageNode.LoadMetadata, loadStageNode.LoadStage));
         }
 
         private void AddMenu<T>(string menuName, Func<Type, bool> filterTypes)
@@ -58,7 +59,7 @@ namespace Rdmp.UI.Menus
             foreach (Type type in types)
             {
                 Type toAdd = type;
-                var mi = menu.DropDownItems.Add(type.Name, null, (s, e) => AddTypeIntoStage(toAdd, taskType));
+                var mi = menu.DropDownItems.Add(type.Name, null, (s, e) => AddTypeIntoStage(toAdd));
 
                 var help = _activator.CommentStore.GetTypeDocumentationIfExists(type);
 
@@ -78,19 +79,10 @@ namespace Rdmp.UI.Menus
 
 
 
-        private void AddTypeIntoStage(Type type, ProcessTaskType taskType)
+        private void AddTypeIntoStage(Type type)
         {
-            var lmd = _loadStageNode.LoadMetadata;
-            var stage = _loadStageNode.LoadStage;
-
-            ProcessTask newTask = new ProcessTask((ICatalogueRepository)lmd.Repository, lmd, stage);
-            newTask.Path = type.FullName;
-            newTask.ProcessTaskType = taskType;
-            newTask.Name = type.Name;
-
-            newTask.SaveToDatabase();
-            Publish(lmd);
-            Activate(newTask);
+            var cmd = new ExecuteCommandCreateNewClassBasedProcessTask(_activator, _loadStageNode.LoadMetadata, _loadStageNode.LoadStage, type);
+            cmd.Execute();
         }
     }
 }

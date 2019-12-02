@@ -5,11 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
-using Rdmp.Core.QueryBuilding.Parameters;
 
 namespace Rdmp.Core.QueryBuilding
 {
@@ -39,6 +37,8 @@ namespace Rdmp.Core.QueryBuilding
         /// <param name="join">The join usage relationship object (includes join direction etc)</param>
         /// <param name="joinedTo">The patient index to which the join is made to (e.g. <see cref="JoinableCohortAggregateConfiguration.AggregateConfiguration"/>)</param>
         /// <param name="joinSql">The full SQL of the join</param>
+        /// <param name="customisations"></param>
+        /// <param name="globals"></param>
         public QueryBuilderArgs(JoinableCohortAggregateConfigurationUse join,AggregateConfiguration joinedTo,CohortQueryBuilderDependencySql joinSql, QueryBuilderCustomArgs customisations, ISqlParameter[] globals):this(customisations,globals)
         {
             JoinIfAny = join;

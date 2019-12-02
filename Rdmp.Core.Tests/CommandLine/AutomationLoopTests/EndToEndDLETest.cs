@@ -6,7 +6,14 @@
 
 using NUnit.Framework;
 using System;
+using System.Data;
+using System.Linq;
+using FAnsi;
+using FAnsi.Discovery;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Tests.Common;
 using Tests.Common.Scenarios;
+using TypeGuesser;
 
 namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests
 {
@@ -18,6 +25,41 @@ namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests
             const int timeoutInMilliseconds = 120000;
             CreateFileInForLoading("loadmeee.csv",500,new Random(500));
             RunDLE(timeoutInMilliseconds);
+        }
+
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
+        public void TestDle_DodgyColumnNames(DatabaseType dbType)
+        {
+            var db = GetCleanedServer(dbType);
+
+            var tbl = db.CreateTable("Troll Select * Loll",new DatabaseColumnRequest[]
+            {
+                new DatabaseColumnRequest("group by",new DatabaseTypeRequest(typeof(string),100)){IsPrimaryKey = true}, 
+                new DatabaseColumnRequest(",,,,",new DatabaseTypeRequest(typeof(string))), 
+            });
+
+            CreateFileInForLoading("Troll.csv", new string[]
+            {
+                "group by,\",,,,\"",
+                "fish,fishon"
+            });
+
+            var cata = Import(tbl);
+            var lmd = new LoadMetadata(CatalogueRepository, nameof(TestDle_DodgyColumnNames));
+            lmd.LocationOfFlatFiles = LoadDirectory.RootPath.FullName;
+            lmd.SaveToDatabase();
+
+            CreateFlatFileAttacher(lmd,"Troll.csv",cata.GetTableInfoList(false).Single());
+
+            cata.LoadMetadata_ID = lmd.ID;
+            cata.SaveToDatabase();
+
+            Assert.AreEqual(0,tbl.GetRowCount());
+
+            RunDLE(lmd,30000,true);
+
+            Assert.AreEqual(1,tbl.GetRowCount());
+            Assert.AreEqual("fishon",tbl.GetDataTable().Rows[0][",,,,"]);
         }
     }
 }

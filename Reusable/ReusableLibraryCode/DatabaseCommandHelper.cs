@@ -16,8 +16,10 @@ using FAnsi.Implementation;
 using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
+using FAnsi.Implementations.PostgreSql;
 using Oracle.ManagedDataAccess.Client;
 using MySql.Data.MySqlClient;
+using Npgsql;
 using ReusableLibraryCode.Performance;
 using TypeGuesser;
 
@@ -35,6 +37,7 @@ namespace ReusableLibraryCode
             {DatabaseType.MySql,new MySqlImplementation()},
             {DatabaseType.Oracle,new OracleImplementation()},
             {DatabaseType.MicrosoftSQLServer,new MicrosoftSQLImplementation()},
+            {DatabaseType.PostgreSql,new PostgreSqlImplementation()},
         };
 
         public static ComprehensiveQueryPerformanceCounter PerformanceCounter = null;
@@ -69,6 +72,8 @@ namespace ReusableLibraryCode
                 return _dbConHelpersByType[DatabaseType.Oracle].GetServerHelper();
             if (cmd is MySqlCommand)
                 return _dbConHelpersByType[DatabaseType.MySql].GetServerHelper();
+            if (cmd is NpgsqlCommand)
+                return _dbConHelpersByType[DatabaseType.PostgreSql].GetServerHelper();
 
             throw new NotSupportedException("Didn't know what helper to use for DbCommand Type " + cmd.GetType());
             //todo: add this method to implementation in FAnsi

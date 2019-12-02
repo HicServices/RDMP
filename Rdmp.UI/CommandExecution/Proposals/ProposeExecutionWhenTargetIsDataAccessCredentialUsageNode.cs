@@ -4,12 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CredentialsUIs;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.CommandExecution;
 
 namespace Rdmp.UI.CommandExecution.Proposals
 {
@@ -29,7 +28,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<DataAccessCredentialsUI,DataAccessCredentials>(target.Credentials);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, DataAccessCredentialUsageNode target,
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, DataAccessCredentialUsageNode target,
             InsertOption insertOption = InsertOption.Default)
         {
             return null;

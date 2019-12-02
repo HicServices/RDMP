@@ -4,12 +4,27 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+
 namespace Rdmp.Core.CommandLine.Options
 {
+    /// <summary>
+    /// Describes what command line activity should be carried out on an RDMP engine (e.g. data load engine).
+    /// </summary>
     public enum CommandLineActivity
     {
+        /// <summary>
+        /// No activity has been specified
+        /// </summary>
         none,
+
+        /// <summary>
+        /// The engine / configuration should be run to completion
+        /// </summary>
         run,
+
+        /// <summary>
+        /// The engine / configuration should be checked but not executed (see <see cref="ReusableLibraryCode.Checks.ICheckable"/>)
+        /// </summary>
         check
     }
 }

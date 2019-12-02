@@ -94,8 +94,9 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 creds.SaveToDatabase();
                 using (var con = CatalogueRepository.GetConnection())
                 {
-                    var cmd = DatabaseCommandHelper.GetCommand("Select Password from DataAccessCredentials where Name='frankieFran'", con.Connection, con.Transaction);
-                    string value = (string) cmd.ExecuteScalar();
+                    string value;
+                    using(var cmd = DatabaseCommandHelper.GetCommand("Select Password from DataAccessCredentials where Name='frankieFran'", con.Connection, con.Transaction))
+                        value = (string) cmd.ExecuteScalar();
 
                     //ensure password in database is encrypted
                     Assert.AreNotEqual("fish",value);
@@ -141,8 +142,9 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 creds.SaveToDatabase();
                 using (var con = CatalogueRepository.GetConnection())
                 {
-                    var cmd = DatabaseCommandHelper.GetCommand("Select Password from DataAccessCredentials where Name='frankieFran'", con.Connection, con.Transaction);
-                    string value = (string)cmd.ExecuteScalar();
+                    string value;
+                    using(var cmd = DatabaseCommandHelper.GetCommand("Select Password from DataAccessCredentials where Name='frankieFran'", con.Connection, con.Transaction))
+                        value = (string) cmd.ExecuteScalar();
 
                     //ensure password in database is encrypted
                     Assert.AreNotEqual(freakyPassword, value);
@@ -181,8 +183,11 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 //update the database to an unencrypted password (like would be the case before software patch)
                 using (var con = CatalogueRepository.GetConnection())
                 {
-                    var cmd = DatabaseCommandHelper.GetCommand("UPDATE DataAccessCredentials set Password = 'fish' where Name='frankieFran'", con.Connection, con.Transaction);
-                    Assert.AreEqual(1, cmd.ExecuteNonQuery());
+                    using (var cmd = DatabaseCommandHelper.GetCommand(
+                        "UPDATE DataAccessCredentials set Password = 'fish' where Name='frankieFran'", con.Connection,
+                        con.Transaction))
+                        Assert.AreEqual(1, cmd.ExecuteNonQuery());
+                    
                 }
 
                 DataAccessCredentials newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(creds.ID);
