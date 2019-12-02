@@ -5,6 +5,7 @@ using System.Text;
 using FAnsi.Implementation;
 using NUnit.Framework;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.Startup;
 
 namespace Rdmp.Core.Tests.Repositories
 {
@@ -40,6 +41,9 @@ namespace Rdmp.Core.Tests.Repositories
         public void TestConnection_NoServer_IntegratedSecurity()
         {
             ImplementationManager.Load<FAnsi.Implementations.MicrosoftSQL.MicrosoftSQLImplementation>();
+
+            if(EnvironmentInfo.IsLinux)
+                Assert.Inconclusive("Linux doesn't really support IntegratedSecurity and in fact can bomb just setting it on a builder");
 
             var repo = new CatalogueRepository(new SqlConnectionStringBuilder()
             {
