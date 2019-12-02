@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug in log viewer right click (introduced in 4.0.1 command refactoring)
 - TestConnection now shows obfuscated connection string when a connection cannot be established (affects RDMP API users only - not core software)
 - Fixed changing join direciton in patient index tables not triggering refresh
+- Fixed Data Load Engine RAW server credentials when running RDMP installer with sql user authentication (RAW server entry would be created with Integrated Security)
 
 ## [4.0.1-rc2] - 2019-11-20
 
