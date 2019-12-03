@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.SimpleDialogs
+﻿using Rdmp.UI.ChecksUI;
+
+namespace Rdmp.UI.SimpleDialogs
 {
     partial class ChooseLoggingTaskUI
     {
@@ -31,7 +33,7 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnClearLive = new System.Windows.Forms.Button();
             this.btnCreateNewLoggingServer = new System.Windows.Forms.Button();
-            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmiley1 = new RAGSmiley();
             this.ddLoggingServer = new System.Windows.Forms.ComboBox();
             this.btnCreateNewLoggingTask = new System.Windows.Forms.Button();
             this.btnRefresh = new System.Windows.Forms.Button();
@@ -186,7 +188,7 @@
         private System.Windows.Forms.ComboBox ddLoggingServer;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnCreateNewLoggingTask;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
+        private RAGSmiley ragSmiley1;
         private System.Windows.Forms.Button btnCreateNewLoggingServer;
         private System.Windows.Forms.Button btnClearLive;
     }

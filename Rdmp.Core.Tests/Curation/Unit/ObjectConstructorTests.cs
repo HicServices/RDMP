@@ -4,13 +4,19 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
+using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Unit
 {
     [Category("Unit")]
-    public class ObjectConstructorTests
+    public class ObjectConstructorTests : UnitTests
     {
         [Test]
         public void ConstructValidTests()
@@ -44,7 +50,7 @@ namespace Rdmp.Core.Tests.Curation.Unit
             var ex = Assert.Throws<ObjectLacksCompatibleConstructorException>(()=>constructor.Construct(typeof (TestClass4), testarg3));
             Assert.IsTrue(ex.Message.Contains("Could not pick the correct constructor between"));
 
-            //exactly the same as the above case but one constructor has been decorated with ImportingConstructor
+            //exactly the same as the above case but one constructor has been decorated with [UseWithObjectConstructor] attribute
             constructor.Construct(typeof (TestClass5), testarg3);
         }
 
@@ -58,8 +64,33 @@ namespace Rdmp.Core.Tests.Curation.Unit
             
             //no constructor taking an int
             Assert.IsNull(constructor.ConstructIfPossible(typeof(TestClassDefaultConstructor),8));
+        }
 
+        [Test]
+        public void GetRepositoryConstructor_AllDatabaseEntities_OneWinningConstructor()
+        {
+            SetupMEF();
+            
+            int countCompatible = 0;
 
+            var badTypes = new Dictionary<Type,Exception>();
+            foreach (Type t in MEF.GetAllTypes().Where(typeof(DatabaseEntity).IsAssignableFrom))
+            {
+                try
+                {
+                    var oc = new ObjectConstructor();
+                    Assert.IsNotNull(oc.GetRepositoryConstructor(typeof(Catalogue)));
+                    countCompatible++;
+                }
+                catch (Exception e)
+                {
+                    badTypes.Add(t,e);
+                }
+            }
+
+            Assert.IsEmpty(badTypes);
+            Assert.GreaterOrEqual(countCompatible,10);
+            Console.WriteLine("Found compatible constructors on " + countCompatible + " objects");
         }
 
         class TestClassDefaultConstructor

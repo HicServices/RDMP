@@ -12,13 +12,11 @@ using System.Linq;
 using System.Windows.Forms;
 using BadMedicine;
 using BadMedicine.Datasets;
+using Rdmp.Core.CommandExecution;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using Rdmp.UI.TransparentHelpSystem;
 using Rdmp.UI.Tutorials;
-using ReusableLibraryCode;
-using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.Dialogs;
-using ReusableUIComponents.TransparentHelpSystem;
 
 namespace Rdmp.UI.SimpleDialogs.Reports
 {

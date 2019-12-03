@@ -108,13 +108,6 @@
       <FileName>Providers\Nodes\CatalogueLookupsNode.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Rdmp.Core.Providers.Nodes.CohortSetsNode" Collapsed="true">
-    <Position X="27.5" Y="3" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAEgAACAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
-      <FileName>Providers\Nodes\CohortSetsNode.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="Rdmp.Core.Providers.Nodes.DataAccessCredentialUsageNode" Collapsed="true">
     <Position X="36.5" Y="3" Width="1.5" />
     <TypeIdentifier>
@@ -188,7 +181,7 @@
   <Class Name="Rdmp.Core.Providers.Nodes.PackageContentNode" Collapsed="true">
     <Position X="18.5" Y="3" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAFgAQQAAAAAAAAAIAAAAAAAgAAAAA=</HashCode>
+      <HashCode>AAAAAAIAABAAAAAFgAQQAAAAAAAAAIAAAAAAAgAAAAA=</HashCode>
       <FileName>Providers\Nodes\PackageContentNode.cs</FileName>
     </TypeIdentifier>
     <Lollipop Orientation="Left" Position="0.491" />
@@ -196,7 +189,7 @@
   <Class Name="Rdmp.Core.Providers.Nodes.ParametersNode" Collapsed="true">
     <Position X="25.25" Y="3" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAEAAAAAAAAEAAAEgAAAAAAAAAAAAIAAAAAAAAQAAAA=</HashCode>
+      <HashCode>AAEAAAAAAAAAAAAEgAAAAAAAAAAAAIAAAIAAAAQAAAA=</HashCode>
       <FileName>Providers\Nodes\ParametersNode.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -211,9 +204,10 @@
   <Class Name="Rdmp.Core.Providers.Nodes.ProjectCataloguesNode" Collapsed="true">
     <Position X="18.5" Y="4.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAEgAAACAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAEAAAAAAAAAAAAEgAAACAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
       <FileName>Providers\Nodes\ProjectCataloguesNode.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="Rdmp.Core.Providers.Nodes.SingletonNode" Collapsed="true">
     <Position X="14" Y="4" Width="1.5" />
@@ -369,7 +363,7 @@
   <Class Name="Rdmp.Core.Providers.Nodes.ArbitraryFolderNode" Collapsed="true">
     <Position X="20.75" Y="7.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAEAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Providers\Nodes\ArbitraryFolderNode.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />

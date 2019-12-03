@@ -18,39 +18,30 @@ namespace Rdmp.Core.CommandLine.Runners
         {
             if (command.Command == CommandLineActivity.none)
                 throw new Exception("No command has been set on '" + command.GetType().Name + "'");
-
-            var dleOpts = command as DleOptions;
-            var dqeOpts = command as DqeOptions;
-            var cacheOpts = command as CacheOptions;
-            var listOpts = command as ListOptions;
-            var extractionOpts = command as ExtractionOptions;
-            var releaseOpts = command as ReleaseOptions;
-            var cohortOpts = command as CohortCreationOptions;
-            var packOpts = command as PackOptions;
-
-            if (dleOpts != null)
+            
+            if (command is DleOptions dleOpts)
                 return new DleRunner(dleOpts);
 
-            if(dqeOpts != null)
+            if(command is DqeOptions dqeOpts)
                 return new DqeRunner(dqeOpts);
 
-            if(cacheOpts != null)
+            if(command is CacheOptions cacheOpts )
                 return new CacheRunner(cacheOpts);
-
-            if(listOpts != null)
-                return new ListRunner(listOpts);
-
-            if (extractionOpts != null)
+            
+            if (command is ExtractionOptions extractionOpts )
                 return new ExtractionRunner(extractionOpts);
 
-            if(releaseOpts != null)
+            if(command is ReleaseOptions releaseOpts )
                 return new ReleaseRunner(releaseOpts);
 
-            if (cohortOpts != null)
+            if (command is CohortCreationOptions cohortOpts )
                 return new CohortCreationRunner(cohortOpts);
 
-            if(packOpts != null)
+            if(command is PackOptions packOpts )
                 return new PackPluginRunner(packOpts);
+            
+            if(command is ExecuteCommandOptions executeOpts)
+                return new ExecuteCommandRunner(executeOpts);
             
             throw new Exception("RDMPCommandLineOptions Type '" + command.GetType() + "'");
         }

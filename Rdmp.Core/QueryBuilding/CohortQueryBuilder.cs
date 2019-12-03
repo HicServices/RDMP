@@ -7,16 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FAnsi;
-using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding.Parameters;
-using Rdmp.Core.Repositories;
-using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.QueryBuilding
 {

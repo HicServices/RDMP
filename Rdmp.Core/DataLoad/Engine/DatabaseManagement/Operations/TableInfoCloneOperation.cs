@@ -72,17 +72,19 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations
         
         public void RemoveTableFromDatabase(string tableName, DiscoveredDatabase dbInfo)
         {
-            if (!IsNukable(dbInfo))
+            if (!IsNukable(dbInfo,tableName))
                 throw new Exception("This method nukes a table in a database! for obvious reasons this is only allowed on databases with a suffix _STAGING/_RAW");
 
             dbInfo.ExpectTable(tableName).Drop();
         }
 
-        private bool IsNukable(DiscoveredDatabase dbInfo)
+        
+        private bool IsNukable(DiscoveredDatabase dbInfo, string tableName)
         {
-            return dbInfo.GetRuntimeName().EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) || dbInfo.GetRuntimeName().EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase);
+            return tableName.EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) || tableName.EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase) 
+             ||
+             dbInfo.GetRuntimeName().EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) || dbInfo.GetRuntimeName().EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase);
         }
-
         public void CloneTable(DiscoveredDatabase srcDatabaseInfo, DiscoveredDatabase destDatabaseInfo, DiscoveredTable sourceTable, string destTableName, bool dropHICColumns, bool dropIdentityColumns, bool allowNulls, PreLoadDiscardedColumn[] dillutionColumns)
         {
             if (!sourceTable.Exists())
@@ -97,8 +99,8 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations
             using (var con = destDatabaseInfo.Server.GetConnection())
             {
                 con.Open();
-                var cmd = destDatabaseInfo.Server.GetCommand(sql, con);
-                cmd.ExecuteNonQuery();
+                using(var cmd = destDatabaseInfo.Server.GetCommand(sql, con))
+                    cmd.ExecuteNonQuery();
             }
 
             if (!newTable.Exists())

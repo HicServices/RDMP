@@ -10,7 +10,6 @@ using System.Linq;
 using System.Security.Cryptography;
 using FAnsi;
 using FAnsi.Discovery;
-using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.QueryBuilding
@@ -34,12 +33,13 @@ namespace Rdmp.Core.QueryBuilding
         public DataAccessContext DataAccessContext { get;}
 
         private HashSet<IDataAccessPoint> _points = new HashSet<IDataAccessPoint>();
-        
+
         /// <summary>
         /// Creates a new collection of <see cref="IDataAccessPoint"/> for collecting dependencies e.g.
         /// when building a query in which there are subqueries run on different databases
         /// </summary>
         /// <param name="singleServer">True to require all <see cref="Points"/> to be on the same server (and type).</param>
+        /// <param name="context"></param>
         public DataAccessPointCollection(bool singleServer,DataAccessContext context = DataAccessContext.InternalDataProcessing)
         {
             SingleServer = singleServer;
@@ -160,9 +160,12 @@ namespace Rdmp.Core.QueryBuilding
         {
             if(!SingleServer)
                 throw new NotSupportedException("Only valid when SingleServer flag is set");
-            
+
+            //they all have to be in the same server but do they also reside in the same database?
+            var allOnSameDatabase = Points.Select(p => p.Database).Distinct().Count() == 1;
+
             return DataAccessPortal.GetInstance().ExpectDistinctServer(Points.ToArray(),
-                DataAccessContext, false);
+                DataAccessContext, allOnSameDatabase);
         }
 
         /// <summary>

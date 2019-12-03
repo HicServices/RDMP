@@ -10,15 +10,17 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Sharing.Refactoring;
+using Rdmp.UI.ChecksUI;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleControls;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableUIComponents;
-using ReusableUIComponents.ChecksUI;
-using ReusableUIComponents.Dialogs;
+
+
+
 
 namespace Rdmp.UI.MainFormUITabs.SubComponents
 {

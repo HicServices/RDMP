@@ -82,6 +82,9 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
         {
             var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction",null);
             server.Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name;
+            server.Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny;
+            server.Password = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitPasswordIfAny;
+            
             //server.Database = "FictionalDatabase"; Ignored by the extractor!
             
             try
@@ -116,6 +119,8 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
         {
             var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction",null);
             server.Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name;
+            server.Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny;
+            server.Password = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitPasswordIfAny;
             //server.Database = "FictionalDatabase"; Ignored by the extractor!
             
             using (var con = Database.Server.GetConnection())

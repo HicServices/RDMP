@@ -8,14 +8,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FAnsi.Discovery;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad.Extensions;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.Providers.Nodes;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using ReusableLibraryCode;
-using ReusableLibraryCode.CommandExecution;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {
@@ -23,7 +23,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
     /// Depicts a table in a given DLE <see cref="LoadBubble"/>.  Given the Create/Destroy nature of load stages this
     /// node may or may not map to an existing table in the database.
     /// </summary>
-    public class LoadDiagramTableNode:Node,ICommandSource, IHasLoadDiagramState, IMasqueradeAs, IKnowWhatIAm
+    public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState, IMasqueradeAs, IKnowWhatIAm
     {
         private readonly LoadDiagramDatabaseNode _databaseNode;
         public readonly TableInfo TableInfo;
@@ -79,9 +79,9 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             return TableName;
         }
         
-        public ICommand GetCommand()
+        public ICombineToMakeCommand GetCombineable()
         {
-            return new SqlTextOnlyCommand(TableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(DatabaseName,null, TableName));
+            return new SqlTextOnlyCombineable(TableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(DatabaseName,null, TableName));
         }
 
         public void DiscoverState()

@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
@@ -114,5 +115,31 @@ namespace Rdmp.Core.Providers
         /// All standard (i.e. not plugin) use cases for editting <see cref="IPipeline"/> under.
         /// </summary>
         HashSet<StandardPipelineUseCaseNode> PipelineUseCases {get; }
+
+        
+        /// <summary>
+        /// All components within all <see cref="Pipeline"/>
+        /// </summary>
+        PipelineComponent[] AllPipelineComponents { get; }
+
+        /// <summary>
+        /// All arguments for the <see cref="AllPipelineComponents"/>
+        /// </summary>
+        PipelineComponentArgument[] AllPipelineComponentsArguments { get; }
+
+        /// <summary>
+        /// All process
+        /// </summary>
+        ProcessTask[] AllProcessTasks { get; }
+        
+        ProcessTaskArgument[] AllProcessTasksArguments { get; }
+
+        /// <summary>
+        /// Returns all objects in the tree hierarchy that are assignable to the supplied <paramref name="type"/>
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="unwrapMasqueraders">true to unwrap and return matching underlying objects from <see cref="IMasqueradeAs"/> objects</param>
+        /// <returns></returns>
+        IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type type,bool unwrapMasqueraders);
     }
 }

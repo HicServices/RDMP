@@ -1,4 +1,5 @@
-﻿using ReusableLibraryCode.Checks;
+﻿using Rdmp.UI.ChecksUI;
+using ReusableLibraryCode.Checks;
 
 namespace Rdmp.UI.TestsAndSetup
 {
@@ -33,7 +34,7 @@ namespace Rdmp.UI.TestsAndSetup
             this.lblProgress = new System.Windows.Forms.Label();
             this.pbLoadProgress = new System.Windows.Forms.ProgressBar();
             this.btnChoosePlatformDatabases = new System.Windows.Forms.Button();
-            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmiley1 = new RAGSmiley();
             this.pbDisconnected = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbDisconnected)).BeginInit();
             this.SuspendLayout();
@@ -109,7 +110,7 @@ namespace Rdmp.UI.TestsAndSetup
         #endregion
         private System.Windows.Forms.Label lblProgress;
         private System.Windows.Forms.ProgressBar pbLoadProgress;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
+        private RAGSmiley ragSmiley1;
         private System.Windows.Forms.Button btnChoosePlatformDatabases;
         private System.Windows.Forms.PictureBox pbDisconnected;
     }

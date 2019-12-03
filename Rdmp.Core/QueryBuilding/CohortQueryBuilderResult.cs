@@ -18,7 +18,6 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.QueryCaching.Aggregation;
-using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.QueryBuilding
@@ -83,6 +82,7 @@ namespace Rdmp.Core.QueryBuilding
         /// <param name="cacheServer"></param>
         /// <param name="childProvider"></param>
         /// <param name="helper"></param>
+        /// <param name="customise"></param>
         public CohortQueryBuilderResult(ExternalDatabaseServer cacheServer, ICoreChildProvider childProvider, CohortQueryBuilderHelper helper,QueryBuilderCustomArgs customise)
         {
             CacheServer = cacheServer;
@@ -265,10 +265,12 @@ namespace Rdmp.Core.QueryBuilding
             var dis = arg as IDisableable;
             return dis == null || !dis.IsDisabled;
         }
+
         /// <summary>
         /// Returns the SQL keyword for the <paramref name="currentContainerOperation"/>
         /// </summary>
         /// <param name="currentContainerOperation"></param>
+        /// <param name="dbType"></param>
         /// <returns></returns>
         protected virtual string GetSetOperationSql(SetOperation currentContainerOperation,DatabaseType dbType)
         {
@@ -351,7 +353,10 @@ namespace Rdmp.Core.QueryBuilding
             if (CacheServer == null)
                 SetCacheUsage(CacheUsage.AllOrNothing,"there is no cache server");
             else
+            {
+                _log.AppendLine($"Cache Server:{CacheServer.Server} (DatabaseType:{CacheServer.DatabaseType})");
                 SetCacheUsage(CacheUsage.Opportunistic, "there is a cache server (so starting with Opportunistic)");
+            }
             
             DependenciesSingleServer =  new DataAccessPointCollection(true);
 
@@ -373,7 +378,7 @@ namespace Rdmp.Core.QueryBuilding
 
         private void HandleDependency(CohortQueryBuilderDependency dependency,bool isPatientIndexTable, ITableInfo dependantTable)
         {
-            _log.AppendLine($"Found dependant table '{dependantTable}'");
+            _log.AppendLine($"Found dependant table '{dependantTable}' (Server:{dependantTable.Server} DatabaseType:{dependantTable.DatabaseType})");
             
             //if dependencies are on different servers / access credentials
             if(DependenciesSingleServer != null)
@@ -421,7 +426,10 @@ namespace Rdmp.Core.QueryBuilding
         private void LogDependencies()
         {
             foreach (var d in Dependencies)
+            {
                 _log.AppendLine($"Dependency '{d}' is {d.DescribeCachedState()}");
+                _log.AppendLine($"Dependency '{d}' IsExtractionIdentifier column is {d.ExtractionIdentifierColumn?.GetRuntimeName() ?? "NULL"}");
+            }   
         }
 
         

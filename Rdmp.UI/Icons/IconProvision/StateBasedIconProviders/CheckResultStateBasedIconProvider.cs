@@ -6,6 +6,7 @@
 
 using System;
 using System.Drawing;
+using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders

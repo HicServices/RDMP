@@ -20,6 +20,36 @@ namespace Rdmp.Core.Logging
             LoggingTable = loggingTable;
         }
 
+        /// <summary>
+        /// Creates a new filter showing records in the <paramref name="loggingTable"/> that belong to a parent Type (share foreign key
+        /// <paramref name="id"/> e.g. applying a filter on <see cref="LoggingTables.ProgressLog"/> will show all log entries for
+        /// the parent <see cref="LoggingTables.TableLoadRun"/> with that <paramref name="id"/>.  Pass null to not filter.
+        /// </summary>
+        /// <param name="loggingTable"></param>
+        /// <param name="id">ID of the parent object for which to extract a matching row collection</param>
+        public LogViewerFilter(LoggingTables loggingTable, int? id)
+        {
+            LoggingTable = loggingTable;
+            switch (loggingTable)
+            {
+                case LoggingTables.DataLoadTask:
+                    Task = id;
+                    break;
+                case LoggingTables.DataLoadRun:
+                    Task = id;
+                    break;
+                case LoggingTables.ProgressLog:
+                case LoggingTables.FatalError:
+                case LoggingTables.TableLoadRun:
+                    Run = id;
+                    break;
+                case LoggingTables.DataSource:
+                    Table = id;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(loggingTable), loggingTable, null);
+            }
+        }
         public LoggingTables LoggingTable {get;set;}
 
         public bool IsEmpty { get { return Run == null && Table == null && Task == null; } }

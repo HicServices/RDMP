@@ -140,11 +140,14 @@ namespace Rdmp.Core.DataQualityEngine.Data
                , "@PivotCategory"
                );
 
-            var cmd = DatabaseCommandHelper.GetCommand(sql, con, transaction);
-            DatabaseCommandHelper.AddParameterWithValueToCommand("@ItemValidatorXML", cmd, ItemValidatorXML);
-            DatabaseCommandHelper.AddParameterWithValueToCommand("@TargetProperty", cmd, TargetProperty);
-            DatabaseCommandHelper.AddParameterWithValueToCommand("@PivotCategory", cmd, pivotCategory);
-            cmd.ExecuteNonQuery();
+            using (var cmd = DatabaseCommandHelper.GetCommand(sql, con, transaction))
+            {
+                DatabaseCommandHelper.AddParameterWithValueToCommand("@ItemValidatorXML", cmd, ItemValidatorXML);
+                DatabaseCommandHelper.AddParameterWithValueToCommand("@TargetProperty", cmd, TargetProperty);
+                DatabaseCommandHelper.AddParameterWithValueToCommand("@PivotCategory", cmd, pivotCategory);
+                cmd.ExecuteNonQuery();
+            }
+            
 
             IsCommitted = true;
         }

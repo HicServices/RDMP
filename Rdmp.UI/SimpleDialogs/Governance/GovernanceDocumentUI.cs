@@ -14,8 +14,8 @@ using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
-using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
+
+
 
 namespace Rdmp.UI.SimpleDialogs.Governance
 {

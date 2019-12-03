@@ -16,10 +16,10 @@ using Rdmp.UI.Copying;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
+using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableUIComponents;
-using ReusableUIComponents.ScintillaHelper;
+
 using ScintillaNET;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks
@@ -76,7 +76,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks
                 if (_scintilla == null)
                 {
                     ScintillaTextEditorFactory factory = new ScintillaTextEditorFactory();
-                    _scintilla = factory.Create(new RDMPCommandFactory());
+                    _scintilla = factory.Create(new RDMPCombineableFactory());
                     groupBox1.Controls.Add(_scintilla);
                     _scintilla.SavePointLeft += ScintillaOnSavePointLeft;
                     ObjectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;    

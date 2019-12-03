@@ -185,8 +185,8 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             {
                 con.Open();
                 //delete half the records (so we can simulate cohort refresh)
-                var cmd = cohortTable.Database.Server.GetCommand(string.Format("DELETE TOP (10) PERCENT from {0}",cohortTable.GetFullyQualifiedName()), con);
-                cmd.ExecuteNonQuery();
+                using(var cmd = cohortTable.Database.Server.GetCommand(string.Format("DELETE TOP (10) PERCENT from {0}",cohortTable.GetFullyQualifiedName()), con))
+                    cmd.ExecuteNonQuery();
             }
             
             var ec1 = CreateExtractionConfiguration(project,cohort,"First Extraction (2016 - project 123)",true,notifier,biochem,prescribing,demography);
@@ -338,7 +338,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
 
             //Create a new cohort set to the 'Inclusion Criteria' based on the filters Catalogue
             var cata = inclusionFilter1.ExtractionInformation.CatalogueItem.Catalogue;
-            var ac = cic.CreateNewEmptyConfigurationForCatalogue(cata,(a,b)=>{throw new Exception("Problem encountered with chi column(s)");},false);
+            var ac = cic.CreateNewEmptyConfigurationForCatalogue(cata,(a,b)=> throw new Exception("Problem encountered with chi column(s)"),false);
             container.AddChild(ac,0);
 
             //Add the filter to the WHERE logic of the cohort set
@@ -380,7 +380,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             using(var con = db.Server.GetConnection())
             {
                 con.Open();
-                var cmd = db.Server.GetCommand(
+                using(var cmd = db.Server.GetCommand(
 
                 @"create view vConditions as
 
@@ -393,12 +393,12 @@ FROM
 UNPIVOT 
 (
   Condition FOR Field IN (MainCondition,OtherCondition1,OtherCondition2,OtherCondition3)
-) AS up;",con);
+) AS up;",con))
                 cmd.ExecuteNonQuery();
 
                 
 
-                cmd = db.Server.GetCommand(
+                using(var cmd = db.Server.GetCommand(
 @"create view vOperations as
 
 SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,Operation,Field
@@ -410,7 +410,7 @@ FROM
 UNPIVOT 
 (
   Operation FOR Field IN (MainOperation,OtherOperation1,OtherOperation2,OtherOperation3)
-) AS up;",con);
+) AS up;",con))
                 cmd.ExecuteNonQuery();
                 
 

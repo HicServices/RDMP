@@ -167,17 +167,21 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
             {
                 con.Open();
                 var sql = GetMappingTableSql();
-                var cmd = server.GetCommand(sql, con);
-                cmd.CommandTimeout = Timeout;
 
-                var r = cmd.ExecuteReader();
-
-                while (r.Read())
+                using (var cmd = server.GetCommand(sql, con))
                 {
-                    if(!_mappingTable.ContainsKey(r[fromColumnName]))
-                        _mappingTable.Add(r[fromColumnName],new List<object>());
+                    cmd.CommandTimeout = Timeout;
 
-                    _mappingTable[r[fromColumnName]].Add(r[toColumnName]);
+                    using (var r = cmd.ExecuteReader())
+                    {
+                        while (r.Read())
+                        {
+                            if(!_mappingTable.ContainsKey(r[fromColumnName]))
+                                _mappingTable.Add(r[fromColumnName],new List<object>());
+
+                            _mappingTable[r[fromColumnName]].Add(r[toColumnName]);
+                        }
+                    }
                 }
             }
         }

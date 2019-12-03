@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Repositories.Managers;
 using ReusableLibraryCode.DataAccess;
 using Tests.Common;
 
@@ -345,6 +346,21 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 
             }
 
+        }
+
+        [Test]
+        public void Test_BlankPasswords()
+        {
+            var creds = new DataAccessCredentials(CatalogueRepository, "blankpwdCreds");
+            creds.Username = "Root";
+            creds.Password = "";
+
+            creds.SaveToDatabase();
+
+
+            var manager = new TableInfoCredentialsManager(CatalogueRepository);
+            Assert.AreEqual(creds,manager.GetCredentialByUsernameAndPasswordIfExists("Root",null));
+            Assert.AreEqual(creds,manager.GetCredentialByUsernameAndPasswordIfExists("Root",""));
         }
     }
 }

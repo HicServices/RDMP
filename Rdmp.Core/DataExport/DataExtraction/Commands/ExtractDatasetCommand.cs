@@ -8,11 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
+using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Commands
 {
@@ -139,6 +141,23 @@ namespace Rdmp.Core.DataExport.DataExtraction.Commands
         public override string DescribeExtractionImplementation()
         {
             return QueryBuilder.SQL;
+        }
+
+        /// <inheritdoc/>
+        public DiscoveredServer GetDistinctLiveDatabaseServer()
+        {
+            IDataAccessPoint[] points;
+
+            if (QueryBuilder?.TablesUsedInQuery != null) 
+                points = QueryBuilder.TablesUsedInQuery.ToArray(); //get it from the request if it has been built
+            else
+                points = Catalogue.GetTableInfoList(false); //or from the Catalogue directly if the query hasn't been built
+
+            var singleServer = new DataAccessPointCollection(true, DataAccessContext.DataExport);
+            singleServer.AddRange(points);
+           
+            return singleServer.GetDistinctServer();
+        
         }
     }
 }

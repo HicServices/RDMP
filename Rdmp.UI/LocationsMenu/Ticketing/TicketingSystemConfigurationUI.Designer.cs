@@ -45,7 +45,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.tbName = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.checksUI1 = new ReusableUIComponents.ChecksUI.ChecksUI();
+            this.checksUI1 = new ChecksUI.ChecksUI();
             this.btnCreate = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -305,7 +305,7 @@
         private System.Windows.Forms.TextBox tbID;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.GroupBox gbTicketingSystem;
-        private ReusableUIComponents.ChecksUI.ChecksUI checksUI1;
+        private ChecksUI.ChecksUI checksUI1;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.ComboBox ddCredentials;
         private System.Windows.Forms.Button btnEditCredentials;

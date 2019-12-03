@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.Versioning
+﻿using Rdmp.UI.SimpleControls;
+
+namespace Rdmp.UI.Versioning
 {
     partial class CreatePlatformDatabase
     {
@@ -28,9 +30,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.checksUI1 = new ReusableUIComponents.ChecksUI.ChecksUI();
+            this.checksUI1 = new ChecksUI.ChecksUI();
             this.btnCreate = new System.Windows.Forms.Button();
-            this.serverDatabaseTableSelector1 = new ReusableUIComponents.ServerDatabaseTableSelector();
+            this.serverDatabaseTableSelector1 = new ServerDatabaseTableSelector();
             this.SuspendLayout();
             // 
             // checksUI1
@@ -85,8 +87,8 @@
         }
 
         #endregion
-        private ReusableUIComponents.ChecksUI.ChecksUI checksUI1;
+        private ChecksUI.ChecksUI checksUI1;
         private System.Windows.Forms.Button btnCreate;
-        private ReusableUIComponents.ServerDatabaseTableSelector serverDatabaseTableSelector1;
+        private ServerDatabaseTableSelector serverDatabaseTableSelector1;
     }
 }

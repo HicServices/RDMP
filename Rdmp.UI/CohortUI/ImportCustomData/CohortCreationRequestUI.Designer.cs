@@ -1,4 +1,7 @@
-﻿namespace Rdmp.UI.CohortUI.ImportCustomData
+﻿using Rdmp.UI.ChecksUI;
+using Rdmp.UI.SimpleControls;
+
+namespace Rdmp.UI.CohortUI.ImportCustomData
 {
     partial class CohortCreationRequestUI
     {
@@ -52,7 +55,7 @@
             this.label11 = new System.Windows.Forms.Label();
             this.btnClearProject = new System.Windows.Forms.Button();
             this.btnOk = new System.Windows.Forms.Button();
-            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmiley1 = new RAGSmiley();
             this.gbDescription = new System.Windows.Forms.GroupBox();
             this.pbProject = new System.Windows.Forms.PictureBox();
             this.pbCohortSource = new System.Windows.Forms.PictureBox();
@@ -64,7 +67,7 @@
             this.tbExistingCohortSource = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
-            this.existingHelpIcon = new ReusableUIComponents.HelpIcon();
+            this.existingHelpIcon = new HelpIcon();
             this.gbRevisedCohort.SuspendLayout();
             this.gbNewCohort.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -521,7 +524,7 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Button btnClearProject;
         private System.Windows.Forms.Button btnOk;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
+        private RAGSmiley ragSmiley1;
         private System.Windows.Forms.GroupBox gbDescription;
         private System.Windows.Forms.PictureBox pbProject;
         private System.Windows.Forms.PictureBox pbCohortSource;
@@ -533,6 +536,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tbExistingCohortSource;
         private System.Windows.Forms.TextBox tbExistingVersion;
-        private ReusableUIComponents.HelpIcon existingHelpIcon;
+        private HelpIcon existingHelpIcon;
     }
 }

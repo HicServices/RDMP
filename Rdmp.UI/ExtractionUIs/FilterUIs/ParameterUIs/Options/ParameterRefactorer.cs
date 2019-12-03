@@ -10,7 +10,8 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.Curation.FilterImporting;
-using ReusableUIComponents;
+using Rdmp.UI.SimpleDialogs;
+
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
 {

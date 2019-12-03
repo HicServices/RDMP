@@ -6,10 +6,11 @@
 
 using System.Drawing;
 using System.Windows.Forms;
+using Rdmp.UI;
 using Rdmp.UI.Menus.MenuItems;
 using Rdmp.UI.SimpleControls;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
-using ReusableUIComponents;
+
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality

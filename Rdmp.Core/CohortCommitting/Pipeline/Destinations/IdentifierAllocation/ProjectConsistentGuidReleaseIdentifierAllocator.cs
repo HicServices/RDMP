@@ -62,6 +62,8 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation
 
             var ect = _request.NewCohortDefinition.LocationOfCohort;
 
+            var syntax = cohortDatabase.Server.GetQuerySyntaxHelper();
+
             using (var con = cohortDatabase.Server.GetConnection())
             {
                 string sql =
@@ -72,7 +74,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation
                         ect.DefinitionTableName,
                         ect.DefinitionTableForeignKeyField,
                         "id",
-                        "projectNumber",
+                        syntax.EnsureWrapped("projectNumber"),
                         _projectNumber);
 
                 var syntaxHelper = ect.GetQuerySyntaxHelper();

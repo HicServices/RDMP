@@ -10,10 +10,11 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Cohort;
-using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.Dialogs;
+using Rdmp.UI.CommandExecution;
+using Rdmp.UI.SimpleDialogs;
+
 
 namespace Rdmp.UI.Collections.Providers.Copying
 {
@@ -23,11 +24,11 @@ namespace Rdmp.UI.Collections.Providers.Copying
     /// </summary>
     public class DragDropProvider:SimpleDragSource
     {
-        private readonly ICommandFactory _commandFactory;
+        private readonly ICombineableFactory _commandFactory;
         private readonly ICommandExecutionFactory _commandExecutionFactory;
         private readonly TreeListView _treeView;
 
-        public DragDropProvider(ICommandFactory commandFactory, ICommandExecutionFactory commandExecutionFactory, TreeListView treeView)
+        public DragDropProvider(ICombineableFactory commandFactory, ICommandExecutionFactory commandExecutionFactory, TreeListView treeView)
         {
             _commandFactory = commandFactory;
             _commandExecutionFactory = commandExecutionFactory;
@@ -141,7 +142,7 @@ namespace Rdmp.UI.Collections.Providers.Copying
            {
                //get file list
                var files = dataObject.GetFileDropList().Cast<string>().Select(s => new FileInfo(s)).ToArray();
-               ICommand fileCommand = _commandFactory.Create(files);
+               ICombineToMakeCommand fileCommand = _commandFactory.Create(files);
 
                //if command factory supports generating file based commands
                if (fileCommand != null)
@@ -168,7 +169,7 @@ namespace Rdmp.UI.Collections.Providers.Copying
                 var toReturn = (OLVDataObject)base.StartDrag(olv, button, item);
                 
                 //can we process it into a command?
-                ICommand command = _commandFactory.Create(toReturn);
+                ICombineToMakeCommand command = _commandFactory.Create(toReturn);
 
                 if (command == null)
                     return null;//it couldn't become a command so leave it as a model object

@@ -21,7 +21,7 @@
 | NPOI | [GitHub](https://github.com/tonyqus/npoi) | [2.4.1](https://www.nuget.org/packages/NPOI/2.4.1) | Apache 2.0 | Enables reading/writing Microsoft Excel files |
 | ExcelNumberFormat | [GitHub](https://github.com/andersnm/ExcelNumberFormat) | [1.0.7](https://www.nuget.org/packages/ExcelNumberFormat/1.0.7) |[MIT](https://opensource.org/licenses/MIT)  | Handles translating number formats from Excel formats into usable values | |
 | [NLog](https://nlog-project.org/) | [GitHub](https://github.com/NLog/NLog) | [4.6.5](https://www.nuget.org/packages/NLog/4.6.5) | [BSD 3-Clause](https://github.com/NLog/NLog/blob/dev/LICENSE.txt) | Flexible user configurable logging | |
-| HIC.FAnsiSql |[GitHub](https://github.com/HicServices/FAnsiSql) | [0.10.7](https://www.nuget.org/packages/HIC.FansiSql/0.10.7) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | [DBMS] abstraction layer |
+| HIC.FAnsiSql |[GitHub](https://github.com/HicServices/FAnsiSql) | [0.10.13](https://www.nuget.org/packages/HIC.FansiSql/0.10.13) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | [DBMS] abstraction layer |
 | HIC.BadMedicine | [GitHub](https://github.com/HicServices/BadMedicine) | [0.1.5](https://www.nuget.org/packages/HIC.BadMedicine/0.1.5) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | Generate Test Datasets for tests/exericses |
 | SSH.NET  | [GitHub](https://github.com/sshnet/SSH.NET)  | [2016.1.0](https://www.nuget.org/packages/SSH.NET/2016.1.0) | [MIT](https://github.com/sshnet/SSH.NET/blob/develop/LICENSE) | Enables fetching files from SFTP servers |
 | Moq 4 | [GitHub](https://github.com/moq/moq4) | [4.12.0](https://www.nuget.org/packages/Moq/4.12.0) |[BSD 3](https://github.com/moq/moq4/blob/master/License.txt)  | Mock objects during unit testing |
@@ -43,5 +43,8 @@
 | System.Globalization | [GitHub](https://github.com/dotnet/corefx) | [4.3.0](https://www.nuget.org/packages/System.Globalization/4.3.0) |[MIT](https://opensource.org/licenses/MIT) | Provides classes that define culture-related information |  |
 | System.Net.NameResolution | [GitHub](https://github.com/dotnet/corefx) | [4.3.0](https://www.nuget.org/packages/System.Net.NameResolution/4.3.0) |[MIT](https://opensource.org/licenses/MIT) | Provides the System.Net.Dns class, which enables developers to perform simple domain name resolution |  |
 | System.Net.Primitives | [GitHub](https://github.com/dotnet/corefx) | [4.3.0](https://www.nuget.org/packages/System.Net.Primitives/4.3.0) |[MIT](https://opensource.org/licenses/MIT) | Provides common types for network-based libraries |  |
+| System.Security.Permissions |[GitHub](https://github.com/dotnet/corefx) | [4.6.0](https://www.nuget.org/packages/System.Security.Permissions/4.6.0) |[MIT](https://opensource.org/licenses/MIT) | Provides common types for Xml doc reading in UI code |  |
+| [AutoComplete Console](https://www.codeproject.com/Articles/1182358/Using-Autocomplete-in-Windows-Console-Applications) by Jasper Lammers | Embedded | 4.0 | [CPOL](https://www.codeproject.com/info/cpol10.aspx) | Provides interactive autocomplete in console input | |
+| System.Resources.Extensions | [GitHub](https://github.com/dotnet/corefx) | [4.6.0](https://www.nuget.org/packages/System.Resources.Extensions/4.6.0) | [MIT](https://opensource.org/licenses/MIT) | Allows [publishing with dotnet publish on machines with netcoreapp3.0 SDK installed](https://github.com/microsoft/msbuild/issues/4704#issuecomment-530034240) | |
 
 [DBMS]: ./Glossary.md#DBMS

@@ -7,11 +7,9 @@
 using System;
 using System.Data;
 using System.Data.Common;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
-using Rdmp.Core.QueryBuilding;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CohortCreation.Execution
@@ -45,7 +43,8 @@ namespace Rdmp.Core.CohortCreation.Execution
         private DbCommand _cmdCount;
         private DbDataReader _rIds;
         private DbDataReader _rCumulative;
-        
+        private DbCommand _cmdCountCumulative;
+
         public CohortIdentificationTaskExecution(IDataAccessPoint cacheServerIfAny, string countSQL, string cumulativeSQL, CancellationTokenSource cancellationTokenSource, int subQueries, int subqueriesCached, bool isResultsForRootContainer,DiscoveredServer target)
         {
             _cacheServerIfAny = cacheServerIfAny;
@@ -125,9 +124,9 @@ namespace Rdmp.Core.CohortCreation.Execution
                 {
                     CumulativeIdentifiers = new DataTable();
 
-                    var cmdCountCumulative = server.GetCommand(CumulativeSQL, con);
-                    cmdCountCumulative.CommandTimeout = commandTimeout;
-                    cumulativeIdentifiersRead = cmdCountCumulative.ExecuteReaderAsync(_cancellationTokenSource.Token);
+                    _cmdCountCumulative = server.GetCommand(CumulativeSQL, con);
+                    _cmdCountCumulative.CommandTimeout = commandTimeout;
+                    cumulativeIdentifiersRead = _cmdCountCumulative.ExecuteReaderAsync(_cancellationTokenSource.Token);
                 }
 
                 if (cumulativeIdentifiersRead != null)
@@ -145,17 +144,12 @@ namespace Rdmp.Core.CohortCreation.Execution
 
         public void Dispose()
         {
-            if(Identifiers != null)
-                Identifiers.Dispose();
-            
-            if(CumulativeIdentifiers != null)
-                CumulativeIdentifiers.Dispose();
-
-            if (_rIds != null)
-                _rIds.Dispose();
-
-            if (_rCumulative != null)
-                _rCumulative.Dispose();
+            Identifiers?.Dispose();
+            CumulativeIdentifiers?.Dispose();
+            _rIds?.Dispose();
+            _rCumulative?.Dispose();
+            _cmdCount?.Dispose();
+            _cmdCountCumulative?.Dispose();
         }
     }
 }

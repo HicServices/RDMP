@@ -127,7 +127,7 @@ namespace Rdmp.Core.DataExport.DataRelease.Audit
                                        });
         }
 
-        public ReleaseLog(IRepository repository, DbDataReader r):base(repository,r)
+        public ReleaseLog(IDataExportRepository repository, DbDataReader r):base(repository,r)
         {
             CumulativeExtractionResults_ID = Convert.ToInt32(r["CumulativeExtractionResults_ID"]);
             Username = r["Username"].ToString();

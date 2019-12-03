@@ -144,32 +144,34 @@ FROM
             {
                 con.Open();
 
-                var cmd = server.GetCommand(
+                using (var cmd = server.GetCommand(
                     SqlToCountLetters
-                        .Replace("FIELDTOEVALUATE",_columnInfo.GetRuntimeName())
+                        .Replace("FIELDTOEVALUATE", _columnInfo.GetRuntimeName())
                         .Replace("TABLETOEVALUATE", _parent.Name)
-                    ,con);
+                    , con))
+                {
+                    cmd.CommandTimeout = timeoutInMilliseconds;
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        reader.Read();
 
-                cmd.CommandTimeout = timeoutInMilliseconds;
-                var reader = cmd.ExecuteReader();
+                        int longestString = int.Parse(reader[0].ToString());
+                        int largestNumberOfCharactersSpotted = int.Parse(reader[1].ToString());
 
-                reader.Read();
+                        string resultPattern = "";
 
-                int longestString = int.Parse(reader[0].ToString());
-                int largestNumberOfCharactersSpotted = int.Parse(reader[1].ToString());
+                        for (int i = 0; i < largestNumberOfCharactersSpotted; i++)
+                            resultPattern += 'Z';
 
-                string resultPattern = "";
+                        for (int i = 0; i < longestString - largestNumberOfCharactersSpotted; i++)
+                            resultPattern += '9';
 
-                for (int i = 0; i < largestNumberOfCharactersSpotted; i++)
-                    resultPattern += 'Z';
+                        //double up on the first character type (ask chris hall about this)
+                        resultPattern = resultPattern.ToCharArray()[0] + resultPattern;
 
-                for (int i = 0; i < longestString - largestNumberOfCharactersSpotted; i++)
-                    resultPattern += '9';
-
-                //double up on the first character type (ask chris hall about this)
-                resultPattern = resultPattern.ToCharArray()[0] + resultPattern;
-
-                return resultPattern;
+                        return resultPattern;
+                    }
+                }
             }
         }
     }

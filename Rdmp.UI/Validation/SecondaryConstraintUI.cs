@@ -19,6 +19,7 @@ using Rdmp.Core.Validation.Constraints;
 using Rdmp.Core.Validation.Constraints.Secondary;
 using Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 using Rdmp.Core.Validation.UIAttributes;
+using ReusableLibraryCode;
 
 namespace Rdmp.UI.Validation
 {
@@ -157,7 +158,7 @@ namespace Rdmp.UI.Validation
                         cbx.Items.Add("");
                         cbx.DropDownStyle = ComboBoxStyle.DropDownList;
                         cbx.Tag = i;
-                        cbx.SelectedIndexChanged += (s, e) => _requiredProperties[(int)cbx.Tag].SetValue(SecondaryConstriant, Convert.ChangeType(cbx.SelectedItem, _requiredProperties[(int)cbx.Tag].PropertyType), null);
+                        cbx.SelectedIndexChanged += (s, e) => _requiredProperties[(int)cbx.Tag].SetValue(SecondaryConstriant, UsefulStuff.ChangeType(cbx.SelectedItem, _requiredProperties[(int)cbx.Tag].PropertyType), null);
                         cbx.Width = 350;
                         
                         valueControl = cbx;
@@ -263,18 +264,7 @@ namespace Rdmp.UI.Validation
                 else
                 {
                     Type underlyingType = _requiredProperties[propertyIdx].PropertyType;
-
-                    if (underlyingType.IsGenericType && underlyingType.GetGenericTypeDefinition() == typeof(Nullable<>))
-                        underlyingType = Nullable.GetUnderlyingType(underlyingType);
-
-                    if (underlyingType == typeof(DateTime))
-                    {
-                        //Convert.ChangeType doesn't handle dates, so let's deal with that one ourself
-                        DateTime dt = DateTime.Parse(senderAsControl.Text);
-                        _requiredProperties[propertyIdx].SetValue(SecondaryConstriant, dt, null);
-                    }
-                    else
-                        _requiredProperties[propertyIdx].SetValue(SecondaryConstriant, Convert.ChangeType(senderAsControl.Text, underlyingType), null);        
+                    _requiredProperties[propertyIdx].SetValue(SecondaryConstriant, UsefulStuff.ChangeType(senderAsControl.Text, underlyingType), null);        
                 }
 
                 

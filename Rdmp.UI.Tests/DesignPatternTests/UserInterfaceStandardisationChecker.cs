@@ -18,6 +18,7 @@ using Rdmp.Core.Providers.Nodes.UsedByNodes;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.CatalogueSummary.DataQualityReporting;
 using Rdmp.UI.CatalogueSummary.LoadEvents;
+using Rdmp.UI.CommandExecution.Proposals;
 using Rdmp.UI.DashboardTabs;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus;
@@ -26,7 +27,6 @@ using Rdmp.UI.PieCharts;
 using Rdmp.UI.Raceway;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ResearchDataManagementPlatform;
-using ReusableUIComponents.CommandExecution.Proposals;
 
 namespace Rdmp.UI.Tests.DesignPatternTests
 {
@@ -154,6 +154,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests
             //Drag and drop / Activation - Execution Proposal system
             foreach (Type proposalClass in mef.GetAllTypes().Where(t => typeof(ICommandExecutionProposal).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
             {
+                if(proposalClass.Namespace.Contains("Rdmp.UI.Tests.DesignPatternTests"))
+                    continue;
+
                 //We are looking at something like AutomationServerSlotsMenu
                 if (!proposalClass.Name.StartsWith("ProposeExecutionWhenTargetIs"))
                 {

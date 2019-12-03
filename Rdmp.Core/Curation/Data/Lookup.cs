@@ -210,6 +210,8 @@ namespace Rdmp.Core.Curation.Data
         /// <returns>All lookup relationships, a given table could have 2+ of these e.g. SendingLocation and DischargeLocation could both reference z_Location lookup</returns>
         public static Lookup[] GetAllLookupsBetweenTables(TableInfo foreignKeyTable,TableInfo primaryKeyTable)
         {
+            List<Lookup> toReturn = new List<Lookup>();
+
             if(foreignKeyTable.Equals(primaryKeyTable))
                 throw new NotSupportedException("Tables must be different");
 
@@ -219,32 +221,25 @@ namespace Rdmp.Core.Curation.Data
             var repo = ((CatalogueRepository) foreignKeyTable.Repository);
             using (var con = repo.GetConnection())
             {
-                DbCommand cmd;
-                cmd = DatabaseCommandHelper.GetCommand(@"SELECT * FROM [Lookup] 
+
+                using (var cmd = DatabaseCommandHelper.GetCommand(@"SELECT * FROM [Lookup] 
   WHERE 
   (SELECT TableInfo_ID FROM ColumnInfo where ID = PrimaryKey_ID) = @primaryKeyTableID
   AND
   (SELECT TableInfo_ID FROM ColumnInfo where ID = [ForeignKey_ID]) = @foreignKeyTableID"
-                                     , con.Connection,con.Transaction);
-
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@primaryKeyTableID", cmd));
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@foreignKeyTableID", cmd));
-
-                cmd.Parameters["@primaryKeyTableID"].Value = primaryKeyTable.ID;
-                cmd.Parameters["@foreignKeyTableID"].Value = foreignKeyTable.ID;
-
-                DbDataReader r = cmd.ExecuteReader();
-
-                List<Lookup> toReturn = new List<Lookup>();
-
-
-                while (r.Read())
+                    , con.Connection, con.Transaction))
                 {
-                    toReturn.Add(new Lookup(repo,r));
+                    cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@primaryKeyTableID", cmd));
+                    cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@foreignKeyTableID", cmd));
+
+                    cmd.Parameters["@primaryKeyTableID"].Value = primaryKeyTable.ID;
+                    cmd.Parameters["@foreignKeyTableID"].Value = foreignKeyTable.ID;
+
+                    using (DbDataReader r = cmd.ExecuteReader())
+                        while (r.Read())
+                            toReturn.Add(new Lookup(repo, r));
                 }
-
-                r.Close();
-
+                
                 return toReturn.ToArray();
             }
         }

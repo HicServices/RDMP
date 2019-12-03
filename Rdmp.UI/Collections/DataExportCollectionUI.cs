@@ -6,6 +6,7 @@
 
 using System;
 using BrightIdeasSoftware;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
@@ -13,7 +14,6 @@ using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs.NavigateTo;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.Collections
@@ -124,8 +124,6 @@ namespace Rdmp.UI.Collections
                 tlvDataExport.AddObjects(dataExportChildProvider.AllPackages);
                 tlvDataExport.AddObjects(dataExportChildProvider.Projects);
             }
-            
-            NavigateToObjectUI.RecordThatTypeIsNotAUsefulParentToShow(typeof(ProjectCohortIdentificationConfigurationAssociationsNode));
         }
         
         public static bool IsRootObject(object root)

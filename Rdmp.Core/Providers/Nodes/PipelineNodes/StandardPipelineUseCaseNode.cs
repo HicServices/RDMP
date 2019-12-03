@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using Rdmp.Core.Curation.Data.Pipelines;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Comments;
@@ -18,6 +19,7 @@ namespace Rdmp.Core.Providers.Nodes.PipelineNodes
     {
         private readonly CommentStore _commentStore;
         public PipelineUseCase UseCase { get; set; }
+        public List<Pipeline> Pipelines { get; } = new List<Pipeline>();
 
         public StandardPipelineUseCaseNode(string caption, PipelineUseCase useCase,CommentStore commentStore) : base(caption)
         {

@@ -168,9 +168,11 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
                 mergeSql = allColumns.Aggregate(mergeSql, (s, n) => s + " source.[" + n + "],").TrimEnd(new[] { ',', ' ' }) + Environment.NewLine;
                 mergeSql += ");" + Environment.NewLine;
 
-                DbCommand cmdInsert = _dumpDatabase.Server.GetCommand(mergeSql, con);
-                cmdInsert.CommandTimeout = Timeout;
-                cmdInsert.ExecuteNonQuery();
+                using (DbCommand cmdInsert = _dumpDatabase.Server.GetCommand(mergeSql, con))
+                {
+                    cmdInsert.CommandTimeout = Timeout;
+                    cmdInsert.ExecuteNonQuery();
+                }
             
                 //PERFORM overwrite with UPDATES
                 string updateSql = "WITH ToUpdate AS (" + Environment.NewLine;
@@ -198,18 +200,20 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
                 updateSql = pks.Aggregate(updateSql, (s, n) => s + " prod.[" + n + "]=ToUpdate.[" + n + "] AND").TrimEnd(new[] { 'A', 'N', 'D', ' ' }) + Environment.NewLine; 
                 updateSql += ")" + Environment.NewLine;
 
-                DbCommand updateCommand = _dumpDatabase.Server.GetCommand(updateSql,con);
-                updateCommand.CommandTimeout = Timeout;
-                updateCommand.ExecuteNonQuery();
+                using(DbCommand updateCommand = _dumpDatabase.Server.GetCommand(updateSql,con))
+                {
+                    updateCommand.CommandTimeout = Timeout;
+                    updateCommand.ExecuteNonQuery();
+                }
 
-
-                DbCommand cmdtruncateIdentifiersArchive = _dumpDatabase.Server.GetCommand("TRUNCATE TABLE " + GetStagingRuntimeName(), con);
-
-                if(!cmdtruncateIdentifiersArchive.CommandText.Contains("_STAGING"))
-                    throw new Exception("Were about to run a command that TRUNCATED a non staging table!");
-                //clear the table now
-                cmdtruncateIdentifiersArchive.ExecuteNonQuery();
-                
+                using (DbCommand cmdtruncateIdentifiersArchive =
+                    _dumpDatabase.Server.GetCommand("TRUNCATE TABLE " + GetStagingRuntimeName(), con))
+                {
+                    if(!cmdtruncateIdentifiersArchive.CommandText.Contains("_STAGING"))
+                        throw new Exception("Were about to run a command that TRUNCATED a non staging table!");
+                    //clear the table now
+                    cmdtruncateIdentifiersArchive.ExecuteNonQuery();
+                }
             }
         }
 
@@ -222,8 +226,8 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
             using (var con = _dumpDatabase.Server.GetConnection())
             {
                 con.Open();
-                DbCommand cmdCreateSTAGING = _dumpDatabase.Server.GetCommand("SELECT TOP 0 * INTO " + GetStagingRuntimeName() + " FROM " + GetRuntimeName(), con);
-                cmdCreateSTAGING.ExecuteNonQuery();
+                using(DbCommand cmdCreateSTAGING = _dumpDatabase.Server.GetCommand("SELECT TOP 0 * INTO " + GetStagingRuntimeName() + " FROM " + GetRuntimeName(), con))
+                    cmdCreateSTAGING.ExecuteNonQuery();
             }
         }
         
@@ -326,12 +330,14 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
             using (var con = _dumpDatabase.Server.GetConnection())
             {
                 con.Open();
-                DbCommand cmdDropSTAGING = _dumpDatabase.Server.GetCommand("DROP TABLE " + GetStagingRuntimeName(), con);
+                using (DbCommand cmdDropSTAGING =
+                    _dumpDatabase.Server.GetCommand("DROP TABLE " + GetStagingRuntimeName(), con))
+                {
+                    if (!cmdDropSTAGING.CommandText.Contains("STAGING"))
+                        throw new Exception("Expected comand " + cmdDropSTAGING.CommandText + " to have the word STAGING in it, do not drop a live ANO table that would be the worst of things!");
 
-                if (!cmdDropSTAGING.CommandText.Contains("STAGING"))
-                    throw new Exception("Expected comand " + cmdDropSTAGING.CommandText + " to have the word STAGING in it, do not drop a live ANO table that would be the worst of things!");
-
-                cmdDropSTAGING.ExecuteNonQuery();
+                    cmdDropSTAGING.ExecuteNonQuery();
+                }
             }
         }
         

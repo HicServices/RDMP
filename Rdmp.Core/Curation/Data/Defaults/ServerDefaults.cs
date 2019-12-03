@@ -53,18 +53,23 @@ namespace Rdmp.Core.Curation.Data.Defaults
 
             using (var con = _repository.GetConnection())
             {
-                var cmd = DatabaseCommandHelper.GetCommand("SELECT ExternalDatabaseServer_ID FROM ServerDefaults WHERE DefaultType = @type", con.Connection, con.Transaction);
-                var p = cmd.CreateParameter();
-                p.ParameterName = "@type";
-                p.Value = StringExpansionDictionary[field];
-                cmd.Parameters.Add(p);
+                using (var cmd = DatabaseCommandHelper.GetCommand(
+                    "SELECT ExternalDatabaseServer_ID FROM ServerDefaults WHERE DefaultType = @type", con.Connection,
+                    con.Transaction))
+                {
+                    var p = cmd.CreateParameter();
+                
+                    p.ParameterName = "@type";
+                    p.Value = StringExpansionDictionary[field];
+                    cmd.Parameters.Add(p);
 
-                var executeScalar = cmd.ExecuteScalar();
+                    var executeScalar = cmd.ExecuteScalar();
 
-                if (executeScalar == DBNull.Value)
-                    return null;
+                    if (executeScalar == DBNull.Value)
+                        return null;
 
-                return _repository.GetObjectByID<ExternalDatabaseServer>(Convert.ToInt32(executeScalar));
+                    return _repository.GetObjectByID<ExternalDatabaseServer>(Convert.ToInt32(executeScalar));
+                }
             }
         }
 
@@ -75,10 +80,12 @@ namespace Rdmp.Core.Curation.Data.Defaults
 
             using (var con = _repository.GetConnection())
             {
-                var cmd = DatabaseCommandHelper.GetCommand("SELECT COUNT(*) AS NumDefaults FROM ServerDefaults WHERE DefaultType=@DefaultType", con.Connection, con.Transaction);
-                DatabaseCommandHelper.AddParameterWithValueToCommand("@DefaultType", cmd, StringExpansionDictionary[type]);
-                var result = cmd.ExecuteScalar();
-                return Convert.ToInt32(result);
+                using(var cmd = DatabaseCommandHelper.GetCommand("SELECT COUNT(*) AS NumDefaults FROM ServerDefaults WHERE DefaultType=@DefaultType", con.Connection, con.Transaction))
+                { 
+                    DatabaseCommandHelper.AddParameterWithValueToCommand("@DefaultType", cmd, StringExpansionDictionary[type]);
+                    var result = cmd.ExecuteScalar();
+                    return Convert.ToInt32(result);
+                }
             }
         }
 

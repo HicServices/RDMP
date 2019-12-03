@@ -6,6 +6,9 @@
 
 namespace Rdmp.Core.Providers.Nodes
 {
+    /// <summary>
+    /// Abstract base for all collection and proxy nodes in RDMP tree hierarchies e.g. <see cref="AllANOTablesNode"/>
+    /// </summary>
     public abstract class Node
     {
     }

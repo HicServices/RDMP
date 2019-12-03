@@ -54,6 +54,8 @@ namespace Rdmp.Core.Providers
         //Load System
         public LoadMetadata[] AllLoadMetadatas { get; set; }
         public ProcessTask[] AllProcessTasks { get; set; }
+        public ProcessTaskArgument[] AllProcessTasksArguments { get; }
+
         public LoadProgress[] AllLoadProgresses { get; set; }
         public CacheProgress[] AllCacheProgresses { get; set; }
         public PermissionWindow[] AllPermissionWindows { get; set; }
@@ -70,9 +72,8 @@ namespace Rdmp.Core.Providers
         
         //This is the reverse of _childDictionary in some ways.  _childDictionary tells you the immediate children while
         //this tells you for a given child object what the navigation tree down to get to it is e.g. ascendancy[child] would return [root,grandParent,parent]
-        private Dictionary<object, DescendancyList> _descendancyDictionary = new Dictionary<object, DescendancyList>();
-
-
+        private ConcurrentDictionary<object, DescendancyList> _descendancyDictionary = new ConcurrentDictionary<object, DescendancyList>();
+        
         public IEnumerable<CatalogueItem> AllCatalogueItems { get { return AllCatalogueItemsDictionary.Values; } }
         
         private From1ToM<Catalogue,CatalogueItem> _catalogueToCatalogueItems;
@@ -98,6 +99,8 @@ namespace Rdmp.Core.Providers
         public OtherPipelinesNode OtherPipelinesNode { get; private set; }
         public Pipeline[] AllPipelines { get; set; }
         public PipelineComponent[] AllPipelineComponents { get; set; }
+        
+        public PipelineComponentArgument[] AllPipelineComponentsArguments { get; }
 
         public StandardRegex[] AllStandardRegexes { get; set; }
 
@@ -164,6 +167,9 @@ namespace Rdmp.Core.Providers
         public JoinableCohortAggregateConfiguration[] AllJoinables { get; set; }
         public JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; set; }
 
+        /// <summary>
+        /// Collection of all objects for which there are masqueraders
+        /// </summary>
         public ConcurrentDictionary<object,HashSet<IMasqueradeAs>> AllMasqueraders { get; private set; }
 
         public readonly IChildProvider[] PluginChildProviders;
@@ -184,7 +190,26 @@ namespace Rdmp.Core.Providers
         public Curation.Data.Plugin[] AllCompatiblePlugins { get; }
 
         public HashSet<StandardPipelineUseCaseNode> PipelineUseCases {get;set; } = new HashSet<StandardPipelineUseCaseNode>();
-            
+
+        
+
+        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type type, bool unwrapMasqueraders)
+        {
+            //things that are a match on Type but not IMasqueradeAs
+            var exactMatches = GetAllSearchables().Keys.Where(t=>!(t is IMasqueradeAs)).Where(type.IsInstanceOfType);
+
+            //Union the unwrapped masqueraders
+            if (unwrapMasqueraders)
+                return exactMatches.Union(
+                    AllMasqueraders
+                        .Select(kvp => kvp.Key)
+                        .OfType<IMapsDirectlyToDatabaseTable>()
+                        .Where(type.IsInstanceOfType))
+                    .Distinct();
+
+            return exactMatches;
+        }
+
         public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get;set; } = new AllOrphanAggregateConfigurationsNode();
 
         public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
@@ -219,6 +244,7 @@ namespace Rdmp.Core.Providers
 
             AllLoadMetadatas = GetAllObjects<LoadMetadata>(repository);
             AllProcessTasks = GetAllObjects<ProcessTask>(repository);
+            AllProcessTasksArguments = GetAllObjects<ProcessTaskArgument>(repository);
             AllLoadProgresses = GetAllObjects<LoadProgress>(repository);
             AllCacheProgresses = GetAllObjects<CacheProgress>(repository);
             
@@ -349,6 +375,7 @@ namespace Rdmp.Core.Providers
             OtherPipelinesNode = new OtherPipelinesNode();
             AllPipelines = GetAllObjects<Pipeline>(repository);
             AllPipelineComponents = GetAllObjects<PipelineComponent>(repository);
+            AllPipelineComponentsArguments = GetAllObjects<PipelineComponentArgument>(repository);
 
             foreach (Pipeline p in AllPipelines)
                 p.InjectKnown(AllPipelineComponents.Where(pc => pc.Pipeline_ID == p.ID).ToArray());
@@ -560,7 +587,7 @@ namespace Rdmp.Core.Providers
             }
 
             children.Add(OtherPipelinesNode);
-
+            OtherPipelinesNode.Pipelines.AddRange(unknownPipelines.Cast<Pipeline>());
             AddToDictionaries(unknownPipelines,descendancy.Add(OtherPipelinesNode));
             
             //it is the first standard use case
@@ -574,10 +601,19 @@ namespace Rdmp.Core.Providers
             
             MemoryRepository repo = new MemoryRepository();
 
+            //Could be an issue here if a pipeline becomes compatible with multiple use cases.
+            //Should be impossible currently but one day it could be an issue especially if we were to
+            //support plugin use cases in this hierarchy
+
             //find compatible pipelines useCase.Value
             foreach (Pipeline compatiblePipeline in AllPipelines.Where(node.UseCase.GetContext().IsAllowable))
             {
-                children.Add(new PipelineCompatibleWithUseCaseNode(repo,compatiblePipeline, node.UseCase));
+                var useCaseNode = new PipelineCompatibleWithUseCaseNode(repo, compatiblePipeline, node.UseCase);
+
+                AddChildren(useCaseNode, descendancy.Add(useCaseNode));
+
+                node.Pipelines.Add(compatiblePipeline);
+                children.Add(useCaseNode);
             }
 
             //it is the first standard use case
@@ -586,6 +622,27 @@ namespace Rdmp.Core.Providers
             return children.Cast<PipelineCompatibleWithUseCaseNode>().Select(u => u.Pipeline);
         }
 
+        private void AddChildren(PipelineCompatibleWithUseCaseNode pipelineNode, DescendancyList descendancy)
+        {
+            var components = AllPipelineComponents.Where(c => c.Pipeline_ID == pipelineNode.Pipeline.ID).OrderBy(o => o.Order)
+                .ToArray();
+
+            foreach (var component in components) 
+                AddChildren(component, descendancy.Add(component));
+
+            HashSet<object> children = new HashSet<object>(components);
+
+            AddToDictionaries(children, descendancy);
+        }
+
+        private void AddChildren(PipelineComponent pipelineComponent, DescendancyList descendancy)
+        {
+            var components = AllPipelineComponentsArguments.Where(c => c.PipelineComponent_ID == pipelineComponent.ID).ToArray();
+            
+            HashSet<object> children = new HashSet<object>(components);
+
+            AddToDictionaries(children, descendancy);
+        }
 
         private void BuildServerNodes()
         {
@@ -772,10 +829,21 @@ namespace Rdmp.Core.Providers
                 p => p.LoadMetadata_ID == loadStageNode.LoadMetadata.ID && p.LoadStage == loadStageNode.LoadStage)
                 .OrderBy(o=>o.Order).ToArray();
 
+            foreach (var processTask in tasks)
+                AddChildren(processTask, descendancy.Add(processTask));
+
             if(tasks.Any())
                 AddToDictionaries(new HashSet<object>(tasks),descendancy);
         }
-
+        
+        private void AddChildren(ProcessTask procesTask, DescendancyList descendancy)
+        {
+            var args = AllProcessTasksArguments.Where(
+                    a => a.ProcessTask_ID == procesTask.ID).ToArray();
+            
+            if(args.Any())
+                AddToDictionaries(new HashSet<object>(args),descendancy);
+        }
         private void AddChildren(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode, DescendancyList descendancy)
         {
             HashSet<object> chilObjects = new HashSet<object>();
@@ -819,9 +887,8 @@ namespace Rdmp.Core.Providers
                 var ciNodeDescendancy = descendancy.Add(catalogueItemsNode);
                 AddToDictionaries(new HashSet<object>(cis), ciNodeDescendancy);
 
-                foreach (CatalogueItem ci in cis)
-                    AddChildren(ci,ciNodeDescendancy.Add(ci));
-                
+                for (var index = 0; index < cis.Length; index++)
+                    AddChildren(cis[index], ciNodeDescendancy.Add(cis[index]));
             }
 
             //do we have any foreign key fields into this lookup table
@@ -928,6 +995,8 @@ namespace Rdmp.Core.Providers
                 childObjects.Add(ei);
                 AddChildren(ei, descendancy.Add(ei));
             }
+            else
+                ci.InjectKnown((ExtractionInformation)null); // we know the CatalogueItem has no ExtractionInformation child because it's not in the dictionary
 
             if (ci.ColumnInfo_ID.HasValue)
                 childObjects.Add(new LinkedColumnInfoNode(ci, _allColumnInfos[ci.ColumnInfo_ID.Value]));
@@ -979,8 +1048,22 @@ namespace Rdmp.Core.Providers
         {
            
             //if we don't have a record of any children in the child dictionary for the parent model object
-            if(!_childDictionary.ContainsKey(model))
+            if (!_childDictionary.ContainsKey(model))
+            {
+                //if they want the children of a Pipeline (which we don't track) we will have to look under PipelineUseCase instead
+                if (model is Pipeline p)
+                {
+                    if (OtherPipelinesNode.Pipelines.Contains(p))
+                        return GetChildren(OtherPipelinesNode);
+
+                    var useCase = PipelineUseCases.SingleOrDefault(u => u.Pipelines.Contains(p));
+                    if (useCase != null)
+                        return GetChildren(useCase);
+                }
+                
                 return new object[0];//return none
+            }
+                
             
             return _childDictionary[model].OrderBy(o=>o.ToString()).ToArray();
         }
@@ -1161,7 +1244,6 @@ namespace Rdmp.Core.Providers
                 AddToDictionaries(children,descendancy);
         }
 
-        private object oAddToDictionariesLock = new object();
         protected void AddToDictionaries(HashSet<object> children, DescendancyList list)
         {
             if(list.IsEmpty)
@@ -1169,57 +1251,55 @@ namespace Rdmp.Core.Providers
          
             //document that the last parent has these as children
             var parent = list.Last();
-            lock (oAddToDictionariesLock)
+
+            _childDictionary.AddOrUpdate(parent,
+                children, (p, s) =>
+                {
+                    if (!s.SetEquals(children))
+                        throw new Exception("Ambiguous children collections for object '" + parent + "'");
+
+                    return s;
+                });
+            
+            //now document the entire parent order to reach each child object i.e. 'Root=>Grandparent=>Parent'  is how you get to 'Child'
+            foreach (object o in children)
+                _descendancyDictionary.AddOrUpdate(o, list,(k,v)=> HandleDescendancyCollision(k,v,list));
+            
+
+            foreach (IMasqueradeAs masquerader in children.OfType<IMasqueradeAs>())
             {
+                var key = masquerader.MasqueradingAs();
 
-                //we have already seen it before
-                if(_childDictionary.ContainsKey(parent))
-                {
-                    if (!_childDictionary[parent].SetEquals(children))
-                        throw new Exception("Ambiguous children collections for object '" + parent  +"'");
-                }
-                else
-                    _childDictionary.AddOrUpdate(parent,children,(o, set) => set);
+                if (!AllMasqueraders.ContainsKey(key))
+                    AllMasqueraders.AddOrUpdate(key, new HashSet<IMasqueradeAs>(), (o, set) => set);
 
-                //now document the entire parent order to reach each child object i.e. 'Root=>Grandparent=>Parent'  is how you get to 'Child'
-                foreach (object o in children)
-                {
-                    //if there is a collision for the object then it means we already know of another way to get to it (that's a problem, there can be only one)
-                    if(_descendancyDictionary.ContainsKey(o))
-                    {
-
-                        var collision =_descendancyDictionary[o];
-                        //the old way of getting to it was marked with BetterRouteExists so we can discard it
-                        if (collision.BetterRouteExists)
-                            _descendancyDictionary.Remove(o);
-                        //the new one is marked BetterRouteExists so just throw away the new one
-                        else if (list.BetterRouteExists)
-                            continue;
-                        //the new one is marked as the NewBestRoute so we can get rid of the old one and replace it
-                        else if (list.NewBestRoute && !collision.NewBestRoute)
-                            _descendancyDictionary.Remove(o);
-                        else
-                        {
-                            //there was a horrible problem with 
-                            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not add '" + o + "' to Ascendancy Tree with parents " + list + " because it is already listed under hierarchy " + collision,CheckResult.Fail));
-                            return;
-                        }
-                    
-                    }
-
-                    _descendancyDictionary.Add(o, list);
-                }
-
-                foreach (IMasqueradeAs masquerader in children.OfType<IMasqueradeAs>())
-                {
-                    var key = masquerader.MasqueradingAs();
-
-                    if(!AllMasqueraders.ContainsKey(key))
-                        AllMasqueraders.AddOrUpdate(key,new HashSet<IMasqueradeAs>(),(o, set) => set);
-
-                    AllMasqueraders[key].Add(masquerader);
-                }
+                AllMasqueraders[key].Add(masquerader);
             }
+            
+        }
+
+        private DescendancyList HandleDescendancyCollision(object key, DescendancyList oldRoute, DescendancyList newRoute)
+        {
+            //if the new route is the best best
+            if (newRoute.NewBestRoute && !oldRoute.NewBestRoute)
+                return newRoute;
+
+            //the new one is marked BetterRouteExists so just throw away the new one
+            if (newRoute.BetterRouteExists)
+                return oldRoute;
+            
+            //the new one is marked as the NewBestRoute so we can get rid of the old one and replace it
+            if (oldRoute.BetterRouteExists)
+                return newRoute;
+
+            
+            //there was a horrible problem with 
+            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(
+                "Could not add '" + key + "' to Ascendancy Tree with parents " + newRoute +
+                " because it is already listed under hierarchy " + oldRoute, CheckResult.Fail));
+            
+            return oldRoute;
+        
         }
 
         public DescendancyList GetDescendancyListIfAnyFor(object model)
@@ -1321,7 +1401,7 @@ namespace Rdmp.Core.Providers
                                 _childDictionary[o].Add(pluginChild);
                                 
                                 //add to the child collection of the parent object kvp.Key
-                                _descendancyDictionary.Add(pluginChild, newDescendancy);
+                                _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,(s,e)=>newDescendancy);
 
                                 //we have found a new object so we must ask other plugins about it (chances are a plugin will have a whole tree of sub objects)
                                 newObjectsFound.Add(pluginChild);

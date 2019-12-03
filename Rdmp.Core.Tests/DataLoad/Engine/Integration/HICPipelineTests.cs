@@ -180,11 +180,11 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                         "CREATE TABLE TestData ([Col1] [int], [hic_dataLoadRunID] [int] NULL, [hic_validFrom] [datetime] NULL, CONSTRAINT [PK_TestData] PRIMARY KEY CLUSTERED ([Col1] ASC))";
                     const string addValidFromDefault =
                         "ALTER TABLE TestData ADD CONSTRAINT [DF_TestData__hic_validFrom]  DEFAULT (getdate()) FOR [hic_validFrom]";
-                    var cmd = DatabaseCommandHelper.GetCommand(createDatasetTableQuery, con);
-                    cmd.ExecuteNonQuery();
+                    using(var cmd = DatabaseCommandHelper.GetCommand(createDatasetTableQuery, con))
+                        cmd.ExecuteNonQuery();
 
-                    cmd = DatabaseCommandHelper.GetCommand(addValidFromDefault, con);
-                    cmd.ExecuteNonQuery();
+                    using(var cmd = DatabaseCommandHelper.GetCommand(addValidFromDefault, con))
+                        cmd.ExecuteNonQuery();
                 }
 
                 // Ensure the dataset table has been created

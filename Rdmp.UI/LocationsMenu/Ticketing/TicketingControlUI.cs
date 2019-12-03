@@ -7,8 +7,9 @@
 using System;
 using Rdmp.Core.Ticketing;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableUIComponents.Dialogs;
+
 using Color = System.Drawing.Color;
 
 namespace Rdmp.UI.LocationsMenu.Ticketing

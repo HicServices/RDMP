@@ -9,10 +9,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.ItemActivation.Emphasis;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands

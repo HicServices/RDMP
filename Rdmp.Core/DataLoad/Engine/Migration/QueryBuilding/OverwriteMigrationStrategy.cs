@@ -64,7 +64,7 @@ INSERT INTO CrossDatabaseMergeCommandTo..ToTable (Name,Age,Postcode,hic_dataLoad
             sbInsert.AppendLine(string.Format("INSERT INTO {0} ({1},{2})",
                 columnsToMigrate.DestinationTable.GetFullyQualifiedName(),
                 string.Join(",", columnsToMigrate.FieldsToUpdate.Select(c => syntax.EnsureWrapped(c.GetRuntimeName()))),
-                SpecialFieldNames.DataLoadRunID));
+                syntax.EnsureWrapped(SpecialFieldNames.DataLoadRunID)));
 
             sbInsert.AppendLine("SELECT");
 
@@ -127,7 +127,9 @@ INSERT INTO CrossDatabaseMergeCommandTo..ToTable (Name,Age,Postcode,hic_dataLoad
                 sqlLines.Add(new CustomLine(string.Join(",",toSet), QueryComponent.SET));
                 
                 //also update the hic_dataLoadRunID field
-                sqlLines.Add(new CustomLine(string.Format("t1.{0}={1}", SpecialFieldNames.DataLoadRunID,dataLoadInfoID),QueryComponent.SET));
+                sqlLines.Add(new CustomLine(string.Format("t1.{0}={1}", 
+                    syntax.EnsureWrapped(SpecialFieldNames.DataLoadRunID)
+                    ,dataLoadInfoID),QueryComponent.SET));
 
                 //t1.Name <> t2.Name AND t1.Age <> t2.Age etc
                 sqlLines.Add(new CustomLine(string.Join(" OR ", toDiff.Select(c=>GetORLine(c,syntax))), QueryComponent.WHERE));

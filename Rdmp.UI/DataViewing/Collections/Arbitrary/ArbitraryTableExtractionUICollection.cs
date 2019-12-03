@@ -32,7 +32,7 @@ namespace Rdmp.UI.DataViewing.Collections.Arbitrary
         public string Password { get; set; }
         public string GetDecryptedPassword()
         {
-            return Password;
+            return Password ?? "";
         }
 
         /// <summary>

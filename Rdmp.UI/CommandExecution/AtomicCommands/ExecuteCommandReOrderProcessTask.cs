@@ -4,10 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
-using ReusableUIComponents.CommandExecution;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
@@ -17,11 +16,11 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         private readonly InsertOption _insertOption;
         private ProcessTask _sourceProcessTask;
 
-        public ExecuteCommandReOrderProcessTask(IActivateItems activator, ProcessTaskCommand sourceProcessTaskCommand, ProcessTask targetProcessTask, InsertOption insertOption) : base(activator)
+        public ExecuteCommandReOrderProcessTask(IActivateItems activator, ProcessTaskCombineable sourceProcessTaskCombineable, ProcessTask targetProcessTask, InsertOption insertOption) : base(activator)
         {
             _targetProcessTask = targetProcessTask;
             _insertOption = insertOption;
-            _sourceProcessTask = sourceProcessTaskCommand.ProcessTask;
+            _sourceProcessTask = sourceProcessTaskCombineable.ProcessTask;
 
             if (_sourceProcessTask.LoadMetadata_ID != targetProcessTask.LoadMetadata_ID)
                 SetImpossible("ProcessTasks must belong to the same Load");

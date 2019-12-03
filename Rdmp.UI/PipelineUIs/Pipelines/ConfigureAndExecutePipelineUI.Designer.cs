@@ -1,4 +1,5 @@
 ﻿using System.Windows.Forms;
+using Rdmp.UI.Progress;
 
 namespace Rdmp.UI.PipelineUIs.Pipelines
 {
@@ -36,7 +37,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             this.btnPreviewSource = new System.Windows.Forms.Button();
             this.lblTask = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.progressUI1 = new ReusableUIComponents.Progress.ProgressUI();
+            this.progressUI1 = new ProgressUI();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -146,7 +147,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
         private Button btnPreviewSource;
         private Label lblTask;
         private Label label4;
-        private ReusableUIComponents.Progress.ProgressUI progressUI1;
+        private ProgressUI progressUI1;
         private Panel panel1;
 
     }

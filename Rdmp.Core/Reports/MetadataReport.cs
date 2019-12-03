@@ -246,13 +246,14 @@ namespace Rdmp.Core.Reports
             {
                 con.Open();
                
-                var cmd = DatabaseCommandHelper.GetCommand("Select * from " + lookupTable.Name, con);
-                var da = DatabaseCommandHelper.GetDataAdapter(cmd);
+                using(var cmd = DatabaseCommandHelper.GetCommand("Select * from " + lookupTable.Name, con))
+                    using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
+                    {
+                        var dt = new System.Data.DataTable();
+                        da.Fill(dt);
 
-                var dt = new System.Data.DataTable();
-                da.Fill(dt);
-
-                return dt;
+                        return dt;
+                    }
             }
         }
 
@@ -462,16 +463,19 @@ namespace Rdmp.Core.Reports
                 sql += tableToQuery.Name;
 
                 identifierName = hasExtractionIdentifier ? bestExtractionInformation[0].GetRuntimeName() : null;
-            
-                DbCommand cmd = server.GetCommand(sql,con);
-                cmd.CommandTimeout = _args.Timeout;
 
-                DbDataReader r = cmd.ExecuteReader();
-                r.Read();
+                using (DbCommand cmd = server.GetCommand(sql, con))
+                {
+                    cmd.CommandTimeout = _args.Timeout;
 
-                count = Convert.ToInt32(r["recordCount"]);
-                distinct = hasExtractionIdentifier && _args.IncludeDistinctIdentifierCounts ? Convert.ToInt32(r["recordCountDistinct"]) : -1;
-
+                    using (DbDataReader r = cmd.ExecuteReader())
+                    {
+                        r.Read();
+                        count = Convert.ToInt32(r["recordCount"]);
+                        distinct = hasExtractionIdentifier && _args.IncludeDistinctIdentifierCounts ? Convert.ToInt32(r["recordCountDistinct"]) : -1;
+                    }
+                }
+                
                 con.Close();
             }
         }

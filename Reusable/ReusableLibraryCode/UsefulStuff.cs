@@ -518,5 +518,25 @@ namespace ReusableLibraryCode
 
             return parser;
         }
+
+        /// <summary>
+        /// Implementation of <see cref="Convert.ChangeType(object,Type)"/> that works with nullable types,
+        /// dates etc
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="conversionType"></param>
+        /// <returns></returns>
+        public static object ChangeType(object value, Type conversionType)
+        {
+            Type t = Nullable.GetUnderlyingType(conversionType) ?? conversionType;
+
+            if (t == typeof(DateTime) && value is string s)
+            {
+                //Convert.ChangeType doesn't handle dates, so let's deal with that
+                return DateTime.Parse(s);
+            }
+
+            return value == null || value is string sval && string.IsNullOrWhiteSpace(sval) ? null : Convert.ChangeType(value, t);
+        }
     }
 }

@@ -39,6 +39,11 @@ namespace Rdmp.Core.Logging
         /// If the Server was set from a persistent database reference this property will store it e.g. a logging ExternalDatabaseServer
         /// </summary>
         public IDataAccessPoint DataAccessPointIfAny { get; private set; }
+        
+        /// <summary>
+        /// Event triggered every time a new <see cref="IDataLoadInfo"/> is created.
+        /// </summary>
+        public event DataLoadInfoHandler DataLoadInfoCreated;
 
         public LogManager(DiscoveredServer server)
         {
@@ -52,24 +57,25 @@ namespace Rdmp.Core.Logging
 
         public string[] ListDataTasks(bool hideTests=false)
         {
+            List<string> tasks = new List<string>();
+
             using (var con = Server.GetConnection())
             {
                 con.Open();
-                DbCommand cmd = Server.GetCommand("SELECT * FROM DataLoadTask",con);
-
-                DbDataReader r = cmd.ExecuteReader();
-
-                List<string> tasks = new List<string>();
-                while (r.Read())
+                using (DbCommand cmd = Server.GetCommand("SELECT * FROM DataLoadTask", con))
                 {
-                    if (hideTests)
-                    {
-                        if(!(bool)r["isTest"])
-                            tasks.Add(r["name"].ToString());
-                        //else it is a test, and we are hidding them
-                    }
-                    else
-                        tasks.Add(r["name"].ToString()); //we are not hiding tests
+                    using(DbDataReader r = cmd.ExecuteReader())
+                        while (r.Read())
+                        {
+                            if (hideTests)
+                            {
+                                if(!(bool)r["isTest"])
+                                    tasks.Add(r["name"].ToString());
+                                //else it is a test, and we are hidding them
+                            }
+                            else
+                                tasks.Add(r["name"].ToString()); //we are not hiding tests
+                        }
                 }
 
                 return tasks.ToArray();
@@ -102,10 +108,9 @@ namespace Rdmp.Core.Logging
             {
                 con.Open();
 
-                DbCommand cmd = Server.GetCommand(sql, con);
-
-                DbDataAdapter da = Server.GetDataAdapter(cmd);
-                da.Fill(dt);
+                using(DbCommand cmd = Server.GetCommand(sql, con))
+                    using(DbDataAdapter da = Server.GetDataAdapter(cmd))
+                        da.Fill(dt);
                 
                 return dt;
             }
@@ -113,18 +118,16 @@ namespace Rdmp.Core.Logging
 
         public string[] ListDataSets()
         {
+            List<string> tasks = new List<string>();
+
             using (var con = Server.GetConnection())
             {
                 con.Open();
 
-                DbCommand cmd = Server.GetCommand("SELECT * FROM DataSet", con);
-
-                DbDataReader r = cmd.ExecuteReader();
-
-                List<string> tasks = new List<string>();
-                
-                while (r.Read())
-                    tasks.Add(r["dataSetID"].ToString());
+                using(DbCommand cmd = Server.GetCommand("SELECT * FROM DataSet", con))
+                    using(DbDataReader r = cmd.ExecuteReader())
+                        while (r.Read())
+                            tasks.Add(r["dataSetID"].ToString());
 
                 return tasks.ToArray();
             }
@@ -151,76 +154,79 @@ namespace Rdmp.Core.Logging
 
                 string where = "";
                 string top = "";
-                
-                var cmd = Server.GetCommand("", con);
 
-                if (topX != null)
-                    top = "TOP " + topX.Value;
-
-                if (specificDataLoadRunIDOnly != null)
-                    where = "WHERE ID=" + specificDataLoadRunIDOnly.Value;
-                else
+                using (var cmd = Server.GetCommand("", con))
                 {
-                    where = "WHERE dataLoadTaskID = @dataTaskId";
-                    var p = cmd.CreateParameter();
-                    p.ParameterName = "@dataTaskId";
-                    p.Value = dataTaskId;
-                    cmd.Parameters.Add(p);
-                }
+                    if (topX != null)
+                        top = "TOP " + topX.Value;
 
-                string sql = "SELECT " + top + " *, (select top 1 1 from FatalError where dataLoadRunID = DataLoadRun.ID) hasErrors FROM " + run.GetFullyQualifiedName() +" " + where + " ORDER BY ID desc";
-
-                cmd.CommandText = sql;
-
-                DbDataReader r;
-                if (token == null)
-                    r = cmd.ExecuteReader();
-                else
-                {
-                    Task<DbDataReader> rTask = cmd.ExecuteReaderAsync(token.Value);
-                    rTask.Wait(token.Value);
-
-                    if (rTask.IsCompleted)
-                        r = rTask.Result;
+                    if (specificDataLoadRunIDOnly != null)
+                        where = "WHERE ID=" + specificDataLoadRunIDOnly.Value;
                     else
                     {
-                        cmd.Cancel();
-                        
-                        if (rTask.IsFaulted && rTask.Exception != null)
-                            throw rTask.Exception.GetExceptionIfExists<Exception>() ?? rTask.Exception;
-
-                        yield break;
+                        where = "WHERE dataLoadTaskID = @dataTaskId";
+                        var p = cmd.CreateParameter();
+                        p.ParameterName = "@dataTaskId";
+                        p.Value = dataTaskId;
+                        cmd.Parameters.Add(p);
                     }
-                }
 
-                while (r.Read())
-                    yield return new ArchivalDataLoadInfo(r, db);
+                    string sql = "SELECT " + top + " *, (select top 1 1 from FatalError where dataLoadRunID = DataLoadRun.ID) hasErrors FROM " + run.GetFullyQualifiedName() +" " + where + " ORDER BY ID desc";
+
+                    cmd.CommandText = sql;
+
+                    DbDataReader r;
+                    if (token == null)
+                        r = cmd.ExecuteReader();
+                    else
+                    {
+                        Task<DbDataReader> rTask = cmd.ExecuteReaderAsync(token.Value);
+                        rTask.Wait(token.Value);
+
+                        if (rTask.IsCompleted)
+                            r = rTask.Result;
+                        else
+                        {
+                            cmd.Cancel();
+                        
+                            if (rTask.IsFaulted && rTask.Exception != null)
+                                throw rTask.Exception.GetExceptionIfExists<Exception>() ?? rTask.Exception;
+
+                            yield break;
+                        }
+                    }
+
+                    using(r)
+                        while (r.Read())
+                            yield return new ArchivalDataLoadInfo(r, db);
+                }
             }
         }
 
         private int GetDataTaskId(string dataTask, DiscoveredServer server, DbConnection con)
         {
-            var cmd = server.GetCommand("SELECT ID FROM DataLoadTask WHERE name = @name", con);
+            using (var cmd = server.GetCommand("SELECT ID FROM DataLoadTask WHERE name = @name", con))
+            {
+                var p = cmd.CreateParameter();
+                p.ParameterName = "@name";
+                p.Value = dataTask;
+                cmd.Parameters.Add(p);
 
-            var p = cmd.CreateParameter();
-            p.ParameterName = "@name";
-            p.Value = dataTask;
-            cmd.Parameters.Add(p);
-
-            return Convert.ToInt32(cmd.ExecuteScalar());
+                return Convert.ToInt32(cmd.ExecuteScalar());
+            }
         }
 
-        public event DataLoadInfoHandler DataLoadInfoCreated;
+        
 
         public IDataLoadInfo CreateDataLoadInfo(string dataLoadTaskName, string packageName, string description, string suggestedRollbackCommand, bool isTest)
         {
-            if(!ListDataTasks().Contains(dataLoadTaskName))
+            var task = ListDataTasks().FirstOrDefault(t=>t.Equals(dataLoadTaskName,StringComparison.CurrentCultureIgnoreCase));
+            if(task == null)
                 throw new KeyNotFoundException("DataLoadTask called '" + dataLoadTaskName + "' was not found in the logging database " + Server);
 
-            var toReturn = new DataLoadInfo(dataLoadTaskName, packageName, description, suggestedRollbackCommand, isTest, Server);
+            var toReturn = new DataLoadInfo(task, packageName, description, suggestedRollbackCommand, isTest, Server);
 
-            if (DataLoadInfoCreated != null)
-                DataLoadInfoCreated(this,toReturn);
+            DataLoadInfoCreated?.Invoke(this,toReturn);
 
             return toReturn;
 
@@ -242,11 +248,13 @@ namespace Rdmp.Core.Logging
                         "VALUES " +
                         "(" + id + ", @dataSetID, @dataSetID, GetDate(), @username, 1, 0, @dataSetID)";
 
-                    var cmd = Server.GetCommand(sql, conn);
-                    Server.AddParameterWithValueToCommand("@dataSetID",cmd,dataSetID);
-                    Server.AddParameterWithValueToCommand("@username",cmd,Environment.UserName);
+                    using (var cmd = Server.GetCommand(sql, conn))
+                    {
+                        Server.AddParameterWithValueToCommand("@dataSetID",cmd,dataSetID);
+                        Server.AddParameterWithValueToCommand("@username",cmd,Environment.UserName);
                     
-                    cmd.ExecuteNonQuery();
+                        cmd.ExecuteNonQuery();
+                    }
                 }
             }
         }
@@ -262,10 +270,11 @@ namespace Rdmp.Core.Logging
                         "VALUES " +
                         "(@datasetName,@datasetName)";
 
-
-                    var cmd =Server.GetCommand(sql, conn);
-                    Server.AddParameterWithValueToCommand("@datasetName",cmd,datasetName);
-                    cmd.ExecuteNonQuery();
+                    using (var cmd = Server.GetCommand(sql, conn))
+                    {
+                        Server.AddParameterWithValueToCommand("@datasetName",cmd,datasetName);
+                        cmd.ExecuteNonQuery();
+                    }
                 }
             }
         }
@@ -274,10 +283,10 @@ namespace Rdmp.Core.Logging
 
         public void CreateNewLoggingTaskIfNotExists(string toCreate)
         {
-            if(!ListDataSets().Contains(toCreate))
+            if(!ListDataSets().Contains(toCreate,StringComparer.CurrentCultureIgnoreCase))
                 CreateNewDataSet(toCreate);
 
-            if(!ListDataTasks().Contains(toCreate))
+            if(!ListDataTasks().Contains(toCreate,StringComparer.CurrentCultureIgnoreCase))
                 CreateNewLoggingTask(GetMaxTaskID()+1,toCreate);
         }
 
@@ -290,12 +299,14 @@ namespace Rdmp.Core.Logging
                     var sql =
                         "SELECT MAX(ID) FROM DataLoadTask";
 
-                    var result = Server.GetCommand(sql, conn).ExecuteScalar();
+                    using (var cmd = Server.GetCommand(sql, conn))
+                    {
+                        var result = cmd.ExecuteScalar();
+                        if (result == null || result == DBNull.Value)
+                            return 0;
 
-                    if (result == null || result == DBNull.Value)
-                        return 0;
-
-                    return int.Parse(result.ToString());
+                        return int.Parse(result.ToString());
+                    }
                 }
             }
         }
@@ -309,12 +320,15 @@ namespace Rdmp.Core.Logging
                     var sql =
                         "UPDATE [FatalError] SET explanation =@explanation, statusID=@statusID where ID in (" + string.Join(",", ids) + ")";
 
-                    var cmd = Server.GetCommand(sql, conn);
-                    Server.AddParameterWithValueToCommand("@explanation", cmd, newExplanation);
-                    Server.AddParameterWithValueToCommand("@statusID", cmd, Convert.ToInt32(newState));
-                    
-                    int affectedRows = cmd.ExecuteNonQuery();
+                    int affectedRows;
 
+                    using (var cmd = Server.GetCommand(sql, conn))
+                    {
+                        Server.AddParameterWithValueToCommand("@explanation", cmd, newExplanation);
+                        Server.AddParameterWithValueToCommand("@statusID", cmd, Convert.ToInt32(newState));
+                        affectedRows = cmd.ExecuteNonQuery();
+                    }
+                    
                     if(affectedRows != ids.Length)
                         throw new Exception("Query " + sql + " resulted in " + affectedRows + ", we were expecting there to be " + ids.Length + " updates because that is how many FatalError IDs that were passed to this method");
                 }

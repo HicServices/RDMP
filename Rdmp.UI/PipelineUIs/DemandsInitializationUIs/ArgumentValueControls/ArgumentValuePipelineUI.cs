@@ -11,8 +11,9 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.PipelineUIs.Pipelines;
 using Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers;
-using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
+using Rdmp.UI.SimpleDialogs;
+
+
 
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 {

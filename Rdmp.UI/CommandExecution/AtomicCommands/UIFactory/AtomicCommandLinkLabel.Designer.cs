@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory
+﻿using Rdmp.UI.SimpleControls;
+
+namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory
 {
     partial class AtomicCommandLinkLabel
     {
@@ -31,7 +33,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AtomicCommandLinkLabel));
             this.pbCommandIcon = new System.Windows.Forms.PictureBox();
             this.lblName = new System.Windows.Forms.Label();
-            this.helpIcon1 = new ReusableUIComponents.HelpIcon();
+            this.helpIcon1 = new HelpIcon();
             ((System.ComponentModel.ISupportInitialize)(this.pbCommandIcon)).BeginInit();
             this.SuspendLayout();
             // 
@@ -83,6 +85,6 @@
 
         private System.Windows.Forms.PictureBox pbCommandIcon;
         private System.Windows.Forms.Label lblName;
-        private ReusableUIComponents.HelpIcon helpIcon1;
+        private HelpIcon helpIcon1;
     }
 }

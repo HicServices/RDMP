@@ -12,6 +12,8 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
@@ -26,11 +28,10 @@ using Rdmp.UI.Menus;
 using Rdmp.UI.Menus.MenuItems;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Theme;
+using Rdmp.UI.TreeHelper;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Settings;
-using ReusableUIComponents.TreeHelper;
 
 namespace Rdmp.UI.Collections
 {
@@ -326,7 +327,7 @@ namespace Rdmp.UI.Collections
             }
         }
 
-        void _activator_Emphasise(object sender, ItemActivation.Emphasis.EmphasiseEventArgs args)
+        void _activator_Emphasise(object sender, EmphasiseEventArgs args)
         {
             var rootObject = _activator.GetRootObjectOrSelf(args.Request.ObjectToEmphasise);
 
@@ -379,7 +380,7 @@ namespace Rdmp.UI.Collections
             Tree.EnsureVisible(index);
 
             
-            args.FormRequestingActivation = Tree.FindForm();
+            args.Sender = Tree.FindForm();
         }
 
         private void Pin(IMapsDirectlyToDatabaseTable objectToPin, DescendancyList descendancy)
@@ -441,7 +442,7 @@ namespace Rdmp.UI.Collections
 
         /// <summary>
         /// Creates a menu compatible with object <paramref name="o"/>.  Returns null if no compatible menu exists.
-        /// Errors are reported to <see cref="IActivateItems.GlobalErrorCheckNotifier"/> (if set up).
+        /// Errors are reported to <see cref="IBasicActivateItems.GlobalErrorCheckNotifier"/> (if set up).
         /// 
         /// </summary>
         /// <param name="o"></param>
@@ -460,7 +461,7 @@ namespace Rdmp.UI.Collections
 
                     if (many.Cast<object>().All(d => d is IDeleteable))
                     {
-                        var mi = factory.CreateMenuItem(new ExecuteCommandDelete(_activator, many.Cast<IDeleteable>().ToList()));
+                        var mi = factory.CreateMenuItem(new ExecuteCommandDelete(_activator, many.Cast<IDeleteable>().ToArray()));
                         mi.ShortcutKeys = Keys.Delete;
                         menu.Items.Add(mi);
                     }

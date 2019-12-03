@@ -13,9 +13,9 @@ using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Copying;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableUIComponents;
-using ReusableUIComponents.ScintillaHelper;
+
 using ScintillaNET;
 
 namespace Rdmp.UI.SubComponents
@@ -34,7 +34,7 @@ namespace Rdmp.UI.SubComponents
             InitializeComponent();
 
             var factory = new ScintillaTextEditorFactory();
-            QueryEditor = factory.Create(new RDMPCommandFactory());
+            QueryEditor = factory.Create(new RDMPCombineableFactory());
             this.Controls.Add(QueryEditor);
 
             AssociatedCollection = RDMPCollection.Cohort;

@@ -7,6 +7,7 @@
 using System;
 using System.Drawing;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Icons.IconProvision;
 
 namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders
 {

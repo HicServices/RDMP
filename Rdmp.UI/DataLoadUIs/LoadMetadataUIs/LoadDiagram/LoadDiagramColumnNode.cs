@@ -6,16 +6,17 @@
 
 using System;
 using FAnsi.Discovery;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.DataLoad.Extensions;
 using Rdmp.Core.Providers.Nodes;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode;
 using Rdmp.Core.DataLoad.Triggers;
-using ReusableLibraryCode.CommandExecution;
+using Rdmp.Core.Icons.IconProvision;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {
@@ -23,7 +24,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
     /// Depicts a column in a given DLE <see cref="LoadBubble"/>.  Given the Create/Destroy nature of load stages this
     /// node may or may not map to an existing column in the database.
     /// </summary>
-    public class LoadDiagramColumnNode : Node,ICommandSource, IHasLoadDiagramState, IKnowWhatIAm
+    public class LoadDiagramColumnNode : Node,ICombineableSource, IHasLoadDiagramState, IKnowWhatIAm
     {
         private readonly LoadDiagramTableNode _tableNode;
         private readonly IHasStageSpecificRuntimeName _column;
@@ -76,12 +77,12 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             return State == LoadDiagramState.Different ? _discoveredDataType : _expectedDataType;
         }
         
-        public ICommand GetCommand()
+        public ICombineToMakeCommand GetCombineable()
         {
 
             var querySyntaxHelper = _tableNode.TableInfo.GetQuerySyntaxHelper();
 
-            return new SqlTextOnlyCommand(querySyntaxHelper.EnsureFullyQualified(_tableNode.DatabaseName,null, _tableNode.TableName, ColumnName));
+            return new SqlTextOnlyCombineable(querySyntaxHelper.EnsureFullyQualified(_tableNode.DatabaseName,null, _tableNode.TableName, ColumnName));
         }
 
         public object GetImage(ICoreIconProvider coreIconProvider)

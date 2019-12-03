@@ -239,7 +239,7 @@ namespace Rdmp.Core.Curation.Data
         /// <inheritdoc/>
         public string GetDecryptedPassword()
         {
-            return _selfCertifyingDataAccessPoint.GetDecryptedPassword();
+            return _selfCertifyingDataAccessPoint.GetDecryptedPassword()?? "";
         }
 
         /// <summary>

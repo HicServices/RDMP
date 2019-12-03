@@ -177,6 +177,8 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             //create a target server pointer
             _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver",null);
             _extractionServer.Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name;
+            _extractionServer.Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny;
+            _extractionServer.Password = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitPasswordIfAny;
             _extractionServer.SaveToDatabase();
 
             //create a pipeline

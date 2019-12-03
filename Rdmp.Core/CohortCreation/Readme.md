@@ -4,10 +4,10 @@
 
 - [Introduction](#introduction)
 - [Query Caching](#query-caching)
-  - [Background](#cache-background)
-  - [Hit/Miss](#hit-miss)
-  - [Code](#cache-code)
-- [Parameters & Renaming](#parameters)
+  - [Background](#background)
+  - [Hit/Miss](#cache-hitmiss)
+  - [Code](#code)
+- [Parameters and Renaming](#parameters-and-renaming)
 
 ## Introduction
 
@@ -15,16 +15,16 @@ A Cohort is a collection of unique person identifiers which can be linked agains
 
 See [CohortComitting](../CohortCommitting/Readme.md) for committing (saving) a final list of patients (or for generating cohorts directly from a file etc).
 
+Cohorts are always created by performing set operations and/or joins on distinct patients (determined by the selected [IsExtractionIdentifier] column in the dataset(s))
+
 ## Query Caching
 
-<a name="cache-background"></a>
 ### Background
 
 A complicated cohort can easily include 10 or more criteria (prescribed drug X; never prescribed drug y etc).  Each criteria can involve querying a large number of records and can take some time.  The traditional approach to this problem is to use temporary tables (e.g. `tempdb`) or a scratch area (e.g. MyWorkingDb) to create tables that store results for subsections of the overall query.  RDMP automates this practice through it's query caching subsystem.
 
 The RDMP query cache also get's around [DBMS] limitations e.g. MySql not supporting Set operations ([UNION] / [INTERSECT] / [EXCEPT]) and enables cross server (and [DBMS]) query generation.
 
-<a name="hit-miss"></a>
 ### Cache Hit/Miss
 
 Consider the following cohort
@@ -97,7 +97,6 @@ Caching happens automatically after executing an uncached query.  If you make a 
 
 When using the execute all button, execution will start with each subquery in order to maximise cache usage.  This is especially important when cumulative totals is enabled (which results in more component combinations being executed at once).
 
-<a name="cache-code"></a>
 ### Code
 
 The cache usage flow chart is implemented by the `CohortQueryBuilderResult` class.  The following states can be determined:
@@ -120,8 +119,7 @@ The following classes play a role in building and executing cohort building quer
 |CohortQueryBuilderDependency| Stores the uncached and cached (if available) SQL for the subcomponent|
 |CohortQueryBuilderHelper| Builds the uncached SQL for each atomic subcomponent (uses an `AggregateBuilder` to do most of the work)|
 
-<a name="parameters"></a>
-## Parameters & Renames
+## Parameters and Renaming
 
 Consider the following cohort identification configuration.  We have an inclusion criteria (based on HBA1C) and an exclusion criteria (based on NA - sodium).  Both filters use parameters `@code` and `@Result` but with different values.
 
@@ -196,3 +194,4 @@ Notice that the parameter has been renamed `@Result_2` and `@code_2` in the comp
 [UNION]: ../../Documentation/CodeTutorials/Glossary.md#UNION
 [INTERSECT]: ../../Documentation/CodeTutorials/Glossary.md#INTERSECT
 [EXCEPT]: ../../Documentation/CodeTutorials/Glossary.md#EXCEPT
+[IsExtractionIdentifier]: ../../Documentation/CodeTutorials/Glossary.md#IsExtractionIdentifier

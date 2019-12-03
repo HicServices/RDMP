@@ -16,6 +16,10 @@ using TypeGuesser;
 
 namespace Rdmp.Core.DataLoad.Triggers.Implementations
 {
+    /// <summary>
+    /// Trigger implementer for that creates archive triggers on tables.  This is a prerequisite for the RDMP DLE and ensures that
+    /// when updates in a load replace live records the old state is persisted.
+    /// </summary>
     public abstract class TriggerImplementer:ITriggerImplementer
     {
         protected readonly bool _createDataLoadRunIdAlso;
@@ -26,7 +30,13 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
         protected DiscoveredColumn[] _columns;
         protected readonly DiscoveredColumn[] _primaryKeys;
 
-        public TriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true)
+        /// <summary>
+        /// Trigger implementer for that creates a trigger on <paramref name="table"/> which records old UPDATE
+        /// records into an _Archive table.  <paramref name="table"/> must have primary keys
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="createDataLoadRunIDAlso"></param>
+        protected TriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true)
         {
             _server = table.Database.Server;
             _table = table;
@@ -82,9 +92,8 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
                 {
                     con.Open();
                 
-                    var cmdCreateArchive = _server.GetCommand(sql, con);
-
-                    cmdCreateArchive.ExecuteNonQuery();
+                    using(var cmdCreateArchive = _server.GetCommand(sql, con))
+                        cmdCreateArchive.ExecuteNonQuery();
 
                     _archiveTable.AddColumn("hic_validTo", new DatabaseTypeRequest(typeof(DateTime)), true, timeout);
                     _archiveTable.AddColumn("hic_userID", new DatabaseTypeRequest(typeof(string), 128), true, timeout);

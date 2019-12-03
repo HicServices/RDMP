@@ -62,8 +62,8 @@ namespace Rdmp.Core.Repositories.Managers
             {
                 con.Open();
                 //Table can only ever have 1 record
-                DbCommand cmd = DatabaseCommandHelper.GetCommand("SELECT Path from PasswordEncryptionKeyLocation", con);
-                return cmd.ExecuteScalar() as string;
+                using(DbCommand cmd = DatabaseCommandHelper.GetCommand("SELECT Path from PasswordEncryptionKeyLocation", con))
+                    return cmd.ExecuteScalar() as string;
             }
         }
 
@@ -138,9 +138,14 @@ namespace Rdmp.Core.Repositories.Managers
 
             using (var con = _catalogueRepository.GetConnection())
             {
-                DbCommand cmd = DatabaseCommandHelper.GetCommand("INSERT INTO PasswordEncryptionKeyLocation(Path,Lock) VALUES (@Path,'X')", con.Connection, con.Transaction);
-                DatabaseCommandHelper.AddParameterWithValueToCommand("@Path", cmd, fileInfo.FullName);
-                cmd.ExecuteNonQuery();
+                using (DbCommand cmd = DatabaseCommandHelper.GetCommand(
+                    "INSERT INTO PasswordEncryptionKeyLocation(Path,Lock) VALUES (@Path,'X')", con.Connection,
+                    con.Transaction))
+                {
+                    DatabaseCommandHelper.AddParameterWithValueToCommand("@Path", cmd, fileInfo.FullName);
+                    cmd.ExecuteNonQuery();
+                }
+                
             }
 
             ClearAllInjections();
@@ -165,13 +170,16 @@ namespace Rdmp.Core.Repositories.Managers
             using (var con = _catalogueRepository.GetConnection())
             {
                 //Table can only ever have 1 record
-                DbCommand cmd = DatabaseCommandHelper.GetCommand(@"if exists (select 1 from PasswordEncryptionKeyLocation)
+                using (DbCommand cmd = DatabaseCommandHelper.GetCommand(
+                    @"if exists (select 1 from PasswordEncryptionKeyLocation)
     UPDATE PasswordEncryptionKeyLocation SET Path = @Path
   else
   INSERT INTO PasswordEncryptionKeyLocation(Path,Lock) VALUES (@Path,'X')
-  ", con.Connection, con.Transaction);
-                DatabaseCommandHelper.AddParameterWithValueToCommand("@Path", cmd, newLocation);
-                cmd.ExecuteNonQuery();
+  ", con.Connection, con.Transaction))
+                {
+                    DatabaseCommandHelper.AddParameterWithValueToCommand("@Path", cmd, newLocation);
+                    cmd.ExecuteNonQuery();
+                }
             }
 
             ClearAllInjections();
@@ -193,11 +201,15 @@ namespace Rdmp.Core.Repositories.Managers
             using (var con = _catalogueRepository.GetConnection())
             {
                 //Table can only ever have 1 record
-                DbCommand cmd = DatabaseCommandHelper.GetCommand("DELETE FROM PasswordEncryptionKeyLocation", con.Connection, con.Transaction);
-                int affectedRows = cmd.ExecuteNonQuery();
+                using (DbCommand cmd = DatabaseCommandHelper.GetCommand("DELETE FROM PasswordEncryptionKeyLocation",
+                    con.Connection, con.Transaction))
+                {
+                    int affectedRows = cmd.ExecuteNonQuery();
+                    if (affectedRows != 1)
+                        throw new Exception("Delete from PasswordEncryptionKeyLocation resulted in " + affectedRows + ", expected 1");
+                }
 
-                if (affectedRows != 1)
-                    throw new Exception("Delete from PasswordEncryptionKeyLocation resulted in " + affectedRows + ", expected 1");
+                
             }
 
             ClearAllInjections();

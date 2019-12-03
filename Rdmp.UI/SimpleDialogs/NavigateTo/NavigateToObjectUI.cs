@@ -16,21 +16,23 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
+using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.Collections.Providers.Filtering;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.ItemActivation.Emphasis;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Theme;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -104,53 +106,6 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
                 {RDMPCollection.None,new []{typeof(SupportingDocument),typeof(CatalogueItem)}} //Add all other Type checkboxes here so that they are recognised as Typenames
 };
 
-        private static HashSet<Type> TypesThatAreNotUsefulParents = new HashSet<Type>(
-            new []
-        {
-            typeof(CatalogueItemsNode),
-            typeof(DocumentationNode),
-            typeof(AggregatesNode),
-            typeof(LoadMetadataScheduleNode),
-            typeof(AllCataloguesUsedByLoadMetadataNode),
-            typeof(AllProcessTasksUsedByLoadMetadataNode),
-            typeof(LoadStageNode),
-            typeof(PreLoadDiscardedColumnsNode),
-            typeof(ProjectCataloguesNode)
-
-        });
-
-        /// <summary>
-        /// When the user types one of these they get a filter on the full Type
-        /// </summary>
-        Dictionary<string, Type> ShortCodes =
-            new Dictionary<string, Type> (StringComparer.CurrentCultureIgnoreCase){
-
-            {"c",typeof (Catalogue)},
-            {"ci",typeof (CatalogueItem)},
-            {"sd",typeof (SupportingDocument)},
-            {"p",typeof (Project)},
-            {"ec",typeof (ExtractionConfiguration)},
-            {"co",typeof (ExtractableCohort)},
-            {"cic",typeof (CohortIdentificationConfiguration)},
-            {"t",typeof (TableInfo)},
-            {"col",typeof (ColumnInfo)},
-            {"lmd",typeof (LoadMetadata)},
-            {"pipe",typeof(Pipeline)}
-
-                };
-
-        /// <summary>
-        /// When the user types one of these Types (or a <see cref="ShortCodes"/> for one) they also get the value list for free.
-        /// This lets you serve up multiple object Types e.g. <see cref="IMasqueradeAs"/> objects as though they were the same as thier
-        /// Key Type.
-        /// </summary>
-        Dictionary<string, Type[]> AlsoIncludes =
-            new Dictionary<string, Type[]> (StringComparer.CurrentCultureIgnoreCase){
-
-            {"Pipeline",new Type[]{ typeof(PipelineCompatibleWithUseCaseNode)}}
-
-                };
-
         private bool _isClosed;
 
         private List<Type> showOnlyTypes = new List<Type>();
@@ -161,11 +116,6 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
         /// </summary>
         public Action<IMapsDirectlyToDatabaseTable> CompletionAction { get; set; }
 
-        public static void RecordThatTypeIsNotAUsefulParentToShow(Type t)
-        {
-            if(!TypesThatAreNotUsefulParents.Contains(t))
-                TypesThatAreNotUsefulParents.Add(t);
-        }
         public NavigateToObjectUI(IActivateItems activator, string initialSearchQuery = null,RDMPCollection focusedCollection = RDMPCollection.None):base(activator)
         {
             _coreIconProvider = activator.CoreIconProvider;
@@ -199,13 +149,7 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
                 if (!_typeNames.Contains(t.Name))
                     _typeNames.Add(t.Name);
             }
-            
-            //autocomplete is all Type names (e.g. "Catalogue") + all short codes (e.g. "c")
-            textBox1.AutoCompleteMode = AutoCompleteMode.Append;
-            textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
-            textBox1.AutoCompleteCustomSource.AddRange(
-                _typeNames.Union(ShortCodes.Select(kvp=>kvp.Key)).ToArray());
-            
+
             Type[] startingFilters = null;
 
             if (focusedCollection != RDMPCollection.None && StartingEasyFilters.ContainsKey(focusedCollection))
@@ -221,7 +165,7 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
                 b.Tag = t;
                 b.DisplayStyle = ToolStripItemDisplayStyle.Image;
 
-                string shortCode = ShortCodes.Single(kvp=>kvp.Value == t).Key;
+                string shortCode = SearchablesMatchScorer.ShortCodes.Single(kvp=>kvp.Value == t).Key;
 
                 b.Text = $"{t.Name} ({shortCode})";
                 b.CheckedChanged += CollectionCheckedChanged;
@@ -254,12 +198,16 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
             if (e.KeyCode == Keys.Up)
             {
                 e.Handled = true;
+                textBox1.SelectionStart = textBox1.Text.Length;
+                textBox1.SelectionLength = 0;
                 MoveSelectionUp();
             }
 
             if (e.KeyCode == Keys.Down)
             {
                 e.Handled = true;
+                textBox1.SelectionStart = textBox1.Text.Length;
+                textBox1.SelectionLength = 0;
                 MoveSelectionDown();
             }
 
@@ -409,25 +357,7 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
             var scorer = new SearchablesMatchScorer();
             scorer.TypeNames = _typeNames;
 
-            //do short code substitutions e.g. ti for TableInfo
-            if(!string.IsNullOrWhiteSpace(text))
-                foreach(var kvp in ShortCodes)
-                    text = Regex.Replace(text,$@"\b{kvp.Key}\b",kvp.Value.Name);
-            
-            //if user hasn't typed any explicit Type filters
-            if(string.IsNullOrWhiteSpace(text) || !_typeNames.Intersect(text.Split(' '),StringComparer.CurrentCultureIgnoreCase).Any())
-                //add the buttons pressed
-                foreach (var showOnlyType in showOnlyTypes)
-                    text = text + " " + showOnlyType.Name;
-
-            //Search the tokens for also inclusions e.g. "Pipeline" becomes "Pipeline PipelineCompatibleWithUseCaseNode"
-            if (!string.IsNullOrWhiteSpace(text))
-                foreach(var s in text.Split(' ').ToArray())
-                    if (AlsoIncludes.ContainsKey(s))
-                        foreach(var v in AlsoIncludes[s])
-                            text += " " + v.Name;
-            
-            var scores = scorer.ScoreMatches(_searchables, text, cancellationToken);
+            var scores = scorer.ScoreMatches(_searchables, text, cancellationToken,showOnlyTypes);
 
             if (scores == null)
                 return;
@@ -506,19 +436,9 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
                     {
                         //get first parent that isn't one of the explicitly useless parent types (I'd rather know the Catalogue of an AggregateGraph than to know it's an under an AggregatesGraphNode)                
                         var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(_matches[i]);
-                
-                        object lastParent = null;
 
-                        if(descendancy != null)
-                        {
-
-                            lastParent = descendancy.Parents.LastOrDefault(parent => 
-                                !TypesThatAreNotUsefulParents.Contains(parent.GetType())
-                                &&
-                                !(parent is IContainer)
-                                );
-                        }
-
+                        object lastParent = descendancy?.GetMostDescriptiveParent();
+                        
                         float currentRowStartY = DrawMatchesStartingAtY + (RowHeight*i);
                     
                         if (lastParent != null)

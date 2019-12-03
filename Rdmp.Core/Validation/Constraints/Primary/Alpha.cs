@@ -15,6 +15,7 @@ namespace Rdmp.Core.Validation.Constraints.Primary
     {
         public const string RegExp = @"^[A-Za-z]+$";
 
+        /// <inheritdoc/>
         public override ValidationFailure Validate(object value)
         {
             if (value == null)

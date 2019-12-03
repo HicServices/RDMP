@@ -81,7 +81,7 @@ namespace Rdmp.Core.Curation.Data.Remoting
         /// <inheritdoc/>
         public string GetDecryptedPassword()
         {
-            return _encryptedPasswordHost.GetDecryptedPassword();
+            return _encryptedPasswordHost.GetDecryptedPassword()?? "";
         }
 
 
@@ -102,7 +102,7 @@ namespace Rdmp.Core.Curation.Data.Remoting
         }
 
         /// <inheritdoc/>
-        public RemoteRDMP(IRepository repository, DbDataReader r) : base(repository, r)
+        public RemoteRDMP(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
         {
             // need a new copy of the catalogue repository so a new DB connection can be made to use with the encrypted host.
             _encryptedPasswordHost = new EncryptedPasswordHost((ICatalogueRepository) repository);

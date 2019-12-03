@@ -1,4 +1,5 @@
 ﻿using BrightIdeasSoftware;
+using Rdmp.UI.ChecksUI;
 
 namespace Rdmp.UI.CatalogueSummary.LoadEvents
 {
@@ -37,7 +38,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
             this.treeView1 = new BrightIdeasSoftware.TreeListView();
             this.olvDate = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvDescription = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmiley1 = new RAGSmiley();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.treeView1)).BeginInit();
             this.SuspendLayout();
@@ -138,6 +139,6 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
         private TreeListView treeView1;
         private OLVColumn olvDescription;
         private OLVColumn olvDate;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
+        private RAGSmiley ragSmiley1;
     }
 }

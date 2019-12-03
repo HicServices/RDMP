@@ -135,7 +135,6 @@ namespace Rdmp.UI.SubComponents
             // 
             // olvCachedQueryUseCount
             // 
-            this.olvCachedQueryUseCount.AspectName = "GetCachedQueryUseCount";
             this.olvCachedQueryUseCount.Text = "Cached";
             // 
             // label1

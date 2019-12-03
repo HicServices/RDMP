@@ -8,15 +8,18 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.Icons.IconProvision;
+using Rdmp.UI.ChecksUI;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents;
-using ReusableUIComponents.ChecksUI;
+
+
 using ScintillaNET;
+using HelpIcon = Rdmp.UI.SimpleControls.HelpIcon;
 
 namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 {

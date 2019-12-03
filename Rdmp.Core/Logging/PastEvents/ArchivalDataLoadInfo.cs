@@ -112,11 +112,10 @@ namespace Rdmp.Core.Logging.PastEvents
             {
                 con.Open();
 
-                var cmd =  _loggingDatabase.Server.GetCommand("SELECT * FROM TableLoadRun WHERE dataLoadRunID=" +ID , con);
-                var r = cmd.ExecuteReader();
-
-                while(r.Read())
-                    toReturn.Add(new ArchivalTableLoadInfo(this,r,_loggingDatabase));
+                using(var cmd =  _loggingDatabase.Server.GetCommand("SELECT * FROM TableLoadRun WHERE dataLoadRunID=" +ID , con))
+                    using(var r = cmd.ExecuteReader())
+                        while(r.Read())
+                            toReturn.Add(new ArchivalTableLoadInfo(this,r,_loggingDatabase));
             }
 
             return toReturn;
@@ -130,11 +129,10 @@ namespace Rdmp.Core.Logging.PastEvents
             {
                 con.Open();
 
-                var cmd = _loggingDatabase.Server.GetCommand("SELECT * FROM ProgressLog WHERE dataLoadRunID=" + ID, con);
-                var r = cmd.ExecuteReader();
-
-                while (r.Read())
-                    toReturn.Add(new ArchivalProgressLog(r));
+                using (var cmd = _loggingDatabase.Server.GetCommand("SELECT * FROM ProgressLog WHERE dataLoadRunID=" + ID, con))
+                    using (var r = cmd.ExecuteReader())
+                        while (r.Read())
+                            toReturn.Add(new ArchivalProgressLog(r));
             }
 
             return toReturn;
@@ -148,11 +146,10 @@ namespace Rdmp.Core.Logging.PastEvents
             {
                 con.Open();
 
-                var cmd = _loggingDatabase.Server.GetCommand("SELECT * FROM FatalError WHERE dataLoadRunID=" + ID, con);
-                var r = cmd.ExecuteReader();
-
-                while (r.Read())
-                    toReturn.Add(new ArchivalFatalError(r));
+                using(var cmd = _loggingDatabase.Server.GetCommand("SELECT * FROM FatalError WHERE dataLoadRunID=" + ID, con))
+                    using(var r = cmd.ExecuteReader())
+                        while (r.Read())
+                            toReturn.Add(new ArchivalFatalError(r));
             }
 
             return toReturn;

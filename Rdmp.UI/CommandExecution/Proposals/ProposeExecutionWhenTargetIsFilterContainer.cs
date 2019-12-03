@@ -4,12 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.CommandExecution;
 
 namespace Rdmp.UI.CommandExecution.Proposals
 {
@@ -30,9 +30,9 @@ namespace Rdmp.UI.CommandExecution.Proposals
             
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, IContainer targetContainer, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, IContainer targetContainer, InsertOption insertOption = InsertOption.Default)
         {
-            var sourceFilterCommand = cmd as FilterCommand;
+            var sourceFilterCommand = cmd as FilterCombineable;
 
             //drag a filter into a container
             if (sourceFilterCommand != null)
@@ -53,7 +53,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
                 
             }
 
-            var sourceContainerCommand = cmd as ContainerCommand;
+            var sourceContainerCommand = cmd as ContainerCombineable;
             
             //drag a container into another container
             if (sourceContainerCommand != null)

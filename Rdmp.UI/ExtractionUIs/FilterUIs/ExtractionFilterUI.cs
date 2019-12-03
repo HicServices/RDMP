@@ -21,11 +21,12 @@ using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
+using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.SimpleControls;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
-using ReusableUIComponents.ScintillaHelper;
+
+
 using ScintillaNET;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs
@@ -67,7 +68,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             if (VisualStudioDesignMode) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
                 return;
 
-            QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCommandFactory());
+            QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
             QueryEditor.TextChanged += QueryEditor_TextChanged;
             pQueryEditor.Controls.Add(QueryEditor);
             #endregion QueryEditor

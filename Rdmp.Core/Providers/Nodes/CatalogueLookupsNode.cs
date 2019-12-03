@@ -8,6 +8,9 @@ using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.Providers.Nodes
 {
+    /// <summary>
+    /// Collection node for all <see cref="Lookup"/> that exist under a <see cref="Catalogue"/>
+    /// </summary>
     public class CatalogueLookupsNode:Node
     {
         public Catalogue Catalogue { get; set; }

@@ -59,6 +59,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.olvName});
             this.olvObjects.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvObjects.FullRowSelect = true;
+            this.olvObjects.HideSelection = false;
             this.olvObjects.Location = new System.Drawing.Point(2, 12);
             this.olvObjects.Name = "olvObjects";
             this.olvObjects.ShowGroups = false;
@@ -73,7 +74,7 @@ namespace Rdmp.UI.SimpleDialogs
             // 
             // olvID
             // 
-            this.olvID.AspectName = "ID";
+            this.olvID.AspectName = "";
             this.olvID.Text = "ID";
             // 
             // olvSelected
@@ -82,10 +83,11 @@ namespace Rdmp.UI.SimpleDialogs
             // 
             // olvName
             // 
-            this.olvName.AspectName = "ToString";
+            this.olvName.AspectName = "";
             this.olvName.FillsFreeSpace = true;
-            this.olvName.Text = "Name";
             this.olvName.MinimumWidth = 100;
+            this.olvName.Text = "Name";
+            this.olvName.Width = 100;
             // 
             // btnSelect
             // 

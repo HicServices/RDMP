@@ -6,12 +6,34 @@
 
 namespace Rdmp.Core.CohortCreation.Execution
 {
+    /// <summary>
+    /// Describes the state of a cohort set or container in a <see cref="CohortCompiler"/>
+    /// </summary>
     public enum CompilationState
     {
+        /// <summary>
+        /// The set / container has been built but not executed yet
+        /// </summary>
         NotScheduled,
+
+        /// <summary>
+        /// The set / container has been queued for execution but has not been sent to the server yet
+        /// </summary>
         Scheduled,
+
+        /// <summary>
+        /// The set / container is executing on the endpoint server
+        /// </summary>
         Executing,
+
+        /// <summary>
+        /// The set / container has finished executing successfully and should have a final cohort identifier count
+        /// </summary>
         Finished,
+
+        /// <summary>
+        /// The set / container has crashed.  This could be during building, execution or the caching stage
+        /// </summary>
         Crashed
     }
 }

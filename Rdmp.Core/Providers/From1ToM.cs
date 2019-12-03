@@ -28,12 +28,12 @@ namespace Rdmp.Core.Providers
         {
             Parallel.ForEach(collection, (o) =>
                 {
-                    int id = idSelector(o);
-
-                    if (!Keys.Contains(id))
-                        AddOrUpdate(id, new ConcurrentBag<T1>(),(i, set) => set);
-
-                    this[id].Add(o);
+                    AddOrUpdate(idSelector(o), new ConcurrentBag<T1>(new[] {o}),(i, set) =>
+                        {
+                            set.Add(o);
+                            return set;
+                        }
+                    );
                 }
             );
         }

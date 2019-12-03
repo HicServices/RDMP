@@ -241,7 +241,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
             
             public string GetDecryptedPassword()
             {
-                return Password;
+                return Password?? "";
             }
 
             public override string ToString()

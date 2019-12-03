@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.DataViewing
+﻿using Rdmp.UI.ChecksUI;
+
+namespace Rdmp.UI.DataViewing
 {
     partial class ViewSQLAndResultsWithDataGridUI
     {
@@ -31,7 +33,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ViewSQLAndResultsWithDataGridUI));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmiley1 = new RAGSmiley();
             this.llCancel = new System.Windows.Forms.LinkLabel();
             this.pbLoading = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -132,7 +134,7 @@
 
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
+        private RAGSmiley ragSmiley1;
         private System.Windows.Forms.LinkLabel llCancel;
         private System.Windows.Forms.PictureBox pbLoading;
     }

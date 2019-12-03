@@ -7,6 +7,7 @@
 using System;
 using FAnsi;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.UI.CommandExecution.AtomicCommands;

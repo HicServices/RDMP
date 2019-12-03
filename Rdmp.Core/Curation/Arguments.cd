@@ -1,31 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Comment CommentText="The argument host can by default handle most types of argument demand.  HOWEVER If it can handle freaky special types such as TableInfos then also implement that interface">
-    <Position X="5.031" Y="1.469" Height="1.167" Width="2.627" />
+  <Comment CommentText="The argument host can by default handle most types of arguments demanded.">
+    <Position X="5.031" Y="1.469" Height="0.646" Width="2.627" />
   </Comment>
-  <Comment CommentText="Type T (defined in an assembly dll that was uploaded to the Catalogue - in the LoadModuleAssembly table) has one or more class properties marked with [DemandsInitialization].  A platform library requires to use some T classes and wants to store various configurations of values for their arguments.  This is done by having LoadModuleAssembly fetch the class definition by name (string) from the CatalogueDatabse and doing argument discovery via Reflection (e.g. GetTypes&lt;IAttacher&gt;()).  After discovering some properties marked with DemandsInitialization the user is prompted to choose some values for the properties.  The properties are stored in an IArgumentHost through it's children IArguments.  Then later on the program can stamp out copies of this configuration as required again and again without ever having to know the exact type T (having a couple of  generic Interface would be good idea though e.g. IAttacher).  Sometimes the context of your configuration is sufficient to provide some interesting argument values for the user to pick from (relevant to the context of the class T's usage ) e.g. in data load configuration you might know which TableInfo's you are trying to load in which case you can give the user a dropdown of only those TableInfos relevant to your collection.  If you plan to support this type of [DemandsInitialization] properties (TableInfo) then your IArgumentHost should implement ITableInfoCollectionHost">
-    <Position X="13" Y="3" Height="4.083" Width="6.158" />
+  <Comment CommentText="Type T (defined in an assembly dll that was uploaded to the Catalogue - in the LoadModuleAssembly table) has one or more class properties marked with [DemandsInitialization].  A platform library requires to use some T classes and wants to store various configurations of values for their arguments.  This is done by having LoadModuleAssembly fetch the class definition by name (string) from the CatalogueDatabse and doing argument discovery via Reflection (e.g. GetTypes&lt;IAttacher&gt;()).  After discovering some properties marked with DemandsInitialization the user is prompted to choose some values for the properties.  The properties are stored in an IArgumentHost through it's children IArguments.  Then later on the program can stamp out copies of this configuration as required again and again without ever having to know the exact type T (having a couple of  generic Interface would be good idea though e.g. IAttacher).">
+    <Position X="13" Y="3" Height="1.937" Width="6.158" />
   </Comment>
   <Class Name="Rdmp.Core.Curation.Data.DataLoad.ProcessTask" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="7.75" Y="5.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AUGCYAhCACICAAIEADgAgCQAAAAAQAFAQAAAEAAKCAA=</HashCode>
-      <FileName>Data\DataLoad\ProcessTask.cs</FileName>
+      <HashCode>AWGCYAhKACICAAIEADgAgAQAAAAAQAFAQAAAEAAKCAA=</HashCode>
+      <FileName>Curation\Data\DataLoad\ProcessTask.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Rdmp.Core.Curation.Data.DataLoad.ProcessTaskArgument" Collapsed="true">
     <Position X="9.5" Y="5" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAACAAIAAEABAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Data\DataLoad\ProcessTaskArgument.cs</FileName>
+      <HashCode>AAAAAAQAACAAIAAEABAAAAAAAAAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>Curation\Data\DataLoad\ProcessTaskArgument.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Rdmp.Core.Curation.Data.Pipelines.PipelineComponent" Collapsed="true">
     <Position X="7.75" Y="8.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAEAIAACACAAAAAEABpAAAQYABAAAAAAAAAQUAAAABA=</HashCode>
-      <FileName>Data\Pipelines\PipelineComponent.cs</FileName>
+      <FileName>Curation\Data\Pipelines\PipelineComponent.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
@@ -33,15 +33,15 @@
     <Position X="10" Y="8.5" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAABAAAEAAAAAAAIQAAAAAAAgAAAQAAAAAA=</HashCode>
-      <FileName>Data\Pipelines\PipelineComponentArgument.cs</FileName>
+      <FileName>Curation\Data\Pipelines\PipelineComponentArgument.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Rdmp.Core.Curation.Data.DataLoad.Argument" Collapsed="true">
     <Position X="10.25" Y="7" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>ABQAIAAAAAAgAgQEAAAAAAQAAAAAAAAQASAgAAQEAAA=</HashCode>
-      <FileName>Data\DataLoad\Argument.cs</FileName>
+      <HashCode>ABQAIAAAAgAgIgQEAgAAAAQAICBAAAAQASIgAAQAAAA=</HashCode>
+      <FileName>Curation\Data\DataLoad\Argument.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
@@ -52,64 +52,51 @@
       <Compartment Name="Properties" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAAJAgAAABgAFAEAgBECQRAgACAAAIEAAAEEAAAAAA=</HashCode>
-      <FileName>Data\LoadModuleAssembly.cs</FileName>
+      <HashCode>AAAAAAgAAABAABAECBAEAQhAAACAAAAEAACAEAAgBAA=</HashCode>
+      <FileName>Curation\Data\LoadModuleAssembly.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="Rdmp.Core.Curation.Data.DemandsInitializationAttribute" Collapsed="true">
     <Position X="12.5" Y="0.75" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAEAAAAAAgAAAAAAQAAAAAAABAAAAAAAAAAAAACAA=</HashCode>
-      <FileName>Data\DemandsInitializationAttribute.cs</FileName>
+      <FileName>Curation\Data\DemandsInitializationAttribute.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Interface Name="Rdmp.Core.Curation.Data.DataLoad.IArgument" Collapsed="true">
-    <Position X="10" Y="1.5" Width="1.5" />
+    <Position X="9.75" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAAAIAAAAgAgAAAAAAAAQAAAAAAAAQASAgAAAAAAA=</HashCode>
-      <FileName>Data\DataLoad\IArgument.cs</FileName>
+      <HashCode>AAQAAAAAAAAgAgAAAgAAAAQAAAAAAAAQASAgAAAAAAA=</HashCode>
+      <FileName>Curation\Data\DataLoad\IArgument.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Rdmp.Core.Curation.Data.DataLoad.IArgumentHost" Collapsed="true">
-    <Position X="7.75" Y="1" Width="2.25" />
+    <Position X="7.75" Y="1.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAABgAAAAAAAAAAAAAAAAAEAAAAAA=</HashCode>
-      <FileName>Data\DataLoad\IArgumentHost.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
-  <Interface Name="Rdmp.Core.Curation.Data.DataLoad.ITableInfoCollectionHost">
-    <Position X="7.75" Y="2.75" Width="2.25" />
-    <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Data\DataLoad\ITableInfoCollectionHost.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
-  <Interface Name="Rdmp.Core.Curation.Data.DataLoad.ILoadProgressHost">
-    <Position X="7.75" Y="1.5" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Data\DataLoad\ILoadProgressHost.cs</FileName>
+      <HashCode>AAAAAAAAACAAAAAAABgAAAAAAAAAAAAAAAAAEAAAAAA=</HashCode>
+      <FileName>Curation\Data\DataLoad\IArgumentHost.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Rdmp.Core.Curation.Data.DataLoad.ICustomUI&lt;T&gt;">
     <Position X="15.25" Y="1.25" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAIAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Data\DataLoad\ICustomUI.cs</FileName>
+      <HashCode>AAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Curation\Data\DataLoad\ICustomUI.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Rdmp.Core.Curation.Data.DataLoad.ICustomUIDrivenClass">
     <Position X="18.25" Y="1.25" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAEAAAgAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Data\DataLoad\ICustomUIDrivenClass.cs</FileName>
+      <FileName>Curation\Data\DataLoad\ICustomUIDrivenClass.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Enum Name="Rdmp.Core.Curation.Data.DemandType">
     <Position X="12.75" Y="1.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAA=</HashCode>
-      <FileName>Data\DemandType.cs</FileName>
+      <FileName>Curation\Data\DemandType.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Font Name="Segoe UI" Size="9" />

@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.LocationsMenu.Ticketing
+﻿using Rdmp.UI.ChecksUI;
+
+namespace Rdmp.UI.LocationsMenu.Ticketing
 {
     partial class TicketingControlUI
     {
@@ -32,7 +34,7 @@
             this.btnShowTicket = new System.Windows.Forms.Button();
             this.tbTicket = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmiley1 = new RAGSmiley();
             this.gbTicketing.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -105,7 +107,7 @@
         private System.Windows.Forms.Button btnShowTicket;
         private System.Windows.Forms.TextBox tbTicket;
         private System.Windows.Forms.Label label6;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
+        private RAGSmiley ragSmiley1;
         
     }
 }

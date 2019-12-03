@@ -135,7 +135,8 @@ namespace Rdmp.Core.Reports.ExtractionTime
 
                 string sql = "SELECT  TOP 1 LEFT(" + Cohort.GetReleaseIdentifier() + ",3) FROM " + ect.TableName + " WHERE " + Cohort.WhereSQL();
 
-                return (string)db.Server.GetCommand(sql, con).ExecuteScalar();
+                using(var cmd = db.Server.GetCommand(sql, con))
+                    return (string)cmd.ExecuteScalar();
             }
         }
 

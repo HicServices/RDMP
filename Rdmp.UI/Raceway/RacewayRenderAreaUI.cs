@@ -10,14 +10,14 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.DashboardTabs.Construction;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.ItemActivation.Emphasis;
-using ReusableUIComponents;
-using ReusableUIComponents.Heatmapping;
+using Rdmp.UI.SimpleControls;
 
 namespace Rdmp.UI.Raceway
 {

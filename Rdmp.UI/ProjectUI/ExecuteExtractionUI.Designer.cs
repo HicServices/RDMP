@@ -41,7 +41,7 @@ namespace Rdmp.UI.ProjectUI
             this.tlvDatasets = new BrightIdeasSoftware.TreeListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvState = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.helpIcon1 = new ReusableUIComponents.HelpIcon();
+            this.helpIcon1 = new HelpIcon();
             this.checkAndExecuteUI1 = new CheckAndExecuteUI();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -177,6 +177,6 @@ namespace Rdmp.UI.ProjectUI
         private CheckAndExecuteUI checkAndExecuteUI1;
         private OLVColumn olvName;
         private OLVColumn olvState;
-        private ReusableUIComponents.HelpIcon helpIcon1;
+        private HelpIcon helpIcon1;
     }
 }

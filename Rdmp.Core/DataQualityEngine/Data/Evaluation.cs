@@ -93,12 +93,12 @@ namespace Rdmp.Core.DataQualityEngine.Data
 
                 using (var con = DQERepository.GetConnection())
                 {
-                    var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction);
-                    using (var r = cmd.ExecuteReader())
-                    {
-                        while (r.Read())
-                            toReturn.Add((string) r["PivotCategory"]);
-                    }
+                    using(var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction))
+                        using (var r = cmd.ExecuteReader())
+                        {
+                            while (r.Read())
+                                toReturn.Add((string) r["PivotCategory"]);
+                        }
                 }
 
                 return toReturn.ToArray();

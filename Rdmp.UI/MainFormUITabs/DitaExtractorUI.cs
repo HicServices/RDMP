@@ -11,7 +11,8 @@ using System.Windows.Forms;
 using Rdmp.Core.Reports;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
-using ReusableUIComponents.ChecksUI;
+
+using PopupChecksUI = Rdmp.UI.ChecksUI.PopupChecksUI;
 
 namespace Rdmp.UI.MainFormUITabs
 {

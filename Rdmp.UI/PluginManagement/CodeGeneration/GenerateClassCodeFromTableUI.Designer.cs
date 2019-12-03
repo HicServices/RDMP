@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.PluginManagement.CodeGeneration
+﻿using Rdmp.UI.SimpleControls;
+
+namespace Rdmp.UI.PluginManagement.CodeGeneration
 {
     partial class GenerateClassCodeFromTableUI
     {
@@ -28,7 +30,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.serverDatabaseTableSelector1 = new ReusableUIComponents.ServerDatabaseTableSelector();
+            this.serverDatabaseTableSelector1 = new ServerDatabaseTableSelector();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnGenerateCode = new System.Windows.Forms.Button();
@@ -96,7 +98,7 @@
 
         #endregion
 
-        private ReusableUIComponents.ServerDatabaseTableSelector serverDatabaseTableSelector1;
+        private ServerDatabaseTableSelector serverDatabaseTableSelector1;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btnGenerateCode;

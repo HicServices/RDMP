@@ -14,6 +14,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
+using Rdmp.Core.QueryBuilding;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
@@ -41,7 +42,9 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
 
         public override DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-            if (!_haveCopiedCohortAndAdjustedSql && Request != null)
+            SetServer();
+
+            if (!_haveCopiedCohortAndAdjustedSql && Request != null && _doNotMigrate == false)
                 CopyCohortToDataServer(listener,cancellationToken);
 
             return base.GetChunk(listener, cancellationToken);
@@ -53,14 +56,25 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
         private DiscoveredServer _server;
         private DiscoveredDatabase _tempDb;
         private bool _semaphoreObtained;
+        
+        /// <summary>
+        /// True if we decided not to move the cohort after all (e.g. if one or more datasets being extracted are already on the same server).
+        /// </summary>
+        private bool _doNotMigrate;
 
         public override string HackExtractionSQL(string sql, IDataLoadEventListener listener)
         {
-            //call base hacks
-            sql = base.HackExtractionSQL(sql, listener);
-
             SetServer();
 
+            //call base hacks
+            sql = base.HackExtractionSQL(sql, listener);
+            
+            if (_doNotMigrate)
+            {
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,"Cohort and Data are on same server so no migration will occur"));
+                return sql;
+            }
+            
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Original (unhacked) SQL was " + sql, null));
             
             //now replace database with tempdb
@@ -123,14 +137,34 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
 
         private void SetServer()
         {
-            if(_server == null)
+            if(_server == null && Request != null)
             {
                 //it's a legit dataset being extracted?
-                _server = Request.Catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
+                _server = Request.GetDistinctLiveDatabaseServer();
                 
                 //expect a database called called tempdb
                 _tempDb = _server.ExpectDatabase(TemporaryDatabaseName);
+
+                var cohortServer = Request.ExtractableCohort.ExternalCohortTable.Discover();
+                if (AreOnSameServer(_server , cohortServer.Server))
+                    _doNotMigrate = true;
             }
+        }
+
+        /// <summary>
+        /// Returns true if the two databases are on the same server (do not have to be on the same database).  Also confirms that the access
+        /// credentials are compatible.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        protected bool AreOnSameServer(DiscoveredServer a, DiscoveredServer b)
+        {
+            return
+                string.Equals(a.Name, b.Name, StringComparison.CurrentCultureIgnoreCase) &&
+                a.DatabaseType == b.DatabaseType &&
+                a.ExplicitUsernameIfAny == b.ExplicitUsernameIfAny &&
+                a.ExplicitPasswordIfAny == b.ExplicitPasswordIfAny;
         }
 
 

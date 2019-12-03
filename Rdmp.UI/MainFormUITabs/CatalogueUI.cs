@@ -13,11 +13,12 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;
+using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.SimpleControls;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
-using ReusableUIComponents.ScintillaHelper;
+
+
 using ScintillaNET;
 
 namespace Rdmp.UI.MainFormUITabs

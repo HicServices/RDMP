@@ -7,10 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands.Sharing
@@ -19,7 +19,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.Sharing
     {
         private readonly IFilter _toPopulate;
 
-        public ExecuteCommandImportFilterDescriptionsFromShare(IActivateItems activator, IFilter toPopulate,FileCollectionCommand cmd=null) : base(activator,cmd)
+        public ExecuteCommandImportFilterDescriptionsFromShare(IActivateItems activator, IFilter toPopulate,FileCollectionCombineable cmd=null) : base(activator,cmd)
         {
             _toPopulate = toPopulate;
 

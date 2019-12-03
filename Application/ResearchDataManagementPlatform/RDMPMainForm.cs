@@ -14,8 +14,11 @@ using System.Text;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
+using Rdmp.UI;
 using Rdmp.UI.Refreshing;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using Rdmp.UI.Theme;
 using ResearchDataManagementPlatform.Theme;
 using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
@@ -23,9 +26,8 @@ using ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
-using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
-using ReusableUIComponents.Theme;
+
+
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform

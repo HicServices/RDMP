@@ -16,6 +16,7 @@ using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers.Copying;
 using Rdmp.UI.CommandExecution;
@@ -28,7 +29,7 @@ using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents;
+
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {
@@ -324,7 +325,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
                 });
 
             if (_dragDropProvider == null)
-                _dragDropProvider = new DragDropProvider(new RDMPCommandFactory(), new RDMPCommandExecutionFactory(Activator), tlvLoadedTables);
+                _dragDropProvider = new DragDropProvider(new RDMPCombineableFactory(), new RDMPCommandExecutionFactory(Activator), tlvLoadedTables);
             
             _loadMetadata = databaseObject;
             RefreshUIFromDatabase();

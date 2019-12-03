@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
+﻿using Rdmp.UI.SimpleControls;
+
+namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 {
     partial class ConfigureCatalogueExtractabilityUI
     {
@@ -60,7 +62,7 @@
             this.label8 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnRenameTableInfo = new System.Windows.Forms.Button();
-            this.helpIcon1 = new ReusableUIComponents.HelpIcon();
+            this.helpIcon1 = new HelpIcon();
             ((System.ComponentModel.ISupportInitialize)(this.olvColumnExtractability)).BeginInit();
             this.pChangeAll.SuspendLayout();
             this.pFilter.SuspendLayout();
@@ -471,7 +473,7 @@
         private System.Windows.Forms.TextBox tbAcronym;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Panel panel1;
-        private ReusableUIComponents.HelpIcon helpIcon1;
+        private HelpIcon helpIcon1;
         private System.Windows.Forms.Button btnRenameTableInfo;
     }
 }

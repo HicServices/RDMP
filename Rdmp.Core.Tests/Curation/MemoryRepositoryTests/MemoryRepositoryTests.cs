@@ -4,10 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Reflection;
 using FAnsi.Implementation;
 using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
+using FAnsi.Implementations.PostgreSql;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
@@ -23,10 +25,10 @@ namespace Rdmp.Core.Tests.Curation.MemoryRepositoryTests
         [OneTimeSetUp]
         public virtual void OneTimeSetUp()
         {
-            ImplementationManager.Load(
-                typeof(MicrosoftSQLImplementation).Assembly,
-                typeof(MySqlImplementation).Assembly,
-                typeof(OracleImplementation).Assembly);
+            ImplementationManager.Load<MicrosoftSQLImplementation>();
+            ImplementationManager.Load<MySqlImplementation>();
+            ImplementationManager.Load<OracleImplementation>();
+            ImplementationManager.Load<PostgreSqlImplementation>();
         }
 
         [Test]

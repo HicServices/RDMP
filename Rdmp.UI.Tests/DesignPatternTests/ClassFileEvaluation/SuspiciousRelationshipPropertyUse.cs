@@ -25,7 +25,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
     {
         private readonly MEF mef;
         List<string>  _fails = new List<string>();
-        private BiDictionary<PropertyInfo, MethodInfo> RelationshipPropertyInfos = new BiDictionary<PropertyInfo, MethodInfo>();
+        private Dictionary<PropertyInfo, MethodInfo> RelationshipPropertyInfos = new Dictionary<PropertyInfo, MethodInfo>();
 
         public SuspiciousRelationshipPropertyUse(MEF mef)
         {

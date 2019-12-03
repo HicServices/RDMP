@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.MainFormUITabs.SubComponents
+﻿using Rdmp.UI.ChecksUI;
+
+namespace Rdmp.UI.MainFormUITabs.SubComponents
 {
     partial class TableInfoUI
     {
@@ -40,7 +42,7 @@
             this.label37 = new System.Windows.Forms.Label();
             this.tbTableInfoID = new System.Windows.Forms.TextBox();
             this.label38 = new System.Windows.Forms.Label();
-            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmiley1 = new RAGSmiley();
             this.label1 = new System.Windows.Forms.Label();
             this.tbSchema = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -259,7 +261,7 @@
         private System.Windows.Forms.Button btnParameters;
         private System.Windows.Forms.Button btnSynchronize;
         
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
+        private RAGSmiley ragSmiley1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbSchema;
         private System.Windows.Forms.Panel panel1;

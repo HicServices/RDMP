@@ -1,13 +1,13 @@
-# Table of contents
+# Creating A Context Menu
+
+## Contents
 1. [Background](#background)
 2. [Masquerading](#masquerading)
-3. [Menu Constructor Overloading](#menu-constructor-overloading)
-4. [Reasoning](#reasoning)
 5. [Example](#example)
 6. [Commands](#commands)
 7. [Creating a new Command](#creating-a-new-command)
-<a name="background"></a>
-# Background
+
+## Background
 RDMP uses tree collections to represent all objects the user is required to interact with (filters, datasets, projects, extraction configurations etc).  Every item can be right clicked resulting in a context menu appropriate to the object.  At a minimum it should have Expand/Collapse and 'What is this?'.
 
 ![ExampleMenu](Images/CreatingANewRightClickMenu/ExampleMenu.png) 
@@ -20,14 +20,14 @@ This menu is built by `RDMPCollectionCommonFunctionality` using reflection.  The
 
 If no corresponding menu exists for the object then the default menu will be shown.
 
-# Masquerading
+## Masquerading
 Sometimes we want 2 objects to have the same menu without having to create two menu classes.  This is valid if they represent the same object e.g. `ColumnInfo` and  `LinkedColumnInfoNode` (this represents a specific `ColumnInfo` to `CatalogueItem` binding).  The following options are available to make this happen.
 
 1. Making the wrapper class `IMasqueradeAs` will allow you to specify at the class level that it behaves like the wrapped object with the following exceptions
 1. If you implement `IDeletable` then your method will be called (not the object you are masquerading as)
 2. If a menu directly compatible with your wrapper class does exists then it will be used (i.e. the masqueraded object menu is only used if there isn't one for the wrapper)
 	
-# Example
+## Example
 Right click the "Data Repository Servers" folder and click "What is this?" (See [picture in Background](#background)).  A MessageBox should pop up saying `AllServersNode`
 
 Create a new class in `Rdmp.UI.Menus` called `AllServersNodeMenu` 
@@ -36,7 +36,7 @@ Create a new class in `Rdmp.UI.Menus` called `AllServersNodeMenu`
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace CatalogueManager.Menus
+namespace Rdmp.UI.Menus
 {
     class AllServersNodeMenu : RDMPContextMenuStrip
     {
@@ -46,28 +46,22 @@ namespace CatalogueManager.Menus
         }
     }
 }
-
 ```
 
 Run RDMP and right click the `AllServersNode` again, you should see your new menu item.
 
 ![ExampleMenu](Images/CreatingANewRightClickMenu/DoNothingMenuItem.png)
 
-# Commands
+## Commands
 The preferred way of adding menu items is to use abstract base class `RDMPContextMenuStrip` method `Add(IAtomicCommand cmd)`.  For example 
 
+<!--- f243e95a6dc94b3486f44b8f0bb0ed7d --->
 ```csharp
-using Rdmp.Core.Providers.Nodes;
-using Rdmp.UI.CommandExecution.AtomicCommands;
-
-namespace CatalogueManager.Menus
+class AllServersNodeMenu : RDMPContextMenuStrip
 {
-    class AllServersNodeMenu : RDMPContextMenuStrip
+    public AllServersNodeMenu(RDMPContextMenuStripArgs args, AllServersNode o) : base(args, o)
     {
-        public AllServersNodeMenu(RDMPContextMenuStripArgs args, AllServersNode o) : base(args, o)
-        {
-            Add(new ExecuteCommandCreateNewEmptyCatalogue(args.ItemActivator));
-        }
+        Add(new ExecuteCommandCreateNewEmptyCatalogue(args.ItemActivator));
     }
 }
 ```
@@ -75,7 +69,7 @@ This delegates all display/execution logic to `IAtomicCommand` and lets reuse th
 
 ![ExampleMenu](Images/CreatingANewRightClickMenu/AddCommand.png)
 
-# Creating a new Command
+## Creating a new Command
 
 All commands must be declared in an appropriate namespace e.g. `CommandExecution` (the unit test `UserInterfaceStandardisationChecker` will tell you if you put it in the wrong place).
 

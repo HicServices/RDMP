@@ -61,8 +61,8 @@ namespace Rdmp.Core.Repositories
             using (var con = GetConnection())
             {
                 //get all the row level data 1 to 1 join with evaluation
-                var cmdGetEvaluations = DatabaseCommandHelper.GetCommand("select count(*) from Evaluation where CatalogueID = " + catalogue.ID ,con.Connection, con.Transaction);
-                return Convert.ToInt32(cmdGetEvaluations.ExecuteScalar()) > 0;
+                using(var cmdGetEvaluations = DatabaseCommandHelper.GetCommand("select count(*) from Evaluation where CatalogueID = " + catalogue.ID ,con.Connection, con.Transaction))
+                    return Convert.ToInt32(cmdGetEvaluations.ExecuteScalar()) > 0;
             }
         }
 
@@ -74,44 +74,46 @@ namespace Rdmp.Core.Repositories
             using(var con = GetConnection())
             {
                 //get all the row level data 1 to 1 join with evaluation
-                var cmdGetEvaluations = DatabaseCommandHelper.GetCommand("select * from Evaluation " + whereSQL, con.Connection, con.Transaction);
-                using (DbDataReader r = cmdGetEvaluations.ExecuteReader())
+                using(var cmdGetEvaluations = DatabaseCommandHelper.GetCommand("select * from Evaluation " + whereSQL, con.Connection, con.Transaction))
+                    using (DbDataReader r = cmdGetEvaluations.ExecuteReader())
+                    {
+
+                        while (r.Read())
+                        {
+                            Evaluation toAdd = new Evaluation(this, r);
+                            toReturn.Add(toAdd);
+                        }
+                    }
+                
+                //use a separate command to read the children to prevent multiple active results sets problems
+                foreach (Evaluation evaluation in toReturn)
                 {
+                    List<RowState> states = new List<RowState>();
 
-                    while (r.Read())
+                    //get all the row level data
+                    using (var cmdGetRowStates = DatabaseCommandHelper.GetCommand(
+                        "select * from RowState WHERE Evaluation_ID =" + evaluation.ID, con.Connection,
+                        con.Transaction))
                     {
-                        Evaluation toAdd = new Evaluation(this,r);
-                        toReturn.Add(toAdd);
+                        using(var r2 = cmdGetRowStates.ExecuteReader())
+                            while (r2.Read())
+                                states.Add(new RowState(r2));
                     }
-
-                    r.Close();
                     
-                    //use a separate connection to read the children to prevent multiple active results sets problems
-                    foreach (Evaluation evaluation in toReturn)
-                    {
-                        //get all the row level data
-                        var cmdGetRowStates = DatabaseCommandHelper.GetCommand("select * from RowState WHERE Evaluation_ID =" + evaluation.ID, con.Connection, con.Transaction);
+                    evaluation.RowStates = states.ToArray();
 
-                        var r2 = cmdGetRowStates.ExecuteReader();
-                        List<RowState> states = new List<RowState>();
+                    //get all the column level data
+                    using(var cmdGetColumnStates = DatabaseCommandHelper.GetCommand("select * from ColumnState WHERE ColumnState.Evaluation_ID =" + evaluation.ID, con.Connection, con.Transaction))
+                        using(var r2 = cmdGetColumnStates.ExecuteReader())
+                        {
+                            List<ColumnState> columnStates = new List<ColumnState>();
 
-                        while (r2.Read())
-                            states.Add(new RowState(r2));
-                        r2.Close();
-                        evaluation.RowStates = states.ToArray();
+                            while (r2.Read())
+                                columnStates.Add(new ColumnState(r2));
 
-                        //get all the column level data
-                        var cmdGetColumnStates = DatabaseCommandHelper.GetCommand("select * from ColumnState WHERE ColumnState.Evaluation_ID =" + evaluation.ID, con.Connection, con.Transaction);
-                        r2 = cmdGetColumnStates.ExecuteReader();
-
-                        List<ColumnState> columnStates = new List<ColumnState>();
-
-                        while (r2.Read())
-                            columnStates.Add(new ColumnState(r2));
-
-                        evaluation.ColumnStates = columnStates.ToArray();
-                        r2.Close();
-                    }
+                            evaluation.ColumnStates = columnStates.ToArray();
+                            r2.Close();
+                        }
                 }
             }
 

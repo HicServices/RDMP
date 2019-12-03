@@ -4,14 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.MainFormUITabs;
-using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.CommandExecution;
 
 namespace Rdmp.UI.CommandExecution.Proposals
 {
@@ -31,9 +31,9 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<CatalogueUI, Catalogue>(c);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, Catalogue targetCatalogue, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Catalogue targetCatalogue, InsertOption insertOption = InsertOption.Default)
         {
-            var sourceFileCollection = cmd as FileCollectionCommand;
+            var sourceFileCollection = cmd as FileCollectionCombineable;
 
             if(sourceFileCollection != null)
                 if (sourceFileCollection.IsShareDefinition)

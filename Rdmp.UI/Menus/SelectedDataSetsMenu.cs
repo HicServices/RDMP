@@ -10,11 +10,13 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ProjectUI.Graphs;
+using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.Dialogs;
+
 
 namespace Rdmp.UI.Menus
 {

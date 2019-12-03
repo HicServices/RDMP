@@ -1,4 +1,6 @@
 ﻿using BrightIdeasSoftware;
+using Rdmp.UI.ChecksUI;
+using Rdmp.UI.LinkLabels;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.Diagrams
 {
@@ -40,13 +42,13 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.Diagrams
             this.cacheState = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.btnRefresh = new System.Windows.Forms.Button();
-            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmiley1 = new RAGSmiley();
             this.cataloguesRowCountChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.olvDQERuns = new BrightIdeasSoftware.ObjectListView();
             this.olvCatalogue = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvLastDQERun = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvExecute = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.pathLinkLabel1 = new ReusableUIComponents.LinkLabels.PathLinkLabel();
+            this.pathLinkLabel1 = new PathLinkLabel();
             this.pbFolder = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.cacheState)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -225,13 +227,13 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.Diagrams
         private System.Windows.Forms.DataVisualization.Charting.Chart cacheState;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.PictureBox pbFolder;
-        private ReusableUIComponents.LinkLabels.PathLinkLabel pathLinkLabel1;
+        private PathLinkLabel pathLinkLabel1;
         private System.Windows.Forms.DataVisualization.Charting.Chart cataloguesRowCountChart;
         private ObjectListView olvDQERuns;
         private OLVColumn olvCatalogue;
         private OLVColumn olvLastDQERun;
         private OLVColumn olvExecute;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
+        private RAGSmiley ragSmiley1;
         private System.Windows.Forms.Button btnRefresh;
     }
 }

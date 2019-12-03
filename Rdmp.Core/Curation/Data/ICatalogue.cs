@@ -48,7 +48,7 @@ namespace Rdmp.Core.Curation.Data
         int? LiveLoggingServer_ID { get; set; }
 
         /// <summary>
-        /// Currently configured validation rules for columns in a Catalogue, this can be deserialized into a HIC.Common.Validation.Validator
+        /// Currently configured validation rules for columns in a Catalogue, this can be deserialized into a Rdmp.Core.Validation.Validator
         /// </summary>
         string ValidatorXML { get; set; }
 
@@ -149,7 +149,14 @@ namespace Rdmp.Core.Curation.Data
 
         /// <inheritdoc cref="GetDistinctLiveDatabaseServer(DataAccessContext,bool,out IDataAccessPoint)"/>
         DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase);
-        
+
+        /// <summary>
+        /// Returns all <see cref="TableInfo"/> that underly the <see cref="Catalogue"/>.  Returned array does not include lookup tables unless the
+        /// <see cref="Catalogue"/> is entirely composed of lookup table(s) only
+        /// </summary>
+        /// <returns></returns>
+        ITableInfo[] GetTableInfosIdeallyJustFromMainTables();
+
         /// <inheritdoc cref="SupportingSQLTable"/>
         SupportingSQLTable[] GetAllSupportingSQLTablesForCatalogue(FetchOptions fetch);
 

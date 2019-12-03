@@ -1,4 +1,5 @@
-﻿using Rdmp.UI.LocationsMenu.Ticketing;
+﻿using Rdmp.UI.ChecksUI;
+using Rdmp.UI.LocationsMenu.Ticketing;
 
 namespace Rdmp.UI.ProjectUI
 {
@@ -40,11 +41,11 @@ namespace Rdmp.UI.ProjectUI
             this.label6 = new System.Windows.Forms.Label();
             this.pChooseExtractionPipeline = new System.Windows.Forms.Panel();
             this.gbCohortRefreshing = new System.Windows.Forms.GroupBox();
-            this.ragSmiley1Refresh = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmiley1Refresh = new RAGSmiley();
             this.pChooseCohortRefreshPipeline = new System.Windows.Forms.Panel();
             this.btnClearCic = new System.Windows.Forms.Button();
             this.pbCic = new System.Windows.Forms.PictureBox();
-            this.cbxCohortIdentificationConfiguration = new ReusableUIComponents.SuggestComboBox();
+            this.cbxCohortIdentificationConfiguration = new SuggestComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tbDescription = new System.Windows.Forms.TextBox();
@@ -285,13 +286,13 @@ namespace Rdmp.UI.ProjectUI
         private System.Windows.Forms.Panel pChooseExtractionPipeline;
         private System.Windows.Forms.GroupBox gbCohortRefreshing;
         private System.Windows.Forms.PictureBox pbCic;
-        private ReusableUIComponents.SuggestComboBox cbxCohortIdentificationConfiguration;
+        private SuggestComboBox cbxCohortIdentificationConfiguration;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnClearCic;
         private System.Windows.Forms.Panel pChooseCohortRefreshPipeline;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tbDescription;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1Refresh;
+        private RAGSmiley ragSmiley1Refresh;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label3;
     }

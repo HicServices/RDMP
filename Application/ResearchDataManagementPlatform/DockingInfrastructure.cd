@@ -46,7 +46,6 @@
       <Field Name="ActivateItems" />
       <Field Name="_windowFactory" />
       <Property Name="MainForm" />
-      <Property Name="Navigation" />
     </ShowAsAssociation>
   </Class>
   <Class Name="ResearchDataManagementPlatform.WindowManagement.WindowFactory" Collapsed="true">
@@ -57,9 +56,9 @@
     </TypeIdentifier>
   </Class>
   <Class Name="ResearchDataManagementPlatform.WindowManagement.ActivateItems" Collapsed="true">
-    <Position X="5.25" Y="2.75" Width="2" />
+    <Position X="5.25" Y="3.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AIQAACAgAAEAgBDUBAAAoCEgAAQgAwNgDFQQAEFAAQA=</HashCode>
+      <HashCode>AIQgACAgAAEAgBDUREAAoCUhAAQkAwNgDlQQAEFAAwA=</HashCode>
       <FileName>WindowManagement\ActivateItems.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -158,8 +157,8 @@
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="ReusableUIComponents.NavigationTrack&lt;T&gt;" Collapsed="true">
-    <Position X="5.25" Y="1.5" Width="2.25" />
+  <Class Name="Rdmp.UI.NavigationTrack&lt;T&gt;" Collapsed="true">
+    <Position X="5.25" Y="2" Width="1.75" />
     <TypeIdentifier />
   </Class>
   <Interface Name="Rdmp.UI.ItemActivation.IActivateItems" Collapsed="true">
