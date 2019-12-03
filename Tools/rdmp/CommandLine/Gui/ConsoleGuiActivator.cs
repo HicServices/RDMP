@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using NStack;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
@@ -180,23 +181,41 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public override void ShowException(string errorText, Exception exception)
         {
-            var dlg = new Dialog("Error", Math.Min(Application.Top.Frame.Width, 80),
-                Math.Min(Application.Top.Frame.Height, 20),
-                new Button("Ok", true){Clicked = Application.RequestStop});
-            
-            var msg = Wrap(errorText + "\n" + ExceptionHelper.ExceptionToListOfInnerMessages(exception), 76);
+            var msg = GetExceptionText(errorText,exception,false);
 
-            dlg.Add(new TextView()
+            var textView = new TextView()
             {
                 Text = msg,
                 X = 0,
                 Y = 0,
                 Width = Dim.Fill(),
-                Height = Dim.Fill()-2,
+                Height = Dim.Fill() - 2,
                 ReadOnly = true
-            });
+            };
+
+            bool toggleStack = true;
+
+            var dlg = new Dialog("Error", Math.Min(Application.Top.Frame.Width, 80),
+                Math.Min(Application.Top.Frame.Height, 20),
+                new Button("Ok", true){Clicked = Application.RequestStop},
+                new Button("Stack"){Clicked = ()=>
+                    {
+                        //flip between stack / no stack
+                        textView.Text = GetExceptionText(errorText,exception,toggleStack);
+                        toggleStack = !toggleStack;
+                    }
+                });
+            
+            
+
+            dlg.Add(textView);
             
             Application.Run(dlg);
+        }
+
+        private ustring GetExceptionText(string errorText, Exception exception, bool includeStackTrace)
+        {
+            return Wrap(errorText + "\n" + ExceptionHelper.ExceptionToListOfInnerMessages(exception,includeStackTrace), 76);
         }
 
         private string Wrap(string longString, int width)

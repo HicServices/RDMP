@@ -79,6 +79,7 @@ namespace Rdmp.UI.SubComponents
             olvExecute.AspectGetter += ExecuteAspectGetter;
             tlvCic.ButtonClick += tlvCic_ButtonClick;
             olvOrder.AspectGetter += (o)=> o is JoinableCollectionNode ? null : o is ParametersNode ? null : (o as IOrderable)?.Order;
+            olvOrder.IsEditable = false;
             AssociatedCollection = RDMPCollection.Cohort;
 
             CohortCompilerUI1.SelectionChanged += CohortCompilerUI1_SelectionChanged;

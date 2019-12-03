@@ -123,7 +123,7 @@ namespace Rdmp.Core.DataExport.Data
         /// <inheritdoc/>
         public ISupplementalExtractionResults AddSupplementalExtractionResult(string sqlExecuted, IMapsDirectlyToDatabaseTable extractedObject)
         {
-            var result = new SupplementalExtractionResults(Repository, this, sqlExecuted, extractedObject);
+            var result = new SupplementalExtractionResults(DataExportRepository, this, sqlExecuted, extractedObject);
             SupplementalExtractionResults.Add(result);
             return result;
         }
@@ -195,7 +195,7 @@ namespace Rdmp.Core.DataExport.Data
                                     CumulativeExtractionResults_ID = " + ID, con.Connection, con.Transaction))
                     using(var r = cmdselect.ExecuteReader())
                         if (r.Read())
-                            return new ReleaseLog(Repository, r);
+                            return new ReleaseLog(DataExportRepository, r);
 
                 return null;
             }

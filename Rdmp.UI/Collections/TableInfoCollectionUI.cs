@@ -11,6 +11,7 @@ using BrightIdeasSoftware;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
@@ -54,14 +55,14 @@ namespace Rdmp.UI.Collections
 
         private object tlvTableInfos_DataTypeAspectGetter(object rowobject)
         {
-            var c = rowobject as ColumnInfo;
-            var p = rowobject as PreLoadDiscardedColumn;
-
-            if (c != null)
+            if (rowobject is ColumnInfo c)
                 return c.Data_type;
 
-            if (p != null)
+            if (rowobject is PreLoadDiscardedColumn p)
                 return p.Data_type;
+
+            if (rowobject is PipelineComponentArgument a)
+                return a.Type;
 
             return null;
         }

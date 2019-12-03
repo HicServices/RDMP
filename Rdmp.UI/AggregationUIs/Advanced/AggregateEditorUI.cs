@@ -95,7 +95,31 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             olvJoin.CheckStatePutter += ForceJoinCheckStatePutter;
             olvJoinTableName.ImageGetter += ImageGetter;
 
+            olvJoinDirection.AspectGetter += JoinDirectionGetter;
+            olvJoinDirection.AspectPutter += JoinDirectionPutter;
+
             olvJoin.AddDecoration(new EditingCellBorderDecoration { UseLightbox = true });
+        }
+
+        private void JoinDirectionPutter(object rowobject, object newvalue)
+        {
+            if (rowobject is JoinableCohortAggregateConfigurationUse j)
+            {
+                if(j.JoinType == (ExtractionJoinType) newvalue)
+                    return;
+                
+                j.JoinType = (ExtractionJoinType)newvalue;
+                j.SaveToDatabase();
+                Publish();
+            }
+        }
+
+        private object JoinDirectionGetter(object rowobject)
+        {
+            if (rowobject is JoinableCohortAggregateConfigurationUse j)
+                return j.JoinType;
+
+            return null;
         }
 
         private object ImageGetter(object rowObject)

@@ -10,15 +10,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Ability to generate metadata reports for subset of catalogues (e.g. all catalogues in a folder).
 - Console gui supports short code searches (e.g. "c", "ti" etc)
+- Cohort Builder build log now lists the [IsExtractionIdentifier] column for each cohort set
 
 ### Changed
 
 - Updated to [FAnsiSql] 0.10.13
+- Cohort Builder now shows "No Cache" when there is no query cache server configured for a configuration instead of "0/1" (or "0/2" etc)
 
 ### Fixed
 
 - Fixed various issues with new CLI gui
+- Fixed issue using the 'context menu' button on compatible keyboards to access the GoTo menu (sometimes menu would not be expandable)
+- Fixed issue where ProjectNumber and Version appeared editable in some tree controls (changes were ignored).  These cells are now correctly readonly.
+- Fixed bug in log viewer right click (introduced in 4.0.1 command refactoring)
+- TestConnection now shows obfuscated connection string when a connection cannot be established (affects RDMP API users only - not core software)
+- Fixed changing join direciton in patient index tables not triggering refresh
+- Fixed Data Load Engine RAW server credentials when running RDMP installer with sql user authentication (RAW server entry would be created with Integrated Security)
 
 ## [4.0.1-rc2] - 2019-11-20
 
@@ -197,7 +206,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added GoTo menu item Catalogue=>TableInfo
 - Added user setting for skipping Cohort Creation wizard
 - MDFAttacher emits more messages when looking up location on disk to copy MDF file to.
-- Added menu option to set IsExtractionIdentifier on a Catalogue without having to open ExtractionInformations directly
+- Added menu option to set [IsExtractionIdentifier] on a Catalogue without having to open ExtractionInformations directly
 - Added the ability to set custom number of patients / rows per dataset when creating example datasets (from command line or when setting up client)
 - FlatFileAttacher now issues a warning if TableToLoad isn't one of the tables loaded by the currently executing load (previously it would just say 'table x wasn't found in RAW')
 - Added (initially hidden) column Order to cohort query builder to help debugging any issues with order of display
@@ -316,3 +325,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [UNION]: ./Documentation/CodeTutorials/Glossary.md#UNION
 [INTERSECT]: ./Documentation/CodeTutorials/Glossary.md#INTERSECT
 [EXCEPT]: ./Documentation/CodeTutorials/Glossary.md#EXCEPT
+[IsExtractionIdentifier]: ./Documentation/CodeTutorials/Glossary.md#IsExtractionIdentifier

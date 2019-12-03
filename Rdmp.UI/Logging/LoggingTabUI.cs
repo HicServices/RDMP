@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
@@ -110,9 +111,9 @@ namespace Rdmp.UI.Logging
             {
                 var menu = new ContextMenuStrip();
 
-                foreach (ExecuteCommandViewLoggedData cmd in GetCommands(e.RowIndex))
+                foreach (BasicCommandExecution cmd in GetCommands(e.RowIndex))
                 {
-                    ExecuteCommandViewLoggedData cmd1 = cmd;
+                    BasicCommandExecution cmd1 = cmd;
                     var mi = new ToolStripMenuItem(cmd.GetCommandName(), null, (s, x) => cmd1.Execute());
                     menu.Items.Add(mi);
                 }
@@ -139,7 +140,7 @@ namespace Rdmp.UI.Logging
                 WideMessageBox.Show("Full Text", dataGridView1.Rows[e.RowIndex]);
         }
 
-        private IEnumerable<IAtomicCommand> GetCommands(int rowIdnex)
+        private IEnumerable<BasicCommandExecution> GetCommands(int rowIdnex)
         {
             var rowId = (int)dataGridView1.Rows[rowIdnex].Cells["ID"].Value;
 

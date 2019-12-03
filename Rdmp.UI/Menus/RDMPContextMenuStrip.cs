@@ -125,10 +125,14 @@ namespace Rdmp.UI.Menus
             var mi = AddMenuIfNotExists(GoTo);
             bool bFirstTime = true;
 
+            var proxy = new ToolStripMenuItem("proxy") {Enabled = false};
+            mi.DropDownItems.Add(proxy);
+
             mi.DropDownOpening += (s,e) => 
             {
                 if(bFirstTime)
                 {
+                    mi.DropDownItems.Remove(proxy);
                     AddGoTo(func(),title);
                     bFirstTime = false;
                 }

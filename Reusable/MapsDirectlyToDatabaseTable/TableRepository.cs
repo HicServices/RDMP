@@ -525,7 +525,15 @@ namespace MapsDirectlyToDatabaseTable
             }
             catch (Exception e)
             {
-                throw new Exception("Testing connection failed, connection string was '" + _connectionStringBuilder.ConnectionString + "'", e);
+
+                var msg = _connectionStringBuilder.ConnectionString;
+
+                var pass = DiscoveredServer.Helper.GetExplicitPasswordIfAny(_connectionStringBuilder);
+
+                if(!string.IsNullOrWhiteSpace(pass))
+                    msg = msg.Replace(pass,"****");
+                
+                throw new Exception("Testing connection failed, connection string was '" + msg + "'", e);
             }
         }
 
