@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+### Fixed
+
+- Fixed null reference when using command `Reports->Generate...->Metadata Report...`
+
 ## [4.0.1] - 2019-12-03
 
 ### Added
