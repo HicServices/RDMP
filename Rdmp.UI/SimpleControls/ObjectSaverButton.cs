@@ -202,12 +202,14 @@ namespace Rdmp.UI.SimpleControls
 
             _undo = false;
             btnUndoRedo.Image = _redoImage;
+            btnUndoRedo.Text = "Redo";
         }
         private void SetReadyToUndo()
         {
             _undo = true;
             btnUndoRedo.Image = _undoImage;
             _undoneChanges = null;
+            btnUndoRedo.Text = "Undo";
         }
 
         public void CheckForOutOfDateObjectAndOfferToFix()
