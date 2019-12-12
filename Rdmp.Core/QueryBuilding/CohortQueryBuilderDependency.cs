@@ -35,6 +35,11 @@ namespace Rdmp.Core.QueryBuilding
         /// The relationship object describing the JOIN relationship between <see cref="CohortSet"/> and another optional table
         /// </summary>
         public JoinableCohortAggregateConfigurationUse PatientIndexTableIfAny { get; }
+        
+        /// <summary>
+        /// The column in the <see cref="CohortSet"/> that is marked <see cref="IColumn.IsExtractionIdentifier"/>
+        /// </summary>
+        public AggregateDimension ExtractionIdentifierColumn { get;}
 
         /// <summary>
         /// The aggregate (query) referenced by <see cref="PatientIndexTableIfAny"/>
@@ -71,6 +76,13 @@ namespace Rdmp.Core.QueryBuilding
             CohortSet = cohortSet;
             PatientIndexTableIfAny = patientIndexTableIfAny;
 
+            //record the IsExtractionIdentifier column for the log (helps with debugging count issues)
+            var eis = cohortSet?.AggregateDimensions?.Where(d => d.IsExtractionIdentifier).ToArray();
+            
+            //Multiple IsExtractionIdentifier columns is a big problem but it's handled elsewhere
+            if(eis != null && eis.Length == 1)
+                ExtractionIdentifierColumn = eis[0];
+            
             if (PatientIndexTableIfAny != null)
             {
                 var join = _childProvider.AllJoinables.SingleOrDefault(j =>

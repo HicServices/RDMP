@@ -71,7 +71,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             edsDQE.Server = _dqe.DataSource;
             edsDQE.Database = _dqe.InitialCatalog;
 
-            if (_logging.UserID != null)
+            if (_dqe.UserID != null)
             {
                 edsDQE.Username = _dqe.UserID;
                 edsDQE.Password = _dqe.Password;
@@ -83,6 +83,17 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
 
             var edsRAW = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "RAW Server", null);
             edsRAW.Server = _dqe.DataSource;
+
+            //We are expecting a single username/password for everything here, so just use the dqe one
+            if (_dqe.UserID != null)
+            {
+                if (_logging.UserID != _dqe.UserID || _logging.Password != _dqe.Password)
+                    throw new Exception("DQE uses sql authentication but the credentials are not the same as the logging db.  Could not pick a single set of credentials to use for the RAW server entry");
+
+                edsRAW.Username = _dqe.UserID;
+                edsRAW.Password = _dqe.Password;
+            }
+
             edsRAW.SaveToDatabase();
             defaults.SetDefault(PermissableDefaults.RAWDataLoadServer, edsRAW);
             Console.WriteLine("Successfully configured RAW server");
