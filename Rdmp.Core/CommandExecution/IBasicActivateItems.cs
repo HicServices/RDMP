@@ -66,7 +66,7 @@ namespace Rdmp.Core.CommandExecution
         IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,IMapsDirectlyToDatabaseTable[] availableObjects,string initialSearchText = null);
 
         /// <summary>
-        /// Prompts user to pick one of the <paramref cref="availableObjects"/>
+        /// Prompts user to pick one of the <paramref name="availableObjects"/>
         /// </summary>
         /// <param name="prompt"></param>
         /// <param name="availableObjects">Objects that can be selected</param>
