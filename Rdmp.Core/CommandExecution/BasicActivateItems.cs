@@ -172,9 +172,9 @@ namespace Rdmp.Core.CommandExecution
         public abstract FileInfo SelectFile(string prompt, string patternDescription, string pattern);
 
         /// <inheritdoc/>
-        public virtual List<KeyValuePair<Type, Func<RequiredArgument, object>>> GetDelegates()
+        public virtual List<CommandInvokerDelegate> GetDelegates()
         {
-            return new List<KeyValuePair<Type, Func<RequiredArgument, object>>>();
+            return new List<CommandInvokerDelegate>();
         }
     }
 }

@@ -41,7 +41,7 @@ namespace Rdmp.Core.CommandExecution
         /// exists for the parameter Type then the constructor will not be supported by the <see cref="IBasicActivateItems"/>
         /// </summary>
         /// <returns></returns>
-        List<KeyValuePair<Type, Func<RequiredArgument,object>>> GetDelegates();
+        List<CommandInvokerDelegate> GetDelegates();
         
         /// <summary>
         /// Stores the location of the Catalogue / Data Export repository databases and provides access to their objects

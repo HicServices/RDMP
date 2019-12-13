@@ -1,0 +1,45 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
+using MapsDirectlyToDatabaseTable;
+
+namespace Rdmp.Core.CommandExecution
+{
+    /// <summary>
+    /// A function which can be run to fetch instances of a given <see cref="Type"/> when required at runtime by a <see cref="CommandInvoker"/>
+    /// </summary>
+    public class CommandInvokerDelegate
+    {
+        /// <summary>
+        /// True if the delegate automatically supplies the value without any user input e.g. <see cref="IBasicActivateItems"/>
+        /// </summary>
+        public bool IsAuto { get; }
+
+        /// <summary>
+        /// The base class for which the delegate handles locating instances of e.g. <see cref="IDeleteable"/>
+        /// </summary>
+        public Type HandledType { get; }
+
+        /// <summary>
+        /// The method to run when it is time to pick an object for the give <see cref="RequiredArgument"/>
+        /// </summary>
+        public Func<RequiredArgument,object> Run { get; }
+
+        /// <summary>
+        /// Defines a new <see cref="Type"/> which we know how to get instances at runtime to fulfill
+        /// </summary>
+        /// <param name="handledType"></param>
+        /// <param name="isAuto"></param>
+        /// <param name="run"></param>
+        public CommandInvokerDelegate(Type handledType, bool isAuto, Func<RequiredArgument, object> run)
+        {
+            IsAuto = isAuto;
+            Run = run;
+            HandledType = handledType;
+        }
+    }
+}

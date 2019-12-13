@@ -243,11 +243,11 @@ namespace Rdmp.UI.Tests
             task.Wait(cts.Token);
         }
         
-        public override List<KeyValuePair<Type, Func<RequiredArgument, object>>> GetDelegates()
+        public override List<CommandInvokerDelegate> GetDelegates()
         {
-            return new List<KeyValuePair<Type, Func<RequiredArgument, object>>>
+            return new List<CommandInvokerDelegate>
             {
-                new KeyValuePair<Type, Func<RequiredArgument, object>>(typeof(IActivateItems),(p)=>this)
+                new CommandInvokerDelegate(typeof(IActivateItems),true,(p)=>this)
             };
         }
 

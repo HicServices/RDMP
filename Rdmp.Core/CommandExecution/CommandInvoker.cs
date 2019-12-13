@@ -30,7 +30,7 @@ namespace Rdmp.Core.CommandExecution
         /// <summary>
         /// Delegates provided by <see cref="_basicActivator"/> for fulfilling constructor arguments of the key Type
         /// </summary>
-        private List<KeyValuePair<Type, Func<RequiredArgument,object>>> _argumentDelegates;
+        private List<CommandInvokerDelegate> _argumentDelegates;
 
         /// <summary>
         /// Called when the user attempts to run a command marked <see cref="ICommandExecution.IsImpossible"/>
@@ -50,33 +50,33 @@ namespace Rdmp.Core.CommandExecution
             _argumentDelegates = _basicActivator.GetDelegates();
 
             
-            AddDelegate(typeof(ICatalogueRepository),(p)=>_repositoryLocator.CatalogueRepository);
-            AddDelegate(typeof(IDataExportRepository),(p)=>_repositoryLocator.DataExportRepository);
-            AddDelegate(typeof(IBasicActivateItems),(p)=>_basicActivator);
-            AddDelegate(typeof(IRDMPPlatformRepositoryServiceLocator),(p)=>_repositoryLocator);
-            AddDelegate(typeof(DirectoryInfo), (p) => _basicActivator.SelectDirectory($"Enter Directory for '{p.Name}'"));
-            AddDelegate(typeof(FileInfo), (p) => _basicActivator.SelectFile($"Enter File for '{p.Name}'"));
+            AddDelegate(typeof(ICatalogueRepository),true,(p)=>_repositoryLocator.CatalogueRepository);
+            AddDelegate(typeof(IDataExportRepository),true,(p)=>_repositoryLocator.DataExportRepository);
+            AddDelegate(typeof(IBasicActivateItems),true,(p)=>_basicActivator);
+            AddDelegate(typeof(IRDMPPlatformRepositoryServiceLocator),true,(p)=>_repositoryLocator);
+            AddDelegate(typeof(DirectoryInfo), false,(p) => _basicActivator.SelectDirectory($"Enter Directory for '{p.Name}'"));
+            AddDelegate(typeof(FileInfo), false,(p) => _basicActivator.SelectFile($"Enter File for '{p.Name}'"));
 
-            AddDelegate(typeof(string), (p) =>
+            AddDelegate(typeof(string), false,(p) =>
                 _basicActivator.TypeText("Value needed for parameter", p.Name, 1000, null, out string result, false)
                 ? result
                 : null);
 
-            AddDelegate(typeof(Type), (p) =>_basicActivator.SelectType($"Type needed for {p.Name} ",p.DemandIfAny?.TypeOf));
+            AddDelegate(typeof(Type), false,(p) =>_basicActivator.SelectType($"Type needed for {p.Name} ",p.DemandIfAny?.TypeOf));
                 
 
-            AddDelegate(typeof(DiscoveredDatabase),(p)=>_basicActivator.SelectDatabase(true,"Value needed for parameter " + p.Name));
-            AddDelegate(typeof(DiscoveredTable),(p)=>_basicActivator.SelectTable(true,"Value needed for parameter " + p.Name));
+            AddDelegate(typeof(DiscoveredDatabase),false,(p)=>_basicActivator.SelectDatabase(true,"Value needed for parameter " + p.Name));
+            AddDelegate(typeof(DiscoveredTable),false,(p)=>_basicActivator.SelectTable(true,"Value needed for parameter " + p.Name));
 
-            AddDelegate(typeof(DatabaseEntity), (p) =>_basicActivator.SelectOne(p.Name, GetAllObjectsOfType(p.Type)));
-            AddDelegate(typeof(IMightBeDeprecated), SelectOne<IMightBeDeprecated>);
-            AddDelegate(typeof(IDisableable), SelectOne<IDisableable>);
-            AddDelegate(typeof(INamed), SelectOne<INamed>);
-            AddDelegate(typeof(IDeleteable), SelectOne<IDeleteable>);
+            AddDelegate(typeof(DatabaseEntity),false, (p) =>_basicActivator.SelectOne(p.Name, GetAllObjectsOfType(p.Type)));
+            AddDelegate(typeof(IMightBeDeprecated),false, SelectOne<IMightBeDeprecated>);
+            AddDelegate(typeof(IDisableable),false, SelectOne<IDisableable>);
+            AddDelegate(typeof(INamed),false, SelectOne<INamed>);
+            AddDelegate(typeof(IDeleteable),false, SelectOne<IDeleteable>);
 
-            AddDelegate(typeof(Enum),(p)=>_basicActivator.SelectEnum("Value needed for parameter " + p.Name , p.Type, out Enum chosen)?chosen:null);
+            AddDelegate(typeof(Enum),false,(p)=>_basicActivator.SelectEnum("Value needed for parameter " + p.Name , p.Type, out Enum chosen)?chosen:null);
 
-            AddDelegate(typeof(ICheckable), 
+            AddDelegate(typeof(ICheckable), false,
                 (p)=>_basicActivator.SelectOne(p.Name, 
                     _basicActivator.GetAll<ICheckable>()
                         .Where(p.Type.IsInstanceOfType)
@@ -84,7 +84,7 @@ namespace Rdmp.Core.CommandExecution
                         .ToArray())
                 );
 
-            AddDelegate(typeof(IPatcher), (p) =>
+            AddDelegate(typeof(IPatcher),false, (p) =>
                 {
                     var patcherType = _basicActivator.SelectType("Select Patcher (if any)", typeof(IPatcher));
                     if (patcherType == null)
@@ -102,9 +102,9 @@ namespace Rdmp.Core.CommandExecution
             );
         }
 
-        private void AddDelegate(Type type, Func<RequiredArgument, object> func)
+        private void AddDelegate(Type type,bool isAuto, Func<RequiredArgument, object> func)
         {
-            _argumentDelegates.Add(new KeyValuePair<Type, Func<RequiredArgument, object>>(type,func));
+            _argumentDelegates.Add(new CommandInvokerDelegate(type,isAuto,func));
         }
 
         
@@ -182,12 +182,10 @@ namespace Rdmp.Core.CommandExecution
 
         private object GetValueFor(RequiredArgument a)
         {
-            var record = _argumentDelegates.Where(p => p.Key.IsAssignableFrom(a.Type))
-                .Select(p => new {p.Key, p.Value })
-                .FirstOrDefault();
+            var record = _argumentDelegates.FirstOrDefault(p => p.HandledType.IsAssignableFrom(a.Type));
 
             if (record != null)
-                return record.Value(a);
+                return record.Run(a);
             
             //it's an array of DatabaseEntities
             if(a.Type.IsArray && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(a.Type.GetElementType()))
@@ -219,7 +217,7 @@ namespace Rdmp.Core.CommandExecution
 
         private bool IsSupported(ParameterInfo p)
         {
-            return _argumentDelegates.Any(k => k.Key.IsAssignableFrom(p.ParameterType)) ||
+            return _argumentDelegates.Any(k => k.HandledType.IsAssignableFrom(p.ParameterType)) ||
                    p.ParameterType.IsArray &&
                    typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(p.ParameterType.GetElementType()) ||
                    p.HasDefaultValue ||
