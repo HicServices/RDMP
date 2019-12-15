@@ -8,6 +8,7 @@ using System;
 using System.Reflection;
 using System.Text;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Startup;
 using ReusableLibraryCode.Comments;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
@@ -35,27 +36,47 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             help.ReadComments(Environment.CurrentDirectory);
 
             var sb = new StringBuilder();
-            sb.AppendLine(BasicCommandExecution.GetCommandName(_commandType.Name));
-
-            var helpText = help.GetTypeDocumentationIfExists(_commandType);
-
-            if(helpText != null)
-                sb.AppendLine(helpText);
 
             if(commandCtor == null || !invoker.IsSupported(commandCtor))
-                sb.AppendLine("Command is not supported");
+                sb.AppendLine($"Command '{_commandType.Name}' does not current input method (e.g. CLI)");
             else
+            {
+
+                sb.AppendLine("COMMAND:" + _commandType.FullName);
+
+
+                var helpText = help.GetTypeDocumentationIfExists(_commandType);
+
+                if(helpText != null)
+                    sb.AppendLine(helpText);
+
+                sb.AppendLine("USAGE:");
+                
+                sb.Append(EnvironmentInfo.IsLinux ? "./rdmp" : "./rdmp.exe");
+                sb.Append(" cmd ");
+
+                sb.Append(BasicCommandExecution.GetCommandName(_commandType.Name));
+                sb.Append(" ");
+
+                var sbParameters = new StringBuilder();
+                sbParameters.AppendLine("PARAMETERS:");
+
                 foreach(ParameterInfo p in commandCtor.GetParameters())
                 {
-
                     var req = new RequiredArgument(p);
 
                     //automatic delegates require no user input or CLI entry (e.g. IActivateItems)                
                     if(invoker.GetDelegate(req).IsAuto)
                         continue;
 
-                    sb.AppendLine($"{req.Name}\t{req.Type.Name}\t{req.DemandIfAny?.Description}");
+                    sb.Append($"<{req.Name}> ");
+                    sbParameters.AppendLine($"{req.Name}\t{req.Type.Name}\t{req.DemandIfAny?.Description}");
                 }
+
+                sb.AppendLine();
+                sb.AppendLine(sbParameters.ToString());
+            }
+                
 
             BasicActivator.Show(sb.ToString());
 

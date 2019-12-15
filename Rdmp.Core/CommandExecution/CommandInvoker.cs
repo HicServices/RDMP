@@ -205,8 +205,6 @@ namespace Rdmp.Core.CommandExecution
 
         public bool IsSupported(ConstructorInfo c)
         {
-            var notSupported = c.GetParameters().Where(p=>!IsSupported(p));
-
             return c.GetParameters().All(IsSupported);
         }
 
