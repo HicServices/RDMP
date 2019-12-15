@@ -5,7 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Reflection;
+using System.Text;
 using Rdmp.Core.Curation.Data;
+using ReusableLibraryCode.Comments;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -24,9 +27,37 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            throw new NotImplementedException("Coming soon to an RDMP near you");
-            //new CommandInvoker(BasicActivator).ExecuteCommand();
+            var invoker = new CommandInvoker(BasicActivator);
 
+            var commandCtor = invoker.GetConstructor(_commandType);
+
+            var help = new CommentStore();
+            help.ReadComments(Environment.CurrentDirectory);
+
+            var sb = new StringBuilder();
+            sb.AppendLine(BasicCommandExecution.GetCommandName(_commandType.Name));
+
+            var helpText = help.GetTypeDocumentationIfExists(_commandType);
+
+            if(helpText != null)
+                sb.AppendLine(helpText);
+
+            if(commandCtor == null || !invoker.IsSupported(commandCtor))
+                sb.AppendLine("Command is not supported");
+            else
+                foreach(ParameterInfo p in commandCtor.GetParameters())
+                {
+
+                    var req = new RequiredArgument(p);
+
+                    //automatic delegates require no user input or CLI entry (e.g. IActivateItems)                
+                    if(invoker.GetDelegate(req).IsAuto)
+                        continue;
+
+                    sb.AppendLine($"{req.Name}\t{req.Type.Name}\t{req.DemandIfAny?.Description}");
+                }
+
+            BasicActivator.Show(sb.ToString());
 
         }
     }

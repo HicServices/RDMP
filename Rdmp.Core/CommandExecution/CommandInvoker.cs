@@ -76,6 +76,15 @@ namespace Rdmp.Core.CommandExecution
 
             AddDelegate(typeof(Enum),false,(p)=>_basicActivator.SelectEnum("Value needed for parameter " + p.Name , p.Type, out Enum chosen)?chosen:null);
 
+
+            _argumentDelegates.Add(new CommandInvokerArrayDelegate(typeof(IMapsDirectlyToDatabaseTable),false,(p)=>
+            {
+                IMapsDirectlyToDatabaseTable[] available = GetAllObjectsOfType(p.Type.GetElementType());
+                return _basicActivator.SelectMany(p.Name,p.Type.GetElementType(), available);
+              
+            }));
+                   
+
             AddDelegate(typeof(ICheckable), false,
                 (p)=>_basicActivator.SelectOne(p.Name, 
                     _basicActivator.GetAll<ICheckable>()
@@ -100,6 +109,10 @@ namespace Rdmp.Core.CommandExecution
                     }
                 }
             );
+
+            _argumentDelegates.Add(new CommandInvokerValueTypeDelegate((p)=>
+            _basicActivator.SelectValueType(p.Name,p.Type, null)));
+
         }
 
         private void AddDelegate(Type type,bool isAuto, Func<RequiredArgument, object> func)
@@ -182,25 +195,7 @@ namespace Rdmp.Core.CommandExecution
 
         private object GetValueFor(RequiredArgument a)
         {
-            var record = _argumentDelegates.FirstOrDefault(p => p.HandledType.IsAssignableFrom(a.Type));
-
-            if (record != null)
-                return record.Run(a);
-            
-            //it's an array of DatabaseEntities
-            if(a.Type.IsArray && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(a.Type.GetElementType()))
-            {
-                IMapsDirectlyToDatabaseTable[] available = GetAllObjectsOfType(a.Type.GetElementType());
-                return _basicActivator.SelectMany(a.Name,a.Type.GetElementType(), available);
-            }
-            
-            if (a.HasDefaultValue)
-                return a.DefaultValue;
-
-            if (a.Type.IsValueType && !typeof(Enum).IsAssignableFrom(a.Type))
-                return _basicActivator.SelectValueType(a.Name,a.Type, null);
-
-            return null;
+            return GetDelegate(a)?.Run(a);
         }
 
         private T SelectOne<T>(RequiredArgument parameterInfo)
@@ -217,14 +212,23 @@ namespace Rdmp.Core.CommandExecution
 
         private bool IsSupported(ParameterInfo p)
         {
-            return _argumentDelegates.Any(k => k.HandledType.IsAssignableFrom(p.ParameterType)) ||
-                   p.ParameterType.IsArray &&
-                   typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(p.ParameterType.GetElementType()) ||
-                   p.HasDefaultValue ||
-                   p.ParameterType == typeof(string) ||
-                   (p.ParameterType.IsValueType && !typeof(Enum).IsAssignableFrom(p.ParameterType));
+            return GetDelegate(new RequiredArgument(p)) != null;
         }
 
+        public CommandInvokerDelegate GetDelegate(RequiredArgument required)
+        {
+            var match =  _argumentDelegates.FirstOrDefault(k=>k.CanHandle(required.Type));
+
+            if(match != null)
+                return match;
+
+
+            if(required.DefaultValue != null)
+                return new CommandInvokerFixedValueDelegate(required.DefaultValue);
+
+            return null;
+
+        }
         public bool IsSupported(Type t)
         {
             bool acceptableType = typeof(IAtomicCommand).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface;
@@ -251,7 +255,8 @@ namespace Rdmp.Core.CommandExecution
             }
         }
 
-        private static ConstructorInfo GetConstructor(Type type)
+
+        public virtual ConstructorInfo GetConstructor(Type type)
         {
             var constructors = type.GetConstructors();
 

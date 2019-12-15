@@ -22,7 +22,7 @@ namespace Rdmp.Core.CommandExecution
         /// <summary>
         /// The base class for which the delegate handles locating instances of e.g. <see cref="IDeleteable"/>
         /// </summary>
-        public Type HandledType { get; }
+        protected readonly Type HandledType;
 
         /// <summary>
         /// The method to run when it is time to pick an object for the give <see cref="RequiredArgument"/>
@@ -40,6 +40,11 @@ namespace Rdmp.Core.CommandExecution
             IsAuto = isAuto;
             Run = run;
             HandledType = handledType;
+        }
+
+        public virtual bool CanHandle(Type t)
+        {
+            return HandledType.IsAssignableFrom(t);
         }
     }
 }
