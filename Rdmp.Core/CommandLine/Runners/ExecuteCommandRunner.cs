@@ -38,7 +38,9 @@ namespace Rdmp.Core.CommandLine.Runners
             _input = new ConsoleInputManager(repositoryLocator,checkNotifier);
             _listener = listener;
             _invoker = new CommandInvoker(_input);
-            
+            _invoker.CommandImpossible += (s,c)=>Console.WriteLine($"Command Impossible:{c.Command.ReasonCommandImpossible}");
+            _invoker.CommandCompleted += (s,c)=>Console.WriteLine("Command Completed");
+
             _commands = _invoker.GetSupportedCommands().ToDictionary(
                 k=>BasicCommandExecution.GetCommandName(k.Name),
                 v=>v,StringComparer.CurrentCultureIgnoreCase);

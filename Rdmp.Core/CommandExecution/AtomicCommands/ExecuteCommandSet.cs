@@ -6,16 +6,19 @@
 
 using System.Reflection;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.ImportExport;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandSet:BasicCommandExecution
     {
         private readonly IMapsDirectlyToDatabaseTable _setOn;
-        private PropertyInfo _property;
-        
+        private readonly PropertyInfo _property;
+        private readonly bool _getValueAtExecuteTime;
+
         /// <summary>
         /// The new value chosen by the user during command execution
         /// </summary>
@@ -26,39 +29,50 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// </summary>
         public bool Success { get; private set; }
 
-        public ExecuteCommandSet(IBasicActivateItems activator,IMapsDirectlyToDatabaseTable setOn):base(activator)
+        [UseWithObjectConstructor]
+        public ExecuteCommandSet(IBasicActivateItems activator,IMapsDirectlyToDatabaseTable setOn,string property, string value):base(activator)
         {
             _setOn = setOn;
-        }
 
-        public ExecuteCommandSet(IBasicActivateItems activator, IMapsDirectlyToDatabaseTable setOn,PropertyInfo property) : this(activator,setOn)
+            _property = _setOn.GetType().GetProperty(property);
+
+            if(_property == null)
+                SetImpossible($"Unknown Property '{property}'");
+            else
+            {
+                var invoker = new CommandInvoker(activator);
+                
+                var picker = new CommandLineObjectPicker(new string[]{value},activator.RepositoryLocator);
+
+                if(!picker.HasArgumentOfType(0,_property.PropertyType))
+                {
+                    SetImpossible($"Provided value could not be converted to '{_property.PropertyType}'");
+                }
+                else
+                    NewValue = picker[0].GetValueForParameterOfType(_property.PropertyType);
+            }
+        }
+        public ExecuteCommandSet(IBasicActivateItems activator,IMapsDirectlyToDatabaseTable setOn,PropertyInfo property):base(activator)
         {
+            _setOn = setOn;
             _property = property;
+            _getValueAtExecuteTime = true;
         }
-
+        
         public override void Execute()
         {
             base.Execute();
 
             if(_property == null)
-                if (BasicActivator.TypeText("Property To Set", "Property Name", 1000, null, out string propName, false))
-                {
-                    _property = _setOn.GetType().GetProperty(propName);
-
-                    if (_property == null)
-                    {
-                        Show($"No property found called '{propName}' on Type '{_setOn.GetType().Name}'");
-                        return;
-                    }
-                }
-
-            if(_property == null)
                 return;
             
-            var val = BasicActivator.SelectValueType(_property.Name, _property.PropertyType, _property.GetValue(_setOn));
-               
-            NewValue = val;
-            ShareManager.SetValue(_property,val,_setOn);
+            if(_getValueAtExecuteTime)
+            {
+                var val = BasicActivator.SelectValueType(_property.Name, _property.PropertyType, _property.GetValue(_setOn));
+                NewValue = val;
+            }
+            
+            ShareManager.SetValue(_property,NewValue,_setOn);
             ((DatabaseEntity)_setOn).SaveToDatabase();
 
             Success = true;

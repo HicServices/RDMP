@@ -118,6 +118,9 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
             if (paramType.IsValueType && !typeof(Enum).IsAssignableFrom(paramType))
                 return UsefulStuff.ChangeType(RawValue, paramType);
             
+            if(paramType.IsEnum)
+                return Enum.Parse(paramType,RawValue,true);
+            
             return null;
         }
 
