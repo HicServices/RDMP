@@ -8,8 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
@@ -29,6 +27,11 @@ namespace Rdmp.Core.CommandLine.Interactive
     public class ConsoleInputManager : BasicActivateItems
     {
         /// <summary>
+        /// Set to true to throw on any blocking input methods (e.g. <see cref="TypeText"/>)
+        /// </summary>
+        public bool DisallowInput { get; set; }
+        
+        /// <summary>
         /// Creates a new instance connected to the provided RDMP platform databases
         /// </summary>
         /// <param name="repositoryLocator">The databases to connect to</param>
@@ -47,9 +50,13 @@ namespace Rdmp.Core.CommandLine.Interactive
             Console.WriteLine(message);
         }
 
+
         public override bool TypeText(string header, string prompt, int maxLength, string initialText, out string text,
             bool requireSaneHeaderText)
         {
+            if (DisallowInput)
+                throw new InputDisallowedException($"Value required for '{header}' ({prompt})");
+
             Console.WriteLine(header);
             Console.Write(prompt +":");
             text = ReadLine();
@@ -58,6 +65,9 @@ namespace Rdmp.Core.CommandLine.Interactive
 
         public override DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
         {
+            if (DisallowInput)
+                throw new InputDisallowedException($"Value required for '{taskDescription}'");
+
             Console.WriteLine(taskDescription);
             var value = ReadLine(new PickDatabase());
             return value.Database;
@@ -65,6 +75,9 @@ namespace Rdmp.Core.CommandLine.Interactive
 
         public override DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
         {
+            if (DisallowInput)
+                throw new InputDisallowedException($"Value required for '{taskDescription}'");
+
             Console.WriteLine(taskDescription);
             var value = ReadLine(new PickTable());
             return value.Table;
@@ -77,6 +90,9 @@ namespace Rdmp.Core.CommandLine.Interactive
         
         public override bool SelectEnum(string prompt, Type enumType, out Enum chosen)
         {
+            if (DisallowInput)
+                throw new InputDisallowedException($"Value required for '{prompt}'");
+
             string chosenStr = GetString(prompt, Enum.GetNames(enumType).ToList());
             chosen = (Enum)Enum.Parse(enumType, chosenStr);
             return true;
@@ -84,6 +100,9 @@ namespace Rdmp.Core.CommandLine.Interactive
 
         public override Type SelectType(string prompt, Type[] available)
         {
+            if (DisallowInput)
+                throw new InputDisallowedException($"Value required for '{prompt}'"); 
+
             string chosenStr = GetString(prompt, available.Select(t=>t.Name).ToList());
 
             if (string.IsNullOrWhiteSpace(chosenStr))
@@ -111,6 +130,9 @@ namespace Rdmp.Core.CommandLine.Interactive
         public override IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
             IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText)
         {
+            if (DisallowInput)
+                throw new InputDisallowedException($"Value required for '{prompt}'");
+
             Console.WriteLine(prompt);
 
             var value = ReadLine(new PickObjectBase[]
@@ -128,6 +150,9 @@ namespace Rdmp.Core.CommandLine.Interactive
         public override IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
             string initialSearchText = null, bool allowAutoSelect = false)
         {
+            if (DisallowInput)
+                throw new InputDisallowedException($"Value required for '{prompt}'");
+
             Console.WriteLine(prompt);
 
             if (availableObjects.Length == 0)
@@ -154,11 +179,17 @@ namespace Rdmp.Core.CommandLine.Interactive
 
         private string ReadLine(IEnumerable<string> autoComplete = null)
         {
+            if (DisallowInput)
+                throw new InputDisallowedException("Value required");
+
             return autoComplete != null ? GetString("", autoComplete.ToList()) : Console.ReadLine();
         }
 
         private CommandLineObjectPickerArgumentValue ReadLine(PickObjectBase picker)
         {
+            if (DisallowInput)
+                throw new InputDisallowedException("Value required");
+
             Console.WriteLine($"Format: {picker.Format}");
             string line = ReadLine(picker.GetAutoCompleteIfAny());
 
@@ -166,6 +197,9 @@ namespace Rdmp.Core.CommandLine.Interactive
         }
         private CommandLineObjectPickerArgumentValue ReadLine(PickObjectBase[] pickers,IEnumerable<string> autoComplete)
         {
+            if (DisallowInput)
+                throw new InputDisallowedException("Value required");
+
             Console.WriteLine("Enter value in one of the following formats:");
 
             foreach (PickObjectBase p in pickers)
@@ -179,17 +213,26 @@ namespace Rdmp.Core.CommandLine.Interactive
 
         public override DirectoryInfo SelectDirectory(string prompt)
         {
+            if (DisallowInput)
+                throw new InputDisallowedException($"Value required for '{prompt}'");
+
             Console.WriteLine(prompt);
             return new DirectoryInfo(Console.ReadLine());
         }
 
         public override FileInfo SelectFile(string prompt)
         {
+            if (DisallowInput)
+                throw new InputDisallowedException($"Value required for '{prompt}'");
+
             return SelectFile(prompt, null, null);
         }
 
         public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
         {
+            if (DisallowInput)
+                throw new InputDisallowedException($"Value required for '{prompt}'");
+
             Console.WriteLine(prompt);
             return new FileInfo(Console.ReadLine());
         }
@@ -198,6 +241,9 @@ namespace Rdmp.Core.CommandLine.Interactive
 
         protected override object SelectValueTypeImpl(string prompt, Type paramType, object initialValue)
         {
+            if (DisallowInput)
+                throw new InputDisallowedException($"Value required for '{prompt}'");
+
             Console.WriteLine("Enter value for " + prompt +":");
             
             return UsefulStuff.ChangeType(ReadLine(), paramType);
@@ -205,12 +251,18 @@ namespace Rdmp.Core.CommandLine.Interactive
         
         public override bool YesNo(string text, string caption)
         {
+            if (DisallowInput)
+                throw new InputDisallowedException($"Value required for '{text}'");
+
             Console.WriteLine(text + "(y/n)");
             return string.Equals(Console.ReadLine(), "y", StringComparison.CurrentCultureIgnoreCase);
         }
         
         public string GetString(string prompt, List<string> options)
         {
+            if (DisallowInput)
+                throw new InputDisallowedException($"Value required for '{prompt}'");
+
             Console.WriteLine(prompt +":");
 
             //This implementation does not play nice with linux
