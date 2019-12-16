@@ -31,7 +31,7 @@ namespace Rdmp.Core.CommandExecution
         /// <inheritdoc/>
         public override bool CanHandle(Type t)
         {
-            return t.IsArray && t.GetElementType().IsAssignableFrom(t);
+            return t.IsArray && HandledType.IsAssignableFrom(t.GetElementType());
         }
         
     }
