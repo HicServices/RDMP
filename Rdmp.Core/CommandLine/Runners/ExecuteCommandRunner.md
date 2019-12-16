@@ -18,7 +18,7 @@ The above command would be broken down as follows (see [ExecuteCommandOptions]):
 | `Set` | CommandName, determines which `BasicCommand` derrived Type to attempt to run.  If missing then an [interactive command loop] is triggered|
 | `Catalogue:1 Name "My cool new name"`  | CommandArgs (3 in this case) for [constructing the command]|
 
-[CommandArgs are optional](##running-without-arguments)
+[CommandArgs are optional](#running-without-arguments)
  
 ## Constructing the Command
 
@@ -147,5 +147,5 @@ Format: {Type}:{NamePattern}[,{NamePattern2},{NamePattern3}...]
 [CommandLineObjectPicker]: ../Interactive/Picking/CommandLineObjectPicker.cs
 [CommandLineObjectPickerArgumentValue]: ../Interactive/Picking/CommandLineObjectPickerArgumentValue.cs
 [CommandInvoker]: ../../CommandExecution/CommandInvoker.cs
-[interactive command loop]: ##interactive-command-loop
-[constructing the command]: ##constructing-the-command
+[interactive command loop]: #interactive-command-loop
+[constructing the command]: #constructing-the-command
