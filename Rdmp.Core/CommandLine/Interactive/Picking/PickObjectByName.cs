@@ -50,8 +50,16 @@ NamePattern2+: (optional) only allowed if you are being prompted for multiple ob
 
         private bool IsLegitType(string possibleTypeName, out Type t)
         {
-            t = RepositoryLocator.CatalogueRepository.MEF.GetType(possibleTypeName);
-
+            try
+            {
+                t = RepositoryLocator.CatalogueRepository.MEF.GetType(possibleTypeName);
+            }
+            catch (AmbiguousTypeException )
+            {
+                t = null;
+                return false;
+            }
+            
             return  t != null 
                 && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t);
         }

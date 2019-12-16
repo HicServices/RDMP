@@ -35,10 +35,17 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
 
         private Type GetType(string arg)
         {
-            return 
-            RepositoryLocator.CatalogueRepository.MEF.GetType(BasicCommandExecution.ExecuteCommandPrefix + arg)
-            ??
-            RepositoryLocator.CatalogueRepository.MEF.GetType(arg);
+            try
+            {
+                return 
+                    RepositoryLocator.CatalogueRepository.MEF.GetType(BasicCommandExecution.ExecuteCommandPrefix + arg)
+                    ??
+                    RepositoryLocator.CatalogueRepository.MEF.GetType(arg);
+            }
+            catch (AmbiguousTypeException )
+            {
+                return null;
+            }
         }
     }
 }
