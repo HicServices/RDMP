@@ -220,8 +220,7 @@ namespace Rdmp.Core.CommandExecution
             if(match != null)
                 return match;
 
-
-            if(required.DefaultValue != null)
+            if(required.HasDefaultValue && required.DefaultValue != null)
                 return new CommandInvokerFixedValueDelegate(required.DefaultValue);
 
             return null;
