@@ -4,8 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+
 namespace Rdmp.Core.CommandExecution
 {
+    /// <summary>
+    /// <see cref="CommandInvokerDelegate"/> that only ever returns a single object (in <see cref="CommandInvokerDelegate.Run"/>)
+    /// and claims only to handle that object's exact <see cref="Type"/>.
+    /// </summary>
     class CommandInvokerFixedValueDelegate : CommandInvokerDelegate
     {
         public CommandInvokerFixedValueDelegate(object o):base(o.GetType(),true,(p)=>o)

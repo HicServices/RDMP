@@ -8,12 +8,17 @@ using System;
 
 namespace Rdmp.Core.CommandExecution
 {
+    /// <summary>
+    /// <see cref="CommandInvokerDelegate"/> that handles any value type except <see cref="Enum"/> (in <see cref="CommandInvokerDelegate.Run"/>).
+    /// </summary>
     class CommandInvokerValueTypeDelegate : CommandInvokerDelegate
     {
+        /// <inheritdoc />
         public CommandInvokerValueTypeDelegate(Func<RequiredArgument,object> run):base(typeof(object),false,run)
         {            
         }
 
+        /// <inheritdoc/>
         public override bool CanHandle(Type t)
         {
             return t.IsValueType && !typeof(Enum).IsAssignableFrom(t);

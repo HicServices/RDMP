@@ -34,7 +34,7 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         /// <param name="handledType"></param>
         /// <param name="isAuto"></param>
-        /// <param name="run"></param>
+        /// <param name="run">The function to run when values are required of the <paramref name="handledType"/> during runtime</param>
         public CommandInvokerDelegate(Type handledType, bool isAuto, Func<RequiredArgument, object> run)
         {
             IsAuto = isAuto;
@@ -42,6 +42,11 @@ namespace Rdmp.Core.CommandExecution
             HandledType = handledType;
         }
 
+        /// <summary>
+        /// Returns true if the delegate <see cref="Run"/> function can return valid objects of the passed <see cref="Type"/>
+        /// </summary>
+        /// <param name="t">The type of object you need</param>
+        /// <returns></returns>
         public virtual bool CanHandle(Type t)
         {
             return HandledType.IsAssignableFrom(t);
