@@ -63,9 +63,13 @@ namespace Rdmp.Core.CommandLine.Runners
             if(_commands.ContainsKey(command))
                 _invoker.ExecuteCommand(_commands[command],_picker);
             else
-                _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error,$"Unknown Command '{command}', use {BasicCommandExecution.GetCommandName<ExecuteCommandListSupportedCommands>()} to see available commands" ));
+                _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error,$"Unknown or Unsupported Command '{command}', use {BasicCommandExecution.GetCommandName<ExecuteCommandListSupportedCommands>()} to see available commands" ));
         }
 
+        /// <summary>
+        /// Runs a main loop in which the user types many commands one after the other
+        /// </summary>
+        /// <param name="repositoryLocator"></param>
         private void RunCommandExecutionLoop(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             //when running a command loop don't use command line arguments (shouldn't really be possible anyway)

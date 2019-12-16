@@ -38,13 +38,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             var sb = new StringBuilder();
 
             if(commandCtor == null || !invoker.IsSupported(commandCtor))
-                sb.AppendLine($"Command '{_commandType.Name}' does not current input method (e.g. CLI)");
+                sb.AppendLine($"Command '{_commandType.Name}' is not supported by the current input type ({BasicActivator.GetType().Name})");
             else
             {
-
                 sb.AppendLine("COMMAND:" + _commandType.FullName);
-
-
+                
                 var helpText = help.GetTypeDocumentationIfExists(_commandType);
 
                 if(helpText != null)

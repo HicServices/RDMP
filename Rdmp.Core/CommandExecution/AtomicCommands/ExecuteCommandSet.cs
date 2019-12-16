@@ -13,6 +13,10 @@ using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
+    /// <summary>
+    /// Changes a single property of an object and saves the new value to the database.  New value must be valid for the object and respect
+    /// any Type / Database constraints.
+    /// </summary>
     public class ExecuteCommandSet:BasicCommandExecution
     {
         private readonly IMapsDirectlyToDatabaseTable _setOn;
@@ -30,7 +34,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public bool Success { get; private set; }
 
         [UseWithObjectConstructor]
-        public ExecuteCommandSet(IBasicActivateItems activator,IMapsDirectlyToDatabaseTable setOn,string property, string value):base(activator)
+        public ExecuteCommandSet(IBasicActivateItems activator,
+            
+            [DemandsInitialization("A single object on which you want to change a given property")]
+            IMapsDirectlyToDatabaseTable setOn,
+            [DemandsInitialization("Name of a property you want to change e.g. Description")]
+            string property, 
+            [DemandsInitialization("New value to assign, this will be parsed into a valid Type if property is not a string")]
+            string value):base(activator)
         {
             _setOn = setOn;
 

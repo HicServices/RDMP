@@ -11,7 +11,7 @@ using ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
 {
     /// <summary>
-    /// Changes the type of the database column in the live database
+    /// Changes the datatype of the database column in the live database
     /// </summary>
     public class ExecuteCommandAlterColumnType : BasicCommandExecution
     {
