@@ -12,6 +12,9 @@ using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
 {
+    /// <summary>
+    /// Abstract base command for all commands which change a tables schema (on the live database)
+    /// </summary>
     public abstract class AlterTableCommandExecution :BasicCommandExecution
     {
         protected TableInfo TableInfo;

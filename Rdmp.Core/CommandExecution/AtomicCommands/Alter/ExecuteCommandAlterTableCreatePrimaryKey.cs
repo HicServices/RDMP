@@ -12,6 +12,9 @@ using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
 {
+    /// <summary>
+    /// Creates a primary key on the live database table based on one or more columns
+    /// </summary>
     public class ExecuteCommandAlterTableCreatePrimaryKey : AlterTableCommandExecution
     {
         public ExecuteCommandAlterTableCreatePrimaryKey(IBasicActivateItems activator, TableInfo tableInfo):base(activator,tableInfo)

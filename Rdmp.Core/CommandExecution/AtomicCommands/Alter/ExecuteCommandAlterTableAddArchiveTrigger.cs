@@ -12,6 +12,9 @@ using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
 {
+    /// <summary>
+    /// Creates a backup trigger and accompanying _Archive table on the live database for a given table
+    /// </summary>
     public class ExecuteCommandAlterTableAddArchiveTrigger : AlterTableCommandExecution
     {
         private readonly ITriggerImplementer _triggerImplementer;
