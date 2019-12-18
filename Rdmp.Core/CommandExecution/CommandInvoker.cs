@@ -147,8 +147,14 @@ namespace Rdmp.Core.CommandExecution
             //for each parameter on the constructor we want to invoke
             foreach (var parameterInfo in constructorInfo.GetParameters())
             {
-                object value = null;
+                var required = new RequiredArgument(parameterInfo);
+                
+                var argDelegate = GetDelegate(required);
 
+                //if it is an easy one to automatically fill e.g. IBasicActivateItems
+                if (argDelegate != null && argDelegate.IsAuto)
+                    parameterValues.Add(argDelegate.Run(required));
+                else
                 //if the constructor argument is a picker, use the one passed in
                 if (parameterInfo.ParameterType == typeof(CommandLineObjectPicker))
                 {
@@ -161,7 +167,7 @@ namespace Rdmp.Core.CommandExecution
                     complainAboutExtraParameters = false;
                     continue;
                 }
-
+                else
                 //if we have argument values specified
                 if (picker != null)
                 {
@@ -169,20 +175,19 @@ namespace Rdmp.Core.CommandExecution
                     if (picker.HasArgumentOfType(idx, parameterInfo.ParameterType))
                     {
                         //consume a value
-                        value = picker[idx].GetValueForParameterOfType(parameterInfo.ParameterType);
+                        parameterValues.Add(picker[idx].GetValueForParameterOfType(parameterInfo.ParameterType));
                         idx++;
+                        continue;
                     }
+                    
+                    throw new Exception($"Expected parameter at index {idx} to be a {parameterInfo.ParameterType} (for parameter '{parameterInfo.Name}') but it was {(idx >= picker.Length ? "Missing":picker[idx].RawValue)}");
                 }
-                
-                if(value == null) 
-                    value = GetValueForParameterOfType(parameterInfo);
-                
-                //if it's a null and not a default null
-                if(value == null && !parameterInfo.HasDefaultValue)
-                    throw new OperationCanceledException("Could not figure out a value for property '" + parameterInfo + "' for constructor '" + constructorInfo + "'.  Parameter Type was '" + parameterInfo.ParameterType + "'");
-
-                parameterValues.Add(value);
+                else
+                {
+                    parameterValues.Add(GetValueForParameterOfType(parameterInfo));
+                }
             }
+
             if(picker != null && idx < picker.Length && complainAboutExtraParameters)
                 throw new Exception("Unrecognised extra parameter " + picker[idx].RawValue);
 

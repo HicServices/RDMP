@@ -9,36 +9,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
-using ReusableLibraryCode.Checks;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandExecution
 {
-    class TestExecuteCommandNewObject : UnitTests
+    class TestExecuteCommandNewObject : CommandCliTests
     {
-        protected override void OneTimeSetUp()
-        {
-            base.OneTimeSetUp();
-
-            SetupMEF();
-        }
-
-        private CommandInvoker GetInvoker()
-        {
-            var invoker = new CommandInvoker(new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier())
-            {
-                DisallowInput = true
-            });
-            invoker.CommandImpossible +=(s,c)=> throw new Exception(c.Command.ReasonCommandImpossible);
-
-            return invoker;
-        }
-
         [Test]
         public void Test_NewObjectCommand_NoArguments()
         {

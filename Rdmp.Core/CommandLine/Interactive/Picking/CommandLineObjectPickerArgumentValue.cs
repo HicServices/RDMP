@@ -55,6 +55,13 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         /// </summary>
         public Type Type { get; private set; }
 
+        /// <summary>
+        /// True if the <see cref="RawValue"/> is an explicit indication by the user that they want a null
+        /// value used (rather than just skipping out selection)
+        /// </summary>
+        public bool ExplicitNull =>
+            RawValue != null && RawValue.Equals("null", StringComparison.CurrentCultureIgnoreCase);
+
         Logger _logger = LogManager.GetCurrentClassLogger();
 
         public CommandLineObjectPickerArgumentValue(string rawValue,int idx)
@@ -91,6 +98,9 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         /// <returns></returns>
         public object GetValueForParameterOfType(Type paramType)
         {
+            if (ExplicitNull)
+                return null;
+
             if (typeof(DirectoryInfo) == paramType)
                 return new DirectoryInfo(RawValue);
 
@@ -166,7 +176,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
 
         /// <summary>
         /// Returns true if the current <see cref="CommandLineObjectPickerArgumentValue"/> could be used to provide a
-        /// value of the given <paramref name="paramType"/>.
+        /// value of the given <paramref name="paramType"/> or the user has picked an <see cref="ExplicitNull"/>.
         /// </summary>
         /// <param name="paramType"></param>
         /// <returns></returns>
@@ -174,6 +184,11 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         {
             try
             {
+                bool canBeNull = !paramType.IsValueType || Nullable.GetUnderlyingType(paramType) != null;
+
+                if (ExplicitNull && canBeNull)
+                    return true;
+
                 return GetValueForParameterOfType(paramType) != null;
             }
             catch (Exception e)

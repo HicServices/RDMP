@@ -142,5 +142,13 @@ namespace Rdmp.Core.Tests.CommandLine
             Assert.IsNull(picker[0].Type);
             Assert.AreEqual("Name",picker[0].RawValue);
         }
+
+        [TestCase("null")]
+        [TestCase("NULL")]
+        public void PickNull(string nullString)
+        {
+            var picker = new CommandLineObjectPicker(new []{nullString},RepositoryLocator);
+            Assert.IsTrue(picker[0].ExplicitNull);
+        }
     }
 }

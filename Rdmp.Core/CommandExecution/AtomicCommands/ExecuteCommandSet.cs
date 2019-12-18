@@ -51,9 +51,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 SetImpossible($"Unknown Property '{property}'");
             else
             {
-                var invoker = new CommandInvoker(activator);
-                
-                var picker = new CommandLineObjectPicker(new string[]{value},activator.RepositoryLocator);
+                var picker = new CommandLineObjectPicker(new string[]{value ?? "NULL"},activator.RepositoryLocator);
 
                 if(!picker.HasArgumentOfType(0,_property.PropertyType))
                 {
