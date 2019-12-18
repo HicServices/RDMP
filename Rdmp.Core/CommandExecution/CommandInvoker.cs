@@ -135,17 +135,32 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="picker"></param>
         public void ExecuteCommand(Type type, CommandLineObjectPicker picker)
         {
-            ExecuteCommand(GetConstructor(type),picker);
+            ExecuteCommand(GetConstructor(type,picker),picker);
         }
         private void ExecuteCommand(ConstructorInfo constructorInfo, CommandLineObjectPicker picker)
         {
             List<object> parameterValues = new List<object>();
-            
+            bool complainAboutExtraParameters = true;
+
             int idx = 0;
 
+            //for each parameter on the constructor we want to invoke
             foreach (var parameterInfo in constructorInfo.GetParameters())
             {
                 object value = null;
+
+                //if the constructor argument is a picker, use the one passed in
+                if (parameterInfo.ParameterType == typeof(CommandLineObjectPicker))
+                {
+                    if(picker == null)
+                        throw new ArgumentException($"Type {constructorInfo.DeclaringType} contained a constructor which took an {parameterInfo.ParameterType} but no picker was passed");
+
+                    parameterValues.Add(picker);
+                    
+                    //the parameters are expected to be consumed by the target constructors so it's not really a problem if there are extra
+                    complainAboutExtraParameters = false;
+                    continue;
+                }
 
                 //if we have argument values specified
                 if (picker != null)
@@ -168,7 +183,7 @@ namespace Rdmp.Core.CommandExecution
 
                 parameterValues.Add(value);
             }
-            if(picker != null && idx < picker.Length)
+            if(picker != null && idx < picker.Length && complainAboutExtraParameters)
                 throw new Exception("Unrecognised extra parameter " + picker[idx].RawValue);
 
             var instance = (IAtomicCommand)constructorInfo.Invoke(parameterValues.ToArray());
@@ -252,15 +267,37 @@ namespace Rdmp.Core.CommandExecution
             }
         }
 
-
+        /// <summary>
+        /// Returns the first best constructor on the <paramref name="type"/> preferring those decorated with <see cref="UseWithObjectConstructorAttribute"/>
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public virtual ConstructorInfo GetConstructor(Type type)
+        {
+            return GetConstructor(type, null);
+        }
+
+        /// <summary>
+        /// Returns the first best constructor on the <paramref name="type"/> preferring those decorated with <see cref="UseWithCommandLineAttribute"/>
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public virtual ConstructorInfo GetConstructor(Type type, CommandLineObjectPicker picker)
         {
             var constructors = type.GetConstructors();
 
             if (constructors.Length == 0)
                 return null;
 
-            var importDecorated = constructors.Where(c => Attribute.IsDefined(c, typeof(UseWithObjectConstructorAttribute))).ToArray();
+            ConstructorInfo[] importDecorated = null;
+
+            //If we have a picker, look for a constructor that wants to run from the command line
+            if(picker != null)
+                importDecorated = constructors.Where(c => Attribute.IsDefined(c, typeof(UseWithCommandLineAttribute))).ToArray();
+
+            //otherwise look for a regular decorated constructor
+            if(importDecorated == null || !importDecorated.Any())
+                importDecorated = constructors.Where(c => Attribute.IsDefined(c, typeof(UseWithObjectConstructorAttribute))).ToArray();
 
             if (importDecorated.Any())
                 return importDecorated[0];
