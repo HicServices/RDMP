@@ -15,7 +15,7 @@ The above command would be broken down as follows (see [ExecuteCommandOptions]):
 | Operand | Role |
 | ------------- | ------------- |
 | `cmd` | Verb to pick an `IRunner` (in this case `ExecuteCommandRunner`) |
-| `Set` | CommandName, determines which `BasicCommand` derrived Type to attempt to run.  If missing then an [interactive command loop] is triggered|
+| `Set` | CommandName, determines which `BasicCommandExecution` derrived Type to attempt to run.  If missing then an [interactive command loop] is triggered|
 | `Catalogue:1 Name "My cool new name"`  | CommandArgs (3 in this case) for [constructing the command]|
 
 [CommandArgs are optional](#running-without-arguments)
