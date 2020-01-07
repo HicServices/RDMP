@@ -62,7 +62,11 @@ namespace Rdmp.Core.CommandExecution
                 ? result
                 : null);
 
-            AddDelegate(typeof(Type), false,(p) =>_basicActivator.SelectType($"Type needed for {p.Name} ",p.DemandIfAny?.TypeOf));
+            AddDelegate(typeof(Type), false,(p) =>
+            {
+                _basicActivator.SelectType($"Type needed for {p.Name} ", p.DemandIfAny?.TypeOf, out Type chosen);
+                return chosen;
+            });
                 
 
             AddDelegate(typeof(DiscoveredDatabase),false,(p)=>_basicActivator.SelectDatabase(true,"Value needed for parameter " + p.Name));
@@ -95,8 +99,7 @@ namespace Rdmp.Core.CommandExecution
 
             AddDelegate(typeof(IPatcher),false, (p) =>
                 {
-                    var patcherType = _basicActivator.SelectType("Select Patcher (if any)", typeof(IPatcher));
-                    if (patcherType == null)
+                    if(!_basicActivator.SelectType("Select Patcher (if any)", typeof(IPatcher), out Type patcherType))
                         return null;
                     
                     try
@@ -111,7 +114,10 @@ namespace Rdmp.Core.CommandExecution
             );
 
             _argumentDelegates.Add(new CommandInvokerValueTypeDelegate((p)=>
-            _basicActivator.SelectValueType(p.Name,p.Type, null)));
+            {
+                _basicActivator.SelectValueType(p.Name, p.Type, null, out object chosen);
+                return chosen;
+            }));
 
         }
 

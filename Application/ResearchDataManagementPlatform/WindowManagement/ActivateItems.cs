@@ -333,14 +333,19 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return false;
         }
 
-        public override Type SelectType(string prompt, Type[] available)
+        public override bool SelectType(string prompt, Type[] available,out Type chosen)
         {
             var dlg =  new PickOneOrCancelDialog<Type>(available, prompt);
 
             if (dlg.ShowDialog() == DialogResult.OK)
-                return dlg.Picked;
+            {
+                chosen = dlg.Picked;
+                return true;
+            }
 
-            return null;
+
+            chosen = null;
+            return false;
         }
 
         public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
@@ -550,9 +555,24 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
 
         /// <inheritdoc/>
-        public override bool YesNo(string text,string caption)
+        public override bool YesNo(string text,string caption,out bool chosen)
         {
-            return MessageBox.Show(text,caption,MessageBoxButtons.YesNo) == DialogResult.Yes;
+            var dr = MessageBox.Show(text, caption, MessageBoxButtons.YesNo);
+
+            if (dr == DialogResult.Yes)
+            {
+                chosen = true;
+                return true;
+            }
+
+            if (dr == DialogResult.No)
+            {
+                chosen = false;
+                return true;
+            }
+
+            chosen = false;
+            return false;
         }
 
         public override bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText)
@@ -672,16 +692,20 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
         
 
-        protected override object SelectValueTypeImpl(string prompt, Type paramType, object initialValue)
+        protected override bool SelectValueTypeImpl(string prompt, Type paramType, object initialValue, out object chosen)
         {
             //whatever else it is use string
             var typeTextDialog = new TypeTextOrCancelDialog("Enter Value", prompt + " (" + paramType.Name + ")",1000,
                 initialValue?.ToString());
-            
-            if (typeTextDialog.ShowDialog() == DialogResult.OK)
-                return UsefulStuff.ChangeType(typeTextDialog.ResultText, paramType);
 
-            return null;
+            if (typeTextDialog.ShowDialog() == DialogResult.OK)
+            {
+                chosen = UsefulStuff.ChangeType(typeTextDialog.ResultText, paramType);
+                return true;
+            }
+
+            chosen = null;
+            return false;
         }
 
         public override IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,

@@ -118,8 +118,9 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="prompt"></param>
         /// <param name="paramType"></param>
         /// <param name="initialValue"></param>
+        /// <param name="chosen"></param>
         /// <returns></returns>
-        object SelectValueType(string prompt, Type paramType, object initialValue);
+        bool SelectValueType(string prompt, Type paramType, object initialValue,out object chosen);
 
         /// <summary>
         /// Delete the <paramref name="deleteable"/> ideally asking the user for confirmation first (if appropriate)
@@ -129,11 +130,20 @@ namespace Rdmp.Core.CommandExecution
         bool DeleteWithConfirmation(IDeleteable deleteable);
 
         /// <summary>
-        /// Offers the user a binary choice and returns true if they accept it.  This method is blocking.
+        /// Offers the user a binary choice and returns true if they consciously select a value.  This method is blocking.
         /// </summary>
         /// <param name="text">The question to pose</param>
         /// <param name="caption"></param>
-        /// <returns></returns>
+        /// <param name="chosen">The answer chosen by the user</param>
+        /// <returns>true if user successfully made a choice</returns>
+        bool YesNo(string text, string caption, out bool chosen);
+
+        /// <summary>
+        /// Offers the user a binary choice returning the choice or false if user cancels (to distinguish between false and cancel
+        /// use the overload).  This method is blocking.</summary>
+        /// <param name="text">The question to pose</param>
+        /// <param name="caption"></param>
+        /// <returns>Users choice or false if user cancels</returns>
         bool YesNo(string text, string caption);
 
         /// <summary>
@@ -227,8 +237,9 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         /// <param name="prompt"></param>
         /// <param name="baseTypeIfAny">Pass a base class or interface if the Type must be an inheritor / assignable to a specific Type otherwise pass null</param>
+        /// <param name="chosen"></param>
         /// <returns></returns>
-        Type SelectType(string prompt, Type baseTypeIfAny);
+        bool SelectType(string prompt, Type baseTypeIfAny, out Type chosen);
 
         /// <summary>
         /// Requests user select one of the <paramref name="available"/> <see cref="Type"/>
@@ -236,6 +247,6 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="prompt">message to show to user</param>
         /// <param name="available">array of Types selection should be made from</param>
         /// <returns></returns>
-        Type SelectType(string prompt, Type[] available);
+        bool SelectType(string prompt, Type[] available, out Type chosen);
     }
 }

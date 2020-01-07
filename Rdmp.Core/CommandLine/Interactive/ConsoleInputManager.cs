@@ -98,7 +98,7 @@ namespace Rdmp.Core.CommandLine.Interactive
             return true;
         }
 
-        public override Type SelectType(string prompt, Type[] available)
+        public override bool SelectType(string prompt, Type[] available,out Type chosen)
         {
             if (DisallowInput)
                 throw new InputDisallowedException($"Value required for '{prompt}'"); 
@@ -106,14 +106,17 @@ namespace Rdmp.Core.CommandLine.Interactive
             string chosenStr = GetString(prompt, available.Select(t=>t.Name).ToList());
 
             if (string.IsNullOrWhiteSpace(chosenStr))
-                return null;
+            {
+                chosen = null;
+                return false;
+            }
 
-            var chosen = available.SingleOrDefault(t => t.Name.Equals(chosenStr));
+            chosen = available.SingleOrDefault(t => t.Name.Equals(chosenStr));
 
             if(chosen == null)
                 throw new Exception($"Unknown or incompatible Type '{chosen}'");
 
-            return chosen;
+            return true;
         }
 
         private void RefreshChildProvider()
@@ -239,23 +242,24 @@ namespace Rdmp.Core.CommandLine.Interactive
         
         
 
-        protected override object SelectValueTypeImpl(string prompt, Type paramType, object initialValue)
+        protected override bool SelectValueTypeImpl(string prompt, Type paramType, object initialValue,out object chosen)
         {
             if (DisallowInput)
                 throw new InputDisallowedException($"Value required for '{prompt}'");
 
             Console.WriteLine("Enter value for " + prompt +":");
-            
-            return UsefulStuff.ChangeType(ReadLine(), paramType);
+            chosen = UsefulStuff.ChangeType(ReadLine(), paramType);
+
+            return true;
         }
         
-        public override bool YesNo(string text, string caption)
+        public override bool YesNo(string text, string caption, out bool chosen)
         {
             if (DisallowInput)
                 throw new InputDisallowedException($"Value required for '{text}'");
 
             Console.WriteLine(text + "(y/n)");
-            return string.Equals(Console.ReadLine(), "y", StringComparison.CurrentCultureIgnoreCase);
+            return chosen = string.Equals(Console.ReadLine(), "y", StringComparison.CurrentCultureIgnoreCase);
         }
         
         public string GetString(string prompt, List<string> options)

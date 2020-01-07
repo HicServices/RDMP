@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Undo/Redo button now changes label as well as icon during use
 - Fixed null reference when using command `Reports->Generate...->Metadata Report...`
+- Fixed bug in console gui where cancelling a property change (e.g. Description) would result in setting the value to null.
 
 ## [4.0.1] - 2019-12-03
 

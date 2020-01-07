@@ -77,8 +77,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             
             if(_getValueAtExecuteTime)
             {
-                var val = BasicActivator.SelectValueType(_property.Name, _property.PropertyType, _property.GetValue(_setOn));
-                NewValue = val;
+                if(BasicActivator.SelectValueType(_property.Name, _property.PropertyType, _property.GetValue(_setOn), out object chosen))
+                    NewValue = chosen;
+                else
+                {
+                    Success = false;
+                    return;
+                }
             }
             
             ShareManager.SetValue(_property,NewValue,_setOn);
