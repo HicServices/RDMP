@@ -1,5 +1,8 @@
 extraction:
   csharp:
     index:
-      dotnet:
-        version: 3.0.101
+      solution: "HIC.DataManagementPlatform.sln"
+      vstools_version: "15"
+      msbuild:
+        configuration: "release"
+        platform: "Any CPU"
