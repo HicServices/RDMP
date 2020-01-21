@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using FAnsi;
 using FAnsi.Discovery;
@@ -12,6 +13,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.EntityNaming;
+using Rdmp.Core.DataLoad.Engine.Job;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming
@@ -91,6 +93,26 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming
             DeployInfo = new StandardDatabaseHelper(liveServer.GetCurrentDatabase(), namer,rawServer);
             
             RequiresStagingTableCreation = true;
+        }
+
+
+        /// <summary>
+        /// Returns all tables in the load as they would be named in the given <paramref name="stage"/>
+        /// </summary>
+        /// <param name="job">DLE job</param>
+        /// <param name="stage"></param>
+        /// <param name="includeLookups"></param>
+        /// <returns></returns>
+        public IEnumerable<DiscoveredTable> ExpectTables(IDataLoadJob job, LoadBubble stage, bool includeLookups)
+        {
+            var db = DeployInfo.DatabaseInfoList[stage];
+
+            foreach (ITableInfo t in job.RegularTablesToLoad)
+                yield return db.ExpectTable(t.GetRuntimeName(stage, DatabaseNamer));
+            
+            if(includeLookups)
+                foreach (ITableInfo t in job.LookupTablesToLoad)
+                    yield return db.ExpectTable(t.GetRuntimeName(stage, DatabaseNamer));
         }
     }
 }
