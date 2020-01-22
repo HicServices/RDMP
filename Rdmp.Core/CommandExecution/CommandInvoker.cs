@@ -58,16 +58,15 @@ namespace Rdmp.Core.CommandExecution
             AddDelegate(typeof(FileInfo), false,(p) => _basicActivator.SelectFile($"Enter File for '{p.Name}'"));
 
             AddDelegate(typeof(string), false,(p) =>
+            
                 _basicActivator.TypeText("Value needed for parameter", p.Name, 1000, null, out string result, false)
                 ? result
-                : null);
+                : throw new OperationCanceledException());
 
-            AddDelegate(typeof(Type), false,(p) =>
-            {
-                _basicActivator.SelectType($"Type needed for {p.Name} ", p.DemandIfAny?.TypeOf, out Type chosen);
-                return chosen;
-            });
-                
+            AddDelegate(typeof(Type), false,(p) => 
+                _basicActivator.SelectType($"Type needed for {p.Name} ", p.DemandIfAny?.TypeOf, out Type chosen)
+                    ? chosen 
+                    : throw new OperationCanceledException());
 
             AddDelegate(typeof(DiscoveredDatabase),false,(p)=>_basicActivator.SelectDatabase(true,"Value needed for parameter " + p.Name));
             AddDelegate(typeof(DiscoveredTable),false,(p)=>_basicActivator.SelectTable(true,"Value needed for parameter " + p.Name));
@@ -114,10 +113,9 @@ namespace Rdmp.Core.CommandExecution
             );
 
             _argumentDelegates.Add(new CommandInvokerValueTypeDelegate((p)=>
-            {
-                _basicActivator.SelectValueType(p.Name, p.Type, null, out object chosen);
-                return chosen;
-            }));
+                _basicActivator.SelectValueType(p.Name, p.Type, null, out object chosen) 
+                    ? chosen 
+                    : throw new OperationCanceledException()));
 
         }
 

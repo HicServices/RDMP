@@ -258,8 +258,16 @@ namespace Rdmp.Core.CommandLine.Interactive
             if (DisallowInput)
                 throw new InputDisallowedException($"Value required for '{text}'");
 
-            Console.WriteLine(text + "(y/n)");
-            return chosen = string.Equals(Console.ReadLine(), "y", StringComparison.CurrentCultureIgnoreCase);
+            Console.WriteLine(text + "(Y/n)");
+            
+            //if user picks no then it's false otherwise true
+            if (string.Equals(Console.ReadLine()?.Trim(), "n", StringComparison.CurrentCultureIgnoreCase))
+                chosen = false;
+            else
+                chosen = true;
+
+            //user made a conscious decision
+            return true;
         }
         
         public string GetString(string prompt, List<string> options)

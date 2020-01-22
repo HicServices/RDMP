@@ -205,8 +205,14 @@ namespace Rdmp.UI.Tests
 
         public override bool YesNo(string text, string caption, out bool chosen)
         {
-            if(YesNoResponse.HasValue)
-                return chosen = YesNoResponse.Value;
+            if (YesNoResponse.HasValue)
+            {
+                chosen = YesNoResponse.Value;
+                
+                //'user' consciously chose a value
+                return true;
+            }
+                
 
             throw new Exception("Did not expect to be asked a question but we were asked :" + text);
         }
