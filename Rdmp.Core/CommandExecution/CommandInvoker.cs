@@ -30,7 +30,7 @@ namespace Rdmp.Core.CommandExecution
         /// <summary>
         /// Delegates provided by <see cref="_basicActivator"/> for fulfilling constructor arguments of the key Type
         /// </summary>
-        private List<KeyValuePair<Type, Func<RequiredArgument,object>>> _argumentDelegates;
+        private List<CommandInvokerDelegate> _argumentDelegates;
 
         /// <summary>
         /// Called when the user attempts to run a command marked <see cref="ICommandExecution.IsImpossible"/>
@@ -50,33 +50,45 @@ namespace Rdmp.Core.CommandExecution
             _argumentDelegates = _basicActivator.GetDelegates();
 
             
-            AddDelegate(typeof(ICatalogueRepository),(p)=>_repositoryLocator.CatalogueRepository);
-            AddDelegate(typeof(IDataExportRepository),(p)=>_repositoryLocator.DataExportRepository);
-            AddDelegate(typeof(IBasicActivateItems),(p)=>_basicActivator);
-            AddDelegate(typeof(IRDMPPlatformRepositoryServiceLocator),(p)=>_repositoryLocator);
-            AddDelegate(typeof(DirectoryInfo), (p) => _basicActivator.SelectDirectory($"Enter Directory for '{p.Name}'"));
-            AddDelegate(typeof(FileInfo), (p) => _basicActivator.SelectFile($"Enter File for '{p.Name}'"));
+            AddDelegate(typeof(ICatalogueRepository),true,(p)=>_repositoryLocator.CatalogueRepository);
+            AddDelegate(typeof(IDataExportRepository),true,(p)=>_repositoryLocator.DataExportRepository);
+            AddDelegate(typeof(IBasicActivateItems),true,(p)=>_basicActivator);
+            AddDelegate(typeof(IRDMPPlatformRepositoryServiceLocator),true,(p)=>_repositoryLocator);
+            AddDelegate(typeof(DirectoryInfo), false,(p) => _basicActivator.SelectDirectory($"Enter Directory for '{p.Name}'"));
+            AddDelegate(typeof(FileInfo), false,(p) => _basicActivator.SelectFile($"Enter File for '{p.Name}'"));
 
-            AddDelegate(typeof(string), (p) =>
+            AddDelegate(typeof(string), false,(p) =>
+            
                 _basicActivator.TypeText("Value needed for parameter", p.Name, 1000, null, out string result, false)
                 ? result
-                : null);
+                : throw new OperationCanceledException());
 
-            AddDelegate(typeof(Type), (p) =>_basicActivator.SelectType($"Type needed for {p.Name} ",p.DemandIfAny?.TypeOf));
-                
+            AddDelegate(typeof(Type), false,(p) => 
+                _basicActivator.SelectType($"Type needed for {p.Name} ", p.DemandIfAny?.TypeOf, out Type chosen)
+                    ? chosen 
+                    : throw new OperationCanceledException());
 
-            AddDelegate(typeof(DiscoveredDatabase),(p)=>_basicActivator.SelectDatabase(true,"Value needed for parameter " + p.Name));
-            AddDelegate(typeof(DiscoveredTable),(p)=>_basicActivator.SelectTable(true,"Value needed for parameter " + p.Name));
+            AddDelegate(typeof(DiscoveredDatabase),false,(p)=>_basicActivator.SelectDatabase(true,"Value needed for parameter " + p.Name));
+            AddDelegate(typeof(DiscoveredTable),false,(p)=>_basicActivator.SelectTable(true,"Value needed for parameter " + p.Name));
 
-            AddDelegate(typeof(DatabaseEntity), (p) =>_basicActivator.SelectOne(p.Name, GetAllObjectsOfType(p.Type)));
-            AddDelegate(typeof(IMightBeDeprecated), SelectOne<IMightBeDeprecated>);
-            AddDelegate(typeof(IDisableable), SelectOne<IDisableable>);
-            AddDelegate(typeof(INamed), SelectOne<INamed>);
-            AddDelegate(typeof(IDeleteable), SelectOne<IDeleteable>);
+            AddDelegate(typeof(DatabaseEntity),false, (p) =>_basicActivator.SelectOne(p.Name, GetAllObjectsOfType(p.Type)));
+            AddDelegate(typeof(IMightBeDeprecated),false, SelectOne<IMightBeDeprecated>);
+            AddDelegate(typeof(IDisableable),false, SelectOne<IDisableable>);
+            AddDelegate(typeof(INamed),false, SelectOne<INamed>);
+            AddDelegate(typeof(IDeleteable),false, SelectOne<IDeleteable>);
 
-            AddDelegate(typeof(Enum),(p)=>_basicActivator.SelectEnum("Value needed for parameter " + p.Name , p.Type, out Enum chosen)?chosen:null);
+            AddDelegate(typeof(Enum),false,(p)=>_basicActivator.SelectEnum("Value needed for parameter " + p.Name , p.Type, out Enum chosen)?chosen:null);
 
-            AddDelegate(typeof(ICheckable), 
+
+            _argumentDelegates.Add(new CommandInvokerArrayDelegate(typeof(IMapsDirectlyToDatabaseTable),false,(p)=>
+            {
+                IMapsDirectlyToDatabaseTable[] available = GetAllObjectsOfType(p.Type.GetElementType());
+                return _basicActivator.SelectMany(p.Name,p.Type.GetElementType(), available);
+              
+            }));
+                   
+
+            AddDelegate(typeof(ICheckable), false,
                 (p)=>_basicActivator.SelectOne(p.Name, 
                     _basicActivator.GetAll<ICheckable>()
                         .Where(p.Type.IsInstanceOfType)
@@ -84,9 +96,11 @@ namespace Rdmp.Core.CommandExecution
                         .ToArray())
                 );
 
-            AddDelegate(typeof(IPatcher), (p) =>
+            AddDelegate(typeof(IPatcher),false, (p) =>
                 {
-                    var patcherType = _basicActivator.SelectType("Select Patcher (if any)", typeof(IPatcher));
+                    if(!_basicActivator.SelectType("Select Patcher (if any)", typeof(IPatcher), out Type patcherType))
+                        throw new OperationCanceledException();
+
                     if (patcherType == null)
                         return null;
                     
@@ -100,11 +114,17 @@ namespace Rdmp.Core.CommandExecution
                     }
                 }
             );
+
+            _argumentDelegates.Add(new CommandInvokerValueTypeDelegate((p)=>
+                _basicActivator.SelectValueType(p.Name, p.Type, null, out object chosen) 
+                    ? chosen 
+                    : throw new OperationCanceledException()));
+
         }
 
-        private void AddDelegate(Type type, Func<RequiredArgument, object> func)
+        private void AddDelegate(Type type,bool isAuto, Func<RequiredArgument, object> func)
         {
-            _argumentDelegates.Add(new KeyValuePair<Type, Func<RequiredArgument, object>>(type,func));
+            _argumentDelegates.Add(new CommandInvokerDelegate(type,isAuto,func));
         }
 
         
@@ -122,18 +142,39 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="picker"></param>
         public void ExecuteCommand(Type type, CommandLineObjectPicker picker)
         {
-            ExecuteCommand(GetConstructor(type),picker);
+            ExecuteCommand(GetConstructor(type,picker),picker);
         }
         private void ExecuteCommand(ConstructorInfo constructorInfo, CommandLineObjectPicker picker)
         {
             List<object> parameterValues = new List<object>();
-            
+            bool complainAboutExtraParameters = true;
+
             int idx = 0;
 
+            //for each parameter on the constructor we want to invoke
             foreach (var parameterInfo in constructorInfo.GetParameters())
             {
-                object value = null;
+                var required = new RequiredArgument(parameterInfo);
+                
+                var argDelegate = GetDelegate(required);
 
+                //if it is an easy one to automatically fill e.g. IBasicActivateItems
+                if (argDelegate != null && argDelegate.IsAuto)
+                    parameterValues.Add(argDelegate.Run(required));
+                else
+                //if the constructor argument is a picker, use the one passed in
+                if (parameterInfo.ParameterType == typeof(CommandLineObjectPicker))
+                {
+                    if(picker == null)
+                        throw new ArgumentException($"Type {constructorInfo.DeclaringType} contained a constructor which took an {parameterInfo.ParameterType} but no picker was passed");
+
+                    parameterValues.Add(picker);
+                    
+                    //the parameters are expected to be consumed by the target constructors so it's not really a problem if there are extra
+                    complainAboutExtraParameters = false;
+                    continue;
+                }
+                else
                 //if we have argument values specified
                 if (picker != null)
                 {
@@ -141,21 +182,20 @@ namespace Rdmp.Core.CommandExecution
                     if (picker.HasArgumentOfType(idx, parameterInfo.ParameterType))
                     {
                         //consume a value
-                        value = picker[idx].GetValueForParameterOfType(parameterInfo.ParameterType);
+                        parameterValues.Add(picker[idx].GetValueForParameterOfType(parameterInfo.ParameterType));
                         idx++;
+                        continue;
                     }
+                    
+                    throw new Exception($"Expected parameter at index {idx} to be a {parameterInfo.ParameterType} (for parameter '{parameterInfo.Name}') but it was {(idx >= picker.Length ? "Missing":picker[idx].RawValue)}");
                 }
-                
-                if(value == null) 
-                    value = GetValueForParameterOfType(parameterInfo);
-                
-                //if it's a null and not a default null
-                if(value == null && !parameterInfo.HasDefaultValue)
-                    throw new OperationCanceledException("Could not figure out a value for property '" + parameterInfo + "' for constructor '" + constructorInfo + "'.  Parameter Type was '" + parameterInfo.ParameterType + "'");
-
-                parameterValues.Add(value);
+                else
+                {
+                    parameterValues.Add(GetValueForParameterOfType(parameterInfo));
+                }
             }
-            if(picker != null && idx < picker.Length)
+
+            if(picker != null && idx < picker.Length && complainAboutExtraParameters)
                 throw new Exception("Unrecognised extra parameter " + picker[idx].RawValue);
 
             var instance = (IAtomicCommand)constructorInfo.Invoke(parameterValues.ToArray());
@@ -182,27 +222,7 @@ namespace Rdmp.Core.CommandExecution
 
         private object GetValueFor(RequiredArgument a)
         {
-            var record = _argumentDelegates.Where(p => p.Key.IsAssignableFrom(a.Type))
-                .Select(p => new {p.Key, p.Value })
-                .FirstOrDefault();
-
-            if (record != null)
-                return record.Value(a);
-            
-            //it's an array of DatabaseEntities
-            if(a.Type.IsArray && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(a.Type.GetElementType()))
-            {
-                IMapsDirectlyToDatabaseTable[] available = GetAllObjectsOfType(a.Type.GetElementType());
-                return _basicActivator.SelectMany(a.Name,a.Type.GetElementType(), available);
-            }
-            
-            if (a.HasDefaultValue)
-                return a.DefaultValue;
-
-            if (a.Type.IsValueType && !typeof(Enum).IsAssignableFrom(a.Type))
-                return _basicActivator.SelectValueType(a.Name,a.Type, null);
-
-            return null;
+            return GetDelegate(a)?.Run(a);
         }
 
         private T SelectOne<T>(RequiredArgument parameterInfo)
@@ -212,21 +232,27 @@ namespace Rdmp.Core.CommandExecution
 
         public bool IsSupported(ConstructorInfo c)
         {
-            var notSupported = c.GetParameters().Where(p=>!IsSupported(p));
-
             return c.GetParameters().All(IsSupported);
         }
 
         private bool IsSupported(ParameterInfo p)
         {
-            return _argumentDelegates.Any(k => k.Key.IsAssignableFrom(p.ParameterType)) ||
-                   p.ParameterType.IsArray &&
-                   typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(p.ParameterType.GetElementType()) ||
-                   p.HasDefaultValue ||
-                   p.ParameterType == typeof(string) ||
-                   (p.ParameterType.IsValueType && !typeof(Enum).IsAssignableFrom(p.ParameterType));
+            return GetDelegate(new RequiredArgument(p)) != null;
         }
 
+        public CommandInvokerDelegate GetDelegate(RequiredArgument required)
+        {
+            var match =  _argumentDelegates.FirstOrDefault(k=>k.CanHandle(required.Type));
+
+            if(match != null)
+                return match;
+
+            if(required.HasDefaultValue && required.DefaultValue != null)
+                return new CommandInvokerFixedValueDelegate(required.DefaultValue);
+
+            return null;
+
+        }
         public bool IsSupported(Type t)
         {
             bool acceptableType = typeof(IAtomicCommand).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface;
@@ -253,14 +279,37 @@ namespace Rdmp.Core.CommandExecution
             }
         }
 
-        private static ConstructorInfo GetConstructor(Type type)
+        /// <summary>
+        /// Returns the first best constructor on the <paramref name="type"/> preferring those decorated with <see cref="UseWithObjectConstructorAttribute"/>
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public virtual ConstructorInfo GetConstructor(Type type)
+        {
+            return GetConstructor(type, null);
+        }
+
+        /// <summary>
+        /// Returns the first best constructor on the <paramref name="type"/> preferring those decorated with <see cref="UseWithCommandLineAttribute"/>
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public virtual ConstructorInfo GetConstructor(Type type, CommandLineObjectPicker picker)
         {
             var constructors = type.GetConstructors();
 
             if (constructors.Length == 0)
                 return null;
 
-            var importDecorated = constructors.Where(c => Attribute.IsDefined(c, typeof(UseWithObjectConstructorAttribute))).ToArray();
+            ConstructorInfo[] importDecorated = null;
+
+            //If we have a picker, look for a constructor that wants to run from the command line
+            if(picker != null)
+                importDecorated = constructors.Where(c => Attribute.IsDefined(c, typeof(UseWithCommandLineAttribute))).ToArray();
+
+            //otherwise look for a regular decorated constructor
+            if(importDecorated == null || !importDecorated.Any())
+                importDecorated = constructors.Where(c => Attribute.IsDefined(c, typeof(UseWithObjectConstructorAttribute))).ToArray();
 
             if (importDecorated.Any())
                 return importDecorated[0];

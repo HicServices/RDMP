@@ -14,12 +14,17 @@ using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
+    /// <summary>
+    /// Deletes objects out of the RDMP database
+    /// </summary>
     public class ExecuteCommandDelete : BasicCommandExecution
     {
         private readonly IList<IDeleteable> _deletables;
 
         [UseWithObjectConstructor]
-        public ExecuteCommandDelete(IBasicActivateItems activator, IDeleteable deletable) : this(activator,new []{ deletable})
+        public ExecuteCommandDelete(IBasicActivateItems activator, 
+            [DemandsInitialization("The object you want to delete",Mandatory = true)]
+            IDeleteable deletable) : this(activator,new []{ deletable})
         {
         }
 

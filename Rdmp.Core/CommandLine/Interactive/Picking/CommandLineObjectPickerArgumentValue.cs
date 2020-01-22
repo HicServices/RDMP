@@ -24,16 +24,43 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
     /// </summary>
     public class CommandLineObjectPickerArgumentValue
     {
+        /// <summary>
+        /// The exact value typed in at the console
+        /// </summary>
         public string RawValue { get; }
+
+        /// <summary>
+        /// Which element in the sequence of arguments
+        /// </summary>
         public int Index { get; }
 
+        /// <summary>
+        /// <see cref="DiscoveredDatabase"/> if <see cref="RawValue"/> matches the syntax (see <see cref="PickDatabase"/>) otherwise null
+        /// </summary>
         public DiscoveredDatabase Database { get; private set; }
 
+        /// <summary>
+        /// <see cref="DiscoveredDatabase"/> if <see cref="RawValue"/> matches the syntax (see <see cref="PickTable"/>) otherwise null
+        /// </summary>
         public DiscoveredTable Table { get; private set; }
 
+        /// <summary>
+        /// A collection of <see cref="DatabaseEntity"/> if the <see cref="RawValue"/> indicates selecting one or more such objects
+        /// (e.g. see <see cref="PickObjectByID"/>, <see cref="PickObjectByName"/>) otherwise null
+        /// </summary>
         public ReadOnlyCollection<IMapsDirectlyToDatabaseTable> DatabaseEntities { get; private set; }
 
+        /// <summary>
+        /// <see cref="System.Type"/> if the <see cref="RawValue"/> matches a single type name (see <see cref="PickType"/>) otherwise null
+        /// </summary>
         public Type Type { get; private set; }
+
+        /// <summary>
+        /// True if the <see cref="RawValue"/> is an explicit indication by the user that they want a null
+        /// value used (rather than just skipping out selection)
+        /// </summary>
+        public bool ExplicitNull =>
+            RawValue != null && RawValue.Equals("null", StringComparison.CurrentCultureIgnoreCase);
 
         Logger _logger = LogManager.GetCurrentClassLogger();
 
@@ -71,6 +98,9 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         /// <returns></returns>
         public object GetValueForParameterOfType(Type paramType)
         {
+            if (ExplicitNull)
+                return null;
+
             if (typeof(DirectoryInfo) == paramType)
                 return new DirectoryInfo(RawValue);
 
@@ -118,6 +148,9 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
             if (paramType.IsValueType && !typeof(Enum).IsAssignableFrom(paramType))
                 return UsefulStuff.ChangeType(RawValue, paramType);
             
+            if(paramType.IsEnum)
+                return Enum.Parse(paramType,RawValue,true);
+            
             return null;
         }
 
@@ -141,10 +174,21 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
             throw new CommandLineObjectPickerParseException($"Specified object was not an '{typeof(T)}''",Index,RawValue);
         }
 
+        /// <summary>
+        /// Returns true if the current <see cref="CommandLineObjectPickerArgumentValue"/> could be used to provide a
+        /// value of the given <paramref name="paramType"/> or the user has picked an <see cref="ExplicitNull"/>.
+        /// </summary>
+        /// <param name="paramType"></param>
+        /// <returns></returns>
         public bool HasValueOfType(Type paramType)
         {
             try
             {
+                bool canBeNull = !paramType.IsValueType || Nullable.GetUnderlyingType(paramType) != null;
+
+                if (ExplicitNull && canBeNull)
+                    return true;
+
                 return GetValueForParameterOfType(paramType) != null;
             }
             catch (Exception e)

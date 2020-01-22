@@ -5,17 +5,37 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
+    /// <summary>
+    /// Creates a new <see cref="DatabaseEntity"/> in the RDMP Platform database with the provided arguments.
+    /// </summary>
     class ExecuteCommandNewObject:BasicCommandExecution
     {
-        private Type _type;
+        /// <summary>
+        /// The type of <see cref="DatabaseEntity"/> the user wants to construct
+        /// </summary>
+        private readonly Type _type;
 
-        
+        /// <summary>
+        /// if arguments are coming direct from the command line we can pull values from here otherwise we must prompt user for those
+        /// values
+        /// </summary>
+        private CommandLineObjectPicker _picker;
+
+        /// <summary>
+        /// Interactive constructor, user will be prompted for values at execute time
+        /// </summary>
+        /// <param name="activator"></param>
+        /// <param name="type"></param>
+        [UseWithObjectConstructor]
         public ExecuteCommandNewObject(IBasicActivateItems activator,
             [DemandsInitialization("Type to create",TypeOf = typeof(DatabaseEntity))]
             Type type):base(activator)
@@ -25,23 +45,45 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _type = type;
         }
 
+        /// <summary>
+        /// Automatic/Unattended constructor, construction values will come from <see cref="picker"/> and user will not be
+        /// prompted for each constructor argument.
+        /// </summary>
+        /// <param name="activator"></param>
+        /// <param name="picker"></param>
+        [UseWithCommandLine]
+        public ExecuteCommandNewObject(IBasicActivateItems activator,CommandLineObjectPicker picker):base(activator)
+        {
+            if(!picker.HasArgumentOfType(0, typeof(Type)))
+                SetImpossible("First parameter must be a Type of DatabaseEntity");
+            else
+            {
+                _type = picker[0].Type;
+
+                if(!typeof(DatabaseEntity).IsAssignableFrom(_type))
+                    SetImpossible("Type must be derived from DatabaseEntity");
+            }
+
+            _picker = picker;
+        }
+
+
         public override void Execute()
         {
             base.Execute();
 
-            var objectConstructor = new ObjectConstructor();
+            var instance = (DatabaseEntity)Construct(_type,
 
-            var constructor = objectConstructor.GetRepositoryConstructor(_type);
-
-            var invoker = new CommandInvoker(BasicActivator);
-
-            var instance = objectConstructor.ConstructIfPossible(_type,
-                constructor.GetParameters().Select(invoker.GetValueForParameterOfType).ToArray());
-
+                //use the IRepository constructor of the _type
+                o=>o.GetRepositoryConstructor(_type), 
+                
+                //first argument is the Type, the rest are fed into the constructor of _type
+                _picker?.Arguments?.Skip(1));
+            
             if(instance == null)
                 throw new Exception("Failed to construct object with provided parameters");
 
-            Publish((DatabaseEntity) instance);
+            Publish( instance);
         }
     }
 }

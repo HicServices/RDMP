@@ -40,6 +40,9 @@ namespace Rdmp.UI.SimpleDialogs
         public PickOneOrCancelDialog(T[] options,string message, Func<T,Image> imageGetter, Func<T,string> nameGetter)
         {
             InitializeComponent();
+            
+            if (typeof(Enum).IsAssignableFrom(typeof(T)))
+                btnSelectNULL.Enabled = false;
 
             //start at cancel so if they hit the X nothing is selected
             DialogResult = DialogResult.Cancel;
@@ -109,6 +112,13 @@ namespace Rdmp.UI.SimpleDialogs
                 objectListView1.UseFiltering = true;
                 objectListView1.ModelFilter = new TextMatchFilter(objectListView1,tbFilter.Text);
             }            
+        }
+
+        private void btnSelectNULL_Click(object sender, EventArgs e)
+        {
+            Picked = default;
+            DialogResult = DialogResult.OK;
+            Close();
         }
     }
 

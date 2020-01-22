@@ -79,6 +79,7 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
                     {
                         var p = collection[list.SelectedItem];
 
+
                         var cmd = new ExecuteCommandSet(_activator, DatabaseObject, p.PropertyInfo);
                         cmd.Execute();
 
