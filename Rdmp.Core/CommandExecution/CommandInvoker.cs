@@ -99,6 +99,9 @@ namespace Rdmp.Core.CommandExecution
             AddDelegate(typeof(IPatcher),false, (p) =>
                 {
                     if(!_basicActivator.SelectType("Select Patcher (if any)", typeof(IPatcher), out Type patcherType))
+                        throw new OperationCanceledException();
+
+                    if (patcherType == null)
                         return null;
                     
                     try
