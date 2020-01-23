@@ -1053,9 +1053,6 @@ namespace Rdmp.Core.Providers
                 //if they want the children of a Pipeline (which we don't track) we will have to look under PipelineUseCase instead
                 if (model is Pipeline p)
                 {
-                    if (OtherPipelinesNode.Pipelines.Contains(p))
-                        return GetChildren(OtherPipelinesNode);
-
                     var useCase = PipelineUseCases.SingleOrDefault(u => u.Pipelines.Contains(p));
                     if (useCase != null)
                         return GetChildren(useCase);
