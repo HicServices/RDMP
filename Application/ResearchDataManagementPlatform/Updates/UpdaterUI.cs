@@ -41,7 +41,7 @@ namespace ResearchDataManagementPlatform.Updates
             InitializeComponent();
             Entries = new List<GHRelease>();
             SquirrelEntries = new List<ReleaseEntry>();
-            _currentVersion = new SemanticVersion(FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion);
+            _currentVersion = new SemanticVersion(FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion);
 
             GetUpdatesAsync();
 
@@ -216,7 +216,7 @@ namespace ResearchDataManagementPlatform.Updates
                 return String.IsNullOrEmpty(version.SpecialVersion);
 
             if (!cbShowOlderVersions.Checked && cbShowPrerelease.Checked)
-                return (version > _currentVersion) && version.SpecialVersion.Any();
+                return version > _currentVersion;
 
             return (version > _currentVersion) && String.IsNullOrEmpty(version.SpecialVersion);
         }

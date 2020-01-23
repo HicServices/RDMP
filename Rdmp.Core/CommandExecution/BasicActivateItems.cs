@@ -28,7 +28,14 @@ namespace Rdmp.Core.CommandExecution
         /// <inheritdoc/>
         public IServerDefaults ServerDefaults { get; }
 
-        public abstract bool YesNo(string text, string caption);
+        /// <inheritdoc/>
+        public abstract bool YesNo(string text, string caption, out bool chosen);
+
+        /// <inheritdoc/>
+        public bool YesNo(string text, string caption)
+        {
+            return YesNo(text, caption, out bool chosen) && chosen;
+        }
 
         /// <inheritdoc/>
         public ICheckNotifier GlobalErrorCheckNotifier { get; set; }
@@ -80,17 +87,17 @@ namespace Rdmp.Core.CommandExecution
         }
 
         public abstract bool SelectEnum(string prompt, Type enumType, out Enum chosen);
-        public virtual Type SelectType(string prompt, Type baseTypeIfAny)
+        public virtual bool SelectType(string prompt, Type baseTypeIfAny, out Type chosen)
         {
             Type[] available =
             RepositoryLocator.CatalogueRepository.MEF.GetAllTypes()
                 .Where(t => baseTypeIfAny == null || baseTypeIfAny.IsAssignableFrom(t))
                 .ToArray();
 
-            return SelectType(prompt, available);
+            return SelectType(prompt, available, out chosen);
         }
 
-        public abstract Type SelectType(string prompt, Type[] available);
+        public abstract bool SelectType(string prompt, Type[] available, out Type chosen);
 
         /// <inheritdoc/>
         public virtual IEnumerable<T> GetAll<T>()
@@ -121,22 +128,35 @@ namespace Rdmp.Core.CommandExecution
         }
 
         /// <inheritdoc/>
-        public  object SelectValueType(string prompt, Type paramType, object initialValue)
+        public bool SelectValueType(string prompt, Type paramType, object initialValue, out object chosen)
         {
-            
-            if((Nullable.GetUnderlyingType(paramType) ??paramType).IsEnum)
-                return SelectEnum(prompt, paramType, out Enum chosen) ? chosen : null;
+
+            if ((Nullable.GetUnderlyingType(paramType) ?? paramType).IsEnum)
+            {
+                bool ok = SelectEnum(prompt, paramType, out Enum enumChosen);
+                chosen = enumChosen;
+                return ok;
+            }
 
             if (paramType == typeof(bool) || paramType == typeof(bool?))
-                return YesNo(prompt, "Enter Value");
-            
-            if (paramType == typeof(string))
-                return TypeText("Enter Value",prompt,int.MaxValue,null,out string answer,false) ? answer : null;
+            {
+                bool ok = YesNo(prompt, "Enter Value", out bool boolChosen);
+                chosen = boolChosen;
+                return ok;
+            }
 
-            return SelectValueTypeImpl(prompt, paramType, initialValue);
+            if (paramType == typeof(string))
+            {
+                bool ok = TypeText("Enter Value",prompt,int.MaxValue,null,out string stringChosen,false);
+                chosen = stringChosen;
+                return ok;
+
+            }
+
+            return SelectValueTypeImpl(prompt, paramType, initialValue, out chosen);
         }
 
-        protected abstract object SelectValueTypeImpl(string prompt, Type paramType, object initialValue);
+        protected abstract bool SelectValueTypeImpl(string prompt, Type paramType, object initialValue, out object chosen);
 
         /// <inheritdoc/>
         public abstract void Publish(DatabaseEntity databaseEntity);
@@ -172,9 +192,9 @@ namespace Rdmp.Core.CommandExecution
         public abstract FileInfo SelectFile(string prompt, string patternDescription, string pattern);
 
         /// <inheritdoc/>
-        public virtual List<KeyValuePair<Type, Func<RequiredArgument, object>>> GetDelegates()
+        public virtual List<CommandInvokerDelegate> GetDelegates()
         {
-            return new List<KeyValuePair<Type, Func<RequiredArgument, object>>>();
+            return new List<CommandInvokerDelegate>();
         }
     }
 }

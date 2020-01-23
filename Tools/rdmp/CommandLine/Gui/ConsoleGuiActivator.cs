@@ -30,12 +30,17 @@ namespace Rdmp.Core.CommandLine.Gui
         }
 
 
-        protected override object SelectValueTypeImpl(string prompt, Type paramType, object initialValue)
+        protected override bool SelectValueTypeImpl(string prompt, Type paramType, object initialValue, out object chosen)
         {
             var dlg = new ConsoleGuiTextDialog(prompt,initialValue?.ToString());
-            dlg.ShowDialog();
-
-            return dlg.ResultText;
+            if (dlg.ShowDialog())
+            {
+                chosen = dlg.ResultText;
+                return true;
+            }
+            
+            chosen = null;
+            return false;
         }
 
         public override void Publish(DatabaseEntity databaseEntity)
@@ -66,11 +71,14 @@ namespace Rdmp.Core.CommandLine.Gui
             bool requireSaneHeaderText)
         {
             var dlg = new ConsoleGuiTextDialog(prompt,initialText);
-            bool okPressed = dlg.ShowDialog();
+            if (dlg.ShowDialog())
+            {
+                text = dlg.ResultText;
+                return true;
+            }
 
-            text = dlg.ResultText;
-
-            return okPressed;
+            text = null;
+            return false;
         }
 
         public override DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
@@ -147,12 +155,18 @@ namespace Rdmp.Core.CommandLine.Gui
             return selected == null ? null : new FileInfo(selected);
         }
 
-        public override bool YesNo(string text, string caption)
+        public override bool YesNo(string text, string caption, out bool chosen)
         {
             var dlg = new ConsoleGuiBigListBox<bool>(text, "Ok", false, new List<bool>(new []{true,false}), (b) => b ? "Yes" : "No",false);
-            dlg.ShowDialog();
-            
-            return dlg.Selected;
+
+            if (dlg.ShowDialog())
+            {
+                chosen = dlg.Selected;
+                return true;
+            }
+
+            chosen = false;
+            return false;
         }
 
         public override bool SelectEnum(string prompt, Type enumType, out Enum chosen)
@@ -169,14 +183,18 @@ namespace Rdmp.Core.CommandLine.Gui
             return false;
         }
 
-        public override Type SelectType(string prompt, Type[] available)
+        public override bool SelectType(string prompt, Type[] available,out Type chosen)
         {
             var dlg = new ConsoleGuiBigListBox<Type>(prompt, "Ok", true, available.ToList(), null,true);
 
             if (dlg.ShowDialog())
-                return dlg.Selected;
-            
-            return null;
+            {
+                chosen = dlg.Selected;
+                return true;
+            }
+
+            chosen = null;
+            return false;
         }
 
         public override void ShowException(string errorText, Exception exception)

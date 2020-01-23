@@ -101,7 +101,7 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void metadataReportToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandGenerateMetadataReport(Activator, null);
+            var cmd = new ExecuteCommandGenerateMetadataReport(Activator);
             cmd.Execute();
         }
 

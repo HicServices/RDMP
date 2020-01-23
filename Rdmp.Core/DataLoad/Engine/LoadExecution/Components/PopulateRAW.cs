@@ -92,7 +92,7 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components
 
             var rawDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Raw];
             
-            if (rawDbInfo.DiscoverTables(false).All(t=>t.IsEmpty()))
+            if (_databaseConfiguration.ExpectTables(job,LoadBubble.Raw,true).All(t=>t.IsEmpty()))
             {
                 var message = "The Mounting stage has not populated the RAW database (" + rawDbInfo + ") with any data";
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, message));

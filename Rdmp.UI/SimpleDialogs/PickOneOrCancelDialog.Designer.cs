@@ -35,6 +35,7 @@
             this.btnCancel = new System.Windows.Forms.Button();
             this.tbFilter = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.btnSelectNULL = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.objectListView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -50,14 +51,15 @@
             // objectListView1
             // 
             this.objectListView1.AllColumns.Add(this.olvOptions);
-            this.objectListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.objectListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.objectListView1.CellEditUseWholeCell = false;
             this.objectListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvOptions});
             this.objectListView1.Cursor = System.Windows.Forms.Cursors.Default;
             this.objectListView1.FullRowSelect = true;
+            this.objectListView1.HideSelection = false;
             this.objectListView1.Location = new System.Drawing.Point(12, 25);
             this.objectListView1.Name = "objectListView1";
             this.objectListView1.RowHeight = 19;
@@ -72,8 +74,9 @@
             // olvOptions
             // 
             this.olvOptions.FillsFreeSpace = true;
-            this.olvOptions.Text = "Options";
             this.olvOptions.MinimumWidth = 100;
+            this.olvOptions.Text = "Options";
+            this.olvOptions.Width = 100;
             // 
             // btnOk
             // 
@@ -99,7 +102,7 @@
             // 
             // tbFilter
             // 
-            this.tbFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+            this.tbFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbFilter.Location = new System.Drawing.Point(50, 369);
             this.tbFilter.Name = "tbFilter";
@@ -117,11 +120,24 @@
             this.label2.TabIndex = 4;
             this.label2.Text = "Filter:";
             // 
+            // btnSelectNULL
+            // 
+            this.btnSelectNULL.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSelectNULL.Location = new System.Drawing.Point(326, 395);
+            this.btnSelectNULL.Name = "btnSelectNULL";
+            this.btnSelectNULL.Size = new System.Drawing.Size(96, 23);
+            this.btnSelectNULL.TabIndex = 5;
+            this.btnSelectNULL.Text = "Select \'NULL\'";
+            this.btnSelectNULL.UseVisualStyleBackColor = true;
+            this.btnSelectNULL.Click += new System.EventHandler(this.btnSelectNULL_Click);
+            // 
             // PickOneOrCancelDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(518, 427);
+            this.Controls.Add(this.btnSelectNULL);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.tbFilter);
             this.Controls.Add(this.btnCancel);
@@ -145,5 +161,6 @@
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.TextBox tbFilter;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button btnSelectNULL;
     }
 }

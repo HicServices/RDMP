@@ -244,7 +244,8 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             "MyPatIndexTable",
             "MSBuild15CMD",
             "SetupLazy",
-            "TestCaseSourceAttribute"
+            "TestCaseSourceAttribute",
+            "DescribeCommand" //aka ExecuteCommandDescribeCommand
         };
         #endregion
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)
