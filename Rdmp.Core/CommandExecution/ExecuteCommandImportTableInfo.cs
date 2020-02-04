@@ -12,7 +12,12 @@ namespace Rdmp.Core.CommandExecution
         private readonly DiscoveredTable _table;
         private readonly bool _createCatalogue;
 
-        public ExecuteCommandImportTableInfo(IBasicActivateItems activator, DiscoveredTable table, bool createCatalogue): base(activator)
+        public ExecuteCommandImportTableInfo(IBasicActivateItems activator, 
+            
+            [DemandsInitialization("The table or view you want to reference from RDMP.  See PickTable for syntax")]
+            DiscoveredTable table, 
+            [DemandsInitialization("True to create a Catalogue as well as a TableInfo")]
+            bool createCatalogue): base(activator)
         {
             _table = table;
             _createCatalogue = createCatalogue;
