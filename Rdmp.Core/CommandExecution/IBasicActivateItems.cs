@@ -248,5 +248,12 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="available">array of Types selection should be made from</param>
         /// <returns></returns>
         bool SelectType(string prompt, Type[] available, out Type chosen);
+
+        /// <summary>
+        /// Launches an appropriate user interface for <paramref name="o"/> (or does nothing if
+        /// environment is not interactive e.g. console)
+        /// </summary>
+        /// <param name="o"></param>
+        void Activate(DatabaseEntity o);
     }
 }

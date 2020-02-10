@@ -348,6 +348,14 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return false;
         }
 
+        public override void Activate(DatabaseEntity o)
+        {
+            var cmd = new ExecuteCommandActivate(this, o);
+            
+            if(!cmd.IsImpossible)
+                cmd.Execute();
+        }
+
         public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
         {
             //if the collection an arbitrary one then it is definetly not the root collection for anyone

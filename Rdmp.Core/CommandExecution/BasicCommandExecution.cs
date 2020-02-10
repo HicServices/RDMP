@@ -304,6 +304,7 @@ namespace Rdmp.Core.CommandExecution
 
         protected virtual void Activate(DatabaseEntity o)
         {
+            BasicActivator.Activate(o);
         }
 
         /// <summary>

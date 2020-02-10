@@ -98,6 +98,11 @@ namespace Rdmp.Core.CommandExecution
         }
 
         public abstract bool SelectType(string prompt, Type[] available, out Type chosen);
+        
+        public virtual void Activate(DatabaseEntity o)
+        {
+            
+        }
 
         /// <inheritdoc/>
         public virtual IEnumerable<T> GetAll<T>()
