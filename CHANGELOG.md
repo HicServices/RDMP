@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - 'Show' on collection based tab windows now prompts you to pick which you want to navigate to (previously did nothing)
 - Datagrid UI now shows server/database names and DatabaseType
-
+- Running Checks or CheckAll now shows the Checks column (if it isn't already visible)
+ 
 ### Changed
 
 - Datagrid/query syntax errors are now more visible and consistent with other SQL IDEs
