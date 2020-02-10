@@ -19,7 +19,9 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             {
                 components.Dispose();
             }
-            base.Dispose(disposing);
+
+            if(!IsDisposed)
+                base.Dispose(disposing);
         }
 
         #region Component Designer generated code

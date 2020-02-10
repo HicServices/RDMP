@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed some forms not getting launched when new objects are created (e.g. Supporting Documents)
 - Fixed null reference when cancelling adding a SupportingDocument
+- Fixed bug in axis section of graph editor where changing value would result in text box loosing focus
 
 ## [4.0.2] - 2020-01-23
 
