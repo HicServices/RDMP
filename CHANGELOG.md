@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 'Show' on collection based tab windows now prompts you to pick which you want to navigate to (previously did nothing)
 - Datagrid UI now shows server/database names and DatabaseType
 - Running Checks or CheckAll now shows the Checks column (if it isn't already visible)
+- Added 'Clear Cache' option for clearing the cache on a single Catalogue in a cohort builder configuration (without affecting the cache state of the others)
  
 ### Changed
 

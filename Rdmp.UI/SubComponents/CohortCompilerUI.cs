@@ -573,6 +573,16 @@ namespace Rdmp.UI.SubComponents
                         })
                     );
 
+                
+                menu.Items.Add(
+                    BuildItem("Clear Cache", c, a => a.SubqueriesCached > 0,
+                        a =>
+                        {
+                            if (c is ICacheableTask cacheable)
+                                ClearCacheFor(new[] {cacheable});
+                        })
+                );
+
                 tlvConfiguration.ContextMenuStrip = menu;
             }
             else
