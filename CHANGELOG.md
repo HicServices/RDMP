@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - 'Show' on collection based tab windows now prompts you to pick which you want to navigate to (previously did nothing)
+- Datagrid UI now shows server/database names and DatabaseType
 
 ### Changed
 
