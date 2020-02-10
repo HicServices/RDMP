@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - 'Show' on collection based tab windows now prompts you to pick which you want to navigate to (previously did nothing)
 
+### Changed
+
+- Datagrid/query syntax errors are now more visible and consistent with other SQL IDEs
+
 ### Fixed
 
 - Fixed some forms not getting launched when new objects are created (e.g. Supporting Documents)

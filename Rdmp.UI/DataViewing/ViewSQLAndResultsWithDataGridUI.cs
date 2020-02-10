@@ -66,7 +66,6 @@ namespace Rdmp.UI.DataViewing
             splitContainer1.Panel1.Controls.Add(_scintilla);
             _scintilla.TextChanged += _scintilla_TextChanged;
             _scintilla.KeyUp += ScintillaOnKeyUp;
-            DoTransparencyProperly.ThisHoversOver(ragSmiley1,dataGridView1);
 
             btnExecuteSql.Click += (s,e) => RunQuery();
             btnResetSql.Click += btnResetSql_Click;
@@ -141,16 +140,41 @@ namespace Rdmp.UI.DataViewing
 
                 LoadDataTableAsync(_server, sql);
             }
-            catch (QueryBuildingException ex)
-            {
-                ragSmiley1.SetVisible(true);
-                ragSmiley1.Fatal(ex);
-            }
             catch (Exception ex)
             {
-                ragSmiley1.SetVisible(true);
-                ragSmiley1.Fatal(ex);
+                ShowFatal(ex);
             }
+        }
+
+        private void ShowFatal(Exception exception)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(() => ShowFatal(exception)));
+                return;
+            }
+
+            splitContainer1.Panel2.Controls.Remove(dataGridView1);
+            splitContainer1.Panel2.Controls.Add(tbErrors);
+            tbErrors.Visible = true;
+            tbErrors.Text = exception.Message;
+            tbErrors.Dock = DockStyle.Fill;
+            
+            base.CommonFunctionality.Fatal("Query failed",exception);
+        }
+
+        private void HideFatal()
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new MethodInvoker(HideFatal));
+                return;
+            }
+
+            splitContainer1.Panel2.Controls.Add(dataGridView1);
+            splitContainer1.Panel2.Controls.Remove(tbErrors);
+            base.CommonFunctionality.ResetChecks();
+
         }
 
         private void LoadDataTableAsync(DiscoveredServer server, string sql)
@@ -158,13 +182,11 @@ namespace Rdmp.UI.DataViewing
             //it is already running and not completed
             if (_task != null && !_task.IsCompleted)
             {
-                ragSmiley1.SetVisible(true);
-                ragSmiley1.Warning(new Exception("Cannot refresh because query is still running"));
+                Activator.Show("Cannot refresh because query is still running");
                 return;
             }
 
-            ragSmiley1.Reset();
-            ragSmiley1.SetVisible(false);
+            HideFatal();
             pbLoading.Visible = true;
             llCancel.Visible = true;
 
@@ -202,8 +224,7 @@ namespace Rdmp.UI.DataViewing
                 }
                 catch (Exception e)
                 {
-                    ragSmiley1.SetVisible(true);
-                    ragSmiley1.Fatal(e);
+                    ShowFatal(e);
                 }
                 finally
                 {
