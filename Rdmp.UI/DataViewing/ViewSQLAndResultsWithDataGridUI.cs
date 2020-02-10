@@ -56,6 +56,8 @@ namespace Rdmp.UI.DataViewing
         ToolStripButton btnResetSql = new ToolStripButton("Restore Original SQL");
 
         readonly ToolStripTimeout _timeoutControls = new ToolStripTimeout();
+        private ToolStripLabel _serverHeader;
+        private DatabaseTypeIconProvider _databaseTypeIconProvider;
 
         public ViewSQLAndResultsWithDataGridUI()
         {
@@ -72,6 +74,8 @@ namespace Rdmp.UI.DataViewing
             
             dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
 
+            _serverHeader = new ToolStripLabel("Server:");
+            _databaseTypeIconProvider = new DatabaseTypeIconProvider();
         }
 
         private void ScintillaOnKeyUp(object sender, KeyEventArgs keyEventArgs)
@@ -121,6 +125,21 @@ namespace Rdmp.UI.DataViewing
             foreach (DatabaseEntity d in _collection.GetToolStripObjects())
                 CommonFunctionality.AddToMenu(new ExecuteCommandShow(activator, d, 0, true));
             
+            CommonFunctionality.Add(new ToolStripSeparator());
+            CommonFunctionality.Add(_serverHeader);
+
+            try
+            {
+                var dap = _collection.GetDataAccessPoint();
+                _serverHeader.Text = $"Server: {dap.Server} Database: {dap.Database}";
+                _serverHeader.Image = _databaseTypeIconProvider.GetImage(dap.DatabaseType);
+            }
+            catch (Exception)
+            {
+                _serverHeader.Text = "Server:Unknown";
+            }
+            
+
             RefreshUIFromDatabase();
         }
 
