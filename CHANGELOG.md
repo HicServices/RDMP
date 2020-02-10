@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- 'Show' on collection based tab windows now prompts you to pick which you want to navigate to (previously did nothing)
+
+### Fixed
+
+- Fixed some forms not getting launched when new objects are created (e.g. Supporting Documents)
+- Fixed null reference when cancelling adding a SupportingDocument
+
 ## [4.0.2] - 2020-01-23
 
 ### Fixed

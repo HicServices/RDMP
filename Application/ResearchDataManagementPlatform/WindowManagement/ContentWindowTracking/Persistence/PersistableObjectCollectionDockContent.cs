@@ -108,8 +108,13 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
             var collection = _control.GetCollection();
 
             if(collection != null)
-                if(collection.DatabaseObjects.Count == 1)
-                    activator.RequestItemEmphasis(this, new EmphasiseRequest(collection.DatabaseObjects[0]));
+                if (collection.DatabaseObjects.Count >= 1)
+                {
+                    var o = activator.SelectOne("Show", collection.DatabaseObjects.ToArray(),null,true);
+
+                    if(o != null)
+                        activator.RequestItemEmphasis(this, new EmphasiseRequest(o));
+                }
         }
     }
 }
