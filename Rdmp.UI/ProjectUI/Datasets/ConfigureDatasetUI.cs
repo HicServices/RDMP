@@ -62,6 +62,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
             olvAvailableColumnCategory.AspectGetter += AvailableColumnCategoryAspectGetter;
             olvAvailable.AlwaysGroupByColumn = olvAvailableColumnCategory;
             olvSelectedCatalogue.AspectGetter += SelectedCatalogue_AspectGetter;
+            olvSelectedCategory.AspectGetter += SelectedCategory_AspectGetter;
 
             SimpleDropSink dropSink = (SimpleDropSink) olvSelected.DropSink;
             
@@ -130,6 +131,14 @@ namespace Rdmp.UI.ProjectUI.Datasets
                 return null;
 
             return ei.CatalogueItem.Catalogue.Name;
+        }
+
+        private object SelectedCategory_AspectGetter(object rowObject)
+        {
+            var c = (ExtractableColumn) rowObject;
+            var ei = c.CatalogueExtractionInformation;
+
+            return ei?.ExtractionCategory;
         }
 
         private void SortSelectedByOrder()
