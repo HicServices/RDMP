@@ -35,6 +35,8 @@ namespace Rdmp.UI.DataViewing.Collections.Arbitrary
             return Password ?? "";
         }
 
+        public string OverrideSql {get;set;}
+        
         /// <summary>
         /// Needed for deserialization
         /// </summary>
@@ -85,6 +87,9 @@ namespace Rdmp.UI.DataViewing.Collections.Arbitrary
 
         public string GetSql()
         {
+            if (!string.IsNullOrWhiteSpace(OverrideSql))
+                return OverrideSql;
+
             var response = _table.GetQuerySyntaxHelper().HowDoWeAchieveTopX(100);
             
             switch (response.Location)

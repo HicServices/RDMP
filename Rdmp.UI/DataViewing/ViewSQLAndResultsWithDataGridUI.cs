@@ -200,10 +200,7 @@ namespace Rdmp.UI.DataViewing
         {
             //it is already running and not completed
             if (_task != null && !_task.IsCompleted)
-            {
-                Activator.Show("Cannot refresh because query is still running");
                 return;
-            }
 
             HideFatal();
             pbLoading.Visible = true;

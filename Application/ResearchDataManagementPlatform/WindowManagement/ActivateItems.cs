@@ -434,9 +434,16 @@ namespace ResearchDataManagementPlatform.WindowManagement
             where T: Control,IObjectCollectionControl,new()
 
         {
-            Control existingHostedControlInstance;
-            if (PopExisting(typeof(T), collection, out existingHostedControlInstance))
-                return (T)existingHostedControlInstance;
+            //if the window is already open
+            if (PopExisting(typeof(T), collection, out var existingHostedControlInstance))
+            {
+                //just update it's state
+                var existing = (T) existingHostedControlInstance;
+                existing.SetCollection(this,collection);
+
+                return existing;
+            }
+                
 
             var uiInstance = new T();
             Activate(uiInstance, collection);
