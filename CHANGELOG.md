@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added ability to right click a dataset in an ExtractionConfiguration and open the directory into which it was extracted (if it was extracted to disk)
 - Added Extraction Category column for columns included in the project extractions
 - Added command Import Catalogue Item Descriptions accessible from the CatalogueItem node menu that imports all descriptions (and other fields) from one Catalogue into another.
 - Added 'Execute' button on Catalogue and Extraction dataset SQL viewing windows.
