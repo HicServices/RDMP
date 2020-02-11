@@ -35,6 +35,8 @@ namespace Rdmp.UI.Menus
             Items.Add("Guess Associated Columns From TableInfo...", iconProvider.GetImage(RDMPConcept.ExtractionInformation,OverlayKind.Problem), (s, e) => GuessAssociatedColumns(node.Catalogue));
 
             Add(new ExecuteCommandChangeExtractionCategory(_activator,node.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any)));
+
+            Add(new ExecuteCommandImportCatalogueItemDescriptions(_activator, node.Catalogue,null/*pick at runtime*/));
         }
          
         private void GuessAssociatedColumns(Catalogue c)
