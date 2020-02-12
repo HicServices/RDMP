@@ -26,6 +26,8 @@ namespace Rdmp.Core.DataExport.DataExtraction.Commands
         IExtractableDatasetBundle DatasetBundle { get; }
         List<IColumn> ColumnsToExtract { get; set; }
 
+        IProject Project { get; }
+
         void GenerateQueryBuilder();
         ISqlQueryBuilder QueryBuilder { get; set; }
 
