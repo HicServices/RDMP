@@ -504,6 +504,8 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 if (dsRequest != null && string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
                     notifier.OnCheckPerformed(new CheckEventArgs("Catalogue '" + dsRequest.Catalogue + "' does not have an Acronym but TableNamingPattern contains $a", CheckResult.Fail));
             }
+            
+            base.Check(notifier);
 
             try
             {

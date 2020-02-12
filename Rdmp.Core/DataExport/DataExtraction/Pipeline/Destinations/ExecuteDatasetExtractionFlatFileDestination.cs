@@ -197,6 +197,8 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                     rootDir.Create();
                 }                    
             }
+            
+            base.Check(notifier);
         }
     }
 }
