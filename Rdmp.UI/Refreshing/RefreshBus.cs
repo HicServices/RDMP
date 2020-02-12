@@ -43,31 +43,34 @@ namespace Rdmp.UI.Refreshing
             {
                 if (BeforePublish != null)
                     BeforePublish(sender, e);
-
-                PublishInProgress = true;
-
-                //refresh it from the child provider
-                if (e.Exists)
-                    if (ChildProvider != null)
-                    {
-                        var fresh = ChildProvider.GetLatestCopyOf(e.Object);
-
-                        if (fresh != null)
-                            e.Object = fresh;
-                        else
-                            e.Object.RevertToDatabaseState();
-                    }
-                    else
-                        e.Object.RevertToDatabaseState();
-
+                
                 try
                 {
+                    PublishInProgress = true;
+                    // Set cursor as hourglass
+                    Cursor.Current = Cursors.WaitCursor;
+
+                    //refresh it from the child provider
+                    if (e.Exists)
+                        if (ChildProvider != null)
+                        {
+                            var fresh = ChildProvider.GetLatestCopyOf(e.Object);
+
+                            if (fresh != null)
+                                e.Object = fresh;
+                            else
+                                e.Object.RevertToDatabaseState();
+                        }
+                        else
+                            e.Object.RevertToDatabaseState();
+
                     if (RefreshObject != null)
                         RefreshObject(sender, e);
                 }
                 finally
                 {
                     PublishInProgress = false;
+                    Cursor.Current = Cursors.Default;
                 }  
             }
         }

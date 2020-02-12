@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Refresh now shows 'waiting' cursor while updates take effect
 - Creating a Catalogue from a CatalogueFolder right click context menu now creates the resulting Catalogue in that directory
 - Added ability to right click a dataset in an ExtractionConfiguration and open the directory into which it was extracted (if it was extracted to disk)
 - Added Extraction Category column for columns included in the project extractions
