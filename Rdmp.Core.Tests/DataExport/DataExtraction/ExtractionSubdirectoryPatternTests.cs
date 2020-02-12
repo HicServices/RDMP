@@ -79,7 +79,9 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
         {
             var sds = WhenIHaveA<SelectedDataSets>();
 
-            sds.ExtractionConfiguration.Project.ExtractionDirectory = "/";
+            
+
+            sds.ExtractionConfiguration.Project.ExtractionDirectory = TestContext.CurrentContext.WorkDirectory;
             sds.ExtractionConfiguration.Name = "AAA";
             sds.ExtractableDataSet.Catalogue.Name = "BBB";
             sds.ExtractableDataSet.Catalogue.Acronym = "C";
