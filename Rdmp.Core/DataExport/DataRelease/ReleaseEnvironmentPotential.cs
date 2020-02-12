@@ -73,10 +73,10 @@ namespace Rdmp.Core.DataExport.DataRelease
             MakeAssessment();
 
             var message = "Environment Releasability is " + Assesment;
-            if (!String.IsNullOrWhiteSpace(Reason))
+            if (!string.IsNullOrWhiteSpace(Reason))
                 message += " - " + Reason;
 
-            notifier.OnCheckPerformed(new CheckEventArgs("Environment Releasability is " + Assesment, GetCheckResultFor(Assesment), Exception));
+            notifier.OnCheckPerformed(new CheckEventArgs(message, GetCheckResultFor(Assesment), Exception));
         }
 
         private CheckResult GetCheckResultFor(TicketingReleaseabilityEvaluation assesment)
