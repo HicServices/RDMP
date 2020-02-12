@@ -18,6 +18,7 @@ using Rdmp.Core.DataExport.DataRelease;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.Logging.Listeners;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
@@ -80,7 +81,7 @@ namespace Rdmp.Core.CommandLine.Runners
         protected override ICheckable[] GetCheckables(ICheckNotifier checkNotifier)
         {
             foreach (var configuration in _configurations)
-                IdentifyAndRemoveOldExtractionResults(checkNotifier, configuration);
+                IdentifyAndRemoveOldExtractionResults(RepositoryLocator,checkNotifier, configuration);
 
             List<ICheckable> toReturn = new List<ICheckable>();
 
@@ -115,7 +116,7 @@ namespace Rdmp.Core.CommandLine.Runners
             return toReturn.ToArray();
         }
 
-        private void IdentifyAndRemoveOldExtractionResults(ICheckNotifier checkNotifier, IExtractionConfiguration configuration)
+        public static void IdentifyAndRemoveOldExtractionResults(IRDMPPlatformRepositoryServiceLocator repo,ICheckNotifier checkNotifier, IExtractionConfiguration configuration)
         {
             var oldResults = configuration.CumulativeExtractionResults
                 .Where(cer => !configuration.GetAllExtractableDataSets().Contains(cer.ExtractableDataSet))
@@ -141,7 +142,7 @@ namespace Rdmp.Core.CommandLine.Runners
             var oldLostSupplemental = configuration.CumulativeExtractionResults
                 .SelectMany(c => c.SupplementalExtractionResults)
                 .Union(configuration.SupplementalExtractionResults)
-                .Where(s => !RepositoryLocator.ArbitraryDatabaseObjectExists(s.ReferencedObjectRepositoryType, s.ReferencedObjectType, s.ReferencedObjectID))
+                .Where(s => !repo.ArbitraryDatabaseObjectExists(s.ReferencedObjectRepositoryType, s.ReferencedObjectType, s.ReferencedObjectID))
                 .ToArray();
 
             if (oldLostSupplemental.Any())

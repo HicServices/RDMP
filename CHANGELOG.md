@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added check for stale extraction records when generating a one off Release Document (i.e. not part of a Release workflow)
 - Added clarifiaction on what to do if a table is not found during synchronization
 - Refresh now shows 'waiting' cursor while updates take effect
 - Creating a Catalogue from a CatalogueFolder right click context menu now creates the resulting Catalogue in that directory
