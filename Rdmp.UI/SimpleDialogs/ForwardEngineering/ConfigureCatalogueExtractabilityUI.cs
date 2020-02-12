@@ -69,6 +69,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 
         public Catalogue CatalogueCreatedIfAny { get { return _catalogue; }}
         public TableInfo TableInfoCreated{get { return _tableInfo; }}
+        public CatalogueFolder TargetFolder { get; set; }
 
         private BinderWithErrorProviderFactory _binder;
         
@@ -164,6 +165,16 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             CommonFunctionality.AddHelpString(btnAddToExisting,"Add to existing catalogue","Use this option if you want to create a Catalogue which extracts from multiple tables (via a JOIN).  Once used you will still need to configure a JoinInfo between column(s) in all the tables the Catalogue draws data from.");
         }
 
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            
+            if (TargetFolder != null)
+            {
+                _catalogue.Folder = TargetFolder;
+                _catalogue.SaveToDatabase();
+            }
+        }
 
         private void IsExtractionIdentifier_AspectPutter(object rowobject, object newvalue)
         {

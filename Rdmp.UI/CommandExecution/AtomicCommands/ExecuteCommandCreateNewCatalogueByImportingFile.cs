@@ -61,7 +61,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var dialog = new CreateNewCatalogueByImportingFileUI(Activator, this);
+            var dialog = new CreateNewCatalogueByImportingFileUI(Activator, this)
+            {
+                TargetFolder = TargetFolder
+            };
 
             if (_project != null)
                 dialog.SetProjectSpecific(_project);
