@@ -11,7 +11,7 @@ RUN wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsof
 
 ENV ACCEPT_EULA=Y
 ARG MSSQL_SA_PASSWORD=SA_PASSWORD1.
-ENV DB_PREFIX=TEST_
+ARG DB_PREFIX=TEST_
 
 WORKDIR /usr/bin/rdmp-cli
 
