@@ -23,7 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Datagrid UI now shows server/database names and DatabaseType
 - Running Checks or CheckAll now shows the Checks column (if it isn't already visible)
 - Added 'Clear Cache' option for clearing the cache on a single Catalogue in a cohort builder configuration (without affecting the cache state of the others)
- 
+- Added `FOR UPDATE` to the end of the DLE migration query for MySql server (prevents edge case deadlocks when live table changes during migration)
+
 ### Changed
 
 - Datagrid/query syntax errors are now more visible and consistent with other SQL IDEs

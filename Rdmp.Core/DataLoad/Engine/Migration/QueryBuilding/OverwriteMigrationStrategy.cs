@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FAnsi;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
@@ -91,6 +92,10 @@ INSERT INTO CrossDatabaseMergeCommandTo..ToTable (Name,Age,Postcode,hic_dataLoad
                 columnsToMigrate.DestinationTable.GetFullyQualifiedName(),
                 syntax.EnsureWrapped(columnsToMigrate.PrimaryKeys.First().GetRuntimeName())));
             
+            //right at the end of the SELECT
+            if (columnsToMigrate.DestinationTable.Database.Server.DatabaseType == DatabaseType.MySql)
+                sbInsert.Append(" FOR UPDATE");
+
             string insertSql = sbInsert.ToString();
             
             var cmd = server.GetCommand(insertSql, _managedConnection);
