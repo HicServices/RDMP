@@ -1,0 +1,12 @@
+---
+
+# docker run -p 1433:1433 rdmp
+
+version: "3.7"
+
+services:
+  rdmp:
+    container_name: rdmp
+    build: .
+    ports:
+      - 1433:1433
