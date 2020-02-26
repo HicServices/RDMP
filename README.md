@@ -5,6 +5,7 @@
 - [Releases](https://github.com/HicServices/RDMP/releases)
 - [FAQ](Documentation/CodeTutorials/FAQ.md)
 - [User Manual](https://github.com/HicServices/RDMP/raw/master/Documentation/UserManual.docx)
+- [Glossary](./Documentation/CodeTutorials/Glossary.md)
 - [Changelog](./CHANGELOG.md)
 - [Libraries](./Documentation/CodeTutorials/Packages.md)
 
