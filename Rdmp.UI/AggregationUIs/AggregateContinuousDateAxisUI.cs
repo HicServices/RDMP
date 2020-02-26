@@ -54,9 +54,7 @@ namespace Rdmp.UI.AggregationUIs
         }
 
         private bool updating = false;
-
-        public event Action AxisSaved;
-
+        
         private void UpdateFormStateToMatchAxisState()
         {
             updating = true;
@@ -100,8 +98,6 @@ namespace Rdmp.UI.AggregationUIs
 
             _axis.AxisIncrement = (AxisIncrement) ddIncrement.SelectedValue;
             _axis.SaveToDatabase();
-
-            AxisSaved();
         }
         
         private void tbDates_TextChanged(object sender, EventArgs e)
@@ -119,18 +115,12 @@ namespace Rdmp.UI.AggregationUIs
             else if(_errorProvider.Tag == s)
                 _errorProvider.Clear();
 
-            try
+            //if user enters a date then put 
+            if (DateTime.TryParse(s.Text, out DateTime dt))
             {
-                //if user enters a date then put 
-                DateTime dt = DateTime.Parse(s.Text);
-
                 updating = true;
                 s.Text = "'" + dt.ToString("yyyy-MM-dd") + "'";
                 updating = false;
-            }
-            catch (Exception)
-            {
-                
             }
 
             if(s == tbStartDate)
@@ -144,15 +134,12 @@ namespace Rdmp.UI.AggregationUIs
                 s.ForeColor = Color.Black;
 
                 _axis.SaveToDatabase();
-                AxisSaved();
+                ((TextBox) sender).Focus();
             }
             catch (SyntaxErrorException)
             {
                 s.ForeColor = Color.Red;
             }
-
         }
-
-     
     }
 }

@@ -6,11 +6,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+...
+
+### Added
+
+- Added ability to customize extraction directory subfolder names
+- Added check for stale extraction records when generating a one off Release Document (i.e. not part of a Release workflow)
+- Added clarifiaction on what to do if a table is not found during synchronization
+- Refresh now shows 'waiting' cursor while updates take effect
+- Creating a Catalogue from a CatalogueFolder right click context menu now creates the resulting Catalogue in that directory
+- Added ability to right click a dataset in an ExtractionConfiguration and open the directory into which it was extracted (if it was extracted to disk)
+- Added Extraction Category column for columns included in the project extractions
+- Added command Import Catalogue Item Descriptions accessible from the CatalogueItem node menu that imports all descriptions (and other fields) from one Catalogue into another.
+- Added 'Execute' button on Catalogue and Extraction dataset SQL viewing windows.
+- 'Show' on collection based tab windows now prompts you to pick which you want to navigate to (previously did nothing)
+- Datagrid UI now shows server/database names and DatabaseType
+- Running Checks or CheckAll now shows the Checks column (if it isn't already visible)
+- Added 'Clear Cache' option for clearing the cache on a single Catalogue in a cohort builder configuration (without affecting the cache state of the others)
+- Added `FOR UPDATE` to the end of the DLE migration query for MySql server (prevents edge case deadlocks when live table changes during migration)
+
+### Changed
+
+- Datagrid/query syntax errors are now more visible and consistent with other SQL IDEs
 
 ### Fixed
 
+- Fixed some forms not getting launched when new objects are created (e.g. Supporting Documents)
+- Fixed null reference when cancelling adding a SupportingDocument
+- Fixed bug in axis section of graph editor where changing value would result in text box loosing focus
+- Fixed ticketing system Reason [for not being able to release a configuration] not being displayed on the ReleaseUI
+
+## [4.0.2] - 2020-01-23
+
+### Fixed
+
+- Fixed stack overflow when trying to edit 'unknown pipelines' in Tables tree view
 - Undo/Redo button now changes label as well as icon during use
 - Fixed null reference when using command `Reports->Generate...->Metadata Report...`
+- Fixed bug in console gui where cancelling a property change (e.g. Description) would result in setting the value to null.
 
 ## [4.0.1] - 2019-12-03
 
@@ -321,7 +354,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.0.1...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.0.2...develop
+[4.0.2]: https://github.com/HicServices/RDMP/compare/v4.0.1...v4.0.2
 [4.0.1]: https://github.com/HicServices/RDMP/compare/v4.0.1-rc3...v4.0.1
 [4.0.1-rc3]: https://github.com/HicServices/RDMP/compare/v4.0.1-rc2...v4.0.1-rc3
 [4.0.1-rc2]: https://github.com/HicServices/RDMP/compare/v4.0.1-rc1...v4.0.1-rc2

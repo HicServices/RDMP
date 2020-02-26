@@ -58,7 +58,6 @@ namespace Rdmp.Core.Repositories
           
         private HashSet<string> TypeNotKnown = new HashSet<string>();
 
-
         /// <summary>
         /// Looks up the given Type in all loaded assemblies (during <see cref="Startup.Startup"/>).  Returns null
         /// if the Type is not found.
@@ -102,7 +101,7 @@ namespace Rdmp.Core.Repositories
                             if(matches.Length == 1)
                                 toReturn = matches[0];
                             else if(matches.Length > 1) //nope looks like everyone has a class called MyClass
-                                throw new Exception("Found " + matches.Length  +" Types called '" + type + "'");
+                                throw new AmbiguousTypeException("Found " + matches.Length  +" Types called '" + type + "'");
                         }
                     }
                     else
@@ -126,7 +125,7 @@ namespace Rdmp.Core.Repositories
                             if(matches.Length == 1)
                                 toReturn = matches[0];
                             else if(matches.Length > 1) //nope looks like everyone has a class called MyClass
-                                throw new Exception("Found " + matches.Length  +" Types called '" + type + "'");
+                                throw new AmbiguousTypeException("Found " + matches.Length  +" Types called '" + type + "'");
                         }
                     }
 

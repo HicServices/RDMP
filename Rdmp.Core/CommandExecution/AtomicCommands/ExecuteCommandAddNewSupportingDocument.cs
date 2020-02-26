@@ -59,6 +59,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             var files = _fileCollectionCombineable != null ? _fileCollectionCombineable.Files : new[] {BasicActivator.SelectFile("File to add")};
 
+            if(files == null || files.All(f=>f == null))
+                return;
+
             List<SupportingDocument> created = new List<SupportingDocument>();
             foreach (var f in files)
             {

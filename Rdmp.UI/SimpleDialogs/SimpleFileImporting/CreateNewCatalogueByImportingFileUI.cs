@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
@@ -47,6 +48,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
         private DataFlowPipelineContext<DataTable> _context;
 
         public HelpWorkflow HelpWorkflow { get; set; }
+        public CatalogueFolder TargetFolder { get; set; }
 
         public CreateNewCatalogueByImportingFileUI(IActivateItems activator, ExecuteCommandCreateNewCatalogueByImportingFile command):base(activator)
         {
@@ -390,7 +392,10 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
 
         private void ForwardEngineer(DiscoveredTable targetTableName)
         {
-            var extractionPicker = new ConfigureCatalogueExtractabilityUI(Activator, new TableInfoImporter(Activator.RepositoryLocator.CatalogueRepository, targetTableName), "File '" + _selectedFile.FullName + "'", _projectSpecific);
+            var extractionPicker = new ConfigureCatalogueExtractabilityUI(Activator, new TableInfoImporter(Activator.RepositoryLocator.CatalogueRepository, targetTableName), "File '" + _selectedFile.FullName + "'", _projectSpecific)
+            {
+                TargetFolder = TargetFolder
+            };
             extractionPicker.ShowDialog();
 
             var catalogue = extractionPicker.CatalogueCreatedIfAny;

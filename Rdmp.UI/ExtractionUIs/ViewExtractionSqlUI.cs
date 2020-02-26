@@ -19,10 +19,13 @@ using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.DataViewing;
+using Rdmp.UI.DataViewing.Collections.Arbitrary;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Icons.IconProvision;
 
 using ScintillaNET;
@@ -48,6 +51,7 @@ namespace Rdmp.UI.ExtractionUIs
         ToolStripButton rbSpecialApproval = new ToolStripButton("Special Approval");
         ToolStripButton rbInternal = new ToolStripButton("Internal");
 
+        ToolStripButton btnRun = new ToolStripButton("Run",CatalogueIcons.ExecuteArrow);
         
         private Scintilla QueryPreview;
         public ViewExtractionSqlUI()
@@ -73,6 +77,7 @@ namespace Rdmp.UI.ExtractionUIs
             rbSupplemental.Click += rb_Click;
             rbSpecialApproval.Click += rb_Click;
             rbInternal.Click += rb_Click;
+            btnRun.Click += BtnRun_Click;
         }
 
         private void rb_Click(object sender, EventArgs e)
@@ -178,6 +183,22 @@ namespace Rdmp.UI.ExtractionUIs
             return builder.SQL;
         }
         
+        private void BtnRun_Click(object sender, EventArgs e)
+        {
+            var t = _catalogue.GetTableInfoList(false).FirstOrDefault();
+
+            if(t == null)
+                Activator.Show("Could not determine what table underlies the Catalogue");
+            else
+            {
+                Activator.Activate<ViewSQLAndResultsWithDataGridUI>(
+                    new ArbitraryTableExtractionUICollection(t.Discover(DataAccessContext.InternalDataProcessing))
+                    {
+                        OverrideSql = QueryPreview.Text
+                    });
+            }
+        }
+
 
         public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
         {
@@ -194,6 +215,7 @@ namespace Rdmp.UI.ExtractionUIs
             CommonFunctionality.Add(rbSupplemental);
             CommonFunctionality.Add(rbSpecialApproval);
             CommonFunctionality.Add(rbInternal);
+            CommonFunctionality.Add(btnRun);
 
             CommonFunctionality.AddToMenu(new ExecuteCommandReOrderColumns(Activator, _catalogue));
             

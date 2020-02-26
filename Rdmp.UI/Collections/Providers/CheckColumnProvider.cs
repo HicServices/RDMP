@@ -24,6 +24,8 @@ namespace Rdmp.UI.Collections.Providers
         private readonly TreeListView _tree;
         private readonly ICoreIconProvider _iconProvider;
 
+        public const string ChecksColumnName = "Checks";
+
         public CheckColumnProvider(TreeListView tree, ICoreIconProvider iconProvider)
         {
             _tree = tree;
@@ -33,7 +35,7 @@ namespace Rdmp.UI.Collections.Providers
         public OLVColumn CreateColumn()
         {
             var toReturn = new OLVColumn();
-            toReturn.Text = "Checks";
+            toReturn.Text = ChecksColumnName;
             toReturn.ImageGetter = CheckImageGetter;
             toReturn.IsEditable = false;
             toReturn.IsVisible = UserSettings.ShowColumnCheck;
@@ -70,12 +72,31 @@ namespace Rdmp.UI.Collections.Providers
                 }
             });
             
+            EnsureChecksColumnVisible();
             checkingTask.ContinueWith(
                 //now load images to UI
                 (t) => _tree.RebuildColumns(), TaskScheduler.FromCurrentSynchronizationContext());
 
             checkingTask.Start();
         }
+
+        public void EnsureChecksColumnVisible()
+        {
+            if (_tree.InvokeRequired)
+            {
+                _tree.Invoke(new MethodInvoker(EnsureChecksColumnVisible));  
+                return;
+            }
+
+            var checksCol = _tree.AllColumns.FirstOrDefault(c=>string.Equals(c.Text,ChecksColumnName));
+
+            if (checksCol != null && !checksCol.IsVisible)
+            {
+                checksCol.IsVisible = true;
+                _tree.RebuildColumns();
+            }
+        }
+
         private object ocheckResultsDictionaryLock = new object();
         Dictionary<ICheckable, CheckResult> checkResultsDictionary = new Dictionary<ICheckable, CheckResult>();
 
@@ -90,6 +111,8 @@ namespace Rdmp.UI.Collections.Providers
 
                 if (_tree.IndexOf(o) != -1)
                     _tree.RefreshObject(o);
+
+                EnsureChecksColumnVisible();
             }
         }
 

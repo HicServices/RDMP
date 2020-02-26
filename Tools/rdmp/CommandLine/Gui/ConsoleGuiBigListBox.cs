@@ -86,6 +86,10 @@ namespace Rdmp.Core.CommandLine.Gui
             }
         }
 
+        /// <summary>
+        /// Runs the dialog as modal blocking and returns true if a selection was made. 
+        /// </summary>
+        /// <returns>True if selection was made (see <see cref="Selected"/>) or false if user cancelled the dialog</returns>
         public bool ShowDialog()
         {
             bool okClicked = false;

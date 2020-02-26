@@ -4,8 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.CommandLine.Interactive.Picking
@@ -22,12 +25,27 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
 
         public override bool IsMatch(string arg, int idx)
         {
-            return RepositoryLocator.CatalogueRepository.MEF.GetType(arg) != null;
+            return GetType(arg) != null;
         }
 
         public override CommandLineObjectPickerArgumentValue Parse(string arg, int idx)
         {
-            return new CommandLineObjectPickerArgumentValue(arg,idx,RepositoryLocator.CatalogueRepository.MEF.GetType(arg));
+            return new CommandLineObjectPickerArgumentValue(arg,idx,GetType(arg));
+        }
+
+        private Type GetType(string arg)
+        {
+            try
+            {
+                return 
+                    RepositoryLocator.CatalogueRepository.MEF.GetType(BasicCommandExecution.ExecuteCommandPrefix + arg)
+                    ??
+                    RepositoryLocator.CatalogueRepository.MEF.GetType(arg);
+            }
+            catch (AmbiguousTypeException )
+            {
+                return null;
+            }
         }
     }
 }

@@ -23,6 +23,7 @@ using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using ReusableLibraryCode.DataAccess;
 using Rdmp.Core.Curation;
 using System.Data.SqlClient;
+using FAnsi.Discovery;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
@@ -40,6 +41,16 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         [DemandsInitialization("If this is true, the dataset/globals extraction folder will be wiped clean before extracting the dataset. Useful if you suspect there are spurious files in the folder", defaultValue: false)]
         public bool CleanExtractionFolderBeforeExtraction { get; set; }
         public bool GeneratesFiles { get; }
+
+        [DemandsInitialization(@"Overrides the extraction sub directory of datasets as they are extracted
+         $c - Configuration Name (e.g. 'Cases')
+         $i - Configuration ID (e.g. 459)
+         $d - Dataset name (e.g. 'Prescribing')
+         $a - Dataset acronym (e.g. 'Presc')
+         $n - Dataset ID (e.g. 459)
+
+e.g. /$i/$a")]
+        public string ExtractionSubdirectoryPattern { get; set; }
 
         //PreInitialize fields
         protected IExtractCommand _request;
@@ -199,9 +210,29 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         
         /// <inheritdoc/>
         public abstract void Abort(IDataLoadEventListener listener);
-        
+
         /// <inheritdoc/>
-        public abstract void Check(ICheckNotifier notifier);
+        public virtual void Check(ICheckNotifier notifier)
+        {
+            if (!string.IsNullOrWhiteSpace(ExtractionSubdirectoryPattern))
+            {
+                if (ExtractionSubdirectoryPattern.Contains("."))
+                    notifier.OnCheckPerformed(new CheckEventArgs(
+                        "ExtractionSubdirectoryPattern cannot contain dots, it must be relative e.g. $c/$d",
+                        CheckResult.Fail));
+
+                if (!ExtractionSubdirectoryPattern.Contains("$i") && !ExtractionSubdirectoryPattern.Contains("$c"))
+                    notifier.OnCheckPerformed(new CheckEventArgs(
+                        "ExtractionSubdirectoryPattern must contain a Configuration element ($i or $c)",
+                        CheckResult.Fail));
+
+                if (!ExtractionSubdirectoryPattern.Contains("$a") && !ExtractionSubdirectoryPattern.Contains("$d") && !ExtractionSubdirectoryPattern.Contains("$n"))
+                    notifier.OnCheckPerformed(new CheckEventArgs(
+                        "ExtractionSubdirectoryPattern must contain a Dataset element ($d, $a or $n)",
+                        CheckResult.Fail));
+            }
+
+        }
 
         #endregion
         
@@ -222,7 +253,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
         private void ExtractGlobals(ExtractGlobalsCommand request, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
         {
-            var globalsDirectory = request.GetExtractionDirectory();
+            var globalsDirectory = GetDirectoryFor(request);
             if (CleanExtractionFolderBeforeExtraction)
             {
                 globalsDirectory.Delete(true);
@@ -242,7 +273,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
         private void WriteBundleContents(IExtractableDatasetBundle datasetBundle, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
         {
-            var rootDir = _request.GetExtractionDirectory();
+            var rootDir = GetDirectoryFor(_request);
             var supportingSQLFolder = new DirectoryInfo(Path.Combine(rootDir.FullName, SupportingSQLTable.ExtractionFolderName));
             var lookupDir = rootDir.CreateSubdirectory("Lookups");
                        
@@ -266,6 +297,36 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                     ? ExtractCommandState.Completed
                     : ExtractCommandState.Crashed;
             }
+        }
+
+        public DirectoryInfo GetDirectoryFor(IExtractCommand request)
+        {
+            var cmd = request as IExtractDatasetCommand;
+
+            if(string.IsNullOrWhiteSpace(ExtractionSubdirectoryPattern) || cmd == null)
+                return request.GetExtractionDirectory();
+            
+            var cata = cmd.SelectedDataSets.ExtractableDataSet.Catalogue;
+
+            if (ExtractionSubdirectoryPattern.Contains("$a") && string.IsNullOrWhiteSpace(cata.Acronym))
+            {
+                throw new Exception($"Catalogue {cata} does not have an Acronym and ExtractionSubdirectoryPattern contains $a");
+            }
+
+            var path = Path.Combine(cmd.Project.ExtractionDirectory,
+                ExtractionSubdirectoryPattern
+                    .Replace("$c",QuerySyntaxHelper.MakeHeaderNameSensible(cmd.Configuration.Name))
+                    .Replace("$i",cmd.Configuration.ID.ToString())
+                    .Replace("$d",QuerySyntaxHelper.MakeHeaderNameSensible(cata.Name))
+                    .Replace("$a",QuerySyntaxHelper.MakeHeaderNameSensible(cata.Acronym))
+                    .Replace("$n",cata.ID.ToString())
+                );
+
+            var dir = new DirectoryInfo(path);
+            if (!dir.Exists)
+                dir.Create();
+
+            return dir;
         }
 
         protected bool TryExtractLookupTable(BundledLookupTable lookup, DirectoryInfo lookupDir,IDataLoadEventListener job)

@@ -33,9 +33,9 @@ namespace Rdmp.UI.DataViewing
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ViewSQLAndResultsWithDataGridUI));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.ragSmiley1 = new RAGSmiley();
             this.llCancel = new System.Windows.Forms.LinkLabel();
             this.pbLoading = new System.Windows.Forms.PictureBox();
+            this.tbErrors = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -66,25 +66,13 @@ namespace Rdmp.UI.DataViewing
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.ragSmiley1);
+            this.splitContainer1.Panel2.Controls.Add(this.tbErrors);
             this.splitContainer1.Panel2.Controls.Add(this.llCancel);
             this.splitContainer1.Panel2.Controls.Add(this.pbLoading);
             this.splitContainer1.Panel2.Controls.Add(this.dataGridView1);
             this.splitContainer1.Size = new System.Drawing.Size(1249, 805);
             this.splitContainer1.SplitterDistance = 209;
             this.splitContainer1.TabIndex = 2;
-            // 
-            // ragSmiley1
-            // 
-            this.ragSmiley1.AlwaysShowHandCursor = false;
-            this.ragSmiley1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
-            this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(590, 214);
-            this.ragSmiley1.Name = "ragSmiley1";
-            this.ragSmiley1.Size = new System.Drawing.Size(37, 38);
-            this.ragSmiley1.TabIndex = 9;
-            this.ragSmiley1.Visible = false;
             // 
             // llCancel
             // 
@@ -113,6 +101,20 @@ namespace Rdmp.UI.DataViewing
             this.pbLoading.TabStop = false;
             this.pbLoading.Visible = false;
             // 
+            // tbErrors
+            // 
+            this.tbErrors.BackColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.tbErrors.Font = new System.Drawing.Font("Courier New", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbErrors.ForeColor = System.Drawing.Color.Red;
+            this.tbErrors.Location = new System.Drawing.Point(335, 55);
+            this.tbErrors.Multiline = true;
+            this.tbErrors.Name = "tbErrors";
+            this.tbErrors.ReadOnly = true;
+            this.tbErrors.Size = new System.Drawing.Size(239, 119);
+            this.tbErrors.TabIndex = 9;
+            this.tbErrors.Text = "Errors";
+            this.tbErrors.Visible = false;
+            // 
             // ViewSQLAndResultsWithDataGridUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -134,8 +136,8 @@ namespace Rdmp.UI.DataViewing
 
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private RAGSmiley ragSmiley1;
         private System.Windows.Forms.LinkLabel llCancel;
         private System.Windows.Forms.PictureBox pbLoading;
+        private System.Windows.Forms.TextBox tbErrors;
     }
 }

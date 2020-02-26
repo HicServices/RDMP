@@ -89,8 +89,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             gbHaving.Controls.Add(QueryHaving);
 
             QueryHaving.TextChanged += HavingTextChanged;
-            aggregateContinuousDateAxisUI1.AxisSaved += PublishToSelfOnly;
-
+            
             olvJoin.CheckStateGetter += ForceJoinCheckStateGetter;
             olvJoin.CheckStatePutter += ForceJoinCheckStatePutter;
             olvJoinTableName.ImageGetter += ImageGetter;

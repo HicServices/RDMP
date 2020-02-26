@@ -17,11 +17,14 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     internal class ExecuteCommandCreateNewEmptyCatalogue : BasicUICommandExecution,IAtomicCommand
     {
+        public CatalogueFolder TargetFolder { get; set; }
+
         public ExecuteCommandCreateNewEmptyCatalogue(IActivateItems activator) : base(activator)
         {
             
         }
 
+        
         public override string GetCommandName()
         {
             return base.GetCommandName() + " (Not Recommended)";
@@ -42,6 +45,14 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             base.Execute();
 
             var c = new Catalogue(Activator.RepositoryLocator.CatalogueRepository, "New Catalogue " + Guid.NewGuid());
+
+            if (TargetFolder != null)
+            {
+                c.Folder = TargetFolder;
+                c.SaveToDatabase();
+            }
+                
+
             Publish(c);
             Emphasise(c);
         }

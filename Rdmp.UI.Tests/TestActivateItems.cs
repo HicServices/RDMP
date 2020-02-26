@@ -132,7 +132,7 @@ namespace Rdmp.UI.Tests
             throw new NotImplementedException();
         }
 
-        public override Type SelectType(string prompt, Type[] available)
+        public override bool SelectType(string prompt, Type[] available,out Type chosen)
         {
             throw new NotImplementedException();
         }
@@ -199,14 +199,20 @@ namespace Rdmp.UI.Tests
 
         
         /// <summary>
-        /// The answer to give when asked <see cref="YesNo(string, string)"/>
+        /// The answer to give when asked <see cref="YesNo"/>
         /// </summary>
         public bool? YesNoResponse { get;set;}
 
-        public override bool YesNo(string text, string caption)
+        public override bool YesNo(string text, string caption, out bool chosen)
         {
-            if(YesNoResponse.HasValue)
-                return YesNoResponse.Value;
+            if (YesNoResponse.HasValue)
+            {
+                chosen = YesNoResponse.Value;
+                
+                //'user' consciously chose a value
+                return true;
+            }
+                
 
             throw new Exception("Did not expect to be asked a question but we were asked :" + text);
         }
@@ -243,11 +249,11 @@ namespace Rdmp.UI.Tests
             task.Wait(cts.Token);
         }
         
-        public override List<KeyValuePair<Type, Func<RequiredArgument, object>>> GetDelegates()
+        public override List<CommandInvokerDelegate> GetDelegates()
         {
-            return new List<KeyValuePair<Type, Func<RequiredArgument, object>>>
+            return new List<CommandInvokerDelegate>
             {
-                new KeyValuePair<Type, Func<RequiredArgument, object>>(typeof(IActivateItems),(p)=>this)
+                new CommandInvokerDelegate(typeof(IActivateItems),true,(p)=>this)
             };
         }
 
@@ -278,7 +284,7 @@ namespace Rdmp.UI.Tests
             throw new NotImplementedException();
         }
 
-        protected override object SelectValueTypeImpl(string prompt, Type paramType, object initialValue)
+        protected override bool SelectValueTypeImpl(string prompt, Type paramType, object initialValue,out object chosen)
         {
             throw new NotImplementedException();
         }

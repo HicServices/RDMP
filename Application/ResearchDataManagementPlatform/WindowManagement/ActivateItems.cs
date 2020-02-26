@@ -333,14 +333,27 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return false;
         }
 
-        public override Type SelectType(string prompt, Type[] available)
+        public override bool SelectType(string prompt, Type[] available,out Type chosen)
         {
             var dlg =  new PickOneOrCancelDialog<Type>(available, prompt);
 
             if (dlg.ShowDialog() == DialogResult.OK)
-                return dlg.Picked;
+            {
+                chosen = dlg.Picked;
+                return true;
+            }
 
-            return null;
+
+            chosen = null;
+            return false;
+        }
+
+        public override void Activate(DatabaseEntity o)
+        {
+            var cmd = new ExecuteCommandActivate(this, o);
+            
+            if(!cmd.IsImpossible)
+                cmd.Execute();
         }
 
         public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
@@ -421,9 +434,16 @@ namespace ResearchDataManagementPlatform.WindowManagement
             where T: Control,IObjectCollectionControl,new()
 
         {
-            Control existingHostedControlInstance;
-            if (PopExisting(typeof(T), collection, out existingHostedControlInstance))
-                return (T)existingHostedControlInstance;
+            //if the window is already open
+            if (PopExisting(typeof(T), collection, out var existingHostedControlInstance))
+            {
+                //just update it's state
+                var existing = (T) existingHostedControlInstance;
+                existing.SetCollection(this,collection);
+
+                return existing;
+            }
+                
 
             var uiInstance = new T();
             Activate(uiInstance, collection);
@@ -550,9 +570,24 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
 
         /// <inheritdoc/>
-        public override bool YesNo(string text,string caption)
+        public override bool YesNo(string text,string caption,out bool chosen)
         {
-            return MessageBox.Show(text,caption,MessageBoxButtons.YesNo) == DialogResult.Yes;
+            var dr = MessageBox.Show(text, caption, MessageBoxButtons.YesNo);
+
+            if (dr == DialogResult.Yes)
+            {
+                chosen = true;
+                return true;
+            }
+
+            if (dr == DialogResult.No)
+            {
+                chosen = false;
+                return true;
+            }
+
+            chosen = false;
+            return false;
         }
 
         public override bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText)
@@ -672,16 +707,20 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
         
 
-        protected override object SelectValueTypeImpl(string prompt, Type paramType, object initialValue)
+        protected override bool SelectValueTypeImpl(string prompt, Type paramType, object initialValue, out object chosen)
         {
             //whatever else it is use string
             var typeTextDialog = new TypeTextOrCancelDialog("Enter Value", prompt + " (" + paramType.Name + ")",1000,
                 initialValue?.ToString());
-            
-            if (typeTextDialog.ShowDialog() == DialogResult.OK)
-                return UsefulStuff.ChangeType(typeTextDialog.ResultText, paramType);
 
-            return null;
+            if (typeTextDialog.ShowDialog() == DialogResult.OK)
+            {
+                chosen = UsefulStuff.ChangeType(typeTextDialog.ResultText, paramType);
+                return true;
+            }
+
+            chosen = null;
+            return false;
         }
 
         public override IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
@@ -712,11 +751,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return null;
         }
 
-        public override List<KeyValuePair<Type, Func<RequiredArgument, object>>> GetDelegates()
+        public override List<CommandInvokerDelegate> GetDelegates()
         {
-            return new List<KeyValuePair<Type, Func<RequiredArgument, object>>>
+            return new List<CommandInvokerDelegate>
             {
-                new KeyValuePair<Type, Func<RequiredArgument, object>>(typeof(IActivateItems),(p)=>this)
+                new CommandInvokerDelegate(typeof(IActivateItems),true,(p)=>this)
             };
         }
     }

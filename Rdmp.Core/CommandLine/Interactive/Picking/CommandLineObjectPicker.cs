@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Rdmp.Core.Repositories;
 
@@ -17,12 +18,11 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
     /// </summary>
     public class CommandLineObjectPicker
     {
-        private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
-        private CommandLineObjectPickerArgumentValue[] _arguments;
+        public IReadOnlyCollection<CommandLineObjectPickerArgumentValue> Arguments { get; }
         
-        public CommandLineObjectPickerArgumentValue this[int i] => _arguments[i];
+        public CommandLineObjectPickerArgumentValue this[int i] => Arguments.ElementAt(i);
 
-        public int Length => _arguments.Length;
+        public int Length => Arguments.Count;
 
         private readonly HashSet<PickObjectBase> _pickers = new HashSet<PickObjectBase>();
         
@@ -34,16 +34,12 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         public CommandLineObjectPicker(IEnumerable<string> args,
             IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
-            _repositoryLocator = repositoryLocator;
-            
             _pickers.Add(new PickObjectByID(repositoryLocator));
             _pickers.Add(new PickObjectByName(repositoryLocator));
             _pickers.Add(new PickDatabase());
             _pickers.Add(new PickTable());
             _pickers.Add(new PickType(repositoryLocator));
-            _arguments = args.Select(ParseValue).ToArray();
-
-
+            Arguments = new ReadOnlyCollection<CommandLineObjectPickerArgumentValue>(args.Select(ParseValue).ToList());
         }
 
         /// <summary>
@@ -54,12 +50,10 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         /// <param name="pickers"></param>
         public CommandLineObjectPicker(string[] args,IRDMPPlatformRepositoryServiceLocator repositoryLocator, IEnumerable<PickObjectBase> pickers)
         {
-            _repositoryLocator = repositoryLocator;
-
             foreach(PickObjectBase p in pickers)
                 _pickers.Add(p);
 
-            _arguments = args.Select(ParseValue).ToArray();
+            Arguments = new ReadOnlyCollection<CommandLineObjectPickerArgumentValue>(args.Select(ParseValue).ToList());
         }
 
         private CommandLineObjectPickerArgumentValue ParseValue(string arg,int idx)
@@ -84,10 +78,10 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         public bool HasArgumentOfType(int idx, Type paramType)
         {
             //if the index is greater than the number of arguments we have
-            if (idx >= _arguments.Length)
+            if (idx >= Arguments.Count)
                 return false;
 
-            return _arguments[idx].HasValueOfType(paramType);
+            return Arguments.ElementAt(idx).HasValueOfType(paramType);
         }
     }
 }

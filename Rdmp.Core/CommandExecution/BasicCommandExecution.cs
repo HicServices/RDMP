@@ -8,12 +8,16 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataLoad.Modules.Mutilators;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -300,6 +304,66 @@ namespace Rdmp.Core.CommandExecution
 
         protected virtual void Activate(DatabaseEntity o)
         {
+            BasicActivator.Activate(o);
+        }
+
+        /// <summary>
+        /// Executes a given constructor (identified by <paramref name="constructorSelector"/>) by reading values out of the picker
+        /// (or prompting the user if <paramref name="pickerArgsIfAny"/> is null)
+        /// </summary>
+        /// <param name="toConstruct">The Type you want to construct</param>
+        /// <param name="constructorSelector">Selects which constructor on <paramref name="toConstruct"/> you want to invoke</param>
+        /// <param name="pickerArgsIfAny"></param>
+        /// <returns></returns>
+        protected object Construct(Type toConstruct, Func<ObjectConstructor, ConstructorInfo> constructorSelector,
+            IEnumerable<CommandLineObjectPickerArgumentValue> pickerArgsIfAny = null)
+        {
+            var objectConstructor = new ObjectConstructor();
+            
+            var invoker = new CommandInvoker(BasicActivator);
+            
+            var constructor = constructorSelector(objectConstructor);
+
+            List<object> constructorValues = new List<object>();
+
+            var pickerEnumerator = pickerArgsIfAny?.GetEnumerator();
+
+            foreach (var parameterInfo in constructor.GetParameters())
+            {
+                var required = new RequiredArgument(parameterInfo);
+                var parameterDelegate = invoker.GetDelegate(required);
+
+                if (parameterDelegate.IsAuto)
+                    constructorValues.Add(parameterDelegate.Run(required));
+                else
+                {
+                    //it's not auto
+                    if (pickerEnumerator != null)
+                    {
+                        pickerEnumerator.MoveNext();
+
+                        if(pickerEnumerator.Current == null)
+                            throw new ArgumentException($"Value needed for parameter '{required.Name}' (of type '{required.Type}')");
+
+                        //construct with the picker arguments
+                        if(!pickerEnumerator.Current.HasValueOfType(required.Type))
+                            throw new NotSupportedException($"Argument '{pickerEnumerator.Current.RawValue}' could not be converted to required Type '{required.Type}' for argument {required.Name}");
+
+                        //it is a valid object yay!
+                        constructorValues.Add(pickerEnumerator.Current.GetValueForParameterOfType(required.Type));
+
+                    }
+                    else
+                    {
+                        //construct by prompting user for the values
+                        constructorValues.Add(invoker.GetValueForParameterOfType(parameterInfo));
+                    }
+                }
+            }
+
+            pickerEnumerator?.Dispose();
+
+            return constructor.Invoke(constructorValues.ToArray());
         }
     }
 }
