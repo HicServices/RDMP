@@ -30,6 +30,7 @@ namespace ReusableLibraryCode.Icons.IconProvision
         Delete,
         Edit,
         Locked,
-        Help
+        Help,
+        Hashed
     }
 }

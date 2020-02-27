@@ -256,5 +256,14 @@ namespace Rdmp.Core.Icons.IconOverlays {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Hashed {
+            get {
+                object obj = ResourceManager.GetObject("Hashed", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }
