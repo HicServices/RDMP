@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added icon for HashOnDataRelease
 - Added ability to customize extraction directory subfolder names
 - Added check for stale extraction records when generating a one off Release Document (i.e. not part of a Release workflow)
 - Added clarifiaction on what to do if a table is not found during synchronization
