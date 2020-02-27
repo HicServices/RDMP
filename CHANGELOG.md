@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Datagrid/query syntax errors are now more visible and consistent with other SQL IDEs
+- Bulk Process CatalogueItems now defaults to exact matching (ignoring case)
 
 ### Fixed
 
