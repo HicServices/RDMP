@@ -407,7 +407,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
                                 "\r\n" +
                                 "The edit functionality will now open.");
 
-                Activator.WindowArranger.SetupEditCatalogue(this, catalogue);
+                Activator.WindowArranger.SetupEditAnything(this, catalogue);
                 
             }
             if (cbAutoClose.Checked)

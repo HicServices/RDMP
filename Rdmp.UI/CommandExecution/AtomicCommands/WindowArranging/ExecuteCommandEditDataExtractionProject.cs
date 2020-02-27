@@ -47,7 +47,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.WindowArranging
                 SetImpossible("You must choose a Data Extraction Project to edit.");
 
             base.Execute();
-            Activator.WindowArranger.SetupEditDataExtractionProject(this, Project);
+            Activator.WindowArranger.SetupEditAnything(this, Project);
         }
 
         public override string GetCommandHelp()

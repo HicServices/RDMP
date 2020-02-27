@@ -136,6 +136,12 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
             
             textBox1.TextChanged += tbFind_TextChanged;
             textBox1.KeyUp += _scintilla_KeyUp;
+            textBox1.KeyPress += (s, e) =>
+            {
+                //prevents windows 'bong' noise when you hit enter
+                if (e.KeyChar == (int) Keys.Enter)
+                    e.Handled = true;
+            };
 
             FetchMatches(initialSearchQuery,CancellationToken.None);
             StartPosition = FormStartPosition.CenterScreen;
@@ -214,6 +220,7 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
             if (e.KeyCode == Keys.Enter)
             {
                 e.Handled = true;
+                e.SuppressKeyPress = true;
                 PerformCompletionAction(keyboardSelectedIndex);
             }
             

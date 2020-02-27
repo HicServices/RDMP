@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Datagrid/query syntax errors are now more visible and consistent with other SQL IDEs
+- Open / New Catalogue no longer closes all toolboxes prior to setting up editing layout
 
 ### Fixed
 
