@@ -148,6 +148,11 @@ namespace ReusableLibraryCode.Settings
             get { return AppSettings.GetValueOrDefault("ShowColumnFilters", true); }
             set { AppSettings.AddOrUpdateValue("ShowColumnFilters", value); }
         }
+        public static bool ShowOrderColumn
+        {
+            get { return AppSettings.GetValueOrDefault("ShowOrderColumn", true); }
+            set { AppSettings.AddOrUpdateValue("ShowOrderColumn", value); }
+        }
 
         public static bool ShowColumnDataType
         {
