@@ -816,7 +816,7 @@ If you have access to an oracle / mysql testing database you can add the other t
 ```
 ServerName: localhost\sqlexpress
 Prefix: TEST_
-MySql: Server=localhost;Uid=root;Pwd=zombie;SSL-Mode=None
+MySql: Server=localhost;Uid=root;Pwd=zombie;SSLMode=None
 Oracle: Data Source=localhost:1521/orclpdb.dundee.uni;User Id=ora;Password=zombie;
 ``` 
 

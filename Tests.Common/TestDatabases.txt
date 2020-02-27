@@ -10,7 +10,7 @@ ServerName:	localhost
 Prefix:	TEST_
 Username: sa
 Password: YourStrong!Passw0rd
-MySql:	server=127.0.0.1;Uid=root;Pwd=;Ssl-Mode=None
+MySql:	server=127.0.0.1;Uid=root;Pwd=;SslMode=None
 PostgreSql:	User ID=postgres;Password=;Host=127.0.0.1;Port=5432
 Oracle: 
 #User accounts you can create with limited access rights (e.g. connect list databases etc).  These users will be used in low privilege tests
