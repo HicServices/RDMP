@@ -8,8 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [4.0.3] - 2020-02-28
+
 ### Added
 
+- Added timestamps to Word Metadata Reports (e.g. when document was created)
 - Added icon for HashOnDataRelease
 - Added Order column to Catalogue Collection tree view
 - Added ability to disable the TicketingSystem that controls whether datasets can be released (only applies where one has been configured)
@@ -33,9 +36,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Datagrid/query syntax errors are now more visible and consistent with other SQL IDEs
 - Open / New Catalogue no longer closes all toolboxes prior to setting up editing layout
 - Bulk Process CatalogueItems now defaults to exact matching (ignoring case)
+- Changed MySql adapter from `MySql.Data` to `MySqlConnector` (see [FAnsiSql] version 0.11.1 change notes)
 
 ### Fixed
 
+- Fixed bug where broken Lookup configurations could result in DQE not passing checks
+- Fixed top menu missing some options on extraction/cohort building graphs (e.g. timeout / retry query)
+- Fixed DLE backup trigger creation for old versions of MySql (5.5 and earlier)
 - Fixed some forms not getting launched when new objects are created (e.g. Supporting Documents)
 - Fixed null reference when cancelling adding a SupportingDocument
 - Fixed bug in axis section of graph editor where changing value would result in text box loosing focus
@@ -359,7 +366,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.0.2...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.0.3...develop
+[4.0.3]: https://github.com/HicServices/RDMP/compare/v4.0.2...v4.0.3
 [4.0.2]: https://github.com/HicServices/RDMP/compare/v4.0.1...v4.0.2
 [4.0.1]: https://github.com/HicServices/RDMP/compare/v4.0.1-rc3...v4.0.1
 [4.0.1-rc3]: https://github.com/HicServices/RDMP/compare/v4.0.1-rc2...v4.0.1-rc3
