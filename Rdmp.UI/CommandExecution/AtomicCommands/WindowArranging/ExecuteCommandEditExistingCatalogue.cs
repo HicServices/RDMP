@@ -56,7 +56,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.WindowArranging
                 SetImpossible("You must choose a Catalogue.");
 
             base.Execute();
-            Activator.WindowArranger.SetupEditCatalogue(this, Catalogue);
+            Activator.WindowArranger.SetupEditAnything(this, Catalogue);
         }
     }
 }
