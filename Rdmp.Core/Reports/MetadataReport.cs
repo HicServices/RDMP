@@ -158,6 +158,8 @@ namespace Rdmp.Core.Reports
                             ShowFile(document);
 
                         SetMargins(document,20);
+                        
+                        AddFooter(document,"Created on " + DateTime.Now, TextFontSize);
 
                         return document.FileInfo;
                     }
