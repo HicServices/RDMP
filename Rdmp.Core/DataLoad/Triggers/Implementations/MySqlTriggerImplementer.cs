@@ -81,7 +81,11 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
         public bool UseOldDateTimeDefaultMethod(DiscoveredTable table)
         {
             using (var con = table.Database.Server.GetConnection())
+            {
+                con.Open();
                 return UseOldDateTimeDefaultMethod(table.GetCommand("SELECT VERSION()", con).ExecuteScalar()?.ToString());
+            }
+                
         }
 
         public static bool UseOldDateTimeDefaultMethod(string version)
