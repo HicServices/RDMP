@@ -275,7 +275,7 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void userSettingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var settings = new UserSettingsFileUI();
+            var settings = new UserSettingsFileUI(Activator);
             settings.Show();
         }
 

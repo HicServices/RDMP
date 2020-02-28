@@ -44,6 +44,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.cbWait5Seconds = new System.Windows.Forms.CheckBox();
             this.cbShowCohortWizard = new System.Windows.Forms.CheckBox();
+            this.btnClearFavourites = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // cbShowHomeOnStartup
@@ -206,11 +207,21 @@
             this.cbShowCohortWizard.UseVisualStyleBackColor = true;
             this.cbShowCohortWizard.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
+            // btnClearFavourites
+            // 
+            this.btnClearFavourites.Location = new System.Drawing.Point(104, 362);
+            this.btnClearFavourites.Name = "btnClearFavourites";
+            this.btnClearFavourites.Size = new System.Drawing.Size(96, 23);
+            this.btnClearFavourites.TabIndex = 10;
+            this.btnClearFavourites.Text = "Clear Favourites";
+            this.btnClearFavourites.UseVisualStyleBackColor = true;
+            // 
             // UserSettingsFileUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(742, 565);
+            this.Controls.Add(this.btnClearFavourites);
             this.Controls.Add(this.tbHeatmapColours);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
@@ -252,5 +263,6 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.CheckBox cbWait5Seconds;
         private System.Windows.Forms.CheckBox cbShowCohortWizard;
+        private System.Windows.Forms.Button btnClearFavourites;
     }
 }
