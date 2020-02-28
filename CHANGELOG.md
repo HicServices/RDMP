@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ...
 
 ### Added
+
+- Added icon for HashOnDataRelease
 - Added Order column to Catalogue Collection tree view
 - Added ability to disable the TicketingSystem that controls whether datasets can be released (only applies where one has been configured)
 - Added ability to customize extraction directory subfolder names
