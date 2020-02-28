@@ -56,6 +56,10 @@ namespace Rdmp.UI.ExtractionUIs
             InitializeComponent();
             splitContainer1.Panel2Collapsed = true;
             AssociatedCollection = RDMPCollection.Catalogue;
+            helpIcon1.SetHelpText("Re Order",
+                "Instructions: In simple mode you can view your columns and drag and drop them to reorder them.  In Advanced mode you can also Paste (Ctrl + V)  a list of column names into Desired Order (dont worry about trimming commas or table prefixes etc).  The first item in the list should be the point at which you want to start reordering at e.g. CHI or the last record if you want to move columns to the end then paste in the rest of the columns that you want to move after this first item."
+                );
+
         }
 
         public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)

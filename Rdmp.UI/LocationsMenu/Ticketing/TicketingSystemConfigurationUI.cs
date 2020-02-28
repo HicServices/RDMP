@@ -6,6 +6,7 @@
 
 using System;
 using System.Linq;
+using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Ticketing;
 using Rdmp.UI.ItemActivation;
@@ -56,7 +57,13 @@ namespace Rdmp.UI.LocationsMenu.Ticketing
         private void RefreshUIFromDatabase()
         {
             _bLoading = true;
-            _ticketingSystemConfiguration = _activator.RepositoryLocator.CatalogueRepository.GetTicketingSystem();
+
+            var ticketing = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<TicketingSystemConfiguration>().ToArray();
+
+            if(ticketing.Length > 1)
+                throw new Exception("You have multiple TicketingSystemConfiguration configured, open the table TicketingSystemConfiguration and delete one of them");
+
+            _ticketingSystemConfiguration = ticketing.SingleOrDefault();
             var mef = _activator.RepositoryLocator.CatalogueRepository.MEF;
             
             cbxType.Items.Clear();
@@ -73,7 +80,7 @@ namespace Rdmp.UI.LocationsMenu.Ticketing
                 tbName.Text = "";
                 tbUrl.Text = "";
                 cbxType.Text = "";
-
+                cbDisabled.Checked = false;
                 btnCreate.Enabled = true;
                 btnDelete.Enabled = false;
             }
@@ -85,6 +92,7 @@ namespace Rdmp.UI.LocationsMenu.Ticketing
                 tbName.Text = _ticketingSystemConfiguration.Name;
                 tbUrl.Text = _ticketingSystemConfiguration.Url;
                 cbxType.Text = _ticketingSystemConfiguration.Type;
+                cbDisabled.Checked = !_ticketingSystemConfiguration.IsActive;
 
                 if (_ticketingSystemConfiguration.DataAccessCredentials_ID != null)
                     ddCredentials.Text =
@@ -215,6 +223,15 @@ namespace Rdmp.UI.LocationsMenu.Ticketing
         {
             base.SetItemActivator(activator);
             _activator = activator;
+        }
+
+        private void cbDisabled_CheckedChanged(object sender, EventArgs e)
+        {
+            if (_ticketingSystemConfiguration != null)
+            {
+                _ticketingSystemConfiguration.IsActive = !cbDisabled.Checked;
+                _ticketingSystemConfiguration.SaveToDatabase();
+            }   
         }
     }
 }

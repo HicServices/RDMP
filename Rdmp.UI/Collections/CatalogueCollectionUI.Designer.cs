@@ -27,6 +27,7 @@ namespace Rdmp.UI.Collections
             this.tlvCatalogues = new BrightIdeasSoftware.TreeListView();
             this.olvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvFilters = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvOrder = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.imageList_RightClickIcons = new System.Windows.Forms.ImageList(this.components);
             this.gbColdStorage = new System.Windows.Forms.GroupBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
@@ -46,11 +47,13 @@ namespace Rdmp.UI.Collections
             // 
             this.tlvCatalogues.AllColumns.Add(this.olvColumn1);
             this.tlvCatalogues.AllColumns.Add(this.olvFilters);
+            this.tlvCatalogues.AllColumns.Add(this.olvOrder);
             this.tlvCatalogues.CellEditUseWholeCell = false;
             this.tlvCatalogues.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvColumn1});
             this.tlvCatalogues.Cursor = System.Windows.Forms.Cursors.Default;
             this.tlvCatalogues.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlvCatalogues.HideSelection = false;
             this.tlvCatalogues.Location = new System.Drawing.Point(0, 0);
             this.tlvCatalogues.Name = "tlvCatalogues";
             this.tlvCatalogues.ShowGroups = false;
@@ -67,15 +70,22 @@ namespace Rdmp.UI.Collections
             this.olvColumn1.AspectName = "ToString";
             this.olvColumn1.FillsFreeSpace = true;
             this.olvColumn1.HeaderTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.olvColumn1.MinimumWidth = 100;
             this.olvColumn1.Text = "Catalogues";
             this.olvColumn1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.olvColumn1.MinimumWidth = 100;
+            this.olvColumn1.Width = 100;
             // 
             // olvFilters
             // 
             this.olvFilters.DisplayIndex = 1;
             this.olvFilters.IsVisible = false;
             this.olvFilters.Text = "Filters";
+            // 
+            // olvOrder
+            // 
+            this.olvOrder.IsEditable = false;
+            this.olvOrder.IsVisible = false;
+            this.olvOrder.Text = "Order";
             // 
             // imageList_RightClickIcons
             // 
@@ -207,5 +217,6 @@ namespace Rdmp.UI.Collections
         private CheckBox cbProjectSpecific;
         private CheckBox cbShowNonExtractable;
         private FlowLayoutPanel flowLayoutPanel1;
+        private OLVColumn olvOrder;
     }
 }
