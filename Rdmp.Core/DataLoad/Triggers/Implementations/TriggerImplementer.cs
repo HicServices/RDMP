@@ -74,12 +74,11 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
                 _table.AddColumn(SpecialFieldNames.DataLoadRunID, new DatabaseTypeRequest(typeof(int)), true, timeout);
 
             var syntaxHelper = _server.GetQuerySyntaxHelper();
-            var dateTimeDatatype = syntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof (DateTime)));
-            var nowFunction = syntaxHelper.GetScalarFunctionSql(MandatoryScalarFunctions.GetTodaysDate);
+            
 
             //must add validFrom outside of transaction if we want SMO to pick it up
             if (b_mustCreate_validFrom)
-                _table.AddColumn(SpecialFieldNames.ValidFrom, string.Format(" {0} DEFAULT {1}", dateTimeDatatype, nowFunction), true, timeout);
+                AddValidFrom(_table, syntaxHelper,timeout);
 
             //if we created columns we need to update _column
             if (b_mustCreate_dataloadRunId || b_mustCreate_validFrom)
@@ -103,7 +102,14 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
             return sql;
         }
 
-        
+        protected virtual void AddValidFrom(DiscoveredTable table, IQuerySyntaxHelper syntaxHelper, int timeout)
+        {
+            var dateTimeDatatype = syntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof (DateTime)));
+            var nowFunction = syntaxHelper.GetScalarFunctionSql(MandatoryScalarFunctions.GetTodaysDate);
+            
+            _table.AddColumn(SpecialFieldNames.ValidFrom, string.Format(" {0} DEFAULT {1}", dateTimeDatatype, nowFunction), true, timeout);
+        }
+
 
         private string WorkOutArchiveTableCreationSQL()
         {
