@@ -24,9 +24,10 @@ namespace Rdmp.Core.DataQualityEngine
     public class DatasetTimespanCalculator : IDetermineDatasetTimespan
     {
         /// <inheritdoc/>
-        public string GetHumanReadableTimepsanIfKnownOf(Catalogue catalogue,bool discardOutliers)
+        public string GetHumanReadableTimepsanIfKnownOf(Catalogue catalogue,bool discardOutliers, out DateTime? accurateAsOf)
         {
             DataTable dt;
+            accurateAsOf = null;
 
             try
             {
@@ -37,6 +38,7 @@ namespace Rdmp.Core.DataQualityEngine
                 if (mostRecentEvaluation == null)
                     return "Unknown";
 
+                accurateAsOf = mostRecentEvaluation.DateOfEvaluation;
                 dt = PeriodicityState.GetPeriodicityForDataTableForEvaluation(mostRecentEvaluation, "ALL", false);
             }
             catch (Exception e)

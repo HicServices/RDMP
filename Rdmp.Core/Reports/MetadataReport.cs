@@ -104,15 +104,22 @@ namespace Rdmp.Core.Reports
                             }
 
                             InsertHeader(document,c.Name);
+
+                            //assume we don't know the age of the dataset
+                            DateTime? accurateAsOf = null;
                             
+                            //get the age of the dataset if known and output it
                             if (_args.TimespanCalculator != null)
                             {
-                                string timespan = _args.TimespanCalculator.GetHumanReadableTimepsanIfKnownOf(c, true);
+                                string timespan = _args.TimespanCalculator.GetHumanReadableTimepsanIfKnownOf(c, true,out accurateAsOf);
                                 if (!string.IsNullOrWhiteSpace(timespan) && !timespan.Equals("Unknown"))
-                                    InsertParagraph(document,timespan, TextFontSize);
+                                    InsertParagraph(document,timespan + (accurateAsOf.HasValue ? "*" :""), TextFontSize);
                             }
 
                             InsertParagraph(document,c.Description, TextFontSize);
+
+                            if(accurateAsOf.HasValue)
+                                InsertParagraph(document,"* Based on DQE run on " + accurateAsOf.Value, TextFontSize-2);
                             
                             if (gotRecordCount)
                             {
