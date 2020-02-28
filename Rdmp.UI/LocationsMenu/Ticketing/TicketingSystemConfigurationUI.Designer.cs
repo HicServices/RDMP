@@ -45,9 +45,10 @@
             this.label3 = new System.Windows.Forms.Label();
             this.tbName = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.checksUI1 = new ChecksUI.ChecksUI();
+            this.checksUI1 = new Rdmp.UI.ChecksUI.ChecksUI();
             this.btnCreate = new System.Windows.Forms.Button();
             this.btnDelete = new System.Windows.Forms.Button();
+            this.cbDisabled = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -92,6 +93,7 @@
             // 
             // gbTicketingSystem
             // 
+            this.gbTicketingSystem.Controls.Add(this.cbDisabled);
             this.gbTicketingSystem.Controls.Add(this.cbxType);
             this.gbTicketingSystem.Controls.Add(this.groupBox1);
             this.gbTicketingSystem.Controls.Add(this.btnCheck);
@@ -250,6 +252,7 @@
             // 
             // checksUI1
             // 
+            this.checksUI1.AllowsYesNoToAll = true;
             this.checksUI1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.checksUI1.Location = new System.Drawing.Point(0, 0);
             this.checksUI1.Name = "checksUI1";
@@ -277,6 +280,17 @@
             this.btnDelete.Text = "Delete";
             this.btnDelete.UseVisualStyleBackColor = true;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            // 
+            // cbDisabled
+            // 
+            this.cbDisabled.AutoSize = true;
+            this.cbDisabled.Location = new System.Drawing.Point(55, 151);
+            this.cbDisabled.Name = "cbDisabled";
+            this.cbDisabled.Size = new System.Drawing.Size(61, 17);
+            this.cbDisabled.TabIndex = 17;
+            this.cbDisabled.Text = "Disable";
+            this.cbDisabled.UseVisualStyleBackColor = true;
+            this.cbDisabled.CheckedChanged += new System.EventHandler(this.cbDisabled_CheckedChanged);
             // 
             // TicketingSystemConfigurationUI
             // 
@@ -321,5 +335,6 @@
         private System.Windows.Forms.Button btnCreate;
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button btnDeleteCredentials;
+        private System.Windows.Forms.CheckBox cbDisabled;
     }
 }

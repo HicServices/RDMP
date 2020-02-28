@@ -45,9 +45,22 @@ namespace Rdmp.Core.DataExport.DataRelease
             if (configuration == null) return;
 
             TicketingSystemFactory factory = new TicketingSystemFactory(_repository.CatalogueRepository);
-            ITicketingSystem ticketingSystem = factory.CreateIfExists(configuration);
 
-            if (ticketingSystem == null) return;
+
+            ITicketingSystem ticketingSystem;
+            try
+            {
+                ticketingSystem = factory.CreateIfExists(configuration);
+            }
+            catch (Exception e)
+            {
+                Assesment = TicketingReleaseabilityEvaluation.TicketingLibraryCrashed;
+                Exception = e;
+                return;
+            }
+            
+            if (ticketingSystem == null) 
+                return;
 
             try
             {

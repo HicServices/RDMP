@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added icon for HashOnDataRelease
+- Added Order column to Catalogue Collection tree view
+- Added ability to disable the TicketingSystem that controls whether datasets can be released (only applies where one has been configured)
 - Added ability to customize extraction directory subfolder names
 - Added check for stale extraction records when generating a one off Release Document (i.e. not part of a Release workflow)
 - Added clarifiaction on what to do if a table is not found during synchronization
@@ -29,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Datagrid/query syntax errors are now more visible and consistent with other SQL IDEs
+- Bulk Process CatalogueItems now defaults to exact matching (ignoring case)
 
 ### Fixed
 

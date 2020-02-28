@@ -331,7 +331,10 @@ namespace Rdmp.Core.Repositories
         public T CreateA<T>(string typeToCreate, params object[] args)
         {
             Type typeToCreateAsType = GetType(typeToCreate);
-            
+
+            if (typeToCreateAsType == null)
+                throw new Exception($"Could not find Type '{typeToCreate}'");
+
             //can we cast to T?
             if(typeToCreateAsType.IsAssignableFrom(typeof(T)))
                 throw new Exception("Requested typeToCreate '" + typeToCreate + "' was not assignable to the required Type '" + typeof(T).Name +"'");

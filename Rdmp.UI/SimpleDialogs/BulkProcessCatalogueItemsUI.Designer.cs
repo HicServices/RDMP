@@ -33,6 +33,8 @@ namespace Rdmp.UI.SimpleDialogs
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.cbExactMatch = new System.Windows.Forms.CheckBox();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.btnClear = new System.Windows.Forms.Button();
             this.lbPastedColumns = new System.Windows.Forms.ListBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
@@ -90,6 +92,8 @@ namespace Rdmp.UI.SimpleDialogs
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.cbExactMatch);
+            this.splitContainer1.Panel1.Controls.Add(this.checkBox1);
             this.splitContainer1.Panel1.Controls.Add(this.btnClear);
             this.splitContainer1.Panel1.Controls.Add(this.lbPastedColumns);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
@@ -100,6 +104,30 @@ namespace Rdmp.UI.SimpleDialogs
             this.splitContainer1.Size = new System.Drawing.Size(940, 601);
             this.splitContainer1.SplitterDistance = 252;
             this.splitContainer1.TabIndex = 2;
+            // 
+            // cbExactMatch
+            // 
+            this.cbExactMatch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbExactMatch.AutoSize = true;
+            this.cbExactMatch.Checked = true;
+            this.cbExactMatch.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbExactMatch.Location = new System.Drawing.Point(128, 580);
+            this.cbExactMatch.Name = "cbExactMatch";
+            this.cbExactMatch.Size = new System.Drawing.Size(121, 17);
+            this.cbExactMatch.TabIndex = 4;
+            this.cbExactMatch.Text = "Exact Matches Only";
+            this.cbExactMatch.UseVisualStyleBackColor = true;
+            this.cbExactMatch.CheckedChanged += new System.EventHandler(this.cbExactMatch_CheckedChanged);
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(-15, -15);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(80, 17);
+            this.checkBox1.TabIndex = 3;
+            this.checkBox1.Text = "checkBox1";
+            this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // btnClear
             // 
@@ -174,6 +202,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.olvCatalogueItems.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvName});
             this.olvCatalogueItems.Cursor = System.Windows.Forms.Cursors.Default;
+            this.olvCatalogueItems.HideSelection = false;
             this.olvCatalogueItems.Location = new System.Drawing.Point(6, 25);
             this.olvCatalogueItems.Name = "olvCatalogueItems";
             this.olvCatalogueItems.RowHeight = 19;
@@ -188,6 +217,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.olvName.AspectName = "ToString";
             this.olvName.FillsFreeSpace = true;
             this.olvName.MinimumWidth = 100;
+            this.olvName.Width = 100;
             // 
             // groupBox2
             // 
@@ -333,12 +363,12 @@ namespace Rdmp.UI.SimpleDialogs
             this.cbTableInfos.TabIndex = 2;
             this.cbTableInfos.SelectedIndexChanged += new System.EventHandler(this.cbTableInfos_SelectedIndexChanged);
             // 
-            // BulkProcessCatalogueItems
+            // BulkProcessCatalogueItemsUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
-            this.Name = "BulkProcessCatalogueItems";
+            this.Name = "BulkProcessCatalogueItemsUI";
             this.Size = new System.Drawing.Size(940, 601);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
@@ -381,5 +411,7 @@ namespace Rdmp.UI.SimpleDialogs
         private System.Windows.Forms.TextBox tbFilter;
         private System.Windows.Forms.Label label3;
         private OLVColumn olvName;
+        private System.Windows.Forms.CheckBox cbExactMatch;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }

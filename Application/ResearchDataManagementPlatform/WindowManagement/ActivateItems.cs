@@ -263,7 +263,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                         
             if (
                 YesNo(
-                    overrideConfirmationText?? ("Are you sure you want to delete '" + deleteable + "' from the database?")
+                    overrideConfirmationText?? ("Are you sure you want to delete '" + deleteable + "'?")
                 +Environment.NewLine + "(" + deleteable.GetType().Name + idText +")",
                 "Delete " + deleteable.GetType().Name))
             {
