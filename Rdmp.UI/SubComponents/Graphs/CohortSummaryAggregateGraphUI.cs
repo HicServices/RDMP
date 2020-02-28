@@ -62,6 +62,9 @@ namespace Rdmp.UI.SubComponents.Graphs
         {
             _collection = (CohortSummaryAggregateGraphObjectCollection) collection;
             SetItemActivator(activator);
+            
+            BuildMenu(activator);
+
             base.SetAggregate(activator,_collection.Graph);
             LoadGraphAsync();
         }
@@ -108,18 +111,7 @@ namespace Rdmp.UI.SubComponents.Graphs
 
         protected override object[] GetRibbonObjects()
         {
-            List<object> toReturn = new List<object>();
-            
-            
-            if(_collection.SingleFilterOnly!= null)
-                toReturn.Add(_collection.SingleFilterOnly);
-
-            toReturn.Add((object) _collection.CohortIfAny ?? _collection.CohortContainerIfAny);
-
-            toReturn.Add(AggregateConfiguration);
-            toReturn.Add(GetAdjustmentDescription(_collection.Adjustment));
-
-            return toReturn.ToArray();
+            return new object[]{GetAdjustmentDescription(_collection.Adjustment)};
         }
 
         private string GetAdjustmentDescription(CohortSummaryAdjustment adjustment)
