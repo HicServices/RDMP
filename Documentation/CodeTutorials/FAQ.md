@@ -98,7 +98,7 @@ For help on each engine (verb) on the command line enter the verb (listed by the
 rdmp.exe dle --help
 ```
 
-When performing an operation in the RDMP client application (e.g. releasing a dataset) you can instead select 'Copy Run Command To Clipboard'.  This will generate a CLI command that will perform the current action (e.g. extract Project X using Pipeline Y).  This can be helpful for scheduling long running tasks etc.
+When performing an operation in the RDMP client application (e.g. releasing a dataset) you can instead select 'Copy Run Command To Clipboard'.  This will generate a CLI command that will perform the current action (e.g. extract [Project] X using Pipeline Y).  This can be helpful for scheduling long running tasks etc.
 
 ![Accessing menu copy to clipboard](./Images/FAQ/CopyCommandToClipboard.png)
 
@@ -583,3 +583,5 @@ Yes there are over 1,000 unit and integration tests, this is covered in [Tests](
 
 [Catalogue]: ./Glossary.md#Catalogue
 [TableInfo]: ./Glossary.md#TableInfo
+
+[Project]: ./Glossary.md#Project

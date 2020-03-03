@@ -1394,3 +1394,5 @@ Going from `ICheckNotifier` to `IDataLoadEventListener` will result in a listene
 
 [Catalogue]: ./Glossary.md#Catalogue
 [TableInfo]: ./Glossary.md#TableInfo
+
+[Project]: ./Glossary.md#Project

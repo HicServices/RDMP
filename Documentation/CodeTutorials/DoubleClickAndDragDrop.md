@@ -161,3 +161,5 @@ Doing this will allow you to drag the object (when previously you couldn't).  Th
 To provide drop targets for the new `ICombineToMakeCommand` go to the `RDMPCommandExecutionProposal<T>` of the object `Type` you want to be able to drop on and [provide an implementation of ProposeExecution](#drop)
 
 [Catalogue]: ./Glossary.md#Catalogue
+
+[Project]: ./Glossary.md#Project

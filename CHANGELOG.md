@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added clarifiaction on what to do if a table is not found during synchronization
 - Refresh now shows 'waiting' cursor while updates take effect
 - Creating a [Catalogue] from a CatalogueFolder right click context menu now creates the resulting [Catalogue] in that directory
-- Added ability to right click a dataset in an ExtractionConfiguration and open the directory into which it was extracted (if it was extracted to disk)
+- Added ability to right click a dataset in an [ExtractionConfiguration] and open the directory into which it was extracted (if it was extracted to disk)
 - Added Extraction Category column for columns included in the project extractions
 - Added command Import [Catalogue] Item Descriptions accessible from the CatalogueItem node menu that imports all descriptions (and other fields) from one [Catalogue] into another.
 - Added 'Execute' button on [Catalogue] and Extraction dataset SQL viewing windows.
@@ -304,7 +304,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to latest version of BadMedicine (0.1.5)
 - Improved error message shown when attempting to delete a used patient index table (now lists the users)
-- System no longer auto selects objects when there is only 1 option (e.g. when user starts a Release when there is only one Project in the system).  This previously created an inconsistent user experience.
+- System no longer auto selects objects when there is only 1 option (e.g. when user starts a Release when there is only one [Project] in the system).  This previously created an inconsistent user experience.
 - Dita extraction checks no longer propose deleting non dita files in the output directory
 - Improved Find (Ctrl+F) dialog layout and added shortcut codes (e.g. typing "c Bob" will return all Catalogues containing the word "Bob")
 - Message boxes now display a limit of 20,000 characters (full text can still be accessed by the copy to clipboard button).
@@ -342,8 +342,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated to latest version of [BadMedicine] (0.0.1.2)
 - Updated to latest version of [FAnsiSql] (0.9.2)
 - File=>New now launches modal dialog instead of dropdown menu
-- Project objects can now be sorted (previously they always appeared alphabetically)
-- Project creation UI now shows duplicate ProjectNumbers as a Warning instead of an Error allowing users to create 2+ Projects with shared cohorts
+- [Project] objects can now be sorted (previously they always appeared alphabetically)
+- [Project] creation UI now shows duplicate ProjectNumbers as a Warning instead of an Error allowing users to create 2+ Projects with shared cohorts
 - Disabled objects in tree views now appear greyed out instead of red
 - Improved message shown when cohorts with null descriptions are preventing cohort importing
 - Attempting to deleting an Extractable [Catalogue] no longer shows an error and instead asks if you want to make it non extractable (then delete)
@@ -387,3 +387,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [Catalogue]: ./Documentation/CodeTutorials/Glossary.md#Catalogue
 [SupportingDocument]: ./Documentation/CodeTutorials/Glossary.md#SupportingDocument
 [TableInfo]: ./Documentation/CodeTutorials/Glossary.md#TableInfo
+
+[ExtractionConfiguration]: ./Documentation/CodeTutorials/Glossary.md#ExtractionConfiguration
+[Project]: ./Documentation/CodeTutorials/Glossary.md#Project
