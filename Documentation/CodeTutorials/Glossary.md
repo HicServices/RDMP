@@ -10,7 +10,7 @@ As well as storing human readable names/descriptions of what is in the dataset i
 
 Catalogues are always flat views although they can be built from multiple relational data tables underneath.
 
-## ExternalCohortTable ![SupportingDocument Icon](./../../Rdmp.Core/Icons/ExternalCohortTable.png)
+## ExternalCohortTable ![ExternalCohortTable Icon](./../../Rdmp.Core/Icons/ExternalCohortTable.png)
 
 Records where to store linkage cohorts (see [ExtractableCohort]).  
 
@@ -27,7 +27,7 @@ Both the cohort and custom table names table must have a foreign key into the de
 
 You can have multiple ExternalCohortTable sources in your database for example if you need to support different identifier datatypes / formats.
 
-## ExtractableCohort
+## ExtractableCohort ![ExtractableCohort Icon](./../../Rdmp.Core/Icons/ExtractableCohort.png)
 
 Records the location and ID of a cohort in an [ExternalCohortTable] database. 
 
