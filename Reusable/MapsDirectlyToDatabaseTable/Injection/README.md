@@ -213,3 +213,5 @@ Now we have an interface and standardised public methods we can do things like
 This means that we have 2 database calls up front and never have to make another one since we did a fast operation in memory to tell all the `AggregateTopX` what their associated `AggregateConfiguration` are.  This may not seem like must of a big deal but if you have thousands of objects it can really help prevent you from ddosing your metadata database.
 
 Even if you never call `InjectKnown`, having a standard interface method for caching relationship property objects and invalidating these caches (`ClearAllInjections`) is still a big performance booster.
+
+[Catalogue]: ../../../Documentation/CodeTutorials/Glossary.md#Catalogue

@@ -1,4 +1,4 @@
-﻿# The 'cmd' Command
+# The 'cmd' Command
 
 ## Background
 
@@ -149,3 +149,5 @@ Format: {Type}:{NamePattern}[,{NamePattern2},{NamePattern3}...]
 [CommandInvoker]: ../../CommandExecution/CommandInvoker.cs
 [interactive command loop]: #interactive-command-loop
 [constructing the command]: #constructing-the-command
+
+[Catalogue]: ../../../Documentation/CodeTutorials/Glossary.md#Catalogue

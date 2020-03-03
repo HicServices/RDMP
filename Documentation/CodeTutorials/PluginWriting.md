@@ -220,7 +220,7 @@ public override ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object o)
 
 Increase the version number of your plugin to 0.1.2 in the nuspec file and commit the new nupkg to rdmp.
 
-Now when you right click a Catalogue you should see your command offered to the user:
+Now when you right click a [Catalogue] you should see your command offered to the user:
 
 ![What it should look like](Images/RightClickBunnyMenuItem.png)
 
@@ -306,7 +306,7 @@ Now lets write some components for our plugin!
 <a name="anoPluginVersion1"></a>
 ## Version 1
 
-Most of the processes in RDMP use the `Pipeline` system.  This involves a series of components performing operations on a flow of objects of type T (often a `System.Data.DataTable`).  The pipeline is setup/tailored by RDMP users and then reused every time the task needs to be executed.  For example importing a csv file into the database and generating a Catalogue from the resulting table (the first thing you do when playing with the RDMP test data) happens through a pipeline called 'BULK INSERT:CSV Import File'.
+Most of the processes in RDMP use the `Pipeline` system.  This involves a series of components performing operations on a flow of objects of type T (often a `System.Data.DataTable`).  The pipeline is setup/tailored by RDMP users and then reused every time the task needs to be executed.  For example importing a csv file into the database and generating a [Catalogue] from the resulting table (the first thing you do when playing with the RDMP test data) happens through a pipeline called 'BULK INSERT:CSV Import File'.
 
 ![What it should look like](Images/ImportCatalogue.png)
 
@@ -494,7 +494,7 @@ Emma
 ## Version 3 - Referencing a database table
 Having a text file isn't that great, it would be much better to power it with a database table.  
 
-Create a new plugin component BasicDataTableAnonymiser3 (or modify your existing one).  Get rid of the property NameList and add a TableInfo one instead:
+Create a new plugin component BasicDataTableAnonymiser3 (or modify your existing one).  Get rid of the property NameList and add a [TableInfo] one instead:
 
 ```csharp
  using Rdmp.Core.Curation.Data;
@@ -607,7 +607,7 @@ insert into NamesListTable values ('Saunders')
 
 ```
 
-And import it into RDMP as a TableInfo (you don't need to create a Catalogue if you don't want to, just the TableInfo part)
+And import it into RDMP as a [TableInfo] (you don't need to create a Catalogue if you don't want to, just the [TableInfo] part)
 
 ![Import TableInfo - Version 3](Images/ImportExistingTableInfo.png)
 
@@ -677,7 +677,7 @@ This is a very basic test.  We create a data table that would be flowing through
 
 ## Setting up Database Tests
 
-Lets look at testing `BasicDataTableAnonymiser3`, this is harder since it involves having a user specified TableInfo that references a table of names.  We can do this though.
+Lets look at testing `BasicDataTableAnonymiser3`, this is harder since it involves having a user specified [TableInfo] that references a table of names.  We can do this though.
 
 Start by making a new class `TestAnonymisationPluginsDatabaseTests` and inherit from `Tests.Common.DatabaseTests`:
 
@@ -1086,7 +1086,7 @@ public void TestBasicDataTableAnonymiser4_FailConditions()
 }
 ```
 
-Now when you run RDMP and add this component to the `BULK INSERT:CSV Import File` without specifying a TableInfo it should look something like:
+Now when you run RDMP and add this component to the `BULK INSERT:CSV Import File` without specifying a [TableInfo] it should look something like:
 
 ![Add empty Catalogue](Images/ChecksFailure.png)
 
@@ -1391,3 +1391,6 @@ IDataLoadEventListener listener2 = new FromCheckNotifierToDataLoadEventListener(
 Keep in mind the differences though: 
 Going from `IDataLoadEventListener` to `ICheckNotifier` will result in rejecting any ProposedFix automatically
 Going from `ICheckNotifier` to `IDataLoadEventListener` will result in a listener which basically ignores OnProgress counts
+
+[Catalogue]: ./Glossary.md#Catalogue
+[TableInfo]: ./Glossary.md#TableInfo

@@ -12,7 +12,7 @@ Drag and drop and double clicking (called activation) is a core part of the RDMP
 This derrived class will decide what tab/window/custom action to show when `Activate` happens either as part of double click or as part of `ExecuteCommandActivate` (e.g. from a right click menu) or a call to `BasicUICommandExecution.Activate` and decide what `ICommandExecution` is executed when a given object/collection is dropped on it.
 
 ![ExampleMenu](Images/DoubleClickAndDragDrop/DropExample.png) 
-_Example of dragging a Catalogue onto an ExtractionConfiguration_
+_Example of dragging a [Catalogue] onto an ExtractionConfiguration_
 
 This pattern allows all tree views system wide to have consistent behaviour for a given object type (via `RDMPCollectionCommonFunctionality`).  
 
@@ -159,3 +159,5 @@ Doing this will allow you to drag the object (when previously you couldn't).  Th
 ![CannotDrop](Images/DoubleClickAndDragDrop/CannotDrop.png)
 
 To provide drop targets for the new `ICombineToMakeCommand` go to the `RDMPCommandExecutionProposal<T>` of the object `Type` you want to be able to drop on and [provide an implementation of ProposeExecution](#drop)
+
+[Catalogue]: ./Glossary.md#Catalogue
