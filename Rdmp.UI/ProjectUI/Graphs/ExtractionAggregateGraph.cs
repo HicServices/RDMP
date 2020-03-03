@@ -99,7 +99,7 @@ namespace Rdmp.UI.ProjectUI.Graphs
             if (_collection == null)
                 return base.GetRibbonObjects();
 
-            return new object[] { Request.Configuration ,Request.SelectedDataSets,AggregateConfiguration,"Graphing Extraction Query"};
+            return new object[] { Request.Configuration,"Graphing Extraction Query"};
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
@@ -144,6 +144,7 @@ namespace Rdmp.UI.ProjectUI.Graphs
 
             Request = new ExtractDatasetCommand( config, new ExtractableDatasetBundle(ds));
             Request.GenerateQueryBuilder();
+            BuildMenu(activator);
 
             SetAggregate(activator,_collection.Graph);
             LoadGraphAsync();

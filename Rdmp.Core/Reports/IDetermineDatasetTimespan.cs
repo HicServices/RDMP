@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.Reports
@@ -19,7 +20,8 @@ namespace Rdmp.Core.Reports
         /// </summary>
         /// <param name="catalogue"></param>
         /// <param name="discardOutliers">True to attempt to throw out outlier rows when determining the dataset timespan</param>
+        /// <param name="accurateAsOf">The date at which the timespan was calculated e.g. if the result is cached</param>
         /// <returns></returns>
-        string GetHumanReadableTimepsanIfKnownOf(Catalogue catalogue, bool discardOutliers);
+        string GetHumanReadableTimepsanIfKnownOf(Catalogue catalogue, bool discardOutliers, out DateTime? accurateAsOf);
     }
 }

@@ -50,6 +50,9 @@ namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders
                 if (ei.IsExtractionIdentifier)
                     return _overlayProvider.GetOverlay(toReturn, OverlayKind.Key);
 
+                if (ei.HashOnDataRelease) 
+                    toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Hashed);
+
                 return toReturn;
 
             }

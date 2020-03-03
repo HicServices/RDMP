@@ -75,7 +75,7 @@ namespace Rdmp.Core.Reports
                         writer.WriteField(catalogue.Folder);
                         writer.WriteField(catalogue.Name);
                         writer.WriteField(relevantGovernance);
-                        writer.WriteField(_timespanCalculator.GetHumanReadableTimepsanIfKnownOf(catalogue,true));
+                        writer.WriteField(_timespanCalculator.GetHumanReadableTimepsanIfKnownOf(catalogue,true, out _));
                         writer.WriteField(ShortenDescription(catalogue.Description));
 
                         writer.NextRecord();

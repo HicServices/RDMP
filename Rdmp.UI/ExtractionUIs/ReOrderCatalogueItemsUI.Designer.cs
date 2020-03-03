@@ -48,16 +48,18 @@ namespace Rdmp.UI.ExtractionUIs
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.btnSaveNewOrder = new System.Windows.Forms.Button();
-            this.label12 = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.btnClear = new System.Windows.Forms.Button();
             this.rbSimple = new System.Windows.Forms.RadioButton();
             this.rbAdvanced = new System.Windows.Forms.RadioButton();
+            this.helpIcon1 = new Rdmp.UI.SimpleControls.HelpIcon();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.olvExtractionInformations)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // olvExtractionInformations
@@ -73,11 +75,12 @@ namespace Rdmp.UI.ExtractionUIs
             this.olvOrder});
             this.olvExtractionInformations.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvExtractionInformations.FullRowSelect = true;
+            this.olvExtractionInformations.HideSelection = false;
             this.olvExtractionInformations.IsSimpleDragSource = true;
             this.olvExtractionInformations.IsSimpleDropSink = true;
             this.olvExtractionInformations.Location = new System.Drawing.Point(0, 19);
             this.olvExtractionInformations.Name = "olvExtractionInformations";
-            this.olvExtractionInformations.Size = new System.Drawing.Size(363, 687);
+            this.olvExtractionInformations.Size = new System.Drawing.Size(355, 685);
             this.olvExtractionInformations.TabIndex = 0;
             this.olvExtractionInformations.UseCompatibleStateImageBehavior = false;
             this.olvExtractionInformations.View = System.Windows.Forms.View.Details;
@@ -90,9 +93,10 @@ namespace Rdmp.UI.ExtractionUIs
             this.olvColumns.AspectName = "ToString";
             this.olvColumns.FillsFreeSpace = true;
             this.olvColumns.Groupable = false;
+            this.olvColumns.MinimumWidth = 100;
             this.olvColumns.Sortable = false;
             this.olvColumns.Text = "Columns";
-            this.olvColumns.MinimumWidth = 100;
+            this.olvColumns.Width = 100;
             // 
             // olvOrder
             // 
@@ -118,7 +122,7 @@ namespace Rdmp.UI.ExtractionUIs
             this.lbDesiredOrder.FormattingEnabled = true;
             this.lbDesiredOrder.Location = new System.Drawing.Point(7, 19);
             this.lbDesiredOrder.Name = "lbDesiredOrder";
-            this.lbDesiredOrder.Size = new System.Drawing.Size(316, 654);
+            this.lbDesiredOrder.Size = new System.Drawing.Size(316, 641);
             this.lbDesiredOrder.TabIndex = 2;
             this.lbDesiredOrder.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lbDesiredOrder_DrawItem);
             this.lbDesiredOrder.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lbDesiredOrder_KeyUp);
@@ -136,7 +140,7 @@ namespace Rdmp.UI.ExtractionUIs
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.BackColor = System.Drawing.Color.Lime;
-            this.label3.Location = new System.Drawing.Point(332, 636);
+            this.label3.Location = new System.Drawing.Point(332, 634);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(16, 15);
             this.label3.TabIndex = 4;
@@ -145,7 +149,7 @@ namespace Rdmp.UI.ExtractionUIs
             // 
             this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(355, 636);
+            this.label4.Location = new System.Drawing.Point(355, 634);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(77, 13);
             this.label4.TabIndex = 5;
@@ -155,7 +159,7 @@ namespace Rdmp.UI.ExtractionUIs
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(355, 654);
+            this.label5.Location = new System.Drawing.Point(355, 652);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(96, 13);
             this.label5.TabIndex = 7;
@@ -165,7 +169,7 @@ namespace Rdmp.UI.ExtractionUIs
             // 
             this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label6.BackColor = System.Drawing.Color.Purple;
-            this.label6.Location = new System.Drawing.Point(332, 654);
+            this.label6.Location = new System.Drawing.Point(332, 652);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(16, 15);
             this.label6.TabIndex = 6;
@@ -187,14 +191,14 @@ namespace Rdmp.UI.ExtractionUIs
             this.lbNewOrder.FormattingEnabled = true;
             this.lbNewOrder.Location = new System.Drawing.Point(327, 19);
             this.lbNewOrder.Name = "lbNewOrder";
-            this.lbNewOrder.Size = new System.Drawing.Size(288, 576);
+            this.lbNewOrder.Size = new System.Drawing.Size(288, 563);
             this.lbNewOrder.TabIndex = 8;
             this.lbNewOrder.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lbCurrentOrder_DrawItem);
             // 
             // label8
             // 
             this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label8.Location = new System.Drawing.Point(355, 672);
+            this.label8.Location = new System.Drawing.Point(355, 670);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(262, 32);
             this.label8.TabIndex = 11;
@@ -204,7 +208,7 @@ namespace Rdmp.UI.ExtractionUIs
             // 
             this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label9.BackColor = System.Drawing.SystemColors.Window;
-            this.label9.Location = new System.Drawing.Point(332, 673);
+            this.label9.Location = new System.Drawing.Point(332, 671);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(16, 15);
             this.label9.TabIndex = 10;
@@ -213,7 +217,7 @@ namespace Rdmp.UI.ExtractionUIs
             // 
             this.label10.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(26, 684);
+            this.label10.Location = new System.Drawing.Point(26, 682);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(57, 13);
             this.label10.TabIndex = 13;
@@ -223,7 +227,7 @@ namespace Rdmp.UI.ExtractionUIs
             // 
             this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label11.BackColor = System.Drawing.Color.Red;
-            this.label11.Location = new System.Drawing.Point(5, 684);
+            this.label11.Location = new System.Drawing.Point(5, 682);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(16, 15);
             this.label11.TabIndex = 12;
@@ -231,7 +235,7 @@ namespace Rdmp.UI.ExtractionUIs
             // btnSaveNewOrder
             // 
             this.btnSaveNewOrder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnSaveNewOrder.Location = new System.Drawing.Point(327, 610);
+            this.btnSaveNewOrder.Location = new System.Drawing.Point(327, 608);
             this.btnSaveNewOrder.Name = "btnSaveNewOrder";
             this.btnSaveNewOrder.Size = new System.Drawing.Size(114, 23);
             this.btnSaveNewOrder.TabIndex = 14;
@@ -239,20 +243,11 @@ namespace Rdmp.UI.ExtractionUIs
             this.btnSaveNewOrder.UseVisualStyleBackColor = true;
             this.btnSaveNewOrder.Click += new System.EventHandler(this.btnSaveNewOrder_Click);
             // 
-            // label12
-            // 
-            this.label12.Location = new System.Drawing.Point(12, 3);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(915, 32);
-            this.label12.TabIndex = 16;
-            this.label12.Text = resources.GetString("label12.Text");
-            // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitContainer1.Location = new System.Drawing.Point(3, 64);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 30);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -276,14 +271,14 @@ namespace Rdmp.UI.ExtractionUIs
             this.splitContainer1.Panel2.Controls.Add(this.label6);
             this.splitContainer1.Panel2.Controls.Add(this.label4);
             this.splitContainer1.Panel2.Controls.Add(this.label3);
-            this.splitContainer1.Size = new System.Drawing.Size(992, 706);
-            this.splitContainer1.SplitterDistance = 366;
+            this.splitContainer1.Size = new System.Drawing.Size(984, 704);
+            this.splitContainer1.SplitterDistance = 358;
             this.splitContainer1.TabIndex = 17;
             // 
             // btnClear
             // 
             this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnClear.Location = new System.Drawing.Point(447, 610);
+            this.btnClear.Location = new System.Drawing.Point(447, 608);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(114, 23);
             this.btnClear.TabIndex = 15;
@@ -295,7 +290,7 @@ namespace Rdmp.UI.ExtractionUIs
             // 
             this.rbSimple.AutoSize = true;
             this.rbSimple.Checked = true;
-            this.rbSimple.Location = new System.Drawing.Point(9, 41);
+            this.rbSimple.Location = new System.Drawing.Point(3, 3);
             this.rbSimple.Name = "rbSimple";
             this.rbSimple.Size = new System.Drawing.Size(56, 17);
             this.rbSimple.TabIndex = 18;
@@ -307,23 +302,45 @@ namespace Rdmp.UI.ExtractionUIs
             // rbAdvanced
             // 
             this.rbAdvanced.AutoSize = true;
-            this.rbAdvanced.Location = new System.Drawing.Point(76, 41);
+            this.rbAdvanced.Location = new System.Drawing.Point(65, 3);
             this.rbAdvanced.Name = "rbAdvanced";
             this.rbAdvanced.Size = new System.Drawing.Size(74, 17);
             this.rbAdvanced.TabIndex = 18;
             this.rbAdvanced.Text = "Advanced";
             this.rbAdvanced.UseVisualStyleBackColor = true;
             // 
-            // ReOrderCatalogueItems
+            // helpIcon1
+            // 
+            this.helpIcon1.BackColor = System.Drawing.Color.Transparent;
+            this.helpIcon1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIcon1.BackgroundImage")));
+            this.helpIcon1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.helpIcon1.Location = new System.Drawing.Point(145, 3);
+            this.helpIcon1.MaximumSize = new System.Drawing.Size(19, 19);
+            this.helpIcon1.MinimumSize = new System.Drawing.Size(19, 19);
+            this.helpIcon1.Name = "helpIcon1";
+            this.helpIcon1.Size = new System.Drawing.Size(19, 19);
+            this.helpIcon1.SuppressClick = false;
+            this.helpIcon1.TabIndex = 19;
+            // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Controls.Add(this.rbSimple);
+            this.flowLayoutPanel1.Controls.Add(this.rbAdvanced);
+            this.flowLayoutPanel1.Controls.Add(this.helpIcon1);
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(984, 30);
+            this.flowLayoutPanel1.TabIndex = 20;
+            // 
+            // ReOrderCatalogueItemsUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.rbAdvanced);
-            this.Controls.Add(this.rbSimple);
+            this.ClientSize = new System.Drawing.Size(984, 734);
             this.Controls.Add(this.splitContainer1);
-            this.Controls.Add(this.label12);
-            this.Name = "ReOrderCatalogueItems";
-            this.Size = new System.Drawing.Size(1000, 773);
+            this.Controls.Add(this.flowLayoutPanel1);
+            this.Name = "ReOrderCatalogueItemsUI";
             ((System.ComponentModel.ISupportInitialize)(this.olvExtractionInformations)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
@@ -331,8 +348,9 @@ namespace Rdmp.UI.ExtractionUIs
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -353,12 +371,13 @@ namespace Rdmp.UI.ExtractionUIs
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Button btnSaveNewOrder;
-        private System.Windows.Forms.Label label12;
         private OLVColumn olvColumns;
         private OLVColumn olvOrder;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.RadioButton rbSimple;
         private System.Windows.Forms.RadioButton rbAdvanced;
         private System.Windows.Forms.Button btnClear;
+        private SimpleControls.HelpIcon helpIcon1;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
     }
 }

@@ -52,13 +52,7 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators
                 return;
             }
 
-            //Get an update command for each non primary key column
-            Dictionary<string, Task<int>> sqlCommands = new Dictionary<string, Task<int>>();
-
-            foreach (DiscoveredColumn nonPk in nonPks)
-                sqlCommands.Add(GetCommand(table, pks, nonPk), null);
-            
-            server.EnableAsync();
+            int affectedRows = 0;
 
             using (var con = table.Database.Server.GetConnection())
             {
@@ -76,20 +70,18 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators
                     }                    
                 }
 
-                foreach (var sql in sqlCommands.Keys.ToArray())
+                //Get an update command for each non primary key column
+                foreach (DiscoveredColumn nonPk in nonPks)
                 {
+                    var sql = GetCommand(table, pks, nonPk);
+
                     var cmd = server.GetCommand(sql, con);
                     cmd.CommandTimeout = Timeout;
-                    sqlCommands[sql] = cmd.ExecuteNonQueryAsync();
+                    affectedRows += cmd.ExecuteNonQuery();
                 }
-
-                Task.WaitAll(sqlCommands.Values.ToArray());
             }
-
-            int affectedRows = sqlCommands.Values.Sum(t => t.Result);
-
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Coalesce on table '" + table + "' completed (" + affectedRows + " rows affected)"));
             
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Coalesce on table '" + table + "' completed (" + affectedRows + " rows affected)"));
         }
 
         private string GetCommand(DiscoveredTable table, DiscoveredColumn[] pks, DiscoveredColumn nonPk)

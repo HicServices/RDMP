@@ -4,33 +4,24 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace ReusableLibraryCode.Icons.IconProvision
+using FAnsi;
+using FAnsi.Discovery;
+using NUnit.Framework;
+using Rdmp.Core.DataLoad.Triggers.Implementations;
+using Tests.Common;
+
+namespace Rdmp.Core.Tests.Curation.Integration
 {
-    /// <summary>
-    /// Describes a small overlay image that appears on top of the main icon to indicate something about it (e.g. that there is a problem with it).
-    /// </summary>
-    public enum OverlayKind
+    public class MySqlTriggerImplementerTests
     {
-        None =0,
-        Add,
-        Problem,
-        Link,
-        Shortcut,
-        Execute,
-        Import,
-        Extractable,
-        Extractable_Internal,
-        Extractable_SpecialApproval,
-        Extractable_Supplemental,
-        Key,
-        Filter,
-        FavouredItem,
-        Deprecated,
-        Internal,
-        Delete,
-        Edit,
-        Locked,
-        Help,
-        Hashed
+        [TestCase("4.0",true)]
+        [TestCase("5.1",true)]
+        [TestCase("8.5",false)]
+        [TestCase("5.5.64-MariaDB",true)]
+        [TestCase("10.5.64-MariaDB",false)]
+        public void TestOldNew(string versionString, bool expectToUseOldMethod)
+        {
+            Assert.AreEqual(expectToUseOldMethod,MySqlTriggerImplementer.UseOldDateTimeDefaultMethod(versionString));
+        }
     }
 }

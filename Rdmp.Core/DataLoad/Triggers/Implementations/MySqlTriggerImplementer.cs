@@ -6,7 +6,9 @@
 
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Exceptions;
 
@@ -63,6 +65,44 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
             }
 
             return creationSql;
+        }
+
+        protected override void AddValidFrom(DiscoveredTable table, IQuerySyntaxHelper syntaxHelper, int timeout)
+        {
+            // MySql changed how they do default date fields between 5.5 and 5.6
+            //https://dba.stackexchange.com/a/132954
+ 
+            if (UseOldDateTimeDefaultMethod(table))
+                table.AddColumn(SpecialFieldNames.ValidFrom,"TIMESTAMP DEFAULT CURRENT_TIMESTAMP",true,timeout);
+            else
+                table.AddColumn(SpecialFieldNames.ValidFrom,"DATETIME DEFAULT CURRENT_TIMESTAMP",true,timeout);
+        }
+
+        public bool UseOldDateTimeDefaultMethod(DiscoveredTable table)
+        {
+            using (var con = table.Database.Server.GetConnection())
+            {
+                con.Open();
+                return UseOldDateTimeDefaultMethod(table.GetCommand("SELECT VERSION()", con).ExecuteScalar()?.ToString());
+            }
+                
+        }
+
+        public static bool UseOldDateTimeDefaultMethod(string version)
+        {
+            if (string.IsNullOrWhiteSpace(version))
+                return false;
+            
+            var match = Regex.Match(version,@"(\d+)\.(\d+)");
+
+            //If the version string doesn't start with numbers we have bigger problems than creating a default constraint
+            if (!match.Success)
+                return false;
+
+            var major = int.Parse(match.Groups[1].Value);
+            var minor = int.Parse(match.Groups[2].Value);
+
+            return major < 5 || (major == 5 && minor <= 5);
         }
 
         protected virtual string CreateTriggerBody()

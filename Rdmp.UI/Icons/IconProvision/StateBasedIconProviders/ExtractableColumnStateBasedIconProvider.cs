@@ -7,40 +7,42 @@
 using System;
 using System.Drawing;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders
 {
-    public class CatalogueItemStateBasedIconProvider : IObjectStateBasedIconProvider
+    public class ExtractableColumnStateBasedIconProvider : IObjectStateBasedIconProvider
     {
         private readonly Bitmap basicImage;
         private readonly IconOverlayProvider _overlayProvider;
 
-        public CatalogueItemStateBasedIconProvider(IconOverlayProvider overlayProvider)
+        public ExtractableColumnStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
-            basicImage = CatalogueIcons.CatalogueItem;
+            basicImage = CatalogueIcons.ExtractableColumn;
             _overlayProvider = overlayProvider;
         }
 
         public Bitmap GetImageIfSupportedObject(object o)
         {
-            var ci = o as CatalogueItem;
+            var col = o as ExtractableColumn;
 
-            if (ci == null)
+            if (col == null)
                 return null;
 
             Bitmap toReturn = basicImage;
+            
+            //if the current state is to hash add the overlay
+            if (col.HashOnDataRelease) 
+                toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Hashed);
+            
+            var ei = col.CatalogueExtractionInformation;
 
-            var ei = ci.ExtractionInformation;
-
-            //it's extractable
+            //it's parent ExtractionInformation still exists then we can determine it's category
             if (ei != null)
             {
-                if (ei.HashOnDataRelease) 
-                    toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Hashed);
-
                 switch (ei.ExtractionCategory)
                 {
                     case ExtractionCategory.ProjectSpecific:
@@ -64,8 +66,6 @@ namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders
                         throw new ArgumentOutOfRangeException();
                 }
             }
-                
-
 
             return toReturn;
         }

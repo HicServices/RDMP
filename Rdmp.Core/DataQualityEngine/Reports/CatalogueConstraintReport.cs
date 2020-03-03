@@ -469,8 +469,7 @@ namespace Rdmp.Core.DataQualityEngine.Reports
                 try
                 {
                     //if we have a the foreign key too
-                    var foreignQtc = _queryBuilder.SelectColumns.SingleOrDefault(fk => fk.IsLookupForeignKey && fk.LookupTable.ID == descQtc.LookupTable.ID);
-                    if (foreignQtc != null)
+                    foreach(var foreignQtc in _queryBuilder.SelectColumns.Where(fk => fk.IsLookupForeignKey && fk.LookupTable.ID == descQtc.LookupTable.ID))
                     {
                         var descriptionFieldName = descQtc.IColumn.GetRuntimeName();
                         var foreignKeyFieldName = foreignQtc.IColumn.GetRuntimeName();
@@ -507,7 +506,7 @@ namespace Rdmp.Core.DataQualityEngine.Reports
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
                             "Failed to add new lookup validation rule for column " +
-                            descQtc.IColumn.GetRuntimeName(), CheckResult.Fail, ex));
+                            descQtc.IColumn.GetRuntimeName(), CheckResult.Warning, ex));
                 }
             }
         }

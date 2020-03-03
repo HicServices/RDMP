@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.Curation.Data;
@@ -277,15 +278,31 @@ namespace Rdmp.UI.SimpleDialogs
             List<IModelFilter> orFilters = new List<IModelFilter>();
 
             foreach (var item in lbPastedColumns.Items)
-                orFilters.Add(new TextMatchFilter(olvCatalogueItems, item.ToString()));
+            {
+                var filter = new TextMatchFilter(olvCatalogueItems, item.ToString(),
+                    StringComparison.CurrentCultureIgnoreCase);
 
-            filters.Add(new TextMatchFilter(olvCatalogueItems, tbFilter.Text));
+                if (cbExactMatch.Checked)
+                {
+                    filter.RegexOptions = RegexOptions.IgnoreCase;
+                    filter.RegexStrings = new List<string> {"^" + item + "$"};
+                }
+                orFilters.Add(filter);
+            }
+                
+
+            filters.Add(new TextMatchFilter(olvCatalogueItems, tbFilter.Text,StringComparison.CurrentCultureIgnoreCase));
 
             if (orFilters.Any())
                 filters.Add(new CompositeAnyFilter(orFilters));
 
             olvCatalogueItems.ModelFilter = new CompositeAllFilter(filters);
             olvCatalogueItems.UseFiltering = true;
+        }
+
+        private void cbExactMatch_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateFilter();
         }
     }
 

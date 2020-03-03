@@ -8,7 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 
@@ -34,7 +36,12 @@ namespace Rdmp.UI.Collections
             _activator = activator;
             CommonTreeFunctionality.SetUp(RDMPCollection.Favourites,tlvFavourites,_activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings {AllowPinning = false});
             CommonTreeFunctionality.AxeChildren = new Type[] { typeof(CohortIdentificationConfiguration) };
-
+            CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter =
+                (a) => new IAtomicCommand[]
+                {
+                    new ExecuteCommandAddFavourite(a),
+                    new ExecuteCommandClearFavourites(a)
+                };
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
             
             RefreshFavourites();
