@@ -10,6 +10,31 @@ As well as storing human readable names/descriptions of what is in the dataset i
 
 Catalogues are always flat views although they can be built from multiple relational data tables underneath.
 
+## ExternalCohortTable ![SupportingDocument Icon](./../../Rdmp.Core/Icons/ExternalCohortTable.png)
+
+Records where to store linkage cohorts (see [ExtractableCohort]).  
+
+Since every agency handles cohort management differently RDMP is built to support diverse cohort [DBMS] table schemas.  There are no fixed datatypes / columns for cohort databases. 
+
+An ExternalCohortTable stores:
+
+- What table contains your cohort identifiers
+- What table describes the cohorts (e.g. description, version etc)
+- Which column is the private identifier
+- Which column is the release identifier
+ 
+Both the cohort and custom table names table must have a foreign key into the definition table.  You are free to add additional columns to these tables or even base them on views of other existing tables in your database. 
+
+You can have multiple ExternalCohortTable sources in your database for example if you need to support different identifier datatypes / formats.
+
+## ExtractableCohort
+
+Records the location and ID of a cohort in an [ExternalCohortTable] database. 
+
+This allows RDMP to record which cohorts are part of which ExtractionConfiguration in a Project without having to move the identifiers into the RDMP application database.  
+
+Each ExtractableCohort has an OriginID, this field represents the id of the cohort in the CohortDefinition table of the [ExternalCohortTable]. Effectively this number is the id of the cohort in your cohort database while the ID property of the [ExtractableCohort] (as opposed to OriginID) is the RDMP ID assigned to the cohort. This allows you to have two different cohort sources both of which have a cohort id 10 but the RDMP software is able to tell the difference. In addition it allows for the unfortunate situation in which you delete a cohort in your cohort database and leave the ExtractableCohort orphaned - under such circumstances you will at least still have your RDMP configuration and know the location of the original cohort even if it doesn't exist anymore.
+
 ## SupportingDocument ![SupportingDocument Icon](./../../Rdmp.Core/Icons/supportingDocument.png)
 
 Describes a document (e.g. PDF / Excel file etc) which is useful for understanding a given dataset ([Catalogue]). This can be marked as Extractable in which case every time the dataset is extracted the file will also be bundled along with it (so that researchers can also benefit from the file).  You can also mark SupportingDocuments as Global in which case they will be provided (if Extractable) to researchers regardless of which datasets they have selected e.g. a PDF on data governance or a copy of an empty 'data use contract document'.
@@ -51,3 +76,5 @@ When joining between datasets on different [DBMS] IsExtractionIdentifier columns
 [Catalogue]: #Catalogue
 [TableInfo]: #TableInfo
 [SupportingDocument]: #SupportingDocument
+[ExternalCohortTable]: #ExternalCohortTable
+[ExtractableCohort]: #ExtractableCohort
