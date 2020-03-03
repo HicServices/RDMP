@@ -10,11 +10,11 @@ As well as storing human readable names/descriptions of what is in the dataset i
 
 Catalogues are always flat views although they can be built from multiple relational data tables underneath.
 
-## SupportingDocument  ![Catalogue Icon](../../Rdmp.Core/Icons/SupportingDocument.png)
+## SupportingDocument ![SupportingDocument Icon](./../../Rdmp.Core/Icons/supportingDocument.png)
 
 Describes a document (e.g. PDF / Excel file etc) which is useful for understanding a given dataset ([Catalogue]). This can be marked as Extractable in which case every time the dataset is extracted the file will also be bundled along with it (so that researchers can also benefit from the file).  You can also mark SupportingDocuments as Global in which case they will be provided (if Extractable) to researchers regardless of which datasets they have selected e.g. a PDF on data governance or a copy of an empty 'data use contract document'.
 
-## TableInfo  ![Catalogue Icon](../../Rdmp.Core/Icons/TableInfo.png)
+## TableInfo ![TableInfo Icon](../../Rdmp.Core/Icons/tableinfo.png)
 
 Describes an sql table (or table valued function) on a given [DBMS] Server from which you intend to either extract and/or load / curate data.  A TableInfo represents a cached state of the live database table schema.  You can synchronize a TableInfo at any time to handle schema changes (e.g. dropping columns)
 
