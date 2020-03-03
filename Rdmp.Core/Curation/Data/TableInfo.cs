@@ -33,8 +33,9 @@ namespace Rdmp.Core.Curation.Data
     /// Describes an sql table (or table valued function) on a given Server from which you intend to either extract and/or load / curate data.
     /// These can be created most easily by using TableInfoImporter.  This entity is the hanging off point for PreLoadDiscardedColumn, ColumnInfo etc
     /// 
-    /// <para>This class represents a constant for the RDMP and allows the system to detect when data analysts have randomly dropped/renamed columns without 
-    /// telling anybody and present this information in a rational context to the systems user (see TableInfoSynchronizer).</para>
+    /// <para>TDescribes an sql table (or table valued function) on a given [DBMS] Server from which you intend to either extract and/or load / curate data.
+    /// A TableInfo represents a cached state of the live database table schema.  You can synchronize a TableInfo at any time to handle schema changes
+    /// (e.g. dropping columns) (see <see cref="TableInfoSynchronizer"/>).</para>
     /// </summary>
     public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNameToo, IInjectKnown<ColumnInfo[]>,ICheckable
     {

@@ -22,6 +22,8 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
         private string[] _mdFiles;
         Regex matchMdReferences = new Regex(@"`(.*)`");
 
+        public const bool ReWriteMarkdownToReferenceGlossary = true;
+
         //words that are in Pascal case and you can use in comments despite not being in the codebase... this is an ironic variable to be honest
         //since the very fact that you add something to _whitelist means that it is in the codebase after all!
         #region Whitelist Terms
@@ -427,8 +429,8 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
         {
             const string glossaryRelativePath = "./Documentation/CodeTutorials/Glossary.md";
             
-            Regex rGlossary = new Regex("##(.*)");
-            Regex rWords = new Regex(@"\b\[?\w*\]?\b");
+            Regex rGlossary = new Regex("##([A-z ]*)");
+            Regex rWords = new Regex(@"\[?\w*\]?");
             Regex rGlossaryLink = new Regex(@"^\[\w*\]:");
 
             var glossaryPath = Path.Combine(_slndir.FullName, glossaryRelativePath);
@@ -446,7 +448,12 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             bool inCodeBlock = false;
             int lineNumber = 0;
 
-            foreach (string line in File.ReadAllLines(mdFile))
+            var allLines = File.ReadAllLines(mdFile);
+            var allLinesRevised = allLines;
+
+            Dictionary<string,string> suggestedLinks = new Dictionary<string, string>();
+
+            foreach (string line in allLines)
             {
                 lineNumber++;
 
@@ -460,8 +467,6 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
                 //don't complain about keywords in code blocks
                 if(line.TrimStart().StartsWith("```"))
                     inCodeBlock = !inCodeBlock;
-
-                
 
                 if (!inCodeBlock)
                 {
@@ -486,13 +491,32 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
 
                             string suggestedLine = $"[{match.Value}]: {relPath}#{match.Value}";
 
-                            problems.Add($"Glossary term should be link in {mdFile} line number {lineNumber}.  Term is {match.Value}.  Suggested link line is:\"{suggestedLine}\"" );
+                            //if it has spaces on either side
+                            if(line[Math.Max(0,match.Index-1)] == ' ' && line[Math.Min(line.Length-1,match.Index + match.Length)] == ' '
+                               //don't mess with lines that contain an image
+                               && !line.Contains("!["))
+                                allLinesRevised[lineNumber - 1] = line.Replace($" {match.Value} ", $" [{match.Value}] ");
+
+                            //if it is a novel occurrence
+                            if (!allLines.Contains(suggestedLine) && !suggestedLinks.ContainsValue(suggestedLine))
+                            {
+                                suggestedLinks.Add(match.Value,suggestedLine);
+                                problems.Add($"Glossary term should be link in {mdFile} line number {lineNumber}.  Term is {match.Value}.  Suggested link line is:\"{suggestedLine}\"" );
+                            }
                         }
-                            
                     }
                 }
             }
+            
+            // ReSharper disable once RedundantLogicalConditionalExpressionOperand
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            if (suggestedLinks.Any() && ReWriteMarkdownToReferenceGlossary)
+            {
+                File.WriteAllLines(mdFile,allLinesRevised);
 
+                File.AppendAllText(mdFile,Environment.NewLine);
+                File.AppendAllLines(mdFile, suggestedLinks.Values.Distinct());
+            }
 
         }
     }
