@@ -396,3 +396,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [ColumnInfo]: ./Documentation/CodeTutorials/Glossary.md#ColumnInfo
 
 [JoinInfo]: ./Documentation/CodeTutorials/Glossary.md#JoinInfo
+
+[Pipeline]: ./Documentation/CodeTutorials/Glossary.md#Pipeline

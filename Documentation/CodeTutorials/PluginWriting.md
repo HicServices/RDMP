@@ -306,7 +306,7 @@ Now lets write some components for our plugin!
 <a name="anoPluginVersion1"></a>
 ## Version 1
 
-Most of the processes in RDMP use the `Pipeline` system.  This involves a series of components performing operations on a flow of objects of type T (often a `System.Data.DataTable`).  The pipeline is setup/tailored by RDMP users and then reused every time the task needs to be executed.  For example importing a csv file into the database and generating a [Catalogue] from the resulting table (the first thing you do when playing with the RDMP test data) happens through a pipeline called 'BULK INSERT:CSV Import File'.
+Most of the processes in RDMP use the [Pipeline] system.  This involves a series of components performing operations on a flow of objects of type T (often a `System.Data.DataTable`).  The pipeline is setup/tailored by RDMP users and then reused every time the task needs to be executed.  For example importing a csv file into the database and generating a [Catalogue] from the resulting table (the first thing you do when playing with the RDMP test data) happens through a pipeline called 'BULK INSERT:CSV Import File'.
 
 ![What it should look like](Images/ImportCatalogue.png)
 
@@ -396,7 +396,7 @@ select * from test..demography where forename like '%REDACTED%'
 
 <a name="anoPluginVersion2"></a>
 ## Version 2 - Adding arguments
-You can add user configured properties by declaring public properties decorated with `[DemandsInitialization]`.  This attribute is supported on a wide range of common Types (see `Rdmp.Core.Curation.Data.DataLoad.Argument`.`PermissableTypes` for a complete list) and some RDMP object Types (e.g. `Catalogue`).  Let's add a file list of common names and a regular expression that lets you skip columns you know won't have any names in.
+You can add user configured properties by declaring public properties decorated with `[DemandsInitialization]`.  This attribute is supported on a wide range of common Types (see `Rdmp.Core.Curation.Data.DataLoad.Argument`.`PermissableTypes` for a complete list) and some RDMP object Types (e.g. [Catalogue]).  Let's add a file list of common names and a regular expression that lets you skip columns you know won't have any names in.
 
 Add a new component BasicDataTableAnonymiser2 (or adjust your previous component).  Add two public properties as shown below.
 
@@ -809,7 +809,7 @@ This has a few intersting lines in it.  Firstly we create a DataTable containing
 
 `Discovered[...]` is how we reference Servers / Databases / Tables / Columns as we find them at runtime.  These classes exist to provide simplified access to common tasks in a cross platform way.
 
-Once we have a `DiscoveredTable` we can create a persistent reference to it in the TEST_Catalogue database (`TableInfo`) via base method `Import` (this is a helper method that wraps `TableInfoImporter`).  The `TableInfo` pointer is given to the `BasicDataTableAnonymiser3` and used to anonymise the 'pipeline chunk' `dtStories` (like in the first unit test).
+Once we have a `DiscoveredTable` we can create a persistent reference to it in the TEST_Catalogue database ([TableInfo]) via base method `Import` (this is a helper method that wraps `TableInfoImporter`).  The [TableInfo] pointer is given to the `BasicDataTableAnonymiser3` and used to anonymise the 'pipeline chunk' `dtStories` (like in the first unit test).
 
 If you have access to an oracle / mysql testing database you can add the other test cases by adding the connection strings to TestDatabases.txt:
 
@@ -1396,3 +1396,5 @@ Going from `ICheckNotifier` to `IDataLoadEventListener` will result in a listene
 [TableInfo]: ./Glossary.md#TableInfo
 
 [Project]: ./Glossary.md#Project
+
+[Pipeline]: ./Glossary.md#Pipeline

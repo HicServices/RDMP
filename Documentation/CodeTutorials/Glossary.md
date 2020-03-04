@@ -24,6 +24,12 @@ A 'virtual' column that is made available to researchers. Each [Catalogue] has 1
 
 CatalogueItems can be tied to the underlying database via [ExtractionInformation] . This means that you can have multiple extraction transforms from the same underlying [ColumnInfo]  e.g. PatientDateOfBirth / PatientYearOfBirth (each with different governance categories).
 
+## CohortAggregateContainer![Icon](../../Rdmp.Core/Icons/INTERSECT.png)
+
+Cohort identification is achieved by identifying Sets of patients and performing set operations on them e.g. you might identify "all patients who have been prescribed Diazepam" and then [EXCEPT] "patients who have been prescribed Diazepam before 2000". This is gives you DISTINCT patients who were FIRST prescribed Diazepam AFTER 2000. 
+
+A CohortAggregateContainer is a collection of sets (and subcontainers) which are all combined with the given SetOperation ([UNION],[INTERSECT] or [EXCEPT])
+
 ## CohortIdentificationConfiguration![Icon](../../Rdmp.Core/Icons/cohortIdentificationConfiguration.png)
 
 Describes a configuration for identifying patients fitting a given study criteria. E.g. "I want all patients who have been prescribed Diazepam for the first time after 2000 and who are still alive today". 
@@ -94,6 +100,16 @@ Represents a collection of datasets (see [Catalogue]), ExtractableColumns, Extra
 
 Once you have executed, extracted and released an [ExtractionConfiguration] it becomes 'frozen' (IsReleased) and it is not possible to edit it. This is intended to ensure that once data has gone out the door the configuration that generated the data is immutable.  If you need to perform a repeat extraction (e.g. an update of data 5 years on) then you should 'Clone' the ExtractionConfiguration in the [Project] and give it a new name e.g. 'Cases - 5 year update'.
 
+## ExtractionFilter![Icon](./../../Rdmp.Core/Icons/Filter.png)
+
+Defines as a single line of WHERE SQL.  This is a way of reducing the scope of a data extraction / aggregation etc.
+
+For example, 'Only prescriptions for diabetes medications'.  Typically an ExtractionFilter is cloned as either a DeployedExtractionFilter or an AggregateFilter and either used as is or customised in it's new location 
+
+It is not uncommon for an extraction to involve multiple customised copies of the same master Extraction filter for example a user might take the filter 'Prescriptions of drug @Drugname' and make 3 copies in a given project with the first as 'Paracetamol', the second as 'Aspirin' and the third as 'Ibuprofen' and then put them all in a single OR container.
+
+At query building time RDMP resolves all the various containers, subcontainers, filters and parameters into one extraction SQL query.
+
 ## ExtractionInformation![ExtractionConfiguration Information](./../../Rdmp.Core/Icons/ExtractionInformation.png)
 
 Describes in a single line of SELECT SQL.  This can be either the fully qualified name or a transform upon an underlying [ColumnInfo].  Adding an [ExtractionInformation] to a [CatalogueItem] makes it extractable in a linkage [Project].
@@ -149,6 +165,27 @@ Lookups are designed to handle missing values and support composite joins (e.g. 
 ## PII
 
 Personally Identifiable Information, this is information that could be used to uniquely identify a person.  RDMP is designed (when properly configured) to prevent PII information being released in extracts.
+
+## Pipeline![Icon](./../../Rdmp.Core/Icons/Pipeline.png)
+
+Controls the flow of data from a source to a destination (e.g. extracting linked cohort data into a flat file ). 
+
+Each Pipeline is composed of a sequence of [PipelineComponents] which can each perform specific jobs e.g. 'clean strings', 'substitute column X for column Y by mapping values off of remote server B'.
+
+A Pipeline can be missing either/both a source and destination. This means that the pipeline can only be used in a context where the source/destination is already fixed (for example if the user is trying to bulk insert a CSV file then the Destination might be a fixed instance of DataTableUploadDestination initialized with a specific server/database that the user had picked on a user interface).
+
+
+## PipelineComponent![Icon](./../../Rdmp.Core/Icons/PipelineComponent.png)
+
+Blueprint for a specific task that can be run in a [Pipeline].  A component has one of the following roles:
+
+|Icon| Role | Description | Example  |
+|------|------|-------------|----------|
+|![Icon](./../../Rdmp.Core/Icons/PipelineComponentSource.png) | Source | Produces data | executing linkage SQL on a server |
+|![Icon](./../../Rdmp.Core/Icons/PipelineComponent.png) | Middle  | Transforms / Audits data | substituting values in a column for an anonymous mapping |
+|![Icon](./../../Rdmp.Core/Icons/PipelineComponentDestination.png) | Destination  | Consumes data | writes records out to disk |
+
+Pipeline components can include user written plugins (e.g. [for imaging operations](https://github.com/HicServices/RdmpDicom))
 
 ## Project![Project Icon](./../../Rdmp.Core/Icons/Project.png)
 
@@ -217,3 +254,10 @@ Mathematical set operation which matches unique (distinct) identifiers  **in the
 [LoadMetadata]: #LoadMetadata
 [ProcessTask]: #ProcessTask
 [GovernancePeriod]: #GovernancePeriod
+[EXCEPT]: #EXCEPT
+[INTERSECT]: #INTERSECT
+[UNION]: #UNION
+[Pipeline]: #Pipeline
+[PipelineComponent]: #PipelineComponent
+[PipelineComponents]: #PipelineComponent
+[ExtractionFilter]: #ExtractionFilter
