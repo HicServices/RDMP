@@ -148,8 +148,8 @@ namespace Rdmp.Core.Reports.ExtractionTime
 
             SetTableCell(table,tableLine, 0, "Version");
             SetTableCell(table,tableLine, 1, "Description");
-            SetTableCell(table,tableLine, 2, "dtCreated");
-            SetTableCell(table,tableLine, 3, "Unique Patient Count");
+            SetTableCell(table,tableLine, 2, "Date Extracted");
+            SetTableCell(table,tableLine, 3, "Unique Individuals");
             tableLine++;
             
             SetTableCell(table,tableLine, 0, Cohort.GetExternalData().ExternalVersion.ToString());
@@ -157,7 +157,7 @@ namespace Rdmp.Core.Reports.ExtractionTime
 
             var lastExtracted = ExtractionResults.Any() ? ExtractionResults.Max(r => r.DateOfExtraction).ToString() : "Never";
             SetTableCell(table,tableLine, 2, lastExtracted);
-            SetTableCell(table,tableLine, 3, Cohort.CountDistinct.ToString());
+            SetTableCell(table,tableLine, 3, Cohort.CountDistinct.ToString("N0"));
         }
 
         private void CreateFileSummary(XWPFDocument document)
@@ -169,34 +169,42 @@ namespace Rdmp.Core.Reports.ExtractionTime
             SetTableCell(table,tableLine, 0, "Data Requirement");
             SetTableCell(table,tableLine, 1, "Notes");
             SetTableCell(table,tableLine, 2, "Filename");
-            SetTableCell(table,tableLine, 3, "No. of records extracted");
-            SetTableCell(table,tableLine, 4, "Unique Patient Count");
+            SetTableCell(table,tableLine, 3, "Records");
+            SetTableCell(table,tableLine, 4, "Unique Individuals");
             tableLine++;
 
             foreach (var result in ExtractionResults)
             {
-                string filename = "";
+                var filename = GetFileName(result);
                 
-                if (IsValidFilename(result.DestinationDescription))
-                    filename = new FileInfo(result.DestinationDescription).Name;
-                else
-                    filename = result.DestinationDescription;
-
                 SetTableCell(table,tableLine, 0,_repository.GetObjectByID<ExtractableDataSet>(result.ExtractableDataSet_ID).ToString());
                 SetTableCell(table,tableLine, 1,result.FiltersUsed);
                 SetTableCell(table,tableLine, 2,filename);
-                SetTableCell(table,tableLine, 3,result.RecordsExtracted.ToString());
-                SetTableCell(table,tableLine, 4,result.DistinctReleaseIdentifiersEncountered.ToString());
+                SetTableCell(table,tableLine, 3,result.RecordsExtracted.ToString("N0"));
+                SetTableCell(table,tableLine, 4,result.DistinctReleaseIdentifiersEncountered.ToString("N0"));
                 tableLine++;
             }
            
         }
 
-        private bool IsValidFilename(string candidateFilename)
+        private string GetFileName(ICumulativeExtractionResults result)
         {
-            return !string.IsNullOrEmpty(candidateFilename) &&
-                   candidateFilename.IndexOfAny(Path.GetInvalidFileNameChars()) < 0 &&
-                   !File.Exists(candidateFilename);
+            if (string.IsNullOrWhiteSpace(result?.DestinationDescription))
+                return "";
+
+            if (string.IsNullOrWhiteSpace(Project.ExtractionDirectory))
+                return result.DestinationDescription;
+
+            //can we express it relative
+            if (result.DestinationDescription.StartsWith(Project.ExtractionDirectory,
+                StringComparison.CurrentCultureIgnoreCase))
+            {
+                string relative = result.DestinationDescription.Substring(Project.ExtractionDirectory.Length).Replace('\\', '/');
+                
+                return "./" + relative.Trim('/');
+            }
+
+            return result.DestinationDescription;
         }
     }
 }
