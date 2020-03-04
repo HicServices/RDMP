@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Creating a [Catalogue] from a CatalogueFolder right click context menu now creates the resulting [Catalogue] in that directory
 - Added ability to right click a dataset in an [ExtractionConfiguration] and open the directory into which it was extracted (if it was extracted to disk)
 - Added Extraction Category column for columns included in the project extractions
-- Added command Import [Catalogue] Item Descriptions accessible from the CatalogueItem node menu that imports all descriptions (and other fields) from one [Catalogue] into another.
+- Added command Import [Catalogue] Item Descriptions accessible from the [CatalogueItem] node menu that imports all descriptions (and other fields) from one [Catalogue] into another.
 - Added 'Execute' button on [Catalogue] and Extraction dataset SQL viewing windows.
 - 'Show' on collection based tab windows now prompts you to pick which you want to navigate to (previously did nothing)
 - Datagrid UI now shows server/database names and DatabaseType
@@ -242,7 +242,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Clonng a Cohort Identification Configuration now preserves custom set container names e.g. "UNION Inclusion Criteria"
 - Fixed bug in DataTableUploadDestination where multiple root (DataLoadInfo) logging entries were created for a single large bulk insert 
 - Fixed bug in QueryBuilder when there are multiple IsPrimaryExtractionTable tables (Exception thrown was NullReferenceException instead of QueryBuilderException)
-- Fixed bug in generating FROM SQL when there are circular JoinInfo configured between tables used in the query
+- Fixed bug in generating FROM SQL when there are circular [JoinInfo] configured between tables used in the query
 - Fixed bug where closing the server/database selection dialog with the X instead of cancel could cause error messages (e.g. in Bulk Import TableInfos)
 - Fixed bug where searching for "Pipeline" or "Pipe" did not show all pipelines
 - Fixed bug caching patient index tables (cohort creation) when there are multiple tables being joined in the query.
@@ -394,3 +394,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [CatalogueItem]: ./Documentation/CodeTutorials/Glossary.md#CatalogueItem
 [ExtractionInformation]: ./Documentation/CodeTutorials/Glossary.md#ExtractionInformation
 [ColumnInfo]: ./Documentation/CodeTutorials/Glossary.md#ColumnInfo
+
+[JoinInfo]: ./Documentation/CodeTutorials/Glossary.md#JoinInfo

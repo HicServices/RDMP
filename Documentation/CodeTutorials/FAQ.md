@@ -499,7 +499,7 @@ Start by importing the Tables as normal (but do not create a Catalogue).  Double
 
 ![How to set IsPrimaryExtractionTable on a TableInfo](Images/FAQ/SetIsPrimaryExtractionTable.png) 
 
-Next right click the topmost table and select 'Configure JoinInfo Where...'.  In this window add the child table to join to and drag the column(s) that should be used to join. 
+Next right click the topmost table and select 'Configure [JoinInfo] Where...'.  In this window add the child table to join to and drag the column(s) that should be used to join. 
 
 You can configure a `collation` (if required) and join direction (LEFT / RIGHT / INNER)
 
@@ -513,7 +513,7 @@ Then right click each Table in turn and select `Create New Catalogue...` but ins
 
 ![How to add to existing Catalogue instead of creating a fresh one](Images/FAQ/ConfigureExtractabilityAddToExistingCatalogue.png) 
 
-You can check that you have configured the join correctly by right clicking the Catalogue and selecting `View Catalogue Extraction Sql`
+You can check that you have configured the join correctly by right clicking the [Catalogue] and selecting `View [Catalogue] Extraction Sql`
 
 ## User Interface Programming
 
@@ -587,3 +587,5 @@ Yes there are over 1,000 unit and integration tests, this is covered in [Tests](
 [Project]: ./Glossary.md#Project
 
 [CatalogueItem]: ./Glossary.md#CatalogueItem
+
+[JoinInfo]: ./Glossary.md#JoinInfo

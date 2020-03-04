@@ -22,6 +22,18 @@ Records the last known state of a column in an SQL table (see [TableInfo]).
 
 A ColumnInfo can belong to an anonymisation group (see [ANOTable]) e.g. ANOGPCode, in this case it will be aware not only of it's name and datatype in LIVE but also it's unanonymised name/datatype during data loading.
 
+## ConnectionStringKeyword![ConnectionStringKeyword Icon](../../Rdmp.Core/Icons/ConnectionStringKeyword.png)
+
+Describes a specific key/value pair that should always be used in connection strings to servers of the given DatabaseType by RDMP.
+
+For example you could specify Encrypt = true to force all connections made to go through SSL (requires certificates / certificate validation etc). Be careful when creating these as they apply to all users of the system and can make servers unreachable if invalid or unresolvable connection strings are created.
+
+## DataAccessCredentials![DataAccessCredentials Icon](../../Rdmp.Core/Icons/DataAccessCredentials.png)
+
+Stores a username and encrypted password.
+
+Passwords are stored as hex formatted strings which can be decrypted automatically by RDMP at runtime using your RSA encryption key.
+
 ## DBMS
 Database Management System.  Refers to a specific proprietary engine e.g. Oracle, MySql, SqlServer.  
 
@@ -43,6 +55,16 @@ An ExternalCohortTable stores:
 Both the cohort and custom table names table must have a foreign key into the definition table.  You are free to add additional columns to these tables or even base them on views of other existing tables in your database. 
 
 You can have multiple ExternalCohortTable sources in your database for example if you need to support different identifier datatypes / formats.
+
+## ExternalDatabaseServer![ExternalDatabaseServer Icon](./../../Rdmp.Core/Icons/ExternalDatabaseServer.png)
+
+Records information about a server. This can be an RDMP platform database e.g. a Logging database or it could be a generic database you use to hold data (e.g. lookups). 
+
+These are usually database servers but don't have to be (e.g. you could create a reference to an FTP server).  
+
+ExternalDatabaseServer are not required to reference datasets you want to link/extract, these should be reference by [TableInfo] / [Catalogue] instead.
+
+Servers can have usernames/passwords or use integrated security (windows account).  Password are encrypted in the same fashion as in [DataAccessCredentials].
 
 ## ExtractableCohort![ExtractableCohort Icon](./../../Rdmp.Core/Icons/ExtractableCohort.png)
 
@@ -76,6 +98,24 @@ IsExtractionIdentifier columns do not have to have the same name (although it he
 
 When joining between datasets on different [DBMS] IsExtractionIdentifier columns are compatible as long as the distinct datatypes are semantically similar (e.g. Oracle `varchar2(10)` could be INTERSECTED with Sql Server `varchar(10)` - providing a query cache was used)
 
+## JoinInfo![JoinInfo Icon](./../../Rdmp.Core/Icons/JoinInfo.png)
+
+Records how to join two [TableInfo] together. 
+
+A JoinInfo can include multiple columns.  Each JoinInfo has a direction (e.g. LEFT / RIGHT) and optional collation (for resolving collation conflicts during joins).
+
+## Lookup![Lookup Icon](./../../Rdmp.Core/Icons/Lookup.png)
+
+Describes a relationship between 3 [ColumnInfos] in which 2 are from a lookup table (e.g. z_drugName), these are a primary key (e.g. DrugCode) and a description (e.g. HumanReadableDrugName). And a third ColumnInfo from a different table (e.g. Prescribing) which is a foreign key (e.g. DrugPrescribed).  
+
+The RDMP QueryBuilder uses this information to work out how to join together various tables in a query. Note that it is possible to define the same lookup multiple times just with different foreign keys (e.g. Prescribing and Purchasing datasets might both share the same lookup table z_drugName).  
+
+Lookups are designed to handle missing values and support composite joins (e.g. where the same code is used differently between healthboards and you must perform a lookup join on both code and healthboard).
+
+## PII
+
+Personally Identifiable Information, this is information that could be used to uniquely identify a person.  RDMP is designed (when properly configured) to prevent PII information being released in extracts.
+
 ## Project![Project Icon](./../../Rdmp.Core/Icons/Project.png)
 
 All extractions through RDMP must be done through Projects. A Project has a name, extraction directory and optionally Tickets (if you have a ticketing system configured). A Project should never be deleted even after all [ExtractionConfiguration] have been executed as it serves as an audit and a cloning point if you ever need to clone any of the ExtractionConfigurations (e.g. to do an update of project data 5 years on).  
@@ -85,6 +125,16 @@ The ProjectNumber must match the project number of the [ExtractableCohort] in yo
 ## SupportingDocument![SupportingDocument Icon](./../../Rdmp.Core/Icons/supportingDocument.png)
 
 Describes a document (e.g. PDF / Excel file etc) which is useful for understanding a given dataset ([Catalogue]). This can be marked as Extractable in which case every time the dataset is extracted the file will also be bundled along with it (so that researchers can also benefit from the file).  You can also mark SupportingDocuments as Global in which case they will be provided (if Extractable) to researchers regardless of which datasets they have selected e.g. a PDF on data governance or a copy of an empty 'data use contract document'.
+
+## SupportingSQLTable![SupportingSQLTable Icon](./../../Rdmp.Core/Icons/SupportingSQLTable.png)
+
+Describes an SQL query that can be run to generate useful information for the understanding of a given [Catalogue]. 
+
+If it is marked as Extractable then it will be bundled along with the [Catalogue] every time it is extracted (for this reason it is important to ensure that no [PII] data is returned by the query).
+
+This can be used as an alternative to definining [Lookups] or to extract other useful administrative data etc to be provided to researchers  
+
+If the Global flag is set then the SQL will be run and the result provided to every researcher regardless of what datasets they have asked for in an extraction, this is useful for large lookups like ICD / SNOMED CT which are likely to be used by many datasets.
 
 ## TableInfo![TableInfo Icon](../../Rdmp.Core/Icons/tableinfo.png)
 
@@ -113,4 +163,13 @@ Mathematical set operation which matches unique (distinct) identifiers  **in the
 [ExtractionConfiguration]: #ExtractionConfiguration
 [CatalogueItem]: #CatalogueItem
 [ColumnInfo]: #ColumnInfo
+[ColumnInfos]: #ColumnInfo
 [ExtractionInformation]: #ExtractionInformation
+[JoinInfo]: #JoinInfo
+[ExternalDatabaseServer]: #ExternalDatabaseServer
+[DataAccessCredential]: #DataAccessCredential
+[DataAccessCredentials]: #DataAccessCredential
+[ConnectionStringKeyword]: #ConnectionStringKeyword
+[PII]: #PII
+[Lookup]: #Lookup
+[Lookups]: #Lookup
