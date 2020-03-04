@@ -10,6 +10,18 @@ As well as storing human readable names/descriptions of what is in the dataset i
 
 Catalogues are always flat views although they can be built from multiple relational data tables underneath.
 
+## CatalogueItem![CatalogueItem Icon](../../Rdmp.Core/Icons/CatalogueItem.png)
+
+A 'virtual' column that is made available to researchers. Each [Catalogue] has 1 or more CatalogueItems, these store the columns description as well as any outstanding/resolved issues.
+
+CatalogueItems can be tied to the underlying database via [ExtractionInformation] . This means that you can have multiple extraction transforms from the same underlying [ColumnInfo]  e.g. PatientDateOfBirth / PatientYearOfBirth (each with different governance categories).
+
+## ColumnInfo![ColumnInfo Icon](../../Rdmp.Core/Icons/columninfo.png)
+
+Records the last known state of a column in an SQL table (see [TableInfo]).
+
+A ColumnInfo can belong to an anonymisation group (see [ANOTable]) e.g. ANOGPCode, in this case it will be aware not only of it's name and datatype in LIVE but also it's unanonymised name/datatype during data loading.
+
 ## DBMS
 Database Management System.  Refers to a specific proprietary engine e.g. Oracle, MySql, SqlServer.  
 
@@ -45,6 +57,12 @@ Each ExtractableCohort has an OriginID, this field represents the id of the coho
 Represents a collection of datasets (see [Catalogue]), ExtractableColumns, ExtractionFilters etc and a single [ExtractableCohort] for a data extraction [Project]. You can have multiple active ExtractionConfigurations at a time for example a Project might have two cohorts 'Cases' and 'Controls' and you would have two ExtractionConfiguration possibly containing the same datasets and filters but with different cohorts.  
 
 Once you have executed, extracted and released an [ExtractionConfiguration] it becomes 'frozen' (IsReleased) and it is not possible to edit it. This is intended to ensure that once data has gone out the door the configuration that generated the data is immutable.  If you need to perform a repeat extraction (e.g. an update of data 5 years on) then you should 'Clone' the ExtractionConfiguration in the [Project] and give it a new name e.g. 'Cases - 5 year update'.
+
+## ExtractionInformation![ExtractionConfiguration Information](./../../Rdmp.Core/Icons/ExtractionInformation.png)
+
+Describes in a single line of SELECT SQL.  This can be either the fully qualified name or a transform upon an underlying [ColumnInfo].  Adding an [ExtractionInformation] to a [CatalogueItem] makes it extractable in a linkage [Project].
+
+Every ExtractionInformation has an ExtractionCategory which lets you flag the sensitivity of the data being extracted e.g. SpecialApprovalRequired.  One (or more) [ExtractionInformation] in a [Catalogue] can be flagged as [IsExtractionIdentifier]. This is the column(s) which will be joined against cohorts in data extraction linkages.
 
 ## IsExtractionIdentifier
 
@@ -90,5 +108,9 @@ Mathematical set operation which matches unique (distinct) identifiers  **in the
 [SupportingDocument]: #SupportingDocument
 [ExternalCohortTable]: #ExternalCohortTable
 [ExtractableCohort]: #ExtractableCohort
+[IsExtractionIdentifier]: #IsExtractionIdentifier
 [Project]: #Project
 [ExtractionConfiguration]: #ExtractionConfiguration
+[CatalogueItem]: #CatalogueItem
+[ColumnInfo]: #ColumnInfo
+[ExtractionInformation]: #ExtractionInformation

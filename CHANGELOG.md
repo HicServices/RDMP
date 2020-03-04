@@ -132,7 +132,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Fixed
 
-- Fixed bug generating metadata reports that include Catalogues with orphan ExtractionInformation (not mapped to an underlying ColumnInfo)
+- Fixed bug generating metadata reports that include Catalogues with orphan [ExtractionInformation] (not mapped to an underlying ColumnInfo)
 - Fixed bug in column descriptions pie chart where navigate to CatalogueItem(s) would show all CatalogueItems instead of only those missing descriptions
 - Fixed bug in example dataset creation where views (vConditions and vOperations) were not marked IsView
 
@@ -215,7 +215,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MDFAttacher now checks for existing mdf/ldf files in the RAW server data directory.  Existing files will trigger a warning.  After the warning an attempt is still made to overwrite the file(s) (as occured previously)
 - Tab key now also works for autocomplete in SQL editor windows (previously only Enter worked)
 - Orphan cohort sets (do not belong to any Cohort Identification Configuration) now appear under a top level folder in 'Cohort Builder' collection
-- Extraction Category can now be changed directly from a CatalogueItem, ExtractionInformation 
+- Extraction Category can now be changed directly from a CatalogueItem, [ExtractionInformation] 
 - Extraction Category can be changed for all columns in a [Catalogue] at once by right clicking the or the CatalogueItemsNode (folder under a Catalogue)
 - Right clicking a column allows you to Alter it's type e.g. increase the size of a varchar field
 
@@ -225,8 +225,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Extraction source component `ExecuteCrossServerDatasetExtractionSource` now never drops the temporary cohort database (previously it would drop it if it created it and CreateTemporaryDatabaseIfNotExists was true)
 - Updated to latest version of [FAnsiSql] (0.10.4) for better Oracle, localization and type estimation
 - Dashboards now appear in tree view instead of application tool strip and are searchable
-- CatalogueItem descriptions pie chart has flags for including internal/project specific etc in it's counts
-- CatalogueItem descriptions pie chart now lets you navigate directly to problem objects rather than showing a data table
+- [CatalogueItem] descriptions pie chart has flags for including internal/project specific etc in it's counts
+- [CatalogueItem] descriptions pie chart now lets you navigate directly to problem objects rather than showing a data table
 
 ### Fixed 
 - Deleting an object now clears the selection in tree views (previously selection would become an arbitrary object).
@@ -390,3 +390,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [ExtractionConfiguration]: ./Documentation/CodeTutorials/Glossary.md#ExtractionConfiguration
 [Project]: ./Documentation/CodeTutorials/Glossary.md#Project
+
+[CatalogueItem]: ./Documentation/CodeTutorials/Glossary.md#CatalogueItem
+[ExtractionInformation]: ./Documentation/CodeTutorials/Glossary.md#ExtractionInformation
+[ColumnInfo]: ./Documentation/CodeTutorials/Glossary.md#ColumnInfo

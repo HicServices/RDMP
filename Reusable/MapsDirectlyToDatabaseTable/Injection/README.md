@@ -215,3 +215,5 @@ This means that we have 2 database calls up front and never have to make another
 Even if you never call `InjectKnown`, having a standard interface method for caching relationship property objects and invalidating these caches (`ClearAllInjections`) is still a big performance booster.
 
 [Catalogue]: ../../../Documentation/CodeTutorials/Glossary.md#Catalogue
+
+[CatalogueItem]: ../../../Documentation/CodeTutorials/Glossary.md#CatalogueItem

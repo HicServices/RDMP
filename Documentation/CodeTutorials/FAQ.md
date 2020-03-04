@@ -585,3 +585,5 @@ Yes there are over 1,000 unit and integration tests, this is covered in [Tests](
 [TableInfo]: ./Glossary.md#TableInfo
 
 [Project]: ./Glossary.md#Project
+
+[CatalogueItem]: ./Glossary.md#CatalogueItem
