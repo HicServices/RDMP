@@ -1,5 +1,13 @@
 # Glossary
 
+## ANOTable![Icon](../../Rdmp.Core/Icons/ANOTable.png)
+
+Defines an anonymisation method for a group of related columns of the same datatype.
+
+For example 'ANOGPCode' could be transform input varchar(5) values into anonymous values composed of 3 digits and 2 characters with a suffix of _G. 
+
+Anonymisation occurs at [ColumnInfo] level during data load.  Each ANOTable points to a corresponding table on an ANO server in which mappings are persisted.  This server should be part of your normal backup strategy.
+
 ## Catalogue![Catalogue Icon](../../Rdmp.Core/Icons/Catalogue.png)
 
 The central class for the RDMP, a Catalogue is a virtual dataset e.g. 'Hospital Admissions'. 
@@ -15,6 +23,12 @@ Catalogues are always flat views although they can be built from multiple relati
 A 'virtual' column that is made available to researchers. Each [Catalogue] has 1 or more CatalogueItems, these store the columns description as well as any outstanding/resolved issues.
 
 CatalogueItems can be tied to the underlying database via [ExtractionInformation] . This means that you can have multiple extraction transforms from the same underlying [ColumnInfo]  e.g. PatientDateOfBirth / PatientYearOfBirth (each with different governance categories).
+
+## CohortIdentificationConfiguration![Icon](../../Rdmp.Core/Icons/cohortIdentificationConfiguration.png)
+
+Describes a configuration for identifying patients fitting a given study criteria. E.g. "I want all patients who have been prescribed Diazepam for the first time after 2000 and who are still alive today". 
+
+Each new project/cohort to identify he should result in a new CohortIdentificationConfiguration, it is the entry point for cohort generation and includes a high level description of what the cohort requirements are, an optional ticket and the query that should be used to identify patients.
 
 ## ColumnInfo![ColumnInfo Icon](../../Rdmp.Core/Icons/columninfo.png)
 
@@ -86,6 +100,20 @@ Describes in a single line of SELECT SQL.  This can be either the fully qualifie
 
 Every ExtractionInformation has an ExtractionCategory which lets you flag the sensitivity of the data being extracted e.g. SpecialApprovalRequired.  One (or more) [ExtractionInformation] in a [Catalogue] can be flagged as [IsExtractionIdentifier]. This is the column(s) which will be joined against cohorts in data extraction linkages.
 
+## GovernanceDocument![Icon](./../../Rdmp.Core/Icons/GovernanceDocument.png)
+
+Contains the path to a useful file which reflects either a request or a granting of governance e.g. a letter from your local healthboard authorising you to host/use 1 or more datasets for a given period of time. 
+
+Also includes a name (which should really match the file name) and a description which should be a plain summary of what is in the document such that lay users can appreciate what the document contains/means for the system.
+
+## GovernancePeriod![Icon](./../../Rdmp.Core/Icons/GovernancePeriod.png)
+
+Tracks the fact that a given set of [Catalogues] require external approval for your agency to hold.
+
+A GovernancePeriod starts at a specific date and can optionally expire. A [Catalogue] can have multiple GovernancePeriods e.g. if you require to get approval from 2 different external agencies to hold a specific dataset.
+
+GovernancePeriods are not required to use RDMP.
+
 ## IsExtractionIdentifier
 
 Indicates that a column contains patient identifier(s) e.g. a CHI / NHS number etc.  Although unusual, you can have more than one in a given dataset e.g. ParentCHI, BabyCHI,TwinBabyCHI,TripletBabyCHI.  All IsExtractionIdentifiers should have the same/compatible datatypes to prevent problems doing linkage between datasets/cohorts.
@@ -103,6 +131,12 @@ When joining between datasets on different [DBMS] IsExtractionIdentifier columns
 Records how to join two [TableInfo] together. 
 
 A JoinInfo can include multiple columns.  Each JoinInfo has a direction (e.g. LEFT / RIGHT) and optional collation (for resolving collation conflicts during joins).
+
+## LoadMetadata![Lookup Icon](./../../Rdmp.Core/Icons/loadMetadata.png)
+
+Records how to load data into one or more [Catalogues]. This includes name, description, scheduled start dates etc. 
+
+A LoadMetadata contains at least one [ProcessTask] which is an ETL step e.g. Unzip files called *.zip / Dowload all files from FTP server X.
 
 ## Lookup![Lookup Icon](./../../Rdmp.Core/Icons/Lookup.png)
 
@@ -122,6 +156,12 @@ All extractions through RDMP must be done through Projects. A Project has a name
 
 The ProjectNumber must match the project number of the [ExtractableCohort] in your [ExternalCohortTable].
 
+## ProcessTask![Project Icon](./../../Rdmp.Core/Icons/ProcessTask.png)
+
+Describes a specific operation carried out during a [LoadMetadata] execution (DLE run). This could be 'unzip all files called *.zip in for loading' or 'after loading the data to live, call sp_clean_table1' or 'Connect to webservice X and download 1,000,000 records which will be serialized into XML'  
+
+A ProcessTask has a ProcessTaskType which defines how it is run by RDMP.  These include C# classes (which can include plugin components) such as Attachers and DataProviders or traditional ETL steps such as SQL scripts or launching standalone processes.
+
 ## SupportingDocument![SupportingDocument Icon](./../../Rdmp.Core/Icons/supportingDocument.png)
 
 Describes a document (e.g. PDF / Excel file etc) which is useful for understanding a given dataset ([Catalogue]). This can be marked as Extractable in which case every time the dataset is extracted the file will also be bundled along with it (so that researchers can also benefit from the file).  You can also mark SupportingDocuments as Global in which case they will be provided (if Extractable) to researchers regardless of which datasets they have selected e.g. a PDF on data governance or a copy of an empty 'data use contract document'.
@@ -140,20 +180,21 @@ If the Global flag is set then the SQL will be run and the result provided to ev
 
 Describes an sql table (or table valued function) on a given [DBMS] Server from which you intend to either extract and/or load / curate data.  A TableInfo represents a cached state of the live database table schema.  You can synchronize a TableInfo at any time to handle schema changes (e.g. dropping columns)
 
-## UNION
+## UNION![Icon](../../Rdmp.Core/Icons/UNION.png)
 
 Mathematical set operation which matches unique (distinct) identifiers in **any** datasets being combined (e.g. SetA UNION SetB returns any patient in **either SetA or SetB**).  
 
-## INTERSECT
+## INTERSECT![Icon](../../Rdmp.Core/Icons/INTERSECT.png)
 
 Mathematical set operation which matches unique (distinct) identifiers  **only** if they appear in **all** datasets being combined (e.g. SetA INTERSECT SetB returns patients who appear in **both SetA and SetB**).
 
-## EXCEPT
+## EXCEPT![Icon](../../Rdmp.Core/Icons/EXCEPT.png)
 
 Mathematical set operation which matches unique (distinct) identifiers  **in the first dataset** only if they **do not appear in any of the subsequent datasets** being combined (e.g. SetA EXCEPT SetB returns patients who appear in **SetA but not SetB**).
 
 [DBMS]: #DBMS
 [Catalogue]: #Catalogue
+[Catalogues]: #Catalogue
 [TableInfo]: #TableInfo
 [SupportingDocument]: #SupportingDocument
 [ExternalCohortTable]: #ExternalCohortTable
@@ -173,3 +214,6 @@ Mathematical set operation which matches unique (distinct) identifiers  **in the
 [PII]: #PII
 [Lookup]: #Lookup
 [Lookups]: #Lookup
+[LoadMetadata]: #LoadMetadata
+[ProcessTask]: #ProcessTask
+[GovernancePeriod]: #GovernancePeriod

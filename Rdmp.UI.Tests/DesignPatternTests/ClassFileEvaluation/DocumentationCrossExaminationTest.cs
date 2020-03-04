@@ -497,6 +497,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
                                && !line.Contains("!["))
                                 allLinesRevised[lineNumber - 1] = line.Replace($" {match.Value} ", $" [{match.Value}] ");
 
+                            //also if we have a name like `Catalogue` it should probably be [Catalogue] instead so it works as a link
+                            allLinesRevised[lineNumber - 1] = line.Replace($"`{match.Value}`", $"[{match.Value}]");
+
                             //if it is a novel occurrence
                             if (!allLines.Contains(suggestedLine) && !suggestedLinks.ContainsValue(suggestedLine))
                             {
