@@ -89,3 +89,6 @@ Useful methods you can invoke in `Execute` include
 2. `Emphasise` Navigates the user interface to the collection containing the object and selects it (brings the object to the attention of the user)
 4. `Activate` performs the double click action for the object usually resulting in a new tab opening for editing/executing the object
 3. `SelectOne<T>` gets the user to pick a `DatabaseEntity` from a selection (or all the ones of a given type in the database).
+
+[ColumnInfo]: ./Glossary.md#ColumnInfo
+[CatalogueItem]: ./Glossary.md#CatalogueItem

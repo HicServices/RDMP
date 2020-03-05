@@ -14,27 +14,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added timestamps to Word Metadata Reports (e.g. when document was created)
 - Added icon for HashOnDataRelease
-- Added Order column to Catalogue Collection tree view
+- Added Order column to [Catalogue] Collection tree view
 - Added ability to disable the TicketingSystem that controls whether datasets can be released (only applies where one has been configured)
 - Added ability to customize extraction directory subfolder names
 - Added check for stale extraction records when generating a one off Release Document (i.e. not part of a Release workflow)
 - Added clarifiaction on what to do if a table is not found during synchronization
 - Refresh now shows 'waiting' cursor while updates take effect
-- Creating a Catalogue from a CatalogueFolder right click context menu now creates the resulting Catalogue in that directory
-- Added ability to right click a dataset in an ExtractionConfiguration and open the directory into which it was extracted (if it was extracted to disk)
+- Creating a [Catalogue] from a CatalogueFolder right click context menu now creates the resulting [Catalogue] in that directory
+- Added ability to right click a dataset in an [ExtractionConfiguration] and open the directory into which it was extracted (if it was extracted to disk)
 - Added Extraction Category column for columns included in the project extractions
-- Added command Import Catalogue Item Descriptions accessible from the CatalogueItem node menu that imports all descriptions (and other fields) from one Catalogue into another.
-- Added 'Execute' button on Catalogue and Extraction dataset SQL viewing windows.
+- Added command Import [Catalogue] Item Descriptions accessible from the [CatalogueItem] node menu that imports all descriptions (and other fields) from one [Catalogue] into another.
+- Added 'Execute' button on [Catalogue] and Extraction dataset SQL viewing windows.
 - 'Show' on collection based tab windows now prompts you to pick which you want to navigate to (previously did nothing)
 - Datagrid UI now shows server/database names and DatabaseType
 - Running Checks or CheckAll now shows the Checks column (if it isn't already visible)
-- Added 'Clear Cache' option for clearing the cache on a single Catalogue in a cohort builder configuration (without affecting the cache state of the others)
+- Added 'Clear Cache' option for clearing the cache on a single [Catalogue] in a cohort builder configuration (without affecting the cache state of the others)
 - Added `FOR UPDATE` to the end of the DLE migration query for MySql server (prevents edge case deadlocks when live table changes during migration)
 
 ### Changed
 
 - Datagrid/query syntax errors are now more visible and consistent with other SQL IDEs
-- Open / New Catalogue no longer closes all toolboxes prior to setting up editing layout
+- Open / New [Catalogue] no longer closes all toolboxes prior to setting up editing layout
 - Bulk Process CatalogueItems now defaults to exact matching (ignoring case)
 - Changed MySql adapter from `MySql.Data` to `MySqlConnector` (see [FAnsiSql] version 0.11.1 change notes)
 
@@ -139,7 +139,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Fixed
 
-- Fixed bug generating metadata reports that include Catalogues with orphan ExtractionInformation (not mapped to an underlying ColumnInfo)
+- Fixed bug generating metadata reports that include Catalogues with orphan [ExtractionInformation] (not mapped to an underlying ColumnInfo)
 - Fixed bug in column descriptions pie chart where navigate to CatalogueItem(s) would show all CatalogueItems instead of only those missing descriptions
 - Fixed bug in example dataset creation where views (vConditions and vOperations) were not marked IsView
 
@@ -199,7 +199,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Database patching user interface no longer suggests restarting if the patching process has failed
 - Improved usability of StartupUI when no repository connection strings are not set (previously would report status as 'Broken')
 - Fixed bug where `DropTableIfLoadFails` of `ExecuteFullExtractionToDatabaseMSSql` would (under fail conditions) drop the destination table even if the table was created by a previous execution of the same pipeline.
-- Fixed bug where adding a Catalogue to a cohort set container would create an extra duplicate copy (which would appear under orphans)
+- Fixed bug where adding a [Catalogue] to a cohort set container would create an extra duplicate copy (which would appear under orphans)
 - Improved cross server cohort query building (e.g. combining cohort sets on seperate servers / server types)
 - Fixed bug in checks dual reporting some errors when clicking on red angry face icons
 
@@ -222,8 +222,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MDFAttacher now checks for existing mdf/ldf files in the RAW server data directory.  Existing files will trigger a warning.  After the warning an attempt is still made to overwrite the file(s) (as occured previously)
 - Tab key now also works for autocomplete in SQL editor windows (previously only Enter worked)
 - Orphan cohort sets (do not belong to any Cohort Identification Configuration) now appear under a top level folder in 'Cohort Builder' collection
-- Extraction Category can now be changed directly from a CatalogueItem, ExtractionInformation 
-- Extraction Category can be changed for all columns in a Catalogue at once by right clicking the or the CatalogueItemsNode (folder under a Catalogue)
+- Extraction Category can now be changed directly from a CatalogueItem, [ExtractionInformation] 
+- Extraction Category can be changed for all columns in a [Catalogue] at once by right clicking the or the CatalogueItemsNode (folder under a Catalogue)
 - Right clicking a column allows you to Alter it's type e.g. increase the size of a varchar field
 
 ### Changed
@@ -232,13 +232,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Extraction source component `ExecuteCrossServerDatasetExtractionSource` now never drops the temporary cohort database (previously it would drop it if it created it and CreateTemporaryDatabaseIfNotExists was true)
 - Updated to latest version of [FAnsiSql] (0.10.4) for better Oracle, localization and type estimation
 - Dashboards now appear in tree view instead of application tool strip and are searchable
-- CatalogueItem descriptions pie chart has flags for including internal/project specific etc in it's counts
-- CatalogueItem descriptions pie chart now lets you navigate directly to problem objects rather than showing a data table
+- [CatalogueItem] descriptions pie chart has flags for including internal/project specific etc in it's counts
+- [CatalogueItem] descriptions pie chart now lets you navigate directly to problem objects rather than showing a data table
 
 ### Fixed 
 - Deleting an object now clears the selection in tree views (previously selection would become an arbitrary object).
 - Fixed bug where adding/moving cohort sets between containers ([INTERSECT]/[UNION]/[EXCEPT]) could result in 2 objects with the same Order in the same container (resulting in ambiguous order of execution).
-- Fixed UI bug where selecting an extractable Catalogue would hide it's extractable (small green e) icon overlay
+- Fixed UI bug where selecting an extractable [Catalogue] would hide it's extractable (small green e) icon overlay
 - Fixed bug where deleting a Pinned object would not unpin the object
 - Fixed bug where database tables with brackets in the name could break synchronization (these tables are now ignored by RDMP and cannot be imported).
 - Fixed bug deleting multiple objects at once when some objects are parents of others (and cause implicit delete).
@@ -249,7 +249,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Clonng a Cohort Identification Configuration now preserves custom set container names e.g. "UNION Inclusion Criteria"
 - Fixed bug in DataTableUploadDestination where multiple root (DataLoadInfo) logging entries were created for a single large bulk insert 
 - Fixed bug in QueryBuilder when there are multiple IsPrimaryExtractionTable tables (Exception thrown was NullReferenceException instead of QueryBuilderException)
-- Fixed bug in generating FROM SQL when there are circular JoinInfo configured between tables used in the query
+- Fixed bug in generating FROM SQL when there are circular [JoinInfo] configured between tables used in the query
 - Fixed bug where closing the server/database selection dialog with the X instead of cancel could cause error messages (e.g. in Bulk Import TableInfos)
 - Fixed bug where searching for "Pipeline" or "Pipe" did not show all pipelines
 - Fixed bug caching patient index tables (cohort creation) when there are multiple tables being joined in the query.
@@ -268,7 +268,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added GoTo menu item Catalogue=>TableInfo
 - Added user setting for skipping Cohort Creation wizard
 - MDFAttacher emits more messages when looking up location on disk to copy MDF file to.
-- Added menu option to set [IsExtractionIdentifier] on a Catalogue without having to open ExtractionInformations directly
+- Added menu option to set [IsExtractionIdentifier] on a [Catalogue] without having to open ExtractionInformations directly
 - Added the ability to set custom number of patients / rows per dataset when creating example datasets (from command line or when setting up client)
 - FlatFileAttacher now issues a warning if TableToLoad isn't one of the tables loaded by the currently executing load (previously it would just say 'table x wasn't found in RAW')
 - Added (initially hidden) column Order to cohort query builder to help debugging any issues with order of display
@@ -284,8 +284,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Extraction destination property CleanExtractionFolderBeforeExtraction is now implemented in the Checks phase of the component lifecycle rather than on reciept of first batch of records (this prevents accidentally deleting files produced by upstream components)
 - 
 ### Fixed 
-- Fixed bug in Catalogue validation setup window (DQE Validation Rules) which resulted in changes not being saved if it had been refreshed after initially loading
-- Fixed scrollbars not appearing in Catalogue validation setup window when lots of validation rules are applied to a single column
+- Fixed bug in [Catalogue] validation setup window (DQE Validation Rules) which resulted in changes not being saved if it had been refreshed after initially loading
+- Fixed scrollbars not appearing in [Catalogue] validation setup window when lots of validation rules are applied to a single column
 - Type text dialog prompt now resizes correctly and has a display limit of 20,000 characters for messages
 - Fixed bug that prevented exiting if the RDMP directory (in user's application data folder) was deleted while the program was running
 - Fixed bug where CatalogueItems created when importing Oracle tables had database qualifiers in the name e.g. "CHI" (including the double quotes)
@@ -311,7 +311,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to latest version of BadMedicine (0.1.5)
 - Improved error message shown when attempting to delete a used patient index table (now lists the users)
-- System no longer auto selects objects when there is only 1 option (e.g. when user starts a Release when there is only one Project in the system).  This previously created an inconsistent user experience.
+- System no longer auto selects objects when there is only 1 option (e.g. when user starts a Release when there is only one [Project] in the system).  This previously created an inconsistent user experience.
 - Dita extraction checks no longer propose deleting non dita files in the output directory
 - Improved Find (Ctrl+F) dialog layout and added shortcut codes (e.g. typing "c Bob" will return all Catalogues containing the word "Bob")
 - Message boxes now display a limit of 20,000 characters (full text can still be accessed by the copy to clipboard button).
@@ -322,7 +322,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug when cloning a Pipeline called "Bob" when there was already an existing Pipeline called "Bob (Clone)"
 - Fixed validation issue in some user interfaces of INamed classes (e.g. Catalogue) where all properties were checked for illegal characters instead of just the Name
 - Fixed image scaling in Metadata reports to 100% (previously 133%)
-- Governance report now properly escapes newlines and quotes in Catalogue descriptions when outputting as CSV
+- Governance report now properly escapes newlines and quotes in [Catalogue] descriptions when outputting as CSV
 - Fixed bug in Plugin code generator for tables with a Name property (previously incorrect C# code was generated)
 - Fixed bug in SQL query editor user interface when the query returned a table that included binary columns with large amounts of data in
 - Clicking a collection button or using GoTo/Show now correctly pops the relevant collection if it is set to auto dock (pinned).
@@ -337,7 +337,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Forward/backward navigation in LogViewer now preserves text filters / TOP X
 - Added the ability to create example datasets and configurations/projects etc during installation / startup
 - Objects with names containing problematic characters (e.g. \ ") are highlighted red
-- New right click context menu GoTo shows related objects e.g. which ExtractionConfiguration(s) a Catalogue has been used in
+- New right click context menu GoTo shows related objects e.g. which ExtractionConfiguration(s) a [Catalogue] has been used in
 - Heatmap hover tool tip now shows more information about the cell value
 - 'Other Pipelines' (unknown use case) can now be edited by double clicking.  This prompts user to pick a use case to edit them under
 - Creating a Catalogue/TableInfo by importing a file now lets you rename the table after it has been created
@@ -349,11 +349,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated to latest version of [BadMedicine] (0.0.1.2)
 - Updated to latest version of [FAnsiSql] (0.9.2)
 - File=>New now launches modal dialog instead of dropdown menu
-- Project objects can now be sorted (previously they always appeared alphabetically)
-- Project creation UI now shows duplicate ProjectNumbers as a Warning instead of an Error allowing users to create 2+ Projects with shared cohorts
+- [Project] objects can now be sorted (previously they always appeared alphabetically)
+- [Project] creation UI now shows duplicate ProjectNumbers as a Warning instead of an Error allowing users to create 2+ Projects with shared cohorts
 - Disabled objects in tree views now appear greyed out instead of red
 - Improved message shown when cohorts with null descriptions are preventing cohort importing
-- Attempting to deleting an Extractable Catalogue no longer shows an error and instead asks if you want to make it non extractable (then delete)
+- Attempting to deleting an Extractable [Catalogue] no longer shows an error and instead asks if you want to make it non extractable (then delete)
 - xmldoc are now shipped inside SourceCodeForSelfAwareness.zip (instead of side by side with the binary).  This avoids an issue where [Squirrel drops xmldoc files](https://github.com/Squirrel/Squirrel.Windows/issues/1323)
 
 ### Fixed 
@@ -391,3 +391,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [INTERSECT]: ./Documentation/CodeTutorials/Glossary.md#INTERSECT
 [EXCEPT]: ./Documentation/CodeTutorials/Glossary.md#EXCEPT
 [IsExtractionIdentifier]: ./Documentation/CodeTutorials/Glossary.md#IsExtractionIdentifier
+
+[Catalogue]: ./Documentation/CodeTutorials/Glossary.md#Catalogue
+[SupportingDocument]: ./Documentation/CodeTutorials/Glossary.md#SupportingDocument
+[TableInfo]: ./Documentation/CodeTutorials/Glossary.md#TableInfo
+
+[ExtractionConfiguration]: ./Documentation/CodeTutorials/Glossary.md#ExtractionConfiguration
+[Project]: ./Documentation/CodeTutorials/Glossary.md#Project
+
+[CatalogueItem]: ./Documentation/CodeTutorials/Glossary.md#CatalogueItem
+[ExtractionInformation]: ./Documentation/CodeTutorials/Glossary.md#ExtractionInformation
+[ColumnInfo]: ./Documentation/CodeTutorials/Glossary.md#ColumnInfo
+
+[JoinInfo]: ./Documentation/CodeTutorials/Glossary.md#JoinInfo
+
+[Pipeline]: ./Documentation/CodeTutorials/Glossary.md#Pipeline

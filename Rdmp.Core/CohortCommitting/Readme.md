@@ -8,8 +8,9 @@ See [Cohort Creation](../CohortCreation/Readme.md) for building queries that ide
 
 Cohorts are persisted in your database in a set of cohort tables.  In order to support diverse identifier formats (e.g. varchar(10), int) or extracting from existing tables the schema of these stores is not rigidly defined.  
 
-The schema is documented in an `ExternalCohortTable`
+The schema is documented in an [ExternalCohortTable]
 
 ## Example Tests
 
 [Create Cohort](../../Rdmp.Core.Tests/CohortCommitting/CommitCohortExample.cs)
+[ExternalCohortTable]: ../../Documentation/CodeTutorials/Glossary.md#ExternalCohortTable
