@@ -226,6 +226,16 @@ namespace Rdmp.Core.Providers
         private int MatchCount(List<Regex> regexes, string str)
         {
             int matches = 0;
+
+            //exact matches
+            foreach (var match in regexes.Where(r => r.ToString().Equals(str,StringComparison.CurrentCultureIgnoreCase)).ToArray())
+            {
+                regexes.Remove(match);
+                //score double for exact matches
+                matches+=2;
+            }
+            
+            //contains matches
             foreach (var match in regexes.Where(r => r.IsMatch(str)).ToArray())
             {
                 regexes.Remove(match);
