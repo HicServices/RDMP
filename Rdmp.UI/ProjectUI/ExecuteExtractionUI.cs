@@ -84,6 +84,7 @@ namespace Rdmp.UI.ProjectUI
             tlvDatasets.ChildrenGetter = ChildrenGetter;
             tlvDatasets.CanExpandGetter = CanExpandGetter;
             tlvDatasets.HierarchicalCheckboxes = true;
+            tlvDatasets.ItemActivate += TlvDatasets_ItemActivate;
             
             checkAndExecuteUI1.BackColor = Color.FromArgb(240, 240, 240);
 
@@ -95,6 +96,12 @@ namespace Rdmp.UI.ProjectUI
                     new ExecuteCommandAddDatasetsToConfiguration(Activator,_extractionConfiguration),
                     new ExecuteCommandAddPackageToConfiguration(Activator,_extractionConfiguration),
                 };
+        }
+
+        private void TlvDatasets_ItemActivate(object sender, EventArgs e)
+        {
+            if (tlvDatasets.SelectedObject is SelectedDataSets sds) 
+                Activator.Activate(sds);
         }
 
         void tlvDatasets_CellClick(object sender, CellClickEventArgs e)
