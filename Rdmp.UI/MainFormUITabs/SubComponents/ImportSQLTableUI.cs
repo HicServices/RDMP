@@ -39,6 +39,7 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
         private readonly bool _allowImportAsCatalogue;
         public ITableInfoImporter Importer { get; private set; }
         public TableInfo TableInfoCreatedIfAny { get; private set; }
+        public CatalogueFolder TargetFolder { get; set; }
 
         public ImportSQLTableUI(IActivateItems activator,bool allowImportAsCatalogue):base(activator)
         {
@@ -90,7 +91,10 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
 
             if(_allowImportAsCatalogue)
             {
-                var ui = new ConfigureCatalogueExtractabilityUI(Activator, Importer, "Existing Table", null);
+                var ui = new ConfigureCatalogueExtractabilityUI(Activator, Importer, "Existing Table", null)
+                {
+                    TargetFolder = TargetFolder
+                };
                 ui.ShowDialog();
                 TableInfoCreatedIfAny = ui.TableInfoCreated;
             }

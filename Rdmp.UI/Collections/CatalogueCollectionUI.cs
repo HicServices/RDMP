@@ -11,6 +11,7 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.Collections.Providers.Filtering;
@@ -63,9 +64,22 @@ namespace Rdmp.UI.Collections
             olvFilters.AspectGetter += FilterAspectGetter;
             olvFilters.IsVisible = UserSettings.ShowColumnFilters;
             olvFilters.VisibilityChanged += (s, e) => UserSettings.ShowColumnFilters = ((OLVColumn)s).IsVisible;
-            
-            
+
+            olvOrder.AspectGetter += OrderAspectGetter;
+            olvOrder.VisibilityChanged += (s,e)=>UserSettings.ShowOrderColumn = ((OLVColumn)s).IsVisible;
+            olvOrder.IsVisible = UserSettings.ShowOrderColumn;
             bLoading = false;
+        }
+
+        private object OrderAspectGetter(object rowobject)
+        {
+            if (rowobject is CatalogueItem ci)
+                return ci.ExtractionInformation?.Order;
+
+            if (rowobject is ConcreteColumn o)
+                return o.Order;
+
+            return null;
         }
 
         //The color to highlight each Catalogue based on its extractability status

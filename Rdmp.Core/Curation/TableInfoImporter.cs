@@ -104,6 +104,16 @@ namespace Rdmp.Core.Curation
         {
             string tableName;
             string databaseName;
+
+            try
+            {
+                _server.TestConnection();
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"Could not reach server {_server.Name}",e);
+            }
+
             var querySyntaxHelper = _server.GetQuerySyntaxHelper();
 
             tableName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);

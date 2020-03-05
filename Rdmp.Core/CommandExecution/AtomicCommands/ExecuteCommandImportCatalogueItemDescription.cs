@@ -53,7 +53,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <param name="skipNameProperty"></param>
-        public void CopyNonIDValuesAcross(IMapsDirectlyToDatabaseTable from, IMapsDirectlyToDatabaseTable to, bool skipNameProperty = false)
+        public static void CopyNonIDValuesAcross(IMapsDirectlyToDatabaseTable from, IMapsDirectlyToDatabaseTable to, bool skipNameProperty = false)
         {
             var type = from.GetType();
 

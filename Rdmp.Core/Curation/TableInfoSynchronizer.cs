@@ -81,7 +81,8 @@ namespace Rdmp.Core.Curation
                 //table exists?
                 expectedTable = expectedDatabase.ExpectTable(_tableToSync.GetRuntimeName(),_tableToSync.Schema,_tableToSync.IsView ? TableType.View:TableType.Table);
                 if(!expectedTable.Exists())
-                    throw new SynchronizationFailedException("Database " + expectedDatabase + " did not contain a table called " + _tableToSync.GetRuntimeName());
+                    throw new SynchronizationFailedException(
+                        $"Database {expectedDatabase} did not contain a {(_tableToSync.IsView ? "view" : "table") } called {_tableToSync.GetRuntimeName()} (make sure you have marked whether it is a table/view and that it exists in your database)");
             }
 
             try

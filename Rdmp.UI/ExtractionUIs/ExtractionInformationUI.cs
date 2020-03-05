@@ -132,6 +132,7 @@ namespace Rdmp.UI.ExtractionUIs
 
         public override void SetDatabaseObject(IActivateItems activator,ExtractionInformation databaseObject)
         {
+            ExtractionInformation = databaseObject;
             base.SetDatabaseObject(activator, databaseObject);
             
             Setup(databaseObject);

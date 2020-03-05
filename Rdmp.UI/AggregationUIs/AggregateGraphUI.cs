@@ -707,7 +707,7 @@ namespace Rdmp.UI.AggregationUIs
         }
 
         /// <summary>
-        /// Normally you dont need to work about double subscriptions but this graph gets recycled during MetadataReport generation with different aggregates one
+        /// Normally you dont need to worry about double subscriptions but this graph gets recycled during MetadataReport generation with different aggregates one
         /// after the other which violetates the 1 subscription per control rule (see base.SetDatabaseObject)
         /// </summary>
         private bool menuInitialized = false;
@@ -716,12 +716,22 @@ namespace Rdmp.UI.AggregationUIs
 
         public override void SetDatabaseObject(IActivateItems activator, AggregateConfiguration databaseObject)
         {
+            base.SetDatabaseObject(activator,databaseObject);
+
+            BuildMenu(activator);
+
+            SetAggregate(activator,databaseObject);
+        }
+
+        protected void BuildMenu(IActivateItems activator)
+        {
             if (!menuInitialized)
             {
-                base.SetDatabaseObject(activator,databaseObject);
                 menuInitialized = true;
 
-                CommonFunctionality.AddToMenu(new ExecuteCommandActivate(activator, databaseObject));
+                if(DatabaseObject != null)
+                    CommonFunctionality.AddToMenu(new ExecuteCommandActivate(activator, DatabaseObject));
+
                 CommonFunctionality.AddToMenu(new ToolStripSeparator());
 
                 CommonFunctionality.AddToMenu(miSaveImages);
@@ -733,8 +743,6 @@ namespace Rdmp.UI.AggregationUIs
                 foreach (var c in _timeoutControls.GetControls())
                     CommonFunctionality.Add(c);
             }
-
-            SetAggregate(activator,databaseObject);
         }
 
 

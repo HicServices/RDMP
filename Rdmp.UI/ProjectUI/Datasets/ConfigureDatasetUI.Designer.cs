@@ -47,7 +47,6 @@ namespace Rdmp.UI.ProjectUI.Datasets
             this.btnSelectCore = new System.Windows.Forms.Button();
             this.flpCouldNotJoinTables = new System.Windows.Forms.FlowLayoutPanel();
             this.label8 = new System.Windows.Forms.Label();
-            this.helpIconJoin = new HelpIcon();
             this.tbSearchTables = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -61,6 +60,8 @@ namespace Rdmp.UI.ProjectUI.Datasets
             this.olvIssues = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSelectedColumnOrder = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvSelectedCatalogue = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvSelectedCategory = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.helpIconJoin = new Rdmp.UI.SimpleControls.HelpIcon();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -205,9 +206,9 @@ namespace Rdmp.UI.ProjectUI.Datasets
             // 
             this.olvAvailableColumnName.AspectName = "ToString";
             this.olvAvailableColumnName.FillsFreeSpace = true;
+            this.olvAvailableColumnName.MinimumWidth = 100;
             this.olvAvailableColumnName.Text = "Name";
             this.olvAvailableColumnName.Width = 200;
-            this.olvAvailableColumnName.MinimumWidth = 100;
             // 
             // olvAvailableColumnCategory
             // 
@@ -253,15 +254,6 @@ namespace Rdmp.UI.ProjectUI.Datasets
             this.label8.Size = new System.Drawing.Size(204, 13);
             this.label8.TabIndex = 0;
             this.label8.Text = "Missing join information for included tables";
-            // 
-            // helpIconJoin
-            // 
-            this.helpIconJoin.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.helpIconJoin.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIconJoin.BackgroundImage")));
-            this.helpIconJoin.Location = new System.Drawing.Point(213, 3);
-            this.helpIconJoin.Name = "helpIconJoin";
-            this.helpIconJoin.Size = new System.Drawing.Size(19, 19);
-            this.helpIconJoin.TabIndex = 1;
             // 
             // tbSearchTables
             // 
@@ -309,6 +301,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
             this.olvJoinColumn});
             this.olvJoin.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvJoin.FullRowSelect = true;
+            this.olvJoin.HideSelection = false;
             this.olvJoin.IsSimpleDropSink = true;
             this.olvJoin.Location = new System.Drawing.Point(6, 490);
             this.olvJoin.Name = "olvJoin";
@@ -324,9 +317,9 @@ namespace Rdmp.UI.ProjectUI.Datasets
             this.olvJoinTableName.FillsFreeSpace = true;
             this.olvJoinTableName.Groupable = false;
             this.olvJoinTableName.IsEditable = false;
+            this.olvJoinTableName.MinimumWidth = 100;
             this.olvJoinTableName.Text = "Table Name";
             this.olvJoinTableName.Width = 163;
-            this.olvJoinTableName.MinimumWidth = 100;
             // 
             // olvJoinColumn
             // 
@@ -360,6 +353,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
             // olvSelected
             // 
             this.olvSelected.AllColumns.Add(this.olvSelectedColumnName);
+            this.olvSelected.AllColumns.Add(this.olvSelectedCategory);
             this.olvSelected.AllColumns.Add(this.olvIssues);
             this.olvSelected.AllColumns.Add(this.olvSelectedColumnOrder);
             this.olvSelected.AllColumns.Add(this.olvSelectedCatalogue);
@@ -369,6 +363,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
             this.olvSelected.CellEditUseWholeCell = false;
             this.olvSelected.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvSelectedColumnName,
+            this.olvSelectedCategory,
             this.olvIssues,
             this.olvSelectedCatalogue});
             this.olvSelected.Cursor = System.Windows.Forms.Cursors.Default;
@@ -392,26 +387,48 @@ namespace Rdmp.UI.ProjectUI.Datasets
             // 
             this.olvSelectedColumnName.AspectName = "ToString";
             this.olvSelectedColumnName.FillsFreeSpace = true;
+            this.olvSelectedColumnName.MinimumWidth = 100;
             this.olvSelectedColumnName.Sortable = false;
             this.olvSelectedColumnName.Text = "Name";
-            this.olvSelectedColumnName.MinimumWidth = 100;
+            this.olvSelectedColumnName.Width = 100;
             // 
             // olvIssues
             // 
+            this.olvIssues.Sortable = false;
             this.olvIssues.Text = "Issues";
             this.olvIssues.Width = 100;
             // 
             // olvSelectedColumnOrder
             // 
             this.olvSelectedColumnOrder.AspectName = "Order";
-            this.olvSelectedColumnOrder.DisplayIndex = 1;
+            this.olvSelectedColumnOrder.DisplayIndex = 3;
             this.olvSelectedColumnOrder.IsVisible = false;
             this.olvSelectedColumnOrder.Text = "Order";
             // 
             // olvSelectedCatalogue
             // 
+            this.olvSelectedCatalogue.Sortable = false;
             this.olvSelectedCatalogue.Text = "Catalogue";
             this.olvSelectedCatalogue.Width = 100;
+            // 
+            // olvSelectedCategory
+            // 
+            this.olvSelectedCategory.Sortable = false;
+            this.olvSelectedCategory.Text = "Category";
+            // 
+            // helpIconJoin
+            // 
+            this.helpIconJoin.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.helpIconJoin.BackColor = System.Drawing.Color.Transparent;
+            this.helpIconJoin.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIconJoin.BackgroundImage")));
+            this.helpIconJoin.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.helpIconJoin.Location = new System.Drawing.Point(213, 3);
+            this.helpIconJoin.MaximumSize = new System.Drawing.Size(19, 19);
+            this.helpIconJoin.MinimumSize = new System.Drawing.Size(19, 19);
+            this.helpIconJoin.Name = "helpIconJoin";
+            this.helpIconJoin.Size = new System.Drawing.Size(19, 19);
+            this.helpIconJoin.SuppressClick = false;
+            this.helpIconJoin.TabIndex = 1;
             // 
             // ConfigureDatasetUI
             // 
@@ -466,5 +483,6 @@ namespace Rdmp.UI.ProjectUI.Datasets
         private System.Windows.Forms.Label label8;
         private HelpIcon helpIconJoin;
         private OLVColumn olvIssues;
+        private OLVColumn olvSelectedCategory;
     }
 }

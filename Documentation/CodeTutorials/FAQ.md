@@ -35,7 +35,7 @@
    1. [What is a Catalogue?](#whatisacatalogue)
    1. [Can I share/export/import my dataset metadata?](#sharing)
    1. [Is there a Data Quality Engine?](#dqe)
-   4. [How do I create a Catalogue from 2+ tables?](#2tablecatalogues)
+   4. [How do I create a [Catalogue] from 2+ tables?](#2tablecatalogues)
 1. User Interface Programming
    1. [How are user interfaces implemented in RDMP?](#uioverview)
    1. [Whats with the _Design user interface classes?](#abstractDesignerPattern)
@@ -98,7 +98,7 @@ For help on each engine (verb) on the command line enter the verb (listed by the
 rdmp.exe dle --help
 ```
 
-When performing an operation in the RDMP client application (e.g. releasing a dataset) you can instead select 'Copy Run Command To Clipboard'.  This will generate a CLI command that will perform the current action (e.g. extract Project X using Pipeline Y).  This can be helpful for scheduling long running tasks etc.
+When performing an operation in the RDMP client application (e.g. releasing a dataset) you can instead select 'Copy Run Command To Clipboard'.  This will generate a CLI command that will perform the current action (e.g. extract [Project] X using Pipeline Y).  This can be helpful for scheduling long running tasks etc.
 
 ![Accessing menu copy to clipboard](./Images/FAQ/CopyCommandToClipboard.png)
 
@@ -147,7 +147,7 @@ Yes, RDMP can be controlled programmatically through it's API which is available
 
 <a name="plugins"></a>
 ### Does RDMP Support Plugins?
-Yes, RDMP supports both functional plugins (e.g. new anonymisation components, new load plugins etc) as well as UI plugins (e.g. new operations when you right click a `Catalogue`).
+Yes, RDMP supports both functional plugins (e.g. new anonymisation components, new load plugins etc) as well as UI plugins (e.g. new operations when you right click a [Catalogue]).
 
 See [PluginWriting](./PluginWriting.md)
 
@@ -159,7 +159,7 @@ Platform databases are divided into three tiers:
 
 |Tier| Description|
 |------|-----|
-|   1  | The Catalogue and Data Export databases, stores all metadata (projects, datasets etc) as well as the locations of other databases|
+|   1  | The [Catalogue] and Data Export databases, stores all metadata (projects, datasets etc) as well as the locations of other databases|
 |   2  | Ancillary databases managed by RDMP e.g. Logging, DQE Results, Query Caches.  You can have multiple or none of each of these configured.|
 |   3  | This tier is reserved for [Plugins](#plugins) which wish to persist objects/meta data in a database using the same versioning model (update scripts, data model) as the core RDMP databases.|
 
@@ -200,14 +200,14 @@ When importing a table RDMP will record the schema it came from and fully qualif
 <a name="views"></a>
 ### Does RDMP Support Views?
 
-Yes, when importing a table from a database to create a `Catalogue` any views in the database will also be shown.  These are interacted with in exactly the same manner as regular tables.
+Yes, when importing a table from a database to create a [Catalogue] any views in the database will also be shown.  These are interacted with in exactly the same manner as regular tables.
 
 You cannot load a view with data using the Data Load Engine.
 
 <a name="tvf"></a>
 ### Does RDMP Support Table Valued Functions?
 
-When importing a table from a Microsoft Sql Server database to create a `Catalogue` any table valued functions in the database will also be shown.  When you import these you will get a `TableInfo` which contains default values to supply to the function when querying it.  You can override these parameters e.g. for a project extraction, cohort identification configuration etc.
+When importing a table from a Microsoft Sql Server database to create a [Catalogue] any table valued functions in the database will also be shown.  When you import these you will get a [TableInfo] which contains default values to supply to the function when querying it.  You can override these parameters e.g. for a project extraction, cohort identification configuration etc.
 
 ![A Table Valued Function TableInfo](Images/FAQ/TableValuedFunctionExample.png)
 
@@ -297,7 +297,7 @@ If you need to process data in the columns but don't want them in your final LIV
 2. Be dumped into an identifier dump (`StoreInIdentifiersDump`).  This is useful if you are supplied with lots of identifiable columns that you want to keep track of but separated from the rest of the data
 3. Be promoted to LIVE in a diluted form (`Dilute`).  For example you might want to promote PatientName as a 1 or a 0 indicating whether or not it was provided and store the full name in the identifier dump as above.
 
-Creating a `PreLoadDiscardedColumn` can be done by right clicking the `TableInfo`	.  You will need to specify both the name of the virtual column and the datatype as it should be created in RAW (it won't appear in your LIVE table).
+Creating a `PreLoadDiscardedColumn` can be done by right clicking the [TableInfo]	.  You will need to specify both the name of the virtual column and the datatype as it should be created in RAW (it won't appear in your LIVE table).
 
 ![ReOrdering](Images/FAQ/Oblivion.png)
 
@@ -324,7 +324,7 @@ If you want to make a script agnostic of the LoadStage or if you are writing you
 {T:100}
 ```
 
-Where T is for `TableInfo` and 100 is the `ID` of the `TableInfo` you want the name of.  You can find the ID by viewing the ID column of the Tables collection:
+Where T is for [TableInfo] and 100 is the `ID` of the [TableInfo] you want the name of.  You can find the ID by viewing the ID column of the Tables collection:
 
 ![How to specify column and table names using curly bracer syntax](Images/FAQ/TableAndColumnCurlyBracerSyntax.png)
 
@@ -382,7 +382,7 @@ Yes, data can be annonymised in the following ways
 
 <a name="whatisacatalogue"></a>
 ### What is a Catalogue?
-A Catalogue is RDMP's representation of one of your datasets e.g. 'Hospital Admissions'.  A Catalogue consists of:
+A [Catalogue] is RDMP's representation of one of your datasets e.g. 'Hospital Admissions'.  A [Catalogue] consists of:
 
 * Human readable names/descriptions of what is in the dataset it is
 * A collection of items mapped to underlying columns in your database.  Each of these:
@@ -396,11 +396,11 @@ A Catalogue is RDMP's representation of one of your datasets e.g. 'Hospital Admi
 
 ![Catalogue](Images/FAQ/Catalogue.png)
 
-A Catalogue can be a part of project extraction configurations, used in cohort identification configurations.  They can be marked as Deprecated, Internal etc.
+A [Catalogue] can be a part of project extraction configurations, used in cohort identification configurations.  They can be marked as Deprecated, Internal etc.
 
 The separation of dataset and underlying table allows you to have multiple datasets both of which draw data from the same table.  It also makes it easier to handle moving a table/database (e.g. to a new server or database) / renaming etc.
 
-Internally Catalogues are stored in the Catalogue table of the RDMP platform database (e.g. RDMP_Catalogue).  The ID field of this table is used by other objects to reference it (e.g. CatalogueItem.Catalogue_ID).  
+Internally Catalogues are stored in the [Catalogue] table of the RDMP platform database (e.g. RDMP_Catalogue).  The ID field of this table is used by other objects to reference it (e.g. CatalogueItem.Catalogue_ID).  
 
 <a name="sharing"></a>
 ### Can I share/export/import my dataset metadata?
@@ -424,9 +424,9 @@ This report can be generated for a specific dataset only or all datasets.  A var
 
 #### Share Definition
 
-If you want to share dataset description, column descriptions etc with another RDMP user (in another organisation) you can export your Catalogue as a .sd file.  This contains JSON definitions for the `Catalogue` and all `CatalogueItem` objects.  This includes Validation XML and all the additional fields e.g. Granularity Coverage, Background Summary etc.  The share does not include the mapping between descriptions and underlying columns or the extraction SQL since this is likely to vary by site.
+If you want to share dataset description, column descriptions etc with another RDMP user (in another organisation) you can export your [Catalogue] as a .sd file.  This contains JSON definitions for the [Catalogue] and all [CatalogueItem] objects.  This includes Validation XML and all the additional fields e.g. Granularity Coverage, Background Summary etc.  The share does not include the mapping between descriptions and underlying columns or the extraction SQL since this is likely to vary by site.
 
-You can import a Share Definition (.sd) file previously generated by yourself or another RMDP user to load the stored descriptions.  This is useful if two or more organisations have semantically similar copies of the same dataset (e.g. SMR01).  When importing a Share Definition file you will import all column descriptions (`CatalogueItem`) even if you do not have them in your database (they simply won't be mapped to an underlying database column).
+You can import a Share Definition (.sd) file previously generated by yourself or another RMDP user to load the stored descriptions.  This is useful if two or more organisations have semantically similar copies of the same dataset (e.g. SMR01).  When importing a Share Definition file you will import all column descriptions ([CatalogueItem]) even if you do not have them in your database (they simply won't be mapped to an underlying database column).
 
 Share Definition files include JSON serialization of values and are not designed to be human readable.
 
@@ -434,7 +434,7 @@ Share Definition files include JSON serialization of values and are not designed
 
 #### Dublin Core
 
-`Catalogue` descriptive metadata can be serialized into an xml file which follows the [Dublin Core guidelines]( http://dublincore.org/documents/dc-xml-guidelines/).  RDMP can load dataset descriptions from `<metadata>` `XElements` which follow this xmlns.
+[Catalogue] descriptive metadata can be serialized into an xml file which follows the [Dublin Core guidelines]( http://dublincore.org/documents/dc-xml-guidelines/).  RDMP can load dataset descriptions from `<metadata>` `XElements` which follow this xmlns.
 
 An example can be seen below:
 
@@ -493,19 +493,19 @@ Yes.  You can read more about the DQE in the [technical implementation](./Valida
 
 
 <a name="2tablecatalogues"></a>
-## How do I create a Catalogue from 2+ tables?
+## How do I create a [Catalogue] from 2+ tables?
 
 Start by importing the Tables as normal (but do not create a Catalogue).  Double click the topmost table and check 'Is Primary Extraction Table'.
 
 ![How to set IsPrimaryExtractionTable on a TableInfo](Images/FAQ/SetIsPrimaryExtractionTable.png) 
 
-Next right click the topmost table and select 'Configure JoinInfo Where...'.  In this window add the child table to join to and drag the column(s) that should be used to join. 
+Next right click the topmost table and select 'Configure [JoinInfo] Where...'.  In this window add the child table to join to and drag the column(s) that should be used to join. 
 
 You can configure a `collation` (if required) and join direction (LEFT / RIGHT / INNER)
 
 ![How to add a JoinInfo between two TableInfo](Images/FAQ/AddJoinInfo.png) 
 
-Now we have configured the technical layer we can create our `Catalogue`.  Create a new Catalogue by right clicking in the Catalogues collection
+Now we have configured the technical layer we can create our [Catalogue].  Create a new [Catalogue] by right clicking in the Catalogues collection
 
 ![How to create a new empty Catalogue](Images/FAQ/CreateNewEmptyCatalogue.png) 
 
@@ -513,7 +513,7 @@ Then right click each Table in turn and select `Create New Catalogue...` but ins
 
 ![How to add to existing Catalogue instead of creating a fresh one](Images/FAQ/ConfigureExtractabilityAddToExistingCatalogue.png) 
 
-You can check that you have configured the join correctly by right clicking the Catalogue and selecting `View Catalogue Extraction Sql`
+You can check that you have configured the join correctly by right clicking the [Catalogue] and selecting `View [Catalogue] Extraction Sql`
 
 ## User Interface Programming
 
@@ -553,7 +553,7 @@ This requires a tutorial all of it's own
 
 <a name="databaseDdos"></a>
 ### My metadata databases are being hammered by thousands of requests?
-The entire RDMP meta data model is stored in platform databases (Catalogue / Data Export etc).  Classes e.g. `Catalogue` are fetched either all at once or by `ID`.  The class Properties can be used to fetch other related objects e.g. `Catalogue.CatalogueItems`.  This usually does not result in a bottleneck but under some conditions deeply nested use of these properties can result in your platform database being hammered with requests.  You can determine whether this is the case by using the PerformanceCounter.  This tool will show every database request issued while it is running including the number of distinct Stack Frames responsible for the query being issued.  Hundreds or even thousands of requests isn't a problem but if you start getting into the tens of thousands for trivial operations you might want to refactor your code.
+The entire RDMP meta data model is stored in platform databases (Catalogue / Data Export etc).  Classes e.g. [Catalogue] are fetched either all at once or by `ID`.  The class Properties can be used to fetch other related objects e.g. `Catalogue.CatalogueItems`.  This usually does not result in a bottleneck but under some conditions deeply nested use of these properties can result in your platform database being hammered with requests.  You can determine whether this is the case by using the PerformanceCounter.  This tool will show every database request issued while it is running including the number of distinct Stack Frames responsible for the query being issued.  Hundreds or even thousands of requests isn't a problem but if you start getting into the tens of thousands for trivial operations you might want to refactor your code.
 
 ![PerformanceCounter](Images/FAQ/PerformanceCounter.png) 
 
@@ -580,3 +580,16 @@ Yes there are over 1,000 unit and integration tests, this is covered in [Tests](
 [EXCEPT]: ./Glossary.md#EXCEPT
 [INTERSECT]: ./Glossary.md#INTERSECT
 [DBMS]: ./Glossary.md#DBMS
+
+[Catalogue]: ./Glossary.md#Catalogue
+[TableInfo]: ./Glossary.md#TableInfo
+
+[Project]: ./Glossary.md#Project
+
+[CatalogueItem]: ./Glossary.md#CatalogueItem
+
+[JoinInfo]: ./Glossary.md#JoinInfo
+
+[ProcessTask]: ./Glossary.md#ProcessTask
+
+[Pipeline]: ./Glossary.md#Pipeline

@@ -7,6 +7,7 @@
 using System.Drawing;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
@@ -17,6 +18,8 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable:BasicUICommandExecution,IAtomicCommand
     {
+        
+        public CatalogueFolder TargetFolder { get; set; }
         public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IActivateItems activator) : base(activator)
         {
             UseTripleDotSuffix = true;
@@ -26,7 +29,8 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var importTable = new ImportSQLTableUI(Activator,true);
+            var importTable = new ImportSQLTableUI(Activator,true){
+                TargetFolder = TargetFolder};
             importTable.ShowDialog();
         }
 

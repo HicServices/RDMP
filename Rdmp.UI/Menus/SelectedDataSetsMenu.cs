@@ -61,6 +61,8 @@ namespace Rdmp.UI.Menus
             Add(new ExecuteCommandViewSelectedDataSetsExtractionSql(_activator).SetTarget(selectedDataSet));
             
             Add(new ExecuteCommandViewThenVsNowSql(_activator, selectedDataSet));
+
+            Add(new ExecuteCommandOpenExtractionDirectory(_activator, selectedDataSet));
         }
 
 

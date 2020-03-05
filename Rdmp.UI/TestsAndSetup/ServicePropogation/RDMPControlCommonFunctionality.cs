@@ -397,6 +397,9 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
                 ToolStripAddedToHost(this,new EventArgs());
         }
 
+        /// <summary>
+        /// Resets the RAG checker (smiley) if there is one to empty
+        /// </summary>
         public void ResetChecks()
         {
             if (_ragSmileyToolStrip != null)

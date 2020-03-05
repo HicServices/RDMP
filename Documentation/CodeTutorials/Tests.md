@@ -179,3 +179,7 @@ public class MyTests : DatabaseTests
 	}
 }
 ```
+
+[Catalogue]: ./Glossary.md#Catalogue
+
+[Project]: ./Glossary.md#Project

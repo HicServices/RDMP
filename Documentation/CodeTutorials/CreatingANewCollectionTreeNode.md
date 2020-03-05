@@ -29,7 +29,7 @@ Go to the root directory of your RDMP checkout and open `\Rdmp.UI\Icons\FolderOf
 
 ![EditFolderOfX](Images/CreatingANewCollectionTreeNode/EditFolderOfX.png) 
 
- Save the new image as a 19x19 png with the name of the class you intend to use (think about this before you save it!) e.g. `FrozenExtractionConfigurationsNode.png`.  When naming you should use the suffix Node for any class which is not directly tied to a a database persistence object.  For example Project inherits from `DatabaseEntity` and is a persistent object but anything which is created arbitrarily at runtime or is a container of other items should be called a Node.
+ Save the new image as a 19x19 png with the name of the class you intend to use (think about this before you save it!) e.g. `FrozenExtractionConfigurationsNode.png`.  When naming you should use the suffix Node for any class which is not directly tied to a a database persistence object.  For example [Project] inherits from `DatabaseEntity` and is a persistent object but anything which is created arbitrarily at runtime or is a container of other items should be called a Node.
 
 # Adding the icon to the project
 RDMP requires that all tree view objects have an entry in RDMPConcept Enum, a class with the same name and a .png icon file with the same name.  So the first step is to open RDMPConcept and add a new Enum value `FrozenExtractionConfigurationsNode`
@@ -281,3 +281,6 @@ private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConf
 Now when you run RDMP, the final tree should look something like:
 
 ![FinalTree](Images/CreatingANewCollectionTreeNode/FinalTree.png) 
+
+[ExtractionConfiguration]: ./Glossary.md#ExtractionConfiguration
+[Project]: ./Glossary.md#Project

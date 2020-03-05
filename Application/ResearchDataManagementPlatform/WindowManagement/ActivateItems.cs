@@ -263,7 +263,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                         
             if (
                 YesNo(
-                    overrideConfirmationText?? ("Are you sure you want to delete '" + deleteable + "' from the database?")
+                    overrideConfirmationText?? ("Are you sure you want to delete '" + deleteable + "'?")
                 +Environment.NewLine + "(" + deleteable.GetType().Name + idText +")",
                 "Delete " + deleteable.GetType().Name))
             {
@@ -348,6 +348,14 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return false;
         }
 
+        public override void Activate(DatabaseEntity o)
+        {
+            var cmd = new ExecuteCommandActivate(this, o);
+            
+            if(!cmd.IsImpossible)
+                cmd.Execute();
+        }
+
         public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
         {
             //if the collection an arbitrary one then it is definetly not the root collection for anyone
@@ -426,9 +434,16 @@ namespace ResearchDataManagementPlatform.WindowManagement
             where T: Control,IObjectCollectionControl,new()
 
         {
-            Control existingHostedControlInstance;
-            if (PopExisting(typeof(T), collection, out existingHostedControlInstance))
-                return (T)existingHostedControlInstance;
+            //if the window is already open
+            if (PopExisting(typeof(T), collection, out var existingHostedControlInstance))
+            {
+                //just update it's state
+                var existing = (T) existingHostedControlInstance;
+                existing.SetCollection(this,collection);
+
+                return existing;
+            }
+                
 
             var uiInstance = new T();
             Activate(uiInstance, collection);

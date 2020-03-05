@@ -31,13 +31,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             Activator = activator;
         }
-
-        protected override void Activate(DatabaseEntity o)
-        {
-            var cmd = new ExecuteCommandActivate(Activator, o);
-            cmd.Execute();
-        }
-
+        
         protected FileInfo SelectSaveFile(string filter)
         {
             var sfd = new SaveFileDialog();

@@ -45,9 +45,22 @@ namespace Rdmp.Core.DataExport.DataRelease
             if (configuration == null) return;
 
             TicketingSystemFactory factory = new TicketingSystemFactory(_repository.CatalogueRepository);
-            ITicketingSystem ticketingSystem = factory.CreateIfExists(configuration);
 
-            if (ticketingSystem == null) return;
+
+            ITicketingSystem ticketingSystem;
+            try
+            {
+                ticketingSystem = factory.CreateIfExists(configuration);
+            }
+            catch (Exception e)
+            {
+                Assesment = TicketingReleaseabilityEvaluation.TicketingLibraryCrashed;
+                Exception = e;
+                return;
+            }
+            
+            if (ticketingSystem == null) 
+                return;
 
             try
             {
@@ -73,10 +86,10 @@ namespace Rdmp.Core.DataExport.DataRelease
             MakeAssessment();
 
             var message = "Environment Releasability is " + Assesment;
-            if (!String.IsNullOrWhiteSpace(Reason))
+            if (!string.IsNullOrWhiteSpace(Reason))
                 message += " - " + Reason;
 
-            notifier.OnCheckPerformed(new CheckEventArgs("Environment Releasability is " + Assesment, GetCheckResultFor(Assesment), Exception));
+            notifier.OnCheckPerformed(new CheckEventArgs(message, GetCheckResultFor(Assesment), Exception));
         }
 
         private CheckResult GetCheckResultFor(TicketingReleaseabilityEvaluation assesment)

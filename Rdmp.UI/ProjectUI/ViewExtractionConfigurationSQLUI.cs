@@ -6,14 +6,20 @@
 
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.Collections;
+using Rdmp.UI.DataViewing;
+using Rdmp.UI.DataViewing.Collections.Arbitrary;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using ReusableLibraryCode.DataAccess;
 
 
 namespace Rdmp.UI.ProjectUI
@@ -27,7 +33,9 @@ namespace Rdmp.UI.ProjectUI
         private ScintillaNET.Scintilla QueryEditor;
         private IExtractionConfiguration _extractionConfiguration;
         private IExtractableDataSet _extractableDataSet;
-
+        
+        ToolStripButton btnRun = new ToolStripButton("Run",CatalogueIcons.ExecuteArrow);
+        private ExtractDatasetCommand _request;
 
         public ViewExtractionConfigurationSQLUI()
         {
@@ -46,9 +54,10 @@ namespace Rdmp.UI.ProjectUI
             QueryEditor.ReadOnly = before;
 
             AssociatedCollection = RDMPCollection.DataExport;
-
+            btnRun.Click += BtnRun_Click;
         }
 
+        
         private void RegenerateCodeInQueryEditor()
         {
             try
@@ -57,14 +66,13 @@ namespace Rdmp.UI.ProjectUI
                     throw new Exception("No cohort has been defined for this ExtractionConfiguration");
 
                 //We are generating what the extraction SQL will be like, that only requires the dataset so empty bundle is fine
-                ExtractDatasetCommand request = new ExtractDatasetCommand(_extractionConfiguration,new ExtractableDatasetBundle(_extractableDataSet));
-                request.GenerateQueryBuilder();
+                _request = new ExtractDatasetCommand(_extractionConfiguration,new ExtractableDatasetBundle(_extractableDataSet));
+                _request.GenerateQueryBuilder();
 
                 QueryEditor.ReadOnly = false;
 
                 //get the SQL from the query builder 
-                QueryEditor.Text = request.QueryBuilder.SQL;
-             
+                QueryEditor.Text = _request.QueryBuilder.SQL;
                 QueryEditor.ReadOnly = true;
             }
             catch (Exception ex)
@@ -81,6 +89,24 @@ namespace Rdmp.UI.ProjectUI
             _extractionConfiguration = databaseObject.ExtractionConfiguration;
             _extractableDataSet = databaseObject.ExtractableDataSet;
             RegenerateCodeInQueryEditor();
+
+
+            CommonFunctionality.Add(btnRun);
+        }
+        private void BtnRun_Click(object sender, EventArgs e)
+        {
+            var t = _request?.QueryBuilder?.TablesUsedInQuery?.FirstOrDefault();
+
+            if(t == null)
+                Activator.Show("Could not determine what table underlies the ExtractionConfiguration");
+            else
+            {
+                Activator.Activate<ViewSQLAndResultsWithDataGridUI>(
+                    new ArbitraryTableExtractionUICollection(t.Discover(DataAccessContext.InternalDataProcessing))
+                    {
+                        OverrideSql = QueryEditor.Text
+                    });
+            }
         }
 
         public override string GetTabName()

@@ -12,7 +12,7 @@ Drag and drop and double clicking (called activation) is a core part of the RDMP
 This derrived class will decide what tab/window/custom action to show when `Activate` happens either as part of double click or as part of `ExecuteCommandActivate` (e.g. from a right click menu) or a call to `BasicUICommandExecution.Activate` and decide what `ICommandExecution` is executed when a given object/collection is dropped on it.
 
 ![ExampleMenu](Images/DoubleClickAndDragDrop/DropExample.png) 
-_Example of dragging a Catalogue onto an ExtractionConfiguration_
+_Example of dragging a [Catalogue] onto an ExtractionConfiguration_
 
 This pattern allows all tree views system wide to have consistent behaviour for a given object type (via `RDMPCollectionCommonFunctionality`).  
 
@@ -57,7 +57,7 @@ Check this works in the application by double clicking a tree node of the approp
 ![ExampleMenu](Images/DoubleClickAndDragDrop/TestMessage.png)
 
 # Tab Documents
-Most tabs in RDMP are designed for editing/executing a single `Type` of object held in one of the RDMP platform database tables (e.g. Catalogue, CatalogueItem, Project etc).  By convention these controls should be named `<MyClass>UI` unless there is a good reason not to.  These user interfaces all inherit from abstract base class `RDMPSingleDatabaseObjectControl<T>`.  There can be multiple tabs for a given `Type` e.g. `CacheProgress` has both `CacheProgressUI` (for changing cache dates etc) and `ExecuteCacheProgressUI` (for executing the cache).
+Most tabs in RDMP are designed for editing/executing a single `Type` of object held in one of the RDMP platform database tables (e.g. Catalogue, CatalogueItem, [Project] etc).  By convention these controls should be named `<MyClass>UI` unless there is a good reason not to.  These user interfaces all inherit from abstract base class `RDMPSingleDatabaseObjectControl<T>`.  There can be multiple tabs for a given `Type` e.g. `CacheProgress` has both `CacheProgressUI` (for changing cache dates etc) and `ExecuteCacheProgressUI` (for executing the cache).
 
 To show a new tab control for editing your object you should create a normal WinForms control as you normally would but inherit from `RDMPSingleDatabaseObjectControl<T>` instead of `UserControl`.
 
@@ -86,7 +86,7 @@ To add support for item dropping you should add an implementation to the body of
 
 | Parameter | Purpose |
 | ------------- | ------------- |
-| ICombineToMakeCommand cmd| Self contained class describing both the object being dragged and salient facts about it e.g. if  it is a `CatalogueCombineable` then it will know whether the dragged `Catalogue` has at least one patient identifier column.|
+| ICombineToMakeCommand cmd| Self contained class describing both the object being dragged and salient facts about it e.g. if  it is a `CatalogueCombineable` then it will know whether the dragged [Catalogue] has at least one patient identifier column.|
 | T target | The object the cursor is currently hovering over |
 | InsertOption insertOption | Whether the cursor is above or below or ontop of your object (if the collection the object is in supports it) |
 
@@ -107,7 +107,7 @@ public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pi
 }
 ```
 
-While not terribly useful, you can now drop a `Catalogue` on `Pipeline` to delete the `Catalogue`
+While not terribly useful, you can now drop a [Catalogue] on `Pipeline` to delete the [Catalogue]
 
 ![ExampleMenu](Images/DoubleClickAndDragDrop/DropDelete.png)
 
@@ -115,9 +115,9 @@ You can create your own `ICommandExecution` implementations by [following this t
 
 # Drag
 
-`RDMPCombineableFactory` is responsible for creating `ICombineToMakeCommand` objects at the start of a drag operation (including files etc from the OS).  Most objects will have a 1 to 1 mapping with an `ICombineToMakeCommand` e.g `CatalogueCombineable` is a wrapper for a `Catalogue`.  The `ICombineToMakeCommand` is responsible for doing expensive fact gathering at the start of a drag operation.
+`RDMPCombineableFactory` is responsible for creating `ICombineToMakeCommand` objects at the start of a drag operation (including files etc from the OS).  Most objects will have a 1 to 1 mapping with an `ICombineToMakeCommand` e.g `CatalogueCombineable` is a wrapper for a [Catalogue].  The `ICombineToMakeCommand` is responsible for doing expensive fact gathering at the start of a drag operation.
 
-If you need to provide drag support for a new object `Type` (e.g. `Pipeline`) first create an appropriate `ICombineToMakeCommand` e.g. `PipelineCombineable` and then in `RDMPCombineableFactory` modify the method `ICommand Create(object modelObject)` to return it given the appropriate modelObject:
+If you need to provide drag support for a new object `Type` (e.g. [Pipeline]) first create an appropriate `ICombineToMakeCommand` e.g. `PipelineCombineable` and then in `RDMPCombineableFactory` modify the method `ICommand Create(object modelObject)` to return it given the appropriate modelObject:
 
 ```csharp
 public ICombineToMakeCommand Create(object modelObject)
@@ -159,3 +159,11 @@ Doing this will allow you to drag the object (when previously you couldn't).  Th
 ![CannotDrop](Images/DoubleClickAndDragDrop/CannotDrop.png)
 
 To provide drop targets for the new `ICombineToMakeCommand` go to the `RDMPCommandExecutionProposal<T>` of the object `Type` you want to be able to drop on and [provide an implementation of ProposeExecution](#drop)
+
+[Catalogue]: ./Glossary.md#Catalogue
+
+[Project]: ./Glossary.md#Project
+
+[CatalogueItem]: ./Glossary.md#CatalogueItem
+
+[Pipeline]: ./Glossary.md#Pipeline

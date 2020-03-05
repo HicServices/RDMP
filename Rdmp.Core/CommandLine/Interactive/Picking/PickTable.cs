@@ -55,7 +55,7 @@ ConnectionString (Required)";
             bool isViewBool = isViewStr == null ? false : bool.Parse(isViewStr);
             
             var dbType = (DatabaseType)Enum.Parse(typeof(DatabaseType),m.Groups[4].Value);
-            var dbName = m.Groups[5].Value;
+            var dbName = Trim("Name:",m.Groups[5].Value);
             var connectionString = m.Groups[6].Value;
 
             var server = new DiscoveredServer(connectionString, dbType);

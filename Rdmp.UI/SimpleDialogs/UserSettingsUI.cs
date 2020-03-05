@@ -6,6 +6,8 @@
 
 using System;
 using System.Windows.Forms;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Settings;
 using ScintillaNET;
 
@@ -20,7 +22,7 @@ namespace Rdmp.UI.SimpleDialogs
     {
         private bool _bLoaded;
 
-        public UserSettingsFileUI()
+        public UserSettingsFileUI(IActivateItems activator)
         {
             InitializeComponent();
             cbShowHomeOnStartup.Checked = UserSettings.ShowHomeOnStartup;
@@ -46,6 +48,15 @@ namespace Rdmp.UI.SimpleDialogs
             tbHeatmapColours.Text = UserSettings.HeatMapColours;
 
             _bLoaded = true;
+
+            var cmd = new ExecuteCommandClearFavourites(activator);
+            btnClearFavourites.Enabled = !cmd.IsImpossible;
+
+            btnClearFavourites.Click += (s, e) =>
+            {
+                cmd.Execute();
+                btnClearFavourites.Enabled = !cmd.IsImpossible;
+            };
         }
 
         private void cb_CheckedChanged(object sender, EventArgs e)

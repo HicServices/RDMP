@@ -29,15 +29,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
         {
             InitializeComponent();
         }
-
-        protected override object[] GetRibbonObjects()
-        {
-            if (_collection == null)
-                return base.GetRibbonObjects();
-
-            return new object[] {_collection.GetFilter(), _collection.GetGraph()};
-        }
-
+        
         protected override AggregateBuilder GetQueryBuilder(AggregateConfiguration aggregateConfiguration)
         {
             var basicQueryBuilder =  base.GetQueryBuilder(aggregateConfiguration);
@@ -63,6 +55,9 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
         {
             _collection = (FilterGraphObjectCollection)collection;
             SetItemActivator(activator);
+            
+            BuildMenu(activator);
+
             SetAggregate(Activator,_collection.GetGraph());
             LoadGraphAsync();
         }

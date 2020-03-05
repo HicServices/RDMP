@@ -37,6 +37,10 @@ namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders
 
             //it's extractable
             if (ei != null)
+            {
+                if (ei.HashOnDataRelease) 
+                    toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Hashed);
+
                 switch (ei.ExtractionCategory)
                 {
                     case ExtractionCategory.ProjectSpecific:
@@ -59,6 +63,8 @@ namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
+            }
+                
 
 
             return toReturn;
