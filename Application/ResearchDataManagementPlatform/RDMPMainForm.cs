@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.UI;
@@ -85,6 +86,7 @@ namespace ResearchDataManagementPlatform
         private FileInfo _persistenceFile;
         private ICheckNotifier _globalErrorCheckNotifier;
         private string _version;
+        private string _connectedTo;
 
         public void SetRepositoryLocator(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
@@ -104,8 +106,18 @@ namespace ResearchDataManagementPlatform
             
             //put the version of the software into the window title
             _version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
-            Text = "Research Data Management Platform";
             
+            //put the current platform database into the window title too
+            if (Activator?.RepositoryLocator?.CatalogueRepository is TableRepository connectedTo)
+            {
+                var database = connectedTo.DiscoveredServer?.GetCurrentDatabase();
+
+                if (database != null) 
+                    _connectedTo = $"({database.GetRuntimeName()} on {database.Server.Name})";
+            }
+            
+            Text = "Research Data Management Platform";
+
             var rdmpDir = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RDMP"));
             if(!rdmpDir.Exists)
                 rdmpDir.Create();
@@ -145,8 +157,9 @@ namespace ResearchDataManagementPlatform
         }
 
         public override string Text { 
-            get => base.Text; 
-            set => base.Text = value + " v" + _version; }
+            get => base.Text;
+            set => base.Text = (value + " v" + _version + " " + _connectedTo).Trim();
+        }
 
         public void LoadFromXml(Stream stream)
         {
