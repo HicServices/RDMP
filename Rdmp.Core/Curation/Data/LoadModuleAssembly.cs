@@ -115,7 +115,7 @@ namespace Rdmp.Core.Curation.Data
 
         
         /// <summary>
-        /// Downloads the plugin dll/pdb/src to the given directory
+        /// Downloads the plugin nupkg to the given directory
         /// </summary>
         /// <param name="downloadDirectory"></param>
         public string DownloadAssembly(DirectoryInfo downloadDirectory)
