@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Export Plugins command (which saves the currently loaded RDMP plugins to the selected folder)
 - Double clicking a dataset in the Extraction user interface opens it for editing (previously you had to right click and select Edit)
 
+## Changed
+
+- Catalogue collection no longer expands when CatalogueFolder changes
+
 ## [4.0.3] - 2020-02-28
 
 ### Added

@@ -118,21 +118,12 @@ namespace Rdmp.UI.Collections
             if(isFirstTime || Equals(oRefreshFrom, CatalogueFolder.Root))
             {
                 tlvCatalogues.RefreshObject(CatalogueFolder.Root);
-                ExpandAllFolders(CatalogueFolder.Root);
+                tlvCatalogues.Expand(CatalogueFolder.Root);
                 isFirstTime = false;
             }
 
         }
-
-        private void ExpandAllFolders(CatalogueFolder model)
-        {
-            //expand it
-            tlvCatalogues.Expand(model);
-            
-            foreach (var folder in tlvCatalogues.GetChildren(model).OfType<CatalogueFolder>())
-                ExpandAllFolders(folder);
-        }
-
+        
         public void ApplyFilters()
         {
             if(bLoading)
