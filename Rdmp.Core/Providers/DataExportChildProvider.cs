@@ -56,8 +56,9 @@ namespace Rdmp.Core.Providers
         public ExtractableCohort[] Cohorts { get; private set; }
 
         public ExtractionConfiguration[] ExtractionConfigurations { get; private set; }
-        
-        private Dictionary<ExtractionConfiguration, SelectedDataSets[]> _configurationToDatasetMapping;
+        public Dictionary<int, List<ExtractionConfiguration>> ExtractionConfigurationsByProject { get; set; }
+
+        private Dictionary<ExtractionConfiguration, List<SelectedDataSets>> _configurationToDatasetMapping;
         private IFilterManager _dataExportFilterManager;
 
         public List<ExternalCohortTable> BlackListedSources { get; private set; }
@@ -128,6 +129,8 @@ namespace Rdmp.Core.Providers
             
             Projects = GetAllObjects<Project>(dataExportRepository);
             ExtractionConfigurations = GetAllObjects<ExtractionConfiguration>(dataExportRepository);
+            ExtractionConfigurationsByProject = ExtractionConfigurations.GroupBy(k => k.Project_ID).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
+
             AllGlobalExtractionFilterParameters = GetAllObjects<GlobalExtractionFilterParameter>(dataExportRepository);
 
             AllContainers = GetAllObjects<FilterContainer>(dataExportRepository).ToDictionary(o => o.ID, o => o);
@@ -150,12 +153,14 @@ namespace Rdmp.Core.Providers
                 _cohortsByOriginId[c.OriginID].Add(c);
             }
 
-            _configurationToDatasetMapping = new Dictionary<ExtractionConfiguration, SelectedDataSets[]>();
+            _configurationToDatasetMapping = new Dictionary<ExtractionConfiguration, List<SelectedDataSets>>();
 
             GetCohortAvailability();
-
+            
+            var configToSds = SelectedDataSets.GroupBy(k => k.ExtractionConfiguration_ID).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
+            
             foreach (ExtractionConfiguration configuration in ExtractionConfigurations)
-                _configurationToDatasetMapping.Add(configuration, SelectedDataSets.Where(c => c.ExtractionConfiguration_ID == configuration.ID).ToArray());
+                _configurationToDatasetMapping.Add(configuration,configToSds[configuration.ID]);
 
             RootCohortsNode = new AllCohortsNode();
             AddChildren(RootCohortsNode,new DescendancyList(RootCohortsNode));
@@ -308,7 +313,7 @@ namespace Rdmp.Core.Providers
             AddChildren(frozenConfigurationsNode,descendancy.Add(frozenConfigurationsNode));
 
             //Add ExtractionConfigurations which are not released (frozen)
-            var configs = ExtractionConfigurations.Where(c => c.Project_ID == extractionConfigurationsNode.Project.ID).ToArray();
+            var configs = ExtractionConfigurationsByProject[extractionConfigurationsNode.Project.ID].ToArray();
             foreach (ExtractionConfiguration config in configs.Where(c=>!c.IsReleased))
             {
                 AddChildren(config, descendancy.Add(config));
@@ -323,7 +328,7 @@ namespace Rdmp.Core.Providers
             HashSet<object> children = new HashSet<object>();
 
             //Add ExtractionConfigurations which are not released (frozen)
-            var configs = ExtractionConfigurations.Where(c => c.Project_ID == frozenExtractionConfigurationsNode.Project.ID).ToArray();
+            var configs = ExtractionConfigurationsByProject[frozenExtractionConfigurationsNode.Project.ID].ToArray();
             foreach (ExtractionConfiguration config in configs.Where(c => c.IsReleased))
             {
                 AddChildren(config, descendancy.Add(config));
