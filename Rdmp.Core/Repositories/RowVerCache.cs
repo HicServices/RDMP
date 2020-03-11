@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,6 +28,7 @@ namespace Rdmp.Core.Repositories
         private object _oLockCachedObjects = new object();
 
         private byte[] _maxRowVer;
+        public long _changeTracking;
 
         public RowVerCache(TableRepository repository)
         {
@@ -51,26 +53,23 @@ namespace Rdmp.Core.Repositories
 
                 // Get deleted objects
                 /*
-
-    SELECT ID
-      FROM (
-	    VALUES (1),(2),(3),(4),(5),(6),(50)
-           ) t1 (ID)
-    EXCEPT
-    select ID FROM Catalogue
+                SELECT  
+    CT.ID
+FROM  
+    CHANGETABLE(CHANGES Catalogue, @last_synchronization_version) AS CT  
+	WHERE SYS_CHANGE_OPERATION = 'D'
 
     */
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine("SELECT ID FROM ( VALUES");
-                sb.Append(string.Join(",", _cachedObjects.Select(l => $"({l.ID})")));
-                sb.AppendLine(@") t1 (ID)
-    EXCEPT
-    select ID FROM ");
-                sb.Append(typeof(T).Name);
 
                 using (var con = _repository.GetConnection())
                 {
-                    using(var cmd = _repository.DiscoveredServer.GetCommand(sb.ToString(), con))
+                    string sql = $@"SELECT  
+                    CT.ID
+                        FROM  
+    CHANGETABLE(CHANGES {typeof(T).Name}, {_changeTracking}) AS CT  
+	WHERE SYS_CHANGE_OPERATION = 'D'";
+
+                    using(var cmd = _repository.DiscoveredServer.GetCommand(sql, con))
                         using(var r = cmd.ExecuteReader())
                             while (r.Read())
                             {
@@ -103,6 +102,16 @@ namespace Rdmp.Core.Repositories
             {
                 using (var cmd = _repository.DiscoveredServer.GetCommand("select max(RowVer) from " + typeof(T).Name, con))
                     _maxRowVer = (byte[])cmd.ExecuteScalar();
+
+                using (var cmd =
+                    _repository.DiscoveredServer.GetCommand("select CHANGE_TRACKING_CURRENT_VERSION()", con))
+                {
+                    
+                    object result = cmd.ExecuteScalar();
+                    if(result != DBNull.Value)
+                        _changeTracking = Convert.ToInt64(result);
+                }
+                    
             }
         }
         private string ByteArrayToString(byte[] ba)
