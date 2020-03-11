@@ -24,6 +24,7 @@ namespace Rdmp.Core.Repositories
         private readonly TableRepository _repository;
 
         private List<T> _cachedObjects = new List<T>();
+        private object _oLockCachedObjects = new object();
 
         private byte[] _maxRowVer;
 
@@ -34,74 +35,72 @@ namespace Rdmp.Core.Repositories
 
         public List<T> GetAllObjects(out List<T> deleted, out List<T> newObjects, out List<T> changedObjects)
         {
-            deleted = new List<T>();
-            changedObjects = new List<T>();
-
-            var server = _repository.DiscoveredServer;
-
-            //cache is empty
-            if (!_cachedObjects.Any() || _maxRowVer == null)
+            lock (_oLockCachedObjects)
             {
-                _cachedObjects.AddRange(_repository.GetAllObjectsNoCache<T>());
-                newObjects = _cachedObjects;
-                UpdateMaxRowVer(server);
+                deleted = new List<T>();
+                changedObjects = new List<T>();
+
+                //cache is empty
+                if (!_cachedObjects.Any() || _maxRowVer == null)
+                {
+                    _cachedObjects.AddRange(_repository.GetAllObjectsNoCache<T>());
+                    newObjects = _cachedObjects;
+                    UpdateMaxRowVer();
+                    return _cachedObjects;
+                }
+
+                // Get deleted objects
+                /*
+
+    SELECT ID
+      FROM (
+	    VALUES (1),(2),(3),(4),(5),(6),(50)
+           ) t1 (ID)
+    EXCEPT
+    select ID FROM Catalogue
+
+    */
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("SELECT ID FROM ( VALUES");
+                sb.Append(string.Join(",", _cachedObjects.Select(l => $"({l.ID})")));
+                sb.AppendLine(@") t1 (ID)
+    EXCEPT
+    select ID FROM ");
+                sb.Append(typeof(T).Name);
+
+                using (var con = _repository.GetConnection())
+                {
+                    using(var cmd = _repository.DiscoveredServer.GetCommand(sb.ToString(), con))
+                        using(var r = cmd.ExecuteReader())
+                            while (r.Read())
+                            {
+                                var d = _cachedObjects.Single(o => o.ID == (int)r["ID"]);
+                                deleted.Add(d);
+                                _cachedObjects.Remove(d);
+                            }
+                }
+
+                //get new objects
+                var maxId = _cachedObjects.Any() ? _cachedObjects.Max(o => o.ID) : 0;
+                newObjects = new List<T>(_repository.GetAllObjects<T>("WHERE ID > " + maxId));
+                _cachedObjects.AddRange(newObjects);
+
+                // Get updated objects
+                changedObjects = new List<T>(_repository.GetAllObjects<T>("WHERE RowVer > " + ByteArrayToString(_maxRowVer)));
+                //I'm hoping Union prefers references in the LHS of this since they will be fresher!
+                _cachedObjects = changedObjects.Union(_cachedObjects).ToList();
+
+                UpdateMaxRowVer();
+
                 return _cachedObjects;
             }
-        
-
-            // Get deleted objects
-            /*
-
-SELECT ID
-  FROM (
-	VALUES (1),(2),(3),(4),(5),(6),(50)
-       ) t1 (ID)
-EXCEPT
-select ID FROM Catalogue
-
-*/
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("SELECT ID FROM ( VALUES");
-            sb.Append(string.Join(",", _cachedObjects.Select(l => $"({l.ID})")));
-            sb.AppendLine(@") t1 (ID)
-EXCEPT
-select ID FROM ");
-            sb.Append(typeof(T).Name);
-
-            using (var con = server.GetConnection())
-            {
-                con.Open();
-                using(var cmd = _repository.DiscoveredServer.GetCommand(sb.ToString(), con))
-                using(var r = cmd.ExecuteReader())
-                    while (r.Read())
-                    {
-                        var d = _cachedObjects.Single(o => o.ID == (int)r["ID"]);
-                        deleted.Add(d);
-                        _cachedObjects.Remove(d);
-                    }
-            }
-
-            //get new objects
-            var maxId = _cachedObjects.Any() ? _cachedObjects.Max(o => o.ID) : 0;
-            newObjects = new List<T>(_repository.GetAllObjects<T>("WHERE ID > " + maxId));
-            _cachedObjects.AddRange(newObjects);
-
-            // Get updated objects
-            changedObjects = new List<T>(_repository.GetAllObjects<T>("WHERE RowVer > " + ByteArrayToString(_maxRowVer)));
-            //I'm hoping Union prefers references in the LHS of this since they will be fresher!
-            _cachedObjects = changedObjects.Union(_cachedObjects).ToList();
-
-            UpdateMaxRowVer(server);
-
-            return _cachedObjects;
         }
 
-        private void UpdateMaxRowVer(DiscoveredServer server)
+        private void UpdateMaxRowVer()
         {
             //get the earliest RowVer
-            using (var con = server.GetConnection())
+            using (var con = _repository.GetConnection())
             {
-                con.Open();
                 using (var cmd = _repository.DiscoveredServer.GetCommand("select max(RowVer) from " + typeof(T).Name, con))
                     _maxRowVer = (byte[])cmd.ExecuteScalar();
             }
