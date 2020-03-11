@@ -277,7 +277,7 @@ namespace MapsDirectlyToDatabaseTable
             }
         }
 
-        public T[] GetAllObjects<T>() where T : IMapsDirectlyToDatabaseTable
+        public virtual T[] GetAllObjects<T>() where T : IMapsDirectlyToDatabaseTable
         {
             return GetAllObjects<T>(null);
         }
@@ -949,6 +949,11 @@ namespace MapsDirectlyToDatabaseTable
         protected virtual bool IsCompatibleType(Type type)
         {
             return _tables.Value.Any(t=>t.GetRuntimeName().Equals(type.Name));
+        }
+
+        public virtual T[] GetAllObjectsNoCache<T>() where T : IMapsDirectlyToDatabaseTable
+        {
+            return GetAllObjects<T>();
         }
     }
 }
