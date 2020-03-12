@@ -77,6 +77,7 @@ namespace Rdmp.Core.Tests.CohortCommitting
 
             //delete the column info to make it a missing reference
             _c1.DeleteInDatabase();
+            _extractionInfo1.ClearAllInjections(); //<- Because this already exists in the cache it will know it's anticipated child ColumnInfo too
 
             //now it should gracefully skip over it
             Assert.IsFalse(wizard.GetPrivateIdentifierCandidates().Any(prototype => prototype.RuntimeName.Equals("PrivateIdentifierA")));

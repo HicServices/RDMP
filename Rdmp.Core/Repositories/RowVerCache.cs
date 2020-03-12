@@ -9,18 +9,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
-using NPOI.SS.Formula.Functions;
-using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.Repositories
 {
-    public interface IRowVerCache
-    {
-        T[] GetAllObjects<T>();
-    }
-
     public class RowVerCache<T>: IRowVerCache where T : IMapsDirectlyToDatabaseTable
     {
         private readonly TableRepository _repository;
