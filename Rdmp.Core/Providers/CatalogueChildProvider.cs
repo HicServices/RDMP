@@ -76,7 +76,7 @@ namespace Rdmp.Core.Providers
         
         public IEnumerable<CatalogueItem> AllCatalogueItems { get { return AllCatalogueItemsDictionary.Values; } }
         
-        private From1ToM<Catalogue,CatalogueItem> _catalogueToCatalogueItems;
+        private Dictionary<int,List<CatalogueItem>> _catalogueToCatalogueItems;
         public Dictionary<int,CatalogueItem> AllCatalogueItemsDictionary { get; private set; }
 
         private readonly Dictionary<int,ColumnInfo> _allColumnInfos;
@@ -120,7 +120,7 @@ namespace Rdmp.Core.Providers
         public DataAccessCredentials[] AllDataAccessCredentials { get; set; }
         public Dictionary<TableInfo, List<DataAccessCredentialUsageNode>> AllDataAccessCredentialUsages { get; set; }
 
-        private From1ToM<TableInfo, ColumnInfo> _tableInfosToColumnInfos;
+        private Dictionary<int, List<ColumnInfo>> _tableInfosToColumnInfos;
         public ColumnInfo[] AllColumnInfos { get; private set; }
         public PreLoadDiscardedColumn[] AllPreLoadDiscardedColumns { get; private set; }
 
@@ -271,7 +271,9 @@ namespace Rdmp.Core.Providers
                 Task.Factory.StartNew(() => { AllColumnInfos = GetAllObjects<ColumnInfo>(repository); })
                 );
             
-            _tableInfosToColumnInfos = new From1ToM<TableInfo, ColumnInfo>(c=>c.TableInfo_ID,AllColumnInfos);
+            ;
+
+            _tableInfosToColumnInfos = AllColumnInfos.GroupBy(c => c.TableInfo_ID).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
             AllPreLoadDiscardedColumns = GetAllObjects<PreLoadDiscardedColumn>(repository);
 
             AllSupportingDocuments = GetAllObjects<SupportingDocument>(repository);
@@ -281,7 +283,7 @@ namespace Rdmp.Core.Providers
             AllJoinableCohortAggregateConfigurationUse = GetAllObjects<JoinableCohortAggregateConfigurationUse>(repository);
 
             AllCatalogueItemsDictionary = GetAllObjects<CatalogueItem>(repository).ToDictionary(i => i.ID, o => o);
-            _catalogueToCatalogueItems = new From1ToM<Catalogue, CatalogueItem>(ci=>ci.Catalogue_ID,AllCatalogueItems);
+            _catalogueToCatalogueItems = AllCatalogueItems.GroupBy(c=>c.Catalogue_ID).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
             _allColumnInfos = AllColumnInfos.ToDictionary(i=>i.ID,o=>o);
             
             //Inject known ColumnInfos into CatalogueItems
@@ -870,7 +872,7 @@ namespace Rdmp.Core.Providers
             var regularAggregates = catalogueAggregates.Except(cohortAggregates).ToArray();
 
             //get all the CatalogueItems for this Catalogue
-            var cis = _catalogueToCatalogueItems[c].ToArray();
+            var cis = _catalogueToCatalogueItems[c.ID].ToArray();
 
             //tell the CatalogueItems that we are are their parent
             foreach (CatalogueItem ci in cis)
@@ -1208,7 +1210,7 @@ namespace Rdmp.Core.Providers
             }
 
             //next add the column infos
-            foreach (ColumnInfo c in _tableInfosToColumnInfos[tableInfo])
+            foreach (ColumnInfo c in _tableInfosToColumnInfos[tableInfo.ID])
             {
                 children.Add(c);
                 c.InjectKnown(tableInfo);
@@ -1353,64 +1355,67 @@ namespace Rdmp.Core.Providers
             
             Stopwatch sw = new Stopwatch();
 
+            var providers = PluginChildProviders.Except(_blacklistedPlugins).ToArray();
+
             //for every object found so far
-            foreach (var o in objectsToAskAbout?? GetAllObjects())
-            {
-                //for every plugin loaded (that is not blacklisted)
-                foreach (var plugin in PluginChildProviders.Except(_blacklistedPlugins))
+            if(providers.Any())
+                foreach (var o in objectsToAskAbout?? GetAllObjects())
                 {
-                    //ask about the children
-                    try
+                    //for every plugin loaded (that is not blacklisted)
+                    foreach (var plugin in providers)
                     {
-                        sw.Restart();
-                        //otherwise ask plugin what it's children are
-                        var pluginChildren = plugin.GetChildren(o);
-
-                        //if the plugin takes too long to respond we need to stop
-                        if (sw.ElapsedMilliseconds > 1000)
+                        //ask about the children
+                        try
                         {
-                            _blacklistedPlugins.Add(plugin);
-                            throw new Exception("Plugin '" + plugin + "' was blacklisted for taking too long to respond to GetChildren(o) where o was a '" + o.GetType().Name + "' ('" + o + "')");
-                        }
+                            sw.Restart();
+                            //otherwise ask plugin what it's children are
+                            var pluginChildren = plugin.GetChildren(o);
 
-                        //it has children
-                        if (pluginChildren != null && pluginChildren.Any())
-                        {
-                            //get the descendancy of the parent
-                            var parentDescendancy = GetDescendancyListIfAnyFor(o);
-
-                            DescendancyList newDescendancy;
-                            if(parentDescendancy == null)
-                                newDescendancy = new DescendancyList(new[] {o}); //if the parent is a root level object start a new descendancy list from it
-                            else
-                                newDescendancy = parentDescendancy.Add(o);//otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
-
-                            //record that 
-
-                            foreach (object pluginChild in pluginChildren)
+                            //if the plugin takes too long to respond we need to stop
+                            if (sw.ElapsedMilliseconds > 1000)
                             {
-                                //if the parent didn't have any children before
-                                if (!_childDictionary.ContainsKey(o))
-                                    _childDictionary.AddOrUpdate(o,new HashSet<object>(),(o1, set) => set);//it does now
+                                _blacklistedPlugins.Add(plugin);
+                                throw new Exception("Plugin '" + plugin + "' was blacklisted for taking too long to respond to GetChildren(o) where o was a '" + o.GetType().Name + "' ('" + o + "')");
+                            }
+
+                            //it has children
+                            if (pluginChildren != null && pluginChildren.Any())
+                            {
+                                //get the descendancy of the parent
+                                var parentDescendancy = GetDescendancyListIfAnyFor(o);
+
+                                DescendancyList newDescendancy;
+                                if(parentDescendancy == null)
+                                    newDescendancy = new DescendancyList(new[] {o}); //if the parent is a root level object start a new descendancy list from it
+                                else
+                                    newDescendancy = parentDescendancy.Add(o);//otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
+
+                                //record that 
+
+                                foreach (object pluginChild in pluginChildren)
+                                {
+                                    //if the parent didn't have any children before
+                                    if (!_childDictionary.ContainsKey(o))
+                                        _childDictionary.AddOrUpdate(o,new HashSet<object>(),(o1, set) => set);//it does now
 
 
-                                //add us to the parent objects child collection
-                                _childDictionary[o].Add(pluginChild);
-                                
-                                //add to the child collection of the parent object kvp.Key
-                                _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,(s,e)=>newDescendancy);
+                                    //add us to the parent objects child collection
+                                    _childDictionary[o].Add(pluginChild);
+                                    
+                                    //add to the child collection of the parent object kvp.Key
+                                    _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,(s,e)=>newDescendancy);
 
-                                //we have found a new object so we must ask other plugins about it (chances are a plugin will have a whole tree of sub objects)
-                                newObjectsFound.Add(pluginChild);
+                                    //we have found a new object so we must ask other plugins about it (chances are a plugin will have a whole tree of sub objects)
+                                    newObjectsFound.Add(pluginChild);
+                                }
                             }
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
+                        catch (Exception e)
+                        {
+                            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
+                        }
                     }
                 }
-            }
 
             if(newObjectsFound.Any())
                 GetPluginChildren(newObjectsFound);

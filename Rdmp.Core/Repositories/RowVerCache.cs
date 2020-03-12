@@ -43,6 +43,7 @@ namespace Rdmp.Core.Repositories
                     //cache is empty
                     if (!_cachedObjects.Any() || _maxRowVer == null)
                     {
+                        _cachedObjects.Clear();
                         _cachedObjects.AddRange(_repository.GetAllObjectsNoCache<T>());
                         UpdateMaxRowVer();
                         return _cachedObjects;

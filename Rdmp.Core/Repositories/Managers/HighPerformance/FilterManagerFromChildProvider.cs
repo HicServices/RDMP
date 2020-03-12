@@ -26,12 +26,13 @@ namespace Rdmp.Core.Repositories.Managers.HighPerformance
         /// </summary>
         readonly Dictionary<int, List<AggregateFilterContainer>> _subcontainers = new Dictionary<int, List<AggregateFilterContainer>>();
 
-        private From1ToM<IContainer, IFilter> _containersToFilters;
+        private Dictionary<int, List<AggregateFilter>> _containersToFilters;
 
         public FilterManagerFromChildProvider(CatalogueRepository repository,ICoreChildProvider childProvider):base(repository)
         {
-            _containersToFilters = new From1ToM<IContainer, IFilter>(f=>f.FilterContainer_ID.Value,childProvider.AllAggregateFilters.Where(f=>f.FilterContainer_ID.HasValue));
 
+            _containersToFilters = childProvider.AllAggregateFilters.Where(f=>f.FilterContainer_ID.HasValue).GroupBy(f=>f.FilterContainer_ID.Value).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
+            
             var server = repository.DiscoveredServer;
             using (var con = repository.GetConnection())
             {
@@ -61,7 +62,7 @@ namespace Rdmp.Core.Repositories.Managers.HighPerformance
 
         public override IFilter[] GetFilters(IContainer container)
         {
-            return _containersToFilters[container].ToArray();
+            return _containersToFilters[container.ID].ToArray();
         }
     }
 }
