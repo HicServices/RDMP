@@ -60,7 +60,7 @@ namespace Rdmp.Core.CohortCommitting
             foreach (var extractionInformation in extractionInformations)
             {
                 //do not process ExtractionInformations when the ColumnInfo is COLUMNINFO_MISSING
-                if(extractionInformation .ColumnInfo == null)
+                if(extractionInformation.ColumnInfo == null || !extractionInformation.ColumnInfo.Exists())
                     continue;
 
                 var match = toReturn.SingleOrDefault(prototype => prototype.IsCompatible(extractionInformation));

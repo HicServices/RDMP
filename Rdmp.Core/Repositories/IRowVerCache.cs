@@ -6,6 +6,10 @@
 
 namespace Rdmp.Core.Repositories
 {
+
+    /// <summary>
+    /// Interface for generic class <see cref="RowVerCache{T}"/>
+    /// </summary>
     public interface IRowVerCache
     {
         T[] GetAllObjects<T>();

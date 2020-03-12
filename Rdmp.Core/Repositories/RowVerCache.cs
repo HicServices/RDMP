@@ -13,6 +13,12 @@ using MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Repositories
 {
+    /// <summary>
+    /// Caches the results of calls to GetAllObjects of <see cref="TableRepository"/> using a mixture of
+    /// Sql Server 'Change Tracking' and a RowVer column.  This reduces the number of objects that need to be
+    /// constructed / updated when an RDMP platform database stores hundreds of thousands of objects.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class RowVerCache<T>: IRowVerCache where T : IMapsDirectlyToDatabaseTable
     {
         private readonly TableRepository _repository;
