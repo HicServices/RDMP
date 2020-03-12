@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using NPOI.SS.Formula.Functions;
@@ -35,64 +36,72 @@ namespace Rdmp.Core.Repositories
             _repository = repository;
         }
 
-        public List<T> GetAllObjects(out List<T> deleted, out List<T> newObjects, out List<T> changedObjects)
+        public List<T> GetAllObjects()
         {
-            lock (_oLockCachedObjects)
+            if(Monitor.TryEnter(_oLockCachedObjects))
             {
-                deleted = new List<T>();
-                changedObjects = new List<T>();
-
-                //cache is empty
-                if (!_cachedObjects.Any() || _maxRowVer == null)
+                try
                 {
-                    _cachedObjects.AddRange(_repository.GetAllObjectsNoCache<T>());
-                    newObjects = _cachedObjects;
+                    //cache is empty
+                    if (!_cachedObjects.Any() || _maxRowVer == null)
+                    {
+                        _cachedObjects.AddRange(_repository.GetAllObjectsNoCache<T>());
+                        UpdateMaxRowVer();
+                        return _cachedObjects;
+                    }
+
+                    // Get deleted objects
+                    /*
+                    SELECT  
+        CT.ID
+    FROM  
+        CHANGETABLE(CHANGES Catalogue, @last_synchronization_version) AS CT  
+	    WHERE SYS_CHANGE_OPERATION = 'D'
+
+        */
+
+                    using (var con = _repository.GetConnection())
+                    {
+                        string sql = $@"SELECT  
+                        CT.ID
+                            FROM  
+        CHANGETABLE(CHANGES {typeof(T).Name}, {_changeTracking}) AS CT  
+	    WHERE SYS_CHANGE_OPERATION = 'D'";
+
+                        using(var cmd = _repository.DiscoveredServer.GetCommand(sql, con))
+                            using(var r = cmd.ExecuteReader())
+                                while (r.Read())
+                                {
+                                    //it might have been added and deleted by someone else and we never saw it
+                                    var d = _cachedObjects.SingleOrDefault(o => o.ID == (int)r["ID"]);
+
+                                    if (d != null)
+                                        _cachedObjects.Remove(d);
+
+                                }
+                    }
+
+                    //get new objects
+                    var maxId = _cachedObjects.Any() ? _cachedObjects.Max(o => o.ID) : 0;
+                    _cachedObjects.AddRange(_repository.GetAllObjects<T>("WHERE ID > " + maxId));
+
+                    // Get updated objects
+                    var changedObjects = _repository.GetAllObjects<T>("WHERE RowVer > " + ByteArrayToString(_maxRowVer));
+                    //I'm hoping Union prefers references in the LHS of this since they will be fresher!
+                    _cachedObjects = changedObjects.Union(_cachedObjects).ToList();
+
                     UpdateMaxRowVer();
+
                     return _cachedObjects;
                 }
-
-                // Get deleted objects
-                /*
-                SELECT  
-    CT.ID
-FROM  
-    CHANGETABLE(CHANGES Catalogue, @last_synchronization_version) AS CT  
-	WHERE SYS_CHANGE_OPERATION = 'D'
-
-    */
-
-                using (var con = _repository.GetConnection())
+                finally
                 {
-                    string sql = $@"SELECT  
-                    CT.ID
-                        FROM  
-    CHANGETABLE(CHANGES {typeof(T).Name}, {_changeTracking}) AS CT  
-	WHERE SYS_CHANGE_OPERATION = 'D'";
-
-                    using(var cmd = _repository.DiscoveredServer.GetCommand(sql, con))
-                        using(var r = cmd.ExecuteReader())
-                            while (r.Read())
-                            {
-                                var d = _cachedObjects.Single(o => o.ID == (int)r["ID"]);
-                                deleted.Add(d);
-                                _cachedObjects.Remove(d);
-                            }
+                    Monitor.Exit(_oLockCachedObjects);
                 }
-
-                //get new objects
-                var maxId = _cachedObjects.Any() ? _cachedObjects.Max(o => o.ID) : 0;
-                newObjects = new List<T>(_repository.GetAllObjects<T>("WHERE ID > " + maxId));
-                _cachedObjects.AddRange(newObjects);
-
-                // Get updated objects
-                changedObjects = new List<T>(_repository.GetAllObjects<T>("WHERE RowVer > " + ByteArrayToString(_maxRowVer)));
-                //I'm hoping Union prefers references in the LHS of this since they will be fresher!
-                _cachedObjects = changedObjects.Union(_cachedObjects).ToList();
-
-                UpdateMaxRowVer();
-
-                return _cachedObjects;
             }
+
+            //we were unable to get a lock
+            return _repository.GetAllObjectsNoCache<T>().ToList();
         }
 
         private void UpdateMaxRowVer()
@@ -124,7 +133,7 @@ FROM
 
         public T1[] GetAllObjects<T1>()
         {
-            return GetAllObjects(out _, out _, out _).Cast<T1>().ToArray();
+            return GetAllObjects().Cast<T1>().ToArray();
         }
     }
 }

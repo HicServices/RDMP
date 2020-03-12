@@ -160,7 +160,8 @@ namespace Rdmp.Core.Providers
             var configToSds = SelectedDataSets.GroupBy(k => k.ExtractionConfiguration_ID).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
             
             foreach (ExtractionConfiguration configuration in ExtractionConfigurations)
-                _configurationToDatasetMapping.Add(configuration,configToSds[configuration.ID]);
+                if(configToSds.ContainsKey(configuration.ID))
+                    _configurationToDatasetMapping.Add(configuration,configToSds[configuration.ID]);
 
             RootCohortsNode = new AllCohortsNode();
             AddChildren(RootCohortsNode,new DescendancyList(RootCohortsNode));
@@ -313,12 +314,12 @@ namespace Rdmp.Core.Providers
             AddChildren(frozenConfigurationsNode,descendancy.Add(frozenConfigurationsNode));
 
             //Add ExtractionConfigurations which are not released (frozen)
-            var configs = ExtractionConfigurationsByProject[extractionConfigurationsNode.Project.ID].ToArray();
-            foreach (ExtractionConfiguration config in configs.Where(c=>!c.IsReleased))
-            {
-                AddChildren(config, descendancy.Add(config));
-                children.Add(config);
-            }
+            if(ExtractionConfigurationsByProject.ContainsKey(extractionConfigurationsNode.Project.ID))
+                foreach (ExtractionConfiguration config in ExtractionConfigurationsByProject[extractionConfigurationsNode.Project.ID].Where(c=>!c.IsReleased))
+                {
+                    AddChildren(config, descendancy.Add(config));
+                    children.Add(config);
+                }
 
             AddToDictionaries(children, descendancy);
         }
@@ -328,12 +329,12 @@ namespace Rdmp.Core.Providers
             HashSet<object> children = new HashSet<object>();
 
             //Add ExtractionConfigurations which are not released (frozen)
-            var configs = ExtractionConfigurationsByProject[frozenExtractionConfigurationsNode.Project.ID].ToArray();
-            foreach (ExtractionConfiguration config in configs.Where(c => c.IsReleased))
-            {
-                AddChildren(config, descendancy.Add(config));
-                children.Add(config);
-            }
+            if(ExtractionConfigurationsByProject.ContainsKey(frozenExtractionConfigurationsNode.Project.ID))
+                foreach (ExtractionConfiguration config in ExtractionConfigurationsByProject[frozenExtractionConfigurationsNode.Project.ID].Where(c => c.IsReleased))
+                {
+                    AddChildren(config, descendancy.Add(config));
+                    children.Add(config);
+                }
 
             AddToDictionaries(children,descendancy);
         }

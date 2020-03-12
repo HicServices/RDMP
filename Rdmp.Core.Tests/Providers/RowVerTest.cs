@@ -28,21 +28,15 @@ namespace Rdmp.Core.Tests.Providers
 
             //create a cache
             var rowVerCache = new RowVerCache<Catalogue>(CatalogueRepository);
-            List<Catalogue> deleted;
-            List<Catalogue> added;
-            List<Catalogue> changed;
 
             //should fill the cache
-            cata = rowVerCache.GetAllObjects(out _, out added, out changed)[0];
-            Assert.Contains(cata,added);
+            cata = rowVerCache.GetAllObjects()[0];
             
             //should return the same instance
-            Assert.AreSame(cata, rowVerCache.GetAllObjects(out deleted, out added, out changed)[0]);
-            Assert.IsEmpty(deleted);
+            Assert.AreSame(cata, rowVerCache.GetAllObjects()[0]);
 
             cata.DeleteInDatabase();
-            Assert.IsEmpty(rowVerCache.GetAllObjects(out deleted, out added, out changed));
-            Assert.AreSame(cata,deleted[0]);
+            Assert.IsEmpty(rowVerCache.GetAllObjects());
             
             //create some catalogues
             new Catalogue(CatalogueRepository, "1");
@@ -50,35 +44,30 @@ namespace Rdmp.Core.Tests.Providers
             new Catalogue(CatalogueRepository, "3");
 
             //fill up the cache
-            rowVerCache.GetAllObjects(out deleted, out added, out changed);
+            rowVerCache.GetAllObjects();
 
             //give it a fresh object
             var cata2 = new Catalogue(CatalogueRepository, "dddd");
             
             //fresh fetch for this
-            Assert.Contains(cata2,rowVerCache.GetAllObjects(out deleted, out added, out changed));
-            Assert.AreEqual(cata2,added.Single());
-            Assert.IsFalse(rowVerCache.GetAllObjects(out deleted, out added, out changed).Contains(cata));
-            Assert.IsEmpty(deleted);
-
+            Assert.Contains(cata2,rowVerCache.GetAllObjects());
+            Assert.IsFalse(rowVerCache.GetAllObjects().Contains(cata));
+            
             //change a value in the background but first make sure that what the cache has is a Equal but not reference to cata2
-            Assert.IsFalse(rowVerCache.GetAllObjects(out deleted, out added, out changed).Any(o=>ReferenceEquals(o,cata2)));
-            Assert.IsTrue(rowVerCache.GetAllObjects(out deleted, out added, out changed).Any(o=>Equals(o,cata2)));
+            Assert.IsFalse(rowVerCache.GetAllObjects().Any(o=>ReferenceEquals(o,cata2)));
+            Assert.IsTrue(rowVerCache.GetAllObjects().Any(o=>Equals(o,cata2)));
 
             cata2.Name = "boom";
             cata2.SaveToDatabase();
             
-            Assert.AreEqual(1,rowVerCache.GetAllObjects(out deleted, out added, out changed).Count(c=>c.Name.Equals("boom")));
-            Assert.AreEqual(1,changed.Count);
+            Assert.AreEqual(1,rowVerCache.GetAllObjects().Count(c=>c.Name.Equals("boom")));
             
             cata2.Name = "vroom";
             cata2.SaveToDatabase();
             
-            Assert.AreEqual(1,rowVerCache.GetAllObjects(out deleted, out added, out changed).Count(c=>c.Name.Equals("vroom")));
-            Assert.AreEqual(1,changed.Count);
+            Assert.AreEqual(1,rowVerCache.GetAllObjects().Count(c=>c.Name.Equals("vroom")));
 
-            Assert.AreEqual(1,rowVerCache.GetAllObjects(out deleted, out added, out changed).Count(c=>c.Name.Equals("vroom")));
-            Assert.AreEqual(0,changed.Count);
+            Assert.AreEqual(1,rowVerCache.GetAllObjects().Count(c=>c.Name.Equals("vroom")));
         }
     }
 }
