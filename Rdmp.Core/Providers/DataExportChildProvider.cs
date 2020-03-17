@@ -80,19 +80,19 @@ namespace Rdmp.Core.Providers
 
         public AllFreeCohortIdentificationConfigurationsNode AllFreeCohortIdentificationConfigurationsNode = new AllFreeCohortIdentificationConfigurationsNode();
         public AllProjectCohortIdentificationConfigurationsNode AllProjectCohortIdentificationConfigurationsNode = new AllProjectCohortIdentificationConfigurationsNode();
-        private readonly HashSet<ISelectedDataSets> _selectedDataSetsWithNoIsExtractionIdentifier;
+        private HashSet<ISelectedDataSets> _selectedDataSetsWithNoIsExtractionIdentifier;
 
 
         /// <summary>
         /// All AND/OR containers found during construction (in the data export database).  The Key is the ID of the container (for rapid random access)
         /// </summary>
-        public readonly Dictionary<int, FilterContainer> AllContainers;
+        public Dictionary<int, FilterContainer> AllContainers;
 
         /// <summary>
         /// All data export filters that existed when this child provider was constructed
         /// </summary>
         public DeployedExtractionFilter[] AllDeployedExtractionFilters { get; private set; }
-        private readonly DeployedExtractionFilterParameter[] _allParameters;
+        private DeployedExtractionFilterParameter[] _allParameters;
         
         private IDataExportRepository dataExportRepository;
 
@@ -617,6 +617,43 @@ namespace Rdmp.Core.Providers
             }
 
             return toReturn;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            
+            if (disposing)
+            {
+                //That's one way to avoid memory leaks... anyone holding onto a stale one of these is going to have a bad day
+                RootCohortsNode = null;
+                 CohortSources = null;
+                ExtractableDataSets = null;
+                SelectedDataSets = null;
+                AllPackages = null;
+                Projects = null;
+                _cohortsByOriginId = null;
+                Cohorts = null;
+                ExtractionConfigurations = null;
+                ExtractionConfigurationsByProject = null;
+                _configurationToDatasetMapping = null;
+                _dataExportFilterManager = null;
+                BlackListedSources = null;
+                DuplicatesByProject = null;
+                DuplicatesByCohortSourceUsedByProjectNode = null;
+                ProjectNumberToCohortsDictionary = null;
+                AllProjectAssociatedCics = null;
+                AllGlobalExtractionFilterParameters = null;
+                _cicAssociations = null;
+                AllFreeCohortIdentificationConfigurationsNode = null;
+                AllProjectCohortIdentificationConfigurationsNode = null;
+                _selectedDataSetsWithNoIsExtractionIdentifier = null;
+                 AllContainers = null;
+                AllDeployedExtractionFilters = null;
+                _allParameters = null;
+                dataExportRepository = null;
+
+            }
         }
     }
 }

@@ -49,12 +49,12 @@ namespace Rdmp.Core.Providers
     /// 5. For each of the objects added that has children of it's own repeat the above (Except call DescendancyList.Add instead of creating a new one)</para>
     ///  
     /// </summary>
-    public class CatalogueChildProvider :ICoreChildProvider
+    public class CatalogueChildProvider :ICoreChildProvider, IDisposable
     {
         //Load System
         public LoadMetadata[] AllLoadMetadatas { get; set; }
         public ProcessTask[] AllProcessTasks { get; set; }
-        public ProcessTaskArgument[] AllProcessTasksArguments { get; }
+        public ProcessTaskArgument[] AllProcessTasksArguments { get; set; }
 
         public LoadProgress[] AllLoadProgresses { get; set; }
         public CacheProgress[] AllCacheProgresses { get; set; }
@@ -79,7 +79,7 @@ namespace Rdmp.Core.Providers
         private Dictionary<int,List<CatalogueItem>> _catalogueToCatalogueItems;
         public Dictionary<int,CatalogueItem> AllCatalogueItemsDictionary { get; private set; }
 
-        private readonly Dictionary<int,ColumnInfo> _allColumnInfos;
+        private Dictionary<int,ColumnInfo> _allColumnInfos;
         
         public AggregateConfiguration[] AllAggregateConfigurations { get; private set; }
         public AggregateDimension[] AllAggregateDimensions { get; private set; }
@@ -100,7 +100,7 @@ namespace Rdmp.Core.Providers
         public Pipeline[] AllPipelines { get; set; }
         public PipelineComponent[] AllPipelineComponents { get; set; }
         
-        public PipelineComponentArgument[] AllPipelineComponentsArguments { get; }
+        public PipelineComponentArgument[] AllPipelineComponentsArguments { get; set; }
 
         public StandardRegex[] AllStandardRegexes { get; set; }
 
@@ -1442,6 +1442,67 @@ namespace Rdmp.Core.Providers
         {
             foreach (IMapsDirectlyToDatabaseTable m in toAdd)
                 toReturn.Add(m, null);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                //That's one way to avoid memory leaks... anyone holding onto a stale one of these is going to have a bad day
+                AllLoadMetadatas = null;
+                AllProcessTasks = null;
+                AllProcessTasksArguments = null;
+                AllLoadProgresses = null;
+                AllCacheProgresses = null;
+                AllPermissionWindows = null;
+                AllCatalogues = null;
+                AllCataloguesDictionary = null;
+                AllSupportingDocuments = null;
+                AllSupportingSQL = null;
+                _childDictionary = null;
+                _descendancyDictionary = null;
+                _catalogueToCatalogueItems = null;
+                AllCatalogueItemsDictionary= null;
+                _allColumnInfos = null;
+                AllAggregateConfigurations= null;
+                AllAggregateDimensions= null;
+                AllRDMPRemotesNode= null;
+                AllRemoteRDMPs = null;
+                AllDashboardsNode = null;
+                AllDashboards = null;
+                AllObjectSharingNode= null;
+                AllImports = null;
+                AllExports = null;
+                AllStandardRegexesNode= null;
+                AllPipelinesNode= null;
+                OtherPipelinesNode= null;
+                AllPipelines = null;
+                AllPipelineComponents = null;
+                AllPipelineComponentsArguments = null;
+                AllStandardRegexes = null;
+                AllANOTablesNode= null;
+                AllANOTables = null;
+                AllExternalServers= null;
+                AllServers = null;
+                AllTableInfos = null;
+                AllDataAccessCredentialsNode = null;
+                AllExternalServersNode= null;
+                AllServersNode= null;
+                AllDataAccessCredentials = null;
+                AllDataAccessCredentialUsages = null;
+                _tableInfosToColumnInfos = null;
+                AllColumnInfos= null;
+                AllPreLoadDiscardedColumns= null;
+                AllLookups = null;
+                AllJoinInfos = null;
+                AllAnyTableParameters = null;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

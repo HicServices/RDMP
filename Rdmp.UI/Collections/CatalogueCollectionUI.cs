@@ -102,6 +102,9 @@ namespace Rdmp.UI.Collections
 
         public void RefreshUIFromDatabase(object oRefreshFrom)
         {   
+            if(tlvCatalogues.ModelFilter is CatalogueCollectionFilter f)
+                f.ChildProvider = _activator.CoreChildProvider;
+
             //if there are new catalogues we don't already have in our tree
             if (_allCatalogues != null)
             {
@@ -253,6 +256,8 @@ namespace Rdmp.UI.Collections
                 //then refresh us
                 RefreshUIFromDatabase(o);
             }
+
+            ApplyFilters();
         }
         
         private void rbFlag_CheckedChanged(object sender, EventArgs e)

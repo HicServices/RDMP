@@ -31,7 +31,10 @@ namespace Rdmp.Core.Repositories.Managers.HighPerformance
         public FilterManagerFromChildProvider(CatalogueRepository repository,ICoreChildProvider childProvider):base(repository)
         {
 
-            _containersToFilters = childProvider.AllAggregateFilters.Where(f=>f.FilterContainer_ID.HasValue).GroupBy(f=>f.FilterContainer_ID.Value).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
+            _containersToFilters = 
+                childProvider.AllAggregateFilters.Where(f=>f.FilterContainer_ID.HasValue)
+                    .GroupBy(f=>f.FilterContainer_ID.Value)
+                    .ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
             
             var server = repository.DiscoveredServer;
             using (var con = repository.GetConnection())
@@ -54,15 +57,13 @@ namespace Rdmp.Core.Repositories.Managers.HighPerformance
         
         public override IContainer[] GetSubContainers(IContainer container)
         {
-            if (!_subcontainers.ContainsKey(container.ID))
-                return new AggregateFilterContainer[0];
-
-            return _subcontainers[container.ID].ToArray();
+            return _subcontainers.TryGetValue(container.ID, out List<AggregateFilterContainer> result) ? result.ToArray() :
+                new AggregateFilterContainer[0];
         }
 
         public override IFilter[] GetFilters(IContainer container)
         {
-            return _containersToFilters[container.ID].ToArray();
+            return _containersToFilters.TryGetValue(container.ID,out List<AggregateFilter> result) ? result.ToArray() : new AggregateFilter[0];
         }
     }
 }
