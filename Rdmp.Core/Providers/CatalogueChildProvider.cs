@@ -289,12 +289,10 @@ namespace Rdmp.Core.Providers
             //Inject known ColumnInfos into CatalogueItems
             Parallel.ForEach(AllCatalogueItems, (ci) =>
             {
-                ColumnInfo col = null;
-
-                if (ci.ColumnInfo_ID != null && _allColumnInfos.ContainsKey(ci.ColumnInfo_ID.Value))
-                    col = _allColumnInfos[ci.ColumnInfo_ID.Value];
-
-                ci.InjectKnown(col);
+                if (ci.ColumnInfo_ID != null && _allColumnInfos.TryGetValue(ci.ColumnInfo_ID.Value, out ColumnInfo col))
+                    ci.InjectKnown(col);
+                else
+                    ci.InjectKnown((ColumnInfo)null);
             });
 
             AllExtractionInformationsDictionary = GetAllObjects<ExtractionInformation>(repository).ToDictionary(i => i.ID, o => o);
@@ -303,9 +301,11 @@ namespace Rdmp.Core.Providers
             //Inject known CatalogueItems into ExtractionInformations
             foreach (ExtractionInformation ei in AllExtractionInformationsDictionary.Values)
             {
-                CatalogueItem ci = AllCatalogueItemsDictionary[ei.CatalogueItem_ID];
-                ei.InjectKnown(ci.ColumnInfo);
-                ei.InjectKnown(ci);
+                if (AllCatalogueItemsDictionary.TryGetValue(ei.CatalogueItem_ID, out CatalogueItem ci))
+                {
+                    ei.InjectKnown(ci.ColumnInfo);
+                    ei.InjectKnown(ci);
+                }
             }
 
             AllAggregateConfigurations = GetAllObjects<AggregateConfiguration>(repository);
@@ -406,11 +406,9 @@ namespace Rdmp.Core.Providers
 
             foreach (AggregateConfiguration ac in AllAggregateConfigurations)
             {
-                var joinable = joinableDictionaryByAggregateConfigurationId.ContainsKey(ac.ID) //if theres a joinable
-                    ? joinableDictionaryByAggregateConfigurationId[ac.ID] //inject that we know the joinable (and what it is)
-                    : null; //otherwise inject that it is not a joinable (suppresses database checking later)
-
-                ac.InjectKnown(joinable);
+                ac.InjectKnown(joinableDictionaryByAggregateConfigurationId.TryGetValue(ac.ID,out JoinableCohortAggregateConfiguration joinable) //if theres a joinable
+                    ? joinable //inject that we know the joinable (and what it is)
+                    : null); //otherwise inject that it is not a joinable (suppresses database checking later)
             }
                     
             AllGovernanceNode = new AllGovernanceNode();
@@ -990,9 +988,8 @@ namespace Rdmp.Core.Providers
         {
             List<object> childObjects = new List<object>();
 
-            if(_extractionInformationsByCatalogueItem.ContainsKey(ci.ID))
+            if(_extractionInformationsByCatalogueItem.TryGetValue(ci.ID,out ExtractionInformation ei))
             {
-                var ei = _extractionInformationsByCatalogueItem[ci.ID];
                 ci.InjectKnown(ei);
                 childObjects.Add(ei);
                 AddChildren(ei, descendancy.Add(ei));
@@ -1000,8 +997,8 @@ namespace Rdmp.Core.Providers
             else
                 ci.InjectKnown((ExtractionInformation)null); // we know the CatalogueItem has no ExtractionInformation child because it's not in the dictionary
 
-            if (ci.ColumnInfo_ID.HasValue)
-                childObjects.Add(new LinkedColumnInfoNode(ci, _allColumnInfos[ci.ColumnInfo_ID.Value]));
+            if (ci.ColumnInfo_ID.HasValue && _allColumnInfos.TryGetValue(ci.ColumnInfo_ID.Value, out ColumnInfo col))
+                childObjects.Add(new LinkedColumnInfoNode(ci,col));
             
             AddToDictionaries(new HashSet<object>(childObjects),descendancy);
         }
@@ -1218,8 +1215,8 @@ namespace Rdmp.Core.Providers
             }
 
             //finally add any credentials objects
-            if (AllDataAccessCredentialUsages.ContainsKey(tableInfo))
-                foreach (DataAccessCredentialUsageNode node in AllDataAccessCredentialUsages[tableInfo])
+            if (AllDataAccessCredentialUsages.TryGetValue(tableInfo, out List<DataAccessCredentialUsageNode> nodes))
+                foreach (DataAccessCredentialUsageNode node in nodes)
                     children.Add(node);
 
             //now we have recorded all the children add them with descendancy via the TableInfo descendancy
@@ -1303,10 +1300,7 @@ namespace Rdmp.Core.Providers
 
         public DescendancyList GetDescendancyListIfAnyFor(object model)
         {
-            if (_descendancyDictionary.ContainsKey(model))
-                return _descendancyDictionary[model];
-
-            return null;
+            return _descendancyDictionary.TryGetValue(model, out DescendancyList result) ? result : null;
         }
         
         
@@ -1423,10 +1417,8 @@ namespace Rdmp.Core.Providers
 
         public IEnumerable<IMasqueradeAs> GetMasqueradersOf(object o)
         {
-            if (AllMasqueraders.ContainsKey(o))
-                return AllMasqueraders[o];
-
-            return new IMasqueradeAs[0];
+            return AllMasqueraders.TryGetValue(o,out HashSet<IMasqueradeAs> result) ?
+                (IEnumerable<IMasqueradeAs>) result:new IMasqueradeAs[0];
         }
 
         public DatabaseEntity GetLatestCopyOf(DatabaseEntity e)

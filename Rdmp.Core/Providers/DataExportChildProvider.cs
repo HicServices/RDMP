@@ -120,10 +120,10 @@ namespace Rdmp.Core.Providers
                 s.InjectKnown(dsDictionary[s.ExtractableDataSet_ID]);
             
             //This means that the ToString method in ExtractableDataSet doesn't need to go lookup catalogue info
-            var dictionary = AllCatalogues.ToDictionary(c => c.ID, c2 => c2);
+            var catalogueIdDict = AllCatalogues.ToDictionary(c => c.ID, c2 => c2);
             foreach (ExtractableDataSet ds in ExtractableDataSets)
-                if(dictionary.ContainsKey(ds.Catalogue_ID))
-                    ds.InjectKnown(dictionary[ds.Catalogue_ID]);
+                if(catalogueIdDict.TryGetValue(ds.Catalogue_ID, out Catalogue cata))
+                    ds.InjectKnown(cata);
                 
             AllPackages = GetAllObjects<ExtractableDataSetPackage>(dataExportRepository);
             
@@ -160,8 +160,8 @@ namespace Rdmp.Core.Providers
             var configToSds = SelectedDataSets.GroupBy(k => k.ExtractionConfiguration_ID).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
             
             foreach (ExtractionConfiguration configuration in ExtractionConfigurations)
-                if(configToSds.ContainsKey(configuration.ID))
-                    _configurationToDatasetMapping.Add(configuration,configToSds[configuration.ID]);
+                if(configToSds.TryGetValue(configuration.ID, out List<SelectedDataSets> result))
+                    _configurationToDatasetMapping.Add(configuration,result);
 
             RootCohortsNode = new AllCohortsNode();
             AddChildren(RootCohortsNode,new DescendancyList(RootCohortsNode));
@@ -177,8 +177,8 @@ namespace Rdmp.Core.Providers
 
             //inject extractability into Catalogues
             foreach (Catalogue catalogue in AllCatalogues)
-                if (cataToEds.ContainsKey(catalogue.ID))
-                    catalogue.InjectKnown(cataToEds[catalogue.ID].GetCatalogueExtractabilityStatus());
+                if (cataToEds.TryGetValue(catalogue.ID, out ExtractableDataSet result))
+                    catalogue.InjectKnown(result.GetCatalogueExtractabilityStatus());
                 else
                     catalogue.InjectKnown(new CatalogueExtractabilityStatus(false,false));
 
@@ -314,8 +314,8 @@ namespace Rdmp.Core.Providers
             AddChildren(frozenConfigurationsNode,descendancy.Add(frozenConfigurationsNode));
 
             //Add ExtractionConfigurations which are not released (frozen)
-            if(ExtractionConfigurationsByProject.ContainsKey(extractionConfigurationsNode.Project.ID))
-                foreach (ExtractionConfiguration config in ExtractionConfigurationsByProject[extractionConfigurationsNode.Project.ID].Where(c=>!c.IsReleased))
+            if(ExtractionConfigurationsByProject.TryGetValue(extractionConfigurationsNode.Project.ID, out List<ExtractionConfiguration> result))
+                foreach (ExtractionConfiguration config in result.Where(c=>!c.IsReleased))
                 {
                     AddChildren(config, descendancy.Add(config));
                     children.Add(config);
@@ -329,8 +329,8 @@ namespace Rdmp.Core.Providers
             HashSet<object> children = new HashSet<object>();
 
             //Add ExtractionConfigurations which are not released (frozen)
-            if(ExtractionConfigurationsByProject.ContainsKey(frozenExtractionConfigurationsNode.Project.ID))
-                foreach (ExtractionConfiguration config in ExtractionConfigurationsByProject[frozenExtractionConfigurationsNode.Project.ID].Where(c => c.IsReleased))
+            if(ExtractionConfigurationsByProject.TryGetValue(frozenExtractionConfigurationsNode.Project.ID, out List<ExtractionConfiguration> result))
+                foreach (ExtractionConfiguration config in result.Where(c => c.IsReleased))
                 {
                     AddChildren(config, descendancy.Add(config));
                     children.Add(config);
@@ -464,9 +464,9 @@ namespace Rdmp.Core.Providers
                                 {
                                     //really should be only one here but still they might for some reason have 2 references to the same external cohort
                             
-                                    if(_cohortsByOriginId.ContainsKey(Convert.ToInt32(r["OriginID"])))
+                                    if(_cohortsByOriginId.TryGetValue(Convert.ToInt32(r["OriginID"]),out HashSet<ExtractableCohort> result))
                                         //Tell the cohorts what their external data values are so they don't have to fetch them themselves individually
-                                        foreach (ExtractableCohort c in _cohortsByOriginId[Convert.ToInt32(r["OriginID"])].Where(c=> c.ExternalCohortTable_ID == source.ID))
+                                        foreach (ExtractableCohort c in result.Where(c=> c.ExternalCohortTable_ID == source.ID))
                                         {
                                             //load external data from the result set
                                             var externalData = new ExternalCohortDefinitionData(r, source.Name);
@@ -552,10 +552,8 @@ namespace Rdmp.Core.Providers
 
         public IEnumerable<SelectedDataSets> GetDatasets(ExtractionConfiguration extractionConfiguration)
         {
-            if (_configurationToDatasetMapping.ContainsKey(extractionConfiguration))
-                return _configurationToDatasetMapping[extractionConfiguration];
-
-            return new SelectedDataSets[0];
+            return _configurationToDatasetMapping.TryGetValue(extractionConfiguration,out List<SelectedDataSets> result)?
+                (IEnumerable<SelectedDataSets>) result :new SelectedDataSets[0];
         }
 
         public IEnumerable<ExtractionConfiguration> GetConfigurations(Project project)
@@ -613,12 +611,8 @@ namespace Rdmp.Core.Providers
                     c.InjectKnown((ExtractionInformation)null);
                 else
                 {
-                    if (AllExtractionInformationsDictionary.ContainsKey(c.CatalogueExtractionInformation_ID.Value))
-                    {
-                        var extractionInformation = AllExtractionInformationsDictionary[c.CatalogueExtractionInformation_ID.Value];
-
-                        c.InjectKnown(extractionInformation);
-                    }
+                    if (AllExtractionInformationsDictionary.TryGetValue(c.CatalogueExtractionInformation_ID.Value,out ExtractionInformation ei))
+                        c.InjectKnown(ei);
                 }
             }
 
