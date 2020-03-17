@@ -869,8 +869,10 @@ namespace Rdmp.Core.Providers
             var cohortAggregates = catalogueAggregates.Where(a => a.IsCohortIdentificationAggregate).ToArray();
             var regularAggregates = catalogueAggregates.Except(cohortAggregates).ToArray();
 
-            //get all the CatalogueItems for this Catalogue
-            var cis = _catalogueToCatalogueItems[c.ID].ToArray();
+            //get all the CatalogueItems for this Catalogue (TryGet because Catalogue may not have any items
+            var cis = _catalogueToCatalogueItems.TryGetValue(c.ID, out List<CatalogueItem> result)
+                ? result.ToArray()
+                : new CatalogueItem[0];
 
             //tell the CatalogueItems that we are are their parent
             foreach (CatalogueItem ci in cis)
@@ -1207,12 +1209,13 @@ namespace Rdmp.Core.Providers
             }
 
             //next add the column infos
-            foreach (ColumnInfo c in _tableInfosToColumnInfos[tableInfo.ID])
-            {
-                children.Add(c);
-                c.InjectKnown(tableInfo);
-                AddChildren(c,descendancy.Add(c).SetBetterRouteExists());
-            }
+            if( _tableInfosToColumnInfos.TryGetValue(tableInfo.ID,out List<ColumnInfo> result))
+                foreach (ColumnInfo c in result)
+                {
+                    children.Add(c);
+                    c.InjectKnown(tableInfo);
+                    AddChildren(c,descendancy.Add(c).SetBetterRouteExists());
+                }
 
             //finally add any credentials objects
             if (AllDataAccessCredentialUsages.TryGetValue(tableInfo, out List<DataAccessCredentialUsageNode> nodes))
