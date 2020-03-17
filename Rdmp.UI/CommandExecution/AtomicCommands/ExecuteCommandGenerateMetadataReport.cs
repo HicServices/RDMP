@@ -19,8 +19,6 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public ExecuteCommandGenerateMetadataReport(IActivateItems activator, params ICatalogue[] initialSelection) : base(activator)
         {
             _initialSelection = initialSelection;
-            if(initialSelection.Length == 0)
-                SetImpossible("No Catalogues");
         }
 
         public override void Execute()
