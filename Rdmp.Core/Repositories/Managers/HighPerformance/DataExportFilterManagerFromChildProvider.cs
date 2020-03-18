@@ -21,7 +21,7 @@ namespace Rdmp.Core.Repositories.Managers.HighPerformance
     {
         readonly Dictionary<int, List<FilterContainer>> _subcontainers = new Dictionary<int, List<FilterContainer>>();
         
-        private From1ToM<IContainer, IFilter> _containersToFilters;
+        private Dictionary<int, List<DeployedExtractionFilter>> _containersToFilters;
 
         /// <summary>
         /// Fetches all containers and filters out of the <paramref name="repository"/> and sets the class up to provide
@@ -31,8 +31,8 @@ namespace Rdmp.Core.Repositories.Managers.HighPerformance
         /// <param name="childProvider"></param>
         public DataExportFilterManagerFromChildProvider(DataExportRepository repository, DataExportChildProvider childProvider): base(repository)
         {
-            _containersToFilters = new From1ToM<IContainer, IFilter>(f=>f.FilterContainer_ID.Value,childProvider.AllDeployedExtractionFilters.Where(f=>f.FilterContainer_ID.HasValue));
-
+            _containersToFilters = childProvider.AllDeployedExtractionFilters.Where(f=>f.FilterContainer_ID.HasValue).GroupBy(f=>f.FilterContainer_ID.Value).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
+            
             var server = repository.DiscoveredServer;
             using (var con = repository.GetConnection())
             {
@@ -65,7 +65,7 @@ namespace Rdmp.Core.Repositories.Managers.HighPerformance
 
         public override IFilter[] GetFilters(IContainer container)
         {
-            return  _containersToFilters[container].ToArray();
+            return  _containersToFilters[container.ID].ToArray();
         }
     }
 }

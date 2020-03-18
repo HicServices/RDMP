@@ -194,6 +194,34 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             var ec3 = CreateExtractionConfiguration(project,cohort,"Project 123 - 2018 Refresh",true,notifier,biochem,prescribing,demography,admissions);
 
             ReleaseAllConfigurations(notifier,ec1,ec2,ec3);
+
+
+            if (options.Nightmare)
+            {
+                //Lots of datasets
+                for (int i = 0; i < 1000; i++)
+                {
+                    var cata = new Catalogue(_repos.CatalogueRepository, $"Catalogue {i}");
+                    var eds = new ExtractableDataSet(_repos.DataExportRepository, cata);
+                    var ti = new TableInfo(_repos.CatalogueRepository, $"[MyDb].[Table{i}]");
+
+                    for (int j = 0; j < 40; j++)
+                    {
+                        var col = new ColumnInfo(_repos.CatalogueRepository, $"MyCol{j}", "varchar(10)", ti);
+                        var ci = new CatalogueItem(_repos.CatalogueRepository, cata, col.Name);
+                        var ei = new ExtractionInformation(_repos.CatalogueRepository, ci, col, col.Name);
+                    }
+                    
+                    Project p = new Project(_repos.DataExportRepository,$"Project {i}");
+
+                    for (int j = 0; j < 20; j++)
+                    {
+                        var config = new ExtractionConfiguration(_repos.DataExportRepository, p);
+                        var sds = new SelectedDataSets(_repos.DataExportRepository,config, eds,null);
+                    }
+                }
+
+            }
         }
 
         private void ReleaseAllConfigurations(ICheckNotifier notifier,params ExtractionConfiguration[] extractionConfigurations)

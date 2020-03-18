@@ -74,6 +74,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public List<IPluginUserInterface> PluginUserInterfaces { get; private set; }
         readonly UIObjectConstructor _constructor = new UIObjectConstructor();
 
+        /// <summary>
+        /// Populated after <see cref="UpdateChildProviders"/>, this is the stale child provider
+        /// which should be disposed (anyone holding onto it will have a bad day).
+        /// </summary>
+        private ICoreChildProvider _staleChildProvider;
+
         public IArrangeWindows WindowArranger { get; private set; }
         
         public override void Publish(DatabaseEntity databaseEntity)
@@ -108,6 +114,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             UpdateChildProviders();
             RefreshBus.BeforePublish += (s, e) => UpdateChildProviders();
+            RefreshBus.AfterPublish +=  (s, e) => _staleChildProvider?.Dispose();
 
             //handle custom icons from plugin user interfaces in which
             CoreIconProvider = new DataExportIconProvider(repositoryLocator,PluginUserInterfaces.ToArray());
@@ -147,6 +154,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         private void UpdateChildProviders()
         {
+            //Dispose the old one
+            var old = CoreChildProvider;
+
             //prefer a linked repository with both
             if(RepositoryLocator.DataExportRepository != null)
                 try
@@ -167,6 +177,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             CoreChildProvider.GetPluginChildren();
             RefreshBus.ChildProvider = CoreChildProvider;
+
+            _staleChildProvider = old;
         }
         
 

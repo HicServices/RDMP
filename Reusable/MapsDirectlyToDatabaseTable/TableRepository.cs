@@ -84,12 +84,6 @@ namespace MapsDirectlyToDatabaseTable
                         DatabaseCommandHelper.AddParameterWithValueToCommand("@ID", cmd, oTableWrapperObject.ID);
                         affectedRows = cmd.ExecuteNonQuery();
                     }
-
-                    if (affectedRows != 1)
-                    {
-                        throw new Exception("Attempted to delete object of type " + oTableWrapperObject.GetType().Name + " from table " + oTableWrapperObject.GetType().Name + " with ID " + oTableWrapperObject.ID +
-                                            " but the DELETE command resulted in " + affectedRows + " affected rows");
-                    }
                     
                     //likewise if there are obscure depenedency handlers let them handle cascading this delete into the mists of their obscure functionality (e.g. deleting a Catalogue in CatalogueRepository would delete all Evaluations of that Catalogue in the DQE repository because they would then be orphans)
                     if(ObscureDependencyFinder != null)
@@ -277,7 +271,7 @@ namespace MapsDirectlyToDatabaseTable
             }
         }
 
-        public T[] GetAllObjects<T>() where T : IMapsDirectlyToDatabaseTable
+        public virtual T[] GetAllObjects<T>() where T : IMapsDirectlyToDatabaseTable
         {
             return GetAllObjects<T>(null);
         }
@@ -949,6 +943,11 @@ namespace MapsDirectlyToDatabaseTable
         protected virtual bool IsCompatibleType(Type type)
         {
             return _tables.Value.Any(t=>t.GetRuntimeName().Equals(type.Name));
+        }
+
+        public virtual T[] GetAllObjectsNoCache<T>() where T : IMapsDirectlyToDatabaseTable
+        {
+            return GetAllObjects<T>();
         }
     }
 }

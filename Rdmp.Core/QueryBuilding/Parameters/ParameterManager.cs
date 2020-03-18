@@ -457,7 +457,10 @@ namespace Rdmp.Core.QueryBuilding.Parameters
                 return null;
 
             return 
-                ParametersFoundSoFarInQueryGeneration.Single(k => k.Value.Contains(parameter)).Key;
+                ParametersFoundSoFarInQueryGeneration
+                    //take the bottom most level it was found at
+                    .OrderBy(kvp=>kvp.Key)
+                    .First(k => k.Value.Contains(parameter)).Key;
         
         }
 

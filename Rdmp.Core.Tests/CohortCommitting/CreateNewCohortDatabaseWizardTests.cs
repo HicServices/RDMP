@@ -77,7 +77,7 @@ namespace Rdmp.Core.Tests.CohortCommitting
 
             //delete the column info to make it a missing reference
             _c1.DeleteInDatabase();
-
+            
             //now it should gracefully skip over it
             Assert.IsFalse(wizard.GetPrivateIdentifierCandidates().Any(prototype => prototype.RuntimeName.Equals("PrivateIdentifierA")));
             
