@@ -184,9 +184,9 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("Wait5SecondsAfterStartupUI", value); }
         }
 
-        public static bool ShowCohortWizard 
+        public static bool ShowCohortWizard
         {
-            get { return AppSettings.GetValueOrDefault("ShowCohortWizard", true); }
+            get { return AppSettings.GetValueOrDefault("ShowCohortWizard", false); }
             set { AppSettings.AddOrUpdateValue("ShowCohortWizard", value); }
         }
         #endregion

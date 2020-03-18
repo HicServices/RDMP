@@ -66,9 +66,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory
             this.lblGo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblGo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblGo.ForeColor = System.Drawing.Color.CornflowerBlue;
-            this.lblGo.Location = new System.Drawing.Point(372, 20);
+            this.lblGo.Location = new System.Drawing.Point(345, 19);
             this.lblGo.Name = "lblGo";
-            this.lblGo.Size = new System.Drawing.Size(28, 19);
+            this.lblGo.Size = new System.Drawing.Size(30, 19);
             this.lblGo.TabIndex = 3;
             this.lblGo.Text = "GO";
             this.lblGo.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -79,7 +79,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory
             // helpIcon1
             // 
             this.helpIcon1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.helpIcon1.Location = new System.Drawing.Point(381, 3);
+            this.helpIcon1.Location = new System.Drawing.Point(378, 19);
             this.helpIcon1.Name = "helpIcon1";
             this.helpIcon1.Size = new System.Drawing.Size(19, 19);
             this.helpIcon1.TabIndex = 6;
@@ -91,7 +91,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory
             this.selectIMapsDirectlyToDatabaseTableComboBox1.Location = new System.Drawing.Point(25, 17);
             this.selectIMapsDirectlyToDatabaseTableComboBox1.Name = "selectIMapsDirectlyToDatabaseTableComboBox1";
             this.selectIMapsDirectlyToDatabaseTableComboBox1.SelectedItem = null;
-            this.selectIMapsDirectlyToDatabaseTableComboBox1.Size = new System.Drawing.Size(350, 24);
+            this.selectIMapsDirectlyToDatabaseTableComboBox1.Size = new System.Drawing.Size(319, 24);
             this.selectIMapsDirectlyToDatabaseTableComboBox1.TabIndex = 10;
             // 
             // AtomicCommandWithTargetUI
