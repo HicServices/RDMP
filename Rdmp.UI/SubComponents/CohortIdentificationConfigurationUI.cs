@@ -28,11 +28,13 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SubComponents.EmptyLineElements;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Icons.IconProvision;
+using Timer = System.Windows.Forms.Timer;
 
 
 namespace Rdmp.UI.SubComponents
@@ -66,7 +68,7 @@ namespace Rdmp.UI.SubComponents
     /// <para>    Filter 2 - Date of Death - Date of Birth > 16 years</para>
     ///  
     /// </summary>
-    public partial class CohortIdentificationConfigurationUI : CohortIdentificationConfigurationUI_Design
+    public partial class CohortIdentificationConfigurationUI : CohortIdentificationConfigurationUI_Design,IRefreshBusSubscriber
     {
         private CohortIdentificationConfiguration _configuration;
 
@@ -101,6 +103,10 @@ namespace Rdmp.UI.SubComponents
             olvOrder.IsEditable = false;
             AssociatedCollection = RDMPCollection.Cohort;
 
+            var t = new Timer();
+            t.Tick += refreshThreadCountPeriodically_Tick;
+            t.Interval = 500;
+            t.Start();
             
             olvCount.AspectGetter += Count_AspectGetter;
             olvCached.AspectGetter = Cached_AspectGetter;
@@ -135,7 +141,20 @@ namespace Rdmp.UI.SubComponents
 
             return null;
         }
+        
+        public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+        {
+            var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
 
+            //if publish event was for a child of the cic (_cic is in the objects descendancy i.e. it sits below our cic)
+            if (descendancy != null && descendancy.Parents.Contains(_configuration))
+                RecreateAllTasks();
+        }
+        
+        private void refreshThreadCountPeriodically_Tick(object sender, EventArgs e)
+        {
+            tlvCic.RebuildColumns();
+        }
 
         void CohortCompilerUI1_SelectionChanged(IMapsDirectlyToDatabaseTable obj)
         {
@@ -522,6 +541,91 @@ namespace Rdmp.UI.SubComponents
         {
             CancelAll();
         }
+
+
+        /* TODO: Integrate this bit
+
+        private void tlvConfiguration_ItemActivate(object sender, EventArgs e)
+        {
+            var o = tlvConfiguration.SelectedObject as ICompileable;
+            if (o != null)
+                if(o.CrashMessage != null)
+                    ViewCrashMessage(o);
+                else
+                    WideMessageBox.Show("Build Log", o.Log,WideMessageBoxTheme.Help);
+        }
+
+        private void tlvConfiguration_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            BuildRightClickMenu(c);
+        }
+
+        private void BuildRightClickMenu(ICompileable c)
+        {
+            if (c != null)
+            {
+                var menu = new ContextMenuStrip();
+                
+                menu.Items.Add(
+                    BuildItem("View Sql", c, a => !string.IsNullOrWhiteSpace(a.CountSQL),
+                        a => WideMessageBox.Show($"Sql {c}", a.CountSQL, WideMessageBoxTheme.Help))
+                    );
+                
+                                
+                menu.Items.Add(
+                    new ToolStripMenuItem("View Crash Message", null,
+                        (s, e) => ViewCrashMessage(c)){Enabled = c.CrashMessage != null});
+
+                menu.Items.Add(
+                    new ToolStripMenuItem("View Build Log", null,
+                        (s, e) => WideMessageBox.Show($"Build Log {c}", c.Log, WideMessageBoxTheme.Help)));
+                
+                menu.Items.Add(
+                    BuildItem("View Results", c, a => a.Identifiers != null,
+                        a =>
+                        {
+                            Activator.ShowWindow(new DataTableViewerUI(a.Identifiers, $"Results {c}"));
+                        })
+                    );
+
+                
+                menu.Items.Add(
+                    BuildItem("Clear Cache", c, a => a.SubqueriesCached > 0,
+                        a =>
+                        {
+                            if (c is ICacheableTask cacheable)
+                                ClearCacheFor(new[] {cacheable});
+                        })
+                );
+
+                ContextMenuStrip = menu;
+            }
+            else
+                ContextMenuStrip = null;
+        }
+
+        private void ViewCrashMessage(ICompileable compileable)
+        {
+            ExceptionViewer.Show(compileable.CrashMessage);
+        }
+
+        private ToolStripMenuItem BuildItem(string title, ICompileable c,Func<CohortIdentificationTaskExecution,bool> enabledFunc, Action<CohortIdentificationTaskExecution> action)
+        {
+            var menuItem = new ToolStripMenuItem(title);
+
+            if (Compiler.Tasks.ContainsKey(c))
+            {
+                var exe = Compiler.Tasks[c];
+                if (enabledFunc(exe))
+                    menuItem.Click += (s, e) => action(exe);
+                else
+                    menuItem.Enabled = false;
+            }
+            else
+                menuItem.Enabled = false;
+
+            return menuItem;
+        }*/
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CohortIdentificationConfigurationUI_Design, UserControl>))]
