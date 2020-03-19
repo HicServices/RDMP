@@ -108,8 +108,11 @@ namespace Rdmp.UI.SubComponents
             t.Interval = 500;
             t.Start();
             
-            olvCount.AspectGetter += Count_AspectGetter;
+            olvCount.AspectGetter = Count_AspectGetter;
             olvCached.AspectGetter = Cached_AspectGetter;
+            olvCumulativeTotal.AspectGetter = CumulativeTotal_AspectGetter;
+            olvTime.AspectGetter = Time_AspectGetter;
+            olvWorking.AspectGetter = Working_AspectGetter;
 
             _miClearCache.Click += MiClearCacheClick;
             _miClearCache.Image = CatalogueIcons.ExternalDatabaseServer_Cache;
@@ -120,6 +123,21 @@ namespace Rdmp.UI.SubComponents
             //doesn't get called unless the column has a sorting on it
             olvNameCol.Sortable = true;
             tlvCic.Sort(olvNameCol);
+        }
+
+        private object Working_AspectGetter(object rowobject)
+        {
+            return Compiler?.Tasks?.Keys.FirstOrDefault(k => k.Child.Equals(rowobject))?.State;
+        }
+
+        private object Time_AspectGetter(object rowobject)
+        {
+            return Compiler?.Tasks?.Keys.FirstOrDefault(k => k.Child.Equals(rowobject))?.ElapsedTime;
+        }
+
+        private object CumulativeTotal_AspectGetter(object rowobject)
+        {
+            return Compiler?.Tasks?.Keys.FirstOrDefault(k => k.Child.Equals(rowobject))?.CumulativeRowCount;
         }
 
         private object Cached_AspectGetter(object rowobject)
@@ -155,14 +173,7 @@ namespace Rdmp.UI.SubComponents
         {
             tlvCic.RebuildColumns();
         }
-
-        void CohortCompilerUI1_SelectionChanged(IMapsDirectlyToDatabaseTable obj)
-        {
-            var joinable = obj as JoinableCohortAggregateConfiguration;
-            
-            tlvCic.SelectedObject = joinable != null ? joinable.AggregateConfiguration : obj;
-        }
-
+        
         public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);

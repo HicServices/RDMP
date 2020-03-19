@@ -137,22 +137,27 @@ namespace Rdmp.UI.SubComponents
             // olvCached
             // 
             this.olvCached.Text = "Cached";
+            olvCached.IsEditable = false;
             // 
             // olvCount
             // 
             this.olvCount.Text = "Count";
+            olvCount.IsEditable = false;
             // 
             // olvCumulativeTotal
             // 
             this.olvCumulativeTotal.Text = "Cumulative Total";
+            olvCumulativeTotal.IsEditable = false;
             // 
             // olvWorking
             // 
             this.olvWorking.Text = "Working";
+            olvWorking.IsEditable = false;
             // 
             // olvTime
             // 
             this.olvTime.Text = "Time";
+            olvTime.IsEditable = false;
             // 
             // timer1
             // 

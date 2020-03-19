@@ -152,7 +152,7 @@ namespace Rdmp.Core.CommandExecution
 
             if (paramType == typeof(string))
             {
-                bool ok = TypeText("Enter Value",prompt,int.MaxValue, initialValue.ToString(),out string stringChosen,false);
+                bool ok = TypeText("Enter Value",prompt,int.MaxValue, initialValue?.ToString(),out string stringChosen,false);
                 chosen = stringChosen;
                 return ok;
 
