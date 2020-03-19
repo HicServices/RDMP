@@ -42,8 +42,11 @@ namespace Rdmp.UI.SubComponents
             this.olvNameCol = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvExecute = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvOrder = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.CohortCompilerUI1 = new Rdmp.UI.SubComponents.CohortCompilerUI();
+            this.olvCached = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvCount = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvCumulativeTotal = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvWorking = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvTime = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.ticket = new Rdmp.UI.LocationsMenu.Ticketing.TicketingControlUI();
             this.btnAbortLoad = new System.Windows.Forms.Button();
@@ -51,15 +54,12 @@ namespace Rdmp.UI.SubComponents
             this.label5 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.tbDescription = new System.Windows.Forms.Label();
+            this.tbName = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.lblFrozen = new System.Windows.Forms.Label();
-            this.tbName = new System.Windows.Forms.Label();
-            this.tbDescription = new System.Windows.Forms.Label();
+            this.lblExecuteAllPhase = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.tlvCic)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
@@ -90,18 +90,27 @@ namespace Rdmp.UI.SubComponents
             this.tlvCic.AllColumns.Add(this.olvNameCol);
             this.tlvCic.AllColumns.Add(this.olvExecute);
             this.tlvCic.AllColumns.Add(this.olvOrder);
+            this.tlvCic.AllColumns.Add(this.olvCached);
+            this.tlvCic.AllColumns.Add(this.olvCount);
+            this.tlvCic.AllColumns.Add(this.olvCumulativeTotal);
+            this.tlvCic.AllColumns.Add(this.olvWorking);
+            this.tlvCic.AllColumns.Add(this.olvTime);
             this.tlvCic.CellEditUseWholeCell = false;
             this.tlvCic.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvNameCol,
             this.olvExecute,
-            this.olvOrder});
+            this.olvCached,
+            this.olvCount,
+            this.olvCumulativeTotal,
+            this.olvWorking,
+            this.olvTime});
             this.tlvCic.Cursor = System.Windows.Forms.Cursors.Default;
             this.tlvCic.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlvCic.HideSelection = false;
             this.tlvCic.Location = new System.Drawing.Point(0, 0);
             this.tlvCic.Name = "tlvCic";
             this.tlvCic.ShowGroups = false;
-            this.tlvCic.Size = new System.Drawing.Size(387, 574);
+            this.tlvCic.Size = new System.Drawing.Size(1243, 578);
             this.tlvCic.TabIndex = 60;
             this.tlvCic.UseCompatibleStateImageBehavior = false;
             this.tlvCic.View = System.Windows.Forms.View.Details;
@@ -121,35 +130,29 @@ namespace Rdmp.UI.SubComponents
             // 
             // olvOrder
             // 
+            this.olvOrder.DisplayIndex = 2;
             this.olvOrder.IsVisible = false;
             this.olvOrder.Text = "Order";
             // 
-            // splitContainer1
+            // olvCached
             // 
-            this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer1.Name = "splitContainer1";
+            this.olvCached.Text = "Cached";
             // 
-            // splitContainer1.Panel1
+            // olvCount
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.tlvCic);
+            this.olvCount.Text = "Count";
             // 
-            // splitContainer1.Panel2
+            // olvCumulativeTotal
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.CohortCompilerUI1);
-            this.splitContainer1.Size = new System.Drawing.Size(1243, 578);
-            this.splitContainer1.SplitterDistance = 391;
-            this.splitContainer1.TabIndex = 61;
+            this.olvCumulativeTotal.Text = "Cumulative Total";
             // 
-            // CohortCompilerUI1
+            // olvWorking
             // 
-            this.CohortCompilerUI1.CoreIconProvider = null;
-            this.CohortCompilerUI1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.CohortCompilerUI1.Location = new System.Drawing.Point(0, 0);
-            this.CohortCompilerUI1.Name = "CohortCompilerUI1";
-            this.CohortCompilerUI1.Size = new System.Drawing.Size(844, 574);
-            this.CohortCompilerUI1.TabIndex = 0;
+            this.olvWorking.Text = "Working";
+            // 
+            // olvTime
+            // 
+            this.olvTime.Text = "Time";
             // 
             // timer1
             // 
@@ -218,6 +221,7 @@ namespace Rdmp.UI.SubComponents
             // 
             // splitContainer2.Panel1
             // 
+            this.splitContainer2.Panel1.Controls.Add(this.lblExecuteAllPhase);
             this.splitContainer2.Panel1.Controls.Add(this.tbDescription);
             this.splitContainer2.Panel1.Controls.Add(this.tbName);
             this.splitContainer2.Panel1.Controls.Add(this.groupBox1);
@@ -227,10 +231,30 @@ namespace Rdmp.UI.SubComponents
             // 
             // splitContainer2.Panel2
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.splitContainer1);
+            this.splitContainer2.Panel2.Controls.Add(this.tlvCic);
             this.splitContainer2.Size = new System.Drawing.Size(1243, 681);
             this.splitContainer2.SplitterDistance = 99;
             this.splitContainer2.TabIndex = 67;
+            // 
+            // tbDescription
+            // 
+            this.tbDescription.AutoSize = true;
+            this.tbDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbDescription.Location = new System.Drawing.Point(216, 34);
+            this.tbDescription.Name = "tbDescription";
+            this.tbDescription.Size = new System.Drawing.Size(11, 13);
+            this.tbDescription.TabIndex = 69;
+            this.tbDescription.Text = "-";
+            // 
+            // tbName
+            // 
+            this.tbName.AutoSize = true;
+            this.tbName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbName.Location = new System.Drawing.Point(216, 8);
+            this.tbName.Name = "tbName";
+            this.tbName.Size = new System.Drawing.Size(11, 13);
+            this.tbName.TabIndex = 68;
+            this.tbName.Text = "-";
             // 
             // groupBox1
             // 
@@ -258,25 +282,15 @@ namespace Rdmp.UI.SubComponents
             this.lblFrozen.Text = "Read Only Mode (Configuration is Frozen)";
             this.lblFrozen.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // tbName
+            // lblExecuteAllPhase
             // 
-            this.tbName.AutoSize = true;
-            this.tbName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbName.Location = new System.Drawing.Point(216, 8);
-            this.tbName.Name = "tbName";
-            this.tbName.Size = new System.Drawing.Size(11, 13);
-            this.tbName.TabIndex = 68;
-            this.tbName.Text = "-";
-            // 
-            // tbDescription
-            // 
-            this.tbDescription.AutoSize = true;
-            this.tbDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tbDescription.Location = new System.Drawing.Point(216, 34);
-            this.tbDescription.Name = "tbDescription";
-            this.tbDescription.Size = new System.Drawing.Size(11, 13);
-            this.tbDescription.TabIndex = 69;
-            this.tbDescription.Text = "-";
+            this.lblExecuteAllPhase.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblExecuteAllPhase.AutoSize = true;
+            this.lblExecuteAllPhase.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblExecuteAllPhase.Location = new System.Drawing.Point(16, 81);
+            this.lblExecuteAllPhase.Name = "lblExecuteAllPhase";
+            this.lblExecuteAllPhase.Size = new System.Drawing.Size(0, 13);
+            this.lblExecuteAllPhase.TabIndex = 70;
             // 
             // CohortIdentificationConfigurationUI
             // 
@@ -287,10 +301,6 @@ namespace Rdmp.UI.SubComponents
             this.Name = "CohortIdentificationConfigurationUI";
             this.Size = new System.Drawing.Size(1243, 694);
             ((System.ComponentModel.ISupportInitialize)(this.tlvCic)).EndInit();
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
@@ -303,8 +313,6 @@ namespace Rdmp.UI.SubComponents
         }
 
         #endregion
-
-        private CohortCompilerUI CohortCompilerUI1;
         private System.Windows.Forms.Label lblName;
         private TicketingControlUI ticket;
         private System.Windows.Forms.Label lblDescription;
@@ -312,7 +320,6 @@ namespace Rdmp.UI.SubComponents
         private OLVColumn olvNameCol;
         private OLVColumn olvExecute;
         private OLVColumn olvOrder;
-        private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Button btnAbortLoad;
         private System.Windows.Forms.Button btnExecute;
@@ -323,5 +330,11 @@ namespace Rdmp.UI.SubComponents
         private System.Windows.Forms.Label lblFrozen;
         private System.Windows.Forms.Label tbDescription;
         private System.Windows.Forms.Label tbName;
+        private OLVColumn olvCached;
+        private OLVColumn olvCount;
+        private OLVColumn olvCumulativeTotal;
+        private OLVColumn olvWorking;
+        private OLVColumn olvTime;
+        private System.Windows.Forms.Label lblExecuteAllPhase;
     }
 }
