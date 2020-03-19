@@ -58,7 +58,7 @@ namespace Rdmp.UI.SubComponents
     /// <para>    Filter 2 - Date of Death - Date of Birth > 16 years</para>
     ///  
     /// </summary>
-    public partial class CohortIdentificationConfigurationUI : CohortIdentificationConfigurationUI_Design, ISaveableUI
+    public partial class CohortIdentificationConfigurationUI : CohortIdentificationConfigurationUI_Design
     {
         private CohortIdentificationConfiguration _configuration;
 
@@ -109,7 +109,6 @@ namespace Rdmp.UI.SubComponents
 
             lblFrozen.Visible = _configuration.Frozen;
 
-            tbID.Text = _configuration.ID.ToString();
             tbName.Text = _configuration.Name;
             tbDescription.Text = _configuration.Description;
             ticket.TicketText = _configuration.Ticket;
@@ -136,7 +135,13 @@ namespace Rdmp.UI.SubComponents
             CommonFunctionality.AddToMenu(_miClearCache);
             CommonFunctionality.AddToMenu(new ExecuteCommandSetQueryCachingDatabase(Activator, _configuration));
             CommonFunctionality.AddToMenu(new ExecuteCommandCreateNewQueryCacheDatabase(activator, _configuration));
-
+            CommonFunctionality.AddToMenu(
+                new ExecuteCommandSet(activator, _configuration, _configuration.GetType().GetProperty("Description"))
+                {
+                    OverrideCommandName = "Edit Description",
+                    OverrideIcon =
+                        Activator.CoreIconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Edit)
+                });
             CommonFunctionality.AddToMenu(new ToolStripSeparator());
             CommonFunctionality.AddToMenu(new ExecuteCommandShowXmlDoc(activator, "CohortIdentificationConfiguration.QueryCachingServer_ID", "Query Caching"), "Help (What is Query Caching)");
 
@@ -157,28 +162,11 @@ namespace Rdmp.UI.SubComponents
         {
             return "Execute:" + base.GetTabName();
         }
-
-        private void tbName_TextChanged(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(tbName.Text))
-            {
-                tbName.Text = "No Name";
-                tbName.SelectAll();
-            }
-
-            _configuration.Name = tbName.Text;
-        }
-
-        private void tbDescription_TextChanged(object sender, EventArgs e)
-        {
-            _configuration.Description = tbDescription.Text;
-        }
-
+        
         private void ticket_TicketTextChanged(object sender, EventArgs e)
         {
             _configuration.Ticket = ticket.TicketText;
         }
-
 
         private object ExecuteAspectGetter(object rowObject)
         {

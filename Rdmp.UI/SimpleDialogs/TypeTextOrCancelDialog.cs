@@ -25,10 +25,15 @@ namespace Rdmp.UI.SimpleDialogs
         /// </summary>
         public bool RequireSaneHeaderText{get;set;}
 
-        public TypeTextOrCancelDialog(string header, string label, int maxCharacters, string startingTextForInputBox = null, bool allowBlankText = false)
+        public TypeTextOrCancelDialog(string header, string label, int maxCharacters, string startingTextForInputBox = null, bool allowBlankText = false, bool multiLine = false)
         {
             _allowBlankText = allowBlankText;
             InitializeComponent();
+            if (multiLine)
+            {
+                this.Height += 40;
+                this.textBox1.Height += 40;
+            }
 
             if(header.Length > WideMessageBox.MAX_LENGTH_TITLE)
                 header = header.Substring(0, WideMessageBox.MAX_LENGTH_TITLE);
