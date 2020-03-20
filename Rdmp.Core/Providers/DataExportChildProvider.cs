@@ -343,15 +343,20 @@ namespace Rdmp.Core.Providers
         {
             HashSet<object> children = new HashSet<object>();
 
-            var parameterNode = new ParametersNode(extractionConfiguration, AllGlobalExtractionFilterParameters.Where(p=>p.ExtractionConfiguration_ID == extractionConfiguration.ID).ToArray());
+            var parameters = AllGlobalExtractionFilterParameters.Where(p => p.ExtractionConfiguration_ID == extractionConfiguration.ID)
+                .ToArray();
 
-            children.Add(parameterNode);
+            if (parameters.Any())
+            {
+                var parameterNode = new ParametersNode(extractionConfiguration, parameters);
+                children.Add(parameterNode);
+            }
+
             //if it has a cohort
             if (extractionConfiguration.Cohort_ID != null)
             {
                 var cohort = Cohorts.Single(c => c.ID == extractionConfiguration.Cohort_ID);
                 children.Add(new LinkedCohortNode(extractionConfiguration, cohort));
-
             }
 
             //if it has extractable datasets add those

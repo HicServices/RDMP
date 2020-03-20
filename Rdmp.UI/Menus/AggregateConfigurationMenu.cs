@@ -37,6 +37,8 @@ namespace Rdmp.UI.Menus
             //only allow them to execute graph if it is normal aggregate graph
             if (!aggregate.IsCohortIdentificationAggregate)
                 Add(new ExecuteCommandExecuteAggregateGraph(_activator, aggregate));
+            
+            Add(new ExecuteCommandViewSqlParameters(_activator,aggregate));
 
             Items.Add(new ToolStripSeparator());
 

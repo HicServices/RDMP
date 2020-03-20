@@ -102,6 +102,9 @@ namespace Rdmp.Core.Curation.Checks
             bool problems = false;
             foreach (DiscoveredColumn missingProperty in missingProperties)
             {
+                if(missingProperty.GetRuntimeName().Equals("RowVer"))
+                    continue;
+
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     "Missing property " + missingProperty + " on class definition " + type.FullName + ", the underlying table contains this field but the class does not", CheckResult.Fail,
                     null));

@@ -946,8 +946,12 @@ namespace Rdmp.Core.Providers
             var childrenObjects = new HashSet<object>();
 
             var parameters = AllAnyTableParameters.Where(p => p.IsReferenceTo(aggregateConfiguration)).Cast<ISqlParameter>().ToArray();
-            var node = new ParametersNode(aggregateConfiguration, parameters);
-            childrenObjects.Add(node);
+
+            if (parameters.Any())
+            {
+                var node = new ParametersNode(aggregateConfiguration, parameters);
+                childrenObjects.Add(node);
+            }
 
             //we can step into this twice, once via Catalogue children and once via CohortIdentificationConfiguration children
             //if we get in via Catalogue children then descendancy will be Ignore=true we don't end up emphasising into CatalogueCollectionUI when
@@ -1075,9 +1079,12 @@ namespace Rdmp.Core.Providers
                 children.Add(new QueryCacheUsedByCohortIdentificationNode(cic, AllExternalServers.Single(s => s.ID == cic.QueryCachingServer_ID)));
             
             var parameters = AllAnyTableParameters.Where(p => p.IsReferenceTo(cic)).Cast<ISqlParameter>().ToArray();
-            var node = new ParametersNode(cic, parameters);
 
-            children.Add(node);
+            if (parameters.Any())
+            {
+                var node = new ParametersNode(cic, parameters);
+                children.Add(node);
+            }
 
             //if it has a root container
             if (cic.RootCohortAggregateContainer_ID != null)
