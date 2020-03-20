@@ -46,7 +46,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if (_container != null)
                 _container.AddChild((IFilter)f);
             
-            Publish(f);
+            Publish(_container ?? f);
             Emphasise(f);
             Activate(f);
         }
