@@ -19,7 +19,7 @@ namespace Rdmp.UI.SubComponents
             if (disposing && (components != null))
             {
                 components.Dispose();
-
+                timer.Dispose();
                 if (_commonFunctionality != null && _commonFunctionality.IsSetup)
                     _commonFunctionality.TearDown();
             }
@@ -130,37 +130,44 @@ namespace Rdmp.UI.SubComponents
             // olvExecute
             // 
             this.olvExecute.Text = "Execute";
+            olvExecute.Sortable = false;
             // 
             // olvOrder
             // 
             this.olvOrder.DisplayIndex = 2;
             this.olvOrder.IsVisible = false;
             this.olvOrder.Text = "Order";
+            olvOrder.Sortable = false;
             // 
             // olvCached
             // 
             this.olvCached.IsEditable = false;
             this.olvCached.Text = "Cached";
+            olvCached.Sortable = false;
             // 
             // olvCount
             // 
             this.olvCount.IsEditable = false;
             this.olvCount.Text = "Count";
+            olvCount.Sortable = false;
             // 
             // olvCumulativeTotal
             // 
             this.olvCumulativeTotal.IsEditable = false;
             this.olvCumulativeTotal.Text = "Cumulative Total";
+            olvCumulativeTotal.Sortable = false;
             // 
             // olvWorking
             // 
             this.olvWorking.IsEditable = false;
             this.olvWorking.Text = "Working";
+            olvWorking.Sortable = false;
             // 
             // olvTime
             // 
             this.olvTime.IsEditable = false;
             this.olvTime.Text = "Time";
+            olvTime.Sortable = false;
             // 
             // timer1
             // 
@@ -303,6 +310,7 @@ namespace Rdmp.UI.SubComponents
             // olvCatalogue
             // 
             this.olvCatalogue.Text = "Catalogue";
+            olvCatalogue.Sortable = false;
             // 
             // CohortIdentificationConfigurationUI
             // 

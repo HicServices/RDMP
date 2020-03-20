@@ -87,6 +87,7 @@ namespace Rdmp.UI.SubComponents
         readonly ToolStripTimeout _timeoutControls = new ToolStripTimeout() { Timeout = 3000 };
 
         public CohortCompiler Compiler { get; }
+        Timer timer = new Timer();
 
         public CohortIdentificationConfigurationUI()
         {
@@ -103,10 +104,10 @@ namespace Rdmp.UI.SubComponents
             olvOrder.IsEditable = false;
             AssociatedCollection = RDMPCollection.Cohort;
 
-            var t = new Timer();
-            t.Tick += refreshThreadCountPeriodically_Tick;
-            t.Interval = 500;
-            t.Start();
+            
+            timer.Tick += refreshThreadCountPeriodically_Tick;
+            timer.Interval = 500;
+            timer.Start();
             
             olvCount.AspectGetter = Count_AspectGetter;
             olvCached.AspectGetter = Cached_AspectGetter;
@@ -142,7 +143,7 @@ namespace Rdmp.UI.SubComponents
 
         private object CumulativeTotal_AspectGetter(object rowobject)
         {
-            return GetKey(rowobject)?.CumulativeRowCount;
+            return GetKey(rowobject)?.CumulativeRowCount?.ToString("N0");
         }
 
         private ICompileable GetKey(object rowobject)
@@ -170,7 +171,7 @@ namespace Rdmp.UI.SubComponents
             var key = GetKey(rowobject);
             
             if (key != null && key.State == CompilationState.Finished)
-                return key.FinalRowCount;
+                return key.FinalRowCount.ToString("N0");
 
             return null;
         }
@@ -185,14 +186,19 @@ namespace Rdmp.UI.SubComponents
         {
             var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
 
+            
             //if publish event was for a child of the cic (_cic is in the objects descendancy i.e. it sits below our cic)
             if (descendancy != null && descendancy.Parents.Contains(_configuration))
+            {
+                //TODO: this doesn't clear the compiler
                 RecreateAllTasks();
+            }
         }
         
         private void refreshThreadCountPeriodically_Tick(object sender, EventArgs e)
         {
-            tlvCic.RebuildColumns();
+            if(!tlvCic.IsDisposed)
+                tlvCic.RebuildColumns();
         }
         
         public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
@@ -207,8 +213,10 @@ namespace Rdmp.UI.SubComponents
             ticket.TicketText = _configuration.Ticket;
             tlvCic.Enabled = !databaseObject.Frozen;
             
+
             if (_commonFunctionality == null)
             {
+                activator.RefreshBus.Subscribe(this);
                 _commonFunctionality = new RDMPCollectionCommonFunctionality();
 
                 _commonFunctionality.SetUp(RDMPCollection.Cohort, tlvCic, activator, olvNameCol, olvNameCol, new RDMPCollectionCommonFunctionalitySettings
