@@ -55,11 +55,6 @@ namespace Rdmp.UI.Collections
         {
             InitializeComponent();
             
-            cbShowInternal.Checked = UserSettings.ShowInternalCatalogues;
-            cbShowDeprecated.Checked = UserSettings.ShowDeprecatedCatalogues ;
-            cbShowColdStorage.Checked = UserSettings.ShowColdStorageCatalogues;
-            cbProjectSpecific.Checked = UserSettings.ShowProjectSpecificCatalogues;
-            cbShowNonExtractable.Checked = UserSettings.ShowNonExtractableCatalogues;
 
             olvFilters.AspectGetter += FilterAspectGetter;
             olvFilters.IsVisible = UserSettings.ShowColumnFilters;
@@ -69,6 +64,8 @@ namespace Rdmp.UI.Collections
             olvOrder.VisibilityChanged += (s,e)=>UserSettings.ShowOrderColumn = ((OLVColumn)s).IsVisible;
             olvOrder.IsVisible = UserSettings.ShowOrderColumn;
             bLoading = false;
+
+            catalogueCollectionFilterUI1.FiltersChanged += (s, e) => ApplyFilters();
         }
 
         private object OrderAspectGetter(object rowobject)
@@ -131,12 +128,6 @@ namespace Rdmp.UI.Collections
         {
             if(bLoading)
                 return;
-
-            UserSettings.ShowInternalCatalogues = cbShowInternal.Checked;
-            UserSettings.ShowDeprecatedCatalogues = cbShowDeprecated.Checked;
-            UserSettings.ShowColdStorageCatalogues = cbShowColdStorage.Checked;
-            UserSettings.ShowProjectSpecificCatalogues = cbProjectSpecific.Checked;
-            UserSettings.ShowNonExtractableCatalogues = cbShowNonExtractable.Checked;
             
             tlvCatalogues.UseFiltering = true;
             tlvCatalogues.ModelFilter = new CatalogueCollectionFilter(_activator.CoreChildProvider);
@@ -212,18 +203,7 @@ namespace Rdmp.UI.Collections
             
             if (c != null)
             {
-                if ((c.IsColdStorageDataset || c.IsDeprecated || c.IsInternalDataset))
-                {
-                    //trouble is our flags might be hiding it so make sure it is visible
-                    cbShowColdStorage.Checked = cbShowColdStorage.Checked || c.IsColdStorageDataset;
-                    cbShowDeprecated.Checked = cbShowDeprecated.Checked || c.IsDeprecated;
-                    cbShowInternal.Checked = cbShowInternal.Checked || c.IsInternalDataset;
-                }
-
-                var isExtractable = c.GetExtractabilityStatus(null);
-
-                cbShowNonExtractable.Checked = cbShowNonExtractable.Checked || isExtractable == null || isExtractable.IsExtractable == false;
-                
+                catalogueCollectionFilterUI1.EnsureVisible(c);
                 ApplyFilters();
             }
         }
@@ -260,11 +240,6 @@ namespace Rdmp.UI.Collections
             ApplyFilters();
         }
         
-        private void rbFlag_CheckedChanged(object sender, EventArgs e)
-        {
-            ApplyFilters();
-        }
-
         public static bool IsRootObject(object root)
         {
             return root.Equals(CatalogueFolder.Root) || root is AllGovernanceNode;
