@@ -16,14 +16,19 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     public class ExecuteCommandCreateNewFilter : BasicCommandExecution,IAtomicCommand
     {
         private IFilterFactory _factory;
-        private readonly IContainer _container;
+        private IContainer _container;
+        private Func<IContainer> _containerFunc;
 
         public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, IFilterFactory factory, IContainer container = null):base(activator)
         {
             _factory = factory;
             _container = container;
         }
-
+        public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, IFilterFactory factory, Func<IContainer> containerFunc):base(activator)
+        {
+            _factory = factory;
+            _containerFunc = containerFunc;
+        }
         public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Filter, OverlayKind.Add);
@@ -34,6 +39,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             base.Execute();
 
             var f = (DatabaseEntity)_factory.CreateNewFilter("New Filter " + Guid.NewGuid());
+
+            if (_containerFunc != null)
+                _container = _containerFunc();
 
             if (_container != null)
                 _container.AddChild((IFilter)f);

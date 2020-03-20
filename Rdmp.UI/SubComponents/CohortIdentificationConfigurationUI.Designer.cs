@@ -311,6 +311,7 @@ namespace Rdmp.UI.SubComponents
             // 
             this.olvCatalogue.Text = "Catalogue";
             olvCatalogue.Sortable = false;
+            olvCatalogue.IsEditable = false;
             olvCatalogue.Width = 150;
             // 
             // CohortIdentificationConfigurationUI
