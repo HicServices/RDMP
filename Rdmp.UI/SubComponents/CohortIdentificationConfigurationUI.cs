@@ -190,6 +190,14 @@ namespace Rdmp.UI.SubComponents
             //if publish event was for a child of the cic (_cic is in the objects descendancy i.e. it sits below our cic)
             if (descendancy != null && descendancy.Parents.Contains(_configuration))
             {
+
+                //Go up descendency list clearing out the tasks above (and including) e.Object because it has changed
+                foreach (var o in descendancy.Parents.Union(new[] {e.Object}))
+                {
+                    var key = GetKey(o);
+                    if(key != null)
+                        Compiler.CancelTask(key,true);
+                }
                 //TODO: this doesn't clear the compiler
                 RecreateAllTasks();
             }
