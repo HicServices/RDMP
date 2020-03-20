@@ -218,7 +218,7 @@ namespace Rdmp.UI.SubComponents
                     AllowPinning = false,
                     AllowSorting =  true, //important, we need sorting on so that we can override sort order with our OrderableComparer
                 });
-
+                _commonFunctionality.MenuBuilt += MenuBuilt;
                 tlvCic.AddObject(_configuration);
                 tlvCic.ExpandAll();
             }
@@ -237,7 +237,6 @@ namespace Rdmp.UI.SubComponents
                 });
             CommonFunctionality.AddToMenu(new ToolStripSeparator());
             CommonFunctionality.AddToMenu(new ExecuteCommandShowXmlDoc(activator, "CohortIdentificationConfiguration.QueryCachingServer_ID", "Query Caching"), "Help (What is Query Caching)");
-
             CommonFunctionality.Add(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(activator, null).SetTarget(_configuration),
                 "Commit Cohort",
                 activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableCohort,OverlayKind.Add));
@@ -250,6 +249,7 @@ namespace Rdmp.UI.SubComponents
             Compiler.CoreChildProvider = activator.CoreChildProvider;
             RecreateAllTasks();
         }
+
 
         public override void SetItemActivator(IActivateItems activator)
         {
@@ -574,54 +574,39 @@ namespace Rdmp.UI.SubComponents
             CancelAll();
         }
 
-
-        /* TODO: Integrate this bit
-
-        private void tlvConfiguration_ItemActivate(object sender, EventArgs e)
+        
+        private void MenuBuilt(object sender, MenuBuiltEventArgs e)
         {
-            var o = tlvConfiguration.SelectedObject as ICompileable;
-            if (o != null)
-                if(o.CrashMessage != null)
-                    ViewCrashMessage(o);
-                else
-                    WideMessageBox.Show("Build Log", o.Log,WideMessageBoxTheme.Help);
-        }
+            var c = GetKey(e.Obj);
 
-        private void tlvConfiguration_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            BuildRightClickMenu(c);
-        }
-
-        private void BuildRightClickMenu(ICompileable c)
-        {
             if (c != null)
             {
-                var menu = new ContextMenuStrip();
-                
-                menu.Items.Add(
+                e.Menu.Items.Add(new ToolStripSeparator());
+
+                e.Menu.Items.Add(
                     BuildItem("View Sql", c, a => !string.IsNullOrWhiteSpace(a.CountSQL),
                         a => WideMessageBox.Show($"Sql {c}", a.CountSQL, WideMessageBoxTheme.Help))
-                    );
+                );
                 
                                 
-                menu.Items.Add(
+                e.Menu.Items.Add(
                     new ToolStripMenuItem("View Crash Message", null,
-                        (s, e) => ViewCrashMessage(c)){Enabled = c.CrashMessage != null});
+                        (s, ev) => ViewCrashMessage(c)){Enabled = c.CrashMessage != null});
 
-                menu.Items.Add(
+                e.Menu.Items.Add(
                     new ToolStripMenuItem("View Build Log", null,
-                        (s, e) => WideMessageBox.Show($"Build Log {c}", c.Log, WideMessageBoxTheme.Help)));
+                        (s, ev) => WideMessageBox.Show($"Build Log {c}", c.Log, WideMessageBoxTheme.Help)));
                 
-                menu.Items.Add(
+                e.Menu.Items.Add(
                     BuildItem("View Results", c, a => a.Identifiers != null,
                         a =>
                         {
                             Activator.ShowWindow(new DataTableViewerUI(a.Identifiers, $"Results {c}"));
                         })
-                    );
+                );
 
                 
-                menu.Items.Add(
+                e.Menu.Items.Add(
                     BuildItem("Clear Cache", c, a => a.SubqueriesCached > 0,
                         a =>
                         {
@@ -629,18 +614,9 @@ namespace Rdmp.UI.SubComponents
                                 ClearCacheFor(new[] {cacheable});
                         })
                 );
-
-                ContextMenuStrip = menu;
             }
-            else
-                ContextMenuStrip = null;
-        }
 
-        private void ViewCrashMessage(ICompileable compileable)
-        {
-            ExceptionViewer.Show(compileable.CrashMessage);
         }
-
         private ToolStripMenuItem BuildItem(string title, ICompileable c,Func<CohortIdentificationTaskExecution,bool> enabledFunc, Action<CohortIdentificationTaskExecution> action)
         {
             var menuItem = new ToolStripMenuItem(title);
@@ -657,7 +633,11 @@ namespace Rdmp.UI.SubComponents
                 menuItem.Enabled = false;
 
             return menuItem;
-        }*/
+        }
+        private void ViewCrashMessage(ICompileable compileable)
+        {
+            ExceptionViewer.Show(compileable.CrashMessage);
+        }
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CohortIdentificationConfigurationUI_Design, UserControl>))]
