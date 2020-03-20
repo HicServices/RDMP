@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 
 
@@ -22,6 +23,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
     [TechnicalUI]
     public partial class ArgumentValueComboBoxUI : UserControl, IArgumentValueUI
     {
+        private readonly IActivateItems _activator;
         private readonly object[] _objectsForComboBox;
         private bool _bLoading = true;
 
@@ -31,8 +33,9 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
         private ArgumentValueUIArgs _args;
         private bool _isEnum;
 
-        public ArgumentValueComboBoxUI(object[] objectsForComboBox)
+        public ArgumentValueComboBoxUI(IActivateItems activator,object[] objectsForComboBox)
         {
+            _activator = activator;
             _objectsForComboBox = objectsForComboBox;
             InitializeComponent();
 
@@ -67,7 +70,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
             
         }
 
-        public void SetUp(ArgumentValueUIArgs args)
+        public void SetUp(IActivateItems activator, ArgumentValueUIArgs args)
         {
             _bLoading = true;
             _args = args;
@@ -113,7 +116,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 
         private void btnPick_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_objectsForComboBox.Cast<IMapsDirectlyToDatabaseTable>(), true,false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, _objectsForComboBox.Cast<IMapsDirectlyToDatabaseTable>(), true,false);
 
             if (dialog.ShowDialog() == DialogResult.OK)
                 if (dialog.Selected == null)

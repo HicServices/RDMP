@@ -41,7 +41,7 @@ namespace Rdmp.UI.Menus
          
         private void GuessAssociatedColumns(Catalogue c)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>(), false, false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>(), false, false);
 
             int itemsSeen = 0;
             int itemsQualifying = 0;

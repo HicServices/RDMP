@@ -8,9 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Repositories;
+using Rdmp.UI.ItemActivation;
 using Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -38,26 +40,28 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
         private int _currentY;
         private int _maxValueUILeft;
         private List<Control> _valueUIs = new List<Control>();
+        private IActivateItems _activator;
 
         public ArgumentCollectionUI()
         {
             InitializeComponent();
         }
-        
+
         /// <summary>
         /// Reconfigures this UI (can be called multiple times throughout controls lifetime) to facilitate the population of DemandsInitialization
         /// properties on an underlying type (e.g. if your collection is ProcessTask and your argument type is ProcessTaskArgument then your underlying type could
         /// be AnySeparatorFileAttacher or MDFAttacher).  Note that while T is IArgumentHost, it also should be tied to one or more interfaces (e.g. IAttacher) and able to host
         /// any child of that interface of which argumentsAreForUnderlyingType is the currently configured concrete class (e.g. AnySeparatorFileAttacher).
         /// </summary>
+        /// <param name="activator"></param>
         /// <param name="parent"></param>
         /// <param name="argumentsAreForUnderlyingType"></param>
         /// <param name="catalogueRepository"></param>
-        public void Setup(IArgumentHost parent, Type argumentsAreForUnderlyingType, ICatalogueRepository catalogueRepository)
+        public void Setup(IActivateItems activator,IArgumentHost parent, Type argumentsAreForUnderlyingType, ICatalogueRepository catalogueRepository)
         {
             _parent = parent;
             _argumentsAreFor = argumentsAreForUnderlyingType;
-
+            _activator = activator;
             lblTypeUnloadable.Visible = _argumentsAreFor == null;
 
             _valueUisFactory = new ArgumentValueUIFactory();
@@ -196,7 +200,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
             };
             args.Fatal = ragSmiley.Fatal;
 
-            var valueui = (Control)_valueUisFactory.Create(args);
+            var valueui = (Control)_valueUisFactory.Create(_activator, args);
             
             valueui.Anchor = name.Anchor = AnchorStyles.Top |  AnchorStyles.Left | AnchorStyles.Right;
             _valueUIs.Add(valueui);

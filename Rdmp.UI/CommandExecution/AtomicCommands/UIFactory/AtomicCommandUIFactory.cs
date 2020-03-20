@@ -40,7 +40,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory
 
         public AtomicCommandWithTargetUI<T> CreateLinkLabelWithSelection<T>(IAtomicCommandWithTarget command, IEnumerable<T> selection, Func<T, string> propertySelector)
         {
-            return new AtomicCommandWithTargetUI<T>(_iconProvider, command, selection, propertySelector);
+            return new AtomicCommandWithTargetUI<T>(_activator, command, selection, propertySelector);
         }
 
         public RDMPContextMenuStrip CreateMenu(IActivateItems activator,TreeListView tree, RDMPCollection collection, params IAtomicCommand[] commands)

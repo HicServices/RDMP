@@ -230,7 +230,7 @@ namespace Rdmp.UI.Raceway
         
         private void btnAddCatalogue_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Except(_collection.GetCatalogues()), false, false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Except(_collection.GetCatalogues()), false, false);
             dialog.AllowMultiSelect = true;
 
             if (dialog.ShowDialog() == DialogResult.OK)
@@ -264,7 +264,7 @@ namespace Rdmp.UI.Raceway
             if(dataExportChildProvider == null)
                 return;
             
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(dataExportChildProvider.AllPackages, false, false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, dataExportChildProvider.AllPackages, false, false);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 var packageToAdd = (ExtractableDataSetPackage) dialog.Selected;

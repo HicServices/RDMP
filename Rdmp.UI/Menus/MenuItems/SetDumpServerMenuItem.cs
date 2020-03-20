@@ -51,7 +51,7 @@ namespace Rdmp.UI.Menus.MenuItems
 
         private void UseExisting(object sender, EventArgs e)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_availableServers, false, false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, _availableServers, false, false);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 var selected = (ExternalDatabaseServer) dialog.Selected;

@@ -41,7 +41,13 @@ namespace Rdmp.UI.SimpleDialogs
             this.tbFilter = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.catalogueCollectionFilterUI1 = new Rdmp.UI.Collections.CatalogueCollectionFilterUI();
             ((System.ComponentModel.ISupportInitialize)(this.olvObjects)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // olvObjects
@@ -60,10 +66,10 @@ namespace Rdmp.UI.SimpleDialogs
             this.olvObjects.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvObjects.FullRowSelect = true;
             this.olvObjects.HideSelection = false;
-            this.olvObjects.Location = new System.Drawing.Point(2, 12);
+            this.olvObjects.Location = new System.Drawing.Point(0, 3);
             this.olvObjects.Name = "olvObjects";
             this.olvObjects.ShowGroups = false;
-            this.olvObjects.Size = new System.Drawing.Size(273, 381);
+            this.olvObjects.Size = new System.Drawing.Size(273, 322);
             this.olvObjects.TabIndex = 1;
             this.olvObjects.UseCompatibleStateImageBehavior = false;
             this.olvObjects.UseFiltering = true;
@@ -129,9 +135,9 @@ namespace Rdmp.UI.SimpleDialogs
             // 
             this.tbFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbFilter.Location = new System.Drawing.Point(50, 394);
+            this.tbFilter.Location = new System.Drawing.Point(37, 329);
             this.tbFilter.Name = "tbFilter";
-            this.tbFilter.Size = new System.Drawing.Size(225, 20);
+            this.tbFilter.Size = new System.Drawing.Size(233, 20);
             this.tbFilter.TabIndex = 0;
             this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
             this.tbFilter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbFilter_KeyDown);
@@ -141,7 +147,7 @@ namespace Rdmp.UI.SimpleDialogs
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 397);
+            this.label1.Location = new System.Drawing.Point(3, 332);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(32, 13);
             this.label1.TabIndex = 3;
@@ -153,24 +159,56 @@ namespace Rdmp.UI.SimpleDialogs
             this.timer1.Interval = 200;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.splitContainer1.Location = new System.Drawing.Point(2, -1);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.olvObjects);
+            this.splitContainer1.Panel1.Controls.Add(this.tbFilter);
+            this.splitContainer1.Panel1.Controls.Add(this.label1);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.catalogueCollectionFilterUI1);
+            this.splitContainer1.Size = new System.Drawing.Size(273, 415);
+            this.splitContainer1.SplitterDistance = 351;
+            this.splitContainer1.TabIndex = 5;
+            // 
+            // catalogueCollectionFilterUI1
+            // 
+            this.catalogueCollectionFilterUI1.Location = new System.Drawing.Point(3, 3);
+            this.catalogueCollectionFilterUI1.Name = "catalogueCollectionFilterUI1";
+            this.catalogueCollectionFilterUI1.Size = new System.Drawing.Size(267, 52);
+            this.catalogueCollectionFilterUI1.TabIndex = 0;
+            // 
             // SelectIMapsDirectlyToDatabaseTableDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(276, 513);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.tbFilter);
+            this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSelectNULL);
             this.Controls.Add(this.btnSelect);
-            this.Controls.Add(this.olvObjects);
             this.Name = "SelectIMapsDirectlyToDatabaseTableDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Select Object(s)";
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.SelectIMapsDirectlyToDatabaseTableDialog_KeyUp);
             ((System.ComponentModel.ISupportInitialize)(this.olvObjects)).EndInit();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -186,5 +224,7 @@ namespace Rdmp.UI.SimpleDialogs
         private ObjectListView olvObjects;
         private OLVColumn olvSelected;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.SplitContainer splitContainer1;
+        private Collections.CatalogueCollectionFilterUI catalogueCollectionFilterUI1;
     }
 }

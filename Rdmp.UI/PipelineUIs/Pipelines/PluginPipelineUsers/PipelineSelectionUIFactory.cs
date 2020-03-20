@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Repositories;
+using Rdmp.UI.ItemActivation;
 using Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 
 namespace Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers
@@ -40,10 +41,10 @@ namespace Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers
             _useCase = pluginUserAndCase;
         }
 
-        public IPipelineSelectionUI Create(string text = null, DockStyle dock = DockStyle.None, Control containerControl = null)
+        public IPipelineSelectionUI Create(IActivateItems activator,string text = null, DockStyle dock = DockStyle.None, Control containerControl = null)
         {
             //setup getter as an event handler for the selection ui
-            _pipelineSelectionUIInstance = new PipelineSelectionUI(_useCase,_repository);
+            _pipelineSelectionUIInstance = new PipelineSelectionUI(activator, _useCase,_repository);
 
             if (_user != null)
             {

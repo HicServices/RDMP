@@ -120,7 +120,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
                 var useCase = CachingPipelineUseCase.DesignTime();
 
                 var selectionFactory = new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, user, useCase);
-                _pipelineSelectionUI = (Control)selectionFactory.Create("Cache Pipeline",DockStyle.Fill,pPipeline);
+                _pipelineSelectionUI = (Control)selectionFactory.Create(Activator,"Cache Pipeline",DockStyle.Fill,pPipeline);
             }
         }
 
