@@ -54,11 +54,12 @@ namespace Rdmp.UI.SubComponents
             this.label5 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.lblExecuteAllPhase = new System.Windows.Forms.Label();
             this.tbDescription = new System.Windows.Forms.Label();
             this.tbName = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.lblFrozen = new System.Windows.Forms.Label();
-            this.lblExecuteAllPhase = new System.Windows.Forms.Label();
+            this.olvCatalogue = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             ((System.ComponentModel.ISupportInitialize)(this.tlvCic)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -95,6 +96,7 @@ namespace Rdmp.UI.SubComponents
             this.tlvCic.AllColumns.Add(this.olvCumulativeTotal);
             this.tlvCic.AllColumns.Add(this.olvWorking);
             this.tlvCic.AllColumns.Add(this.olvTime);
+            this.tlvCic.AllColumns.Add(this.olvCatalogue);
             this.tlvCic.CellEditUseWholeCell = false;
             this.tlvCic.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvNameCol,
@@ -103,7 +105,8 @@ namespace Rdmp.UI.SubComponents
             this.olvCount,
             this.olvCumulativeTotal,
             this.olvWorking,
-            this.olvTime});
+            this.olvTime,
+            this.olvCatalogue});
             this.tlvCic.Cursor = System.Windows.Forms.Cursors.Default;
             this.tlvCic.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlvCic.HideSelection = false;
@@ -136,28 +139,28 @@ namespace Rdmp.UI.SubComponents
             // 
             // olvCached
             // 
+            this.olvCached.IsEditable = false;
             this.olvCached.Text = "Cached";
-            olvCached.IsEditable = false;
             // 
             // olvCount
             // 
+            this.olvCount.IsEditable = false;
             this.olvCount.Text = "Count";
-            olvCount.IsEditable = false;
             // 
             // olvCumulativeTotal
             // 
+            this.olvCumulativeTotal.IsEditable = false;
             this.olvCumulativeTotal.Text = "Cumulative Total";
-            olvCumulativeTotal.IsEditable = false;
             // 
             // olvWorking
             // 
+            this.olvWorking.IsEditable = false;
             this.olvWorking.Text = "Working";
-            olvWorking.IsEditable = false;
             // 
             // olvTime
             // 
+            this.olvTime.IsEditable = false;
             this.olvTime.Text = "Time";
-            olvTime.IsEditable = false;
             // 
             // timer1
             // 
@@ -241,6 +244,16 @@ namespace Rdmp.UI.SubComponents
             this.splitContainer2.SplitterDistance = 99;
             this.splitContainer2.TabIndex = 67;
             // 
+            // lblExecuteAllPhase
+            // 
+            this.lblExecuteAllPhase.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.lblExecuteAllPhase.AutoSize = true;
+            this.lblExecuteAllPhase.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblExecuteAllPhase.Location = new System.Drawing.Point(16, 81);
+            this.lblExecuteAllPhase.Name = "lblExecuteAllPhase";
+            this.lblExecuteAllPhase.Size = new System.Drawing.Size(0, 13);
+            this.lblExecuteAllPhase.TabIndex = 70;
+            // 
             // tbDescription
             // 
             this.tbDescription.AutoSize = true;
@@ -287,15 +300,9 @@ namespace Rdmp.UI.SubComponents
             this.lblFrozen.Text = "Read Only Mode (Configuration is Frozen)";
             this.lblFrozen.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // lblExecuteAllPhase
+            // olvCatalogue
             // 
-            this.lblExecuteAllPhase.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblExecuteAllPhase.AutoSize = true;
-            this.lblExecuteAllPhase.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblExecuteAllPhase.Location = new System.Drawing.Point(16, 81);
-            this.lblExecuteAllPhase.Name = "lblExecuteAllPhase";
-            this.lblExecuteAllPhase.Size = new System.Drawing.Size(0, 13);
-            this.lblExecuteAllPhase.TabIndex = 70;
+            this.olvCatalogue.Text = "Catalogue";
             // 
             // CohortIdentificationConfigurationUI
             // 
@@ -341,5 +348,6 @@ namespace Rdmp.UI.SubComponents
         private OLVColumn olvWorking;
         private OLVColumn olvTime;
         private System.Windows.Forms.Label lblExecuteAllPhase;
+        private OLVColumn olvCatalogue;
     }
 }

@@ -113,11 +113,16 @@ namespace Rdmp.UI.SubComponents
             olvCumulativeTotal.AspectGetter = CumulativeTotal_AspectGetter;
             olvTime.AspectGetter = Time_AspectGetter;
             olvWorking.AspectGetter = Working_AspectGetter;
+            olvCatalogue.AspectGetter = Catalogue_AspectGetter;
 
             _miClearCache.Click += MiClearCacheClick;
             _miClearCache.Image = CatalogueIcons.ExternalDatabaseServer_Cache;
 
-            cbIncludeCumulative.CheckedChanged += (s, e) => Compiler.IncludeCumulativeTotals = cbIncludeCumulative.Checked;
+            cbIncludeCumulative.CheckedChanged += (s, e) =>
+            {
+                Compiler.IncludeCumulativeTotals = cbIncludeCumulative.Checked;
+                RecreateAllTasks();
+            };
 
             //This is important, OrderableComparer ensures IOrderable objects appear in the correct order but the comparator
             //doesn't get called unless the column has a sorting on it
@@ -127,22 +132,32 @@ namespace Rdmp.UI.SubComponents
 
         private object Working_AspectGetter(object rowobject)
         {
-            return Compiler?.Tasks?.Keys.FirstOrDefault(k => k.Child.Equals(rowobject))?.State;
+            return GetKey(rowobject)?.State;
         }
 
         private object Time_AspectGetter(object rowobject)
         {
-            return Compiler?.Tasks?.Keys.FirstOrDefault(k => k.Child.Equals(rowobject))?.ElapsedTime;
+            return GetKey(rowobject)?.ElapsedTime;
         }
 
         private object CumulativeTotal_AspectGetter(object rowobject)
         {
-            return Compiler?.Tasks?.Keys.FirstOrDefault(k => k.Child.Equals(rowobject))?.CumulativeRowCount;
+            return GetKey(rowobject)?.CumulativeRowCount;
+        }
+
+        private ICompileable GetKey(object rowobject)
+        {
+            return
+                Compiler?.Tasks?.Keys.FirstOrDefault(k => 
+                    
+                    (rowobject is AggregateConfiguration ac && k.Child is JoinableCohortAggregateConfiguration j 
+                                                            && j.AggregateConfiguration_ID == ac.ID)
+                    || k.Child.Equals(rowobject));
         }
 
         private object Cached_AspectGetter(object rowobject)
         {
-            var key = Compiler?.Tasks?.Keys.FirstOrDefault(k => k.Child.Equals(rowobject));
+            var key = GetKey(rowobject);
             
             if (key != null)
                 return _configuration.QueryCachingServer_ID == null ? "No Cache" : key.GetCachedQueryUseCount();
@@ -150,15 +165,21 @@ namespace Rdmp.UI.SubComponents
             return null;
         }
 
-        private object Count_AspectGetter(object rowObject)
+        private object Count_AspectGetter(object rowobject)
         {
-            var key = Compiler?.Tasks?.Keys.FirstOrDefault(k => k.Child.Equals(rowObject));
+            var key = GetKey(rowobject);
             
             if (key != null && key.State == CompilationState.Finished)
                 return key.FinalRowCount;
 
             return null;
         }
+        private object Catalogue_AspectGetter(object rowobject)
+        {
+            return
+                rowobject is AggregateConfiguration ac ? ac.Catalogue.Name : null;
+        }
+
         
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
