@@ -138,7 +138,7 @@ namespace Rdmp.UI.SubComponents
 
         private object Time_AspectGetter(object rowobject)
         {
-            return GetKey(rowobject)?.ElapsedTime;
+            return GetKey(rowobject)?.ElapsedTime?.ToString( @"hh\:mm\:ss");
         }
 
         private object CumulativeTotal_AspectGetter(object rowobject)
