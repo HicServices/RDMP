@@ -81,7 +81,7 @@ namespace Rdmp.UI.SimpleDialogs
             //Add them to the tree view
             olvObjects.AddObjects(o);
 
-            if (o.All(c => c is ICatalogue))
+            if (o.Length>0 && o.All(c => c is ICatalogue))
             {
                 splitContainer1.Panel2Collapsed = false;
                 _useCatalogueFilter = true;
