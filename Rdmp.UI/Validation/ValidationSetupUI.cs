@@ -387,7 +387,7 @@ namespace Rdmp.UI.Validation
 
         private void lblPickTimePeriodColumn_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any), true, false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any), true, false);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 var ei = dialog.Selected as ExtractionInformation;
@@ -398,7 +398,7 @@ namespace Rdmp.UI.Validation
 
         private void lblPickPivotColumn_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any), true, false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any), true, false);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 var ei = dialog.Selected as ExtractionInformation;

@@ -611,7 +611,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
                     else
                     {
                         //otherwise show all the columns and let them pick which one they want to navigate to (emphasise)
-                        var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(cols, false,false);
+                        var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, cols, false,false);
 
                         if (dialog.ShowDialog() == DialogResult.OK)
                             toEmphasise = (ColumnInfo) dialog.Selected;
@@ -636,7 +636,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
                     otherTable = otherTables[0];
                 else
                 {
-                    var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(otherTables, false, false);
+                    var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, otherTables, false, false);
                     if (dialog.ShowDialog() == DialogResult.OK)
                         otherTable = (TableInfo) dialog.Selected;
                 }

@@ -221,8 +221,7 @@ namespace Rdmp.UI.ANOEngineeringUIs
                         return;
                     }
 
-                    var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(
-                        Activator.CoreChildProvider.AllANOTables, true, false);
+                    var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, Activator.CoreChildProvider.AllANOTables, true, false);
                     try
                     {
                         if (dialog.ShowDialog() == DialogResult.OK)

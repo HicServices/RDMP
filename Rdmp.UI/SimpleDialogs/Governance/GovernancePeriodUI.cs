@@ -129,7 +129,7 @@ namespace Rdmp.UI.SimpleDialogs.Governance
             var availableToSelect =
                 allCatalogues.Where(c => !alreadyMappedCatalogues.Contains(c)).ToArray();
 
-            SelectIMapsDirectlyToDatabaseTableDialog selector = new SelectIMapsDirectlyToDatabaseTableDialog(availableToSelect, false, false);
+            SelectIMapsDirectlyToDatabaseTableDialog selector = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, availableToSelect, false, false);
             selector.AllowMultiSelect = true;
 
             if (selector.ShowDialog() == DialogResult.OK)
@@ -180,7 +180,7 @@ namespace Rdmp.UI.SimpleDialogs.Governance
                 return;
             }
             
-            SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(toImportFrom,false,false);
+            SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, toImportFrom,false,false);
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {

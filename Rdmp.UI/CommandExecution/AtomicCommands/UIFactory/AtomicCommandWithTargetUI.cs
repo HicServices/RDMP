@@ -13,6 +13,7 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
 
@@ -25,17 +26,19 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory
     [TechnicalUI]
     public partial class AtomicCommandWithTargetUI<T> : UserControl
     {
+        private readonly IActivateItems _activator;
         private readonly IAtomicCommandWithTarget _command;
         private T[] _selection;
-        public AtomicCommandWithTargetUI(IIconProvider iconProvider, IAtomicCommandWithTarget command, IEnumerable<T> selection, Func<T, string> propertySelector)
+        public AtomicCommandWithTargetUI(IActivateItems activator, IAtomicCommandWithTarget command, IEnumerable<T> selection, Func<T, string> propertySelector)
         {
+            _activator = activator;
             _command = command;
             InitializeComponent();
 
             _selection = selection.ToArray();
 
-            pbCommandIcon.Image = command.GetImage(iconProvider);
-            helpIcon1.BackgroundImage = iconProvider.GetImage(RDMPConcept.Help);
+            pbCommandIcon.Image = command.GetImage(activator.CoreIconProvider);
+            helpIcon1.BackgroundImage = activator.CoreIconProvider.GetImage(RDMPConcept.Help);
 
             string name = command.GetCommandName();
             lblName.Text = name;
@@ -45,7 +48,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory
             selectIMapsDirectlyToDatabaseTableComboBox1.SetUp(_selection.Cast<IMapsDirectlyToDatabaseTable>().ToArray());
             selectIMapsDirectlyToDatabaseTableComboBox1.SelectedItemChanged += suggestComboBox1_SelectedIndexChanged;
             lblGo.Enabled = false;
-
+            this.selectIMapsDirectlyToDatabaseTableComboBox1.SetItemActivator(_activator);
             Enabled = _selection.Any();
         }
 

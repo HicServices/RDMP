@@ -6,7 +6,7 @@
 
 using System.Windows.Forms;
 using Rdmp.UI.Copying;
-
+using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs.SqlDialogs;
 
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
@@ -26,7 +26,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
             InitializeComponent();
         }
 
-        public void SetUp(ArgumentValueUIArgs args)
+        public void SetUp(IActivateItems activator, ArgumentValueUIArgs args)
         {
             _args = args;
         }

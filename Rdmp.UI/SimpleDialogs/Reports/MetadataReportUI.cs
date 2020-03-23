@@ -202,7 +202,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
         private void btnPick_Click(object sender, EventArgs e)
         {
             var available = cbxCatalogues.Items.OfType<Catalogue>();
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(available, false, false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, available, false, false);
             dialog.AllowMultiSelect = true;
 
             if (dialog.ShowDialog() == DialogResult.OK)

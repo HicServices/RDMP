@@ -115,7 +115,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             
             _pipelineOptionsSet = true;
 
-            _pipelineSelectionUI = new PipelineSelectionUI(_useCase, repository)
+            _pipelineSelectionUI = new PipelineSelectionUI(Activator, _useCase, repository)
             {
                 Dock = DockStyle.Fill
             };

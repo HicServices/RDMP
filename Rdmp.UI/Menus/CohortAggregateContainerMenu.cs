@@ -123,7 +123,7 @@ namespace Rdmp.UI.Menus
         private void AddAggregates(AggregateConfiguration[] userCanPickFrom)
         {
 
-            SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(userCanPickFrom, false, false);
+            SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, userCanPickFrom, false, false);
             dialog.AllowMultiSelect = true;
 
             if (dialog.ShowDialog() == DialogResult.OK)
@@ -161,7 +161,7 @@ namespace Rdmp.UI.Menus
 
         private void AddCatalogues()
         {
-            SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(),false,false);
+            SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(),false,false);
             dialog.AllowMultiSelect = true;
 
             if(dialog.ShowDialog() == DialogResult.OK)

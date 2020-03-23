@@ -35,7 +35,7 @@ namespace Rdmp.UI.Menus
             var packageManager = _activator.RepositoryLocator.DataExportRepository.PackageManager;
             var notInPackage = _childProvider.ExtractableDataSets.Except(packageManager.GetAllDataSets(_package, _childProvider.ExtractableDataSets));
 
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(notInPackage, false, false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, notInPackage, false, false);
             dialog.AllowMultiSelect = true;
 
             if (dialog.ShowDialog() == DialogResult.OK)

@@ -149,7 +149,7 @@ namespace Rdmp.UI.ProjectUI
 
                 //create the UI for this situation
                 var factory = new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, user, useCase);
-                _cohortRefreshingPipelineSelectionUI = factory.Create("Cohort Refresh Pipeline", DockStyle.Fill,pChooseCohortRefreshPipeline);
+                _cohortRefreshingPipelineSelectionUI = factory.Create(Activator,"Cohort Refresh Pipeline", DockStyle.Fill,pChooseCohortRefreshPipeline);
                 _cohortRefreshingPipelineSelectionUI.Pipeline = _extractionConfiguration.CohortRefreshPipeline;
                 _cohortRefreshingPipelineSelectionUI.PipelineChanged += _cohortRefreshingPipelineSelectionUI_PipelineChanged;
                 _cohortRefreshingPipelineSelectionUI.CollapseToSingleLineMode();
@@ -187,7 +187,7 @@ namespace Rdmp.UI.ProjectUI
 
             //create the UI for this situation
             var factory = new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, user, useCase);
-            _extractionPipelineSelectionUI = factory.Create("Extraction Pipeline", DockStyle.Fill, pChooseExtractionPipeline);
+            _extractionPipelineSelectionUI = factory.Create(Activator,"Extraction Pipeline", DockStyle.Fill, pChooseExtractionPipeline);
             _extractionPipelineSelectionUI.CollapseToSingleLineMode();
         }
 

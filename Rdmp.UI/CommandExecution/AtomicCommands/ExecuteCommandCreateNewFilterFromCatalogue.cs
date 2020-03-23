@@ -58,7 +58,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             if (_containerFunc != null)
                 _container = _containerFunc();
 
-            var wizard = new FilterImportWizard();
+            var wizard = new FilterImportWizard(Activator);
             var import = wizard.ImportOneFromSelection(_container, _filters);
 
             if (import != null)

@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 
 
@@ -21,15 +22,17 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
     [TechnicalUI]
     public partial class ArgumentValueArrayUI : UserControl, IArgumentValueUI
     {
+        private readonly IActivateItems _activator;
         private ArgumentValueUIArgs _args;
 
-        public ArgumentValueArrayUI()
+        public ArgumentValueArrayUI(IActivateItems activator)
         {
-            
+            _activator = activator;
+
             InitializeComponent();
         }
 
-        public void SetUp(ArgumentValueUIArgs args)
+        public void SetUp(IActivateItems activator, ArgumentValueUIArgs args)
         {
             _args = args;
 
@@ -70,7 +73,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
                 throw new NotSupportedException("CatalogueRepository does not support element "+elementType+" for DemandsInitialization Type " + type);
 
             var objects = _args.CatalogueRepository.GetAllObjects(elementType);
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(objects, true, false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, objects, true, false);
             dialog.AllowMultiSelect = true;
 
             if (dialog.ShowDialog() == DialogResult.OK)

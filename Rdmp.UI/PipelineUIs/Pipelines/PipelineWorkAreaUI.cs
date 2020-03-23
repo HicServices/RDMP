@@ -12,6 +12,7 @@ using BrightIdeasSoftware;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
+using Rdmp.UI.ItemActivation;
 using Rdmp.UI.PipelineUIs.DemandsInitializationUIs;
 using Rdmp.UI.PipelineUIs.Pipelines.Models;
 using Rdmp.UI.SimpleDialogs;
@@ -30,13 +31,15 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
     {
         private PipelineDiagramUI _pipelineDiagram;
         private ArgumentCollectionUI _arumentsCollection1;
+        private readonly IActivateItems _activator;
         private IPipeline _pipeline;
         private readonly IPipelineUseCase _useCase;
         private readonly ICatalogueRepository _catalogueRepository;
 
 
-        public PipelineWorkAreaUI(IPipeline pipeline, IPipelineUseCase useCase, ICatalogueRepository catalogueRepository)
+        public PipelineWorkAreaUI(IActivateItems activator,IPipeline pipeline, IPipelineUseCase useCase, ICatalogueRepository catalogueRepository)
         {
+            _activator = activator;
             _pipeline = pipeline;
             _useCase = useCase;
             _catalogueRepository = catalogueRepository;
@@ -84,9 +87,9 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             gbArguments.Enabled = true;
 
             if (selected == null)
-                _arumentsCollection1.Setup(null, null,_catalogueRepository);
+                _arumentsCollection1.Setup(_activator, null, null,_catalogueRepository);
             else
-                _arumentsCollection1.Setup(selected, selected.GetClassAsSystemType(), _catalogueRepository);
+                _arumentsCollection1.Setup(_activator, selected, selected.GetClassAsSystemType(), _catalogueRepository);
         }
 
         private void RowFormatter(OLVListItem olvItem)

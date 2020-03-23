@@ -6,6 +6,7 @@
 
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
+using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 {
@@ -17,6 +18,6 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
     /// </summary>
     public interface IArgumentValueUI : IContainerControl
     {
-        void SetUp(ArgumentValueUIArgs args);
+        void SetUp(IActivateItems activator,ArgumentValueUIArgs args);
     }
 }

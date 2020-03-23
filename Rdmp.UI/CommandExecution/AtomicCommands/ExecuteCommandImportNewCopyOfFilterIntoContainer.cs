@@ -37,7 +37,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var wizard = new FilterImportWizard();
+            var wizard = new FilterImportWizard(Activator);
             IFilter newFilter = wizard.Import(_targetContainer, _filterCombineable.Filter);
             if (newFilter != null)
             {

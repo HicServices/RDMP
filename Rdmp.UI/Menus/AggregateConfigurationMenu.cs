@@ -144,7 +144,7 @@ namespace Rdmp.UI.Menus
                 //and are not ourself!
                  .Except(new[] { _aggregate }).ToArray();
 
-            SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(others, true, false);
+            SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, others, true, false);
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {

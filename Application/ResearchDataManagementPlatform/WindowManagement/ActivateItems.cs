@@ -679,7 +679,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                     return null;
                 }
 
-            SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
+            SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(this, availableObjects, false, false);
             selectDialog.Text = prompt;
             selectDialog.SetInitialFilter(initialSearchText);
 
@@ -744,7 +744,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 return null;
             }
 
-            SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
+            SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(this, availableObjects, false, false);
             selectDialog.Text = prompt;
             selectDialog.SetInitialFilter(initialSearchText);
             selectDialog.AllowMultiSelect = true;
