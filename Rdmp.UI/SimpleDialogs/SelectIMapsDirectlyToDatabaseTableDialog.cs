@@ -69,9 +69,6 @@ namespace Rdmp.UI.SimpleDialogs
             {
                 //disable the option to select NULL
                 btnSelectNULL.Visible = false;
-
-                //move this button down so it doesn't look weird
-                btnSelect.Location = new Point(btnSelectNULL.Location.X,btnSelectNULL.Location.Y);
             }
 
             //default to not allowing multi selection
