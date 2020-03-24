@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Windows.Forms;
+using Rdmp.UI.ItemActivation;
 
 
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
@@ -25,7 +26,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
             InitializeComponent();
         }
         
-        public void SetUp(ArgumentValueUIArgs args)
+        public void SetUp(IActivateItems activator, ArgumentValueUIArgs args)
         {
             _args = args;
             _bLoading = true;

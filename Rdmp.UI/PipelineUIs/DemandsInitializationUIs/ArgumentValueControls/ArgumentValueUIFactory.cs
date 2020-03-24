@@ -14,6 +14,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Repositories;
+using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 {
@@ -23,8 +24,11 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
     /// </summary>
     public class ArgumentValueUIFactory
     {
-        public IArgumentValueUI Create(ArgumentValueUIArgs args)
+        private IActivateItems _activator;
+
+        public IArgumentValueUI Create(IActivateItems activator,ArgumentValueUIArgs args)
         {
+            _activator = activator;
             var argumentType = args.Type;
             IArgumentValueUI toReturn;
             var catalogueRepository = args.CatalogueRepository;
@@ -35,7 +39,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
                     toReturn = new ArgumentValueDictionaryUI();
                 else
                 if (typeof (Array).IsAssignableFrom(argumentType))
-                    toReturn = new ArgumentValueArrayUI();
+                    toReturn = new ArgumentValueArrayUI(activator);
                 else
                     //if it's a pipeline
                     if (typeof (IPipeline).IsAssignableFrom(argumentType))
@@ -66,7 +70,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
                                                             "' but does not have a TypeOf specified (e.g. [DemandsInitialization(\"some desc\",DemandType.Unspecified,null,typeof(IDilutionOperation))]).  Without the typeof(X) we do not know what Types to advertise as selectable to the user");
 
                         toReturn =
-                            new ArgumentValueComboBoxUI(
+                            new ArgumentValueComboBoxUI(activator,
                                 catalogueRepository.MEF.GetAllTypes()
                                     .Where(t => args.Required.Demand.TypeOf.IsAssignableFrom(t))
                                     .ToArray());
@@ -78,7 +82,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
                     else if (typeof(Enum).IsAssignableFrom(argumentType))
                     {
                         toReturn =
-                            new ArgumentValueComboBoxUI(
+                            new ArgumentValueComboBoxUI(activator,
                                 Enum.GetValues(argumentType).Cast<object>().ToArray());
                     }
                     else if (typeof (ICatalogueRepository).IsAssignableFrom(argumentType))
@@ -98,7 +102,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 
             ((Control)toReturn).Dock = DockStyle.Fill;
             
-            toReturn.SetUp(args);
+            toReturn.SetUp(activator, args);
             return toReturn;
         }
 
@@ -129,7 +133,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
             else
                 array = args.CatalogueRepository.GetAllObjects(argumentType).ToArray(); //Default case fetch all the objects of the Type
 
-            return new ArgumentValueComboBoxUI(array);
+            return new ArgumentValueComboBoxUI(_activator,array);
         }
 
         private IEnumerable<TableInfo> GetTableInfosInScope(ICatalogueRepository repository, IArgumentHost parent)

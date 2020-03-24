@@ -96,7 +96,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
 
         private void btnChooseRightTableInfo_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_leftTableInfo.Repository.GetAllObjects<TableInfo>().Where(t=>t.ID != _leftTableInfo.ID), false, false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, _leftTableInfo.Repository.GetAllObjects<TableInfo>().Where(t=>t.ID != _leftTableInfo.ID), false, false);
 
             if (dialog.ShowDialog() == DialogResult.OK)
                 SetRightTableInfo((TableInfo) dialog.Selected);

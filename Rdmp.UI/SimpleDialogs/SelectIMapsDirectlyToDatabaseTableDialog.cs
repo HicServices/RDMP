@@ -13,8 +13,10 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.Curation.Data;
 using Rdmp.UI.Collections;
-
+using Rdmp.UI.Collections.Providers.Filtering;
 
 
 namespace Rdmp.UI.SimpleDialogs
@@ -30,6 +32,7 @@ namespace Rdmp.UI.SimpleDialogs
     /// </summary>
     public partial class SelectIMapsDirectlyToDatabaseTableDialog : Form
     {
+        private readonly IBasicActivateItems _activator;
         private readonly bool _allowDeleting;
         public IMapsDirectlyToDatabaseTable Selected;
 
@@ -37,8 +40,11 @@ namespace Rdmp.UI.SimpleDialogs
         
         public const int MaxObjectsToShow = 1000;
 
-        public SelectIMapsDirectlyToDatabaseTableDialog(IEnumerable<IMapsDirectlyToDatabaseTable> toSelectFrom, bool allowSelectingNULL,bool allowDeleting)
+        private bool _useCatalogueFilter = false;
+
+        public SelectIMapsDirectlyToDatabaseTableDialog(IBasicActivateItems activator,IEnumerable<IMapsDirectlyToDatabaseTable> toSelectFrom, bool allowSelectingNULL,bool allowDeleting)
         {
+            _activator = activator;
             _allowDeleting = allowDeleting;
             InitializeComponent();
 
@@ -63,9 +69,6 @@ namespace Rdmp.UI.SimpleDialogs
             {
                 //disable the option to select NULL
                 btnSelectNULL.Visible = false;
-
-                //move this button down so it doesn't look weird
-                btnSelect.Location = new Point(btnSelectNULL.Location.X,btnSelectNULL.Location.Y);
             }
 
             //default to not allowing multi selection
@@ -78,6 +81,14 @@ namespace Rdmp.UI.SimpleDialogs
             //Add them to the tree view
             olvObjects.AddObjects(o);
 
+            if (o.Length>0 && o.All(c => c is ICatalogue))
+            {
+                splitContainer1.Panel2Collapsed = false;
+                _useCatalogueFilter = true;
+                catalogueCollectionFilterUI1.FiltersChanged += (s,e)=>ApplyFilter();
+            }
+            else
+                splitContainer1.Panel2Collapsed = true;
 
             //If there were any
             if(o.Any())
@@ -103,7 +114,10 @@ namespace Rdmp.UI.SimpleDialogs
             olvSelected.GroupWithItemCountFormat = "{0} ({1} objects)";
             olvSelected.GroupWithItemCountSingularFormat = "{0} (1 objects)";
             olvSelected.GroupKeyGetter += GroupKeyGetter;
+            
+            ApplyFilter();
         }
+
 
         private object GroupKeyGetter(object rowObject)
         {
@@ -301,9 +315,20 @@ namespace Rdmp.UI.SimpleDialogs
 
         private void tbFilter_TextChanged(object sender, EventArgs e)
         {
+            ApplyFilter();
+        }
+
+        private void ApplyFilter()
+        {
+            
             var modelFilter = new TextMatchFilterWithWhiteList(MultiSelected,olvObjects,tbFilter.Text,StringComparison.InvariantCultureIgnoreCase);
             olvObjects.ListFilter = new CherryPickingTailFilter(MaxObjectsToShow,modelFilter);
-            olvObjects.ModelFilter = modelFilter;
+
+            olvObjects.ModelFilter = _useCatalogueFilter ? 
+                (IModelFilter) new CompositeAllFilter(new List<IModelFilter>{modelFilter,new CatalogueCollectionFilter(_activator.CoreChildProvider)})
+                : modelFilter;
+            
+
         }
         
         private void tbFilter_KeyUp(object sender, KeyEventArgs e)

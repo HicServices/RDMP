@@ -189,7 +189,7 @@ namespace ResearchDataManagementPlatform.Menus
                 Name = "saveToolStripMenuItem",
                 Size = new System.Drawing.Size(214, 22)
             };
-            fileToolStripMenuItem.DropDownItems.Add(_saveToolStripMenuItem);
+            fileToolStripMenuItem.DropDownItems.Insert(3,_saveToolStripMenuItem);
 
             _windowManager.TabChanged += WindowFactory_TabChanged;
 
@@ -348,6 +348,11 @@ namespace ResearchDataManagementPlatform.Menus
                 var picked = dlg.Picked;
                 picked.Execute();
             }
+        }
+
+        private void quitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
     }
 }

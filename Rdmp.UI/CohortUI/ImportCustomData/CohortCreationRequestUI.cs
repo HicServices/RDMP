@@ -287,7 +287,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
 
         private void btnExisting_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>(), false, false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>(), false, false);
             if(dialog.ShowDialog()== DialogResult.OK)
                 SetProject((Project)dialog.Selected);
         }

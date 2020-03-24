@@ -61,6 +61,7 @@ namespace Rdmp.UI.Wizard
             pbCatalogue.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue);
             pbExtractionIdentifier.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionInformation);
             pbFilters.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Filter);
+            cbxCatalogues.SetItemActivator(activator);
         }
 
         private Catalogue _lastCatalogue = null;

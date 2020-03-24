@@ -604,7 +604,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText)
         {
-            var textTyper = new TypeTextOrCancelDialog(header, prompt, maxLength, initialText)
+            var textTyper = new TypeTextOrCancelDialog(header, prompt, maxLength, initialText, allowBlankText: false, multiLine: maxLength > 1000)
             {
                 RequireSaneHeaderText = requireSaneHeaderText
             };
@@ -679,7 +679,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                     return null;
                 }
 
-            SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
+            SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(this, availableObjects, false, false);
             selectDialog.Text = prompt;
             selectDialog.SetInitialFilter(initialSearchText);
 
@@ -744,7 +744,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 return null;
             }
 
-            SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
+            SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(this, availableObjects, false, false);
             selectDialog.Text = prompt;
             selectDialog.SetInitialFilter(initialSearchText);
             selectDialog.AllowMultiSelect = true;

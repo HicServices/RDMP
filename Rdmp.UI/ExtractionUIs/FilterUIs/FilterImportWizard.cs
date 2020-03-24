@@ -15,6 +15,7 @@ using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.QueryBuilding.Options;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
+using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs
@@ -26,6 +27,13 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
     /// </summary>
     public class FilterImportWizard
     {
+        private readonly IActivateItems _activator;
+
+        public FilterImportWizard(IActivateItems activator)
+        {
+            _activator = activator;
+        }
+
         public IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport)
         {
             ISqlParameter[] globals;
@@ -45,7 +53,10 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
         private IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport,ISqlParameter[] globalParameters, IFilter[] otherFiltersInScope)
         {
             //Sometimes filters have some recommended parameter values which the user can pick from (e.g. filter Condition could have parameter value sets for 'Dementia', 'Alzheimers' etc
-            var chosenParameterValues = AdvertiseAvailableFilterParameterSetsIfAny(filterToImport as ExtractionFilter);
+            var chosenParameterValues = AdvertiseAvailableFilterParameterSetsIfAny(filterToImport as ExtractionFilter, out bool cancel);
+
+            if (cancel)
+                return null;
 
             FilterImporter importer = null;
 
@@ -76,7 +87,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
 
         private IFilter ImportOneFromSelection(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported,ISqlParameter[] globalParameters,IFilter[] otherFiltersInScope)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(filtersThatCouldBeImported, false, false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, filtersThatCouldBeImported, false, false);
             if (dialog.ShowDialog() == DialogResult.OK && dialog.Selected != null)
             {
                 var chosenFilter = (IFilter)dialog.Selected;
@@ -86,21 +97,24 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             return null;//user chose not to import anything
         }
 
-        private ExtractionFilterParameterSet AdvertiseAvailableFilterParameterSetsIfAny(ExtractionFilter extractionFilterOrNull)
+        private ExtractionFilterParameterSet AdvertiseAvailableFilterParameterSetsIfAny(ExtractionFilter extractionFilterOrNull, out bool cancel)
         {
+            cancel = false;
+
             if (extractionFilterOrNull == null)
                 return null;
 
             var parameterSets = extractionFilterOrNull.Repository.GetAllObjectsWithParent<ExtractionFilterParameterSet>(extractionFilterOrNull);
 
-            if(parameterSets.Any())
-                if(MessageBox.Show("Filter " + extractionFilterOrNull + " has some preconfigured values for parameters that represent useful configurations for this filter, would you use one of these?  If you change your mind you can still choose 'Select Null'","Use curated parameter set values?",MessageBoxButtons.YesNo)== DialogResult.Yes)
-                {
-                    var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(parameterSets, true, false);
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                        return dialog.Selected as ExtractionFilterParameterSet;
 
-                }
+            if(parameterSets.Any())
+            {
+                var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, parameterSets, true, false);
+                if (dialog.ShowDialog() == DialogResult.OK)
+                    return dialog.Selected as ExtractionFilterParameterSet;
+                else
+                    cancel = true;
+            }
 
             return null;
         }

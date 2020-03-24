@@ -88,7 +88,7 @@ namespace Rdmp.UI.Menus
 
         private void AddCredentialPermission(TableInfo tableInfo)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_availableCredentials, false, false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, _availableCredentials, false, false);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 var cmd = new DataAccessCredentialsCombineable((DataAccessCredentials)dialog.Selected);

@@ -118,7 +118,8 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
         {
             base.SetDatabaseObject(activator, databaseObject);
             _catalogue = databaseObject;
-            
+
+            cbxLookup.SetItemActivator(activator);
             olvLookupNameColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o);
             olvExtractionInformationsNameColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o);
             olvDescriptionsColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o);

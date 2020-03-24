@@ -179,6 +179,16 @@ namespace Rdmp.Core.DataExport.Data
         {
             return ExtractionConfiguration.CumulativeExtractionResults.SingleOrDefault(ec => ec.IsFor(this));
         }
+
+        public void CreateRootContainerIfNotExists()
+        {
+            if (RootFilterContainer_ID == null)
+            {
+                var container = new FilterContainer(DataExportRepository, FilterContainerOperation.AND);
+                RootFilterContainer_ID = container.ID;
+                SaveToDatabase();
+            }
+        }
     }
 }
 

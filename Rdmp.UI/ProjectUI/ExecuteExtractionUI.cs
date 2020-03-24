@@ -292,7 +292,7 @@ namespace Rdmp.UI.ProjectUI
                 var useCase = ExtractionPipelineUseCase.DesignTime();
                 var factory = new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, null, useCase);
 
-                _pipelineSelectionUI1 = factory.Create("Extraction Pipeline", DockStyle.Fill);
+                _pipelineSelectionUI1 = factory.Create(activator,"Extraction Pipeline", DockStyle.Fill);
                 _pipelineSelectionUI1.CollapseToSingleLineMode();
 
                 //if the configuration has a default then use that pipeline

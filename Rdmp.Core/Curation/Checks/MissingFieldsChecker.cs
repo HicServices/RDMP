@@ -102,6 +102,9 @@ namespace Rdmp.Core.Curation.Checks
             bool problems = false;
             foreach (DiscoveredColumn missingProperty in missingProperties)
             {
+                if(missingProperty.GetRuntimeName().Equals("RowVer"))
+                    continue;
+
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     "Missing property " + missingProperty + " on class definition " + type.FullName + ", the underlying table contains this field but the class does not", CheckResult.Fail,
                     null));
@@ -119,28 +122,7 @@ namespace Rdmp.Core.Curation.Checks
                     null));
                 problems = true;
             }
-
-            //Check nullability
-            foreach (PropertyInfo nonNullableProperty in properties.Where(property=> property.PropertyType.IsEnum || property.PropertyType.IsValueType))
-            {
-
-                //it is something like int? i.e. a nullable value type
-                if (Nullable.GetUnderlyingType(nonNullableProperty.PropertyType) != null)
-                    continue;
-                
-                try
-                {
-                    var col = table.DiscoverColumn(nonNullableProperty.Name);
-
-                    if (col.AllowNulls)
-                        notifier.OnCheckPerformed(new CheckEventArgs("Column " + nonNullableProperty.Name + " in table " + table + " allows nulls but is mapped to a ValueType or Enum", CheckResult.Warning, null));
-                }
-                catch (Exception e)
-                {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Could not check nullability of column " + nonNullableProperty.Name + " in table " + table,CheckResult.Fail, e));
-                }
-            }
-
+            
             if (!problems)
                 notifier.OnCheckPerformed(new CheckEventArgs("All fields present and correct in Type/Table " + table,CheckResult.Success,null));
         }

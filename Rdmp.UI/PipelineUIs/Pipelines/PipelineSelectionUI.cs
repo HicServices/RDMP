@@ -11,6 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Repositories;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Annotations;
 
 namespace Rdmp.UI.PipelineUIs.Pipelines
@@ -18,6 +19,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
     /// <inheritdoc cref="IPipelineSelectionUI" />
     public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     {
+        private readonly IActivateItems _activator;
         private IPipelineUseCase _useCase;
         private readonly ICatalogueRepository _repository;
         
@@ -83,9 +85,9 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
                 : "<<None>>";
         }
         
-        //IMPORTANT:Do not change this method signature, it is used in reflection (See ArgumentValuePipelineUI.cs for one)
-        public PipelineSelectionUI(IPipelineUseCase useCase, ICatalogueRepository repository)
+        public PipelineSelectionUI(IActivateItems activator,IPipelineUseCase useCase, ICatalogueRepository repository)
         {
+            _activator = activator;
             _useCase = useCase;
             _repository = repository;
             InitializeComponent();
@@ -145,7 +147,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
         private void ShowEditPipelineDialog()
         {
             //create pipeline UI with NO explicit destination/source (both must be configured within the extraction context by the user)
-            var dialog = new ConfigurePipelineUI(Pipeline,_useCase, _repository);
+            var dialog = new ConfigurePipelineUI(_activator,Pipeline,_useCase, _repository);
             dialog.ShowDialog();
 
             ddPipelines.Items.Remove(Pipeline);

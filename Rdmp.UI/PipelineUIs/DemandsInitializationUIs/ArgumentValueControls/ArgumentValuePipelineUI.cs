@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Repositories;
+using Rdmp.UI.ItemActivation;
 using Rdmp.UI.PipelineUIs.Pipelines;
 using Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers;
 using Rdmp.UI.SimpleDialogs;
@@ -42,12 +43,12 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 
         }
         
-        public void SetUp(ArgumentValueUIArgs args)
+        public void SetUp(IActivateItems activator, ArgumentValueUIArgs args)
         {
             var instanceOfParentType = Activator.CreateInstance(_typeOfUnderlyingClass);
 
             var factory = new PipelineSelectionUIFactory(args.CatalogueRepository,args.Required,args, instanceOfParentType);
-            _pipelineSelectionUIInstance = factory.Create();
+            _pipelineSelectionUIInstance = factory.Create(activator);
             _pipelineSelectionUIInstance.CollapseToSingleLineMode();
 
             var c = (Control)_pipelineSelectionUIInstance;

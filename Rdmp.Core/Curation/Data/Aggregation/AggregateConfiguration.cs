@@ -767,5 +767,15 @@ namespace Rdmp.Core.Curation.Data.Aggregation
             CopyShallowValuesTo(clone);
             return clone;
         }
+
+        public void CreateRootContainerIfNotExists()
+        {
+            if (RootFilterContainer_ID == null)
+            {
+                var container = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
+                RootFilterContainer_ID = container.ID;
+                SaveToDatabase();
+            }
+        }
     }
 }

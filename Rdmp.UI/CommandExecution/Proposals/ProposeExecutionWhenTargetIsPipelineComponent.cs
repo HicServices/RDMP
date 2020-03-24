@@ -26,7 +26,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
         public override void Activate(PipelineComponent target)
         {
             var ui = new ArgumentCollectionUI();
-            ui.Setup(target,target.GetClassAsSystemType(),ItemActivator.RepositoryLocator.CatalogueRepository);
+            ui.Setup(ItemActivator, target,target.GetClassAsSystemType(),ItemActivator.RepositoryLocator.CatalogueRepository);
             ItemActivator.ShowWindow(ui,true);
         }
 

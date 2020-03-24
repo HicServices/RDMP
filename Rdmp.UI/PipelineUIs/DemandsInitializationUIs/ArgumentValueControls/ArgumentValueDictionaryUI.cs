@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 
 
@@ -30,6 +31,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
         private ArgumentValueUIFactory _factory;
 
         private ArgumentValueUIArgs _args;
+        private IActivateItems _activator;
 
         public ArgumentValueDictionaryUI()
         {
@@ -38,8 +40,9 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
             _factory = new ArgumentValueUIFactory();
         }
 
-        public void SetUp(ArgumentValueUIArgs args)
+        public void SetUp(IActivateItems activator,ArgumentValueUIArgs args)
         {
+            _activator = activator;
             _args = args;
             var concreteType = args.Type;
 
@@ -59,6 +62,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
         List<object> values = new List<object>();
 
         Stack<Tuple<Control,Control>> controls = new Stack<Tuple<Control, Control>>();
+        
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
@@ -84,7 +88,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
             keyArgs.InitialValue = key;
             keyArgs.Type = _kType;
 
-            var keyUI = (Control)_factory.Create(keyArgs);
+            var keyUI = (Control)_factory.Create(_activator, keyArgs);
             keyUI.Dock = DockStyle.None;
             keyUI.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             keyUI.Location = new Point(0, y);
@@ -102,7 +106,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
             valueArgs.InitialValue = val;
             valueArgs.Type = _vType;
 
-            var valueUI = (Control)_factory.Create(valueArgs);
+            var valueUI = (Control)_factory.Create(_activator, valueArgs);
             valueUI.Dock = DockStyle.None;
             valueUI.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             valueUI.Location = new Point(keyUI.Right, y);

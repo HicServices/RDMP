@@ -203,7 +203,7 @@ namespace Rdmp.UI.DataRelease
             if (_pipelineSelectionUI1 == null)
             {
                 var context = ReleaseUseCase.DesignTime();
-                _pipelineSelectionUI1 = new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, null, context).Create("Release", DockStyle.Fill);
+                _pipelineSelectionUI1 = new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, null, context).Create(Activator,"Release", DockStyle.Fill);
                 _pipelineSelectionUI1.CollapseToSingleLineMode();
                 _pipelineSelectionUI1.Pipeline = null;
                 _pipelineSelectionUI1.PipelineChanged += ResetChecksUI;
