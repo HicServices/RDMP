@@ -6,11 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Added double click to expand tree option for RDMP
 ...
+
+## [4.1.0-rc1] - 2020-03-24
 
 ### Added
 
-- Added double click to expand tree option for RDMP
 - When searching (Ctrl+F), exact matches now appear first
 - Added RDMP platform database name (and server) to the window title
 - Added Export Plugins command (which saves the currently loaded RDMP plugins to the selected folder)
@@ -18,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Changed
 
+- CohortBuilder interface has been revamped
 - Catalogue collection no longer expands when CatalogueFolder changes
 
 ## [4.0.3] - 2020-02-28
