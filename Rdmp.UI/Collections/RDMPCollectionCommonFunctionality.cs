@@ -616,6 +616,13 @@ namespace Rdmp.UI.Collections
             if(o == null)
                 return;
 
+            if (UserSettings.DoubleClickToExpand && !Tree.IsExpanded(o) && Tree.CanExpand(o))
+            {
+                Tree.Expand(o);
+                return;
+            }
+
+
             var cmd = new ExecuteCommandActivate(_activator, o);
             if(!cmd.IsImpossible)
                 cmd.Execute();
