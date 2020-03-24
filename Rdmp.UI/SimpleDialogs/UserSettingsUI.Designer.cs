@@ -45,6 +45,7 @@
             this.cbWait5Seconds = new System.Windows.Forms.CheckBox();
             this.cbShowCohortWizard = new System.Windows.Forms.CheckBox();
             this.btnClearFavourites = new System.Windows.Forms.Button();
+            this.cbDoubleClickToExpand = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // cbShowHomeOnStartup
@@ -216,6 +217,17 @@
             this.btnClearFavourites.Text = "Clear Favourites";
             this.btnClearFavourites.UseVisualStyleBackColor = true;
             // 
+            // cbDoubleClickToExpand
+            // 
+            this.cbDoubleClickToExpand.AutoSize = true;
+            this.cbDoubleClickToExpand.Location = new System.Drawing.Point(298, 51);
+            this.cbDoubleClickToExpand.Name = "cbDoubleClickToExpand";
+            this.cbDoubleClickToExpand.Size = new System.Drawing.Size(141, 17);
+            this.cbDoubleClickToExpand.TabIndex = 0;
+            this.cbDoubleClickToExpand.Text = "Double Click To Expand";
+            this.cbDoubleClickToExpand.UseVisualStyleBackColor = true;
+            this.cbDoubleClickToExpand.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
+            // 
             // UserSettingsFileUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -237,6 +249,7 @@
             this.Controls.Add(this.cbConfirmExit);
             this.Controls.Add(this.cbEmphasiseOnTabChanged);
             this.Controls.Add(this.label1);
+            this.Controls.Add(this.cbDoubleClickToExpand);
             this.Controls.Add(this.cbShowHomeOnStartup);
             this.Name = "UserSettingsFileUI";
             this.Text = "User Settings";
@@ -264,5 +277,6 @@
         private System.Windows.Forms.CheckBox cbWait5Seconds;
         private System.Windows.Forms.CheckBox cbShowCohortWizard;
         private System.Windows.Forms.Button btnClearFavourites;
+        private System.Windows.Forms.CheckBox cbDoubleClickToExpand;
     }
 }

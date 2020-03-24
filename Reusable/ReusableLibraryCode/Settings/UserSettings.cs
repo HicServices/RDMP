@@ -189,6 +189,13 @@ namespace ReusableLibraryCode.Settings
             get { return AppSettings.GetValueOrDefault("ShowCohortWizard", false); }
             set { AppSettings.AddOrUpdateValue("ShowCohortWizard", value); }
         }
+
+        public static bool DoubleClickToExpand
+        {
+            get { return AppSettings.GetValueOrDefault("DoubleClickToExpand", false); }
+            set { AppSettings.AddOrUpdateValue("DoubleClickToExpand", value); }
+        }
+
         #endregion
 
         public static bool GetTutorialDone(Guid tutorialGuid)

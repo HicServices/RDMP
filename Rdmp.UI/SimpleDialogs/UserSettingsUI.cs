@@ -32,6 +32,7 @@ namespace Rdmp.UI.SimpleDialogs
             cbThemeMenus.Checked = UserSettings.ApplyThemeToMenus;
             cbWait5Seconds.Checked = UserSettings.Wait5SecondsAfterStartupUI;
             cbShowCohortWizard.Checked = UserSettings.ShowCohortWizard;
+            cbDoubleClickToExpand.Checked = UserSettings.DoubleClickToExpand;
 
             ddTheme.DataSource = new []
             {
@@ -86,6 +87,9 @@ namespace Rdmp.UI.SimpleDialogs
 
             if(cb == cbShowCohortWizard)
                 UserSettings.ShowCohortWizard = cb.Checked;
+
+            if (cb == cbDoubleClickToExpand)
+                UserSettings.DoubleClickToExpand = cb.Checked;
         }
 
         private void ddTheme_SelectedIndexChanged(object sender, EventArgs e)
