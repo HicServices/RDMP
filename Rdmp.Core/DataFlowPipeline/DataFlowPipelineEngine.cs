@@ -126,7 +126,7 @@ namespace Rdmp.Core.DataFlowPipeline
             catch (Exception e)
             {
                 exception = e;
-                _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Data Flow Pipeline Engine execution threw Exception",e));
+                _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, e.Message,e));
             }
             finally
             {
@@ -179,7 +179,7 @@ namespace Rdmp.Core.DataFlowPipeline
             }
 
             if (exception != null)
-                throw new Exception("Data Flow Pipeline Crashed",exception);
+                throw new PipelineCrashedException("Data Flow Pipeline Crashed",exception);
         }
 
         /// <inheritdoc/>

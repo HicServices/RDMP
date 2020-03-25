@@ -367,10 +367,33 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
                 var engine = GetFactory().Create(p, new FromCheckNotifierToDataLoadEventListener(ragSmileyExecute));
                 engine.Initialize(new FlatFileToLoad(_selectedFile), db);
 
+                bool crashed = false;
+
                 var cts = new CancellationTokenSource();
-                var t =Task.Run(()=> engine.ExecutePipeline(new GracefulCancellationToken(cts.Token,cts.Token)));
+                var t =Task.Run(() =>
+                {
+                    try
+                    {
+                        engine.ExecutePipeline(new GracefulCancellationToken(cts.Token, cts.Token));
+                    }
+                    catch (PipelineCrashedException ex)
+                    {
+                        Activator.ShowException("Error uploading",ex.InnerException ?? ex);
+                        crashed = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Activator.ShowException("Error uploading",ex);
+                        crashed = true;
+                    }
+                }
+                    
+                    );
 
                 Activator.Wait("Uploading Table...",t,cts);
+
+                if(crashed)
+                    return;
 
                 if (t.IsFaulted)
                     throw t.Exception?? new Exception("Task Failed");
