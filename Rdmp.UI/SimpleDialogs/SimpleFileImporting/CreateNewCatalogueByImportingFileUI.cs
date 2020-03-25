@@ -369,6 +369,16 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
 
                 bool crashed = false;
 
+                var dest = (DataTableUploadDestination) engine.DestinationObject;
+                dest.TableNamerDelegate = () =>
+                    Activator.TypeText("Table Name", "Enter name for table", 100,
+                        QuerySyntaxHelper.MakeHeaderNameSensible(Path.GetFileNameWithoutExtension(_selectedFile.Name)), out string text, true)
+                        ? text
+                        : throw new Exception("User did not provide a name for table");
+
+                
+
+
                 var cts = new CancellationTokenSource();
                 var t =Task.Run(() =>
                 {
@@ -401,8 +411,6 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
                 if(t.IsCanceled || cts.IsCancellationRequested)
                     return;
 
-                var dest = (DataTableUploadDestination) engine.DestinationObject;
-                
                 ForwardEngineer(db.ExpectTable(dest.TargetTableName));
 
 

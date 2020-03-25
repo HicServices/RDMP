@@ -91,6 +91,12 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
         //All column values sent to server so far
         Dictionary<string, Guesser> _dataTypeDictionary;
 
+        /// <summary>
+        /// Optional function called when a name is needed for the table being uploaded (this overrides
+        /// upstream components naming of tables - e.g. from file names).
+        /// </summary>
+        public Func<string> TableNamerDelegate { get; set; }
+
         public DataTableUploadDestination()
         {
             ExplicitTypes = new List<DatabaseColumnRequest>();
@@ -111,10 +117,13 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
             //work out the table name for the table we are going to create
             if (TargetTableName == null)
             {
+                if (TableNamerDelegate != null)
+                    TargetTableName = TableNamerDelegate();
+                else
                 if (string.IsNullOrWhiteSpace(toProcess.TableName))
                     throw new Exception("Chunk did not have a TableName, did not know what to call the newly created table");
-                
-                TargetTableName = QuerySyntaxHelper.MakeHeaderNameSensible(toProcess.TableName);
+                else                
+                    TargetTableName = QuerySyntaxHelper.MakeHeaderNameSensible(toProcess.TableName);
             }
 
             ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess);
