@@ -6,6 +6,7 @@
 
 using System;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -134,7 +135,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
                     gbExecute.Enabled = false;
                     gbPickDatabase.Enabled = false;
                     btnConfirmDatabase.Enabled = false;
-
+                    gbTableName.Enabled = false;
                     btnAdvanced.Enabled = false;
                     
                     _selectedFile = null;
@@ -153,11 +154,21 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
                     pbFile.Visible = true;
                     btnAdvanced.Enabled = false;
                     gbPickDatabase.Enabled = true;
+                    gbTableName.Enabled = true;
 
                     //text of the file they selected
                     lblFile.Text = _selectedFile.Name;
                     lblFile.Left = pbFile.Right + 2;
                     lblFile.Visible = true;
+                    try
+                    {
+                        tbTableName.Text =
+                            QuerySyntaxHelper.MakeHeaderNameSensible(Path.GetFileNameWithoutExtension(_selectedFile.Name));
+                    }
+                    catch (Exception)
+                    {
+                        tbTableName.Text = "Enter Name";
+                    }
 
                     ragSmileyFile.Visible = true;
                     ragSmileyFile.Left = lblFile.Right + 2;
@@ -178,6 +189,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
                     btnAdvanced.Enabled = true;
                     gbPickDatabase.Enabled = true; //user still might want to change his mind about targets
                     btnConfirmDatabase.Enabled = false;
+                    gbTableName.Enabled = true;
 
                     break;
                 default:
@@ -359,6 +371,12 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
                 MessageBox.Show("No Pipeline Selected");
                 return;
             }
+            
+            if(string.IsNullOrWhiteSpace(tbTableName.Text))
+            {
+                MessageBox.Show("Enter table name");
+                return;
+            }
 
             ragSmileyExecute.Reset();
             try
@@ -370,14 +388,8 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
                 bool crashed = false;
 
                 var dest = (DataTableUploadDestination) engine.DestinationObject;
-                dest.TableNamerDelegate = () =>
-                    Activator.TypeText("Table Name", "Enter name for table", 100,
-                        QuerySyntaxHelper.MakeHeaderNameSensible(Path.GetFileNameWithoutExtension(_selectedFile.Name)), out string text, true)
-                        ? text
-                        : throw new Exception("User did not provide a name for table");
-
+                dest.TableNamerDelegate = () => tbTableName.Text;
                 
-
 
                 var cts = new CancellationTokenSource();
                 var t =Task.Run(() =>
@@ -455,6 +467,14 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
         public void SetProjectSpecific(Project project)
         {
             _projectSpecific = project;
+        }
+
+        private void tbTableName_TextChanged(object sender, EventArgs e)
+        {
+            if(!string.IsNullOrWhiteSpace(tbTableName.Text))
+            //if the sane name doesn't match the 
+            tbTableName.ForeColor = !tbTableName.Text.Equals(QuerySyntaxHelper.MakeHeaderNameSensible(tbTableName.Text),
+                StringComparison.CurrentCultureIgnoreCase) ? Color.Red : Color.Black;
         }
     }
 }

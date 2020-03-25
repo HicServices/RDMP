@@ -118,7 +118,11 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
             if (TargetTableName == null)
             {
                 if (TableNamerDelegate != null)
+                {
                     TargetTableName = TableNamerDelegate();
+                    if(string.IsNullOrWhiteSpace(TargetTableName))
+                        throw new Exception("No table name specified (TableNamerDelegate returned null)");
+                }
                 else
                 if (string.IsNullOrWhiteSpace(toProcess.TableName))
                     throw new Exception("Chunk did not have a TableName, did not know what to call the newly created table");
