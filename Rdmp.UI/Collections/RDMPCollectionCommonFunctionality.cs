@@ -616,10 +616,19 @@ namespace Rdmp.UI.Collections
             if(o == null)
                 return;
 
-            if (UserSettings.DoubleClickToExpand && !Tree.IsExpanded(o) && Tree.CanExpand(o))
+            if (UserSettings.DoubleClickToExpand)
             {
-                Tree.Expand(o);
-                return;
+                if (!Tree.IsExpanded(o) && Tree.CanExpand(o))
+                {
+                    Tree.Expand(o);
+                    return;
+                }
+
+                if (Tree.IsExpanded(o))
+                {
+                    Tree.Collapse(o);
+                    return;
+                }
             }
 
 
