@@ -228,7 +228,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             // btnAdvanced
             // 
             this.btnAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAdvanced.Location = new System.Drawing.Point(622, 311);
+            this.btnAdvanced.Location = new System.Drawing.Point(622, 321);
             this.btnAdvanced.Name = "btnAdvanced";
             this.btnAdvanced.Size = new System.Drawing.Size(75, 23);
             this.btnAdvanced.TabIndex = 6;
@@ -269,7 +269,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             this.gbTableName.Size = new System.Drawing.Size(604, 54);
             this.gbTableName.TabIndex = 2;
             this.gbTableName.TabStop = false;
-            this.gbTableName.Text = "3. Pick database table name";
+            this.gbTableName.Text = "3. Pick Catalogue name (created Table will have the same name)";
             // 
             // tbTableName
             // 

@@ -76,23 +76,28 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             HelpWorkflow = new HelpWorkflow(this, _command, tracker);
 
             //////Normal work flow
-            var root = new HelpStage(gbPickFile, "Choose the file you want to import here.\r\n" +
+            var pickFile = new HelpStage(gbPickFile, "1. Choose the file you want to import here.\r\n" +
                                                  "\r\n" +
                                                  "Click on the red icon to disable this help.");
-            var stage2 = new HelpStage(gbPickDatabase, "Select the database to use for importing data.\r\n" +
+            var pickDb = new HelpStage(gbPickDatabase, "2. Select the database to use for importing data.\r\n" +
                                                        "Username and Password are optional; if not set, the connection will be attempted using your windows user");
-            var stage3 = new HelpStage(gbPickPipeline, "Select the pipeline to execute in order to transfer the data from the files into the DB.\r\n" +
+            var pickName = new HelpStage(gbTableName, "3. Select the name of the created Catalogue.\r\n" +
+                                                       "A Table with the same name will be created in the database selected above.\r\n" +
+                                                       "Please note that the chosen pipeline can alter the created Table name. If a table with the same name already exists " +
+                                                       "in the selected Database, the execution may fail.");
+            var pickPipeline = new HelpStage(gbPickPipeline, "4. Select the pipeline to execute in order to transfer the data from the files into the DB.\r\n" +
                                                        "If you are not sure, ask the admin which one to use or click 'Advanced' to go into the advanced pipeline UI.");
-            var stage4 = new HelpStage(gbExecute, "Click Preview to peek at what data is in the selected file.\r\n" +
+            var execute = new HelpStage(gbExecute, "5. Click Preview to peek at what data is in the selected file.\r\n" +
                                                   "Click Execute to run the process and import your file.");
 
-            root.SetOption(">>", stage2);
-            stage2.SetOption(">>", stage3);
-            stage3.SetOption(">>", stage4);
-            stage4.SetOption("|<<", root);
+            pickFile.SetOption(">>", pickDb);
+            pickDb.SetOption(">>", pickName);
+            pickName.SetOption(">>", pickPipeline);
+            pickPipeline.SetOption(">>", execute);
+            execute.SetOption("|<<", pickFile);
             //stage4.SetOption("next...", stage2);
             
-            HelpWorkflow.RootStage = root;
+            HelpWorkflow.RootStage = pickFile;
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)
@@ -109,7 +114,6 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
         {
             _selectedFile = fileName;
             SetupState(State.FileSelected);
-
         }
 
         private void btnClearFile_Click(object sender, EventArgs e)
@@ -167,7 +171,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
                     }
                     catch (Exception)
                     {
-                        tbTableName.Text = "Enter Name";
+                        tbTableName.Text = String.Empty;
                     }
 
                     ragSmileyFile.Visible = true;
@@ -374,7 +378,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             
             if(string.IsNullOrWhiteSpace(tbTableName.Text))
             {
-                MessageBox.Show("Enter table name");
+                MessageBox.Show("Enter Catalogue name");
                 return;
             }
 
@@ -390,7 +394,6 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
                 var dest = (DataTableUploadDestination) engine.DestinationObject;
                 dest.TableNamerDelegate = () => tbTableName.Text;
                 
-
                 var cts = new CancellationTokenSource();
                 var t =Task.Run(() =>
                 {
