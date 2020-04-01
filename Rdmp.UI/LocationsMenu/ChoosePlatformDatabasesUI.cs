@@ -7,6 +7,7 @@
 using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -14,9 +15,11 @@ using FAnsi;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.Curation.Checks;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
 using Rdmp.UI.ChecksUI;
+using Rdmp.UI.DataLoadUIs.ModuleUIs;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
@@ -265,6 +268,19 @@ namespace Rdmp.UI.LocationsMenu
                     {
                         var creator = new PlatformDatabaseCreation();
                         creator.CreatePlatformDatabases(opts);
+                        if (!opts.SkipPipelines)
+                        {
+                            var repo = new PlatformDatabaseCreationRepositoryFinder(opts);
+                            var bulkInsertCsvPipe = repo.CatalogueRepository
+                                .GetAllObjects<Pipeline>()
+                                .FirstOrDefault(p => p.Name == "BULK INSERT:CSV Import File");
+                            if (bulkInsertCsvPipe != null)
+                            {
+                                var d = (PipelineComponentArgument)bulkInsertCsvPipe.Destination.GetAllArguments().Single(a => a.Name.Equals("Adjuster"));
+                                d.SetValue(typeof(AdjustColumnDataTypesUI));
+                                d.SaveToDatabase();
+                            }
+                        }
                     }
                     catch (Exception ex)
                     {
