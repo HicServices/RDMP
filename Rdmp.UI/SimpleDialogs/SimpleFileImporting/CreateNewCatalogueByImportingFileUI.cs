@@ -404,16 +404,17 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
                     catch (PipelineCrashedException ex)
                     {
                         Activator.ShowException("Error uploading",ex.InnerException ?? ex);
+                        ConfirmTableDeletion(db.ExpectTable(dest.TargetTableName));
                         crashed = true;
                     }
                     catch (Exception ex)
                     {
                         Activator.ShowException("Error uploading",ex);
+                        ConfirmTableDeletion(db.ExpectTable(dest.TargetTableName));
                         crashed = true;
                     }
                 }
-                    
-                    );
+                );
 
                 Activator.Wait("Uploading Table...",t,cts);
 
@@ -427,12 +428,21 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
                     return;
 
                 ForwardEngineer(db.ExpectTable(dest.TargetTableName));
-
-
             }
             catch (Exception exception)
             {
                 ragSmileyExecute.Fatal(exception);
+            }
+        }
+
+        private void ConfirmTableDeletion(DiscoveredTable expectTable)
+        {
+            if (expectTable.Exists())
+            {
+                var confirm = MessageBox.Show("The database table may have been created as part of this import. Do you want to keep that?",
+                    "Confirm", MessageBoxButtons.YesNo);
+                if (confirm == DialogResult.No) 
+                    expectTable.Drop();
             }
         }
 
