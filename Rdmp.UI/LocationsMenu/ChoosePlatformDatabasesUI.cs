@@ -268,19 +268,8 @@ namespace Rdmp.UI.LocationsMenu
                     {
                         var creator = new PlatformDatabaseCreation();
                         creator.CreatePlatformDatabases(opts);
-                        if (!opts.SkipPipelines)
-                        {
-                            var repo = new PlatformDatabaseCreationRepositoryFinder(opts);
-                            var bulkInsertCsvPipe = repo.CatalogueRepository
-                                .GetAllObjects<Pipeline>()
-                                .FirstOrDefault(p => p.Name == "BULK INSERT:CSV Import File");
-                            if (bulkInsertCsvPipe != null)
-                            {
-                                var d = (PipelineComponentArgument)bulkInsertCsvPipe.Destination.GetAllArguments().Single(a => a.Name.Equals("Adjuster"));
-                                d.SetValue(typeof(AdjustColumnDataTypesUI));
-                                d.SaveToDatabase();
-                            }
-                        }
+                        if (!opts.SkipPipelines) 
+                            PostFixPipelines(opts);
                     }
                     catch (Exception ex)
                     {
@@ -329,6 +318,21 @@ namespace Rdmp.UI.LocationsMenu
             finally
             {
                 Cursor = Cursors.Default;
+            }
+        }
+
+        private void PostFixPipelines(PlatformDatabaseCreationOptions opts)
+        {
+            var repo = new PlatformDatabaseCreationRepositoryFinder(opts);
+            var bulkInsertCsvPipe = repo.CatalogueRepository
+                .GetAllObjects<Pipeline>()
+                .FirstOrDefault(p => p.Name == "BULK INSERT:CSV Import File");
+            if (bulkInsertCsvPipe != null)
+            {
+                var d = (PipelineComponentArgument) bulkInsertCsvPipe.Destination.GetAllArguments()
+                    .Single(a => a.Name.Equals("Adjuster"));
+                d.SetValue(typeof(AdjustColumnDataTypesUI));
+                d.SaveToDatabase();
             }
         }
 
