@@ -439,7 +439,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
         {
             if (expectTable.Exists())
             {
-                var confirm = MessageBox.Show("The database table may have been created as part of this import. Do you want to keep that?",
+                var confirm = MessageBox.Show(String.Format("A table named {0} has been created as part of this import. Do you want to keep it?", expectTable.GetFullyQualifiedName()),
                     "Confirm", MessageBoxButtons.YesNo);
                 if (confirm == DialogResult.No) 
                     expectTable.Drop();
