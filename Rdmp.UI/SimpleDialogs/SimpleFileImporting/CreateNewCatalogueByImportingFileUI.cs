@@ -404,13 +404,15 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
                     catch (PipelineCrashedException ex)
                     {
                         Activator.ShowException("Error uploading",ex.InnerException ?? ex);
-                        ConfirmTableDeletion(db.ExpectTable(dest.TargetTableName));
+                        if (dest.CreatedTable)
+                            ConfirmTableDeletion(db.ExpectTable(dest.TargetTableName));
                         crashed = true;
                     }
                     catch (Exception ex)
                     {
                         Activator.ShowException("Error uploading",ex);
-                        ConfirmTableDeletion(db.ExpectTable(dest.TargetTableName));
+                        if (dest.CreatedTable)
+                            ConfirmTableDeletion(db.ExpectTable(dest.TargetTableName));
                         crashed = true;
                     }
                 }
