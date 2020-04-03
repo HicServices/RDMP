@@ -429,7 +429,8 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
         {
             var extractionPicker = new ConfigureCatalogueExtractabilityUI(Activator, new TableInfoImporter(Activator.RepositoryLocator.CatalogueRepository, targetTableName), "File '" + _selectedFile.FullName + "'", _projectSpecific)
             {
-                TargetFolder = TargetFolder
+                TargetFolder = TargetFolder,
+                TableCreated = targetTableName
             };
             extractionPicker.ShowDialog();
 
