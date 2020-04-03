@@ -86,7 +86,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
                                                        "Please note that the chosen pipeline can alter the created Table name. If a table with the same name already exists " +
                                                        "in the selected Database, the execution may fail.");
             var pickPipeline = new HelpStage(gbPickPipeline, "4. Select the pipeline to execute in order to transfer the data from the files into the DB.\r\n" +
-                                                       "If you are not sure, ask the admin which one to use or click 'Advanced' to go into the advanced pipeline UI.");
+                                                       "If you are not sure, ask the admin which one to use.");
             var execute = new HelpStage(gbExecute, "5. Click Preview to peek at what data is in the selected file.\r\n" +
                                                   "Click Execute to run the process and import your file.");
 
@@ -103,7 +103,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
         private void btnBrowse_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "Comma Separated Values|*.csv|Excel File|*.xls*|All Files (Advanced UI Only)|*.*";
+            ofd.Filter = "Comma Separated Values|*.csv|Excel File|*.xls*|Text File|*.txt|All Files|*.*";
             DialogResult result = ofd.ShowDialog();
 
             if (result == DialogResult.OK)
@@ -140,7 +140,6 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
                     gbPickDatabase.Enabled = false;
                     btnConfirmDatabase.Enabled = false;
                     gbTableName.Enabled = false;
-                    btnAdvanced.Enabled = false;
                     
                     _selectedFile = null;
 
@@ -156,7 +155,6 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
 
                     //turn things on
                     pbFile.Visible = true;
-                    btnAdvanced.Enabled = false;
                     gbPickDatabase.Enabled = true;
                     gbTableName.Enabled = true;
 
@@ -190,7 +188,6 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
 
                     //turn things on
                     gbExecute.Enabled = true;
-                    btnAdvanced.Enabled = true;
                     gbPickDatabase.Enabled = true; //user still might want to change his mind about targets
                     btnConfirmDatabase.Enabled = false;
                     gbTableName.Enabled = true;
@@ -234,7 +231,6 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
         void serverDatabaseTableSelector1_SelectionChanged()
         {
             btnConfirmDatabase.Enabled = serverDatabaseTableSelector1.GetDiscoveredDatabase() != null;
-            btnAdvanced.Enabled = btnConfirmDatabase.Enabled;
         }
 
         private void IdentifyCompatiblePipelines()
@@ -290,28 +286,9 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
                 ragSmileyFile.Fatal(exception);
             }
         }
-
-
-        private void btnAdvanced_Click(object sender, EventArgs e)
-        {
-            ToggleAdvanced();
-        }
-
+        
         private Project _projectSpecific;
-
-        private void ToggleAdvanced()
-        {
-            var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
-
-            if (db == null)
-                return;
-
-            //flip it
-            var advanced = new CreateNewCatalogueByImportingFileUI_Advanced(Activator, db, _selectedFile, true, _projectSpecific);
-            var form = new SingleControlForm(advanced);
-            form.Show();
-        }
-
+        
         private void btnConfirmDatabase_Click(object sender, EventArgs e)
         {
             var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();

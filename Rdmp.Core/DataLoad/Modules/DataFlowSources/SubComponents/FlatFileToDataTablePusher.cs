@@ -256,7 +256,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
 
         
 
-        public DataTable StronglyTypeTable(DataTable workingTable,ExplicitTypingCollection explicitTypingCollection)
+        public DataTable StronglyTypeTable(DataTable workingTable, ExplicitTypingCollection explicitTypingCollection)
         {
             Dictionary<int, IDecideTypesForStrings> deciders = new Dictionary<int, IDecideTypesForStrings>();
             var factory = new TypeDeciderFactory(_culture);

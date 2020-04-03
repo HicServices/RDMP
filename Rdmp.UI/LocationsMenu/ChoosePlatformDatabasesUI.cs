@@ -326,7 +326,7 @@ namespace Rdmp.UI.LocationsMenu
             var repo = new PlatformDatabaseCreationRepositoryFinder(opts);
             var bulkInsertCsvPipe = repo.CatalogueRepository
                 .GetAllObjects<Pipeline>()
-                .FirstOrDefault(p => p.Name == "BULK INSERT:CSV Import File");
+                .FirstOrDefault(p => p.Name == "BULK INSERT: CSV Import File (manual column-type editing)");
             if (bulkInsertCsvPipe != null)
             {
                 var d = (PipelineComponentArgument) bulkInsertCsvPipe.Destination.GetAllArguments()

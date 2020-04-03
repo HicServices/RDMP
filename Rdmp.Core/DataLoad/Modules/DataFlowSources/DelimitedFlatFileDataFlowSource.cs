@@ -214,9 +214,10 @@ This will not help you avoid bad data as the full file structure must still be r
                             : StronglyTypeInputBatchSize;
 
                         if(batchSizeToLoad < MinimumStronglyTypeInputBatchSize)
-                        {
-                            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "You set StronglyTypeInputBatchSize to " + batchSizeToLoad + " this may be too small!",null));
-                        }
+                            listener.OnNotify(this,
+                                new NotifyEventArgs(ProgressEventType.Warning,
+                                    "You set StronglyTypeInputBatchSize to " + batchSizeToLoad +
+                                    " this may be too small!", null));
 
                         //user want's to strongly type input with a custom batch size
                         rowsRead = IterativelyBatchLoadDataIntoDataTable(_workingTable, batchSizeToLoad);
@@ -324,6 +325,11 @@ This will not help you avoid bad data as the full file structure must still be r
             if (!StronglyTypeInput)
                 notifier.OnCheckPerformed(
                     new CheckEventArgs("StronglyTypeInput is false, this feature is highly recommended",CheckResult.Warning));
+
+            if (StronglyTypeInput && StronglyTypeInputBatchSize < 500)
+                notifier.OnCheckPerformed(
+                    new CheckEventArgs("StronglyTypeInputBatchSize is less than the recommended 500: this may cause errors when determining the best data type from the source file.", 
+                        CheckResult.Warning));
 
             if (_fileToLoad.File == null)
             {
