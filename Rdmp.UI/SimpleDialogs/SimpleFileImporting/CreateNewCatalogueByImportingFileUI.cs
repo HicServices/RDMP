@@ -241,7 +241,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             _context = new DataFlowPipelineContextFactory<DataTable>().Create(PipelineUsage.LoadsSingleFlatFile);
             _context.MustHaveDestination = typeof(DataTableUploadDestination);
 
-            if (_selectedFile.Extension == ".csv")
+            if (_selectedFile.Extension == ".csv" || _selectedFile.Extension == ".txt")
                 _context.MustHaveSource = typeof (DelimitedFlatFileDataFlowSource);
 
             if(_selectedFile.Extension.StartsWith(".xls"))
