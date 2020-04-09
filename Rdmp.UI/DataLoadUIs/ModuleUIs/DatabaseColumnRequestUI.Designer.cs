@@ -48,13 +48,12 @@
             // 
             // lblColumnName
             // 
-            this.lblColumnName.AutoSize = true;
-            this.lblColumnName.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblColumnName.Location = new System.Drawing.Point(0, 0);
+            this.lblColumnName.Location = new System.Drawing.Point(3, 1);
             this.lblColumnName.Name = "lblColumnName";
-            this.lblColumnName.Size = new System.Drawing.Size(80, 13);
+            this.lblColumnName.Size = new System.Drawing.Size(145, 20);
             this.lblColumnName.TabIndex = 0;
             this.lblColumnName.Text = "lblColumnName";
+            this.lblColumnName.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // tbExplicitDbType
             // 
@@ -195,7 +194,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.nAfterDecimal)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nBeforeDecimal)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
