@@ -109,7 +109,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(506, 26);
+            this.label5.Location = new System.Drawing.Point(380, 26);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(70, 13);
             this.label5.TabIndex = 0;
@@ -119,7 +119,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(409, 26);
+            this.label4.Location = new System.Drawing.Point(283, 26);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(79, 13);
             this.label4.TabIndex = 0;
@@ -147,7 +147,7 @@
             // 
             // nAfterDecimal
             // 
-            this.nAfterDecimal.Location = new System.Drawing.Point(502, 4);
+            this.nAfterDecimal.Location = new System.Drawing.Point(376, 4);
             this.nAfterDecimal.Maximum = new decimal(new int[] {
             100000,
             0,
@@ -160,7 +160,7 @@
             // 
             // nBeforeDecimal
             // 
-            this.nBeforeDecimal.Location = new System.Drawing.Point(411, 4);
+            this.nBeforeDecimal.Location = new System.Drawing.Point(285, 4);
             this.nBeforeDecimal.Maximum = new decimal(new int[] {
             100000,
             0,

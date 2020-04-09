@@ -6,11 +6,9 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>                                                                
 	<NoWarn>1701;1702;CS1591</NoWarn>                                                                                        
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-          </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-          </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>ReusableLibraryCode.snk</AssemblyOriginatorKeyFile>
     <LangVersion>7.1</LangVersion>

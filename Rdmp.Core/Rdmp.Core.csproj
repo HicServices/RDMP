@@ -6,6 +6,8 @@
     <LangVersion>7.1</LangVersion>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 	<NoWarn>1701;1702;CS1591</NoWarn>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Databases\CatalogueDatabase\up\views\**" />

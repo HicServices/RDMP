@@ -10,6 +10,8 @@
 	<NoWarn>1701;1702;CS1591</NoWarn>
     <LangVersion>7.1</LangVersion>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="en_US.aff" />

@@ -46,7 +46,6 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             this.ragSmileyExecute = new Rdmp.UI.ChecksUI.RAGSmiley();
             this.btnExecute = new System.Windows.Forms.Button();
             this.btnPreview = new System.Windows.Forms.Button();
-            this.btnAdvanced = new System.Windows.Forms.Button();
             this.pbHelp = new System.Windows.Forms.PictureBox();
             this.cbAutoClose = new System.Windows.Forms.CheckBox();
             this.gbTableName = new System.Windows.Forms.GroupBox();
@@ -69,10 +68,11 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             this.gbPickFile.Controls.Add(this.btnClearFile);
             this.gbPickFile.Controls.Add(this.lblFile);
             this.gbPickFile.Controls.Add(this.pbFile);
+            this.gbPickFile.Controls.Add(this.pbHelp);
             this.gbPickFile.Controls.Add(this.btnBrowse);
             this.gbPickFile.Location = new System.Drawing.Point(12, 12);
             this.gbPickFile.Name = "gbPickFile";
-            this.gbPickFile.Size = new System.Drawing.Size(632, 54);
+            this.gbPickFile.Size = new System.Drawing.Size(605, 54);
             this.gbPickFile.TabIndex = 0;
             this.gbPickFile.TabStop = false;
             this.gbPickFile.Text = "1. Pick File";
@@ -132,7 +132,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             this.gbPickDatabase.Controls.Add(this.serverDatabaseTableSelector1);
             this.gbPickDatabase.Location = new System.Drawing.Point(12, 72);
             this.gbPickDatabase.Name = "gbPickDatabase";
-            this.gbPickDatabase.Size = new System.Drawing.Size(632, 168);
+            this.gbPickDatabase.Size = new System.Drawing.Size(605, 168);
             this.gbPickDatabase.TabIndex = 1;
             this.gbPickDatabase.TabStop = false;
             this.gbPickDatabase.Text = "2. Pick Destination Database for the Imported Data";
@@ -185,6 +185,8 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             // 
             // gbExecute
             // 
+            this.gbExecute.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gbExecute.Controls.Add(this.ragSmileyExecute);
             this.gbExecute.Controls.Add(this.btnExecute);
             this.gbExecute.Controls.Add(this.btnPreview);
@@ -225,21 +227,10 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             this.btnPreview.UseVisualStyleBackColor = true;
             this.btnPreview.Click += new System.EventHandler(this.btnPreview_Click);
             // 
-            // btnAdvanced
-            // 
-            this.btnAdvanced.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAdvanced.Location = new System.Drawing.Point(622, 321);
-            this.btnAdvanced.Name = "btnAdvanced";
-            this.btnAdvanced.Size = new System.Drawing.Size(75, 23);
-            this.btnAdvanced.TabIndex = 6;
-            this.btnAdvanced.Text = "Advanced";
-            this.btnAdvanced.UseVisualStyleBackColor = true;
-            this.btnAdvanced.Click += new System.EventHandler(this.btnAdvanced_Click);
-            // 
             // pbHelp
             // 
             this.pbHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbHelp.Location = new System.Drawing.Point(680, 12);
+            this.pbHelp.Location = new System.Drawing.Point(580, 0);
             this.pbHelp.Name = "pbHelp";
             this.pbHelp.Size = new System.Drawing.Size(25, 25);
             this.pbHelp.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -262,6 +253,8 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             // 
             // gbTableName
             // 
+            this.gbTableName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gbTableName.Controls.Add(this.tbTableName);
             this.gbTableName.Controls.Add(this.label1);
             this.gbTableName.Location = new System.Drawing.Point(12, 244);
@@ -292,13 +285,11 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(727, 438);
+            this.ClientSize = new System.Drawing.Size(631, 438);
             this.Controls.Add(this.gbTableName);
             this.Controls.Add(this.gbPickPipeline);
             this.Controls.Add(this.gbExecute);
             this.Controls.Add(this.cbAutoClose);
-            this.Controls.Add(this.pbHelp);
-            this.Controls.Add(this.btnAdvanced);
             this.Controls.Add(this.gbPickFile);
             this.Controls.Add(this.gbPickDatabase);
             this.Name = "CreateNewCatalogueByImportingFileUI";
@@ -331,7 +322,6 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
         private System.Windows.Forms.GroupBox gbPickPipeline;
         private System.Windows.Forms.ComboBox ddPipeline;
         private RAGSmiley ragSmileyFile;
-        private System.Windows.Forms.Button btnAdvanced;
         private System.Windows.Forms.GroupBox gbExecute;
         private System.Windows.Forms.Button btnPreview;
         private System.Windows.Forms.Button btnExecute;

@@ -42,17 +42,62 @@ namespace Rdmp.UI.DataLoadUIs.ModuleUIs
             }
 
             tbExplicitDbType.Text = column.ExplicitDbType;
-
+            
             bLoaded = true;
+            ResetVisibility();
+        }
+
+        private void ResetVisibility()
+        {
+            if (!string.IsNullOrEmpty(tbExplicitDbType.Text))
+            {
+                ddManagedType.Visible = false;
+                label2.Visible = false;
+                nLength.Visible = false;
+                label3.Visible = false;
+                nBeforeDecimal.Visible = false;
+                label4.Visible = false;
+                nAfterDecimal.Visible = false;
+                label5.Visible = false;
+                return;
+            }
+
+            ddManagedType.Visible = true;
+            label2.Visible = true;
+
+            var type = ddManagedType.SelectedItem as Type;
+            switch (Type.GetTypeCode(type))
+            {
+                case TypeCode.String:
+                    nLength.Visible = true;
+                    nBeforeDecimal.Visible = false;
+                    nAfterDecimal.Visible = false;
+                    label3.Visible = true;
+                    label4.Visible = false;
+                    label5.Visible = false;
+                    return;
+                case TypeCode.Decimal:
+                    nLength.Visible = false;
+                    nBeforeDecimal.Visible = true;
+                    nAfterDecimal.Visible = true;
+                    label3.Visible = false;
+                    label4.Visible = true;
+                    label5.Visible = true;
+                    return;
+                default:
+                    nLength.Visible = false;
+                    nBeforeDecimal.Visible = false;
+                    nAfterDecimal.Visible = false;
+                    label3.Visible = false;
+                    label4.Visible = false;
+                    label5.Visible = false;
+                    return;
+            }
         }
 
         private void tbExplicitDbType_TextChanged(object sender, System.EventArgs e)
         {
-
-            ddManagedType.Enabled = string.IsNullOrWhiteSpace(tbExplicitDbType.Text);
-            nAfterDecimal.Enabled = string.IsNullOrWhiteSpace(tbExplicitDbType.Text);
-            nBeforeDecimal.Enabled = string.IsNullOrWhiteSpace(tbExplicitDbType.Text);
-            nLength.Enabled = string.IsNullOrWhiteSpace(tbExplicitDbType.Text);
+            ResetVisibility();
             
             if (!bLoaded)
                 return;
@@ -62,6 +107,8 @@ namespace Rdmp.UI.DataLoadUIs.ModuleUIs
 
         private void ddManagedType_SelectedIndexChanged(object sender, System.EventArgs e)
         {
+            ResetVisibility();
+
             if (!bLoaded)
                 return;
 
@@ -71,6 +118,8 @@ namespace Rdmp.UI.DataLoadUIs.ModuleUIs
 
         private void n_ValueChanged(object sender, EventArgs e)
         {
+            ResetVisibility();
+
             if (!bLoaded)
                 return;
 
