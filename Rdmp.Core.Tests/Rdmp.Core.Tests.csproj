@@ -7,6 +7,8 @@
     <Copyright>Copyright ©  2019</Copyright>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <LangVersion>7.1</LangVersion>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Resources\**" />
