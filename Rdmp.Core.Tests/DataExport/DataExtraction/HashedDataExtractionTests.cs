@@ -20,7 +20,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
         [Test]
         public void ExtractNormally()
         {
-            AdjustPipelineSourceDelegate = (p) =>
+            AdjustPipelineComponentDelegate = (p) =>
             {
                 if (p.Class.Contains("ExecuteDatasetExtractionSource"))
                 {

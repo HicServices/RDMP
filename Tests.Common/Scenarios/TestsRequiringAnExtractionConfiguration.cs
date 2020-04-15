@@ -49,7 +49,10 @@ namespace Tests.Common.Scenarios
         protected SelectedDataSets _selectedDataSet;
         protected ColumnInfo[] _columnInfos;
         
-        protected Action<PipelineComponent> AdjustPipelineSourceDelegate { get; set; }
+        /// <summary>
+        /// Called when pipeline components are created during <see cref="SetupPipeline"/>.  Allows you to make last minute changes to them e.g. before pipeline is executed
+        /// </summary>
+        protected Action<PipelineComponent> AdjustPipelineComponentDelegate { get; set; }
 
         protected string ProjectDirectory { get; private set; }
 
@@ -202,7 +205,7 @@ namespace Tests.Common.Scenarios
             arguments.Single(a => a.Name.Equals("FlatFileType")).SetValue(ExecuteExtractionToFlatFileType.CSV);
             arguments.Single(a => a.Name.Equals("FlatFileType")).SaveToDatabase();
 
-            AdjustPipelineSourceDelegate?.Invoke(component);
+            AdjustPipelineComponentDelegate?.Invoke(component);
             
             var component2 = new PipelineComponent(repository, pipeline, typeof(ExecuteDatasetExtractionSource), -1, "Source");
             var arguments2 = component2.CreateArgumentsForClassIfNotExists<ExecuteDatasetExtractionSource>().ToArray();
@@ -210,7 +213,7 @@ namespace Tests.Common.Scenarios
             arguments2.Single(a => a.Name.Equals("AllowEmptyExtractions")).SetValue(AllowEmptyExtractions);
             arguments2.Single(a => a.Name.Equals("AllowEmptyExtractions")).SaveToDatabase();
 
-            AdjustPipelineSourceDelegate?.Invoke(component2);
+            AdjustPipelineComponentDelegate?.Invoke(component2);
 
             //configure the component as the destination
             pipeline.DestinationPipelineComponent_ID = component.ID;
