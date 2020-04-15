@@ -10,6 +10,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using FAnsi;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
@@ -70,7 +71,14 @@ SqlDistinct - Adds the DISTINCT keyword to the SELECT sql sent to the server
 OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies the DISTINCT in memory as records are read from the server (this can help when extracting very large data sets where DISTINCT keyword blocks record streaming until all records are ready to go)"
             ,DefaultValue = Sources.DistinctStrategy.SqlDistinct)]
         public DistinctStrategy DistinctStrategy { get; set; }
+
         
+        [DemandsInitialization("When DBMS is SqlServer then HASH JOIN should be used instead of regular JOINs")]
+        public bool UseHashJoins { get; set; }
+        
+        [DemandsInitialization("When DBMS is SqlServer and the extraction is for any of these datasets then HASH JOIN should be used instead of regular JOINs")]
+        public ICatalogue[] UseHashJoinsForCatalogues { get; set; }
+
         /// <summary>
         /// This is a dictionary containing all the CatalogueItems used in the query, the underlying datatype in the origin database and the
         /// actual datatype that was output after the transform operation e.g. a varchar(10) could be converted into a bona fide DateTime which
@@ -385,9 +393,34 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
             sql = HackExtractionSQL(sql,listener);
 
+            if (ShouldUseHashedJoins())
+            {
+                //use hash joins!
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Substituting JOIN for HASH JOIN"));
+                sql = sql.Replace(" JOIN ", " HASH JOIN ");
+            }
+
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "/*Decided on extraction SQL:*/"+Environment.NewLine + sql));
             
             return sql;
+        }
+
+        private bool ShouldUseHashedJoins()
+        {
+            var dbms = Request?.QueryBuilder?.QuerySyntaxHelper?.DatabaseType;
+
+            //must be sql server
+            if (dbms == null || dbms.Value != DatabaseType.MicrosoftSQLServer)
+                return false;
+
+            if (UseHashJoins)
+                return true;
+
+            if (UseHashJoinsForCatalogues != null)
+                return UseHashJoinsForCatalogues.Contains(Request.Catalogue);
+
+            //user doesn't want to use hash joins
+            return false;
         }
 
         public virtual string HackExtractionSQL(string sql, IDataLoadEventListener listener)

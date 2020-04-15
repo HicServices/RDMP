@@ -48,6 +48,8 @@ namespace Tests.Common.Scenarios
         protected bool AllowEmptyExtractions = false;
         protected SelectedDataSets _selectedDataSet;
         protected ColumnInfo[] _columnInfos;
+        
+        protected Action<PipelineComponent> AdjustPipelineSourceDelegate { get; set; }
 
         protected string ProjectDirectory { get; private set; }
 
@@ -148,8 +150,11 @@ namespace Tests.Common.Scenarios
             Assert.AreEqual(0,returnCode,"Return code from runner was non zero");
         }
 
-        protected void Execute(out ExtractionPipelineUseCase pipelineUseCase, out IExecuteDatasetExtractionDestination results)
+        protected void Execute(out ExtractionPipelineUseCase pipelineUseCase, out IExecuteDatasetExtractionDestination results, IDataLoadEventListener listener = null)
         {
+            if (listener == null)
+                listener = new ThrowImmediatelyDataLoadEventListener();
+
             DataLoadInfo d = new DataLoadInfo("Internal", _testDatabaseName, "IgnoreMe", "", true, new DiscoveredServer(UnitTestLoggingConnectionString));
 
             Pipeline pipeline = null;
@@ -162,7 +167,7 @@ namespace Tests.Common.Scenarios
                 pipeline = SetupPipeline();
                 pipelineUseCase = new ExtractionPipelineUseCase(_request.Configuration.Project, _request, pipeline, d);
 
-                pipelineUseCase.Execute(new ThrowImmediatelyDataLoadEventListener());
+                pipelineUseCase.Execute(listener);
 
                 Assert.IsNotEmpty(pipelineUseCase.Source.Request.QueryBuilder.SQL);
 
@@ -177,6 +182,8 @@ namespace Tests.Common.Scenarios
             results =  pipelineUseCase.Destination;
             _extractableColumns = new List<IColumn>(before);
         }
+
+        
 
         protected virtual Pipeline SetupPipeline()
         {
@@ -195,14 +202,16 @@ namespace Tests.Common.Scenarios
             arguments.Single(a => a.Name.Equals("FlatFileType")).SetValue(ExecuteExtractionToFlatFileType.CSV);
             arguments.Single(a => a.Name.Equals("FlatFileType")).SaveToDatabase();
 
-
+            AdjustPipelineSourceDelegate?.Invoke(component);
+            
             var component2 = new PipelineComponent(repository, pipeline, typeof(ExecuteDatasetExtractionSource), -1, "Source");
             var arguments2 = component2.CreateArgumentsForClassIfNotExists<ExecuteDatasetExtractionSource>().ToArray();
 
             arguments2.Single(a => a.Name.Equals("AllowEmptyExtractions")).SetValue(AllowEmptyExtractions);
             arguments2.Single(a => a.Name.Equals("AllowEmptyExtractions")).SaveToDatabase();
 
-                
+            AdjustPipelineSourceDelegate?.Invoke(component2);
+
             //configure the component as the destination
             pipeline.DestinationPipelineComponent_ID = component.ID;
             pipeline.SourcePipelineComponent_ID = component2.ID;

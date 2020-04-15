@@ -138,7 +138,8 @@ namespace Rdmp.Core.QueryBuilding
         private IContainer _rootFilterContainer;
         private string _hashingAlgorithm;
         private int _topX;
-        private IQuerySyntaxHelper _syntaxHelper;
+        
+        public IQuerySyntaxHelper QuerySyntaxHelper { get; set; }
 
         /// <summary>
         /// Used to build extraction queries based on ExtractionInformation sets
@@ -231,10 +232,10 @@ namespace Rdmp.Core.QueryBuilding
                 throw new Exception("There are no TablesUsedInQuery in this dataset");
 
 
-            _syntaxHelper = SqlQueryBuilderHelper.GetSyntaxHelper(TablesUsedInQuery);
+            QuerySyntaxHelper = SqlQueryBuilderHelper.GetSyntaxHelper(TablesUsedInQuery);
 
             if (TopX != -1)
-                SqlQueryBuilderHelper.HandleTopX(this, _syntaxHelper, TopX);
+                SqlQueryBuilderHelper.HandleTopX(this, QuerySyntaxHelper, TopX);
             else
                 SqlQueryBuilderHelper.ClearTopX(this);
 
@@ -254,7 +255,7 @@ namespace Rdmp.Core.QueryBuilding
                 //if the parameter is one that needs to be told what the query syntax helper is e.g. if it's a global parameter designed to work on multiple datasets
                 var needsToldTheSyntaxHelper = parameter as IInjectKnown<IQuerySyntaxHelper>;
                 if(needsToldTheSyntaxHelper != null)
-                    needsToldTheSyntaxHelper.InjectKnown(_syntaxHelper);
+                    needsToldTheSyntaxHelper.InjectKnown(QuerySyntaxHelper);
                 
                 if(CheckSyntax)
                     parameter.Check(checkNotifier);
@@ -279,7 +280,7 @@ namespace Rdmp.Core.QueryBuilding
             for (int i = 0; i < SelectColumns.Count;i++ )
             {
                 //output each of the ExtractionInformations that the user requested and record the line number for posterity
-                string columnAsSql = SelectColumns[i].GetSelectSQL(_hashingAlgorithm, _salt, _syntaxHelper);
+                string columnAsSql = SelectColumns[i].GetSelectSQL(_hashingAlgorithm, _salt, QuerySyntaxHelper);
 
                  //there is another one coming
                  if (i + 1 < SelectColumns.Count)
