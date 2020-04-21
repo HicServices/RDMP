@@ -258,11 +258,6 @@ namespace ResearchDataManagementPlatform.Menus
 
             navigateBackwardToolStripMenuItem.Enabled = _windowManager.Navigation.CanBack();
             navigateForwardToolStripMenuItem.Enabled = _windowManager.Navigation.CanForward();
-
-            var o = singleObject?.DatabaseObject;
-            
-            if (o != null)
-                Activator.HistoryProvider.Add(o);
         }
         
 
