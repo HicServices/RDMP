@@ -59,6 +59,7 @@ namespace Rdmp.UI.Collections.Providers
             return e;
         }
 
+
         protected bool Equals(HistoryEntry other)
         {
             return Equals(Object, other.Object);

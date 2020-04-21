@@ -44,6 +44,16 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
 
         private void BuildCommandLists()
         {
+            homeBoxUI1.SetUp(Activator,"Catalogue",typeof(Catalogue),_uiFactory,
+                new ExecuteCommandCreateNewCatalogueByImportingFile(_activator)
+                {
+                    OverrideCommandName = "From File"
+                },
+                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator)
+                {
+                    OverrideCommandName = "From Database"
+                });
+
             tlpDataManagement.Controls.Clear();
             tlpCohortCreation.Controls.Clear();
             tlpDataExport.Controls.Clear();
@@ -108,6 +118,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             FixSizingOfTableLayoutPanel(tlpDataExport);
             FixSizingOfTableLayoutPanel(tlpDataLoad);
             FixSizingOfTableLayoutPanel(tlpRecent);
+
+
         }
 
         private void AddCommand(IAtomicCommand command, TableLayoutPanel tableLayoutPanel)

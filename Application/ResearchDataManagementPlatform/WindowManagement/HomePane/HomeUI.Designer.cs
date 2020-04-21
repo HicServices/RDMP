@@ -49,6 +49,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             this.panel3 = new System.Windows.Forms.Panel();
             this.label4 = new System.Windows.Forms.Label();
             this.tlpRecent = new System.Windows.Forms.TableLayoutPanel();
+            this.homeBoxUI1 = new ResearchDataManagementPlatform.WindowManagement.HomePane.HomeBoxUI();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox10)).BeginInit();
             this.flowLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -141,6 +142,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             this.flowLayoutPanel1.Controls.Add(this.panel2);
             this.flowLayoutPanel1.Controls.Add(this.panel5);
             this.flowLayoutPanel1.Controls.Add(this.panel3);
+            this.flowLayoutPanel1.Controls.Add(this.homeBoxUI1);
             this.flowLayoutPanel1.Location = new System.Drawing.Point(18, 94);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(1269, 603);
@@ -266,6 +268,13 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             this.tlpRecent.Size = new System.Drawing.Size(400, 158);
             this.tlpRecent.TabIndex = 16;
             // 
+            // homeBoxUI1
+            // 
+            this.homeBoxUI1.Location = new System.Drawing.Point(3, 453);
+            this.homeBoxUI1.Name = "homeBoxUI1";
+            this.homeBoxUI1.Size = new System.Drawing.Size(480, 499);
+            this.homeBoxUI1.TabIndex = 21;
+            // 
             // HomeUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -314,5 +323,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TableLayoutPanel tlpRecent;
+        private HomeBoxUI homeBoxUI1;
     }
 }
