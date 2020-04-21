@@ -12,6 +12,9 @@ using Rdmp.Core.Repositories;
 
 namespace Rdmp.UI.Collections.Providers
 {
+    /// <summary>
+    /// Records and persists a users access of an <see cref="Object"/> including the time (<see cref="Date"/>) it was accessed
+    /// </summary>
     public class HistoryEntry
     {
         public IMapsDirectlyToDatabaseTable Object { get; private set; }

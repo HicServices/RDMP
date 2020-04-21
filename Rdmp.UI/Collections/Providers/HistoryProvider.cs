@@ -14,6 +14,9 @@ using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.Collections.Providers
 {
+    /// <summary>
+    /// Tracks user access of objects over time and stores in local persistence file <see cref="UserSettings.RecentHistory"/>
+    /// </summary>
     public class HistoryProvider
     {
         /// <summary>
