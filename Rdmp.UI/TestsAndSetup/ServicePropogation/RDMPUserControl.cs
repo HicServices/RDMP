@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.UI.ItemActivation;
@@ -56,6 +57,12 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         public IRDMPControl GetTopmostRDMPUserControl()
         {
             return GetTopmostRDMPUserControl(this, this);
+        }
+        
+        public event EventHandler<bool> UnSavedChanges;
+        public void SetUnSavedChanges(bool b)
+        {
+            UnSavedChanges?.Invoke(this,b);
         }
 
         private IRDMPControl GetTopmostRDMPUserControl(Control c, RDMPUserControl found)

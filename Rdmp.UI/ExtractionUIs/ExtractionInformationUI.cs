@@ -68,6 +68,7 @@ namespace Rdmp.UI.ExtractionUIs
         private IQuerySyntaxHelper _querySyntaxHelper = new MicrosoftQuerySyntaxHelper();
 
         RAGSmileyToolStrip ragSmiley1;
+        private bool _isLoading;
 
         public ExtractionInformationUI()//For use with SetDatabaseObject
         {
@@ -109,6 +110,9 @@ namespace Rdmp.UI.ExtractionUIs
 
         private void QueryEditorOnTextChanged(object sender, EventArgs eventArgs)
         {
+            if (_isLoading)
+                return;
+
             try
             {
                 string sql;
@@ -132,6 +136,7 @@ namespace Rdmp.UI.ExtractionUIs
 
         public override void SetDatabaseObject(IActivateItems activator,ExtractionInformation databaseObject)
         {
+            _isLoading = true;
             ExtractionInformation = databaseObject;
             base.SetDatabaseObject(activator, databaseObject);
             
@@ -146,6 +151,7 @@ namespace Rdmp.UI.ExtractionUIs
             CommonFunctionality.AddHelp(cbHashOnDataRelease, "IColumn.HashOnDataRelease", "Hash on Data Release");
             CommonFunctionality.AddHelp(cbIsExtractionIdentifier, "IColumn.IsExtractionIdentifier", "Is Extraction Identifier");
             CommonFunctionality.AddHelp(cbIsPrimaryKey, "IColumn.IsPrimaryKey", "Is Primary Key");
+            _isLoading = false;
         }
 
         private bool objectSaverButton1OnBeforeSave(DatabaseEntity databaseEntity)
