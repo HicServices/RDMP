@@ -110,11 +110,27 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
 
         private List<Type> showOnlyTypes = new List<Type>();
         private AttributePropertyFinder<UsefulPropertyAttribute> _usefulPropertyFinder;
-        
+        private Type _alwaysFilterOn;
+
         /// <summary>
         /// The action to perform when the form closes with an object selected (defaults to Emphasise)
         /// </summary>
         public Action<IMapsDirectlyToDatabaseTable> CompletionAction { get; set; }
+
+        public Type AlwaysFilterOn
+        {
+            get => _alwaysFilterOn;
+            set
+            {
+                if(value != null)
+                    Controls.Remove(toolStrip1);
+                else
+                    Controls.Add(toolStrip1);
+
+                _alwaysFilterOn = value;
+                tbFind_TextChanged(this, null);
+            }
+        }
 
         public NavigateToObjectUI(IActivateItems activator, string initialSearchQuery = null,RDMPCollection focusedCollection = RDMPCollection.None):base(activator)
         {
@@ -363,6 +379,9 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
         {
             var scorer = new SearchablesMatchScorer();
             scorer.TypeNames = _typeNames;
+            
+            if(AlwaysFilterOn != null)
+                showOnlyTypes = new List<Type>(new []{AlwaysFilterOn});
 
             var scores = scorer.ScoreMatches(_searchables, text, cancellationToken,showOnlyTypes);
 

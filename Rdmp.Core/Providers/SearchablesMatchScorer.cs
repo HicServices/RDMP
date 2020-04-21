@@ -84,7 +84,7 @@ namespace Rdmp.Core.Providers
                     searchText = Regex.Replace(searchText,$@"\b{kvp.Key}\b",kvp.Value.Name);
             
             //if user hasn't typed any explicit Type filters
-            if(showOnlyTypes != null)
+            if(showOnlyTypes != null && TypeNames != null)
                 //add the explicit types only if the search text does not contain any explicit type names
                 if(string.IsNullOrWhiteSpace(searchText) || !TypeNames.Intersect(searchText.Split(' '),StringComparer.CurrentCultureIgnoreCase).Any())
                     foreach (var showOnlyType in showOnlyTypes) 
