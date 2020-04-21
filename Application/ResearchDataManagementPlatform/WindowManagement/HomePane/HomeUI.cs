@@ -54,15 +54,9 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
 
             AddCommand(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator), tlpDataManagement);
 
-            AddCommand(new ExecuteCommandEditExistingCatalogue(_activator),
-                _activator.CoreChildProvider.AllCatalogues,
-                cata => cata.Name,
-                tlpDataManagement);
+            AddCommand(new ExecuteCommandEditExistingCatalogue(_activator),tlpDataManagement);
 
-            AddCommand(
-                new ExecuteCommandRunDQEOnCatalogue(_activator),
-                _activator.CoreChildProvider.AllCatalogues, cata => cata.Name,
-                tlpDataManagement);
+            AddCommand(new ExecuteCommandRunDQEOnCatalogue(_activator),tlpDataManagement);
 
             /////////////////////////////////////Cohort Creation/////////////////////////////////
 
@@ -76,27 +70,13 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             AddCommand(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator)
             {
                 OverrideCommandName = "Create New Cohort From Cohort Identification Query"
-            },
-                    _activator.CoreChildProvider.AllCohortIdentificationConfigurations,
-                    cic => cic.Name,
-                    tlpCohortCreation);
+            }, tlpCohortCreation);
 
             AddCommand(new ExecuteCommandEditExistingCohortIdentificationConfiguration(_activator)
             {
                 OverrideCommandName = "Edit Cohort Identification Query"
-            },
-                    _activator.CoreChildProvider.AllCohortIdentificationConfigurations,
-                    cic => cic.Name,
-                    tlpCohortCreation);
+            }, tlpCohortCreation);
 
-
-            AddCommand(new ExecuteCommandCreateNewCohortFromCatalogue(_activator)
-            {
-                OverrideCommandName = "Create New Cohort From Dataset"
-            },
-                _activator.CoreChildProvider.AllCatalogues,
-                c=>c.Name,
-tlpCohortCreation);
             
             /////////////////////////////////////Data Export/////////////////////////////////
             
@@ -104,22 +84,12 @@ tlpCohortCreation);
             if (dataExportChildProvider != null)
             {
                 AddCommand(new ExecuteCommandCreateNewDataExtractionProject(_activator), tlpDataExport);
-                AddCommand(new ExecuteCommandEditDataExtractionProject(_activator),
-                        dataExportChildProvider.Projects,
-                        cic => cic.Name,
-                        tlpDataExport);
-
-                AddCommand(new ExecuteCommandMakeCatalogueProjectSpecific(_activator),
-                    dataExportChildProvider.AllCatalogues.Where(c=>!c.IsProjectSpecific(null)).ToArray(),
-                    c=>c.Name,tlpDataExport );
+                AddCommand(new ExecuteCommandEditDataExtractionProject(_activator), tlpDataExport);
             }
 
             //////////////////////////////////Data Loading////////////////////////////////////
             AddCommand(new ExecuteCommandCreateNewLoadMetadata(_activator),tlpDataLoad);
-            AddCommand(new ExecuteCommandExecuteLoadMetadata(_activator), 
-                _activator.CoreChildProvider.AllLoadMetadatas,
-                lmd=>lmd.Name,
-                tlpDataLoad);
+            AddCommand(new ExecuteCommandExecuteLoadMetadata(_activator), tlpDataLoad);
             
             FixSizingOfTableLayoutPanel(tlpDataManagement);
             FixSizingOfTableLayoutPanel(tlpCohortCreation);
@@ -127,37 +97,6 @@ tlpCohortCreation);
             FixSizingOfTableLayoutPanel(tlpDataLoad);
         }
 
-        private void AddLabel(string text,TableLayoutPanel tableLayoutPanel)
-        {
-            var label = new Label();
-            label.BackColor = Color.LightBlue;
-            label.ForeColor = Color.Black;
-
-            label.Dock = DockStyle.Top;
-            label.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            label.Location = new System.Drawing.Point(3, 0);
-            label.Name = "label5";
-            label.Size = new System.Drawing.Size(294, 18);
-            label.TabIndex = 0;
-            label.Text = text;
-            label.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-
-            tableLayoutPanel.Controls.Add(label);
-        }
-
-        private void AddCommand<T>(IAtomicCommandWithTarget command, IEnumerable<T> selection, Func<T, string> propertySelector, TableLayoutPanel tableLayoutPanel)
-        {
-            var control = _uiFactory.CreateLinkLabelWithSelection(command, selection, propertySelector);
-
-            SetBackgroundColor(tableLayoutPanel, control);
-            
-            tableLayoutPanel.Controls.Add(control, 0, tableLayoutPanel.Controls.Count);
-
-            //extend the size to match
-            var panel = (Panel)tableLayoutPanel.Parent;
-            panel.Width = Math.Max(panel.Width, control.Width + 10);
-        }
-        
         private void AddCommand(IAtomicCommand command, TableLayoutPanel tableLayoutPanel)
         {
             var control = _uiFactory.CreateLinkLabel(command);

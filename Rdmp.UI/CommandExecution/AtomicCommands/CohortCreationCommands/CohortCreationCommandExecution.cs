@@ -45,7 +45,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands
 
             //do we know where it's going to end up?
             if (ExternalCohortTable == null)
-                if (!SelectOne(Activator.RepositoryLocator.DataExportRepository, out ExternalCohortTable)) //not yet, get user to pick one
+                if (!SelectOne(Activator.RepositoryLocator.DataExportRepository, out ExternalCohortTable,null,true)) //not yet, get user to pick one
                     return null;//user didn't select one and cancelled dialog
             
             //and document the request

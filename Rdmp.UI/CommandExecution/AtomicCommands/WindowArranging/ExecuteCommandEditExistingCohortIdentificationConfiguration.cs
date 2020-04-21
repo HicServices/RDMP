@@ -52,11 +52,16 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.WindowArranging
 
         public override void Execute()
         {
-            if (CohortIdConfig == null)
-                SetImpossible("You must choose a Cohort Identification Configuration to edit.");
-
             base.Execute();
-            Activator.WindowArranger.SetupEditAnything(this, CohortIdConfig);
+
+            var cic = CohortIdConfig ??
+                      SelectOne<CohortIdentificationConfiguration>(BasicActivator.RepositoryLocator
+                          .CatalogueRepository);
+            
+            if(cic == null)
+                return;
+
+            Activator.WindowArranger.SetupEditAnything(this, cic);
         }
     }
 }

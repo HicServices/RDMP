@@ -125,12 +125,6 @@
     <Compile Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandLinkLabel.Designer.cs">
       <DependentUpon>AtomicCommandLinkLabel.cs</DependentUpon>
     </Compile>
-    <Compile Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.Designer.cs">
-      <DependentUpon>AtomicCommandWithTargetUI.cs</DependentUpon>
-    </Compile>
     <Compile Update="SimpleControls\DatabaseTypeUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -405,10 +399,6 @@
     </EmbeddedResource>
     <EmbeddedResource Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandLinkLabel.resx">
       <DependentUpon>AtomicCommandLinkLabel.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.resx">
-      <DependentUpon>AtomicCommandWithTargetUI.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Update="SimpleControls\DatabaseTypeUI.resx">
