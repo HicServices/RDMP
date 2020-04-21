@@ -11,6 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
 using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -95,11 +96,12 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             AddCommand(new ExecuteCommandExecuteLoadMetadata(_activator), tlpDataLoad);
 
             foreach (var entry in _activator.HistoryProvider.History.OrderByDescending(e=>e.Date).Take(10))
-                AddCommand(new ExecuteCommandActivate(_activator, entry.Object)
-                {
-                    OverrideCommandName = entry.Object.ToString(),
-                    AlsoShow = true
-                },tlpRecent);
+                if(((DatabaseEntity)entry.Object).Exists())
+                    AddCommand(new ExecuteCommandActivate(_activator, entry.Object)
+                    {
+                        OverrideCommandName = entry.Object.ToString(),
+                        AlsoShow = true
+                    },tlpRecent);
             
             FixSizingOfTableLayoutPanel(tlpDataManagement);
             FixSizingOfTableLayoutPanel(tlpCohortCreation);
