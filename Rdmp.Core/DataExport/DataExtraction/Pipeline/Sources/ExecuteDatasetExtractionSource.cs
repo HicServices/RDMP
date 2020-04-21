@@ -77,7 +77,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         public bool UseHashJoins { get; set; }
         
         [DemandsInitialization("When DBMS is SqlServer and the extraction is for any of these datasets then HASH JOIN should be used instead of regular JOINs")]
-        public ICatalogue[] UseHashJoinsForCatalogues { get; set; }
+        public Catalogue[] UseHashJoinsForCatalogues { get; set; }
 
         /// <summary>
         /// This is a dictionary containing all the CatalogueItems used in the query, the underlying datatype in the origin database and the
