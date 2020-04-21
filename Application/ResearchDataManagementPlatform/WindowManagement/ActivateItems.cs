@@ -95,6 +95,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public ICombineableFactory CommandFactory { get; private set; }
         public ICommandExecutionFactory CommandExecutionFactory { get; private set; }
         public CommentStore CommentStore { get { return RepositoryLocator.CatalogueRepository.CommentStore; } }
+        public HistoryProvider HistoryProvider { get; private set; }
 
         public List<IProblemProvider> ProblemProviders { get; private set; }
 
@@ -107,7 +108,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             
             //Shouldn't ever change externally to your session so doesn't need constantly refreshed
             FavouritesProvider = new FavouritesProvider(this, repositoryLocator.CatalogueRepository);
-
+            HistoryProvider = new HistoryProvider(repositoryLocator);
             RefreshBus = refreshBus;
 
             ConstructPluginChildProviders();
