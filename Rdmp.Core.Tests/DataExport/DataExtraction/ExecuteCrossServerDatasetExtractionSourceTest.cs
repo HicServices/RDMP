@@ -53,11 +53,13 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             arguments.Single(a=>a.Name.Equals("FlatFileType")).SetValue(ExecuteExtractionToFlatFileType.CSV);
             arguments.Single(a=>a.Name.Equals("FlatFileType")).SaveToDatabase();
             
+            AdjustPipelineComponentDelegate?.Invoke(component);
             
             var component2 = new PipelineComponent(CatalogueRepository, pipeline, typeof(ExecuteCrossServerDatasetExtractionSource), -1, "Source");
             var arguments2 = component2.CreateArgumentsForClassIfNotExists<ExecuteCrossServerDatasetExtractionSource>().ToArray();
             arguments2.Single(a=>a.Name.Equals("AllowEmptyExtractions")).SetValue(false);
             arguments2.Single(a => a.Name.Equals("AllowEmptyExtractions")).SaveToDatabase();
+            AdjustPipelineComponentDelegate?.Invoke(component2);
 
 
             //configure the component as the destination

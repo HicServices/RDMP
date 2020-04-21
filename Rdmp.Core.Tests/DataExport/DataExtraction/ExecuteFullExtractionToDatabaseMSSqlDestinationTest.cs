@@ -198,11 +198,13 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             argumentDbNamePattern.SaveToDatabase();
             argumentTblNamePattern.SetValue("$c_$d");
             argumentTblNamePattern.SaveToDatabase();
+            AdjustPipelineComponentDelegate?.Invoke(component);
             
             var component2 = new PipelineComponent(CatalogueRepository, _pipeline, typeof(ExecuteCrossServerDatasetExtractionSource), -1, "Source");
             var arguments2 = component2.CreateArgumentsForClassIfNotExists<ExecuteCrossServerDatasetExtractionSource>().ToArray();
             arguments2.Single(a=>a.Name.Equals("AllowEmptyExtractions")).SetValue(false);
             arguments2.Single(a => a.Name.Equals("AllowEmptyExtractions")).SaveToDatabase();
+            AdjustPipelineComponentDelegate?.Invoke(component2);
 
             //configure the component as the destination
             _pipeline.DestinationPipelineComponent_ID = component.ID;

@@ -46,6 +46,11 @@ namespace Rdmp.Core.QueryBuilding
         /// <para>Do not modify this manually</para>
         /// </summary>
         List<TableInfo> TablesUsedInQuery { get; }
+        
+        /// <summary>
+        /// The DBMS syntax the query builder has picked to use (can be null of query building failed or has not happened yet)
+        /// </summary>
+        IQuerySyntaxHelper QuerySyntaxHelper { get; }
 
         /// <summary>
         /// All filters found in the <see cref="RootFilterContainer"/> (recursively)
