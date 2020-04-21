@@ -259,7 +259,7 @@ namespace Rdmp.Core.QueryBuilding
         
         private int _pivotID=-1;
         private bool _doNotWriteOutParameters;
-        private IQuerySyntaxHelper _syntaxHelper;
+        public IQuerySyntaxHelper QuerySyntaxHelper { get; set; }
         private readonly AggregateConfiguration _aggregateConfigurationIfAny;
 
         /// <summary>
@@ -308,7 +308,7 @@ namespace Rdmp.Core.QueryBuilding
                 throw new QueryBuildingException("No tables could be identified for the query.  Try adding a column or a force join");
 
             //get the database language syntax based on the tables used in the query 
-            _syntaxHelper = SqlQueryBuilderHelper.GetSyntaxHelper(tables);
+            QuerySyntaxHelper = SqlQueryBuilderHelper.GetSyntaxHelper(tables);
 
 
             //tell the count column what language it is
@@ -317,11 +317,11 @@ namespace Rdmp.Core.QueryBuilding
                 _isCohortIdentificationAggregate = _aggregateConfigurationIfAny != null && _aggregateConfigurationIfAny.IsCohortIdentificationAggregate;
 
                 //if it is not a cic aggregate then make sure it has an alias e.g. count(*) AS MyCount.  cic aggregates take extreme liberties with this field like passing in 'distinct chi' and '*' and other wacky stuff that is so not cool
-                _countColumn.SetQuerySyntaxHelper(_syntaxHelper,!_isCohortIdentificationAggregate);
+                _countColumn.SetQuerySyntaxHelper(QuerySyntaxHelper,!_isCohortIdentificationAggregate);
             }
             
 
-            IAggregateHelper aggregateHelper = _syntaxHelper.AggregateHelper;
+            IAggregateHelper aggregateHelper = QuerySyntaxHelper.AggregateHelper;
             
             if(_pivotID != -1)
                 try
@@ -362,7 +362,7 @@ namespace Rdmp.Core.QueryBuilding
             ParameterManager.AddParametersFor(Filters);
 
             if (AggregateTopX != null)
-                SqlQueryBuilderHelper.HandleTopX(this, _syntaxHelper, AggregateTopX.TopX);
+                SqlQueryBuilderHelper.HandleTopX(this, QuerySyntaxHelper, AggregateTopX.TopX);
             else
                 SqlQueryBuilderHelper.ClearTopX(this);
 
@@ -462,7 +462,7 @@ namespace Rdmp.Core.QueryBuilding
                     string select;
                     string alias;
 
-                    _syntaxHelper.SplitLineIntoSelectSQLAndAlias(col.GetSelectSQL(null, null,_syntaxHelper), out select, out alias);
+                    QuerySyntaxHelper.SplitLineIntoSelectSQLAndAlias(col.GetSelectSQL(null, null,QuerySyntaxHelper), out select, out alias);
 
                     var line = new CustomLine(select + ",",QueryComponent.GroupBy);
 
@@ -502,7 +502,7 @@ namespace Rdmp.Core.QueryBuilding
                             string select;
                             string alias;
 
-                            _syntaxHelper.SplitLineIntoSelectSQLAndAlias(col.GetSelectSQL(null, null, _syntaxHelper),
+                            QuerySyntaxHelper.SplitLineIntoSelectSQLAndAlias(col.GetSelectSQL(null, null, QuerySyntaxHelper),
                                 out select,
                                 out alias);
 
@@ -559,7 +559,7 @@ namespace Rdmp.Core.QueryBuilding
                     throw new QueryBuildingException("Column " + col.IColumn.GetRuntimeName() + " is marked as HashOnDataRelease and therefore cannot be used as an Aggregate dimension");
 
 
-                var line = new CustomLine(col.GetSelectSQL(null, null, _syntaxHelper) + ",", QueryComponent.QueryTimeColumn);
+                var line = new CustomLine(col.GetSelectSQL(null, null, QuerySyntaxHelper) + ",", QueryComponent.QueryTimeColumn);
                 FlagLineBasedOnIcolumn(line,col.IColumn);
 
                 //it's the axis dimension tag it with the axis tag
