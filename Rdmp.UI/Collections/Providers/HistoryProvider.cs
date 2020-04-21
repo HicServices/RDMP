@@ -7,9 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Settings;
@@ -34,7 +36,8 @@ namespace Rdmp.UI.Collections.Providers
             typeof(Catalogue),
             typeof(Project),
             typeof(ExtractionConfiguration),
-            typeof(CohortIdentificationConfiguration)
+            typeof(CohortIdentificationConfiguration),
+            typeof(LoadMetadata)
         };
         
         /// <summary>
@@ -67,14 +70,27 @@ namespace Rdmp.UI.Collections.Providers
         }
 
         /// <summary>
-        /// Saves into user settings the supplied number of <see cref="HistoryEntry"/>
+        /// Saves into user settings the supplied number of <see cref="HistoryEntry"/> (per Type)
         /// </summary>
-        /// <param name="numberOfEntries"></param>
+        /// <param name="numberOfEntries">Maximum number of objects of any given <see cref="System.Type"/> to store</param>
         public void Save(int numberOfEntries = 20)
         {
-            History = History.OrderByDescending(e=>e.Date).Distinct().Take(numberOfEntries).ToList();
+            List<HistoryEntry> newHistory = new List<HistoryEntry>();
+            StringBuilder sb = new StringBuilder();
 
-            UserSettings.RecentHistory = string.Join(Environment.NewLine,History.Select(h=>h.Serialize()));
+            foreach (IGrouping<Type, HistoryEntry> group in History.GroupBy(o => o.Object.GetType()))
+            {
+                var recentsOfType = group.ToList().OrderByDescending(e=>e.Date).Take(numberOfEntries).ToList();
+                
+                //save x of each Type
+                sb.AppendLine(string.Join(Environment.NewLine,recentsOfType.Select(h=>h.Serialize())));
+                newHistory.AddRange(recentsOfType);
+                
+            }
+
+            History = newHistory;
+
+            UserSettings.RecentHistory = sb.ToString();
         }
 
         /// <summary>
