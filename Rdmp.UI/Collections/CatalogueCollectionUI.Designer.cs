@@ -30,11 +30,11 @@ namespace Rdmp.UI.Collections
             this.olvOrder = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.imageList_RightClickIcons = new System.Windows.Forms.ImageList(this.components);
             this.gbColdStorage = new System.Windows.Forms.GroupBox();
-            this.panel1 = new System.Windows.Forms.Panel();
             this.catalogueCollectionFilterUI1 = new Rdmp.UI.Collections.CatalogueCollectionFilterUI();
+            this.panel2 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.tlvCatalogues)).BeginInit();
             this.gbColdStorage.SuspendLayout();
-            this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tlvCatalogues
@@ -51,7 +51,7 @@ namespace Rdmp.UI.Collections
             this.tlvCatalogues.Location = new System.Drawing.Point(0, 0);
             this.tlvCatalogues.Name = "tlvCatalogues";
             this.tlvCatalogues.ShowGroups = false;
-            this.tlvCatalogues.Size = new System.Drawing.Size(500, 405);
+            this.tlvCatalogues.Size = new System.Drawing.Size(500, 414);
             this.tlvCatalogues.TabIndex = 0;
             this.tlvCatalogues.Text = "label1";
             this.tlvCatalogues.UseCompatibleStateImageBehavior = false;
@@ -102,18 +102,6 @@ namespace Rdmp.UI.Collections
             this.gbColdStorage.TabStop = false;
             this.gbColdStorage.Text = "Show";
             // 
-            // panel1
-            // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.Controls.Add(this.tlvCatalogues);
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Margin = new System.Windows.Forms.Padding(0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(500, 405);
-            this.panel1.TabIndex = 0;
-            // 
             // catalogueCollectionFilterUI1
             // 
             this.catalogueCollectionFilterUI1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -122,15 +110,24 @@ namespace Rdmp.UI.Collections
             this.catalogueCollectionFilterUI1.Size = new System.Drawing.Size(494, 46);
             this.catalogueCollectionFilterUI1.TabIndex = 0;
             // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.tlvCatalogues);
+            this.panel2.Controls.Add(this.gbColdStorage);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(0, 0);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(500, 479);
+            this.panel2.TabIndex = 2;
+            // 
             // CatalogueCollectionUI
             // 
-            this.Controls.Add(this.panel1);
-            this.Controls.Add(this.gbColdStorage);
+            this.Controls.Add(this.panel2);
             this.Name = "CatalogueCollectionUI";
             this.Size = new System.Drawing.Size(500, 479);
             ((System.ComponentModel.ISupportInitialize)(this.tlvCatalogues)).EndInit();
             this.gbColdStorage.ResumeLayout(false);
-            this.panel1.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -142,8 +139,8 @@ namespace Rdmp.UI.Collections
         private OLVColumn olvColumn1;
         private OLVColumn olvFilters;
         private GroupBox gbColdStorage;
-        private Panel panel1;
         private OLVColumn olvOrder;
         private CatalogueCollectionFilterUI catalogueCollectionFilterUI1;
+        private Panel panel2;
     }
 }

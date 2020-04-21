@@ -37,8 +37,6 @@ namespace Rdmp.UI.Collections
     /// </summary>
     public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {
-        private IActivateItems _activator;
-        
         public TableInfoCollectionUI()
         {
             InitializeComponent();
@@ -74,8 +72,8 @@ namespace Rdmp.UI.Collections
             if (o is DecryptionPrivateKeyNode)
             {
                 var c = new PasswordEncryptionKeyLocationUI();
-                c.SetItemActivator(_activator);
-                _activator.ShowWindow(c, true);
+                c.SetItemActivator(Activator);
+                Activator.ShowWindow(c, true);
             }
         }
         
@@ -96,7 +94,8 @@ namespace Rdmp.UI.Collections
 
         public override void SetItemActivator(IActivateItems activator)
         {
-            _activator = activator;
+            base.SetItemActivator(activator);
+
             CommonTreeFunctionality.SetUp(
                 RDMPCollection.Tables, 
                 tlvTableInfos,
@@ -111,20 +110,20 @@ namespace Rdmp.UI.Collections
                 new ExecuteCommandBulkImportTableInfos(a)
             };
             
-            _activator.RefreshBus.EstablishLifetimeSubscription(this);
+            Activator.RefreshBus.EstablishLifetimeSubscription(this);
 
 
-            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllDashboardsNode);
-            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllRDMPRemotesNode);
-            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllObjectSharingNode);
-            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllPipelinesNode);
-            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllExternalServersNode);
-            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllDataAccessCredentialsNode);
-            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllANOTablesNode);
-            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllServersNode);
-            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllConnectionStringKeywordsNode);
-            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllStandardRegexesNode);
-            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllPluginsNode);
+            tlvTableInfos.AddObject(Activator.CoreChildProvider.AllDashboardsNode);
+            tlvTableInfos.AddObject(Activator.CoreChildProvider.AllRDMPRemotesNode);
+            tlvTableInfos.AddObject(Activator.CoreChildProvider.AllObjectSharingNode);
+            tlvTableInfos.AddObject(Activator.CoreChildProvider.AllPipelinesNode);
+            tlvTableInfos.AddObject(Activator.CoreChildProvider.AllExternalServersNode);
+            tlvTableInfos.AddObject(Activator.CoreChildProvider.AllDataAccessCredentialsNode);
+            tlvTableInfos.AddObject(Activator.CoreChildProvider.AllANOTablesNode);
+            tlvTableInfos.AddObject(Activator.CoreChildProvider.AllServersNode);
+            tlvTableInfos.AddObject(Activator.CoreChildProvider.AllConnectionStringKeywordsNode);
+            tlvTableInfos.AddObject(Activator.CoreChildProvider.AllStandardRegexesNode);
+            tlvTableInfos.AddObject(Activator.CoreChildProvider.AllPluginsNode);
 
 
         }
@@ -137,8 +136,8 @@ namespace Rdmp.UI.Collections
             if(e.Object is Catalogue || e.Object is TableInfo) 
                 tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllServersNode>());
 
-            if (tlvTableInfos.IndexOf(_activator.CoreChildProvider.AllPipelinesNode) != -1)
-                tlvTableInfos.RefreshObject(_activator.CoreChildProvider.AllPipelinesNode);
+            if (tlvTableInfos.IndexOf(Activator.CoreChildProvider.AllPipelinesNode) != -1)
+                tlvTableInfos.RefreshObject(Activator.CoreChildProvider.AllPipelinesNode);
         }
         
         public static bool IsRootObject(object root)

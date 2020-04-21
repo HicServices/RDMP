@@ -26,8 +26,6 @@ namespace Rdmp.UI.Collections
     /// </summary>
     public partial class DataExportCollectionUI : RDMPCollectionUI
     {
-        private IActivateItems _activator;
-
         public DataExportCollectionUI()
         {
             InitializeComponent();
@@ -99,12 +97,12 @@ namespace Rdmp.UI.Collections
 
         public override void SetItemActivator(IActivateItems activator)
         {
-            _activator = activator;
+            base.SetItemActivator(activator);
 
             CommonTreeFunctionality.SetUp(
                 RDMPCollection.DataExport, 
                 tlvDataExport,
-                _activator,
+                Activator,
                 olvName,
                 olvName
                 );

@@ -17,8 +17,6 @@ namespace Rdmp.UI.Collections
     /// </summary>
     public partial class SavedCohortsCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {
-        private IActivateItems _activator;
-
         public SavedCohortsCollectionUI()
         {
             InitializeComponent();
@@ -51,10 +49,11 @@ namespace Rdmp.UI.Collections
 
         public override void SetItemActivator(IActivateItems activator)
         {
-            _activator = activator;
-            CommonTreeFunctionality.SetUp(RDMPCollection.SavedCohorts, tlvSavedCohorts,_activator,olvName,olvName);
+            base.SetItemActivator(activator);
+
+            CommonTreeFunctionality.SetUp(RDMPCollection.SavedCohorts, tlvSavedCohorts,Activator,olvName,olvName);
             
-            tlvSavedCohorts.AddObject(((DataExportChildProvider)_activator.CoreChildProvider).RootCohortsNode);
+            tlvSavedCohorts.AddObject(((DataExportChildProvider)Activator.CoreChildProvider).RootCohortsNode);
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
