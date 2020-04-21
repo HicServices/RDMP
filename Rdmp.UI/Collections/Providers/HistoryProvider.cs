@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Settings;
 
@@ -23,6 +25,17 @@ namespace Rdmp.UI.Collections.Providers
         /// Collection of objects and when they were accessed, use <see cref="HistoryProvider.Add"/> instead of modifying this list directly
         /// </summary>
         public List<HistoryEntry> History { get; set; } = new List<HistoryEntry>();
+
+        /// <summary>
+        /// What Types to track in <see cref="Add"/>
+        /// </summary>
+        public Type[] TrackTypes { get; set; } = new Type[]
+        {
+            typeof(Catalogue),
+            typeof(Project),
+            typeof(ExtractionConfiguration),
+            typeof(CohortIdentificationConfiguration)
+        };
         
         /// <summary>
         /// Creates a new history provider and loads the users history from the persistence file (<see cref="UserSettings.RecentHistory"/>)
@@ -70,6 +83,12 @@ namespace Rdmp.UI.Collections.Providers
         /// <param name="o"></param>
         public void Add(IMapsDirectlyToDatabaseTable o)
         {
+            if(o == null)
+                return;
+
+            if(!TrackTypes.Contains(o.GetType()))
+                return;
+
             var newEntry = new HistoryEntry(o, DateTime.Now);
 
             //chuck old record (and old date - HistoryEntry are the same if object is the same)

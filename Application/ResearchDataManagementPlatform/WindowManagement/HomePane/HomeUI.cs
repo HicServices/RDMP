@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Providers;
+using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
@@ -46,6 +47,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             tlpCohortCreation.Controls.Clear();
             tlpDataExport.Controls.Clear();
             tlpDataLoad.Controls.Clear();
+            tlpRecent.Controls.Clear();
+
 
             /////////////////////////////////////Data Management/////////////////////////////////
             //AddLabel("New Catalogue", tlpDataManagement);
@@ -90,11 +93,19 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             //////////////////////////////////Data Loading////////////////////////////////////
             AddCommand(new ExecuteCommandCreateNewLoadMetadata(_activator),tlpDataLoad);
             AddCommand(new ExecuteCommandExecuteLoadMetadata(_activator), tlpDataLoad);
+
+            foreach (var entry in _activator.HistoryProvider.History.OrderByDescending(e=>e.Date).Take(10))
+                AddCommand(new ExecuteCommandActivate(_activator, entry.Object)
+                {
+                    OverrideCommandName = entry.Object.ToString(),
+                    AlsoShow = true
+                },tlpRecent);
             
             FixSizingOfTableLayoutPanel(tlpDataManagement);
             FixSizingOfTableLayoutPanel(tlpCohortCreation);
             FixSizingOfTableLayoutPanel(tlpDataExport);
             FixSizingOfTableLayoutPanel(tlpDataLoad);
+            FixSizingOfTableLayoutPanel(tlpRecent);
         }
 
         private void AddCommand(IAtomicCommand command, TableLayoutPanel tableLayoutPanel)
@@ -129,6 +140,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+            
+            SetItemActivator(_activator);
 
             BuildCommandLists();
 

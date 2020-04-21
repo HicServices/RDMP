@@ -5,7 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
@@ -19,6 +21,11 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
     public class ExecuteCommandActivate : BasicUICommandExecution,IAtomicCommand
     {
         private readonly object _o;
+
+        /// <summary>
+        /// Set to true to also emphasise the object being activated
+        /// </summary>
+        public bool AlsoShow { get; set; }
         
         public ExecuteCommandActivate(IActivateItems activator, object o) : base(activator)
         {    
@@ -44,7 +51,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         public override string GetCommandName()
         {
-            return GlobalStrings.Activate;
+            return OverrideCommandName ?? GlobalStrings.Activate;
         }
 
         public override void Execute()
@@ -52,6 +59,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             base.Execute();
 
             Activator.CommandExecutionFactory.Activate(_o);
+            
+            if( _o is IMapsDirectlyToDatabaseTable d && AlsoShow)
+                Activator.RequestItemEmphasis(this,new EmphasiseRequest(d));
+
         }
     }
 }
