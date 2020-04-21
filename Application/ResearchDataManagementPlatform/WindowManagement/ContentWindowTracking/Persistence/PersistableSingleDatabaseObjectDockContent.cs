@@ -39,6 +39,17 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
             
             DatabaseObject = databaseObject;
             TabText = "Loading...";
+
+            control.UnSavedChanges += OnUnSavedChanges;
+            Closing += (s,e)=>control.UnSavedChanges -= OnUnSavedChanges;
+        }
+
+        private void OnUnSavedChanges(object sender, bool unsavedChanges)
+        {
+            if(TabText == null)
+                return;
+
+            TabText = unsavedChanges ? TabText.TrimEnd('*') + '*' : TabText.TrimEnd('*');
         }
 
         protected override string GetPersistString()

@@ -92,16 +92,11 @@ namespace Rdmp.UI.SimpleControls
             _activator = activator;
 
             f.Enter += ParentForm_Enter;
-            f.Leave += ParentFormOnLeave;
             
             //the first time it is set up it could still be out of date!
             CheckForOutOfDateObjectAndOfferToFix();
         }
 
-        private void ParentFormOnLeave(object sender, EventArgs eventArgs)
-        {
-            CheckForUnsavedChangesAnOfferToSave();
-        }
 
         void ParentForm_Enter(object sender, EventArgs e)
         {
@@ -122,6 +117,8 @@ namespace Rdmp.UI.SimpleControls
                 return;
             }
 
+            _parent.SetUnSavedChanges(b);
+            
             btnSave.Enabled = b;
             btnUndoRedo.Enabled = b;
 
@@ -215,7 +212,12 @@ namespace Rdmp.UI.SimpleControls
         public void CheckForOutOfDateObjectAndOfferToFix()
         {
             if (IsDifferent())
-                if(_activator.ShouldReloadFreshCopy(_o))
+                if(
+                    //if we didn't think there were changes
+                    !_isEnabled &&
+                    
+                    //but there are!
+                    _activator.ShouldReloadFreshCopy(_o))
                 {
                     _o.RevertToDatabaseState();
                     
