@@ -329,6 +329,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
             //might be different than sender that was passed in
             if(args.Sender is DockContent content)
                 content.Activate();
+
+            //user is being shown the given object so track it as a recent (e.g. GoTo etc)
+            HistoryProvider.Add(args.Request.ObjectToEmphasise);
         }
 
         public override bool SelectEnum(string prompt, Type enumType, out Enum chosen)

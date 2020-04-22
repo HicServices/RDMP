@@ -28,7 +28,17 @@ namespace Rdmp.Core.Providers
         private static readonly int[] Weights = new int[] { 64, 32, 16, 8, 4, 2, 1 };
 
         public HashSet<string> TypeNames { get; set; }
-        
+
+        /// <summary>
+        /// List of objects which should be favoured slightly above others of equal match potential
+        /// </summary>
+        public List<IMapsDirectlyToDatabaseTable> BumpMatches { get; set; } = new List<IMapsDirectlyToDatabaseTable>();
+
+        /// <summary>
+        /// How much to bump matches when they are in <see cref="BumpMatches"/>
+        /// </summary>
+        public int BumpWeight = 1;
+
         /// <summary>
         /// When the user types one of these they get a filter on the full Type
         /// </summary>
@@ -198,6 +208,10 @@ namespace Rdmp.Core.Providers
             if (catalogueIfAny != null && catalogueIfAny.IsDeprecated)
                 return score /10;
             
+            //if we are bumping up matches
+            if (score > 0 && BumpMatches.Contains(kvp.Key)) 
+                score += BumpWeight;
+
             return score;
         }
 
