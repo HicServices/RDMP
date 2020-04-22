@@ -327,6 +327,8 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
                 if (ToolStrip != null)
                     ToolStrip.Items.Add(_menuDropDown);
             }
+
+            _dropDownButtons.Clear();
         }
 
         /// <summary>

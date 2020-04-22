@@ -57,13 +57,22 @@ namespace Rdmp.UI.Collections
             
             tlvSavedCohorts.AddObject(((DataExportChildProvider)Activator.CoreChildProvider).RootCohortsNode);
 
-            CommonFunctionality.Add(new ExecuteCommandCreateNewCohortFromFile(Activator),GlobalStrings.FromFile,null,"New...");
-            CommonFunctionality.Add(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator),"From Query",null,"New...");
+            SetupToolStrip();
+
+            Activator.RefreshBus.EstablishLifetimeSubscription(this);
+
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
-            
+            SetupToolStrip();
+        }
+
+        private void SetupToolStrip()
+        {
+            CommonFunctionality.ClearToolStrip();
+            CommonFunctionality.Add(new ExecuteCommandCreateNewCohortFromFile(Activator),GlobalStrings.FromFile,null,"New...");
+            CommonFunctionality.Add(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator),"From Query",null,"New...");
         }
 
         public static bool IsRootObject(object root)
