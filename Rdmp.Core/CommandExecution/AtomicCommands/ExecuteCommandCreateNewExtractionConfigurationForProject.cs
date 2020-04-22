@@ -46,10 +46,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if(p == null)
                 return;
 
-            var newConfig = new ExtractionConfiguration(BasicActivator.RepositoryLocator.DataExportRepository, _project);
+            var newConfig = new ExtractionConfiguration(BasicActivator.RepositoryLocator.DataExportRepository, p);
 
             //refresh the project
-            Publish(_project);
+            Publish(p);
             Activate(newConfig);
         }
     }
