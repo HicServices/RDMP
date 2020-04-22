@@ -698,9 +698,8 @@ namespace Rdmp.UI.Collections
                     if (lastParent != null)
                         Tree.RefreshObject(lastParent); //refresh parent
                     else
-                        //Tree has object but not parent, bad times, maybe BetterRouteExists? Refresh the object if it exists
-                       if(exists)
-                            Tree.RefreshObject(o);
+                        //Tree has object but not parent, bad times, maybe BetterRouteExists? 
+                        Tree.RebuildAll(true);
                 }
                 else
                 //if we have the object
