@@ -117,6 +117,9 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
         /// </summary>
         public Action<IMapsDirectlyToDatabaseTable> CompletionAction { get; set; }
 
+        /// <summary>
+        /// Hides the Type selection toggle buttons and forces results to only appear matching the given Type
+        /// </summary>
         public Type AlwaysFilterOn
         {
             get => _alwaysFilterOn;

@@ -94,7 +94,7 @@ namespace Rdmp.UI.Collections.Providers
         }
 
         /// <summary>
-        /// Adds the 
+        /// Adds the <paramref name="o"/> to the history (assuming it is one of the <see cref="TrackTypes"/>).  New entry replaces any previous entries for <paramref name="o"/>.  This method causes implicit <see cref="Save"/>
         /// </summary>
         /// <param name="o"></param>
         public void Add(IMapsDirectlyToDatabaseTable o)

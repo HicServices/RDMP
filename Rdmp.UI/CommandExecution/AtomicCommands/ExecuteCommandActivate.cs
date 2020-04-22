@@ -60,9 +60,8 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             Activator.CommandExecutionFactory.Activate(_o);
             
-            if( _o is IMapsDirectlyToDatabaseTable d && AlsoShow)
-                Activator.RequestItemEmphasis(this,new EmphasiseRequest(d));
-
+            if( _o is DatabaseEntity d && AlsoShow)
+                Emphasise(d);
         }
     }
 }
