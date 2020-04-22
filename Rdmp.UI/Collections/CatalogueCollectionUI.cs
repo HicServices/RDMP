@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using BrightIdeasSoftware;
+using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
@@ -113,6 +114,12 @@ namespace Rdmp.UI.Collections
 
             _allCatalogues = CommonTreeFunctionality.CoreChildProvider.AllCatalogues;
             
+            if (isFirstTime)
+            {
+                CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingFile(Activator),GlobalStrings.FromFile,null,"New...");
+                CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator),GlobalStrings.FromDatabase,null,"New...");
+            }
+
             if(isFirstTime || Equals(oRefreshFrom, CatalogueFolder.Root))
             {
                 tlvCatalogues.RefreshObject(CatalogueFolder.Root);
@@ -120,6 +127,7 @@ namespace Rdmp.UI.Collections
                 isFirstTime = false;
             }
 
+            
         }
         
         public void ApplyFilters()

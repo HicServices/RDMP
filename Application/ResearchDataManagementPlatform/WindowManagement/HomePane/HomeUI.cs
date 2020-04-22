@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using Rdmp.Core;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -41,11 +42,11 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             boxCatalogue.SetUp(Activator,"Catalogue",typeof(Catalogue),_uiFactory,
                 new ExecuteCommandCreateNewCatalogueByImportingFile(_activator)
                 {
-                    OverrideCommandName = "From File"
+                    OverrideCommandName = GlobalStrings.FromFile
                 },
                 new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator)
                 {
-                    OverrideCommandName = "From Database"
+                    OverrideCommandName = GlobalStrings.FromDatabase
                 });
             boxProject.SetUp(Activator,"Project",typeof(Project),_uiFactory, new ExecuteCommandCreateNewDataExtractionProject(_activator));
             
@@ -56,7 +57,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
                 },
                 new ExecuteCommandCreateNewCohortFromFile(_activator)
                 {
-                    OverrideCommandName = "From File"
+                    OverrideCommandName = GlobalStrings.FromFile
                 }
             );
             boxDataLoad.SetUp(Activator,"Data Load",typeof(LoadMetadata),_uiFactory,new ExecuteCommandCreateNewLoadMetadata(_activator));

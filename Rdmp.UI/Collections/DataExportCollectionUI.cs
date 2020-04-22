@@ -122,6 +122,9 @@ namespace Rdmp.UI.Collections
                 tlvDataExport.AddObjects(dataExportChildProvider.AllPackages);
                 tlvDataExport.AddObjects(dataExportChildProvider.Projects);
             }
+
+            CommonFunctionality.Add(new ExecuteCommandCreateNewDataExtractionProject(Activator),"Project",null,"New...");
+            CommonFunctionality.Add(new ExecuteCommandCreateNewExtractionConfigurationForProject(Activator),"Extraction",null,"New...");
         }
         
         public static bool IsRootObject(object root)

@@ -61,6 +61,8 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         private ICheckable _checkable;
         private IActivateItems _activator;
 
+        private Dictionary<string,ToolStripDropDownButton> _dropDownButtons = new Dictionary<string, ToolStripDropDownButton>();
+
 
         public RDMPControlCommonFunctionality(IRDMPControl hostControl)
         {
@@ -94,7 +96,8 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         /// <param name="cmd"></param>
         /// <param name="overrideCommandName"></param>
         /// <param name="overrideImage"></param>
-        public void Add(IAtomicCommand cmd, string overrideCommandName = null, Image overrideImage = null)
+        /// <param name="underMenu">If the command should appear under a submenu dropdown then this should be the name of that root button</param>
+        public void Add(IAtomicCommand cmd, string overrideCommandName = null, Image overrideImage = null, string underMenu = null)
         {
             var p = _hostControl.GetTopmostRDMPUserControl();
             if (p != _hostControl)
@@ -105,14 +108,14 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 
             InitializeToolStrip();
 
-            var button = atomicCommandUIFactory.CreateToolStripItem(cmd);
+            var button = string.IsNullOrWhiteSpace(underMenu)? atomicCommandUIFactory.CreateToolStripItem(cmd) : atomicCommandUIFactory.CreateMenuItem(cmd);
             if (!string.IsNullOrWhiteSpace(overrideCommandName))
                 button.Text = overrideCommandName;
 
             if (overrideImage != null)
                 button.Image = overrideImage;
 
-            Add(button);
+            Add(button,underMenu);
         }
 
         /// <summary>
@@ -120,7 +123,8 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         /// visible at the top of the form
         /// </summary>
         /// <param name="item"></param>
-        public void Add(ToolStripItem item)
+        /// <param name="underMenu">If the command should appear under a submenu dropdown then this should be the name of that root button</param>
+        public void Add(ToolStripItem item, string underMenu = null)
         {
             var p = _hostControl.GetTopmostRDMPUserControl();
             if (p != _hostControl)
@@ -131,7 +135,16 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 
             InitializeToolStrip();
 
-            ToolStrip.Items.Add(item);
+            if (!string.IsNullOrWhiteSpace(underMenu))
+            {
+                if (!_dropDownButtons.ContainsKey(underMenu))
+                    _dropDownButtons.Add(underMenu,new ToolStripDropDownButton {Text = underMenu,DisplayStyle = ToolStripItemDisplayStyle.Text});
+
+                _dropDownButtons[underMenu].DropDownItems.Add(item);
+                ToolStrip.Items.Add(_dropDownButtons[underMenu]);
+            }
+            else
+                ToolStrip.Items.Add(item);
         }
 
         /// <summary>

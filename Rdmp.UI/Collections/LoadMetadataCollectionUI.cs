@@ -80,6 +80,9 @@ namespace Rdmp.UI.Collections
             tlvLoadMetadata.AddObject(Activator.CoreChildProvider.AllPermissionWindowsNode);
             tlvLoadMetadata.AddObject(Activator.CoreChildProvider.AllLoadMetadatasNode);
 
+            
+            CommonFunctionality.Add(new ExecuteCommandCreateNewLoadMetadata(Activator),"New");
+
         }
 
 

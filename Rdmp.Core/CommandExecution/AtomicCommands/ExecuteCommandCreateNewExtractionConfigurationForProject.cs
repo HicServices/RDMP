@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
+using System.Linq;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -18,6 +19,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public ExecuteCommandCreateNewExtractionConfigurationForProject(IBasicActivateItems activator,Project project) : base(activator)
         {
             _project = project;
+        }
+        
+        public ExecuteCommandCreateNewExtractionConfigurationForProject(IBasicActivateItems activator) : base(activator)
+        {
+            if(!activator.GetAll<IProject>().Any())
+                SetImpossible("You do not have any projects yet");
         }
 
         public override string GetCommandHelp()
@@ -33,6 +40,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
+
+            var p = _project ?? SelectOne<Project>(BasicActivator.RepositoryLocator.DataExportRepository);
+
+            if(p == null)
+                return;
 
             var newConfig = new ExtractionConfiguration(BasicActivator.RepositoryLocator.DataExportRepository, _project);
 
