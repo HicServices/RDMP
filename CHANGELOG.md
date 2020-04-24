@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Catalogue collection no longer expands when CatalogueFolder changes
 
+### Fixed
+
+- LoadProgress with RemoteTableAttacher now works correctly with DBMS that do not support Sql parameter declarations (Oracle / Postgres)
+
 ## [4.0.3] - 2020-02-28
 
 ### Added
