@@ -124,9 +124,10 @@ namespace Rdmp.Core.Tests.DataLoad.Modules.Attachers
         private void RunAttachStageWithLoadProgressJob(RemoteTableAttacher attacher, DiscoveredDatabase db,
             bool mismatchProgress)
         {
-           
+            var syntax = db.Server.GetQuerySyntaxHelper();
+
             //the table to get data from
-            attacher.RemoteSelectSQL = "SELECT * FROM table1 WHERE DateCol >= @startDate AND DateCol <= @endDate";
+            attacher.RemoteSelectSQL = $"SELECT * FROM table1 WHERE {syntax.EnsureWrapped("DateCol")} >= @startDate AND {syntax.EnsureWrapped("DateCol")} <= @endDate";
             attacher.RAWTableName = "table2";
 
             attacher.Initialize(null,db);
