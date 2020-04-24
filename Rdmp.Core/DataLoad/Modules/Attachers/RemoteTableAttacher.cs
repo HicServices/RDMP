@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi;
 using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -23,6 +24,7 @@ using Rdmp.Core.DataLoad.Engine.Pipeline.Sources;
 using Rdmp.Core.DataLoad.Modules.LoadProgressUpdating;
 using Rdmp.Core.Logging;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 using TypeGuesser;
 
@@ -41,10 +43,14 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
             
         }
 
-        [DemandsInitialization("The DataSource (Server) connect to in order to read data.  Note that this may be MyFriendlyServer (SqlServer) or something like '192.168.56.101:1521/TRAININGDB'(Oracle)",Mandatory=true)]
+        [DemandsInitialization("The server to connect to (this replaces all other settings e.g. RemoteServer, RemoteDatabaseName etc")]
+        public ExternalDatabaseServer RemoteServerReference { get; set; }
+
+
+        [DemandsInitialization("The DataSource (Server) connect to in order to read data.  Note that this may be MyFriendlyServer (SqlServer) or something like '192.168.56.101:1521/TRAININGDB'(Oracle)")]
         public string RemoteServer { get; set; }
 
-        [DemandsInitialization("The database on the remote host containg the table we will read data from", Mandatory = true)]
+        [DemandsInitialization("The database on the remote host containg the table we will read data from")]
         public string RemoteDatabaseName { get; set; }
 
         [DemandsInitialization("The table on the remote host from which data will be read.")]
@@ -79,8 +85,6 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
         const string EndDateParameter = "@endDate";
         
         private DiscoveredDatabase _remoteDatabase;
-        private string _remoteUsername { get; set; }
-        private string _remotePassword { get; set; }
         protected bool _setupDone { get; set; }
 
         public enum PeriodToLoad
@@ -96,15 +100,15 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
             if(!string.IsNullOrWhiteSpace(RemoteSelectSQL))
                 return;
 
-            const string patternForValidTableNames = "^[0-9A-Za-z_]+$";
+            const string patternForValidTableNames = "^[0-9A-Za-z_ ]+$";
             
             
             if (string.IsNullOrWhiteSpace(RemoteTableName))
-                throw new Exception("RemoteTableName is null, you need to give ProcessTaskArgument a value of a table on the remote server " + RemoteServer);
+                throw new Exception("RemoteTableName is null, you need to give ProcessTaskArgument a value of a table on the remote server");
 
 
             if (!Regex.IsMatch(RemoteTableName, patternForValidTableNames))
-                throw new Exception("RemoteTableName argument was rejected because it contained freaky characters (could be just be spaces).  Value was " + RemoteTableName + " expected regex to match with was: " + patternForValidTableNames);
+                throw new Exception("RemoteTableName argument was rejected because it contained unexpected characters (should be alphanumeric and not qualified e.g. with brackets).  Value was " + RemoteTableName + " expected regex to match with was: " + patternForValidTableNames);
         }
 
 
@@ -124,6 +128,30 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
         
         public override void Check(ICheckNotifier notifier)
         {
+
+            if (RemoteServerReference != null)
+            {
+                if (!string.IsNullOrWhiteSpace(RemoteServer))
+                    notifier.OnCheckPerformed(new CheckEventArgs("RemoteServer must be blank when you have specified a RemoteServerReference", CheckResult.Fail));
+                
+                if (!string.IsNullOrWhiteSpace(RemoteDatabaseName))
+                    notifier.OnCheckPerformed(new CheckEventArgs("RemoteDatabaseName must be blank when you have specified a RemoteServerReference", CheckResult.Fail));
+
+                if(RemoteTableAccessCredentials != null)
+                    notifier.OnCheckPerformed(new CheckEventArgs("RemoteTableAccessCredentials must be blank when you have specified a RemoteServerReference", CheckResult.Fail));
+
+                if (string.IsNullOrWhiteSpace(RemoteServerReference.Database))
+                    notifier.OnCheckPerformed(new CheckEventArgs($"RemoteServerReference {RemoteServerReference} had no listed database to connect to", CheckResult.Fail));
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(RemoteServer))
+                    notifier.OnCheckPerformed(new CheckEventArgs("RemoteServer is a Required field (unless you specify a RemoteServerReference)", CheckResult.Fail));
+                
+                if (string.IsNullOrWhiteSpace(RemoteDatabaseName))
+                    notifier.OnCheckPerformed(new CheckEventArgs("RemoteDatabaseName is a Required field (unless you specify a RemoteServerReference)", CheckResult.Fail));
+            }
+
             //if we have been initialized
             if (LoadDirectory != null)
             {
@@ -143,10 +171,6 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
                     try
                     {
                         Setup();
-
-                        //if there is a username and password
-                        if(!string.IsNullOrWhiteSpace(_remoteUsername) && !string.IsNullOrWhiteSpace(_remotePassword))
-                            notifier.OnCheckPerformed(new CheckEventArgs("Found username and password to use with RemoteTableAttacher",CheckResult.Success, null));
                     }
                     catch (Exception e)
                     {
@@ -157,7 +181,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
                 }
                 catch (Exception e)
                 {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Program crashed while trying to inspect remote server " + RemoteServer + "  for presence of tables/databases specified in the load configuration.",
+                    notifier.OnCheckPerformed(new CheckEventArgs("Program crashed while trying to inspect remote server " + (RemoteServerReference ?? (object)RemoteServer ) + "  for presence of tables/databases specified in the load configuration.",
                         CheckResult.Fail, e));
                 }
 
@@ -232,7 +256,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
             try
             {
                 if (!_remoteDatabase.Exists())
-                    throw new Exception("Database " + RemoteDatabaseName + " did not exist on the remote server");
+                    throw new Exception("Database " + _remoteDatabase + " did not exist on the remote server");
 
                 //still worthwhile doing this incase we cannot connect to the server
                 var tables = _remoteDatabase.DiscoverTables(true).Select(t => t.GetRuntimeName()).ToArray();
@@ -244,31 +268,41 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
                 //user has just picked a table to copy exactly so we can precheck for it
                 if (tables.Contains(RemoteTableName))
                     notifier.OnCheckPerformed(new CheckEventArgs(
-                        "successfully found table " + RemoteTableName + " on server " + RemoteServer + " on database " +
-                        RemoteDatabaseName,
+                        "successfully found table " + RemoteTableName + " on server " + _remoteDatabase.Server + " on database " +
+                        _remoteDatabase,
                         CheckResult.Success, null));
                 else
                     notifier.OnCheckPerformed(new CheckEventArgs(
-                        "Could not find table called '" + RemoteTableName + "' on server " + RemoteServer + " on database " +
-                        RemoteDatabaseName +Environment.NewLine+"(The following tables were found:"+string.Join(",",tables)+")",
+                        "Could not find table called '" + RemoteTableName + "' on server " + _remoteDatabase.Server + " on database " +
+                        _remoteDatabase +Environment.NewLine+"(The following tables were found:"+string.Join(",",tables)+")",
                         CheckResult.Fail, null));
             }
             catch (Exception e)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Problem occurred when trying to enumerate tables on server " + RemoteServer + " on database " +RemoteDatabaseName, CheckResult.Fail, e));
+                notifier.OnCheckPerformed(new CheckEventArgs("Problem occurred when trying to enumerate tables on server " + _remoteDatabase.Server + " on database " +_remoteDatabase, CheckResult.Fail, e));
             }
         }
 
 
         private void Setup()
         {
-            if(RemoteTableAccessCredentials != null)
+            if (RemoteServerReference != null)
             {
-                _remoteUsername = RemoteTableAccessCredentials.Username;
-                _remotePassword = RemoteTableAccessCredentials.GetDecryptedPassword();
+                _remoteDatabase = RemoteServerReference.Discover(DataAccessContext.DataLoad);
             }
+            else
+            {
+                string remoteUsername = null;
+                string remotePassword = null;
+
+                if(RemoteTableAccessCredentials != null)
+                {
+                    remoteUsername = RemoteTableAccessCredentials.Username;
+                    remotePassword = RemoteTableAccessCredentials.GetDecryptedPassword();
+                }
             
-            _remoteDatabase = new DiscoveredServer(RemoteServer, RemoteDatabaseName,DatabaseType, _remoteUsername, _remotePassword).GetCurrentDatabase();
+                _remoteDatabase = new DiscoveredServer(RemoteServer, RemoteDatabaseName,DatabaseType, remoteUsername, remotePassword).GetCurrentDatabase();
+            }
             
             _setupDone = true;
         }
@@ -278,13 +312,15 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
                 throw new Exception("Job is Null, we require to know the job to build a DataFlowPipeline");
       
             ThrowIfInvalidRemoteTableName();
-            
+
+            var syntax = _remoteDatabase.Server.GetQuerySyntaxHelper();
+
             string sql;
 
             if (!string.IsNullOrWhiteSpace(RemoteSelectSQL))
                 sql = RemoteSelectSQL;
             else
-                sql = "Select * from " + RemoteTableName;
+                sql = "Select * from " + syntax.EnsureWrapped(RemoteTableName);
             
             bool scheduleMismatch = false;
 
@@ -311,7 +347,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
 
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to execute SQL:" + Environment.NewLine + sql));
 
-            var source = new DbDataCommandDataFlowSource(sql, "Fetch data from " + RemoteServer + " to populate RAW table " + RemoteTableName, _remoteDatabase.Server.Builder, Timeout == 0 ? 50000 : Timeout);
+            var source = new DbDataCommandDataFlowSource(sql, "Fetch data from " + _remoteDatabase.Server + " to populate RAW table " + RemoteTableName, _remoteDatabase.Server.Builder, Timeout == 0 ? 50000 : Timeout);
 
             var destination = new SqlBulkInsertDestination(_dbInfo, RAWTableName, Enumerable.Empty<string>());
 
@@ -325,7 +361,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
                 new []
                 {
                     new DataSource(
-                        "Remote SqlServer Servername=" + RemoteServer + "Database=" + _dbInfo.GetRuntimeName() +
+                        "Remote SqlServer Servername=" + _remoteDatabase.Server + "Database=" + _dbInfo.GetRuntimeName() +
                         
                         //Either list the table or the query depending on what is populated
                         (RemoteTableName != null?" Table=" + RemoteTableName
