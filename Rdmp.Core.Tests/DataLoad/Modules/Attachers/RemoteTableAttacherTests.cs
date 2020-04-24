@@ -93,6 +93,8 @@ namespace Rdmp.Core.Tests.DataLoad.Modules.Attachers
             attacher.RemoteTableName = "table1";
             attacher.RAWTableName = "table2";
 
+            attacher.Check(new ThrowImmediatelyCheckNotifier());
+
             attacher.Initialize(null,db);
 
             var dt = new DataTable();
@@ -129,6 +131,8 @@ namespace Rdmp.Core.Tests.DataLoad.Modules.Attachers
             //the table to get data from
             attacher.RemoteSelectSQL = $"SELECT * FROM table1 WHERE {syntax.EnsureWrapped("DateCol")} >= @startDate AND {syntax.EnsureWrapped("DateCol")} <= @endDate";
             attacher.RAWTableName = "table2";
+
+            attacher.Check(new ThrowImmediatelyCheckNotifier());
 
             attacher.Initialize(null,db);
 

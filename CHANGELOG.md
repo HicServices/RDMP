@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added new property RemoteServerReference to RemoteTableAttacher which centralises server name/database/credentials when creating many attachers that all pull data from the same place
 - Added double click to expand tree option for RDMP
 - When searching (Ctrl+F), exact matches now appear first
 - Added RDMP platform database name (and server) to the window title
