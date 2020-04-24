@@ -85,14 +85,12 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
         const string EndDateParameter = "@endDate";
         
         private DiscoveredDatabase _remoteDatabase;
-        protected bool _setupDone { get; set; }
 
-        public enum PeriodToLoad
-        {
-            Month,
-            Year,
-            Decade
-        }
+        /// <summary>
+        /// If parameters are not supported in SQL and have to be injected as DbParameter objects
+        /// </summary>
+        private DateTime? _minDateParam;
+        private DateTime? _maxDateParam;
 
         protected void ThrowIfInvalidRemoteTableName()
         {
@@ -303,8 +301,6 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
             
                 _remoteDatabase = new DiscoveredServer(RemoteServer, RemoteDatabaseName,DatabaseType, remoteUsername, remotePassword).GetCurrentDatabase();
             }
-            
-            _setupDone = true;
         }
         public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
@@ -349,6 +345,23 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
 
             var source = new DbDataCommandDataFlowSource(sql, "Fetch data from " + _remoteDatabase.Server + " to populate RAW table " + RemoteTableName, _remoteDatabase.Server.Builder, Timeout == 0 ? 50000 : Timeout);
 
+            //For Oracle / Postgres we have to add the parameters to the DbCommand directly
+            if (_minDateParam.HasValue && _maxDateParam.HasValue && !syntax.SupportsEmbeddedParameters())
+            {
+                source.CommandAdjuster = (cmd) =>
+                {
+                    var pmin = cmd.CreateParameter();
+                    pmin.Value = _minDateParam.Value;
+                    pmin.ParameterName = StartDateParameter;
+                    cmd.Parameters.Add(pmin);
+
+                    var pmax = cmd.CreateParameter();
+                    pmax.Value = _maxDateParam.Value;
+                    pmax.ParameterName = EndDateParameter;
+                    cmd.Parameters.Add(pmax);
+                };
+            }
+                
             var destination = new SqlBulkInsertDestination(_dbInfo, RAWTableName, Enumerable.Empty<string>());
 
             var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
@@ -419,6 +432,14 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
                 throw new Exception("Problematic max and min dates(" + max + " and " + min +" respectively)");
 
             var syntaxHelper = _remoteDatabase.Server.Helper.GetQuerySyntaxHelper();
+
+            if (!syntaxHelper.SupportsEmbeddedParameters())
+            {
+                _minDateParam = min;
+                _maxDateParam = max;
+                return "";
+            }
+
             var declareStartDateParameter = syntaxHelper.GetParameterDeclaration(StartDateParameter, new DatabaseTypeRequest(typeof (DateTime)));
             var declareEndDateParameter = syntaxHelper.GetParameterDeclaration(EndDateParameter,new DatabaseTypeRequest(typeof (DateTime)));
             
