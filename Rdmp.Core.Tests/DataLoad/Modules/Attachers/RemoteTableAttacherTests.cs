@@ -13,11 +13,15 @@ using FAnsi.Discovery;
 using Moq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 using Rdmp.Core.DataLoad.Modules.Attachers;
+using Rdmp.Core.DataLoad.Modules.LoadProgressUpdating;
 using Rdmp.Core.Logging;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
@@ -47,6 +51,44 @@ namespace Rdmp.Core.Tests.DataLoad.Modules.Attachers
                 attacher.RemoteTableAccessCredentials = creds;
             }
 
+            RunAttachStageWithNormalJob(attacher,db);
+        }
+
+
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
+        public void TestRemoteTableAttacher_AsReference(DatabaseType dbType)
+        {
+            var db = GetCleanedServer(dbType);
+
+            var attacher = new RemoteTableAttacher();
+            //where to go for data
+            var eds = new ExternalDatabaseServer(CatalogueRepository, "ref", null);
+            eds.SetProperties(db);
+            eds.SaveToDatabase();
+
+            attacher.RemoteServerReference = eds;
+            
+            RunAttachStageWithNormalJob(attacher,db);
+        }
+        
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypesWithBoolFlags))]
+        public void TestRemoteTableAttacher_WithLoadProgress(DatabaseType dbType, bool mismatchProgress)
+        {
+            var db = GetCleanedServer(dbType);
+
+            var attacher = new RemoteTableAttacher();
+            //where to go for data
+            var eds = new ExternalDatabaseServer(CatalogueRepository, "ref", null);
+            eds.SetProperties(db);
+            eds.SaveToDatabase();
+
+            attacher.RemoteServerReference = eds;
+
+            RunAttachStageWithLoadProgressJob(attacher,db,mismatchProgress);
+        }
+
+        private void RunAttachStageWithNormalJob(RemoteTableAttacher attacher, DiscoveredDatabase db)
+        {
             //the table to get data from
             attacher.RemoteTableName = "table1";
             attacher.RAWTableName = "table2";
@@ -77,8 +119,63 @@ namespace Rdmp.Core.Tests.DataLoad.Modules.Attachers
 
             Assert.AreEqual(1,tbl1.GetRowCount());
             Assert.AreEqual(1,tbl2.GetRowCount());
-            
         }
+
+        private void RunAttachStageWithLoadProgressJob(RemoteTableAttacher attacher, DiscoveredDatabase db,
+            bool mismatchProgress)
+        {
+           
+            //the table to get data from
+            attacher.RemoteSelectSQL = "SELECT * FROM table1 WHERE DateCol >= @startDate AND DateCol <= @endDate";
+            attacher.RAWTableName = "table2";
+
+            attacher.Initialize(null,db);
+
+            var dt = new DataTable();
+            dt.Columns.Add("Col1");
+            dt.Columns.Add("DateCol");
+
+            dt.Rows.Add("fff",new DateTime(2000,1,1));
+            dt.Rows.Add("fff",new DateTime(2001,1,1));
+            dt.Rows.Add("fff",new DateTime(2002,1,1));
+            
+
+            var tbl1 = db.CreateTable("table1", dt);
+            var tbl2 = db.CreateTable("table2", new []
+            {
+                new DatabaseColumnRequest("Col1",new DatabaseTypeRequest(typeof(string),5)),
+                new DatabaseColumnRequest("DateCol",new DatabaseTypeRequest(typeof(DateTime)))
+            });
+
+            Assert.AreEqual(3,tbl1.GetRowCount());
+            Assert.AreEqual(0,tbl2.GetRowCount());
+
+            var logManager = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
+
+            var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(tbl2);
+            Mock.Get(lmd).Setup(p=>p.CatalogueRepository).Returns(CatalogueRepository);
+            logManager.CreateNewLoggingTaskIfNotExists(lmd.GetDistinctLoggingTask());
+
+            var lp = new LoadProgress(CatalogueRepository, new LoadMetadata(CatalogueRepository, "ffffff"));
+            lp.OriginDate = new DateTime(2001,1,1);
+            attacher.Progress = lp;
+            attacher.ProgressUpdateStrategy = new DataLoadProgressUpdateInfo(){Strategy = DataLoadProgressUpdateStrategy.DoNothing};
+            
+            var dbConfiguration = new HICDatabaseConfiguration(lmd, RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));
+
+            var job = new ScheduledDataLoadJob(RepositoryLocator,"test job",logManager,lmd,new TestLoadDirectory(),new ThrowImmediatelyDataLoadEventListener(),dbConfiguration);
+
+            job.LoadProgress = mismatchProgress
+                ? new LoadProgress(CatalogueRepository, new LoadMetadata(CatalogueRepository, "ffsdf"))
+                : lp;
+            job.DatesToRetrieve = new List<DateTime>{new DateTime(2001,01,01)};
+            job.StartLogging();
+            attacher.Attach(job, new GracefulCancellationToken());
+
+            Assert.AreEqual(3,tbl1.GetRowCount());
+            Assert.AreEqual(mismatchProgress ? 0 : 1,tbl2.GetRowCount());
+        }
+
     }
 
 }
