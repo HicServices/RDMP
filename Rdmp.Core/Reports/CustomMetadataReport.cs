@@ -10,6 +10,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataQualityEngine;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Reports
 {
@@ -20,29 +22,29 @@ namespace Rdmp.Core.Reports
     public class CustomMetadataReport
     {
 
-        Dictionary<string,Func<Catalogue,object>> Replacements = new Dictionary<string, Func<Catalogue,object>>()
-        {
-            {"$StartDate",GetStartDate},
-        };
+        Dictionary<string,Func<Catalogue,object>> Replacements = new Dictionary<string, Func<Catalogue,object>>();
+
+        private readonly IDetermineDatasetTimespan _timespanCalculator = new DatasetTimespanCalculator();
 
         public CustomMetadataReport()
         {
             //add basic properties
             foreach (var prop in typeof(Catalogue).GetProperties())
                 Replacements.Add("$" + prop.Name, (s) => prop.GetValue(s));
-        }
 
-        private static object GetStartDate(Catalogue arg)
-        {
-            //TODO this should come from DQE / IDetermineDatasetTimespan
-            return null;
+            Replacements.Add("$StartDate",
+                (c) => _timespanCalculator?.GetMachineReadableTimepsanIfKnownOf(c, true, out _)?.Item1?.ToString());
+            Replacements.Add("$EndDate",
+                (c) => _timespanCalculator?.GetMachineReadableTimepsanIfKnownOf(c, true, out _)?.Item2?.ToString());
+            Replacements.Add("$DateRange",
+                (c) => _timespanCalculator?.GetHumanReadableTimepsanIfKnownOf(c, true, out _));
         }
-
+        
         public void GenerateReport(Catalogue[] catalogues, DirectoryInfo outputDirectory, FileInfo template, string fileNaming, bool oneFile)
         {
             if(catalogues == null || !catalogues.Any())
                 return;
-
+            
             var templateBody = File.ReadAllText(template.FullName);
 
             string outname = DoReplacements(fileNaming,catalogues.First());

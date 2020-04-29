@@ -50,6 +50,38 @@ namespace Rdmp.Core.Tests.Reports
 | ffff |  |",resultText.TrimEnd());
         }
 
+        [Test]
+        public void TestCustomMetadataReport_SingleCatalogueWithNoDQEResults()
+        {
+            var cata = WhenIHaveA<Catalogue>();
+            cata.Name = "ffff";
+            cata.Description = null;
+            cata.SaveToDatabase();
+
+            var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
+            var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
+
+            if(outDir.Exists)
+                outDir.Delete(true);
+            
+            outDir.Create();
+
+            File.WriteAllText(template.FullName,
+                @"| Name | Desc| Range |
+| $Name | $Description | $StartDate$EndDate$DateRange |");
+
+            var cmd = new ExecuteCommandExtractMetadata(null, new[] {cata}, outDir, template, "$Name.md", false);
+            cmd.Execute();
+
+            var outFile = Path.Combine(outDir.FullName, "ffff.md");
+
+            FileAssert.Exists(outFile);
+            var resultText = File.ReadAllText(outFile);
+
+            StringAssert.AreEqualIgnoringCase(@"| Name | Desc| Range |
+| ffff |  | Unknown |",resultText.TrimEnd());
+        }
+
         
         [TestCase(true)]
         [TestCase(false)]
