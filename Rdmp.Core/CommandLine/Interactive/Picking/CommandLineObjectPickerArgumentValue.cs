@@ -118,12 +118,23 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
 
             if (typeof(DiscoveredTable) == paramType)
                 return Table;
+            
+            var element = paramType.GetElementType();
 
             //it's an array of DatabaseEntities
             if(paramType.IsArray && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(paramType.GetElementType()))
             {
                 if(DatabaseEntities.Count == 0)
                     _logger.Warn($"Pattern matched no objects '{RawValue}'");
+
+                if (element != typeof(IMapsDirectlyToDatabaseTable))
+                {
+                    var typedArray = Array.CreateInstance(element, DatabaseEntities.Count);
+                    for (int i = 0; i < DatabaseEntities.Count; i++)
+                        typedArray.SetValue(Convert.ChangeType(DatabaseEntities[i], element),i);
+
+                    return typedArray;
+                }
 
                 return DatabaseEntities.ToArray();
             }
