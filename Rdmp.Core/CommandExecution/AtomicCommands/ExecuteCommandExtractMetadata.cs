@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Reports;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -23,7 +24,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private readonly DirectoryInfo _outputDirectory;
         private readonly FileInfo _template;
         private readonly string _fileNaming;
-        private readonly bool? _oneFile;
+        private readonly bool _oneFile;
 
         public ExecuteCommandExtractMetadata(IBasicActivateItems basicActivator, 
             Catalogue[] catalogues, 
@@ -35,7 +36,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             [DemandsInitialization("How output files based on the template should be named.  Uses same replacement strategy as template contents e.g. $Name.xml")]
             string fileNaming, 
             [DemandsInitialization("True to append all ouputs into a single file.  False to output a new file for every Catalogue")]
-            bool? oneFile):base(basicActivator)
+            bool oneFile):base(basicActivator)
         {
             _catalogues = catalogues;
             _outputDirectory = outputDirectory;
@@ -80,13 +81,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if (string.IsNullOrWhiteSpace(fileNaming))
                 return;
 
-            var oneFile = _oneFile;
-
-            if (!oneFile.HasValue && catas.Length > 1)
-                oneFile = BasicActivator.YesNo("Concatenate all catalogues together into the same file?", "Concatenate");
-
             var reporter = new CustomMetadataReport();
-            reporter.GenerateReport(catas.Cast<Catalogue>().ToArray(),outputDir,template, fileNaming, oneFile ?? false);
+            reporter.GenerateReport(catas.Cast<Catalogue>().ToArray(),outputDir,template, fileNaming, _oneFile);
         }
     }
 }
