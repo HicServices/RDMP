@@ -26,60 +26,75 @@ namespace Rdmp.Core.DataQualityEngine
         /// <inheritdoc/>
         public string GetHumanReadableTimepsanIfKnownOf(Catalogue catalogue,bool discardOutliers, out DateTime? accurateAsOf)
         {
+
+            var result = GetMachineReadableTimepsanIfKnownOf(catalogue, discardOutliers, out accurateAsOf);
+
+            if (result.Item1 == null || result.Item2 == null)
+                return "Unknown";
+
+            return $"{result.Item1} To {result.Item2}";
+        }
+
+        public Tuple<DateTime?, DateTime?> GetMachineReadableTimepsanIfKnownOf(Catalogue catalogue, bool discardOutliers, out DateTime? accurateAsOf)
+        {
             DataTable dt;
             accurateAsOf = null;
+            
+            Evaluation mostRecentEvaluation = null;
 
             try
             {
                 var repo = new DQERepository(catalogue.CatalogueRepository);
-
-                Evaluation mostRecentEvaluation = repo.GetMostRecentEvaluationFor(catalogue);
-
-                if (mostRecentEvaluation == null)
-                    return "Unknown";
-
-                accurateAsOf = mostRecentEvaluation.DateOfEvaluation;
-                dt = PeriodicityState.GetPeriodicityForDataTableForEvaluation(mostRecentEvaluation, "ALL", false);
+                mostRecentEvaluation = repo.GetMostRecentEvaluationFor(catalogue);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                return "Unknown:" + e.Message;
+                return Unknown();
             }
+            
+            if (mostRecentEvaluation == null)
+                return Unknown();
+
+            accurateAsOf = mostRecentEvaluation.DateOfEvaluation;
+            dt = PeriodicityState.GetPeriodicityForDataTableForEvaluation(mostRecentEvaluation, "ALL", false);
 
             if (dt == null || dt.Rows.Count < 2)
-                return "Unknown";
+                return Unknown();
 
             int discardThreshold = discardOutliers? GetDiscardThreshold(dt):-1;
 
-            string minMonth = null;
+            DateTime? minMonth = null;
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                 if (Convert.ToInt32(dt.Rows[i]["CountOfRecords"]) > discardThreshold)
                 {
-                    minMonth = dt.Rows[i][1].ToString();
+                    minMonth = (DateTime)dt.Rows[i][1];
                     break;
                 }
             }
 
-            string maxMonth = null;
+            DateTime? maxMonth = null;
             for (int i = dt.Rows.Count-1; i >=0; i--)
             {
                 if (Convert.ToInt32(dt.Rows[i]["CountOfRecords"]) > discardThreshold)
                 {
-                    maxMonth = dt.Rows[i][1].ToString();
+                    maxMonth = (DateTime)dt.Rows[i][1];
                     break;
                 }
             }
 
             if (maxMonth == null || minMonth == null)
-                return "All Values Below Threshold";
+                return Unknown();
 
             if (maxMonth == minMonth)
-                return minMonth;
+                return Tuple.Create(minMonth,minMonth);
 
+            return Tuple.Create(minMonth,maxMonth);
+        }
 
-            return minMonth + " To " + maxMonth;
-
+        private Tuple<DateTime?, DateTime?> Unknown()
+        {
+            return Tuple.Create<DateTime?, DateTime?>(null, null);
         }
 
         private int GetDiscardThreshold(DataTable dt)
