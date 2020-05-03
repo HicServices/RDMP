@@ -33,6 +33,11 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Sources
         public bool AllowEmptyResultSets { get; set; }
         public int TotalRowsRead { get; set; }
 
+        /// <summary>
+        /// Called after command sql has been set up, allows last minute changes by subscribers before it is executed
+        /// </summary>
+        public Action<DbCommand> CommandAdjuster { get; set; }
+
         public DbDataCommandDataFlowSource(string sql,string taskBeingPerformed, DbConnectionStringBuilder builder, int timeout)
         {
             Sql = sql;
@@ -58,7 +63,8 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Sources
 
                 cmd = DatabaseCommandHelper.GetCommand(Sql, _con);
                 cmd.CommandTimeout = _timeout;
-                
+                CommandAdjuster?.Invoke(cmd);
+
                 _reader = cmd.ExecuteReaderAsync(cancellationToken.AbortToken).Result;
                 _numberOfColumns = _reader.FieldCount;
             }

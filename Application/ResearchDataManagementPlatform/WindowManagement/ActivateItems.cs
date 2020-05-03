@@ -89,7 +89,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override void Show(string message)
         {
-            WideMessageBox.Show("Message",message);
+            WideMessageBox.Show("Message",message,Environment.StackTrace,true,null,WideMessageBoxTheme.Help);
         }
 
         public ICombineableFactory CommandFactory { get; private set; }

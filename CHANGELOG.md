@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added tool strip to tree collection user interfaces
+- Added support for template based metadata extractions ([Catalogue] descriptions etc) 
+- Added new property RemoteServerReference to RemoteTableAttacher which centralises server name/database/credentials when creating many attachers that all pull data from the same place
 - Added double click to expand tree option for RDMP
 - When searching (Ctrl+F), exact matches now appear first
 - Added RDMP platform database name (and server) to the window title
@@ -21,6 +23,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Home screen now follows more consistent user experience and includes recently used items
 - Catalogue collection no longer expands when CatalogueFolder changes
+
+### Fixed
+
+- LoadProgress with RemoteTableAttacher now works correctly with DBMS that do not support Sql parameter declarations (Oracle / Postgres)
 
 ## [4.0.3] - 2020-02-28
 

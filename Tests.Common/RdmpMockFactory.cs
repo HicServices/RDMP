@@ -16,6 +16,8 @@ namespace Tests.Common
 {
     public class RdmpMockFactory
     {
+        private const string TestLoggingTask = "TestLoggingTask";
+
         /// <summary>
         /// Generates an implementation of <see cref="INameDatabasesAndTablesDuringLoads"/> which always returns the provided table regardless of the
         /// DLE load stage.
@@ -59,9 +61,10 @@ namespace Tests.Common
 
             lmd.Setup(m => m.GetDistinctLiveDatabaseServer()).Returns(tableInfo.Discover(DataAccessContext.DataLoad).Database.Server);
             lmd.Setup(m => m.GetAllCatalogues()).Returns(new[] { cata.Object });
-
+            lmd.Setup(p => p.GetDistinctLoggingTask()).Returns(TestLoggingTask);
+            
             cata.Setup(m => m.GetTableInfoList(It.IsAny<bool>())).Returns(new[] { tableInfo });
-
+            cata.Setup(m => m.LoggingDataTask).Returns(TestLoggingTask);
             return lmd.Object;
         }
 
