@@ -11,5 +11,7 @@ build_script:
 - ps: ./Tools/rdmp/bin/Debug/netcoreapp2.2/win-x64/rdmp install localhost\SQL2017 TEST_ -D -u sa -p Password12!
 - ps: Remove-Item "./Tests.Common/TestDatabases.txt"
 - ps: Rename-Item -Path "./Tests.Common/TestDatabases.appveyor.txt" -NewName "TestDatabases.txt"
+- ps: dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj"
+- ps: dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" 
 
 test: off

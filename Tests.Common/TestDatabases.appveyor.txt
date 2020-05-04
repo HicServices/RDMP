@@ -6,12 +6,12 @@
 #To achieve this, you can run DatabaseCreation.exe with argument 1 being your ServerName
 #You can apply a prefix e.g. TEST_ as an argument to DatabaseCreation.exe and include that prefix below if you like
 
-ServerName: localhost
+ServerName: localhost\SQL2017
 Prefix: TEST_
 Username: sa
-Password: YourStrong!Passw0rd
-MySql: server=127.0.0.1;Uid=root;Pwd=;SslMode=None
-PostgreSql: User ID=postgres;Password=;Host=127.0.0.1;Port=5432
+Password: Password12!
+MySql: server=127.0.0.1;Uid=root;Pwd=Password12!;SslMode=None
+PostgreSql: User ID=postgres;Password=Password12!;Host=127.0.0.1;Port=5432
 Oracle: 
 #User accounts you can create with limited access rights (e.g. connect list databases etc).  These users will be used in low privilege tests
 #The account will be granted limited read/write access to databases on a per test basis (See DatabaseTests.SetupLowPrivilegeUserRightsFor)
