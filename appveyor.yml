@@ -2,8 +2,17 @@ version: 1.0.{build}
 image: Visual Studio 2019
 services:
   - mssql2017
+  - mysql
+  - postgresql101
+  
 build_script:
 - ps: dotnet build HIC.DataManagementPlatform.sln /v:q
 - ps: dotnet publish "./Tools/rdmp" -r win-x64
 - ps: ./Tools/rdmp/bin/Debug/netcoreapp2.2/win-x64/rdmp install localhost\SQL2017 TEST_ -D -u sa -p Password12!
+- ps: Remove-Item "./Tests.Common/TestDatabases.txt"
+- ps: Rename-Item -Path "./Tests.Common/TestDatabases.appveyor.txt" -NewName "TestDatabases.txt"
+
+
+
+TestDatabases.appveyor.txt
 test: off
