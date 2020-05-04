@@ -1,4 +1,6 @@
 version: 1.0.{build}
+init:
+  - git config --global core.autocrlf true
 image: Visual Studio 2019
 services:
   - mssql2017
