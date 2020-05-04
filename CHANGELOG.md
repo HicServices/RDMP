@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added new PipelineComponent `SetNull` which detects bad data in a specific column of pipeline data and sets cells matching the `Regex` to null
 - Added support for template based metadata extractions ([Catalogue] descriptions etc) 
 - Added new property RemoteServerReference to RemoteTableAttacher which centralises server name/database/credentials when creating many attachers that all pull data from the same place
 - Added double click to expand tree option for RDMP
