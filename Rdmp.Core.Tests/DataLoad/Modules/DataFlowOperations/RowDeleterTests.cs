@@ -18,7 +18,7 @@ namespace Rdmp.Core.Tests.DataLoad.Modules.DataFlowOperations
     class RowDeleterTests
     {
         [Test]
-        public void TestSetNull_OneCell()
+        public void TestRowDeleter_OneCell()
         {
             var operation = new RowDeleter();
             operation.ColumnNameToFind = "b";
