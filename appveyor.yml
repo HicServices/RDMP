@@ -1,0 +1,30 @@
+version: 1.0.{build}
+init:
+  - git config --global core.autocrlf true
+image: Visual Studio 2019
+services:
+  - mssql2017
+  - mysql
+  - postgresql101
+
+before_build:
+- dotnet restore --packages ./packages
+- choco install opencover.portable
+
+build_script:
+  - ps: Remove-Item "./Tests.Common/TestDatabases.txt"
+  - ps: Rename-Item -Path "./Tests.Common/TestDatabases.appveyor.txt" -NewName "TestDatabases.txt"
+  - ps: dotnet build HIC.DataManagementPlatform.sln /v:q
+  - ps: dotnet publish "./Tools/rdmp" -r win-x64
+  - ps: ./Tools/rdmp/bin/Debug/netcoreapp2.2/win-x64/rdmp install localhost\SQL2017 TEST_ -D -u sa -p Password12!
+# - ps: dotnet test "./Rdmp.UI.Tests/Rdmp.UI.Tests.csproj"
+  - ps: dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj"
+# - ps: dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" 
+  - cmd: "\"packages/opencover/4.7.922/tools/OpenCover.Console.exe\" -target:\"c:/program files/dotnet/dotnet.exe\" -targetargs:\"test ./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj -f netcoreapp2.2 -c Release /p:DebugType=full\" -filter:\"+[*Rdmp.Core*]* +[*ReusableLibraryCode*]* +[*MapsDirectlyToDatabaseTable*]* -[*Tests*]*\"  -output:coverage.xml -register:appveyor -oldStyle -hideskipped:File"
+  - cmd: packages\coveralls.io\1.4.2\tools\coveralls.net.exe --opencover coverage.xml -r %COVERALLS_REPO_TOKEN%
+
+test: off
+
+environment:
+  COVERALLS_REPO_TOKEN:
+    secure: CmtrH/h57hWTM17zwN6LUKin9nzebssvZoADRZIIbj2NH//QQVoDEqF6UW8tkg4U
