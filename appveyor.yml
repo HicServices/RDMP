@@ -1,0 +1,9 @@
+version: 1.0.{build}
+image: Visual Studio 2019
+services:
+  - mssql2012sp1
+build_script:
+- ps: dotnet build HIC.DataManagementPlatform.sln /v:q
+- ps: dotnet publish "./Tools/rdmp" -r win-x64
+- ps: ./Tools/rdmp/bin/Debug/netcoreapp2.2/win-x64/rdmp install localhost\SQL2012SP1 TEST_ -D -u sa -p Password12!
+test: off
