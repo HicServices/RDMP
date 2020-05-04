@@ -12,7 +12,4 @@ build_script:
 - ps: Remove-Item "./Tests.Common/TestDatabases.txt"
 - ps: Rename-Item -Path "./Tests.Common/TestDatabases.appveyor.txt" -NewName "TestDatabases.txt"
 
-
-
-TestDatabases.appveyor.txt
 test: off
