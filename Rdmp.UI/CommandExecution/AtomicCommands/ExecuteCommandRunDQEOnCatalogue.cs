@@ -49,7 +49,13 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-            Activator.Activate<DQEExecutionControlUI, Catalogue>(_catalogue);
+
+            var c = _catalogue ?? SelectOne<Catalogue>(BasicActivator.RepositoryLocator.CatalogueRepository);
+
+            if(c == null)
+                return;
+
+            Activator.Activate<DQEExecutionControlUI, Catalogue>(c);
         }
 
         public override string GetCommandName()

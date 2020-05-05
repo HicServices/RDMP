@@ -44,6 +44,11 @@ namespace ResearchDataManagementPlatform
         private ITheme _theme;
         IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
 
+        /// <summary>
+        /// True while the main form is loading (e.g. from a persistence file)
+        /// </summary>
+        public static bool Loading = true;
+
         public RDMPMainForm()
         {
             InitializeComponent();
@@ -154,6 +159,7 @@ namespace ResearchDataManagementPlatform
             }
          
             FormClosing += CloseForm;
+            Loading = false;
         }
 
         public override string Text { 

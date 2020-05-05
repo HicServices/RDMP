@@ -21,7 +21,7 @@ namespace Rdmp.UI.Wizard
     /// interacting with those datasets including specifying values for arguments e.g. TestCode = 'CRE'.  
     /// 
     /// <para>Initially you are limited to 2 inclusion criteria and 2 exclsuion criteria (datasets).  Upon completing the wizard you will be taken to the execution screen of the Cohort Identification
-    /// Configuration created (See CohortCompilerUI).  There you can test/refine your configuration as well as add more datasets and deeper nesting of set operations as required.</para>
+    /// Configuration created.  There you can test/refine your configuration as well as add more datasets and deeper nesting of set operations as required.</para>
     /// 
     /// </summary>
     public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm

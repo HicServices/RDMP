@@ -6,7 +6,9 @@
 
 using System;
 using System.Globalization;
+using System.Linq;
 using NUnit.Framework;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Tests.Common;
 
@@ -38,6 +40,22 @@ namespace Rdmp.Core.Tests.Curation.Integration.ArgumentTests
             arg.Value = val;
 
             Assert.AreEqual(_expectedAnswers[expectedAnswerIdx],arg.GetValueAsSystemType());
+        }
+
+        [Test]
+        public void TestClassDemandingDouble_CreateArgumentsForClassIfNotExists()
+        {
+            var args = WhenIHaveA<ProcessTask>().CreateArgumentsForClassIfNotExists<TestClassDemandingDouble>();
+
+            Assert.AreEqual(1.0,args.Single().GetValueAsSystemType());
+            Assert.AreEqual("1",args.Single().Value);
+
+        }
+
+        class TestClassDemandingDouble
+        {
+            [DemandsInitialization("some field",defaultValue:1)]
+            public double MyVar { get; set; }
         }
     }
 }

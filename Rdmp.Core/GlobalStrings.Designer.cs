@@ -178,6 +178,24 @@ namespace Rdmp.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to From Database....
+        /// </summary>
+        public static string FromDatabase {
+            get {
+                return ResourceManager.GetString("FromDatabase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to From File....
+        /// </summary>
+        public static string FromFile {
+            get {
+                return ResourceManager.GetString("FromFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Missing.
         /// </summary>
         public static string Missing {

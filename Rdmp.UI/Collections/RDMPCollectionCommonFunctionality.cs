@@ -616,22 +616,19 @@ namespace Rdmp.UI.Collections
             if(o == null)
                 return;
 
-            /* This is still broken
             if (UserSettings.DoubleClickToExpand)
             {
-                if (!Tree.IsExpanded(o) && Tree.CanExpand(o))
+                if (Tree.CanExpand(o) && !Tree.IsExpanded(o))
                 {
                     Tree.Expand(o);
                     return;
                 }
-
                 if (Tree.IsExpanded(o))
                 {
                     Tree.Collapse(o);
                     return;
                 }
-            } 
-            */
+            }
 
             var cmd = new ExecuteCommandActivate(_activator, o);
             if(!cmd.IsImpossible)
@@ -701,9 +698,9 @@ namespace Rdmp.UI.Collections
                     if (lastParent != null)
                         Tree.RefreshObject(lastParent); //refresh parent
                     else
-                        //Tree has object but not parent, bad times, maybe BetterRouteExists? Refresh the object if it exists
-                       if(exists)
-                            Tree.RefreshObject(o);
+                        if(Tree.IndexOf(o) != -1)
+                            //Tree has object but not parent, bad times, maybe BetterRouteExists? 
+                            Tree.RebuildAll(true);
                 }
                 else
                 //if we have the object

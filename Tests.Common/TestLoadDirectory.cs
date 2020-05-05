@@ -11,33 +11,19 @@ using Rdmp.Core.Curation;
 namespace Tests.Common
 {
     public class TestLoadDirectory :ILoadDirectory{
-        private readonly XmlDocument _configurationData;
 
-        public TestLoadDirectory(XmlDocument configurationData)
+        /// <summary>
+        /// Creates a new blank/null implementation of <see cref="ILoadDirectory"/>
+        /// </summary>
+        public TestLoadDirectory()
         {
-            _configurationData = configurationData;
+
         }
-
-        public DirectoryInfo ForLoading { get; private set; }
-        public DirectoryInfo ForArchiving { get; private set; }
-        public DirectoryInfo Cache { get; private set; }
-        public DirectoryInfo RootPath { get; private set; }
-        public DirectoryInfo DataPath { get; private set; }
-        public DirectoryInfo ExecutablesPath { get; private set; }
-        public FileInfo FTPDetails { get; private set; }
-
-        public XmlNodeList GetTagFromConfigurationDataXML(string tagName)
-        {
-            return _configurationData.GetElementsByTagName(tagName);
-        }
-
-        public bool HasTagInConfigurationDataXML(string tagName)
-        {
-            var toReturn =_configurationData.GetElementsByTagName(tagName);
-
-            return toReturn != null && toReturn.Count>0;
-        }
-
-        public bool IsDesignTime { get; private set; }
+        public DirectoryInfo ForLoading { get; set; }
+        public DirectoryInfo ForArchiving { get; set; }
+        public DirectoryInfo Cache { get; set; }
+        public DirectoryInfo RootPath { get; set; }
+        public DirectoryInfo DataPath { get; set; }
+        public DirectoryInfo ExecutablesPath { get; set; }
     }
 }

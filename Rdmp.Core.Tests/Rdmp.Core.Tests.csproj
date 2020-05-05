@@ -7,6 +7,8 @@
     <Copyright>Copyright ©  2019</Copyright>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <LangVersion>7.1</LangVersion>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Resources\**" />
@@ -60,10 +62,12 @@
     <EmbeddedResource Include="DataLoad\Engine\Unit\TestFile\OddFormats.xls" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="coveralls.io" Version="1.4.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="NUnit" Version="3.12.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
     <PackageReference Include="NunitXml.TestLogger" Version="2.1.41" />
+    <PackageReference Include="OpenCover" Version="4.7.922" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />

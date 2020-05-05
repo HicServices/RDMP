@@ -44,7 +44,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             _filters = catalogue.GetAllFilters();
 
             if(!_filters.Any())
-                SetImpossible("There are Filters declard in Catalogue '" + catalogue +"'");
+                SetImpossible("There are no Filters declared in Catalogue '" + catalogue +"'");
         }
         public override Image GetImage(IIconProvider iconProvider)
         {

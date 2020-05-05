@@ -77,7 +77,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 case Scenario.AllColumns:
                     break;
                 case Scenario.MissingPreLoadDiscardedColumn:
-                    var ex = Assert.Throws<Exception>(() => attacher.Attach(job, new GracefulCancellationToken()));
+                    var ex = Assert.Throws<PipelineCrashedException>(() => attacher.Attach(job, new GracefulCancellationToken()));
 
                     Assert.AreEqual("Invalid column name 'MyMissingCol'.", (ex.InnerException.InnerException).InnerException.Message);
                     return;

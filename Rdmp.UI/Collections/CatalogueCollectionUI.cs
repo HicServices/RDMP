@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using BrightIdeasSoftware;
+using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
@@ -44,8 +45,6 @@ namespace Rdmp.UI.Collections
     /// </summary>
     public partial class CatalogueCollectionUI : RDMPCollectionUI
     {
-        private IActivateItems _activator;
-        
         private Catalogue[] _allCatalogues;
 
         //constructor
@@ -100,7 +99,7 @@ namespace Rdmp.UI.Collections
         public void RefreshUIFromDatabase(object oRefreshFrom)
         {   
             if(tlvCatalogues.ModelFilter is CatalogueCollectionFilter f)
-                f.ChildProvider = _activator.CoreChildProvider;
+                f.ChildProvider = Activator.CoreChildProvider;
 
             //if there are new catalogues we don't already have in our tree
             if (_allCatalogues != null)
@@ -115,6 +114,12 @@ namespace Rdmp.UI.Collections
 
             _allCatalogues = CommonTreeFunctionality.CoreChildProvider.AllCatalogues;
             
+            if (isFirstTime)
+            {
+                CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingFile(Activator),GlobalStrings.FromFile,null,"New...");
+                CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator),GlobalStrings.FromDatabase,null,"New...");
+            }
+
             if(isFirstTime || Equals(oRefreshFrom, CatalogueFolder.Root))
             {
                 tlvCatalogues.RefreshObject(CatalogueFolder.Root);
@@ -122,6 +127,7 @@ namespace Rdmp.UI.Collections
                 isFirstTime = false;
             }
 
+            
         }
         
         public void ApplyFilters()
@@ -130,7 +136,7 @@ namespace Rdmp.UI.Collections
                 return;
             
             tlvCatalogues.UseFiltering = true;
-            tlvCatalogues.ModelFilter = new CatalogueCollectionFilter(_activator.CoreChildProvider);
+            tlvCatalogues.ModelFilter = new CatalogueCollectionFilter(Activator.CoreChildProvider);
         }
 
         public enum HighlightCatalogueType
@@ -145,22 +151,22 @@ namespace Rdmp.UI.Collections
         {
             var cataItem = rowObject as CatalogueItem;
             if (cataItem != null)
-                return _activator.CoreChildProvider.GetAllChildrenRecursively(cataItem).OfType<IFilter>().Count();
+                return Activator.CoreChildProvider.GetAllChildrenRecursively(cataItem).OfType<IFilter>().Count();
 
             return null;
         }
 
         public override void SetItemActivator(IActivateItems activator)
         {
-            _activator = activator;
+            base.SetItemActivator(activator);
 
-            _activator.Emphasise += _activator_Emphasise;
+            Activator.Emphasise += _activator_Emphasise;
 
             //important to register the setup before the lifetime subscription so it gets priority on events
             CommonTreeFunctionality.SetUp(
                 RDMPCollection.Catalogue,
                 tlvCatalogues,
-                _activator,
+                Activator,
                 olvColumn1, //the icon column
                 //we have our own custom filter logic so no need to pass tbFilter
                 olvColumn1 //also the renameable column
@@ -179,7 +185,7 @@ namespace Rdmp.UI.Collections
                 new ExecuteCommandCreateNewEmptyCatalogue(a)
             };
 
-            _activator.RefreshBus.EstablishLifetimeSubscription(this);
+            Activator.RefreshBus.EstablishLifetimeSubscription(this);
 
             tlvCatalogues.AddObject(activator.CoreChildProvider.AllGovernanceNode);
             tlvCatalogues.AddObject(CatalogueFolder.Root);
@@ -195,7 +201,7 @@ namespace Rdmp.UI.Collections
             
             if (c == null)
             {
-                var descendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
+                var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
 
                 if (descendancy != null)
                     c = descendancy.Parents.OfType<Catalogue>().SingleOrDefault();
@@ -214,7 +220,7 @@ namespace Rdmp.UI.Collections
             var cata = o as Catalogue;
 
             if(o is GovernancePeriod || o is GovernanceDocument)
-                tlvCatalogues.RefreshObject(_activator.CoreChildProvider.AllGovernanceNode);
+                tlvCatalogues.RefreshObject(Activator.CoreChildProvider.AllGovernanceNode);
 
             if (cata != null)
             {

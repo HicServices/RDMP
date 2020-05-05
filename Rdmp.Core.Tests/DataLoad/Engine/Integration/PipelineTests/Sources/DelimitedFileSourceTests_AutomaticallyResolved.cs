@@ -13,6 +13,37 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
     public class DelimitedFileSourceTests_AutomaticallyResolved : DelimitedFileSourceTestsBase
     {
         [Test]
+        public void Test_ValuesSpradAcrossMultipleRows()
+        {
+
+            var file = CreateTestFile(
+                "A,B,C,D",
+                "1,17,Beginning of a long,37.00",
+                ",,description of something,",
+                ",,really boring,"
+                );
+
+            var dt = RunGetChunk(file);
+            Assert.AreEqual(3,dt.Rows.Count);
+            Assert.AreEqual(true, dt.Rows[0]["A"]);
+            Assert.AreEqual(17, dt.Rows[0]["B"]);
+            Assert.AreEqual("Beginning of a long", dt.Rows[0]["C"]);
+            Assert.AreEqual(37, dt.Rows[0]["D"]);
+
+
+            Assert.AreEqual(DBNull.Value, dt.Rows[1]["A"]);
+            Assert.AreEqual(DBNull.Value, dt.Rows[1]["B"]);
+            Assert.AreEqual("description of something", dt.Rows[1]["C"]);
+            Assert.AreEqual(DBNull.Value, dt.Rows[1]["D"]);
+
+
+            Assert.AreEqual(DBNull.Value, dt.Rows[2]["A"]);
+            Assert.AreEqual(DBNull.Value, dt.Rows[2]["B"]);
+            Assert.AreEqual("really boring", dt.Rows[2]["C"]);
+            Assert.AreEqual(DBNull.Value, dt.Rows[2]["D"]);
+        }
+
+        [Test]
         public void NewLineInFile_Ignored()
         {
             var file = CreateTestFile(

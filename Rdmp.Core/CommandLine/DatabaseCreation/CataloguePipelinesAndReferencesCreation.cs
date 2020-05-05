@@ -101,17 +101,22 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
 
         public void CreatePipelines()
         {
-            var bulkInsertCsvPipe = CreatePipeline("BULK INSERT:CSV Import File", typeof(DelimitedFlatFileDataFlowSource), typeof(DataTableUploadDestination));
-            CreatePipeline("BULK INSERT:Excel File", typeof(ExcelDataFlowSource), typeof(DataTableUploadDestination));
+            var bulkInsertCsvPipe = 
+                CreatePipeline("BULK INSERT: CSV Import File (manual column-type editing)", typeof(DelimitedFlatFileDataFlowSource), typeof(DataTableUploadDestination));
+            var bulkInsertCsvPipewithAdjuster =
+                CreatePipeline("BULK INSERT: CSV Import File (automated column-type detection)", typeof(DelimitedFlatFileDataFlowSource), typeof(DataTableUploadDestination));
+            CreatePipeline("BULK INSERT: Excel File", typeof(ExcelDataFlowSource), typeof(DataTableUploadDestination));
 
-            SetCSVSourceDelimiterToComma(bulkInsertCsvPipe);
+            SetComponentProperties(bulkInsertCsvPipe.Source, "Separator", ",");
+            SetComponentProperties(bulkInsertCsvPipe.Source, "StronglyTypeInput", false);
+            SetComponentProperties(bulkInsertCsvPipewithAdjuster.Source, "Separator", ",");
+            SetComponentProperties(bulkInsertCsvPipewithAdjuster.Source, "StronglyTypeInput", false);
 
-            var d = (PipelineComponentArgument)bulkInsertCsvPipe.Destination.GetAllArguments().Single(a => a.Name.Equals("LoggingServer"));
-            d.SetValue(_edsLogging);
-            d.SaveToDatabase();
+            SetComponentProperties(bulkInsertCsvPipe.Destination, "LoggingServer", _edsLogging);
+            SetComponentProperties(bulkInsertCsvPipewithAdjuster.Destination, "LoggingServer", _edsLogging);
 
             var createCohortFromCSV = CreatePipeline("CREATE COHORT:From CSV File",typeof (DelimitedFlatFileDataFlowSource), typeof (BasicCohortDestination));
-            SetCSVSourceDelimiterToComma(createCohortFromCSV);
+            SetComponentProperties(createCohortFromCSV.Source, "Separator", ",");
 
             CreatePipeline("CREATE COHORT:By Executing Cohort Identification Configuration",typeof (CohortIdentificationConfigurationSource), typeof (BasicCohortDestination));
 
@@ -126,13 +131,13 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             CreatePipeline("CREATE TABLE:From Aggregate Query", null, typeof(DataTableUploadDestination));
         }
 
-        private void SetCSVSourceDelimiterToComma(Pipeline pipe)
+        private void SetComponentProperties(IPipelineComponent component, string propertyName, object value)
         {
-            var s = (PipelineComponentArgument)pipe.Source.GetAllArguments().Single(a => a.Name.Equals("Separator"));
-            s.SetValue(",");
-            s.SaveToDatabase();
+            var d = (PipelineComponentArgument)component.GetAllArguments().Single(a => a.Name.Equals(propertyName));
+            d.SetValue(value);
+            d.SaveToDatabase();
         }
-
+        
         private Pipeline CreatePipeline(string nameOfPipe, Type sourceType, Type destinationTypeIfAny, params Type[] componentTypes)
         {
             if (componentTypes == null || componentTypes.Length == 0)
