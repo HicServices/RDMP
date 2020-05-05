@@ -10,7 +10,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -20,24 +19,17 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
-using Rdmp.Core.Providers.Nodes;
-using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
-using Rdmp.Core.Providers.Nodes.PipelineNodes;
-using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
-using Rdmp.UI.Collections.Providers.Filtering;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Theme;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Settings;
-using IContainer = Rdmp.Core.Curation.Data.IContainer;
 
 namespace Rdmp.UI.SimpleDialogs.NavigateTo
 {
@@ -110,11 +102,30 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
 
         private List<Type> showOnlyTypes = new List<Type>();
         private AttributePropertyFinder<UsefulPropertyAttribute> _usefulPropertyFinder;
-        
+        private Type _alwaysFilterOn;
+
         /// <summary>
         /// The action to perform when the form closes with an object selected (defaults to Emphasise)
         /// </summary>
         public Action<IMapsDirectlyToDatabaseTable> CompletionAction { get; set; }
+
+        /// <summary>
+        /// Hides the Type selection toggle buttons and forces results to only appear matching the given Type
+        /// </summary>
+        public Type AlwaysFilterOn
+        {
+            get => _alwaysFilterOn;
+            set
+            {
+                if(value != null)
+                    Controls.Remove(toolStrip1);
+                else
+                    Controls.Add(toolStrip1);
+
+                _alwaysFilterOn = value;
+                tbFind_TextChanged(this, null);
+            }
+        }
 
         public NavigateToObjectUI(IActivateItems activator, string initialSearchQuery = null,RDMPCollection focusedCollection = RDMPCollection.None):base(activator)
         {
@@ -363,6 +374,10 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
         {
             var scorer = new SearchablesMatchScorer();
             scorer.TypeNames = _typeNames;
+            scorer.BumpMatches = Activator.HistoryProvider.History.Select(h=>h.Object).ToList();
+
+            if(AlwaysFilterOn != null)
+                showOnlyTypes = new List<Type>(new []{AlwaysFilterOn});
 
             var scores = scorer.ScoreMatches(_searchables, text, cancellationToken,showOnlyTypes);
 

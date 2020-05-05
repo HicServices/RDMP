@@ -196,6 +196,12 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("DoubleClickToExpand", value); }
         }
 
+        public static string RecentHistory
+        {
+            get { return AppSettings.GetValueOrDefault("RecentHistory", ""); }
+            set { AppSettings.AddOrUpdateValue("RecentHistory", value); }
+        }
+
         #endregion
 
         public static bool GetTutorialDone(Guid tutorialGuid)
@@ -255,4 +261,5 @@ namespace ReusableLibraryCode.Settings
         }
 
     }
+
 }

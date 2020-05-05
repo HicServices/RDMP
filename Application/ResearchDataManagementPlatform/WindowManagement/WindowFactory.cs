@@ -64,6 +64,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             AddControlToDockContent(activator, (Control)control,content,"Loading...",image);
             
+            if (!RDMPMainForm.Loading)
+                activator.HistoryProvider.Add(databaseObject);
+
             return content;
         }
 
@@ -88,6 +91,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             var img = activator.CoreIconProvider.GetImage(entity);
             AddControlToDockContent(activator, (Control)control, content, entity.ToString(), img);
+
+            if (!RDMPMainForm.Loading)
+                activator.HistoryProvider.Add(entity);
 
             return content;
         }

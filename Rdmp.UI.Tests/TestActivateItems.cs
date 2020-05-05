@@ -72,6 +72,7 @@ namespace Rdmp.UI.Tests
             CoreChildProvider = new DataExportChildProvider(RepositoryLocator,null,Results);
             CoreIconProvider = new DataExportIconProvider(RepositoryLocator,null);
             FavouritesProvider = new FavouritesProvider(this,repo.CatalogueRepository);
+            HistoryProvider = new HistoryProvider(RepositoryLocator);
 
             _problemProviders = new List<IProblemProvider>(new IProblemProvider[]
             {
@@ -103,6 +104,7 @@ namespace Rdmp.UI.Tests
         public ICombineableFactory CommandFactory { get; private set; }
         public ICommandExecutionFactory CommandExecutionFactory { get; set; }
         public CommentStore CommentStore { get; private set; }
+        public HistoryProvider HistoryProvider { get; }
 
         public T Activate<T, T2>(T2 databaseObject) where T : RDMPSingleDatabaseObjectControl<T2>, new() where T2 : DatabaseEntity
         {

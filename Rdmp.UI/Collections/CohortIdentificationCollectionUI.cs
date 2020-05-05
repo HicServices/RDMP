@@ -65,6 +65,7 @@ namespace Rdmp.UI.Collections
             Activator.RefreshBus.EstablishLifetimeSubscription(this);
             
             
+            CommonFunctionality.Add(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator),"New");
         }
         
         public static bool IsRootObject(object root)

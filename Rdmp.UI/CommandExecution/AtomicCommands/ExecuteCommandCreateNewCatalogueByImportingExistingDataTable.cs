@@ -46,7 +46,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         public override string GetCommandName()
         {
-            return GlobalStrings.CreateNewCatalogueByImportingExistingDataTable;
+            return OverrideCommandName ?? GlobalStrings.CreateNewCatalogueByImportingExistingDataTable;
         }
     }
 }

@@ -56,11 +56,13 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.WindowArranging
 
         public override void Execute()
         {
-            if (LoadMetadata == null)
-                SetImpossible("You must choose a LoadMetadata.");
-
             base.Execute();
-            Activator.WindowArranger.SetupEditAnything(this, LoadMetadata);
+
+            var lmd = LoadMetadata ?? SelectOne<LoadMetadata>(BasicActivator.RepositoryLocator.CatalogueRepository);
+            if (lmd == null)
+                return;
+            
+            Activator.WindowArranger.SetupEditAnything(this, lmd);
         }
     }
 }

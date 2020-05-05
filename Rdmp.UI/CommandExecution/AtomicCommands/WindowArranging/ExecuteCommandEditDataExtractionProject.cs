@@ -43,11 +43,13 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.WindowArranging
 
         public override void Execute()
         {
-            if (Project == null)
-                SetImpossible("You must choose a Data Extraction Project to edit.");
-
             base.Execute();
-            Activator.WindowArranger.SetupEditAnything(this, Project);
+
+            var p = Project ?? SelectOne<Project>(BasicActivator.RepositoryLocator.DataExportRepository);
+            if (p == null)
+                return;
+            
+            Activator.WindowArranger.SetupEditAnything(this, p);
         }
 
         public override string GetCommandHelp()

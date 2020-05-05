@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added tool strip to tree collection user interfaces
 - Added new PipelineComponent `SetNull` which detects bad data in a specific column of pipeline data and sets cells matching the `Regex` to null
 - Added support for template based metadata extractions ([Catalogue] descriptions etc) 
 - Added new property RemoteServerReference to RemoteTableAttacher which centralises server name/database/credentials when creating many attachers that all pull data from the same place
@@ -19,8 +20,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Export Plugins command (which saves the currently loaded RDMP plugins to the selected folder)
 - Double clicking a dataset in the Extraction user interface opens it for editing (previously you had to right click and select Edit)
 
-## Changed
+### Changed
 
+- Home screen now follows more consistent user experience and includes recently used items
 - Catalogue collection no longer expands when CatalogueFolder changes
 
 ### Fixed

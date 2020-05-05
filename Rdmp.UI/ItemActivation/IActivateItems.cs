@@ -80,6 +80,11 @@ namespace Rdmp.UI.ItemActivation
         CommentStore CommentStore { get; }
         
         /// <summary>
+        /// Records when objects are accessed by the user through the UI to allow navigation to recent objects
+        /// </summary>
+        HistoryProvider HistoryProvider { get; }
+
+        /// <summary>
         /// Launches a new instance of the specified RDMPSingleDatabaseObjectControl Type with the supplied DatabaseEntity.  If you already have
         /// an ICommandExecutionProposal which facilitates Activation then you can instead use CommandExecutionFactory.Activate
         /// </summary>

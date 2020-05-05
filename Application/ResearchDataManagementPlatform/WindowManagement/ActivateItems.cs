@@ -95,6 +95,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public ICombineableFactory CommandFactory { get; private set; }
         public ICommandExecutionFactory CommandExecutionFactory { get; private set; }
         public CommentStore CommentStore { get { return RepositoryLocator.CatalogueRepository.CommentStore; } }
+        public HistoryProvider HistoryProvider { get; private set; }
 
         public List<IProblemProvider> ProblemProviders { get; private set; }
 
@@ -107,7 +108,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             
             //Shouldn't ever change externally to your session so doesn't need constantly refreshed
             FavouritesProvider = new FavouritesProvider(this, repositoryLocator.CatalogueRepository);
-
+            HistoryProvider = new HistoryProvider(repositoryLocator);
             RefreshBus = refreshBus;
 
             ConstructPluginChildProviders();
@@ -328,6 +329,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
             //might be different than sender that was passed in
             if(args.Sender is DockContent content)
                 content.Activate();
+
+            //user is being shown the given object so track it as a recent (e.g. GoTo etc)
+            HistoryProvider.Add(args.Request.ObjectToEmphasise);
         }
 
         public override bool SelectEnum(string prompt, Type enumType, out Enum chosen)

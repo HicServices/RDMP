@@ -105,8 +105,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public override string GetCommandHelp()
         {
             return
-                "This will open a window which will guide you in the steps for creating a Cohort based on Inclusion and Exclusion criteria.\r\n" +
-                "You will be asked to choose one or more Dataset and the associated column filters to use as inclusion or exclusion criteria for the cohort.";
+                "Creating a cohort identification configuration which includes/excludes patients based on the data in your database tables ";
         }
     }
 }
