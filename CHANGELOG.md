@@ -6,12 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Added double click to expand tree option for RDMP
 ...
+
+## [4.1.0] - 2020-05-05
 
 ### Added
 
 - Added tool strip to tree collection user interfaces
-- Added new PipelineComponent `SetNull` which detects bad data in a specific column of pipeline data and sets cells matching the `Regex` to null
+- Added new [PipelineComponent] `SetNull` which detects bad data in a specific column of pipeline data and sets cells matching the `Regex` to null
 - Added support for template based metadata extractions ([Catalogue] descriptions etc) 
 - Added new property RemoteServerReference to RemoteTableAttacher which centralises server name/database/credentials when creating many attachers that all pull data from the same place
 - Added double click to expand tree option for RDMP
@@ -22,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- CohortBuilder interface has been revamped
 - Home screen now follows more consistent user experience and includes recently used items
 - Catalogue collection no longer expands when CatalogueFolder changes
 
@@ -388,6 +392,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
 [Unreleased]: https://github.com/HicServices/RDMP/compare/v4.0.3...develop
+[4.1.0]: https://github.com/HicServices/RDMP/compare/v4.0.3...v4.1.0
 [4.0.3]: https://github.com/HicServices/RDMP/compare/v4.0.2...v4.0.3
 [4.0.2]: https://github.com/HicServices/RDMP/compare/v4.0.1...v4.0.2
 [4.0.1]: https://github.com/HicServices/RDMP/compare/v4.0.1-rc3...v4.0.1
