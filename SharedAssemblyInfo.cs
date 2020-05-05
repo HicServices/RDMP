@@ -7,6 +7,6 @@ using System.Reflection;
 [assembly: AssemblyCulture("")]
 
 // These should be replaced with correct values by the release process
-[assembly: AssemblyVersion("4.0.3")]
-[assembly: AssemblyFileVersion("4.0.3")]
-[assembly: AssemblyInformationalVersion("4.0.3")]
+[assembly: AssemblyVersion("4.1.0")]
+[assembly: AssemblyFileVersion("4.1.0")]
+[assembly: AssemblyInformationalVersion("4.1.0")]

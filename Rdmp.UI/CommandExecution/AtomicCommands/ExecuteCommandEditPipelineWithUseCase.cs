@@ -27,7 +27,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             base.Execute();
 
             //create pipeline UI with NO explicit destination/source (both must be configured within the extraction context by the user)
-            var dialog = new ConfigurePipelineUI(_pipeline, _useCase, Activator.RepositoryLocator.CatalogueRepository);
+            var dialog = new ConfigurePipelineUI(Activator,_pipeline, _useCase, Activator.RepositoryLocator.CatalogueRepository);
             dialog.ShowDialog();
             
             Publish(_pipeline);

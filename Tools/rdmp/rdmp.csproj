@@ -11,6 +11,8 @@
     <StartupObject></StartupObject>
     <LangVersion>7.1</LangVersion>
     <RootNamespace>Rdmp.Core</RootNamespace>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <WarningsAsErrors>NU1605</WarningsAsErrors>

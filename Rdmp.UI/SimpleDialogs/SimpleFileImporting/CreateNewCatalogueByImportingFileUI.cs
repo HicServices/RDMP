@@ -6,6 +6,7 @@
 
 using System;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -75,29 +76,34 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             HelpWorkflow = new HelpWorkflow(this, _command, tracker);
 
             //////Normal work flow
-            var root = new HelpStage(gbPickFile, "Choose the file you want to import here.\r\n" +
+            var pickFile = new HelpStage(gbPickFile, "1. Choose the file you want to import here.\r\n" +
                                                  "\r\n" +
                                                  "Click on the red icon to disable this help.");
-            var stage2 = new HelpStage(gbPickDatabase, "Select the database to use for importing data.\r\n" +
+            var pickDb = new HelpStage(gbPickDatabase, "2. Select the database to use for importing data.\r\n" +
                                                        "Username and Password are optional; if not set, the connection will be attempted using your windows user");
-            var stage3 = new HelpStage(gbPickPipeline, "Select the pipeline to execute in order to transfer the data from the files into the DB.\r\n" +
-                                                       "If you are not sure, ask the admin which one to use or click 'Advanced' to go into the advanced pipeline UI.");
-            var stage4 = new HelpStage(gbExecute, "Click Preview to peek at what data is in the selected file.\r\n" +
+            var pickName = new HelpStage(gbTableName, "3. Select the name of the created Catalogue.\r\n" +
+                                                       "A Table with the same name will be created in the database selected above.\r\n" +
+                                                       "Please note that the chosen pipeline can alter the created Table name. If a table with the same name already exists " +
+                                                       "in the selected Database, the execution may fail.");
+            var pickPipeline = new HelpStage(gbPickPipeline, "4. Select the pipeline to execute in order to transfer the data from the files into the DB.\r\n" +
+                                                       "If you are not sure, ask the admin which one to use.");
+            var execute = new HelpStage(gbExecute, "5. Click Preview to peek at what data is in the selected file.\r\n" +
                                                   "Click Execute to run the process and import your file.");
 
-            root.SetOption(">>", stage2);
-            stage2.SetOption(">>", stage3);
-            stage3.SetOption(">>", stage4);
-            stage4.SetOption("|<<", root);
+            pickFile.SetOption(">>", pickDb);
+            pickDb.SetOption(">>", pickName);
+            pickName.SetOption(">>", pickPipeline);
+            pickPipeline.SetOption(">>", execute);
+            execute.SetOption("|<<", pickFile);
             //stage4.SetOption("next...", stage2);
             
-            HelpWorkflow.RootStage = root;
+            HelpWorkflow.RootStage = pickFile;
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "Comma Separated Values|*.csv|Excel File|*.xls*|All Files (Advanced UI Only)|*.*";
+            ofd.Filter = "Comma Separated Values|*.csv|Excel File|*.xls*|Text File|*.txt|All Files|*.*";
             DialogResult result = ofd.ShowDialog();
 
             if (result == DialogResult.OK)
@@ -108,7 +114,6 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
         {
             _selectedFile = fileName;
             SetupState(State.FileSelected);
-
         }
 
         private void btnClearFile_Click(object sender, EventArgs e)
@@ -134,8 +139,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
                     gbExecute.Enabled = false;
                     gbPickDatabase.Enabled = false;
                     btnConfirmDatabase.Enabled = false;
-
-                    btnAdvanced.Enabled = false;
+                    gbTableName.Enabled = false;
                     
                     _selectedFile = null;
 
@@ -151,13 +155,22 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
 
                     //turn things on
                     pbFile.Visible = true;
-                    btnAdvanced.Enabled = false;
                     gbPickDatabase.Enabled = true;
+                    gbTableName.Enabled = true;
 
                     //text of the file they selected
                     lblFile.Text = _selectedFile.Name;
                     lblFile.Left = pbFile.Right + 2;
                     lblFile.Visible = true;
+                    try
+                    {
+                        tbTableName.Text =
+                            QuerySyntaxHelper.MakeHeaderNameSensible(Path.GetFileNameWithoutExtension(_selectedFile.Name));
+                    }
+                    catch (Exception)
+                    {
+                        tbTableName.Text = String.Empty;
+                    }
 
                     ragSmileyFile.Visible = true;
                     ragSmileyFile.Left = lblFile.Right + 2;
@@ -175,9 +188,9 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
 
                     //turn things on
                     gbExecute.Enabled = true;
-                    btnAdvanced.Enabled = true;
                     gbPickDatabase.Enabled = true; //user still might want to change his mind about targets
                     btnConfirmDatabase.Enabled = false;
+                    gbTableName.Enabled = true;
 
                     break;
                 default:
@@ -218,7 +231,6 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
         void serverDatabaseTableSelector1_SelectionChanged()
         {
             btnConfirmDatabase.Enabled = serverDatabaseTableSelector1.GetDiscoveredDatabase() != null;
-            btnAdvanced.Enabled = btnConfirmDatabase.Enabled;
         }
 
         private void IdentifyCompatiblePipelines()
@@ -229,7 +241,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             _context = new DataFlowPipelineContextFactory<DataTable>().Create(PipelineUsage.LoadsSingleFlatFile);
             _context.MustHaveDestination = typeof(DataTableUploadDestination);
 
-            if (_selectedFile.Extension == ".csv")
+            if (_selectedFile.Extension == ".csv" || _selectedFile.Extension == ".txt")
                 _context.MustHaveSource = typeof (DelimitedFlatFileDataFlowSource);
 
             if(_selectedFile.Extension.StartsWith(".xls"))
@@ -274,28 +286,9 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
                 ragSmileyFile.Fatal(exception);
             }
         }
-
-
-        private void btnAdvanced_Click(object sender, EventArgs e)
-        {
-            ToggleAdvanced();
-        }
-
+        
         private Project _projectSpecific;
-
-        private void ToggleAdvanced()
-        {
-            var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
-
-            if (db == null)
-                return;
-
-            //flip it
-            var advanced = new CreateNewCatalogueByImportingFileUI_Advanced(Activator, db, _selectedFile, true, _projectSpecific);
-            var form = new SingleControlForm(advanced);
-            form.Show();
-        }
-
+        
         private void btnConfirmDatabase_Click(object sender, EventArgs e)
         {
             var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
@@ -359,6 +352,12 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
                 MessageBox.Show("No Pipeline Selected");
                 return;
             }
+            
+            if(string.IsNullOrWhiteSpace(tbTableName.Text))
+            {
+                MessageBox.Show("Enter Catalogue name");
+                return;
+            }
 
             ragSmileyExecute.Reset();
             try
@@ -367,10 +366,39 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
                 var engine = GetFactory().Create(p, new FromCheckNotifierToDataLoadEventListener(ragSmileyExecute));
                 engine.Initialize(new FlatFileToLoad(_selectedFile), db);
 
+                bool crashed = false;
+
+                var dest = (DataTableUploadDestination) engine.DestinationObject;
+                dest.TableNamerDelegate = () => tbTableName.Text;
+                
                 var cts = new CancellationTokenSource();
-                var t =Task.Run(()=> engine.ExecutePipeline(new GracefulCancellationToken(cts.Token,cts.Token)));
+                var t =Task.Run(() =>
+                {
+                    try
+                    {
+                        engine.ExecutePipeline(new GracefulCancellationToken(cts.Token, cts.Token));
+                    }
+                    catch (PipelineCrashedException ex)
+                    {
+                        Activator.ShowException("Error uploading",ex.InnerException ?? ex);
+                        if (dest.CreatedTable)
+                            ConfirmTableDeletion(db.ExpectTable(dest.TargetTableName));
+                        crashed = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Activator.ShowException("Error uploading",ex);
+                        if (dest.CreatedTable)
+                            ConfirmTableDeletion(db.ExpectTable(dest.TargetTableName));
+                        crashed = true;
+                    }
+                }
+                );
 
                 Activator.Wait("Uploading Table...",t,cts);
+
+                if(crashed)
+                    return;
 
                 if (t.IsFaulted)
                     throw t.Exception?? new Exception("Task Failed");
@@ -378,11 +406,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
                 if(t.IsCanceled || cts.IsCancellationRequested)
                     return;
 
-                var dest = (DataTableUploadDestination) engine.DestinationObject;
-                
                 ForwardEngineer(db.ExpectTable(dest.TargetTableName));
-
-
             }
             catch (Exception exception)
             {
@@ -390,11 +414,23 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             }
         }
 
+        private void ConfirmTableDeletion(DiscoveredTable expectTable)
+        {
+            if (expectTable.Exists())
+            {
+                var confirm = MessageBox.Show(String.Format("A table named {0} has been created as part of this import. Do you want to keep it?", expectTable.GetFullyQualifiedName()),
+                    "Confirm", MessageBoxButtons.YesNo);
+                if (confirm == DialogResult.No) 
+                    expectTable.Drop();
+            }
+        }
+
         private void ForwardEngineer(DiscoveredTable targetTableName)
         {
             var extractionPicker = new ConfigureCatalogueExtractabilityUI(Activator, new TableInfoImporter(Activator.RepositoryLocator.CatalogueRepository, targetTableName), "File '" + _selectedFile.FullName + "'", _projectSpecific)
             {
-                TargetFolder = TargetFolder
+                TargetFolder = TargetFolder,
+                TableCreated = targetTableName
             };
             extractionPicker.ShowDialog();
 
@@ -424,6 +460,14 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
         public void SetProjectSpecific(Project project)
         {
             _projectSpecific = project;
+        }
+
+        private void tbTableName_TextChanged(object sender, EventArgs e)
+        {
+            if(!string.IsNullOrWhiteSpace(tbTableName.Text))
+            //if the sane name doesn't match the 
+            tbTableName.ForeColor = !tbTableName.Text.Equals(QuerySyntaxHelper.MakeHeaderNameSensible(tbTableName.Text),
+                StringComparison.CurrentCultureIgnoreCase) ? Color.Red : Color.Black;
         }
     }
 }

@@ -221,7 +221,7 @@ namespace Rdmp.UI.CohortUI
                 Activator.RequestItemEmphasis(this, new EmphasiseRequest(projects.Single(), 1));
             else
             {
-                SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(projects,false,false);
+                SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, projects,false,false);
                 if(dialog.ShowDialog() == DialogResult.OK)
                     Activator.RequestItemEmphasis(this, new EmphasiseRequest(dialog.Selected, 1));
             }

@@ -22,8 +22,6 @@ namespace Rdmp.UI.Collections
     /// </summary>
     public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {
-        private IActivateItems _activator;
-
         List<IMapsDirectlyToDatabaseTable> favourites = new List<IMapsDirectlyToDatabaseTable>();
 
         public FavouritesCollectionUI()
@@ -33,8 +31,9 @@ namespace Rdmp.UI.Collections
 
         public override void SetItemActivator(IActivateItems activator)
         {
-            _activator = activator;
-            CommonTreeFunctionality.SetUp(RDMPCollection.Favourites,tlvFavourites,_activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings {AllowPinning = false});
+            base.SetItemActivator(activator);
+
+            CommonTreeFunctionality.SetUp(RDMPCollection.Favourites,tlvFavourites,Activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings {AllowPinning = false});
             CommonTreeFunctionality.AxeChildren = new Type[] { typeof(CohortIdentificationConfiguration) };
             CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter =
                 (a) => new IAtomicCommand[]
@@ -42,7 +41,7 @@ namespace Rdmp.UI.Collections
                     new ExecuteCommandAddFavourite(a),
                     new ExecuteCommandClearFavourites(a)
                 };
-            _activator.RefreshBus.EstablishLifetimeSubscription(this);
+            Activator.RefreshBus.EstablishLifetimeSubscription(this);
             
             RefreshFavourites();
         }
@@ -54,7 +53,7 @@ namespace Rdmp.UI.Collections
 
         private void RefreshFavourites()
         {
-            var potentialRootFavourites = _activator.CoreChildProvider.GetAllSearchables().Where(kvp => _activator.FavouritesProvider.IsFavourite(kvp.Key)).ToArray();
+            var potentialRootFavourites = Activator.CoreChildProvider.GetAllSearchables().Where(kvp => Activator.FavouritesProvider.IsFavourite(kvp.Key)).ToArray();
 
             List<IMapsDirectlyToDatabaseTable> hierarchyCollisions = new List<IMapsDirectlyToDatabaseTable>();
 

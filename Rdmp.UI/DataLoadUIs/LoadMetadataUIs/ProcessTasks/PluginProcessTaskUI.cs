@@ -90,7 +90,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks
                     return;
                 }
 
-                _argumentCollection.Setup(databaseObject, _underlyingType,Activator.RepositoryLocator.CatalogueRepository);
+                _argumentCollection.Setup(Activator, databaseObject, _underlyingType,Activator.RepositoryLocator.CatalogueRepository);
 
                 _argumentCollection.Dock = DockStyle.Fill;
                 pArguments.Controls.Add(_argumentCollection);

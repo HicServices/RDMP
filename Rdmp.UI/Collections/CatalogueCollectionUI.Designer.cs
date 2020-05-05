@@ -30,17 +30,11 @@ namespace Rdmp.UI.Collections
             this.olvOrder = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.imageList_RightClickIcons = new System.Windows.Forms.ImageList(this.components);
             this.gbColdStorage = new System.Windows.Forms.GroupBox();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.cbShowColdStorage = new System.Windows.Forms.CheckBox();
-            this.cbShowDeprecated = new System.Windows.Forms.CheckBox();
-            this.cbShowInternal = new System.Windows.Forms.CheckBox();
-            this.cbProjectSpecific = new System.Windows.Forms.CheckBox();
-            this.cbShowNonExtractable = new System.Windows.Forms.CheckBox();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.catalogueCollectionFilterUI1 = new Rdmp.UI.Collections.CatalogueCollectionFilterUI();
+            this.panel2 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.tlvCatalogues)).BeginInit();
             this.gbColdStorage.SuspendLayout();
-            this.flowLayoutPanel1.SuspendLayout();
-            this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tlvCatalogues
@@ -57,7 +51,7 @@ namespace Rdmp.UI.Collections
             this.tlvCatalogues.Location = new System.Drawing.Point(0, 0);
             this.tlvCatalogues.Name = "tlvCatalogues";
             this.tlvCatalogues.ShowGroups = false;
-            this.tlvCatalogues.Size = new System.Drawing.Size(500, 405);
+            this.tlvCatalogues.Size = new System.Drawing.Size(500, 414);
             this.tlvCatalogues.TabIndex = 0;
             this.tlvCatalogues.Text = "label1";
             this.tlvCatalogues.UseCompatibleStateImageBehavior = false;
@@ -99,7 +93,7 @@ namespace Rdmp.UI.Collections
             // 
             // gbColdStorage
             // 
-            this.gbColdStorage.Controls.Add(this.flowLayoutPanel1);
+            this.gbColdStorage.Controls.Add(this.catalogueCollectionFilterUI1);
             this.gbColdStorage.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.gbColdStorage.Location = new System.Drawing.Point(0, 414);
             this.gbColdStorage.Name = "gbColdStorage";
@@ -108,97 +102,32 @@ namespace Rdmp.UI.Collections
             this.gbColdStorage.TabStop = false;
             this.gbColdStorage.Text = "Show";
             // 
-            // flowLayoutPanel1
+            // catalogueCollectionFilterUI1
             // 
-            this.flowLayoutPanel1.Controls.Add(this.cbShowColdStorage);
-            this.flowLayoutPanel1.Controls.Add(this.cbShowDeprecated);
-            this.flowLayoutPanel1.Controls.Add(this.cbShowInternal);
-            this.flowLayoutPanel1.Controls.Add(this.cbProjectSpecific);
-            this.flowLayoutPanel1.Controls.Add(this.cbShowNonExtractable);
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 16);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(494, 46);
-            this.flowLayoutPanel1.TabIndex = 0;
+            this.catalogueCollectionFilterUI1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.catalogueCollectionFilterUI1.Location = new System.Drawing.Point(3, 16);
+            this.catalogueCollectionFilterUI1.Name = "catalogueCollectionFilterUI1";
+            this.catalogueCollectionFilterUI1.Size = new System.Drawing.Size(494, 46);
+            this.catalogueCollectionFilterUI1.TabIndex = 0;
             // 
-            // cbShowColdStorage
+            // panel2
             // 
-            this.cbShowColdStorage.AutoSize = true;
-            this.cbShowColdStorage.Location = new System.Drawing.Point(3, 3);
-            this.cbShowColdStorage.Name = "cbShowColdStorage";
-            this.cbShowColdStorage.Size = new System.Drawing.Size(87, 17);
-            this.cbShowColdStorage.TabIndex = 0;
-            this.cbShowColdStorage.Text = "Cold Storage";
-            this.cbShowColdStorage.UseVisualStyleBackColor = true;
-            this.cbShowColdStorage.CheckedChanged += new System.EventHandler(this.rbFlag_CheckedChanged);
-            // 
-            // cbShowDeprecated
-            // 
-            this.cbShowDeprecated.AutoSize = true;
-            this.cbShowDeprecated.Location = new System.Drawing.Point(96, 3);
-            this.cbShowDeprecated.Name = "cbShowDeprecated";
-            this.cbShowDeprecated.Size = new System.Drawing.Size(82, 17);
-            this.cbShowDeprecated.TabIndex = 1;
-            this.cbShowDeprecated.Text = "Deprecated";
-            this.cbShowDeprecated.UseVisualStyleBackColor = true;
-            this.cbShowDeprecated.CheckedChanged += new System.EventHandler(this.rbFlag_CheckedChanged);
-            // 
-            // cbShowInternal
-            // 
-            this.cbShowInternal.AutoSize = true;
-            this.cbShowInternal.Location = new System.Drawing.Point(184, 3);
-            this.cbShowInternal.Name = "cbShowInternal";
-            this.cbShowInternal.Size = new System.Drawing.Size(61, 17);
-            this.cbShowInternal.TabIndex = 2;
-            this.cbShowInternal.Text = "Internal";
-            this.cbShowInternal.UseVisualStyleBackColor = true;
-            this.cbShowInternal.CheckedChanged += new System.EventHandler(this.rbFlag_CheckedChanged);
-            // 
-            // cbProjectSpecific
-            // 
-            this.cbProjectSpecific.AutoSize = true;
-            this.cbProjectSpecific.Location = new System.Drawing.Point(251, 3);
-            this.cbProjectSpecific.Name = "cbProjectSpecific";
-            this.cbProjectSpecific.Size = new System.Drawing.Size(100, 17);
-            this.cbProjectSpecific.TabIndex = 3;
-            this.cbProjectSpecific.Text = "Project Specific";
-            this.cbProjectSpecific.UseVisualStyleBackColor = true;
-            this.cbProjectSpecific.CheckedChanged += new System.EventHandler(this.rbFlag_CheckedChanged);
-            // 
-            // cbShowNonExtractable
-            // 
-            this.cbShowNonExtractable.AutoSize = true;
-            this.cbShowNonExtractable.Location = new System.Drawing.Point(357, 3);
-            this.cbShowNonExtractable.Name = "cbShowNonExtractable";
-            this.cbShowNonExtractable.Size = new System.Drawing.Size(102, 17);
-            this.cbShowNonExtractable.TabIndex = 4;
-            this.cbShowNonExtractable.Text = "Non Extractable";
-            this.cbShowNonExtractable.UseVisualStyleBackColor = true;
-            this.cbShowNonExtractable.CheckedChanged += new System.EventHandler(this.rbFlag_CheckedChanged);
-            // 
-            // panel1
-            // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.Controls.Add(this.tlvCatalogues);
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Margin = new System.Windows.Forms.Padding(0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(500, 405);
-            this.panel1.TabIndex = 0;
+            this.panel2.Controls.Add(this.tlvCatalogues);
+            this.panel2.Controls.Add(this.gbColdStorage);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(0, 0);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(500, 479);
+            this.panel2.TabIndex = 2;
             // 
             // CatalogueCollectionUI
             // 
-            this.Controls.Add(this.panel1);
-            this.Controls.Add(this.gbColdStorage);
+            this.Controls.Add(this.panel2);
             this.Name = "CatalogueCollectionUI";
             this.Size = new System.Drawing.Size(500, 479);
             ((System.ComponentModel.ISupportInitialize)(this.tlvCatalogues)).EndInit();
             this.gbColdStorage.ResumeLayout(false);
-            this.flowLayoutPanel1.ResumeLayout(false);
-            this.flowLayoutPanel1.PerformLayout();
-            this.panel1.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -210,13 +139,8 @@ namespace Rdmp.UI.Collections
         private OLVColumn olvColumn1;
         private OLVColumn olvFilters;
         private GroupBox gbColdStorage;
-        private CheckBox cbShowInternal;
-        private CheckBox cbShowDeprecated;
-        private CheckBox cbShowColdStorage;
-        private Panel panel1;
-        private CheckBox cbProjectSpecific;
-        private CheckBox cbShowNonExtractable;
-        private FlowLayoutPanel flowLayoutPanel1;
         private OLVColumn olvOrder;
+        private CatalogueCollectionFilterUI catalogueCollectionFilterUI1;
+        private Panel panel2;
     }
 }

@@ -40,6 +40,8 @@ namespace Rdmp.Core.CommandExecution
         public string ReasonCommandImpossible { get; private set; }
         public string OverrideCommandName { get; set; }
 
+        public Image OverrideIcon { get; set; }
+
         /// <summary>
         /// The prefix that must appear on all Types derived from <see cref="BasicCommandExecution"/> in order to be rendered correctly in
         /// menus, called from the command line etc.
@@ -113,7 +115,7 @@ namespace Rdmp.Core.CommandExecution
 
         public virtual Image GetImage(IIconProvider iconProvider)
         {
-            return null;
+            return OverrideIcon;
         }
 
         /// <summary>

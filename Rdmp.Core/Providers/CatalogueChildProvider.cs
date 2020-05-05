@@ -49,12 +49,12 @@ namespace Rdmp.Core.Providers
     /// 5. For each of the objects added that has children of it's own repeat the above (Except call DescendancyList.Add instead of creating a new one)</para>
     ///  
     /// </summary>
-    public class CatalogueChildProvider :ICoreChildProvider
+    public class CatalogueChildProvider :ICoreChildProvider, IDisposable
     {
         //Load System
         public LoadMetadata[] AllLoadMetadatas { get; set; }
         public ProcessTask[] AllProcessTasks { get; set; }
-        public ProcessTaskArgument[] AllProcessTasksArguments { get; }
+        public ProcessTaskArgument[] AllProcessTasksArguments { get; set; }
 
         public LoadProgress[] AllLoadProgresses { get; set; }
         public CacheProgress[] AllCacheProgresses { get; set; }
@@ -76,10 +76,10 @@ namespace Rdmp.Core.Providers
         
         public IEnumerable<CatalogueItem> AllCatalogueItems { get { return AllCatalogueItemsDictionary.Values; } }
         
-        private From1ToM<Catalogue,CatalogueItem> _catalogueToCatalogueItems;
+        private Dictionary<int,List<CatalogueItem>> _catalogueToCatalogueItems;
         public Dictionary<int,CatalogueItem> AllCatalogueItemsDictionary { get; private set; }
 
-        private readonly Dictionary<int,ColumnInfo> _allColumnInfos;
+        private Dictionary<int,ColumnInfo> _allColumnInfos;
         
         public AggregateConfiguration[] AllAggregateConfigurations { get; private set; }
         public AggregateDimension[] AllAggregateDimensions { get; private set; }
@@ -100,7 +100,7 @@ namespace Rdmp.Core.Providers
         public Pipeline[] AllPipelines { get; set; }
         public PipelineComponent[] AllPipelineComponents { get; set; }
         
-        public PipelineComponentArgument[] AllPipelineComponentsArguments { get; }
+        public PipelineComponentArgument[] AllPipelineComponentsArguments { get; set; }
 
         public StandardRegex[] AllStandardRegexes { get; set; }
 
@@ -120,7 +120,7 @@ namespace Rdmp.Core.Providers
         public DataAccessCredentials[] AllDataAccessCredentials { get; set; }
         public Dictionary<TableInfo, List<DataAccessCredentialUsageNode>> AllDataAccessCredentialUsages { get; set; }
 
-        private From1ToM<TableInfo, ColumnInfo> _tableInfosToColumnInfos;
+        private Dictionary<int, List<ColumnInfo>> _tableInfosToColumnInfos;
         public ColumnInfo[] AllColumnInfos { get; private set; }
         public PreLoadDiscardedColumn[] AllPreLoadDiscardedColumns { get; private set; }
 
@@ -271,7 +271,9 @@ namespace Rdmp.Core.Providers
                 Task.Factory.StartNew(() => { AllColumnInfos = GetAllObjects<ColumnInfo>(repository); })
                 );
             
-            _tableInfosToColumnInfos = new From1ToM<TableInfo, ColumnInfo>(c=>c.TableInfo_ID,AllColumnInfos);
+            ;
+
+            _tableInfosToColumnInfos = AllColumnInfos.GroupBy(c => c.TableInfo_ID).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
             AllPreLoadDiscardedColumns = GetAllObjects<PreLoadDiscardedColumn>(repository);
 
             AllSupportingDocuments = GetAllObjects<SupportingDocument>(repository);
@@ -281,18 +283,16 @@ namespace Rdmp.Core.Providers
             AllJoinableCohortAggregateConfigurationUse = GetAllObjects<JoinableCohortAggregateConfigurationUse>(repository);
 
             AllCatalogueItemsDictionary = GetAllObjects<CatalogueItem>(repository).ToDictionary(i => i.ID, o => o);
-            _catalogueToCatalogueItems = new From1ToM<Catalogue, CatalogueItem>(ci=>ci.Catalogue_ID,AllCatalogueItems);
+            _catalogueToCatalogueItems = AllCatalogueItems.GroupBy(c=>c.Catalogue_ID).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
             _allColumnInfos = AllColumnInfos.ToDictionary(i=>i.ID,o=>o);
             
             //Inject known ColumnInfos into CatalogueItems
             Parallel.ForEach(AllCatalogueItems, (ci) =>
             {
-                ColumnInfo col = null;
-
-                if (ci.ColumnInfo_ID != null && _allColumnInfos.ContainsKey(ci.ColumnInfo_ID.Value))
-                    col = _allColumnInfos[ci.ColumnInfo_ID.Value];
-
-                ci.InjectKnown(col);
+                if (ci.ColumnInfo_ID != null && _allColumnInfos.TryGetValue(ci.ColumnInfo_ID.Value, out ColumnInfo col))
+                    ci.InjectKnown(col);
+                else
+                    ci.InjectKnown((ColumnInfo)null);
             });
 
             AllExtractionInformationsDictionary = GetAllObjects<ExtractionInformation>(repository).ToDictionary(i => i.ID, o => o);
@@ -301,9 +301,11 @@ namespace Rdmp.Core.Providers
             //Inject known CatalogueItems into ExtractionInformations
             foreach (ExtractionInformation ei in AllExtractionInformationsDictionary.Values)
             {
-                CatalogueItem ci = AllCatalogueItemsDictionary[ei.CatalogueItem_ID];
-                ei.InjectKnown(ci.ColumnInfo);
-                ei.InjectKnown(ci);
+                if (AllCatalogueItemsDictionary.TryGetValue(ei.CatalogueItem_ID, out CatalogueItem ci))
+                {
+                    ei.InjectKnown(ci.ColumnInfo);
+                    ei.InjectKnown(ci);
+                }
             }
 
             AllAggregateConfigurations = GetAllObjects<AggregateConfiguration>(repository);
@@ -404,11 +406,9 @@ namespace Rdmp.Core.Providers
 
             foreach (AggregateConfiguration ac in AllAggregateConfigurations)
             {
-                var joinable = joinableDictionaryByAggregateConfigurationId.ContainsKey(ac.ID) //if theres a joinable
-                    ? joinableDictionaryByAggregateConfigurationId[ac.ID] //inject that we know the joinable (and what it is)
-                    : null; //otherwise inject that it is not a joinable (suppresses database checking later)
-
-                ac.InjectKnown(joinable);
+                ac.InjectKnown(joinableDictionaryByAggregateConfigurationId.TryGetValue(ac.ID,out JoinableCohortAggregateConfiguration joinable) //if theres a joinable
+                    ? joinable //inject that we know the joinable (and what it is)
+                    : null); //otherwise inject that it is not a joinable (suppresses database checking later)
             }
                     
             AllGovernanceNode = new AllGovernanceNode();
@@ -869,8 +869,10 @@ namespace Rdmp.Core.Providers
             var cohortAggregates = catalogueAggregates.Where(a => a.IsCohortIdentificationAggregate).ToArray();
             var regularAggregates = catalogueAggregates.Except(cohortAggregates).ToArray();
 
-            //get all the CatalogueItems for this Catalogue
-            var cis = _catalogueToCatalogueItems[c].ToArray();
+            //get all the CatalogueItems for this Catalogue (TryGet because Catalogue may not have any items
+            var cis = _catalogueToCatalogueItems.TryGetValue(c.ID, out List<CatalogueItem> result)
+                ? result.ToArray()
+                : new CatalogueItem[0];
 
             //tell the CatalogueItems that we are are their parent
             foreach (CatalogueItem ci in cis)
@@ -944,8 +946,12 @@ namespace Rdmp.Core.Providers
             var childrenObjects = new HashSet<object>();
 
             var parameters = AllAnyTableParameters.Where(p => p.IsReferenceTo(aggregateConfiguration)).Cast<ISqlParameter>().ToArray();
-            var node = new ParametersNode(aggregateConfiguration, parameters);
-            childrenObjects.Add(node);
+
+            if (parameters.Any())
+            {
+                var node = new ParametersNode(aggregateConfiguration, parameters);
+                childrenObjects.Add(node);
+            }
 
             //we can step into this twice, once via Catalogue children and once via CohortIdentificationConfiguration children
             //if we get in via Catalogue children then descendancy will be Ignore=true we don't end up emphasising into CatalogueCollectionUI when
@@ -988,9 +994,8 @@ namespace Rdmp.Core.Providers
         {
             List<object> childObjects = new List<object>();
 
-            if(_extractionInformationsByCatalogueItem.ContainsKey(ci.ID))
+            if(_extractionInformationsByCatalogueItem.TryGetValue(ci.ID,out ExtractionInformation ei))
             {
-                var ei = _extractionInformationsByCatalogueItem[ci.ID];
                 ci.InjectKnown(ei);
                 childObjects.Add(ei);
                 AddChildren(ei, descendancy.Add(ei));
@@ -998,8 +1003,8 @@ namespace Rdmp.Core.Providers
             else
                 ci.InjectKnown((ExtractionInformation)null); // we know the CatalogueItem has no ExtractionInformation child because it's not in the dictionary
 
-            if (ci.ColumnInfo_ID.HasValue)
-                childObjects.Add(new LinkedColumnInfoNode(ci, _allColumnInfos[ci.ColumnInfo_ID.Value]));
+            if (ci.ColumnInfo_ID.HasValue && _allColumnInfos.TryGetValue(ci.ColumnInfo_ID.Value, out ColumnInfo col))
+                childObjects.Add(new LinkedColumnInfoNode(ci,col));
             
             AddToDictionaries(new HashSet<object>(childObjects),descendancy);
         }
@@ -1074,9 +1079,12 @@ namespace Rdmp.Core.Providers
                 children.Add(new QueryCacheUsedByCohortIdentificationNode(cic, AllExternalServers.Single(s => s.ID == cic.QueryCachingServer_ID)));
             
             var parameters = AllAnyTableParameters.Where(p => p.IsReferenceTo(cic)).Cast<ISqlParameter>().ToArray();
-            var node = new ParametersNode(cic, parameters);
 
-            children.Add(node);
+            if (parameters.Any())
+            {
+                var node = new ParametersNode(cic, parameters);
+                children.Add(node);
+            }
 
             //if it has a root container
             if (cic.RootCohortAggregateContainer_ID != null)
@@ -1208,16 +1216,17 @@ namespace Rdmp.Core.Providers
             }
 
             //next add the column infos
-            foreach (ColumnInfo c in _tableInfosToColumnInfos[tableInfo])
-            {
-                children.Add(c);
-                c.InjectKnown(tableInfo);
-                AddChildren(c,descendancy.Add(c).SetBetterRouteExists());
-            }
+            if( _tableInfosToColumnInfos.TryGetValue(tableInfo.ID,out List<ColumnInfo> result))
+                foreach (ColumnInfo c in result)
+                {
+                    children.Add(c);
+                    c.InjectKnown(tableInfo);
+                    AddChildren(c,descendancy.Add(c).SetBetterRouteExists());
+                }
 
             //finally add any credentials objects
-            if (AllDataAccessCredentialUsages.ContainsKey(tableInfo))
-                foreach (DataAccessCredentialUsageNode node in AllDataAccessCredentialUsages[tableInfo])
+            if (AllDataAccessCredentialUsages.TryGetValue(tableInfo, out List<DataAccessCredentialUsageNode> nodes))
+                foreach (DataAccessCredentialUsageNode node in nodes)
                     children.Add(node);
 
             //now we have recorded all the children add them with descendancy via the TableInfo descendancy
@@ -1301,10 +1310,7 @@ namespace Rdmp.Core.Providers
 
         public DescendancyList GetDescendancyListIfAnyFor(object model)
         {
-            if (_descendancyDictionary.ContainsKey(model))
-                return _descendancyDictionary[model];
-
-            return null;
+            return _descendancyDictionary.TryGetValue(model, out DescendancyList result) ? result : null;
         }
         
         
@@ -1353,64 +1359,67 @@ namespace Rdmp.Core.Providers
             
             Stopwatch sw = new Stopwatch();
 
+            var providers = PluginChildProviders.Except(_blacklistedPlugins).ToArray();
+
             //for every object found so far
-            foreach (var o in objectsToAskAbout?? GetAllObjects())
-            {
-                //for every plugin loaded (that is not blacklisted)
-                foreach (var plugin in PluginChildProviders.Except(_blacklistedPlugins))
+            if(providers.Any())
+                foreach (var o in objectsToAskAbout?? GetAllObjects())
                 {
-                    //ask about the children
-                    try
+                    //for every plugin loaded (that is not blacklisted)
+                    foreach (var plugin in providers)
                     {
-                        sw.Restart();
-                        //otherwise ask plugin what it's children are
-                        var pluginChildren = plugin.GetChildren(o);
-
-                        //if the plugin takes too long to respond we need to stop
-                        if (sw.ElapsedMilliseconds > 1000)
+                        //ask about the children
+                        try
                         {
-                            _blacklistedPlugins.Add(plugin);
-                            throw new Exception("Plugin '" + plugin + "' was blacklisted for taking too long to respond to GetChildren(o) where o was a '" + o.GetType().Name + "' ('" + o + "')");
-                        }
+                            sw.Restart();
+                            //otherwise ask plugin what it's children are
+                            var pluginChildren = plugin.GetChildren(o);
 
-                        //it has children
-                        if (pluginChildren != null && pluginChildren.Any())
-                        {
-                            //get the descendancy of the parent
-                            var parentDescendancy = GetDescendancyListIfAnyFor(o);
-
-                            DescendancyList newDescendancy;
-                            if(parentDescendancy == null)
-                                newDescendancy = new DescendancyList(new[] {o}); //if the parent is a root level object start a new descendancy list from it
-                            else
-                                newDescendancy = parentDescendancy.Add(o);//otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
-
-                            //record that 
-
-                            foreach (object pluginChild in pluginChildren)
+                            //if the plugin takes too long to respond we need to stop
+                            if (sw.ElapsedMilliseconds > 1000)
                             {
-                                //if the parent didn't have any children before
-                                if (!_childDictionary.ContainsKey(o))
-                                    _childDictionary.AddOrUpdate(o,new HashSet<object>(),(o1, set) => set);//it does now
+                                _blacklistedPlugins.Add(plugin);
+                                throw new Exception("Plugin '" + plugin + "' was blacklisted for taking too long to respond to GetChildren(o) where o was a '" + o.GetType().Name + "' ('" + o + "')");
+                            }
+
+                            //it has children
+                            if (pluginChildren != null && pluginChildren.Any())
+                            {
+                                //get the descendancy of the parent
+                                var parentDescendancy = GetDescendancyListIfAnyFor(o);
+
+                                DescendancyList newDescendancy;
+                                if(parentDescendancy == null)
+                                    newDescendancy = new DescendancyList(new[] {o}); //if the parent is a root level object start a new descendancy list from it
+                                else
+                                    newDescendancy = parentDescendancy.Add(o);//otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
+
+                                //record that 
+
+                                foreach (object pluginChild in pluginChildren)
+                                {
+                                    //if the parent didn't have any children before
+                                    if (!_childDictionary.ContainsKey(o))
+                                        _childDictionary.AddOrUpdate(o,new HashSet<object>(),(o1, set) => set);//it does now
 
 
-                                //add us to the parent objects child collection
-                                _childDictionary[o].Add(pluginChild);
-                                
-                                //add to the child collection of the parent object kvp.Key
-                                _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,(s,e)=>newDescendancy);
+                                    //add us to the parent objects child collection
+                                    _childDictionary[o].Add(pluginChild);
+                                    
+                                    //add to the child collection of the parent object kvp.Key
+                                    _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,(s,e)=>newDescendancy);
 
-                                //we have found a new object so we must ask other plugins about it (chances are a plugin will have a whole tree of sub objects)
-                                newObjectsFound.Add(pluginChild);
+                                    //we have found a new object so we must ask other plugins about it (chances are a plugin will have a whole tree of sub objects)
+                                    newObjectsFound.Add(pluginChild);
+                                }
                             }
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
+                        catch (Exception e)
+                        {
+                            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
+                        }
                     }
                 }
-            }
 
             if(newObjectsFound.Any())
                 GetPluginChildren(newObjectsFound);
@@ -1418,10 +1427,8 @@ namespace Rdmp.Core.Providers
 
         public IEnumerable<IMasqueradeAs> GetMasqueradersOf(object o)
         {
-            if (AllMasqueraders.ContainsKey(o))
-                return AllMasqueraders[o];
-
-            return new IMasqueradeAs[0];
+            return AllMasqueraders.TryGetValue(o,out HashSet<IMasqueradeAs> result) ?
+                (IEnumerable<IMasqueradeAs>) result:new IMasqueradeAs[0];
         }
 
         public DatabaseEntity GetLatestCopyOf(DatabaseEntity e)
@@ -1445,6 +1452,67 @@ namespace Rdmp.Core.Providers
         {
             foreach (IMapsDirectlyToDatabaseTable m in toAdd)
                 toReturn.Add(m, null);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                //That's one way to avoid memory leaks... anyone holding onto a stale one of these is going to have a bad day
+                AllLoadMetadatas = null;
+                AllProcessTasks = null;
+                AllProcessTasksArguments = null;
+                AllLoadProgresses = null;
+                AllCacheProgresses = null;
+                AllPermissionWindows = null;
+                AllCatalogues = null;
+                AllCataloguesDictionary = null;
+                AllSupportingDocuments = null;
+                AllSupportingSQL = null;
+                _childDictionary = null;
+                _descendancyDictionary = null;
+                _catalogueToCatalogueItems = null;
+                AllCatalogueItemsDictionary= null;
+                _allColumnInfos = null;
+                AllAggregateConfigurations= null;
+                AllAggregateDimensions= null;
+                AllRDMPRemotesNode= null;
+                AllRemoteRDMPs = null;
+                AllDashboardsNode = null;
+                AllDashboards = null;
+                AllObjectSharingNode= null;
+                AllImports = null;
+                AllExports = null;
+                AllStandardRegexesNode= null;
+                AllPipelinesNode= null;
+                OtherPipelinesNode= null;
+                AllPipelines = null;
+                AllPipelineComponents = null;
+                AllPipelineComponentsArguments = null;
+                AllStandardRegexes = null;
+                AllANOTablesNode= null;
+                AllANOTables = null;
+                AllExternalServers= null;
+                AllServers = null;
+                AllTableInfos = null;
+                AllDataAccessCredentialsNode = null;
+                AllExternalServersNode= null;
+                AllServersNode= null;
+                AllDataAccessCredentials = null;
+                AllDataAccessCredentialUsages = null;
+                _tableInfosToColumnInfos = null;
+                AllColumnInfos= null;
+                AllPreLoadDiscardedColumns= null;
+                AllLookups = null;
+                AllJoinInfos = null;
+                AllAnyTableParameters = null;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

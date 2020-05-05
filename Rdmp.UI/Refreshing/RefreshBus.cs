@@ -26,6 +26,7 @@ namespace Rdmp.UI.Refreshing
         /// know when stuff has changed, instead use the Subscribe and Unsubscribe methods 
         /// </summary>
         public event RefreshObjectEventHandler BeforePublish;
+        public event RefreshObjectEventHandler AfterPublish;
         private event RefreshObjectEventHandler RefreshObject;
 
         public bool PublishInProgress { get; private set; }
@@ -41,9 +42,8 @@ namespace Rdmp.UI.Refreshing
 
             lock (oPublishLock)
             {
-                if (BeforePublish != null)
-                    BeforePublish(sender, e);
-                
+                BeforePublish?.Invoke(sender, e);
+
                 try
                 {
                     PublishInProgress = true;
@@ -64,11 +64,11 @@ namespace Rdmp.UI.Refreshing
                         else
                             e.Object.RevertToDatabaseState();
 
-                    if (RefreshObject != null)
-                        RefreshObject(sender, e);
+                    RefreshObject?.Invoke(sender, e);
                 }
                 finally
                 {
+                    AfterPublish?.Invoke(this, e);
                     PublishInProgress = false;
                     Cursor.Current = Cursors.Default;
                 }  

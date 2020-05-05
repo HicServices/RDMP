@@ -443,7 +443,15 @@ namespace Rdmp.Core.Curation.Data.DataLoad
 
                     //if we are passed something o of differing type to the known requested type then someone is lying to someone!
                     if (type != null && !type.IsInstanceOfType(o))
-                        throw new Exception("Cannot set value " + o + " (of Type " + o.GetType().FullName + ") to on ProcessTaskArgument because it has an incompatible Type specified (" + type.FullName + ")");
+                        try
+                        {
+                            return Convert.ChangeType(o, type).ToString();
+                        }
+                        catch (Exception)
+                        {
+                            throw new Exception("Cannot set value " + o + " (of Type " + o.GetType().FullName + ") to on ProcessTaskArgument because it has an incompatible Type specified (" + type.FullName + ")");
+                        }
+                        
                 }
             }
 

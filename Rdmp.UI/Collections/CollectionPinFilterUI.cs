@@ -17,6 +17,7 @@ using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.Remoting;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
+using Rdmp.UI.Collections.Providers.Filtering;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
@@ -185,7 +186,13 @@ namespace Rdmp.UI.Collections
                 return;
 
             var whitelistFilter = _tree.ModelFilter as WhiteListOnlyFilter;
-            
+
+            if(_beforeModelFilter is CatalogueCollectionFilter f1)
+                f1.ChildProvider = childProvider;
+
+            if (_tree.ModelFilter is CatalogueCollectionFilter f2) 
+                f2.ChildProvider = childProvider;
+
             //someone somehow erased the pin filter? or overwrote it with another filter
             if(whitelistFilter == null)
                 return;

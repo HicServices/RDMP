@@ -66,6 +66,8 @@ False - Fetch all columns in the remote table.  To use this option you will need
             var remoteTables = new HashSet<string>(dbFrom.DiscoverTables(true).Select(t => t.GetRuntimeName()),StringComparer.CurrentCultureIgnoreCase);
             var loadables = job.RegularTablesToLoad.Union(job.LookupTablesToLoad).ToArray();
 
+            var syntaxFrom = dbFrom.Server.GetQuerySyntaxHelper();
+
             foreach (var tableInfo in loadables)
             {
                 var table = tableInfo.GetRuntimeName();
@@ -75,11 +77,12 @@ False - Fetch all columns in the remote table.  To use this option you will need
                 if(LoadRawColumnsOnly)
                 {
                     var rawColumns = LoadRawColumnsOnly ? tableInfo.GetColumnsAtStage(LoadStage.AdjustRaw) : tableInfo.ColumnInfos;
-                    sql = "SELECT " + String.Join(",", rawColumns.Select(c=>c.GetRuntimeName(LoadStage.AdjustRaw))) + " FROM " + table;
+                    sql = "SELECT " + String.Join(",", rawColumns.Select(c=>
+                              syntaxFrom.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw)))) + " FROM " + syntaxFrom.EnsureWrapped(table);
                 }
                 else
                 {
-                    sql = "SELECT * FROM " + table;
+                    sql = "SELECT * FROM " + syntaxFrom.EnsureWrapped(table);
                 }
 
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to execute SQL:" + Environment.NewLine + sql));

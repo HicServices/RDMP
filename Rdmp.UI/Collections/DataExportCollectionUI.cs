@@ -13,6 +13,7 @@ using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs.NavigateTo;
 using ReusableLibraryCode.Settings;
 
@@ -24,10 +25,8 @@ namespace Rdmp.UI.Collections
     /// 
     /// <para>Data in these datasets will be linked against the cohort and anonymised on extraction (to flat files / database etc).</para>
     /// </summary>
-    public partial class DataExportCollectionUI : RDMPCollectionUI
+    public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {
-        private IActivateItems _activator;
-
         public DataExportCollectionUI()
         {
             InitializeComponent();
@@ -99,12 +98,12 @@ namespace Rdmp.UI.Collections
 
         public override void SetItemActivator(IActivateItems activator)
         {
-            _activator = activator;
+            base.SetItemActivator(activator);
 
             CommonTreeFunctionality.SetUp(
                 RDMPCollection.DataExport, 
                 tlvDataExport,
-                _activator,
+                Activator,
                 olvName,
                 olvName
                 );
@@ -124,6 +123,23 @@ namespace Rdmp.UI.Collections
                 tlvDataExport.AddObjects(dataExportChildProvider.AllPackages);
                 tlvDataExport.AddObjects(dataExportChildProvider.Projects);
             }
+
+            SetupToolStrip();
+
+            Activator.RefreshBus.EstablishLifetimeSubscription(this);
+
+        }
+
+        public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+        {
+            SetupToolStrip();
+        }
+
+        private void SetupToolStrip()
+        {
+            CommonFunctionality.ClearToolStrip();
+            CommonFunctionality.Add(new ExecuteCommandCreateNewDataExtractionProject(Activator),"Project",null,"New...");
+            CommonFunctionality.Add(new ExecuteCommandCreateNewExtractionConfigurationForProject(Activator),"Extraction",null,"New...");
         }
         
         public static bool IsRootObject(object root)

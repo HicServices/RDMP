@@ -15,6 +15,7 @@ namespace Rdmp.UI.Menus
         public AllPluginsNodeMenu(RDMPContextMenuStripArgs args, AllPluginsNode node): base(args, node)
         {
             Add(new ExecuteCommandAddPlugins(_activator));
+            Add(new ExecuteCommandExportPlugins(_activator));
         }
     }
 }

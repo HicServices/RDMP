@@ -6,7 +6,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Added double click to expand tree option for RDMP
 ...
+
+## [4.1.0] - 2020-05-05
+
+### Added
+
+- Added tool strip to tree collection user interfaces
+- Added new [PipelineComponent] `SetNull` which detects bad data in a specific column of pipeline data and sets cells matching the `Regex` to null
+- Added support for template based metadata extractions ([Catalogue] descriptions etc) 
+- Added new property RemoteServerReference to RemoteTableAttacher which centralises server name/database/credentials when creating many attachers that all pull data from the same place
+- Added double click to expand tree option for RDMP
+- When searching (Ctrl+F), exact matches now appear first
+- Added RDMP platform database name (and server) to the window title
+- Added Export Plugins command (which saves the currently loaded RDMP plugins to the selected folder)
+- Double clicking a dataset in the Extraction user interface opens it for editing (previously you had to right click and select Edit)
+
+### Changed
+
+- CohortBuilder interface has been revamped
+- Home screen now follows more consistent user experience and includes recently used items
+- Catalogue collection no longer expands when CatalogueFolder changes
+
+### Fixed
+
+- LoadProgress with RemoteTableAttacher now works correctly with DBMS that do not support Sql parameter declarations (Oracle / Postgres)
 
 ## [4.0.3] - 2020-02-28
 
@@ -367,6 +392,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
 [Unreleased]: https://github.com/HicServices/RDMP/compare/v4.0.3...develop
+[4.1.0]: https://github.com/HicServices/RDMP/compare/v4.0.3...v4.1.0
 [4.0.3]: https://github.com/HicServices/RDMP/compare/v4.0.2...v4.0.3
 [4.0.2]: https://github.com/HicServices/RDMP/compare/v4.0.1...v4.0.2
 [4.0.1]: https://github.com/HicServices/RDMP/compare/v4.0.1-rc3...v4.0.1
@@ -406,3 +432,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [JoinInfo]: ./Documentation/CodeTutorials/Glossary.md#JoinInfo
 
 [Pipeline]: ./Documentation/CodeTutorials/Glossary.md#Pipeline
+
+[Lookup]: ./Documentation/CodeTutorials/Glossary.md#Lookup

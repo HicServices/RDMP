@@ -109,5 +109,20 @@ AND
 ec.IsExtractionIdentifier = 1
 )","ID").ToArray();
         }
+
+        private readonly Dictionary<Type, IRowVerCache> _caches = new Dictionary<Type, IRowVerCache>();
+
+        public override T[] GetAllObjects<T>()
+        {
+            if (!_caches.ContainsKey(typeof(T))) 
+                _caches.Add(typeof(T), new RowVerCache<T>(this));
+
+            return _caches[typeof(T)].GetAllObjects<T>();
+        }
+
+        public override T[] GetAllObjectsNoCache<T>()
+        {
+            return base.GetAllObjects<T>();
+        }
     }
 }

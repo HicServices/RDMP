@@ -52,11 +52,14 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.WindowArranging
 
         public override void Execute()
         {
-            if (Catalogue == null)
-                SetImpossible("You must choose a Catalogue.");
-
             base.Execute();
-            Activator.WindowArranger.SetupEditAnything(this, Catalogue);
+
+            var c = Catalogue ?? SelectOne<Catalogue>(BasicActivator.RepositoryLocator.CatalogueRepository);
+
+            if(c == null)
+                return;
+
+            Activator.WindowArranger.SetupEditAnything(this, c);
         }
     }
 }

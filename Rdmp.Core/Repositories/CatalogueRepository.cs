@@ -186,6 +186,20 @@ namespace Rdmp.Core.Repositories
             return _constructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);
         }
 
+        private readonly Dictionary<Type, IRowVerCache> _caches = new Dictionary<Type, IRowVerCache>();
+        public override T[] GetAllObjects<T>()
+        {
+            if (!_caches.ContainsKey(typeof(T))) 
+                _caches.Add(typeof(T), new RowVerCache<T>(this));
+
+            return _caches[typeof(T)].GetAllObjects<T>();
+        }
+
+        public override T[] GetAllObjectsNoCache<T>()
+        {
+            return base.GetAllObjects<T>();
+        }
+
 
         public ExternalDatabaseServer[] GetAllDatabases<T>() where T:IPatcher,new()
         {

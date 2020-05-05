@@ -74,6 +74,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public List<IPluginUserInterface> PluginUserInterfaces { get; private set; }
         readonly UIObjectConstructor _constructor = new UIObjectConstructor();
 
+        /// <summary>
+        /// Populated after <see cref="UpdateChildProviders"/>, this is the stale child provider
+        /// which should be disposed (anyone holding onto it will have a bad day).
+        /// </summary>
+        private ICoreChildProvider _staleChildProvider;
+
         public IArrangeWindows WindowArranger { get; private set; }
         
         public override void Publish(DatabaseEntity databaseEntity)
@@ -83,12 +89,13 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override void Show(string message)
         {
-            WideMessageBox.Show("Message",message);
+            WideMessageBox.Show("Message",message,Environment.StackTrace,true,null,WideMessageBoxTheme.Help);
         }
 
         public ICombineableFactory CommandFactory { get; private set; }
         public ICommandExecutionFactory CommandExecutionFactory { get; private set; }
         public CommentStore CommentStore { get { return RepositoryLocator.CatalogueRepository.CommentStore; } }
+        public HistoryProvider HistoryProvider { get; private set; }
 
         public List<IProblemProvider> ProblemProviders { get; private set; }
 
@@ -101,13 +108,14 @@ namespace ResearchDataManagementPlatform.WindowManagement
             
             //Shouldn't ever change externally to your session so doesn't need constantly refreshed
             FavouritesProvider = new FavouritesProvider(this, repositoryLocator.CatalogueRepository);
-
+            HistoryProvider = new HistoryProvider(repositoryLocator);
             RefreshBus = refreshBus;
 
             ConstructPluginChildProviders();
 
             UpdateChildProviders();
             RefreshBus.BeforePublish += (s, e) => UpdateChildProviders();
+            RefreshBus.AfterPublish +=  (s, e) => _staleChildProvider?.Dispose();
 
             //handle custom icons from plugin user interfaces in which
             CoreIconProvider = new DataExportIconProvider(repositoryLocator,PluginUserInterfaces.ToArray());
@@ -147,6 +155,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         private void UpdateChildProviders()
         {
+            //Dispose the old one
+            var old = CoreChildProvider;
+
             //prefer a linked repository with both
             if(RepositoryLocator.DataExportRepository != null)
                 try
@@ -167,6 +178,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             CoreChildProvider.GetPluginChildren();
             RefreshBus.ChildProvider = CoreChildProvider;
+
+            _staleChildProvider = old;
         }
         
 
@@ -316,6 +329,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
             //might be different than sender that was passed in
             if(args.Sender is DockContent content)
                 content.Activate();
+
+            //user is being shown the given object so track it as a recent (e.g. GoTo etc)
+            HistoryProvider.Add(args.Request.ObjectToEmphasise);
         }
 
         public override bool SelectEnum(string prompt, Type enumType, out Enum chosen)
@@ -592,7 +608,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText)
         {
-            var textTyper = new TypeTextOrCancelDialog(header, prompt, maxLength, initialText)
+            var textTyper = new TypeTextOrCancelDialog(header, prompt, maxLength, initialText, allowBlankText: false, multiLine: maxLength > 1000)
             {
                 RequireSaneHeaderText = requireSaneHeaderText
             };
@@ -667,7 +683,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                     return null;
                 }
 
-            SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
+            SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(this, availableObjects, false, false);
             selectDialog.Text = prompt;
             selectDialog.SetInitialFilter(initialSearchText);
 
@@ -732,7 +748,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 return null;
             }
 
-            SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
+            SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(this, availableObjects, false, false);
             selectDialog.Text = prompt;
             selectDialog.SetInitialFilter(initialSearchText);
             selectDialog.AllowMultiSelect = true;

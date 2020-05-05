@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using BrightIdeasSoftware;
+using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
@@ -44,8 +45,6 @@ namespace Rdmp.UI.Collections
     /// </summary>
     public partial class CatalogueCollectionUI : RDMPCollectionUI
     {
-        private IActivateItems _activator;
-        
         private Catalogue[] _allCatalogues;
 
         //constructor
@@ -55,11 +54,6 @@ namespace Rdmp.UI.Collections
         {
             InitializeComponent();
             
-            cbShowInternal.Checked = UserSettings.ShowInternalCatalogues;
-            cbShowDeprecated.Checked = UserSettings.ShowDeprecatedCatalogues ;
-            cbShowColdStorage.Checked = UserSettings.ShowColdStorageCatalogues;
-            cbProjectSpecific.Checked = UserSettings.ShowProjectSpecificCatalogues;
-            cbShowNonExtractable.Checked = UserSettings.ShowNonExtractableCatalogues;
 
             olvFilters.AspectGetter += FilterAspectGetter;
             olvFilters.IsVisible = UserSettings.ShowColumnFilters;
@@ -69,6 +63,8 @@ namespace Rdmp.UI.Collections
             olvOrder.VisibilityChanged += (s,e)=>UserSettings.ShowOrderColumn = ((OLVColumn)s).IsVisible;
             olvOrder.IsVisible = UserSettings.ShowOrderColumn;
             bLoading = false;
+
+            catalogueCollectionFilterUI1.FiltersChanged += (s, e) => ApplyFilters();
         }
 
         private object OrderAspectGetter(object rowobject)
@@ -102,6 +98,9 @@ namespace Rdmp.UI.Collections
 
         public void RefreshUIFromDatabase(object oRefreshFrom)
         {   
+            if(tlvCatalogues.ModelFilter is CatalogueCollectionFilter f)
+                f.ChildProvider = Activator.CoreChildProvider;
+
             //if there are new catalogues we don't already have in our tree
             if (_allCatalogues != null)
             {
@@ -115,37 +114,29 @@ namespace Rdmp.UI.Collections
 
             _allCatalogues = CommonTreeFunctionality.CoreChildProvider.AllCatalogues;
             
+            if (isFirstTime)
+            {
+                CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingFile(Activator),GlobalStrings.FromFile,null,"New...");
+                CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator),GlobalStrings.FromDatabase,null,"New...");
+            }
+
             if(isFirstTime || Equals(oRefreshFrom, CatalogueFolder.Root))
             {
                 tlvCatalogues.RefreshObject(CatalogueFolder.Root);
-                ExpandAllFolders(CatalogueFolder.Root);
+                tlvCatalogues.Expand(CatalogueFolder.Root);
                 isFirstTime = false;
             }
 
-        }
-
-        private void ExpandAllFolders(CatalogueFolder model)
-        {
-            //expand it
-            tlvCatalogues.Expand(model);
             
-            foreach (var folder in tlvCatalogues.GetChildren(model).OfType<CatalogueFolder>())
-                ExpandAllFolders(folder);
         }
-
+        
         public void ApplyFilters()
         {
             if(bLoading)
                 return;
-
-            UserSettings.ShowInternalCatalogues = cbShowInternal.Checked;
-            UserSettings.ShowDeprecatedCatalogues = cbShowDeprecated.Checked;
-            UserSettings.ShowColdStorageCatalogues = cbShowColdStorage.Checked;
-            UserSettings.ShowProjectSpecificCatalogues = cbProjectSpecific.Checked;
-            UserSettings.ShowNonExtractableCatalogues = cbShowNonExtractable.Checked;
             
             tlvCatalogues.UseFiltering = true;
-            tlvCatalogues.ModelFilter = new CatalogueCollectionFilter(_activator.CoreChildProvider);
+            tlvCatalogues.ModelFilter = new CatalogueCollectionFilter(Activator.CoreChildProvider);
         }
 
         public enum HighlightCatalogueType
@@ -160,22 +151,22 @@ namespace Rdmp.UI.Collections
         {
             var cataItem = rowObject as CatalogueItem;
             if (cataItem != null)
-                return _activator.CoreChildProvider.GetAllChildrenRecursively(cataItem).OfType<IFilter>().Count();
+                return Activator.CoreChildProvider.GetAllChildrenRecursively(cataItem).OfType<IFilter>().Count();
 
             return null;
         }
 
         public override void SetItemActivator(IActivateItems activator)
         {
-            _activator = activator;
+            base.SetItemActivator(activator);
 
-            _activator.Emphasise += _activator_Emphasise;
+            Activator.Emphasise += _activator_Emphasise;
 
             //important to register the setup before the lifetime subscription so it gets priority on events
             CommonTreeFunctionality.SetUp(
                 RDMPCollection.Catalogue,
                 tlvCatalogues,
-                _activator,
+                Activator,
                 olvColumn1, //the icon column
                 //we have our own custom filter logic so no need to pass tbFilter
                 olvColumn1 //also the renameable column
@@ -194,7 +185,7 @@ namespace Rdmp.UI.Collections
                 new ExecuteCommandCreateNewEmptyCatalogue(a)
             };
 
-            _activator.RefreshBus.EstablishLifetimeSubscription(this);
+            Activator.RefreshBus.EstablishLifetimeSubscription(this);
 
             tlvCatalogues.AddObject(activator.CoreChildProvider.AllGovernanceNode);
             tlvCatalogues.AddObject(CatalogueFolder.Root);
@@ -210,7 +201,7 @@ namespace Rdmp.UI.Collections
             
             if (c == null)
             {
-                var descendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
+                var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
 
                 if (descendancy != null)
                     c = descendancy.Parents.OfType<Catalogue>().SingleOrDefault();
@@ -218,18 +209,7 @@ namespace Rdmp.UI.Collections
             
             if (c != null)
             {
-                if ((c.IsColdStorageDataset || c.IsDeprecated || c.IsInternalDataset))
-                {
-                    //trouble is our flags might be hiding it so make sure it is visible
-                    cbShowColdStorage.Checked = cbShowColdStorage.Checked || c.IsColdStorageDataset;
-                    cbShowDeprecated.Checked = cbShowDeprecated.Checked || c.IsDeprecated;
-                    cbShowInternal.Checked = cbShowInternal.Checked || c.IsInternalDataset;
-                }
-
-                var isExtractable = c.GetExtractabilityStatus(null);
-
-                cbShowNonExtractable.Checked = cbShowNonExtractable.Checked || isExtractable == null || isExtractable.IsExtractable == false;
-                
+                catalogueCollectionFilterUI1.EnsureVisible(c);
                 ApplyFilters();
             }
         }
@@ -240,7 +220,7 @@ namespace Rdmp.UI.Collections
             var cata = o as Catalogue;
 
             if(o is GovernancePeriod || o is GovernanceDocument)
-                tlvCatalogues.RefreshObject(_activator.CoreChildProvider.AllGovernanceNode);
+                tlvCatalogues.RefreshObject(Activator.CoreChildProvider.AllGovernanceNode);
 
             if (cata != null)
             {
@@ -262,13 +242,10 @@ namespace Rdmp.UI.Collections
                 //then refresh us
                 RefreshUIFromDatabase(o);
             }
-        }
-        
-        private void rbFlag_CheckedChanged(object sender, EventArgs e)
-        {
+
             ApplyFilters();
         }
-
+        
         public static bool IsRootObject(object root)
         {
             return root.Equals(CatalogueFolder.Root) || root is AllGovernanceNode;

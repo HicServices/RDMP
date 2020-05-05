@@ -65,6 +65,8 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
         }
 
         public string TargetTableName { get; private set; }
+
+        public bool CreatedTable { get; private set; }
         
         private IBulkCopy _bulkcopy;
         private int _affectedRows = 0;
@@ -86,10 +88,16 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
 
         private bool _firstTime = true;
         private HashSet<string> _primaryKey = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
-        private DiscoveredTable discoveredTable;
+        private DiscoveredTable _discoveredTable;
 
         //All column values sent to server so far
         Dictionary<string, Guesser> _dataTypeDictionary;
+
+        /// <summary>
+        /// Optional function called when a name is needed for the table being uploaded (this overrides
+        /// upstream components naming of tables - e.g. from file names).
+        /// </summary>
+        public Func<string> TableNamerDelegate { get; set; }
 
         public DataTableUploadDestination()
         {
@@ -111,10 +119,17 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
             //work out the table name for the table we are going to create
             if (TargetTableName == null)
             {
+                if (TableNamerDelegate != null)
+                {
+                    TargetTableName = TableNamerDelegate();
+                    if(string.IsNullOrWhiteSpace(TargetTableName))
+                        throw new Exception("No table name specified (TableNamerDelegate returned null)");
+                }
+                else
                 if (string.IsNullOrWhiteSpace(toProcess.TableName))
                     throw new Exception("Chunk did not have a TableName, did not know what to call the newly created table");
-                
-                TargetTableName = QuerySyntaxHelper.MakeHeaderNameSensible(toProcess.TableName);
+                else                
+                    TargetTableName = QuerySyntaxHelper.MakeHeaderNameSensible(toProcess.TableName);
             }
 
             ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess);
@@ -126,7 +141,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
 
             EnsureTableHasDataInIt(toProcess);
 
-            bool createdTable = false;
+            CreatedTable = false;
             
             if (_firstTime)
             {
@@ -135,21 +150,21 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
                 if (!_database.Exists())
                     throw new Exception("Database " + _database + " does not exist");
 
-                discoveredTable = _database.ExpectTable(TargetTableName);
+                _discoveredTable = _database.ExpectTable(TargetTableName);
 
                 //table already exists
-                if (discoveredTable.Exists())
+                if (_discoveredTable.Exists())
                 {
                     tableAlreadyExistsButEmpty = true;
                     
                     if(!AllowLoadingPopulatedTables)
-                        if (discoveredTable.IsEmpty())
+                        if (_discoveredTable.IsEmpty())
                             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Found table " + TargetTableName + " already, normally this would forbid you from loading it (data duplication / no primary key etc) but it is empty so we are happy to load it, it will not be created"));
                         else
                             throw new Exception("There is already a table called " + TargetTableName + " at the destination " + _database);
                     
                     if (AllowResizingColumnsAtUploadTime)
-                        _dataTypeDictionary = discoveredTable.DiscoverColumns().ToDictionary(k => k.GetRuntimeName(), v => v.GetGuesser(),StringComparer.CurrentCultureIgnoreCase);
+                        _dataTypeDictionary = _discoveredTable.DiscoverColumns().ToDictionary(k => k.GetRuntimeName(), v => v.GetGuesser(),StringComparer.CurrentCultureIgnoreCase);
                 }
                 else
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Determined that the table name " + TargetTableName + " is unique at destination " + _database));
@@ -157,7 +172,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
                 //create connection to destination
                if (!tableAlreadyExistsButEmpty)
                {
-                   createdTable = true;
+                   CreatedTable = true;
 
                    if (AllowResizingColumnsAtUploadTime)
                        _database.CreateTable(out _dataTypeDictionary, TargetTableName, toProcess, ExplicitTypes.ToArray(), true, adjuster);
@@ -168,14 +183,14 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
                 }
 
                 _managedConnection = _server.BeginNewTransactedConnection();
-                _bulkcopy = discoveredTable.BeginBulkInsert(Culture,_managedConnection.ManagedTransaction);
+                _bulkcopy = _discoveredTable.BeginBulkInsert(Culture,_managedConnection.ManagedTransaction);
                 
                 _firstTime = false;
             }
 
             try
             {
-                if (AllowResizingColumnsAtUploadTime && !createdTable)
+                if (AllowResizingColumnsAtUploadTime && !CreatedTable)
                     ResizeColumnsIfRequired(toProcess, listener);
 
                 //push the data
@@ -198,6 +213,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
 
             return null;
         }
+
 
         /// <summary>
         /// Clears the primary key status of the DataTable / <see cref="ExplicitTypes"/>.  These are recorded in <see cref="_primaryKey"/> and applied at Dispose time
@@ -327,10 +343,10 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
             }
 
             //if we have a primary key to create
-            if (pipelineFailureExceptionIfAny == null && _primaryKey != null && _primaryKey.Any() && discoveredTable != null && discoveredTable.Exists())
+            if (pipelineFailureExceptionIfAny == null && _primaryKey != null && _primaryKey.Any() && _discoveredTable != null && _discoveredTable.Exists())
             {
                 //Find the columns in the destination
-                var allColumns = discoveredTable.DiscoverColumns();
+                var allColumns = _discoveredTable.DiscoverColumns();
                 
                 //if there are not yet any primary keys
                 if(allColumns.All(c=>!c.IsPrimaryKey))
@@ -340,10 +356,10 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
 
                     //make sure we found all of them
                     if(pkColumnsToCreate.Length != _primaryKey.Count)
-                        throw new Exception("Could not find primary key column(s) " + string.Join(",",_primaryKey) + " in table " + discoveredTable);
+                        throw new Exception("Could not find primary key column(s) " + string.Join(",",_primaryKey) + " in table " + _discoveredTable);
 
                     //create the primary key to match user provided columns
-                    discoveredTable.CreatePrimaryKey(AlterTimeout, pkColumnsToCreate);
+                    _discoveredTable.CreatePrimaryKey(AlterTimeout, pkColumnsToCreate);
                 }
             }
 

@@ -100,7 +100,7 @@ This will not help you avoid bad data as the full file structure must still be r
         [DemandsInitialization("BatchSize to use when predicting datatypes i.e. if you set this to 1000 then the first 1000 rows have int field then the 5000th row has a string you will get an error.  Set to 0 to use MaxBatchSize.  Set to -1 to load the entire file before computing datatypes (can result in out of memory for super large files)")]
         public int StronglyTypeInputBatchSize { get; set; }
 
-        [DemandsInitialization("Number of rows to read at once from the input file in each go (after the first - See StronglyTypeInputBatchSize)",DefaultValue=10000)]
+        [DemandsInitialization("Number of rows to read at once from the input file in each go (after the first - See StronglyTypeInputBatchSize)",DefaultValue=100000)]
         public int MaxBatchSize {get;set;}
 
         [DemandsInitialization("A collection of column names that are expected to be found in the input file which you want to specify as explicit types (e.g. you load barcodes like 0110 and 1111 and want these all loaded as char(4) instead of int)")]
@@ -214,10 +214,10 @@ This will not help you avoid bad data as the full file structure must still be r
                             : StronglyTypeInputBatchSize;
 
                         if(batchSizeToLoad < MinimumStronglyTypeInputBatchSize)
-                        {
-                            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "You set StronglyTypeInputBatchSize to " + batchSizeToLoad + " this will be increased to 500 because that number is too small!",null));
-                            batchSizeToLoad = MinimumStronglyTypeInputBatchSize;
-                        }
+                            listener.OnNotify(this,
+                                new NotifyEventArgs(ProgressEventType.Warning,
+                                    "You set StronglyTypeInputBatchSize to " + batchSizeToLoad +
+                                    " this may be too small!", null));
 
                         //user want's to strongly type input with a custom batch size
                         rowsRead = IterativelyBatchLoadDataIntoDataTable(_workingTable, batchSizeToLoad);
@@ -325,6 +325,11 @@ This will not help you avoid bad data as the full file structure must still be r
             if (!StronglyTypeInput)
                 notifier.OnCheckPerformed(
                     new CheckEventArgs("StronglyTypeInput is false, this feature is highly recommended",CheckResult.Warning));
+
+            if (StronglyTypeInput && StronglyTypeInputBatchSize < 500)
+                notifier.OnCheckPerformed(
+                    new CheckEventArgs("StronglyTypeInputBatchSize is less than the recommended 500: this may cause errors when determining the best data type from the source file.", 
+                        CheckResult.Warning));
 
             if (_fileToLoad.File == null)
             {

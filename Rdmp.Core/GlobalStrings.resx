@@ -168,4 +168,10 @@
   <data name="ObjectCannotBeActivated" xml:space="preserve">
     <value>Object cannot be Activated</value>
   </data>
+  <data name="FromDatabase" xml:space="preserve">
+    <value>From Database...</value>
+  </data>
+  <data name="FromFile" xml:space="preserve">
+    <value>From File...</value>
+  </data>
 </root>

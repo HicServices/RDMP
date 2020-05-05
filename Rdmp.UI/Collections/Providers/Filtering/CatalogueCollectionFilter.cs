@@ -18,7 +18,7 @@ namespace Rdmp.UI.Collections.Providers.Filtering
     /// </summary>
     public class CatalogueCollectionFilter : IModelFilter
     {
-        private readonly ICoreChildProvider _childProvider;
+        public ICoreChildProvider ChildProvider { get; set; }
         private readonly bool _isInternal;
         private readonly bool _isDeprecated;
         private readonly bool _isColdStorage;
@@ -27,7 +27,7 @@ namespace Rdmp.UI.Collections.Providers.Filtering
 
         public CatalogueCollectionFilter(ICoreChildProvider childProvider)
         {
-            _childProvider = childProvider;
+            ChildProvider = childProvider;
             _isInternal = UserSettings.ShowInternalCatalogues;
             _isDeprecated = UserSettings.ShowDeprecatedCatalogues;
             _isColdStorage = UserSettings.ShowColdStorageCatalogues;
@@ -42,7 +42,7 @@ namespace Rdmp.UI.Collections.Providers.Filtering
             //doesn't relate to us... but maybe we are descended from a Catalogue?
             if (cata == null)
             {
-                var descendancy = _childProvider.GetDescendancyListIfAnyFor(modelObject);
+                var descendancy = ChildProvider.GetDescendancyListIfAnyFor(modelObject);
                 if (descendancy != null)
                     cata = descendancy.Parents.OfType<Catalogue>().SingleOrDefault();
 

@@ -7,8 +7,10 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -53,10 +55,29 @@ namespace Rdmp.UI.Menus
             graphs.Enabled = !_extractionConfiguration.IsReleased && graphs.DropDownItems.Count > 0 && _extractionConfiguration.Cohort_ID != null;
             Items.Add(graphs);
             ////////////////////////////////////////////////////////////////////
+            
+            Items.Add(new ToolStripSeparator());
 
             var addRootFilter = new ToolStripMenuItem("Add Filter Container", _activator.CoreIconProvider.GetImage(RDMPConcept.FilterContainer, OverlayKind.Add) , (s, e) => AddFilterContainer());
             addRootFilter.Enabled = root == null;
             Items.Add(addRootFilter);
+            
+            Add(new ExecuteCommandCreateNewFilter(_activator,
+                new DeployedExtractionFilterFactory(_activator.RepositoryLocator.DataExportRepository),
+                () => {
+                    selectedDataSet.CreateRootContainerIfNotExists();
+                    return selectedDataSet.RootFilterContainer;
+                }));
+
+            Add(new ExecuteCommandCreateNewFilterFromCatalogue(_activator,
+                selectedDataSet.ExtractableDataSet.Catalogue,
+                () =>
+                {
+                    selectedDataSet.CreateRootContainerIfNotExists();
+                    return selectedDataSet.RootFilterContainer;
+                }));
+            
+            Items.Add(new ToolStripSeparator());
 
             Add(new ExecuteCommandViewSelectedDataSetsExtractionSql(_activator).SetTarget(selectedDataSet));
             

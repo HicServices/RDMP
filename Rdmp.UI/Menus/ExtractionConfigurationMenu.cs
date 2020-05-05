@@ -37,6 +37,8 @@ namespace Rdmp.UI.Menus
             Add(new ExecuteCommandAddPackageToConfiguration(_activator, extractionConfiguration));
             
             Add(new ExecuteCommandGenerateReleaseDocument(_activator, extractionConfiguration));          
+            
+            Add(new ExecuteCommandViewSqlParameters(_activator,extractionConfiguration));
 
             if (extractionConfiguration.IsReleased)
                 Add(new ExecuteCommandUnfreezeExtractionConfiguration(_activator, extractionConfiguration));

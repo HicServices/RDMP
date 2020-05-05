@@ -58,7 +58,8 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
         public ISqlParameter[] GlobalFilterParameters { get; private set; }
 
         private Scintilla QueryEditor;
-        
+        private bool _loading;
+
         public ExtractionFilterUI()
         {
             InitializeComponent();
@@ -81,6 +82,9 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
 
         void QueryEditor_TextChanged(object sender, EventArgs e)
         {
+            if (_loading)
+                return;
+
             _extractionFilter.WhereSQL = QueryEditor.Text;
         }
 
@@ -182,6 +186,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
         
         public override void SetDatabaseObject(IActivateItems activator, ConcreteFilter databaseObject)
         {
+            _loading = true;
             base.SetDatabaseObject(activator,databaseObject);
             Catalogue = databaseObject.GetCatalogue();
             _extractionFilter = databaseObject;
@@ -216,6 +221,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
 
             CommonFunctionality.AddChecks(databaseObject);
             CommonFunctionality.StartChecking();
+            _loading = false;
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, ConcreteFilter databaseObject)

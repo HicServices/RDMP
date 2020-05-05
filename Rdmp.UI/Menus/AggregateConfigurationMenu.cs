@@ -6,9 +6,11 @@
 
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -35,12 +37,33 @@ namespace Rdmp.UI.Menus
             //only allow them to execute graph if it is normal aggregate graph
             if (!aggregate.IsCohortIdentificationAggregate)
                 Add(new ExecuteCommandExecuteAggregateGraph(_activator, aggregate));
+            
+            Add(new ExecuteCommandViewSqlParameters(_activator,aggregate));
+
+            Items.Add(new ToolStripSeparator());
 
             var addFilterContainer = new ToolStripMenuItem("Add Filter Container", GetImage(RDMPConcept.FilterContainer, OverlayKind.Add), (s, e) => AddFilterContainer());
 
             //if it doesn't have a root container or a hijacked container shortcut
             addFilterContainer.Enabled = aggregate.RootFilterContainer_ID == null && aggregate.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID == null;
             Items.Add(addFilterContainer);
+
+            Add(new ExecuteCommandCreateNewFilter(_activator,
+                new AggregateFilterFactory(_activator.RepositoryLocator.CatalogueRepository),
+                () => {
+                    aggregate.CreateRootContainerIfNotExists();
+                    return aggregate.RootFilterContainer;
+                }));
+
+            Add(new ExecuteCommandCreateNewFilterFromCatalogue(_activator,
+                aggregate.Catalogue,
+                () =>
+                {
+                    aggregate.CreateRootContainerIfNotExists();
+                    return aggregate.RootFilterContainer;
+                }));
+            
+            Items.Add(new ToolStripSeparator());
 
             var addShortcutFilterContainer = new ToolStripMenuItem("Create Shortcut to Another AggregateConfigurations Filter Container",
                 GetImage(aggregate, OverlayKind.Shortcut), (s, e) => ChooseHijacker());
@@ -121,7 +144,7 @@ namespace Rdmp.UI.Menus
                 //and are not ourself!
                  .Except(new[] { _aggregate }).ToArray();
 
-            SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(others, true, false);
+            SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, others, true, false);
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {

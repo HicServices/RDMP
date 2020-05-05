@@ -18,6 +18,7 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
+using Rdmp.Core.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
@@ -156,7 +157,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
                 engine = new CohortRefreshEngine(toMem, _configuration);
                 
                 //execute it
-                var ex = Assert.Throws<Exception>(()=>engine.Execute());
+                var ex = Assert.Throws<PipelineCrashedException>(()=>engine.Execute());
 
                 Assert.IsTrue(ex.InnerException.InnerException.Message.Contains("CohortIdentificationCriteria execution resulted in an empty dataset"));
                 

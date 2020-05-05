@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using FAnsi.Discovery;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 using Rdmp.Core.Curation;
@@ -69,6 +70,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 
         public Catalogue CatalogueCreatedIfAny { get { return _catalogue; }}
         public TableInfo TableInfoCreated{get { return _tableInfo; }}
+        public DiscoveredTable TableCreated { get; set; }
         public CatalogueFolder TargetFolder { get; set; }
 
         private BinderWithErrorProviderFactory _binder;
@@ -362,7 +364,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             }
             
 
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator.CoreChildProvider.AllCatalogues, false, false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, Activator.CoreChildProvider.AllCatalogues, false, false);
                 if (dialog.ShowDialog() == DialogResult.OK)
 
                     if (MessageBox.Show("This will add " + eis.Length + " new columns to " + dialog.Selected + ". Are you sure this is what you want?","Add to existing", MessageBoxButtons.YesNo) == DialogResult.Yes)
@@ -445,6 +447,8 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
                         {
                             _tableInfo.DeleteInDatabase();
                             _tableInfo = null;
+                            if (TableCreated != null && TableCreated.Exists())
+                                TableCreated.Drop();
                         }
                         else
                             Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(TableInfoCreated));
@@ -534,7 +538,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             {
 
                 var all = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
-                var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(all, false, false);
+                var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, all, false, false);
 
                 if (dialog.ShowDialog() == DialogResult.OK)
                     SelectProject((Project)dialog.Selected);

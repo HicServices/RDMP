@@ -55,8 +55,6 @@ namespace Rdmp.UI.Collections
     /// </summary>
     public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {
-        private IActivateItems _activator;
-   
         public LoadMetadata SelectedLoadMetadata { get { return tlvLoadMetadata.SelectedObject as LoadMetadata; } }
         
         public LoadMetadataCollectionUI()
@@ -67,8 +65,8 @@ namespace Rdmp.UI.Collections
         
         public override void SetItemActivator(IActivateItems activator) 
         {
-            _activator = activator;
-            _activator.RefreshBus.EstablishLifetimeSubscription(this);
+            base.SetItemActivator(activator);
+            Activator.RefreshBus.EstablishLifetimeSubscription(this);
             
             CommonTreeFunctionality.SetUp(
                 RDMPCollection.DataLoad,
@@ -79,8 +77,12 @@ namespace Rdmp.UI.Collections
 
             CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[] {new ExecuteCommandCreateNewLoadMetadata(a)};
             
-            tlvLoadMetadata.AddObject(_activator.CoreChildProvider.AllPermissionWindowsNode);
-            tlvLoadMetadata.AddObject(_activator.CoreChildProvider.AllLoadMetadatasNode);
+            tlvLoadMetadata.AddObject(Activator.CoreChildProvider.AllPermissionWindowsNode);
+            tlvLoadMetadata.AddObject(Activator.CoreChildProvider.AllLoadMetadatasNode);
+
+            
+            CommonFunctionality.Add(new ExecuteCommandCreateNewLoadMetadata(Activator),"New");
+
         }
 
 

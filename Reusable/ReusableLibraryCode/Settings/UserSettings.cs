@@ -184,11 +184,24 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("Wait5SecondsAfterStartupUI", value); }
         }
 
-        public static bool ShowCohortWizard 
+        public static bool ShowCohortWizard
         {
-            get { return AppSettings.GetValueOrDefault("ShowCohortWizard", true); }
+            get { return AppSettings.GetValueOrDefault("ShowCohortWizard", false); }
             set { AppSettings.AddOrUpdateValue("ShowCohortWizard", value); }
         }
+
+        public static bool DoubleClickToExpand
+        {
+            get { return AppSettings.GetValueOrDefault("DoubleClickToExpand", false); }
+            set { AppSettings.AddOrUpdateValue("DoubleClickToExpand", value); }
+        }
+
+        public static string RecentHistory
+        {
+            get { return AppSettings.GetValueOrDefault("RecentHistory", ""); }
+            set { AppSettings.AddOrUpdateValue("RecentHistory", value); }
+        }
+
         #endregion
 
         public static bool GetTutorialDone(Guid tutorialGuid)
@@ -248,4 +261,5 @@ namespace ReusableLibraryCode.Settings
         }
 
     }
+
 }

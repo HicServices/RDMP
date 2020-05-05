@@ -32,7 +32,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            _commonFunctionality.Tree.BeginUpdate();
+            _commonFunctionality.Tree.Visible = false;
             try
             {
                 _commonFunctionality.ExpandToDepth(int.MaxValue,_rootToExpandFrom);
@@ -43,7 +43,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             }
             finally
             {
-                _commonFunctionality.Tree.EndUpdate();
+                _commonFunctionality.Tree.Visible = true;
             }
         }
 

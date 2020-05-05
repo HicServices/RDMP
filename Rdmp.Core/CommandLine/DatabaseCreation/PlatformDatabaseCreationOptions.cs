@@ -50,6 +50,9 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
         [Option("NumberOfRowsPerDataset", Default = ExampleDatasetsCreation.NumberOfRowsPerDataset, HelpText = "When ExampleDatasets is set this is the number of rows to create in each dataset")]
         public int NumberOfRowsPerDataset { get; set; } = ExampleDatasetsCreation.NumberOfRowsPerDataset;
 
+        [Option("Nightmare", Default = false, HelpText = "Only applies when using ExampleDatasets.  Create a 100,000+ objects in the Catalogue database")]
+        public bool Nightmare { get; set; }
+
         [Usage]
         public static IEnumerable<Example> Examples
         {

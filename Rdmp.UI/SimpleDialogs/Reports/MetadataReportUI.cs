@@ -41,6 +41,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
     {
         MetadataReport _report;
         private readonly Catalogue[] _catalogues;
+        bool _firstTime = true;
 
         public MetadataReportUI(IActivateItems activator,ICatalogue[] initialSelection = null):base(activator)
         {
@@ -102,15 +103,14 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             aggregateGraph1.Width = (int) _report.PageWidthInPixels;
             aggregateGraph1.Visible = true;
 
-            bool firstTime = true;
 
             //only graph extractable aggregates
             foreach (AggregateConfiguration aggregate in catalogue.AggregateConfigurations.Where(config=>config.IsExtractable))
             {
-                if (firstTime)
+                if (_firstTime)
                 {
                     aggregateGraph1.SetDatabaseObject(Activator, aggregate);
-                    firstTime = false;
+                    _firstTime = false;
                 }
                 else
                     aggregateGraph1.SetAggregate(Activator,aggregate);
@@ -202,7 +202,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
         private void btnPick_Click(object sender, EventArgs e)
         {
             var available = cbxCatalogues.Items.OfType<Catalogue>();
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(available, false, false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, available, false, false);
             dialog.AllowMultiSelect = true;
 
             if (dialog.ShowDialog() == DialogResult.OK)

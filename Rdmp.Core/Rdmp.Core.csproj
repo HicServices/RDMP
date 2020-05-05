@@ -6,6 +6,8 @@
     <LangVersion>7.1</LangVersion>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 	<NoWarn>1701;1702;CS1591</NoWarn>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Databases\CatalogueDatabase\up\views\**" />
@@ -87,6 +89,7 @@
     <None Remove="Databases\CatalogueDatabase\up\068_FixNamespaces.sql" />
     <None Remove="Databases\CatalogueDatabase\up\069_IsViewProperty.sql" />
     <None Remove="Databases\CatalogueDatabase\up\070_UnicodeSupport.sql" />
+    <None Remove="Databases\CatalogueDatabase\up\071_RowVer.sql" />
     <None Remove="Databases\DataExportDatabase\runAfterCreateDatabase\CreateDataExportManager.sql" />
     <None Remove="Databases\DataExportDatabase\up\001_AddUsernamePasswordFieldsToExternalCohortTable.sql" />
     <None Remove="Databases\DataExportDatabase\up\002_FixServerAndDatabaseNameOnExternalCohort.sql" />
@@ -110,6 +113,7 @@
     <None Remove="Databases\DataExportDatabase\up\019_NamesMustNotBeNull.sql" />
     <None Remove="Databases\DataExportDatabase\up\020_AddReleaseLogIDColumn.sql" />
     <None Remove="Databases\DataExportDatabase\up\021_UnicodeSupport.sql" />
+    <None Remove="Databases\DataExportDatabase\up\022_RowVer.sql" />
     <None Remove="Databases\DataQualityEngineDatabase\runAfterCreateDatabase\CreateTables.sql" />
     <None Remove="Databases\DataQualityEngineDatabase\up\001_AnnotationsAndDiagram.sql" />
     <None Remove="Databases\DataQualityEngineDatabase\up\002_AddPivotCategoryLogic.sql" />
@@ -202,6 +206,7 @@
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\064_FAnsiSupport.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\065_IsDisabledSupport.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\066_NamesMustNotBeNull.sql" />
+    <EmbeddedResource Include="Databases\CatalogueDatabase\up\071_RowVer.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\070_UnicodeSupport.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\069_IsViewProperty.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\068_FixNamespaces.sql" />
@@ -229,6 +234,7 @@
     <EmbeddedResource Include="Databases\DataExportDatabase\up\019_NamesMustNotBeNull.sql" />
     <EmbeddedResource Include="Databases\DataExportDatabase\up\021_UnicodeSupport.sql" />
     <EmbeddedResource Include="Databases\DataExportDatabase\up\020_AddReleaseLogIDColumn.sql" />
+    <EmbeddedResource Include="Databases\DataExportDatabase\up\022_RowVer.sql" />
     <EmbeddedResource Include="Databases\DataQualityEngineDatabase\runAfterCreateDatabase\CreateTables.sql" />
     <EmbeddedResource Include="Databases\DataQualityEngineDatabase\up\001_AnnotationsAndDiagram.sql" />
     <EmbeddedResource Include="Databases\DataQualityEngineDatabase\up\002_AddPivotCategoryLogic.sql" />

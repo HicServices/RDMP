@@ -81,6 +81,8 @@ namespace Rdmp.UI.Collections
         public Type[] MaintainRootObjects { get; set; }
         
         public RDMPCollectionCommonFunctionalitySettings Settings { get; private set; }
+
+        public event EventHandler<MenuBuiltEventArgs> MenuBuilt;
          
         private static readonly Dictionary<RDMPCollection,Guid> TreeGuids = new Dictionary<RDMPCollection, Guid>()
         {
@@ -465,7 +467,7 @@ namespace Rdmp.UI.Collections
                         mi.ShortcutKeys = Keys.Delete;
                         menu.Items.Add(mi);
                     }
-
+                    MenuBuilt?.Invoke(this,new MenuBuiltEventArgs(menu,o));
                     return menu;
                 }
 
@@ -499,13 +501,16 @@ namespace Rdmp.UI.Collections
                                 miPin.ToolTipText = "Pinning is disabled in this collection";
                             }
                         }
-
+                        
+                        MenuBuilt?.Invoke(this,new MenuBuiltEventArgs(menu,o));
                         return menu;
                     }
 
                     //no compatible menus so just return default menu
                     var defaultMenu = new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(_activator, Tree, o), o);
                     defaultMenu.AddCommonMenuItems(this);
+                    
+                    MenuBuilt?.Invoke(this,new MenuBuiltEventArgs(defaultMenu,o));
                     return defaultMenu;
                 }
                 else
@@ -611,6 +616,20 @@ namespace Rdmp.UI.Collections
             if(o == null)
                 return;
 
+            if (UserSettings.DoubleClickToExpand)
+            {
+                if (Tree.CanExpand(o) && !Tree.IsExpanded(o))
+                {
+                    Tree.Expand(o);
+                    return;
+                }
+                if (Tree.IsExpanded(o))
+                {
+                    Tree.Collapse(o);
+                    return;
+                }
+            }
+
             var cmd = new ExecuteCommandActivate(_activator, o);
             if(!cmd.IsImpossible)
                 cmd.Execute();
@@ -679,9 +698,9 @@ namespace Rdmp.UI.Collections
                     if (lastParent != null)
                         Tree.RefreshObject(lastParent); //refresh parent
                     else
-                        //Tree has object but not parent, bad times, maybe BetterRouteExists? Refresh the object if it exists
-                       if(exists)
-                            Tree.RefreshObject(o);
+                        if(Tree.IndexOf(o) != -1)
+                            //Tree has object but not parent, bad times, maybe BetterRouteExists? 
+                            Tree.RebuildAll(true);
                 }
                 else
                 //if we have the object

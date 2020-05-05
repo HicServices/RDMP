@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Drawing;
 using System.Linq;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -18,26 +19,33 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     internal class ExecuteCommandCreateNewFilterFromCatalogue : BasicUICommandExecution, IAtomicCommand
     {
-        private readonly IContainer _container;
+        private readonly Func<IContainer> _containerFunc;
+        private IContainer _container;
         private ExtractionFilter[] _filters;
 
-        public ExecuteCommandCreateNewFilterFromCatalogue(IActivateItems itemActivator, IContainer container):base(itemActivator)
+        public ExecuteCommandCreateNewFilterFromCatalogue(IActivateItems itemActivator, IContainer container):this(itemActivator,container.GetCatalogueIfAny())
         {
             _container = container;
-            var catalogue = container.GetCatalogueIfAny();
+        }
 
+        public ExecuteCommandCreateNewFilterFromCatalogue(IActivateItems itemActivator,ICatalogue catalogue, Func<IContainer> containerFunc):this(itemActivator,catalogue)
+        {
+            _containerFunc = containerFunc;
+        }
+
+        private ExecuteCommandCreateNewFilterFromCatalogue(IActivateItems itemActivator, ICatalogue catalogue):base(itemActivator)
+        {
             if(catalogue == null)
             {
-                SetImpossible("No Catalogue found for filter container:" + container);
+                SetImpossible("No Catalogue found");
                 return;
             }
 
             _filters = catalogue.GetAllFilters();
 
             if(!_filters.Any())
-                SetImpossible("There are Filters declard in Catalogue '" + catalogue +"'");
+                SetImpossible("There are no Filters declared in Catalogue '" + catalogue +"'");
         }
-
         public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Filter, OverlayKind.Add);
@@ -47,7 +55,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var wizard = new FilterImportWizard();
+            if (_containerFunc != null)
+                _container = _containerFunc();
+
+            var wizard = new FilterImportWizard(Activator);
             var import = wizard.ImportOneFromSelection(_container, _filters);
 
             if (import != null)

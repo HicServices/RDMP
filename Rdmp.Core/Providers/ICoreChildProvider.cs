@@ -31,7 +31,7 @@ namespace Rdmp.Core.Providers
     /// property you can just look at the array AllPermissionWindows (especially since you might get lots of spam requests for the icon - you don't want to lookup
     /// the PermissionWindow from the database every time).
     /// </summary>
-    public interface ICoreChildProvider:IChildProvider
+    public interface ICoreChildProvider:IChildProvider,IDisposable
     {
         LoadMetadata[] AllLoadMetadatas { get; }
         TableInfoServerNode[] AllServers { get; }
