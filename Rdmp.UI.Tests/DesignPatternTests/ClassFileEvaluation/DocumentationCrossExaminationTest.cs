@@ -282,6 +282,10 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
                 if(file.Contains("CodeTutorials"))
                     continue;
                 
+                //don't look in the packages dir!
+                if(file.Contains("packages"))
+                    continue;
+
                 foreach (string line in File.ReadAllLines(file))
                 {
                     //if it is a comment
@@ -309,6 +313,10 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             //find all comments in .md tutorials
             foreach (string mdFile in _mdFiles)
             {
+                //don't look in the packages dir!
+                if(mdFile.Contains("packages"))
+                    continue;
+
                 fileCommentTokens.Add(mdFile,new HashSet<string>());
                 var fileContents = File.ReadAllText(mdFile);
                 
