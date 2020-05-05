@@ -431,6 +431,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [JoinInfo]: ./Documentation/CodeTutorials/Glossary.md#JoinInfo
 
+[PipelineComponent]: ./Documentation/CodeTutorials/Glossary.md#PipelineComponent
 [Pipeline]: ./Documentation/CodeTutorials/Glossary.md#Pipeline
 
 [Lookup]: ./Documentation/CodeTutorials/Glossary.md#Lookup
