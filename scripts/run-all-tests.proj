@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.Build.Traversal/2.0.24">
+  <ItemGroup>
+    <ProjectReference Include="..\Reusable\Tests\ReusableCodeTests\ReusableCodeTests.csproj" />
+    <ProjectReference Include="..\Rdmp.Core.Tests\Rdmp.Core.Tests.csproj" />
+  </ItemGroup>
+</Project>

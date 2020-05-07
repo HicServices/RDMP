@@ -18,9 +18,9 @@ build_script:
   - ps: dotnet publish "./Tools/rdmp" -r win-x64
   - ps: ./Tools/rdmp/bin/Debug/netcoreapp2.2/win-x64/rdmp install localhost\SQL2017 TEST_ -D -u sa -p Password12!
   - ps: dotnet test "./Rdmp.UI.Tests/Rdmp.UI.Tests.csproj"
-  - ps: dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj"
-# - ps: dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" 
-  - cmd: "\"packages/opencover/4.7.922/tools/OpenCover.Console.exe\" -target:\"c:/program files/dotnet/dotnet.exe\" -targetargs:\"test ./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj -f netcoreapp2.2 -c Release /p:DebugType=full\" -filter:\"+[*Rdmp.Core*]* +[*ReusableLibraryCode*]* +[*MapsDirectlyToDatabaseTable*]* -[*Tests*]*\"  -output:coverage.xml -register:appveyor -oldStyle -hideskipped:File"
+  
+  # Run code coverage on non UI tests (UI tests run in net461 while the rest run in netcoreapp2.2)
+  - cmd: "\"packages/opencover/4.7.922/tools/OpenCover.Console.exe\" -target:\"c:/program files/dotnet/dotnet.exe\" -targetargs:\"test ./scripts/run-all-tests.proj -f netcoreapp2.2 -c Release -p:BuildInParallel=false\" -filter:\"+[*Rdmp.Core*]* +[*ReusableLibraryCode*]* +[*MapsDirectlyToDatabaseTable*]* -[*Tests*]*\"  -output:coverage.xml -register:appveyor -oldStyle -hideskipped:File"
   - cmd: packages\coveralls.io\1.4.2\tools\coveralls.net.exe --opencover coverage.xml -r %COVERALLS_REPO_TOKEN%
 
 test: off
