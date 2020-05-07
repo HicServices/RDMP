@@ -6,13 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Added double click to expand tree option for RDMP
 ...
+
+### Fixed
+
+- Opening 'Recent' items that have been deleted now prompts to remove from list
 
 ## [4.1.0] - 2020-05-05
 
 ### Added
 
+- Added double click to expand tree option for RDMP
 - Added tool strip to tree collection user interfaces
 - Added new [PipelineComponent] `SetNull` which detects bad data in a specific column of pipeline data and sets cells matching the `Regex` to null
 - Added support for template based metadata extractions ([Catalogue] descriptions etc) 
