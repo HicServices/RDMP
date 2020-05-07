@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -22,6 +23,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
     {
         private IActivateItems _activator;
         private bool _doneSetup = false;
+        private Type _openType;
 
         public HomeBoxUI()
         {
@@ -30,6 +32,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
         }
         public void SetUp(IActivateItems activator,string title, Type openType,AtomicCommandUIFactory factory, params IAtomicCommand[] newCommands)
         {
+            _openType = openType;
+
             if (!_doneSetup)
             {
                 _activator = activator;
@@ -72,13 +76,29 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
 
                 _doneSetup = true;
             }
-            
+
+            RefreshHistory();
+        }
+
+        private void RefreshHistory()
+        {
             olvRecent.ClearObjects();
-            olvRecent.AddObjects(activator.HistoryProvider.History.Where(h=>h.Object.GetType() == openType).ToArray());
+            olvRecent.AddObjects(_activator.HistoryProvider.History.Where(h=>h.Object.GetType() == _openType).ToArray());
         }
 
         private void Open(IMapsDirectlyToDatabaseTable o)
         {
+            if (!((DatabaseEntity) o).Exists())
+            {
+                if (_activator.YesNo($"'{o}' no longer exists, remove from Recent list?", "No longer exists"))
+                {
+                    _activator.HistoryProvider.Remove(o);
+                    RefreshHistory();
+                }
+
+                return;
+            }
+
             var cmd = new ExecuteCommandActivate(_activator, o)
             {
                 AlsoShow = true
