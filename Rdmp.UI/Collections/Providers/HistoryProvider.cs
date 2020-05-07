@@ -124,5 +124,14 @@ namespace Rdmp.UI.Collections.Providers
             UserSettings.RecentHistory = "";
             History.Clear();
         }
+
+        public void Remove(IMapsDirectlyToDatabaseTable o)
+        {
+            if(o == null)
+                return;
+
+            foreach (var historyEntry in History.Where(h => h.Object.Equals(o)).ToArray())
+                History.Remove(historyEntry);
+        }
     }
 }
