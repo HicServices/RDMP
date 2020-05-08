@@ -65,7 +65,9 @@ namespace Rdmp.Core.Repositories.Managers.HighPerformance
 
         public override IFilter[] GetFilters(IContainer container)
         {
-            return  _containersToFilters[container.ID].ToArray();
+            return _containersToFilters.TryGetValue(container.ID, out List<DeployedExtractionFilter> filters)
+                ? filters.ToArray()
+                : new IFilter[0];
         }
     }
 }
