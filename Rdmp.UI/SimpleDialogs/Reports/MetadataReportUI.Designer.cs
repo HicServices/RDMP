@@ -52,6 +52,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             this.label3 = new System.Windows.Forms.Label();
             this.progressBarsUI1 = new Rdmp.UI.Progress.ProgressBarsUI();
             this.gbReportOptions = new System.Windows.Forms.GroupBox();
+            this.btnFolder = new System.Windows.Forms.Button();
             this.gbInclude.SuspendLayout();
             this.gbCatalogue.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nMaxLookupRows)).BeginInit();
@@ -88,7 +89,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             this.cbxCatalogues.FormattingEnabled = true;
             this.cbxCatalogues.Location = new System.Drawing.Point(124, 41);
             this.cbxCatalogues.Name = "cbxCatalogues";
-            this.cbxCatalogues.Size = new System.Drawing.Size(271, 21);
+            this.cbxCatalogues.Size = new System.Drawing.Size(258, 21);
             this.cbxCatalogues.TabIndex = 4;
             this.cbxCatalogues.SelectedIndexChanged += new System.EventHandler(this.cbxCatalogues_SelectedIndexChanged);
             // 
@@ -100,7 +101,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             this.gbInclude.Controls.Add(this.cbIncludeInternalCatalogueItems);
             this.gbInclude.Controls.Add(this.cbIncludeDistinctIdentifiers);
             this.gbInclude.Controls.Add(this.cbIncludeRowCounts);
-            this.gbInclude.Location = new System.Drawing.Point(453, 4);
+            this.gbInclude.Location = new System.Drawing.Point(470, 4);
             this.gbInclude.Name = "gbInclude";
             this.gbInclude.Size = new System.Drawing.Size(325, 117);
             this.gbInclude.TabIndex = 0;
@@ -184,7 +185,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             // btnPick
             // 
             this.btnPick.Enabled = false;
-            this.btnPick.Location = new System.Drawing.Point(401, 41);
+            this.btnPick.Location = new System.Drawing.Point(389, 41);
             this.btnPick.Name = "btnPick";
             this.btnPick.Size = new System.Drawing.Size(32, 21);
             this.btnPick.TabIndex = 5;
@@ -218,13 +219,14 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             // 
             // gbCatalogue
             // 
+            this.gbCatalogue.Controls.Add(this.btnFolder);
             this.gbCatalogue.Controls.Add(this.btnPick);
             this.gbCatalogue.Controls.Add(this.rbSpecificCatalogue);
             this.gbCatalogue.Controls.Add(this.rbAllCatalogues);
             this.gbCatalogue.Controls.Add(this.cbxCatalogues);
             this.gbCatalogue.Location = new System.Drawing.Point(5, 4);
             this.gbCatalogue.Name = "gbCatalogue";
-            this.gbCatalogue.Size = new System.Drawing.Size(442, 117);
+            this.gbCatalogue.Size = new System.Drawing.Size(459, 117);
             this.gbCatalogue.TabIndex = 0;
             this.gbCatalogue.TabStop = false;
             this.gbCatalogue.Text = "Generate For Catalogue";
@@ -307,6 +309,15 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             this.gbReportOptions.TabStop = false;
             this.gbReportOptions.Text = "Options";
             // 
+            // btnFolder
+            // 
+            this.btnFolder.Location = new System.Drawing.Point(421, 41);
+            this.btnFolder.Name = "btnFolder";
+            this.btnFolder.Size = new System.Drawing.Size(32, 21);
+            this.btnFolder.TabIndex = 6;
+            this.btnFolder.UseVisualStyleBackColor = true;
+            this.btnFolder.Click += new System.EventHandler(this.btnFolder_Click);
+            // 
             // MetadataReportUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -355,5 +366,6 @@ namespace Rdmp.UI.SimpleDialogs.Reports
         private System.Windows.Forms.GroupBox gbReportOptions;
         private System.Windows.Forms.CheckBox cbIncludeDeprecatedCatalogueItems;
         private System.Windows.Forms.CheckBox cbIncludeInternalCatalogueItems;
+        private System.Windows.Forms.Button btnFolder;
     }
 }
