@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Added ability to pick a folder in Metadata Report UI
+
 ### Fixed
 
 - Opening 'Recent' items that have been deleted now prompts to remove from list

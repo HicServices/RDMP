@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.DataQualityEngine;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Reports;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
@@ -54,6 +55,8 @@ namespace Rdmp.UI.SimpleDialogs.Reports
                 SetCatalogueSelection(initialSelection);
 
             aggregateGraph1.Silent = true;
+
+            btnFolder.Image = activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueFolder);
         }
 
         private void btnGenerateReport_Click(object sender, EventArgs e)
@@ -245,7 +248,18 @@ namespace Rdmp.UI.SimpleDialogs.Reports
 
             if (cbxCatalogues.SelectedItem != null) 
                 _cataloguesToRun = new[] {(ICatalogue) cbxCatalogues.SelectedItem};
+        }
 
+        private void btnFolder_Click(object sender, EventArgs e)
+        {
+            var folders = Activator.CoreChildProvider.GetAllChildrenRecursively(CatalogueFolder.Root).OfType<CatalogueFolder>().ToList();
+            folders.Add(CatalogueFolder.Root);
+
+            var dlg = new PickOneOrCancelDialog<CatalogueFolder>(folders.ToArray(),"Generate For Folder",(o)=>Activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueFolder),null);
+            
+            if (dlg.ShowDialog() == DialogResult.OK)
+                SetCatalogueSelection(Activator.CoreChildProvider.GetAllChildrenRecursively(dlg.Picked)
+                    .OfType<ICatalogue>().ToArray());
         }
     }
 }
