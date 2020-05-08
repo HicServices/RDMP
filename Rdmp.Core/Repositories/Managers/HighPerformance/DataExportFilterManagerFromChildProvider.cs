@@ -57,10 +57,9 @@ namespace Rdmp.Core.Repositories.Managers.HighPerformance
         /// </summary>
         public override IContainer[] GetSubContainers(IContainer parent)
         {
-            if (!_subcontainers.ContainsKey(parent.ID))
-                return new FilterContainer[0];
-
-            return _subcontainers[parent.ID].ToArray();
+            return _subcontainers.TryGetValue(parent.ID, out List<FilterContainer> result)
+                ? result.ToArray()
+                : new IContainer[0];
         }
 
         public override IFilter[] GetFilters(IContainer container)
