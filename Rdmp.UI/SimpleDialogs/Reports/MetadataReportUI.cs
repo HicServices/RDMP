@@ -256,7 +256,9 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             folders.Add(CatalogueFolder.Root);
 
             var dlg = new PickOneOrCancelDialog<CatalogueFolder>(folders.ToArray(),"Generate For Folder",(o)=>Activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueFolder),null);
-            
+
+            dlg.AllowNull = false;
+
             if (dlg.ShowDialog() == DialogResult.OK)
                 SetCatalogueSelection(Activator.CoreChildProvider.GetAllChildrenRecursively(dlg.Picked)
                     .OfType<ICatalogue>().ToArray());

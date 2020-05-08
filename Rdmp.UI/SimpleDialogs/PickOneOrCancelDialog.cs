@@ -15,6 +15,13 @@ namespace Rdmp.UI.SimpleDialogs
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<PickOneOrCancelDialog<object>, Form>))]
     public partial class PickOneOrCancelDialog<T> : Form
     {
+
+        public bool AllowNull
+        {
+            get => btnSelectNULL.Visible;
+            set => btnSelectNULL.Visible = value;
+        }
+
         public T Picked { get; set; } = default(T);
 
         /// <summary>
