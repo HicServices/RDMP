@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Opening 'Recent' items that have been deleted now prompts to remove from list
+- Fixed race conditions updating UI during refresh / dispose of activators
 
 ## [4.1.0] - 2020-05-05
 

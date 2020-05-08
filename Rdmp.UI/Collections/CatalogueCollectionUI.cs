@@ -149,9 +149,16 @@ namespace Rdmp.UI.Collections
         
         private object FilterAspectGetter(object rowObject)
         {
-            var cataItem = rowObject as CatalogueItem;
-            if (cataItem != null)
-                return Activator.CoreChildProvider.GetAllChildrenRecursively(cataItem).OfType<IFilter>().Count();
+            try
+            {
+                if (rowObject is CatalogueItem cataItem)
+                    return Activator.RefreshBus.PublishInProgress ? (object) null:
+                        Activator.CoreChildProvider.GetAllChildrenRecursively(cataItem).OfType<IFilter>().Count();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
 
             return null;
         }
