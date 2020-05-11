@@ -6,8 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Added double click to expand tree option for RDMP
 ...
+
+## [4.1.1] - 2020-05-11
+
+
+### Added
+
+- Added ability to pick a folder in Metadata Report UI
+
+### Fixed
+
+- Opening 'Recent' items that have been deleted now prompts to remove from list
+- Fixed race conditions updating UI during refresh / dispose of activators
 
 ## [4.1.0] - 2020-05-05
 
@@ -391,7 +402,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.1.0...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.1.1...develop
+[4.1.1]: https://github.com/HicServices/RDMP/compare/v4.1.0...v4.1.1
 [4.1.0]: https://github.com/HicServices/RDMP/compare/v4.0.3...v4.1.0
 [4.0.3]: https://github.com/HicServices/RDMP/compare/v4.0.2...v4.0.3
 [4.0.2]: https://github.com/HicServices/RDMP/compare/v4.0.1...v4.0.2
