@@ -68,6 +68,8 @@ namespace Rdmp.Core.Tests.Providers
             Assert.AreEqual(1,rowVerCache.GetAllObjects().Count(c=>c.Name.Equals("vroom")));
 
             Assert.AreEqual(1,rowVerCache.GetAllObjects().Count(c=>c.Name.Equals("vroom")));
+
+            Assert.IsFalse(rowVerCache.Broken);
         }
     }
 }
