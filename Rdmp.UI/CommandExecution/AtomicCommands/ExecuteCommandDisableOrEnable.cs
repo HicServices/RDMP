@@ -83,7 +83,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             if(_targets.Length == 1)
                 return _targets[0].IsDisabled ? "Enable" : "Disable";
 
-            if(_targets.Length >= 1)
+            if(_targets.Length > 1)
                 return _targets.All(d=>d.IsDisabled)? "Enable All" : "Disable All";
 
             return "Enable All";
