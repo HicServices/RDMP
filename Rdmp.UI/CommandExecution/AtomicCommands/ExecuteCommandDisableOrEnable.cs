@@ -4,7 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Linq;
 using MapsDirectlyToDatabaseTable;
+using NPOI.OpenXmlFormats.Wordprocessing;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -15,39 +17,76 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandDisableOrEnable : BasicUICommandExecution,IAtomicCommand
     {
-        private readonly IDisableable _target;
+        private IDisableable[] _targets;
 
         public ExecuteCommandDisableOrEnable(IActivateItems itemActivator, IDisableable target):base(itemActivator)
         {
-            _target = target;
+            UpdateViabilityForTarget(target);
+            _targets = new []{target};
+        }
+        
+        public ExecuteCommandDisableOrEnable(IActivateItems activator, IDisableable[] disableables) : base(activator)
+        {
+            _targets = disableables;
 
-            var container = _target as CohortAggregateContainer;
+            if (!disableables.Any())
+            {
+                SetImpossible("No objects selected");
+                return;
+            }
+                
+            if (disableables.All(d => d.IsDisabled) || disableables.All(d => !d.IsDisabled))
+            {
+                foreach (IDisableable d in _targets) 
+                    UpdateViabilityForTarget(d);
+            }
+            else
+            {
+                SetImpossible("All objects must be in the same disabled/enabled state");
+            }
+        }
+        private void UpdateViabilityForTarget(IDisableable target)
+        {
+            var container = target as CohortAggregateContainer;
 
             //don't let them disable the root container
             if(container != null && container.IsRootContainer() && !container.IsDisabled)
                 SetImpossible("You cannot disable the root container of a cic");
 
-            var aggregateConfiguration = _target as AggregateConfiguration;
+            var aggregateConfiguration = target as AggregateConfiguration;
             if(aggregateConfiguration != null)
                 if(!aggregateConfiguration.IsCohortIdentificationAggregate)
                     SetImpossible("Only cohort identification aggregates can be disabled");
                 else
-                    if(aggregateConfiguration.IsJoinablePatientIndexTable() && !aggregateConfiguration.IsDisabled)
-                        SetImpossible("Joinable Patient Index Tables cannot be disabled");
+                if(aggregateConfiguration.IsJoinablePatientIndexTable() && !aggregateConfiguration.IsDisabled)
+                    SetImpossible("Joinable Patient Index Tables cannot be disabled");
         }
 
         public override void Execute()
         {
             base.Execute();
 
-            _target.IsDisabled = !_target.IsDisabled;
-            _target.SaveToDatabase();
-            Publish((DatabaseEntity)_target);
+            foreach (IDisableable d in _targets)
+            {
+                d.IsDisabled = !d.IsDisabled;
+                d.SaveToDatabase();    
+            }
+
+            var toRefresh = _targets.FirstOrDefault();
+
+            if(toRefresh != null)
+                Publish((DatabaseEntity)toRefresh);
         }
 
         public override string GetCommandName()
         {
-            return _target.IsDisabled ? "Enable" : "Disable";
+            if(_targets.Length == 1)
+                return _targets[0].IsDisabled ? "Enable" : "Disable";
+
+            if(_targets.Length >= 1)
+                return _targets.All(d=>d.IsDisabled)? "Enable All" : "Disable All";
+
+            return "Enable All";
         }
     }
 }
