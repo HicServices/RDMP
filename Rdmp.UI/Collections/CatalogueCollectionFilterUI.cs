@@ -13,6 +13,7 @@ namespace Rdmp.UI.Collections
 {
     public partial class CatalogueCollectionFilterUI : UserControl
     {
+        private bool _loading = true;
         public CatalogueCollectionFilterUI()
         {
             InitializeComponent();
@@ -22,12 +23,17 @@ namespace Rdmp.UI.Collections
             cbShowColdStorage.Checked = UserSettings.ShowColdStorageCatalogues;
             cbProjectSpecific.Checked = UserSettings.ShowProjectSpecificCatalogues;
             cbShowNonExtractable.Checked = UserSettings.ShowNonExtractableCatalogues;
+
+            _loading = false;
         }
 
         public event EventHandler<EventArgs> FiltersChanged;
 
         private void OnCheckboxChanged(object sender, System.EventArgs e)
         {
+            if(_loading)
+                return;
+
             UserSettings.ShowInternalCatalogues = cbShowInternal.Checked;
             UserSettings.ShowDeprecatedCatalogues = cbShowDeprecated.Checked;
             UserSettings.ShowColdStorageCatalogues = cbShowColdStorage.Checked;

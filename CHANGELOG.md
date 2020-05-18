@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Fixed changes to Catalogue visibility checkboxes not being persisted
 - Fixed object caching system when RDMP user has insufficient permissions to view Change Tracking tables. 
 
 ## [4.1.1] - 2020-05-11
