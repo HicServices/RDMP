@@ -97,7 +97,11 @@ namespace Rdmp.UI.LoadExecutionUIs
                 gbLoadProgresses.Visible = true;
 
                 //give the user the dropdown options for which load progress he wants to run
-                var loadProgressData = new Dictionary<int, string> { { 0, "All available" } };
+                var loadProgressData = new Dictionary<int, string>( );
+
+                //if theres more than 1 let them pick any
+                if(_allLoadProgresses.Length > 1)
+                    loadProgressData.Add(0, "Any Available");
 
                 foreach (var loadProgress in _allLoadProgresses)
                     loadProgressData.Add(loadProgress.ID, loadProgress.Name);
@@ -148,7 +152,7 @@ namespace Rdmp.UI.LoadExecutionUIs
         
         private LoadProgress GetLoadProgressIfAny()
         {
-            if (ddLoadProgress.SelectedIndex == 0 || ddLoadProgress.SelectedIndex == -1)
+            if (ddLoadProgress.SelectedIndex == -1)
                 return null;
 
             var scheduleItem = (KeyValuePair<int, string>)ddLoadProgress.SelectedItem;

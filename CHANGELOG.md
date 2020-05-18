@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Ability to Enable/Disable many objects at once
 
+### Changed
+
+- When a load has only one LoadProgress dropdown no longer shows "All available"
+
 ### Fixed
 
 - Fixed changes to Catalogue visibility checkboxes not being persisted
