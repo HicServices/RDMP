@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -403,7 +404,7 @@ namespace ReusableLibraryCode
         {
             StringBuilder sb = new StringBuilder();
 
-            using (CsvWriter w = new CsvWriter(new StringWriter(sb)))
+            using (CsvWriter w = new CsvWriter(new StringWriter(sb),CultureInfo.CurrentCulture))
             {
                 foreach (DataColumn column in dt.Columns)
                     w.WriteField(column.ColumnName);
