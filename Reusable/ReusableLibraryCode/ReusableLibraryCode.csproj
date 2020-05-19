@@ -10,6 +10,9 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup>
     <AssemblyOriginatorKeyFile>ReusableLibraryCode.snk</AssemblyOriginatorKeyFile>
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>

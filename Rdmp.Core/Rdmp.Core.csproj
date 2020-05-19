@@ -9,6 +9,9 @@
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
+  <PropertyGroup>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Databases\CatalogueDatabase\up\views\**" />
     <EmbeddedResource Remove="Databases\CatalogueDatabase\up\views\**" />
