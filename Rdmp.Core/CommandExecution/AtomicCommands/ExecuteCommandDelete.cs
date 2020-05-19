@@ -47,8 +47,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 if(YesNo("Delete " + _deletables.Count + " Items?","Delete Items"))
                 {
-                    var publishMe = _deletables.OfType<DatabaseEntity>().First();
-
                     try
                     {
                         foreach (IDeleteable d in _deletables)
@@ -57,15 +55,32 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     }
                     finally
                     {
-                        if (publishMe != null)
-                            try
+                        try
+                        {
+                            var publish = _deletables.FirstOrDefault();
+
+                            if (publish != null)
                             {
-                                Publish(publishMe);
+                                if (publish is DatabaseEntity d) 
+                                    Publish(d);
+                                else
+                                {
+                                    var descendancy = BasicActivator.CoreChildProvider.GetDescendancyListIfAnyFor(publish);
+
+                                    if (descendancy != null)
+                                    {
+                                        var parent = descendancy.Parents.OfType<DatabaseEntity>().LastOrDefault();
+
+                                        if(parent != null)
+                                            Publish(parent);
+                                    }
+                                }
                             }
-                            catch(Exception ex)
-                            {
-                                GlobalError("Failed to publish after delete", ex);
-                            }
+                        }
+                        catch(Exception ex)
+                        {
+                            GlobalError("Failed to publish after delete", ex);
+                        }
                     }
                 }
             }
