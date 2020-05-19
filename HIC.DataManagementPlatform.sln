@@ -57,6 +57,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugin.Test", "Plugins\Plug
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{BEEC317E-0984-4EA6-AF33-CBF37096E01B}"
 	ProjectSection(SolutionItems) = preProject
+		Documentation\CodeTutorials\ChangeTracking.md = Documentation\CodeTutorials\ChangeTracking.md
 		Documentation\CodeTutorials\CreatingANewCollectionTreeNode.md = Documentation\CodeTutorials\CreatingANewCollectionTreeNode.md
 		Documentation\CodeTutorials\CreatingANewRightClickMenu.md = Documentation\CodeTutorials\CreatingANewRightClickMenu.md
 		Documentation\CodeTutorials\CSVHandling.md = Documentation\CodeTutorials\CSVHandling.md

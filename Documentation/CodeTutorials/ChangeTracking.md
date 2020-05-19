@@ -1,6 +1,6 @@
 # Change Tracking
 
-When RDMP platform metadata databases get very large (e.g. 1,000 datasets, 1,000 research projects, 1,000 cohort builder queries etc) the GUI Client refresh process (updating the UI after saving a change) can slow down.  This problem can be avoided by granting users the `VIEW CHANGE TRACKING` permission (this ensures that only new/changed objects are fetched back after saving).
+When RDMP [Platform Databases] get very large (e.g. 1,000+ [Catalogue], 1,000+ [ExtractionConfiguration], 1,000 cohort builder queries etc) the GUI Client refresh process (updating the UI after saving a change) can slow down.  This problem can be avoided by granting users the `VIEW CHANGE TRACKING` permission (this ensures that only new/changed objects are fetched back after saving).
 
 ## Enabling Change Tracking
 
@@ -105,3 +105,7 @@ GRANT VIEW CHANGE TRACKING ON dbo.ExtractableDataSetPackage_ExtractableDataSet		
 GRANT VIEW CHANGE TRACKING ON dbo.ProjectCohortIdentificationConfigurationAssociation	to rdmp_user;
 GRANT VIEW CHANGE TRACKING ON dbo.SelectedDataSetsForcedJoin							to rdmp_user;
 ```
+
+[Catalogue]: ./Glossary.md#Catalogue
+[Platform Databases]: ./Glossary.md#Platform-Databases
+[ExtractionConfiguration]: ./Glossary.md#ExtractionConfiguration

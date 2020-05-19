@@ -187,6 +187,12 @@ Blueprint for a specific task that can be run in a [Pipeline].  A component has 
 
 Pipeline components can include user written plugins (e.g. [for imaging operations](https://github.com/HicServices/RdmpDicom))
 
+## Platform Databases
+
+There are 2 main databases in which RDMP stores metadata.  The 'Catalogue' database stores where your datasets are, descriptions, extraction transforms, filters, supporting documents,aggregates, cohort builder queries etc.  The 'Data Export' database stores extraction configurations, which datasets were extracted when, with what filters etc.
+
+'Platform Databases' refers to these main 2 databases although there are addition (some optional) databases for Logging, Cohort query caching, data quality engine results and storing versioned cohorts etc.
+
 ## Project![Project Icon](./../../Rdmp.Core/Icons/Project.png)
 
 All extractions through RDMP must be done through Projects. A Project has a name, extraction directory and optionally Tickets (if you have a ticketing system configured). A Project should never be deleted even after all [ExtractionConfiguration] have been executed as it serves as an audit and a cloning point if you ever need to clone any of the ExtractionConfigurations (e.g. to do an update of project data 5 years on).  
