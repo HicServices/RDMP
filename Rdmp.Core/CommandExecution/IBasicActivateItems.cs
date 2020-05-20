@@ -246,7 +246,8 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         /// <param name="prompt">message to show to user</param>
         /// <param name="available">array of Types selection should be made from</param>
-        /// <returns></returns>
+        /// <param name="chosen">The users choice (unless the option is cancelled - see return value)</param>
+        /// <returns>True if a choice was made or False if the choice was cancelled</returns>
         bool SelectType(string prompt, Type[] available, out Type chosen);
 
         /// <summary>

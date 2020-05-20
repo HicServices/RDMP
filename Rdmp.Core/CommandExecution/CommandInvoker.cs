@@ -292,7 +292,8 @@ namespace Rdmp.Core.CommandExecution
         /// <summary>
         /// Returns the first best constructor on the <paramref name="type"/> preferring those decorated with <see cref="UseWithCommandLineAttribute"/>
         /// </summary>
-        /// <param name="type"></param>
+        /// <param name="type">The type of command you want to fetch the constructor from</param>
+        /// <param name="picker">The command line arguments that you want to use to hydrate the <paramref name="type"/> constructor</param>
         /// <returns></returns>
         public virtual ConstructorInfo GetConstructor(Type type, CommandLineObjectPicker picker)
         {

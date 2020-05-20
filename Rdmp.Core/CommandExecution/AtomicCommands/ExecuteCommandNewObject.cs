@@ -46,7 +46,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         }
 
         /// <summary>
-        /// Automatic/Unattended constructor, construction values will come from <see cref="picker"/> and user will not be
+        /// Automatic/Unattended constructor, construction values will come from <paramref name="picker"/> and user will not be
         /// prompted for each constructor argument.
         /// </summary>
         /// <param name="activator"></param>
