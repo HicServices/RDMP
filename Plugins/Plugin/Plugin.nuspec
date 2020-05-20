@@ -19,7 +19,7 @@
             <dependency id="SSH.NET" version="2016.1.0" />
             <dependency id="HIC.FAnsiSql" version="0.11.1" />
             <dependency id="NLog" version="4.7.2" />
-            <dependency id="HIC.BadMedicine" version="0.1.5" />
+            <dependency id="HIC.BadMedicine" version="0.1.6" />
             <dependency id="ExcelNumberFormat" version="1.0.10" />
             <dependency id="NPOI" version="2.5.1" />
             <dependency id="System.Runtime.Loader" version="4.3.0" />
