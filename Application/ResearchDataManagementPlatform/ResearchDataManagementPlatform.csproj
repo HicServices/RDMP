@@ -20,7 +20,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="HIC.BadMedicine" Version="0.1.5" />
+    <PackageReference Include="HIC.BadMedicine" Version="0.1.6" />
     <PackageReference Include="Squirrel.Windows" Version="1.9.1" />
     <PackageReference Include="System.Resources.Extensions" Version="4.7.1" />
   </ItemGroup>
