@@ -113,8 +113,8 @@ namespace Rdmp.UI.Icons.IconProvision
             if (concept is LinkedColumnInfoNode)
                 return GetImageImpl(ImagesCollection[RDMPConcept.ColumnInfo], OverlayKind.Link);
 
-            if (concept is CatalogueUsedByLoadMetadataNode)
-                return GetImageImpl(ImagesCollection[RDMPConcept.Catalogue], OverlayKind.Link);
+            if (concept is CatalogueUsedByLoadMetadataNode usedByLmd)
+                return GetImageImpl(usedByLmd.ObjectBeingUsed, OverlayKind.Link);
 
             if (concept is DataAccessCredentialUsageNode)
                 return GetImageImpl(ImagesCollection[RDMPConcept.DataAccessCredentials], OverlayKind.Link);
