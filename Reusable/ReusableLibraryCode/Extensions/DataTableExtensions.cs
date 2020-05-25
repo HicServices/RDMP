@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Data;
+using System.Globalization;
 using System.IO;
 using CsvHelper;
 
@@ -19,7 +20,7 @@ namespace ReusableLibraryCode.Extensions
         /// <param name="path"></param>
         public static void SaveAsCsv(this DataTable dt,string path)
         {
-            using (CsvWriter csvWriter = new CsvWriter(new StreamWriter(path)))
+            using (CsvWriter csvWriter = new CsvWriter(new StreamWriter(path),CultureInfo.CurrentCulture))
             {
                 foreach (DataColumn column in dt.Columns)
                     csvWriter.WriteField(column.ColumnName);

@@ -42,9 +42,13 @@ namespace Rdmp.Core
             {    
                 string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                 var nlog = Path.Combine(assemblyFolder ,"NLog.config");
+
+                if (File.Exists(nlog))
+                {
+                    LogManager.ThrowConfigExceptions = false;
+                    NLog.LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(nlog);
+                }
                     
-                if(File.Exists(nlog))
-                    NLog.LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(nlog, true);
             }
             catch(Exception ex)
             {

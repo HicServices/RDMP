@@ -237,7 +237,12 @@ namespace Rdmp.Core.CommandLine.Interactive
                 throw new InputDisallowedException($"Value required for '{prompt}'");
 
             Console.WriteLine(prompt);
-            return new FileInfo(Console.ReadLine());
+            var file = Console.ReadLine();
+            
+            if(file != null)
+                return new FileInfo(file);
+
+            return null;
         }
         
         
