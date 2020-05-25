@@ -60,6 +60,7 @@
     <PackageReference Include="CsvHelper" Version="15.0.5" />
     <PackageReference Include="HIC.FAnsiSql" Version="0.11.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="NPOI" Version="2.4.1" />
     <PackageReference Include="SecurityCodeScan" Version="3.5.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
