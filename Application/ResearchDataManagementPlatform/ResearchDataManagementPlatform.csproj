@@ -1,12 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <ProjectGuid>{550988FD-F1FA-41D8-BE0F-00B4DE47D320}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
-	<NoWarn>1701;1702;CS1591</NoWarn>
+	<NoWarn>1701;1702;CS1591;NU1701</NoWarn>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
@@ -16,6 +17,13 @@
   <PropertyGroup>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Updates\UpdaterUI.cs" />
+    <Compile Remove="Updates\UpdaterUI.Designer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="Updates\UpdaterUI.resx" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DockPanelSuite" Version="3.1.0-beta2" />
     <PackageReference Include="DockPanelSuite.ThemeVS2015" Version="3.1.0-beta2" />
@@ -36,9 +44,6 @@
       <DependentUpon>RDMPMainForm.cs</DependentUpon>
     </Compile>
     <Compile Update="WindowManagement\HomePane\HomeUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Updates\UpdaterUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="WindowManagement\HomePane\HomeUI.Designer.cs">

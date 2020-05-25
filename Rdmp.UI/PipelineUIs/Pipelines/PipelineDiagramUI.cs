@@ -45,7 +45,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
         private IPipelineUseCase _useCase;
         private DataFlowPipelineEngineFactory _pipelineFactory;
 
-        private MenuItem _deleteSelectedMenuItem;
+        private ToolStripMenuItem _deleteSelectedMenuItem;
 
         public PipelineDiagramUI()
         {
@@ -58,13 +58,14 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             pipelineSmiley.Top = 0;
             pipelineSmiley.BringToFront();
 
-            _deleteSelectedMenuItem = new MenuItem("Delete selected component", DeleteSelectedComponent)
+            _deleteSelectedMenuItem = new ToolStripMenuItem("Delete selected component",null, DeleteSelectedComponent)
             {
-                Shortcut = Shortcut.Del,
+                ShortcutKeys = Keys.Delete,
                 Enabled = false
             };
-
-            ContextMenu = new ContextMenu(new []{_deleteSelectedMenuItem});
+            var cms = new ContextMenuStrip();
+            cms.Items.Add(_deleteSelectedMenuItem);
+            ContextMenuStrip = cms;
         }
 
         private void DeleteSelectedComponent(object sender, EventArgs e)

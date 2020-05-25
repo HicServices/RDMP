@@ -327,9 +327,10 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var ui = new UpdaterUI();
+            //TODO: find an updater fix for Squirrel
+           /* var ui = new UpdaterUI();
             var f = new SingleControlForm(ui);
-            f.ShowDialog();
+            f.ShowDialog();*/
         }
 
         private void ListAllTypesToolStripMenuItem_Click(object sender, EventArgs e)
