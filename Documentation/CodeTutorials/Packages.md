@@ -45,6 +45,6 @@
 | System.Net.Primitives | [GitHub](https://github.com/dotnet/corefx) | [4.3.1](https://www.nuget.org/packages/System.Net.Primitives/4.3.1) |[MIT](https://opensource.org/licenses/MIT) | Provides common types for network-based libraries |  |
 | System.Security.Permissions |[GitHub](https://github.com/dotnet/corefx) | [4.7.0](https://www.nuget.org/packages/System.Security.Permissions/4.7.0) |[MIT](https://opensource.org/licenses/MIT) | Provides common types for Xml doc reading in UI code |  |
 | [AutoComplete Console](https://www.codeproject.com/Articles/1182358/Using-Autocomplete-in-Windows-Console-Applications) by Jasper Lammers | Embedded | 4.0 | [CPOL](https://www.codeproject.com/info/cpol10.aspx) | Provides interactive autocomplete in console input | |
-| System.Resources.Extensions | [GitHub](https://github.com/dotnet/corefx) | [4.7.1](https://www.nuget.org/packages/System.Resources.Extensions/4.7.1) | [MIT](https://opensource.org/licenses/MIT) | Allows [publishing with dotnet publish on machines with netcoreapp3.0 SDK installed](https://github.com/microsoft/msbuild/issues/4704#issuecomment-530034240) | |
+| System.Resources.Extensions | [GitHub](https://github.com/dotnet/corefx) | [4.6.0](https://www.nuget.org/packages/System.Resources.Extensions/4.6.0) | [MIT](https://opensource.org/licenses/MIT) | Allows [publishing with dotnet publish on machines with netcoreapp3.0 SDK installed](https://github.com/microsoft/msbuild/issues/4704#issuecomment-530034240) | |
 
 [DBMS]: ./Glossary.md#DBMS
