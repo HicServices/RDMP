@@ -10,6 +10,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using NPOI.OpenXmlFormats.Wordprocessing;
 using NPOI.Util;
+using NPOI.XWPF.Model;
 using NPOI.XWPF.UserModel;
 using ReusableLibraryCode;
 
@@ -165,18 +166,16 @@ namespace Rdmp.Core.Reports
         }
         protected void AddFooter(XWPFDocument document,string text,int textFontSize)
         {
-            CT_SectPr secPr = document.Document.body.sectPr;
-            CT_Ftr footer = new CT_Ftr();
-            var run = footer.AddNewP().AddNewR();
-            run.AddNewT().Value = text;
-            XWPFRelation relation2 = XWPFRelation.FOOTER;
-            XWPFFooter myFooter = (XWPFFooter)document.CreateRelationship(relation2, XWPFFactory.GetInstance(), document.FooterList.Count + 1);
+            
+            document.CreateHeaderFooterPolicy();
 
-            myFooter.SetHeaderFooter(footer);
-            CT_HdrFtrRef myFooterRef = secPr.AddNewFooterReference();
-            myFooterRef.type = ST_HdrFtr.@default;
-            myFooterRef.id = myFooter.GetPackageRelationship().Id;
-            myFooter.Paragraphs[0].Runs[0].FontSize = textFontSize != -1 ? textFontSize : 10;
+            XWPFHeaderFooterPolicy policy = document.GetHeaderFooterPolicy();
+
+            XWPFFooter footer = policy.CreateFooter(XWPFHeaderFooterPolicy.DEFAULT);
+            var footerParagraph = footer.CreateParagraph();
+            var run = footerParagraph.CreateRun();
+            run.SetText( text);
+            run.FontSize = textFontSize != -1 ? textFontSize : 10;
         }
         /// <summary>
         /// Creates a new document in the location of <paramref name="fileInfo"/>
