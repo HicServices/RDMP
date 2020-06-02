@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
 ### Fixed
 
+- Fixed Order not being considered 'OutOfSync' on ExtractableColumn
 - Fixed changes to Catalogue visibility checkboxes not being persisted
 - Fixed object caching system when RDMP user has insufficient permissions to view Change Tracking tables. 
 - Fixed UserSettings last column sort order multithreading issue (causing File IO permissions error in rare cases)
