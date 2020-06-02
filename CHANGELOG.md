@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Ability to create (Project Specific) Catalogues using the Project collection tree view top menu
 - Ability to Enable/Disable many objects at once
 - Catalogue icons under a load now show full range of status icons (e.g. internal / project specific)
 
