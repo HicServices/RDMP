@@ -223,35 +223,41 @@ namespace ReusableLibraryCode.Settings
         {
             AppSettings.AddOrUpdateValue("A_" + controlGuid.ToString("N"), string.Join("#!#", history));
         }
-        
         public static Tuple<string,bool> GetLastColumnSortForCollection(Guid controlGuid)
         {
-            var value = AppSettings.GetValueOrDefault("LastColumnSort_" + controlGuid.ToString("N"),null);
+            lock (_oLockUserSettings)
+            {
+                var value = AppSettings.GetValueOrDefault("LastColumnSort_" + controlGuid.ToString("N"), null);
 
-            //if we dont have a value
-            if (string.IsNullOrWhiteSpace(value))
-                return null;
+                //if we dont have a value
+                if (string.IsNullOrWhiteSpace(value))
+                    return null;
 
-            string[] args = value.Split(new[]{"#!#"},StringSplitOptions.RemoveEmptyEntries);
+                string[] args = value.Split(new[] {"#!#"}, StringSplitOptions.RemoveEmptyEntries);
 
-            //or it doesn't split properly 
-            if (args.Length != 2)
-                return null;
+                //or it doesn't split properly 
+                if (args.Length != 2)
+                    return null;
 
-            //or either element is null
-            if (string.IsNullOrWhiteSpace(args[0]) || string.IsNullOrWhiteSpace(args[1]))
-                return null;
+                //or either element is null
+                if (string.IsNullOrWhiteSpace(args[0]) || string.IsNullOrWhiteSpace(args[1]))
+                    return null;
 
-            bool ascending;
-            if (bool.TryParse(args[1], out ascending))
-                return Tuple.Create(args[0], ascending);
-            
+                bool ascending;
+                if (bool.TryParse(args[1], out ascending))
+                    return Tuple.Create(args[0], ascending);
+            }
+
             return null;
         }
 
+        private static object _oLockUserSettings = new object();
         public static void SetLastColumnSortForCollection(Guid controlGuid, string columnName, bool ascending)
         {
-            AppSettings.AddOrUpdateValue("LastColumnSort_" + controlGuid.ToString("N"), columnName +"#!#" + ascending);
+            lock (_oLockUserSettings)
+            {
+                AppSettings.AddOrUpdateValue("LastColumnSort_" + controlGuid.ToString("N"), columnName +"#!#" + ascending);    
+            }
         }
         
 
