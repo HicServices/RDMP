@@ -16,7 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - When a load has only one LoadProgress dropdown no longer shows "All available"
-
+- Double clicking a crashed configuration in cohort builder now shows the error message (previously would edit/expand the object).  Error message still accessible via context menu (as previously).
+ 
 ### Fixed
 
 - Fixed changes to Catalogue visibility checkboxes not being persisted
