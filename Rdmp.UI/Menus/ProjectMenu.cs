@@ -6,7 +6,9 @@
 
 using System.Windows.Forms;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.Menus
 {
@@ -27,7 +29,7 @@ namespace Rdmp.UI.Menus
             Add(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator)
             {
                 OverrideCommandName = "From File..."
-            }.SetTarget(project), Keys.None, AddProjectSpecificCatalogueMenuText);
+            }.SetTarget(project), Keys.None, AddProjectSpecificCatalogueMenuText,_activator.CoreIconProvider.GetImage(RDMPConcept.ProjectCatalogue,OverlayKind.Add));
             
             Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator)
             {

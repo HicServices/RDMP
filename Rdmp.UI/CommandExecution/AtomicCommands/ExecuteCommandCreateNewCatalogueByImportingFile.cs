@@ -85,7 +85,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         public override Image GetImage(IIconProvider iconProvider)
         {
-            return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Add);
+            return _project != null ?
+                iconProvider.GetImage(RDMPConcept.ProjectCatalogue, OverlayKind.Add):
+                iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Add);
         }
 
         public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
