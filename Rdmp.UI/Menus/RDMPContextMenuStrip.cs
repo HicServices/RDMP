@@ -109,9 +109,10 @@ namespace Rdmp.UI.Menus
         /// <param name="cmd"></param>
         /// <param name="shortcutKey"></param>
         /// <param name="submenu"></param>
-        protected void Add(IAtomicCommand cmd, Keys shortcutKey, string submenu)
+        /// <param name="image"></param>
+        protected void Add(IAtomicCommand cmd, Keys shortcutKey, string submenu, Image image = null)
         {
-            Add(cmd,shortcutKey,AddMenuIfNotExists(submenu));
+            Add(cmd,shortcutKey,AddMenuIfNotExists(submenu,image));
         }
 
         /// <summary>
@@ -156,11 +157,11 @@ namespace Rdmp.UI.Menus
                 Add(new ImpossibleCommand("No object exists"){ OverrideCommandName = title ?? typeof(T).Name},Keys.None,GoTo);
         }
 
-        private ToolStripMenuItem AddMenuIfNotExists(string submenu)
+        private ToolStripMenuItem AddMenuIfNotExists(string submenu, Image image = null)
         {
             if(!_subMenuDictionary.ContainsKey(submenu))
             {
-                var m = new ToolStripMenuItem(submenu);
+                var m = new ToolStripMenuItem(submenu,image);
                 _subMenuDictionary.Add(submenu,m);
             }
 

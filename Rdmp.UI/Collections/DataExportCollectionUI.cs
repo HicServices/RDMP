@@ -5,16 +5,20 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs.NavigateTo;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.Collections
@@ -140,6 +144,23 @@ namespace Rdmp.UI.Collections
             CommonFunctionality.ClearToolStrip();
             CommonFunctionality.Add(new ExecuteCommandCreateNewDataExtractionProject(Activator),"Project",null,"New...");
             CommonFunctionality.Add(new ExecuteCommandCreateNewExtractionConfigurationForProject(Activator),"Extraction",null,"New...");
+
+            var mi = new ToolStripMenuItem("Project Specific Catalogue",Activator.CoreIconProvider.GetImage(RDMPConcept.ProjectCatalogue,OverlayKind.Add));
+
+            var factory = new AtomicCommandUIFactory(Activator);
+            mi.DropDownItems.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCatalogueByImportingFile(Activator)
+            {
+                OverrideCommandName = "From File...",
+                PromptForProject = true
+            }));
+
+            mi.DropDownItems.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator)
+            {
+                OverrideCommandName = "From Database...",
+                PromptForProject = true
+            }));
+
+            CommonFunctionality.Add(mi,"New...");
         }
         
         public static bool IsRootObject(object root)

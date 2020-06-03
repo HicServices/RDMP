@@ -32,7 +32,7 @@ namespace Rdmp.Core.DataQualityEngine
             if (result.Item1 == null || result.Item2 == null)
                 return "Unknown";
 
-            return $"{result.Item1} To {result.Item2}";
+            return $"{result.Item1.Value:yyyy-MMM} To {result.Item2.Value:yyyy-MMM}";
         }
 
         public Tuple<DateTime?, DateTime?> GetMachineReadableTimepsanIfKnownOf(Catalogue catalogue, bool discardOutliers, out DateTime? accurateAsOf)
@@ -68,7 +68,7 @@ namespace Rdmp.Core.DataQualityEngine
             {
                 if (Convert.ToInt32(dt.Rows[i]["CountOfRecords"]) > discardThreshold)
                 {
-                    minMonth = (DateTime)dt.Rows[i][1];
+                    minMonth = DateTime.Parse(dt.Rows[i][1].ToString());
                     break;
                 }
             }
@@ -78,7 +78,7 @@ namespace Rdmp.Core.DataQualityEngine
             {
                 if (Convert.ToInt32(dt.Rows[i]["CountOfRecords"]) > discardThreshold)
                 {
-                    maxMonth = (DateTime)dt.Rows[i][1];
+                    maxMonth = DateTime.Parse(dt.Rows[i][1].ToString());
                     break;
                 }
             }

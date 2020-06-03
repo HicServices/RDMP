@@ -13,6 +13,9 @@
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
+  <PropertyGroup>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
   <ItemGroup>
     <None Remove="en_US.aff" />
     <None Remove="en_US.dic" />
@@ -45,15 +48,15 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AutoCompleteMenu-ScintillaNET" Version="1.6.1" />
+    <PackageReference Include="AutoCompleteMenu-ScintillaNET" Version="1.6.2" />
     <PackageReference Include="NHunspell" Version="1.2.5554.16953" />
     <PackageReference Include="ObjectListView.Official" Version="2.9.1" />
-    <PackageReference Include="SecurityCodeScan" Version="3.2.0">
+    <PackageReference Include="SecurityCodeScan" Version="3.5.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="HIC.BadMedicine" Version="0.1.5" />
-    <PackageReference Include="System.Security.Permissions" Version="4.6.0" />
+    <PackageReference Include="HIC.BadMedicine" Version="0.1.6" />
+    <PackageReference Include="System.Security.Permissions" Version="4.7.0" />
     <PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
   </ItemGroup>
   <ItemGroup>

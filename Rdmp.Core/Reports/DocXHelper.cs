@@ -10,6 +10,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using NPOI.OpenXmlFormats.Wordprocessing;
 using NPOI.Util;
+using NPOI.XWPF.Model;
 using NPOI.XWPF.UserModel;
 using ReusableLibraryCode;
 

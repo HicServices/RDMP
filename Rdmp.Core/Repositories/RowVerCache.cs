@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -29,6 +30,16 @@ namespace Rdmp.Core.Repositories
         private byte[] _maxRowVer;
         public long _changeTracking;
 
+        /// <summary>
+        /// True if the caching system is broken for some reason (e.g. user lacks certain permissions)
+        /// </summary>
+        public bool Broken => BrokenReason != null;
+
+        /// <summary>
+        /// The error that triggered <see cref="Broken"/> (and ended use of the object caching strategy)
+        /// </summary>
+        public SqlException BrokenReason { get; set; }
+
         public RowVerCache(TableRepository repository)
         {
             _repository = repository;
@@ -36,7 +47,7 @@ namespace Rdmp.Core.Repositories
 
         public List<T> GetAllObjects()
         {
-            if(Monitor.TryEnter(_oLockCachedObjects))
+            if(!Broken && Monitor.TryEnter(_oLockCachedObjects))
             {
                 try
                 {
@@ -67,17 +78,17 @@ namespace Rdmp.Core.Repositories
         CHANGETABLE(CHANGES {typeof(T).Name}, {_changeTracking}) AS CT  
 	    WHERE SYS_CHANGE_OPERATION = 'D'";
 
-                        using(var cmd = _repository.DiscoveredServer.GetCommand(sql, con))
-                            using(var r = cmd.ExecuteReader())
-                                while (r.Read())
-                                {
-                                    //it might have been added and deleted by someone else and we never saw it
-                                    var d = _cachedObjects.SingleOrDefault(o => o.ID == (int)r["ID"]);
+                        using (var cmd = _repository.DiscoveredServer.GetCommand(sql, con))
+                        using (var r = cmd.ExecuteReader())
+                            while (r.Read())
+                            {
+                                //it might have been added and deleted by someone else and we never saw it
+                                var d = _cachedObjects.SingleOrDefault(o => o.ID == (int) r["ID"]);
 
-                                    if (d != null)
-                                        _cachedObjects.Remove(d);
+                                if (d != null)
+                                    _cachedObjects.Remove(d);
 
-                                }
+                            }
                     }
 
                     //get new objects
@@ -85,13 +96,18 @@ namespace Rdmp.Core.Repositories
                     _cachedObjects.AddRange(_repository.GetAllObjects<T>("WHERE ID > " + maxId));
 
                     // Get updated objects
-                    var changedObjects = _repository.GetAllObjects<T>("WHERE RowVer > " + ByteArrayToString(_maxRowVer));
+                    var changedObjects =
+                        _repository.GetAllObjects<T>("WHERE RowVer > " + ByteArrayToString(_maxRowVer));
                     //I'm hoping Union prefers references in the LHS of this since they will be fresher!
                     _cachedObjects = changedObjects.Union(_cachedObjects).ToList();
 
                     UpdateMaxRowVer();
 
                     return _cachedObjects;
+                }
+                catch (SqlException ex)
+                {
+                    BrokenReason = ex;
                 }
                 finally
                 {
@@ -102,6 +118,7 @@ namespace Rdmp.Core.Repositories
             //we were unable to get a lock
             return _repository.GetAllObjectsNoCache<T>().ToList();
         }
+
 
         private void UpdateMaxRowVer()
         {

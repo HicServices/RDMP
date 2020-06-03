@@ -383,7 +383,7 @@ This will not help you avoid bad data as the full file structure must still be r
                 throw new Exception("Could not open file " + fileToLoad.FullName + " because the file Separator has not been set yet, make sure to set all relevant [DemandsInitialization] properties");
 
             StreamReader sr = new StreamReader(fileToLoad.FullName);
-            _reader = new CsvReader(sr, new Configuration()
+            _reader = new CsvReader(sr, new CsvConfiguration(Culture)
             {
                 Delimiter = Separator,
                 HasHeaderRecord = string.IsNullOrWhiteSpace(ForceHeaders),

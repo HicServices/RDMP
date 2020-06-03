@@ -461,6 +461,12 @@ namespace Rdmp.UI.Collections
 
                     var factory = new AtomicCommandUIFactory(_activator);
 
+                    if (many.Cast<object>().All(d => d is IDisableable))
+                    {
+                        var mi = factory.CreateMenuItem(new ExecuteCommandDisableOrEnable(_activator, many.Cast<IDisableable>().ToArray()));
+                        menu.Items.Add(mi);
+                    }
+
                     if (many.Cast<object>().All(d => d is IDeleteable))
                     {
                         var mi = factory.CreateMenuItem(new ExecuteCommandDelete(_activator, many.Cast<IDeleteable>().ToArray()));
