@@ -4,8 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Windows.Forms;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.Menus
 {
@@ -13,6 +16,7 @@ namespace Rdmp.UI.Menus
     class ProjectMenu:RDMPContextMenuStrip
     {
         private readonly Project _project;
+        private const string AddProjectSpecificCatalogueMenuText = "Add Project Specific Catalogue";
 
         public ProjectMenu(RDMPContextMenuStripArgs args, Project project)
             : base(args,project)
@@ -21,7 +25,16 @@ namespace Rdmp.UI.Menus
 
             Add(new ExecuteCommandRelease(_activator).SetTarget(project));
             Add(new ExecuteCommandExecuteExtractionConfiguration(_activator).SetTarget(project));
-            Add(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator).SetTarget(_project));
+
+            Add(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator)
+            {
+                OverrideCommandName = "From File..."
+            }.SetTarget(project), Keys.None, AddProjectSpecificCatalogueMenuText,_activator.CoreIconProvider.GetImage(RDMPConcept.ProjectCatalogue,OverlayKind.Add));
+            
+            Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator)
+            {
+                OverrideCommandName = "From Database..."
+            }.SetTarget(project), Keys.None, AddProjectSpecificCatalogueMenuText);
         }
 
     }

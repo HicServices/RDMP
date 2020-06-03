@@ -8,6 +8,7 @@ using System.Drawing;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
@@ -16,10 +17,17 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable:BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable:BasicUICommandExecution,IAtomicCommand,IAtomicCommandWithTarget
     {
-        
+        private Project _project;
+
         public CatalogueFolder TargetFolder { get; set; }
+        
+        /// <summary>
+        /// Create a project specific Catalogue when command is executed by prompting the user to first pick a project
+        /// </summary>
+        public bool PromptForProject { get; set; }
+
         public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IActivateItems activator) : base(activator)
         {
             UseTripleDotSuffix = true;
@@ -28,15 +36,32 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
+            
+            if(PromptForProject)
+                if (SelectOne(Activator.RepositoryLocator.DataExportRepository, out Project p))
+                    _project = p;
+                else
+                    return; //dialogue was cancelled
 
             var importTable = new ImportSQLTableUI(Activator,true){
                 TargetFolder = TargetFolder};
+
+            if (_project != null)
+                importTable.SetProjectSpecific(_project);
+
             importTable.ShowDialog();
         }
 
         public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import);
+        }
+        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+        {
+            if(target is Project)
+                _project = (Project)target;
+
+            return this;
         }
 
         public override string GetCommandHelp()

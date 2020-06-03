@@ -12,6 +12,7 @@ using FAnsi.Discovery;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using Rdmp.UI.ItemActivation;
@@ -40,6 +41,8 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
         public ITableInfoImporter Importer { get; private set; }
         public TableInfo TableInfoCreatedIfAny { get; private set; }
         public CatalogueFolder TargetFolder { get; set; }
+
+        private Project _projectSpecific;
 
         public ImportSQLTableUI(IActivateItems activator,bool allowImportAsCatalogue):base(activator)
         {
@@ -91,7 +94,7 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
 
             if(_allowImportAsCatalogue)
             {
-                var ui = new ConfigureCatalogueExtractabilityUI(Activator, Importer, "Existing Table", null)
+                var ui = new ConfigureCatalogueExtractabilityUI(Activator, Importer, "Existing Table", _projectSpecific)
                 {
                     TargetFolder = TargetFolder
                 };
@@ -142,6 +145,11 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
         private void ddContext_SelectedIndexChanged(object sender, EventArgs e)
         {
             AdjustImporter();
-        }    
+        }
+
+        public void SetProjectSpecific(Project project)
+        {
+            _projectSpecific = project;
+        }
     }
 }

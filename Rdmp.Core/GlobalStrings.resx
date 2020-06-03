@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CreateNewCatalogueByImportingExistingDataTable" xml:space="preserve">
-    <value>New Catalogue From Existing Database Table</value>
+    <value>New Catalogue From Existing Database Table...</value>
   </data>
   <data name="CreateNewCatalogueByImportingFile" xml:space="preserve">
-    <value>New Catalogue From File</value>
+    <value>New Catalogue From File...</value>
   </data>
   <data name="CreateNewCatalogueByImportingFileHelp" xml:space="preserve">
     <value>Creates a NEW data table in your database and an extractable Catalogue reference to it in RDMP.  Table generated will be based on the file selected for import.</value>
