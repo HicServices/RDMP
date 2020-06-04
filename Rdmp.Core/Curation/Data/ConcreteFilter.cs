@@ -171,5 +171,8 @@ namespace Rdmp.Core.Curation.Data
 
             new FilterSyntaxChecker(this).Check(notifier);
         }
+        
+        /// <inheritdoc />
+        public abstract bool ShouldBeReadOnly(out string reason);
     }
 }

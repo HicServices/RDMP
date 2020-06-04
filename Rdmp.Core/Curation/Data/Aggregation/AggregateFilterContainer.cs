@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Curation.Data.Aggregation
@@ -65,7 +66,25 @@ namespace Rdmp.Core.Curation.Data.Aggregation
             var agg = GetAggregate();
             return agg != null?agg.Catalogue:null;
         }
-        
+
+        /// <summary>
+        /// Returns true if the filter container belongs to a parent <see cref="CohortIdentificationConfiguration"/> that is frozen
+        /// </summary>
+        /// <param name="reason"></param>
+        /// <returns></returns>
+        public override bool ShouldBeReadOnly(out string reason)
+        {
+            var cic = GetAggregate()?.GetCohortIdentificationConfigurationIfAny();
+            if (cic == null || !cic.Frozen)
+            {
+                reason = null;
+                return false;
+            }
+
+            reason = cic.Name + " is Frozen";
+            return true;
+        }
+
         /// <summary>
         /// Creates a copy of the current AggregateFilterContainer including new copies of all subcontainers, filters (including those in subcontainers) and paramaters of those 
         /// filters.  This is a recursive operation that will clone the entire tree no matter how deep.

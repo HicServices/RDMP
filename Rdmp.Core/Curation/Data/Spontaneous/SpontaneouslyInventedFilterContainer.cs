@@ -54,5 +54,10 @@ namespace Rdmp.Core.Curation.Data.Spontaneous
             return null;
         }
 
+        public override bool ShouldBeReadOnly(out string reason)
+        {
+            reason = null;
+            return false;
+        }
     }
 }

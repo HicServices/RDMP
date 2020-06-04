@@ -43,7 +43,21 @@ namespace Rdmp.Core.DataExport.Data
             var sel = GetSelectedDataSetIfAny();
             return sel != null ? (Catalogue)sel.ExtractableDataSet.Catalogue : null;
         }
-        
+
+        public override bool ShouldBeReadOnly(out string reason)
+        {
+            var ec = GetSelectedDataSetsRecursively()?.ExtractionConfiguration;
+
+            if (ec == null || !ec.IsReleased)
+            {
+                reason = null;
+                return false;
+            }
+
+            reason = ec + " has already been released";
+            return true;
+        }
+
         /// <summary>
         /// Returns the <see cref="ConcreteContainer.Operation"/> "AND" or "OR"
         /// </summary>

@@ -90,5 +90,12 @@ namespace Rdmp.Core.Curation.Data.Spontaneous
         {
             return null;
         }
+
+        public override bool ShouldBeReadOnly(out string reason)
+        {
+            //Spontaneous filters should never be considered readonly
+            reason = null;
+            return false;
+        }
     }
 }

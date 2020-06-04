@@ -170,6 +170,20 @@ namespace Rdmp.Core.DataExport.Data
             checker.Check(notifier);
         }
 
+        public override bool ShouldBeReadOnly(out string reason)
+        {
+            var ec = GetDataset()?.ExtractionConfiguration;
+
+            if (ec == null || !ec.IsReleased)
+            {
+                reason = null;
+                return false;
+            }
+
+            reason = ec + " has already been released";
+            return true;
+        }
+
         /// <summary>
         /// Returns the configuration and dataset (<see cref="ISelectedDataSets"/>) in which the filter is declared.  This involves traversing
         /// up any nested <see cref="FilterContainer"/>s to the root.
