@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Changed
+
+- Improved layout of query building errors in QueryBuilder SQL viewing user interfaces
+
 ## [4.1.2] - 2020-06-03
 
 ### Added
