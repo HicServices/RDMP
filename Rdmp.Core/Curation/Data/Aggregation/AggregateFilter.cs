@@ -173,19 +173,6 @@ namespace Rdmp.Core.Curation.Data.Aggregation
             checker.Check(notifier);
         }
 
-        public override bool ShouldBeReadOnly(out string reason)
-        {
-            var cic = GetAggregate()?.GetCohortIdentificationConfigurationIfAny();
-            if (cic == null || !cic.Frozen)
-            {
-                reason = null;
-                return false;
-            }
-
-            reason = cic.Name + " is Frozen";
-            return true;
-        }
-
         /// <summary>
         /// Removes the AggregateFilter from any AggregateFilterContainer (AND/OR) that it might be a part of 
         /// effectively turning it into a disconnected orphan.

@@ -84,18 +84,6 @@ namespace Rdmp.Core.Curation.Data
         {
             return ExtractionInformation.CatalogueItem.Catalogue;
         }
-
-        /// <summary>
-        /// Returns false, Catalogue filters are never readonly
-        /// </summary>
-        /// <param name="reason"></param>
-        /// <returns></returns>
-        public override bool ShouldBeReadOnly(out string reason)
-        {
-            reason = null;
-            return false;
-        }
-
         /// <inheritdoc/>
         public override ISqlParameter[] GetAllParameters()
         {

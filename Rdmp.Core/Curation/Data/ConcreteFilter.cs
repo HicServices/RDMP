@@ -171,8 +171,13 @@ namespace Rdmp.Core.Curation.Data
 
             new FilterSyntaxChecker(this).Check(notifier);
         }
-        
+
         /// <inheritdoc />
-        public abstract bool ShouldBeReadOnly(out string reason);
+        public bool ShouldBeReadOnly(out string reason)
+        {
+            reason = null;
+            return FilterContainer?.ShouldBeReadOnly(out reason) ?? false;
+        }
+
     }
 }
