@@ -75,11 +75,8 @@ namespace Rdmp.UI.SubComponents
             }
             catch (Exception ex)
             {
-                QueryEditor.Text = "Could not build Sql:" + ex.Message;
-                CommonFunctionality.ScintillaGoRed(QueryEditor, true);
-                CommonFunctionality.Fatal("Failed to build query" ,ex);
+                CommonFunctionality.ScintillaGoRed(QueryEditor, ex);
             }
-            
             
             QueryEditor.ReadOnly = true;
         }
