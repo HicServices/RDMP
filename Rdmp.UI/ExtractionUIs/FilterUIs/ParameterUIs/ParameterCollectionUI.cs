@@ -173,6 +173,12 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
                 olvParameterSQL.IsEditable = true;
             }
 
+            if (Options.ReadOnly)
+            {
+                olvParameters.DisableObjects(parameters);
+                return;
+            }
+
             //enable all
             olvParameters.EnableObjects(parameters);
             //disable all rows which are overridden or are from a higher level than the one the user is currently editing

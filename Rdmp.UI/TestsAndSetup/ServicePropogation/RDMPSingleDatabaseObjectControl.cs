@@ -41,6 +41,11 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         public DatabaseEntity DatabaseObject { get; private set; }
         protected RDMPCollection AssociatedCollection = RDMPCollection.None;
 
+        /// <summary>
+        /// True if the hosted <see cref="DatabaseObject"/> <see cref="IMightBeReadOnly.ShouldBeReadOnly"/>.  This property is detected and update during SetDatabaseObject so use it only after this call has been made
+        /// </summary>
+        public bool ReadOnly { get; set; }
+
         protected RDMPSingleDatabaseObjectControl()
         {
             CommonFunctionality.ToolStripAddedToHost += CommonFunctionality_ToolStripAddedToHost;
@@ -74,8 +79,10 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
                 _readonlyIndicator.Size = new Size(150, 20);
                 _readonlyIndicator.TabIndex = 0;
                 _readonlyIndicator.TextAlign = ContentAlignment.MiddleLeft;
-                _readonlyIndicator.BackColor = Color.Cornsilk;
-                _readonlyIndicator.ForeColor = Color.Black;
+                _readonlyIndicator.BackColor = System.Drawing.SystemColors.HotTrack;
+                _readonlyIndicator.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                _readonlyIndicator.ForeColor = System.Drawing.Color.Moccasin;
+
             }
 
             if (databaseObject is IMightBeReadOnly ro)
@@ -84,11 +91,13 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
                 {
                     _readonlyIndicator.Text = reason;
                     this.Controls.Add(this._readonlyIndicator);
+                    ReadOnly = true;
                 }
                 else
                 {
                     //removing it allows us to handle refreshes (where something becomes unfrozen for example)
                     this.Controls.Remove(this._readonlyIndicator);
+                    ReadOnly = false;
                 }
             }
             
