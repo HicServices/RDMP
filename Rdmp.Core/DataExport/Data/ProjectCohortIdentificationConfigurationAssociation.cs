@@ -122,7 +122,8 @@ namespace Rdmp.Core.DataExport.Data
 
         public bool ShouldBeReadOnly(out string reason)
         {
-            return CohortIdentificationConfiguration.ShouldBeReadOnly(out reason);
+            reason = null;
+            return CohortIdentificationConfiguration?.ShouldBeReadOnly(out reason) ?? false;
         }
 
         /// <inheritdoc/>
