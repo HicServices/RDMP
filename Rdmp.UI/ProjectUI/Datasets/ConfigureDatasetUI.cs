@@ -97,7 +97,11 @@ namespace Rdmp.UI.ProjectUI.Datasets
             if (ec != null && ec.IsOutOfSync())
             {
                 var ms = new ContextMenuStrip();
-                ms.Items.Add(new ToolStripMenuItem("Update With Catalogue Settings", null,(s,x)=> ec.UpdateValuesToMatch(ec.CatalogueExtractionInformation)));
+                ms.Items.Add(
+                    new ToolStripMenuItem("Update With Catalogue Settings", null,(s,x)=> ec.UpdateValuesToMatch(ec.CatalogueExtractionInformation))
+                    {
+                        Enabled = !ReadOnly
+                    });
 
                 e.MenuStrip = ms;
             }
@@ -357,6 +361,11 @@ namespace Rdmp.UI.ProjectUI.Datasets
             CommonFunctionality.Add(new ExecuteCommandExecuteExtractionConfiguration(activator, databaseObject));
 
             CommonFunctionality.AddChecks(new SelectedDataSetsChecker(SelectedDataSet));
+
+            btnExclude.Enabled = !ReadOnly;
+            btnExcludeAll.Enabled = !ReadOnly;
+            btnInclude.Enabled = !ReadOnly;
+            olvJoin.Enabled = !ReadOnly;
         }
 
         public override string GetTabName()

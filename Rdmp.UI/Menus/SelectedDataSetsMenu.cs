@@ -51,8 +51,8 @@ namespace Rdmp.UI.Menus
             if(availableGraphs.Length > 1)
                 graphs.DropDownItems.Add("All", null, (s,e)=>GenerateExtractionGraphs(availableGraphs));
 
-            //must not be relased and must have graphs available and must have a cohort
-            graphs.Enabled = !_extractionConfiguration.IsReleased && graphs.DropDownItems.Count > 0 && _extractionConfiguration.Cohort_ID != null;
+            //must have graphs available and must have a cohort
+            graphs.Enabled = graphs.DropDownItems.Count > 0 && _extractionConfiguration.Cohort_ID != null;
             Items.Add(graphs);
             ////////////////////////////////////////////////////////////////////
             
