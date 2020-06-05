@@ -537,6 +537,11 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             //enforcing the naming convention on cic aggregates can result in ObjectSaverButton incorrectly getting enabled
             GetObjectSaverButton()?.Enable(false);
 
+            tbName.Enabled = !ReadOnly;
+            QueryHaving.ReadOnly = ReadOnly;
+            olvJoin.Enabled = !ReadOnly;
+            selectColumnUI1.Enabled = !ReadOnly;
+            
             isRefreshing = false;
         }
 
