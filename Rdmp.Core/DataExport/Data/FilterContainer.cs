@@ -48,14 +48,13 @@ namespace Rdmp.Core.DataExport.Data
         {
             var ec = GetSelectedDataSetsRecursively()?.ExtractionConfiguration;
 
-            if (ec == null || !ec.IsReleased)
+            if (ec == null)
             {
                 reason = null;
                 return false;
             }
 
-            reason = ec + " has already been released";
-            return true;
+            return ec.ShouldBeReadOnly(out reason);
         }
 
         /// <summary>

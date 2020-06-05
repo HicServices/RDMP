@@ -75,14 +75,13 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         public override bool ShouldBeReadOnly(out string reason)
         {
             var cic = GetAggregate()?.GetCohortIdentificationConfigurationIfAny();
-            if (cic == null || !cic.Frozen)
+            if (cic == null)
             {
                 reason = null;
                 return false;
             }
 
-            reason = cic.Name + " is Frozen";
-            return true;
+            return cic.ShouldBeReadOnly(out reason);
         }
 
         /// <summary>
