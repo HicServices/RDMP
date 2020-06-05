@@ -33,7 +33,7 @@ namespace Rdmp.Core.Curation.Data
     /// ('result is clinically significant').  Each subcontainer / IFilter are seperated with the Operation (See FilterContainerOperation) when building SQL
     /// (See SqlQueryBuilderHelper).
     /// </summary>
-    public interface IContainer: IRevertable
+    public interface IContainer: IRevertable,IMightBeReadOnly
     {
 
         /// <summary>
@@ -113,5 +113,6 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         /// <returns></returns>
         Catalogue GetCatalogueIfAny();
+
     }
 }

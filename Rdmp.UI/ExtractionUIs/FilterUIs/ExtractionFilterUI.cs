@@ -221,6 +221,12 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
 
             CommonFunctionality.AddChecks(databaseObject);
             CommonFunctionality.StartChecking();
+
+            QueryEditor.ReadOnly = ReadOnly;
+            tbFilterName.ReadOnly = ReadOnly;
+            tbFilterDescription.ReadOnly = ReadOnly;
+            cbIsMandatory.Enabled = !ReadOnly;
+
             _loading = false;
         }
 

@@ -60,6 +60,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 else
                 if(aggregateConfiguration.IsJoinablePatientIndexTable() && !aggregateConfiguration.IsDisabled)
                     SetImpossible("Joinable Patient Index Tables cannot be disabled");
+
+            if(target is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out string reason))
+                SetImpossible(reason);
+                
         }
 
         public override void Execute()

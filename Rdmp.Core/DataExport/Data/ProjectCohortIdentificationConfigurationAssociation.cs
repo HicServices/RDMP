@@ -120,6 +120,12 @@ namespace Rdmp.Core.DataExport.Data
             return assoc == null ? "Orphan Association" :assoc.Name;
         }
 
+        public bool ShouldBeReadOnly(out string reason)
+        {
+            reason = null;
+            return CohortIdentificationConfiguration?.ShouldBeReadOnly(out reason) ?? false;
+        }
+
         /// <inheritdoc/>
         public string GetDeleteMessage()
         {

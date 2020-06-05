@@ -35,6 +35,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if(_deletables.Any( d => d is CohortAggregateContainer c && c.IsRootContainer()))
                 SetImpossible("Cannot delete root containers");
+            
+            string reason = "";
+
+            if (_deletables.Any(d => d is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out reason)))
+                SetImpossible(reason);
         }
         public override void Execute()
         {

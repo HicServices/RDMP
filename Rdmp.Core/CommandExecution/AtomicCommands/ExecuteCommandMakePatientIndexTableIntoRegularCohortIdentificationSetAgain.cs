@@ -25,6 +25,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             
             if(_sourceAggregateCommand.JoinableUsersIfAny.Any())
                 SetImpossible("The following Cohort Set(s) use this PatientIndex table:" + string.Join(",",_sourceAggregateCommand.JoinableUsersIfAny.Select(j=>j.ToString())));
+
+            if(_targetCohortAggregateContainer.ShouldBeReadOnly(out string reason))
+                SetImpossible(reason);
         }
 
         public override void Execute()

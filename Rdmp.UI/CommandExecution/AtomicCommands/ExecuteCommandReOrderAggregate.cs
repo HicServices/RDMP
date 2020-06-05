@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution.Combining;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.UI.ItemActivation;
@@ -53,6 +54,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             _targetOrder = target;
             _insertOption = insertOption;
+            
+            if(target is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out string reason))
+                SetImpossible(reason);
         }
 
         public override void Execute()

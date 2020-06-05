@@ -24,6 +24,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if(nameable is ITableInfo)
                 SetImpossible("TableInfos cannot not be renamed");
+            
+            if (nameable is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out string reason))
+                SetImpossible(reason);
         }
 
         [UseWithObjectConstructor]

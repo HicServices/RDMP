@@ -28,7 +28,7 @@ namespace Rdmp.Core.DataExport.Data
     /// <para>If you need to perform a repeat extraction (e.g. an update of data 5 years on) then you should 'Clone' the ExtractionConfiguration in the Project and give it a new name 
     /// e.g. 'Cases - 5 year update'.</para>
     /// </summary>
-    public interface IExtractionConfiguration:INamed,IHasDependencies
+    public interface IExtractionConfiguration:INamed,IHasDependencies, IMightBeReadOnly
     {
         IDataExportRepository DataExportRepository { get; }
 

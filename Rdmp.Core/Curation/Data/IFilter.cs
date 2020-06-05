@@ -17,7 +17,7 @@ namespace Rdmp.Core.Curation.Data
     /// A line of WHERE sql which can be combined in IContainers.  IFilters can be either ConcreteFilter (there is persisted user defined database object that makes 
     /// up the IFilter) or SpontaneouslyInventedFilter.
     /// </summary>
-    public interface IFilter : ICollectSqlParameters, INamed,IHasQuerySyntaxHelper,ICheckable
+    public interface IFilter : ICollectSqlParameters, INamed,IHasQuerySyntaxHelper,ICheckable, IMightBeReadOnly
     {
         /// <summary>
         /// Single line of WHERE Sql for use in query generation.  Does not include the WHERE keyword.

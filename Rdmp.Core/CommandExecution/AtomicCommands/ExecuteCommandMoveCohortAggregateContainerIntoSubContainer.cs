@@ -24,6 +24,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if(_sourceCohortAggregateContainer.AggregateContainer.Equals(_targetCohortAggregateContainer))
                 SetImpossible("Cannot move a container into itself");
+            
+            if(_targetCohortAggregateContainer.ShouldBeReadOnly(out string reason))
+                SetImpossible(reason);
         }
 
         public override void Execute()
