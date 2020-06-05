@@ -23,10 +23,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if(sourceAggregateConfigurationCommand.JoinableDeclarationIfAny != null)
                 SetImpossible("Aggregate is already a Patient Index Table");
 
-            if(_sourceAggregateConfigurationCombineable.CohortIdentificationConfigurationIfAny != null &&
-                _sourceAggregateConfigurationCombineable.CohortIdentificationConfigurationIfAny.ID != _cohortIdentificationConfiguration.ID)
-                SetImpossible("Aggregate '" + _sourceAggregateConfigurationCombineable.Aggregate + "'  belongs to a different Cohort Identification Configuration");
+            var cic = _sourceAggregateConfigurationCombineable.CohortIdentificationConfigurationIfAny;
 
+            if( cic != null && cic.ID != _cohortIdentificationConfiguration.ID)
+                SetImpossible("Aggregate '" + _sourceAggregateConfigurationCombineable.Aggregate + "'  belongs to a different Cohort Identification Configuration");
+            
+            if(cic != null && cic.ShouldBeReadOnly(out string reason))
+                SetImpossible(reason);
         }
 
         public override void Execute()

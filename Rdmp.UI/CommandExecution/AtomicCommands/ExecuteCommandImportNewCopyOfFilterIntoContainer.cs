@@ -31,6 +31,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                         SetImpossible("Cannot Import Filter from '" + _filterCombineable.SourceCatalogueIfAny + "' into '" + targetCatalogue +"'");
 
             }
+
+            if(targetContainer.ShouldBeReadOnly(out string reason))
+                SetImpossible(reason);
         }
 
         public override void Execute()
