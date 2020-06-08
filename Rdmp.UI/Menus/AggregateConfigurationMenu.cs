@@ -85,11 +85,9 @@ namespace Rdmp.UI.Menus
             {
                 //with a cic (it really should do!)
                 var cic = aggregate.GetCohortIdentificationConfigurationIfAny();
-
+                
                 if (cic != null)
                 {
-                    AddGoTo<CohortIdentificationConfiguration>(cic.ID);
-
                     //find other non cohort aggregates (graphs) 
                     var graphsAvailableInCatalogue = CohortSummaryQueryBuilder.GetAllCompatibleSummariesForCohort(aggregate);
 
@@ -120,7 +118,6 @@ namespace Rdmp.UI.Menus
                 }
             }
 
-            AddGoTo<Catalogue>(aggregate.Catalogue_ID);
         }
 
         private void ClearShortcut()

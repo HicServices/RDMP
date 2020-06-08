@@ -34,10 +34,6 @@ namespace Rdmp.UI.Menus
 
             Add(new ExecuteCommandAnonymiseColumnInfo(_activator, columnInfo));
             
-            AddGoTo<TableInfo>(columnInfo.TableInfo_ID, "Table");
-            AddGoTo(()=>_activator.CoreChildProvider.AllCatalogueItems.Where(ci=>ci.ColumnInfo_ID == columnInfo.ID),"Catalogue Item(s)");
-            AddGoTo<ANOTable>(columnInfo.ANOTable_ID);
-
             Add(new ExecuteCommandAlterColumnType(_activator, columnInfo), Keys.None, Alter);
         }
     }

@@ -53,9 +53,6 @@ namespace Rdmp.UI.Menus
 
             Add(new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator));
 
-            if(_activator.CoreChildProvider is DataExportChildProvider dx)
-                AddGoTo(()=>dx.AllProjectAssociatedCics.Where(a=>a.CohortIdentificationConfiguration_ID == cic.ID).Select(a=>a.Project).Distinct(),"Project(s)");
-
             Add(new ExecuteCommandSetQueryCachingDatabase(_activator, cic));
             Add(new ExecuteCommandCreateNewQueryCacheDatabase(_activator,cic));
             

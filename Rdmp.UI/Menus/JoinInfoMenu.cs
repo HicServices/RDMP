@@ -12,7 +12,6 @@ namespace Rdmp.UI.Menus
     {
         public JoinInfoMenu(RDMPContextMenuStripArgs args, JoinInfo j) : base(args, j)
         {
-            AddGoTo<ColumnInfo>(j.ForeignKey_ID,"Foreign Key");
         }
     }
 }
