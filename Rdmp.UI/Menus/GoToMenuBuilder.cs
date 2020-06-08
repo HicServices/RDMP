@@ -31,7 +31,7 @@ namespace Rdmp.UI.Menus
     /// <summary>
     /// Builds the "Go To" submenu for travelling between objects in an RDMP database (e.g. Catalogue to extractions using the Catalogue)
     /// </summary>
-    class GoToMenuBuilder
+    public class GoToMenuBuilder
     {
         private readonly IActivateItems _activator;
         private AtomicCommandUIFactory _commandFactory;
@@ -141,7 +141,9 @@ namespace Rdmp.UI.Menus
                 if(masquerader.MasqueradingAs() is DatabaseEntity m)
                     AddGoTo(menu,m,m.GetType().Name);
             }
-                
+
+            if (menu.DropDownItems.Count == 0)
+                menu.Enabled = false;
 
             return menu;
         }
