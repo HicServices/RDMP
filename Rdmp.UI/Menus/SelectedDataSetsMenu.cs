@@ -34,8 +34,6 @@ namespace Rdmp.UI.Menus
 
             var root = selectedDataSet.RootFilterContainer;
 
-            AddGoTo<Catalogue>(selectedDataSet.ExtractableDataSet.Catalogue_ID);
-
             Add(new ExecuteCommandExecuteExtractionConfiguration(_activator, selectedDataSet));
 
             Add(new ExecuteCommandRelease(_activator).SetTarget(selectedDataSet));

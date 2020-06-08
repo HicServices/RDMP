@@ -26,8 +26,6 @@ namespace Rdmp.UI.Menus
 
             Add(new ExecuteCommandDeprecate(args.ItemActivator, cohort, !cohort.IsDeprecated));
 
-            if (_activator.CoreChildProvider is DataExportChildProvider dx)
-                AddGoTo(dx.ExtractionConfigurations.Where(ec => ec.Cohort_ID == cohort.ID),"Extraction Configurations");
         }
         
         private void ViewTop100()

@@ -29,12 +29,6 @@ namespace Rdmp.UI.Menus
             else
                 Items.Add("Disable Extraction (temporarily)", CatalogueIcons.ExtractableDataSetDisabled,
                     (s, e) => SetDisabled(true));
-
-
-            AddGoTo<Catalogue>(_dataset.Catalogue_ID);
-            
-            if(_activator.CoreChildProvider is DataExportChildProvider dx)
-                AddGoTo(()=>dx.SelectedDataSets.Where(s=>s.ExtractableDataSet_ID == _dataset.ID).Select(s=>s.ExtractionConfiguration),"Extraction Configurations");
         }
 
         private void SetDisabled(bool disable)
