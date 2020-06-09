@@ -31,6 +31,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             if(_insertOption == InsertOption.Default)
                 SetImpossible("Insert must be above/below");
+            
+            if(_targetParent.ShouldBeReadOnly(out string reason))
+                SetImpossible(reason);
         }
 
         public ExecuteCommandReOrderAggregateContainer(IActivateItems activator, CohortAggregateContainerCombineable sourceCohortAggregateContainerCombineable, AggregateConfiguration targetAggregate, InsertOption insertOption):this(activator,targetAggregate,insertOption)

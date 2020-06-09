@@ -82,8 +82,6 @@ namespace Rdmp.UI.Menus
 
             if (tableInfo != null && tableInfo.IsTableValuedFunction)
                 Items.Add("Configure Parameters...", _activator.CoreIconProvider.GetImage(RDMPConcept.ParametersNode), delegate { ConfigureTableInfoParameters(tableInfo); });
-
-            AddGoTo(()=>tableInfo.ColumnInfos.SelectMany(c=>_activator.CoreChildProvider.AllCatalogueItems.Where(ci=>ci.ColumnInfo_ID == c.ID).Select(ci=>ci.Catalogue)).Distinct(),"Catalogue(s)");
         }
 
         private void AddCredentialPermission(TableInfo tableInfo)

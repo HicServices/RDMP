@@ -22,6 +22,11 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
     public class ParameterCollectionUIOptions
     {  
         public ICollectSqlParameters Collector { get; set; }
+        
+        /// <summary>
+        /// True if the <see cref="Collector"/> is <see cref="IMightBeReadOnly"/> and is readonly
+        /// </summary>
+        public bool ReadOnly { get; set; }
         public ParameterLevel CurrentLevel { get; set; }
         public ParameterManager ParameterManager { get; set; }
         private CreateNewSqlParameterHandler _createNewParameterDelegate;
@@ -60,7 +65,11 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
             if (_createNewParameterDelegate == null)
                 if (AnyTableSqlParameter.IsSupportedType(collector.GetType()))
                     _createNewParameterDelegate = CreateNewParameterDefaultImplementation;
+
+            if (collector is IMightBeReadOnly ro)
+                ReadOnly = ro.ShouldBeReadOnly(out _);
         }
+
 
 
         /// <summary>
@@ -111,7 +120,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
 
         public bool ShouldBeReadOnly(ISqlParameter p)
         {
-            return IsOverridden(p) || IsDifferentLevel(p) || p is SpontaneousObject;
+            return ReadOnly || (IsOverridden(p) || IsDifferentLevel(p) || p is SpontaneousObject);
         }
     }
 }

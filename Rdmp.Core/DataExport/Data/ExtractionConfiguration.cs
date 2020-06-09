@@ -355,7 +355,19 @@ namespace Rdmp.Core.DataExport.Data
         {
             return Name;
         }
-        
+
+        public bool ShouldBeReadOnly(out string reason)
+        {
+            if (IsReleased)
+            {
+                reason = ToString() + " has already been released";
+                return true;
+            }
+
+            reason = null;
+            return false;
+        }
+
         /// <summary>
         /// Creates a complete copy of the <see cref="IExtractionConfiguration"/>, all selected datasets, filters etc.  The copy is created directly into
         /// the <see cref="DatabaseEntity.Repository"/> database using a transaction (to prevent a half succesful clone being generated).

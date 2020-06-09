@@ -102,6 +102,7 @@ namespace Rdmp.UI.SubComponents
             tlvCic.ButtonClick += tlvCic_ButtonClick;
             olvOrder.AspectGetter += (o)=> o is JoinableCollectionNode ? null : o is ParametersNode ? null : (o as IOrderable)?.Order;
             olvOrder.IsEditable = false;
+            tlvCic.ItemActivate += TlvCic_ItemActivate;
             AssociatedCollection = RDMPCollection.Cohort;
 
             
@@ -213,14 +214,10 @@ namespace Rdmp.UI.SubComponents
         {
             base.SetDatabaseObject(activator,databaseObject);
             _configuration = databaseObject;
-
-            lblFrozen.Visible = _configuration.Frozen;
-
+            
             tbName.Text = _configuration.Name;
             tbDescription.Text = _configuration.Description;
             ticket.TicketText = _configuration.Ticket;
-            tlvCic.Enabled = !databaseObject.Frozen;
-            
 
             if (_commonFunctionality == null)
             {
@@ -229,6 +226,7 @@ namespace Rdmp.UI.SubComponents
 
                 _commonFunctionality.SetUp(RDMPCollection.Cohort, tlvCic, activator, olvNameCol, olvNameCol, new RDMPCollectionCommonFunctionalitySettings
                 {
+                    SuppressActivate = true,
                     AddFavouriteColumn = false,
                     AddCheckColumn = false,
                     AllowPinning = false,
@@ -266,6 +264,22 @@ namespace Rdmp.UI.SubComponents
             RecreateAllTasks();
         }
 
+        private void TlvCic_ItemActivate(object sender, EventArgs e)
+        {
+            
+            var o = tlvCic.SelectedObject;
+            if (o != null)
+            {
+                var key = GetKey(o);
+                if (key?.CrashMessage != null)
+                {
+                    ViewCrashMessage(key);
+                    return;
+                }
+            }
+                
+            _commonFunctionality.CommonItemActivation(sender, e);
+        }
 
         public override void SetItemActivator(IActivateItems activator)
         {

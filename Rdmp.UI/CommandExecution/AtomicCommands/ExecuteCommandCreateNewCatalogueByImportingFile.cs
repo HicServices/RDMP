@@ -26,6 +26,11 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public CatalogueFolder TargetFolder { get; set; }
 
         public FileInfo File { get; private set; }
+        
+        /// <summary>
+        /// Create a project specific Catalogue when command is executed by prompting the user to first pick a project
+        /// </summary>
+        public bool PromptForProject {get;set; }
 
         private void CheckFile()
         {
@@ -60,6 +65,12 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
+            
+            if(PromptForProject)
+                if (SelectOne(Activator.RepositoryLocator.DataExportRepository, out Project p))
+                    _project = p;
+                else
+                    return; //dialogue was cancelled
 
             var dialog = new CreateNewCatalogueByImportingFileUI(Activator, this)
             {
@@ -74,7 +85,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         public override Image GetImage(IIconProvider iconProvider)
         {
-            return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Add);
+            return _project != null ?
+                iconProvider.GetImage(RDMPConcept.ProjectCatalogue, OverlayKind.Add):
+                iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Add);
         }
 
         public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)

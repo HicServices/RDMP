@@ -156,5 +156,8 @@ namespace Rdmp.Core.Curation.Data
 
             return toReturn;
         }
+
+        /// <inheritdoc />
+        public abstract bool ShouldBeReadOnly(out string reason);
     }
 }

@@ -28,6 +28,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             _aggregateConfigurationCombineable = aggregateConfigurationCommand;
             _targetCohortAggregateContainer = targetCohortAggregateContainer;
+            
+            if(targetCohortAggregateContainer.ShouldBeReadOnly(out string reason))
+                SetImpossible(reason);
         }
 
         public override void Execute()

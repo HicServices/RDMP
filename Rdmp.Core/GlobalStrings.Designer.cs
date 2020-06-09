@@ -97,7 +97,7 @@ namespace Rdmp.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to New Catalogue From Existing Database Table.
+        ///   Looks up a localized string similar to New Catalogue From Existing Database Table....
         /// </summary>
         public static string CreateNewCatalogueByImportingExistingDataTable {
             get {
@@ -115,7 +115,7 @@ namespace Rdmp.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to New Catalogue From File.
+        ///   Looks up a localized string similar to New Catalogue From File....
         /// </summary>
         public static string CreateNewCatalogueByImportingFile {
             get {

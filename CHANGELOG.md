@@ -10,17 +10,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added "Go To" to tab right click context menu (previously only available in collections).
+
+### Changed
+
+- Improved layout of query building errors in QueryBuilder SQL viewing user interfaces
+
+## [4.1.2] - 2020-06-03
+
+### Added
+
+- Ability to create (Project Specific) Catalogues using the Project collection tree view top menu
 - Ability to Enable/Disable many objects at once
 - Catalogue icons under a load now show full range of status icons (e.g. internal / project specific)
 
 ### Changed
 
 - When a load has only one LoadProgress dropdown no longer shows "All available"
-
+- Double clicking a crashed configuration in cohort builder now shows the error message (previously would edit/expand the object).  Error message still accessible via context menu (as previously).
+ 
 ### Fixed
 
+- Fixed Order not being considered 'OutOfSync' on ExtractableColumn
 - Fixed changes to Catalogue visibility checkboxes not being persisted
 - Fixed object caching system when RDMP user has insufficient permissions to view Change Tracking tables. 
+- Fixed UserSettings last column sort order multithreading issue (causing File IO permissions error in rare cases)
 
 ## [4.1.1] - 2020-05-11
 
@@ -416,7 +430,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.1.1...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.1.2...develop
+[4.1.2]: https://github.com/HicServices/RDMP/compare/v4.1.1...v4.1.2
 [4.1.1]: https://github.com/HicServices/RDMP/compare/v4.1.0...v4.1.1
 [4.1.0]: https://github.com/HicServices/RDMP/compare/v4.0.3...v4.1.0
 [4.0.3]: https://github.com/HicServices/RDMP/compare/v4.0.2...v4.0.3

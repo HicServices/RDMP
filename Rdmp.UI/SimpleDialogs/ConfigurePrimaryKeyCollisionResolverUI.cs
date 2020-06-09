@@ -128,10 +128,11 @@ namespace Rdmp.UI.SimpleDialogs
                 //this is used only to generate the SQL preview of how to resolve primary key collisions so no username/password is required - hence the null,null
                 PrimaryKeyCollisionResolver resolver = new PrimaryKeyCollisionResolver(_table);
                 QueryEditor.Text = resolver.GenerateSQL();
+                CommonFunctionality.ScintillaGoRed(QueryEditor,false);
             }
             catch (Exception e)
             {
-                QueryEditor.Text = e.ToString();
+                CommonFunctionality.ScintillaGoRed(QueryEditor,e);
             }
 
             QueryEditor.ReadOnly = true;

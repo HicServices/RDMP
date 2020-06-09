@@ -259,7 +259,11 @@ namespace Rdmp.Core.DataExport.Data
             var ei = CatalogueExtractionInformation;
 
             if (ei != null)
-                if (ei.IsExtractionIdentifier != IsExtractionIdentifier || IsPrimaryKey != ei.IsPrimaryKey || ei.SelectSQL != SelectSQL || ei.HashOnDataRelease != HashOnDataRelease)
+                if (ei.IsExtractionIdentifier != IsExtractionIdentifier ||
+                    IsPrimaryKey != ei.IsPrimaryKey ||
+                    ei.SelectSQL != SelectSQL || 
+                    ei.Order != Order || 
+                    ei.HashOnDataRelease != HashOnDataRelease)
                     return true;
 
             return false;

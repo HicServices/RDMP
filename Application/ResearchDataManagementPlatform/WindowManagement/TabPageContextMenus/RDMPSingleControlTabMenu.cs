@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Menus;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 
 namespace ResearchDataManagementPlatform.WindowManagement.TabPageContextMenus
@@ -28,6 +29,13 @@ namespace ResearchDataManagementPlatform.WindowManagement.TabPageContextMenus
             Items.Add("Close All But This", null, (s, e) => windowManager.CloseAllButThis(tab));
 
             Items.Add("Show", null, (s, e) => tab.HandleUserRequestingEmphasis(activator));
+
+            if (tab is PersistableSingleDatabaseObjectDockContent single)
+            {
+                var builder = new GoToMenuBuilder(activator);
+                Items.Add(builder.GetMenu(single.DatabaseObject));
+            }
+
             Items.Add("Refresh", FamFamFamIcons.arrow_refresh, (s, e) => _tab.HandleUserRequestingTabRefresh(activator));
 
             var help = new ToolStripMenuItem("Help", FamFamFamIcons.help, (s, e) => _tab.ShowHelp(activator));

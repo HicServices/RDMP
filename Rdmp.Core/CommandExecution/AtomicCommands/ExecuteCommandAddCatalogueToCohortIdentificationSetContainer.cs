@@ -37,6 +37,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if(!catalogueCombineable.ContainsAtLeastOneExtractionIdentifier)
                 SetImpossible("Catalogue " + catalogueCombineable.Catalogue + " does not contain any IsExtractionIdentifier columns");
+            
+            if(targetCohortAggregateContainer.ShouldBeReadOnly(out string reason))
+                SetImpossible(reason);
         }
 
         public override void Execute()

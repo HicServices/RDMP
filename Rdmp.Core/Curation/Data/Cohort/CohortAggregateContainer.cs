@@ -30,7 +30,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
     /// <para>EXCEPT - Take patients in the first child container/aggregate and discard any appearing in subsequent child containers/aggregates</para>
     /// 
     /// </summary>
-    public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisableable
+    public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisableable, IMightBeReadOnly
     {
         #region Database Properties
 
@@ -210,6 +210,19 @@ namespace Rdmp.Core.Curation.Data.Cohort
         public override string ToString()
         {
             return Name;
+        }
+
+        public bool ShouldBeReadOnly(out string reason)
+        {
+            var cic = GetCohortIdentificationConfiguration();
+
+            if (cic == null)
+            {
+                reason = null;
+                return false;
+            }
+
+            return cic.ShouldBeReadOnly(out reason);
         }
 
         /// <summary>

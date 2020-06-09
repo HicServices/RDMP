@@ -121,6 +121,11 @@ namespace Rdmp.Core.DataExport.Data
             return ExtractableDataSet.ToString();
         }
 
+        public bool ShouldBeReadOnly(out string reason)
+        {
+            return ExtractionConfiguration.ShouldBeReadOnly(out reason);
+        }
+
         /// <inheritdoc/>
         public string GetDeleteMessage()
         {

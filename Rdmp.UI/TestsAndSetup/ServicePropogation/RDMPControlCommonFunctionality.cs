@@ -14,6 +14,7 @@ using Rdmp.UI.ChecksUI;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
 
@@ -464,6 +465,23 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
                 //resets styling
                 queryEditor.Text = queryEditor.Text;
             }
+        }
+
+        public void ScintillaGoRed(Scintilla queryEditor, Exception exception)
+        {
+            queryEditor.ReadOnly = false;
+
+            queryEditor.Text =
+                $@"{ExceptionHelper.ExceptionToListOfInnerMessages(exception)}
+
+Technical Detail:
+Type:{exception.GetType()}
+Stack Trace:{exception.StackTrace}";
+            
+            queryEditor.ReadOnly = true;
+
+            //go red after you have set the text
+            ScintillaGoRed(queryEditor,true);
         }
     }
 }
