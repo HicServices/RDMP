@@ -20,7 +20,7 @@ namespace Rdmp.Core.Tests.CommandLine
         [TestCase("NewObject Catalogue \"'trog dor'\"","'trog dor'")]
         [TestCase("NewObject Catalogue '\"trog dor\"'","\"trog dor\"")]
 
-        public void TestRdmpScript_NewObject(string command, string expectedName)
+        public void RdmpScript_NewObject_Catalogue(string command, string expectedName)
         {
             foreach(var c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
                 c.DeleteInDatabase();
@@ -45,7 +45,10 @@ namespace Rdmp.Core.Tests.CommandLine
 
         [TestCase("NewObject Catalogue 'fffff'","NewObject CatalogueItem Catalogue:*fff* 'bbbb'","bbbb")]
         [TestCase("NewObject Catalogue '\"fff\"'","NewObject CatalogueItem 'Catalogue:\"fff\"' 'bbbb'","bbbb")]
-        public void RdmpScriptNewCatalogueItem_BasicName(string cataCommand,string cataItemCommand, string expectedCataItemName)
+        [TestCase("NewObject Catalogue '\"ff ff\"'","NewObject CatalogueItem 'Catalogue:\"ff ff\"' 'bb bb'","bb bb")]
+        [TestCase("NewObject Catalogue '\"ff ff\"'","NewObject CatalogueItem 'Catalogue:\"ff ff\"' bb'bb","bb'bb")]
+        [TestCase("NewObject Catalogue '\"ff ff\"'","NewObject CatalogueItem 'Catalogue:\"ff ff\"' b\"b'bb'","b\"b'bb'")]
+        public void RdmpScript_NewObject_CatalogueItem(string cataCommand,string cataItemCommand, string expectedCataItemName)
         {
             foreach(var c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
                 c.DeleteInDatabase();
@@ -82,6 +85,14 @@ namespace Rdmp.Core.Tests.CommandLine
             Assert.AreEqual("CatalogueItem",vals[1]);
             Assert.AreEqual("Catalogue:\"fff\"",vals[2]);
             Assert.AreEqual("bbbb",vals[3]);
+        }
+        [Test]
+        public void Test_SplitCommandLine_QuotesInStrings()
+        {
+            var vals = ExecuteCommandRunner.SplitCommandLine("NewObject CatalogueItem bb\"'bb'").ToArray();
+            Assert.AreEqual("NewObject",vals[0]);
+            Assert.AreEqual("CatalogueItem",vals[1]);
+            Assert.AreEqual("bb\"'bb'",vals[2]);
         }
     }
 }

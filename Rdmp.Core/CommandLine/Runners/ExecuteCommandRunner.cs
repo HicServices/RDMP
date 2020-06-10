@@ -166,14 +166,10 @@ namespace Rdmp.Core.CommandLine.Runners
             {
                 char c = commandLine[i];
 
-                //if we enter quotes
-                if(inQuotes == null && (c == '\'' || c == '"'))
+                //if we enter quotes and it's the first letter in the word
+                if(inQuotes == null && (c == '\'' || c == '"') && word.Length == 0)
                 {
-                    //if it is the first letter in the word
-                    if(word.Length == 0)
-                    {
-                        inQuotes = c;
-                    }
+                    inQuotes = c;
                 }                
                 else
                 if(c == inQuotes)
