@@ -55,11 +55,18 @@ namespace Rdmp.Core.Repositories.Managers
         /// <returns></returns>
         public string GetKeyFileLocation()
         {
-            return Environment.GetEnvironmentVariable(RDMP_KEY_LOCATION) ?? _knownKeyFileLocation.Value;
+            return _knownKeyFileLocation.Value;
         }
 
         private string GetKeyFileLocationImpl()
         {
+            // Prefer to get it from the environment variable
+            var fromEnvVar = Environment.GetEnvironmentVariable(RDMP_KEY_LOCATION);
+
+            if (fromEnvVar != null)
+                return fromEnvVar;
+
+            //otherwise use the database
             using (var con = _catalogueRepository.DiscoveredServer.GetConnection())
             {
                 con.Open();
