@@ -614,7 +614,7 @@ namespace Tests.Common
         protected void SetupMEF()
         {
             MEF = new MEF();
-            MEF.Setup(new SafeDirectoryCatalog(TestContext.CurrentContext.TestDirectory));
+            MEF.Setup(new SafeDirectoryCatalog(new IgnoreAllErrorsCheckNotifier(),TestContext.CurrentContext.TestDirectory));
             Repository.CatalogueRepository.MEF = MEF;
 
             Validator.RefreshExtraTypes(MEF.SafeDirectoryCatalog,new ThrowImmediatelyCheckNotifier());
