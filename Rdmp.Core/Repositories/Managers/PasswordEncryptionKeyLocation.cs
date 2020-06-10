@@ -26,6 +26,8 @@ namespace Rdmp.Core.Repositories.Managers
     {
         private readonly CatalogueRepository _catalogueRepository;
 
+        public const string RDMP_KEY_LOCATION = "RDMP_KEY_LOCATION";
+
         /// <summary>
         /// Prepares to retrieve/create the key file for the given platform database
         /// </summary>
@@ -53,7 +55,7 @@ namespace Rdmp.Core.Repositories.Managers
         /// <returns></returns>
         public string GetKeyFileLocation()
         {
-            return _knownKeyFileLocation.Value;
+            return Environment.GetEnvironmentVariable(RDMP_KEY_LOCATION) ?? _knownKeyFileLocation.Value;
         }
 
         private string GetKeyFileLocationImpl()
