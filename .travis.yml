@@ -20,9 +20,10 @@ services:
   - mysql
 
 env:
-- MSSQL_SA_PASSWORD="YourStrong!Passw0rd"
-- ACCEPT_EULA=Y
-- MSSQL_PID='developer'
+  global:
+  - MSSQL_SA_PASSWORD="YourStrong!Passw0rd"
+  - ACCEPT_EULA=Y
+  - MSSQL_PID='developer'
 
 before_install:
 - sudo apt-get install -y --no-install-recommends mssql-tools mssql-server dotnet-runtime-2.2 dotnet-sdk-3.1 libc6-dev libgdiplus
