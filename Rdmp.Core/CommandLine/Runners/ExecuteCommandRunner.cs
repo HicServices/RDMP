@@ -53,7 +53,7 @@ namespace Rdmp.Core.CommandLine.Runners
                 null;
             
             if(!string.IsNullOrWhiteSpace(_options.File) && _options.Script == null)
-                throw new Exception("Command line option File was provided but Script property was null.  The host API failed to deserialzie the file or correctly use the ExecuteCommandOptions class");
+                throw new Exception("Command line option File was provided but Script property was null.  The host API failed to deserialize the file or correctly use the ExecuteCommandOptions class");
 
             if(_options.Script != null)
             {
@@ -80,7 +80,7 @@ namespace Rdmp.Core.CommandLine.Runners
                 StringBuilder msg = new StringBuilder($"Unknown or Unsupported Command '{command}', use {BasicCommandExecution.GetCommandName<ExecuteCommandListSupportedCommands>()} to see available commands");
 
                 if (suggestions.Any())
-                    msg.AppendLine("Similar commands included:" + Environment.NewLine +
+                    msg.AppendLine("Similar commands include:" + Environment.NewLine +
                                    string.Join(Environment.NewLine, suggestions));
 
                 _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error,msg.ToString()));
