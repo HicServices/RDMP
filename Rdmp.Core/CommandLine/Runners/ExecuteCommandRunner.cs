@@ -160,53 +160,44 @@ namespace Rdmp.Core.CommandLine.Runners
         {
             char? inQuotes = null;
 
-            return commandLine.Split(c =>
-                {
-                    //if we encounter a closing quote
-                    if (c == inQuotes)
-                        inQuotes = null;
-                    else
-                    // if encounter an opening quote
-                    if (c == '\"' || c == '\'' && inQuotes == null)
-                        inQuotes = c;
-
-                    return inQuotes == null && c == ' ';
-                })
-                //trim whitespace
-                .Select(arg => arg.Trim())
-                //trim either " from each side or ' from each side (but not both!)
-                .Select(arg => arg.StartsWith("\"") ? arg.TrimMatchingQuotes('\"') : arg.StartsWith("'") ? arg.TrimMatchingQuotes('\''):arg)
-                .Where(arg => !string.IsNullOrEmpty(arg));
-        }
-    }
-}
-
-public static class StringExtensions
-{
-
-    public static IEnumerable<string> Split(this string str, 
-        Func<char, bool> controller)
-    {
-        int nextPiece = 0;
-
-        for (int c = 0; c < str.Length; c++)
-        {
-            if (controller(str[c]))
+            StringBuilder word = new StringBuilder();
+            
+            for(int i=0; i<commandLine.Length;i++)
             {
-                yield return str.Substring(nextPiece, c - nextPiece);
-                nextPiece = c + 1;
+                char c = commandLine[i];
+
+                //if we enter quotes
+                if(inQuotes == null && (c == '\'' || c == '"'))
+                {
+                    //if it is the first letter in the word
+                    if(word.Length == 0)
+                    {
+                        inQuotes = c;
+                    }
+                }                
+                else
+                if(c == inQuotes)
+                {
+                    //if we exit quotes
+                    inQuotes = null;
+                }
+                else
+                if(c == ' ' && inQuotes == null) 
+                {
+                    //break character outside of quotes
+                    string resultWord = word.ToString().Trim();
+                    if(!string.IsNullOrWhiteSpace(resultWord))
+                        yield return resultWord;
+
+                    word.Clear();
+                }
+                else
+                    word.Append(c); //regular character
             }
+
+            string finalWord = word.ToString().Trim();
+            if(!string.IsNullOrWhiteSpace(finalWord))
+                yield return finalWord;            
         }
-
-        yield return str.Substring(nextPiece);
-    }
-
-    public static string TrimMatchingQuotes(this string input, char quote)
-    {
-        if ((input.Length >= 2) && 
-            (input[0] == quote) && (input[input.Length - 1] == quote))
-            return input.Substring(1, input.Length - 2);
-
-        return input;
     }
 }
