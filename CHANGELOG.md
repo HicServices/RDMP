@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added `-f` option to CLI (`rdmp.exe -f somefile.yaml`) to run all commands in a file
 - Added "Go To" to tab right click context menu (previously only available in collections).
 
 ### Changed
