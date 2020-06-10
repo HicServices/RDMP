@@ -54,7 +54,7 @@ namespace Rdmp.Core.Curation.Data
         /// Creates a new list of MEF plugin classes from the dlls/files in the directory list provided
         /// </summary>
         /// <param name="directories"></param>
-        public SafeDirectoryCatalog(params string[] directories):this(null,directories)
+        public SafeDirectoryCatalog(params string[] directories):this(new ThrowImmediatelyCheckNotifier(),directories)
         {
         }
 
