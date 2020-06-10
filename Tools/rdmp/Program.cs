@@ -143,15 +143,23 @@ namespace Rdmp.Core
                     return -55;
                 }
 
+                var content = File.ReadAllText(opts.File);
+
+                if (string.IsNullOrWhiteSpace(content))
+                {
+                    Console.WriteLine($"File is empty ('{opts.File}')");
+                    return -56;
+                }
+
                 try
                 {
                     var d = new Deserializer();
-                    opts.Script = d.Deserialize<RdmpScript>(File.ReadAllText(opts.File));
+                    opts.Script = d.Deserialize<RdmpScript>(content);
                 }
                 catch(Exception ex)
                 {
                     Console.WriteLine($"Error deserializing '{opts.File}': {ex.Message}");
-                    return -66;                    
+                    return -57;                    
                 }
             }
 
