@@ -73,5 +73,15 @@ namespace Rdmp.Core.Tests.CommandLine
             Assert.AreEqual(expectedCataItemName,ci.Name);
             
         }
+
+        [Test]
+        public void Test_SplitCommandLine()
+        {
+            var vals = ExecuteCommandRunner.SplitCommandLine("NewObject CatalogueItem 'Catalogue:\"fff\"' 'bbbb'").ToArray();
+            Assert.AreEqual("NewObject",vals[0]);
+            Assert.AreEqual("CatalogueItem",vals[1]);
+            Assert.AreEqual("Catalogue:\"fff\"",vals[2]);
+            Assert.AreEqual("bbbb",vals[3]);
+        }
     }
 }
