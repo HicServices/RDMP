@@ -50,6 +50,14 @@ namespace Rdmp.Core.CommandLine.Runners
                  new CommandLineObjectPicker(_options.CommandArgs, repositoryLocator) :
                 null;
             
+            if(!string.IsNullOrWhiteSpace(_options.File))
+            {
+                if(_options.Script == null)
+                    throw new Exception("Command line option File was provided but Script property was null.  The host API failed to deserialzie the file or correctly use the ExecuteCommandOptions class");
+
+                RunScript(_options.Script,repositoryLocator);
+            }
+            else
             if (string.IsNullOrWhiteSpace(_options.CommandName))
                 RunCommandExecutionLoop(repositoryLocator);
             else
@@ -80,11 +88,7 @@ namespace Rdmp.Core.CommandLine.Runners
                 Console.WriteLine("Enter Command (or 'exit')");
                 var command = _input.GetString("Command", _commands.Keys.ToList());
 
-                if (command.Contains(' '))
-                {
-                    _picker = new CommandLineObjectPicker(SplitCommandLine(command).Skip(1).ToArray(),repositoryLocator);
-                    command = command.Substring(0, command.IndexOf(' '));
-                }
+                command = GetCommandAndPickerFromLine(command, out _picker,repositoryLocator);
 
                 if (string.Equals(command, "exit", StringComparison.CurrentCultureIgnoreCase))
                     break;
@@ -92,6 +96,49 @@ namespace Rdmp.Core.CommandLine.Runners
                 RunCommand(command);
 
                 _picker = null;
+            }
+        }
+
+        /// <summary>
+        /// Takes a single command line e.g. "list Catalogue" and spits it into a command "list" (returned) and the arguments list (as <paramref name="picker"/>)
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="picker"></param>
+        /// <param name="repositoryLocator"></param>
+        /// <returns></returns>
+        private string GetCommandAndPickerFromLine(string command, out CommandLineObjectPicker picker,IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        {    
+            if (command.Contains(' '))
+            {
+                picker = new CommandLineObjectPicker(SplitCommandLine(command).Skip(1).ToArray(),repositoryLocator);
+                return command.Substring(0, command.IndexOf(' '));
+            }
+
+            picker = null;
+            return command;
+        }
+
+        /// <summary>
+        /// Runs all commands in the provided script
+        /// </summary>
+        /// <param name="script">Location of the file to run</param>
+        /// <param name="repositoryLocator"></param>
+        private void RunScript(RdmpScript script, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        {
+            if((script.Commands?.Length ?? 0) == 0)
+                throw new ArgumentException("script was empty",nameof(script));
+
+            foreach(string s in script.Commands)
+            {
+                try
+                {
+                    var cmd = GetCommandAndPickerFromLine(s,out _picker,repositoryLocator);
+                    RunCommand(cmd);
+                }
+                catch(Exception ex)
+                {
+                    throw new Exception($"Error executing script.  Problem line was '{s}':{ex.Message}",ex);
+                }
             }
         }
 

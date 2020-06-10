@@ -24,6 +24,7 @@ using Rdmp.Core.Startup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using YamlDotNet.RepresentationModel;
+using YamlDotNet.Serialization;
 
 namespace Rdmp.Core
 {
@@ -97,7 +98,7 @@ namespace Rdmp.Core
                             (CohortCreationOptions opts) => Run(opts),
                             (PackOptions opts) => Run(opts),
                             (PlatformDatabaseCreationOptions opts) => Run(opts),
-                            (ExecuteCommandOptions opts) => Run(opts),
+                            (ExecuteCommandOptions opts) => RunCmd(opts),
                             (ConsoleGuiOptions opts) => Run(opts),
                             errs => 1);
 
@@ -132,6 +133,30 @@ namespace Rdmp.Core
             return 0;
         }
 
+        private static int RunCmd(ExecuteCommandOptions opts)
+        {
+            if(!string.IsNullOrWhiteSpace(opts.File))
+            {
+                if(!File.Exists(opts.File))
+                {
+                    Console.WriteLine($"Could not find file '{opts.File}'");
+                    return -55;
+                }
+
+                try
+                {
+                    var d = new Deserializer();
+                    opts.Script = d.Deserialize<RdmpScript>(File.ReadAllText(opts.File));
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine($"Error deserializing '{opts.File}': {ex.Message}");
+                    return -66;                    
+                }
+            }
+
+            return Run((RDMPCommandLineOptions) opts);
+        }
 
         private static int Run(RDMPCommandLineOptions opts)
         {
