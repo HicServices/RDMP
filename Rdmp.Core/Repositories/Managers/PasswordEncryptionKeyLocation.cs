@@ -125,7 +125,12 @@ namespace Rdmp.Core.Repositories.Managers
             RSACryptoServiceProvider provider = new RSACryptoServiceProvider(4096);
             RSAParameters p = provider.ExportParameters(true);
 
-            using (var stream = File.Create(path))
+            var fi = new FileInfo(path);
+
+            if(fi.Directory != null && !fi.Directory.Exists)
+                fi.Directory.Create();
+
+            using (var stream = fi.Create())
             {
                 XmlSerializer SerializeXml = new XmlSerializer(typeof(RSAParameters));
                 SerializeXml.Serialize(stream, p);
