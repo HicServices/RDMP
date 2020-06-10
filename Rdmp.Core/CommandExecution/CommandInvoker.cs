@@ -130,8 +130,7 @@ namespace Rdmp.Core.CommandExecution
         
         public IEnumerable<Type> GetSupportedCommands()
         {
-            
-            return _basicActivator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Where(IsSupported);
+            return _basicActivator.RepositoryLocator.CatalogueRepository?.MEF?.GetAllTypes()?.Where(IsSupported) ?? throw new Exception("MEF property has not been initialized on the activator");
         }
 
         /// <summary>
