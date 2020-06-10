@@ -6,7 +6,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
@@ -50,11 +52,11 @@ namespace Rdmp.Core.CommandLine.Runners
                  new CommandLineObjectPicker(_options.CommandArgs, repositoryLocator) :
                 null;
             
-            if(!string.IsNullOrWhiteSpace(_options.File))
-            {
-                if(_options.Script == null)
-                    throw new Exception("Command line option File was provided but Script property was null.  The host API failed to deserialzie the file or correctly use the ExecuteCommandOptions class");
+            if(!string.IsNullOrWhiteSpace(_options.File) && _options.Script == null)
+                throw new Exception("Command line option File was provided but Script property was null.  The host API failed to deserialzie the file or correctly use the ExecuteCommandOptions class");
 
+            if(_options.Script != null)
+            {
                 RunScript(_options.Script,repositoryLocator);
             }
             else
@@ -71,7 +73,19 @@ namespace Rdmp.Core.CommandLine.Runners
             if(_commands.ContainsKey(command))
                 _invoker.ExecuteCommand(_commands[command],_picker);
             else
-                _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error,$"Unknown or Unsupported Command '{command}', use {BasicCommandExecution.GetCommandName<ExecuteCommandListSupportedCommands>()} to see available commands" ));
+            {
+                var suggestions =
+                    _commands.Keys.Where(c => CultureInfo.CurrentCulture.CompareInfo.IndexOf(c,command, CompareOptions.IgnoreCase) >= 0).ToArray();
+
+                StringBuilder msg = new StringBuilder($"Unknown or Unsupported Command '{command}', use {BasicCommandExecution.GetCommandName<ExecuteCommandListSupportedCommands>()} to see available commands");
+
+                if (suggestions.Any())
+                    msg.AppendLine("Similar commands included:" + Environment.NewLine +
+                                   string.Join(Environment.NewLine, suggestions));
+
+                _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error,msg.ToString()));
+            }
+                
         }
 
         /// <summary>
@@ -144,16 +158,19 @@ namespace Rdmp.Core.CommandLine.Runners
 
         public static IEnumerable<string> SplitCommandLine(string commandLine)
         {
-            bool inQuotes = false;
+            char? inQuotes = null;
 
             return commandLine.Split(c =>
                 {
-                    if (c == '\"')
-                        inQuotes = !inQuotes;
+                    if (c == '\"' || c == '\'' && inQuotes == null)
+                        inQuotes = c;
 
-                    return !inQuotes && c == ' ';
+                    return inQuotes == null && c == ' ';
                 })
-                .Select(arg => arg.Trim().TrimMatchingQuotes('\"'))
+                //trim whitespace
+                .Select(arg => arg.Trim())
+                //trim either " from each side or ' from each side (but not both!)
+                .Select(arg => arg.StartsWith("\"") ? arg.TrimMatchingQuotes('\"') : arg.StartsWith("'") ? arg.TrimMatchingQuotes('\''):arg)
                 .Where(arg => !string.IsNullOrEmpty(arg));
         }
     }
