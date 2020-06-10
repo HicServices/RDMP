@@ -162,6 +162,11 @@ namespace Rdmp.Core.CommandLine.Runners
 
             return commandLine.Split(c =>
                 {
+                    //if we encounter a closing quote
+                    if (c == inQuotes)
+                        inQuotes = null;
+                    else
+                    // if encounter an opening quote
                     if (c == '\"' || c == '\'' && inQuotes == null)
                         inQuotes = c;
 
