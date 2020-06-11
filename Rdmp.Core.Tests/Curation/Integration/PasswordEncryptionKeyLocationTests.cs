@@ -22,8 +22,9 @@ namespace Rdmp.Core.Tests.Curation.Integration
             base.SetUp();
 
             var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
+
             if(keyLocation.GetKeyFileLocation() != null)
-                keyLocation.DeleteKey();
+                Assert.Inconclusive();
         }
 
         [Test]
