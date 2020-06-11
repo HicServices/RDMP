@@ -22,8 +22,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _keyFileToCreate = keyFileToCreate;
             _encryption = activator.RepositoryLocator.CatalogueRepository.EncryptionManager as PasswordEncryptionKeyLocation;
 
-            if(_encryption == null)
+            if (_encryption == null)
+            {
                 SetImpossible("Current Encryption manager is not based on key files");
+                return;
+            }
 
             var existing = _encryption.GetKeyFileLocation();
             if (existing != null) 
