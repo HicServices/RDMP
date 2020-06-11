@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added `-f` option to CLI (`rdmp.exe -f somefile.yaml`) to run all commands in a file
 - Added "Go To" to tab right click context menu (previously only available in collections).
+- Private key encryption file location can now be customized per user by setting an environment variable `RDMP_KEY_LOCATION`.  This will override any key file location specified in the RDMP platform database.
 
 ### Changed
 
