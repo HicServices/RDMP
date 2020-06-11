@@ -15,7 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Frozen Extraction Configurations folder always appears at the bottom of the branch under Projects
 - Improved layout of query building errors in QueryBuilder SQL viewing user interfaces
+
+### Fixed
+
+- Fixed bug in tree ordering when comparing a fixed order node to a non fixed order node.
 
 ## [4.1.2] - 2020-06-03
 

@@ -43,6 +43,13 @@ namespace Rdmp.UI.Collections
             if (x is IOrderable xOrderable && y is IOrderable yOrderable)
                     return xOrderable.Order - yOrderable.Order;
 
+            if (x is IOrderable xOnly)
+                return xOnly.Order;
+
+            // The comparison is reversed (y is orderable) so the order must be negated to.
+            if (y is IOrderable yOnly)
+                return -yOnly.Order;
+
             //or use whatever the model is
             if (_modelComparer != null)
                 return _modelComparer.Compare(x, y);
