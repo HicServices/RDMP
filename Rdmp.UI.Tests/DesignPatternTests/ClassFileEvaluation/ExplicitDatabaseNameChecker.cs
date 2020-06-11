@@ -38,7 +38,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
                     "RDMPCommandLineOptions.cs",
                     "Settings.Designer.cs",
                     "PlatformDatabaseCreationOptions.cs",
-                    "PackOptions.cs"
+                    "PackOptions.cs",
+                    "PasswordEncryptionKeyLocation.cs"
+
 
 
                 }); //allowed because it's default arguments for CLI
