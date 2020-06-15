@@ -54,29 +54,7 @@ namespace Rdmp.UI.Menus
 
             Items.Add(new DQEMenuItem(_activator,catalogue));
 
-            AddGoTo<LoadMetadata>(catalogue.LoadMetadata_ID,"Data Load");
-
-            if(_activator.CoreChildProvider is DataExportChildProvider exp)
-            {
-                var eds = exp.ExtractableDataSets.SingleOrDefault(d=>d.Catalogue_ID == catalogue.ID);
-                if(eds != null)
-                    AddGoTo(()=>eds.ExtractionConfigurations,"Extraction Configuration(s)");
-            }
-
-            AddGoTo(()=>catalogue.GetTableInfoList(true),"Table(s)");
-
-            AddGoTo(
-                ()=>
-                _activator
-                .CoreChildProvider
-                .AllAggregateConfigurations.Where(ac=>ac.IsCohortIdentificationAggregate && ac.Catalogue_ID == catalogue.ID)
-                .Select(ac=>ac.GetCohortIdentificationConfigurationIfAny())
-                .Where(cic=>cic != null)
-                .Distinct(),
-                "Cohort Identification Configuration(s)");
-
-            AddGoTo(()=>_activator.CoreChildProvider.AllGovernancePeriods.Where(p=>p.GovernedCatalogues.Contains(catalogue)),"Governance");
-
+            
         }
 
     }

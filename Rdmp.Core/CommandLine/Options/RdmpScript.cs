@@ -4,18 +4,19 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.Curation.Data.Governance;
-using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandLine.Runners;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.Core.CommandLine.Options
 {
-    class GovernancePeriodMenu : RDMPContextMenuStrip
-    {
-        public GovernancePeriodMenu(RDMPContextMenuStripArgs args, GovernancePeriod period)
-            : base(args, period)
-        {
-            Add(new ExecuteCommandAddNewGovernanceDocument(_activator,period));
-        }
+    /// <summary>
+    /// Describes a series of commands to run in sequence.
+    /// </summary>
+    public  class RdmpScript
+    {        
+        /// <summary>
+        /// Commands which should be run by a <see cref="ExecuteCommandRunner"/>
+        /// </summary>
+        /// <value></value>
+        public string[] Commands {get;set;}
     }
 }

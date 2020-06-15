@@ -74,12 +74,11 @@ namespace Rdmp.UI.ProjectUI
                 //get the SQL from the query builder 
                 QueryEditor.Text = _request.QueryBuilder.SQL;
                 QueryEditor.ReadOnly = true;
+                CommonFunctionality.ScintillaGoRed(QueryEditor,false);
             }
             catch (Exception ex)
             {
-                QueryEditor.ReadOnly = false;
-                QueryEditor.Text = ex.ToString();
-                QueryEditor.ReadOnly = true;
+                CommonFunctionality.ScintillaGoRed(QueryEditor,ex);
             }
         }
 

@@ -26,6 +26,8 @@ namespace Rdmp.Core.Repositories.Managers
     {
         private readonly CatalogueRepository _catalogueRepository;
 
+        public const string RDMP_KEY_LOCATION = "RDMP_KEY_LOCATION";
+
         /// <summary>
         /// Prepares to retrieve/create the key file for the given platform database
         /// </summary>
@@ -58,6 +60,13 @@ namespace Rdmp.Core.Repositories.Managers
 
         private string GetKeyFileLocationImpl()
         {
+            // Prefer to get it from the environment variable
+            var fromEnvVar = Environment.GetEnvironmentVariable(RDMP_KEY_LOCATION);
+
+            if (fromEnvVar != null)
+                return fromEnvVar;
+
+            //otherwise use the database
             using (var con = _catalogueRepository.DiscoveredServer.GetConnection())
             {
                 con.Open();
@@ -123,7 +132,12 @@ namespace Rdmp.Core.Repositories.Managers
             RSACryptoServiceProvider provider = new RSACryptoServiceProvider(4096);
             RSAParameters p = provider.ExportParameters(true);
 
-            using (var stream = File.Create(path))
+            var fi = new FileInfo(path);
+
+            if(fi.Directory != null && !fi.Directory.Exists)
+                fi.Directory.Create();
+
+            using (var stream = fi.Create())
             {
                 XmlSerializer SerializeXml = new XmlSerializer(typeof(RSAParameters));
                 SerializeXml.Serialize(stream, p);

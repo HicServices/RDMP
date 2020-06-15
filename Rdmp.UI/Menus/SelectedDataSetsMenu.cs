@@ -34,8 +34,6 @@ namespace Rdmp.UI.Menus
 
             var root = selectedDataSet.RootFilterContainer;
 
-            AddGoTo<Catalogue>(selectedDataSet.ExtractableDataSet.Catalogue_ID);
-
             Add(new ExecuteCommandExecuteExtractionConfiguration(_activator, selectedDataSet));
 
             Add(new ExecuteCommandRelease(_activator).SetTarget(selectedDataSet));
@@ -51,8 +49,8 @@ namespace Rdmp.UI.Menus
             if(availableGraphs.Length > 1)
                 graphs.DropDownItems.Add("All", null, (s,e)=>GenerateExtractionGraphs(availableGraphs));
 
-            //must not be relased and must have graphs available and must have a cohort
-            graphs.Enabled = !_extractionConfiguration.IsReleased && graphs.DropDownItems.Count > 0 && _extractionConfiguration.Cohort_ID != null;
+            //must have graphs available and must have a cohort
+            graphs.Enabled = graphs.DropDownItems.Count > 0 && _extractionConfiguration.Cohort_ID != null;
             Items.Add(graphs);
             ////////////////////////////////////////////////////////////////////
             

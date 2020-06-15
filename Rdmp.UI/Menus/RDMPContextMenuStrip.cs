@@ -48,7 +48,6 @@ namespace Rdmp.UI.Menus
 
         public const string Inspection = "Inspection";
         public const string Tree = "Tree";
-        public const string GoTo = "Go To";
         public const string Alter = "Alter";
 
         public RDMPContextMenuStrip(RDMPContextMenuStripArgs args, object o)
@@ -69,14 +68,9 @@ namespace Rdmp.UI.Menus
 
             if(o is DatabaseEntity e)
             {
-                var export = _activator.RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectExport>(e).FirstOrDefault();
+                var gotoMenuBuilder = new GoToMenuBuilder(_activator);
+                Items.Add(gotoMenuBuilder.GetMenu(e));
 
-                if(export != null)
-                    Add(new ExecuteCommandShow(_activator,export,0,true){OverrideCommandName = "Show Export Definition"},Keys.None,GoTo);
-
-                var import = _activator.RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectImport>(e).FirstOrDefault();
-                if(import != null)
-                    Add(new ExecuteCommandShow(_activator,import,0){OverrideCommandName = "Show Import Definition"},Keys.None,GoTo);
             }
         }
 
@@ -115,47 +109,6 @@ namespace Rdmp.UI.Menus
             Add(cmd,shortcutKey,AddMenuIfNotExists(submenu,image));
         }
 
-        /// <summary>
-        /// Creates a new command under GoTo that navigates the user to the results of <paramref name="func"/>.  This function
-        /// is only evaluated when the GoTo menu is expanded (not when the main context menu is popped).
-        /// </summary>
-        /// <param name="func"></param>
-        /// <param name="title"></param>
-        protected void AddGoTo(Func<IEnumerable<IMapsDirectlyToDatabaseTable>> func, string title)
-        {
-            var mi = AddMenuIfNotExists(GoTo);
-            bool bFirstTime = true;
-
-            var proxy = new ToolStripMenuItem("proxy") {Enabled = false};
-            mi.DropDownItems.Add(proxy);
-
-            mi.DropDownOpening += (s,e) => 
-            {
-                if(bFirstTime)
-                {
-                    mi.DropDownItems.Remove(proxy);
-                    AddGoTo(func(),title);
-                    bFirstTime = false;
-                }
-            };
-            
-        }
-
-        protected void AddGoTo(IEnumerable<IMapsDirectlyToDatabaseTable> objects, string title)
-        {           
-            Add(new ExecuteCommandShow(_activator,objects,1){OverrideCommandName = title },Keys.None,GoTo);
-        }
-        protected void AddGoTo(IMapsDirectlyToDatabaseTable o, string title)
-        {
-            Add(new ExecuteCommandShow(_activator,o,1){OverrideCommandName = title },Keys.None,GoTo);
-        }
-        protected void AddGoTo<T>(int? foreignKey, string title = null) where T:IMapsDirectlyToDatabaseTable
-        {
-            if(foreignKey.HasValue)
-                Add(new ExecuteCommandShow(_activator,RepositoryLocator.GetObjectByID<T>(foreignKey.Value),1){OverrideCommandName = title ?? typeof(T).Name },Keys.None,GoTo);
-            else
-                Add(new ImpossibleCommand("No object exists"){ OverrideCommandName = title ?? typeof(T).Name},Keys.None,GoTo);
-        }
 
         private ToolStripMenuItem AddMenuIfNotExists(string submenu, Image image = null)
         {
@@ -221,16 +174,9 @@ namespace Rdmp.UI.Menus
             PopulateTreeMenu(commonFunctionality, treeMenuItem);
 
             //add refresh and then finally help
-            if (databaseEntity != null)
-            {
-                //if it is a masquerader add a goto the object
-                if(_args.Masquerader != null)
-                    AddGoTo(databaseEntity,databaseEntity.GetType().Name);
-
+            if (databaseEntity != null) 
                 Add(new ExecuteCommandRefreshObject(_activator, databaseEntity), Keys.F5);
-            }
-                
-
+            
             Add(new ExecuteCommandShowKeywordHelp(_activator, _args));}
 
         private void PopulateTreeMenu(RDMPCollectionCommonFunctionality commonFunctionality, ToolStripMenuItem treeMenuItem)

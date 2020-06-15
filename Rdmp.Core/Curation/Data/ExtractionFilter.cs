@@ -84,7 +84,6 @@ namespace Rdmp.Core.Curation.Data
         {
             return ExtractionInformation.CatalogueItem.Catalogue;
         }
-
         /// <inheritdoc/>
         public override ISqlParameter[] GetAllParameters()
         {

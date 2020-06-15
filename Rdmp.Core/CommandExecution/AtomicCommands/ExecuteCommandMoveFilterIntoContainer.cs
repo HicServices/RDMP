@@ -21,6 +21,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if(!filterCombineable.AllContainersInEntireTreeFromRootDown.Contains(targetContainer))
                 SetImpossible("Filters can only be moved within their own container tree");
+
+            if(targetContainer.ShouldBeReadOnly(out string reason))
+                SetImpossible(reason);
         }
 
         public override void Execute()

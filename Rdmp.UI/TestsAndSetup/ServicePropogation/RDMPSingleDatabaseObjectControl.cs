@@ -32,6 +32,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
     public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDMPSingleDatabaseObjectControl where T : DatabaseEntity
     {
         private Control _colorIndicator;
+        private Label _readonlyIndicator;
 
         private BinderWithErrorProviderFactory _binder;
 
@@ -39,6 +40,11 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 
         public DatabaseEntity DatabaseObject { get; private set; }
         protected RDMPCollection AssociatedCollection = RDMPCollection.None;
+
+        /// <summary>
+        /// True if the hosted <see cref="DatabaseObject"/> <see cref="IMightBeReadOnly.ShouldBeReadOnly"/>.  This property is detected and update during SetDatabaseObject so use it only after this call has been made
+        /// </summary>
+        public bool ReadOnly { get; set; }
 
         protected RDMPSingleDatabaseObjectControl()
         {
@@ -64,6 +70,37 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
                 _colorIndicator.BackColor = colorProvider.GetColor(AssociatedCollection);
                 this.Controls.Add(this._colorIndicator);
             }
+
+            if (_readonlyIndicator == null)
+            {
+                _readonlyIndicator = new Label();
+                _readonlyIndicator.Dock = DockStyle.Top;
+                _readonlyIndicator.Location = new Point(0, 0);
+                _readonlyIndicator.Size = new Size(150, 20);
+                _readonlyIndicator.TabIndex = 0;
+                _readonlyIndicator.TextAlign = ContentAlignment.MiddleLeft;
+                _readonlyIndicator.BackColor = System.Drawing.SystemColors.HotTrack;
+                _readonlyIndicator.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+                _readonlyIndicator.ForeColor = System.Drawing.Color.Moccasin;
+
+            }
+
+            if (databaseObject is IMightBeReadOnly ro)
+            {
+                if (ro.ShouldBeReadOnly(out string reason))
+                {
+                    _readonlyIndicator.Text = reason;
+                    this.Controls.Add(this._readonlyIndicator);
+                    ReadOnly = true;
+                }
+                else
+                {
+                    //removing it allows us to handle refreshes (where something becomes unfrozen for example)
+                    this.Controls.Remove(this._readonlyIndicator);
+                    ReadOnly = false;
+                }
+            }
+            
 
             if (_binder == null)
                 _binder = new BinderWithErrorProviderFactory(activator);

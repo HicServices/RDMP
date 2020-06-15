@@ -26,6 +26,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if(_sourceAggregateCommand.ContainerIfAny != null &&  _sourceAggregateCommand.ContainerIfAny.Equals(targetCohortAggregateContainer))
                 SetImpossible("Aggregate is already in container");
+
+            if(targetCohortAggregateContainer.ShouldBeReadOnly(out string reason))
+                SetImpossible(reason);
         }
 
         public override void Execute()

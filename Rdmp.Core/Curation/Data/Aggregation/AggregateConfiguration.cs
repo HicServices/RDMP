@@ -40,11 +40,11 @@ namespace Rdmp.Core.Curation.Data.Aggregation
     /// <para>If your Aggregate is part of cohort identification (Identifier List or Patient Index Table) then its name will start with cic_X_ where X is the ID of the cohort identification 
     /// configuration.  Depending on the user interface though this might not appear (See ToString implementation).</para>
     /// </summary>
-    public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper, 
+    public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper,
         IInjectKnown<JoinableCohortAggregateConfiguration>,
         IInjectKnown<AggregateDimension[]>,
         IInjectKnown<Catalogue>,
-        IDisableable,IKnowWhatIAm
+        IDisableable,IKnowWhatIAm,IMightBeReadOnly
     {
         #region Database Properties
         private string _countSQL;
@@ -443,6 +443,18 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         {
             //strip the cic section from the front
             return Regex.Replace(Name, CohortIdentificationConfiguration.CICPrefix + @"\d+_?", "");
+        }
+
+        public bool ShouldBeReadOnly(out string reason)
+        {
+            var cic = GetCohortIdentificationConfigurationIfAny();
+            if (cic == null)
+            {
+                reason = null;
+                return false;
+            }
+
+            return cic.ShouldBeReadOnly(out reason);
         }
 
         /// <summary>

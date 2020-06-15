@@ -157,11 +157,8 @@ namespace Rdmp.UI.ExtractionUIs
             }
             catch (Exception ex)
             {
-                QueryPreview.ReadOnly = false;
-                QueryPreview.Text = ex.Message;
+                CommonFunctionality.ScintillaGoRed(QueryPreview,ex);
                 CommonFunctionality.Fatal(ex.Message,ex);
-                CommonFunctionality.ScintillaGoRed(QueryPreview,true);
-                QueryPreview.ReadOnly = true;
             }
             finally
             {

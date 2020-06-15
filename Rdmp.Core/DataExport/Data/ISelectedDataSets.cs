@@ -13,7 +13,7 @@ namespace Rdmp.Core.DataExport.Data
     /// <summary>
     /// Represents the desire to extract a given dataset for a given <see cref="ExtractableDataSet"/> for a given <see cref="ExtractionConfiguration"/>.  
     /// </summary>
-    public interface ISelectedDataSets:IDeleteable,IRevertable
+    public interface ISelectedDataSets:IDeleteable,IRevertable, IMightBeReadOnly
     {
         /// <summary>
         /// <see cref="IExtractionConfiguration"/> in which the <see cref="ExtractableDataSet_ID"/> is selected

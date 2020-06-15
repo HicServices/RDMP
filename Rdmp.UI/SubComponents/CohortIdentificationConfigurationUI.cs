@@ -214,14 +214,10 @@ namespace Rdmp.UI.SubComponents
         {
             base.SetDatabaseObject(activator,databaseObject);
             _configuration = databaseObject;
-
-            lblFrozen.Visible = _configuration.Frozen;
-
+            
             tbName.Text = _configuration.Name;
             tbDescription.Text = _configuration.Description;
             ticket.TicketText = _configuration.Ticket;
-            tlvCic.Enabled = !databaseObject.Frozen;
-            
 
             if (_commonFunctionality == null)
             {
