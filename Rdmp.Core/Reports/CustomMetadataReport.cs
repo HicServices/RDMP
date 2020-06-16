@@ -163,7 +163,7 @@ namespace Rdmp.Core.Reports
                 }
 
                 if(current == LoopCatalogueItems)
-                    throw new CustomMetadataReportException($"Error, encountered '{current}' on line {i+1} before the end of current block which started on line {index}.  Make sure to add {EndLoop} at the end of each loop",i+1);
+                    throw new CustomMetadataReportException($"Error, encountered '{current}' on line {i+1} before the end of current block which started on line {index +1}.  Make sure to add {EndLoop} at the end of each loop",i+1);
 
                 block.AppendLine(current);
             }
