@@ -11,6 +11,7 @@ using System.Text;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Reports;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Reports
@@ -211,6 +212,70 @@ A cool dataset with interesting stuff
 | Column | Description |
 | Col1 | some info about column 1 |
 | Col2 | some info about column 2 |",resultText.TrimEnd());
+        }
+
+        [Test]
+        public void TestCustomMetadataReport_CatalogueItems_NoEndBlock()
+        {
+            var cata = WhenIHaveA<Catalogue>();
+            cata.Name = "ffff";
+            cata.Description = "A cool dataset with interesting stuff";
+            cata.SaveToDatabase();
+
+            var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
+            var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
+
+            if(outDir.Exists)
+                outDir.Delete(true);
+            
+            outDir.Create();
+
+            File.WriteAllText(template.FullName,
+                @"## $Name
+$Description
+| Column | Description |
+$foreach CatalogueItem
+| $Name | $Description |");
+
+            var cmd = new ExecuteCommandExtractMetadata(null, new[] {cata}, outDir, template, "$Name.md", false);
+            var ex = Assert.Throws<CustomMetadataReportException>(cmd.Execute);
+
+            Assert.AreEqual(4,ex.LineNumber);
+            Assert.AreEqual("Expected $end to match $foreach which started on line 4",ex.Message);
+        }
+        
+        [Test]
+        public void TestCustomMetadataReport_CatalogueItems_TooManyForeachBlocks()
+        {
+            var cata = WhenIHaveA<Catalogue>();
+            cata.Name = "ffff";
+            cata.Description = "A cool dataset with interesting stuff";
+            cata.SaveToDatabase();
+
+            var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
+            var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
+
+            if(outDir.Exists)
+                outDir.Delete(true);
+            
+            outDir.Create();
+
+            File.WriteAllText(template.FullName,
+                @"## $Name
+$Description
+| Column | Description |
+$foreach CatalogueItem
+| $Name | $Description |
+$foreach CatalogueItem
+| $Name | $Description |
+$end
+$end");
+
+            var cmd = new ExecuteCommandExtractMetadata(null, new[] {cata}, outDir, template, "$Name.md", false);
+            var ex = Assert.Throws<CustomMetadataReportException>(cmd.Execute);
+
+            Assert.AreEqual(6,ex.LineNumber);
+            StringAssert.StartsWith("Error, encountered '$foreach CatalogueItem' on line 6",ex.Message);
         }
     }
 }

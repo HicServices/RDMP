@@ -15,7 +15,6 @@ using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Reports
 {
-
     /// <summary>
     /// Create a custom report e.g. markdown, xml etc by taking a template file and replicating it with replacements for each <see cref="Catalogue"/> property
     /// </summary>
@@ -151,11 +150,14 @@ namespace Rdmp.Core.Reports
                     break;
                 }
 
+                if(current == LoopCatalogueItems)
+                    throw new CustomMetadataReportException($"Error, encountered '{current}' on line {i+1} before the end of current block which started on line {index}.  Make sure to add {EndLoop} at the end of each loop",i+1);
+
                 block.AppendLine(current);
             }
 
             if(!blockTerminated)
-                throw new Exception($"Expected $end to match $foreach which started on line {index}");
+                throw new CustomMetadataReportException($"Expected {EndLoop} to match $foreach which started on line {index+1}",index+1);
 
             foreach (CatalogueItem ci in catalogueItems) 
                 sbResult.AppendLine(DoReplacements(block.ToString(), ci));
