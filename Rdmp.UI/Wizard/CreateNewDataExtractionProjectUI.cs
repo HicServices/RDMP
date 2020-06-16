@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -25,6 +26,7 @@ using Rdmp.UI.CohortUI.CohortSourceManagement;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Progress;
@@ -45,6 +47,10 @@ namespace Rdmp.UI.Wizard
         private Project _project;
         private ExtractionConfiguration _configuration;
         private ExtractableCohort _cohortCreated;
+        /// <summary>
+        /// Datasets that should be added to the <see cref="Project"/> when executed
+        /// </summary>
+        private IExtractableDataSet[] _selectedDatasets = new IExtractableDataSet[0];
 
         public ExtractionConfiguration ExtractionConfigurationCreatedIfAny { get; private set; }
         
@@ -65,7 +71,10 @@ namespace Rdmp.UI.Wizard
 
             IdentifyCompatibleCohortSources();
 
-            olvDatasets.AddObjects(activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSet>());
+            cbxDatasets.Items.AddRange(activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSet>());
+            btnPackage.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage);
+            btnPackage.Enabled =
+                activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSetPackage>().Any();
 
             cbxCohort.DataSource = activator.RepositoryLocator.CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>();
             cbxCohort.PropertySelector = collection => collection.Cast<CohortIdentificationConfiguration>().Select(c => c.ToString());
@@ -286,7 +295,7 @@ namespace Rdmp.UI.Wizard
                     _configuration.SaveToDatabase();
                 }
 
-                foreach (ExtractableDataSet ds in olvDatasets.CheckedObjects.Cast<ExtractableDataSet>())
+                foreach (ExtractableDataSet ds in _selectedDatasets)
                     _configuration.AddDatasetToConfiguration(ds);
 
                 ICommandExecution cmdAssociateCicWithProject = null;
@@ -381,7 +390,7 @@ namespace Rdmp.UI.Wizard
             if (string.IsNullOrWhiteSpace(tbCohortName.Text))
                 return "You must provide a name for your cohort";
 
-            if (!olvDatasets.CheckedObjects.Cast<ExtractableDataSet>().Any())
+            if (!_selectedDatasets.Any())
                 return "You must check at least one dataset";
 
             if (ddCicPipeline.SelectedItem == null && _cohortFile == null)
@@ -415,6 +424,58 @@ namespace Rdmp.UI.Wizard
         private void cbDefineCohort_CheckedChanged(object sender, EventArgs e)
         {
             gbCohortAndDatasets.Enabled = cbDefineCohort.Checked;
+        }
+
+        private void cbxDatasets_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            _selectedDatasets = cbxDatasets.SelectedItem != null ? new[] {(IExtractableDataSet) cbxDatasets.SelectedItem} : new IExtractableDataSet[0];
+        }
+
+        private void btnPick_Click(object sender, EventArgs e)
+        {
+            var dlg = new SelectIMapsDirectlyToDatabaseTableDialog(Activator,
+                cbxDatasets.Items.Cast<ExtractableDataSet>().ToArray(), false, false);
+            dlg.AllowMultiSelect = true;
+
+            foreach (var eds in this._selectedDatasets)
+                dlg.MultiSelected.Add(eds);
+
+            if (dlg.ShowDialog() == DialogResult.OK)
+                _selectedDatasets = dlg.MultiSelected.Cast<ExtractableDataSet>().ToArray();
+
+            UpdateCbxDatasets();
+        }
+
+
+        private void btnPackage_Click(object sender, EventArgs e)
+        {
+            var dlg = new SelectIMapsDirectlyToDatabaseTableDialog(Activator,
+                Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSetPackage>(), false, false);
+            dlg.AllowMultiSelect = true;
+
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                _selectedDatasets = dlg.MultiSelected
+                    .Cast<ExtractableDataSetPackage>()
+                    .SelectMany(p =>
+                        Activator.RepositoryLocator.DataExportRepository.PackageManager.GetAllDataSets(p,
+                            cbxDatasets.Items.Cast<ExtractableDataSet>().ToArray()))
+                    .Distinct()
+                    .ToArray();
+            }
+
+            UpdateCbxDatasets();
+        }
+
+        /// <summary>
+        /// Updates the enabledness and selected item of (<see cref="cbxDatasets"/> to match the current <see cref="_selectedDatasets"/>)
+        /// </summary>
+        private void UpdateCbxDatasets()
+        {
+            cbxDatasets.Enabled = _selectedDatasets.Length <= 1;
+
+            if (_selectedDatasets.Length <= 1)
+                cbxDatasets.SelectedItem = _selectedDatasets.SingleOrDefault();
         }
     }
 }
