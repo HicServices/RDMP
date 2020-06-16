@@ -20,8 +20,15 @@ namespace Rdmp.Core.Reports
     /// </summary>
     public class CustomMetadataReport
     {
+        /// <summary>
+        /// Wildcards that are used during template value replacement e.g. $Name => Catalogue.Name
+        /// </summary>
 
         Dictionary<string,Func<Catalogue,object>> Replacements = new Dictionary<string, Func<Catalogue,object>>();
+
+        /// <summary>
+        /// Wildcards that are used during template value replacement when inside a '$foreach CatalogueItem' block e.g. $Name => CatalogueItem.Name
+        /// </summary>
 
         Dictionary<string,Func<CatalogueItem,object>> ReplacementsCatalogueItem = new Dictionary<string, Func<CatalogueItem,object>>();
 
