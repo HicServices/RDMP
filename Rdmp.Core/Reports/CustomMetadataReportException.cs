@@ -8,6 +8,9 @@ using System;
 
 namespace Rdmp.Core.Reports
 {
+    /// <summary>
+    /// Thrown when a problem is encountered parsing a template during <see cref="CustomMetadataReport"/> execution
+    /// </summary>
     public class CustomMetadataReportException : Exception
     {
         /// <summary>

@@ -55,6 +55,14 @@ namespace Rdmp.Core.Reports
                 (c) => _timespanCalculator?.GetHumanReadableTimepsanIfKnownOf(c, true, out _));
         }
         
+        /// <summary>
+        /// Reads the contents of <paramref name="template"/> and generates one or more files (see <paramref name="oneFile"/>) by substituting tokens (e.g. $Name) for the values in the provided <paramref name="catalogues"/>
+        /// </summary>
+        /// <param name="catalogues">All catalogues that you want to produce metadata for</param>
+        /// <param name="outputDirectory">The directory to write output file(s) into</param>
+        /// <param name="template">Template file with free text and wildcards (e.g. $Name).  Also supports looping e.g. $foreach CatalogueItem</param>
+        /// <param name="fileNaming">Determines how output file(s) will be named in the <paramref name="outputDirectory"/>.  Supports wild cards e.g. $Name.md</param>
+        /// <param name="oneFile">True to concatenate the results together and output in a single file.  If true then <paramref name="fileNaming"/> should not contain wildcards.  If false then <paramref name="fileNaming"/> should contain wildcards (e.g. $Name.doc) to prevent duplicate file names</param>
         public void GenerateReport(Catalogue[] catalogues, DirectoryInfo outputDirectory, FileInfo template, string fileNaming, bool oneFile)
         {
             if(catalogues == null || !catalogues.Any())
@@ -62,7 +70,7 @@ namespace Rdmp.Core.Reports
             
             var templateBody = File.ReadAllLines(template.FullName);
 
-            string outname = DoReplacements(fileNaming,catalogues.First());
+            string outname = DoReplacements(new []{fileNaming},catalogues.First()).Trim();
 
             StreamWriter outFile = null;
             
@@ -77,8 +85,9 @@ namespace Rdmp.Core.Reports
                     outFile.WriteLine(newContents);
                 else
                 {
-                    using (var sw = new StreamWriter(Path.Combine(outputDirectory.FullName,
-                        DoReplacements(fileNaming, catalogue))))
+                    string filename = DoReplacements(new[] {fileNaming}, catalogue).Trim();
+
+                    using (var sw = new StreamWriter(Path.Combine(outputDirectory.FullName,filename)))
                     {
                         sw.Write(newContents);
                         sw.Flush();
@@ -90,10 +99,6 @@ namespace Rdmp.Core.Reports
             outFile?.Dispose();
         }
 
-        private string DoReplacements(string str, Catalogue catalogue)
-        {
-            return DoReplacements(new string[] {str}, catalogue);
-        }
         private string DoReplacements(string[] strs, Catalogue catalogue)
         {
             StringBuilder sb = new StringBuilder();
