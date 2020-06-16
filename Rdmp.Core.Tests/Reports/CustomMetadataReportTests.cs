@@ -164,5 +164,53 @@ namespace Rdmp.Core.Tests.Reports
             }
 
         }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TestCustomMetadataReport_CatalogueItems(bool oneFile)
+        {
+            var cata = WhenIHaveA<Catalogue>();
+            cata.Name = "ffff";
+            cata.Description = "A cool dataset with interesting stuff";
+            cata.SaveToDatabase();
+
+            var cataItem1 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "Col1");
+            cataItem1.Description = "some info about column 1";
+            cataItem1.SaveToDatabase();
+
+            var cataItem2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "Col2");
+            cataItem2.Description = "some info about column 2";
+            cataItem2.SaveToDatabase();
+
+            var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
+            var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
+
+            if(outDir.Exists)
+                outDir.Delete(true);
+            
+            outDir.Create();
+
+            File.WriteAllText(template.FullName,
+                @"## $Name
+$Description
+| Column | Description |
+$foreach CatalogueItem
+| $Name | $Description |
+$end");
+
+            var cmd = new ExecuteCommandExtractMetadata(null, new[] {cata}, outDir, template, "$Name.md", oneFile);
+            cmd.Execute();
+
+            var outFile = Path.Combine(outDir.FullName, "ffff.md");
+
+            FileAssert.Exists(outFile);
+            var resultText = File.ReadAllText(outFile);
+
+            StringAssert.AreEqualIgnoringCase(@"## ffff
+A cool dataset with interesting stuff
+| Column | Description |
+| Col1 | some info about column 1 |
+| Col2 | some info about column 2 |",resultText.TrimEnd());
+        }
     }
 }

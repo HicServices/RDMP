@@ -24,6 +24,18 @@ namespace Rdmp.Core.Reports
 
         Dictionary<string,Func<Catalogue,object>> Replacements = new Dictionary<string, Func<Catalogue,object>>();
 
+        Dictionary<string,Func<CatalogueItem,object>> ReplacementsCatalogueItem = new Dictionary<string, Func<CatalogueItem,object>>();
+
+        /// <summary>
+        /// Control line that begins looping CatalogueItems of a Catalogue
+        /// </summary>
+        public const string LoopCatalogueItems = "$foreach CatalogueItem";
+
+        /// <summary>
+        /// Ends looping
+        /// </summary>
+        public const string EndLoop = "$end";
+
         private readonly IDetermineDatasetTimespan _timespanCalculator = new DatasetTimespanCalculator();
 
         public CustomMetadataReport()
@@ -31,6 +43,10 @@ namespace Rdmp.Core.Reports
             //add basic properties
             foreach (var prop in typeof(Catalogue).GetProperties())
                 Replacements.Add("$" + prop.Name, (s) => prop.GetValue(s));
+            
+            //add basic properties CatalogueItem
+            foreach (var prop in typeof(CatalogueItem).GetProperties())
+                ReplacementsCatalogueItem.Add("$" + prop.Name, (s) => prop.GetValue(s));
 
             Replacements.Add("$StartDate",
                 (c) => _timespanCalculator?.GetMachineReadableTimepsanIfKnownOf(c, true, out _)?.Item1?.ToString());
@@ -45,7 +61,7 @@ namespace Rdmp.Core.Reports
             if(catalogues == null || !catalogues.Any())
                 return;
             
-            var templateBody = File.ReadAllText(template.FullName);
+            var templateBody = File.ReadAllLines(template.FullName);
 
             string outname = DoReplacements(fileNaming,catalogues.First());
 
@@ -77,10 +93,85 @@ namespace Rdmp.Core.Reports
 
         private string DoReplacements(string str, Catalogue catalogue)
         {
-            foreach (var r in Replacements) 
-                str = str.Replace(r.Key, r.Value(catalogue)?.ToString() ?? "");
+            return DoReplacements(new string[] {str}, catalogue);
+        }
+        private string DoReplacements(string[] strs, Catalogue catalogue)
+        {
+            StringBuilder sb = new StringBuilder();
 
-            return str;
+            for (var index = 0; index < strs.Length; index++)
+            {
+                var str = strs[index];
+                string copy = str;
+
+                if (str.Trim().Equals(LoopCatalogueItems, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    index = DoReplacements(strs, index, out copy,catalogue.CatalogueItems) + 1;
+                }
+                else
+                {
+                    foreach (var r in Replacements)
+                        if (copy.Contains(r.Key))
+                            copy = copy.Replace(r.Key, r.Value(catalogue)?.ToString() ?? "");
+                }
+
+                sb.AppendLine(copy.Trim());
+            }
+
+            return sb.ToString().Trim();
+        }
+
+        /// <summary>
+        /// Consumes from $foreach to $end looping <paramref name="catalogueItems"/> to produce output rows of string data
+        /// </summary>
+        /// <param name="strs">The original input in its entirety</param>
+        /// <param name="index">The line in <paramref name="strs"/> in which the foreach was detected</param>
+        /// <param name="result">The results of consuming the foreach block</param>
+        /// <param name="catalogueItems"></param>
+        /// <returns>The index in <paramref name="strs"/> where the $end was detected</returns>
+        private int DoReplacements(string[] strs, int index, out string result, CatalogueItem[] catalogueItems)
+        {
+            // The foreach template block as extracted from strs
+            StringBuilder block = new StringBuilder();
+
+            //the result of printing out the block once for each CatalogueItem item (with replacements)
+            StringBuilder sbResult = new StringBuilder();
+
+            int i = index+1;
+            bool blockTerminated = false;
+
+            //starting on the next line after $foreach until the end of the file
+            for (; i < strs.Length; i++)
+            {
+                var current = strs[i];
+
+                if (current.Trim().Equals(EndLoop, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    blockTerminated = true;
+                    break;
+                }
+
+                block.AppendLine(current);
+            }
+
+            if(!blockTerminated)
+                throw new Exception($"Expected $end to match $foreach which started on line {index}");
+
+            foreach (CatalogueItem ci in catalogueItems) 
+                sbResult.AppendLine(DoReplacements(block.ToString(), ci));
+
+            result = sbResult.ToString();
+
+            return i;
+        }
+
+        private string DoReplacements(string template, CatalogueItem catalogueItem)
+        {
+            foreach (var r in ReplacementsCatalogueItem)
+                if (template.Contains(r.Key))
+                    template = template.Replace(r.Key, r.Value(catalogueItem)?.ToString() ?? "");
+
+            return template.Trim();
         }
     }
 }
