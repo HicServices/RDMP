@@ -144,7 +144,7 @@ namespace Rdmp.UI.Collections
             CommonFunctionality.ClearToolStrip();
             CommonFunctionality.Add(new ExecuteCommandCreateNewDataExtractionProject(Activator),"Project",null,"New...");
             CommonFunctionality.Add(new ExecuteCommandCreateNewExtractionConfigurationForProject(Activator),"Extraction",null,"New...");
-
+            CommonFunctionality.Add(new ExecuteCommandCreateNewExtractableDataSetPackage(Activator),"Package",null,"New...");
             var mi = new ToolStripMenuItem("Project Specific Catalogue",Activator.CoreIconProvider.GetImage(RDMPConcept.ProjectCatalogue,OverlayKind.Add));
 
             var factory = new AtomicCommandUIFactory(Activator);

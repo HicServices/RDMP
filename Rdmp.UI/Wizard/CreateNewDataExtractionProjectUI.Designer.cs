@@ -31,8 +31,7 @@ namespace Rdmp.UI.Wizard
         /// </summary>
         private void InitializeComponent()
         {
-            this.olvDatasets = new BrightIdeasSoftware.ObjectListView();
-            this.olvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CreateNewDataExtractionProjectUI));
             this.label1 = new System.Windows.Forms.Label();
             this.tbProjectName = new System.Windows.Forms.TextBox();
             this.tbProjectNumber = new System.Windows.Forms.TextBox();
@@ -47,11 +46,11 @@ namespace Rdmp.UI.Wizard
             this.lblCohortFile = new System.Windows.Forms.Label();
             this.btnSelectClearCohortFile = new System.Windows.Forms.Button();
             this.gbCic = new System.Windows.Forms.GroupBox();
-            this.ragCic = new RAGSmiley();
+            this.ragCic = new Rdmp.UI.ChecksUI.RAGSmiley();
             this.btnClearCohort = new System.Windows.Forms.Button();
             this.ddCicPipeline = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.cbxCohort = new SuggestComboBox();
+            this.cbxCohort = new Rdmp.UI.SuggestComboBox();
             this.gbFile = new System.Windows.Forms.GroupBox();
             this.ddFilePipeline = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
@@ -63,13 +62,23 @@ namespace Rdmp.UI.Wizard
             this.label6 = new System.Windows.Forms.Label();
             this.pbCohortSources = new System.Windows.Forms.PictureBox();
             this.btnCreateNewCohortSource = new System.Windows.Forms.Button();
-            this.ragExecute = new RAGSmiley();
-            this.ragProjectNumber = new RAGSmiley();
+            this.ragExecute = new Rdmp.UI.ChecksUI.RAGSmiley();
+            this.ragProjectNumber = new Rdmp.UI.ChecksUI.RAGSmiley();
             this.label11 = new System.Windows.Forms.Label();
             this.tbCohortName = new System.Windows.Forms.TextBox();
             this.cbDefineCohort = new System.Windows.Forms.CheckBox();
             this.gbCohortAndDatasets = new System.Windows.Forms.GroupBox();
-            ((System.ComponentModel.ISupportInitialize)(this.olvDatasets)).BeginInit();
+            this.btnClearDatasets = new System.Windows.Forms.Button();
+            this.lblDatasets = new System.Windows.Forms.Label();
+            this.btnPackage = new System.Windows.Forms.Button();
+            this.btnPick = new System.Windows.Forms.Button();
+            this.cbxDatasets = new System.Windows.Forms.ComboBox();
+            this.hlpDatasets = new Rdmp.UI.SimpleControls.HelpIcon();
+            this.hlpIdentifierAllocation = new Rdmp.UI.SimpleControls.HelpIcon();
+            this.hlpExtractionPipeline = new Rdmp.UI.SimpleControls.HelpIcon();
+            this.hlpDefineCohortAndDatasets = new Rdmp.UI.SimpleControls.HelpIcon();
+            this.hlpCicPipe = new Rdmp.UI.SimpleControls.HelpIcon();
+            this.hlpFlatFilePipe = new Rdmp.UI.SimpleControls.HelpIcon();
             ((System.ComponentModel.ISupportInitialize)(this.pbCohort)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbCohortFile)).BeginInit();
             this.gbCic.SuspendLayout();
@@ -77,29 +86,6 @@ namespace Rdmp.UI.Wizard
             ((System.ComponentModel.ISupportInitialize)(this.pbCohortSources)).BeginInit();
             this.gbCohortAndDatasets.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // olvDatasets
-            // 
-            this.olvDatasets.AllColumns.Add(this.olvColumn1);
-            this.olvDatasets.CellEditUseWholeCell = false;
-            this.olvDatasets.CheckBoxes = true;
-            this.olvDatasets.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvColumn1});
-            this.olvDatasets.Cursor = System.Windows.Forms.Cursors.Default;
-            this.olvDatasets.Location = new System.Drawing.Point(114, 182);
-            this.olvDatasets.Name = "olvDatasets";
-            this.olvDatasets.Size = new System.Drawing.Size(400, 273);
-            this.olvDatasets.TabIndex = 10;
-            this.olvDatasets.UseCompatibleStateImageBehavior = false;
-            this.olvDatasets.View = System.Windows.Forms.View.Details;
-            // 
-            // olvColumn1
-            // 
-            this.olvColumn1.AspectName = "ToString";
-            this.olvColumn1.FillsFreeSpace = true;
-            this.olvColumn1.Groupable = false;
-            this.olvColumn1.Text = "DataSets";
-            this.olvColumn1.MinimumWidth = 100;
             // 
             // label1
             // 
@@ -215,6 +201,7 @@ namespace Rdmp.UI.Wizard
             // 
             // gbCic
             // 
+            this.gbCic.Controls.Add(this.hlpCicPipe);
             this.gbCic.Controls.Add(this.ragCic);
             this.gbCic.Controls.Add(this.btnClearCohort);
             this.gbCic.Controls.Add(this.ddCicPipeline);
@@ -282,6 +269,7 @@ namespace Rdmp.UI.Wizard
             // 
             // gbFile
             // 
+            this.gbFile.Controls.Add(this.hlpFlatFilePipe);
             this.gbFile.Controls.Add(this.ddFilePipeline);
             this.gbFile.Controls.Add(this.label8);
             this.gbFile.Controls.Add(this.btnSelectClearCohortFile);
@@ -300,7 +288,7 @@ namespace Rdmp.UI.Wizard
             this.ddFilePipeline.FormattingEnabled = true;
             this.ddFilePipeline.Location = new System.Drawing.Point(61, 64);
             this.ddFilePipeline.Name = "ddFilePipeline";
-            this.ddFilePipeline.Size = new System.Drawing.Size(389, 21);
+            this.ddFilePipeline.Size = new System.Drawing.Size(364, 21);
             this.ddFilePipeline.TabIndex = 2;
             // 
             // label8
@@ -315,16 +303,16 @@ namespace Rdmp.UI.Wizard
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(56, 182);
+            this.label9.Location = new System.Drawing.Point(54, 185);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(52, 13);
+            this.label9.Size = new System.Drawing.Size(58, 13);
             this.label9.TabIndex = 11;
-            this.label9.Text = "Datasets:";
+            this.label9.Text = "Dataset(s):";
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(11, 464);
+            this.label10.Location = new System.Drawing.Point(10, 212);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(97, 13);
             this.label10.TabIndex = 11;
@@ -334,14 +322,14 @@ namespace Rdmp.UI.Wizard
             // 
             this.ddExtractionPipeline.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddExtractionPipeline.FormattingEnabled = true;
-            this.ddExtractionPipeline.Location = new System.Drawing.Point(114, 461);
+            this.ddExtractionPipeline.Location = new System.Drawing.Point(113, 209);
             this.ddExtractionPipeline.Name = "ddExtractionPipeline";
             this.ddExtractionPipeline.Size = new System.Drawing.Size(390, 21);
             this.ddExtractionPipeline.TabIndex = 11;
             // 
             // btnExecute
             // 
-            this.btnExecute.Location = new System.Drawing.Point(17, 603);
+            this.btnExecute.Location = new System.Drawing.Point(18, 349);
             this.btnExecute.Name = "btnExecute";
             this.btnExecute.Size = new System.Drawing.Size(75, 23);
             this.btnExecute.TabIndex = 12;
@@ -390,7 +378,7 @@ namespace Rdmp.UI.Wizard
             this.ragExecute.AlwaysShowHandCursor = false;
             this.ragExecute.BackColor = System.Drawing.Color.Transparent;
             this.ragExecute.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragExecute.Location = new System.Drawing.Point(98, 603);
+            this.ragExecute.Location = new System.Drawing.Point(99, 349);
             this.ragExecute.Name = "ragExecute";
             this.ragExecute.Size = new System.Drawing.Size(25, 25);
             this.ragExecute.TabIndex = 13;
@@ -434,12 +422,19 @@ namespace Rdmp.UI.Wizard
             // 
             // gbCohortAndDatasets
             // 
+            this.gbCohortAndDatasets.Controls.Add(this.hlpExtractionPipeline);
+            this.gbCohortAndDatasets.Controls.Add(this.hlpIdentifierAllocation);
+            this.gbCohortAndDatasets.Controls.Add(this.hlpDatasets);
+            this.gbCohortAndDatasets.Controls.Add(this.btnClearDatasets);
+            this.gbCohortAndDatasets.Controls.Add(this.lblDatasets);
+            this.gbCohortAndDatasets.Controls.Add(this.btnPackage);
+            this.gbCohortAndDatasets.Controls.Add(this.btnPick);
+            this.gbCohortAndDatasets.Controls.Add(this.cbxDatasets);
             this.gbCohortAndDatasets.Controls.Add(this.gbCic);
             this.gbCohortAndDatasets.Controls.Add(this.label5);
             this.gbCohortAndDatasets.Controls.Add(this.tbCohortName);
             this.gbCohortAndDatasets.Controls.Add(this.gbFile);
             this.gbCohortAndDatasets.Controls.Add(this.label11);
-            this.gbCohortAndDatasets.Controls.Add(this.olvDatasets);
             this.gbCohortAndDatasets.Controls.Add(this.label9);
             this.gbCohortAndDatasets.Controls.Add(this.btnCreateNewCohortSource);
             this.gbCohortAndDatasets.Controls.Add(this.label10);
@@ -450,16 +445,145 @@ namespace Rdmp.UI.Wizard
             this.gbCohortAndDatasets.Enabled = false;
             this.gbCohortAndDatasets.Location = new System.Drawing.Point(17, 106);
             this.gbCohortAndDatasets.Name = "gbCohortAndDatasets";
-            this.gbCohortAndDatasets.Size = new System.Drawing.Size(1023, 491);
+            this.gbCohortAndDatasets.Size = new System.Drawing.Size(1023, 237);
             this.gbCohortAndDatasets.TabIndex = 18;
             this.gbCohortAndDatasets.TabStop = false;
             this.gbCohortAndDatasets.Text = "Cohort and Datasets";
+            // 
+            // btnClearDatasets
+            // 
+            this.btnClearDatasets.Location = new System.Drawing.Point(448, 182);
+            this.btnClearDatasets.Name = "btnClearDatasets";
+            this.btnClearDatasets.Size = new System.Drawing.Size(52, 24);
+            this.btnClearDatasets.TabIndex = 19;
+            this.btnClearDatasets.Text = "Clear";
+            this.btnClearDatasets.UseVisualStyleBackColor = true;
+            this.btnClearDatasets.Click += new System.EventHandler(this.btnClearDatasets_Click);
+            // 
+            // lblDatasets
+            // 
+            this.lblDatasets.AutoSize = true;
+            this.lblDatasets.Location = new System.Drawing.Point(112, 185);
+            this.lblDatasets.Name = "lblDatasets";
+            this.lblDatasets.Size = new System.Drawing.Size(55, 13);
+            this.lblDatasets.TabIndex = 18;
+            this.lblDatasets.Text = "x datasets";
+            this.lblDatasets.Visible = false;
+            // 
+            // btnPackage
+            // 
+            this.btnPackage.Location = new System.Drawing.Point(410, 180);
+            this.btnPackage.Name = "btnPackage";
+            this.btnPackage.Size = new System.Drawing.Size(32, 27);
+            this.btnPackage.TabIndex = 17;
+            this.btnPackage.UseVisualStyleBackColor = true;
+            this.btnPackage.Click += new System.EventHandler(this.btnPackage_Click);
+            // 
+            // btnPick
+            // 
+            this.btnPick.Location = new System.Drawing.Point(378, 182);
+            this.btnPick.Name = "btnPick";
+            this.btnPick.Size = new System.Drawing.Size(32, 24);
+            this.btnPick.TabIndex = 16;
+            this.btnPick.Text = "...";
+            this.btnPick.UseVisualStyleBackColor = true;
+            this.btnPick.Click += new System.EventHandler(this.btnPick_Click);
+            // 
+            // cbxDatasets
+            // 
+            this.cbxDatasets.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append;
+            this.cbxDatasets.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.cbxDatasets.FormattingEnabled = true;
+            this.cbxDatasets.Location = new System.Drawing.Point(113, 182);
+            this.cbxDatasets.Name = "cbxDatasets";
+            this.cbxDatasets.Size = new System.Drawing.Size(258, 21);
+            this.cbxDatasets.TabIndex = 15;
+            this.cbxDatasets.SelectedIndexChanged += new System.EventHandler(this.cbxDatasets_SelectedIndexChanged);
+            // 
+            // hlpDatasets
+            // 
+            this.hlpDatasets.BackColor = System.Drawing.Color.Transparent;
+            this.hlpDatasets.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("hlpDatasets.BackgroundImage")));
+            this.hlpDatasets.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.hlpDatasets.Location = new System.Drawing.Point(507, 183);
+            this.hlpDatasets.MaximumSize = new System.Drawing.Size(19, 19);
+            this.hlpDatasets.MinimumSize = new System.Drawing.Size(19, 19);
+            this.hlpDatasets.Name = "hlpDatasets";
+            this.hlpDatasets.Size = new System.Drawing.Size(19, 19);
+            this.hlpDatasets.SuppressClick = false;
+            this.hlpDatasets.TabIndex = 20;
+            // 
+            // hlpIdentifierAllocation
+            // 
+            this.hlpIdentifierAllocation.BackColor = System.Drawing.Color.Transparent;
+            this.hlpIdentifierAllocation.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("hlpIdentifierAllocation.BackgroundImage")));
+            this.hlpIdentifierAllocation.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.hlpIdentifierAllocation.Location = new System.Drawing.Point(621, 155);
+            this.hlpIdentifierAllocation.MaximumSize = new System.Drawing.Size(19, 19);
+            this.hlpIdentifierAllocation.MinimumSize = new System.Drawing.Size(19, 19);
+            this.hlpIdentifierAllocation.Name = "hlpIdentifierAllocation";
+            this.hlpIdentifierAllocation.Size = new System.Drawing.Size(19, 19);
+            this.hlpIdentifierAllocation.SuppressClick = false;
+            this.hlpIdentifierAllocation.TabIndex = 20;
+            // 
+            // hlpExtractionPipeline
+            // 
+            this.hlpExtractionPipeline.BackColor = System.Drawing.Color.Transparent;
+            this.hlpExtractionPipeline.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("hlpExtractionPipeline.BackgroundImage")));
+            this.hlpExtractionPipeline.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.hlpExtractionPipeline.Location = new System.Drawing.Point(512, 209);
+            this.hlpExtractionPipeline.MaximumSize = new System.Drawing.Size(19, 19);
+            this.hlpExtractionPipeline.MinimumSize = new System.Drawing.Size(19, 19);
+            this.hlpExtractionPipeline.Name = "hlpExtractionPipeline";
+            this.hlpExtractionPipeline.Size = new System.Drawing.Size(19, 19);
+            this.hlpExtractionPipeline.SuppressClick = false;
+            this.hlpExtractionPipeline.TabIndex = 20;
+            // 
+            // hlpDefineCohortAndDatasets
+            // 
+            this.hlpDefineCohortAndDatasets.BackColor = System.Drawing.Color.Transparent;
+            this.hlpDefineCohortAndDatasets.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("hlpDefineCohortAndDatasets.BackgroundImage")));
+            this.hlpDefineCohortAndDatasets.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.hlpDefineCohortAndDatasets.Location = new System.Drawing.Point(200, 85);
+            this.hlpDefineCohortAndDatasets.MaximumSize = new System.Drawing.Size(19, 19);
+            this.hlpDefineCohortAndDatasets.MinimumSize = new System.Drawing.Size(19, 19);
+            this.hlpDefineCohortAndDatasets.Name = "hlpDefineCohortAndDatasets";
+            this.hlpDefineCohortAndDatasets.Size = new System.Drawing.Size(19, 19);
+            this.hlpDefineCohortAndDatasets.SuppressClick = false;
+            this.hlpDefineCohortAndDatasets.TabIndex = 21;
+            // 
+            // hlpCicPipe
+            // 
+            this.hlpCicPipe.BackColor = System.Drawing.Color.Transparent;
+            this.hlpCicPipe.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("hlpCicPipe.BackgroundImage")));
+            this.hlpCicPipe.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.hlpCicPipe.Location = new System.Drawing.Point(487, 64);
+            this.hlpCicPipe.MaximumSize = new System.Drawing.Size(19, 19);
+            this.hlpCicPipe.MinimumSize = new System.Drawing.Size(19, 19);
+            this.hlpCicPipe.Name = "hlpCicPipe";
+            this.hlpCicPipe.Size = new System.Drawing.Size(19, 19);
+            this.hlpCicPipe.SuppressClick = false;
+            this.hlpCicPipe.TabIndex = 21;
+            // 
+            // hlpFlatFilePipe
+            // 
+            this.hlpFlatFilePipe.BackColor = System.Drawing.Color.Transparent;
+            this.hlpFlatFilePipe.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("hlpFlatFilePipe.BackgroundImage")));
+            this.hlpFlatFilePipe.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.hlpFlatFilePipe.Location = new System.Drawing.Point(431, 66);
+            this.hlpFlatFilePipe.MaximumSize = new System.Drawing.Size(19, 19);
+            this.hlpFlatFilePipe.MinimumSize = new System.Drawing.Size(19, 19);
+            this.hlpFlatFilePipe.Name = "hlpFlatFilePipe";
+            this.hlpFlatFilePipe.Size = new System.Drawing.Size(19, 19);
+            this.hlpFlatFilePipe.SuppressClick = false;
+            this.hlpFlatFilePipe.TabIndex = 22;
             // 
             // CreateNewDataExtractionProjectUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1054, 630);
+            this.ClientSize = new System.Drawing.Size(1054, 383);
+            this.Controls.Add(this.hlpDefineCohortAndDatasets);
             this.Controls.Add(this.gbCohortAndDatasets);
             this.Controls.Add(this.cbDefineCohort);
             this.Controls.Add(this.ragProjectNumber);
@@ -475,7 +599,6 @@ namespace Rdmp.UI.Wizard
             this.Name = "CreateNewDataExtractionProjectUI";
             this.Text = "New Project";
             this.Load += new System.EventHandler(this.CreateNewDataExtractionProjectUI_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.olvDatasets)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbCohort)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbCohortFile)).EndInit();
             this.gbCic.ResumeLayout(false);
@@ -491,8 +614,6 @@ namespace Rdmp.UI.Wizard
         }
 
         #endregion
-
-        private ObjectListView olvDatasets;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbProjectName;
         private System.Windows.Forms.TextBox tbProjectNumber;
@@ -522,7 +643,6 @@ namespace Rdmp.UI.Wizard
         private System.Windows.Forms.PictureBox pbCohortSources;
         private System.Windows.Forms.Button btnCreateNewCohortSource;
         private RAGSmiley ragExecute;
-        private OLVColumn olvColumn1;
         private RAGSmiley ragProjectNumber;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.TextBox tbCohortName;
@@ -530,5 +650,16 @@ namespace Rdmp.UI.Wizard
         private RAGSmiley ragCic;
         private System.Windows.Forms.CheckBox cbDefineCohort;
         private System.Windows.Forms.GroupBox gbCohortAndDatasets;
+        private System.Windows.Forms.Button btnPackage;
+        private System.Windows.Forms.Button btnPick;
+        private System.Windows.Forms.ComboBox cbxDatasets;
+        private System.Windows.Forms.Label lblDatasets;
+        private System.Windows.Forms.Button btnClearDatasets;
+        private SimpleControls.HelpIcon hlpExtractionPipeline;
+        private SimpleControls.HelpIcon hlpIdentifierAllocation;
+        private SimpleControls.HelpIcon hlpDatasets;
+        private SimpleControls.HelpIcon hlpDefineCohortAndDatasets;
+        private SimpleControls.HelpIcon hlpCicPipe;
+        private SimpleControls.HelpIcon hlpFlatFilePipe;
     }
 }

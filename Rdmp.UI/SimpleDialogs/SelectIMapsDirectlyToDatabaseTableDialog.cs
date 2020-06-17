@@ -356,6 +356,17 @@ namespace Rdmp.UI.SimpleDialogs
                 if (Selected == null)
                     return;
 
+                //double clicking on a row when several others are selected should not make it the only selected item
+                if (AllowMultiSelect)
+                {
+                    //instead it should just add it to the multi selection
+                    MultiSelected.Add(Selected);
+                    buildGroupsRequired = true;
+
+                    UpdateButtonEnabledness();
+                    return;
+                }
+
                 MultiSelected = new HashSet<IMapsDirectlyToDatabaseTable>(new[] { Selected });
                 DialogResult = DialogResult.OK;
                 this.Close();
