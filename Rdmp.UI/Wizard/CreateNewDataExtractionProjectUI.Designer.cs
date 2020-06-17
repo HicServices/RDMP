@@ -67,9 +67,11 @@ namespace Rdmp.UI.Wizard
             this.tbCohortName = new System.Windows.Forms.TextBox();
             this.cbDefineCohort = new System.Windows.Forms.CheckBox();
             this.gbCohortAndDatasets = new System.Windows.Forms.GroupBox();
+            this.lblDatasets = new System.Windows.Forms.Label();
             this.btnPackage = new System.Windows.Forms.Button();
             this.btnPick = new System.Windows.Forms.Button();
             this.cbxDatasets = new System.Windows.Forms.ComboBox();
+            this.btnClearDatasets = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbCohort)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbCohortFile)).BeginInit();
             this.gbCic.SuspendLayout();
@@ -294,9 +296,9 @@ namespace Rdmp.UI.Wizard
             this.label9.AutoSize = true;
             this.label9.Location = new System.Drawing.Point(54, 185);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(52, 13);
+            this.label9.Size = new System.Drawing.Size(58, 13);
             this.label9.TabIndex = 11;
-            this.label9.Text = "Datasets:";
+            this.label9.Text = "Dataset(s):";
             // 
             // label10
             // 
@@ -411,6 +413,8 @@ namespace Rdmp.UI.Wizard
             // 
             // gbCohortAndDatasets
             // 
+            this.gbCohortAndDatasets.Controls.Add(this.btnClearDatasets);
+            this.gbCohortAndDatasets.Controls.Add(this.lblDatasets);
             this.gbCohortAndDatasets.Controls.Add(this.btnPackage);
             this.gbCohortAndDatasets.Controls.Add(this.btnPick);
             this.gbCohortAndDatasets.Controls.Add(this.cbxDatasets);
@@ -433,6 +437,16 @@ namespace Rdmp.UI.Wizard
             this.gbCohortAndDatasets.TabIndex = 18;
             this.gbCohortAndDatasets.TabStop = false;
             this.gbCohortAndDatasets.Text = "Cohort and Datasets";
+            // 
+            // lblDatasets
+            // 
+            this.lblDatasets.AutoSize = true;
+            this.lblDatasets.Location = new System.Drawing.Point(112, 185);
+            this.lblDatasets.Name = "lblDatasets";
+            this.lblDatasets.Size = new System.Drawing.Size(55, 13);
+            this.lblDatasets.TabIndex = 18;
+            this.lblDatasets.Text = "x datasets";
+            this.lblDatasets.Visible = false;
             // 
             // btnPackage
             // 
@@ -463,6 +477,16 @@ namespace Rdmp.UI.Wizard
             this.cbxDatasets.Size = new System.Drawing.Size(258, 21);
             this.cbxDatasets.TabIndex = 15;
             this.cbxDatasets.SelectedIndexChanged += new System.EventHandler(this.cbxDatasets_SelectedIndexChanged);
+            // 
+            // btnClearDatasets
+            // 
+            this.btnClearDatasets.Location = new System.Drawing.Point(448, 182);
+            this.btnClearDatasets.Name = "btnClearDatasets";
+            this.btnClearDatasets.Size = new System.Drawing.Size(52, 24);
+            this.btnClearDatasets.TabIndex = 19;
+            this.btnClearDatasets.Text = "Clear";
+            this.btnClearDatasets.UseVisualStyleBackColor = true;
+            this.btnClearDatasets.Click += new System.EventHandler(this.btnClearDatasets_Click);
             // 
             // CreateNewDataExtractionProjectUI
             // 
@@ -538,5 +562,7 @@ namespace Rdmp.UI.Wizard
         private System.Windows.Forms.Button btnPackage;
         private System.Windows.Forms.Button btnPick;
         private System.Windows.Forms.ComboBox cbxDatasets;
+        private System.Windows.Forms.Label lblDatasets;
+        private System.Windows.Forms.Button btnClearDatasets;
     }
 }

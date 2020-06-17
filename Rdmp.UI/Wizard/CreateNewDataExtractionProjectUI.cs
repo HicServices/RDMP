@@ -449,7 +449,7 @@ namespace Rdmp.UI.Wizard
             if (dlg.ShowDialog() == DialogResult.OK)
                 _selectedDatasets = dlg.MultiSelected.Cast<ExtractableDataSet>().ToArray();
 
-            UpdateCbxDatasets();
+            UpdateDatasetControlVisibility();
         }
 
 
@@ -470,18 +470,26 @@ namespace Rdmp.UI.Wizard
                     .ToArray();
             }
 
-            UpdateCbxDatasets();
+            UpdateDatasetControlVisibility();
         }
 
         /// <summary>
         /// Updates the enabledness and selected item of (<see cref="cbxDatasets"/> to match the current <see cref="_selectedDatasets"/>)
         /// </summary>
-        private void UpdateCbxDatasets()
+        private void UpdateDatasetControlVisibility()
         {
             _bLoading = true;
-            cbxDatasets.Enabled = _selectedDatasets.Length <= 1;
+            cbxDatasets.Visible = _selectedDatasets.Length <= 1;
+            lblDatasets.Visible = _selectedDatasets.Length > 1;
+            lblDatasets.Text = _selectedDatasets.Length + " Datasets";
             cbxDatasets.SelectedItem = _selectedDatasets.Length <= 1 ? _selectedDatasets.SingleOrDefault() : null;
             _bLoading = false;
+        }
+
+        private void btnClearDatasets_Click(object sender, EventArgs e)
+        {
+            _selectedDatasets = new IExtractableDataSet[0];
+            UpdateDatasetControlVisibility();
         }
     }
 }
