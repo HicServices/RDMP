@@ -52,6 +52,8 @@ namespace Rdmp.UI.Wizard
         /// </summary>
         private IExtractableDataSet[] _selectedDatasets = new IExtractableDataSet[0];
 
+        private bool _bLoading = false;
+
         public ExtractionConfiguration ExtractionConfigurationCreatedIfAny { get; private set; }
         
         public CreateNewDataExtractionProjectUI(IActivateItems activator):base(activator)
@@ -428,6 +430,9 @@ namespace Rdmp.UI.Wizard
 
         private void cbxDatasets_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if(_bLoading)
+                return;
+
             _selectedDatasets = cbxDatasets.SelectedItem != null ? new[] {(IExtractableDataSet) cbxDatasets.SelectedItem} : new IExtractableDataSet[0];
         }
 
@@ -435,10 +440,11 @@ namespace Rdmp.UI.Wizard
         {
             var dlg = new SelectIMapsDirectlyToDatabaseTableDialog(Activator,
                 cbxDatasets.Items.Cast<ExtractableDataSet>().ToArray(), false, false);
-            dlg.AllowMultiSelect = true;
-
+            
             foreach (var eds in this._selectedDatasets)
                 dlg.MultiSelected.Add(eds);
+            
+            dlg.AllowMultiSelect = true;
 
             if (dlg.ShowDialog() == DialogResult.OK)
                 _selectedDatasets = dlg.MultiSelected.Cast<ExtractableDataSet>().ToArray();
@@ -472,10 +478,10 @@ namespace Rdmp.UI.Wizard
         /// </summary>
         private void UpdateCbxDatasets()
         {
+            _bLoading = true;
             cbxDatasets.Enabled = _selectedDatasets.Length <= 1;
-
-            if (_selectedDatasets.Length <= 1)
-                cbxDatasets.SelectedItem = _selectedDatasets.SingleOrDefault();
+            cbxDatasets.SelectedItem = _selectedDatasets.Length <= 1 ? _selectedDatasets.SingleOrDefault() : null;
+            _bLoading = false;
         }
     }
 }
