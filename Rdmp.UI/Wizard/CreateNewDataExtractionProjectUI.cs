@@ -81,6 +81,15 @@ namespace Rdmp.UI.Wizard
             cbxCohort.DataSource = activator.RepositoryLocator.CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>();
             cbxCohort.PropertySelector = collection => collection.Cast<CohortIdentificationConfiguration>().Select(c => c.ToString());
             ClearCic();
+
+            hlpDatasets.SetHelpText("Datasets","Pick which datasets should be extracted when this Project ExtractionConfiguration is run.  You can always change this later on.");
+            hlpDefineCohortAndDatasets.SetHelpText("Define Cohort and Datasets", "If you have a cohort (list of identifiers to extract) in a file or defined in an RDMP CohortIdentificationConfiguration you can commit this to the Project here.  You can always commit the cohort later on and/or update the cohort etc.");
+            hlpExtractionPipeline.SetHelpText("Extraction Pipeline", "Choose the default pipeline that should be used to extract the data.  This determines what the output format is e.g. CSV / to database.  If unsure you can leave this blank and choose it later on");
+            hlpIdentifierAllocation.SetHelpText("Identifier Allocation","Choose where to store the cohort (if you have multiple cohort databases) and the name.");
+
+            hlpCicPipe.SetHelpText("Pipeline","Choose which Pipeline to use to read the RDMP CohortIdentificationConfiguration and commit it to your cohort database.  Pipeline selection affects which operations are run including which identifier allocation method is used to allocate release identifiers");
+            hlpFlatFilePipe.SetHelpText("Pipeline","Choose which Pipeline to use to read the cohort flat file and commit it to your cohort database.  Pipeline selection must be for a source compatible with the file type e.g. CSV / fixed width.  Selection also affects which operations are run including which identifier allocation method is used to allocate release identifiers");
+
         }
 
         private void IdentifyCompatibleCohortSources()
