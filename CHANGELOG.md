@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved usability of selecting multiple datasets in the 'New Project' user interface
 - When in multiple selection mode, double clicking a row in the object selection dialog will add it to the selection (previously would close the dialog with the double clicked item as the sole selected item)
 
+### Fixed
+
+- 'Select Core' columns UI button now works correctly with ProjectSpecific Catalogues (previously the highlighted rows would not change)
+ 
 ## [4.1.3] - 2020-06-15
 
 ### Added
