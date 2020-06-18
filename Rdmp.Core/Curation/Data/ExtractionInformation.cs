@@ -139,7 +139,7 @@ namespace Rdmp.Core.Curation.Data
         }
 
         /// <summary>
-        /// Returns the maximum Order from all <see cref="ExtractionInformation"/> in the parent <see cref="Catalogue"/> or <paramref name="catalogueItem"/>.  Returns 1 if anything goes wrong or if there are no other ExtractionInformation yet
+        /// Returns the maximum Order from all <see cref="ExtractionInformation"/> in the parent <see cref="Catalogue"/> of <paramref name="catalogueItem"/>.  Returns 1 if anything goes wrong or if there are no other ExtractionInformation yet
         /// </summary>
         /// <param name="catalogueItem"></param>
         /// <returns></returns>
