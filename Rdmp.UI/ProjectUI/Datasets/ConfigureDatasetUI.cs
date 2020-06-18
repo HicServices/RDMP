@@ -493,9 +493,16 @@ namespace Rdmp.UI.ProjectUI.Datasets
 
         private void btnSelectCore_Click(object sender, EventArgs e)
         {
+            var extractionIsFor = SelectedDataSet.ExtractableDataSet.Catalogue_ID;
+
             olvAvailable.SelectObjects(
                 olvAvailable.Objects.OfType<ExtractionInformation>()
-                .Where(ei => ei.ExtractionCategory == ExtractionCategory.Core).ToArray());
+                .Where(ei =>      
+                    //select core columns
+                    ei.ExtractionCategory == ExtractionCategory.Core 
+                    // or ProjectSpecific ones if it is the main dataset
+                    || (extractionIsFor == ei.CatalogueItem.Catalogue_ID && ei.ExtractionCategory == ExtractionCategory.ProjectSpecific)
+                             ).ToArray());
         }
         #region Joins
 
@@ -698,6 +705,9 @@ namespace Rdmp.UI.ProjectUI.Datasets
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
+            if (!SelectedDataSet.Exists())
+                return;
+
             //if an ExtractionInformation is being refreshed
             var ei = e.Object as ExtractionInformation;
             if (ei != null)
