@@ -61,7 +61,8 @@ namespace Rdmp.UI.Menus
             if (forObject is CohortIdentificationConfiguration cic)
             {
                 if(_activator.CoreChildProvider is DataExportChildProvider dx)
-                    AddGoTo(menu,()=>dx.AllProjectAssociatedCics.Where(a=>a.CohortIdentificationConfiguration_ID == cic.ID).Select(a=>a.Project).Distinct(),"Project(s)");
+                    if(dx.AllProjectAssociatedCics != null)
+                        AddGoTo(menu,()=>dx.AllProjectAssociatedCics.Where(a=>a.CohortIdentificationConfiguration_ID == cic.ID).Select(a=>a.Project).Distinct(),"Project(s)");
             }
            
             if (forObject is ColumnInfo columnInfo)
