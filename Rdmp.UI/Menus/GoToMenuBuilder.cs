@@ -60,9 +60,13 @@ namespace Rdmp.UI.Menus
             // cic => associated projects
             if (forObject is CohortIdentificationConfiguration cic)
             {
-                if(_activator.CoreChildProvider is DataExportChildProvider dx)
-                    if(dx.AllProjectAssociatedCics != null)
-                        AddGoTo(menu,()=>dx.AllProjectAssociatedCics.Where(a=>a.CohortIdentificationConfiguration_ID == cic.ID).Select(a=>a.Project).Distinct(),"Project(s)");
+                AddGoTo(menu,()=>{
+                    if(_activator.CoreChildProvider is DataExportChildProvider dx)
+                        if(dx.AllProjectAssociatedCics != null)
+                            return dx.AllProjectAssociatedCics.Where(a=>a.CohortIdentificationConfiguration_ID == cic.ID).Select(a=>a.Project).Distinct();
+                    
+                    return new CohortIdentificationConfiguration[0];
+                },"Project(s)");
             }
            
             if (forObject is ColumnInfo columnInfo)
@@ -76,8 +80,14 @@ namespace Rdmp.UI.Menus
             {
                 AddGoTo<Catalogue>(menu,eds.Catalogue_ID);
             
-                if(_activator.CoreChildProvider is DataExportChildProvider dx)
-                    AddGoTo(menu,()=>dx.SelectedDataSets.Where(s=>s.ExtractableDataSet_ID == eds.ID).Select(s=>s.ExtractionConfiguration),"Extraction Configurations");
+                AddGoTo(menu,()=>
+                {
+                    if(_activator.CoreChildProvider is DataExportChildProvider dx)
+                        return dx.SelectedDataSets.Where(s=>s.ExtractableDataSet_ID == eds.ID).Select(s=>s.ExtractionConfiguration);
+                    
+                    return new SelectedDataSets[0];               
+                }                
+                ,"Extraction Configurations");
             }
 
             if(forObject is GovernancePeriod period)
@@ -133,8 +143,14 @@ namespace Rdmp.UI.Menus
             }
             
             if(forObject is ExtractableCohort cohort)
-                if (_activator.CoreChildProvider is DataExportChildProvider dx)
-                    AddGoTo(menu,dx.ExtractionConfigurations.Where(ec => ec.Cohort_ID == cohort.ID),"Extraction Configurations");
+                AddGoTo(menu,()=>
+                    {
+                        if(_activator.CoreChildProvider is DataExportChildProvider dx)
+                            return dx.ExtractionConfigurations.Where(ec => ec.Cohort_ID == cohort.ID);
+                    
+                        return new ExtractionConfiguration[0];
+                    }               
+                    ,"Extraction Configurations");
             
             //if it is a masquerader and masquerading as a DatabaseEntity then add a goto the object
             if (forObject is IMasqueradeAs masquerader)

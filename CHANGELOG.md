@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed popup error message showing when deleting an ExtractionConfiguration where one or more datasets are currently being edited (in tabs) 
 - Fixed context menu opening error that could occur in cohort builder when datasets are not configured properly (e.g. have too many [IsExtractionIdentifier] columns).
 - Fixed alias changes not showing up as 'Differences' in edit dataeset extraction user interface
+- Fixed bugs in using GoTo menu of document tabs after a Refresh
 
 ## [4.1.3] - 2020-06-15
 
