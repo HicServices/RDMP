@@ -18,6 +18,7 @@
 1. Cohort Creation
    1. [Cohort Builder isn't working or is slow](#cicslow)
    2. [Does RDMP support ontologies e.g. SNOMED CT?](#ontologies)
+   3. [Does RDMP support multiple identifier formats?](#identifiers)
 1. Data Load Engine
    1. [How does RDMP differ from classic tools e.g. SSIS?](#vsssis)
    1. [Can RDMP Load UnTyped Data?](#untyped)
@@ -231,6 +232,11 @@ Not directly.  RDMP supports multiple [DBMS] and does not enforce any specific t
 Ontology creation / management can still occur behind the scenes in your database e.g. with scalar functions or table valued functions.  This approach allows maximum flexibility of the tool and reduces overhead when deploying RDMP against an existing mature data hosting environment (with established systems for handling ontologies).
 
 RDMP supports lookup tables which can form part of an ontology mapping solution.  The DLE can be helpful in ensuring lookup tables / ontology mappings remain current and avoid duplication.
+
+### Does RDMP support multiple identifier formats?
+<a name="identifiers"></a>
+
+Yes, RDMP supports both multiple identifier formats (text, numerical, guids etc) and [multiple identifiers per dataset](./MultipleExtractionIdentifiers.md)
 
 ## Data Load Engine
 
