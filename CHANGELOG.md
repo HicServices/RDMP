@@ -23,6 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Extractable columns Order field defaults to Max + 1 (previously 1).  This results in new columns appearing last in extracted datasets and prevents Order collisions.
 - 'Select Core' columns UI button now works correctly with ProjectSpecific Catalogues (previously the highlighted rows would not change)
 - Fixed popup error message showing when deleting an ExtractionConfiguration where one or more datasets are currently being edited (in tabs) 
+- Fixed context menu opening error that could occur in cohort builder when datasets are not configured properly (e.g. have too many [IsExtractionIdentifier] columns).
+- Fixed alias changes not showing up as 'Differences' in edit dataeset extraction user interface
+- Fixed bugs in using GoTo menu of document tabs after a Refresh
 
 ## [4.1.3] - 2020-06-15
 

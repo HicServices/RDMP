@@ -89,8 +89,18 @@ namespace Rdmp.UI.Menus
                 if (cic != null)
                 {
                     //find other non cohort aggregates (graphs) 
-                    var graphsAvailableInCatalogue = CohortSummaryQueryBuilder.GetAllCompatibleSummariesForCohort(aggregate);
+                    AggregateConfiguration[] graphsAvailableInCatalogue;
 
+                    try
+                    {
+                        graphsAvailableInCatalogue = CohortSummaryQueryBuilder.GetAllCompatibleSummariesForCohort(aggregate);
+                    }
+                    catch (System.Exception)
+                    {
+                        // Occurs if the AggregateConfiguration is badly set up e.g. has too many extraction identifiers
+                        graphsAvailableInCatalogue = new AggregateConfiguration[0];
+                    }
+                    
                     //and offer graph generation for the cohort subsets
                     var matchRecords = new ToolStripMenuItem("Graph Matching Records Only",_activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph));
                     var matchIdentifiers = new ToolStripMenuItem("Graph All Records For Matching Patients",_activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph));
