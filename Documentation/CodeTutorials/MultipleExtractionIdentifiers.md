@@ -16,7 +16,7 @@ After adding a dataset you can change the identifier column by right clicking an
 
 If you want your cohort to contain identifiers in multiple columns (e.g. Mothers and Children) you will have to import the dataset twice selecting a different column in each case.  If you have complicated filters that you do not want to replicate you can define them in one and create a link in the other:
 
-![Right click context menu for linking one AggregateConfiguration to another's filter tree](./Images/MultipleExtractionIdentifiers/ShortcutFilterContainer.png "Link an AggregateConfiguration to anothers container hierarchy")
+![Right click context menu for linking one AggregateConfiguration to another's filter tree](./Images/MultipleExtractionIdentifiers/ShortcutFilterContainer.png "Link an AggregateConfiguration to another's container hierarchy")
 
 
 ## When extracting a dataset
