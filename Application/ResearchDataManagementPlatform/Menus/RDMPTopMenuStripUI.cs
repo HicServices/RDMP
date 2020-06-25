@@ -164,7 +164,7 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void showHelpToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var current = _windowManager.Navigation.CurrentTab;
+            var current = _windowManager.Navigation.Current;
 
             var t = current as RDMPSingleControlTab;
             if(t == null)

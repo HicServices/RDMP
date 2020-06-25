@@ -282,10 +282,10 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 
             int backIndex = 1;
 
-            foreach (DockContent history in _manager.Navigation.GetHistory(16))
+            foreach (INavigation history in _manager.Navigation.GetHistory(16))
             {
                 var i = backIndex++;
-                btnBack.DropDownItems.Add(history.TabText,null,(a,b)=>_manager.Navigation.Back(i,true));
+                btnBack.DropDownItems.Add(history.ToString(),null,(a,b)=>_manager.Navigation.Back(i,true));
             }
         }
     }

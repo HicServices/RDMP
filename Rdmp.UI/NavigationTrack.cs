@@ -22,9 +22,9 @@ namespace Rdmp.UI
         private bool _suspended = false;
 
         /// <summary>
-        /// The last tab navigated to or null if no tabs are open
+        /// The last T navigated to or null if no T are alive / pushed
         /// </summary>
-        public T CurrentTab
+        public T Current
         {
             get
             {
@@ -106,12 +106,12 @@ namespace Rdmp.UI
         {
             Prune();
 
-            if (CurrentTab == null)
+            if (Current == null)
                 return default;
 
             var pop = _navigationStack.Pop();
 
-            var newHead = CurrentTab;
+            var newHead = Current;
             if (newHead == null)
             {
                 _navigationStack.Push(pop);
