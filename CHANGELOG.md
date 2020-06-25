@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Custom Metadata Report now supports looping items in a Catalogue (use `$foreach CatalogueItem` to start and `$end` to end)
 - Added help to 'New Project' user interface
+- Forward/Backward now includes selection changes in tree collections
 
 ### Changed
 

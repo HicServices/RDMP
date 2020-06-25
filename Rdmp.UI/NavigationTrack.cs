@@ -22,6 +22,11 @@ namespace Rdmp.UI
         private bool _suspended = false;
 
         /// <summary>
+        /// Called when changes are detected, includes Clear, Append etc
+        /// </summary>
+        public event EventHandler Changed;
+
+        /// <summary>
         /// The last T navigated to or null if no T are alive / pushed
         /// </summary>
         public T Current
@@ -123,6 +128,8 @@ namespace Rdmp.UI
             if (show)
                 Activate(newHead);
 
+            Changed?.Invoke(this,new EventArgs());
+
             return newHead;
         }
 
@@ -145,6 +152,8 @@ namespace Rdmp.UI
                 Activate(r);
 
             _navigationStack.Push(r);
+            
+            Changed?.Invoke(this,new EventArgs());
 
             return r;
         }
@@ -201,6 +210,8 @@ namespace Rdmp.UI
             _forward.Clear();
 
             _navigationStack.Push(newTab);
+
+            Changed?.Invoke(this,new EventArgs());
         }
 
         /// <summary>

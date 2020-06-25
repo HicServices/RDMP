@@ -141,6 +141,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
             if(CollectionCreated != null)
                 CollectionCreated(this, new RDMPCollectionCreatedEventHandlerArgs(collectionToCreate));
 
+            collection.CommonTreeFunctionality.Tree.SelectionChanged += (s,e)=>
+            {    
+                if(collection.CommonTreeFunctionality.Tree.SelectedObject is IMapsDirectlyToDatabaseTable im)
+                    Navigation.Append(new CollectionNavigation(im));
+            };
+
             return toReturn;
         }
 

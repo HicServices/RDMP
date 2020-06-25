@@ -8,6 +8,7 @@ using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
+using System.Collections.Generic;
 
 namespace ResearchDataManagementPlatform.WindowManagement
 {
@@ -46,6 +47,20 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public override string ToString()
         {
             return Object.ToString();
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is CollectionNavigation other &&
+                   Object.Equals(other.Object);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return 162302186 + EqualityComparer<IMapsDirectlyToDatabaseTable>.Default.GetHashCode(Object);
+            }
         }
     }
 }
