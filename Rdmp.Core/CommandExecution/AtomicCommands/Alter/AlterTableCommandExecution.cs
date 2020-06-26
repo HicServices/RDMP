@@ -9,6 +9,7 @@ using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using System;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
 {
@@ -23,7 +24,16 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
         protected AlterTableCommandExecution(IBasicActivateItems activator, TableInfo tableInfo) : base(activator)
         {
             TableInfo = tableInfo;
-            Table = TableInfo.Discover(DataAccessContext.InternalDataProcessing);
+            try
+            {
+                Table = TableInfo.Discover(DataAccessContext.InternalDataProcessing);
+            }
+            catch(Exception)
+            {
+                SetImpossible("Could not resolve Server/Table connection details");
+                return;
+            }
+            
                         
             if (!Table.Exists())
             {
