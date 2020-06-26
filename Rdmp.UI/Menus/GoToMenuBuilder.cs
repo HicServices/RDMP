@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
@@ -45,6 +46,10 @@ namespace Rdmp.UI.Menus
 
         public ToolStripMenuItem GetMenu(IMapsDirectlyToDatabaseTable forObject)
         {
+            //forget old values, get them up to the minute
+            if(forObject is IInjectKnown ii)
+                ii.ClearAllInjections();
+
             var menu = new ToolStripMenuItem(GoTo);
             
             // Go to import / export definitions
@@ -72,8 +77,22 @@ namespace Rdmp.UI.Menus
             if (forObject is ColumnInfo columnInfo)
             {
                 AddGoTo<TableInfo>(menu,columnInfo.TableInfo_ID, "Table");
-                AddGoTo(menu,()=>_activator.CoreChildProvider.AllCatalogueItems.Where(ci=>ci.ColumnInfo_ID == columnInfo.ID),"Catalogue Item(s)");
+                AddGoTo(menu,()=>_activator.CoreChildProvider.AllCatalogueItems.Where(catItem=>catItem.ColumnInfo_ID == columnInfo.ID),"Catalogue Item(s)");
                 AddGoTo<ANOTable>(menu,columnInfo.ANOTable_ID);
+            }
+            
+            if (forObject is ExtractionInformation ei)
+            {
+                AddGoTo<Catalogue>(menu,ei.CatalogueItem?.Catalogue_ID, "Catalogue");
+                AddGoTo<CatalogueItem>(menu,ei.CatalogueItem_ID, "CatalogueItem");
+                AddGoTo(menu,ei.ColumnInfo,"Column");
+            }
+            
+            if (forObject is CatalogueItem ci)
+            {
+                AddGoTo<Catalogue>(menu,ci.Catalogue_ID, "Catalogue");
+                AddGoTo(menu,ci.ExtractionInformation, "ExtractionInformation");
+                AddGoTo(menu,ci.ColumnInfo, "Column");
             }
 
             if (forObject is ExtractableDataSet eds)
@@ -107,7 +126,7 @@ namespace Rdmp.UI.Menus
                 AddGoTo<Catalogue>(menu,selectedDataSet.ExtractableDataSet.Catalogue_ID);
 
             if(forObject is TableInfo tableInfo)
-                AddGoTo(menu,()=>tableInfo.ColumnInfos.SelectMany(c=>_activator.CoreChildProvider.AllCatalogueItems.Where(ci=>ci.ColumnInfo_ID == c.ID).Select(ci=>ci.Catalogue)).Distinct(),"Catalogue(s)");
+                AddGoTo(menu,()=>tableInfo.ColumnInfos.SelectMany(c=>_activator.CoreChildProvider.AllCatalogueItems.Where(catItem=>catItem.ColumnInfo_ID == c.ID).Select(catItem=>catItem.Catalogue)).Distinct(),"Catalogue(s)");
 
             if (forObject is AggregateConfiguration aggregate)
             {
