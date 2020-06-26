@@ -287,10 +287,10 @@ namespace Rdmp.UI.Logging
         public void SetFilter(LogViewerFilter filter)
         {
             if(
-                _navigationTrack != null && _navigationTrack.CurrentTab != null //there is a back navigation stack setup
-                && filter != _navigationTrack.CurrentTab //we are not doing a Back operation
+                _navigationTrack != null && _navigationTrack.Current != null //there is a back navigation stack setup
+                && filter != _navigationTrack.Current //we are not doing a Back operation
                 )
-                    _navigationTrack.CurrentTab.Tag = tbContentFilter.Text; //Since user is making a new navigation to a new location, record the current text filter to preserve it for Back operations.
+                    _navigationTrack.Current.Tag = tbContentFilter.Text; //Since user is making a new navigation to a new location, record the current text filter to preserve it for Back operations.
                         
 
             Filter = filter;

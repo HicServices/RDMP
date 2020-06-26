@@ -164,13 +164,8 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void showHelpToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var current = _windowManager.Navigation.CurrentTab;
-
-            var t = current as RDMPSingleControlTab;
-            if(t == null)
-                return;
-
-            t.ShowHelp(Activator);
+            if(_windowManager.Navigation.Current is RDMPSingleControlTab t)
+                t.ShowHelp(Activator);
         }
 
         public void SetWindowManager(WindowManager windowManager)
@@ -192,6 +187,7 @@ namespace ResearchDataManagementPlatform.Menus
             fileToolStripMenuItem.DropDownItems.Insert(3,_saveToolStripMenuItem);
 
             _windowManager.TabChanged += WindowFactory_TabChanged;
+            _windowManager.Navigation.Changed += (s,e)=>UpdateForwardBackEnabled();
 
             var tracker = new TutorialTracker(Activator);
             foreach (Tutorial t in tracker.TutorialsAvailable)
@@ -255,7 +251,13 @@ namespace ResearchDataManagementPlatform.Menus
                 Activator.RequestItemEmphasis(this, new EmphasiseRequest(singleObject.DatabaseObject));
 
             _saveToolStripMenuItem.Saveable = saveable;
-
+        }
+        
+        /// <summary>
+        /// Updates the enabled status (greyed out) of the Forward/Back menu items (includes the use of keyobard shortcuts)
+        /// </summary>
+        private void UpdateForwardBackEnabled()
+        {
             navigateBackwardToolStripMenuItem.Enabled = _windowManager.Navigation.CanBack();
             navigateForwardToolStripMenuItem.Enabled = _windowManager.Navigation.CanForward();
         }

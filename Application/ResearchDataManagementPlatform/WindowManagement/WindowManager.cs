@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
@@ -38,7 +39,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         readonly List<RDMPSingleControlTab>  _trackedWindows = new List<RDMPSingleControlTab>();
         readonly List<DockContent> _trackedAdhocWindows = new List<DockContent>();
         
-        public NavigationTrack<DockContent> Navigation { get; private set; }
+        public NavigationTrack<INavigation> Navigation { get; private set; }
         public event TabChangedHandler TabChanged;
 
         private readonly DockPanel _mainDockPanel;
@@ -68,9 +69,14 @@ namespace ResearchDataManagementPlatform.WindowManagement
             MainForm = mainForm;
             RepositoryLocator = repositoryLocator;
 
-            Navigation = new NavigationTrack<DockContent>((c)=>c.ParentForm != null,(c)=>c.Activate());
+            Navigation = new NavigationTrack<INavigation>(c=>c.IsAlive,(c)=>c.Activate(ActivateItems));
             mainDockPanel.ActiveDocumentChanged += mainDockPanel_ActiveDocumentChanged;
-            
+            ActivateItems.Emphasise += RecordEmphasis;
+        }
+
+        private void RecordEmphasis(object sender, EmphasiseEventArgs args)
+        {
+            Navigation.Append(new CollectionNavigation(args.Request.ObjectToEmphasise));
         }
 
         /// <summary>
@@ -134,6 +140,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             if(CollectionCreated != null)
                 CollectionCreated(this, new RDMPCollectionCreatedEventHandlerArgs(collectionToCreate));
+
+            collection.CommonTreeFunctionality.Tree.SelectionChanged += (s,e)=>
+            {    
+                if(collection.CommonTreeFunctionality.Tree.SelectedObject is IMapsDirectlyToDatabaseTable im)
+                    Navigation.Append(new CollectionNavigation(im));
+            };
 
             return toReturn;
         }
@@ -329,7 +341,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             var newTab = (DockContent) _mainDockPanel.ActiveDocument;
             
-            Navigation.Append(newTab);
+            Navigation.Append(new TabNavigation(newTab));
 
             if(newTab != null && newTab.ParentForm != null)
                 newTab.ParentForm.Text = newTab.TabText + " - RDMP";
@@ -421,21 +433,22 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public void CloseCurrentTab()
         {
             //nothing to close
-            if (Navigation.CurrentTab == null)
+            if (Navigation.Current == null)
                 return;
 
             Navigation.Suspend();
             try
             {
-                Navigation.CurrentTab.Close();
+                Navigation.Current.Close();
 
-                if (Navigation.CurrentTab != null)
-                    Navigation.CurrentTab.Activate();
+                if (Navigation.Current != null)
+                    Navigation.Current.Activate(ActivateItems);
             }
             finally
             {
                 Navigation.Resume();
-                Navigation.Append(_mainDockPanel.ActiveDocument as DockContent);
+                if(_mainDockPanel.ActiveDocument is DockContent dc)
+                    Navigation.Append(new TabNavigation(dc));
             }
         }
     }

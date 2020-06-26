@@ -11,7 +11,7 @@ using System.Linq;
 namespace Rdmp.UI
 {
     /// <summary>
-    /// Handles tracking which tabs the user switched between for Forward / Backward navigation.
+    /// Handles tracking which where the user navigates to for Forward / Backward purposes.
     /// </summary>
     public class NavigationTrack<T>
     {
@@ -22,9 +22,14 @@ namespace Rdmp.UI
         private bool _suspended = false;
 
         /// <summary>
-        /// The last tab navigated to or null if no tabs are open
+        /// Called when changes are detected, includes Clear, Append etc. Does not include <see cref="Prune"/> which is often called as part of internal operations.
         /// </summary>
-        public T CurrentTab
+        public event EventHandler Changed;
+
+        /// <summary>
+        /// The last T navigated to or null if no T are alive / pushed
+        /// </summary>
+        public T Current
         {
             get
             {
@@ -53,7 +58,7 @@ namespace Rdmp.UI
             _activate = activate;
         }
         /// <summary>
-        /// Removes all closed tabs in the history (forward and backwards)
+        /// Removes all dead objects in the history (forward and backwards).  This is based on the alive delegate used to construct the <see cref="NavigationTrack{T}"/>
         /// </summary>
         public void Prune()
         {
@@ -61,6 +66,12 @@ namespace Rdmp.UI
             _forward = new Stack<T>(_forward.ToArray().Reverse().Where(_isAlive));
         }
 
+        /// <summary>
+        /// Calls <see cref="Back(bool)"/> <paramref name="i"/> times.  If this results in a valid <see cref="Current"/> then the activate delegate will be triggered
+        /// </summary>
+        /// <param name="i"></param>
+        /// <param name="show"></param>
+        /// <returns></returns>
         public T Back(int i, bool show)
         {
             T toShow = default;
@@ -75,7 +86,7 @@ namespace Rdmp.UI
         }
 
         /// <summary>
-        /// Activates the given tab without adding it to the history stack
+        /// Activates the given <typeparamref name="T"/> without adding it to the history stack
         /// </summary>
         /// <param name="toShow"></param>
         private void Activate(T toShow)
@@ -98,7 +109,7 @@ namespace Rdmp.UI
         }
 
         /// <summary>
-        /// Returns and optionally Activates the previous tab in the history.  This changes the location history
+        /// Returns and optionally Activates the last entry in the history.  This changes the location history
         /// </summary>
         /// <param name="show">True to launch the activation delegate</param>
         /// <returns></returns>
@@ -106,12 +117,12 @@ namespace Rdmp.UI
         {
             Prune();
 
-            if (CurrentTab == null)
+            if (Current == null)
                 return default;
 
             var pop = _navigationStack.Pop();
 
-            var newHead = CurrentTab;
+            var newHead = Current;
             if (newHead == null)
             {
                 _navigationStack.Push(pop);
@@ -123,11 +134,13 @@ namespace Rdmp.UI
             if (show)
                 Activate(newHead);
 
+            Changed?.Invoke(this,new EventArgs());
+
             return newHead;
         }
 
         /// <summary>
-        /// Returns and optionally Activates the next tab in the history.  This changes the location history
+        /// Returns and optionally Activates the next object in the history.  This changes the location history
         /// 
         /// <para>Does nothing if you have not already gone <see cref="Back(bool)"/></para>
         /// </summary>
@@ -145,12 +158,14 @@ namespace Rdmp.UI
                 Activate(r);
 
             _navigationStack.Push(r);
+            
+            Changed?.Invoke(this,new EventArgs());
 
             return r;
         }
 
         /// <summary>
-        /// Returns true if there are tabs in the history that can be navigated back to
+        /// Returns true if there is a history that can be navigated back to
         /// </summary>
         /// <returns></returns>
         public bool CanBack()
@@ -159,7 +174,7 @@ namespace Rdmp.UI
         }
 
         /// <summary>
-        /// Returns true if there are tabs in the history that can be navigated forwards to
+        /// Returns true if the current state is an exploration of the past history and therefore the user can navigate Forwards again
         /// </summary>
         /// <returns></returns>
         public bool CanForward()
@@ -170,7 +185,7 @@ namespace Rdmp.UI
         }
 
         /// <summary>
-        /// Returns x history tabs that <see cref="Back(bool)"/> would go to if called.  This does not affect the state of the history
+        /// Returns x history objects that <see cref="Back(bool)"/> would go to if called.  This does not affect the state of the history.  Result does not include <see cref="Current"/>
         /// </summary>
         /// <returns></returns>
         public T[] GetHistory(int maxToReturn)
@@ -186,26 +201,27 @@ namespace Rdmp.UI
         /// <summary>
         /// Records that the user has made a new navigation to a fresh page.  This will invalidate any Forward history
         /// </summary>
-        /// <param name="newTab"></param>
-        public void Append(T newTab)
+        /// <param name="newHead"></param>
+        public void Append(T newHead)
         {
-            //don't push the tab if we are suspended
-            if (_suspended || newTab == null)
+            //don't push the newHead if we are suspended
+            if (_suspended || newHead == null)
                 return;
 
-            //don't push the tab if it is already the head
-            if (_navigationStack.Count != 0 && Equals(_navigationStack.Peek(), newTab))
+            //don't push the newHead if it is already the head
+            if (_navigationStack.Count != 0 && Equals(_navigationStack.Peek(), newHead))
                 return;
 
             //don't allow going forward after a novel forward
             _forward.Clear();
 
-            _navigationStack.Push(newTab);
+            _navigationStack.Push(newHead);
+
+            Changed?.Invoke(this,new EventArgs());
         }
 
         /// <summary>
-        /// Changes the behaviour of <see cref="Append"/> to do nothing, use this if you want to activate a tab or load a layout without
-        /// populating the history / affecting the current history.
+        /// Changes the behaviour of <see cref="Append"/> to do nothing, use this if you want to activate something or load a layout without populating the history / affecting the current history.
         /// </summary>
         public void Suspend()
         {
