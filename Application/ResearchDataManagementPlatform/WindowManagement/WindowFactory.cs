@@ -120,16 +120,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
             if(image != null)
                 content.Icon = _iconFactory.GetIcon(image);
 
-            var consult = control as IConsultableBeforeClosing;
-
-            if (consult != null)
+            if (control is IConsultableBeforeClosing consult)
                 content.FormClosing += consult.ConsultAboutClosing;
 
             content.KeyPreview = true;
-            
-            var tab = content as RDMPSingleControlTab;
 
-            if (tab != null)
+            if (content is RDMPSingleControlTab tab)
             {
                 content.TabPageContextMenuStrip = new RDMPSingleControlTabMenu(activator, tab, _windowManager);
 
