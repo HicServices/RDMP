@@ -341,10 +341,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             var newTab = (DockContent) _mainDockPanel.ActiveDocument;
             
-            Navigation.Append(new TabNavigation(newTab));
-
             if(newTab != null && newTab.ParentForm != null)
+            {
+                Navigation.Append(new TabNavigation(newTab));
                 newTab.ParentForm.Text = newTab.TabText + " - RDMP";
+            }
+                
 
             if (TabChanged != null)
                 TabChanged(sender, newTab);
