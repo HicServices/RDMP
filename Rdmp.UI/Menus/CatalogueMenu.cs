@@ -49,7 +49,7 @@ namespace Rdmp.UI.Menus
             Add(new ExecuteCommandImportCatalogueDescriptionsFromShare(_activator, catalogue),Keys.None,extract);
             Add(new ExecuteCommandExportInDublinCoreFormat(_activator, catalogue),Keys.None,extract);
             Add(new ExecuteCommandImportDublinCoreFormat(_activator, catalogue), Keys.None, extract);
-            Add(new ExecuteCommandExtractMetadata(_activator, new []{ catalogue},null,null,null,false){OverrideCommandName = "Custom..."}, Keys.None, extract);
+            Add(new ExecuteCommandExtractMetadata(_activator, new []{ catalogue},null,null,null,false,null){OverrideCommandName = "Custom..."}, Keys.None, extract);
             Items.Add(extract);
 
             Items.Add(new DQEMenuItem(_activator,catalogue));

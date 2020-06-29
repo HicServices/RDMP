@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataQualityEngine;
 using Rdmp.Core.Repositories;
@@ -43,6 +44,11 @@ namespace Rdmp.Core.Reports
         public const string EndLoop = "$end";
 
         private readonly IDetermineDatasetTimespan _timespanCalculator = new DatasetTimespanCalculator();
+
+        /// <summary>
+        /// Specify a replacement for newlines when found in fields e.g. with space.  Leave as null to leave newlines intact.
+        /// </summary>
+        public string NewlineSubstitution { get; internal set; }
 
         public CustomMetadataReport()
         {
@@ -123,7 +129,7 @@ namespace Rdmp.Core.Reports
                 {
                     foreach (var r in Replacements)
                         if (copy.Contains(r.Key))
-                            copy = copy.Replace(r.Key, r.Value(catalogue)?.ToString() ?? "");
+                            copy = copy.Replace(r.Key, ValueToString(r.Value(catalogue)));
                 }
 
                 sb.AppendLine(copy.Trim());
@@ -179,11 +185,35 @@ namespace Rdmp.Core.Reports
             return i;
         }
 
+        /// <summary>
+        /// Returns a string representation suitable for adding to a template output based on the input object (which may be null)
+        /// </summary>
+        /// <param name="v"></param>
+        /// <returns></returns>
+        private string ValueToString(object v)
+        {
+            return ReplaceNewlines(v?.ToString() ?? "");
+        }
+
+        public string ReplaceNewlines(string input)
+        {
+            if(input != null && NewlineSubstitution != null)
+                return Regex.Replace(input,"[\r]?\n",NewlineSubstitution);
+
+            return input;
+        }
+
+        /// <summary>
+        /// Replace all templated strings (e.g. $Name) in the <paramref name="template"/> with the corresponding values in the <paramref name="catalogueItem"/>
+        /// </summary>
+        /// <param name="template"></param>
+        /// <param name="catalogueItem"></param>
+        /// <returns></returns>
         private string DoReplacements(string template, CatalogueItem catalogueItem)
         {
             foreach (var r in ReplacementsCatalogueItem)
                 if (template.Contains(r.Key))
-                    template = template.Replace(r.Key, r.Value(catalogueItem)?.ToString() ?? "");
+                    template = template.Replace(r.Key, ValueToString(r.Value(catalogueItem)));
 
             return template.Trim();
         }

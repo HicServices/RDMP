@@ -51,6 +51,7 @@ namespace Rdmp.Core.Tests.CommandExecution
         public void Test_DescribeDeleteCommand()
         {
             AssertHelpIs( @"cmd Delete <deletable> 
+
 PARAMETERS:
 deletable	IDeleteable	The object you want to delete",typeof(ExecuteCommandDelete));
         }
@@ -61,6 +62,7 @@ deletable	IDeleteable	The object you want to delete",typeof(ExecuteCommandDelete
         {
             AssertHelpIs( 
 @"cmd ImportTableInfo <table> <createCatalogue> 
+
 PARAMETERS:
 table	DiscoveredTable	The table or view you want to reference from RDMP.  See PickTable for syntax
 createCatalogue	Boolean	True to create a Catalogue as well as a TableInfo"
