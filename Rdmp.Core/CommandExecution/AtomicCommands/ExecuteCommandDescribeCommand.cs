@@ -41,14 +41,18 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 sb.AppendLine($"Command '{_commandType.Name}' is not supported by the current input type ({BasicActivator.GetType().Name})");
             else
             {
-                sb.AppendLine("COMMAND:" + _commandType.FullName);
+                sb.AppendLine("Name: " + _commandType.Name);
                 
                 var helpText = help.GetTypeDocumentationIfExists(_commandType);
 
                 if(helpText != null)
-                    sb.AppendLine(helpText);
-
-                sb.AppendLine("USAGE:");
+                {
+                    sb.AppendLine();
+                    sb.AppendLine("Description: " + helpText);
+                }
+                    
+                sb.AppendLine();
+                sb.AppendLine("USAGE: ");
                 
                 sb.Append(EnvironmentInfo.IsLinux ? "./rdmp" : "./rdmp.exe");
                 sb.Append(" cmd ");
@@ -57,6 +61,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 sb.Append(" ");
 
                 var sbParameters = new StringBuilder();
+                sbParameters.AppendLine();
                 sbParameters.AppendLine("PARAMETERS:");
 
                 foreach(ParameterInfo p in commandCtor.GetParameters())
