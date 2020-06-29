@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Custom Metadata Report now supports looping items in a Catalogue (use `$foreach CatalogueItem` to start and `$end` to end)
 - Added help to 'New Project' user interface
 - Forward/Backward now includes selection changes in tree collections
+- Added support for newline replacement in custom metadata doc templates
 
 ### Changed
 
@@ -28,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed alias changes not showing up as 'Differences' in edit dataeset extraction user interface
 - Fixed bugs in using GoTo menu of document tabs after a Refresh
 - Fixed ALTER context sub menu of TableInfo when Server property is null (or other fundamental connection details cannot be resolved).
+- Fixed whitespace only literal strings (e.g. `" "`) on command line causing error while parsing arguments
 
 ## [4.1.3] - 2020-06-15
 

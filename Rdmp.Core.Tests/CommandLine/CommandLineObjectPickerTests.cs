@@ -63,6 +63,27 @@ namespace Rdmp.Core.Tests.CommandLine
            Assert.AreEqual(cata,picker[0].DatabaseEntities.Single());
         }
 
+        /// <summary>
+        /// Tests behaviour of picker when user passes an explicit empty string e.g. ./rdmp.exe DoSomething " "
+        /// </summary>
+        [TestCase(" ")]
+        [TestCase("\t")]
+        [TestCase("\r\n")]
+        public void Test_PickerForWhitespace(string val)
+        {
+            var picker = new CommandLineObjectPicker(new []{val },RepositoryLocator);
+
+            Assert.AreEqual(1,picker.Length);
+            
+            Assert.IsNull(picker[0].Database);
+            Assert.IsNull(picker[0].DatabaseEntities);
+            Assert.IsFalse(picker[0].ExplicitNull);
+            Assert.AreEqual(val,picker[0].RawValue);
+            Assert.IsNull(picker[0].Type);
+            
+            Assert.AreEqual(val,picker[0].GetValueForParameterOfType(typeof(string)));
+            Assert.IsTrue(picker.HasArgumentOfType(0, typeof(string)));
+        }
         
         [Test]
         public void Test_PickCatalogueByID_PickTwo()
