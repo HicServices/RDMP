@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bugs in using GoTo menu of document tabs after a Refresh
 - Fixed ALTER context sub menu of TableInfo when Server property is null (or other fundamental connection details cannot be resolved).
 - Fixed whitespace only literal strings (e.g. `" "`) on command line causing error while parsing arguments
+- Fixed bug with YesNoToAll popups launched from ChecksUI when running as a modal dialogue.
 
 ## [4.1.3] - 2020-06-15
 
