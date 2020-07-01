@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataQualityEngine;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Reports;
@@ -248,7 +249,14 @@ namespace ResearchDataManagementPlatform.Menus
 
             //if user wants to emphasise on tab change and theres an object we can emphasise associated with the control
             if (singleObject != null && UserSettings.EmphasiseOnTabChanged && singleObject.DatabaseObject != null)
-                Activator.RequestItemEmphasis(this, new EmphasiseRequest(singleObject.DatabaseObject));
+            {
+                bool? isCicChild = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(singleObject.DatabaseObject)?.Parents?.Any(p=>p is CohortIdentificationConfiguration);
+
+                //don't emphasise things that live under cics because it doesn't result in a collection being opened but instead opens the cic Tab (which could result in you being unable to get to your original tab!)
+                if(isCicChild == false)
+                    Activator.RequestItemEmphasis(this, new EmphasiseRequest(singleObject.DatabaseObject));
+            }
+                
 
             _saveToolStripMenuItem.Saveable = saveable;
         }
