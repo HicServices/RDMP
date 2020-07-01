@@ -127,7 +127,7 @@ namespace Rdmp.Core.Curation.ANOEngineering
                         Plan = Plan.PassThroughUnchanged; //it is extractable but not special
 
 
-            //if theres an associated ANOTable with a different ColumnInfo with the same name e.g. chi=>ANOChi in another dataset that was already anonymised
+            //if there's an associated ANOTable with a different ColumnInfo with the same name e.g. chi=>ANOChi in another dataset that was already anonymised
             MakeANOTableSuggestionIfApplicable();
         }
 

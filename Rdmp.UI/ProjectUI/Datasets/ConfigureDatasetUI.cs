@@ -621,7 +621,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
 
                     ColumnInfo toEmphasise = null;
 
-                    //if theres only one column involved in the join
+                    //if there's only one column involved in the join
                     if (cols.Length == 1)
                         toEmphasise = cols[0]; //emphasise it to the user
                     else

@@ -111,7 +111,7 @@ namespace Rdmp.Core.Curation.FilterImporting
                     {
                         string toCreate = matchingTemplateFilter.ParameterSQL;
 
-                        //theres a rename requirement e.g. 'DECLARE @bob AS int' to 'DECLARE @bob2 AS int' because the existing scope already has a parameter called @bob
+                        //there's a rename requirement e.g. 'DECLARE @bob AS int' to 'DECLARE @bob2 AS int' because the existing scope already has a parameter called @bob
                         if (proposedNewParameterName != requiredParameterName)
                             toCreate = toCreate.Replace(requiredParameterName, proposedNewParameterName);
                         

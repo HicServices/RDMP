@@ -378,7 +378,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
                 //axis is ordered ascending by date starting in 2000 so that row should come first
                 Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
-                VerifyRowExist(resultTable, "2000", null); //records only showing where there are more than 3 records (HAVING refers to the year since theres no pivot)
+                VerifyRowExist(resultTable, "2000", null); //records only showing where there are more than 3 records (HAVING refers to the year since there's no pivot)
                 VerifyRowExist(resultTable, "2001", 5);
                 VerifyRowExist(resultTable, "2002", 5);
                 VerifyRowExist(resultTable, "2003", null);

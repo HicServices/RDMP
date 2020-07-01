@@ -99,7 +99,7 @@ namespace Rdmp.UI.LoadExecutionUIs
                 //give the user the dropdown options for which load progress he wants to run
                 var loadProgressData = new Dictionary<int, string>( );
 
-                //if theres more than 1 let them pick any
+                //if there are more than 1 let them pick any
                 if(_allLoadProgresses.Length > 1)
                     loadProgressData.Add(0, "Any Available");
 

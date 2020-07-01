@@ -51,7 +51,7 @@ FROM
 
         /// <summary>
         /// When we <see cref="CohortQueryBuilder.GetDatasetSampleSQL"/> we normally get "select TOP 1000 *" of the query body BUT
-        /// if theres HAVING sql then SQL will balk at select *.  In this case we expect it to just run the normal distinct chi
+        /// if there's HAVING sql then SQL will balk at select *.  In this case we expect it to just run the normal distinct chi
         /// bit but put a TOP X on it.
         /// </summary>
         [Test]
