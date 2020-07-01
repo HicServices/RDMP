@@ -254,7 +254,12 @@ namespace ResearchDataManagementPlatform.Menus
 
                 //don't emphasise things that live under cics because it doesn't result in a collection being opened but instead opens the cic Tab (which could result in you being unable to get to your original tab!)
                 if(isCicChild == false)
+                {
+                    _windowManager.Navigation.Suspend();
                     Activator.RequestItemEmphasis(this, new EmphasiseRequest(singleObject.DatabaseObject));
+                    _windowManager.Navigation.Resume();
+                }
+                    
             }
                 
 
