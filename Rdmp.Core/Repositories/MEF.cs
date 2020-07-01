@@ -97,7 +97,7 @@ namespace Rdmp.Core.Repositories
                             if(matches.Length == 0)
                                 matches = SafeDirectoryCatalog.TypesByName.Values.Where(t=>t.Name.Equals(type,StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
-                            //great theres only one
+                            //great there's only one
                             if(matches.Length == 1)
                                 toReturn = matches[0];
                             else if(matches.Length > 1) //nope looks like everyone has a class called MyClass
@@ -121,7 +121,7 @@ namespace Rdmp.Core.Repositories
                             if(matches.Length == 0)
                                 matches =  SafeDirectoryCatalog.TypesByName.Values.Where(t=>t.Name.Equals(name,StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
-                            //great theres only one
+                            //great there's only one
                             if(matches.Length == 1)
                                 toReturn = matches[0];
                             else if(matches.Length > 1) //nope looks like everyone has a class called MyClass

@@ -67,7 +67,7 @@ namespace Rdmp.Core.Reports
         {
             try
             {
-                //if theres only one catalogue call it 'prescribing.docx' etc
+                //if there's only one catalogue call it 'prescribing.docx' etc
                 string filename = _args.Catalogues.Length == 1 ? _args.Catalogues[0].Name : "MetadataReport";
 
                 using (var document = GetNewDocFile(filename))

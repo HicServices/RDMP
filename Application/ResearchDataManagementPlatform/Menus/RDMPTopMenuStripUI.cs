@@ -247,7 +247,7 @@ namespace ResearchDataManagementPlatform.Menus
             var saveable = singleObjectControlTab.GetControl() as ISaveableUI;
             var singleObject = singleObjectControlTab.GetControl() as IRDMPSingleDatabaseObjectControl;
 
-            //if user wants to emphasise on tab change and theres an object we can emphasise associated with the control
+            //if user wants to emphasise on tab change and there's an object we can emphasise associated with the control
             if (singleObject != null && UserSettings.EmphasiseOnTabChanged && singleObject.DatabaseObject != null)
             {
                 bool? isCicChild = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(singleObject.DatabaseObject)?.Parents?.Any(p=>p is CohortIdentificationConfiguration);

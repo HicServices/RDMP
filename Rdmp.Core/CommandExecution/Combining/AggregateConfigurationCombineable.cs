@@ -70,7 +70,7 @@ namespace Rdmp.Core.CommandExecution.Combining
             //assume no join users
             JoinableUsersIfAny = new AggregateConfiguration[0];
 
-            //unless theres a cic
+            //unless there's a cic
             if(CohortIdentificationConfigurationIfAny != null)
             {
                 //with this aggregate as a joinable

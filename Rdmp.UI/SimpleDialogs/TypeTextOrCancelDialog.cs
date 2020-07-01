@@ -88,7 +88,7 @@ namespace Rdmp.UI.SimpleDialogs
         {
             textBox1.ForeColor = Color.Black;
 
-            //if theres some text typed and we want typed text to be sane
+            //if there's some text typed and we want typed text to be sane
             if(RequireSaneHeaderText && !string.IsNullOrWhiteSpace(textBox1.Text))
             {
                 //if the sane name doesn't match the 

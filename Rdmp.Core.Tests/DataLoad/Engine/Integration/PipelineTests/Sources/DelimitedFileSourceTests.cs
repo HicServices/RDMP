@@ -234,7 +234,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
         /// <summary>
         /// Test checks that IgnoreBadReads lets you load quotes in the middle of free text without having to set IgnoreQuotes to true:
         /// 1. There is a row (2) with quotes in the middle which should get loaded correctly
-        /// 2. Theres a row (4) with quotes in the middle of the text and the cell itself is quoted.  This loads but drops some quotes.
+        /// 2. there's a row (4) with quotes in the middle of the text and the cell itself is quoted.  This loads but drops some quotes.
         /// 
         /// <para>The proper way to express row 4 is by escaping the quote with another quote i.e. "" (See test DelimitedFlatFileDataFlowSource_ProperQuoteEscaping) </para>
         /// </summary>

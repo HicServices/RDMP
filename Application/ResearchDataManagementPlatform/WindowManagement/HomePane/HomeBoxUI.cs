@@ -58,7 +58,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
                 };
 
             
-                //if theres only one command for new
+                //if there's only one command for new
                 if (newCommands.Length == 1)
                 {
                     //don't use the dropdown

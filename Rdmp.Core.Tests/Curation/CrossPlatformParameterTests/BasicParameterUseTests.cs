@@ -31,7 +31,7 @@ namespace Rdmp.Core.Tests.Curation.CrossPlatformParameterTests
             //Pick the destination server
             var tableName = TestDatabaseNames.GetConsistentName("tbl");
             
-            //make sure theres a database ready to receive the data
+            //make sure there's a database ready to receive the data
             var db = GetCleanedServer(dbType);
             db.Create(true);
 

@@ -215,7 +215,7 @@ namespace Rdmp.Core.QueryBuilding
             TableInfo primary;
             TablesUsedInQuery = SqlQueryBuilderHelper.GetTablesUsedInQuery(this, out primary, _forceJoinsToTheseTables);
 
-            //force join to any TableInfos that would not be normally joined to but the user wants to anyway e.g. if theres WHERE sql that references them but no columns
+            //force join to any TableInfos that would not be normally joined to but the user wants to anyway e.g. if there's WHERE sql that references them but no columns
             if (_forceJoinsToTheseTables != null)
                 foreach (var force in _forceJoinsToTheseTables)
                     if (!TablesUsedInQuery.Contains(force))

@@ -103,7 +103,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks
         
         private void SetupAutocomplete()
         {
-            //if theres an old one dispose it
+            //if there's an old one dispose it
             if (_autoComplete == null)
                 _autoComplete = new AutoCompleteProviderFactory(Activator).Create(_processTask.LoadMetadata.GetQuerySyntaxHelper());
             else
