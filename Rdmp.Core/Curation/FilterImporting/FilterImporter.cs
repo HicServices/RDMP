@@ -151,7 +151,7 @@ namespace Rdmp.Core.Curation.FilterImporting
             //if we have not yet found a reason to complain, look at parameters for a reason to complain
             if (reason == null)
             {
-                //check to see if theres a problem with the parameters
+                //check to see if there's a problem with the parameters
                 foreach (ISqlParameter filterParameter in filter.GetAllParameters())
                 {
                     string reasonParameterRejected;

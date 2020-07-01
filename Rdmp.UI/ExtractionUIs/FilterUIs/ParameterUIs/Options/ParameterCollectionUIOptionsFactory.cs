@@ -92,7 +92,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
                 }
                 catch (QueryBuildingException)
                 {
-                    //if theres a problem with parameters or anything else, it is okay this diaog might let the user fix that
+                    //if there's a problem with parameters or anything else, it is okay this dialog might let the user fix that
                 }  
             }
             else
@@ -107,7 +107,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
                 }
                 catch (QueryBuildingException)
                 {
-                    //if theres a problem with parameters or anything else, it is okay this diaog might let the user fix that
+                    //if there's a problem with parameters or anything else, it is okay this dialog might let the user fix that
                 }          
             }
 

@@ -386,7 +386,7 @@ namespace Rdmp.UI.Raceway
                         var labelSize = e.Graphics.MeasureString(hoverLabel, Font);
                         var valueSize = e.Graphics.MeasureString(hoverValue, Font);
 
-                        //if theres a scroll down bar add 20 to the width to make space for the down arrow
+                        //if there's a scroll down bar add 20 to the width to make space for the down arrow
                         if (_allowScrollDown)
                             valueSize.Width += 20;
 

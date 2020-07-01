@@ -173,7 +173,7 @@ namespace Rdmp.Core.Providers
 
             score += Weights[0] * CountMatchType(regexes, kvp.Key);
 
-            //match on the parents if theres a decendancy list
+            //match on the parents if there's a decendancy list
             if (kvp.Value != null)
             {
                 var parents = kvp.Value.Parents;

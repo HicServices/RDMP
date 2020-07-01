@@ -47,7 +47,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
 
             foreach (var required in propertiesWeHaveToSet)
             {
-                //theres already a property with the same name
+                //there's already a property with the same name
                 if (existingArguments.Any(a => a.Name.Equals(required.Name)))
                     continue;
 

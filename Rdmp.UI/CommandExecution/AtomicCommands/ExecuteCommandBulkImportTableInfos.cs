@@ -109,7 +109,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 //find a Catalogue of the same name (possibly imported from Share Definition)
                 var matchingCatalogues = catalogues.Where(c => c.Name.Equals(ti.GetRuntimeName(), StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
-                //if theres 1 Catalogue with the same name
+                //if there's 1 Catalogue with the same name
                 if (matchingCatalogues.Length == 1)
                 {
                     //we know we want to import all these ColumnInfos

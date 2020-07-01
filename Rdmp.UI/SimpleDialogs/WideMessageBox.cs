@@ -104,7 +104,7 @@ namespace Rdmp.UI.SimpleDialogs
             var message = args.Message;
             var title = args.Title;
 
-            //todo hack:if theres a long title and no message
+            //todo hack:if there's a long title and no message
             if (!string.IsNullOrWhiteSpace(title) && string.IsNullOrWhiteSpace(message) && title.Length > 100)
             {
                 message = title;

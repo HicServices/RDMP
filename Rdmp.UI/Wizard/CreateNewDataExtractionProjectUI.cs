@@ -142,7 +142,7 @@ namespace Rdmp.UI.Wizard
                     ddFilePipeline.Items.Add(pipeline);
             }
 
-            //for each dropdown if theres only one option
+            //for each dropdown if there's only one option
             foreach (var dd in new ComboBox[]{ddCicPipeline,ddExtractionPipeline,ddFilePipeline})
             {
                 if (dd.Items.Count == 1)

@@ -301,7 +301,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
 
             var dimensions = _aggregate.AggregateDimensions;
 
-            //if theres an axis
+            //if there's an axis
             if (axisIfAny != null && !axisIfAny.Equals(pivotIfAny))//<- if this second thing is the case then the graph is totally messed up!
                 dimensions = dimensions.Except(new[] {axisIfAny}).ToArray();//don't offer the axis as a pivot dimension!
 
@@ -372,7 +372,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
         {
             var allDimensions = _aggregate.AggregateDimensions.ToArray();
             
-            //if theres a pivot then don't advertise that as an axis
+            //if there's a pivot then don't advertise that as an axis
             if (pivotIfAny != null && !pivotIfAny.Equals(axisIfAny))
                 allDimensions = allDimensions.Except(new[] {pivotIfAny}).ToArray();
             
