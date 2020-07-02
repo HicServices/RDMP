@@ -20,6 +20,7 @@ using MapsDirectlyToDatabaseTable.Revertable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NLog;
 using ReusableLibraryCode;
+using ReusableLibraryCode.DataAccess;
 
 namespace MapsDirectlyToDatabaseTable
 {
@@ -66,7 +67,9 @@ namespace MapsDirectlyToDatabaseTable
         /// <inheritdoc/>
         public void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
-            _logger.Debug("Deleted," + oTableWrapperObject.GetType().Name + "," + oTableWrapperObject.ID + "," + oTableWrapperObject);
+            //do not log information about access credentials
+            if(!(oTableWrapperObject is IDataAccessCredentials))
+                _logger.Debug("Deleted," + oTableWrapperObject.GetType().Name + "," + oTableWrapperObject.ID + "," + oTableWrapperObject);
             
             lock (_oLockUpdateCommands)
             {
@@ -76,13 +79,12 @@ namespace MapsDirectlyToDatabaseTable
 
                 using(var con = GetConnection())
                 {
-                    int affectedRows;
                     using (DbCommand cmd = DatabaseCommandHelper.GetCommand(
                         "DELETE FROM " + oTableWrapperObject.GetType().Name + " WHERE ID =@ID", con.Connection,
                         con.Transaction))
                     {
                         DatabaseCommandHelper.AddParameterWithValueToCommand("@ID", cmd, oTableWrapperObject.ID);
-                        affectedRows = cmd.ExecuteNonQuery();
+                        cmd.ExecuteNonQuery();
                     }
                     
                     //likewise if there are obscure depenedency handlers let them handle cascading this delete into the mists of their obscure functionality (e.g. deleting a Catalogue in CatalogueRepository would delete all Evaluations of that Catalogue in the DQE repository because they would then be orphans)

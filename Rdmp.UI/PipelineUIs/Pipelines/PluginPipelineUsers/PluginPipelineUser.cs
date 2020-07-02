@@ -35,7 +35,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers
             var pipeDemander = demanderInstance as IDemandToUseAPipeline;
 
             if (pipeDemander == null)
-                throw new NotSupportedException("Class " + pipeDemander.GetType().Name + " does not implement interface IDemandToUseAPipeline despite having a property which is a Pipeline");
+                throw new NotSupportedException("Class " + demanderInstance.GetType().Name + " does not implement interface IDemandToUseAPipeline despite having a property which is a Pipeline");
 
             _useCase = pipeDemander.GetDesignTimePipelineUseCase(demand);
             

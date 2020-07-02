@@ -123,8 +123,6 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             
         }
 
-        HashSet<ComboBox> boundComboBoxes = new HashSet<ComboBox>();
-
         /// <summary>
         /// Performs data binding using default parameters (OnPropertyChanged), no formatting etc.  Getter must be a
         /// property of <see cref="DatabaseObject"/>
@@ -142,7 +140,6 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             //workaround for only comitting lists on loose focus
             if (box != null && box.DropDownStyle == ComboBoxStyle.DropDownList && propertyName.Equals("SelectedItem"))
             {
-                boundComboBoxes.Add(box);
                 box.SelectionChangeCommitted += (s,e)=>box.DataBindings["SelectedItem"].WriteValue();
             }
             

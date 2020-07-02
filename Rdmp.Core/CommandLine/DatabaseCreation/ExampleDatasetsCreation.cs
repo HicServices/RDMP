@@ -209,7 +209,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                     {
                         var col = new ColumnInfo(_repos.CatalogueRepository, $"MyCol{j}", "varchar(10)", ti);
                         var ci = new CatalogueItem(_repos.CatalogueRepository, cata, col.Name);
-                        var ei = new ExtractionInformation(_repos.CatalogueRepository, ci, col, col.Name);
+                        new ExtractionInformation(_repos.CatalogueRepository, ci, col, col.Name);
                     }
                     
                     Project p = new Project(_repos.DataExportRepository,$"Project {i}");
@@ -217,7 +217,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                     for (int j = 0; j < 20; j++)
                     {
                         var config = new ExtractionConfiguration(_repos.DataExportRepository, p);
-                        var sds = new SelectedDataSets(_repos.DataExportRepository,config, eds,null);
+                        new SelectedDataSets(_repos.DataExportRepository,config, eds,null);
                     }
                 }
 
