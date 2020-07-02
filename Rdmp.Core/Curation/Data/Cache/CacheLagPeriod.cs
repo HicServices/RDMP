@@ -151,7 +151,7 @@ namespace Rdmp.Core.Curation.Data.Cache
                 case PeriodType.Month:
                     return dt.AddMonths(Duration*-1);
                 case PeriodType.Day:
-                    return dt.AddDays(Duration*-1);
+                    return dt.AddDays(Duration*-1d);
                 default:
                     throw new ArgumentOutOfRangeException();
             }

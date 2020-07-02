@@ -25,7 +25,6 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
     {
         private readonly MEF mef;
         List<string>  _fails = new List<string>();
-        private Dictionary<PropertyInfo, MethodInfo> RelationshipPropertyInfos = new Dictionary<PropertyInfo, MethodInfo>();
 
         public SuspiciousRelationshipPropertyUse(MEF mef)
         {
@@ -93,9 +92,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
                         Console.WriteLine("SKIPPED: Property " + relationshipProperty + " is ReadOnly and [NoMapping] but doesn't look like it serves up related objects");
                         continue;
                     }
-                    
-                    RelationshipPropertyInfos.Add(relationshipProperty,relationshipProperty.GetGetMethod());
-                    
+                                        
                     if (relationshipsRegion == null)
                         _fails.Add("FAIL: Class "+ type.FullName+ " has no '#region Relationships' blocks but has a relationship style Property called " + relationshipProperty.Name );
                     else

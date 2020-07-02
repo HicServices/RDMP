@@ -193,9 +193,9 @@ namespace Rdmp.Core.DataFlowPipeline
             {
                 currentChunk = Source.GetChunk(_listener, cancellationToken);
             }
-            catch (OperationCanceledException e)
+            catch (OperationCanceledException)
             {
-                throw e;
+                throw;
             }
             catch (Exception e)
             {
@@ -221,10 +221,8 @@ namespace Rdmp.Core.DataFlowPipeline
 
             //if it is a DataTable call .Clear() because Dispose doesn't actually free up any memory
             if (typeof(DataTable).IsAssignableFrom(typeof(T)))
-            {
                 ((DataTable)(object)currentChunk).Clear();
-                GC.Collect();
-            }
+            
 
             //if the chunk is something that can be disposed, dispose it (e.g. DataTable - to free up memory)
             if (typeof(IDisposable).IsAssignableFrom(typeof(T)))

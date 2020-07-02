@@ -77,7 +77,9 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             var demography = ImportCatalogue(Create<Demography>(db,people,r,notifier, options.NumberOfRowsPerDataset, "chi","dtCreated","hb_extract"));
             var prescribing = ImportCatalogue(Create<Prescribing>(db,people,r,notifier, options.NumberOfRowsPerDataset, "chi","PrescribedDate","Name")); //<- this is slooo!
             var admissions = ImportCatalogue(Create<HospitalAdmissions>(db,people,r,notifier, options.NumberOfRowsPerDataset, "chi","AdmissionDate"));
-            var carotid = Create<CarotidArteryScan>(db,people,r,notifier, options.NumberOfRowsPerDataset, "RECORD_NUMBER");
+            
+            //Create but do not import the CarotidArteryScan dataset so that users can test out referencing a brand new table
+            Create<CarotidArteryScan>(db,people,r,notifier, options.NumberOfRowsPerDataset, "RECORD_NUMBER");
 
             //the following should not be extractable
             ForExtractionInformations(demography,
@@ -601,7 +603,7 @@ UNPIVOT
                 chi.IsExtractionIdentifier = true;
                 chi.SaveToDatabase();
 
-                var eds = new ExtractableDataSet(_repos.DataExportRepository,cata);
+                new ExtractableDataSet(_repos.DataExportRepository,cata);
             }
             return cata;
         }
