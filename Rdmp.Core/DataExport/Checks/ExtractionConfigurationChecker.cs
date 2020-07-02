@@ -130,7 +130,8 @@ namespace Rdmp.Core.DataExport.Checks
                 return;
             }
 
-            var cohort = repo.GetObjectByID<ExtractableCohort>((int)_config.Cohort_ID);
+            //make sure that it's cohort is retrievable
+            repo.GetObjectByID<ExtractableCohort>((int)_config.Cohort_ID);
 
             if (CheckDatasets)
                 foreach (ISelectedDataSets s in _config.SelectedDataSets)

@@ -80,7 +80,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             base.Execute();
 
-            var assoc = new ProjectCohortIdentificationConfigurationAssociation(BasicActivator.RepositoryLocator.DataExportRepository,_project, _cic);
+            //create new relationship in database between the cic and project
+            new ProjectCohortIdentificationConfigurationAssociation(BasicActivator.RepositoryLocator.DataExportRepository,_project, _cic);
             
             Publish(_project);
             Publish(_cic);

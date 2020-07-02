@@ -63,7 +63,7 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
                 throw new Exception("Could not read the sql file at " + Filepath + ": " + e);
             }
             
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Executing script " + Filepath + " (" + db.DescribeDatabase() + ")"));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Executing script " + Filepath + " ( against " + db + ")"));
             var executer = new ExecuteSqlInDleStage(job,_loadStage);
             return executer.Execute(commandText,db);
         }

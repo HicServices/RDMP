@@ -94,7 +94,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Sources
                 dt.TableName = TableName;
 
                 if (listener != null)
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "successfully read " + dt.Rows + " rows from source"));
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "successfully read " + dt.Rows.Count + " rows from source"));
 
 
                 return dt;
