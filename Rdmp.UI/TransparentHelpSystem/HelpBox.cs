@@ -55,7 +55,7 @@ namespace Rdmp.UI.TransparentHelpSystem
         {
             var basicSize =  TextRenderer.MeasureText(text, SystemFonts.DefaultFont, new Size(FixedFormWidth, 0),TextFormatFlags.WordBreak);
 
-            //if theres an option button and very little text then widen the box
+            //if there's an option button and very little text then widen the box
             if (btnOption1.Visible)
                 basicSize.Width = Math.Max(basicSize.Width, btnOption1.Width + 3);
 

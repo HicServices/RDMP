@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ...
+## [4.1.4] - 2020-07-02
+
+### Added
+
+- Custom Metadata Report now supports looping items in a Catalogue (use `$foreach CatalogueItem` to start and `$end` to end)
+- Added help to 'New Project' user interface
+- Forward/Backward now includes selection changes in tree collections
+- Added support for newline replacement in custom metadata doc templates
+
+### Changed
+
+- Improved usability of selecting multiple datasets in the 'New Project' user interface
+- When in multiple selection mode, double clicking a row in the object selection dialog will add it to the selection (previously would close the dialog with the double clicked item as the sole selected item)
+
+### Fixed
+
+- Extractable columns Order field defaults to Max + 1 (previously 1).  This results in new columns appearing last in extracted datasets and prevents Order collisions.
+- 'Select Core' columns UI button now works correctly with ProjectSpecific Catalogues (previously the highlighted rows would not change)
+- Fixed popup error message showing when deleting an ExtractionConfiguration where one or more datasets are currently being edited (in tabs) 
+- Fixed context menu opening error that could occur in cohort builder when datasets are not configured properly (e.g. have too many [IsExtractionIdentifier] columns).
+- Fixed alias changes not showing up as 'Differences' in edit dataeset extraction user interface
+- Fixed bugs in using GoTo menu of document tabs after a Refresh
+- Fixed ALTER context sub menu of TableInfo when Server property is null (or other fundamental connection details cannot be resolved).
+- Fixed whitespace only literal strings (e.g. `" "`) on command line causing error while parsing arguments
+- Fixed bug with YesNoToAll popups launched from ChecksUI when running as a modal dialogue.
+- Fixed bug with user setting 'Show Object Collection On Tab Change' when selecting tabs for objects in CohortBuilder configurations.
 
 ## [4.1.3] - 2020-06-15
 
@@ -439,7 +465,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.1.3...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.1.4...develop
+[4.1.3]: https://github.com/HicServices/RDMP/compare/v4.1.3...v4.1.4
 [4.1.3]: https://github.com/HicServices/RDMP/compare/v4.1.2...v4.1.3
 [4.1.2]: https://github.com/HicServices/RDMP/compare/v4.1.1...v4.1.2
 [4.1.1]: https://github.com/HicServices/RDMP/compare/v4.1.0...v4.1.1

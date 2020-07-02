@@ -248,7 +248,8 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             "SetupLazy",
             "TestCaseSourceAttribute",
             "DescribeCommand", //aka ExecuteCommandDescribeCommand
-            "MySqlConnector"
+            "MySqlConnector",
+            "DoSomething"
         };
         #endregion
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)

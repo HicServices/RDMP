@@ -484,7 +484,7 @@ namespace Rdmp.Core.QueryBuilding
                 {
                     queryLines.Add(new CustomLine("order by " ,QueryComponent.OrderBy));
 
-                    //if theres a top X (with an explicit order by)
+                    //if there's a top X (with an explicit order by)
                     if (AggregateTopX != null)
                     {
                         queryLines.Add(new CustomLine(GetOrderBySQL(AggregateTopX), QueryComponent.OrderBy) { Role = CustomLineRole.TopX });

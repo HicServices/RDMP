@@ -519,7 +519,7 @@ namespace Rdmp.Core.Curation.Data.ImportExport
                             case RelationshipType.OptionalSharedObject:
                             case RelationshipType.SharedObject:
                                 
-                                //Confirm that the share definition includes the knowledge that theres a parent class to this object
+                                //Confirm that the share definition includes the knowledge that there's a parent class to this object
                                 if (!shareDefinition.RelationshipProperties.ContainsKey(relationshipAttribute))
                                     //if it doesn't but the field is optional, ignore it
                                     if(relationshipAttribute.Type == RelationshipType.OptionalSharedObject)

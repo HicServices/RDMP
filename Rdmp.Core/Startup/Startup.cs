@@ -276,7 +276,7 @@ namespace Rdmp.Core.Startup
                     
                     bool mustUnzip = true;
 
-                    //if theres already an unpacked version
+                    //if there's already an unpacked version
                     if(outDir != null && outDir.Exists)
                     {
                         //if the directory has no files we have to unzip - otherwise it has an unzipped version already yay

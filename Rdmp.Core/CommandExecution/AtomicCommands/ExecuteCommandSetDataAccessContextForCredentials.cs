@@ -28,7 +28,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 return;
             }
             
-            //if theres already another credentials for that context (other than this one)
+            //if there's already another credential for that context (other than this one)
             if (existingCredentials.ContainsKey(newContext))
                 SetImpossible("DataAccessCredentials '" + existingCredentials[newContext] + "' are used for accessing table under context " + newContext);
         }

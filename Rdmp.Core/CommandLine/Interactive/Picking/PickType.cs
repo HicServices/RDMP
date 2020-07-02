@@ -35,6 +35,9 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
 
         private Type GetType(string arg)
         {
+            if(string.IsNullOrWhiteSpace(arg))
+                return null;
+
             try
             {
                 return 

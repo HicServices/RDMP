@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
@@ -121,7 +122,7 @@ namespace Rdmp.Core.Curation.Data
             repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
                 {"SelectSQL", string.IsNullOrWhiteSpace(selectSQL) ? column.Name : selectSQL},
-                {"Order", 1},
+                {"Order", GetMaxOrder(catalogueItem)},
                 {"ExtractionCategory", ExtractionCategory.Core.ToString()},
                 {"CatalogueItem_ID",catalogueItem.ID}
             });
@@ -135,6 +136,28 @@ namespace Rdmp.Core.Curation.Data
                                                 " because the CatalogueItem is already associated with a different ColumnInfo: " +
                                                 catalogueItem.ColumnInfo);
             ClearAllInjections();
+        }
+
+        /// <summary>
+        /// Returns the maximum Order from all <see cref="ExtractionInformation"/> in the parent <see cref="Catalogue"/> of <paramref name="catalogueItem"/>.  Returns 1 if anything goes wrong or if there are no other ExtractionInformation yet
+        /// </summary>
+        /// <param name="catalogueItem"></param>
+        /// <returns></returns>
+        private int GetMaxOrder(CatalogueItem catalogueItem)
+        {
+            try
+            {
+                var cata = catalogueItem.Catalogue;
+                cata.ClearAllInjections();
+                
+                var eiMax = cata.GetAllExtractionInformation(ExtractionCategory.Any).OrderByDescending(ei => ei.Order).FirstOrDefault();
+
+                return eiMax == null ? 1 : eiMax.Order + 1;
+            }
+            catch (Exception)
+            {
+                return 1;
+            }
         }
 
         internal ExtractionInformation(ICatalogueRepository repository, DbDataReader r): base(repository, r)

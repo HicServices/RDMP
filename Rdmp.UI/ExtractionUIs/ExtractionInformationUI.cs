@@ -145,8 +145,6 @@ namespace Rdmp.UI.ExtractionUIs
             ObjectSaverButton1.BeforeSave += objectSaverButton1OnBeforeSave;
 
             CommonFunctionality.Add(ragSmiley1);
-            CommonFunctionality.AddToMenu(new ExecuteCommandActivate(activator, databaseObject.CatalogueItem), "Go To Description (CatalogueItem)");
-            CommonFunctionality.AddToMenu(new ExecuteCommandShow(activator, databaseObject.ColumnInfo, 0, true));
 
             CommonFunctionality.AddHelp(cbHashOnDataRelease, "IColumn.HashOnDataRelease", "Hash on Data Release");
             CommonFunctionality.AddHelp(cbIsExtractionIdentifier, "IColumn.IsExtractionIdentifier", "Is Extraction Identifier");

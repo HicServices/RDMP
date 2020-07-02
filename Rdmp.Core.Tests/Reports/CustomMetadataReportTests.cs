@@ -11,6 +11,7 @@ using System.Text;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Reports;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Reports
@@ -38,7 +39,7 @@ namespace Rdmp.Core.Tests.Reports
                 @"| Name | Desc|
 | $Name | $Description |");
 
-            var cmd = new ExecuteCommandExtractMetadata(null, new[] {cata}, outDir, template, "$Name.md", oneFile);
+            var cmd = new ExecuteCommandExtractMetadata(null, new[] {cata}, outDir, template, "$Name.md", oneFile,null);
             cmd.Execute();
 
             var outFile = Path.Combine(outDir.FullName, "ffff.md");
@@ -70,7 +71,7 @@ namespace Rdmp.Core.Tests.Reports
                 @"| Name | Desc| Range |
 | $Name | $Description | $StartDate$EndDate$DateRange |");
 
-            var cmd = new ExecuteCommandExtractMetadata(null, new[] {cata}, outDir, template, "$Name.md", false);
+            var cmd = new ExecuteCommandExtractMetadata(null, new[] {cata}, outDir, template, "$Name.md", false,null);
             cmd.Execute();
 
             var outFile = Path.Combine(outDir.FullName, "ffff.md");
@@ -114,7 +115,7 @@ namespace Rdmp.Core.Tests.Reports
 
 
             var cmd = new ExecuteCommandExtractMetadata(null, new[] {cata,cata2}, outDir, template, 
-                oneFile ? "results.xml" : "$Name.xml", oneFile);
+                oneFile ? "results.xml" : "$Name.xml", oneFile,null);
             cmd.Execute();
 
             if (oneFile)
@@ -163,6 +164,261 @@ namespace Rdmp.Core.Tests.Reports
 
             }
 
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TestCustomMetadataReport_CatalogueItems(bool oneFile)
+        {
+            var cata = WhenIHaveA<Catalogue>();
+            cata.Name = "ffff";
+            cata.Description = "A cool dataset with interesting stuff";
+            cata.SaveToDatabase();
+
+            var cataItem1 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "Col1");
+            cataItem1.Description = "some info about column 1";
+            cataItem1.SaveToDatabase();
+
+            var cataItem2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "Col2");
+            cataItem2.Description = "some info about column 2";
+            cataItem2.SaveToDatabase();
+
+            var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
+            var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
+
+            if(outDir.Exists)
+                outDir.Delete(true);
+            
+            outDir.Create();
+
+            File.WriteAllText(template.FullName,
+                @"## $Name
+$Description
+| Column | Description |
+$foreach CatalogueItem
+| $Name | $Description |
+$end");
+
+            var cmd = new ExecuteCommandExtractMetadata(null, new[] {cata}, outDir, template, "$Name.md", oneFile,null);
+            cmd.Execute();
+
+            var outFile = Path.Combine(outDir.FullName, "ffff.md");
+
+            FileAssert.Exists(outFile);
+            var resultText = File.ReadAllText(outFile);
+
+            StringAssert.AreEqualIgnoringCase(@"## ffff
+A cool dataset with interesting stuff
+| Column | Description |
+| Col1 | some info about column 1 |
+| Col2 | some info about column 2 |",resultText.TrimEnd());
+        }
+
+        [Test]
+        public void TestCustomMetadataReport_TwoCataloguesWithItems()
+        {
+            var c1 = WhenIHaveA<Catalogue>();
+            c1.Name = "ffff";
+            c1.Description = "A cool dataset with interesting stuff";
+            c1.SaveToDatabase();
+
+            var c1ci1 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c1, "Col1");
+            c1ci1.Description = "some info about column 1";
+            c1ci1.SaveToDatabase();
+
+            var c1ci2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c1, "Col2");
+            c1ci2.Description = "some info about column 2";
+            c1ci2.SaveToDatabase();
+
+            
+            var c2 = WhenIHaveA<Catalogue>();
+            c2.Name = "Demog";
+            c2.Description = "This is expensive dataset: $30 to use";
+            c2.SaveToDatabase();
+
+            var c2ci1 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c2, "Name");
+            c2ci1.Description = "Name of the patient";
+            c2ci1.SaveToDatabase();
+            var c2ci2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c2, "Address");
+            c2ci2.Description = "Where they live";
+            c2ci2.SaveToDatabase();
+            var c2ci3 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c2, "Postcode");
+            c2ci3.Description = "Patients postcode";
+            c2ci3.SaveToDatabase();
+
+
+            var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
+            var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
+
+            if(outDir.Exists)
+                outDir.Delete(true);
+            
+            outDir.Create();
+
+            File.WriteAllText(template.FullName,
+                @"## $Name
+$Description
+Price: $30
+| Column | Description |
+$foreach CatalogueItem
+
+| $Name | $Description |
+$end");
+
+            var cmd = new ExecuteCommandExtractMetadata(null, new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
+            cmd.Execute();
+
+            var outFile = Path.Combine(outDir.FullName, "Datasets.md");
+
+            FileAssert.Exists(outFile);
+            var resultText = File.ReadAllText(outFile);
+
+            StringAssert.AreEqualIgnoringCase(@"## ffff
+A cool dataset with interesting stuff
+Price: $30
+| Column | Description |
+| Col1 | some info about column 1 |
+| Col2 | some info about column 2 |
+## Demog
+This is expensive dataset: $30 to use
+Price: $30
+| Column | Description |
+| Name | Name of the patient |
+| Address | Where they live |
+| Postcode | Patients postcode |",resultText.TrimEnd());
+        }
+
+        [Test]
+        public void TestCustomMetadataReport_CatalogueItems_NoEndBlock()
+        {
+            var cata = WhenIHaveA<Catalogue>();
+            cata.Name = "ffff";
+            cata.Description = "A cool dataset with interesting stuff";
+            cata.SaveToDatabase();
+
+            var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
+            var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
+
+            if(outDir.Exists)
+                outDir.Delete(true);
+            
+            outDir.Create();
+
+            File.WriteAllText(template.FullName,
+                @"## $Name
+$Description
+| Column | Description |
+$foreach CatalogueItem
+| $Name | $Description |");
+
+            var cmd = new ExecuteCommandExtractMetadata(null, new[] {cata}, outDir, template, "$Name.md", false,null);
+            var ex = Assert.Throws<CustomMetadataReportException>(cmd.Execute);
+
+            Assert.AreEqual(4,ex.LineNumber);
+            Assert.AreEqual("Expected $end to match $foreach which started on line 4",ex.Message);
+        }
+        
+        [Test]
+        public void TestCustomMetadataReport_CatalogueItems_TooManyForeachBlocks()
+        {
+            var cata = WhenIHaveA<Catalogue>();
+            cata.Name = "ffff";
+            cata.Description = "A cool dataset with interesting stuff";
+            cata.SaveToDatabase();
+
+            var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
+            var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
+
+            if(outDir.Exists)
+                outDir.Delete(true);
+            
+            outDir.Create();
+
+            File.WriteAllText(template.FullName,
+                @"## $Name
+$Description
+| Column | Description |
+$foreach CatalogueItem
+| $Name | $Description |
+$foreach CatalogueItem
+| $Name | $Description |
+$end
+$end");
+
+            var cmd = new ExecuteCommandExtractMetadata(null, new[] {cata}, outDir, template, "$Name.md", false,null);
+            var ex = Assert.Throws<CustomMetadataReportException>(cmd.Execute);
+
+            Assert.AreEqual(6,ex.LineNumber);
+            StringAssert.StartsWith("Error, encountered '$foreach CatalogueItem' on line 6",ex.Message);
+        }
+
+        [Test]
+        public void TestNewlineSubstitution()
+        {
+            var report = new CustomMetadataReport();
+
+            //default is no substitution
+            Assert.IsNull(report.NewlineSubstitution);
+
+            Assert.IsNull(report.ReplaceNewlines(null));
+
+            Assert.AreEqual("aa\r\nbb",report.ReplaceNewlines("aa\r\nbb"));
+            Assert.AreEqual("aa\nbb",report.ReplaceNewlines("aa\nbb"));
+
+            report.NewlineSubstitution = "<br/>";
+
+            Assert.AreEqual("aa<br/>bb",report.ReplaceNewlines("aa\r\nbb"));
+            Assert.AreEqual("aa<br/>bb",report.ReplaceNewlines("aa\nbb"));
+
+        }
+
+        [Test]
+        public void TestNewlineSubstitution_FullTemplate()
+        {
+            var cata = WhenIHaveA<Catalogue>();
+            cata.Name = "ffff";
+            cata.Description = @"A cool
+dataset with interesting stuff";
+            cata.SaveToDatabase();
+
+            var cataItem1 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "Col1");
+            cataItem1.Description = "some info about column 1";
+            cataItem1.SaveToDatabase();
+
+            var cataItem2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "Col2");
+            cataItem2.Description = @"some info 
+about column 2";
+            cataItem2.SaveToDatabase();
+
+            var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
+            var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
+
+            if(outDir.Exists)
+                outDir.Delete(true);
+            
+            outDir.Create();
+
+            File.WriteAllText(template.FullName,
+                @"## $Name
+$Description
+| Column | Description |
+$foreach CatalogueItem
+| $Name | $Description |
+$end");
+
+            var cmd = new ExecuteCommandExtractMetadata(null, new[] {cata}, outDir, template, "$Name.md", false,"<br/>");
+            cmd.Execute();
+
+            var outFile = Path.Combine(outDir.FullName, "ffff.md");
+
+            FileAssert.Exists(outFile);
+            var resultText = File.ReadAllText(outFile);
+
+            StringAssert.AreEqualIgnoringCase(@"## ffff
+A cool<br/>dataset with interesting stuff
+| Column | Description |
+| Col1 | some info about column 1 |
+| Col2 | some info <br/>about column 2 |",resultText.TrimEnd());
         }
     }
 }

@@ -62,7 +62,7 @@ namespace Rdmp.Core.DataLoad.Engine.Checks
                 }
             }
 
-            //Make sure theres some load tasks and they are valid
+            //Make sure there are some load tasks and they are valid
             processTaskChecks.Check(notifier);
             
             

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataQualityEngine;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Reports;
@@ -164,13 +165,8 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void showHelpToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var current = _windowManager.Navigation.CurrentTab;
-
-            var t = current as RDMPSingleControlTab;
-            if(t == null)
-                return;
-
-            t.ShowHelp(Activator);
+            if(_windowManager.Navigation.Current is RDMPSingleControlTab t)
+                t.ShowHelp(Activator);
         }
 
         public void SetWindowManager(WindowManager windowManager)
@@ -192,6 +188,7 @@ namespace ResearchDataManagementPlatform.Menus
             fileToolStripMenuItem.DropDownItems.Insert(3,_saveToolStripMenuItem);
 
             _windowManager.TabChanged += WindowFactory_TabChanged;
+            _windowManager.Navigation.Changed += (s,e)=>UpdateForwardBackEnabled();
 
             var tracker = new TutorialTracker(Activator);
             foreach (Tutorial t in tracker.TutorialsAvailable)
@@ -250,12 +247,30 @@ namespace ResearchDataManagementPlatform.Menus
             var saveable = singleObjectControlTab.GetControl() as ISaveableUI;
             var singleObject = singleObjectControlTab.GetControl() as IRDMPSingleDatabaseObjectControl;
 
-            //if user wants to emphasise on tab change and theres an object we can emphasise associated with the control
+            //if user wants to emphasise on tab change and there's an object we can emphasise associated with the control
             if (singleObject != null && UserSettings.EmphasiseOnTabChanged && singleObject.DatabaseObject != null)
-                Activator.RequestItemEmphasis(this, new EmphasiseRequest(singleObject.DatabaseObject));
+            {
+                bool? isCicChild = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(singleObject.DatabaseObject)?.Parents?.Any(p=>p is CohortIdentificationConfiguration);
+
+                //don't emphasise things that live under cics because it doesn't result in a collection being opened but instead opens the cic Tab (which could result in you being unable to get to your original tab!)
+                if(isCicChild == false)
+                {
+                    _windowManager.Navigation.Suspend();
+                    Activator.RequestItemEmphasis(this, new EmphasiseRequest(singleObject.DatabaseObject));
+                    _windowManager.Navigation.Resume();
+                }
+                    
+            }
+                
 
             _saveToolStripMenuItem.Saveable = saveable;
-
+        }
+        
+        /// <summary>
+        /// Updates the enabled status (greyed out) of the Forward/Back menu items (includes the use of keyobard shortcuts)
+        /// </summary>
+        private void UpdateForwardBackEnabled()
+        {
             navigateBackwardToolStripMenuItem.Enabled = _windowManager.Navigation.CanBack();
             navigateForwardToolStripMenuItem.Enabled = _windowManager.Navigation.CanForward();
         }

@@ -306,7 +306,7 @@ namespace Rdmp.Core.QueryBuilding.Parameters
                         if(AreDeclaredTheSame(overridingGlobal,parameterToImport))
                             continue;//override will replace both so don't bother importing it
                         else
-                            //Theres an override with the same name but different datatypes (that's a problem)
+                            //there's an override with the same name but different datatypes (that's a problem)
                             throw new QueryBuildingException("Parameter " + parameterToImport + " has the same name as an existing parameter with a global override but differing declarations (normally we would handle with a rename but we can't because of the overriding global)",new object[]{existing,parameterToImport,overridingGlobal});
 
                     //one already exists so we will have to do a parameter rename

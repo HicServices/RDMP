@@ -263,6 +263,7 @@ namespace Rdmp.Core.DataExport.Data
                     IsPrimaryKey != ei.IsPrimaryKey ||
                     ei.SelectSQL != SelectSQL || 
                     ei.Order != Order || 
+                    ei.Alias != Alias || 
                     ei.HashOnDataRelease != HashOnDataRelease)
                     return true;
 
