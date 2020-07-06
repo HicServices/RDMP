@@ -126,6 +126,41 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
                     throw new ArgumentOutOfRangeException("strategy");
             }
         }
+
+        [TestCase(BadDataHandlingStrategy.DivertRows)]
+        [TestCase(BadDataHandlingStrategy.ThrowException)]
+        [TestCase(BadDataHandlingStrategy.IgnoreRows)]
+        public void BadCSV_TooManyCellsInRow_TwoBadRows(BadDataHandlingStrategy strategy)
+        {
+            var file = CreateTestFile(
+                "Name,Description,Age",
+                "Frank,Is the greatest,100",
+                "Frank,Is the greatest,100,Frank,Is the greatest,100", //input file has 2 lines stuck together, these should appear in divert file exactly as the input file
+                "Bob,He's also dynamite, seen him do a lot of good work,30", // has too many cells, should appear
+                "Bob2,He's also dynamite2, seen him do a lot of good work2,30", // aso has too many cells, should appear
+                "Dennis,Hes ok,35");
+
+            switch (strategy)
+            {
+                case BadDataHandlingStrategy.ThrowException:
+                    var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, strategy, true));
+                    StringAssert.StartsWith("Bad data found on line 3", ex.Message);
+                    break;
+                case BadDataHandlingStrategy.IgnoreRows:
+                    var dt = RunGetChunk(file, strategy, true);
+                    Assert.AreEqual(2,dt.Rows.Count);
+                    break;
+                case BadDataHandlingStrategy.DivertRows:
+                    var dt2 = RunGetChunk(file, strategy, true);
+                    Assert.AreEqual(2,dt2.Rows.Count);
+
+                    AssertDivertFileIsExactly("Frank,Is the greatest,100,Frank,Is the greatest,100" + Environment.NewLine + "Bob,He's also dynamite, seen him do a lot of good work,30" +Environment.NewLine + "Bob2,He's also dynamite2, seen him do a lot of good work2,30" +Environment.NewLine);
+
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("strategy");
+            }
+        }
         
         [TestCase(BadDataHandlingStrategy.DivertRows,true)]
         [TestCase(BadDataHandlingStrategy.ThrowException,false)]
