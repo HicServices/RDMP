@@ -339,7 +339,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 
         private void FinaliseExtractability()
         {
-            var eds = new ExtractableDataSet(Activator.RepositoryLocator.DataExportRepository, _catalogue);
+            new ExtractableDataSet(Activator.RepositoryLocator.DataExportRepository, _catalogue);
 
             IAtomicCommandWithTarget cmd;
             if(_projectSpecific != null)

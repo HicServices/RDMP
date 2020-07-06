@@ -26,9 +26,7 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Standard
         private readonly HICLoadConfigurationFlags _loadConfigurationFlags;
 
         private readonly Stack<IDisposeAfterDataLoad> _toDispose = new Stack<IDisposeAfterDataLoad>();
-
-        private readonly List<MigrateRAWTableToStaging> _tableMigrations = new List<MigrateRAWTableToStaging>();
-        
+                
         public MigrateRAWToStaging(HICDatabaseConfiguration databaseConfiguration, HICLoadConfigurationFlags loadConfigurationFlags)
         {
             _databaseConfiguration = databaseConfiguration;
@@ -72,7 +70,6 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Standard
         private void MigrateRAWTableToStaging(IDataLoadJob job, ITableInfo tableInfo, bool isLookupTable, GracefulCancellationToken cancellationToken)
         {
             var component = new MigrateRAWTableToStaging(tableInfo, isLookupTable, _databaseConfiguration);
-            _tableMigrations.Add(component);
             component.Run(job, cancellationToken);
         }
 

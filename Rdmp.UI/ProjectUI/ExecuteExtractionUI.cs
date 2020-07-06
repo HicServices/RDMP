@@ -163,10 +163,8 @@ namespace Rdmp.UI.ProjectUI
             if (model == _projectSpecificDatasetsFolder)
                 return _datasets.Where(sds => sds.ExtractableDataSet.Project_ID != null);
 
-            var eds = model as IExtractableDataSet;
-
-            if (_bundledStuff != null && eds != null)
-                return _bundledStuff.Where(s => s.User.Equals(eds));
+            if (_bundledStuff != null && model is ISelectedDataSets sds2)
+                return _bundledStuff.Where(s => s.User.Equals(sds2));
 
             return null;
         }

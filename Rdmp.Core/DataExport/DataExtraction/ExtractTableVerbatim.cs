@@ -130,12 +130,10 @@ namespace Rdmp.Core.DataExport.DataExtraction
 
         public static void WriteHeader(StreamWriter sw, DbDataReader r, string separator, string dateTimeFormat)
         {
-            int whoCares = -999;
-
             //write headers
             for (int i = 0; i < r.FieldCount; i++)
             {
-                sw.Write(CSVOutputFormat.CleanString(r.GetName(i), separator, out whoCares, dateTimeFormat));
+                sw.Write(CSVOutputFormat.CleanString(r.GetName(i), separator, out _, dateTimeFormat));
                 if (i < r.FieldCount - 1)
                     sw.Write(separator);
                 else
@@ -144,7 +142,6 @@ namespace Rdmp.Core.DataExport.DataExtraction
         }
         public static int WriteBody(StreamWriter sw, DbDataReader r, string separator, string dateTimeFormat)
         {
-            int whoCares = -999;
             int linesWritten = 0;
 
             while (r.Read())
@@ -153,7 +150,7 @@ namespace Rdmp.Core.DataExport.DataExtraction
                 for (int i = 0; i < r.FieldCount; i++)
                 {
                     //clean string
-                    sw.Write(CSVOutputFormat.CleanString(r[i], separator, out whoCares, dateTimeFormat));
+                    sw.Write(CSVOutputFormat.CleanString(r[i], separator, out _, dateTimeFormat));
                     if (i < r.FieldCount - 1)
                         sw.Write(separator); //if not the last element add a ','
                     else

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ...
+
+
+### Fixed
+
+- Fixed lookups, supporting documents etc not appearing in the extractable artifacts tree view of the extraction window when non global.
+
 ## [4.1.4] - 2020-07-02
 
 ### Added

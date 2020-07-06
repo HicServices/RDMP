@@ -172,15 +172,15 @@ namespace ReusableLibraryCode
                     }
                 }
             }
-            catch (IOException ex)
+            catch (IOException)
             {
-                //couldn't access the file so wait 5 seconds then try again
+                //couldn't access the file so wait 1 second then try again
                 Thread.Sleep(1000);
 
                 if (retryCount-- > 0)
                     return HashFile(filename, retryCount);//try it again (recursively)
                 else
-                    throw ex;
+                    throw;
             }
 
 
