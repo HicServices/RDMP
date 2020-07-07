@@ -144,7 +144,7 @@ namespace Rdmp.Core.DataExport.Data
             Server = r["Server"] as string;
             Username = r["Username"] as string;
             Password = r["Password"] as string;
-            Database = r["Database"] as string;
+            Database = r["Database"] as string ?? string.Empty;
 
             var syntaxHelper = GetQuerySyntaxHelper();
 
