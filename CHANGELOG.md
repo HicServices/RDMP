@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Changed
+
+- Unhandled Application/Thread exceptions (rare) now show in the top right task bar instead of as a popup dialog
 
 ### Fixed
 
