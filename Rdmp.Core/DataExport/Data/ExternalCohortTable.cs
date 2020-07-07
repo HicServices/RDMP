@@ -49,28 +49,28 @@ namespace Rdmp.Core.DataExport.Data
         public string DefinitionTableForeignKeyField
         {
             get { return _definitionTableForeignKeyField; }
-            set { SetField(ref _definitionTableForeignKeyField, GetQuerySyntaxHelper().EnsureFullyQualified(Database, null,TableName, value)); }
+            set { SetField(ref _definitionTableForeignKeyField, GetQuerySyntaxHelper().EnsureFullyQualified(Database ?? string.Empty, null,TableName?? string.Empty, value)); }
         }
 
         /// <inheritdoc/>
         public string TableName
         {
             get { return _tableName; }
-            set { SetField(ref _tableName, GetQuerySyntaxHelper().EnsureFullyQualified(Database,null, value)); }
+            set { SetField(ref _tableName, GetQuerySyntaxHelper().EnsureFullyQualified(Database?? string.Empty,null, value?? string.Empty)); }
         }
 
         /// <inheritdoc/>
         public string DefinitionTableName
         {
             get { return _definitionTableName; }
-            set { SetField(ref _definitionTableName, GetQuerySyntaxHelper().EnsureFullyQualified(Database, null, value)); }
+            set { SetField(ref _definitionTableName, GetQuerySyntaxHelper().EnsureFullyQualified(Database?? string.Empty, null, value?? string.Empty)); }
         }
 
         /// <inheritdoc/>
         public string PrivateIdentifierField
         {
             get { return _privateIdentifierField; }
-            set { SetField(ref _privateIdentifierField, GetQuerySyntaxHelper().EnsureFullyQualified(Database,null, TableName, value)); }
+            set { SetField(ref _privateIdentifierField, GetQuerySyntaxHelper().EnsureFullyQualified(Database?? string.Empty,null, TableName, value?? string.Empty)); }
         }
 
         /// <inheritdoc/>
@@ -80,7 +80,7 @@ namespace Rdmp.Core.DataExport.Data
         public string ReleaseIdentifierField
         {
             get { return _releaseIdentifierField; }
-            set { SetField(ref _releaseIdentifierField, GetQuerySyntaxHelper().EnsureFullyQualified(Database,null, TableName, value)); }
+            set { SetField(ref _releaseIdentifierField, GetQuerySyntaxHelper().EnsureFullyQualified(Database?? string.Empty,null, TableName, value?? string.Empty)); }
         }
 
         /// <summary>
