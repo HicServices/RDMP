@@ -18,6 +18,7 @@ using Rdmp.UI.Collections;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
+using Rdmp.UI.TestsAndSetup;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Theme;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
@@ -63,6 +64,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             _windowFactory = new WindowFactory(repositoryLocator,this);
             ActivateItems = new ActivateItems(theme,refreshBus, mainDockPanel, repositoryLocator, _windowFactory, this, globalErrorCheckNotifier);
+
+            GlobalExceptionHandler.Instance.Handler = (e)=>globalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message,CheckResult.Fail,e));
 
             _mainDockPanel = mainDockPanel;
             

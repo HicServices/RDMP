@@ -37,9 +37,9 @@ namespace Rdmp.UI.TestsAndSetup
             Scintilla.SetDestroyHandleBehavior(true);
 
             //tell me when you blow up somewhere in the windows API instead of somewhere sensible
-            Application.ThreadException += (sender, args) => ExceptionViewer.Show(args.Exception,false);
+            Application.ThreadException += GlobalExceptionHandler.Instance.Handle;
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-            AppDomain.CurrentDomain.UnhandledException += (sender, args) => ExceptionViewer.Show((Exception)args.ExceptionObject,false);
+            AppDomain.CurrentDomain.UnhandledException += GlobalExceptionHandler.Instance.Handle;
 
             try
             {
