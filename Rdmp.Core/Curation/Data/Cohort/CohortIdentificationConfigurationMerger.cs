@@ -130,7 +130,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
             using(var trans = _repository.BeginNewTransactedConnection())
             {
                 // For each of these
-                foreach(var subContainer in rootContainer.GetSubContainers())
+                foreach(var subContainer in rootContainer.GetSubContainers().OrderBy(c=>c.Order))
                 {
                     // create a new config
                     var newCic = new CohortIdentificationConfiguration(_repository,$"Un Merged { subContainer.Name } ({subContainer.ID }) ");

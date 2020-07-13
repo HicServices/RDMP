@@ -66,5 +66,52 @@ namespace Rdmp.Core.Tests.CohortCreation
             Assert.IsTrue(cic2.Exists());
 
         }
+
+        [Test]
+        public void TestSimpleUnMerge()
+        {
+            var merger = new CohortIdentificationConfigurationMerger(CatalogueRepository);
+
+            var cicInput = new CohortIdentificationConfiguration(CatalogueRepository,"cic99");
+
+            cicInput.CreateRootContainerIfNotExists();
+            var root = cicInput.RootCohortAggregateContainer;
+            root.Name = "Root";
+            root.SaveToDatabase();
+
+            var sub1 = new CohortAggregateContainer(CatalogueRepository,SetOperation.INTERSECT);
+            sub1.Order = 1;
+            sub1.SaveToDatabase();
+
+            var sub2 = new CohortAggregateContainer(CatalogueRepository,SetOperation.EXCEPT);
+            sub2.Order = 2;
+            sub2.SaveToDatabase();
+
+            root.AddChild(sub1);
+            root.AddChild(sub2);
+
+            sub1.AddChild(aggregate1,0);
+            sub2.AddChild(aggregate2,0);
+            sub2.AddChild(aggregate3,1);
+            
+            int numberOfCicsBefore = CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>().Count();
+
+            var results = merger.UnMerge(root);
+
+            // Now should be two new ones
+            Assert.AreEqual(numberOfCicsBefore + 2,CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>().Count());
+            Assert.AreEqual(2,results.Length);
+
+            Assert.AreEqual(SetOperation.INTERSECT,results[0].RootCohortAggregateContainer.Operation);
+            Assert.AreEqual(1,results[0].RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Count);
+            
+            Assert.IsFalse(results[0].RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Intersect(new []{ aggregate1,aggregate2,aggregate3}).Any(),"Expected new aggregates to be new!");
+
+            Assert.AreEqual(SetOperation.EXCEPT,results[1].RootCohortAggregateContainer.Operation);
+            Assert.AreEqual(2,results[1].RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Count);
+
+            Assert.IsFalse(results[1].RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Intersect(new []{ aggregate1,aggregate2,aggregate3}).Any(),"Expected new aggregates to be new!");
+
+        }
     }
 }
