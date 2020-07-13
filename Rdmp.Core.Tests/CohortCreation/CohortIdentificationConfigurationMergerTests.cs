@@ -43,7 +43,7 @@ namespace Rdmp.Core.Tests.CohortCreation
 
             var result = merger.Merge(new []{cic1,cic2 },SetOperation.UNION);
 
-            //original should still be in tact
+            //original should still be intact
             Assert.AreEqual(1,cic1.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Count);
             Assert.AreEqual(1,cic2.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Count);
 

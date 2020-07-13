@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added Merge command, for combining two or more configurations in cohort builder into one
+- Added Un Merge command for splitting one cohort builder configuration into multiple seperate ones
 - Improved error messages in extraction checking when there are:
   -  2+ columns with the same name
   -  2+ columns with the same location in extraction order
