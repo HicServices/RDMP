@@ -53,7 +53,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
             }
             
 
-            using(var trans = _repository.BeginNewTransactedConnection())
+            using(_repository.BeginNewTransactedConnection())
             {
                 // Create a new master configuration
                 var cicMaster = new CohortIdentificationConfiguration(_repository,$"Merged cics (IDs {string.Join(",",cics.Select(c=>c.ID))})" );
@@ -133,7 +133,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
                 throw new Exception("Error during pre merge cloning stage, no UnMerge will be attempted",ex);
             }
                         
-            using(var trans = _repository.BeginNewTransactedConnection())
+            using(_repository.BeginNewTransactedConnection())
             {
                 // For each of these
                 foreach(var subContainer in rootContainer.GetSubContainers().OrderBy(c=>c.Order))
