@@ -103,6 +103,7 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
         private List<Type> showOnlyTypes = new List<Type>();
         private AttributePropertyFinder<UsefulPropertyAttribute> _usefulPropertyFinder;
         private Type _alwaysFilterOn;
+        private ToolStripTextBox _lblId;
 
         /// <summary>
         /// The action to perform when the form closes with an object selected (defaults to Emphasise)
@@ -192,6 +193,10 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
 
                 toolStrip1.Items.Add(b);
             }
+
+            toolStrip1.Items.Add(new ToolStripLabel("ID:"));
+            toolStrip1.Items.Add(_lblId = new ToolStripTextBox());
+            _lblId.TextChanged += tbFind_TextChanged;
         }
 
 
@@ -375,6 +380,9 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
             var scorer = new SearchablesMatchScorer();
             scorer.TypeNames = _typeNames;
             scorer.BumpMatches = Activator.HistoryProvider.History.Select(h=>h.Object).ToList();
+            
+            if(_lblId != null && int.TryParse(_lblId.Text,out int requireId))
+                scorer.ID = requireId;
 
             if(AlwaysFilterOn != null)
                 showOnlyTypes = new List<Type>(new []{AlwaysFilterOn});

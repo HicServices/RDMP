@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   -  2+ columns with the same name
   -  2+ columns with the same location in extraction order
   -  Cohort and dataset are on different servers
+- Added ability to search by ID in find dialog
 
 ### Changed
 
