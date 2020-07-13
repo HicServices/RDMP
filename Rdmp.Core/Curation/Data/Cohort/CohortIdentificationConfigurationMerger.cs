@@ -1,9 +1,11 @@
-﻿using Rdmp.Core.Repositories;
+﻿using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Rdmp.Core.Curation.Data.Cohort
 {
@@ -20,18 +22,24 @@ namespace Rdmp.Core.Curation.Data.Cohort
         }
 
         /// <summary>
-        /// Clones and combines two <see cref="CohortIdentificationConfiguration"/> into a single new cic.
+        /// Clones and combines two or more <see cref="CohortIdentificationConfiguration"/> into a single new cic.
         /// </summary>
-        /// <param name="cic1"></param>
-        /// <param name="cic2"></param>
+        /// <param name="cics"></param>
         /// <param name="operation"></param>
-        public void Merge(CohortIdentificationConfiguration cic1, CohortIdentificationConfiguration cic2, SetOperation operation)
+        /// <returns>The new merged CohortIdentificationConfiguration which contains all the provided <paramref name="cics"/> </returns>
+        public CohortIdentificationConfiguration Merge(CohortIdentificationConfiguration[] cics, SetOperation operation)
         {
+            if(cics.Length <= 1)
+                throw new ArgumentException("You must select at least 2 cics to merge",nameof(cics));            
+
             //clone them
+            var cicClones = new CohortIdentificationConfiguration[cics.Length];
             try
             {
-                cic1 = cic1.CreateClone(new ThrowImmediatelyCheckNotifier());
-                cic2 = cic2.CreateClone(new ThrowImmediatelyCheckNotifier());
+                for (int i = 0; i < cics.Length; i++)
+                {
+                    cicClones[i] = cics[i].CreateClone(new ThrowImmediatelyCheckNotifier());
+                }
             }
             catch(Exception ex)
             {
@@ -42,7 +50,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
             using(var trans = _repository.BeginNewTransactedConnection())
             {
                 // Create a new master configuration
-                var cicMaster = new CohortIdentificationConfiguration(_repository,$"Merged cic ({cic1.ID } with {cic2.ID})" );
+                var cicMaster = new CohortIdentificationConfiguration(_repository,$"Merged cics (IDs {string.Join(",",cics.Select(c=>c.ID))})" );
                 
                 // With a single top level container with the provided operation
                 cicMaster.CreateRootContainerIfNotExists();
@@ -51,38 +59,48 @@ namespace Rdmp.Core.Curation.Data.Cohort
                 rootContainer.SaveToDatabase();
                 
                 //Grab the root container of each of the input cics
-                var cont1 = cic1.RootCohortAggregateContainer;
-                var cont2 = cic2.RootCohortAggregateContainer;
+                foreach(CohortIdentificationConfiguration cic in cicClones)
+                {
+                    var container = cic.RootCohortAggregateContainer;
 
-                //clear them to avoid dual parentage
-                cic1.RootCohortAggregateContainer_ID = null;
-                cic1.SaveToDatabase();
+                    //clear them to avoid dual parentage
+                    cic.RootCohortAggregateContainer_ID = null;
+                    cic.SaveToDatabase();
 
-                cic2.RootCohortAggregateContainer_ID = null;
-                cic2.SaveToDatabase();
-
-                //add both to the new master cic root container
-                rootContainer.AddChild(cont1);
-                rootContainer.AddChild(cont2);
-
-                // Make the new name of all the AggregateConfigurations match the new master cic
-                foreach(var child in cont1.GetAllAggregateConfigurationsRecursively().Union(cont2.GetAllAggregateConfigurationsRecursively()))
-                    cicMaster.EnsureNamingConvention(child);
+                    //add to the new master cic root container
+                    rootContainer.AddChild(container);
+                    
+                    // Make the new name of all the AggregateConfigurations match the new master cic
+                    foreach(var child in container.GetAllAggregateConfigurationsRecursively())
+                        EnsureNamingConvention(cicMaster,child);
+                    
+                    // Delete the old now empty clones
+                    cic.DeleteInDatabase();
+                }                
                 
-                // Delete the old now empty clones
-                cic1.DeleteInDatabase();
-                cic2.DeleteInDatabase();
-
                 //finish transaction
                 _repository.EndTransactedConnection(true);
+
+                return cicMaster;
             }
+        }
+
+        private void EnsureNamingConvention(CohortIdentificationConfiguration cic, AggregateConfiguration ac)
+        {
+            //clear any old cic_x prefixes
+            ac.Name = Regex.Replace(ac.Name, $@"^({CohortIdentificationConfiguration.CICPrefix }\d+_?)+","");
+            ac.SaveToDatabase();
+
+            //and add the new correct one
+            cic.EnsureNamingConvention(ac);
         }
 
         /// <summary>
         /// Splits the root container of a <see cref="CohortIdentificationConfiguration"/> into multiple new cic.
         /// </summary>
         /// <param name="rootContainer"></param>
-        public void UnMerge(CohortAggregateContainer rootContainer)
+        /// <returns>All new configurations unmerged out of the <paramref name="rootContainer"/></returns>
+        public CohortIdentificationConfiguration[] UnMerge(CohortAggregateContainer rootContainer)
         {
             if(!rootContainer.IsRootContainer())
                 throw new ArgumentException("Container must be a root container to be unmerged",nameof(rootContainer));
@@ -94,7 +112,8 @@ namespace Rdmp.Core.Curation.Data.Cohort
                 throw new ArgumentException("Container must contain 2+ sub-containers to be unmerged",nameof(rootContainer));
 
             var cic = rootContainer.GetCohortIdentificationConfiguration();
-                        
+            var toReturn = new List<CohortIdentificationConfiguration>();
+            
             try
             {
                 // clone the input cic 
@@ -125,7 +144,9 @@ namespace Rdmp.Core.Curation.Data.Cohort
                                         
                     // Make the new name of all the AggregateConfigurations match the new cic
                     foreach(var child in subContainer.GetAllAggregateConfigurationsRecursively())
-                        newCic.EnsureNamingConvention(child);
+                        EnsureNamingConvention(newCic,child);
+                    
+                    toReturn.Add(newCic);
                 }
 
                 //Now delete the original clone that we unmerged the containers out of
@@ -134,7 +155,8 @@ namespace Rdmp.Core.Curation.Data.Cohort
                 //finish transaction
                 _repository.EndTransactedConnection(true);
             }
-        }
 
+            return toReturn.ToArray();
+        }
     }
 }
