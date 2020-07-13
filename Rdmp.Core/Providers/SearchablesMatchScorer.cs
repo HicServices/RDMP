@@ -33,6 +33,11 @@ namespace Rdmp.Core.Providers
         /// List of objects which should be favoured slightly above others of equal match potential
         /// </summary>
         public List<IMapsDirectlyToDatabaseTable> BumpMatches { get; set; } = new List<IMapsDirectlyToDatabaseTable>();
+        
+        /// <summary>
+        /// Only show objects with the given ID
+        /// </summary>
+        public int? ID { get; set; }
 
         /// <summary>
         /// How much to bump matches when they are in <see cref="BumpMatches"/>
@@ -108,7 +113,7 @@ namespace Rdmp.Core.Providers
                             searchText += " " + v.Name;
  
             //if we have nothing to search for return no results
-            if(string.IsNullOrWhiteSpace(searchText))
+            if(string.IsNullOrWhiteSpace(searchText) && ID == null)
                 return new Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int>();
             
             var tokens = (searchText??"").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -145,6 +150,12 @@ namespace Rdmp.Core.Providers
 
             if (cancellationToken.IsCancellationRequested)
                 return 0;
+
+            //if we are searching for a specific ID
+            if(ID.HasValue && kvp.Key.ID != ID.Value)
+                return 0;
+            else 
+                score += 10;
 
             if (explicitTypeNames.Any())
                 if (!explicitTypeNames.Contains(kvp.Key.GetType().Name))
