@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Improved error messages in extraction checking when there are:
+  -  2+ columns with the same name
+  -  2+ columns with the same location in extraction order
+  -  Cohort and dataset are on different servers
+
 ### Changed
 
 - Unhandled Application/Thread exceptions (rare) now show in the top right task bar instead of as a popup dialog
