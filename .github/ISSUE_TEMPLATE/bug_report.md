@@ -30,5 +30,9 @@ Displayed in the task bar of the software e.g. v4.1.5
 ```
 If applicable, paste the entire stack trace here, leave the triple quotes (```)
 ```
+
+**Database Engine**
+Sql Server, Oracle, MySql or Postgres.
+
 **Additional context**
 Add any other context about the problem here.
