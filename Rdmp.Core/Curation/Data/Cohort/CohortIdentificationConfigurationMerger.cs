@@ -92,7 +92,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
         }
 
         /// <summary>
-        /// Clone and import one or more <see cref="CohortIdentificationConfiguration"/> into the target <paramref name="into"/> (which must not belong to any of the imported cics)
+        /// Clone and import one or more <see cref="CohortIdentificationConfiguration"/> into the target <paramref name="into"/>
         /// </summary>
         /// <param name="cics"></param>
         /// <param name="into">The container into which you want to add the <paramref name="cics"/></param>
