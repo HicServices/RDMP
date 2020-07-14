@@ -119,5 +119,44 @@ namespace Rdmp.Core.Tests.CohortCreation
             Assert.IsFalse(results[1].RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Intersect(new []{ aggregate1,aggregate2,aggregate3}).Any(),"Expected new aggregates to be new!");
 
         }
+
+        [Test]
+        public void TestSimpleImportCic()
+        {
+            var merger = new CohortIdentificationConfigurationMerger(CatalogueRepository);
+
+            var cic1 = new CohortIdentificationConfiguration(CatalogueRepository,"cic1");
+            var cic2 = new CohortIdentificationConfiguration(CatalogueRepository,"cic2");
+
+            cic1.CreateRootContainerIfNotExists();
+            var root1 = cic1.RootCohortAggregateContainer;
+            root1.Name = "Root1";
+            root1.SaveToDatabase();
+            root1.AddChild(aggregate1,1);
+
+            cic2.CreateRootContainerIfNotExists();
+            var root2 = cic2.RootCohortAggregateContainer;
+            root2.Name = "Root2";
+            root2.SaveToDatabase();
+            root2.AddChild(aggregate2,2);
+
+            Assert.AreEqual(1,cic1.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Count);
+            Assert.AreEqual(1,cic2.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Count);
+            
+            int numberOfCicsBefore = CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>().Count();
+
+            //import 2 into 1
+            merger.Import(new []{cic2 },cic1.RootCohortAggregateContainer);
+
+            //no new cics
+            Assert.AreEqual(numberOfCicsBefore,CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>().Count());
+
+            // cic 1 should now have both aggregates
+            Assert.AreEqual(2,cic1.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Count);
+            
+            Assert.AreEqual("Root1",cic1.RootCohortAggregateContainer.Name);
+            Assert.AreEqual("Root2",cic1.RootCohortAggregateContainer.GetSubContainers()[0].Name);
+
+        }
     }
 }
