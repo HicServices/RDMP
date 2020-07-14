@@ -10,6 +10,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 
@@ -60,12 +61,17 @@ namespace Rdmp.UI.Collections
 
             tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.OrphanAggregateConfigurationsNode);
 
-            CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[]{new ExecuteCommandCreateNewCohortIdentificationConfiguration(a)};
+            CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[]{
+                new ExecuteCommandCreateNewCohortIdentificationConfiguration(a),
+                new ExecuteCommandMergeCohortIdentificationConfigurations(a,null)};
 
             Activator.RefreshBus.EstablishLifetimeSubscription(this);
+
+            var factory = new AtomicCommandUIFactory(activator);
             
             
-            CommonFunctionality.Add(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator),"New");
+            CommonFunctionality.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator)),"New...");
+            CommonFunctionality.Add(factory.CreateMenuItem(new ExecuteCommandMergeCohortIdentificationConfigurations(Activator,null){OverrideCommandName = "By Merging Existing..."}),"New...");
         }
         
         public static bool IsRootObject(object root)

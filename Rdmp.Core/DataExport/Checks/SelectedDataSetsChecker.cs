@@ -109,19 +109,17 @@ namespace Rdmp.Core.DataExport.Checks
 
             //when 2+ columns have the same Name it's a problem
             foreach (IGrouping<string, IColumn> grouping in request.ColumnsToExtract.GroupBy(c=>c.GetRuntimeName()).Where(g=>g.Count()>1))
-                notifier.OnCheckPerformed(new CheckEventArgs("There are " + grouping.Count() + " columns in the extract called '" +grouping.Key + "'",CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs($"There are { grouping.Count() } columns in the extract ({request.DatasetBundle?.DataSet}) called '{ grouping.Key }'",CheckResult.Fail));
 
             //when 2+ columns have the same Order it's a problem because
             foreach (IGrouping<int, IColumn> grouping in request.ColumnsToExtract.GroupBy(c=>c.Order).Where(g=>g.Count()>1))
-                notifier.OnCheckPerformed(new CheckEventArgs("There are " + grouping.Count() + " columns in the extract that share the same Order '" +grouping.Key + "'",CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs($"There are { grouping.Count() } columns in the extract ({request.DatasetBundle?.DataSet}) that share the same Order '{ grouping.Key }'",CheckResult.Fail));
             
             //Make sure cohort and dataset are on same server before checking (can still get around this at runtime by using ExecuteCrossServerDatasetExtractionSource)
             if(!cohortServer.Server.Name.Equals(server.Name,StringComparison.CurrentCultureIgnoreCase) || !cohortServer.Server.DatabaseType.Equals(server.DatabaseType))
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    string.Format("Cohort is on server '{0}' ({1}) but dataset is on '{2}' ({3})",
-                    cohortServer.Server.Name,
-                    cohortServer.Server.DatabaseType,
-                    server.Name,server.DatabaseType), CheckResult.Warning));
+                    $"Cohort is on server '{cohortServer.Server.Name}' ({cohortServer.Server.DatabaseType}) but dataset '{request.DatasetBundle?.DataSet}' is on '{server.Name}' ({server.DatabaseType})"
+                    , CheckResult.Warning));
             else
             {
                 //Try to fetch TOP 1 data

@@ -24,15 +24,12 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
         private readonly Dictionary<string, Type> _commandsDictionary;
 
         private readonly CommandInvoker _commandCaller;
-
-        private readonly Dictionary<Type,Func<object>> _argsDictionary = new Dictionary<Type, Func<object>>();
-
+                
         public RunUI(IActivateItems activator):base(activator)
         {
             InitializeComponent();
             
             _commandsDictionary = new Dictionary<string, Type>(StringComparer.CurrentCultureIgnoreCase);
-            _argsDictionary.Add(typeof(IActivateItems),()=>activator);
 
             _commandCaller = new CommandInvoker(activator);
             _commandCaller.CommandImpossible += (s,e) =>MessageBox.Show(e.Command.ReasonCommandImpossible);

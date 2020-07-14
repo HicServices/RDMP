@@ -280,14 +280,14 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
                 case LookupCreationStage.DragAPrimaryKey:
 
                     DrawCurveWithLabel(
-                        new PointF(groupBox1.Right + 10, groupBox1.Top + (groupBox1.Height / 2)),
+                        new PointF(groupBox1.Right + 10, groupBox1.Top + (groupBox1.Height / 2f)),
                         new PointF(pk1.Left - 10, pk1.Top - 2),
                         "2. Drag Primary Key Column", graphics, arrowPen);
                     break;
                 case LookupCreationStage.DragAForeignKey:
 
                     DrawCurveWithLabel(
-                        new PointF(olvExtractionInformations.Right + 10, olvExtractionInformations.Bottom - (olvExtractionInformations.Height / 10)),
+                        new PointF(olvExtractionInformations.Right + 10, olvExtractionInformations.Bottom - (olvExtractionInformations.Height / 10f)),
                         new PointF(olvSelectedDescriptionColumns.Right + 100, olvSelectedDescriptionColumns.Bottom + 200),
                         new PointF(fk1.Right + 500, fk1.Top + 100),
                         new PointF(fk1.Right + 15, fk1.Bottom - 10),
@@ -295,7 +295,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
                     break;
                 case LookupCreationStage.DragADescription:
                     DrawCurveWithLabel(
-                    new PointF(groupBox1.Right + 10, groupBox1.Top + (groupBox1.Height / 2)),
+                    new PointF(groupBox1.Right + 10, groupBox1.Top + (groupBox1.Height / 2f)),
                     new PointF(olvSelectedDescriptionColumns.Left - 10, olvSelectedDescriptionColumns.Top - 2),
                     "4. Drag a Description Column", graphics, arrowPen);
 

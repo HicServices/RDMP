@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ...
+
+## [4.1.5] - 2020-07-14
+
+### Added
+
+- Added Merge command, for combining two or more configurations in cohort builder into one
+- Added Un Merge command for splitting one cohort builder configuration into multiple seperate ones
+- Improved error messages in extraction checking when there are:
+  -  2+ columns with the same name
+  -  2+ columns with the same location in extraction order
+  -  Cohort and dataset are on different servers
+- Added ability to search by ID in find dialog
+
+### Changed
+
+- Unhandled Application/Thread exceptions (rare) now show in the top right task bar instead of as a popup dialog
+
+### Fixed
+
+- Fixed lookups, supporting documents etc not appearing in the extractable artifacts tree view of the extraction window when non global.
+
 ## [4.1.4] - 2020-07-02
 
 ### Added
@@ -465,7 +486,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.1.4...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.1.5...develop
+[4.1.5]: https://github.com/HicServices/RDMP/compare/v4.1.4...v4.1.5
 [4.1.4]: https://github.com/HicServices/RDMP/compare/v4.1.3...v4.1.4
 [4.1.3]: https://github.com/HicServices/RDMP/compare/v4.1.2...v4.1.3
 [4.1.2]: https://github.com/HicServices/RDMP/compare/v4.1.1...v4.1.2

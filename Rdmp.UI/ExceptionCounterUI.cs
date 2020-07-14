@@ -57,7 +57,7 @@ namespace Rdmp.UI
 
                 PathGradientBrush pgb = new PathGradientBrush(gp);
 
-                pgb.CenterPoint = new PointF(Width / 2,Height / 2);
+                pgb.CenterPoint = new PointF(Width / 2f,Height / 2f);
                 pgb.CenterColor = Color.FromArgb(255,218,188);
                 pgb.SurroundColors = new Color[] { Color.FromArgb(255, 55, 0) };
 

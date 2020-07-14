@@ -37,7 +37,7 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
 
             try
             {
-                Dictionary<int,Stopwatch> performance = new Dictionary<int, Stopwatch>();
+                Dictionary<int,Stopwatch> performance;
 
                 
                 using (var con = db.Server.GetConnection())

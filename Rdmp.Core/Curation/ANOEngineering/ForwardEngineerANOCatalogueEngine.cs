@@ -435,7 +435,7 @@ namespace Rdmp.Core.Curation.ANOEngineering
             var export = _shareManager.GetNewOrExistingExportFor(parent);
 
             //share it to yourself where the child is the realisation of the share (this creates relationship in database)
-            var import = _shareManager.GetImportAs(export.SharingUID, child);
+            _shareManager.GetImportAs(export.SharingUID, child);
 
             //record in memory dictionary
             _parenthoodDictionary.Add(parent,child);

@@ -104,7 +104,8 @@ namespace Rdmp.Core.DataExport.Checks
         {
             try
             {
-                var fi = new FileInfo(path);
+                // throws if the path is illegal
+                new FileInfo(path);
                 return true;
             }
             catch (Exception)

@@ -1132,7 +1132,7 @@ namespace Rdmp.Core.Providers
         private void AddChildren(CohortAggregateContainer container, DescendancyList descendancy)
         {
             //all our children (containers and aggregates)
-            List<IOrderable> children = new List<IOrderable>();
+            List<IOrderable> children;
 
             //get subcontainers
             var subcontainers = _cohortContainerManager.GetChildren(container).OfType<CohortAggregateContainer>().ToList();

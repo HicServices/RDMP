@@ -52,6 +52,8 @@ namespace Rdmp.UI.Menus
             foreach (ToolStripMenuItem item in Items)
                 item.Enabled = item.Enabled && (cic != null && !cic.Frozen);
 
+            Add(new ExecuteCommandUnMergeCohortIdentificationConfiguration(_activator,container));
+
             //Add Graph results of container commands
 
             //this requires cache to exist (and be populated for the container)
