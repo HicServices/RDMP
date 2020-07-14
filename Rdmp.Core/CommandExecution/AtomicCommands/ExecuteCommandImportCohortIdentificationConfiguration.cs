@@ -16,6 +16,9 @@ using System.Text;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
+    /// <summary>
+    /// Clone and import one or more <see cref="CohortIdentificationConfiguration"/> into a root or subcontainer of another
+    /// </summary>
     public class ExecuteCommandImportCohortIdentificationConfiguration : BasicCommandExecution
     {
         public CohortAggregateContainer IntoContainer { get; }
