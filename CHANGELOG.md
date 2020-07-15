@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Added Import command for bringing in one or more [CohortIdentificationConfiguration] into an existing container (like Merge / UnMerge but for existing configurations)
+
 ## [4.1.5] - 2020-07-14
 
 ### Added
@@ -535,3 +539,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [Pipeline]: ./Documentation/CodeTutorials/Glossary.md#Pipeline
 
 [Lookup]: ./Documentation/CodeTutorials/Glossary.md#Lookup
+[CohortIdentificationConfiguration]: ./Documentation/CodeTutorials/Glossary.md#CohortIdentificationConfiguration
