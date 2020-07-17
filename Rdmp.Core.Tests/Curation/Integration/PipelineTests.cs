@@ -159,5 +159,36 @@ namespace Rdmp.Core.Tests.Curation.Integration
             p.DeleteInDatabase();
             p2.DeleteInDatabase();
         }
+
+        [Test]
+        public void CloneAPipeline_BrokenPipes()
+        {
+            Pipeline p = new Pipeline(CatalogueRepository);
+
+            //Setup a pipeline with a source component type that doesnt exist
+            var source = new PipelineComponent(CatalogueRepository, p, typeof (DelimitedFlatFileAttacher), 0);
+            source.Class = "Trollololol";
+
+            var arg = source.CreateNewArgument();
+
+            //Also give the source component a non existant argument
+            arg.GetType().GetProperty("Type").SetValue(arg,"fffffzololz");
+            arg.SaveToDatabase();
+
+            p.SourcePipelineComponent_ID = source.ID;
+            p.SaveToDatabase();
+            
+            Assert.AreEqual("fffffzololz",p.Source.GetAllArguments().Single().Type);
+
+            var clone = p.Clone();
+
+            Assert.AreEqual(clone.Source.Class,p.Source.Class);
+
+            p.DeleteInDatabase();
+            clone.DeleteInDatabase();
+
+            Assert.AreEqual("fffffzololz",clone.Source.GetAllArguments().Single().Type);
+
+        }
     }
 }
