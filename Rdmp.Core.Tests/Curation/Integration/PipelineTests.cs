@@ -183,11 +183,11 @@ namespace Rdmp.Core.Tests.Curation.Integration
             var clone = p.Clone();
 
             Assert.AreEqual(clone.Source.Class,p.Source.Class);
+            Assert.AreEqual("fffffzololz",clone.Source.GetAllArguments().Single().Type);
 
             p.DeleteInDatabase();
             clone.DeleteInDatabase();
 
-            Assert.AreEqual("fffffzololz",clone.Source.GetAllArguments().Single().Type);
 
         }
     }
