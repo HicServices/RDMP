@@ -165,13 +165,13 @@ namespace Rdmp.Core.Tests.Curation.Integration
         {
             Pipeline p = new Pipeline(CatalogueRepository);
 
-            //Setup a pipeline with a source component type that doesnt exist
+            //Setup a pipeline with a source component type that doesn't exist
             var source = new PipelineComponent(CatalogueRepository, p, typeof (DelimitedFlatFileAttacher), 0);
             source.Class = "Trollololol";
 
             var arg = source.CreateNewArgument();
 
-            //Also give the source component a non existant argument
+            //Also give the source component a non existent argument
             arg.GetType().GetProperty("Type").SetValue(arg,"fffffzololz");
             arg.SaveToDatabase();
 
