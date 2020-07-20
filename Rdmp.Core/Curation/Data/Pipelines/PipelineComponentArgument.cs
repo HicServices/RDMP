@@ -87,5 +87,17 @@ namespace Rdmp.Core.Curation.Data.Pipelines
         {
             return new IHasDependencies[0];
         }
+
+        /// <inheritdoc/>
+        public void Clone(PipelineComponent intoTargetComponent)
+        {
+            var cloneArg = new PipelineComponentArgument(intoTargetComponent.CatalogueRepository, intoTargetComponent);
+
+            cloneArg.Name = Name;
+            cloneArg.Value = Value;
+            cloneArg.Type = Type;
+            cloneArg.Description = Description;
+            cloneArg.SaveToDatabase();
+        }
     }
 }
