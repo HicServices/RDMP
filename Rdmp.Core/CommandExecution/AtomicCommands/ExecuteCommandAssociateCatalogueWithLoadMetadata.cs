@@ -9,6 +9,7 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
@@ -19,7 +20,22 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private readonly Catalogue[] _availableCatalogues;
         private readonly ICatalogue[] _otherCatalogues;
         private Catalogue[] _chosenCatalogues;
+        
+        [UseWithObjectConstructor]
+        public ExecuteCommandAssociateCatalogueWithLoadMetadata(IBasicActivateItems activator, LoadMetadata loadMetadata, Catalogue[] toAssociate) : this(activator,loadMetadata)
+        {
+            //if command is possible, select those that are available for association
+            if(!IsImpossible)
+            {
+                _chosenCatalogues = _availableCatalogues.Intersect(toAssociate).ToArray();
 
+                if(_chosenCatalogues.Length == 0)
+                    SetImpossible($"None of the provided Catalogues are available for association with the LoadMetadata '{loadMetadata}'");
+            }
+                
+
+            
+        }
         public ExecuteCommandAssociateCatalogueWithLoadMetadata(IBasicActivateItems activator, LoadMetadata loadMetadata) : base(activator)
         {
             _loadMetadata = loadMetadata;
