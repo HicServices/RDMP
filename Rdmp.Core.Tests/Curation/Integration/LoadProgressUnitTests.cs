@@ -5,9 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using NUnit.Framework;
+using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
+using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Progress;
 using System;
+using System.IO;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration
@@ -47,9 +52,54 @@ namespace Rdmp.Core.Tests.Curation.Integration
             lp.OriginDate = new DateTime(2001,1,1);
             lp.DataLoadProgress = new DateTime(2002,1,1);
             lp.Check(new ThrowImmediatelyCheckNotifier());
+        }
+
+        [Test]
+        public void LoadProgress_JobFactory_NoDates()
+        {
+            var lp = WhenIHaveA<LoadProgress>();
 
             
+
+            lp.OriginDate = new DateTime(2001,1,1);
             
+            // We are fully up-to-date
+            lp.DataLoadProgress = DateTime.Now;
+            
+            lp.Check(new ThrowImmediatelyCheckNotifier());
+            
+            var stratFactory = new JobDateGenerationStrategyFactory(new AnyAvailableLoadProgressSelectionStrategy(lp.LoadMetadata));
+            var strat = stratFactory.Create(lp,new ThrowImmediatelyDataLoadEventListener());
+            
+            var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"LoadProgress_JobFactory_NoDates",true);
+            
+            var lmd = lp.LoadMetadata;
+            lmd.LocationOfFlatFiles = dir.RootPath.FullName;
+            
+            foreach(var cata in lmd.GetAllCatalogues())
+            {
+                cata.LoggingDataTask = "ff";
+                cata.SaveToDatabase();
+            }
+                
+
+            lmd.SaveToDatabase();
+            
+
+            var jobFactory = new SingleScheduledJobFactory(lp,strat,999,lp.LoadMetadata,null);
+            var ex = Assert.Throws<Exception>(()=>jobFactory.Create(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(),null));
+
+            Assert.AreEqual("DatesToRetrieve was empty for load 'MyLoad'.  Possibly the load is already up to date?",ex.Message);
+
+            // We have 1 day to load (date is the last fully loaded date)
+            lp.DataLoadProgress = DateTime.Now.AddDays(-2);
+            lp.SaveToDatabase();
+             
+            strat = stratFactory.Create(lp,new ThrowImmediatelyDataLoadEventListener());
+            jobFactory =  new SingleScheduledJobFactory(lp,strat,999,lp.LoadMetadata,null);
+
+            var job = jobFactory.Create(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(),null);
+            Assert.AreEqual(1,((ScheduledDataLoadJob)job).DatesToRetrieve.Count);
         }
     }
 }
