@@ -142,15 +142,9 @@ namespace Rdmp.Core.Curation.Data.Pipelines
             var cataRepo = (ICatalogueRepository) intoTargetPipeline.Repository;
 
             var clone = new PipelineComponent(cataRepo, intoTargetPipeline, GetClassAsSystemType(), Order);
-            foreach (IPipelineComponentArgument argument in PipelineComponentArguments)
+            foreach (var argument in PipelineComponentArguments)
             {
-                var cloneArg = new PipelineComponentArgument(cataRepo, clone);
-
-                cloneArg.Name = argument.Name;
-                cloneArg.Value = argument.Value;
-                cloneArg.SetType(argument.GetSystemType());
-                cloneArg.Description = argument.Description;
-                cloneArg.SaveToDatabase();
+                argument.Clone(clone);
             }
 
             clone.Name = Name;
