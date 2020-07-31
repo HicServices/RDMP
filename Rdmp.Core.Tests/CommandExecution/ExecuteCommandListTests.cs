@@ -18,6 +18,11 @@ namespace Rdmp.Core.Tests.CommandExecution
         [Test]
         public void Test_ExecuteCommandList_NoCataloguesParsing()
         {
+            foreach(var cat in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
+                cat.DeleteInDatabase();
+
+            Assert.IsEmpty(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>());
+
             GetInvoker().ExecuteCommand(typeof(ExecuteCommandList),
                 new CommandLineObjectPicker(new string[]{ "Catalogue"}, RepositoryLocator));
         }

@@ -123,6 +123,9 @@ namespace Rdmp.Core.Tests.CommandLine
         [Test]
         public void TestPicker_TypeYieldsEmptyArrayOfObjects()
         {
+            foreach(var cat in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
+                cat.DeleteInDatabase();
+
             Assert.IsEmpty(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>());
 
             //when interpreting the string "Catalogue" for a command
