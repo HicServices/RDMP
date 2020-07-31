@@ -9,6 +9,8 @@ using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Progress;
+using System;
+using System.Linq;
 
 namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling
 {
@@ -27,7 +29,20 @@ namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling
             LogManager = logManager;
         }
 
-        public abstract IDataLoadJob Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,HICDatabaseConfiguration configuration);
+        
         public abstract bool HasJobs();
+
+
+        public IDataLoadJob Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,HICDatabaseConfiguration configuration)
+        {
+            var job = CreateImpl(repositoryLocator,listener,configuration);
+
+            if(job.DatesToRetrieve == null || !job.DatesToRetrieve.Any())
+                throw new Exception($"DatesToRetrieve was empty for load '{LoadMetadata}'.  Possibly the load is already up to date?");
+
+            return job;
+        }
+
+        protected abstract ScheduledDataLoadJob CreateImpl(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, HICDatabaseConfiguration configuration);
     }
 }

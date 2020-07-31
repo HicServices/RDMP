@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added 'Save Changes' prompt when closing tabs
 - Added Import command for bringing in one or more [CohortIdentificationConfiguration] into an existing container (like Merge / UnMerge but for existing configurations)
+- Added checks for LoadProgress dates being in sensible ranges during DLE
 
 ## [4.1.5] - 2020-07-14
 

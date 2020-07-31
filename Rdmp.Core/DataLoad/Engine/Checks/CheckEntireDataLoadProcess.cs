@@ -47,6 +47,8 @@ namespace Rdmp.Core.DataLoad.Engine.Checks
             //If the load is a progressable (loaded over time) then make sure any associated caches are compatible with the load ProcessTasks
             foreach (ILoadProgress loadProgress in LoadMetadata.LoadProgresses)
             {
+                loadProgress.Check(notifier);
+
                 var cp = loadProgress.CacheProgress;
                 if(cp != null)
                 {
