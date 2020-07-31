@@ -137,8 +137,8 @@ namespace Rdmp.Core.Tests.CommandLine
             Assert.AreEqual(typeof(Catalogue),picker.Arguments.Single().GetValueForParameterOfType(typeof(Type)));
 
             //if it is looking for an ienumerable of objects
-            Assert.IsTrue(picker.Arguments.First().HasValueOfType(typeof(IEnumerator<IMapsDirectlyToDatabaseTable>)));
-            Assert.IsEmpty(((IEnumerable<IMapsDirectlyToDatabaseTable>)picker.Arguments.First().GetValueForParameterOfType(typeof(IEnumerable<IMapsDirectlyToDatabaseTable>))).ToArray());
+            Assert.IsTrue(picker.Arguments.First().HasValueOfType(typeof(IMapsDirectlyToDatabaseTable[])));
+            Assert.IsEmpty((IMapsDirectlyToDatabaseTable[])picker.Arguments.First().GetValueForParameterOfType(typeof(IMapsDirectlyToDatabaseTable[])));
 
             Assert.IsTrue(picker.Arguments.First().HasValueOfType(typeof(Catalogue[])));
             Assert.IsEmpty(((Catalogue[])picker.Arguments.First().GetValueForParameterOfType(typeof(Catalogue[]))).ToArray());
