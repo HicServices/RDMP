@@ -110,33 +110,6 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             _autoCompleteProvider.RegisterForEvents(QueryEditor);
         }
         
-
-        /// <summary>
-        /// Gives the user an option to save the changes to the filter (if they have unsaved changes) call things for example when closing the host form.
-        /// </summary>
-        public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
-        {
-            if (_extractionFilter != null && _extractionFilter.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
-                if (Activator.YesNo(
-                        "You have unsaved changes to Filter \"" + _extractionFilter.Name +
-                        "\", would you like to save these now?", "Save Changes to Filter?"))
-                    ObjectSaverButton1.Save();
-                else
-                {
-                    try
-                    {
-                        //So there are local changes to the filter but the user doesnt want to save them.  We need to undo the local changes to the
-                        //object that we have a reference to.  This is important because other classes might still have references to that object too
-                        //so we fetch a fresh copy out of the database (RevertChanges) and set each of the properties to the original (last saved) values
-                        _extractionFilter.RevertToDatabaseState();
-                    }
-                    catch (Exception ex)
-                    {
-                        ExceptionViewer.Show("Failed to revert changes on filter, did you delete it?",ex);
-                    }
-                }
-        }
-
         private bool BeforeSave(DatabaseEntity databaseEntity)
         {
             SubstituteQueryEditorTextIfContainsLineComments();
