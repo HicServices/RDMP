@@ -16,16 +16,8 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandExecution
 {
-    class TestExecuteCommandDescribeCommand : UnitTests
+    class TestExecuteCommandDescribeCommand : CommandCliTests
     {
-        private Mock<IBasicActivateItems> GetMock()
-        {
-            var mock = new Mock<IBasicActivateItems>();
-            mock.Setup(m => m.RepositoryLocator).Returns(RepositoryLocator);
-            mock.Setup(m => m.GetDelegates()).Returns(new List<CommandInvokerDelegate>());
-            mock.Setup(m => m.Show(It.IsAny<string>()));
-            return mock;
-        }
         
         /// <summary>
         /// Asserts that the help text <paramref name="forCommand"/> matches your <paramref name="expectedHelp"/> text
@@ -34,7 +26,7 @@ namespace Rdmp.Core.Tests.CommandExecution
         /// <param name="forCommand"></param>
         private void AssertHelpIs(string expectedHelp, Type forCommand)
         {
-            var mock = GetMock();
+            var mock = GetMockActivator();
 
             var cmd = new ExecuteCommandDescribeCommand(mock.Object, forCommand);
             Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
