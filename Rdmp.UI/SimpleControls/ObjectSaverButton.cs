@@ -242,7 +242,8 @@ namespace Rdmp.UI.SimpleControls
 
         public void CheckForUnsavedChangesAnOfferToSave()
         {
-            if (_o == null)
+            // If there is no object or it does not exist don't try to save it
+            if (_o == null || !_o.Exists())
                 return;
             
             if (_isEnabled)
