@@ -233,7 +233,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
                         DatabaseEntities = other.DatabaseEntities; //use theirs
                     else
                         if(other.DatabaseEntities.Any())
-                            throw new Exception("Did not know what set to pick during merge.  Both had DatabaseEntitites");
+                            throw new Exception("Did not know which set to pick during merge.  Both had DatabaseEntitites");
                 
             }
 
