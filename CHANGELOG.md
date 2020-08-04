@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Import command for bringing in one or more [CohortIdentificationConfiguration] into an existing container (like Merge / UnMerge but for existing configurations)
 - Added checks for LoadProgress dates being in sensible ranges during DLE
 
+### Fixed
+
+- Fixed [bug when parsing lists of ints in CLI](https://github.com/HicServices/RDMP/issues/84)
+
 ## [4.1.5] - 2020-07-14
 
 ### Added
