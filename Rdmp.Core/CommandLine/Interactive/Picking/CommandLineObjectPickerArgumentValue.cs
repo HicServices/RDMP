@@ -226,12 +226,14 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
                 Database = Database ?? other.Database;
                 Table = Table ?? other.Table;
 
-                //do we have any? yet
-                if (DatabaseEntities == null || !DatabaseEntities.Any()) //no
-                    DatabaseEntities = other.DatabaseEntities; //use theirs
-                else
-                    if(other.DatabaseEntities != null && other.DatabaseEntities.Any())
-                        throw new Exception("Did not know what set to pick during merge.  Both had DatabaseEntitites");
+                //if they have some
+                if(other.DatabaseEntities != null)
+                    //do we have any? yet
+                    if ( DatabaseEntities == null || !DatabaseEntities.Any()) //no
+                        DatabaseEntities = other.DatabaseEntities; //use theirs
+                    else
+                        if(other.DatabaseEntities.Any())
+                            throw new Exception("Did not know which set to pick during merge.  Both had DatabaseEntitites");
                 
             }
 

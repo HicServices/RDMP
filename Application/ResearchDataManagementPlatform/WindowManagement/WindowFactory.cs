@@ -18,6 +18,7 @@ using Rdmp.UI.Collections;
 using Rdmp.UI.Icons;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using Rdmp.UI.SimpleControls;
 using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
@@ -122,6 +123,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             if (control is IConsultableBeforeClosing consult)
                 content.FormClosing += consult.ConsultAboutClosing;
+
+            if(control is ISaveableUI saveable)
+                content.FormClosing += (s,e)=>saveable.GetObjectSaverButton()?.CheckForUnsavedChangesAnOfferToSave();            
 
             content.KeyPreview = true;
 

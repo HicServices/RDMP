@@ -91,6 +91,62 @@ namespace Rdmp.Core.Curation.Data.Cohort
             }
         }
 
+        /// <summary>
+        /// Clone and import one or more <see cref="CohortIdentificationConfiguration"/> into the target <paramref name="into"/>
+        /// </summary>
+        /// <param name="cics"></param>
+        /// <param name="into">The container into which you want to add the <paramref name="cics"/></param>
+        public void Import(CohortIdentificationConfiguration[] cics, CohortAggregateContainer into)
+        {
+            var cicInto = into.GetCohortIdentificationConfiguration();
+
+            if(cicInto == null)
+                throw new ArgumentException($"Cannot import into orphan container '{into}'",nameof(into));
+
+            //clone them
+            var cicClones = new CohortIdentificationConfiguration[cics.Length];
+            try
+            {
+                for (int i = 0; i < cics.Length; i++)
+                {
+                    cicClones[i] = cics[i].CreateClone(new ThrowImmediatelyCheckNotifier());
+                }
+            }
+            catch(Exception ex)
+            {
+                throw new Exception("Error during pre import cloning stage, no import will be attempted",ex);
+            }
+            
+
+            using(_repository.BeginNewTransactedConnection())
+            {
+                //Grab the root container of each of the input cics
+                foreach(CohortIdentificationConfiguration cic in cicClones)
+                {
+                    var container = cic.RootCohortAggregateContainer;
+
+                    //clear them to avoid dual parentage
+                    cic.RootCohortAggregateContainer_ID = null;
+                    cic.SaveToDatabase();
+
+                    //add them into the target SET operation container you are importing into
+                    into.AddChild(container);
+                    
+                    // Make the new name of all the AggregateConfigurations match the owner of import into container
+                    foreach(var child in container.GetAllAggregateConfigurationsRecursively())
+                        EnsureNamingConvention(cicInto,child);
+                    
+                    // Delete the old now empty clones
+                    cic.DeleteInDatabase();
+                }                
+                
+                //finish transaction                
+                _repository.EndTransactedConnection(true);
+            }
+        }
+
+
+
         private void EnsureNamingConvention(CohortIdentificationConfiguration cic, AggregateConfiguration ac)
         {
             //clear any old cic_x prefixes

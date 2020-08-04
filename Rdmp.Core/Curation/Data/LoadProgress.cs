@@ -14,11 +14,12 @@ using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Annotations;
+using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Curation.Data
 {
     /// <inheritdoc cref="ILoadProgress"/>
-    public class LoadProgress : DatabaseEntity, ILoadProgress
+    public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
     {
         #region Database Properties
         private bool _isDisabled;
@@ -123,6 +124,20 @@ namespace Rdmp.Core.Curation.Data
         public override string ToString()
         {
             return Name + " ID=" + ID;
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            if(OriginDate != null && DataLoadProgress != null)
+                if(OriginDate > DataLoadProgress)
+                    notifier.OnCheckPerformed(new CheckEventArgs($"OriginDate of '{Name}' is set after DataLoadProgress date.  LoadProgress cannot have negative progress",CheckResult.Fail));
+
+            if(OriginDate != null && OriginDate > DateTime.Now)
+                notifier.OnCheckPerformed(new CheckEventArgs($"OriginDate cannot be in the future ({Name})",CheckResult.Fail));
+
+            if(DataLoadProgress != null && DataLoadProgress > DateTime.Now)
+                notifier.OnCheckPerformed(new CheckEventArgs($"DataLoadProgress cannot be in the future ({Name})",CheckResult.Fail));
+
         }
     }
 }
