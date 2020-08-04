@@ -54,7 +54,7 @@ NamePattern2+: (optional) only allowed if you are being prompted for multiple ob
             {
                 t = RepositoryLocator.CatalogueRepository.MEF.GetType(possibleTypeName);
             }
-            catch (AmbiguousTypeException )
+            catch (Exception )
             {
                 t = null;
                 return false;
