@@ -12,6 +12,7 @@ using NUnit.Framework;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandExecution
@@ -42,6 +43,34 @@ namespace Rdmp.Core.Tests.CommandExecution
             cata.RevertToDatabaseState();
             Assert.IsNull(cata.Description);
 
+        }
+
+        [Test]
+        public void TestExecuteCommandSet_SetArrayValueFromCLI()
+        {
+            var pta = WhenIHaveA<ProcessTaskArgument>();
+            pta.SetType(typeof(TableInfo[]));
+            pta.Name = "TablesToIsolate";
+            pta.SaveToDatabase();
+
+            var t1 = WhenIHaveA<TableInfo>();
+            var t2 = WhenIHaveA<TableInfo>();
+            var t3 = WhenIHaveA<TableInfo>();
+            var t4 = WhenIHaveA<TableInfo>();
+
+            var ids = t1.ID + "," + t2.ID + "," + t3.ID + "," + t4.ID;
+
+            Assert.IsNull(pta.Value);
+            Assert.IsNull(pta.GetValueAsSystemType());
+
+            GetInvoker().ExecuteCommand(typeof(ExecuteCommandSet),new CommandLineObjectPicker(new []{"ProcessTaskArgument:TablesToIsolate" ,"Value",ids},RepositoryLocator));
+
+            Assert.AreEqual(ids,pta.Value);
+
+            Assert.Contains(t1,(TableInfo[])pta.GetValueAsSystemType());
+            Assert.Contains(t2,(TableInfo[])pta.GetValueAsSystemType());
+            Assert.Contains(t3,(TableInfo[])pta.GetValueAsSystemType());
+            Assert.Contains(t4,(TableInfo[])pta.GetValueAsSystemType());
         }
     }
 }
