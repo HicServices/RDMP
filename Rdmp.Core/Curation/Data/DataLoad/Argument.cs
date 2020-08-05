@@ -60,7 +60,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             //IMapsDirectlyToDatabaseTable
             typeof(TableInfo), typeof(ColumnInfo), typeof(PreLoadDiscardedColumn), typeof(LoadProgress), typeof(LoadMetadata),
             typeof(CacheProgress), typeof(ExternalDatabaseServer), typeof(StandardRegex),typeof(CohortIdentificationConfiguration),
-            typeof(RemoteRDMP),
+            typeof(RemoteRDMP),typeof(Catalogue),typeof(CatalogueItem),
             typeof(DataAccessCredentials),
            
             //wierd special cases

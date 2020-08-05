@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- New command `SetArgument` for easier changing of values of modules (e.g. [PipelineComponent]) from command line
+- Support for `DescribeCommand` help text on `NewObject` and other commands that take dynamic argument lists (command line)
+
 ## [4.1.6] - 2020-08-04
 
 ### Added
