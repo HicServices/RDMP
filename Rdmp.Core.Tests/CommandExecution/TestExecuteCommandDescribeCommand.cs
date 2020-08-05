@@ -61,5 +61,27 @@ createCatalogue	Boolean	True to create a Catalogue as well as a TableInfo"
                 ,typeof(ExecuteCommandImportTableInfo));
 
         }
+
+        [Test]
+        public void Test_DescribeCommand_ExecuteCommandNewObject()
+        {
+            AssertHelpIs( @"cmd NewObject <type> <arg1> <arg2> <etc>
+
+PARAMETERS:
+type	The object to create e.g. Catalogue
+args    Dynamic list of values to satisfy the types constructor",typeof(ExecuteCommandNewObject));
+        }
+
+        [Test]
+        public void Test_DescribeCommand_ExecuteCommandSetArgument()
+        {
+            AssertHelpIs( @"cmd SetArgument <component> <argName> <argValue>
+
+PARAMETERS:
+component    Module to set value on e.g. ProcessTask:1
+argName Name of an argument to set on the component e.g. Retry
+argValue    New value for argument e.g. Null, True, Catalogue:5 etc
+",typeof(ExecuteCommandSetArgument));
+        }
     }
 }

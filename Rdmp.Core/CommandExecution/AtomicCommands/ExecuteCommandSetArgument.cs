@@ -37,7 +37,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// </summary>
         /// <param name="activator"></param>
         /// <param name="picker"></param>
-        [UseWithCommandLine]
+        [UseWithCommandLine(
+            ParameterHelpList = "<component> <argName> <argValue>", 
+            ParameterHelpBreakdown = @"component    Module to set value on e.g. ProcessTask:1
+argName Name of an argument to set on the component e.g. Retry
+argValue    New value for argument e.g. Null, True, Catalogue:5 etc")]
         public ExecuteCommandSetArgument(IBasicActivateItems activator,CommandLineObjectPicker picker):base(activator)
         {
             if(picker.Arguments.Count != 3)
