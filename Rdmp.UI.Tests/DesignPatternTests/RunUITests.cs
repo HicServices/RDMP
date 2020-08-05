@@ -77,7 +77,8 @@ typeof(ExecuteCommandReOrderAggregate),
 typeof(ExecuteCommandReOrderAggregateContainer),
 typeof(ExecuteCommandUseCredentialsToAccessTableInfoData),
 typeof(ExecuteCommandCreateLookup),
-typeof(ExecuteCommandImportFilterDescriptionsFromShare)
+typeof(ExecuteCommandImportFilterDescriptionsFromShare),
+typeof(ExecuteCommandSetArgument)
 
             });
 
