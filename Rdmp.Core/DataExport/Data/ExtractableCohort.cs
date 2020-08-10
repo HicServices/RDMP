@@ -303,9 +303,14 @@ where
         public string WhereSQL()
         {
             var ect = ExternalCohortTable;
-            var querySyntaxHelper = ect.GetQuerySyntaxHelper();
-
-            return querySyntaxHelper.EnsureFullyQualified(ect.Database, null, ect.TableName, ect.DefinitionTableForeignKeyField) + "=" + OriginID;
+            var syntax = ect.GetQuerySyntaxHelper();
+            
+            return syntax.EnsureFullyQualified(
+                syntax.GetRuntimeName(ect.Database ?? string.Empty),
+                /* no schema*/
+                null, 
+                syntax.GetRuntimeName(ect.TableName ?? string.Empty),
+                syntax.GetRuntimeName(ect.DefinitionTableForeignKeyField ?? string.Empty)) + "=" + OriginID;
         }
 
         private int CountCohortInDatabase()

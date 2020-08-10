@@ -37,6 +37,8 @@ namespace Rdmp.Core.Tests.CohortCommitting
             var privateColumn = new PrivateIdentifierPrototype("chi", privateDataType);
             var externalCohortTable = wizard.CreateDatabase(privateColumn,new ThrowImmediatelyCheckNotifier());
 
+            Assert.AreEqual(dbType,externalCohortTable.DatabaseType);
+
             //create a project into which we want to import a cohort
             var project = new Project(DataExportRepository, "MyProject");
             project.ProjectNumber = 500;
@@ -73,6 +75,10 @@ namespace Rdmp.Core.Tests.CohortCommitting
 
             //now there should be one
             ExtractableCohort cohort = DataExportRepository.GetAllObjects<ExtractableCohort>().Single();
+
+            //make sure we are all on the same page about what the DBMS type is (nothing cached etc)
+            Assert.AreEqual(dbType, cohort.ExternalCohortTable.DatabaseType);
+            Assert.AreEqual(dbType,cohort.GetQuerySyntaxHelper().DatabaseType);
 
             Assert.AreEqual(500,cohort.ExternalProjectNumber);
             Assert.AreEqual(2,cohort.CountDistinct);
