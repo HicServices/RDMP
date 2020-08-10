@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Changed
+
+- Schema names (Sql Server) are now wrapped correctly e.g. `[My Cool Schema]`
+
 ### Added
 
 - New command `SetArgument` for easier changing of values of modules (e.g. [PipelineComponent]) from command line

@@ -58,6 +58,8 @@ namespace Rdmp.Core.Tests.Curation.RefactoringTests
         [TestCase("UPPER([database]..[table].[column])",true)]
         [TestCase("dbo.MyScalarFunction([database]..[table].[column]) in Select(distinct [database]..[table].[column] from bob)", true)]
         [TestCase("dbo.MyNewRand()", false)]
+        [TestCase("[dbo].MyScalarFunction([database]..[table].[column]) in Select(distinct [database]..[table].[column] from bob)", true)]
+        [TestCase("[dbo].MyNewRand()", false)]
         public void RefactorTableName_IsRefactorable_ExtractionInformation(string transformSql,bool expectedToBeRefactorable)
         {
             var ei = WhenIHaveA<ExtractionInformation>();
@@ -123,6 +125,9 @@ namespace Rdmp.Core.Tests.Curation.RefactoringTests
 
         //It shouldn't matter if you have dbo or not
         [TestCase("[Fish]..","[Fish]..")]
+        [TestCase("[Fish].[dbo].","[Fish]..")]
+        [TestCase("[Fish]..","[Fish].[dbo].")]
+        [TestCase("[Fish].[dbo].","[Fish].[dbo].")]
         [TestCase("[Fish].dbo.","[Fish]..")]
         [TestCase("[Fish]..","[Fish].dbo.")]
         [TestCase("[Fish].dbo.","[Fish].dbo.")]
