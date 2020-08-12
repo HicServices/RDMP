@@ -168,16 +168,12 @@ namespace Rdmp.Core.DataExport.Data
             Username = r["Username"] as string;
             Password = r["Password"] as string;
             Database = r["Database"] as string ?? string.Empty;
-
-            var syntaxHelper = GetQuerySyntaxHelper();
-
             
             TableName = Qualify(Database,  r["TableName"] as string ?? string.Empty);
             DefinitionTableForeignKeyField = Qualify(Database, TableName, r["DefinitionTableForeignKeyField"] as string ?? string.Empty);
 
             DefinitionTableName = Qualify(Database, r["DefinitionTableName"] as string ?? string.Empty);
             
-
             PrivateIdentifierField = Qualify(Database, TableName, r["PrivateIdentifierField"] as string ?? string.Empty);
             ReleaseIdentifierField = Qualify(Database, TableName, r["ReleaseIdentifierField"] as string ?? string.Empty);
         }
