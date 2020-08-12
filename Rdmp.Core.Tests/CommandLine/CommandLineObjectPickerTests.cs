@@ -120,6 +120,34 @@ namespace Rdmp.Core.Tests.CommandLine
            Assert.AreEqual(2,picker[0].DatabaseEntities.Count);
         }
 
+        [Test]
+        public void TestPicker_TypeYieldsEmptyArrayOfObjects()
+        {
+            foreach(var cat in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
+                cat.DeleteInDatabase();
+
+            Assert.IsEmpty(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>());
+
+            //when interpreting the string "Catalogue" for a command
+            var picker = new CommandLineObjectPicker(new []{"Catalogue" },RepositoryLocator);
+
+            //we can pick it as either a Catalogue or a collection of all the Catalogues
+            Assert.AreEqual(typeof(Catalogue),picker.Arguments.Single().Type);
+            Assert.IsEmpty(picker.Arguments.Single().DatabaseEntities);
+
+            //when interpretting as a Type we get Catalogue
+            Assert.IsTrue(picker.Arguments.First().HasValueOfType(typeof(Type)));
+            Assert.AreEqual(typeof(Catalogue),picker.Arguments.Single().GetValueForParameterOfType(typeof(Type)));
+
+            //if it is looking for an ienumerable of objects
+            Assert.IsTrue(picker.Arguments.First().HasValueOfType(typeof(IMapsDirectlyToDatabaseTable[])));
+            Assert.IsEmpty((IMapsDirectlyToDatabaseTable[])picker.Arguments.First().GetValueForParameterOfType(typeof(IMapsDirectlyToDatabaseTable[])));
+
+            Assert.IsTrue(picker.Arguments.First().HasValueOfType(typeof(Catalogue[])));
+            Assert.IsEmpty(((Catalogue[])picker.Arguments.First().GetValueForParameterOfType(typeof(Catalogue[]))).ToArray());
+
+        }
+
         [TestCase(typeof(PickDatabase))]
         [TestCase(typeof(PickTable))]
         [TestCase(typeof(PickObjectByID))]

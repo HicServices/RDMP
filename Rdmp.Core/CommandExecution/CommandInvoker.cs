@@ -231,7 +231,7 @@ namespace Rdmp.Core.CommandExecution
 
         public bool IsSupported(ConstructorInfo c)
         {
-            return c.GetParameters().All(IsSupported);
+            return c.GetCustomAttribute<UseWithCommandLineAttribute>() != null || c.GetParameters().All(IsSupported);
         }
 
         private bool IsSupported(ParameterInfo p)
@@ -264,7 +264,7 @@ namespace Rdmp.Core.CommandExecution
 
             try
             {
-                var constructor = GetConstructor(t);
+                var constructor = GetConstructor(t, new CommandLineObjectPicker(new string[0]{ },_repositoryLocator));
 
                 if (constructor == null)
                     return false;

@@ -18,10 +18,10 @@ using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
 using FAnsi.Implementations.PostgreSql;
 using Oracle.ManagedDataAccess.Client;
-using MySql.Data.MySqlClient;
 using Npgsql;
 using ReusableLibraryCode.Performance;
 using TypeGuesser;
+using MySqlConnector;
 
 namespace ReusableLibraryCode
 {

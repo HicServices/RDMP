@@ -29,9 +29,9 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests
             Assert.AreEqual(CollapseWhitespace(string.Format(@"/*cic_{0}_UnitTestAggregate1*/
 SELECT 
 distinct
-[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 FROM 
-[" + _scratchDatabaseName + @"].dbo.[BulkData]", cohortIdentificationConfiguration.ID)), CollapseWhitespace(builder.SQL));
+[" + _scratchDatabaseName + @"].[dbo].[BulkData]", cohortIdentificationConfiguration.ID)), CollapseWhitespace(builder.SQL));
         }
         
         [Test]
@@ -45,7 +45,7 @@ FROM
 	TOP 1000
 	*
 	FROM 
-	[" + _scratchDatabaseName + @"].dbo.[BulkData]",cohortIdentificationConfiguration.ID)),CollapseWhitespace(builder.GetDatasetSampleSQL()));
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData]",cohortIdentificationConfiguration.ID)),CollapseWhitespace(builder.GetDatasetSampleSQL()));
         }
 
 
@@ -66,11 +66,11 @@ FROM
 	SELECT
     distinct
 	TOP 1000
-	[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 	FROM 
-	[" + _scratchDatabaseName + @"].dbo.[BulkData]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
     group by 
-    [" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+    [" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
     HAVING
     count(*)>1", cohortIdentificationConfiguration.ID)), CollapseWhitespace(builder.GetDatasetSampleSQL()));
         }
@@ -97,18 +97,18 @@ FROM
 	/*cic_{0}_UnitTestAggregate2*/
 	SELECT
 	distinct
-	[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 	FROM 
-	[" + _scratchDatabaseName + @"].dbo.[BulkData]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 
 	EXCEPT
 
 	/*cic_{0}_UnitTestAggregate1*/
 	SELECT
 	distinct
-	[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 	FROM 
-	[" + _scratchDatabaseName + @"].dbo.[BulkData]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 )"
        
        ,cohortIdentificationConfiguration.ID))
@@ -151,9 +151,9 @@ FROM
 	/*cic_{0}_UnitTestAggregate1*/
 	SELECT
 	distinct
-	[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 	FROM 
-	[" + _scratchDatabaseName + @"].dbo.[BulkData]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 
 	EXCEPT
 
@@ -162,18 +162,18 @@ FROM
 		/*cic_{0}_UnitTestAggregate2*/
 		SELECT
 		distinct
-		[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+		[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 		FROM 
-		[" + _scratchDatabaseName + @"].dbo.[BulkData]
+		[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 
 		UNION
 
 		/*cic_{0}_UnitTestAggregate3*/
 		SELECT
 		distinct
-		[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+		[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 		FROM 
-		[" + _scratchDatabaseName + @"].dbo.[BulkData]
+		[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 	)
 
 )",cohortIdentificationConfiguration.ID))
@@ -216,18 +216,18 @@ FROM
 		/*cic_{0}_UnitTestAggregate2*/
 		SELECT
 		distinct
-		[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+		[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 		FROM 
-		[" + _scratchDatabaseName + @"].dbo.[BulkData]
+		[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 
 		UNION
 
 		/*cic_{0}_UnitTestAggregate3*/
 		SELECT
 		distinct
-		[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+		[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 		FROM 
-		[" + _scratchDatabaseName + @"].dbo.[BulkData]
+		[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 	)
 
 
@@ -236,9 +236,9 @@ FROM
 	/*cic_{0}_UnitTestAggregate1*/
 	SELECT
 	distinct
-	[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 	FROM 
-	[" + _scratchDatabaseName + @"].dbo.[BulkData]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 )",cohortIdentificationConfiguration.ID))
   ,CollapseWhitespace(builder.SQL));
             }
@@ -295,18 +295,18 @@ SET @abracadabra=1;
 	/*cic_{0}_UnitTestAggregate2*/
 	SELECT
 	distinct
-	[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 	FROM 
-	[" + _scratchDatabaseName + @"].dbo.[BulkData]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 
 	EXCEPT
 
 	/*cic_{0}_UnitTestAggregate1*/
 	SELECT
 	distinct
-	[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 	FROM 
-	[" + _scratchDatabaseName + @"].dbo.[BulkData]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 	WHERE
 	(
 	/*hithere*/
@@ -327,9 +327,9 @@ SET @abracadabra=1;
 /*cic_{0}_UnitTestAggregate1*/
 SELECT
 distinct
-[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 FROM 
-[" + _scratchDatabaseName + @"].dbo.[BulkData]
+[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 WHERE
 (
 /*hithere*/
@@ -352,7 +352,7 @@ SET @abracadabra=1;
 	TOP 1000
 	*
 	FROM 
-	[" + TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData]
+	[" + TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData]
 	WHERE
 	(
 	/*hithere*/
@@ -394,18 +394,18 @@ SET @abracadabra=1;
 	/*cic_{0}_UnitTestAggregate1*/
 	SELECT
 	distinct
-	[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 	FROM 
-	[" + _scratchDatabaseName + @"].dbo.[BulkData]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 
 	EXCEPT
 
 	/*cic_{0}_UnitTestAggregate2*/
 	SELECT
 	distinct
-	[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 	FROM 
-	[" + _scratchDatabaseName + @"].dbo.[BulkData]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 )
 ",cohortIdentificationConfiguration.ID)),
  CollapseWhitespace(builder.SQL));
@@ -421,27 +421,27 @@ string.Format(
 	/*cic_{0}_UnitTestAggregate1*/
 	SELECT
 	distinct
-	[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 	FROM 
-	[" + _scratchDatabaseName + @"].dbo.[BulkData]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 
 	EXCEPT
 
 	/*cic_{0}_UnitTestAggregate2*/
 	SELECT
 	distinct
-	[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 	FROM 
-	[" + _scratchDatabaseName + @"].dbo.[BulkData]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 
 	EXCEPT
 
 	/*cic_{0}_UnitTestAggregate3*/
 	SELECT
 	distinct
-	[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 	FROM 
-	[" + _scratchDatabaseName + @"].dbo.[BulkData]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 )
 ",cohortIdentificationConfiguration.ID)),
  CollapseWhitespace(builder2.SQL));
@@ -492,9 +492,9 @@ string.Format(
 	/*cic_{0}_UnitTestAggregate1*/
 	SELECT
 	distinct
-	[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 	FROM 
-	[" + _scratchDatabaseName + @"].dbo.[BulkData]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 
 	EXCEPT
 
@@ -503,18 +503,18 @@ string.Format(
 		/*cic_{0}_UnitTestAggregate2*/
 		SELECT
 		distinct
-		[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+		[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 		FROM 
-		[" + _scratchDatabaseName + @"].dbo.[BulkData]
+		[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 
 		UNION
 
 		/*cic_{0}_UnitTestAggregate3*/
 		SELECT
 		distinct
-		[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+		[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 		FROM 
-		[" + _scratchDatabaseName + @"].dbo.[BulkData]
+		[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 	)
 
 )
@@ -558,11 +558,11 @@ string.Format(
 	/*cic_{0}_UnitTestAggregate1*/
 	SELECT
 	distinct
-	[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 	FROM 
-	[" + _scratchDatabaseName + @"].dbo.[BulkData]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 	group by 
-	[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 	HAVING
 	SUM(Result)>10
 
@@ -573,11 +573,11 @@ string.Format(
 		/*cic_{0}_UnitTestAggregate2*/
 		SELECT
 		distinct
-		[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+		[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 		FROM 
-		[" + _scratchDatabaseName + @"].dbo.[BulkData]
+		[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 		group by
-		[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+		[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 		HAVING
 		count(*)>1
 
@@ -586,9 +586,9 @@ string.Format(
 		/*cic_{0}_UnitTestAggregate3*/
 		SELECT
 		distinct
-		[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+		[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 		FROM 
-		[" + _scratchDatabaseName + @"].dbo.[BulkData]
+		[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 	)
 
 )
@@ -681,9 +681,9 @@ SET @bob='Boom!';
 	/*cic_{0}_UnitTestAggregate2*/
 	SELECT
 	distinct
-	[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 	FROM 
-	[" + _scratchDatabaseName + @"].dbo.[BulkData]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 	WHERE
 	(
 	/*filter2_1*/
@@ -698,9 +698,9 @@ SET @bob='Boom!';
 	/*cic_{0}_UnitTestAggregate1*/
 	SELECT
 	distinct
-	[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 	FROM 
-	[" + _scratchDatabaseName + @"].dbo.[BulkData]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 	WHERE
 	(
 	/*filter1_1*/
@@ -728,9 +728,9 @@ SET @bob_2='Boom!';
 	/*cic_{0}_UnitTestAggregate2*/
 	SELECT
 	distinct
-	[" + TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData].[chi]
+	[" + TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
 	FROM 
-	["+TestDatabaseNames.Prefix+ @"ScratchArea].dbo.[BulkData]
+	["+TestDatabaseNames.Prefix+ @"ScratchArea].[dbo].[BulkData]
 	WHERE
 	(
 	/*filter2_1*/
@@ -745,9 +745,9 @@ SET @bob_2='Boom!';
 	/*cic_{0}_UnitTestAggregate1*/
 	SELECT
 	distinct
-	[" + TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData].[chi]
+	[" + TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
 	FROM 
-	["+TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData]
+	["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData]
 	WHERE
 	(
 	/*filter1_1*/
@@ -802,9 +802,9 @@ SET @bob_2='Boom!';
 	/*cic_{0}_UnitTestAggregate2*/
 	SELECT
 	distinct
-	[" + _scratchDatabaseName + @"].dbo.[BulkData].[chi]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 	FROM 
-	[" + _scratchDatabaseName + @"].dbo.[BulkData]
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 )"
 
        , cohortIdentificationConfiguration.ID))
@@ -888,9 +888,9 @@ SET @bob_2='Boom!';
 	/*cic_{0}_UnitTestAggregate2*/
 	SELECT
 	distinct
-	[" + TestDatabaseNames.Prefix + @"ScratchArea].dbo.[BulkData].[chi]
+	[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi]
 	FROM 
-	[" + TestDatabaseNames.Prefix + @"ScratchArea].dbo.[BulkData]
+	[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData]
 	WHERE
 	(
 	/*filter2_1*/
@@ -902,9 +902,9 @@ SET @bob_2='Boom!';
 	/*cic_{0}_UnitTestAggregate1*/
 	SELECT
 	distinct
-	[" + TestDatabaseNames.Prefix + @"ScratchArea].dbo.[BulkData].[chi]
+	[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi]
 	FROM 
-	[" + TestDatabaseNames.Prefix + @"ScratchArea].dbo.[BulkData]
+	[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData]
 	WHERE
 	(
 	/*filter1_1*/

@@ -112,6 +112,7 @@ namespace Rdmp.Core.CohortCommitting
                 notifier.OnCheckPerformed(new CheckEventArgs("About to create pointer to the source", CheckResult.Success));
                 var pointer = new ExternalCohortTable(_dataExportRepository, "TestExternalCohort", _targetDatabase.Server.DatabaseType)
                 {
+                    DatabaseType = _targetDatabase.Server.DatabaseType,
                     Server = _targetDatabase.Server.Name,
                     Database = _targetDatabase.GetRuntimeName(),
                     Username = _targetDatabase.Server.ExplicitUsernameIfAny,
@@ -121,8 +122,7 @@ namespace Rdmp.Core.CohortCommitting
                     PrivateIdentifierField = privateIdentifierPrototype.RuntimeName,
                     ReleaseIdentifierField = _releaseIdentifierFieldName,
                     DefinitionTableForeignKeyField = _definitionTableForeignKeyField,
-                    DefinitionTableName = definitionTable.GetRuntimeName(),
-                    DatabaseType = _targetDatabase.Server.DatabaseType
+                    DefinitionTableName = definitionTable.GetRuntimeName()
                 };
 
                 pointer.SaveToDatabase();

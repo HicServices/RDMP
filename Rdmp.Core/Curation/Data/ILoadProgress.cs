@@ -8,6 +8,7 @@ using System;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
+using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Curation.Data
 {
@@ -15,7 +16,7 @@ namespace Rdmp.Core.Curation.Data
     /// Describes the progress of a large iterative load which cannot be completed in a single batch.  Includes start and end dates for what is trying to
     /// be loaded as well as how far through that process progress has been made up to date.
     /// </summary>
-    public interface ILoadProgress :INamed
+    public interface ILoadProgress :INamed, ICheckable
     {
         /// <summary>
         /// The date the dataset starts at, this is in dataset time e.g. if you have prescribing records held from 2001-01-01 to present then the <see cref="OriginDate"/> is 2001-01-01

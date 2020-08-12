@@ -120,7 +120,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
                 Assert.AreEqual("Fish", tbl.GetRuntimeName());
                 Assert.AreEqual( "Omg", tbl.Schema);
-                Assert.IsTrue(tbl.GetFullyQualifiedName().EndsWith("Omg.[Fish]"));
+                Assert.IsTrue(tbl.GetFullyQualifiedName().EndsWith("[Omg].[Fish]"));
 
                 Assert.IsTrue(tbl.Exists());
 
@@ -133,14 +133,14 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 Assert.AreEqual("Omg",tbl2.Schema);
                 Assert.IsTrue(tbl2.Exists());
 
-                Assert.IsTrue(ti.Name.EndsWith("Omg.[Fish]"));
+                Assert.IsTrue(ti.Name.EndsWith("[Omg].[Fish]"));
 
-                Assert.IsTrue(ti.GetFullyQualifiedName().EndsWith("Omg.[Fish]"));
+                Assert.IsTrue(ti.GetFullyQualifiedName().EndsWith("[Omg].[Fish]"));
 
                 var c = cols.Single();
 
                 Assert.AreEqual("MyCol",c.GetRuntimeName());
-                StringAssert.Contains("Omg.[Fish]",c.GetFullyQualifiedName());
+                StringAssert.Contains("[Omg].[Fish]",c.GetFullyQualifiedName());
 
                 //should be primary key
                 Assert.IsTrue(c.IsPrimaryKey);
@@ -174,7 +174,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 var syncTvf = new TableInfoSynchronizer(tvfTi);
                 syncTvf.Synchronize(new ThrowImmediatelyCheckNotifier());
 
-                StringAssert.EndsWith("Omg.Fish_Legacy(@index) AS Fish_Legacy",tvfTi.Name);
+                StringAssert.EndsWith("[Omg].Fish_Legacy(@index) AS Fish_Legacy",tvfTi.Name);
             }
         }
 

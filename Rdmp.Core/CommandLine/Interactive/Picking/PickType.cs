@@ -45,7 +45,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
                     ??
                     RepositoryLocator.CatalogueRepository.MEF.GetType(arg);
             }
-            catch (AmbiguousTypeException )
+            catch (Exception)
             {
                 return null;
             }

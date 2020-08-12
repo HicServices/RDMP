@@ -16,16 +16,8 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandExecution
 {
-    class TestExecuteCommandDescribeCommand : UnitTests
+    class TestExecuteCommandDescribeCommand : CommandCliTests
     {
-        private Mock<IBasicActivateItems> GetMock()
-        {
-            var mock = new Mock<IBasicActivateItems>();
-            mock.Setup(m => m.RepositoryLocator).Returns(RepositoryLocator);
-            mock.Setup(m => m.GetDelegates()).Returns(new List<CommandInvokerDelegate>());
-            mock.Setup(m => m.Show(It.IsAny<string>()));
-            return mock;
-        }
         
         /// <summary>
         /// Asserts that the help text <paramref name="forCommand"/> matches your <paramref name="expectedHelp"/> text
@@ -34,7 +26,7 @@ namespace Rdmp.Core.Tests.CommandExecution
         /// <param name="forCommand"></param>
         private void AssertHelpIs(string expectedHelp, Type forCommand)
         {
-            var mock = GetMock();
+            var mock = GetMockActivator();
 
             var cmd = new ExecuteCommandDescribeCommand(mock.Object, forCommand);
             Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
@@ -68,6 +60,28 @@ table	DiscoveredTable	The table or view you want to reference from RDMP.  See Pi
 createCatalogue	Boolean	True to create a Catalogue as well as a TableInfo"
                 ,typeof(ExecuteCommandImportTableInfo));
 
+        }
+
+        [Test]
+        public void Test_DescribeCommand_ExecuteCommandNewObject()
+        {
+            AssertHelpIs( @"cmd NewObject <type> <arg1> <arg2> <etc>
+
+PARAMETERS:
+type	The object to create e.g. Catalogue
+args    Dynamic list of values to satisfy the types constructor",typeof(ExecuteCommandNewObject));
+        }
+
+        [Test]
+        public void Test_DescribeCommand_ExecuteCommandSetArgument()
+        {
+            AssertHelpIs( @"cmd SetArgument <component> <argName> <argValue>
+
+PARAMETERS:
+component    Module to set value on e.g. ProcessTask:1
+argName Name of an argument to set on the component e.g. Retry
+argValue    New value for argument e.g. Null, True, Catalogue:5 etc
+",typeof(ExecuteCommandSetArgument));
         }
     }
 }

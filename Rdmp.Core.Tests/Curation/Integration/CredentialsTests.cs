@@ -307,7 +307,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             Catalogue c = new Catalogue(CatalogueRepository, "GetConnectionStringFromCatalogueWhereOneTableInfoUsesACredentialsOverride");
             CatalogueItem ci = new CatalogueItem(CatalogueRepository, c,"GetConnectionStringFromCatalogueWhereOneTableInfoUsesACredentialsOverride");
             TableInfo t = new TableInfo(CatalogueRepository, "Test");
-            ColumnInfo col = new ColumnInfo(CatalogueRepository, "[mydatabase].dbo.test.col","varchar(10)", t);
+            ColumnInfo col = new ColumnInfo(CatalogueRepository, "[mydatabase].[dbo].test.col","varchar(10)", t);
             
             var extractionInformation = new ExtractionInformation(CatalogueRepository, ci, col, col.Name);
 

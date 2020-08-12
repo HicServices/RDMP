@@ -4,6 +4,8 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Naming;
@@ -226,12 +228,21 @@ namespace Rdmp.Core.Sharing.Refactoring
             //run what they asked for
             updatesMade += RefactorTableNameImpl(columnInfo,oldFullyQualifiedTableName,newFullyQualifiedTableName);
 
-            //if they asked for .dbo. also run ..
-            if(oldFullyQualifiedTableName.Contains(".dbo."))
-                updatesMade += RefactorTableNameImpl(columnInfo,oldFullyQualifiedTableName.Replace(".dbo.",".."),newFullyQualifiedTableName);
-            //if they asked for .. also run .dbo.
-            else if(oldFullyQualifiedTableName.Contains(".."))
-                updatesMade += RefactorTableNameImpl(columnInfo,oldFullyQualifiedTableName.Replace("..",".dbo."),newFullyQualifiedTableName);
+            //these are all the things that could appear spattered throughout the old columns
+            List<string> oldPrefixes = new List<string>{".." ,".dbo.",".[dbo]."};
+
+            //this is what they said they wanted in the refactoring
+            var newPrefix = oldPrefixes.FirstOrDefault(newFullyQualifiedTableName.Contains);
+
+            //if they are trying to standardise
+            if(newPrefix != null)
+                foreach(var old in oldPrefixes)
+                {
+                    if(!string.Equals(old ,newPrefix))
+                    {
+                        updatesMade += RefactorTableNameImpl(columnInfo,oldFullyQualifiedTableName.Replace(newPrefix,old),newFullyQualifiedTableName);
+                    }
+                }
 
             return updatesMade;
         }

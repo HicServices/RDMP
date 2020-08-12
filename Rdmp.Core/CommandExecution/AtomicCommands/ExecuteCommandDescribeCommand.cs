@@ -5,9 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Text;
+using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.Startup;
 using ReusableLibraryCode.Comments;
 
@@ -30,40 +33,34 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             var invoker = new CommandInvoker(BasicActivator);
 
-            var commandCtor = invoker.GetConstructor(_commandType);
-
-            var help = new CommentStore();
-            help.ReadComments(Environment.CurrentDirectory);
+            var commandCtor = invoker.GetConstructor(_commandType, new CommandLineObjectPicker(new string[0],BasicActivator.RepositoryLocator));
 
             var sb = new StringBuilder();
 
+            PopulateBasicCommandInfo(sb);
+
+            var dynamicCtorAttribute = commandCtor?.GetCustomAttribute<UseWithCommandLineAttribute>();
+            
+            //it is a basic command, one that expects a fixed number of proper objects
+            var sbParameters = new StringBuilder();
+            sbParameters.AppendLine();
+            sbParameters.AppendLine("PARAMETERS:");
+
+            // Usage
+            if(dynamicCtorAttribute != null)
+            {
+                //is it a dynamic command (one that processes it's own CommandLinePicker)
+                
+                // Added to the call line e.g. "./rdmp cmd MyCall <param1> <someotherParam>"
+                sb.Append(dynamicCtorAttribute.ParameterHelpList);
+                sbParameters.Append(dynamicCtorAttribute.ParameterHelpBreakdown);
+            }
+            else
             if(commandCtor == null || !invoker.IsSupported(commandCtor))
                 sb.AppendLine($"Command '{_commandType.Name}' is not supported by the current input type ({BasicActivator.GetType().Name})");
             else
             {
-                sb.AppendLine("Name: " + _commandType.Name);
-                
-                var helpText = help.GetTypeDocumentationIfExists(_commandType);
-
-                if(helpText != null)
-                {
-                    sb.AppendLine();
-                    sb.AppendLine("Description: " + helpText);
-                }
-                    
-                sb.AppendLine();
-                sb.AppendLine("USAGE: ");
-                
-                sb.Append(EnvironmentInfo.IsLinux ? "./rdmp" : "./rdmp.exe");
-                sb.Append(" cmd ");
-
-                sb.Append(BasicCommandExecution.GetCommandName(_commandType.Name));
-                sb.Append(" ");
-
-                var sbParameters = new StringBuilder();
-                sbParameters.AppendLine();
-                sbParameters.AppendLine("PARAMETERS:");
-
+                // For each thing the constructor takes
                 foreach(ParameterInfo p in commandCtor.GetParameters())
                 {
                     var req = new RequiredArgument(p);
@@ -72,16 +69,46 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     if(invoker.GetDelegate(req).IsAuto)
                         continue;
 
+                    // Added to the call line e.g. "./rdmp cmd MyCall <param1> <someotherParam>"
                     sb.Append($"<{req.Name}> ");
+
+                    //document it for the breakdown table
                     sbParameters.AppendLine($"{req.Name}\t{req.Type.Name}\t{req.DemandIfAny?.Description}");
                 }
 
-                sb.AppendLine();
-                sb.AppendLine(sbParameters.ToString());
             }
-                
 
+            sb.AppendLine();
+            sb.AppendLine(sbParameters.ToString());
+                
             BasicActivator.Show(sb.ToString());
+
+        }
+
+        private void PopulateBasicCommandInfo(StringBuilder sb)
+        {
+            var help = new CommentStore();
+            help.ReadComments(Environment.CurrentDirectory);
+
+            // Basic info about command
+            sb.AppendLine("Name: " + _commandType.Name);
+                
+            var helpText = help.GetTypeDocumentationIfExists(_commandType);
+
+            if(helpText != null)
+            {
+                sb.AppendLine();
+                sb.AppendLine("Description: " + helpText);
+            }
+
+            sb.AppendLine();
+            sb.AppendLine("USAGE: ");
+                
+            sb.Append(EnvironmentInfo.IsLinux ? "./rdmp" : "./rdmp.exe");
+            sb.Append(" cmd ");
+
+            sb.Append(BasicCommandExecution.GetCommandName(_commandType.Name));
+            sb.Append(" ");
 
         }
     }

@@ -49,28 +49,51 @@ namespace Rdmp.Core.DataExport.Data
         public string DefinitionTableForeignKeyField
         {
             get { return _definitionTableForeignKeyField; }
-            set { SetField(ref _definitionTableForeignKeyField, GetQuerySyntaxHelper().EnsureFullyQualified(Database ?? string.Empty, null,TableName?? string.Empty, value)); }
+            set { SetField(ref _definitionTableForeignKeyField, Qualify(Database ?? string.Empty, TableName?? string.Empty, value)); }
         }
 
         /// <inheritdoc/>
         public string TableName
         {
             get { return _tableName; }
-            set { SetField(ref _tableName, GetQuerySyntaxHelper().EnsureFullyQualified(Database?? string.Empty,null, value?? string.Empty)); }
+            set { SetField(ref _tableName, Qualify(Database?? string.Empty, value?? string.Empty)); }
+        }
+
+        private string Qualify(string db, string tbl, string col = null)
+        {
+            //if we already have a value being set that is qualified don't mess it up!
+            if((col ?? tbl ?? string.Empty).Contains('.'))
+                return col ?? tbl;
+
+            //they sent us something like "bob" for a table/column name, lets fully qualify it with the Database etc
+            var syntax = GetQuerySyntaxHelper();
+
+            if(col == null)
+                return  syntax.EnsureFullyQualified(
+                            syntax.GetRuntimeName(db ?? string.Empty),
+                            null /*no schema*/,
+                        syntax.GetRuntimeName(tbl ?? string.Empty));
+
+            return  syntax.EnsureFullyQualified(
+                        syntax.GetRuntimeName(db ?? string.Empty),
+                        null /*no schema*/,
+                    syntax.GetRuntimeName(tbl ?? string.Empty),
+                    syntax.GetRuntimeName(col));
+
         }
 
         /// <inheritdoc/>
         public string DefinitionTableName
         {
             get { return _definitionTableName; }
-            set { SetField(ref _definitionTableName, GetQuerySyntaxHelper().EnsureFullyQualified(Database?? string.Empty, null, value?? string.Empty)); }
+            set { SetField(ref _definitionTableName, Qualify(Database?? string.Empty, value?? string.Empty)); }
         }
 
         /// <inheritdoc/>
         public string PrivateIdentifierField
         {
             get { return _privateIdentifierField; }
-            set { SetField(ref _privateIdentifierField, GetQuerySyntaxHelper().EnsureFullyQualified(Database?? string.Empty,null, TableName, value?? string.Empty)); }
+            set { SetField(ref _privateIdentifierField, Qualify(Database?? string.Empty,TableName, value?? string.Empty)); }
         }
 
         /// <inheritdoc/>
@@ -80,7 +103,7 @@ namespace Rdmp.Core.DataExport.Data
         public string ReleaseIdentifierField
         {
             get { return _releaseIdentifierField; }
-            set { SetField(ref _releaseIdentifierField, GetQuerySyntaxHelper().EnsureFullyQualified(Database?? string.Empty,null, TableName, value?? string.Empty)); }
+            set { SetField(ref _releaseIdentifierField, Qualify(Database?? string.Empty, TableName, value?? string.Empty)); }
         }
 
         /// <summary>
@@ -145,18 +168,14 @@ namespace Rdmp.Core.DataExport.Data
             Username = r["Username"] as string;
             Password = r["Password"] as string;
             Database = r["Database"] as string ?? string.Empty;
-
-            var syntaxHelper = GetQuerySyntaxHelper();
-
             
-            TableName = syntaxHelper.EnsureFullyQualified(Database, null, r["TableName"] as string ?? string.Empty);
-            DefinitionTableForeignKeyField = syntaxHelper.EnsureFullyQualified(Database, null, TableName, r["DefinitionTableForeignKeyField"] as string ?? string.Empty);
+            TableName = Qualify(Database,  r["TableName"] as string ?? string.Empty);
+            DefinitionTableForeignKeyField = Qualify(Database, TableName, r["DefinitionTableForeignKeyField"] as string ?? string.Empty);
 
-            DefinitionTableName = syntaxHelper.EnsureFullyQualified(Database, null, r["DefinitionTableName"] as string ?? string.Empty);
+            DefinitionTableName = Qualify(Database, r["DefinitionTableName"] as string ?? string.Empty);
             
-
-            PrivateIdentifierField = syntaxHelper.EnsureFullyQualified(Database,null, TableName, r["PrivateIdentifierField"] as string ?? string.Empty);
-            ReleaseIdentifierField = syntaxHelper.EnsureFullyQualified(Database,null, TableName, r["ReleaseIdentifierField"] as string ?? string.Empty);
+            PrivateIdentifierField = Qualify(Database, TableName, r["PrivateIdentifierField"] as string ?? string.Empty);
+            ReleaseIdentifierField = Qualify(Database, TableName, r["ReleaseIdentifierField"] as string ?? string.Empty);
         }
 
         /// <inheritdoc/>

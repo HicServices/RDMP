@@ -8,10 +8,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Changed
+
+- Schema names (Sql Server) are now wrapped correctly e.g. `[My Cool Schema]`
+
+### Added
+
+- New command `SetArgument` for easier changing of values of modules (e.g. [PipelineComponent]) from command line
+- Support for `DescribeCommand` help text on `NewObject` and other commands that take dynamic argument lists (command line)
+
+## [4.1.6] - 2020-08-04
+
 ### Added
 
 - Added 'Save Changes' prompt when closing tabs
 - Added Import command for bringing in one or more [CohortIdentificationConfiguration] into an existing container (like Merge / UnMerge but for existing configurations)
+- Added checks for LoadProgress dates being in sensible ranges during DLE
+
+### Fixed
+
+- Fixed [bug when parsing lists of ints in CLI](https://github.com/HicServices/RDMP/issues/84)
 
 ## [4.1.5] - 2020-07-14
 
@@ -491,7 +507,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.1.5...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.1.6...develop
+[4.1.6]: https://github.com/HicServices/RDMP/compare/v4.1.5...v4.1.6
 [4.1.5]: https://github.com/HicServices/RDMP/compare/v4.1.4...v4.1.5
 [4.1.4]: https://github.com/HicServices/RDMP/compare/v4.1.3...v4.1.4
 [4.1.3]: https://github.com/HicServices/RDMP/compare/v4.1.2...v4.1.3
