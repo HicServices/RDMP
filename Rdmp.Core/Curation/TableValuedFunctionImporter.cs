@@ -75,7 +75,9 @@ namespace Rdmp.Core.Curation
         {
             var syntax = _tableValuedFunction.Database.Server.GetQuerySyntaxHelper();
             
-            string finalName = syntax.EnsureWrapped(_database) + "." + syntax.EnsureWrapped(_schema) + "." + _tableValuedFunctionName + "(";
+            var wrappedSchema = string.IsNullOrWhiteSpace(_schema) ? "" : syntax.EnsureWrapped(_schema);
+
+            string finalName = syntax.EnsureWrapped(_database) + "." + wrappedSchema + "." + _tableValuedFunctionName + "(";
 
             foreach (DiscoveredParameter parameter in _parameters)
                 finalName += parameter.ParameterName + ",";
