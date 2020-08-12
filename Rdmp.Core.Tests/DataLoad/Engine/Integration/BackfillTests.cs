@@ -68,7 +68,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             #endregion
 
             // databases are now represent state after push to From and before migration
-            Mutilate("[" + DatabaseName + "].dbo.[Samples].[SampleDate]");
+            Mutilate("[" + DatabaseName + "].[dbo].[Samples].[SampleDate]");
 
             // check that From contains the correct data
             using (var connection = (SqlConnection)From.Server.GetConnection())
@@ -142,7 +142,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             #endregion
 
             // databases are now represent state after push to From and before migration
-            Mutilate("[" + DatabaseName + "].dbo.[Samples].[SampleDate]");
+            Mutilate("[" + DatabaseName + "].[dbo].[Samples].[SampleDate]");
 
             // check that From contains the correct data
             using (var connection = (SqlConnection)From.Server.GetConnection())
@@ -184,7 +184,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             #endregion
 
             // databases are now represent state after push to From and before migration
-            Mutilate("[" + DatabaseName + "].dbo.[Samples].[SampleDate]");
+            Mutilate("[" + DatabaseName + "].[dbo].[Samples].[SampleDate]");
 
             // check that From contains the correct data
             using (var connection = (SqlConnection)From.Server.GetConnection())
@@ -232,7 +232,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             }
             #endregion
 
-            Mutilate("[" + DatabaseName + "].dbo.[Samples].[SampleDate]");
+            Mutilate("[" + DatabaseName + "].[dbo].[Samples].[SampleDate]");
 
             // todo: asserts
             using (var connection = (SqlConnection)From.Server.GetConnection())
@@ -321,7 +321,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             #endregion
 
-            Mutilate("[" + DatabaseName + "].dbo.[Samples].[SampleDate]");
+            Mutilate("[" + DatabaseName + "].[dbo].[Samples].[SampleDate]");
 
             // From should be exactly the same as it was before mutilation as there is a single update
             using (var connection = (SqlConnection)From.Server.GetConnection())
@@ -387,7 +387,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             #endregion
 
-            Mutilate("[" + DatabaseName + "].dbo.[Samples].[SampleDate]");
+            Mutilate("[" + DatabaseName + "].[dbo].[Samples].[SampleDate]");
 
             // From should be exactly the same as it was before mutilation as there is a single update
             using (var connection = (SqlConnection)From.Server.GetConnection())
@@ -473,7 +473,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             #endregion
 
-            Mutilate("[" + DatabaseName + "].dbo.[Samples].[SampleDate]");
+            Mutilate("[" + DatabaseName + "].[dbo].[Samples].[SampleDate]");
 
             // From should be exactly the same as it was before mutilation as there is a single update
             using (var connection = (SqlConnection)From.Server.GetConnection())
@@ -565,7 +565,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             #endregion
 
-            Mutilate("[" + DatabaseName + "].dbo.[Samples].[SampleDate]");
+            Mutilate("[" + DatabaseName + "].[dbo].[Samples].[SampleDate]");
 
             // From should be exactly the same as it was before mutilation as there is a single update
             using (var connection = (SqlConnection)From.Server.GetConnection())
@@ -633,7 +633,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             
             #endregion
 
-            Mutilate("[" + DatabaseName + "].dbo.[Samples].[SampleDate]");
+            Mutilate("[" + DatabaseName + "].[dbo].[Samples].[SampleDate]");
 
             // From should be exactly the same as it was before mutilation as there is a single update
             using (var connection = (SqlConnection)From.Server.GetConnection())
@@ -701,7 +701,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             #endregion
 
-            Mutilate("[" + DatabaseName + "].dbo.[Samples].[SampleDate]");
+            Mutilate("[" + DatabaseName + "].[dbo].[Samples].[SampleDate]");
 
             // From should be exactly the same as it was before mutilation as there is a single update
             using (var connection = (SqlConnection)From.Server.GetConnection())
@@ -782,7 +782,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             #endregion
 
-            Mutilate("[" + DatabaseName + "].dbo.[Samples].[SampleDate]");
+            Mutilate("[" + DatabaseName + "].[dbo].[Samples].[SampleDate]");
 
             using (var connection = (SqlConnection)From.Server.GetConnection())
             {

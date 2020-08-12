@@ -51,5 +51,62 @@ namespace Rdmp.Core.Tests.DataExport.Data
             Assert.IsNotNull(tbl.PrivateIdentifierField);
             Assert.IsNotNull(tbl.ReleaseIdentifierField);
         }
+
+        [Test]
+        public void TestExternalCohortTableProperties_BasicValues()
+        {
+            var table = new ExternalCohortTable(RepositoryLocator.DataExportRepository,"ffff",DatabaseType.MicrosoftSQLServer);
+
+            Assert.IsNull(table.Database);
+            Assert.IsNull(table.Server);
+            Assert.IsNull(table.TableName);
+            Assert.IsNull(table.PrivateIdentifierField);
+            Assert.IsNull(table.ReleaseIdentifierField);
+            Assert.IsNull(table.DefinitionTableForeignKeyField);
+
+            table.Database = "mydb";
+            table.Server = "myserver";
+            table.TableName = "mytbl";
+            table.PrivateIdentifierField = "priv";
+            table.ReleaseIdentifierField = "rel";
+            table.DefinitionTableForeignKeyField = "fk";
+
+            Assert.AreEqual("mydb",table.Database);
+            Assert.AreEqual("myserver",table.Server);
+            Assert.AreEqual("[mydb]..[mytbl]",table.TableName);
+            Assert.IsNull(table.DefinitionTableName);
+
+            Assert.AreEqual("[mydb]..[mytbl].[priv]",table.PrivateIdentifierField);
+            Assert.AreEqual("[mydb]..[mytbl].[rel]",table.ReleaseIdentifierField);
+            Assert.AreEqual("[mydb]..[mytbl].[fk]",table.DefinitionTableForeignKeyField);
+        }
+        [Test]
+        public void TestExternalCohortTableProperties_SetFullValues()
+        {
+            var table = new ExternalCohortTable(RepositoryLocator.DataExportRepository,"ffff",DatabaseType.MicrosoftSQLServer);
+
+            Assert.IsNull(table.Database);
+            Assert.IsNull(table.Server);
+            Assert.IsNull(table.TableName);
+            Assert.IsNull(table.PrivateIdentifierField);
+            Assert.IsNull(table.ReleaseIdentifierField);
+            Assert.IsNull(table.DefinitionTableForeignKeyField);
+
+            table.PrivateIdentifierField = "[mydb]..[mytbl].[priv]";
+            table.ReleaseIdentifierField = "[mydb]..[mytbl].[rel]";
+            table.DefinitionTableForeignKeyField = "[mydb]..[mytbl].[fk]";
+            table.Database = "mydb";
+            table.Server = "myserver";
+            table.TableName = "[mydb]..[mytbl]";
+
+            Assert.AreEqual("mydb",table.Database);
+            Assert.AreEqual("myserver",table.Server);
+            Assert.AreEqual("[mydb]..[mytbl]",table.TableName);
+            Assert.IsNull(table.DefinitionTableName);
+
+            Assert.AreEqual("[mydb]..[mytbl].[priv]",table.PrivateIdentifierField);
+            Assert.AreEqual("[mydb]..[mytbl].[rel]",table.ReleaseIdentifierField);
+            Assert.AreEqual("[mydb]..[mytbl].[fk]",table.DefinitionTableForeignKeyField);
+        }
     }
 }

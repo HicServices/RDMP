@@ -116,6 +116,8 @@ namespace Rdmp.Core.Tests.CohortCommitting
                 candidate,
                 new ThrowImmediatelyCheckNotifier());
 
+            Assert.AreEqual(type,ect.DatabaseType);
+
             //database should exist
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(cohortDatabaseName);
             Assert.IsTrue(db.Exists());

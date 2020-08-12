@@ -127,7 +127,7 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
             ColumnInfoToANOTableConverter converter = new ColumnInfoToANOTableConverter(condition, _anoConditionTable);
             var ex = Assert.Throws<Exception>(()=>converter.ConvertFullColumnInfo((s) => true, new ThrowImmediatelyCheckNotifier())); //say  yes to everything it proposes 
 
-            StringAssert.IsMatch(@"Could not perform transformation because column \[(.*)\]\.dbo\.\[.*\]\.\[Condition1\] is not droppable",ex.Message);
+            StringAssert.IsMatch(@"Could not perform transformation because column \[(.*)\]\.\[dbo\]\.\[.*\]\.\[Condition1\] is not droppable",ex.Message);
         }
 
 

@@ -87,11 +87,11 @@ SET @ProjectNumber=1;
 SELECT DISTINCT 
 
 [tempdb]..[Cohort].[ReleaseID] AS ReleaseID,
-[{0}ScratchArea].dbo.[TestTable].[Name],
-[{0}ScratchArea].dbo.[TestTable].[DateOfBirth]
+[{0}ScratchArea].[dbo].[TestTable].[Name],
+[{0}ScratchArea].[dbo].[TestTable].[DateOfBirth]
 FROM 
-[{0}ScratchArea].dbo.[TestTable]
-INNER JOIN [tempdb]..[Cohort] ON [{0}ScratchArea].dbo.[TestTable].[PrivateID]=[tempdb]..[Cohort].[PrivateID]
+[{0}ScratchArea].[dbo].[TestTable]
+INNER JOIN [tempdb]..[Cohort] ON [{0}ScratchArea].[dbo].[TestTable].[PrivateID]=[tempdb]..[Cohort].[PrivateID]
 WHERE
 [tempdb]..[Cohort].[cohortDefinition_id]=-599
 ", TestDatabaseNames.Prefix);

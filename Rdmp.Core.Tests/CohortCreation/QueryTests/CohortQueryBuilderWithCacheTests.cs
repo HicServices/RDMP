@@ -67,9 +67,9 @@ string.Format(
 	/*cic_{0}_UnitTestAggregate1*/
 	SELECT
 	distinct
-	[" + TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData].[chi]
+	[" + TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
 	FROM 
-	["+TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData]
+	["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData]
 )
 ",cohortIdentificationConfiguration.ID)), 
  CollapseWhitespace(builder.SQL));
@@ -87,9 +87,9 @@ string.Format(
                         string.Format(@"/*cic_{0}_UnitTestAggregate1*/
 SELECT
 distinct
-[" +TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData].[chi]
+[" +TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
 FROM 
-[" + TestDatabaseNames.Prefix + @"ScratchArea].dbo.[BulkData]", cohortIdentificationConfiguration.ID), dt, _chiColumnSpecification, 30));
+[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData]", cohortIdentificationConfiguration.ID), dt, _chiColumnSpecification, 30));
                 }
 
 

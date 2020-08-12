@@ -58,6 +58,8 @@ namespace Rdmp.Core.Tests.Curation.RefactoringTests
         [TestCase("UPPER([database]..[table].[column])",true)]
         [TestCase("dbo.MyScalarFunction([database]..[table].[column]) in Select(distinct [database]..[table].[column] from bob)", true)]
         [TestCase("dbo.MyNewRand()", false)]
+        [TestCase("[dbo].MyScalarFunction([database]..[table].[column]) in Select(distinct [database]..[table].[column] from bob)", true)]
+        [TestCase("[dbo].MyNewRand()", false)]
         public void RefactorTableName_IsRefactorable_ExtractionInformation(string transformSql,bool expectedToBeRefactorable)
         {
             var ei = WhenIHaveA<ExtractionInformation>();
@@ -121,21 +123,37 @@ namespace Rdmp.Core.Tests.Curation.RefactoringTests
         }
 
 
-        //It shouldn't matter if you have dbo or not
-        [TestCase("[Fish]..","[Fish]..")]
-        [TestCase("[Fish].dbo.","[Fish]..")]
-        [TestCase("[Fish]..","[Fish].dbo.")]
-        [TestCase("[Fish].dbo.","[Fish].dbo.")]
-        public void RefactorTableName_IsRefactorable_ColumnInfo(string columnTable,string findTableName)
+        /// <summary>
+        /// Tests when the Column name does not exactly match the search/replace table name pattern during refactoring.
+        /// </summary>
+        /// <example>
+        /// Refactor columns belonging to [Fish].[dbo].[TableA] to now belong in [Fish].[dbo].[TableB]
+        /// 
+        /// BUT column name is [Fish]..[TableA].[MyCol].  In this case it should be refactored to [Fish].[dbo].[TableB].[MyCol]
+        /// </example>
+        /// <param name="columnName">A column that belongs to <paramref name="findTableName"/> which should be refactored even if it's name isn't an exact match to the table name</param>
+        /// <param name="findTableName">The table being renamed, will be renamed MyTbl to MyNewTbl</param>
+        [TestCase("[Fish]..[MyTbl].[A]",     "[Fish]..[MyTbl]")]
+        [TestCase("[Fish].[dbo].[MyTbl].[A]","[Fish]..[MyTbl]")]
+        [TestCase("[Fish]..[MyTbl].[A]",     "[Fish].[dbo].[MyTbl]")]
+        [TestCase("[Fish].[dbo].[MyTbl].[A]","[Fish].[dbo].[MyTbl]")]
+        [TestCase("[Fish].dbo.[MyTbl].[A]",  "[Fish]..[MyTbl]")]
+        [TestCase("[Fish]..[MyTbl].[A]",     "[Fish].dbo.[MyTbl]")]
+        [TestCase("[Fish].dbo.[MyTbl].[A]",  "[Fish].dbo.[MyTbl]")]
+        public void RefactorTableName_IsRefactorable_ColumnInfo(string columnName,string findTableName)
         {
             var col = WhenIHaveA<ColumnInfo>();
-            col.Name = columnTable + "[MyTbl].[A]";
+            col.Name = columnName;
             col.SaveToDatabase();
 
             var refactorer = new SelectSQLRefactorer();
-            Assert.AreEqual(1,refactorer.RefactorTableName(col,findTableName + "[MyTbl].[A]" , findTableName + "[MyTbl2].[A]"));
 
-            Assert.AreEqual( findTableName + "[MyTbl2].[A]",col.Name);
+            var oldName = findTableName;
+            var newName = oldName.Replace("MyTbl","MyNewTbl");
+
+            Assert.AreEqual(1,refactorer.RefactorTableName(col,oldName,newName));
+
+            Assert.AreEqual( newName + ".[A]",col.Name);
         }
     }
 }
