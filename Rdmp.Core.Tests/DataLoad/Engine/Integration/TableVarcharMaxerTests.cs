@@ -98,9 +98,9 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             maxer.Initialize(db,LoadStage.AdjustRaw);
             maxer.Check(new ThrowImmediatelyCheckNotifier(){ThrowOnWarning = true});
 
-            var job = Mock.Of<IDataLoadJob>(x => 
-                x.RegularTablesToLoad==new List<ITableInfo>(){ti} &&
-                x.Configuration==new HICDatabaseConfiguration(db.Server,null,null,null));
+            var job = new ThrowImmediatelyDataLoadJob();
+            job.RegularTablesToLoad = new List<ITableInfo>(){ti};
+            job.Configuration = new HICDatabaseConfiguration(db.Server,null,null,null);
 
             maxer.Mutilate(job);
 
