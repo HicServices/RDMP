@@ -73,8 +73,9 @@ namespace Rdmp.Core.Curation
         /// <inheritdoc/>
         public void DoImport(out TableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated)
         {
+            var syntax = _tableValuedFunction.Database.Server.GetQuerySyntaxHelper();
             
-            string finalName = "[" + _database + "].["+_schema+"]." + _tableValuedFunctionName + "(";
+            string finalName = syntax.EnsureWrapped(_database) + "." + syntax.EnsureWrapped(_schema) + "." + _tableValuedFunctionName + "(";
 
             foreach (DiscoveredParameter parameter in _parameters)
                 finalName += parameter.ParameterName + ",";
