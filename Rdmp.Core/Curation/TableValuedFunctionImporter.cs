@@ -74,7 +74,7 @@ namespace Rdmp.Core.Curation
         public void DoImport(out TableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated)
         {
             
-            string finalName = "[" + _database + "]."+_schema+"." + _tableValuedFunctionName + "(";
+            string finalName = "[" + _database + "].["+_schema+"]." + _tableValuedFunctionName + "(";
 
             foreach (DiscoveredParameter parameter in _parameters)
                 finalName += parameter.ParameterName + ",";
