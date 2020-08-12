@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -228,7 +229,7 @@ namespace Rdmp.Core.Sharing.Refactoring
             updatesMade += RefactorTableNameImpl(columnInfo,oldFullyQualifiedTableName,newFullyQualifiedTableName);
 
             //these are all the things that could appear spattered throughout the old columns
-            List<string> oldPrefixes = new List<string>{".." ,".dbo",".[dbo]."};
+            List<string> oldPrefixes = new List<string>{".." ,".dbo.",".[dbo]."};
 
             //this is what they said they wanted in the refactoring
             var newPrefix = oldPrefixes.FirstOrDefault(newFullyQualifiedTableName.Contains);
@@ -239,7 +240,7 @@ namespace Rdmp.Core.Sharing.Refactoring
                 {
                     if(!string.Equals(old ,newPrefix))
                     {
-                        updatesMade += RefactorTableNameImpl(columnInfo,oldFullyQualifiedTableName.Replace(old,newPrefix),newFullyQualifiedTableName);
+                        updatesMade += RefactorTableNameImpl(columnInfo,oldFullyQualifiedTableName.Replace(newPrefix,old),newFullyQualifiedTableName);
                     }
                 }
 
