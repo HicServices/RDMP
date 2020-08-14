@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Schema names (Sql Server) are now wrapped correctly e.g. `[My Cool Schema]`
+- Progress logged (e.g. done x of y files) can now go backwards.
 
 ### Added
 
