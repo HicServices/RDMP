@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [4.1.7] - 2020-08-14
+
 ### Changed
 
 - Schema names (Sql Server) are now wrapped correctly e.g. `[My Cool Schema]`
@@ -508,7 +510,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.1.6...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.1.7...develop
+[4.1.6]: https://github.com/HicServices/RDMP/compare/v4.1.6...v4.1.7
 [4.1.6]: https://github.com/HicServices/RDMP/compare/v4.1.5...v4.1.6
 [4.1.5]: https://github.com/HicServices/RDMP/compare/v4.1.4...v4.1.5
 [4.1.4]: https://github.com/HicServices/RDMP/compare/v4.1.3...v4.1.4
