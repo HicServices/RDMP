@@ -199,18 +199,18 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests
     @"/*cic_{1}_UnitTestAggregate1*/
 SELECT
 distinct
-["+TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData].[chi]
+["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
 FROM 
-["+TestDatabaseNames.Prefix+ @"ScratchArea].dbo.[BulkData]
+["+TestDatabaseNames.Prefix+ @"ScratchArea].[dbo].[BulkData]
 LEFT Join (
 	/*cic_{1}_UnitTestAggregate2*/
 	SELECT
 	distinct
-	[" + TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData].[chi]
+	[" + TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
 	FROM 
-	["+TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData]
+	["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData]
 ){0}
-on ["+TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData].[chi] = {0}.chi",expectedTableAlias,cohortIdentificationConfiguration.ID), builder.SQL);
+on ["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi] = {0}.chi",expectedTableAlias,cohortIdentificationConfiguration.ID), builder.SQL);
 
             }
             finally
@@ -238,7 +238,7 @@ on ["+TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData].[chi] = {0}.chi",ex
             var filter1 = new AggregateFilter(CatalogueRepository, "Within 1 year of event", filterContainer1);
             var filter2 = new AggregateFilter(CatalogueRepository, "DateAfter2001", filterContainer2);
 
-            filter1.WhereSQL = string.Format("ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData].dtCreated)) <= 1",expectedTableAlias);
+            filter1.WhereSQL = string.Format("ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].dtCreated)) <= 1",expectedTableAlias);
             filter1.SaveToDatabase();
 
             filter2.WhereSQL = "dtCreated > '2001-01-01'";
@@ -276,27 +276,27 @@ on ["+TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData].[chi] = {0}.chi",ex
     @"/*cic_{1}_UnitTestAggregate1*/
 SELECT
 distinct
-["+TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData].[chi]
+["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
 FROM 
-["+TestDatabaseNames.Prefix+ @"ScratchArea].dbo.[BulkData]
+["+TestDatabaseNames.Prefix+ @"ScratchArea].[dbo].[BulkData]
 LEFT Join (
 	/*cic_{1}_UnitTestAggregate2*/
 	SELECT distinct
-	[" + TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData].[chi], ["+TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData].[dtCreated]
+	[" + TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi], ["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[dtCreated]
 	FROM 
-	["+TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData]
+	["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData]
 	WHERE
 	(
 	/*DateAfter2001*/
 	dtCreated > '2001-01-01'
 	)
 ){0}
-on ["+TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData].[chi] = {0}.chi
+on ["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi] = {0}.chi
 
 WHERE
 (
 /*Within 1 year of event*/
-ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData].dtCreated)) <= 1
+ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].dtCreated)) <= 1
 )", expectedTableAlias,cohortIdentificationConfiguration.ID)), CollapseWhitespace(builder.SQL));
 
             }
@@ -332,7 +332,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].dbo
             var filter1 = new AggregateFilter(CatalogueRepository, "Within 1 year of event", filterContainer1);
             var filter2 = new AggregateFilter(CatalogueRepository, "DateAfter2001", filterContainer2);
 
-            filter1.WhereSQL = string.Format("ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData].dtCreated)) <= 1", expectedTableAlias);
+            filter1.WhereSQL = string.Format("ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].dtCreated)) <= 1", expectedTableAlias);
             filter1.SaveToDatabase();
 
             filter2.WhereSQL = "dtCreated > '2001-01-01'";
@@ -477,15 +477,15 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].dbo
         @"/*cic_{2}_UnitTestAggregate1*/
 SELECT
 distinct
-["+TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData].[chi]
+["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
 FROM 
-["+TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData]
+["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData]
 LEFT Join (
 	/*Cached:cic_{2}_UnitTestAggregate2*/
 	select * from [{3}]..[JoinableInceptionQuery_AggregateConfiguration{1}]
 
 ){0}
-on [" + TestDatabaseNames.Prefix + @"ScratchArea].dbo.[BulkData].[chi] = {0}.chi",
+on [" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi] = {0}.chi",
         expectedTableAlias,  //{0}
         aggregate2.ID, //{1}
         cohortIdentificationConfiguration.ID,//{2}

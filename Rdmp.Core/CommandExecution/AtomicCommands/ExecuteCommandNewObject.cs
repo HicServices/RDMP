@@ -51,7 +51,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// </summary>
         /// <param name="activator"></param>
         /// <param name="picker"></param>
-        [UseWithCommandLine]
+        [UseWithCommandLine(
+            ParameterHelpList = "<type> <arg1> <arg2> <etc>", 
+            ParameterHelpBreakdown = @"type	The object to create e.g. Catalogue
+args    Dynamic list of values to satisfy the types constructor")]
         public ExecuteCommandNewObject(IBasicActivateItems activator,CommandLineObjectPicker picker):base(activator)
         {
             if(!picker.HasArgumentOfType(0, typeof(Type)))

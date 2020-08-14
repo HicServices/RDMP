@@ -40,26 +40,26 @@ If we have no cache then the following SQL would be executed:
 ```sql
 SELECT
 distinct
-[TEST_ExampleData].dbo.[Biochemistry].[chi]
+[TEST_ExampleData].[dbo].[Biochemistry].[chi]
 FROM 
 [TEST_ExampleData]..[Biochemistry]
 WHERE
 (
 /*TestCode is NA*/
-[TEST_ExampleData].dbo.[Biochemistry].[TestCode] = 'NA'
+[TEST_ExampleData].[dbo].[Biochemistry].[TestCode] = 'NA'
 )
 
 INTERSECT
 
 SELECT
 distinct
-[TEST_ExampleData].dbo.[Biochemistry].[chi]
+[TEST_ExampleData].[dbo].[Biochemistry].[chi]
 FROM 
 [TEST_ExampleData]..[Biochemistry]
 WHERE
 (
 /*TestCode is HBA1c*/
-[TEST_ExampleData].dbo.[Biochemistry].[TestCode] like '%HBA%'
+[TEST_ExampleData].[dbo].[Biochemistry].[TestCode] like '%HBA%'
 )
 ```
 
@@ -153,32 +153,32 @@ SET @Result_2=50;
 /*cic_15_People with high HBA1C*/
 SELECT
 distinct
-[TEST_ExampleData].dbo.[Biochemistry].[chi]
+[TEST_ExampleData].[dbo].[Biochemistry].[chi]
 FROM 
 [TEST_ExampleData]..[Biochemistry]
 WHERE
 (
 /*Has HBA1C (@code = 'HBA1C')*/
-[TEST_ExampleData].dbo.[Biochemistry].[TestCode] = @code
+[TEST_ExampleData].[dbo].[Biochemistry].[TestCode] = @code
 AND
 /*Result is high (@Result > 3)*/
-[TEST_ExampleData].dbo.[Biochemistry].[Result] > @Result
+[TEST_ExampleData].[dbo].[Biochemistry].[Result] > @Result
 )
 EXCEPT
 
 /*cic_15_People with high Sodium (exclusion criteria)*/
 SELECT
 distinct
-[TEST_ExampleData].dbo.[Biochemistry].[chi]
+[TEST_ExampleData].[dbo].[Biochemistry].[chi]
 FROM 
 [TEST_ExampleData]..[Biochemistry]
 WHERE
 (
 /*NA test code (@code_2='NA')*/
-[TEST_ExampleData].dbo.[Biochemistry].[TestCode] = @code_2
+[TEST_ExampleData].[dbo].[Biochemistry].[TestCode] = @code_2
 AND
 /*Result is high (@Result_2 > 50)*/
-[TEST_ExampleData].dbo.[Biochemistry].[Result] > @Result_2
+[TEST_ExampleData].[dbo].[Biochemistry].[Result] > @Result_2
 )
 )
 ```
