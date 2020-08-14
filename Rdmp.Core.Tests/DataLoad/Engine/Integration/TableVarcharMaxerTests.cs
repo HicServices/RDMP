@@ -74,5 +74,50 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                     throw new ArgumentOutOfRangeException("dbType");
             }
         }
+
+        [TestCase(DatabaseType.MySql)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        public void VarcharMaxer_BadTableNames(DatabaseType dbType)
+        {
+            var db = GetCleanedServer(dbType);
+
+            var tbl = db.CreateTable("Fi ; '`sh",new[]
+            {
+                new DatabaseColumnRequest("Da'   ,,;ve",new DatabaseTypeRequest(typeof(string),100)), 
+                new DatabaseColumnRequest("Frrrrr ##' ank",new DatabaseTypeRequest(typeof(int))) 
+            });
+
+            TableInfo ti;
+            ColumnInfo[] cols;
+            Import(tbl, out ti, out cols);
+
+            var maxer = new TableVarcharMaxer();
+            maxer.TableRegexPattern = new Regex(".*");
+            maxer.DestinationType = db.Server.GetQuerySyntaxHelper().TypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof(string),int.MaxValue));
+            
+            maxer.Initialize(db,LoadStage.AdjustRaw);
+            maxer.Check(new ThrowImmediatelyCheckNotifier(){ThrowOnWarning = true});
+
+            var job = new ThrowImmediatelyDataLoadJob();
+            job.RegularTablesToLoad = new List<ITableInfo>(){ti};
+            job.Configuration = new HICDatabaseConfiguration(db.Server,null,null,null);
+
+            maxer.Mutilate(job);
+
+            switch (dbType)
+            {
+                case DatabaseType.MicrosoftSQLServer:
+                    Assert.AreEqual("varchar(max)",tbl.DiscoverColumn("Da'   ,,;ve").DataType.SQLType);
+                    break;
+                case DatabaseType.MySql:
+                    Assert.AreEqual("text",tbl.DiscoverColumn("Da'   ,,;ve").DataType.SQLType);
+                    break;
+                case DatabaseType.Oracle:
+                    Assert.AreEqual("varchar(max)",tbl.DiscoverColumn("Da'   ,,;ve").DataType.SQLType);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("dbType");
+            }
+        }
     }
 }
