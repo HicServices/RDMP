@@ -8,11 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [4.1.8] - 2020-08-17
+
 ### Fixed 
 
 - Fixed progress logging still not being allowed to go backwards when logging to database
-
-- Fixed
 
 ## [4.1.7] - 2020-08-14
 
@@ -516,7 +516,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.1.7...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.1.8...develop
+[4.1.8]: https://github.com/HicServices/RDMP/compare/v4.1.7...v4.1.8
 [4.1.7]: https://github.com/HicServices/RDMP/compare/v4.1.6...v4.1.7
 [4.1.6]: https://github.com/HicServices/RDMP/compare/v4.1.5...v4.1.6
 [4.1.5]: https://github.com/HicServices/RDMP/compare/v4.1.4...v4.1.5
