@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Fixed 
+
+- Fixed progress logging still not being allowed to go backwards when logging to database
+
+- Fixed
+
 ## [4.1.7] - 2020-08-14
 
 ### Changed
