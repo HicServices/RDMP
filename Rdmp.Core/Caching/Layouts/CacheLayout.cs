@@ -27,6 +27,11 @@ namespace Rdmp.Core.Caching.Layouts
         public ILoadCachePathResolver Resolver {  get; private set;}
         public DirectoryInfo RootDirectory { get; private set; }
 
+        /// <summary>
+        /// When archiving files what compression level should be used to add/update new files (only applies if <see cref="ArchiveType"/> is zip).  Defaults to Optimal
+        /// </summary>
+        public CompressionLevel Compression {get;set; } = CompressionLevel.Optimal;
+
         public CacheLayout(DirectoryInfo rootDirectory, string dateFormat, CacheArchiveType cacheArchiveType, CacheFileGranularity granularity, ILoadCachePathResolver resolver)
         {
             DateFormat = dateFormat;
@@ -185,7 +190,7 @@ namespace Rdmp.Core.Caching.Layouts
                         // don't add an entry where one already exists for a particular dataFile
                         foreach (var dataFile in files.Where(dataFile => entries.All(e => e.Name != dataFile.Name)))
                         {
-                            zipArchive.CreateEntryFromFile(dataFile.FullName, dataFile.Name, CompressionLevel.Optimal);
+                            zipArchive.CreateEntryFromFile(dataFile.FullName, dataFile.Name, Compression);
                         }
                     }
                     else
@@ -193,7 +198,7 @@ namespace Rdmp.Core.Caching.Layouts
                         // We are creating a new file, so don't have to check for the existence of entries.
                         foreach (var dataFile in files)
                         {
-                            zipArchive.CreateEntryFromFile(dataFile.FullName, dataFile.Name, CompressionLevel.Optimal);
+                            zipArchive.CreateEntryFromFile(dataFile.FullName, dataFile.Name, Compression);
                         }
                         
                     }
