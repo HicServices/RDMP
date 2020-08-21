@@ -26,7 +26,7 @@
 | SSH.NET  | [GitHub](https://github.com/sshnet/SSH.NET)  | [2016.1.0](https://www.nuget.org/packages/SSH.NET/2016.1.0) | [MIT](https://github.com/sshnet/SSH.NET/blob/develop/LICENSE) | Enables fetching files from SFTP servers |
 | Moq 4 | [GitHub](https://github.com/moq/moq4) | [4.14.5](https://www.nuget.org/packages/Moq/4.14.5) |[BSD 3](https://github.com/moq/moq4/blob/master/License.txt)  | Mock objects during unit testing |
 | [Nunit](https://nunit.org/) |[GitHub](https://github.com/nunit/nunit) | [3.12.0](https://www.nuget.org/packages/NUnit/3.12.0) | [MIT](https://opensource.org/licenses/MIT) | Unit testing |
-| Microsoft.NET.Test.Sdk | [GitHub](https://github.com/microsoft/vstest/) | [16.7.0](https://www.nuget.org/packages/Microsoft.NET.Test.Sdk/16.7.0) | [MIT](https://opensource.org/licenses/MIT) | Required for running tests| |
+| Microsoft.NET.Test.Sdk | [GitHub](https://github.com/microsoft/vstest/) | [16.7.1](https://www.nuget.org/packages/Microsoft.NET.Test.Sdk/16.7.1) | [MIT](https://opensource.org/licenses/MIT) | Required for running tests| |
 | NUnit3TestAdapter | [GitHub](https://github.com/nunit/nunit3-vs-adapter)| [3.13.0](https://www.nuget.org/packages/NUnit3TestAdapter/3.13.0) | [MIT](https://opensource.org/licenses/MIT) | Run unit tests from within Visual Studio |
 | [Newtonsoft.Json](https://www.newtonsoft.com/json) | [GitHub](https://github.com/JamesNK/Newtonsoft.Json) | [12.0.3](https://www.nuget.org/packages/Newtonsoft.Json/12.0.3) | [MIT](https://opensource.org/licenses/MIT) | Serialization of objects for sharing/transmission |
 | YamlDotNet | [GitHub](https://github.com/aaubry/YamlDotNet)  | [8.1.2](https://www.nuget.org/packages/YamlDotNet/8.1.2) | [MIT](https://opensource.org/licenses/MIT) |Loading configuration files|
