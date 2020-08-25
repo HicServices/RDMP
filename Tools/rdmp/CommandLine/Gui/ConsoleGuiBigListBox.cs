@@ -156,7 +156,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
                 win.Add(searchLabel);
                 win.Add(mainInput);
-                win.SetFocus(mainInput);
+                mainInput.SetFocus();
                 
                 mainInput.Changed += (s, e) =>
                 {
