@@ -309,7 +309,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         /// <param name="catalogue"></param>
         public void EnsureLoggingWorksFor(ICatalogue catalogue)
         {
-            //if theres no logging task / logging server set them up with the same name as the lmd
+            //if there's no logging task / logging server set them up with the same name as the lmd
             IExternalDatabaseServer loggingServer;
 
             if (catalogue.LiveLoggingServer_ID == null)
@@ -324,7 +324,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             else
                 loggingServer = Repository.GetObjectByID<ExternalDatabaseServer>(catalogue.LiveLoggingServer_ID.Value);
 
-            //if theres no logging task yet and theres a logging server
+            //if there's no logging task yet and there's a logging server
             if (string.IsNullOrWhiteSpace(catalogue.LoggingDataTask))
             {
                 var lm = new LogManager(loggingServer);

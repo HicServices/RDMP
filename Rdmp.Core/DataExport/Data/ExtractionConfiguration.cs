@@ -631,9 +631,9 @@ namespace Rdmp.Core.DataExport.Data
                 //there is a default?
                 if (defaultLoggingServer != null)
                     loggingServer = (ExternalDatabaseServer)defaultLoggingServer;
-                
-                //no, there is no default or user does not want to use it.
-                throw new Exception("There is no default logging server configured and there was a problem asking Catalogues for a logging server instead.  Configure a default logging server via ManageExternalServersUI", e);
+                else
+                    //no, there is no default or user does not want to use it.
+                    throw new Exception("There is no default logging server configured and there was a problem asking Catalogues for a logging server instead.  Configure a default logging server via ManageExternalServersUI", e);
             }
             
             var server = DataAccessPortal.GetInstance().ExpectServer(loggingServer, DataAccessContext.Logging);

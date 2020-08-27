@@ -45,8 +45,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public override void Execute()
         {
-            DataTable dt = new DataTable();
-
             var db = SelectOne(_loggingServers,null,true);
             var server = db.Discover(DataAccessContext.Logging).Server;
             

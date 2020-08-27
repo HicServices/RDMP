@@ -59,10 +59,10 @@ namespace Rdmp.Core.Tests.Curation.Unit
             var syntax = new MicrosoftQuerySyntaxHelper();
 
             Assert.AreEqual(syntax.GetRuntimeName("[test]"), "test");
-            Assert.AreEqual(syntax.GetRuntimeName("`test`"), "test");
-            Assert.AreEqual(syntax.GetRuntimeName("`[test]`"), "test");
+            Assert.AreEqual(syntax.GetRuntimeName("`test`"), "`test`");
+            Assert.AreEqual(syntax.GetRuntimeName("`[test]`"), "`[test]`");
             Assert.AreEqual(syntax.GetRuntimeName("[mydb].[test]"), "test");
-            Assert.AreEqual(syntax.GetRuntimeName("`mymysqldb`.`test`"), "test");
+            Assert.AreEqual(syntax.GetRuntimeName("`mymysqldb`.`test`"), "`test`");
             Assert.AreEqual(syntax.GetRuntimeName("[mydb]..[test]"), "test");
             Assert.AreEqual(syntax.GetRuntimeName("[SERVER].[mydb]..[test]"), "test");
         }

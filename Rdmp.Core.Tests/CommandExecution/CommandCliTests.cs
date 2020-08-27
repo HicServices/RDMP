@@ -5,6 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
+using Moq;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Interactive;
 using ReusableLibraryCode.Checks;
@@ -16,7 +18,7 @@ namespace Rdmp.Core.Tests.CommandExecution
     /// Base class for all tests which test RDMP CLI command line arguments to run <see cref="BasicCommandExecution"/> derrived
     /// classes
     /// </summary>
-    abstract class CommandCliTests : UnitTests
+    public abstract class CommandCliTests : UnitTests
     {
         protected override void OneTimeSetUp()
         {
@@ -34,6 +36,15 @@ namespace Rdmp.Core.Tests.CommandExecution
             invoker.CommandImpossible +=(s,c)=> throw new Exception(c.Command.ReasonCommandImpossible);
 
             return invoker;
+        }
+        
+        protected Mock<IBasicActivateItems> GetMockActivator()
+        {
+            var mock = new Mock<IBasicActivateItems>();
+            mock.Setup(m => m.RepositoryLocator).Returns(RepositoryLocator);
+            mock.Setup(m => m.GetDelegates()).Returns(new List<CommandInvokerDelegate>());
+            mock.Setup(m => m.Show(It.IsAny<string>()));
+            return mock;
         }
     }
 }

@@ -50,7 +50,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if (_childProvider.ProjectNumberToCohortsDictionary.ContainsKey(project.ProjectNumber.Value))
                 _compatibleCohorts = (_childProvider.ProjectNumberToCohortsDictionary[project.ProjectNumber.Value]).ToList();
 
-            //if theres only one compatible cohort and that one is already selected
+            //if there's only one compatible cohort and that one is already selected
             if (_compatibleCohorts.Count == 1 && _compatibleCohorts.Single().ID == _extractionConfiguration.Cohort_ID)
                 SetImpossible("The currently select cohort is the only one available");
 

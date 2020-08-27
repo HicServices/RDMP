@@ -156,9 +156,10 @@ namespace Rdmp.Core.DataLoad.Modules.LoadProgressUpdating
                             " but there is no ExecuteScalarSQL, ExecuteScalarSQL should be a SELECT statement that returns a specific value that reflects the maximum date in the load e.g. Select MAX(MyDate) FROM MyTable",
                             CheckResult.Fail));
 
+            // TODO: These checks are VERY Sql Server specific!
 
             if(Strategy == DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW)
-                if (ExecuteScalarSQL.Contains("..") || ExecuteScalarSQL.Contains(".dbo."))
+                if (ExecuteScalarSQL.Contains("..") || ExecuteScalarSQL.Contains(".[dbo].") || ExecuteScalarSQL.Contains(".dbo."))
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
                             "Strategy is " + Strategy +
@@ -166,11 +167,11 @@ namespace Rdmp.Core.DataLoad.Modules.LoadProgressUpdating
                             CheckResult.Warning));
 
             if (Strategy == DataLoadProgressUpdateStrategy.ExecuteScalarSQLInLIVE)
-                if (!(ExecuteScalarSQL.Contains("..") || ExecuteScalarSQL.Contains(".dbo.")))
+                if (!(ExecuteScalarSQL.Contains("..") || ExecuteScalarSQL.Contains(".[dbo].") || ExecuteScalarSQL.Contains(".dbo.")))
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
                             "Strategy is " + Strategy +
-                            " but the SQL does not contain '..' or '.dbo.', LIVE update queries should use fully table names i.e. 'Select MAX(dt) FROM [MyLIVEDatabase]..[MyTable]' NOT 'Select MAX(dt) FROM MyTable'",
+                            " but the SQL does not contain '..' or '.[dbo].' or '.dbo.', LIVE update queries should use fully table names i.e. 'Select MAX(dt) FROM [MyLIVEDatabase]..[MyTable]' NOT 'Select MAX(dt) FROM MyTable'",
                             CheckResult.Warning));
                         
         }

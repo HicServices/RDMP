@@ -16,6 +16,14 @@ namespace Rdmp.Core.Repositories.Construction
     [System.AttributeUsage(AttributeTargets.Constructor)]
     public class UseWithCommandLineAttribute : Attribute
     {
+        /// <summary>
+        /// List of the expected arguments the command should take in a format suitable for displaying in CLI help e.g. "&lt;param1&gt; &lt;param2&gt;"
+        /// </summary>
+        public string ParameterHelpList { get; set; } = @"<dynamic>";
 
+        /// <summary>
+        /// Help for each parameter listed in <see cref="ParameterHelpList"/> with descriptions of what you expect to be in them (suitable for displaying in CLI)
+        /// </summary>
+        public string ParameterHelpBreakdown { get; set; } = @"Unknown";
     }
 }

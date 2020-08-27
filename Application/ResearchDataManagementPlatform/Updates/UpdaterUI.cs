@@ -79,7 +79,7 @@ namespace ResearchDataManagementPlatform.Updates
 
                             var updatePath = mgr.ApplyReleases(_updateInfo, OnProgress).Result;
 
-                            var task = Task.Run(() => Process.Start(new ProcessStartInfo(Path.Combine(updatePath, "ResearchDataManagementPlatform.exe"))));
+                            Task.Run(() => Process.Start(new ProcessStartInfo(Path.Combine(updatePath, "ResearchDataManagementPlatform.exe"))));
                             Application.Exit();
                         }
                         else

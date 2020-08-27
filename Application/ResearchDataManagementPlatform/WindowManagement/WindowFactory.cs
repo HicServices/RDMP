@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
@@ -17,6 +18,7 @@ using Rdmp.UI.Collections;
 using Rdmp.UI.Icons;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using Rdmp.UI.SimpleControls;
 using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
@@ -119,17 +121,36 @@ namespace ResearchDataManagementPlatform.WindowManagement
             if(image != null)
                 content.Icon = _iconFactory.GetIcon(image);
 
-            var consult = control as IConsultableBeforeClosing;
-
-            if (consult != null)
+            if (control is IConsultableBeforeClosing consult)
                 content.FormClosing += consult.ConsultAboutClosing;
 
-            content.KeyPreview = true;
-            
-            var tab = content as RDMPSingleControlTab;
+            if(control is ISaveableUI saveable)
+                content.FormClosing += (s,e)=>saveable.GetObjectSaverButton()?.CheckForUnsavedChangesAnOfferToSave();            
 
-            if (tab != null)
+            content.KeyPreview = true;
+
+            if (content is RDMPSingleControlTab tab)
+            {
                 content.TabPageContextMenuStrip = new RDMPSingleControlTabMenu(activator, tab, _windowManager);
+
+                //Create handler for AfterPublish
+                RefreshObjectEventHandler handler = null;
+                handler = (s,e)=>
+                { 
+                    // After global changes, rebuild the context menu
+
+                    if(!content.IsDisposed)
+                        content.TabPageContextMenuStrip = new RDMPSingleControlTabMenu(activator, tab, _windowManager);
+                    else
+                        if(handler != null)
+                            activator.RefreshBus.AfterPublish -= handler; //don't leak handlers
+                };
+
+                //register the event handler
+                activator.RefreshBus.AfterPublish += handler;
+                
+            }
+                
         }
     }
 }

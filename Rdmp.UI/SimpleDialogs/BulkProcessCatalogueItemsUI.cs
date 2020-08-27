@@ -95,7 +95,7 @@ namespace Rdmp.UI.SimpleDialogs
                 UpdateFilter();
             }
 
-            if(e.KeyCode == Keys.Delete & lbPastedColumns.SelectedItem != null)
+            if(e.KeyCode == Keys.Delete && lbPastedColumns.SelectedItem != null)
             {
                 lbPastedColumns.Items.Remove(lbPastedColumns.SelectedItem);
                 UpdateFilter();

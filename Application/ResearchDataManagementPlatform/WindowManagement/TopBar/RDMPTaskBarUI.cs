@@ -62,7 +62,10 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         public void SetWindowManager(WindowManager manager)
         {
             _manager = manager;
-            _manager.TabChanged += _manager_TabChanged;
+
+            //Update task bar buttons enabledness when the user navigates somewhere
+            _manager.Navigation.Changed += (s,e)=> UpdateForwardBackEnabled();
+
             btnDataExport.Enabled = manager.RepositoryLocator.DataExportRepository != null;
             
             ReCreateDropDowns();
@@ -72,7 +75,10 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             _manager.ActivateItems.Theme.ApplyTo(toolStrip1);
         }
 
-        void _manager_TabChanged(object sender, IDockContent newTab)
+        /// <summary>
+        /// Updates the enabled status (greyed out) of the Forward/Back buttons based on the current <see cref="_manager"/> <see cref="NavigationTrack{T}"/>
+        /// </summary>
+        void UpdateForwardBackEnabled()
         {
             btnBack.Enabled = _manager.Navigation.CanBack();
             btnForward.Enabled = _manager.Navigation.CanForward();
@@ -282,10 +288,10 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 
             int backIndex = 1;
 
-            foreach (DockContent history in _manager.Navigation.GetHistory(16))
+            foreach (INavigation history in _manager.Navigation.GetHistory(16))
             {
                 var i = backIndex++;
-                btnBack.DropDownItems.Add(history.TabText,null,(a,b)=>_manager.Navigation.Back(i,true));
+                btnBack.DropDownItems.Add(history.ToString(),null,(a,b)=>_manager.Navigation.Back(i,true));
             }
         }
     }

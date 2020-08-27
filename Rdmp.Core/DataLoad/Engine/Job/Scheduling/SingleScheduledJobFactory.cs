@@ -11,6 +11,8 @@ using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Progress;
+using System;
+using System.Linq;
 
 namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling
 {
@@ -34,7 +36,7 @@ namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling
             return _jobDateGenerationStrategy.GetTotalNumberOfJobs(OverrideNumberOfDaysToLoad??_loadProgress.DefaultNumberOfDaysToLoadEachTime, false) > 0;
         }
 
-        public override IDataLoadJob Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator,IDataLoadEventListener listener,HICDatabaseConfiguration configuration)
+        protected override ScheduledDataLoadJob CreateImpl(IRDMPPlatformRepositoryServiceLocator repositoryLocator,IDataLoadEventListener listener,HICDatabaseConfiguration configuration)
         {
             var LoadDirectory = new LoadDirectory(LoadMetadata.LocationOfFlatFiles);
             return new ScheduledDataLoadJob(repositoryLocator,JobDescription, LogManager, LoadMetadata, LoadDirectory, listener,configuration)

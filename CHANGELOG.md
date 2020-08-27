@@ -8,13 +8,99 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
-### Added
+## [4.1.8] - 2020-08-17
 
-- Added "Go To" to tab right click context menu (previously only available in collections).
+### Fixed 
+
+- Fixed progress logging still not being allowed to go backwards when logging to database
+
+## [4.1.7] - 2020-08-14
 
 ### Changed
 
+- Schema names (Sql Server) are now wrapped correctly e.g. `[My Cool Schema]`
+- Progress logged (e.g. done x of y files) can now go backwards.
+
+### Added
+
+- New command `SetArgument` for easier changing of values of modules (e.g. [PipelineComponent]) from command line
+- Support for `DescribeCommand` help text on `NewObject` and other commands that take dynamic argument lists (command line)
+
+## [4.1.6] - 2020-08-04
+
+### Added
+
+- Added 'Save Changes' prompt when closing tabs
+- Added Import command for bringing in one or more [CohortIdentificationConfiguration] into an existing container (like Merge / UnMerge but for existing configurations)
+- Added checks for LoadProgress dates being in sensible ranges during DLE
+
+### Fixed
+
+- Fixed [bug when parsing lists of ints in CLI](https://github.com/HicServices/RDMP/issues/84)
+
+## [4.1.5] - 2020-07-14
+
+### Added
+
+- Added Merge command, for combining two or more configurations in cohort builder into one
+- Added Un Merge command for splitting one cohort builder configuration into multiple seperate ones
+- Improved error messages in extraction checking when there are:
+  -  2+ columns with the same name
+  -  2+ columns with the same location in extraction order
+  -  Cohort and dataset are on different servers
+- Added ability to search by ID in find dialog
+
+### Changed
+
+- Unhandled Application/Thread exceptions (rare) now show in the top right task bar instead of as a popup dialog
+
+### Fixed
+
+- Fixed lookups, supporting documents etc not appearing in the extractable artifacts tree view of the extraction window when non global.
+
+## [4.1.4] - 2020-07-02
+
+### Added
+
+- Custom Metadata Report now supports looping items in a Catalogue (use `$foreach CatalogueItem` to start and `$end` to end)
+- Added help to 'New Project' user interface
+- Forward/Backward now includes selection changes in tree collections
+- Added support for newline replacement in custom metadata doc templates
+
+### Changed
+
+- Improved usability of selecting multiple datasets in the 'New Project' user interface
+- When in multiple selection mode, double clicking a row in the object selection dialog will add it to the selection (previously would close the dialog with the double clicked item as the sole selected item)
+
+### Fixed
+
+- Extractable columns Order field defaults to Max + 1 (previously 1).  This results in new columns appearing last in extracted datasets and prevents Order collisions.
+- 'Select Core' columns UI button now works correctly with ProjectSpecific Catalogues (previously the highlighted rows would not change)
+- Fixed popup error message showing when deleting an ExtractionConfiguration where one or more datasets are currently being edited (in tabs) 
+- Fixed context menu opening error that could occur in cohort builder when datasets are not configured properly (e.g. have too many [IsExtractionIdentifier] columns).
+- Fixed alias changes not showing up as 'Differences' in edit dataeset extraction user interface
+- Fixed bugs in using GoTo menu of document tabs after a Refresh
+- Fixed ALTER context sub menu of TableInfo when Server property is null (or other fundamental connection details cannot be resolved).
+- Fixed whitespace only literal strings (e.g. `" "`) on command line causing error while parsing arguments
+- Fixed bug with YesNoToAll popups launched from ChecksUI when running as a modal dialogue.
+- Fixed bug with user setting 'Show Object Collection On Tab Change' when selecting tabs for objects in CohortBuilder configurations.
+
+## [4.1.3] - 2020-06-15
+
+### Added
+
+- Added `-f` option to CLI (`rdmp.exe -f somefile.yaml`) to run all commands in a file
+- Added "Go To" to tab right click context menu (previously only available in collections).
+- Private key encryption file location can now be customized per user by setting an environment variable `RDMP_KEY_LOCATION`.  This will override any key file location specified in the RDMP platform database.
+
+### Changed
+
+- Frozen Extraction Configurations folder always appears at the bottom of the branch under Projects
 - Improved layout of query building errors in QueryBuilder SQL viewing user interfaces
+
+### Fixed
+
+- Fixed bug in tree ordering when comparing a fixed order node to a non fixed order node.
 
 ## [4.1.2] - 2020-06-03
 
@@ -430,7 +516,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.1.2...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.1.8...develop
+[4.1.8]: https://github.com/HicServices/RDMP/compare/v4.1.7...v4.1.8
+[4.1.7]: https://github.com/HicServices/RDMP/compare/v4.1.6...v4.1.7
+[4.1.6]: https://github.com/HicServices/RDMP/compare/v4.1.5...v4.1.6
+[4.1.5]: https://github.com/HicServices/RDMP/compare/v4.1.4...v4.1.5
+[4.1.4]: https://github.com/HicServices/RDMP/compare/v4.1.3...v4.1.4
+[4.1.3]: https://github.com/HicServices/RDMP/compare/v4.1.2...v4.1.3
 [4.1.2]: https://github.com/HicServices/RDMP/compare/v4.1.1...v4.1.2
 [4.1.1]: https://github.com/HicServices/RDMP/compare/v4.1.0...v4.1.1
 [4.1.0]: https://github.com/HicServices/RDMP/compare/v4.0.3...v4.1.0
@@ -476,3 +568,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [Pipeline]: ./Documentation/CodeTutorials/Glossary.md#Pipeline
 
 [Lookup]: ./Documentation/CodeTutorials/Glossary.md#Lookup
+[CohortIdentificationConfiguration]: ./Documentation/CodeTutorials/Glossary.md#CohortIdentificationConfiguration

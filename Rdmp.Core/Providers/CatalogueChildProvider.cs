@@ -406,7 +406,7 @@ namespace Rdmp.Core.Providers
 
             foreach (AggregateConfiguration ac in AllAggregateConfigurations)
             {
-                ac.InjectKnown(joinableDictionaryByAggregateConfigurationId.TryGetValue(ac.ID,out JoinableCohortAggregateConfiguration joinable) //if theres a joinable
+                ac.InjectKnown(joinableDictionaryByAggregateConfigurationId.TryGetValue(ac.ID,out JoinableCohortAggregateConfiguration joinable) //if there's a joinable
                     ? joinable //inject that we know the joinable (and what it is)
                     : null); //otherwise inject that it is not a joinable (suppresses database checking later)
             }
@@ -1132,7 +1132,7 @@ namespace Rdmp.Core.Providers
         private void AddChildren(CohortAggregateContainer container, DescendancyList descendancy)
         {
             //all our children (containers and aggregates)
-            List<IOrderable> children = new List<IOrderable>();
+            List<IOrderable> children;
 
             //get subcontainers
             var subcontainers = _cohortContainerManager.GetChildren(container).OfType<CohortAggregateContainer>().ToList();

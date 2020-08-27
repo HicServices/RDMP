@@ -28,10 +28,6 @@ namespace Rdmp.Core.Logging
             get { return _isClosed; } 
         }
 
-        private int _updates;
-        private int _deletes;
-        private int _inserts;
-        private int _discardedDuplicates;
         private int _errorRows; // incremented only through RowErrorLogging class
         private string _suggestedRollbackCommand;
         private int _id;
@@ -65,10 +61,10 @@ namespace Rdmp.Core.Logging
             this._databaseSettings = parent.DatabaseSettings;
 
             _startTime = DateTime.Now;
-            _inserts = 0;
-            _updates = 0;
-            _deletes = 0;
-            _discardedDuplicates = 0;
+            Inserts = 0;
+            Updates = 0;
+            Deletes = 0;
+            DiscardedDuplicates = 0;
             _errorRows = 0;
             
             _suggestedRollbackCommand = suggestedRollbackCommand;
@@ -142,83 +138,23 @@ namespace Rdmp.Core.Logging
         /// <summary>
         /// Increases or Gets the number of Updated records, use += instead of trying to set a specific value.  Important:Make sure you increment with Affected Rows, not just UPDATE commands sent)
         /// </summary>
-        public int Updates
-        {
-            get
-            {
-             
-                return _updates;
-            }
-
-            set
-            {
-                if (_updates > value)
-                    throw new Exception("Illegal attempt to reduce the value of the Updates, you can only increase the value of this counter");
-
-                _updates = value;
-            }
-        }
+        public int Updates {get;set;}
 
 
         /// <summary>
         /// Increases or Gets the number of Deleted records, use += instead of trying to set a specific value.  Important:Make sure you increment with Affected Rows, not just DELETE commands sent)
         /// </summary>
-        public int Deletes
-        {
-            get
-            {
-             
-                return _deletes;
-            }
-
-            set
-            {
-                if (_deletes > value)
-                    throw new Exception("Illegal attempt to reduce the value of Deletes, you can only increase the value of this counter");
-
-                _deletes = value;
-            }
-        }
+        public int Deletes {get;set;}
 
         /// <summary>
         /// Increases or Gets the number of Inserted records, use += instead of trying to set a specific value
         /// </summary>
-        public int Inserts
-        {
-            get
-            {
-          
-                return _inserts;
-            }
-
-            set
-            {
-                if (_inserts > value)
-                    throw new Exception("Illegal attempt to reduce the value of Inserts, you can only increase the value of this counter");
-
-                _inserts = value;
-            }
-        }
+        public int Inserts {get;set;}
 
         /// <summary>
         /// Increases or Gets the number of Discarded Duplicate records, use += instead of trying to set a specific value
         /// </summary>
-        public int DiscardedDuplicates
-        {
-            get
-            {
-          
-                return _discardedDuplicates;
-            }
-
-            set
-            {
-                if (_discardedDuplicates > value)
-                    throw new Exception("Illegal attempt to reduce the value of DiscardedDuplicates, you can only increase the value of this counter");
-
-                _discardedDuplicates = value;
-            }
-        }
+        public int DiscardedDuplicates {get;set;}
 
         /// <summary>
         /// Gets the number of ErrorRows during this data run so far, this is automatically increased by the RowErrorLogging class

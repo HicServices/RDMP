@@ -99,9 +99,6 @@ namespace Rdmp.Core.Logging.Listeners
                     TableLoads.Add(e.TaskDescription,t);
                 }
 
-                if (e.Progress.Value < TableLoads[e.TaskDescription].Inserts)
-                    throw new Exception("Received OnProgress event with a TaskDescription '" + e.TaskDescription +"' which has the same name as a previous Task but the number of Inserts is lower in this event.  Progress is not allowed to go backwards!");
-
                 TableLoads[e.TaskDescription].Inserts = e.Progress.Value;
             }
         }

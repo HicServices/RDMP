@@ -48,9 +48,12 @@ namespace Rdmp.UI.Menus
 
             Items.Add("Add Aggregate(s) into container", _activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph, OverlayKind.Import), (s, e) => AddAggregates());
             Items.Add("Import (Copy of) Cohort Set into container", _activator.CoreIconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Import), (s, e) => AddCohortAggregate());
-            
+            Add(new ExecuteCommandImportCohortIdentificationConfiguration(_activator,null,container));
+
             foreach (ToolStripMenuItem item in Items)
                 item.Enabled = item.Enabled && (cic != null && !cic.Frozen);
+
+            Add(new ExecuteCommandUnMergeCohortIdentificationConfiguration(_activator,container));
 
             //Add Graph results of container commands
 

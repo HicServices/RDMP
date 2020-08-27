@@ -25,6 +25,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private readonly FileInfo _template;
         private readonly string _fileNaming;
         private readonly bool _oneFile;
+        private readonly string _newlineSub;
 
         public ExecuteCommandExtractMetadata(IBasicActivateItems basicActivator, 
             Catalogue[] catalogues, 
@@ -36,13 +37,16 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             [DemandsInitialization("How output files based on the template should be named.  Uses same replacement strategy as template contents e.g. $Name.xml")]
             string fileNaming, 
             [DemandsInitialization("True to append all ouputs into a single file.  False to output a new file for every Catalogue")]
-            bool oneFile):base(basicActivator)
+            bool oneFile, 
+            [DemandsInitialization("Optional, specify a replacement for newlines when found in fields e.g. <br/>.  Leave as null to leave newlines intact.")]
+            string newlineSub):base(basicActivator)
         {
             _catalogues = catalogues;
             _outputDirectory = outputDirectory;
             _template = template;
             _fileNaming = fileNaming;
             _oneFile = oneFile;
+            _newlineSub = newlineSub;
         }
 
         public override void Execute()
@@ -81,7 +85,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if (string.IsNullOrWhiteSpace(fileNaming))
                 return;
 
-            var reporter = new CustomMetadataReport();
+            var reporter = new CustomMetadataReport()
+            {
+                NewlineSubstitution = _newlineSub
+            };
             reporter.GenerateReport(catas.Cast<Catalogue>().ToArray(),outputDir,template, fileNaming, _oneFile);
         }
     }

@@ -6,7 +6,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
@@ -50,6 +52,14 @@ namespace Rdmp.Core.CommandLine.Runners
                  new CommandLineObjectPicker(_options.CommandArgs, repositoryLocator) :
                 null;
             
+            if(!string.IsNullOrWhiteSpace(_options.File) && _options.Script == null)
+                throw new Exception("Command line option File was provided but Script property was null.  The host API failed to deserialize the file or correctly use the ExecuteCommandOptions class");
+
+            if(_options.Script != null)
+            {
+                RunScript(_options.Script,repositoryLocator);
+            }
+            else
             if (string.IsNullOrWhiteSpace(_options.CommandName))
                 RunCommandExecutionLoop(repositoryLocator);
             else
@@ -63,7 +73,19 @@ namespace Rdmp.Core.CommandLine.Runners
             if(_commands.ContainsKey(command))
                 _invoker.ExecuteCommand(_commands[command],_picker);
             else
-                _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error,$"Unknown or Unsupported Command '{command}', use {BasicCommandExecution.GetCommandName<ExecuteCommandListSupportedCommands>()} to see available commands" ));
+            {
+                var suggestions =
+                    _commands.Keys.Where(c => CultureInfo.CurrentCulture.CompareInfo.IndexOf(c,command, CompareOptions.IgnoreCase) >= 0).ToArray();
+
+                StringBuilder msg = new StringBuilder($"Unknown or Unsupported Command '{command}', use {BasicCommandExecution.GetCommandName<ExecuteCommandListSupportedCommands>()} to see available commands");
+
+                if (suggestions.Any())
+                    msg.AppendLine("Similar commands include:" + Environment.NewLine +
+                                   string.Join(Environment.NewLine, suggestions));
+
+                _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error,msg.ToString()));
+            }
+                
         }
 
         /// <summary>
@@ -80,11 +102,7 @@ namespace Rdmp.Core.CommandLine.Runners
                 Console.WriteLine("Enter Command (or 'exit')");
                 var command = _input.GetString("Command", _commands.Keys.ToList());
 
-                if (command.Contains(' '))
-                {
-                    _picker = new CommandLineObjectPicker(SplitCommandLine(command).Skip(1).ToArray(),repositoryLocator);
-                    command = command.Substring(0, command.IndexOf(' '));
-                }
+                command = GetCommandAndPickerFromLine(command, out _picker,repositoryLocator);
 
                 if (string.Equals(command, "exit", StringComparison.CurrentCultureIgnoreCase))
                     break;
@@ -95,49 +113,87 @@ namespace Rdmp.Core.CommandLine.Runners
             }
         }
 
-        public static IEnumerable<string> SplitCommandLine(string commandLine)
-        {
-            bool inQuotes = false;
-
-            return commandLine.Split(c =>
-                {
-                    if (c == '\"')
-                        inQuotes = !inQuotes;
-
-                    return !inQuotes && c == ' ';
-                })
-                .Select(arg => arg.Trim().TrimMatchingQuotes('\"'))
-                .Where(arg => !string.IsNullOrEmpty(arg));
-        }
-    }
-}
-
-public static class StringExtensions
-{
-
-    public static IEnumerable<string> Split(this string str, 
-        Func<char, bool> controller)
-    {
-        int nextPiece = 0;
-
-        for (int c = 0; c < str.Length; c++)
-        {
-            if (controller(str[c]))
+        /// <summary>
+        /// Takes a single command line e.g. "list Catalogue" and spits it into a command "list" (returned) and the arguments list (as <paramref name="picker"/>)
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="picker"></param>
+        /// <param name="repositoryLocator"></param>
+        /// <returns></returns>
+        private string GetCommandAndPickerFromLine(string command, out CommandLineObjectPicker picker,IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        {    
+            if (command.Contains(' '))
             {
-                yield return str.Substring(nextPiece, c - nextPiece);
-                nextPiece = c + 1;
+                picker = new CommandLineObjectPicker(SplitCommandLine(command).Skip(1).ToArray(),repositoryLocator);
+                return command.Substring(0, command.IndexOf(' '));
+            }
+
+            picker = null;
+            return command;
+        }
+
+        /// <summary>
+        /// Runs all commands in the provided script
+        /// </summary>
+        /// <param name="script">Location of the file to run</param>
+        /// <param name="repositoryLocator"></param>
+        private void RunScript(RdmpScript script, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        {
+            if((script.Commands?.Length ?? 0) == 0)
+                throw new ArgumentException("script was empty",nameof(script));
+
+            foreach(string s in script.Commands)
+            {
+                try
+                {
+                    var cmd = GetCommandAndPickerFromLine(s,out _picker,repositoryLocator);
+                    RunCommand(cmd);
+                }
+                catch(Exception ex)
+                {
+                    throw new Exception($"Error executing script.  Problem line was '{s}':{ex.Message}",ex);
+                }
             }
         }
 
-        yield return str.Substring(nextPiece);
-    }
+        public static IEnumerable<string> SplitCommandLine(string commandLine)
+        {
+            char? inQuotes = null;
 
-    public static string TrimMatchingQuotes(this string input, char quote)
-    {
-        if ((input.Length >= 2) && 
-            (input[0] == quote) && (input[input.Length - 1] == quote))
-            return input.Substring(1, input.Length - 2);
+            StringBuilder word = new StringBuilder();
+            
+            for(int i=0; i<commandLine.Length;i++)
+            {
+                char c = commandLine[i];
 
-        return input;
+                //if we enter quotes and it's the first letter in the word
+                if(inQuotes == null && (c == '\'' || c == '"') && word.Length == 0)
+                {
+                    inQuotes = c;
+                }                
+                else
+                if(c == inQuotes)
+                {
+                    //if we exit quotes
+                    inQuotes = null;
+                }
+                else
+                if(c == ' ' && inQuotes == null) 
+                {
+                    //break character outside of quotes
+                    string resultWord = word.ToString().Trim();
+                    if(!string.IsNullOrWhiteSpace(resultWord))
+                        yield return resultWord;
+
+                    word.Clear();
+                }
+                else
+                    word.Append(c); //regular character
+            }
+
+            string finalWord = word.ToString().Trim();
+            if(!string.IsNullOrWhiteSpace(finalWord))
+                yield return finalWord;            
+        }
     }
 }

@@ -13,7 +13,7 @@ addons:
     sources:
     - sourceline: 'deb [arch=amd64] https://packages.microsoft.com/ubuntu/18.04/prod bionic main'
       key_url: 'https://packages.microsoft.com/keys/microsoft.asc'
-    - sourceline: 'deb [arch=amd64,arm64,armhf] https://packages.microsoft.com/ubuntu/16.04/mssql-server-2017 xenial main'
+    - sourceline: 'deb [arch=amd64,arm64,armhf] https://packages.microsoft.com/ubuntu/18.04/mssql-server-2019 bionic main'
 
 services:
   - postgresql
@@ -25,8 +25,9 @@ env:
   - ACCEPT_EULA=Y
   - MSSQL_PID='developer'
 
-before_install:
-- sudo apt-get install -y --no-install-recommends mssql-tools mssql-server dotnet-runtime-2.2 dotnet-sdk-3.1 libc6-dev libgdiplus
+before_script:
+- sudo apt-get install -y --no-install-recommends libc6-dev libgdiplus dotnet-sdk-2.2 dotnet-sdk-3.1
+- sudo apt-get install -y --no-install-recommends mssql-tools mssql-server
 - sudo /opt/mssql/bin/mssql-conf -n setup accept-eula
 
 script:

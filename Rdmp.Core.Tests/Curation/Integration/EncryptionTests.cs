@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Repositories.Managers;
 using ReusableLibraryCode;
 using Tests.Common;
 
@@ -204,6 +205,9 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void PasswordTooLong()
         {
+            if(RepositoryLocator.CatalogueRepository.EncryptionManager is PasswordEncryptionKeyLocation em && !string.IsNullOrWhiteSpace(em.GetKeyFileLocation()))
+                Assert.Inconclusive("Could not run test because there is already an encryption key set up.  Likely one that handles very long passwords");
+
             string password = "a";
             for (int i = 0; i < 200; i++)
                 password += "a";

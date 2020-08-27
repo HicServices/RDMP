@@ -176,12 +176,12 @@ namespace Rdmp.UI.Icons.IconProvision
             
             RDMPConcept t;
 
-            //It is a System.Type, get the name and see if theres a corresponding image
+            //It is a System.Type, get the name and see if there's a corresponding image
             if (concept is Type)
                 if (Enum.TryParse(((Type)concept).Name, out t))
                     return GetImageImpl(ImagesCollection[t], kind);
 
-            //It is an instance of something, get the System.Type and see if theres a corresponding image
+            //It is an instance of something, get the System.Type and see if there's a corresponding image
             if(Enum.TryParse(conceptTypeName,out t))
                 return GetImageImpl(ImagesCollection[t],kind);
 

@@ -35,6 +35,9 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
 
         private Type GetType(string arg)
         {
+            if(string.IsNullOrWhiteSpace(arg))
+                return null;
+
             try
             {
                 return 
@@ -42,7 +45,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
                     ??
                     RepositoryLocator.CatalogueRepository.MEF.GetType(arg);
             }
-            catch (AmbiguousTypeException )
+            catch (Exception)
             {
                 return null;
             }

@@ -85,7 +85,7 @@ namespace Rdmp.UI.ChecksUI
         public event EventHandler<AllChecksCompleteHandlerArgs> AllChecksComplete;
         
         Thread _checkingThread; 
-        private YesNoYesToAllDialog yesNoYesToAllDialog = new YesNoYesToAllDialog();
+        private YesNoYesToAllDialog yesNoYesToAllDialog;
         
         /// <summary>
         /// Pauses drawing the list view while you make changes to it
@@ -102,7 +102,12 @@ namespace Rdmp.UI.ChecksUI
         {
             olvChecks.EndUpdate();
         }
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
 
+             yesNoYesToAllDialog = new YesNoYesToAllDialog();
+        }
         public void StartChecking(ICheckable rootCheckable, bool bClearUI =true)
         {
             if(bClearUI)

@@ -144,10 +144,10 @@ namespace Rdmp.Core.Tests.CohortCreation
 SET @sex='M';
 /*cic_{0}_UnitTestAggregate1*/
 SELECT 
-["+TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData].[chi],
+["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi],
 count(*)
 FROM 
-["+TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData]
+["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData]
 WHERE
 (
 /*MyFilter*/
@@ -155,9 +155,9 @@ sex=@sex
 )
 
 group by 
-["+TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData].[chi]
+["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
 order by 
-["+TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData].[chi]",cohortIdentificationConfiguration.ID)),CollapseWhitespace(aggregateSql));
+["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]",cohortIdentificationConfiguration.ID)),CollapseWhitespace(aggregateSql));
 
 //the expected differences are
 //1. should not have the count
@@ -171,9 +171,9 @@ SET @sex='M';
 /*cic_"+cohortIdentificationConfiguration.ID+@"_UnitTestAggregate1*/
 SELECT
 distinct
-["+TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData].[chi]
+["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
 FROM 
-["+TestDatabaseNames.Prefix+@"ScratchArea].dbo.[BulkData]
+["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData]
 WHERE
 (
 /*MyFilter*/

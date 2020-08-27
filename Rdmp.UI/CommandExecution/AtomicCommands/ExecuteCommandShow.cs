@@ -30,9 +30,12 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public ExecuteCommandShow(IActivateItems activator, IMapsDirectlyToDatabaseTable objectToShow, int expansionDepth, bool useIconAndTypeName=false):base(activator)
         {
             _objectToShow = objectToShow;
-            _objectType = _objectToShow.GetType();
+            _objectType = _objectToShow?.GetType();
             _expansionDepth = expansionDepth;
             _useIconAndTypeName = useIconAndTypeName;
+
+            if(_objectToShow == null)
+                SetImpossible("No objects found");
         }
 
 

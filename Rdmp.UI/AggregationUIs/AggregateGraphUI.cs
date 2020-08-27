@@ -541,7 +541,7 @@ namespace Rdmp.UI.AggregationUIs
                 chart1.Series[index].Name = _dt.Columns[index + 1].ColumnName;
             }
 
-            //don't show legend if theres only the one series
+            //don't show legend if there's only one series
             if(chart1.Series.Count == 1)
                 chart1.Legends.Clear();
 

@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
@@ -45,6 +46,10 @@ namespace Rdmp.UI.Menus
 
         public ToolStripMenuItem GetMenu(IMapsDirectlyToDatabaseTable forObject)
         {
+            //forget old values, get them up to the minute
+            if(forObject is IInjectKnown ii)
+                ii.ClearAllInjections();
+
             var menu = new ToolStripMenuItem(GoTo);
             
             // Go to import / export definitions
@@ -60,23 +65,48 @@ namespace Rdmp.UI.Menus
             // cic => associated projects
             if (forObject is CohortIdentificationConfiguration cic)
             {
-                if(_activator.CoreChildProvider is DataExportChildProvider dx)
-                    AddGoTo(menu,()=>dx.AllProjectAssociatedCics.Where(a=>a.CohortIdentificationConfiguration_ID == cic.ID).Select(a=>a.Project).Distinct(),"Project(s)");
+                AddGoTo(menu,()=>{
+                    if(_activator.CoreChildProvider is DataExportChildProvider dx)
+                        if(dx.AllProjectAssociatedCics != null)
+                            return dx.AllProjectAssociatedCics.Where(a=>a.CohortIdentificationConfiguration_ID == cic.ID).Select(a=>a.Project).Distinct();
+                    
+                    return new CohortIdentificationConfiguration[0];
+                },"Project(s)");
             }
            
             if (forObject is ColumnInfo columnInfo)
             {
                 AddGoTo<TableInfo>(menu,columnInfo.TableInfo_ID, "Table");
-                AddGoTo(menu,()=>_activator.CoreChildProvider.AllCatalogueItems.Where(ci=>ci.ColumnInfo_ID == columnInfo.ID),"Catalogue Item(s)");
+                AddGoTo(menu,()=>_activator.CoreChildProvider.AllCatalogueItems.Where(catItem=>catItem.ColumnInfo_ID == columnInfo.ID),"Catalogue Item(s)");
                 AddGoTo<ANOTable>(menu,columnInfo.ANOTable_ID);
+            }
+            
+            if (forObject is ExtractionInformation ei)
+            {
+                AddGoTo<Catalogue>(menu,ei.CatalogueItem?.Catalogue_ID, "Catalogue");
+                AddGoTo<CatalogueItem>(menu,ei.CatalogueItem_ID, "CatalogueItem");
+                AddGoTo(menu,ei.ColumnInfo,"Column");
+            }
+            
+            if (forObject is CatalogueItem ci)
+            {
+                AddGoTo<Catalogue>(menu,ci.Catalogue_ID, "Catalogue");
+                AddGoTo(menu,ci.ExtractionInformation, "ExtractionInformation");
+                AddGoTo(menu,ci.ColumnInfo, "Column");
             }
 
             if (forObject is ExtractableDataSet eds)
             {
                 AddGoTo<Catalogue>(menu,eds.Catalogue_ID);
             
-                if(_activator.CoreChildProvider is DataExportChildProvider dx)
-                    AddGoTo(menu,()=>dx.SelectedDataSets.Where(s=>s.ExtractableDataSet_ID == eds.ID).Select(s=>s.ExtractionConfiguration),"Extraction Configurations");
+                AddGoTo(menu,()=>
+                {
+                    if(_activator.CoreChildProvider is DataExportChildProvider dx)
+                        return dx.SelectedDataSets.Where(s=>s.ExtractableDataSet_ID == eds.ID).Select(s=>s.ExtractionConfiguration);
+                    
+                    return new SelectedDataSets[0];               
+                }                
+                ,"Extraction Configurations");
             }
 
             if(forObject is GovernancePeriod period)
@@ -96,7 +126,7 @@ namespace Rdmp.UI.Menus
                 AddGoTo<Catalogue>(menu,selectedDataSet.ExtractableDataSet.Catalogue_ID);
 
             if(forObject is TableInfo tableInfo)
-                AddGoTo(menu,()=>tableInfo.ColumnInfos.SelectMany(c=>_activator.CoreChildProvider.AllCatalogueItems.Where(ci=>ci.ColumnInfo_ID == c.ID).Select(ci=>ci.Catalogue)).Distinct(),"Catalogue(s)");
+                AddGoTo(menu,()=>tableInfo.ColumnInfos.SelectMany(c=>_activator.CoreChildProvider.AllCatalogueItems.Where(catItem=>catItem.ColumnInfo_ID == c.ID).Select(catItem=>catItem.Catalogue)).Distinct(),"Catalogue(s)");
 
             if (forObject is AggregateConfiguration aggregate)
             {
@@ -132,8 +162,14 @@ namespace Rdmp.UI.Menus
             }
             
             if(forObject is ExtractableCohort cohort)
-                if (_activator.CoreChildProvider is DataExportChildProvider dx)
-                    AddGoTo(menu,dx.ExtractionConfigurations.Where(ec => ec.Cohort_ID == cohort.ID),"Extraction Configurations");
+                AddGoTo(menu,()=>
+                    {
+                        if(_activator.CoreChildProvider is DataExportChildProvider dx)
+                            return dx.ExtractionConfigurations.Where(ec => ec.Cohort_ID == cohort.ID);
+                    
+                        return new ExtractionConfiguration[0];
+                    }               
+                    ,"Extraction Configurations");
             
             //if it is a masquerader and masquerading as a DatabaseEntity then add a goto the object
             if (forObject is IMasqueradeAs masquerader)

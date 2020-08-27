@@ -76,13 +76,8 @@ namespace Rdmp.UI.MainFormUITabs
             base.SetDatabaseObject(activator,databaseObject);
             
 
-            if (_catalogueItem.ExtractionInformation != null)
-                CommonFunctionality.AddToMenu(new ExecuteCommandActivate(activator, _catalogueItem.ExtractionInformation), "Go To Extraction Information");
-            else
+            if (_catalogueItem.ExtractionInformation == null)
                 CommonFunctionality.AddToMenu(new ExecuteCommandMakeCatalogueItemExtractable(activator, _catalogueItem), "Make Extractable");
-
-            if (_catalogueItem.ColumnInfo_ID != null)
-                CommonFunctionality.AddToMenu(new ExecuteCommandShow(activator, _catalogueItem.ColumnInfo, 0, true));
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, CatalogueItem databaseObject)
