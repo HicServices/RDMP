@@ -14,6 +14,7 @@
         <copyright>Copyright 2018-2019</copyright>
         <dependencies>
 			      <dependency id="HIC.BadMedicine" version="0.1.6" />
+            <dependency id="System.Windows.Forms.DataVisualization" version="1.0.0-prerelease.20110.1" />
             <dependency id="HIC.FAnsiSql" version="1.0.5" />
             <dependency id="DockPanelSuite.ThemeVS2015" version="2.13.0" />
             <dependency id="CsvHelper" version="15.0.5" />
