@@ -24,7 +24,7 @@
             <dependency id="ObjectListView.Official" version="2.9.1" />
             <dependency id="CommandLineParser" version="2.8.0" />
             <dependency id="SSH.NET" version="2016.1.0" />
-            <dependency id="NLog" version="4.7.3" />
+            <dependency id="NLog" version="4.7.4" />
             <dependency id="ExcelNumberFormat" version="1.0.10" />
             <dependency id="NPOI" version="2.4.1" />
             <dependency id="System.Runtime.Loader" version="4.3.0" />

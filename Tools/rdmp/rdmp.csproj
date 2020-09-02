@@ -34,7 +34,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Terminal.Gui" Version="0.81.0" />
+    <PackageReference Include="Terminal.Gui" Version="0.89.4" />
     <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
     <PackageReference Include="YamlDotNet" Version="8.1.2" />
   </ItemGroup>

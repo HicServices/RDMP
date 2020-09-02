@@ -156,9 +156,9 @@ namespace Rdmp.Core.CommandLine.Gui
 
                 win.Add(searchLabel);
                 win.Add(mainInput);
-                win.SetFocus(mainInput);
+                mainInput.SetFocus();
                 
-                mainInput.Changed += (s, e) =>
+                mainInput.TextChanged += (s) =>
                 {
                     listView.SetSource((_collection = BuildList(GetListAfterSearch(mainInput.Text.ToString()))).ToList());
                 };

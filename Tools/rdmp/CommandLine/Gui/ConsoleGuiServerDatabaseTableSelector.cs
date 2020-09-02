@@ -71,7 +71,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 Y = 0,
                 Width = Dim.Fill(),
             };
-            tbuser.Changed += (s, e) => Username = ((TextField)s).Text.ToString();
+            tbuser.TextChanged += (s) => Username = tbuser.Text.ToString();
             
             //////////////////////////////////////////////// Password  //////////////////////
             
@@ -87,7 +87,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 Y = Pos.Bottom(lbluser),
                 Width = Dim.Fill()
             };
-            tbPassword.Changed += (s, e) => Password = ((TextField)s).Text.ToString();
+            tbPassword.TextChanged += (s) => Password = tbPassword.Text.ToString();
 
             //////////////////////// Database Type /////////////
 
@@ -120,7 +120,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 Y = Pos.Bottom(btnDatabaseType),
                 Width = Dim.Fill()
             };
-            tbServer.Changed += (s, e) => Server = ((TextField)s).Text.ToString();
+            tbServer.TextChanged += (s) => Server = tbServer.Text.ToString();
             
 
             //////////////////////////////////////////////// Database  //////////////////////
@@ -137,7 +137,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 Y = Pos.Bottom(lblServer),
                 Width = Dim.Fill() - 20
             };
-            tbDatabase.Changed += (s, e) => Database = ((TextField)s).Text.ToString();
+            tbDatabase.TextChanged += (s) => Database = tbDatabase.Text.ToString();
 
             var btnCreateDatabase = new Button("Create Database")
             {
@@ -164,7 +164,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 Width = Dim.Fill()
             };
 
-            tbSchema.Changed += (s, e) => Schema = ((TextField)s).Text.ToString();
+            tbSchema.TextChanged += (s) => Schema = tbSchema.Text.ToString();
 
 
             //////////////////////////////////////////////// Table  //////////////////////
@@ -191,7 +191,7 @@ namespace Rdmp.Core.CommandLine.Gui
             };
 
 
-            tbTable.Changed += (s, e) => Table = ((TextField)s).Text.ToString();
+            tbTable.TextChanged += (s) => Table = tbTable.Text.ToString();
             
             win.Add(lbluser);
             win.Add(tbuser);

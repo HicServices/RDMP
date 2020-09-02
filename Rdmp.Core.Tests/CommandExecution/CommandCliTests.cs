@@ -18,7 +18,7 @@ namespace Rdmp.Core.Tests.CommandExecution
     /// Base class for all tests which test RDMP CLI command line arguments to run <see cref="BasicCommandExecution"/> derrived
     /// classes
     /// </summary>
-    abstract class CommandCliTests : UnitTests
+    public abstract class CommandCliTests : UnitTests
     {
         protected override void OneTimeSetUp()
         {
