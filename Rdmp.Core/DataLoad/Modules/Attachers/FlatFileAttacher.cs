@@ -39,9 +39,6 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
 
         [DemandsInitialization("Determines the behaviour of the system when no files are matched by FilePattern.  If true the entire data load process immediately stops with exit code LoadNotRequired, if false then the load proceeds as normal (useful if for example if you have multiple Attachers and some files are optional)")]
         public bool SendLoadNotRequiredIfFileNotFound { get; set; }
-        
-        [DemandsInitialization(Attacher.ExplicitDateTimeFormat_DemandDescription)]
-        public string ExplicitDateTimeFormat {get;set;}
 
         public FlatFileAttacher() : base(true)
         {

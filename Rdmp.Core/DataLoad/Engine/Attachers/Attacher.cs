@@ -32,6 +32,12 @@ namespace Rdmp.Core.DataLoad.Engine.Attachers
             set => _culture = value;
         }
 
+        private string _explicitDateTimeFormat;
+        [DemandsInitialization(ExplicitDateTimeFormat_DemandDescription)]
+        public virtual string ExplicitDateTimeFormat{
+            get => _explicitDateTimeFormat;
+            set => _explicitDateTimeFormat = value; }
+
         protected DiscoveredDatabase _dbInfo;
 
         public abstract ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken);
