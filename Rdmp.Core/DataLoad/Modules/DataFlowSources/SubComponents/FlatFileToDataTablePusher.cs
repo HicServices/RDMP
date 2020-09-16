@@ -30,6 +30,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
         private readonly Func<string, object> _hackValuesFunc;
         private readonly bool _attemptToResolveNewlinesInRecords;
         private readonly CultureInfo _culture;
+        private readonly string _explicitDateTimeFormat;
         TypeDeciderFactory typeDeciderFactory;
 
         /// <summary>
@@ -55,18 +56,18 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
         /// </summary>
         private bool _haveComplainedAboutColumnMismatch;
 
-        public FlatFileToDataTablePusher(FlatFileToLoad fileToLoad, FlatFileColumnCollection headers, Func<string, object> hackValuesFunc, bool attemptToResolveNewlinesInRecords,CultureInfo culture)
+        public FlatFileToDataTablePusher(FlatFileToLoad fileToLoad, FlatFileColumnCollection headers, Func<string, object> hackValuesFunc, bool attemptToResolveNewlinesInRecords,CultureInfo culture, string explicitDateTimeFormat)
         {
             _fileToLoad = fileToLoad;
             _headers = headers;
             _hackValuesFunc = hackValuesFunc;
             _attemptToResolveNewlinesInRecords = attemptToResolveNewlinesInRecords;
             _culture = culture ?? CultureInfo.CurrentCulture;
-
+            _explicitDateTimeFormat = explicitDateTimeFormat;
              typeDeciderFactory = new TypeDeciderFactory(_culture);
-
-
-
+            
+            if(!string.IsNullOrWhiteSpace(explicitDateTimeFormat))
+            typeDeciderFactory.Settings.ExplicitDateFormats = new []{ explicitDateTimeFormat};
         }
 
         public int PushCurrentLine(CsvReader reader,FlatFileLine lineToPush, DataTable dt,IDataLoadEventListener listener, FlatFileEventHandlers eventHandlers)
@@ -260,6 +261,9 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
         {
             Dictionary<int, IDecideTypesForStrings> deciders = new Dictionary<int, IDecideTypesForStrings>();
             var factory = new TypeDeciderFactory(_culture);
+            
+            if(!string.IsNullOrWhiteSpace(_explicitDateTimeFormat))
+                factory.Settings.ExplicitDateFormats = new []{ _explicitDateTimeFormat};
 
             DataTable dtCloned = workingTable.Clone();
 

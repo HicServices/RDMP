@@ -22,6 +22,7 @@ namespace Rdmp.Core.DataLoad.Engine.Attachers
     public abstract class Attacher : IAttacher
     {
         public const string Culture_DemandDescription = "Culture to use for bulk insert operations (determines date formats etc)";
+        public const string ExplicitDateTimeFormat_DemandDescription =  "Optional - explicit format for all date columns e.g. yyyy-MM-dd. See https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings";
 
         private CultureInfo _culture;
         [DemandsInitialization(Culture_DemandDescription)]

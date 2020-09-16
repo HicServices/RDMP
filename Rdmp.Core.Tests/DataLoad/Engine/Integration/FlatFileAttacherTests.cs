@@ -147,6 +147,60 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             File.Delete(filename);
         }
 
+
+        
+        [Test]
+        public void Test_ExplicitDateTimeFormat_Attachment()
+        {
+            string filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
+            var sw = new StreamWriter(filename);
+
+            sw.WriteLine("name,name2");
+            sw.WriteLine("Bob,20011301");
+            sw.WriteLine("Franky,20021301");
+
+            sw.Flush();
+            sw.Close();
+            sw.Dispose();
+
+            var attacher = new AnySeparatorFileAttacher();
+            attacher.Initialize(LoadDirectory, _database);
+            attacher.Separator = ",";
+            attacher.FilePattern = "bob*";
+            attacher.TableName = "Bob";
+            attacher.ExplicitDateTimeFormat = "yyyyddMM";
+
+            
+            var table = _database.ExpectTable("Bob");
+            table.Truncate();
+
+            Assert.IsTrue(table.Exists());
+            table.DiscoverColumn("name");
+            var name2 = table.DiscoverColumn("name2");
+            name2.DataType.AlterTypeTo("datetime2");
+
+            //other cases (i.e. correct separator)
+            attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
+
+            using (var con = _database.Server.GetConnection())
+            {
+
+                con.Open();
+                var r = _database.Server.GetCommand("Select * from Bob", con).ExecuteReader();
+                Assert.IsTrue(r.Read());
+                Assert.AreEqual("Bob",r["name"]);
+                Assert.AreEqual(new DateTime(2001,01,13), r["name2"]);
+                    
+                Assert.IsTrue(r.Read());
+                Assert.AreEqual("Franky", r["name"]);
+                Assert.AreEqual(new DateTime(2002,01,13), r["name2"]);
+            }
+            
+            attacher.LoadCompletedSoDispose(ExitCodeType.Success,new ThrowImmediatelyDataLoadEventListener());
+
+            File.Delete(filename);
+        }
+
         [Test]
         public void TabTestWithOverrideHeaders()
         {
