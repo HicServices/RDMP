@@ -100,6 +100,9 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
         [DemandsInitialization(Attacher.Culture_DemandDescription)]
         public override CultureInfo Culture { get => _source.Culture; set => _source.Culture = value; }
 
+        [DemandsInitialization(Attacher.ExplicitDateTimeFormat_DemandDescription)]
+        public override string ExplicitDateTimeFormat {get => _source.ExplicitDateTimeFormat; set => _source.ExplicitDateTimeFormat = value; }
+
         private GracefulCancellationToken cancellationToken = new GracefulCancellationToken();
 
           protected DelimitedFlatFileAttacher(char separator)

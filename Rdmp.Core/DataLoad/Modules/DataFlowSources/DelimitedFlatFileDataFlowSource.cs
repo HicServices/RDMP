@@ -15,6 +15,7 @@ using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
@@ -132,6 +133,9 @@ This will not help you avoid bad data as the full file structure must still be r
             set => _culture = value;
         }
 
+        [DemandsInitialization(Attacher.ExplicitDateTimeFormat_DemandDescription)]
+        public string ExplicitDateTimeFormat {get;set;}
+
         /// <summary>
         /// The database table we are trying to load
         /// </summary>
@@ -165,7 +169,7 @@ This will not help you avoid bad data as the full file structure must still be r
         private void InitializeComponents()
         {
             Headers = new FlatFileColumnCollection(_fileToLoad, MakeHeaderNamesSane, ExplicitlyTypedColumns, ForceHeaders, ForceHeadersReplacesFirstLineInFile, IgnoreColumns);
-            DataPusher = new FlatFileToDataTablePusher(_fileToLoad, Headers, HackValueReadFromFile, AttemptToResolveNewLinesInRecords,Culture);
+            DataPusher = new FlatFileToDataTablePusher(_fileToLoad, Headers, HackValueReadFromFile, AttemptToResolveNewLinesInRecords,Culture,ExplicitDateTimeFormat);
             EventHandlers = new FlatFileEventHandlers(_fileToLoad, DataPusher, ThrowOnEmptyFiles, BadDataHandlingStrategy, _listener, MaximumErrorsToReport <= 0 ? int.MaxValue:MaximumErrorsToReport,IgnoreBadReads);
         }
 

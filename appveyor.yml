@@ -1,5 +1,6 @@
 version: 1.0.{build}
 init:
+  - cmd: if defined APPVEYOR_PULL_REQUEST_NUMBER appveyor exit
   - git config --global core.autocrlf true
 image: Visual Studio 2019
 services:
@@ -13,7 +14,6 @@ cache:
   - C:\ProgramData\chocolatey\lib -> appveyor.yml
 
 before_build:
-- cmd: if defined APPVEYOR_PULL_REQUEST_NUMBER appveyor exit
 - dotnet restore --packages ./packages
 - choco install opencover.portable
 

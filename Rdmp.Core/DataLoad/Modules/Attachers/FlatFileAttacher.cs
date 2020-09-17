@@ -39,7 +39,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
 
         [DemandsInitialization("Determines the behaviour of the system when no files are matched by FilePattern.  If true the entire data load process immediately stops with exit code LoadNotRequired, if false then the load proceeds as normal (useful if for example if you have multiple Attachers and some files are optional)")]
         public bool SendLoadNotRequiredIfFileNotFound { get; set; }
-        
+
         public FlatFileAttacher() : base(true)
         {
             
@@ -111,6 +111,10 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
                 {
                     // setup bulk insert it into destination
                     insert.Timeout = 500000;
+
+                    //if user wants to use a specific explicit format for datetimes
+                    if(ExplicitDateTimeFormat != null)
+                        insert.DateTimeDecider.Settings.ExplicitDateFormats = new string[]{ExplicitDateTimeFormat};
 
                     //bulk insert ito destination
                     job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to open file " + fileToLoad.FullName));
