@@ -1469,7 +1469,9 @@ namespace Rdmp.Core.Providers
                 AllCataloguesDictionary = null;
                 AllSupportingDocuments = null;
                 AllSupportingSQL = null;
+                _childDictionary?.Clear();
                 _childDictionary = null;
+                _descendancyDictionary?.Clear();
                 _descendancyDictionary = null;
                 _catalogueToCatalogueItems = null;
                 AllCatalogueItemsDictionary= null;
@@ -1506,6 +1508,10 @@ namespace Rdmp.Core.Providers
                 AllLookups = null;
                 AllJoinInfos = null;
                 AllAnyTableParameters = null;
+                AllMasqueraders?.Clear();
+                AllMasqueraders = null;
+                AllExtractionInformationsDictionary?.Clear();
+                AllExtractionInformationsDictionary = null;
             }
         }
 

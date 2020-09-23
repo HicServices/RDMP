@@ -637,14 +637,19 @@ namespace Rdmp.Core.Providers
                 SelectedDataSets = null;
                 AllPackages = null;
                 Projects = null;
+                _cohortsByOriginId?.Clear();
                 _cohortsByOriginId = null;
                 Cohorts = null;
                 ExtractionConfigurations = null;
+                ExtractionConfigurationsByProject?.Clear();
                 ExtractionConfigurationsByProject = null;
+                _configurationToDatasetMapping?.Clear();
                 _configurationToDatasetMapping = null;
                 _dataExportFilterManager = null;
                 BlackListedSources = null;
+                DuplicatesByProject?.Clear();
                 DuplicatesByProject = null;
+                DuplicatesByCohortSourceUsedByProjectNode?.Clear();
                 DuplicatesByCohortSourceUsedByProjectNode = null;
                 ProjectNumberToCohortsDictionary = null;
                 AllProjectAssociatedCics = null;
@@ -652,6 +657,7 @@ namespace Rdmp.Core.Providers
                 _cicAssociations = null;
                 AllFreeCohortIdentificationConfigurationsNode = null;
                 AllProjectCohortIdentificationConfigurationsNode = null;
+                _selectedDataSetsWithNoIsExtractionIdentifier?.Clear();
                 _selectedDataSetsWithNoIsExtractionIdentifier = null;
                  AllContainers = null;
                 AllDeployedExtractionFilters = null;
