@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Pipeline ID and Name now recorded in logs for Data Extractions
+
 ## [4.1.9] - 2020-09-17
 
 ### Added

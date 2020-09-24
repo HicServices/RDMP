@@ -77,6 +77,9 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
             try
             {
                 ExtractCommand.ElevateState(ExtractCommandState.WaitingToExecute);
+
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"Running Extraction {ExtractCommand} with Pipeline {_pipeline.Name} (ID={_pipeline.ID})"));
+
                 var engine = GetEngine(_pipeline, listener);
 
                 try
