@@ -26,7 +26,6 @@ namespace Rdmp.Core.CommandLine.Gui
     {
         public ConsoleGuiActivator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier) : base(repositoryLocator, globalErrorCheckNotifier)
         {
-            CoreChildProvider = new DataExportChildProvider(RepositoryLocator,null,GlobalErrorCheckNotifier);
         }
 
 
@@ -41,12 +40,6 @@ namespace Rdmp.Core.CommandLine.Gui
             
             chosen = null;
             return false;
-        }
-
-        public override void Publish(DatabaseEntity databaseEntity)
-        {
-            //refresh the child provider because there could be new objects
-            CoreChildProvider = new DataExportChildProvider(RepositoryLocator,null,GlobalErrorCheckNotifier);
         }
 
         public override void Show(string message)

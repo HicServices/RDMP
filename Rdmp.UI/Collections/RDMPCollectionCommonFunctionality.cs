@@ -202,7 +202,7 @@ namespace Rdmp.UI.Collections
             CopyPasteProvider = new CopyPasteProvider();
             CopyPasteProvider.RegisterEvents(tree);
             
-            OnRefreshChildProvider(_activator.CoreChildProvider);
+            CoreChildProvider = _activator.CoreChildProvider;
             
             _activator.Emphasise += _activator_Emphasise;
 
@@ -643,8 +643,6 @@ namespace Rdmp.UI.Collections
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
-            OnRefreshChildProvider(_activator.CoreChildProvider);
-
             RefreshObject(e.Object,e.Exists);
 
             //now tell tree view to refresh the object
@@ -734,11 +732,6 @@ namespace Rdmp.UI.Collections
         private bool IsHiddenByFilter(object o)
         {
             return Tree.IsFiltering && !Tree.FilteredObjects.Cast<object>().Contains(o);
-        }
-
-        private void OnRefreshChildProvider(ICoreChildProvider coreChildProvider)
-        {
-            CoreChildProvider = coreChildProvider;
         }
 
         public void TearDown()

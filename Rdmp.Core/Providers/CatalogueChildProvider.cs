@@ -49,7 +49,7 @@ namespace Rdmp.Core.Providers
     /// 5. For each of the objects added that has children of it's own repeat the above (Except call DescendancyList.Add instead of creating a new one)</para>
     ///  
     /// </summary>
-    public class CatalogueChildProvider :ICoreChildProvider, IDisposable
+    public class CatalogueChildProvider : ICoreChildProvider
     {
         //Load System
         public LoadMetadata[] AllLoadMetadatas { get; set; }
@@ -197,7 +197,6 @@ namespace Rdmp.Core.Providers
         protected object WriteLock = new object();
 
         public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get;set; } = new AllOrphanAggregateConfigurationsNode();
-        public bool IsDisposed { get; private set; }
 
         public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
 
@@ -1272,9 +1271,6 @@ namespace Rdmp.Core.Providers
 
         public virtual object[] GetChildren(object model)
         {
-            if(IsDisposed) 
-                throw new ObjectDisposedException(GetType().Name);
-
            lock(WriteLock)
            {
                 //if we don't have a record of any children in the child dictionary for the parent model object
@@ -1298,9 +1294,6 @@ namespace Rdmp.Core.Providers
 
         public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type type, bool unwrapMasqueraders)
         {
-            if(IsDisposed) 
-                throw new ObjectDisposedException(GetType().Name);
-
             lock(WriteLock)
             {
                 //things that are a match on Type but not IMasqueradeAs
@@ -1321,8 +1314,6 @@ namespace Rdmp.Core.Providers
 
         public DescendancyList GetDescendancyListIfAnyFor(object model)
         {
-            if(IsDisposed) 
-                throw new ObjectDisposedException(GetType().Name);
 
             lock(WriteLock)
             {
@@ -1333,9 +1324,6 @@ namespace Rdmp.Core.Providers
         
         public object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise)
         {
-            if(IsDisposed) 
-                throw new ObjectDisposedException(GetType().Name);
-
             lock(WriteLock)
             {
                 var descendancy = GetDescendancyListIfAnyFor(objectToEmphasise);
@@ -1350,9 +1338,6 @@ namespace Rdmp.Core.Providers
 
         public virtual Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables()
         {
-            if(IsDisposed) 
-                throw new ObjectDisposedException(GetType().Name);
-
             lock(WriteLock)
             {
                 var toReturn = new Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList>();
@@ -1366,9 +1351,6 @@ namespace Rdmp.Core.Providers
 
         public IEnumerable<object> GetAllChildrenRecursively(object o)
         {
-            if(IsDisposed) 
-                throw new ObjectDisposedException(GetType().Name);
-
             lock(WriteLock)
             {
                 List<object> toReturn = new List<object>();
@@ -1390,9 +1372,6 @@ namespace Rdmp.Core.Providers
         /// <param name="objectsToAskAbout"></param>
         public void GetPluginChildren(HashSet<object> objectsToAskAbout = null)
         {
-            if(IsDisposed) 
-                throw new ObjectDisposedException(GetType().Name);
-
             lock(WriteLock)
             {
                 HashSet<object> newObjectsFound = new HashSet<object>();
@@ -1468,9 +1447,6 @@ namespace Rdmp.Core.Providers
 
         public IEnumerable<IMasqueradeAs> GetMasqueradersOf(object o)
         {
-            if(IsDisposed) 
-                throw new ObjectDisposedException(GetType().Name);
-
             lock(WriteLock)
             {
                 return AllMasqueraders.TryGetValue(o,out HashSet<IMasqueradeAs> result) ?
@@ -1480,9 +1456,6 @@ namespace Rdmp.Core.Providers
 
         public DatabaseEntity GetLatestCopyOf(DatabaseEntity e)
         {
-            if(IsDisposed) 
-                throw new ObjectDisposedException(GetType().Name);
-
             lock(WriteLock)
             {
                 return _descendancyDictionary.Keys.OfType<DatabaseEntity>().SingleOrDefault(k => k.Equals(e));
@@ -1492,9 +1465,6 @@ namespace Rdmp.Core.Providers
 
         protected T[] GetAllObjects<T>(IRepository repository) where T : IMapsDirectlyToDatabaseTable
         {
-            if(IsDisposed) 
-                throw new ObjectDisposedException(GetType().Name);
-
             lock(WriteLock)
             {
                 return repository.GetAllObjects<T>();
@@ -1504,9 +1474,6 @@ namespace Rdmp.Core.Providers
 
         protected void AddToReturnSearchablesWithNoDecendancy(Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> toReturn, IEnumerable<IMapsDirectlyToDatabaseTable> toAdd)
         {
-            if(IsDisposed) 
-                throw new ObjectDisposedException(GetType().Name);
-
             lock(WriteLock)
             {
                 foreach (IMapsDirectlyToDatabaseTable m in toAdd)
@@ -1514,73 +1481,63 @@ namespace Rdmp.Core.Providers
             }
         }
 
-        protected virtual void Dispose(bool disposing)
+        public virtual void UpdateTo(ICoreChildProvider other)
         {
-            IsDisposed = true;
-            lock(WriteLock)
-                if (disposing)
-                {
-                    //That's one way to avoid memory leaks... anyone holding onto a stale one of these is going to have a bad day
-                    AllLoadMetadatas = null;
-                    AllProcessTasks = null;
-                    AllProcessTasksArguments = null;
-                    AllLoadProgresses = null;
-                    AllCacheProgresses = null;
-                    AllPermissionWindows = null;
-                    AllCatalogues = null;
-                    AllCataloguesDictionary = null;
-                    AllSupportingDocuments = null;
-                    AllSupportingSQL = null;
-                    _childDictionary?.Clear();
-                    _childDictionary = null;
-                    _descendancyDictionary?.Clear();
-                    _descendancyDictionary = null;
-                    _catalogueToCatalogueItems = null;
-                    AllCatalogueItemsDictionary= null;
-                    _allColumnInfos = null;
-                    AllAggregateConfigurations= null;
-                    AllAggregateDimensions= null;
-                    AllRDMPRemotesNode= null;
-                    AllRemoteRDMPs = null;
-                    AllDashboardsNode = null;
-                    AllDashboards = null;
-                    AllObjectSharingNode= null;
-                    AllImports = null;
-                    AllExports = null;
-                    AllStandardRegexesNode= null;
-                    AllPipelinesNode= null;
-                    OtherPipelinesNode= null;
-                    AllPipelines = null;
-                    AllPipelineComponents = null;
-                    AllPipelineComponentsArguments = null;
-                    AllStandardRegexes = null;
-                    AllANOTablesNode= null;
-                    AllANOTables = null;
-                    AllExternalServers= null;
-                    AllServers = null;
-                    AllTableInfos = null;
-                    AllDataAccessCredentialsNode = null;
-                    AllExternalServersNode= null;
-                    AllServersNode= null;
-                    AllDataAccessCredentials = null;
-                    AllDataAccessCredentialUsages = null;
-                    _tableInfosToColumnInfos = null;
-                    AllColumnInfos= null;
-                    AllPreLoadDiscardedColumns= null;
-                    AllLookups = null;
-                    AllJoinInfos = null;
-                    AllAnyTableParameters = null;
-                    AllMasqueraders?.Clear();
-                    AllMasqueraders = null;
-                    AllExtractionInformationsDictionary?.Clear();
-                    AllExtractionInformationsDictionary = null;
-                }
-        }
+            if(other == null)
+                throw new ArgumentNullException(nameof(other));
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            if(!(other is CatalogueChildProvider otherCat))
+                throw new NotSupportedException("Did not know how to UpdateTo ICoreChildProvider of type " + other.GetType().Name);
+
+            AllLoadMetadatas = otherCat.AllLoadMetadatas;
+            AllProcessTasks = otherCat.AllProcessTasks;
+            AllProcessTasksArguments = otherCat.AllProcessTasksArguments;
+            AllLoadProgresses = otherCat.AllLoadProgresses;
+            AllCacheProgresses = otherCat.AllCacheProgresses;
+            AllPermissionWindows = otherCat.AllPermissionWindows;
+            AllCatalogues = otherCat.AllCatalogues;
+            AllCataloguesDictionary = otherCat.AllCataloguesDictionary;
+            AllSupportingDocuments = otherCat.AllSupportingDocuments;
+            AllSupportingSQL = otherCat.AllSupportingSQL;
+            _childDictionary = otherCat._childDictionary;
+            _descendancyDictionary = otherCat._descendancyDictionary;
+            _catalogueToCatalogueItems = otherCat._catalogueToCatalogueItems;
+            AllCatalogueItemsDictionary= otherCat.AllCatalogueItemsDictionary;
+            _allColumnInfos = otherCat._allColumnInfos;
+            AllAggregateConfigurations= otherCat.AllAggregateConfigurations;
+            AllAggregateDimensions= otherCat.AllAggregateDimensions;
+            AllRDMPRemotesNode= otherCat.AllRDMPRemotesNode;
+            AllRemoteRDMPs = otherCat.AllRemoteRDMPs;
+            AllDashboardsNode = otherCat.AllDashboardsNode;
+            AllDashboards = otherCat.AllDashboards;
+            AllObjectSharingNode= otherCat.AllObjectSharingNode;
+            AllImports = otherCat.AllImports;
+            AllExports = otherCat.AllExports;
+            AllStandardRegexesNode= otherCat.AllStandardRegexesNode;
+            AllPipelinesNode= otherCat.AllPipelinesNode;
+            OtherPipelinesNode = otherCat.OtherPipelinesNode;
+            AllPipelines = otherCat.AllPipelines;
+            AllPipelineComponents = otherCat.AllPipelineComponents;
+            AllPipelineComponentsArguments = otherCat.AllPipelineComponentsArguments;
+            AllStandardRegexes = otherCat.AllStandardRegexes;
+            AllANOTablesNode= otherCat.AllANOTablesNode;
+            AllANOTables = otherCat.AllANOTables;
+            AllExternalServers= otherCat.AllExternalServers;
+            AllServers = otherCat.AllServers;
+            AllTableInfos = otherCat.AllTableInfos;
+            AllDataAccessCredentialsNode = otherCat.AllDataAccessCredentialsNode;
+            AllExternalServersNode= otherCat.AllExternalServersNode;
+            AllServersNode= otherCat.AllServersNode;
+            AllDataAccessCredentials = otherCat.AllDataAccessCredentials;
+            AllDataAccessCredentialUsages = otherCat.AllDataAccessCredentialUsages;
+            _tableInfosToColumnInfos = otherCat._tableInfosToColumnInfos;
+            AllColumnInfos= otherCat.AllColumnInfos;
+            AllPreLoadDiscardedColumns= otherCat.AllPreLoadDiscardedColumns;
+            AllLookups = otherCat.AllLookups;
+            AllJoinInfos = otherCat.AllJoinInfos;
+            AllAnyTableParameters = otherCat.AllAnyTableParameters;
+            AllMasqueraders = otherCat.AllMasqueraders;
+            AllExtractionInformationsDictionary = otherCat.AllExtractionInformationsDictionary;
         }
     }
 }

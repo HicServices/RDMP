@@ -23,7 +23,7 @@ namespace Rdmp.Core.CommandExecution
     public abstract class BasicActivateItems : IBasicActivateItems
     {
         /// <inheritdoc/>
-        public ICoreChildProvider CoreChildProvider { get; protected set; }
+        public ICoreChildProvider CoreChildProvider { get; }
 
         /// <inheritdoc/>
         public IServerDefaults ServerDefaults { get; }
@@ -52,8 +52,17 @@ namespace Rdmp.Core.CommandExecution
             GlobalErrorCheckNotifier = globalErrorCheckNotifier;
 
             ServerDefaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
+            CoreChildProvider = GetChildProvider();
         }
-        
+
+        protected virtual ICoreChildProvider GetChildProvider()
+        {
+            return RepositoryLocator.DataExportRepository != null?
+                            new DataExportChildProvider(RepositoryLocator,null,new ThrowImmediatelyCheckNotifier()):
+                            new CatalogueChildProvider(RepositoryLocator.CatalogueRepository,null,new ThrowImmediatelyCheckNotifier());;
+        }
+
+
         protected void OnEmphasise(object sender, EmphasiseEventArgs args)
         {
             Emphasise?.Invoke(sender,args);
@@ -164,7 +173,11 @@ namespace Rdmp.Core.CommandExecution
         protected abstract bool SelectValueTypeImpl(string prompt, Type paramType, object initialValue, out object chosen);
 
         /// <inheritdoc/>
-        public abstract void Publish(DatabaseEntity databaseEntity);
+        public virtual void Publish(DatabaseEntity databaseEntity)
+        {
+            var fresh = GetChildProvider();
+            CoreChildProvider.UpdateTo(fresh);
+        }
 
         /// <inheritdoc/>
         public abstract void Show(string message);

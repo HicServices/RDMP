@@ -552,9 +552,6 @@ namespace Rdmp.Core.Providers
 
         public IEnumerable<ExtractionConfiguration> GetActiveConfigurationsOnly(Project project)
         {
-            if(IsDisposed) 
-                throw new ObjectDisposedException(GetType().Name);
-
             lock(WriteLock)
             {
                 return GetConfigurations(project).Where(ec => !ec.IsReleased);
@@ -563,9 +560,6 @@ namespace Rdmp.Core.Providers
 
         public IEnumerable<SelectedDataSets> GetDatasets(ExtractionConfiguration extractionConfiguration)
         {
-            if(IsDisposed) 
-                throw new ObjectDisposedException(GetType().Name);
-
             lock(WriteLock)
             {
                 return _configurationToDatasetMapping.TryGetValue(extractionConfiguration,out List<SelectedDataSets> result)?
@@ -575,9 +569,6 @@ namespace Rdmp.Core.Providers
 
         public IEnumerable<ExtractionConfiguration> GetConfigurations(Project project)
         {
-            if(IsDisposed) 
-                throw new ObjectDisposedException(GetType().Name);
-
             lock(WriteLock)
             {
                 //Get the extraction configurations node of the project
@@ -592,9 +583,6 @@ namespace Rdmp.Core.Providers
 
         public IEnumerable<IExtractableDataSet> GetDatasets(ExtractableDataSetPackage package)
         {
-            if(IsDisposed) 
-                throw new ObjectDisposedException(GetType().Name);
-
             lock(WriteLock)
             {
                 return dataExportRepository.PackageManager.GetAllDataSets(package, ExtractableDataSets);
@@ -603,9 +591,6 @@ namespace Rdmp.Core.Providers
         
         public bool ProjectHasNoSavedCohorts(Project project)
         {
-            if(IsDisposed) 
-                throw new ObjectDisposedException(GetType().Name);
-
             lock(WriteLock)
             {
                 //get the projects cohort umbrella folder
@@ -621,9 +606,6 @@ namespace Rdmp.Core.Providers
 
         public override Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables()
         {
-            if(IsDisposed) 
-                throw new ObjectDisposedException(GetType().Name);
-
             lock(WriteLock)
             {
                 var toReturn = base.GetAllSearchables();
@@ -636,9 +618,6 @@ namespace Rdmp.Core.Providers
 
         public bool IsMissingExtractionIdentifier(SelectedDataSets selectedDataSets)
         {
-            if(IsDisposed) 
-                throw new ObjectDisposedException(GetType().Name);
-
             lock(WriteLock)
             {
                 return _selectedDataSetsWithNoIsExtractionIdentifier.Contains(selectedDataSets);
@@ -652,9 +631,6 @@ namespace Rdmp.Core.Providers
         /// <returns></returns>
         public ExtractableColumn[] GetAllExtractableColumns(IDataExportRepository repository)
         {
-            if(IsDisposed) 
-                throw new ObjectDisposedException(GetType().Name);
-
             lock(WriteLock)
             {
                 var toReturn = repository.GetAllObjects<ExtractableColumn>();
@@ -673,48 +649,47 @@ namespace Rdmp.Core.Providers
             }
         }
 
-        protected override void Dispose(bool disposing)
+        public override void UpdateTo(ICoreChildProvider other)
         {
-            base.Dispose(disposing);
-         
             lock(WriteLock)
-                if (disposing)
-                {
-                    //That's one way to avoid memory leaks... anyone holding onto a stale one of these is going to have a bad day
-                    RootCohortsNode = null;
-                     CohortSources = null;
-                    ExtractableDataSets = null;
-                    SelectedDataSets = null;
-                    AllPackages = null;
-                    Projects = null;
-                    _cohortsByOriginId?.Clear();
-                    _cohortsByOriginId = null;
-                    Cohorts = null;
-                    ExtractionConfigurations = null;
-                    ExtractionConfigurationsByProject?.Clear();
-                    ExtractionConfigurationsByProject = null;
-                    _configurationToDatasetMapping?.Clear();
-                    _configurationToDatasetMapping = null;
-                    _dataExportFilterManager = null;
-                    BlackListedSources = null;
-                    DuplicatesByProject?.Clear();
-                    DuplicatesByProject = null;
-                    DuplicatesByCohortSourceUsedByProjectNode?.Clear();
-                    DuplicatesByCohortSourceUsedByProjectNode = null;
-                    ProjectNumberToCohortsDictionary = null;
-                    AllProjectAssociatedCics = null;
-                    AllGlobalExtractionFilterParameters = null;
-                    _cicAssociations = null;
-                    AllFreeCohortIdentificationConfigurationsNode = null;
-                    AllProjectCohortIdentificationConfigurationsNode = null;
-                    _selectedDataSetsWithNoIsExtractionIdentifier?.Clear();
-                    _selectedDataSetsWithNoIsExtractionIdentifier = null;
-                     AllContainers = null;
-                    AllDeployedExtractionFilters = null;
-                    _allParameters = null;
-                    dataExportRepository = null;
+            {
+                base.UpdateTo(other);
 
+                if(!(other is DataExportChildProvider dxOther))
+                {
+                    throw new NotSupportedException("Did not know how to UpdateTo ICoreChildProvider of type " + other.GetType().Name);
                 }
+
+                //That's one way to avoid memory leaks... anyone holding onto a stale one of these is going to have a bad day
+                RootCohortsNode = dxOther.RootCohortsNode;
+                CohortSources = dxOther.CohortSources;
+                ExtractableDataSets = dxOther.ExtractableDataSets;
+                SelectedDataSets = dxOther.SelectedDataSets;
+                AllPackages = dxOther.AllPackages;
+                Projects = dxOther.Projects;
+                _cohortsByOriginId = dxOther._cohortsByOriginId;
+                Cohorts = dxOther.Cohorts;
+                ExtractionConfigurations = dxOther.ExtractionConfigurations;
+                ExtractionConfigurationsByProject = dxOther.ExtractionConfigurationsByProject;
+                _configurationToDatasetMapping = dxOther._configurationToDatasetMapping;
+                _dataExportFilterManager = dxOther._dataExportFilterManager;
+                BlackListedSources = dxOther.BlackListedSources;
+                DuplicatesByProject = dxOther.DuplicatesByProject;
+                DuplicatesByCohortSourceUsedByProjectNode = dxOther.DuplicatesByCohortSourceUsedByProjectNode;
+                ProjectNumberToCohortsDictionary = dxOther.ProjectNumberToCohortsDictionary;
+                AllProjectAssociatedCics = dxOther.AllProjectAssociatedCics;
+                AllGlobalExtractionFilterParameters = dxOther.AllGlobalExtractionFilterParameters;
+                _cicAssociations = dxOther._cicAssociations;
+                AllFreeCohortIdentificationConfigurationsNode = dxOther.AllFreeCohortIdentificationConfigurationsNode;
+                AllProjectCohortIdentificationConfigurationsNode = dxOther.AllProjectCohortIdentificationConfigurationsNode;
+                _selectedDataSetsWithNoIsExtractionIdentifier = dxOther._selectedDataSetsWithNoIsExtractionIdentifier;
+                AllContainers = dxOther.AllContainers;
+                AllDeployedExtractionFilters = dxOther.AllDeployedExtractionFilters;
+                _allParameters = dxOther._allParameters;
+                dataExportRepository = dxOther.dataExportRepository;
+
+            }
+            
         }
     }
 }
