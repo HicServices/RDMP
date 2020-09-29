@@ -56,13 +56,12 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
                 Y = Pos.Bottom(list),
                 Width = 5,
                 Height = 1,
-                IsDefault = true,
-                Clicked = ()=>
-                {
-                    if (list.SelectedItem != -1)
-                        nodes[list.SelectedItem].Edit();
-                }
-
+                IsDefault = true
+            };
+            btnSet.Clicked += () =>
+            {
+                if (list.SelectedItem != -1)
+                    nodes[list.SelectedItem].Edit();
             };
 
             var btnClose = new Button("Close")
@@ -70,10 +69,11 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
                 X = Pos.Right(btnSet) + 3,
                 Y = Pos.Bottom(list),
                 Width = 5,
-                Height = 1,
-                Clicked = Application.RequestStop
+                Height = 1
             };
-            
+            btnClose.Clicked += Application.RequestStop;
+
+
             win.Add(list);
             win.Add(btnSet);
             win.Add(btnClose);
