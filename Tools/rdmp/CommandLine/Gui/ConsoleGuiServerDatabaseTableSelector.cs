@@ -96,18 +96,18 @@ namespace Rdmp.Core.CommandLine.Gui
                 X = 0,
                 Y = Pos.Bottom(lblPassword),
                 Width = 10,
-                Height = 1,
-                Clicked = () =>
+                Height = 1
+            };
+            btnDatabaseType.Clicked += () =>
+            {
+                if (_activator.SelectEnum("Database Type", typeof(DatabaseType), out Enum chosen))
                 {
-                    if(_activator.SelectEnum("Database Type",typeof(DatabaseType),out Enum chosen))
-                    {
-                        DatabaseType = (DatabaseType) chosen;
-                    }
+                    DatabaseType = (DatabaseType) chosen;
                 }
             };
 
             //////////////////////////////////////////////// Server  //////////////////////
-            
+
             var lblServer = new Label("Server:")
             {
                 X = 0,
@@ -144,17 +144,17 @@ namespace Rdmp.Core.CommandLine.Gui
                 X = Pos.Right(tbDatabase),
                 Y = Pos.Bottom(lblServer),
                 Width = 15,
-                Height = 0,
-                Clicked = CreateDatabase
+                Height = 0
             };
-            
+            btnCreateDatabase.Clicked += CreateDatabase;
+
             //////////////////////////////////////////////// Schema  //////////////////////
-            
+
             var lblSchema = new Label("Schema:")
             {
                 X = 0,
                 Y = Pos.Bottom(lblDatabase),
-                Height = 1,
+                Height = 1
             };
 
             var tbSchema = new TextField(string.Empty)
@@ -220,12 +220,12 @@ namespace Rdmp.Core.CommandLine.Gui
                 X = 0,
                 Y = _showTableComponents ? Pos.Bottom(lblTable) : Pos.Bottom(lblDatabase),
                 Width = 5,
-                Height = 1,
-                Clicked = () =>
-                {
-                    OkClicked = true;
-                    Application.RequestStop();
-                }
+                Height = 1
+            };
+            btnOk.Clicked += () =>
+            {
+                OkClicked = true;
+                Application.RequestStop();
             };
 
             var btnCancel = new Button("Cancel",true)
@@ -233,10 +233,9 @@ namespace Rdmp.Core.CommandLine.Gui
                 X = Pos.Right(btnOk)+10,
                 Y = _showTableComponents ? Pos.Bottom(lblTable) : Pos.Bottom(lblDatabase),
                 Width = 5,
-                Height = 1,
-                Clicked = Application.RequestStop
-
+                Height = 1
             };
+            btnCancel.Clicked += Application.RequestStop;
 
             win.Add(btnOk);
             win.Add(btnCancel);

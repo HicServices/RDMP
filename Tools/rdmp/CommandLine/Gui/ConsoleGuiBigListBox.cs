@@ -117,26 +117,26 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 Y = Pos.Bottom(listView),
                 Width = 5,
-                Height = 1,
-                Clicked = () =>
-                {
-                    if(listView.SelectedItem >= _collection.Count)
-                        return;
+                Height = 1
+            };
+            btnOk.Clicked += () =>
+            {
+                if (listView.SelectedItem >= _collection.Count)
+                    return;
 
-                    okClicked = true;
-                    Application.RequestStop();
-                    Selected = _collection[listView.SelectedItem].Object;
-                }
+                okClicked = true;
+                Application.RequestStop();
+                Selected = _collection[listView.SelectedItem].Object;
             };
 
             var btnCancel = new Button("Cancel")
             {
                 Y = Pos.Bottom(listView),
                 Width = 5,
-                Height = 1,
-                Clicked = Application.RequestStop
+                Height = 1
             };
-            
+            btnCancel.Clicked += Application.RequestStop;
+
             if (_addSearch)
             {
                 var searchLabel = new Label("Search:")
