@@ -552,54 +552,97 @@ namespace Rdmp.Core.Providers
 
         public IEnumerable<ExtractionConfiguration> GetActiveConfigurationsOnly(Project project)
         {
-            return GetConfigurations(project).Where(ec => !ec.IsReleased);
+            if(IsDisposed) 
+                throw new ObjectDisposedException(GetType().Name);
+
+            lock(WriteLock)
+            {
+                return GetConfigurations(project).Where(ec => !ec.IsReleased);
+            }
         }
 
         public IEnumerable<SelectedDataSets> GetDatasets(ExtractionConfiguration extractionConfiguration)
         {
-            return _configurationToDatasetMapping.TryGetValue(extractionConfiguration,out List<SelectedDataSets> result)?
+            if(IsDisposed) 
+                throw new ObjectDisposedException(GetType().Name);
+
+            lock(WriteLock)
+            {
+                return _configurationToDatasetMapping.TryGetValue(extractionConfiguration,out List<SelectedDataSets> result)?
                 (IEnumerable<SelectedDataSets>) result :new SelectedDataSets[0];
+            }
         }
 
         public IEnumerable<ExtractionConfiguration> GetConfigurations(Project project)
         {
-            //Get the extraction configurations node of the project
-            var configurationsNode = GetChildren(project).OfType<ExtractionConfigurationsNode>().Single();
+            if(IsDisposed) 
+                throw new ObjectDisposedException(GetType().Name);
 
-            var frozenConfigurationsNode = GetChildren(configurationsNode).OfType<FrozenExtractionConfigurationsNode>().Single();
+            lock(WriteLock)
+            {
+                //Get the extraction configurations node of the project
+                var configurationsNode = GetChildren(project).OfType<ExtractionConfigurationsNode>().Single();
 
-            //then add all the children extraction configurations
-            return GetChildren(configurationsNode).OfType<ExtractionConfiguration>().Union(GetChildren(frozenConfigurationsNode).OfType<ExtractionConfiguration>());
+                var frozenConfigurationsNode = GetChildren(configurationsNode).OfType<FrozenExtractionConfigurationsNode>().Single();
+
+                //then add all the children extraction configurations
+                return GetChildren(configurationsNode).OfType<ExtractionConfiguration>().Union(GetChildren(frozenConfigurationsNode).OfType<ExtractionConfiguration>());
+            }
         }
 
         public IEnumerable<IExtractableDataSet> GetDatasets(ExtractableDataSetPackage package)
         {
-            return dataExportRepository.PackageManager.GetAllDataSets(package, ExtractableDataSets);
+            if(IsDisposed) 
+                throw new ObjectDisposedException(GetType().Name);
+
+            lock(WriteLock)
+            {
+                return dataExportRepository.PackageManager.GetAllDataSets(package, ExtractableDataSets);
+            }
         }
         
         public bool ProjectHasNoSavedCohorts(Project project)
         {
-            //get the projects cohort umbrella folder
-            var projectCohortsNode = GetChildren(project).OfType<ProjectCohortsNode>().Single();
+            if(IsDisposed) 
+                throw new ObjectDisposedException(GetType().Name);
 
-            //get the saved cohorts folder under it
-            var projectSavedCohortsNode = GetChildren(projectCohortsNode).OfType<ProjectSavedCohortsNode>().Single();
+            lock(WriteLock)
+            {
+                //get the projects cohort umbrella folder
+                var projectCohortsNode = GetChildren(project).OfType<ProjectCohortsNode>().Single();
 
-            //if ther are no children that are Cohort Sources (cohort databases) under this saved cohorts folder then the Project has no 
-            return GetChildren(projectSavedCohortsNode).OfType<CohortSourceUsedByProjectNode>().All(s => s.IsEmptyNode);
+                //get the saved cohorts folder under it
+                var projectSavedCohortsNode = GetChildren(projectCohortsNode).OfType<ProjectSavedCohortsNode>().Single();
+
+                //if ther are no children that are Cohort Sources (cohort databases) under this saved cohorts folder then the Project has no 
+                return GetChildren(projectSavedCohortsNode).OfType<CohortSourceUsedByProjectNode>().All(s => s.IsEmptyNode);
+            }
         }
 
         public override Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables()
         {
-            var toReturn = base.GetAllSearchables();
-            AddToReturnSearchablesWithNoDecendancy(toReturn,Projects);
-            AddToReturnSearchablesWithNoDecendancy(toReturn, AllPackages);
-            return toReturn;
+            if(IsDisposed) 
+                throw new ObjectDisposedException(GetType().Name);
+
+            lock(WriteLock)
+            {
+                var toReturn = base.GetAllSearchables();
+                AddToReturnSearchablesWithNoDecendancy(toReturn,Projects);
+                AddToReturnSearchablesWithNoDecendancy(toReturn, AllPackages);
+                return toReturn;
+            }
+            
         }
 
         public bool IsMissingExtractionIdentifier(SelectedDataSets selectedDataSets)
         {
-            return _selectedDataSetsWithNoIsExtractionIdentifier.Contains(selectedDataSets);
+            if(IsDisposed) 
+                throw new ObjectDisposedException(GetType().Name);
+
+            lock(WriteLock)
+            {
+                return _selectedDataSetsWithNoIsExtractionIdentifier.Contains(selectedDataSets);
+            }
         }
 
         /// <summary>
@@ -609,62 +652,69 @@ namespace Rdmp.Core.Providers
         /// <returns></returns>
         public ExtractableColumn[] GetAllExtractableColumns(IDataExportRepository repository)
         {
-            var toReturn = repository.GetAllObjects<ExtractableColumn>();
-            foreach (var c in toReturn)
-            {
-                if (c.CatalogueExtractionInformation_ID == null)
-                    c.InjectKnown((ExtractionInformation)null);
-                else
-                {
-                    if (AllExtractionInformationsDictionary.TryGetValue(c.CatalogueExtractionInformation_ID.Value,out ExtractionInformation ei))
-                        c.InjectKnown(ei);
-                }
-            }
+            if(IsDisposed) 
+                throw new ObjectDisposedException(GetType().Name);
 
-            return toReturn;
+            lock(WriteLock)
+            {
+                var toReturn = repository.GetAllObjects<ExtractableColumn>();
+                foreach (var c in toReturn)
+                {
+                    if (c.CatalogueExtractionInformation_ID == null)
+                        c.InjectKnown((ExtractionInformation)null);
+                    else
+                    {
+                        if (AllExtractionInformationsDictionary.TryGetValue(c.CatalogueExtractionInformation_ID.Value,out ExtractionInformation ei))
+                            c.InjectKnown(ei);
+                    }
+                }
+
+                return toReturn;
+            }
         }
 
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-            
-            if (disposing)
-            {
-                //That's one way to avoid memory leaks... anyone holding onto a stale one of these is going to have a bad day
-                RootCohortsNode = null;
-                 CohortSources = null;
-                ExtractableDataSets = null;
-                SelectedDataSets = null;
-                AllPackages = null;
-                Projects = null;
-                _cohortsByOriginId?.Clear();
-                _cohortsByOriginId = null;
-                Cohorts = null;
-                ExtractionConfigurations = null;
-                ExtractionConfigurationsByProject?.Clear();
-                ExtractionConfigurationsByProject = null;
-                _configurationToDatasetMapping?.Clear();
-                _configurationToDatasetMapping = null;
-                _dataExportFilterManager = null;
-                BlackListedSources = null;
-                DuplicatesByProject?.Clear();
-                DuplicatesByProject = null;
-                DuplicatesByCohortSourceUsedByProjectNode?.Clear();
-                DuplicatesByCohortSourceUsedByProjectNode = null;
-                ProjectNumberToCohortsDictionary = null;
-                AllProjectAssociatedCics = null;
-                AllGlobalExtractionFilterParameters = null;
-                _cicAssociations = null;
-                AllFreeCohortIdentificationConfigurationsNode = null;
-                AllProjectCohortIdentificationConfigurationsNode = null;
-                _selectedDataSetsWithNoIsExtractionIdentifier?.Clear();
-                _selectedDataSetsWithNoIsExtractionIdentifier = null;
-                 AllContainers = null;
-                AllDeployedExtractionFilters = null;
-                _allParameters = null;
-                dataExportRepository = null;
+         
+            lock(WriteLock)
+                if (disposing)
+                {
+                    //That's one way to avoid memory leaks... anyone holding onto a stale one of these is going to have a bad day
+                    RootCohortsNode = null;
+                     CohortSources = null;
+                    ExtractableDataSets = null;
+                    SelectedDataSets = null;
+                    AllPackages = null;
+                    Projects = null;
+                    _cohortsByOriginId?.Clear();
+                    _cohortsByOriginId = null;
+                    Cohorts = null;
+                    ExtractionConfigurations = null;
+                    ExtractionConfigurationsByProject?.Clear();
+                    ExtractionConfigurationsByProject = null;
+                    _configurationToDatasetMapping?.Clear();
+                    _configurationToDatasetMapping = null;
+                    _dataExportFilterManager = null;
+                    BlackListedSources = null;
+                    DuplicatesByProject?.Clear();
+                    DuplicatesByProject = null;
+                    DuplicatesByCohortSourceUsedByProjectNode?.Clear();
+                    DuplicatesByCohortSourceUsedByProjectNode = null;
+                    ProjectNumberToCohortsDictionary = null;
+                    AllProjectAssociatedCics = null;
+                    AllGlobalExtractionFilterParameters = null;
+                    _cicAssociations = null;
+                    AllFreeCohortIdentificationConfigurationsNode = null;
+                    AllProjectCohortIdentificationConfigurationsNode = null;
+                    _selectedDataSetsWithNoIsExtractionIdentifier?.Clear();
+                    _selectedDataSetsWithNoIsExtractionIdentifier = null;
+                     AllContainers = null;
+                    AllDeployedExtractionFilters = null;
+                    _allParameters = null;
+                    dataExportRepository = null;
 
-            }
+                }
         }
     }
 }

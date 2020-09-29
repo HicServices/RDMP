@@ -191,26 +191,13 @@ namespace Rdmp.Core.Providers
 
         public HashSet<StandardPipelineUseCaseNode> PipelineUseCases {get;set; } = new HashSet<StandardPipelineUseCaseNode>();
 
-        
-
-        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type type, bool unwrapMasqueraders)
-        {
-            //things that are a match on Type but not IMasqueradeAs
-            var exactMatches = GetAllSearchables().Keys.Where(t=>!(t is IMasqueradeAs)).Where(type.IsInstanceOfType);
-
-            //Union the unwrapped masqueraders
-            if (unwrapMasqueraders)
-                return exactMatches.Union(
-                    AllMasqueraders
-                        .Select(kvp => kvp.Key)
-                        .OfType<IMapsDirectlyToDatabaseTable>()
-                        .Where(type.IsInstanceOfType))
-                    .Distinct();
-
-            return exactMatches;
-        }
+        /// <summary>
+        /// Lock for changes to Child provider
+        /// </summary>
+        protected object WriteLock = new object();
 
         public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get;set; } = new AllOrphanAggregateConfigurationsNode();
+        public bool IsDisposed { get; private set; }
 
         public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
 
@@ -1023,16 +1010,6 @@ namespace Rdmp.Core.Providers
             AddToDictionaries(children,descendancy);
         }
 
-        /*
-        public IEnumerable<AggregateFilterParameter> GetParameters(AggregateFilter filter)
-        {
-            return AllAggregateFilterParameters.Where(p => p.AggregateFilter_ID == filter.ID);
-        }
-        public IEnumerable<ExtractionFilterParameterSetValue> GetValueSetValues(ExtractionFilterParameterSet parameterSet)
-        {
-            return AllCatalogueValueSetValues.Where(v => v.ExtractionFilterParameterSet_ID == parameterSet.ID);
-        }*/
-
         private void AddChildren(ExtractionFilter filter, DescendancyList descendancy)
         {
             var children = new HashSet<object>();
@@ -1047,27 +1024,6 @@ namespace Rdmp.Core.Providers
 
             if(children.Any())
                 AddToDictionaries(children,descendancy);
-        }
-
-        public virtual object[] GetChildren(object model)
-        {
-           
-            //if we don't have a record of any children in the child dictionary for the parent model object
-            if (!_childDictionary.ContainsKey(model))
-            {
-                //if they want the children of a Pipeline (which we don't track) we will have to look under PipelineUseCase instead
-                if (model is Pipeline p)
-                {
-                    var useCase = PipelineUseCases.SingleOrDefault(u => u.Pipelines.Contains(p));
-                    if (useCase != null)
-                        return GetChildren(useCase);
-                }
-                
-                return new object[0];//return none
-            }
-                
-            
-            return _childDictionary[model].OrderBy(o=>o.ToString()).ToArray();
         }
 
         private void AddChildren(CohortIdentificationConfiguration cic)
@@ -1307,45 +1263,124 @@ namespace Rdmp.Core.Providers
             return oldRoute;
         
         }
+        
+        private HashSet<object> GetAllObjects()
+        {
+            //anything which has children or is a child of someone else (distinct because HashSet)
+            return new HashSet<object>(_childDictionary.SelectMany(kvp => kvp.Value).Union(_childDictionary.Keys));
+        }
+
+        public virtual object[] GetChildren(object model)
+        {
+            if(IsDisposed) 
+                throw new ObjectDisposedException(GetType().Name);
+
+           lock(WriteLock)
+           {
+                //if we don't have a record of any children in the child dictionary for the parent model object
+                if (!_childDictionary.ContainsKey(model))
+                {
+                    //if they want the children of a Pipeline (which we don't track) we will have to look under PipelineUseCase instead
+                    if (model is Pipeline p)
+                    {
+                        var useCase = PipelineUseCases.SingleOrDefault(u => u.Pipelines.Contains(p));
+                        if (useCase != null)
+                            return GetChildren(useCase);
+                    }
+                
+                    return new object[0];//return none
+                }
+                
+            
+                return _childDictionary[model].OrderBy(o=>o.ToString()).ToArray();
+           }
+        }
+
+        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type type, bool unwrapMasqueraders)
+        {
+            if(IsDisposed) 
+                throw new ObjectDisposedException(GetType().Name);
+
+            lock(WriteLock)
+            {
+                //things that are a match on Type but not IMasqueradeAs
+                var exactMatches = GetAllSearchables().Keys.Where(t=>!(t is IMasqueradeAs)).Where(type.IsInstanceOfType);
+
+                //Union the unwrapped masqueraders
+                if (unwrapMasqueraders)
+                    return exactMatches.Union(
+                        AllMasqueraders
+                            .Select(kvp => kvp.Key)
+                            .OfType<IMapsDirectlyToDatabaseTable>()
+                            .Where(type.IsInstanceOfType))
+                        .Distinct();
+
+                return exactMatches;
+            }
+        }
 
         public DescendancyList GetDescendancyListIfAnyFor(object model)
         {
-            return _descendancyDictionary.TryGetValue(model, out DescendancyList result) ? result : null;
+            if(IsDisposed) 
+                throw new ObjectDisposedException(GetType().Name);
+
+            lock(WriteLock)
+            {
+                return _descendancyDictionary.TryGetValue(model, out DescendancyList result) ? result : null;
+            }
         }
         
         
         public object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise)
         {
-            var descendancy = GetDescendancyListIfAnyFor(objectToEmphasise);
+            if(IsDisposed) 
+                throw new ObjectDisposedException(GetType().Name);
 
-            if (descendancy != null && descendancy.Parents.Any())
-                return descendancy.Parents[0];
+            lock(WriteLock)
+            {
+                var descendancy = GetDescendancyListIfAnyFor(objectToEmphasise);
 
-            return objectToEmphasise;
+                if (descendancy != null && descendancy.Parents.Any())
+                    return descendancy.Parents[0];
+
+                return objectToEmphasise;
+            }
         }
 
 
         public virtual Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables()
         {
-            var toReturn = new Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList>();
+            if(IsDisposed) 
+                throw new ObjectDisposedException(GetType().Name);
 
-            foreach (var kvp in _descendancyDictionary.Where(kvp => kvp.Key is IMapsDirectlyToDatabaseTable))
-                toReturn.Add((IMapsDirectlyToDatabaseTable) kvp.Key, kvp.Value);
+            lock(WriteLock)
+            {
+                var toReturn = new Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList>();
 
-            return toReturn;
+                foreach (var kvp in _descendancyDictionary.Where(kvp => kvp.Key is IMapsDirectlyToDatabaseTable))
+                    toReturn.Add((IMapsDirectlyToDatabaseTable) kvp.Key, kvp.Value);
+
+                return toReturn;
+            }
         }
 
         public IEnumerable<object> GetAllChildrenRecursively(object o)
         {
-            List<object> toReturn = new List<object>();
+            if(IsDisposed) 
+                throw new ObjectDisposedException(GetType().Name);
 
-            foreach (var child in GetChildren(o))
+            lock(WriteLock)
             {
-                toReturn.Add(child);
-                toReturn.AddRange(GetAllChildrenRecursively(child));
-            }
+                List<object> toReturn = new List<object>();
 
-            return toReturn;
+                foreach (var child in GetChildren(o))
+                {
+                    toReturn.Add(child);
+                    toReturn.AddRange(GetAllChildrenRecursively(child));
+                }
+
+                return toReturn;
+            }
         }
 
         /// <summary>
@@ -1355,164 +1390,191 @@ namespace Rdmp.Core.Providers
         /// <param name="objectsToAskAbout"></param>
         public void GetPluginChildren(HashSet<object> objectsToAskAbout = null)
         {
-            HashSet<object> newObjectsFound = new HashSet<object>();
+            if(IsDisposed) 
+                throw new ObjectDisposedException(GetType().Name);
+
+            lock(WriteLock)
+            {
+                HashSet<object> newObjectsFound = new HashSet<object>();
             
-            Stopwatch sw = new Stopwatch();
+                Stopwatch sw = new Stopwatch();
 
-            var providers = PluginChildProviders.Except(_blacklistedPlugins).ToArray();
+                var providers = PluginChildProviders.Except(_blacklistedPlugins).ToArray();
 
-            //for every object found so far
-            if(providers.Any())
-                foreach (var o in objectsToAskAbout?? GetAllObjects())
-                {
-                    //for every plugin loaded (that is not blacklisted)
-                    foreach (var plugin in providers)
+                //for every object found so far
+                if(providers.Any())
+                    foreach (var o in objectsToAskAbout?? GetAllObjects())
                     {
-                        //ask about the children
-                        try
+                        //for every plugin loaded (that is not blacklisted)
+                        foreach (var plugin in providers)
                         {
-                            sw.Restart();
-                            //otherwise ask plugin what it's children are
-                            var pluginChildren = plugin.GetChildren(o);
-
-                            //if the plugin takes too long to respond we need to stop
-                            if (sw.ElapsedMilliseconds > 1000)
+                            //ask about the children
+                            try
                             {
-                                _blacklistedPlugins.Add(plugin);
-                                throw new Exception("Plugin '" + plugin + "' was blacklisted for taking too long to respond to GetChildren(o) where o was a '" + o.GetType().Name + "' ('" + o + "')");
-                            }
+                                sw.Restart();
+                                //otherwise ask plugin what it's children are
+                                var pluginChildren = plugin.GetChildren(o);
 
-                            //it has children
-                            if (pluginChildren != null && pluginChildren.Any())
-                            {
-                                //get the descendancy of the parent
-                                var parentDescendancy = GetDescendancyListIfAnyFor(o);
-
-                                DescendancyList newDescendancy;
-                                if(parentDescendancy == null)
-                                    newDescendancy = new DescendancyList(new[] {o}); //if the parent is a root level object start a new descendancy list from it
-                                else
-                                    newDescendancy = parentDescendancy.Add(o);//otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
-
-                                //record that 
-
-                                foreach (object pluginChild in pluginChildren)
+                                //if the plugin takes too long to respond we need to stop
+                                if (sw.ElapsedMilliseconds > 1000)
                                 {
-                                    //if the parent didn't have any children before
-                                    if (!_childDictionary.ContainsKey(o))
-                                        _childDictionary.AddOrUpdate(o,new HashSet<object>(),(o1, set) => set);//it does now
+                                    _blacklistedPlugins.Add(plugin);
+                                    throw new Exception("Plugin '" + plugin + "' was blacklisted for taking too long to respond to GetChildren(o) where o was a '" + o.GetType().Name + "' ('" + o + "')");
+                                }
+
+                                //it has children
+                                if (pluginChildren != null && pluginChildren.Any())
+                                {
+                                    //get the descendancy of the parent
+                                    var parentDescendancy = GetDescendancyListIfAnyFor(o);
+
+                                    DescendancyList newDescendancy;
+                                    if(parentDescendancy == null)
+                                        newDescendancy = new DescendancyList(new[] {o}); //if the parent is a root level object start a new descendancy list from it
+                                    else
+                                        newDescendancy = parentDescendancy.Add(o);//otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
+
+                                    //record that 
+
+                                    foreach (object pluginChild in pluginChildren)
+                                    {
+                                        //if the parent didn't have any children before
+                                        if (!_childDictionary.ContainsKey(o))
+                                            _childDictionary.AddOrUpdate(o,new HashSet<object>(),(o1, set) => set);//it does now
 
 
-                                    //add us to the parent objects child collection
-                                    _childDictionary[o].Add(pluginChild);
+                                        //add us to the parent objects child collection
+                                        _childDictionary[o].Add(pluginChild);
                                     
-                                    //add to the child collection of the parent object kvp.Key
-                                    _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,(s,e)=>newDescendancy);
+                                        //add to the child collection of the parent object kvp.Key
+                                        _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,(s,e)=>newDescendancy);
 
-                                    //we have found a new object so we must ask other plugins about it (chances are a plugin will have a whole tree of sub objects)
-                                    newObjectsFound.Add(pluginChild);
+                                        //we have found a new object so we must ask other plugins about it (chances are a plugin will have a whole tree of sub objects)
+                                        newObjectsFound.Add(pluginChild);
+                                    }
                                 }
                             }
-                        }
-                        catch (Exception e)
-                        {
-                            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
+                            catch (Exception e)
+                            {
+                                _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
+                            }
                         }
                     }
-                }
 
-            if(newObjectsFound.Any())
-                GetPluginChildren(newObjectsFound);
+                if(newObjectsFound.Any())
+                    GetPluginChildren(newObjectsFound);
+            }   
         }
 
         public IEnumerable<IMasqueradeAs> GetMasqueradersOf(object o)
         {
-            return AllMasqueraders.TryGetValue(o,out HashSet<IMasqueradeAs> result) ?
+            if(IsDisposed) 
+                throw new ObjectDisposedException(GetType().Name);
+
+            lock(WriteLock)
+            {
+                return AllMasqueraders.TryGetValue(o,out HashSet<IMasqueradeAs> result) ?
                 (IEnumerable<IMasqueradeAs>) result:new IMasqueradeAs[0];
+            }
         }
 
         public DatabaseEntity GetLatestCopyOf(DatabaseEntity e)
         {
-            return _descendancyDictionary.Keys.OfType<DatabaseEntity>().SingleOrDefault(k => k.Equals(e));
+            if(IsDisposed) 
+                throw new ObjectDisposedException(GetType().Name);
+
+            lock(WriteLock)
+            {
+                return _descendancyDictionary.Keys.OfType<DatabaseEntity>().SingleOrDefault(k => k.Equals(e));
+            }
         }
 
-        private HashSet<object> GetAllObjects()
-        {
-            //anything which has children or is a child of someone else (distinct because HashSet)
-            return new HashSet<object>(_childDictionary.SelectMany(kvp => kvp.Value).Union(_childDictionary.Keys));
-        }
 
         protected T[] GetAllObjects<T>(IRepository repository) where T : IMapsDirectlyToDatabaseTable
         {
-            return repository.GetAllObjects<T>();
+            if(IsDisposed) 
+                throw new ObjectDisposedException(GetType().Name);
+
+            lock(WriteLock)
+            {
+                return repository.GetAllObjects<T>();
+            }
         }
 
 
         protected void AddToReturnSearchablesWithNoDecendancy(Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> toReturn, IEnumerable<IMapsDirectlyToDatabaseTable> toAdd)
         {
-            foreach (IMapsDirectlyToDatabaseTable m in toAdd)
-                toReturn.Add(m, null);
+            if(IsDisposed) 
+                throw new ObjectDisposedException(GetType().Name);
+
+            lock(WriteLock)
+            {
+                foreach (IMapsDirectlyToDatabaseTable m in toAdd)
+                    toReturn.Add(m, null);
+            }
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposing)
-            {
-                //That's one way to avoid memory leaks... anyone holding onto a stale one of these is going to have a bad day
-                AllLoadMetadatas = null;
-                AllProcessTasks = null;
-                AllProcessTasksArguments = null;
-                AllLoadProgresses = null;
-                AllCacheProgresses = null;
-                AllPermissionWindows = null;
-                AllCatalogues = null;
-                AllCataloguesDictionary = null;
-                AllSupportingDocuments = null;
-                AllSupportingSQL = null;
-                _childDictionary?.Clear();
-                _childDictionary = null;
-                _descendancyDictionary?.Clear();
-                _descendancyDictionary = null;
-                _catalogueToCatalogueItems = null;
-                AllCatalogueItemsDictionary= null;
-                _allColumnInfos = null;
-                AllAggregateConfigurations= null;
-                AllAggregateDimensions= null;
-                AllRDMPRemotesNode= null;
-                AllRemoteRDMPs = null;
-                AllDashboardsNode = null;
-                AllDashboards = null;
-                AllObjectSharingNode= null;
-                AllImports = null;
-                AllExports = null;
-                AllStandardRegexesNode= null;
-                AllPipelinesNode= null;
-                OtherPipelinesNode= null;
-                AllPipelines = null;
-                AllPipelineComponents = null;
-                AllPipelineComponentsArguments = null;
-                AllStandardRegexes = null;
-                AllANOTablesNode= null;
-                AllANOTables = null;
-                AllExternalServers= null;
-                AllServers = null;
-                AllTableInfos = null;
-                AllDataAccessCredentialsNode = null;
-                AllExternalServersNode= null;
-                AllServersNode= null;
-                AllDataAccessCredentials = null;
-                AllDataAccessCredentialUsages = null;
-                _tableInfosToColumnInfos = null;
-                AllColumnInfos= null;
-                AllPreLoadDiscardedColumns= null;
-                AllLookups = null;
-                AllJoinInfos = null;
-                AllAnyTableParameters = null;
-                AllMasqueraders?.Clear();
-                AllMasqueraders = null;
-                AllExtractionInformationsDictionary?.Clear();
-                AllExtractionInformationsDictionary = null;
-            }
+            IsDisposed = true;
+            lock(WriteLock)
+                if (disposing)
+                {
+                    //That's one way to avoid memory leaks... anyone holding onto a stale one of these is going to have a bad day
+                    AllLoadMetadatas = null;
+                    AllProcessTasks = null;
+                    AllProcessTasksArguments = null;
+                    AllLoadProgresses = null;
+                    AllCacheProgresses = null;
+                    AllPermissionWindows = null;
+                    AllCatalogues = null;
+                    AllCataloguesDictionary = null;
+                    AllSupportingDocuments = null;
+                    AllSupportingSQL = null;
+                    _childDictionary?.Clear();
+                    _childDictionary = null;
+                    _descendancyDictionary?.Clear();
+                    _descendancyDictionary = null;
+                    _catalogueToCatalogueItems = null;
+                    AllCatalogueItemsDictionary= null;
+                    _allColumnInfos = null;
+                    AllAggregateConfigurations= null;
+                    AllAggregateDimensions= null;
+                    AllRDMPRemotesNode= null;
+                    AllRemoteRDMPs = null;
+                    AllDashboardsNode = null;
+                    AllDashboards = null;
+                    AllObjectSharingNode= null;
+                    AllImports = null;
+                    AllExports = null;
+                    AllStandardRegexesNode= null;
+                    AllPipelinesNode= null;
+                    OtherPipelinesNode= null;
+                    AllPipelines = null;
+                    AllPipelineComponents = null;
+                    AllPipelineComponentsArguments = null;
+                    AllStandardRegexes = null;
+                    AllANOTablesNode= null;
+                    AllANOTables = null;
+                    AllExternalServers= null;
+                    AllServers = null;
+                    AllTableInfos = null;
+                    AllDataAccessCredentialsNode = null;
+                    AllExternalServersNode= null;
+                    AllServersNode= null;
+                    AllDataAccessCredentials = null;
+                    AllDataAccessCredentialUsages = null;
+                    _tableInfosToColumnInfos = null;
+                    AllColumnInfos= null;
+                    AllPreLoadDiscardedColumns= null;
+                    AllLookups = null;
+                    AllJoinInfos = null;
+                    AllAnyTableParameters = null;
+                    AllMasqueraders?.Clear();
+                    AllMasqueraders = null;
+                    AllExtractionInformationsDictionary?.Clear();
+                    AllExtractionInformationsDictionary = null;
+                }
         }
 
         public void Dispose()
