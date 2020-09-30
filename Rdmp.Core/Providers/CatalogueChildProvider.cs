@@ -152,7 +152,6 @@ namespace Rdmp.Core.Providers
         public AggregateFilterContainer[] AllAggregateContainers { get { return AllAggregateContainersDictionary.Values.ToArray();}}
 
         public AggregateFilter[] AllAggregateFilters { get; private set; }
-        private AggregateFilterParameter[] AllAggregateFilterParameters;
 
         //Catalogue master filters (does not include any support for filter containers (AND/OR)
         private ExtractionFilter[] AllCatalogueFilters;
@@ -186,8 +185,8 @@ namespace Rdmp.Core.Providers
 
         public JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; private set; }
         public AllPluginsNode AllPluginsNode { get; private set;}
-        public Curation.Data.Plugin[] AllPlugins { get; }
-        public Curation.Data.Plugin[] AllCompatiblePlugins { get; }
+        public Curation.Data.Plugin[] AllPlugins { get; private set ;}
+        public Curation.Data.Plugin[] AllCompatiblePlugins { get; private set;}
 
         public HashSet<StandardPipelineUseCaseNode> PipelineUseCases {get;set; } = new HashSet<StandardPipelineUseCaseNode>();
 
@@ -315,7 +314,6 @@ namespace Rdmp.Core.Providers
 
             AllAggregateContainersDictionary = GetAllObjects<AggregateFilterContainer>(repository).ToDictionary(o => o.ID, o2 => o2);
             AllAggregateFilters = GetAllObjects<AggregateFilter>(repository);
-            AllAggregateFilterParameters = GetAllObjects<AggregateFilterParameter>(repository);
 
             AllCatalogueFilters = GetAllObjects<ExtractionFilter>(repository);
             AllCatalogueParameters = GetAllObjects<ExtractionFilterParameter>(repository);
@@ -1539,6 +1537,30 @@ namespace Rdmp.Core.Providers
             AllMasqueraders = otherCat.AllMasqueraders;
             AllExtractionInformationsDictionary = otherCat.AllExtractionInformationsDictionary;
             _pluginChildProviders = otherCat._pluginChildProviders;
+            AllPermissionWindowsNode = otherCat.AllPermissionWindowsNode;
+            AllLoadMetadatasNode = otherCat.AllLoadMetadatasNode;
+            AllConnectionStringKeywordsNode = otherCat.AllConnectionStringKeywordsNode;
+            AllConnectionStringKeywords = otherCat.AllConnectionStringKeywords;
+            AllAggregateContainersDictionary = otherCat.AllAggregateContainersDictionary;
+            AllAggregateFilters = otherCat.AllAggregateFilters;
+            AllCohortIdentificationConfigurations = otherCat.AllCohortIdentificationConfigurations;
+            AllCohortAggregateContainers = otherCat.AllCohortAggregateContainers;
+            AllJoinables = otherCat.AllJoinables;
+            AllJoinUses = otherCat.AllJoinUses;
+            AllGovernanceNode = otherCat.AllGovernanceNode;
+            AllGovernancePeriods = otherCat.AllGovernancePeriods;
+            AllGovernanceDocuments = otherCat.AllGovernanceDocuments;
+            GovernanceCoverage = otherCat.GovernanceCoverage;
+            AllJoinableCohortAggregateConfigurationUse = otherCat.AllJoinableCohortAggregateConfigurationUse;
+            AllPluginsNode = otherCat.AllPluginsNode;
+            AllPlugins = otherCat.AllPlugins;
+            AllCompatiblePlugins = otherCat.AllCompatiblePlugins;
+            PipelineUseCases = otherCat.PipelineUseCases;
+            OrphanAggregateConfigurationsNode = otherCat.OrphanAggregateConfigurationsNode;
+            AllCatalogueParameters = otherCat.AllCatalogueParameters;  
+            AllCatalogueValueSets = otherCat.AllCatalogueValueSets;
+            AllCatalogueValueSetValues = otherCat.AllCatalogueValueSetValues ;
+            OrphanAggregateConfigurations = otherCat.OrphanAggregateConfigurations;
         }
     }
 }

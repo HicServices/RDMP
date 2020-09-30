@@ -9,6 +9,10 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
 using ReusableLibraryCode.Checks;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace Rdmp.UI.Tests
 {
@@ -29,6 +33,57 @@ namespace Rdmp.UI.Tests
             //instead we should get a parent node with the name "Null Server"
             var parent = (TableInfoServerNode) desc.Parents[desc.Parents.Length - 1];
             Assert.AreEqual(TableInfoServerNode.NullServerNode, parent.ServerName);
+        }
+
+        [Test]
+        public void TestUpTo()
+        {
+            string[] skip = {"AllAggregateContainers","_dataExportFilterManager","dataExportRepository","WriteLock","_oProjectNumberToCohortsDictionary","_errorsCheckNotifier"};
+
+            // We have 2 providers and want to suck all the data out of one into the other
+            var cp1 = new DataExportChildProvider(RepositoryLocator,null,new ThrowImmediatelyCheckNotifier());
+            var cp2 = new DataExportChildProvider(RepositoryLocator,null,new ThrowImmediatelyCheckNotifier());
+
+            //to start with lets make sure all fields and properties are different on the two classes except where we expect them to be the same
+            BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+
+            foreach(var prop in typeof(DataExportChildProvider).GetProperties().Where(p=>!skip.Contains(p.Name)))
+                Assert.AreNotSame(prop.GetValue(cp1),prop.GetValue(cp2),$"Prop {prop} was unexpectedly the same between child providers");
+
+            foreach(var field in typeof(DataExportChildProvider).GetFields(bindFlags).Where(p=>!skip.Contains(p.Name)))
+                Assert.AreNotSame(field.GetValue(cp1),field.GetValue(cp2),$"Field {field} was unexpectedly the same between child providers");
+
+            // Now call UpdateTo to make cp1 look like cp2
+            cp1.UpdateTo(cp2);
+            
+            List<string> badProps = new List<string>();
+
+            foreach(var prop in typeof(DataExportChildProvider).GetProperties().Where(p=>!skip.Contains(p.Name)))
+                try
+                {
+                    Assert.AreSame(prop.GetValue(cp1),prop.GetValue(cp2),$"Prop {prop} was not the same between child providers - after UpdateTo");
+                }
+                catch (Exception)
+                {
+                    badProps.Add(prop.Name);
+                }
+
+            Assert.IsEmpty(badProps);
+                        
+            List<string> badFields = new List<string>();
+            
+            foreach(var field in typeof(DataExportChildProvider).GetFields(bindFlags).Where(p=>!skip.Contains(p.Name)))
+                try
+                {
+                    Assert.AreSame(field.GetValue(cp1),field.GetValue(cp2),$"Field {field} was not the same between child providers - after UpdateTo");
+                }
+                catch(Exception)
+                {
+                    badFields.Add(field.Name);
+                }
+            
+            Assert.IsEmpty(badFields);
+
         }
     }
 }

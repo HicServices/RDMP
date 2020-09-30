@@ -687,7 +687,7 @@ namespace Rdmp.Core.Providers
                 AllDeployedExtractionFilters = dxOther.AllDeployedExtractionFilters;
                 _allParameters = dxOther._allParameters;
                 dataExportRepository = dxOther.dataExportRepository;
-
+                _extractionInformationsByCatalogueItem = dxOther._extractionInformationsByCatalogueItem;
             }
             
         }
