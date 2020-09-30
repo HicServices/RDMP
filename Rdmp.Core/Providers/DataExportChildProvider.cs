@@ -115,32 +115,47 @@ namespace Rdmp.Core.Providers
             _selectedDataSetsWithNoIsExtractionIdentifier = new HashSet<ISelectedDataSets>(dataExportRepository.GetSelectedDatasetsWithNoExtractionIdentifiers());
 
             SelectedDataSets = GetAllObjects<SelectedDataSets>(dataExportRepository);
+            ReportProgress("Fetching data export objects");
+
             var dsDictionary = ExtractableDataSets.ToDictionary(ds => ds.ID, d => d);
             foreach (SelectedDataSets s in SelectedDataSets)
                 s.InjectKnown(dsDictionary[s.ExtractableDataSet_ID]);
             
+            ReportProgress("Injecting SelectedDataSets");
+
             //This means that the ToString method in ExtractableDataSet doesn't need to go lookup catalogue info
             var catalogueIdDict = AllCatalogues.ToDictionary(c => c.ID, c2 => c2);
             foreach (ExtractableDataSet ds in ExtractableDataSets)
                 if(catalogueIdDict.TryGetValue(ds.Catalogue_ID, out Catalogue cata))
                     ds.InjectKnown(cata);
-                
+             
+            ReportProgress("Injecting ExtractableDataSet");
+            
             AllPackages = GetAllObjects<ExtractableDataSetPackage>(dataExportRepository);
             
             Projects = GetAllObjects<Project>(dataExportRepository);
             ExtractionConfigurations = GetAllObjects<ExtractionConfiguration>(dataExportRepository);
+                        
+            ReportProgress("Get Projects and Configurations");
+
             ExtractionConfigurationsByProject = ExtractionConfigurations.GroupBy(k => k.Project_ID).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
+
+            ReportProgress("Grouping Extractions by Project");
 
             AllGlobalExtractionFilterParameters = GetAllObjects<GlobalExtractionFilterParameter>(dataExportRepository);
 
             AllContainers = GetAllObjects<FilterContainer>(dataExportRepository).ToDictionary(o => o.ID, o => o);
             AllDeployedExtractionFilters = GetAllObjects<DeployedExtractionFilter>(dataExportRepository);
             _allParameters = GetAllObjects<DeployedExtractionFilterParameter>(dataExportRepository);
+            
+            ReportProgress("Getting Filters");
 
             //if we are using a database repository then we can make use of the caching class DataExportFilterManagerFromChildProvider to speed up
             //filter contents
             var dbRepo = dataExportRepository as DataExportRepository;
             _dataExportFilterManager = dbRepo == null ? dataExportRepository.FilterManager : new DataExportFilterManagerFromChildProvider(dbRepo, this);
+                        
+            ReportProgress("Building FilterManager");
 
             Cohorts = GetAllObjects<ExtractableCohort>(dataExportRepository);
             _cohortsByOriginId = new Dictionary<int,HashSet<ExtractableCohort>>();
@@ -154,23 +169,33 @@ namespace Rdmp.Core.Providers
             }
 
             _configurationToDatasetMapping = new Dictionary<ExtractionConfiguration, List<SelectedDataSets>>();
+            
+            ReportProgress("Fetching Cohorts");
 
             GetCohortAvailability();
+
+            ReportProgress("GetCohortAvailability");
             
             var configToSds = SelectedDataSets.GroupBy(k => k.ExtractionConfiguration_ID).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
             
             foreach (ExtractionConfiguration configuration in ExtractionConfigurations)
                 if(configToSds.TryGetValue(configuration.ID, out List<SelectedDataSets> result))
                     _configurationToDatasetMapping.Add(configuration,result);
+            
+            ReportProgress("Mapping configurations to datasets");
 
             RootCohortsNode = new AllCohortsNode();
             AddChildren(RootCohortsNode,new DescendancyList(RootCohortsNode));
 
             foreach (ExtractableDataSetPackage package in AllPackages)
                 AddChildren(package, new DescendancyList(package));
+            
+            ReportProgress("Packages and Cohorts");
 
             foreach (Project p in Projects)
                 AddChildren(p, new DescendancyList(p));
+            
+            ReportProgress("Projects");
 
             //work out all the Catalogues that are extractable (Catalogues are extractable if there is an ExtractableDataSet with the Catalogue_ID that matches them)
             var cataToEds = new Dictionary<int,ExtractableDataSet>(ExtractableDataSets.ToDictionary(k => k.Catalogue_ID));
@@ -181,6 +206,8 @@ namespace Rdmp.Core.Providers
                     catalogue.InjectKnown(result.GetCatalogueExtractabilityStatus());
                 else
                     catalogue.InjectKnown(new CatalogueExtractabilityStatus(false,false));
+            
+            ReportProgress("Catalogue extractability injection");
 
             try
             {
@@ -198,6 +225,8 @@ namespace Rdmp.Core.Providers
             {
                 _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to build DesignTime PipelineUseCases",CheckResult.Fail,ex));
             }
+
+            ReportProgress("Pipeline adding");
         }
 
         private void AddChildren(IExtractableDataSetPackage package, DescendancyList descendancy)
