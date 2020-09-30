@@ -100,13 +100,14 @@ namespace ResearchDataManagementPlatform.WindowManagement
             WindowFactory = windowFactory;
             _mainDockPanel = mainDockPanel;
             _windowManager = windowManager;
+            RefreshBus = refreshBus;
+
+            ConstructPluginChildProviders();
+            CoreChildProvider = GetChildProvider();
             
             //Shouldn't ever change externally to your session so doesn't need constantly refreshed
             FavouritesProvider = new FavouritesProvider(this, repositoryLocator.CatalogueRepository);
             HistoryProvider = new HistoryProvider(repositoryLocator);
-            RefreshBus = refreshBus;
-
-            ConstructPluginChildProviders();
 
             //handle custom icons from plugin user interfaces in which
             CoreIconProvider = new DataExportIconProvider(repositoryLocator,PluginUserInterfaces.ToArray());
@@ -145,8 +146,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         protected override ICoreChildProvider GetChildProvider()
         {
+            //constructor call in base class
             if(PluginUserInterfaces == null)
-                return base.GetChildProvider();
+                return null;
 
             //Dispose the old one
             ICoreChildProvider temp = null;
@@ -168,7 +170,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
             if (temp == null)
                 temp = new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(),GlobalErrorCheckNotifier);
 
-            CoreChildProvider.UpdateTo(temp);
+            // first time
+            if(CoreChildProvider == null)
+                CoreChildProvider = temp;
+            else
+                CoreChildProvider.UpdateTo(temp);
 
             return CoreChildProvider;
         }

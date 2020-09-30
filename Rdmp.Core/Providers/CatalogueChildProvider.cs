@@ -172,7 +172,7 @@ namespace Rdmp.Core.Providers
         /// </summary>
         public ConcurrentDictionary<object,HashSet<IMasqueradeAs>> AllMasqueraders { get; private set; }
 
-        public readonly IChildProvider[] PluginChildProviders;
+        private IChildProvider[] _pluginChildProviders;
         private readonly ICatalogueRepository _catalogueRepository;
         private readonly ICheckNotifier _errorsCheckNotifier;
         private readonly List<IChildProvider> _blacklistedPlugins = new List<IChildProvider>();
@@ -217,7 +217,7 @@ namespace Rdmp.Core.Providers
             // all the objects which are 
             AllMasqueraders = new ConcurrentDictionary<object, HashSet<IMasqueradeAs>>();
             
-            PluginChildProviders = pluginChildProviders;
+            _pluginChildProviders = pluginChildProviders;
             
             AllAnyTableParameters = GetAllObjects<AnyTableSqlParameter>(repository);
 
@@ -1370,7 +1370,7 @@ namespace Rdmp.Core.Providers
         /// call itself with all the new objects that were sent back by the plugin (so that new objects found can still have children).
         /// </summary>
         /// <param name="objectsToAskAbout"></param>
-        public void GetPluginChildren(HashSet<object> objectsToAskAbout = null)
+        protected void GetPluginChildren(HashSet<object> objectsToAskAbout = null)
         {
             lock(WriteLock)
             {
@@ -1378,7 +1378,7 @@ namespace Rdmp.Core.Providers
             
                 Stopwatch sw = new Stopwatch();
 
-                var providers = PluginChildProviders.Except(_blacklistedPlugins).ToArray();
+                var providers = _pluginChildProviders.Except(_blacklistedPlugins).ToArray();
 
                 //for every object found so far
                 if(providers.Any())
@@ -1538,6 +1538,7 @@ namespace Rdmp.Core.Providers
             AllAnyTableParameters = otherCat.AllAnyTableParameters;
             AllMasqueraders = otherCat.AllMasqueraders;
             AllExtractionInformationsDictionary = otherCat.AllExtractionInformationsDictionary;
+            _pluginChildProviders = otherCat._pluginChildProviders;
         }
     }
 }

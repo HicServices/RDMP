@@ -26,6 +26,9 @@ namespace Rdmp.Core.CommandLine.Interactive
     /// </summary>
     public class ConsoleInputManager : BasicActivateItems
     {
+        /// <inheritdoc/>
+        public override bool IsInteractive => !DisallowInput;
+
         /// <summary>
         /// Set to true to throw on any blocking input methods (e.g. <see cref="TypeText"/>)
         /// </summary>

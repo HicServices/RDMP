@@ -23,7 +23,10 @@ namespace Rdmp.Core.CommandExecution
     public abstract class BasicActivateItems : IBasicActivateItems
     {
         /// <inheritdoc/>
-        public ICoreChildProvider CoreChildProvider { get; }
+        public virtual bool IsInteractive => true;
+
+        /// <inheritdoc/>
+        public ICoreChildProvider CoreChildProvider { get; protected set;}
 
         /// <inheritdoc/>
         public IServerDefaults ServerDefaults { get; }
@@ -52,6 +55,8 @@ namespace Rdmp.Core.CommandExecution
             GlobalErrorCheckNotifier = globalErrorCheckNotifier;
 
             ServerDefaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
+
+            // Note that this is virtual so can return null e.g. if other stuff has to happen with the activator before a valid child provider can be built (e.g. loading plugin user interfaces)
             CoreChildProvider = GetChildProvider();
         }
 

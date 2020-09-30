@@ -98,7 +98,6 @@ namespace Rdmp.Core.Providers
 
         JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; }
 
-        void GetPluginChildren(HashSet<object> objectsToAskAbout = null);
         
         /// <summary>
         /// Copy updated values for all properties from the <paramref name="other"/>
