@@ -157,7 +157,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             if(RepositoryLocator.DataExportRepository != null)
                 try
                 {
-                    temp = new DataExportChildProvider(RepositoryLocator,PluginUserInterfaces.ToArray(),GlobalErrorCheckNotifier);
+                    temp = new DataExportChildProvider(RepositoryLocator,PluginUserInterfaces.ToArray(),GlobalErrorCheckNotifier,CoreChildProvider as DataExportChildProvider);
                 }
                 catch (Exception e)
                 {
@@ -168,7 +168,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             //so just create a catalogue one
             if (temp == null)
-                temp = new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(),GlobalErrorCheckNotifier);
+                temp = new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(),GlobalErrorCheckNotifier, CoreChildProvider as CatalogueChildProvider);
 
             // first time
             if(CoreChildProvider == null)

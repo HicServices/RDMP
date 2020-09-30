@@ -208,7 +208,8 @@ namespace Rdmp.Core.Providers
         /// <param name="repository"></param>
         /// <param name="pluginChildProviders"></param>
         /// <param name="errorsCheckNotifier">Where to report errors building the hierarchy e.g. when <paramref name="pluginChildProviders"/> crash.  Set to null for <see cref="IgnoreAllErrorsCheckNotifier"/></param>
-        public CatalogueChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier)
+        /// <param name="previousStateIfKnown">Previous child provider state if you know it otherwise null</param>
+        public CatalogueChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier, CatalogueChildProvider previousStateIfKnown)
         {
             _commentStore = repository.CommentStore;
             _catalogueRepository = repository;

@@ -63,8 +63,8 @@ namespace Rdmp.Core.CommandExecution
         protected virtual ICoreChildProvider GetChildProvider()
         {
             return RepositoryLocator.DataExportRepository != null?
-                            new DataExportChildProvider(RepositoryLocator,null,GlobalErrorCheckNotifier):
-                            new CatalogueChildProvider(RepositoryLocator.CatalogueRepository,null,GlobalErrorCheckNotifier);
+                            new DataExportChildProvider(RepositoryLocator,null,GlobalErrorCheckNotifier, CoreChildProvider as DataExportChildProvider):
+                            new CatalogueChildProvider(RepositoryLocator.CatalogueRepository,null,GlobalErrorCheckNotifier,CoreChildProvider as CatalogueChildProvider);
         }
 
 

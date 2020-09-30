@@ -43,7 +43,7 @@ namespace Rdmp.Core.CohortCreation.Execution
         /// </summary>
         public ICoreChildProvider CoreChildProvider
         {
-            get => _coreChildProvider = _coreChildProvider ?? new CatalogueChildProvider(CohortIdentificationConfiguration.CatalogueRepository,null,new IgnoreAllErrorsCheckNotifier());
+            get => _coreChildProvider = _coreChildProvider ?? new CatalogueChildProvider(CohortIdentificationConfiguration.CatalogueRepository,null,new IgnoreAllErrorsCheckNotifier(),null);
             set => _coreChildProvider = value;
         }
 

@@ -26,7 +26,7 @@ namespace Rdmp.UI.Tests
             ti.SaveToDatabase();
 
             //creating a child provider when there are TableInfos with null servers should not crash the API!
-            var provider = new CatalogueChildProvider(Repository.CatalogueRepository, null, new ThrowImmediatelyCheckNotifier());
+            var provider = new CatalogueChildProvider(Repository.CatalogueRepository, null, new ThrowImmediatelyCheckNotifier(),null);
             var desc = provider.GetDescendancyListIfAnyFor(ti);
             Assert.IsNotNull(desc);
 
@@ -41,8 +41,8 @@ namespace Rdmp.UI.Tests
             string[] skip = {"AllAggregateContainers","_dataExportFilterManager","dataExportRepository","WriteLock","_oProjectNumberToCohortsDictionary","_errorsCheckNotifier"};
 
             // We have 2 providers and want to suck all the data out of one into the other
-            var cp1 = new DataExportChildProvider(RepositoryLocator,null,new ThrowImmediatelyCheckNotifier());
-            var cp2 = new DataExportChildProvider(RepositoryLocator,null,new ThrowImmediatelyCheckNotifier());
+            var cp1 = new DataExportChildProvider(RepositoryLocator,null,new ThrowImmediatelyCheckNotifier(),null);
+            var cp2 = new DataExportChildProvider(RepositoryLocator,null,new ThrowImmediatelyCheckNotifier(),null);
 
             //to start with lets make sure all fields and properties are different on the two classes except where we expect them to be the same
             BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;

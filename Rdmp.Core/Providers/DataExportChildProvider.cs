@@ -96,9 +96,9 @@ namespace Rdmp.Core.Providers
         
         private IDataExportRepository dataExportRepository;
 
-        public DataExportChildProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders,ICheckNotifier errorsCheckNotifier) : base(repositoryLocator.CatalogueRepository, pluginChildProviders,errorsCheckNotifier)
+        public DataExportChildProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders,ICheckNotifier errorsCheckNotifier, DataExportChildProvider previousStateIfKnown) : base(repositoryLocator.CatalogueRepository, pluginChildProviders,errorsCheckNotifier,previousStateIfKnown)
         {
-            BlackListedSources = new List<ExternalCohortTable>();
+            BlackListedSources = previousStateIfKnown?.BlackListedSources ?? new List<ExternalCohortTable>();
             _errorsCheckNotifier = errorsCheckNotifier;
             dataExportRepository = repositoryLocator.DataExportRepository;
 
