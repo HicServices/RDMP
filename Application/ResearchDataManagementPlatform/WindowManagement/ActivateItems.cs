@@ -78,7 +78,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
         
         public override void Publish(DatabaseEntity databaseEntity)
         {
-            base.Publish(databaseEntity);
             RefreshBus.Publish(this,new RefreshObjectEventArgs(databaseEntity));
         }
 
@@ -573,6 +572,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
+            //update the child provider
+            GetChildProvider();
             RefreshProblemProviders();
         }
 
