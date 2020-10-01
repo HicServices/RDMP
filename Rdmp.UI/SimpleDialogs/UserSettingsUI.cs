@@ -25,6 +25,9 @@ namespace Rdmp.UI.SimpleDialogs
         public UserSettingsFileUI(IActivateItems activator)
         {
             InitializeComponent();
+
+            hlpDebugPerformance.SetHelpText("Debug Performance","When enabled RDMP will record certain performance related metrics (how long refresh takes etc).  These figures are completely internal to the application and are not transmitted anywhere.  You can view the results in the toolbar.");
+
             cbShowHomeOnStartup.Checked = UserSettings.ShowHomeOnStartup;
             cbEmphasiseOnTabChanged.Checked = UserSettings.EmphasiseOnTabChanged;
             cbConfirmExit.Checked = UserSettings.ConfirmApplicationExiting;
@@ -33,6 +36,7 @@ namespace Rdmp.UI.SimpleDialogs
             cbWait5Seconds.Checked = UserSettings.Wait5SecondsAfterStartupUI;
             cbShowCohortWizard.Checked = UserSettings.ShowCohortWizard;
             cbDoubleClickToExpand.Checked = UserSettings.DoubleClickToExpand;
+            cbDebugPerformance.Checked = UserSettings.DebugPerformance;
 
             ddTheme.DataSource = new []
             {
@@ -90,6 +94,9 @@ namespace Rdmp.UI.SimpleDialogs
 
             if (cb == cbDoubleClickToExpand)
                 UserSettings.DoubleClickToExpand = cb.Checked;
+
+            if(cb == cbDebugPerformance)
+                UserSettings.DebugPerformance = cb.Checked;
         }
 
         private void ddTheme_SelectedIndexChanged(object sender, EventArgs e)

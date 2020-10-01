@@ -203,7 +203,7 @@ namespace ReusableLibraryCode.Settings
         }
 
         public static bool DebugPerformance { 
-            get { return AppSettings.GetValueOrDefault("DebugPerformance", true); }
+            get { return AppSettings.GetValueOrDefault("DebugPerformance", false); }
             set { AppSettings.AddOrUpdateValue("DebugPerformance", value); } }
 
         #endregion
