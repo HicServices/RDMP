@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
@@ -490,7 +491,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
             {
                 existingHostedControlInstance = existing.GetControl();
                 existing.Activate();
-                existing.HandleUserRequestingTabRefresh(this);
+
+                // only refresh if there are changes to the underlying object
+                if(databaseObject is IRevertable r && r.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
+                    existing.HandleUserRequestingTabRefresh(this);
             }
 
             return existing != null;
@@ -505,7 +509,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
             {
                 existingHostedControlInstance = existing.GetControl();
                 existing.Activate();
-                existing.HandleUserRequestingTabRefresh(this);
+                
+                // only refresh if there are changes to some of the underlying objects
+                if(collection.DatabaseObjects.OfType<IRevertable>().Any(r=>r.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent))
+                    existing.HandleUserRequestingTabRefresh(this);
             }
 
             return existing != null;
