@@ -313,6 +313,9 @@ namespace Rdmp.UI.Collections
         
         private void RefreshContextMenuStrip()
         {
+            //clear the old menu strip first so old shortcuts cannot be activated during 
+            Tree.ContextMenuStrip = null;
+
             if(Tree.SelectedObjects.Count <= 1)
                 Tree.ContextMenuStrip = GetMenuIfExists(Tree.SelectedObject);
             else
