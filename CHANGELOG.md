@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - reduced memory overhead during refreshes
+- Fixed various graphical/performance issues when running in VDI environments with limited CPU
 
 ### Added
 

@@ -106,8 +106,8 @@ namespace Rdmp.UI.SubComponents
             AssociatedCollection = RDMPCollection.Cohort;
 
             
-            timer.Tick += refreshThreadCountPeriodically_Tick;
-            timer.Interval = 500;
+            timer.Tick += refreshColumnValues;
+            timer.Interval = 2000;
             timer.Start();
             
             olvCount.AspectGetter = Count_AspectGetter;
@@ -204,10 +204,10 @@ namespace Rdmp.UI.SubComponents
             }
         }
         
-        private void refreshThreadCountPeriodically_Tick(object sender, EventArgs e)
+        private void refreshColumnValues(object sender, EventArgs e)
         {
             if(!tlvCic.IsDisposed)
-                tlvCic.RebuildColumns();
+                tlvCic.RefreshObjects(tlvCic.Objects.Cast<object>().ToArray());
         }
         
         public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
