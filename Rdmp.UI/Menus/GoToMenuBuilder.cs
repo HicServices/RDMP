@@ -144,6 +144,7 @@ namespace Rdmp.UI.Menus
                 }
                 catch (KeyNotFoundException)
                 {
+                    Add(menu,new ImpossibleCommand("Parent filter has been deleted"){OverrideCommandName="Parent Filter" });
                 }
             }
 
