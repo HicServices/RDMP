@@ -268,7 +268,8 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
                 try
                 {
                     _logManager = new LogManager(Collection.RootObject.GetDistinctLoggingDatabase());
-                    results = _logManager.GetArchivalDataLoadInfos(Collection.RootObject.GetDistinctLoggingTask(), _populateLoadHistoryCancel.Token,null, _toFetch).ToArray();
+                    var unfilteredResults = _logManager.GetArchivalDataLoadInfos(Collection.RootObject.GetDistinctLoggingTask(), _populateLoadHistoryCancel.Token,null, _toFetch);
+                    results = Collection.RootObject.FilterRuns(unfilteredResults).ToArray();
                 }
                 catch (OperationCanceledException)//user cancels
                 {

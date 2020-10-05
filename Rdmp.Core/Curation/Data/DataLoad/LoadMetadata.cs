@@ -17,6 +17,7 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Logging;
+using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
@@ -350,6 +351,16 @@ namespace Rdmp.Core.Curation.Data.DataLoad
                 throw new Exception("LoadMetadata '" + this + "' has multiple underlying Catalogue Live Database Type(s) - not allowed");
 
             return syntax.SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Returns all runs since each LoadMetadata has it's own task and all runs apply to that task and hence this object
+        /// </summary>
+        /// <param name="runs"></param>
+        /// <returns></returns>
+        public IEnumerable<ArchivalDataLoadInfo> FilterRuns(IEnumerable<ArchivalDataLoadInfo> runs)
+        {
+            return runs;
         }
     }
 }

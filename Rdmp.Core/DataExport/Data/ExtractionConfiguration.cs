@@ -18,6 +18,7 @@ using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 using Rdmp.Core.DataExport.DataRelease.Audit;
 using Rdmp.Core.Logging;
+using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
@@ -275,9 +276,19 @@ namespace Rdmp.Core.DataExport.Data
             }
         }
 
+        public string GetLoggingRunName()
+        {
+            return Project.Name + " " + GetExtractionLoggingName();
+        }
+
+        private string GetExtractionLoggingName()
+        {
+            return "(ExtractionConfiguration ID=" + ID + ")";
+        }
+
 
         #endregion
-        
+
         /// <summary>
         /// Creates a new extraction configuration in the <paramref name="repository"/> database for the provided <paramref name="project"/>.
         /// </summary>
@@ -727,6 +738,17 @@ namespace Rdmp.Core.DataExport.Data
         public string GetDistinctLoggingTask()
         {
             return ExecuteDatasetExtractionSource.AuditTaskName;
+        }
+
+        /// <summary>
+        /// Returns runs from the data extraction task where the run was for this ExtractionConfiguration
+        /// </summary>
+        /// <param name="runs"></param>
+        /// <returns></returns>
+        public IEnumerable<ArchivalDataLoadInfo> FilterRuns(IEnumerable<ArchivalDataLoadInfo> runs)
+        {
+            // allow for the project name changing but not our ID
+            return runs.Where(r=>r.Description.Contains(GetExtractionLoggingName()));
         }
     }
 }

@@ -5,6 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Discovery;
+using Rdmp.Core.Logging.PastEvents;
+using System.Collections.Generic;
 
 namespace Rdmp.Core.Curation.Data.DataLoad
 {
@@ -18,5 +20,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen);
 
         string GetDistinctLoggingTask();
+
+        IEnumerable<ArchivalDataLoadInfo> FilterRuns(IEnumerable<ArchivalDataLoadInfo> runs);
     }
 }
