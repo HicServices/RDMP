@@ -122,6 +122,20 @@ namespace Rdmp.UI.Menus
                 AddGoTo<ColumnInfo>(menu,lookup.ForeignKey_ID,"Foreign Key");
             }
 
+            if(forObject is IFilter filter && filter.ClonedFromExtractionFilter_ID.HasValue)
+            {
+                try
+                {
+                    var parent = _activator.RepositoryLocator.CatalogueRepository.GetObjectByID<ExtractionFilter>(filter.ClonedFromExtractionFilter_ID.Value);
+    
+                    if(parent != null)
+                        AddGoTo(menu,parent,"Parent Filter");
+                }
+                catch (KeyNotFoundException)
+                {
+                }
+            }
+
             if (forObject is SelectedDataSets selectedDataSet)
                 AddGoTo<Catalogue>(menu,selectedDataSet.ExtractableDataSet.Catalogue_ID);
 

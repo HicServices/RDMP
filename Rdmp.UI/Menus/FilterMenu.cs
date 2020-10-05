@@ -29,6 +29,7 @@ namespace Rdmp.UI.Menus
 
             Add(new ExecuteCommandExportObjectsToFileUI(_activator, new[] {filter}));
             Add(new ExecuteCommandImportFilterDescriptionsFromShare(_activator, filter));
+            
         }
     }
 }
