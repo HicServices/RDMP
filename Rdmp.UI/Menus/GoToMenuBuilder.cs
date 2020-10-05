@@ -122,6 +122,17 @@ namespace Rdmp.UI.Menus
                 AddGoTo<ColumnInfo>(menu,lookup.ForeignKey_ID,"Foreign Key");
             }
 
+            if(forObject is ExtractionFilter masterFilter)
+            {
+                AddGoTo(menu,()=>
+                _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<AggregateFilter>("ClonedFromExtractionFilter_ID", masterFilter.ID).Select(f=>f.GetAggregate()).Distinct()
+                ,"Usages (in Cohort Builder)");
+
+                AddGoTo(menu,()=>
+                _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<DeployedExtractionFilter>("ClonedFromExtractionFilter_ID" , masterFilter.ID).Select(f=>f.GetDataset().ExtractionConfiguration).Distinct()
+                ,"Usages (in Extractions)");
+            }
+
             if(forObject is IFilter filter && filter.ClonedFromExtractionFilter_ID.HasValue)
             {
                 try
