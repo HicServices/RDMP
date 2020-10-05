@@ -19,6 +19,7 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Providers;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
+using ReusableLibraryCode.Settings;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CohortCommitting
@@ -202,6 +203,39 @@ namespace Rdmp.Core.Tests.CohortCommitting
             var repo = new DataExportChildProvider(RepositoryLocator, null,new ThrowImmediatelyCheckNotifier(),null);
             var descendancy = repo.GetDescendancyListIfAnyFor(cohort);
             Assert.IsNotNull(descendancy);
+        }
+
+        [Test]
+        public void Test_IdentifiableExtractions()
+        {
+            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+
+            CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(db,CatalogueRepository, DataExportRepository,false);
+
+            _extractionInfo2.IsExtractionIdentifier = true;
+            _extractionInfo2.SaveToDatabase();
+
+            var candidate = wizard.GetPrivateIdentifierCandidates().Single(c => c.RuntimeName.Equals("PrivateIdentifierB"));
+            var ect = wizard.CreateDatabase(
+                candidate,
+                new ThrowImmediatelyCheckNotifier());
+
+            ect.Check(new ThrowImmediatelyCheckNotifier());
+
+            ect.ReleaseIdentifierField = ect.PrivateIdentifierField;
+            ect.SaveToDatabase();
+            
+            UserSettings.AllowIdentifiableExtractions = false;
+
+            var ex = Assert.Throws<Exception>(()=>ect.Check(new ThrowImmediatelyCheckNotifier()));
+            StringAssert.Contains("cohort will extract IDENTIFIABLE data",ex.Message);
+
+            UserSettings.AllowIdentifiableExtractions = true;
+
+            ect.Check(new ThrowImmediatelyCheckNotifier());
+
+            UserSettings.AllowIdentifiableExtractions = false;
+
         }
     }
 }
