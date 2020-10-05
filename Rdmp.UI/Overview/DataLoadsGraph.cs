@@ -62,7 +62,7 @@ namespace Rdmp.UI.Overview
                         .SingleOrDefault(m => m.ID == loadSummary.ID);
 
                 if (metadata != null)
-                    new ExecuteCommandViewLoadMetadataLogs(Activator).SetTarget(metadata).Execute();
+                    new ExecuteCommandViewLogs(Activator,metadata).Execute();
             };
 
             olvDataLoads.DoubleClick += delegate(object sender, EventArgs args)

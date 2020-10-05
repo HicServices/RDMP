@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -710,6 +711,22 @@ namespace Rdmp.Core.DataExport.Data
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return new IHasDependencies[0];
+        }
+
+        public DiscoveredServer GetDistinctLoggingDatabase()
+        {
+            return GetDistinctLoggingServer(false).Discover(DataAccessContext.Logging).Server;
+        }
+
+        public DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen)
+        {
+            serverChosen = GetDistinctLoggingServer(false);
+            return serverChosen.Discover(DataAccessContext.Logging).Server;
+        }
+
+        public string GetDistinctLoggingTask()
+        {
+            return ExecuteDatasetExtractionSource.AuditTaskName;
         }
     }
 }
