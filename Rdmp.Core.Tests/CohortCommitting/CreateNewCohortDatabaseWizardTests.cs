@@ -234,6 +234,8 @@ namespace Rdmp.Core.Tests.CohortCommitting
 
             ect.Check(new ThrowImmediatelyCheckNotifier());
 
+            UserSettings.AllowIdentifiableExtractions = false;
+
         }
     }
 }
