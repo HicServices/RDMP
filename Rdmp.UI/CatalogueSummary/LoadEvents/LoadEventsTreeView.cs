@@ -30,14 +30,11 @@ using ReusableLibraryCode;
 namespace Rdmp.UI.CatalogueSummary.LoadEvents
 {
     /// <summary>
-    /// Shows the longitudinal history of all data loads of the selected Catalogue (dataset).  This is an expandable tree including all progress messages, errors, table load notifications
+    /// Shows the longitudinal history of all data loads of a given object (e.g. data load).  This is an expandable tree including all progress messages, errors, table load notifications
     /// etc.
     /// 
     /// <para>Right clicking on red error messages will allow you to resolve them into yellow state (error has been investigated and did not result in any serious problems / data integrity loss etc).
     /// This launches the ResolveFatalErrors dialog.  You can resolve multiple errors at the same time by selecting all the errors at once and then right clicking one of them.</para>
-    /// 
-    /// <para>Right clicking a live table load message will let you view a sample of the the UPDATES / INSERTS that happened during the data load (launches ViewInsertsAndUpdatesDialog).</para>
-    /// 
     /// </summary>
     public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionControl
     {

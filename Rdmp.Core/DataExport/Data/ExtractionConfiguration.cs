@@ -276,6 +276,10 @@ namespace Rdmp.Core.DataExport.Data
             }
         }
 
+        /// <summary>
+        /// Returns a name suitable for describing the extraction of a dataset(s) from this configuration (in a <see cref="DataLoadInfo"/>)
+        /// </summary>
+        /// <returns></returns>
         public string GetLoggingRunName()
         {
             return Project.Name + " " + GetExtractionLoggingName();
