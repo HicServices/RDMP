@@ -327,6 +327,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
         public void ApplyFilter(string filter)
         {
             treeView1.ModelFilter = new TextMatchFilter(treeView1, filter,StringComparison.CurrentCultureIgnoreCase);
+            treeView1.UseFiltering = !string.IsNullOrWhiteSpace(filter);
             
         }
 
@@ -422,27 +423,6 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
         }
         
         
-                /*
-
-
-        public override void SetDatabaseObject(IActivateItems activator, LoadMetadata databaseObject)
-        {
-            base.SetDatabaseObject(activator,databaseObject);
-            ragSmiley1.Reset();
-
-            _rootObject = databaseObject;
-
-            CommonFunctionality.Add(new ToolStripLabel("Filter:"));
-            CommonFunctionality.Add(_tbFilterBox);
-            CommonFunctionality.Add(_btnApplyFilter);
-
-            CommonFunctionality.Add(new ToolStripSeparator());
-            CommonFunctionality.Add(new ToolStripLabel("Fetch:"));
-            CommonFunctionality.Add(_tbToFetch);
-            CommonFunctionality.Add(_btnFetch);
-
-        }*/
-
         
         public IPersistableObjectCollection GetCollection()
         {
@@ -456,12 +436,25 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
-            
         }
 
         public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
         {
+            SetItemActivator(activator);
+
             Collection = (LoadEventsTreeViewObjectCollection)collection;
+            
+            CommonFunctionality.ClearToolStrip();
+
+            CommonFunctionality.Add(new ToolStripLabel("Filter:"));
+            CommonFunctionality.Add(_tbFilterBox);
+            CommonFunctionality.Add(_btnApplyFilter);
+
+            CommonFunctionality.Add(new ToolStripSeparator());
+            CommonFunctionality.Add(new ToolStripLabel("Fetch:"));
+            CommonFunctionality.Add(_tbToFetch);
+            CommonFunctionality.Add(_btnFetch);
+
             PopulateLoadHistory();
         }
     }
