@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.PastEvents;
@@ -21,6 +22,7 @@ using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus.MenuItems;
+using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
@@ -37,26 +39,14 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
     /// <para>Right clicking a live table load message will let you view a sample of the the UPDATES / INSERTS that happened during the data load (launches ViewInsertsAndUpdatesDialog).</para>
     /// 
     /// </summary>
-    public partial class LoadEventsTreeView : LoadEventsTreeView_Design
+    public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionControl
     {
-        private ILoggedActivityRootObject _rootObject;
-        
+        public LoadEventsTreeViewCollection Collection {get;set;}
+                
         private BackgroundWorker _populateLoadHistory = new BackgroundWorker();
         private ArchivalDataLoadInfo[] _populateLoadHistoryResults = new ArchivalDataLoadInfo[0];
         private CancellationTokenSource _populateLoadHistoryCancel;
         
-
-        [Browsable(false)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ILoggedActivityRootObject RootObject
-        {
-            get { return _rootObject; }
-            private set
-            {
-                _rootObject = value;
-                PopulateLoadHistory();
-            }
-        }
 
         readonly ToolStripTextBox _tbFilterBox = new ToolStripTextBox();
         readonly ToolStripButton _btnApplyFilter = new ToolStripButton("Apply");
@@ -88,7 +78,6 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
             //We will handle this ourselves because default behaviour is to limit the amount of text copied
             treeView1.CopySelectionOnControlC = false;
 
-            AssociatedCollection = RDMPCollection.DataLoad;
             _btnApplyFilter.Click += (s, e) => ApplyFilter(_tbFilterBox.Text);
             _tbToFetch.TextChanged += TbToFetchTextChanged;
             _btnFetch.Click += (s,e)=>PopulateLoadHistory();
@@ -278,8 +267,8 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
             {
                 try
                 {
-                    _logManager = new LogManager(_rootObject.GetDistinctLoggingDatabase());
-                    results = _logManager.GetArchivalDataLoadInfos(_rootObject.GetDistinctLoggingTask(), _populateLoadHistoryCancel.Token,null, _toFetch).ToArray();
+                    _logManager = new LogManager(Collection.RootObject.GetDistinctLoggingDatabase());
+                    results = _logManager.GetArchivalDataLoadInfos(Collection.RootObject.GetDistinctLoggingTask(), _populateLoadHistoryCancel.Token,null, _toFetch).ToArray();
                 }
                 catch (OperationCanceledException)//user cancels
                 {
@@ -290,7 +279,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
             }
             catch (Exception exception)
             {
-                ragSmiley1.Fatal(exception);
+                CommonFunctionality.Fatal("Failed to popualte load history",exception);
             }
         }
 
@@ -303,7 +292,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
             //clear the tree
             ClearObjects();
 
-            if (_rootObject == null)
+            if (Collection?.RootObject == null)
                 return;
 
 
@@ -356,7 +345,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
                 RightClickMenu.Items.Add(new AtomicCommandMenuItem(cmd, Activator));
             }
 
-            if (tli != null && _rootObject is LoadMetadata lmd)
+            if (tli != null && Collection?.RootObject is LoadMetadata lmd)
             {
                 //if it is not a freaky temp table
                 if (!tli.TargetTable.EndsWith("_STAGING") && !tli.TargetTable.EndsWith("_RAW"))
@@ -434,6 +423,10 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
             }
         }
         
+        
+                /*
+
+
         public override void SetDatabaseObject(IActivateItems activator, LoadMetadata databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
@@ -450,11 +443,28 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
             CommonFunctionality.Add(_tbToFetch);
             CommonFunctionality.Add(_btnFetch);
 
-        }
-    }
+        }*/
 
-    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LoadEventsTreeView_Design, UserControl>))]
-    public abstract class LoadEventsTreeView_Design : RDMPSingleDatabaseObjectControl<LoadMetadata>
-    {
+        
+        public IPersistableObjectCollection GetCollection()
+        {
+            return Collection;
+        }
+
+        public string GetTabName()
+        {
+            return "Logs:" + Collection?.RootObject?.ToString();
+        }
+
+        public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+        {
+            
+        }
+
+        public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
+        {
+            Collection = (LoadEventsTreeViewCollection)collection;
+            PopulateLoadHistory();
+        }
     }
 }

@@ -7,6 +7,7 @@
 using System.Drawing;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
@@ -47,7 +48,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-            Activator.Activate<LoadEventsTreeView, LoadMetadata>(_loadmetadata);
+            Activator.Activate<LoadEventsTreeView>(new LoadEventsTreeViewCollection(_loadmetadata));
         }
     }
 }
