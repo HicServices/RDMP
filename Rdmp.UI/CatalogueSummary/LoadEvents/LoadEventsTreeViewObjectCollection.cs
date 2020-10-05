@@ -7,13 +7,13 @@
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CatalogueSummary.LoadEvents
 {
-    public class LoadEventsTreeViewCollection: PersistableObjectCollection
+    public class LoadEventsTreeViewObjectCollection : PersistableObjectCollection
     {
         public ILoggedActivityRootObject RootObject { get; }
 
-        public LoadEventsTreeViewCollection(ILoggedActivityRootObject rootObject)
+        public LoadEventsTreeViewObjectCollection(ILoggedActivityRootObject rootObject)
         {
             RootObject = rootObject;
         }

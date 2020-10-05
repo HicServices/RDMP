@@ -48,7 +48,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-            Activator.Activate<LoadEventsTreeView>(new LoadEventsTreeViewCollection(_loadmetadata));
+            Activator.Activate<LoadEventsTreeView>(new LoadEventsTreeViewObjectCollection(_loadmetadata));
         }
     }
 }

@@ -41,7 +41,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
     /// </summary>
     public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionControl
     {
-        public LoadEventsTreeViewCollection Collection {get;set;}
+        public LoadEventsTreeViewObjectCollection Collection {get;set;}
                 
         private BackgroundWorker _populateLoadHistory = new BackgroundWorker();
         private ArchivalDataLoadInfo[] _populateLoadHistoryResults = new ArchivalDataLoadInfo[0];
@@ -463,7 +463,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
 
         public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
         {
-            Collection = (LoadEventsTreeViewCollection)collection;
+            Collection = (LoadEventsTreeViewObjectCollection)collection;
             PopulateLoadHistory();
         }
     }
