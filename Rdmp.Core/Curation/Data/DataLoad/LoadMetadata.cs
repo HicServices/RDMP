@@ -43,7 +43,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
 
 
     /// <inheritdoc cref="ILoadMetadata"/>
-    public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHasQuerySyntaxHelper
+    public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHasQuerySyntaxHelper, ILoggedActivityRootObject
     {
 
         #region Database Properties
@@ -196,7 +196,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             return Repository.GetAllObjectsWithParent<Catalogue>(this);
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc cref="GetDistinctLoggingDatabase()"/>
         public DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen)
         {
             var loggingServers = GetLoggingServers();
@@ -209,8 +209,11 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             serverChosen = (IExternalDatabaseServer)loggingServer;
             return toReturn;
         }
-
-        /// <inheritdoc/>
+                
+        /// <summary>
+        /// The unique logging server for auditing the load (found by querying <see cref="Catalogue.LiveLoggingServer"/>)
+        /// </summary>
+        /// <returns></returns>
         public DiscoveredServer GetDistinctLoggingDatabase()
         {
             IExternalDatabaseServer whoCares;
@@ -227,7 +230,10 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             return catalogue.Select(c => c.LiveLoggingServer).ToArray();
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Returns the unique value of <see cref="Catalogue.LoggingDataTask"/> amongst all catalogues loaded by the <see cref="LoadMetadata"/>
+        /// </summary>
+        /// <returns></returns>
         public string GetDistinctLoggingTask()
         {
             var catalogueMetadatas = GetAllCatalogues().ToArray();
