@@ -23,7 +23,10 @@ namespace Rdmp.Core.CommandExecution
     public abstract class BasicActivateItems : IBasicActivateItems
     {
         /// <inheritdoc/>
-        public ICoreChildProvider CoreChildProvider { get; protected set; }
+        public virtual bool IsInteractive => true;
+
+        /// <inheritdoc/>
+        public ICoreChildProvider CoreChildProvider { get; protected set;}
 
         /// <inheritdoc/>
         public IServerDefaults ServerDefaults { get; }
@@ -52,8 +55,19 @@ namespace Rdmp.Core.CommandExecution
             GlobalErrorCheckNotifier = globalErrorCheckNotifier;
 
             ServerDefaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
+
+            // Note that this is virtual so can return null e.g. if other stuff has to happen with the activator before a valid child provider can be built (e.g. loading plugin user interfaces)
+            CoreChildProvider = GetChildProvider();
         }
-        
+
+        protected virtual ICoreChildProvider GetChildProvider()
+        {
+            return RepositoryLocator.DataExportRepository != null?
+                            new DataExportChildProvider(RepositoryLocator,null,GlobalErrorCheckNotifier, CoreChildProvider as DataExportChildProvider):
+                            new CatalogueChildProvider(RepositoryLocator.CatalogueRepository,null,GlobalErrorCheckNotifier,CoreChildProvider as CatalogueChildProvider);
+        }
+
+
         protected void OnEmphasise(object sender, EmphasiseEventArgs args)
         {
             Emphasise?.Invoke(sender,args);
@@ -164,7 +178,11 @@ namespace Rdmp.Core.CommandExecution
         protected abstract bool SelectValueTypeImpl(string prompt, Type paramType, object initialValue, out object chosen);
 
         /// <inheritdoc/>
-        public abstract void Publish(DatabaseEntity databaseEntity);
+        public virtual void Publish(DatabaseEntity databaseEntity)
+        {
+            var fresh = GetChildProvider();
+            CoreChildProvider.UpdateTo(fresh);
+        }
 
         /// <inheritdoc/>
         public abstract void Show(string message);

@@ -19,6 +19,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Progress;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.DataExport.Data
 {
@@ -426,13 +427,13 @@ where
                 ? ExternalCohortTable.ReleaseIdentifierField
                 : OverrideReleaseIdentifierSQL;
 
-            if (toReturn.Equals(ExternalCohortTable.PrivateIdentifierField))
+            if (toReturn.Equals(ExternalCohortTable.PrivateIdentifierField) && !UserSettings.AllowIdentifiableExtractions)
                 throw new Exception("ReleaseIdentifier for cohort " + ID +
                                     " is the same as the PrivateIdentifierSQL, this is forbidden");
 
             var syntaxHelper = GetQuerySyntaxHelper();
 
-            if (syntaxHelper.GetRuntimeName(toReturn).Equals(syntaxHelper.GetRuntimeName(ExternalCohortTable.PrivateIdentifierField)))
+            if (syntaxHelper.GetRuntimeName(toReturn).Equals(syntaxHelper.GetRuntimeName(ExternalCohortTable.PrivateIdentifierField)) && !UserSettings.AllowIdentifiableExtractions)
                 throw new Exception("ReleaseIdentifier for cohort " + ID +
                                     " is the same as the PrivateIdentifierSQL, this is forbidden");
 

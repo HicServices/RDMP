@@ -22,6 +22,11 @@ namespace Rdmp.Core.CommandExecution
     public interface IBasicActivateItems
     {
         /// <summary>
+        /// True for activators that can illicit immediate responses from users.  False for activators designed to run unattended e.g. command line/scripting
+        /// </summary>
+        bool IsInteractive {get;}
+
+        /// <summary>
         /// Event triggered when objects should be brought to the users attention
         /// </summary>
         event EmphasiseItemHandler Emphasise;

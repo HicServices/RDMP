@@ -20,6 +20,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.DataExport.Data
 {
@@ -240,7 +241,7 @@ namespace Rdmp.Core.DataExport.Data
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
                         "PrivateIdentifierField and ReleaseIdentifierField are the same, this means your cohort will extract IDENTIFIABLE data (no cohort identifier substitution takes place)",
-                        CheckResult.Fail));
+                        UserSettings.AllowIdentifiableExtractions ? CheckResult.Warning : CheckResult.Fail));
         }
 
         #region Stuff for checking the remote (not data export manager) table where the cohort is allegedly stored

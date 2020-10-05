@@ -69,7 +69,6 @@ namespace Rdmp.UI.Tests
 
             CommentStore = _commentStore;
 
-            CoreChildProvider = new DataExportChildProvider(RepositoryLocator,null,Results);
             CoreIconProvider = new DataExportIconProvider(RepositoryLocator,null);
             FavouritesProvider = new FavouritesProvider(this,repo.CatalogueRepository);
             HistoryProvider = new HistoryProvider(RepositoryLocator);
@@ -93,6 +92,7 @@ namespace Rdmp.UI.Tests
 
         public override void Publish(DatabaseEntity databaseEntity)
         {
+            base.Publish(databaseEntity);
             RefreshBus.Publish(this,new RefreshObjectEventArgs(databaseEntity));
         }
 

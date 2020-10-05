@@ -11,11 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - reduced memory overhead during refreshes
+- Fixed various graphical/performance issues when running in VDI environments with limited CPU
 
 ### Added
 
 - Pipeline ID and Name now recorded in logs for Data Extractions
 - Added support for viewing extraction logs in tree form (for a given ExtractionConfiguration)
+- Added `AllowIdentifiableExtractions` user setting.  Enabling this prevents RDMP reporting an error state when cohorts are created that have the same private and release ID fields.
 
 ## [4.1.9] - 2020-09-17
 

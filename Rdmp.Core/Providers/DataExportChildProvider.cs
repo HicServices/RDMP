@@ -96,9 +96,9 @@ namespace Rdmp.Core.Providers
         
         private IDataExportRepository dataExportRepository;
 
-        public DataExportChildProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders,ICheckNotifier errorsCheckNotifier) : base(repositoryLocator.CatalogueRepository, pluginChildProviders,errorsCheckNotifier)
+        public DataExportChildProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders,ICheckNotifier errorsCheckNotifier, DataExportChildProvider previousStateIfKnown) : base(repositoryLocator.CatalogueRepository, pluginChildProviders,errorsCheckNotifier,previousStateIfKnown)
         {
-            BlackListedSources = new List<ExternalCohortTable>();
+            BlackListedSources = previousStateIfKnown?.BlackListedSources ?? new List<ExternalCohortTable>();
             _errorsCheckNotifier = errorsCheckNotifier;
             dataExportRepository = repositoryLocator.DataExportRepository;
 
@@ -115,32 +115,47 @@ namespace Rdmp.Core.Providers
             _selectedDataSetsWithNoIsExtractionIdentifier = new HashSet<ISelectedDataSets>(dataExportRepository.GetSelectedDatasetsWithNoExtractionIdentifiers());
 
             SelectedDataSets = GetAllObjects<SelectedDataSets>(dataExportRepository);
+            ReportProgress("Fetching data export objects");
+
             var dsDictionary = ExtractableDataSets.ToDictionary(ds => ds.ID, d => d);
             foreach (SelectedDataSets s in SelectedDataSets)
                 s.InjectKnown(dsDictionary[s.ExtractableDataSet_ID]);
             
+            ReportProgress("Injecting SelectedDataSets");
+
             //This means that the ToString method in ExtractableDataSet doesn't need to go lookup catalogue info
             var catalogueIdDict = AllCatalogues.ToDictionary(c => c.ID, c2 => c2);
             foreach (ExtractableDataSet ds in ExtractableDataSets)
                 if(catalogueIdDict.TryGetValue(ds.Catalogue_ID, out Catalogue cata))
                     ds.InjectKnown(cata);
-                
+             
+            ReportProgress("Injecting ExtractableDataSet");
+            
             AllPackages = GetAllObjects<ExtractableDataSetPackage>(dataExportRepository);
             
             Projects = GetAllObjects<Project>(dataExportRepository);
             ExtractionConfigurations = GetAllObjects<ExtractionConfiguration>(dataExportRepository);
+                        
+            ReportProgress("Get Projects and Configurations");
+
             ExtractionConfigurationsByProject = ExtractionConfigurations.GroupBy(k => k.Project_ID).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
+
+            ReportProgress("Grouping Extractions by Project");
 
             AllGlobalExtractionFilterParameters = GetAllObjects<GlobalExtractionFilterParameter>(dataExportRepository);
 
             AllContainers = GetAllObjects<FilterContainer>(dataExportRepository).ToDictionary(o => o.ID, o => o);
             AllDeployedExtractionFilters = GetAllObjects<DeployedExtractionFilter>(dataExportRepository);
             _allParameters = GetAllObjects<DeployedExtractionFilterParameter>(dataExportRepository);
+            
+            ReportProgress("Getting Filters");
 
             //if we are using a database repository then we can make use of the caching class DataExportFilterManagerFromChildProvider to speed up
             //filter contents
             var dbRepo = dataExportRepository as DataExportRepository;
             _dataExportFilterManager = dbRepo == null ? dataExportRepository.FilterManager : new DataExportFilterManagerFromChildProvider(dbRepo, this);
+                        
+            ReportProgress("Building FilterManager");
 
             Cohorts = GetAllObjects<ExtractableCohort>(dataExportRepository);
             _cohortsByOriginId = new Dictionary<int,HashSet<ExtractableCohort>>();
@@ -154,23 +169,33 @@ namespace Rdmp.Core.Providers
             }
 
             _configurationToDatasetMapping = new Dictionary<ExtractionConfiguration, List<SelectedDataSets>>();
+            
+            ReportProgress("Fetching Cohorts");
 
             GetCohortAvailability();
+
+            ReportProgress("GetCohortAvailability");
             
             var configToSds = SelectedDataSets.GroupBy(k => k.ExtractionConfiguration_ID).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
             
             foreach (ExtractionConfiguration configuration in ExtractionConfigurations)
                 if(configToSds.TryGetValue(configuration.ID, out List<SelectedDataSets> result))
                     _configurationToDatasetMapping.Add(configuration,result);
+            
+            ReportProgress("Mapping configurations to datasets");
 
             RootCohortsNode = new AllCohortsNode();
             AddChildren(RootCohortsNode,new DescendancyList(RootCohortsNode));
 
             foreach (ExtractableDataSetPackage package in AllPackages)
                 AddChildren(package, new DescendancyList(package));
+            
+            ReportProgress("Packages and Cohorts");
 
             foreach (Project p in Projects)
                 AddChildren(p, new DescendancyList(p));
+            
+            ReportProgress("Projects");
 
             //work out all the Catalogues that are extractable (Catalogues are extractable if there is an ExtractableDataSet with the Catalogue_ID that matches them)
             var cataToEds = new Dictionary<int,ExtractableDataSet>(ExtractableDataSets.ToDictionary(k => k.Catalogue_ID));
@@ -181,6 +206,8 @@ namespace Rdmp.Core.Providers
                     catalogue.InjectKnown(result.GetCatalogueExtractabilityStatus());
                 else
                     catalogue.InjectKnown(new CatalogueExtractabilityStatus(false,false));
+            
+            ReportProgress("Catalogue extractability injection");
 
             try
             {
@@ -198,6 +225,8 @@ namespace Rdmp.Core.Providers
             {
                 _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to build DesignTime PipelineUseCases",CheckResult.Fail,ex));
             }
+
+            ReportProgress("Pipeline adding");
         }
 
         private void AddChildren(IExtractableDataSetPackage package, DescendancyList descendancy)
@@ -552,54 +581,76 @@ namespace Rdmp.Core.Providers
 
         public IEnumerable<ExtractionConfiguration> GetActiveConfigurationsOnly(Project project)
         {
-            return GetConfigurations(project).Where(ec => !ec.IsReleased);
+            lock(WriteLock)
+            {
+                return GetConfigurations(project).Where(ec => !ec.IsReleased);
+            }
         }
 
         public IEnumerable<SelectedDataSets> GetDatasets(ExtractionConfiguration extractionConfiguration)
         {
-            return _configurationToDatasetMapping.TryGetValue(extractionConfiguration,out List<SelectedDataSets> result)?
+            lock(WriteLock)
+            {
+                return _configurationToDatasetMapping.TryGetValue(extractionConfiguration,out List<SelectedDataSets> result)?
                 (IEnumerable<SelectedDataSets>) result :new SelectedDataSets[0];
+            }
         }
 
         public IEnumerable<ExtractionConfiguration> GetConfigurations(Project project)
         {
-            //Get the extraction configurations node of the project
-            var configurationsNode = GetChildren(project).OfType<ExtractionConfigurationsNode>().Single();
+            lock(WriteLock)
+            {
+                //Get the extraction configurations node of the project
+                var configurationsNode = GetChildren(project).OfType<ExtractionConfigurationsNode>().Single();
 
-            var frozenConfigurationsNode = GetChildren(configurationsNode).OfType<FrozenExtractionConfigurationsNode>().Single();
+                var frozenConfigurationsNode = GetChildren(configurationsNode).OfType<FrozenExtractionConfigurationsNode>().Single();
 
-            //then add all the children extraction configurations
-            return GetChildren(configurationsNode).OfType<ExtractionConfiguration>().Union(GetChildren(frozenConfigurationsNode).OfType<ExtractionConfiguration>());
+                //then add all the children extraction configurations
+                return GetChildren(configurationsNode).OfType<ExtractionConfiguration>().Union(GetChildren(frozenConfigurationsNode).OfType<ExtractionConfiguration>());
+            }
         }
 
         public IEnumerable<IExtractableDataSet> GetDatasets(ExtractableDataSetPackage package)
         {
-            return dataExportRepository.PackageManager.GetAllDataSets(package, ExtractableDataSets);
+            lock(WriteLock)
+            {
+                return dataExportRepository.PackageManager.GetAllDataSets(package, ExtractableDataSets);
+            }
         }
         
         public bool ProjectHasNoSavedCohorts(Project project)
         {
-            //get the projects cohort umbrella folder
-            var projectCohortsNode = GetChildren(project).OfType<ProjectCohortsNode>().Single();
+            lock(WriteLock)
+            {
+                //get the projects cohort umbrella folder
+                var projectCohortsNode = GetChildren(project).OfType<ProjectCohortsNode>().Single();
 
-            //get the saved cohorts folder under it
-            var projectSavedCohortsNode = GetChildren(projectCohortsNode).OfType<ProjectSavedCohortsNode>().Single();
+                //get the saved cohorts folder under it
+                var projectSavedCohortsNode = GetChildren(projectCohortsNode).OfType<ProjectSavedCohortsNode>().Single();
 
-            //if ther are no children that are Cohort Sources (cohort databases) under this saved cohorts folder then the Project has no 
-            return GetChildren(projectSavedCohortsNode).OfType<CohortSourceUsedByProjectNode>().All(s => s.IsEmptyNode);
+                //if ther are no children that are Cohort Sources (cohort databases) under this saved cohorts folder then the Project has no 
+                return GetChildren(projectSavedCohortsNode).OfType<CohortSourceUsedByProjectNode>().All(s => s.IsEmptyNode);
+            }
         }
 
         public override Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables()
         {
-            var toReturn = base.GetAllSearchables();
-            AddToReturnSearchablesWithNoDecendancy(toReturn,Projects);
-            AddToReturnSearchablesWithNoDecendancy(toReturn, AllPackages);
-            return toReturn;
+            lock(WriteLock)
+            {
+                var toReturn = base.GetAllSearchables();
+                AddToReturnSearchablesWithNoDecendancy(toReturn,Projects);
+                AddToReturnSearchablesWithNoDecendancy(toReturn, AllPackages);
+                return toReturn;
+            }
+            
         }
 
         public bool IsMissingExtractionIdentifier(SelectedDataSets selectedDataSets)
         {
-            return _selectedDataSetsWithNoIsExtractionIdentifier.Contains(selectedDataSets);
+            lock(WriteLock)
+            {
+                return _selectedDataSetsWithNoIsExtractionIdentifier.Contains(selectedDataSets);
+            }
         }
 
         /// <summary>
@@ -609,62 +660,65 @@ namespace Rdmp.Core.Providers
         /// <returns></returns>
         public ExtractableColumn[] GetAllExtractableColumns(IDataExportRepository repository)
         {
-            var toReturn = repository.GetAllObjects<ExtractableColumn>();
-            foreach (var c in toReturn)
+            lock(WriteLock)
             {
-                if (c.CatalogueExtractionInformation_ID == null)
-                    c.InjectKnown((ExtractionInformation)null);
-                else
+                var toReturn = repository.GetAllObjects<ExtractableColumn>();
+                foreach (var c in toReturn)
                 {
-                    if (AllExtractionInformationsDictionary.TryGetValue(c.CatalogueExtractionInformation_ID.Value,out ExtractionInformation ei))
-                        c.InjectKnown(ei);
+                    if (c.CatalogueExtractionInformation_ID == null)
+                        c.InjectKnown((ExtractionInformation)null);
+                    else
+                    {
+                        if (AllExtractionInformationsDictionary.TryGetValue(c.CatalogueExtractionInformation_ID.Value,out ExtractionInformation ei))
+                            c.InjectKnown(ei);
+                    }
                 }
-            }
 
-            return toReturn;
+                return toReturn;
+            }
         }
 
-        protected override void Dispose(bool disposing)
+        public override void UpdateTo(ICoreChildProvider other)
         {
-            base.Dispose(disposing);
-            
-            if (disposing)
+            lock(WriteLock)
             {
-                //That's one way to avoid memory leaks... anyone holding onto a stale one of these is going to have a bad day
-                RootCohortsNode = null;
-                 CohortSources = null;
-                ExtractableDataSets = null;
-                SelectedDataSets = null;
-                AllPackages = null;
-                Projects = null;
-                _cohortsByOriginId?.Clear();
-                _cohortsByOriginId = null;
-                Cohorts = null;
-                ExtractionConfigurations = null;
-                ExtractionConfigurationsByProject?.Clear();
-                ExtractionConfigurationsByProject = null;
-                _configurationToDatasetMapping?.Clear();
-                _configurationToDatasetMapping = null;
-                _dataExportFilterManager = null;
-                BlackListedSources = null;
-                DuplicatesByProject?.Clear();
-                DuplicatesByProject = null;
-                DuplicatesByCohortSourceUsedByProjectNode?.Clear();
-                DuplicatesByCohortSourceUsedByProjectNode = null;
-                ProjectNumberToCohortsDictionary = null;
-                AllProjectAssociatedCics = null;
-                AllGlobalExtractionFilterParameters = null;
-                _cicAssociations = null;
-                AllFreeCohortIdentificationConfigurationsNode = null;
-                AllProjectCohortIdentificationConfigurationsNode = null;
-                _selectedDataSetsWithNoIsExtractionIdentifier?.Clear();
-                _selectedDataSetsWithNoIsExtractionIdentifier = null;
-                 AllContainers = null;
-                AllDeployedExtractionFilters = null;
-                _allParameters = null;
-                dataExportRepository = null;
+                base.UpdateTo(other);
 
+                if(!(other is DataExportChildProvider dxOther))
+                {
+                    throw new NotSupportedException("Did not know how to UpdateTo ICoreChildProvider of type " + other.GetType().Name);
+                }
+
+                //That's one way to avoid memory leaks... anyone holding onto a stale one of these is going to have a bad day
+                RootCohortsNode = dxOther.RootCohortsNode;
+                CohortSources = dxOther.CohortSources;
+                ExtractableDataSets = dxOther.ExtractableDataSets;
+                SelectedDataSets = dxOther.SelectedDataSets;
+                AllPackages = dxOther.AllPackages;
+                Projects = dxOther.Projects;
+                _cohortsByOriginId = dxOther._cohortsByOriginId;
+                Cohorts = dxOther.Cohorts;
+                ExtractionConfigurations = dxOther.ExtractionConfigurations;
+                ExtractionConfigurationsByProject = dxOther.ExtractionConfigurationsByProject;
+                _configurationToDatasetMapping = dxOther._configurationToDatasetMapping;
+                _dataExportFilterManager = dxOther._dataExportFilterManager;
+                BlackListedSources = dxOther.BlackListedSources;
+                DuplicatesByProject = dxOther.DuplicatesByProject;
+                DuplicatesByCohortSourceUsedByProjectNode = dxOther.DuplicatesByCohortSourceUsedByProjectNode;
+                ProjectNumberToCohortsDictionary = dxOther.ProjectNumberToCohortsDictionary;
+                AllProjectAssociatedCics = dxOther.AllProjectAssociatedCics;
+                AllGlobalExtractionFilterParameters = dxOther.AllGlobalExtractionFilterParameters;
+                _cicAssociations = dxOther._cicAssociations;
+                AllFreeCohortIdentificationConfigurationsNode = dxOther.AllFreeCohortIdentificationConfigurationsNode;
+                AllProjectCohortIdentificationConfigurationsNode = dxOther.AllProjectCohortIdentificationConfigurationsNode;
+                _selectedDataSetsWithNoIsExtractionIdentifier = dxOther._selectedDataSetsWithNoIsExtractionIdentifier;
+                AllContainers = dxOther.AllContainers;
+                AllDeployedExtractionFilters = dxOther.AllDeployedExtractionFilters;
+                _allParameters = dxOther._allParameters;
+                dataExportRepository = dxOther.dataExportRepository;
+                _extractionInformationsByCatalogueItem = dxOther._extractionInformationsByCatalogueItem;
             }
+            
         }
     }
 }

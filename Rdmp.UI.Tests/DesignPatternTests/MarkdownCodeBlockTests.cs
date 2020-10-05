@@ -121,7 +121,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                 {
                     throw new NotImplementedException();
                 }
-                public _c9aeab3ddaf643e5967c3e2352c388f0(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier) : base(repositoryLocator, pluginChildProviders, errorsCheckNotifier)
+                public _c9aeab3ddaf643e5967c3e2352c388f0(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier) : base(repositoryLocator, pluginChildProviders, errorsCheckNotifier,null)
                 {
                 }
             }
@@ -175,7 +175,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                     throw new NotImplementedException();
                 }
 
-                public _0bac9aa7f8874a25bc1fe1361b91f6e5(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier) : base(repositoryLocator, pluginChildProviders, errorsCheckNotifier)
+                public _0bac9aa7f8874a25bc1fe1361b91f6e5(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier) : base(repositoryLocator, pluginChildProviders, errorsCheckNotifier,null)
                 {
                 }
             }
