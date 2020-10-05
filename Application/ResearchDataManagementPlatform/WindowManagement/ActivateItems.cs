@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
@@ -74,12 +75,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public List<IPluginUserInterface> PluginUserInterfaces { get; private set; }
         readonly UIObjectConstructor _constructor = new UIObjectConstructor();
 
-        /// <summary>
-        /// Populated after <see cref="UpdateChildProviders"/>, this is the stale child provider
-        /// which should be disposed (anyone holding onto it will have a bad day).
-        /// </summary>
-        private ICoreChildProvider _staleChildProvider;
-
         public IArrangeWindows WindowArranger { get; private set; }
         
         public override void Publish(DatabaseEntity databaseEntity)
@@ -105,17 +100,14 @@ namespace ResearchDataManagementPlatform.WindowManagement
             WindowFactory = windowFactory;
             _mainDockPanel = mainDockPanel;
             _windowManager = windowManager;
+            RefreshBus = refreshBus;
+
+            ConstructPluginChildProviders();
+            CoreChildProvider = GetChildProvider();
             
             //Shouldn't ever change externally to your session so doesn't need constantly refreshed
             FavouritesProvider = new FavouritesProvider(this, repositoryLocator.CatalogueRepository);
             HistoryProvider = new HistoryProvider(repositoryLocator);
-            RefreshBus = refreshBus;
-
-            ConstructPluginChildProviders();
-
-            UpdateChildProviders();
-            RefreshBus.BeforePublish += (s, e) => UpdateChildProviders();
-            RefreshBus.AfterPublish +=  (s, e) => _staleChildProvider?.Dispose();
 
             //handle custom icons from plugin user interfaces in which
             CoreIconProvider = new DataExportIconProvider(repositoryLocator,PluginUserInterfaces.ToArray());
@@ -143,7 +135,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             {
                 try
                 {
-                    
                     PluginUserInterfaces.Add((IPluginUserInterface) _constructor.Construct(pluginType,this,false));
                 }
                 catch (Exception e)
@@ -153,16 +144,20 @@ namespace ResearchDataManagementPlatform.WindowManagement
             }
         }
 
-        private void UpdateChildProviders()
+        protected override ICoreChildProvider GetChildProvider()
         {
+            //constructor call in base class
+            if(PluginUserInterfaces == null)
+                return null;
+
             //Dispose the old one
-            var old = CoreChildProvider;
+            ICoreChildProvider temp = null;
 
             //prefer a linked repository with both
             if(RepositoryLocator.DataExportRepository != null)
                 try
                 {
-                    CoreChildProvider = new DataExportChildProvider(RepositoryLocator,PluginUserInterfaces.ToArray(),GlobalErrorCheckNotifier);
+                    temp = new DataExportChildProvider(RepositoryLocator,PluginUserInterfaces.ToArray(),GlobalErrorCheckNotifier,CoreChildProvider as DataExportChildProvider);
                 }
                 catch (Exception e)
                 {
@@ -172,14 +167,16 @@ namespace ResearchDataManagementPlatform.WindowManagement
             //there was an error generating a data export repository or there was no repository specified
 
             //so just create a catalogue one
-            if (CoreChildProvider == null)
-                CoreChildProvider = new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(),GlobalErrorCheckNotifier);
+            if (temp == null)
+                temp = new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(),GlobalErrorCheckNotifier, CoreChildProvider as CatalogueChildProvider);
 
+            // first time
+            if(CoreChildProvider == null)
+                CoreChildProvider = temp;
+            else
+                CoreChildProvider.UpdateTo(temp);
 
-            CoreChildProvider.GetPluginChildren();
-            RefreshBus.ChildProvider = CoreChildProvider;
-
-            _staleChildProvider = old;
+            return CoreChildProvider;
         }
         
 
@@ -494,7 +491,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
             {
                 existingHostedControlInstance = existing.GetControl();
                 existing.Activate();
-                existing.HandleUserRequestingTabRefresh(this);
+
+                // only refresh if there are changes to the underlying object
+                if(databaseObject is IRevertable r && r.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
+                    existing.HandleUserRequestingTabRefresh(this);
             }
 
             return existing != null;
@@ -509,7 +509,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
             {
                 existingHostedControlInstance = existing.GetControl();
                 existing.Activate();
-                existing.HandleUserRequestingTabRefresh(this);
+                
+                // only refresh if there are changes to some of the underlying objects
+                if(collection.DatabaseObjects.OfType<IRevertable>().Any(r=>r.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent))
+                    existing.HandleUserRequestingTabRefresh(this);
             }
 
             return existing != null;
@@ -576,6 +579,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
+            //update the child provider
+            GetChildProvider();
             RefreshProblemProviders();
         }
 

@@ -199,7 +199,7 @@ namespace Rdmp.Core.Tests.CohortCommitting
             Assert.AreEqual("101243", dtAno.Rows[1][cohort.GetPrivateIdentifier(true)]);
 
             //make sure that it shows up in the child provider (provides fast object access in CLI and builds tree model for UI)
-            var repo = new DataExportChildProvider(RepositoryLocator, null,new ThrowImmediatelyCheckNotifier());
+            var repo = new DataExportChildProvider(RepositoryLocator, null,new ThrowImmediatelyCheckNotifier(),null);
             var descendancy = repo.GetDescendancyListIfAnyFor(cohort);
             Assert.IsNotNull(descendancy);
         }

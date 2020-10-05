@@ -202,6 +202,10 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("RecentHistory", value); }
         }
 
+        public static bool DebugPerformance { 
+            get { return AppSettings.GetValueOrDefault("DebugPerformance", false); }
+            set { AppSettings.AddOrUpdateValue("DebugPerformance", value); } }
+
         #endregion
 
         public static bool GetTutorialDone(Guid tutorialGuid)
