@@ -234,8 +234,7 @@ namespace Rdmp.Core.CommandLine.Runners
                 //populate DataLoadInfo object (Audit)
                 dataLoadInfo = new DataLoadInfo(ExecuteDatasetExtractionSource.AuditTaskName,
                                                      Process.GetCurrentProcess().ProcessName,
-                                                     _project.Name + " (ExtractionConfiguration ID=" +
-                                                     _configuration.ID + ")",
+                                                     _configuration.GetLoggingRunName(),
                                                      "", false, _logManager.Server);
             }
             catch (Exception e)

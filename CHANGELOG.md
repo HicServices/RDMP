@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Pipeline ID and Name now recorded in logs for Data Extractions
+- Added support for viewing extraction logs in tree form (for a given ExtractionConfiguration)
 - Added `AllowIdentifiableExtractions` user setting.  Enabling this prevents RDMP reporting an error state when cohorts are created that have the same private and release ID fields.
 - Added GoTo from extraction/cohort building filters to the parent Catalogue level filter and vice versa
 

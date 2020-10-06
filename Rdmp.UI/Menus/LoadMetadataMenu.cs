@@ -21,7 +21,7 @@ namespace Rdmp.UI.Menus
     {
         public LoadMetadataMenu(RDMPContextMenuStripArgs args, LoadMetadata loadMetadata) : base(args, loadMetadata)
         {
-            Add(new ExecuteCommandViewLoadMetadataLogs(_activator).SetTarget(loadMetadata));
+            Add(new ExecuteCommandViewLogs(_activator,loadMetadata));
 
             Add(new ExecuteCommandViewLoadDiagram(_activator,loadMetadata));
 
