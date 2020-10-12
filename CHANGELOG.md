@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added GoTo from extraction/cohort building filters to the parent Catalogue level filter and vice versa
 - Added ability to suppress [LoadMetadata] triggers
 - Added ability for Plugins to store custom information about objects in the RDMP Catalogue platform database
+- Added IgnoreColumns setting for DLE to ignore specific columns in the final table completely (not created in RAW/STAGING and not migrated)
 
 ## [4.1.9] - 2020-09-17
 

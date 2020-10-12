@@ -7,6 +7,7 @@
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -45,7 +46,6 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
 ";
 
         [TestCase(true)]
-        [TestCase(false)]
         public void TestTemporalTable(bool ignoreTrigger)
         {
             var dbtype = FAnsi.DatabaseType.MicrosoftSQLServer;
@@ -93,6 +93,9 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
             checker.Check(new AcceptAllCheckNotifier());
 
             var dbConfig = new HICDatabaseConfiguration(lmd,null);
+
+            // TODO: find a way to inject this or persist at LoadMetadata
+            dbConfig.IgnoreColumns = new Regex("^Valid((From)|(To))$");
 
             var loadFactory = new HICDataLoadFactory(
                 lmd,

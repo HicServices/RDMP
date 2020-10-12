@@ -22,13 +22,15 @@ namespace Rdmp.Core.DataLoad.Engine.Migration
     public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
     {
         private readonly Regex _updateButDoNotDiffExtended;
+        private readonly Regex _ignore;
 
         /// <inheritdoc/>
         public bool NoBackupTrigger {get;set;}
 
-        public StagingToLiveMigrationFieldProcessor(Regex updateButDoNotDiff = null)
+        public StagingToLiveMigrationFieldProcessor(Regex updateButDoNotDiff = null, Regex ignore=null)
         {
             _updateButDoNotDiffExtended = updateButDoNotDiff;
+            _ignore = ignore;
         }
 
         public void ValidateFields(DiscoveredColumn[] sourceFields, DiscoveredColumn[] destinationFields)
@@ -45,10 +47,13 @@ namespace Rdmp.Core.DataLoad.Engine.Migration
 
         public void AssignFieldsForProcessing(DiscoveredColumn field, List<DiscoveredColumn> fieldsToDiff, List<DiscoveredColumn> fieldsToUpdate)
         {
+            if(Ignore(field))
+                return;
+
             //it is a hic internal field but not one of the overwritten, standard ones
             if (SpecialFieldNames.IsHicPrefixed(field)
                 || 
-                IsSupplementalMatch(field))
+                UpdateOnly(field))
             
                 fieldsToUpdate.Add(field);
             else
@@ -59,7 +64,21 @@ namespace Rdmp.Core.DataLoad.Engine.Migration
             }
         }
 
-        private bool IsSupplementalMatch(DiscoveredColumn field)
+        private bool Ignore(DiscoveredColumn field)
+        {
+            if(_ignore == null)
+                return false;
+
+            //its a supplemental ignore e.g. MessageGuid
+            bool match = _ignore.IsMatch(field.GetRuntimeName());
+
+            if(match && field.IsPrimaryKey)
+                throw new NotSupportedException("Ignore Pattern " + _ignore + " matched Primary Key column '" + field.GetRuntimeName() + "' this is not permitted");
+
+            return match;
+        }
+
+        private bool UpdateOnly(DiscoveredColumn field)
         {
             if(_updateButDoNotDiffExtended == null)
                 return false;

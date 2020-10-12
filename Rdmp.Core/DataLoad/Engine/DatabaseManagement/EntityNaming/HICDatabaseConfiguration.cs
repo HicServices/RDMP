@@ -46,6 +46,11 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming
         public Regex UpdateButDoNotDiff { get; set; }
 
         /// <summary>
+        /// Optional Regex for fields which will be completedly ignored at STAGING=>LIVE migration
+        /// </summary>
+        public Regex IgnoreColumns { get; internal set; }
+
+        /// <summary>
         /// Preferred Constructor, creates RAW, STAGING, LIVE connection strings based on the data access points in the LoadMetadata, also respects the ServerDefaults for RAW override (if any)
         /// </summary>
         /// <param name="lmd"></param>
