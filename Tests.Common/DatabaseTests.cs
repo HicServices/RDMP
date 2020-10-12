@@ -549,7 +549,7 @@ delete from {1}..Project
                         con.Open();
 
                         t.Database.Server.GetCommand($@"IF OBJECTPROPERTY(OBJECT_ID('{syntax.EnsureWrapped(t.GetRuntimeName())}'), 'TableTemporalType') = 2
-    ALTER TABLE {t.GetRuntimeName()} SET (SYSTEM_VERSIONING = OFF)",con).ExecuteNonQuery();
+    ALTER TABLE {t.GetFullyQualifiedName()} SET (SYSTEM_VERSIONING = OFF)",con).ExecuteNonQuery();
                     }
                 }
 
