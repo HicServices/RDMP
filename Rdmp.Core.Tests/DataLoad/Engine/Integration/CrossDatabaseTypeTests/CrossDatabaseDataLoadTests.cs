@@ -62,6 +62,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
             ForeignKeyOrphans,
             DodgyCollation,
             AllPrimaryKeys,
+            NoTrigger,
             WithNonPrimaryKeyIdentityColumn,
             
             WithCustomTableNamer,
@@ -71,6 +72,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
 
         [TestCase(DatabaseType.Oracle,TestCase.Normal)]
         [TestCase(DatabaseType.MicrosoftSQLServer,TestCase.Normal)]
+        [TestCase(DatabaseType.MicrosoftSQLServer,TestCase.NoTrigger)]
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.WithCustomTableNamer)]
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.WithNonPrimaryKeyIdentityColumn)]
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.DodgyCollation)]
@@ -149,6 +151,12 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
             //define a new load configuration
             var lmd = new LoadMetadata(CatalogueRepository, "MyLoad");
 
+            if(testCase == TestCase.NoTrigger)
+            {
+                lmd.IgnoreTrigger = true;
+                lmd.SaveToDatabase();
+            }   
+
             TableInfo ti = Import(tbl, lmd,logManager);
             
             var projectDirectory = SetupLoadDirectory(lmd);
@@ -175,6 +183,9 @@ MrMurder,2001-01-01,Yella");
                 SetupLowPrivilegeUserRightsFor(ti, TestLowPrivilegePermissions.Reader|TestLowPrivilegePermissions.Writer);
                 SetupLowPrivilegeUserRightsFor(db.Server.ExpectDatabase("DLE_STAGING"),TestLowPrivilegePermissions.All);
             }
+
+            Assert.AreEqual(testCase != TestCase.NoTrigger, tbl.DiscoverColumns().Select(c=>c.GetRuntimeName()).Contains(SpecialFieldNames.DataLoadRunID), $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
+            Assert.AreEqual(testCase != TestCase.NoTrigger, tbl.DiscoverColumns().Select(c=>c.GetRuntimeName()).Contains(SpecialFieldNames.ValidFrom), $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
 
             var dbConfig = new HICDatabaseConfiguration(lmd,testCase == TestCase.WithCustomTableNamer? new CustomINameDatabasesAndTablesDuringLoads():null);
 
@@ -241,6 +252,9 @@ MrMurder,2001-01-01,Yella");
                 //MySql add default of now() on a table will auto populate all the column values with the the now() date while Sql Server will leave them as nulls
                 if(databaseType == DatabaseType.MicrosoftSQLServer)
                     Assert.AreEqual(DBNull.Value, bob[SpecialFieldNames.ValidFrom]);
+
+                Assert.AreEqual(testCase != TestCase.NoTrigger, tbl.DiscoverColumns().Select(c=>c.GetRuntimeName()).Contains(SpecialFieldNames.DataLoadRunID), $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
+                Assert.AreEqual(testCase != TestCase.NoTrigger, tbl.DiscoverColumns().Select(c=>c.GetRuntimeName()).Contains(SpecialFieldNames.ValidFrom), $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
             }
             finally
             {

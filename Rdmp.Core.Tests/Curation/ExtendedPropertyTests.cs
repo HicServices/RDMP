@@ -20,6 +20,16 @@ namespace Rdmp.Core.Tests.Curation
             
             Assert.AreEqual(10,prop.GetValueAsSystemType());
             Assert.IsTrue(prop.IsReferenceTo(cata));
+
+            prop.RevertToDatabaseState();
+
+            Assert.AreEqual(10,prop.GetValueAsSystemType());
+            Assert.IsTrue(prop.IsReferenceTo(cata));
+
+            var prop2 = CatalogueRepository.GetObjectByID<ExtendedProperty>(prop.ID);
+            Assert.AreEqual(10,prop.GetValueAsSystemType());
+            Assert.IsTrue(prop.IsReferenceTo(cata));
+
         }
     }
 }

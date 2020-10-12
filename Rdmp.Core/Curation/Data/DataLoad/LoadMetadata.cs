@@ -54,7 +54,8 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         private string _description;
         private CacheArchiveType _cacheArchiveType;
         private int? _overrideRawServerID;
-        
+        private bool _ignoreTrigger;
+
         /// <inheritdoc/>
         [AdjustableLocation]
         public string LocationOfFlatFiles
@@ -109,7 +110,16 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             get { return _overrideRawServerID; }
             set { SetField(ref _overrideRawServerID, value); }
         }
-
+        
+        
+        /// <summary>
+        /// Set to true to ignore the requirement for live tables to need the backup archive trigger
+        /// </summary>
+        public bool IgnoreTrigger
+        {
+            get { return _ignoreTrigger; }
+            set { SetField(ref _ignoreTrigger, value); }
+        }
         #endregion
 
         
@@ -153,7 +163,8 @@ namespace Rdmp.Core.Curation.Data.DataLoad
                 name = "NewLoadMetadata" + Guid.NewGuid();
             repository.InsertAndHydrate(this,new Dictionary<string, object>()
             {
-                {"Name",name}
+                {"Name",name},
+                { "IgnoreTrigger",false/*todo could be system global default here*/}
             });
         }
 
@@ -167,6 +178,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             Description = r["Description"] as string;//allows for nulls
             CacheArchiveType = (CacheArchiveType)r["CacheArchiveType"];
             OverrideRAWServer_ID = ObjectToNullableInt(r["OverrideRAWServer_ID"]);
+            IgnoreTrigger = ObjectToNullableBool(r["IgnoreTrigger"])??false;
         }
 
         internal LoadMetadata(ShareManager shareManager,ShareDefinition shareDefinition):base()
