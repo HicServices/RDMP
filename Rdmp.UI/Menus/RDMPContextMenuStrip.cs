@@ -39,7 +39,7 @@ namespace Rdmp.UI.Menus
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
         protected IActivateItems _activator;
         
-        private readonly AtomicCommandUIFactory AtomicCommandUIFactory;
+        protected readonly AtomicCommandUIFactory AtomicCommandUIFactory;
 
         protected ToolStripMenuItem ActivateCommandMenuItem;
         private RDMPContextMenuStripArgs _args;

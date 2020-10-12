@@ -33,6 +33,15 @@ namespace Rdmp.UI.Menus
 
             Add(new ExecuteCommandOverrideRawServer(_activator, loadMetadata));
             Add(new ExecuteCommandCreateNewLoadMetadata(_activator));
+
+            var mi = AtomicCommandUIFactory.CreateMenuItem(
+            new ExecuteCommandSet(_activator,loadMetadata,typeof(LoadMetadata).GetProperty(nameof(LoadMetadata.IgnoreTrigger)))
+            {
+                OverrideCommandName = "Ignore Trigger"
+            }
+            );
+            mi.Checked = loadMetadata.IgnoreTrigger;
+            Items.Add(mi);
             
             ReBrandActivateAs("Check and Execute",RDMPConcept.LoadMetadata,OverlayKind.Execute);
         }

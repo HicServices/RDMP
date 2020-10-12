@@ -293,11 +293,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>GlobalStrings.resx</DependentUpon>
     </Compile>
-    <Compile Update="Icons\IconProvision\CatalogueIcons.Designer.cs">
-      <DependentUpon>CatalogueIcons.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
     <Compile Update="Icons\IconProvision\ChecksAndProgressIcons.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -318,8 +313,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Icons\IconProvision\CatalogueIcons.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>CatalogueIcons.Designer.cs</LastGenOutput>
+      <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Icons\IconProvision\ChecksAndProgressIcons.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
