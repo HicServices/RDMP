@@ -547,9 +547,16 @@ delete from {1}..Project
                     using(var con = t.Database.Server.GetConnection())
                     {
                         con.Open();
-
-                        t.Database.Server.GetCommand($@"IF OBJECTPROPERTY(OBJECT_ID('{syntax.EnsureWrapped(t.GetRuntimeName())}'), 'TableTemporalType') = 2
-    ALTER TABLE {t.GetFullyQualifiedName()} SET (SYSTEM_VERSIONING = OFF)",con).ExecuteNonQuery();
+                        try
+                        {
+                            
+                            t.Database.Server.GetCommand($@"IF OBJECTPROPERTY(OBJECT_ID('{syntax.EnsureWrapped(t.GetRuntimeName())}'), 'TableTemporalType') = 2
+        ALTER TABLE {t.GetFullyQualifiedName()} SET (SYSTEM_VERSIONING = OFF)",con).ExecuteNonQuery();
+                        }
+                        catch (Exception)
+                        {
+                            TestContext.Out.WriteLine($"Failed to generate disable System Versioning check for table {t} (nevermind)");
+                        }
                     }
                 }
 
