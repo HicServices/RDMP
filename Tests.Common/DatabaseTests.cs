@@ -538,6 +538,8 @@ delete from {1}..Project
 
         protected void DeleteTables(DiscoveredDatabase database)
         {
+            var syntax = database.Server.GetQuerySyntaxHelper();
+
             if(database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer)
                 foreach(var t in database.DiscoverTables(false))
                 {
@@ -546,7 +548,7 @@ delete from {1}..Project
                     {
                         con.Open();
 
-                        t.Database.Server.GetCommand($@"IF OBJECTPROPERTY(OBJECT_ID('{t.GetRuntimeName()}'), 'TableTemporalType') = 2
+                        t.Database.Server.GetCommand($@"IF OBJECTPROPERTY(OBJECT_ID('{syntax.EnsureWrapped(t.GetRuntimeName())}'), 'TableTemporalType') = 2
     ALTER TABLE {t.GetRuntimeName()} SET (SYSTEM_VERSIONING = OFF)",con).ExecuteNonQuery();
                     }
                 }
