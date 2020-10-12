@@ -50,7 +50,7 @@ namespace Rdmp.Core.DataLoad.Engine.Job
         public IDataLoadInfo DataLoadInfo { get; set; }
         public ILoadDirectory LoadDirectory { get; set; }
         public int JobID { get; set; }
-        public ILoadMetadata LoadMetadata { get; private set; }
+        public ILoadMetadata LoadMetadata { get; set; }
         public bool DisposeImmediately { get; private set; }
         public string ArchiveFilepath { get; private set; }
         public List<ITableInfo> RegularTablesToLoad { get; set; } = new List<ITableInfo>();
