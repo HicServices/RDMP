@@ -34,6 +34,11 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         string LocationOfFlatFiles { get; set; }
 
         /// <summary>
+        /// Set to true to ignore the requirement for live tables to need the backup archive trigger
+        /// </summary>
+        bool IgnoreTrigger {get;}
+
+        /// <summary>
         /// Optional - Overrides the <see cref="ServerDefaults"/> RAWDataLoadServer with an explicit RAW server to use this load only.
         /// </summary>
         ExternalDatabaseServer OverrideRAWServer { get; }

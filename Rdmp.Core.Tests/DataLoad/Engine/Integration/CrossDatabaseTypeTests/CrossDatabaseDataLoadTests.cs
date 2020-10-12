@@ -235,24 +235,32 @@ MrMurder,2001-01-01,Yella");
                 var result = tbl.GetDataTable();
                 var frank = result.Rows.Cast<DataRow>().Single(r => (string) r["Name"] == "Frank");
                 Assert.AreEqual("Neon",frank["FavouriteColour"]);
-                AssertHasDataLoadRunId(frank);
+                
+                if(testCase != TestCase.NoTrigger)
+                    AssertHasDataLoadRunId(frank);
 
                 //MrMurder is a new person who likes Yella
                 var mrmurder = result.Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "MrMurder");
                 Assert.AreEqual("Yella", mrmurder["FavouriteColour"]);
                 Assert.AreEqual(new DateTime(2001,01,01), mrmurder["DateOfBirth"]);
-                AssertHasDataLoadRunId(mrmurder);
+                
+                if(testCase != TestCase.NoTrigger)
+                    AssertHasDataLoadRunId(mrmurder);
 
                 //bob should be untouched (same values as before and no dataloadrunID)
                 var bob = result.Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "Bob");
                 Assert.AreEqual("Pink", bob["FavouriteColour"]);
                 Assert.AreEqual(new DateTime(2001, 01, 01), bob["DateOfBirth"]);
-                Assert.AreEqual(DBNull.Value,bob[SpecialFieldNames.DataLoadRunID]);
+                
+                if(testCase != TestCase.NoTrigger)
+                {
+                    Assert.AreEqual(DBNull.Value,bob[SpecialFieldNames.DataLoadRunID]);
 
-                //MySql add default of now() on a table will auto populate all the column values with the the now() date while Sql Server will leave them as nulls
-                if(databaseType == DatabaseType.MicrosoftSQLServer)
-                    Assert.AreEqual(DBNull.Value, bob[SpecialFieldNames.ValidFrom]);
-
+                    //MySql add default of now() on a table will auto populate all the column values with the the now() date while Sql Server will leave them as nulls
+                    if(databaseType == DatabaseType.MicrosoftSQLServer)
+                        Assert.AreEqual(DBNull.Value, bob[SpecialFieldNames.ValidFrom]);
+                }
+                    
                 Assert.AreEqual(testCase != TestCase.NoTrigger, tbl.DiscoverColumns().Select(c=>c.GetRuntimeName()).Contains(SpecialFieldNames.DataLoadRunID), $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
                 Assert.AreEqual(testCase != TestCase.NoTrigger, tbl.DiscoverColumns().Select(c=>c.GetRuntimeName()).Contains(SpecialFieldNames.ValidFrom), $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
             }

@@ -23,6 +23,9 @@ namespace Rdmp.Core.DataLoad.Engine.Migration
     {
         private readonly Regex _updateButDoNotDiffExtended;
 
+        /// <inheritdoc/>
+        public bool NoBackupTrigger {get;set;}
+
         public StagingToLiveMigrationFieldProcessor(Regex updateButDoNotDiff = null)
         {
             _updateButDoNotDiffExtended = updateButDoNotDiff;
@@ -30,6 +33,9 @@ namespace Rdmp.Core.DataLoad.Engine.Migration
 
         public void ValidateFields(DiscoveredColumn[] sourceFields, DiscoveredColumn[] destinationFields)
         {
+            if(NoBackupTrigger)
+                return;
+
             if (!destinationFields.Any(f => f.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID, StringComparison.CurrentCultureIgnoreCase)))
                 throw new MissingFieldException("Destination (Live) database table is missing field:" + SpecialFieldNames.DataLoadRunID);
 

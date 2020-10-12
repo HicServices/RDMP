@@ -112,9 +112,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         }
         
         
-        /// <summary>
-        /// Set to true to ignore the requirement for live tables to need the backup archive trigger
-        /// </summary>
+        /// <iheritdoc/>
         public bool IgnoreTrigger
         {
             get { return _ignoreTrigger; }
