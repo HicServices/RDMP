@@ -538,11 +538,25 @@ delete from {1}..Project
 
         protected void DeleteTables(DiscoveredDatabase database)
         {
+            if(database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer)
+                foreach(var t in database.DiscoverTables(false))
+                {
+                    //disable system versioning on any temporal tables otherwise drop fails
+                    using(var con = t.Database.Server.GetConnection())
+                    {
+                        con.Open();
+
+                        t.Database.Server.GetCommand($@"IF OBJECTPROPERTY(OBJECT_ID('{t.GetRuntimeName()}'), 'TableTemporalType') = 2
+    ALTER TABLE {t.GetRuntimeName()} SET (SYSTEM_VERSIONING = OFF)",con).ExecuteNonQuery();
+                    }
+                }
+
             var tables = new RelationshipTopologicalSort(database.DiscoverTables(true));
 
             foreach (var t in tables.Order.Reverse())
                 try
                 {
+                    
                     t.Drop();
                 }
                 catch (Exception ex)
