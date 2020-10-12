@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added support for viewing extraction logs in tree form (for a given ExtractionConfiguration)
 - Added `AllowIdentifiableExtractions` user setting.  Enabling this prevents RDMP reporting an error state when cohorts are created that have the same private and release ID fields.
 - Added GoTo from extraction/cohort building filters to the parent Catalogue level filter and vice versa
+- Added ability to suppress LoadMetadata triggers
+- Added ability for Plugins to store custom information about objects in the RDMP Catalogue platform database
 
 ## [4.1.9] - 2020-09-17
 

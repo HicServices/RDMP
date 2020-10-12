@@ -16,6 +16,9 @@ using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Curation.Data
 {
+    /// <summary>
+    /// Stores a single named value for a specific <see cref="DatabaseEntity"/>.  This can be used to store custom field values e.g. for plugins
+    /// </summary>
     public class ExtendedProperty  : Argument,IReferenceOtherObjectWithPersist, IInjectKnown<IMapsDirectlyToDatabaseTable>, INamed
     {
         #region Database Properties
