@@ -51,7 +51,10 @@ namespace Rdmp.Core.DataLoad.Engine.Migration
 
                     //migrate all tables (both lookups and live tables in the same way)
                     var dataColsToMigrate = _migrationConfig.CreateMigrationColumnSetFromTableInfos(job.RegularTablesToLoad, job.LookupTablesToLoad,
-                        new StagingToLiveMigrationFieldProcessor(_databaseConfiguration.UpdateButDoNotDiff, _databaseConfiguration.IgnoreColumns)
+                        new StagingToLiveMigrationFieldProcessor(
+                            _databaseConfiguration.UpdateButDoNotDiff,
+                            _databaseConfiguration.IgnoreColumns,
+                            job.GetAllColumns().Where(c=>c.IgnoreInLoads).ToArray())
                         {
                             NoBackupTrigger = job.LoadMetadata.IgnoreTrigger
                         });

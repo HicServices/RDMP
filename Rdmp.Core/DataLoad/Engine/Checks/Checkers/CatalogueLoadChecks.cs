@@ -103,6 +103,13 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
 
             CheckTableHasColumnInfosAndPrimaryKeys(live, tableInfo, out columnInfos, out columnInfosWhichArePrimaryKeys,notifier);
             
+            //check for trying to ignore primary keys
+            foreach (var col in tableInfo.ColumnInfos)
+            {
+                if(col.IgnoreInLoads && col.IsPrimaryKey)
+                    notifier.OnCheckPerformed(new CheckEventArgs($"ColumnInfo {col} is marked both IgnoreInLoads and IsPrimaryKey",CheckResult.Fail));
+            }
+
             try
             {
                 if(!_loadMetadata.IgnoreTrigger)
@@ -133,6 +140,7 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
                     ConfirmStagingAndLiveHaveSameColumns(tableInfo.GetRuntimeName(), stagingCols, liveCols, false,notifier);
 
                     CheckStagingToLiveMigrationForTable(stagingTable, stagingCols, liveTable, liveCols,notifier);
+
                 }
             }
             catch (Exception e)

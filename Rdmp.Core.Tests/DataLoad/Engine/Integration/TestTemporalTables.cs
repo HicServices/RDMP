@@ -46,7 +46,8 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
 ";
 
         [TestCase(true)]
-        public void TestTemporalTable(bool ignoreTrigger)
+        [TestCase(false)]
+        public void TestTemporalTable(bool ignoreWithGlobalPattern)
         {
             var dbtype = FAnsi.DatabaseType.MicrosoftSQLServer;
             var db = GetCleanedServer(dbtype);
@@ -69,7 +70,7 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
 
             //define a new load configuration
             var lmd = new LoadMetadata(CatalogueRepository, "MyLoad");
-            lmd.IgnoreTrigger = ignoreTrigger;
+            lmd.IgnoreTrigger = true;
             lmd.SaveToDatabase();
               
             TableInfo ti = Import(tbl, lmd,logManager);
@@ -92,10 +93,28 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
             var checker = new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags(),CatalogueRepository.MEF);
             checker.Check(new AcceptAllCheckNotifier());
 
-            var dbConfig = new HICDatabaseConfiguration(lmd,null);
+            if(ignoreWithGlobalPattern)
+            {
+                var regex = new StandardRegex(RepositoryLocator.CatalogueRepository)
+                {
+                    ConceptName = StandardRegex.DataLoadEngineGlobalIgnorePattern,
+                    Regex = "^Valid((From)|(To))$"
+                };
 
-            // TODO: find a way to inject this or persist at LoadMetadata
-            dbConfig.IgnoreColumns = new Regex("^Valid((From)|(To))$");
+                regex.SaveToDatabase();
+            }
+            else
+            {
+                var col = ti.ColumnInfos.Single(c=>c.GetRuntimeName().Equals("ValidFrom"));
+                col.IgnoreInLoads = true;
+                col.SaveToDatabase();
+
+                col = ti.ColumnInfos.Single(c=>c.GetRuntimeName().Equals("ValidTo"));
+                col.IgnoreInLoads = true;
+                col.SaveToDatabase();
+            }
+            
+            var dbConfig = new HICDatabaseConfiguration(lmd,null);
 
             var loadFactory = new HICDataLoadFactory(
                 lmd,
@@ -119,6 +138,13 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
             var frank = result.Rows.Cast<DataRow>().Single(r => (string) r["Name"] == "Frank");
             Assert.AreEqual("Department of F'Tang",frank["Department"]);
             Assert.AreEqual("Boss",frank["Position"]);
+
+            //post test cleanup
+            foreach (var regex in RepositoryLocator.CatalogueRepository.GetAllObjects<StandardRegex>())
+                regex.DeleteInDatabase();
+            {
+
+            }
             
         }
     }

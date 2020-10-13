@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Triggers;
 
 namespace Rdmp.Core.DataLoad.Engine.Migration
@@ -23,14 +24,16 @@ namespace Rdmp.Core.DataLoad.Engine.Migration
     {
         private readonly Regex _updateButDoNotDiffExtended;
         private readonly Regex _ignore;
+        private readonly ColumnInfo[] _alsoIgnore;
 
         /// <inheritdoc/>
         public bool NoBackupTrigger {get;set;}
 
-        public StagingToLiveMigrationFieldProcessor(Regex updateButDoNotDiff = null, Regex ignore=null)
+        public StagingToLiveMigrationFieldProcessor(Regex updateButDoNotDiff = null, Regex ignore=null, ColumnInfo[] alsoIgnore = null)
         {
             _updateButDoNotDiffExtended = updateButDoNotDiff;
             _ignore = ignore;
+            _alsoIgnore = alsoIgnore;
         }
 
         public void ValidateFields(DiscoveredColumn[] sourceFields, DiscoveredColumn[] destinationFields)
@@ -47,6 +50,9 @@ namespace Rdmp.Core.DataLoad.Engine.Migration
 
         public void AssignFieldsForProcessing(DiscoveredColumn field, List<DiscoveredColumn> fieldsToDiff, List<DiscoveredColumn> fieldsToUpdate)
         {
+            if(IgnoreColumnInfo(field))
+                return;
+
             if(Ignore(field))
                 return;
 
@@ -64,12 +70,31 @@ namespace Rdmp.Core.DataLoad.Engine.Migration
             }
         }
 
+        private bool IgnoreColumnInfo(DiscoveredColumn field)
+        {
+            if(_alsoIgnore == null)
+                return false;
+
+            // TODO: if a load targets 2 tables with the same name in different databases and one has a column marked ignore it could be ignored in both during load.  Note that `field` parameter is the from column not the to column
+            
+            //its a column we were told to ignore
+            ColumnInfo match = _alsoIgnore.FirstOrDefault(c=>
+                c.GetRuntimeName().Equals(field.GetRuntimeName(),StringComparison.CurrentCultureIgnoreCase) &&
+                c.TableInfo.GetRuntimeName().Equals(field.Table.GetRuntimeName(),StringComparison.CurrentCultureIgnoreCase)
+            );
+
+            if(match != null && field.IsPrimaryKey)
+                throw new NotSupportedException($"ColumnInfo {match} is marked {nameof(ColumnInfo.IgnoreInLoads)} but is a Primary Key column this is not permitted");
+
+            return match != null;
+        }
+
         private bool Ignore(DiscoveredColumn field)
         {
             if(_ignore == null)
                 return false;
 
-            //its a supplemental ignore e.g. MessageGuid
+            //its a global ignore based on regex ignore pattern?
             bool match = _ignore.IsMatch(field.GetRuntimeName());
 
             if(match && field.IsPrimaryKey)

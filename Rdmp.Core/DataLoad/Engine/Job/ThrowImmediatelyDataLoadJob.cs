@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
+using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -93,6 +94,10 @@ namespace Rdmp.Core.DataLoad.Engine.Job
         public void OnProgress(object sender, ProgressEventArgs e)
         {
             _listener.OnProgress(sender,e);
+        }
+        public ColumnInfo[] GetAllColumns()
+        {
+            return RegularTablesToLoad.SelectMany(t=>t.ColumnInfos).Union(LookupTablesToLoad.SelectMany(t=>t.ColumnInfos)).Distinct().ToArray();
         }
     }
 }

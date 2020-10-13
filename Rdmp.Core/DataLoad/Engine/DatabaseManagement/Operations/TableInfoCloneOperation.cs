@@ -9,6 +9,7 @@ using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.DataLoad.Extensions;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataLoad.Triggers;
 using ReusableLibraryCode.DataAccess;
@@ -118,6 +119,10 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations
                 if (SpecialFieldNames.IsHicPrefixed(colName) && dropHICColumns)
                     drop = true;
                 
+                //if the ColumnInfo is explicitly marked to be ignored
+                if(_tableInfo.ColumnInfos.Any(c=>c.IgnoreInLoads && c.GetRuntimeName(_copyToBubble.ToLoadStage()).Equals(colName)))
+                    drop = true;
+
                 //also drop any columns we have specifically been told to ignore in the DLE configuration
                 if(_hicDatabaseConfiguration.IgnoreColumns != null && _hicDatabaseConfiguration.IgnoreColumns.IsMatch(colName))
                     drop = true;

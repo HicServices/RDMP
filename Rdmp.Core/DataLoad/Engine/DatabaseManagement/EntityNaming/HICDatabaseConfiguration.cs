@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi;
 using FAnsi.Discovery;
@@ -58,6 +59,11 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming
         public HICDatabaseConfiguration(ILoadMetadata lmd, INameDatabasesAndTablesDuringLoads namer = null):
             this(lmd.GetDistinctLiveDatabaseServer(), namer, lmd.CatalogueRepository.GetServerDefaults(),lmd.OverrideRAWServer)
         {
+            var globalIgnorePattern = lmd.Repository.GetAllObjects<StandardRegex>().FirstOrDefault(r=>r.ConceptName == StandardRegex.DataLoadEngineGlobalIgnorePattern);
+            
+            if(globalIgnorePattern != null && !string.IsNullOrWhiteSpace(globalIgnorePattern.Regex))
+                IgnoreColumns = new Regex(globalIgnorePattern.Regex);
+
         }
 
         /// <summary>
@@ -67,7 +73,7 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming
         /// <param name="namer">optionally lets you specify how to pick database names for the temporary bubbles STAGING and RAW</param>
         /// <param name="defaults">optionally specifies the location to get RAW default server from</param>
         /// <param name="overrideRAWServer">optionally specifies an explicit server to use for RAW</param>
-        public HICDatabaseConfiguration(DiscoveredServer liveServer, INameDatabasesAndTablesDuringLoads namer = null, IServerDefaults defaults = null, IExternalDatabaseServer overrideRAWServer = null)
+        internal HICDatabaseConfiguration(DiscoveredServer liveServer, INameDatabasesAndTablesDuringLoads namer = null, IServerDefaults defaults = null, IExternalDatabaseServer overrideRAWServer = null)
         {
             //respects the override of LIVE server
             var liveDatabase = liveServer.GetCurrentDatabase();
