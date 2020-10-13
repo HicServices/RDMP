@@ -10,11 +10,13 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi;
 using FAnsi.Discovery;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming
@@ -59,11 +61,16 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming
         public HICDatabaseConfiguration(ILoadMetadata lmd, INameDatabasesAndTablesDuringLoads namer = null):
             this(lmd.GetDistinctLiveDatabaseServer(), namer, lmd.CatalogueRepository.GetServerDefaults(),lmd.OverrideRAWServer)
         {
-            var globalIgnorePattern = lmd.Repository.GetAllObjects<StandardRegex>().FirstOrDefault(r=>r.ConceptName == StandardRegex.DataLoadEngineGlobalIgnorePattern);
+            var globalIgnorePattern = GetGlobalIgnorePatternIfAny(lmd.CatalogueRepository);
             
             if(globalIgnorePattern != null && !string.IsNullOrWhiteSpace(globalIgnorePattern.Regex))
                 IgnoreColumns = new Regex(globalIgnorePattern.Regex);
 
+        }
+
+        public static StandardRegex GetGlobalIgnorePatternIfAny(ICatalogueRepository repository)
+        {
+            return repository.GetAllObjects<StandardRegex>().OrderBy(r=>r.ID).FirstOrDefault(r=>r.ConceptName == StandardRegex.DataLoadEngineGlobalIgnorePattern);
         }
 
         /// <summary>
