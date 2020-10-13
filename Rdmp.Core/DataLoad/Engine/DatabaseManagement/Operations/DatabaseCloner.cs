@@ -52,7 +52,7 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations
 
             var destDbInfo = _hicDatabaseConfiguration.DeployInfo[copyToStage];
 
-            var cloneOperation = new TableInfoCloneOperation(_hicDatabaseConfiguration,tableInfo, copyToStage)
+            var cloneOperation = new TableInfoCloneOperation(_hicDatabaseConfiguration,tableInfo, copyToStage,listener)
             {
                 DropHICColumns = copyToStage == LoadBubble.Raw,//don't drop columns like hic_sourceID, these are optional for population (and don't get Diff'ed) but should still be there
                 AllowNulls = copyToStage == LoadBubble.Raw

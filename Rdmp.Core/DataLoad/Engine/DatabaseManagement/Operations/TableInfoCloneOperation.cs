@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data.DataLoad.Extensions;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataLoad.Triggers;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations
 {
@@ -27,19 +28,21 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations
         private readonly HICDatabaseConfiguration _hicDatabaseConfiguration;
         private readonly TableInfo _tableInfo;
         private readonly LoadBubble _copyToBubble;
-        
+        private readonly IDataLoadEventListener _listener;
+
         public bool DropHICColumns { get; set; }
         public bool DropIdentityColumns { get; set; }
         public bool AllowNulls { get; set; }
-        
+
+
         private bool _operationSucceeded = false;
 
-        public TableInfoCloneOperation(HICDatabaseConfiguration hicDatabaseConfiguration, TableInfo tableInfo, LoadBubble copyToBubble)
+        public TableInfoCloneOperation(HICDatabaseConfiguration hicDatabaseConfiguration, TableInfo tableInfo, LoadBubble copyToBubble, IDataLoadEventListener listener)
         {
             _hicDatabaseConfiguration = hicDatabaseConfiguration;
             _tableInfo = tableInfo;
             _copyToBubble = copyToBubble;
-            
+            this._listener = listener;
             DropIdentityColumns = true;
         }
 
@@ -97,6 +100,8 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations
             
             var sql = sourceTable.ScriptTableCreation(allowNulls, allowNulls, false /*False because we want to drop these columns entirely not just flip to int*/,newTable); 
             
+            _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,"Creating table with SQL:" + sql));
+
             using (var con = destDatabaseInfo.Server.GetConnection())
             {
                 con.Open();
@@ -121,11 +126,18 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations
                 
                 //if the ColumnInfo is explicitly marked to be ignored
                 if(_tableInfo.ColumnInfos.Any(c=>c.IgnoreInLoads && c.GetRuntimeName(_copyToBubble.ToLoadStage()).Equals(colName)))
+                {
+                    _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"{colName} will be dropped because it is marked IgnoreInLoads"));
                     drop = true;
+                }
+                    
 
                 //also drop any columns we have specifically been told to ignore in the DLE configuration
                 if(_hicDatabaseConfiguration.IgnoreColumns != null && _hicDatabaseConfiguration.IgnoreColumns.IsMatch(colName))
+                {
+                    _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"{colName} will be dropped because it is matches the gloabl ignores pattern ({_hicDatabaseConfiguration.IgnoreColumns})"));
                     drop = true;
+                }
 
                 //drop the data load run ID field and validFrom fields, we don't need them in STAGING or RAW, it will be hard coded in the MERGE migration with a fixed value anyway.
                 if (colName.Equals(SpecialFieldNames.DataLoadRunID) || colName.Equals(SpecialFieldNames.ValidFrom))
@@ -134,7 +146,10 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations
                 var dillution = dillutionColumns.SingleOrDefault(c => c.GetRuntimeName().Equals(colName));
 
                 if (dillution != null)
+                {
+                    _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"Altering diluted column {colName} to {dillution.Data_type}"));
                     column.DataType.AlterTypeTo(dillution.Data_type);
+                }
 
                 if(drop)
                     newTable.DropColumn(column);
