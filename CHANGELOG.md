@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `AllowIdentifiableExtractions` user setting.  Enabling this prevents RDMP reporting an error state when cohorts are created that have the same private and release ID fields.
 - Added GoTo from extraction/cohort building filters to the parent Catalogue level filter and vice versa
 
+### Changed
+
+- CLI tools now built for .Net Core 3.1 since 2.2 has reached EOL
+
 ## [4.1.9] - 2020-09-17
 
 ### Added
