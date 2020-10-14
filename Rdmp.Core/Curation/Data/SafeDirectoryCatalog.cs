@@ -78,7 +78,7 @@ namespace Rdmp.Core.Curation.Data
                     var existing = files.SingleOrDefault(d => d.Name.Equals(newOne.Name));
                     
                     if(existing != null)
-                        listener.OnCheckPerformed(new CheckEventArgs("Found 2 copies of " + newOne.Name +".  Loaded will be '" + existing.FullName +"'.  Rejected one will be '" + newOne.FullName +"'",CheckResult.Success));
+                        listener?.OnCheckPerformed(new CheckEventArgs("Found 2 copies of " + newOne.Name +".  Loaded will be '" + existing.FullName +"'.  Rejected one will be '" + newOne.FullName +"'",CheckResult.Success));
                     else
                         files.Add(newOne);
                 }
