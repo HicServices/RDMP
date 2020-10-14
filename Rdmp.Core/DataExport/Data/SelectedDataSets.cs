@@ -169,7 +169,7 @@ namespace Rdmp.Core.DataExport.Data
             return Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(this).ToArray();
         }
 
-        private ICatalogue FetchCatalogue()
+        public ICatalogue GetCatalogue()
         {
             return ExtractableDataSet.Catalogue;
         }

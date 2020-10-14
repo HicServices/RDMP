@@ -4,13 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CommandLine.Interactive;
+using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting;
-using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
@@ -28,8 +26,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// <summary>
         /// ID of the Catalogue that is being extracted by <see cref="_into"/> to ensure that we only import filters from the same table
         /// </summary>
-        private readonly int _catalogue;
-        private readonly SelectedDataSets _into;
+        private readonly ICatalogue _catalogue;
+        private readonly IRootFilterContainerHost _into;
         
         /// <summary>
         /// May be null, if populated this is the explicit subcontainer into which the tree should be imported i.e. not <see cref="_into"/>
@@ -47,15 +45,15 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 SetImpossible("Data export functions unavailable");
         }
 
-        public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, SelectedDataSets into):this(activator)
+        public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, IRootFilterContainerHost into):this(activator)
         {
             _into = into;
 
-            if(into.RootFilterContainer != null)
+            if(into.RootFilterContainer_ID != null)
                 SetImpossible("Dataset already has a root container");
             
 
-            _catalogue = _into.ExtractableDataSet.Catalogue_ID;
+            _catalogue = _into.GetCatalogue();
 
         }
 
@@ -66,7 +64,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// <param name="into"></param>
         /// <param name="from"></param>
         [UseWithObjectConstructor]
-        public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, SelectedDataSets into, AggregateConfiguration from):this(activator,into)
+        public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, IRootFilterContainerHost into, AggregateConfiguration from):this(activator,into)
         {
             if(from.RootFilterContainer_ID == null)
                 SetImpossible("AggregateConfiguration has no root container");
@@ -80,7 +78,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// <param name="activator"></param>
         /// <param name="into"></param>
         /// <param name="explicitChoice"></param>
-        public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, SelectedDataSets into, IContainer explicitChoice):this(activator,into)
+        public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, IRootFilterContainerHost into, IContainer explicitChoice):this(activator,into)
         {
             _explicitChoice = explicitChoice;
         }
@@ -146,7 +144,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 }
             }
             
-            Publish(_into ?? (DatabaseEntity)_intoSubContainer);
+            Publish((DatabaseEntity)_into ?? (DatabaseEntity)_intoSubContainer);
         }
 
         private void Import(IContainer from)
@@ -206,11 +204,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 return new AggregateConfiguration[0];
 
             return arg.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively()
-                .Where(ac=>ac.Catalogue_ID == _catalogue && ac.RootFilterContainer_ID != null);
-        }
-        private bool IsElligible(ExtractionConfiguration arg)
-        {
-            return GetElligibleChild(arg) != null;
+                .Where(ac=>ac.Catalogue_ID == _catalogue.ID && ac.RootFilterContainer_ID != null);
         }
 
         /// <summary>
@@ -225,7 +219,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         private bool IsElligible(ISelectedDataSets arg)
         {
-            return arg.ExtractableDataSet_ID == _into.ExtractableDataSet_ID && arg.RootFilterContainer_ID != null;
+            return arg.RootFilterContainer_ID != null;
         }
     }
 }

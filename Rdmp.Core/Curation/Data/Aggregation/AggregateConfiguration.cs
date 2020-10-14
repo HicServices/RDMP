@@ -44,7 +44,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         IInjectKnown<JoinableCohortAggregateConfiguration>,
         IInjectKnown<AggregateDimension[]>,
         IInjectKnown<Catalogue>,
-        IDisableable,IKnowWhatIAm,IMightBeReadOnly
+        IDisableable,IKnowWhatIAm,IMightBeReadOnly, IRootFilterContainerHost
     {
         #region Database Properties
         private string _countSQL;
@@ -788,6 +788,11 @@ namespace Rdmp.Core.Curation.Data.Aggregation
                 RootFilterContainer_ID = container.ID;
                 SaveToDatabase();
             }
+        }
+
+        public ICatalogue GetCatalogue()
+        {
+            return Catalogue;
         }
     }
 }
