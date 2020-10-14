@@ -89,7 +89,7 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations
              ||
              dbInfo.GetRuntimeName().EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) || dbInfo.GetRuntimeName().EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase);
         }
-        public void CloneTable(DiscoveredDatabase srcDatabaseInfo, DiscoveredDatabase destDatabaseInfo, DiscoveredTable sourceTable, string destTableName, bool dropHICColumns, bool dropIdentityColumns, bool allowNulls, PreLoadDiscardedColumn[] dillutionColumns)
+        public void CloneTable(DiscoveredDatabase srcDatabaseInfo, DiscoveredDatabase destDatabaseInfo, DiscoveredTable sourceTable, string destTableName, bool dropHICColumns, bool dropIdentityColumns, bool allowNulls, PreLoadDiscardedColumn[] dilutionColumns)
         {
             if (!sourceTable.Exists())
                 throw new Exception("Table " + sourceTable + " does not exist on " + srcDatabaseInfo);
@@ -143,12 +143,12 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations
                 if (colName.Equals(SpecialFieldNames.DataLoadRunID) || colName.Equals(SpecialFieldNames.ValidFrom))
                     drop = true;
 
-                var dillution = dillutionColumns.SingleOrDefault(c => c.GetRuntimeName().Equals(colName));
+                var dilution = dilutionColumns.SingleOrDefault(c => c.GetRuntimeName().Equals(colName));
 
-                if (dillution != null)
+                if (dilution != null)
                 {
-                    _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"Altering diluted column {colName} to {dillution.Data_type}"));
-                    column.DataType.AlterTypeTo(dillution.Data_type);
+                    _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"Altering diluted column {colName} to {dilution.Data_type}"));
+                    column.DataType.AlterTypeTo(dilution.Data_type);
                 }
 
                 if(drop)

@@ -142,10 +142,6 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
             //post test cleanup
             foreach (var regex in RepositoryLocator.CatalogueRepository.GetAllObjects<StandardRegex>())
                 regex.DeleteInDatabase();
-            {
-
-            }
-            
         }
     }
 }

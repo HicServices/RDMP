@@ -1192,7 +1192,7 @@ namespace Rdmp.Core.Providers
             //if the table has an identifier dump listed
             if (tableInfo.IdentifierDumpServer_ID != null)
             {
-                //if there is a dump (e.g. for dillution and dumping - not appearing in the live table)
+                //if there is a dump (e.g. for dilution and dumping - not appearing in the live table)
                 ExternalDatabaseServer server = AllExternalServers.Single(s => s.ID == tableInfo.IdentifierDumpServer_ID.Value);
 
                 children.Add(new IdentifierDumpServerUsageNode(tableInfo, server));
