@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -12,6 +13,7 @@ using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
+using Rdmp.Core.Repositories.Construction;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +31,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private readonly int _catalogue;
         private readonly SelectedDataSets _into;
 
+        /// <summary>
+        /// May be null, if populated then this is the explicit one the user wants and we shouldn't ask them again
+        /// </summary>
+        private AggregateConfiguration _explicitChoice;
+
         public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, SelectedDataSets into):base(activator)
         {
             _into = into;
@@ -43,73 +50,92 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         }
 
+        [UseWithObjectConstructor]
+        public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, SelectedDataSets into, AggregateConfiguration from):this(activator,into)
+        {
+            _explicitChoice = from;
+
+            if(_explicitChoice.RootFilterContainer_ID == null)
+                SetImpossible("AggregateConfiguration has no root container");
+        }
+
         public override void Execute()
         {
             base.Execute();
-            
-            var childProvider = (DataExportChildProvider)BasicActivator.CoreChildProvider;
 
-            // The root object that makes most sense to the user e.g. they select an extraction 
-            var fromConfiguration
-                =
-            childProvider.AllCohortIdentificationConfigurations.Where(IsElligible)
-            .Cast<DatabaseEntity>()
-            .Union(childProvider.ExtractionConfigurations.Where(IsElligible)).ToList();
-
-            if(!fromConfiguration.Any())
+            if(_explicitChoice != null)
             {
-                Show("There are no extractions or cohort builder configurations of this dataset that use filters");
-                return;
+                Import(_explicitChoice.RootFilterContainer);
             }
+            else
+            {
+                //prompt user to pick one
+                var childProvider = (DataExportChildProvider)BasicActivator.CoreChildProvider;
+
+                var ecById = childProvider.ExtractionConfigurations.ToDictionary(k=>k.ID);
+
+                // The root object that makes most sense to the user e.g. they select an extraction 
+                var fromConfiguration
+                    =
+                childProvider.AllCohortIdentificationConfigurations.Where(IsElligible)
+                .Cast<DatabaseEntity>()
+                .Union(childProvider.SelectedDataSets.Where(IsElligible).Select(sds=> ecById[sds.ExtractionConfiguration_ID])).ToList();
+
+                if(!fromConfiguration.Any())
+                {
+                    Show("There are no extractions or cohort builder configurations of this dataset that use filters");
+                    return;
+                }
                 
-
-            if(SelectOne(fromConfiguration,out DatabaseEntity selected))
-            {
-                if(selected is ExtractionConfiguration ec)
+                if(SelectOne(fromConfiguration,out DatabaseEntity selected))
                 {
-                    Import(GetElligibleChild(ec).RootFilterContainer);
-                }
-                if(selected is CohortIdentificationConfiguration cic)
-                {
-                    var chosen = SelectOne(GetElligibleChildren(cic).ToList(),null,true);
+                    if(selected is ExtractionConfiguration ec)
+                    {
+                        Import(GetElligibleChild(ec).RootFilterContainer);
+                    }
+                    if(selected is CohortIdentificationConfiguration cic)
+                    {
+                        var chosen = SelectOne(GetElligibleChildren(cic).ToList(),null,true);
 
-                    if(chosen != null)
-                        Import(chosen.RootFilterContainer);
+                        if(chosen != null)
+                            Import(chosen.RootFilterContainer);
+                    }
+
                 }
-                    
-                    
             }
+            
+            Publish(_into);
         }
 
         private void Import(IContainer from)
         {
             var factory = new DeployedExtractionFilterFactory(BasicActivator.RepositoryLocator.DataExportRepository);
             
-            var newRoot = DeepClone(from,factory);
+            var newRoot = new FilterContainer(BasicActivator.RepositoryLocator.DataExportRepository);
+            newRoot.Operation = from.Operation;
             _into.RootFilterContainer_ID = newRoot.ID;
             _into.SaveToDatabase();
 
-            
+            DeepClone(newRoot,from,factory);            
         }
 
-        private FilterContainer DeepClone(IContainer from, DeployedExtractionFilterFactory factory)
+        private void DeepClone(IContainer into,IContainer from, DeployedExtractionFilterFactory factory)
         {
-            var newRoot = new FilterContainer(BasicActivator.RepositoryLocator.DataExportRepository);
-            newRoot.Operation = from.Operation;
-
             //clone the subcontainers
             foreach(var container in from.GetSubContainers())
             {
-                newRoot.AddChild(DeepClone(container,factory));
+                var subContainer = new FilterContainer(BasicActivator.RepositoryLocator.DataExportRepository);
+                subContainer.Operation = container.Operation;
+                into.AddChild(subContainer);
+
+                DeepClone(subContainer,container,factory);            
             }
             
             var wizard = new FilterImportWizard(BasicActivator);
             
             //clone the filters
             foreach(var filter in from.GetFilters())
-                wizard.Import(newRoot,filter);
-
-            return newRoot;
+                into.AddChild(wizard.Import(into,filter));
         }
 
         private bool IsElligible(CohortIdentificationConfiguration arg)
@@ -143,7 +169,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// <returns></returns>
         private ISelectedDataSets GetElligibleChild(ExtractionConfiguration arg)
         {
-            return arg.SelectedDataSets.FirstOrDefault(s=>s.ExtractableDataSet_ID == _into.ExtractableDataSet_ID && s.RootFilterContainer_ID !=null);
+            return arg.SelectedDataSets.FirstOrDefault(IsElligible);
+        }
+
+        private bool IsElligible(ISelectedDataSets arg)
+        {
+            return arg.ExtractableDataSet_ID == _into.ExtractableDataSet_ID && arg.RootFilterContainer_ID != null;
         }
     }
 }
