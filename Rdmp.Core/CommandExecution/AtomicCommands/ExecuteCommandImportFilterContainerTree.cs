@@ -34,7 +34,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// <summary>
         /// May be null, if populated then this is the explicit one the user wants and we shouldn't ask them again
         /// </summary>
-        private AggregateConfiguration _explicitChoice;
+        private IContainer _explicitChoice;
 
         public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, SelectedDataSets into):base(activator)
         {
@@ -50,13 +50,24 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         }
 
+        /// <summary>
+        /// constructor for explicit choices, use this aggregates root container
+        /// </summary>
+        /// <param name="activator"></param>
+        /// <param name="into"></param>
+        /// <param name="from"></param>
         [UseWithObjectConstructor]
         public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, SelectedDataSets into, AggregateConfiguration from):this(activator,into)
         {
-            _explicitChoice = from;
-
-            if(_explicitChoice.RootFilterContainer_ID == null)
+            if(from.RootFilterContainer_ID == null)
                 SetImpossible("AggregateConfiguration has no root container");
+            else
+                _explicitChoice = from.RootFilterContainer;
+        }
+
+        public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, SelectedDataSets into, IContainer explicitChoice):this(activator,into)
+        {
+            _explicitChoice = explicitChoice;
         }
 
         public override void Execute()
@@ -65,7 +76,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if(_explicitChoice != null)
             {
-                Import(_explicitChoice.RootFilterContainer);
+                Import(_explicitChoice);
             }
             else
             {
