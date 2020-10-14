@@ -27,9 +27,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             //if pattern is null but this constructor is used then we shouldn't ask them again what they want
             _explicitPatternProvided = true;
         }
+
+        /// <summary>
+        /// Constructor for when we should prompt user in Gui for what the pattern should be if/when command is executed
+        /// </summary>
+        /// <param name="activator"></param>
         public ExecuteCommandSetGlobalDleIgnorePattern(IBasicActivateItems activator):base(activator)
         {
-            //constructor for when they 
+             
         }
 
         public override void Execute()
