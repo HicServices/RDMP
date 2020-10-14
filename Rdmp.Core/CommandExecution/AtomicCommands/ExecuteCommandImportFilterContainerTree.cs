@@ -30,21 +30,30 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// </summary>
         private readonly int _catalogue;
         private readonly SelectedDataSets _into;
+        
+        /// <summary>
+        /// May be null, if populated this is the explicit subcontainer into which the tree should be imported i.e. not <see cref="_into"/>
+        /// </summary>
+        private IContainer _intoSubContainer;
 
         /// <summary>
         /// May be null, if populated then this is the explicit one the user wants and we shouldn't ask them again
         /// </summary>
         private IContainer _explicitChoice;
 
-        public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, SelectedDataSets into):base(activator)
+        private ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator):base(activator)
+        {
+            if(!(activator.CoreChildProvider is DataExportChildProvider))
+                SetImpossible("Data export functions unavailable");
+        }
+
+        public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, SelectedDataSets into):this(activator)
         {
             _into = into;
 
             if(into.RootFilterContainer != null)
                 SetImpossible("Dataset already has a root container");
             
-            if(!(activator.CoreChildProvider is DataExportChildProvider))
-                SetImpossible("Data export functions unavailable");
 
             _catalogue = _into.ExtractableDataSet.Catalogue_ID;
 
@@ -65,9 +74,27 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 _explicitChoice = from.RootFilterContainer;
         }
 
+        /// <summary>
+        /// Constructor for explicitly specifying the container to import
+        /// </summary>
+        /// <param name="activator"></param>
+        /// <param name="into"></param>
+        /// <param name="explicitChoice"></param>
         public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, SelectedDataSets into, IContainer explicitChoice):this(activator,into)
         {
             _explicitChoice = explicitChoice;
+        }
+        /// <summary>
+        /// Constructor for importing into a sub container
+        /// </summary>
+        /// <param name="activator"></param>
+        /// <param name="into"></param>
+        /// <param name="explicitChoice"></param>
+        public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, IContainer into, IContainer explicitChoice):this(activator)
+        {
+            _intoSubContainer = into;
+            _explicitChoice = explicitChoice;
+
         }
 
         public override void Execute()
@@ -80,6 +107,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
             else
             {
+
+                if(_into == null)
+                    throw new NotSupportedException("Interactive mode is only supported when specifying a root object to import into");
+
                 //prompt user to pick one
                 var childProvider = (DataExportChildProvider)BasicActivator.CoreChildProvider;
 
@@ -115,19 +146,28 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 }
             }
             
-            Publish(_into);
+            Publish(_into ?? (DatabaseEntity)_intoSubContainer);
         }
 
         private void Import(IContainer from)
         {
             var factory = new DeployedExtractionFilterFactory(BasicActivator.RepositoryLocator.DataExportRepository);
             
-            var newRoot = new FilterContainer(BasicActivator.RepositoryLocator.DataExportRepository);
-            newRoot.Operation = from.Operation;
-            _into.RootFilterContainer_ID = newRoot.ID;
-            _into.SaveToDatabase();
+            IContainer intoContainer;
 
-            DeepClone(newRoot,from,factory);            
+            if(_into != null)
+            {
+                var newRoot = new FilterContainer(BasicActivator.RepositoryLocator.DataExportRepository);
+                newRoot.Operation = from.Operation;
+                _into.RootFilterContainer_ID = newRoot.ID;
+                _into.SaveToDatabase();
+                
+                intoContainer = newRoot;
+            }
+            else
+                intoContainer = _intoSubContainer;
+
+            DeepClone(intoContainer,from,factory);            
         }
 
         private void DeepClone(IContainer into,IContainer from, DeployedExtractionFilterFactory factory)
