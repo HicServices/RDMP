@@ -37,7 +37,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             Assert.IsNotNull(d, "A row which was expected to have a hic_validFrom had null instead");
             Assert.AreNotEqual(DBNull.Value, d, "A row which was expected to have a hic_validFrom had DBNull.Value instead");
 
-            //expect validFrom to be after 2 hours ago (to handle UTC / BST nonesense)
+            //expect validFrom to be after 2 hours ago (to handle UTC / BST nonsense)
             Assert.GreaterOrEqual((DateTime)d, DateTime.Now.Subtract(new TimeSpan(2, 0, 0)));
 
         }
