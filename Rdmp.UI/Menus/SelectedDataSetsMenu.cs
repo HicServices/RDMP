@@ -60,6 +60,8 @@ namespace Rdmp.UI.Menus
             addRootFilter.Enabled = root == null;
             Items.Add(addRootFilter);
             
+            Add(new ExecuteCommandImportFilterContainerTree(_activator,selectedDataSet));
+
             Add(new ExecuteCommandCreateNewFilter(_activator,
                 new DeployedExtractionFilterFactory(_activator.RepositoryLocator.DataExportRepository),
                 () => {

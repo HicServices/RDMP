@@ -7,18 +7,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
-using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.QueryBuilding.Options;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs;
+using Rdmp.Core.CommandExecution;
 
-namespace Rdmp.UI.ExtractionUIs.FilterUIs
+namespace Rdmp.Core.Curation.FilterImporting
 {
     /// <summary>
     /// Handles deploying <see cref="ExtractionFilter"/> instances into cohort identification / data extraction <see cref="IContainer"/>s.
@@ -27,9 +24,9 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
     /// </summary>
     public class FilterImportWizard
     {
-        private readonly IActivateItems _activator;
+        private readonly IBasicActivateItems _activator;
 
-        public FilterImportWizard(IActivateItems activator)
+        public FilterImportWizard(IBasicActivateItems activator)
         {
             _activator = activator;
         }
@@ -38,7 +35,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
         {
             ISqlParameter[] globals;
             IFilter[] otherFilters;
-            GetGlobalsAndFilters(containerToImportOneInto,out globals,out otherFilters);
+            GetGlobalsAndFilters(containerToImportOneInto, out globals, out otherFilters);
             return Import(containerToImportOneInto, filterToImport, globals, otherFilters);
         }
 
@@ -46,11 +43,11 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
         {
             ISqlParameter[] global;
             IFilter[] otherFilters;
-            GetGlobalsAndFilters(containerToImportOneInto,out global, out otherFilters);
+            GetGlobalsAndFilters(containerToImportOneInto, out global, out otherFilters);
             return ImportOneFromSelection(containerToImportOneInto, filtersThatCouldBeImported, global, otherFilters);
         }
 
-        private IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport,ISqlParameter[] globalParameters, IFilter[] otherFiltersInScope)
+        private IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport, ISqlParameter[] globalParameters, IFilter[] otherFiltersInScope)
         {
             //Sometimes filters have some recommended parameter values which the user can pick from (e.g. filter Condition could have parameter value sets for 'Dementia', 'Alzheimers' etc
             var chosenParameterValues = AdvertiseAvailableFilterParameterSetsIfAny(filterToImport as ExtractionFilter, out bool cancel);
@@ -64,7 +61,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
                 importer = new FilterImporter(new AggregateFilterFactory((ICatalogueRepository)containerToImportOneInto.Repository), globalParameters);
             else if (containerToImportOneInto is FilterContainer)
                 importer =
-                    new FilterImporter(new DeployedExtractionFilterFactory((IDataExportRepository) containerToImportOneInto.Repository), globalParameters);
+                    new FilterImporter(new DeployedExtractionFilterFactory((IDataExportRepository)containerToImportOneInto.Repository), globalParameters);
             else
                 throw new ArgumentException("Cannot import into IContainer of type " + containerToImportOneInto.GetType().Name, "containerToImportOneInto");
 
@@ -85,13 +82,13 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             return newFilter;
         }
 
-        private IFilter ImportOneFromSelection(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported,ISqlParameter[] globalParameters,IFilter[] otherFiltersInScope)
+        private IFilter ImportOneFromSelection(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported, ISqlParameter[] globalParameters, IFilter[] otherFiltersInScope)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, filtersThatCouldBeImported, false, false);
-            if (dialog.ShowDialog() == DialogResult.OK && dialog.Selected != null)
+            var chosenFilter = _activator.SelectOne("Import filter", filtersThatCouldBeImported);
+
+            if (chosenFilter != null)
             {
-                var chosenFilter = (IFilter)dialog.Selected;
-                return Import(containerToImportOneInto, chosenFilter, globalParameters, otherFiltersInScope);
+                return Import(containerToImportOneInto, (IFilter)chosenFilter, globalParameters, otherFiltersInScope);
             }
 
             return null;//user chose not to import anything
@@ -107,11 +104,12 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             var parameterSets = extractionFilterOrNull.Repository.GetAllObjectsWithParent<ExtractionFilterParameterSet>(extractionFilterOrNull);
 
 
-            if(parameterSets.Any())
+            if (parameterSets.Any())
             {
-                var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, parameterSets, true, false);
-                if (dialog.ShowDialog() == DialogResult.OK)
-                    return dialog.Selected as ExtractionFilterParameterSet;
+                var chosen = _activator.SelectOne("Parameter Set", parameterSets);
+
+                if (chosen != null)
+                    return chosen as ExtractionFilterParameterSet;
                 else
                     cancel = true;
             }
@@ -119,11 +117,11 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             return null;
         }
 
-        private void GetGlobalsAndFilters(IContainer containerToImportOneInto,out ISqlParameter[] globals, out IFilter[] otherFilters)
+        private void GetGlobalsAndFilters(IContainer containerToImportOneInto, out ISqlParameter[] globals, out IFilter[] otherFilters)
         {
             var aggregatecontainer = containerToImportOneInto as AggregateFilterContainer;
             var filtercontainer = containerToImportOneInto as FilterContainer;
-            
+
 
             if (aggregatecontainer != null)
             {
@@ -133,22 +131,22 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
 
                 globals = options.GetAllParameters(aggregate);
                 var root = aggregate.RootFilterContainer;
-                otherFilters = root == null ? new IFilter[0] : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();    
+                otherFilters = root == null ? new IFilter[0] : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
                 return;
             }
-            
-            if(filtercontainer != null)
+
+            if (filtercontainer != null)
             {
                 var selectedDataSet = filtercontainer.GetSelectedDataSetsRecursively();
                 var config = selectedDataSet.ExtractionConfiguration;
                 var root = selectedDataSet.RootFilterContainer;
 
                 globals = config.GlobalExtractionFilterParameters;
-                otherFilters = root == null ? new IFilter[0] : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();    
+                otherFilters = root == null ? new IFilter[0] : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
 
                 return;
             }
-            
+
 
             throw new Exception("Container " + containerToImportOneInto + " was an unexpected Type:" + containerToImportOneInto.GetType().Name);
         }

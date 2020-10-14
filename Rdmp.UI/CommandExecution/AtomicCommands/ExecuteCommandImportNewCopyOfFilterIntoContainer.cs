@@ -6,7 +6,7 @@
 
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.ExtractionUIs.FilterUIs;
+using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
