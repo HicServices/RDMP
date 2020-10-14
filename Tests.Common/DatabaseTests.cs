@@ -540,22 +540,23 @@ delete from {1}..Project
         {
             var syntax = database.Server.GetQuerySyntaxHelper();
 
-            if(database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer)
-                foreach(var t in database.DiscoverTables(false))
+            if (database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer)
+                using (var con = database.Server.GetConnection())
                 {
-                    //disable system versioning on any temporal tables otherwise drop fails
-                    using(var con = t.Database.Server.GetConnection())
+                    con.Open();
+                    foreach (var t in database.DiscoverTables(false))
                     {
-                        con.Open();
+                        //disable system versioning on any temporal tables otherwise drop fails
                         try
                         {
-                            
-                            t.Database.Server.GetCommand($@"IF OBJECTPROPERTY(OBJECT_ID('{syntax.EnsureWrapped(t.GetRuntimeName())}'), 'TableTemporalType') = 2
-        ALTER TABLE {t.GetFullyQualifiedName()} SET (SYSTEM_VERSIONING = OFF)",con).ExecuteNonQuery();
+                            t.Database.Server.GetCommand(
+                                $@"IF OBJECTPROPERTY(OBJECT_ID('{syntax.EnsureWrapped(t.GetRuntimeName())}'), 'TableTemporalType') = 2
+        ALTER TABLE {t.GetFullyQualifiedName()} SET (SYSTEM_VERSIONING = OFF)", con).ExecuteNonQuery();
                         }
                         catch (Exception)
                         {
-                            TestContext.Out.WriteLine($"Failed to generate disable System Versioning check for table {t} (nevermind)");
+                            TestContext.Out.WriteLine(
+                                $"Failed to generate disable System Versioning check for table {t} (nevermind)");
                         }
                     }
                 }
