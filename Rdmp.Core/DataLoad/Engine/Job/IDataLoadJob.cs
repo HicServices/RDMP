@@ -54,5 +54,11 @@ namespace Rdmp.Core.DataLoad.Engine.Job
         void CreateTablesInStage(DatabaseCloner cloner,LoadBubble stage);
 
         void PushForDisposal(IDisposeAfterDataLoad disposeable);
+        
+        /// <summary>
+        /// Returns all <see cref="ColumnInfo"/> in <see cref="RegularTablesToLoad "/> and <see cref="LookupTablesToLoad"/>
+        /// </summary>
+        /// <returns></returns>
+        ColumnInfo[] GetAllColumns();
     }
 }

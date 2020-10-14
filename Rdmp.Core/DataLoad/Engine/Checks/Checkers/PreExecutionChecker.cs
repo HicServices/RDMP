@@ -140,7 +140,9 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
             CheckDatabaseExistsForStage(LoadBubble.Live, "LIVE database found", "LIVE database not found");
             CheckColumnInfosMatchWithWhatIsInDatabaseAtStage(allNonLookups, LoadBubble.Live);
             
-            CheckUpdateTriggers(allNonLookups);
+            if(!_loadMetadata.IgnoreTrigger)
+                CheckUpdateTriggers(allNonLookups);
+
             CheckRAWDatabaseIsNotPresent();
         }
 

@@ -103,15 +103,24 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
 
             CheckTableHasColumnInfosAndPrimaryKeys(live, tableInfo, out columnInfos, out columnInfosWhichArePrimaryKeys,notifier);
             
+            //check for trying to ignore primary keys
+            foreach (var col in tableInfo.ColumnInfos)
+            {
+                if(col.IgnoreInLoads && col.IsPrimaryKey)
+                    notifier.OnCheckPerformed(new CheckEventArgs($"ColumnInfo {col} is marked both IgnoreInLoads and IsPrimaryKey",CheckResult.Fail));
+            }
+
             try
             {
+                if(!_loadMetadata.IgnoreTrigger)
+                {
+                    //if trigger is created as part of this check then it is likely to have resulted in changes to the underlying table (e.g. added hic_validFrom field) in which case we should resynch the TableInfo to pickup these new columns
+                    bool runSynchronizationAgain;
+                    CheckTriggerIntact(liveTable,notifier,out runSynchronizationAgain);
 
-                //if trigger is created as part of this check then it is likely to have resulted in changes to the underlying table (e.g. added hic_validFrom field) in which case we should resynch the TableInfo to pickup these new columns
-                bool runSynchronizationAgain;
-                CheckTriggerIntact(liveTable,notifier,out runSynchronizationAgain);
-
-                if(runSynchronizationAgain)
-                    CheckTableInfoSynchronization(tableInfo, notifier);
+                    if(runSynchronizationAgain)
+                        CheckTableInfoSynchronization(tableInfo, notifier);
+                }
                 
                 if (!_databaseConfiguration.RequiresStagingTableCreation)
                 {
@@ -131,6 +140,7 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
                     ConfirmStagingAndLiveHaveSameColumns(tableInfo.GetRuntimeName(), stagingCols, liveCols, false,notifier);
 
                     CheckStagingToLiveMigrationForTable(stagingTable, stagingCols, liveTable, liveCols,notifier);
+
                 }
             }
             catch (Exception e)
@@ -272,7 +282,9 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
         {
             try
             {
-                new MigrationColumnSet(stagingTable,liveTable,new StagingToLiveMigrationFieldProcessor());
+                new MigrationColumnSet(stagingTable,liveTable,new StagingToLiveMigrationFieldProcessor(){
+                NoBackupTrigger = _loadMetadata.IgnoreTrigger
+                    });
                 notifier.OnCheckPerformed(new CheckEventArgs("TableInfo " + liveTable + " passed " + typeof(MigrationColumnSet).Name + " check ", CheckResult.Success, null));
             }
             catch (Exception e)

@@ -33,6 +33,22 @@ namespace Rdmp.UI.Menus
 
             Add(new ExecuteCommandOverrideRawServer(_activator, loadMetadata));
             Add(new ExecuteCommandCreateNewLoadMetadata(_activator));
+
+            var mi_advanced = new ToolStripMenuItem("Advanced");
+            Add(new ExecuteCommandSetGlobalDleIgnorePattern(_activator),Keys.None,mi_advanced);
+            Add(new ExecuteCommandSetIgnoredColumns(_activator,loadMetadata),Keys.None,mi_advanced);
+            Add(new ExecuteCommandSetIgnoredColumns(_activator,loadMetadata,null){OverrideCommandName = "Clear Ignored Columns" },Keys.None,mi_advanced);
+
+            var mi_ignoreTrigger = AtomicCommandUIFactory.CreateMenuItem(
+            new ExecuteCommandSet(_activator,loadMetadata,typeof(LoadMetadata).GetProperty(nameof(LoadMetadata.IgnoreTrigger)))
+            {
+                OverrideCommandName = "Ignore Trigger"
+            }
+            );
+            mi_ignoreTrigger.Checked = loadMetadata.IgnoreTrigger;
+            mi_advanced.DropDownItems.Add(mi_ignoreTrigger);
+
+            Items.Add(mi_advanced);
             
             ReBrandActivateAs("Check and Execute",RDMPConcept.LoadMetadata,OverlayKind.Execute);
         }

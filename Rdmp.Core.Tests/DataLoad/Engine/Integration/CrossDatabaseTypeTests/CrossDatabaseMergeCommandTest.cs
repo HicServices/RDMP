@@ -95,10 +95,13 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
             logManager.CreateNewLoggingTaskIfNotExists("CrossDatabaseMergeCommandTest");
             var dli = logManager.CreateDataLoadInfo("CrossDatabaseMergeCommandTest", "tests", "running test", "", true);
 
-            var job = new ThrowImmediatelyDataLoadJob();
-            job.DataLoadInfo = dli;
-            job.RegularTablesToLoad = new List<ITableInfo>(new[]{ti});
-            
+            var job = new ThrowImmediatelyDataLoadJob()
+            {
+                LoadMetadata = lmd,
+                DataLoadInfo = dli,
+                RegularTablesToLoad = new List<ITableInfo>(new[]{ti})
+            };
+
             migrationHost.Migrate(job, new GracefulCancellationToken());
             
             var resultantDt = toTbl.GetDataTable();

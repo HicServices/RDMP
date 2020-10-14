@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Triggers;
 
 namespace Rdmp.Core.DataLoad.Engine.Migration
@@ -22,14 +23,24 @@ namespace Rdmp.Core.DataLoad.Engine.Migration
     public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
     {
         private readonly Regex _updateButDoNotDiffExtended;
+        private readonly Regex _ignore;
+        private readonly ColumnInfo[] _alsoIgnore;
 
-        public StagingToLiveMigrationFieldProcessor(Regex updateButDoNotDiff = null)
+        /// <inheritdoc/>
+        public bool NoBackupTrigger {get;set;}
+
+        public StagingToLiveMigrationFieldProcessor(Regex updateButDoNotDiff = null, Regex ignore=null, ColumnInfo[] alsoIgnore = null)
         {
             _updateButDoNotDiffExtended = updateButDoNotDiff;
+            _ignore = ignore;
+            _alsoIgnore = alsoIgnore;
         }
 
         public void ValidateFields(DiscoveredColumn[] sourceFields, DiscoveredColumn[] destinationFields)
         {
+            if(NoBackupTrigger)
+                return;
+
             if (!destinationFields.Any(f => f.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID, StringComparison.CurrentCultureIgnoreCase)))
                 throw new MissingFieldException("Destination (Live) database table is missing field:" + SpecialFieldNames.DataLoadRunID);
 
@@ -39,10 +50,16 @@ namespace Rdmp.Core.DataLoad.Engine.Migration
 
         public void AssignFieldsForProcessing(DiscoveredColumn field, List<DiscoveredColumn> fieldsToDiff, List<DiscoveredColumn> fieldsToUpdate)
         {
+            if(IgnoreColumnInfo(field))
+                return;
+
+            if(Ignore(field))
+                return;
+
             //it is a hic internal field but not one of the overwritten, standard ones
             if (SpecialFieldNames.IsHicPrefixed(field)
                 || 
-                IsSupplementalMatch(field))
+                UpdateOnly(field))
             
                 fieldsToUpdate.Add(field);
             else
@@ -53,7 +70,40 @@ namespace Rdmp.Core.DataLoad.Engine.Migration
             }
         }
 
-        private bool IsSupplementalMatch(DiscoveredColumn field)
+        private bool IgnoreColumnInfo(DiscoveredColumn field)
+        {
+            if(_alsoIgnore == null)
+                return false;
+
+            // TODO: if a load targets 2 tables with the same name in different databases and one has a column marked ignore it could be ignored in both during load.  Note that `field` parameter is the from column not the to column
+            
+            //its a column we were told to ignore
+            ColumnInfo match = _alsoIgnore.FirstOrDefault(c=>
+                c.GetRuntimeName().Equals(field.GetRuntimeName(),StringComparison.CurrentCultureIgnoreCase) &&
+                c.TableInfo.GetRuntimeName().Equals(field.Table.GetRuntimeName(),StringComparison.CurrentCultureIgnoreCase)
+            );
+
+            if(match != null && field.IsPrimaryKey)
+                throw new NotSupportedException($"ColumnInfo {match} is marked {nameof(ColumnInfo.IgnoreInLoads)} but is a Primary Key column this is not permitted");
+
+            return match != null;
+        }
+
+        private bool Ignore(DiscoveredColumn field)
+        {
+            if(_ignore == null)
+                return false;
+
+            //its a global ignore based on regex ignore pattern?
+            bool match = _ignore.IsMatch(field.GetRuntimeName());
+
+            if(match && field.IsPrimaryKey)
+                throw new NotSupportedException("Ignore Pattern " + _ignore + " matched Primary Key column '" + field.GetRuntimeName() + "' this is not permitted");
+
+            return match;
+        }
+
+        private bool UpdateOnly(DiscoveredColumn field)
         {
             if(_updateButDoNotDiffExtended == null)
                 return false;

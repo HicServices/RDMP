@@ -197,5 +197,10 @@ namespace Rdmp.Core.DataLoad.Engine.Job
                 disposable.LoadCompletedSoDispose(exitCode, postLoadEventsListener);
             }
         }
+
+        public ColumnInfo[] GetAllColumns()
+        {
+            return RegularTablesToLoad.SelectMany(t=>t.ColumnInfos).Union(LookupTablesToLoad.SelectMany(t=>t.ColumnInfos)).Distinct().ToArray();
+        }
     }
 }
