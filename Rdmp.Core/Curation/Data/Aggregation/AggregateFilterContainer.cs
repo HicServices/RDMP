@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Curation.Data.Aggregation
@@ -145,6 +146,11 @@ namespace Rdmp.Core.Curation.Data.Aggregation
                 return null;
 
             return ((AggregateFilterContainer)parentContainer).GetAggregate();
+        }
+
+        public override IFilterFactory GetFilterFactory()
+        {
+            return new AggregateFilterFactory(CatalogueRepository);
         }
     }
 }

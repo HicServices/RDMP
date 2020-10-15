@@ -9,6 +9,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting;
+using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
@@ -149,13 +150,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         private void Import(IContainer from)
         {
-            var factory = new DeployedExtractionFilterFactory(BasicActivator.RepositoryLocator.DataExportRepository);
+            var factory = from.GetFilterFactory();
             
             IContainer intoContainer;
 
             if(_into != null)
             {
-                var newRoot = new FilterContainer(BasicActivator.RepositoryLocator.DataExportRepository);
+                var newRoot = factory.CreateNewContainer();
                 newRoot.Operation = from.Operation;
                 _into.RootFilterContainer_ID = newRoot.ID;
                 _into.SaveToDatabase();
@@ -168,12 +169,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             DeepClone(intoContainer,from,factory);            
         }
 
-        private void DeepClone(IContainer into,IContainer from, DeployedExtractionFilterFactory factory)
+        private void DeepClone(IContainer into,IContainer from, IFilterFactory factory)
         {
             //clone the subcontainers
             foreach(var container in from.GetSubContainers())
             {
-                var subContainer = new FilterContainer(BasicActivator.RepositoryLocator.DataExportRepository);
+                var subContainer = factory.CreateNewContainer();
                 subContainer.Operation = container.Operation;
                 into.AddChild(subContainer);
 

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport.Data
@@ -151,6 +152,11 @@ namespace Rdmp.Core.DataExport.Data
             //our parent must be the root container maybe? recursive
             return parent.GetSelectedDataSetsRecursively();
 
+        }
+
+        public override IFilterFactory GetFilterFactory()
+        {
+            return new DeployedExtractionFilterFactory(DataExportRepository);
         }
     }
 }
