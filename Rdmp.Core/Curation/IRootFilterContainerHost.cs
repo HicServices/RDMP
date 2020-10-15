@@ -6,6 +6,7 @@
 
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.FilterImporting.Construction;
 
 namespace Rdmp.Core.Curation
 {
@@ -31,5 +32,11 @@ namespace Rdmp.Core.Curation
         /// </summary>
         /// <returns></returns>
         IContainer RootFilterContainer {get;}
+
+        /// <summary>
+        /// Returns a filter factory of the appropriate Type for creating filters in the <see cref="RootFilterContainer"/>
+        /// </summary>
+        /// <returns></returns>
+        IFilterFactory GetFilterFactory();
     }
 }

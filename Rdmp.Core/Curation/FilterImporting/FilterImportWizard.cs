@@ -50,7 +50,7 @@ namespace Rdmp.Core.Curation.FilterImporting
         private IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport, ISqlParameter[] globalParameters, IFilter[] otherFiltersInScope)
         {
             //Sometimes filters have some recommended parameter values which the user can pick from (e.g. filter Condition could have parameter value sets for 'Dementia', 'Alzheimers' etc
-            var chosenParameterValues = AdvertiseAvailableFilterParameterSetsIfAny(filterToImport as ExtractionFilter, out bool cancel);
+            var chosenParameterValues = AdvertiseAvailableFilterParameterSetsIfAny(filterToImport, out bool cancel);
 
             if (cancel)
                 return null;
@@ -94,11 +94,12 @@ namespace Rdmp.Core.Curation.FilterImporting
             return null;//user chose not to import anything
         }
 
-        private ExtractionFilterParameterSet AdvertiseAvailableFilterParameterSetsIfAny(ExtractionFilter extractionFilterOrNull, out bool cancel)
+        private ExtractionFilterParameterSet AdvertiseAvailableFilterParameterSetsIfAny(IFilter filter, out bool cancel)
         {
             cancel = false;
 
-            if (extractionFilterOrNull == null)
+            //only advertise filter parameter sets if it is a master level filter (Catalogue level)
+            if (!(filter is ExtractionFilter extractionFilterOrNull))
                 return null;
 
             var parameterSets = extractionFilterOrNull.Repository.GetAllObjectsWithParent<ExtractionFilterParameterSet>(extractionFilterOrNull);

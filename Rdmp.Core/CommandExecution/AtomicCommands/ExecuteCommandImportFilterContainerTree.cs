@@ -150,7 +150,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         private void Import(IContainer from)
         {
-            var factory = from.GetFilterFactory();
+            var factory = 
+                _into != null ? _into.GetFilterFactory() : _intoSubContainer.GetFilterFactory();
             
             IContainer intoContainer;
 

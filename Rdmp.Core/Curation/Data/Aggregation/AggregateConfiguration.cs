@@ -14,6 +14,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
@@ -793,6 +794,11 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         public ICatalogue GetCatalogue()
         {
             return Catalogue;
+        }
+
+        public IFilterFactory GetFilterFactory()
+        {
+            return new AggregateFilterFactory(CatalogueRepository);
         }
     }
 }

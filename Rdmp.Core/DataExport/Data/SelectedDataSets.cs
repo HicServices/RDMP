@@ -11,6 +11,7 @@ using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport.Data
@@ -193,6 +194,11 @@ namespace Rdmp.Core.DataExport.Data
                 RootFilterContainer_ID = container.ID;
                 SaveToDatabase();
             }
+        }
+
+        public IFilterFactory GetFilterFactory()
+        {
+            return new DeployedExtractionFilterFactory(DataExportRepository);
         }
     }
 }
