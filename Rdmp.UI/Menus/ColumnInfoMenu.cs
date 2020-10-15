@@ -6,6 +6,7 @@
 
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -35,6 +36,11 @@ namespace Rdmp.UI.Menus
             Add(new ExecuteCommandAnonymiseColumnInfo(_activator, columnInfo));
             
             Add(new ExecuteCommandAlterColumnType(_activator, columnInfo), Keys.None, Alter);
+
+            var miIgnore = AtomicCommandUIFactory.CreateMenuItem(new ExecuteCommandSet(_activator,columnInfo,typeof(ColumnInfo).GetProperty(nameof(ColumnInfo.IgnoreInLoads))));
+            miIgnore.Checked = columnInfo.IgnoreInLoads;
+            miIgnore.Text = "Ignore In Loads";
+            Items.Add(miIgnore);
         }
     }
 }

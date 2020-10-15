@@ -14,7 +14,6 @@ using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
 using NUnit.Framework;
-using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -27,12 +26,10 @@ using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution;
 using Rdmp.Core.DataLoad.Engine.LoadProcess;
-using Rdmp.Core.DataLoad.Modules.Attachers;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.Logging;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
-using Tests.Common;
 using TypeGuesser;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
@@ -53,7 +50,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
         ALTER ROLE [db_datawriter] ADD MEMBER [minion]
     */
 
-    public class CrossDatabaseDataLoadTests : DatabaseTests
+    class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
     {
         public enum TestCase
         {
@@ -62,6 +59,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
             ForeignKeyOrphans,
             DodgyCollation,
             AllPrimaryKeys,
+            NoTrigger,
             WithNonPrimaryKeyIdentityColumn,
             
             WithCustomTableNamer,
@@ -71,6 +69,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
 
         [TestCase(DatabaseType.Oracle,TestCase.Normal)]
         [TestCase(DatabaseType.MicrosoftSQLServer,TestCase.Normal)]
+        [TestCase(DatabaseType.MicrosoftSQLServer,TestCase.NoTrigger)]
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.WithCustomTableNamer)]
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.WithNonPrimaryKeyIdentityColumn)]
         [TestCase(DatabaseType.MicrosoftSQLServer, TestCase.DodgyCollation)]
@@ -149,6 +148,12 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
             //define a new load configuration
             var lmd = new LoadMetadata(CatalogueRepository, "MyLoad");
 
+            if(testCase == TestCase.NoTrigger)
+            {
+                lmd.IgnoreTrigger = true;
+                lmd.SaveToDatabase();
+            }   
+
             TableInfo ti = Import(tbl, lmd,logManager);
             
             var projectDirectory = SetupLoadDirectory(lmd);
@@ -175,6 +180,9 @@ MrMurder,2001-01-01,Yella");
                 SetupLowPrivilegeUserRightsFor(ti, TestLowPrivilegePermissions.Reader|TestLowPrivilegePermissions.Writer);
                 SetupLowPrivilegeUserRightsFor(db.Server.ExpectDatabase("DLE_STAGING"),TestLowPrivilegePermissions.All);
             }
+
+            Assert.AreEqual(testCase != TestCase.NoTrigger, tbl.DiscoverColumns().Select(c=>c.GetRuntimeName()).Contains(SpecialFieldNames.DataLoadRunID), $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
+            Assert.AreEqual(testCase != TestCase.NoTrigger, tbl.DiscoverColumns().Select(c=>c.GetRuntimeName()).Contains(SpecialFieldNames.ValidFrom), $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
 
             var dbConfig = new HICDatabaseConfiguration(lmd,testCase == TestCase.WithCustomTableNamer? new CustomINameDatabasesAndTablesDuringLoads():null);
 
@@ -224,23 +232,34 @@ MrMurder,2001-01-01,Yella");
                 var result = tbl.GetDataTable();
                 var frank = result.Rows.Cast<DataRow>().Single(r => (string) r["Name"] == "Frank");
                 Assert.AreEqual("Neon",frank["FavouriteColour"]);
-                AssertHasDataLoadRunId(frank);
+                
+                if(testCase != TestCase.NoTrigger)
+                    AssertHasDataLoadRunId(frank);
 
                 //MrMurder is a new person who likes Yella
                 var mrmurder = result.Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "MrMurder");
                 Assert.AreEqual("Yella", mrmurder["FavouriteColour"]);
                 Assert.AreEqual(new DateTime(2001,01,01), mrmurder["DateOfBirth"]);
-                AssertHasDataLoadRunId(mrmurder);
+                
+                if(testCase != TestCase.NoTrigger)
+                    AssertHasDataLoadRunId(mrmurder);
 
                 //bob should be untouched (same values as before and no dataloadrunID)
                 var bob = result.Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "Bob");
                 Assert.AreEqual("Pink", bob["FavouriteColour"]);
                 Assert.AreEqual(new DateTime(2001, 01, 01), bob["DateOfBirth"]);
-                Assert.AreEqual(DBNull.Value,bob[SpecialFieldNames.DataLoadRunID]);
+                
+                if(testCase != TestCase.NoTrigger)
+                {
+                    Assert.AreEqual(DBNull.Value,bob[SpecialFieldNames.DataLoadRunID]);
 
-                //MySql add default of now() on a table will auto populate all the column values with the the now() date while Sql Server will leave them as nulls
-                if(databaseType == DatabaseType.MicrosoftSQLServer)
-                    Assert.AreEqual(DBNull.Value, bob[SpecialFieldNames.ValidFrom]);
+                    //MySql add default of now() on a table will auto populate all the column values with the the now() date while Sql Server will leave them as nulls
+                    if(databaseType == DatabaseType.MicrosoftSQLServer)
+                        Assert.AreEqual(DBNull.Value, bob[SpecialFieldNames.ValidFrom]);
+                }
+                    
+                Assert.AreEqual(testCase != TestCase.NoTrigger, tbl.DiscoverColumns().Select(c=>c.GetRuntimeName()).Contains(SpecialFieldNames.DataLoadRunID), $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
+                Assert.AreEqual(testCase != TestCase.NoTrigger, tbl.DiscoverColumns().Select(c=>c.GetRuntimeName()).Contains(SpecialFieldNames.ValidFrom), $"When running with NoTrigger there shouldn't be any additional columns added to table. Test case was {testCase}");
             }
             finally
             {
@@ -413,77 +432,9 @@ MrMurder,2001-01-01,Yella");
             }
         }
 
-        private void AssertHasDataLoadRunId(DataRow row)
-        {
-            var o = row[SpecialFieldNames.DataLoadRunID];
-            
-            Assert.IsNotNull(o,"A row which was expected to have a hic_dataLoadRunID had null instead");
-            Assert.AreNotEqual(DBNull.Value,o,"A row which was expected to have a hic_dataLoadRunID had DBNull.Value instead");
-            Assert.GreaterOrEqual((int)o, 0);
-
-            var d = row[SpecialFieldNames.ValidFrom];
-            Assert.IsNotNull(d, "A row which was expected to have a hic_validFrom had null instead");
-            Assert.AreNotEqual(DBNull.Value,d, "A row which was expected to have a hic_validFrom had DBNull.Value instead");
-            
-            //expect validFrom to be after 2 hours ago (to handle UTC / BST nonesense)
-            Assert.GreaterOrEqual((DateTime)d, DateTime.Now.Subtract(new TimeSpan(2,0,0)));
-
-        }
-
-        private void CreateCSVProcessTask(LoadMetadata lmd, TableInfo ti, string regex)
-        {
-            var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.Mounting);
-            pt.Path = typeof(AnySeparatorFileAttacher).FullName;
-            pt.ProcessTaskType = ProcessTaskType.Attacher;
-            pt.Name = "Load " + ti.GetRuntimeName();
-            pt.SaveToDatabase();
-
-            pt.CreateArgumentsForClassIfNotExists<AnySeparatorFileAttacher>();
-            pt.SetArgumentValue("FilePattern", regex);
-            pt.SetArgumentValue("Separator", ",");
-            pt.SetArgumentValue("TableToLoad", ti);
-
-            pt.Check(new ThrowImmediatelyCheckNotifier());
-        }
-
-        private LoadDirectory SetupLoadDirectory(LoadMetadata lmd)
-        {
-            var projectDirectory = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "MyLoadDir", true);
-            lmd.LocationOfFlatFiles = projectDirectory.RootPath.FullName;
-            lmd.SaveToDatabase();
-
-            return projectDirectory;
-        }
-
-        private TableInfo Import(DiscoveredTable tbl, LoadMetadata lmd, LogManager logManager)
-        {
-            logManager.CreateNewLoggingTaskIfNotExists(lmd.Name);
-
-            //import TableInfos
-            var importer = new TableInfoImporter(CatalogueRepository, tbl);
-            TableInfo ti;
-            ColumnInfo[] cis;
-            importer.DoImport(out ti, out cis);
-
-            //create Catalogue
-            var forwardEngineer = new ForwardEngineerCatalogue(ti, cis, true);
-
-            Catalogue cata;
-            CatalogueItem[] cataItems;
-            ExtractionInformation[] eis;
-            forwardEngineer.ExecuteForwardEngineering(out cata, out cataItems, out eis);
-
-            //make the catalogue use the load configuration
-            cata.LoadMetadata_ID = lmd.ID;
-            cata.LoggingDataTask = lmd.Name;
-            Assert.IsNotNull(cata.LiveLoggingServer_ID); //catalogue should have one of these because of system defaults
-            cata.SaveToDatabase();
-
-            return ti;
-        }
     }
 
-    public class CustomINameDatabasesAndTablesDuringLoads:INameDatabasesAndTablesDuringLoads
+    class CustomINameDatabasesAndTablesDuringLoads:INameDatabasesAndTablesDuringLoads
     {
         public string GetDatabaseName(string rootDatabaseName, LoadBubble convention)
         {
