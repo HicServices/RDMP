@@ -196,9 +196,9 @@ namespace Rdmp.Core.Curation.Data.Aggregation
             get { return _knownCatalogue.Value; }
         }
 
-        /// <inheritdoc cref="RootFilterContainer_ID"/>
+        /// <inheritdoc/>
         [NoMappingToDatabase]
-        public AggregateFilterContainer RootFilterContainer
+        public IContainer RootFilterContainer
         {
             get
             {

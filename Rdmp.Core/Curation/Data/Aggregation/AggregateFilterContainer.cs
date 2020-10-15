@@ -89,7 +89,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         /// filters.  This is a recursive operation that will clone the entire tree no matter how deep.
         /// </summary>
         /// <returns></returns>
-        public AggregateFilterContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
+        public override IContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
         {
             //clone ourselves
             AggregateFilterContainer clone = ShallowClone();
@@ -109,7 +109,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
             foreach (AggregateFilterContainer toCloneSubcontainer in GetSubContainers())
             {
                 //clone the subcontainer recursively
-                AggregateFilterContainer clonedSubcontainer =
+                var clonedSubcontainer =
                     toCloneSubcontainer.DeepCloneEntireTreeRecursivelyIncludingFilters();
 
                 //get the returned filter subcontainer and assocaite it with the cloned version of this

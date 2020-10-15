@@ -240,7 +240,7 @@ namespace Rdmp.UI.Wizard
             
             var filterOp = (FilterContainerOperation) ddAndOr.SelectedItem;
 
-            AggregateFilterContainer filterContainer;
+            IContainer filterContainer;
             if (aggregate.RootFilterContainer_ID != null)
             {
                 //this is the case if there are mandatory filters in the dataset

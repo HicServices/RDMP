@@ -25,5 +25,11 @@ namespace Rdmp.Core.Curation
         /// </summary>
         /// <returns></returns>
         ICatalogue GetCatalogue();
+
+        /// <summary>
+        /// Returns the root container specified by the <see cref="RootFilterContainer_ID"/>
+        /// </summary>
+        /// <returns></returns>
+        IContainer RootFilterContainer {get;}
     }
 }

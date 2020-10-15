@@ -64,7 +64,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// <param name="into"></param>
         /// <param name="from"></param>
         [UseWithObjectConstructor]
-        public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, IRootFilterContainerHost into, AggregateConfiguration from):this(activator,into)
+        public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, IRootFilterContainerHost into, IRootFilterContainerHost from):this(activator,into)
         {
             if(from.RootFilterContainer_ID == null)
                 SetImpossible("AggregateConfiguration has no root container");

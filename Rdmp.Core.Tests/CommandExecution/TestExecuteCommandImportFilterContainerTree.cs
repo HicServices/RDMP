@@ -22,7 +22,7 @@ namespace Rdmp.Core.Tests.CommandExecution
     class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
     {
         [Test]
-        public void TestImportTree_FromCohortIdentificationConfiguration()
+        public void TestImportTree_FromCohortIdentificationConfiguration_ToSelectedDatasets()
         {
             var sds = WhenIHaveA<SelectedDataSets>();
 
@@ -33,8 +33,8 @@ namespace Rdmp.Core.Tests.CommandExecution
 
             var ac = new AggregateConfiguration(Repository,cata,"myagg");
             ac.CreateRootContainerIfNotExists();
-
             cic.RootCohortAggregateContainer.AddChild(ac,1);
+
             var filterToImport = new AggregateFilter(Repository,"MyFilter"){WhereSQL = "true" };
             ac.RootFilterContainer.AddChild(filterToImport);
             
@@ -56,6 +56,46 @@ namespace Rdmp.Core.Tests.CommandExecution
             Assert.AreEqual("true",sds.RootFilterContainer.GetFilters()[0].WhereSQL);
 
             Assert.AreNotEqual(filterToImport.GetType(),sds.RootFilterContainer.GetFilters()[0].GetType());
+        }
+
+        [Test]
+        public void TestImportTree_FromSelectedDatasets_ToCohortIdentificationConfiguration()
+        {
+
+            // Import From Selected Dataset
+            var sds = WhenIHaveA<SelectedDataSets>();
+            sds.CreateRootContainerIfNotExists();
+
+            var filterToImport = new DeployedExtractionFilter(Repository,"MyFilter", (FilterContainer)sds.RootFilterContainer){WhereSQL = "true" };
+            filterToImport.SaveToDatabase();
+
+            var cata = sds.ExtractableDataSet.Catalogue;
+
+            // Into an Aggregate Configuration
+            var cic = new CohortIdentificationConfiguration(Repository,"my cic");
+            cic.CreateRootContainerIfNotExists();
+            var ac = new AggregateConfiguration(Repository,cata,"myagg");
+
+            cic.RootCohortAggregateContainer.AddChild(ac,1);
+            
+            //there should be no root container
+            Assert.IsNull(ac.RootFilterContainer);
+            
+            //run the command
+            var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
+            mgr.DisallowInput = true;
+            var cmd = new ExecuteCommandImportFilterContainerTree(mgr,ac,sds);
+            
+            Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
+            cmd.Execute();
+            
+            ac.ClearAllInjections();
+            Assert.IsNotNull(ac.RootFilterContainer);
+            Assert.AreEqual(1,ac.RootFilterContainer.GetFilters().Length);
+            Assert.AreEqual("MyFilter",ac.RootFilterContainer.GetFilters()[0].Name);
+            Assert.AreEqual("true",ac.RootFilterContainer.GetFilters()[0].WhereSQL);
+
+            Assert.AreNotEqual(filterToImport.GetType(),ac.RootFilterContainer.GetFilters()[0].GetType());
             
 
         }

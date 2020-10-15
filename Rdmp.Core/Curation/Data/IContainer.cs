@@ -114,5 +114,13 @@ namespace Rdmp.Core.Curation.Data
         /// <returns></returns>
         Catalogue GetCatalogueIfAny();
 
+
+        /// <summary>
+        /// Creates a deep copy of the current container, all filters and subcontainers (recursively).  These objects will all have new IDs and be new objects
+        /// in the repository database.
+        /// </summary>
+        /// <returns></returns>
+        IContainer DeepCloneEntireTreeRecursivelyIncludingFilters();
+
     }
 }

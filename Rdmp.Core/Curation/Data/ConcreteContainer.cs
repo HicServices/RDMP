@@ -159,5 +159,7 @@ namespace Rdmp.Core.Curation.Data
 
         /// <inheritdoc />
         public abstract bool ShouldBeReadOnly(out string reason);
+
+        public abstract IContainer DeepCloneEntireTreeRecursivelyIncludingFilters();
     }
 }

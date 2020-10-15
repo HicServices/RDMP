@@ -27,9 +27,6 @@ namespace Rdmp.Core.DataExport.Data
         int ExtractableDataSet_ID { get; set; }
 
 
-        /// <inheritdoc cref="IRootFilterContainerHost.RootFilterContainer_ID"/>
-        IContainer RootFilterContainer { get; }
-
         /// <inheritdoc cref="ExtractionConfiguration_ID"/>
         IExtractionConfiguration ExtractionConfiguration { get;}
 

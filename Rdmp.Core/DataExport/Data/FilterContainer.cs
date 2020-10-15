@@ -67,13 +67,7 @@ namespace Rdmp.Core.DataExport.Data
         }
         
         
-        
-        /// <summary>
-        /// Creates a deep copy of the current container, all filters and subcontainers (recursively).  These objects will all have new IDs and be new objects
-        /// in the repository database.
-        /// </summary>
-        /// <returns></returns>
-        public FilterContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
+        public override IContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
         {
             //clone ourselves
             var clonedFilterContainer = this.ShallowClone();
@@ -97,7 +91,7 @@ namespace Rdmp.Core.DataExport.Data
             foreach (FilterContainer toCloneSubcontainer in this.GetSubContainers())
             {
                 //clone the subcontainer recursively
-                FilterContainer clonedSubcontainer = toCloneSubcontainer.DeepCloneEntireTreeRecursivelyIncludingFilters();
+                var clonedSubcontainer = toCloneSubcontainer.DeepCloneEntireTreeRecursivelyIncludingFilters();
 
                 //get the returned filter subcontainer and assocaite it with the cloned version of this
                 clonedFilterContainer.AddChild(clonedSubcontainer);
