@@ -50,5 +50,10 @@ namespace Rdmp.Core.Curation.FilterImporting.Construction
         {
             return typeof (AggregateFilterContainer);
         }
+
+        public IContainer CreateNewContainer()
+        {
+            return new AggregateFilterContainer(_repository,FilterContainerOperation.AND);
+        }
     }
 }

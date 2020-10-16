@@ -47,6 +47,8 @@ namespace Rdmp.UI.Menus
             //if it doesn't have a root container or a hijacked container shortcut
             addFilterContainer.Enabled = aggregate.RootFilterContainer_ID == null && aggregate.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID == null;
             Items.Add(addFilterContainer);
+            
+            Add(new ExecuteCommandImportFilterContainerTree(_activator,aggregate));
 
             Add(new ExecuteCommandCreateNewFilter(_activator,
                 new AggregateFilterFactory(_activator.RepositoryLocator.CatalogueRepository),

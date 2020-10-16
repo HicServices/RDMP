@@ -51,5 +51,10 @@ namespace Rdmp.Core.DataExport.Data
         {
             return typeof (FilterContainer);
         }
+
+        public IContainer CreateNewContainer()
+        {
+            return new FilterContainer(_repository);
+        }
     }
 }

@@ -396,7 +396,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                 graph.SaveToDatabase();
             }
             else
-                container = graph.RootFilterContainer;
+                container = (AggregateFilterContainer)graph.RootFilterContainer;
             
             var filter = new AggregateFilter(_repos.CatalogueRepository,name,container);
             filter.WhereSQL = whereSql;

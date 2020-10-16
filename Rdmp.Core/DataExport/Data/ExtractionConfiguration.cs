@@ -428,7 +428,7 @@ namespace Rdmp.Core.DataExport.Data
                                 continue;
 
                             //there was one to clone so clone it recursively (all subcontainers) including filters then set the root filter to the new clone 
-                            FilterContainer cloneRootContainer = rootContainer.DeepCloneEntireTreeRecursivelyIncludingFilters();
+                            IContainer cloneRootContainer = rootContainer.DeepCloneEntireTreeRecursivelyIncludingFilters();
                             newSelectedDataSet.RootFilterContainer_ID = cloneRootContainer.ID;
                             newSelectedDataSet.SaveToDatabase();
                         }
