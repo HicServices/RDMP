@@ -118,9 +118,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 // The root object that makes most sense to the user e.g. they select an extraction 
                 var fromConfiguration
                     =
-                childProvider.AllCohortIdentificationConfigurations.Where(IsElligible)
+                childProvider.AllCohortIdentificationConfigurations.Where(IsEligible)
                 .Cast<DatabaseEntity>()
-                .Union(childProvider.SelectedDataSets.Where(IsElligible).Select(sds=> ecById[sds.ExtractionConfiguration_ID])).ToList();
+                .Union(childProvider.SelectedDataSets.Where(IsEligible).Select(sds=> ecById[sds.ExtractionConfiguration_ID])).ToList();
 
                 if(!fromConfiguration.Any())
                 {
@@ -132,11 +132,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 {
                     if(selected is ExtractionConfiguration ec)
                     {
-                        Import(GetElligibleChild(ec).RootFilterContainer);
+                        Import(GetEligibleChild(ec).RootFilterContainer);
                     }
                     if(selected is CohortIdentificationConfiguration cic)
                     {
-                        var chosen = SelectOne(GetElligibleChildren(cic).ToList(),null,true);
+                        var chosen = SelectOne(GetEligibleChildren(cic).ToList(),null,true);
 
                         if(chosen != null)
                             Import(chosen.RootFilterContainer);
@@ -189,9 +189,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 into.AddChild(wizard.Import(into,filter));
         }
 
-        private bool IsElligible(CohortIdentificationConfiguration arg)
+        private bool IsEligible(CohortIdentificationConfiguration arg)
         {
-            return GetElligibleChildren(arg).Any();
+            return GetEligibleChildren(arg).Any();
         }
 
 
@@ -200,7 +200,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// </summary>
         /// <param name="arg"></param>
         /// <returns></returns>
-        private IEnumerable<AggregateConfiguration> GetElligibleChildren(CohortIdentificationConfiguration arg)
+        private IEnumerable<AggregateConfiguration> GetEligibleChildren(CohortIdentificationConfiguration arg)
         {
             if(arg.RootCohortAggregateContainer_ID == null)
                 return new AggregateConfiguration[0];
@@ -214,12 +214,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// </summary>
         /// <param name="arg"></param>
         /// <returns></returns>
-        private ISelectedDataSets GetElligibleChild(ExtractionConfiguration arg)
+        private ISelectedDataSets GetEligibleChild(ExtractionConfiguration arg)
         {
-            return arg.SelectedDataSets.FirstOrDefault(IsElligible);
+            return arg.SelectedDataSets.FirstOrDefault(IsEligible);
         }
 
-        private bool IsElligible(ISelectedDataSets arg)
+        private bool IsEligible(ISelectedDataSets arg)
         {
             return arg.RootFilterContainer_ID != null;
         }
