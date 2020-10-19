@@ -266,8 +266,16 @@ namespace Rdmp.Core.Providers
 
             foreach (ExtractableDataSet projectSpecificEds in ExtractableDataSets.Where(eds=>eds.Project_ID == projectCataloguesNode.Project.ID))
             {
-                children.Add(projectSpecificEds.Catalogue);
-                AddChildren((Catalogue)projectSpecificEds.Catalogue, descendancy.Add(projectSpecificEds.Catalogue));
+                
+                var cata = (Catalogue)projectSpecificEds.Catalogue;
+                
+                // cata will be null if it has been deleted from the database
+                if(cata != null)
+                {
+                    children.Add(cata);
+                    AddChildren(cata, descendancy.Add(projectSpecificEds.Catalogue));
+                }
+                    
             }
             
             AddToDictionaries(children, descendancy);
