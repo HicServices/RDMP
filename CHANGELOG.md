@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [4.2.0] - 2020-10-19
+
 ### Fixed
 
 - reduced memory overhead during refreshes
@@ -538,7 +540,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.1.9...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.2.0...develop
+[4.2.0]: https://github.com/HicServices/RDMP/compare/v4.1.9...v4.2.0
 [4.1.9]: https://github.com/HicServices/RDMP/compare/v4.1.8...v4.1.9
 [4.1.8]: https://github.com/HicServices/RDMP/compare/v4.1.7...v4.1.8
 [4.1.7]: https://github.com/HicServices/RDMP/compare/v4.1.6...v4.1.7
