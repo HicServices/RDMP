@@ -26,7 +26,6 @@ namespace Rdmp.Core.CommandLine.Gui
     {
         public ConsoleGuiActivator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier) : base(repositoryLocator, globalErrorCheckNotifier)
         {
-            CoreChildProvider = new DataExportChildProvider(RepositoryLocator,null,GlobalErrorCheckNotifier);
         }
 
 
@@ -43,16 +42,11 @@ namespace Rdmp.Core.CommandLine.Gui
             return false;
         }
 
-        public override void Publish(DatabaseEntity databaseEntity)
-        {
-            //refresh the child provider because there could be new objects
-            CoreChildProvider = new DataExportChildProvider(RepositoryLocator,null,GlobalErrorCheckNotifier);
-        }
-
         public override void Show(string message)
         {
-            var dlg = new Dialog("Message", Math.Min(80,Application.Top.Frame.Width), Math.Min(20,Application.Top.Frame.Height),
-                new Button("Ok", true){Clicked = Application.RequestStop});
+            var okButton = new Button("Ok", true);
+            okButton.Clicked += Application.RequestStop;
+            var dlg = new Dialog("Message", Math.Min(80,Application.Top.Frame.Width), Math.Min(20,Application.Top.Frame.Height),okButton);
 
             dlg.Add(new TextView()
             {
@@ -213,16 +207,18 @@ namespace Rdmp.Core.CommandLine.Gui
 
             bool toggleStack = true;
 
+            var btnOk = new Button("Ok", true);
+            btnOk.Clicked += Application.RequestStop;
+            var btnStack = new Button("Stack");
+            btnStack.Clicked += () =>
+            {
+                //flip between stack / no stack
+                textView.Text = GetExceptionText(errorText, exception, toggleStack);
+                toggleStack = !toggleStack;
+            };
             var dlg = new Dialog("Error", Math.Min(Application.Top.Frame.Width, 80),
                 Math.Min(Application.Top.Frame.Height, 20),
-                new Button("Ok", true){Clicked = Application.RequestStop},
-                new Button("Stack"){Clicked = ()=>
-                    {
-                        //flip between stack / no stack
-                        textView.Text = GetExceptionText(errorText,exception,toggleStack);
-                        toggleStack = !toggleStack;
-                    }
-                });
+                btnOk,btnStack);
             
             
 

@@ -93,6 +93,7 @@
     <None Remove="Databases\CatalogueDatabase\up\069_IsViewProperty.sql" />
     <None Remove="Databases\CatalogueDatabase\up\070_UnicodeSupport.sql" />
     <None Remove="Databases\CatalogueDatabase\up\071_RowVer.sql" />
+    <None Remove="Databases\CatalogueDatabase\up\072_ExtendedProperties.sql" />
     <None Remove="Databases\DataExportDatabase\runAfterCreateDatabase\CreateDataExportManager.sql" />
     <None Remove="Databases\DataExportDatabase\up\001_AddUsernamePasswordFieldsToExternalCohortTable.sql" />
     <None Remove="Databases\DataExportDatabase\up\002_FixServerAndDatabaseNameOnExternalCohort.sql" />
@@ -209,6 +210,7 @@
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\064_FAnsiSupport.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\065_IsDisabledSupport.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\066_NamesMustNotBeNull.sql" />
+    <EmbeddedResource Include="Databases\CatalogueDatabase\up\072_ExtendedProperties.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\071_RowVer.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\070_UnicodeSupport.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\069_IsViewProperty.sql" />
@@ -252,7 +254,7 @@
     <EmbeddedResource Include="Databases\QueryCachingDatabase\up\001_UnicodeSupport.sql" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ExcelNumberFormat" Version="1.0.10" />
+    <PackageReference Include="ExcelNumberFormat" Version="1.1.0" />
     <PackageReference Include="HIC.BadMedicine" Version="0.1.6" />
     <PackageReference Include="NPOI" Version="2.4.1" />
     <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
@@ -291,11 +293,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>GlobalStrings.resx</DependentUpon>
     </Compile>
-    <Compile Update="Icons\IconProvision\CatalogueIcons.Designer.cs">
-      <DependentUpon>CatalogueIcons.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
     <Compile Update="Icons\IconProvision\ChecksAndProgressIcons.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -316,8 +313,7 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Icons\IconProvision\CatalogueIcons.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>CatalogueIcons.Designer.cs</LastGenOutput>
+      <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Icons\IconProvision\ChecksAndProgressIcons.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>

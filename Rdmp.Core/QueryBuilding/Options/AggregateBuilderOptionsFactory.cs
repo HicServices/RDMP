@@ -15,7 +15,7 @@ namespace Rdmp.Core.QueryBuilding.Options
     {
         /// <summary>
         /// Creates an <see cref="IAggregateBuilderOptions"/> appropriate to the <see cref="AggregateConfiguration"/>.  These options indicate whether
-        /// it is functioning as a graph or cohort set and therefore which parts of the <see cref="AggregateBuilder"/> are elligible to be modified.
+        /// it is functioning as a graph or cohort set and therefore which parts of the <see cref="AggregateBuilder"/> are eligible to be modified.
         /// </summary>
         /// <param name="config"></param>
         /// <returns></returns>

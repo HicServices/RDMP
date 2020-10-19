@@ -8,6 +8,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [4.2.0] - 2020-10-19
+
+### Fixed
+
+- Reduced memory overhead during refreshes
+- Fixed various graphical/performance issues when running in VDI environments with limited CPU
+- Fixed missing scrollbars in Explicit Column Typing user interface
+- Fixed various errors that could occur when a [Catalogue] referenced by an extraction is deleted outside of RDMP (e.g. by truncating the database table(s))
+
+### Added
+
+- Support for importing WHERE logic into extraction datasets from other configurations or cohort builder configurations
+- Pipeline ID and Name now recorded in logs for Data Extractions
+- Added support for viewing extraction logs in tree form (for a given ExtractionConfiguration)
+- Added `AllowIdentifiableExtractions` user setting.  Enabling this prevents RDMP reporting an error state when cohorts are created that have the same private and release ID fields.
+- Added GoTo from extraction/cohort building filters to the parent Catalogue level filter and vice versa
+- Added ability to suppress [LoadMetadata] triggers
+- Added ability for Plugins to store custom information about objects in the RDMP Catalogue platform database
+- Added IgnoreColumns setting for DLE to ignore specific columns in the final table completely (not created in RAW/STAGING and not migrated)
+
 ## [4.1.9] - 2020-09-17
 
 ### Added
@@ -522,8 +542,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.1.9...develop
-[4.1.8]: https://github.com/HicServices/RDMP/compare/v4.1.8...v4.1.9
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.2.0...develop
+[4.2.0]: https://github.com/HicServices/RDMP/compare/v4.1.9...v4.2.0
+[4.1.9]: https://github.com/HicServices/RDMP/compare/v4.1.8...v4.1.9
 [4.1.8]: https://github.com/HicServices/RDMP/compare/v4.1.7...v4.1.8
 [4.1.7]: https://github.com/HicServices/RDMP/compare/v4.1.6...v4.1.7
 [4.1.6]: https://github.com/HicServices/RDMP/compare/v4.1.5...v4.1.6
@@ -576,3 +597,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [Lookup]: ./Documentation/CodeTutorials/Glossary.md#Lookup
 [CohortIdentificationConfiguration]: ./Documentation/CodeTutorials/Glossary.md#CohortIdentificationConfiguration
+[LoadMetadata]: ./Documentation/CodeTutorials/Glossary.md#LoadMetadata

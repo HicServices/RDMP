@@ -17,7 +17,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
     /// Entrypoint to the loading metadata for one or more Catalogues. This includes name, description, scheduled start dates etc.  A <see cref="LoadMetadata"/>
     /// contains at least one <see cref="ProcessTask"/> which is an ETL step e.g. Unzip files called *.zip / Dowload all files from FTP server X.
     /// </summary>
-    public interface ILoadMetadata : INamed
+    public interface ILoadMetadata : INamed, ILoggedActivityRootObject
     {
         ICatalogueRepository CatalogueRepository { get; }
 
@@ -32,6 +32,11 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         /// <para>For structured access to this use a new <see cref="ILoadDirectory"/></para>
         /// </summary>
         string LocationOfFlatFiles { get; set; }
+
+        /// <summary>
+        /// Set to true to ignore the requirement for live tables to need the backup archive trigger
+        /// </summary>
+        bool IgnoreTrigger {get;}
 
         /// <summary>
         /// Optional - Overrides the <see cref="ServerDefaults"/> RAWDataLoadServer with an explicit RAW server to use this load only.
@@ -52,14 +57,6 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         /// <returns></returns>
         IEnumerable<ICatalogue> GetAllCatalogues();
 
-        /// <summary>
-        /// The unique logging server for auditing the load (found by querying <see cref="Catalogue.LiveLoggingServer"/>)
-        /// </summary>
-        /// <returns></returns>
-        DiscoveredServer GetDistinctLoggingDatabase();
-
-        /// <inheritdoc cref="GetDistinctLoggingDatabase()"/>
-        DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen);
 
         /// <summary>
         /// Returns the single server that contains all the live data tables in all the <see cref="ICatalogue"/> that are loaded by the <see cref="LoadMetadata"/>.
@@ -67,11 +64,5 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         /// </summary>
         /// <returns></returns>
         DiscoveredServer GetDistinctLiveDatabaseServer();
-
-        /// <summary>
-        /// Returns the unique value of <see cref="Catalogue.LoggingDataTask"/> amongst all catalogues loaded by the <see cref="LoadMetadata"/>
-        /// </summary>
-        /// <returns></returns>
-        string GetDistinctLoggingTask();
     }
 }

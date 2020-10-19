@@ -38,6 +38,37 @@ namespace Rdmp.Core.Tests.Curation.Integration
         }
 
         [Test]
+        public void Test_IgnoreTrigger_GetSet()
+        {
+            var loadMetadata = new LoadMetadata(CatalogueRepository);
+
+            try
+            {
+                //default
+                Assert.IsFalse(loadMetadata.IgnoreTrigger);
+                loadMetadata.SaveToDatabase();
+                Assert.IsFalse(loadMetadata.IgnoreTrigger);
+                loadMetadata.SaveToDatabase();
+                
+                loadMetadata.IgnoreTrigger = true;
+                Assert.IsTrue(loadMetadata.IgnoreTrigger);
+                loadMetadata.RevertToDatabaseState();
+                Assert.IsFalse(loadMetadata.IgnoreTrigger);
+
+                
+                loadMetadata.IgnoreTrigger = true;
+                Assert.IsTrue(loadMetadata.IgnoreTrigger);
+                loadMetadata.SaveToDatabase();
+                var lmd2 = RepositoryLocator.CatalogueRepository.GetObjectByID<LoadMetadata>(loadMetadata.ID);
+                Assert.IsTrue(lmd2.IgnoreTrigger);
+            }
+            finally
+            {
+                loadMetadata.DeleteInDatabase();
+            }
+        }
+
+        [Test]
         public void TestPreExecutionChecker_TablesDontExist()
         {
             var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);

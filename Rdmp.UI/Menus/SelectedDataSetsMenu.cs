@@ -41,7 +41,13 @@ namespace Rdmp.UI.Menus
             /////////////////// Extraction Graphs //////////////////////////////
             var graphs = new ToolStripMenuItem("View Extraction Graphs", CatalogueIcons.Graph);
             
-            var availableGraphs = selectedDataSet.ExtractableDataSet.Catalogue.AggregateConfigurations.Where(a => !a.IsCohortIdentificationAggregate).ToArray();
+            var cata = selectedDataSet.ExtractableDataSet.Catalogue;
+            
+            // If the Catalogue has been deleted, don't build Catalogue specific menu items
+            if(cata == null)
+                return;
+
+            var availableGraphs = cata.AggregateConfigurations.Where(a => !a.IsCohortIdentificationAggregate).ToArray();
 
             foreach (AggregateConfiguration ac in availableGraphs)
                 graphs.DropDownItems.Add(ac.ToString(), CatalogueIcons.Graph, (s, e) => GenerateExtractionGraphs(ac));
@@ -60,6 +66,8 @@ namespace Rdmp.UI.Menus
             addRootFilter.Enabled = root == null;
             Items.Add(addRootFilter);
             
+            Add(new ExecuteCommandImportFilterContainerTree(_activator,selectedDataSet));
+
             Add(new ExecuteCommandCreateNewFilter(_activator,
                 new DeployedExtractionFilterFactory(_activator.RepositoryLocator.DataExportRepository),
                 () => {

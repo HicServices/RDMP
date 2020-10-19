@@ -484,7 +484,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
             if (toClone.RootFilterContainer_ID != null) //if it has any filters
             {
                 //get the tree
-                AggregateFilterContainer oldRootContainer = toClone.RootFilterContainer;
+                IContainer oldRootContainer = toClone.RootFilterContainer;
 
                 //clone the tree
                 var newRootContainer = oldRootContainer.DeepCloneEntireTreeRecursivelyIncludingFilters();

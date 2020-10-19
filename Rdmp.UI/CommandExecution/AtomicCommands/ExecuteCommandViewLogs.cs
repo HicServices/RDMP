@@ -7,6 +7,7 @@
 using System.Drawing;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
@@ -17,20 +18,18 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandViewLoadMetadataLogs:BasicUICommandExecution,IAtomicCommandWithTarget
+    public class ExecuteCommandViewLogs:BasicUICommandExecution,IAtomicCommand
     {
-        private LoadMetadata _loadmetadata;
+        public ILoggedActivityRootObject RootObject { get; }
 
         [UseWithObjectConstructor]
-        public ExecuteCommandViewLoadMetadataLogs(IActivateItems activator, LoadMetadata loadMetadata) : base(activator) => SetTarget(loadMetadata);
-
-        public ExecuteCommandViewLoadMetadataLogs(IActivateItems activator) : base(activator)
+        public ExecuteCommandViewLogs(IActivateItems activator, ILoggedActivityRootObject rootObject):base(activator)
         {
+            RootObject = rootObject;
         }
-
         public override string GetCommandHelp()
         {
-            return "View the hierarchical audit log of all executions of the data load configuration";
+            return "View the hierarchical audit log of all executions";
         }
 
         public override Image GetImage(IIconProvider iconProvider)
@@ -38,16 +37,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return iconProvider.GetImage(RDMPConcept.Logging);
         }
 
-        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
-        {
-            _loadmetadata = (LoadMetadata) target;
-            return this;
-        }
-
         public override void Execute()
         {
             base.Execute();
-            Activator.Activate<LoadEventsTreeView, LoadMetadata>(_loadmetadata);
+            Activator.Activate<LoadEventsTreeView>(new LoadEventsTreeViewObjectCollection(RootObject));
         }
     }
 }

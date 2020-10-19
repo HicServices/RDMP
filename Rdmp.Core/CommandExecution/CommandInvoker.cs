@@ -15,7 +15,9 @@ using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive.Picking;
+using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Checks;
@@ -76,6 +78,8 @@ namespace Rdmp.Core.CommandExecution
             AddDelegate(typeof(IDisableable),false, SelectOne<IDisableable>);
             AddDelegate(typeof(INamed),false, SelectOne<INamed>);
             AddDelegate(typeof(IDeleteable),false, SelectOne<IDeleteable>);
+            AddDelegate(typeof(ILoggedActivityRootObject),false, SelectOne<ILoggedActivityRootObject>);
+            AddDelegate(typeof(IRootFilterContainerHost),false, SelectOne<IRootFilterContainerHost>);            
 
             AddDelegate(typeof(Enum),false,(p)=>_basicActivator.SelectEnum("Value needed for parameter " + p.Name , p.Type, out Enum chosen)?chosen:null);
 

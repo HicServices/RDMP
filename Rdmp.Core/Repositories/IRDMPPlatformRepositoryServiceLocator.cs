@@ -6,6 +6,7 @@
 
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.Core.Providers;
 
 namespace Rdmp.Core.Repositories
 {

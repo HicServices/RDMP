@@ -17,6 +17,7 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Logging;
+using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
@@ -43,7 +44,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
 
 
     /// <inheritdoc cref="ILoadMetadata"/>
-    public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHasQuerySyntaxHelper
+    public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHasQuerySyntaxHelper, ILoggedActivityRootObject
     {
 
         #region Database Properties
@@ -53,7 +54,8 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         private string _description;
         private CacheArchiveType _cacheArchiveType;
         private int? _overrideRawServerID;
-        
+        private bool _ignoreTrigger;
+
         /// <inheritdoc/>
         [AdjustableLocation]
         public string LocationOfFlatFiles
@@ -108,7 +110,14 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             get { return _overrideRawServerID; }
             set { SetField(ref _overrideRawServerID, value); }
         }
-
+        
+        
+        /// <iheritdoc/>
+        public bool IgnoreTrigger
+        {
+            get { return _ignoreTrigger; }
+            set { SetField(ref _ignoreTrigger, value); }
+        }
         #endregion
 
         
@@ -152,7 +161,8 @@ namespace Rdmp.Core.Curation.Data.DataLoad
                 name = "NewLoadMetadata" + Guid.NewGuid();
             repository.InsertAndHydrate(this,new Dictionary<string, object>()
             {
-                {"Name",name}
+                {"Name",name},
+                { "IgnoreTrigger",false/*todo could be system global default here*/}
             });
         }
 
@@ -166,6 +176,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             Description = r["Description"] as string;//allows for nulls
             CacheArchiveType = (CacheArchiveType)r["CacheArchiveType"];
             OverrideRAWServer_ID = ObjectToNullableInt(r["OverrideRAWServer_ID"]);
+            IgnoreTrigger = ObjectToNullableBool(r["IgnoreTrigger"])??false;
         }
 
         internal LoadMetadata(ShareManager shareManager,ShareDefinition shareDefinition):base()
@@ -196,7 +207,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             return Repository.GetAllObjectsWithParent<Catalogue>(this);
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc cref="GetDistinctLoggingDatabase()"/>
         public DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen)
         {
             var loggingServers = GetLoggingServers();
@@ -209,8 +220,11 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             serverChosen = (IExternalDatabaseServer)loggingServer;
             return toReturn;
         }
-
-        /// <inheritdoc/>
+                
+        /// <summary>
+        /// The unique logging server for auditing the load (found by querying <see cref="Catalogue.LiveLoggingServer"/>)
+        /// </summary>
+        /// <returns></returns>
         public DiscoveredServer GetDistinctLoggingDatabase()
         {
             IExternalDatabaseServer whoCares;
@@ -227,7 +241,10 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             return catalogue.Select(c => c.LiveLoggingServer).ToArray();
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Returns the unique value of <see cref="Catalogue.LoggingDataTask"/> amongst all catalogues loaded by the <see cref="LoadMetadata"/>
+        /// </summary>
+        /// <returns></returns>
         public string GetDistinctLoggingTask()
         {
             var catalogueMetadatas = GetAllCatalogues().ToArray();
@@ -344,6 +361,16 @@ namespace Rdmp.Core.Curation.Data.DataLoad
                 throw new Exception("LoadMetadata '" + this + "' has multiple underlying Catalogue Live Database Type(s) - not allowed");
 
             return syntax.SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Returns all runs since each LoadMetadata has it's own task and all runs apply to that task and hence this object
+        /// </summary>
+        /// <param name="runs"></param>
+        /// <returns></returns>
+        public IEnumerable<ArchivalDataLoadInfo> FilterRuns(IEnumerable<ArchivalDataLoadInfo> runs)
+        {
+            return runs;
         }
     }
 }

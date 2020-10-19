@@ -62,17 +62,24 @@ INSERT INTO CrossDatabaseMergeCommandTo..ToTable (Name,Age,Postcode,hic_dataLoad
             var syntax = server.GetQuerySyntaxHelper();
             
 
-            sbInsert.AppendLine(string.Format("INSERT INTO {0} ({1},{2})",
+            sbInsert.AppendLine(string.Format("INSERT INTO {0} ({1}",
                 columnsToMigrate.DestinationTable.GetFullyQualifiedName(),
-                string.Join(",", columnsToMigrate.FieldsToUpdate.Select(c => syntax.EnsureWrapped(c.GetRuntimeName()))),
-                syntax.EnsureWrapped(SpecialFieldNames.DataLoadRunID)));
+                string.Join(",", columnsToMigrate.FieldsToUpdate.Select(c => syntax.EnsureWrapped(c.GetRuntimeName())))));
+
+            //if we are not ignoring the trigger then we should record the data load run ID
+            if(!job.LoadMetadata.IgnoreTrigger)
+                sbInsert.AppendLine($",{syntax.EnsureWrapped(SpecialFieldNames.DataLoadRunID)}");
+
+            sbInsert.AppendLine(")");
 
             sbInsert.AppendLine("SELECT");
 
-            foreach (var col in columnsToMigrate.FieldsToUpdate)
-                sbInsert.AppendLine(col.GetFullyQualifiedName() + ",");
-
-            sbInsert.AppendLine(dataLoadInfoID.ToString());
+            // Add the columns we are migrating
+            sbInsert.AppendLine(string.Join(","+Environment.NewLine,columnsToMigrate.FieldsToUpdate.Select(c=>c.GetFullyQualifiedName())));
+            
+            // If we are using trigger also add the run ID e.g. ",50"
+            if(!job.LoadMetadata.IgnoreTrigger)
+                sbInsert.AppendLine("," + dataLoadInfoID.ToString());
 
             sbInsert.AppendLine("FROM");
             sbInsert.AppendLine(columnsToMigrate.SourceTable.GetFullyQualifiedName());
@@ -131,10 +138,11 @@ INSERT INTO CrossDatabaseMergeCommandTo..ToTable (Name,Age,Postcode,hic_dataLoad
                 //t1.Name = t2.Name, t1.Age=T2.Age etc
                 sqlLines.Add(new CustomLine(string.Join(",",toSet), QueryComponent.SET));
                 
-                //also update the hic_dataLoadRunID field
-                sqlLines.Add(new CustomLine(string.Format("t1.{0}={1}", 
-                    syntax.EnsureWrapped(SpecialFieldNames.DataLoadRunID)
-                    ,dataLoadInfoID),QueryComponent.SET));
+                //also update the hic_dataLoadRunID field                
+                if(!job.LoadMetadata.IgnoreTrigger)
+                    sqlLines.Add(new CustomLine(string.Format("t1.{0}={1}", 
+                        syntax.EnsureWrapped(SpecialFieldNames.DataLoadRunID)
+                        ,dataLoadInfoID),QueryComponent.SET));
 
                 //t1.Name <> t2.Name AND t1.Age <> t2.Age etc
                 sqlLines.Add(new CustomLine(string.Join(" OR ", toDiff.Select(c=>GetORLine(c,syntax))), QueryComponent.WHERE));

@@ -70,8 +70,8 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
                 Height = 1
             };
 
-            btnClose.Clicked = Application.RequestStop;
-            btnSet.Clicked = () =>
+            btnClose.Clicked += Application.RequestStop;
+            btnSet.Clicked += () =>
             {
                 if (list.SelectedItem != -1)
                 {

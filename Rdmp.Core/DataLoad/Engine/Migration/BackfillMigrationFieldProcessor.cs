@@ -17,6 +17,19 @@ namespace Rdmp.Core.DataLoad.Engine.Migration
     /// </summary>
     public class BackfillMigrationFieldProcessor : IMigrationFieldProcessor
     {
+        public bool NoBackupTrigger 
+        { 
+            get
+            {
+                return false;
+            }
+            set 
+            {
+                if(!value)
+                    throw new NotSupportedException("NoBackupTrigger must be false to perform this migration");
+            }
+        }
+
         public void ValidateFields(DiscoveredColumn[] sourceFields, DiscoveredColumn[] destinationFields)
         {
             if (!sourceFields.Any(c=>c.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID,StringComparison.CurrentCultureIgnoreCase)))

@@ -50,7 +50,14 @@ namespace Rdmp.Core.DataLoad.Engine.Migration
                         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Migrate table "+ name +" from STAGING to " + _destinationDbInfo.GetRuntimeName() + ": " + inserts + " inserts, " + updates + " updates"));
 
                     //migrate all tables (both lookups and live tables in the same way)
-                    var dataColsToMigrate = _migrationConfig.CreateMigrationColumnSetFromTableInfos(job.RegularTablesToLoad, job.LookupTablesToLoad, new StagingToLiveMigrationFieldProcessor(_databaseConfiguration.UpdateButDoNotDiff));
+                    var dataColsToMigrate = _migrationConfig.CreateMigrationColumnSetFromTableInfos(job.RegularTablesToLoad, job.LookupTablesToLoad,
+                        new StagingToLiveMigrationFieldProcessor(
+                            _databaseConfiguration.UpdateButDoNotDiff,
+                            _databaseConfiguration.IgnoreColumns,
+                            job.GetAllColumns().Where(c=>c.IgnoreInLoads).ToArray())
+                        {
+                            NoBackupTrigger = job.LoadMetadata.IgnoreTrigger
+                        });
 
                     // Migrate the data columns
                     _migrationStrategy.Execute(job,dataColsToMigrate, job.DataLoadInfo, cancellationToken);

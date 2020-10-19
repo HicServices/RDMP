@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UserSettingsFileUI));
             this.cbShowHomeOnStartup = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.cbEmphasiseOnTabChanged = new System.Windows.Forms.CheckBox();
@@ -46,6 +47,10 @@
             this.cbShowCohortWizard = new System.Windows.Forms.CheckBox();
             this.btnClearFavourites = new System.Windows.Forms.Button();
             this.cbDoubleClickToExpand = new System.Windows.Forms.CheckBox();
+            this.cbDebugPerformance = new System.Windows.Forms.CheckBox();
+            this.hlpDebugPerformance = new Rdmp.UI.SimpleControls.HelpIcon();
+            this.cbAllowIdentifiableExtractions = new System.Windows.Forms.CheckBox();
+            this.hlpIdentifiableExtractions = new Rdmp.UI.SimpleControls.HelpIcon();
             this.SuspendLayout();
             // 
             // cbShowHomeOnStartup
@@ -228,11 +233,63 @@
             this.cbDoubleClickToExpand.UseVisualStyleBackColor = true;
             this.cbDoubleClickToExpand.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
+            // cbDebugPerformance
+            // 
+            this.cbDebugPerformance.AutoSize = true;
+            this.cbDebugPerformance.Location = new System.Drawing.Point(298, 74);
+            this.cbDebugPerformance.Name = "cbDebugPerformance";
+            this.cbDebugPerformance.Size = new System.Drawing.Size(286, 17);
+            this.cbDebugPerformance.TabIndex = 11;
+            this.cbDebugPerformance.Text = "Record Performance Metrics (local data collection only)";
+            this.cbDebugPerformance.UseVisualStyleBackColor = true;
+            this.cbDebugPerformance.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
+            // 
+            // hlpDebugPerformance
+            // 
+            this.hlpDebugPerformance.BackColor = System.Drawing.Color.Transparent;
+            this.hlpDebugPerformance.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("hlpDebugPerformance.BackgroundImage")));
+            this.hlpDebugPerformance.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.hlpDebugPerformance.Location = new System.Drawing.Point(584, 73);
+            this.hlpDebugPerformance.MaximumSize = new System.Drawing.Size(19, 19);
+            this.hlpDebugPerformance.MinimumSize = new System.Drawing.Size(19, 19);
+            this.hlpDebugPerformance.Name = "hlpDebugPerformance";
+            this.hlpDebugPerformance.Size = new System.Drawing.Size(19, 19);
+            this.hlpDebugPerformance.SuppressClick = false;
+            this.hlpDebugPerformance.TabIndex = 12;
+            // 
+            // cbAllowIdentifiableExtractions
+            // 
+            this.cbAllowIdentifiableExtractions.AutoSize = true;
+            this.cbAllowIdentifiableExtractions.Location = new System.Drawing.Point(298, 97);
+            this.cbAllowIdentifiableExtractions.Name = "cbAllowIdentifiableExtractions";
+            this.cbAllowIdentifiableExtractions.Size = new System.Drawing.Size(160, 17);
+            this.cbAllowIdentifiableExtractions.TabIndex = 13;
+            this.cbAllowIdentifiableExtractions.Text = "Allow Identifiable Extractions";
+            this.cbAllowIdentifiableExtractions.UseVisualStyleBackColor = true;
+            this.cbAllowIdentifiableExtractions.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
+            // 
+            // hlpIdentifiableExtractions
+            // 
+            this.hlpIdentifiableExtractions.BackColor = System.Drawing.Color.Transparent;
+            this.hlpIdentifiableExtractions.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("hlpIdentifiableExtractions.BackgroundImage")));
+            this.hlpIdentifiableExtractions.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.hlpIdentifiableExtractions.Location = new System.Drawing.Point(464, 97);
+            this.hlpIdentifiableExtractions.MaximumSize = new System.Drawing.Size(19, 19);
+            this.hlpIdentifiableExtractions.MinimumSize = new System.Drawing.Size(19, 19);
+            this.hlpIdentifiableExtractions.Name = "hlpIdentifiableExtractions";
+            this.hlpIdentifiableExtractions.Size = new System.Drawing.Size(19, 19);
+            this.hlpIdentifiableExtractions.SuppressClick = false;
+            this.hlpIdentifiableExtractions.TabIndex = 14;
+            // 
             // UserSettingsFileUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(742, 565);
+            this.Controls.Add(this.hlpIdentifiableExtractions);
+            this.Controls.Add(this.cbAllowIdentifiableExtractions);
+            this.Controls.Add(this.hlpDebugPerformance);
+            this.Controls.Add(this.cbDebugPerformance);
             this.Controls.Add(this.btnClearFavourites);
             this.Controls.Add(this.tbHeatmapColours);
             this.Controls.Add(this.label6);
@@ -278,5 +335,9 @@
         private System.Windows.Forms.CheckBox cbShowCohortWizard;
         private System.Windows.Forms.Button btnClearFavourites;
         private System.Windows.Forms.CheckBox cbDoubleClickToExpand;
+        private System.Windows.Forms.CheckBox cbDebugPerformance;
+        private SimpleControls.HelpIcon hlpDebugPerformance;
+        private System.Windows.Forms.CheckBox cbAllowIdentifiableExtractions;
+        private SimpleControls.HelpIcon hlpIdentifiableExtractions;
     }
 }

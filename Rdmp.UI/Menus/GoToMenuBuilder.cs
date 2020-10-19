@@ -122,8 +122,42 @@ namespace Rdmp.UI.Menus
                 AddGoTo<ColumnInfo>(menu,lookup.ForeignKey_ID,"Foreign Key");
             }
 
+            if(forObject is ExtractionFilter masterFilter)
+            {
+                AddGoTo(menu,()=>
+                _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<AggregateFilter>("ClonedFromExtractionFilter_ID", masterFilter.ID).Select(f=>f.GetAggregate()).Distinct()
+                ,"Usages (in Cohort Builder)");
+
+                AddGoTo(menu,()=>
+                _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<DeployedExtractionFilter>("ClonedFromExtractionFilter_ID" , masterFilter.ID).Select(f=>f.GetDataset().ExtractionConfiguration).Distinct()
+                ,"Usages (in Extractions)");
+            }
+
+            if(forObject is IFilter filter && filter.ClonedFromExtractionFilter_ID.HasValue)
+            {
+                try
+                {
+                    var parent = _activator.RepositoryLocator.CatalogueRepository.GetObjectByID<ExtractionFilter>(filter.ClonedFromExtractionFilter_ID.Value);
+    
+                    if(parent != null)
+                        AddGoTo(menu,parent,"Parent Filter");
+                }
+                catch (KeyNotFoundException)
+                {
+                    Add(menu,new ImpossibleCommand("Parent filter has been deleted"){OverrideCommandName="Parent Filter" });
+                }
+            }
+
             if (forObject is SelectedDataSets selectedDataSet)
-                AddGoTo<Catalogue>(menu,selectedDataSet.ExtractableDataSet.Catalogue_ID);
+                try
+                {
+                    AddGoTo<Catalogue>(menu,selectedDataSet.ExtractableDataSet.Catalogue_ID);
+                }
+                catch (KeyNotFoundException)
+                {
+                    Add(menu,new ImpossibleCommand("Catalogue has been deleted"){OverrideCommandName="Catalogue" });
+                }
+                
 
             if(forObject is TableInfo tableInfo)
                 AddGoTo(menu,()=>tableInfo.ColumnInfos.SelectMany(c=>_activator.CoreChildProvider.AllCatalogueItems.Where(catItem=>catItem.ColumnInfo_ID == c.ID).Select(catItem=>catItem.Catalogue)).Distinct(),"Catalogue(s)");

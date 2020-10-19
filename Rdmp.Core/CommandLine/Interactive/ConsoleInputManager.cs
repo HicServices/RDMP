@@ -26,6 +26,9 @@ namespace Rdmp.Core.CommandLine.Interactive
     /// </summary>
     public class ConsoleInputManager : BasicActivateItems
     {
+        /// <inheritdoc/>
+        public override bool IsInteractive => !DisallowInput;
+
         /// <summary>
         /// Set to true to throw on any blocking input methods (e.g. <see cref="TypeText"/>)
         /// </summary>
@@ -38,18 +41,11 @@ namespace Rdmp.Core.CommandLine.Interactive
         /// <param name="globalErrorCheckNotifier">The global error provider for non fatal issues</param>
         public ConsoleInputManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier):base(repositoryLocator,globalErrorCheckNotifier)
         {
-            RefreshChildProvider();
         }
-        public override void Publish(DatabaseEntity databaseEntity)
-        {
-            RefreshChildProvider();
-        }
-
         public override void Show(string message)
         {
             Console.WriteLine(message);
         }
-
 
         public override bool TypeText(string header, string prompt, int maxLength, string initialText, out string text,
             bool requireSaneHeaderText)
@@ -118,16 +114,6 @@ namespace Rdmp.Core.CommandLine.Interactive
 
             return true;
         }
-
-        private void RefreshChildProvider()
-        {
-            //todo pass the plugin child providers
-            if(RepositoryLocator.DataExportRepository != null)
-                CoreChildProvider = new DataExportChildProvider(RepositoryLocator,null,new ThrowImmediatelyCheckNotifier());
-            else
-                CoreChildProvider = new CatalogueChildProvider(RepositoryLocator.CatalogueRepository,null,new ThrowImmediatelyCheckNotifier());
-        }
-
 
 
         public override IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,

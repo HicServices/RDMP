@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using FAnsi.Discovery;
+using Rdmp.Core.DataLoad.Triggers;
 
 namespace Rdmp.Core.DataLoad.Engine.Migration
 {
@@ -16,6 +17,11 @@ namespace Rdmp.Core.DataLoad.Engine.Migration
     /// </summary>
     public interface IMigrationFieldProcessor
     {
+        /// <summary>
+        /// True if there is not expected to be any backup trigger on the table i.e. <see cref="SpecialFieldNames"/> are not going to be there
+        /// </summary>
+        bool NoBackupTrigger {get;set;}
+
         void ValidateFields(DiscoveredColumn[] fromColumns, DiscoveredColumn[] toColumns);
 
         /// <summary>

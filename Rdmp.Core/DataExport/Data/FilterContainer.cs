@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport.Data
@@ -67,13 +68,7 @@ namespace Rdmp.Core.DataExport.Data
         }
         
         
-        
-        /// <summary>
-        /// Creates a deep copy of the current container, all filters and subcontainers (recursively).  These objects will all have new IDs and be new objects
-        /// in the repository database.
-        /// </summary>
-        /// <returns></returns>
-        public FilterContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
+        public override IContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
         {
             //clone ourselves
             var clonedFilterContainer = this.ShallowClone();
@@ -97,7 +92,7 @@ namespace Rdmp.Core.DataExport.Data
             foreach (FilterContainer toCloneSubcontainer in this.GetSubContainers())
             {
                 //clone the subcontainer recursively
-                FilterContainer clonedSubcontainer = toCloneSubcontainer.DeepCloneEntireTreeRecursivelyIncludingFilters();
+                var clonedSubcontainer = toCloneSubcontainer.DeepCloneEntireTreeRecursivelyIncludingFilters();
 
                 //get the returned filter subcontainer and assocaite it with the cloned version of this
                 clonedFilterContainer.AddChild(clonedSubcontainer);
@@ -157,6 +152,11 @@ namespace Rdmp.Core.DataExport.Data
             //our parent must be the root container maybe? recursive
             return parent.GetSelectedDataSetsRecursively();
 
+        }
+
+        public override IFilterFactory GetFilterFactory()
+        {
+            return new DeployedExtractionFilterFactory(DataExportRepository);
         }
     }
 }

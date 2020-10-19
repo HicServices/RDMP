@@ -14,6 +14,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
@@ -44,7 +45,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         IInjectKnown<JoinableCohortAggregateConfiguration>,
         IInjectKnown<AggregateDimension[]>,
         IInjectKnown<Catalogue>,
-        IDisableable,IKnowWhatIAm,IMightBeReadOnly
+        IDisableable,IKnowWhatIAm,IMightBeReadOnly, IRootFilterContainerHost
     {
         #region Database Properties
         private string _countSQL;
@@ -196,9 +197,9 @@ namespace Rdmp.Core.Curation.Data.Aggregation
             get { return _knownCatalogue.Value; }
         }
 
-        /// <inheritdoc cref="RootFilterContainer_ID"/>
+        /// <inheritdoc/>
         [NoMappingToDatabase]
-        public AggregateFilterContainer RootFilterContainer
+        public IContainer RootFilterContainer
         {
             get
             {
@@ -788,6 +789,16 @@ namespace Rdmp.Core.Curation.Data.Aggregation
                 RootFilterContainer_ID = container.ID;
                 SaveToDatabase();
             }
+        }
+
+        public ICatalogue GetCatalogue()
+        {
+            return Catalogue;
+        }
+
+        public IFilterFactory GetFilterFactory()
+        {
+            return new AggregateFilterFactory(CatalogueRepository);
         }
     }
 }

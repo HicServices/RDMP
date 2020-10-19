@@ -74,6 +74,15 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("DataExportConnectionString", value); }
         }
 
+        /// <summary>
+        /// Controls whether RDMP permits cohorts to be created where the release ID and private ID are the same (i.e. the linkage ids are not anonymised).
+        /// </summary>
+        public static bool AllowIdentifiableExtractions
+        {
+            get { return AppSettings.GetValueOrDefault("AllowIdentifiableExtractions", false); }
+            set { AppSettings.AddOrUpdateValue("AllowIdentifiableExtractions", value); }
+        }
+
         public static string Theme
         {
             get { return AppSettings.GetValueOrDefault("Theme", "ResearchDataManagementPlatform.Theme.MyVS2015BlueTheme"); }
@@ -201,6 +210,10 @@ namespace ReusableLibraryCode.Settings
             get { return AppSettings.GetValueOrDefault("RecentHistory", ""); }
             set { AppSettings.AddOrUpdateValue("RecentHistory", value); }
         }
+
+        public static bool DebugPerformance { 
+            get { return AppSettings.GetValueOrDefault("DebugPerformance", false); }
+            set { AppSettings.AddOrUpdateValue("DebugPerformance", value); } }
 
         #endregion
 

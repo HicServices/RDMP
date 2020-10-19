@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.DataRelease.Audit;
 using Rdmp.Core.Repositories;
@@ -28,7 +29,7 @@ namespace Rdmp.Core.DataExport.Data
     /// <para>If you need to perform a repeat extraction (e.g. an update of data 5 years on) then you should 'Clone' the ExtractionConfiguration in the Project and give it a new name 
     /// e.g. 'Cases - 5 year update'.</para>
     /// </summary>
-    public interface IExtractionConfiguration:INamed,IHasDependencies, IMightBeReadOnly
+    public interface IExtractionConfiguration:INamed,IHasDependencies, IMightBeReadOnly, ILoggedActivityRootObject
     {
         IDataExportRepository DataExportRepository { get; }
 

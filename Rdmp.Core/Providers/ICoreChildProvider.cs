@@ -31,7 +31,7 @@ namespace Rdmp.Core.Providers
     /// property you can just look at the array AllPermissionWindows (especially since you might get lots of spam requests for the icon - you don't want to lookup
     /// the PermissionWindow from the database every time).
     /// </summary>
-    public interface ICoreChildProvider:IChildProvider,IDisposable
+    public interface ICoreChildProvider:IChildProvider
     {
         LoadMetadata[] AllLoadMetadatas { get; }
         TableInfoServerNode[] AllServers { get; }
@@ -98,7 +98,12 @@ namespace Rdmp.Core.Providers
 
         JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; }
 
-        void GetPluginChildren(HashSet<object> objectsToAskAbout = null);
+        
+        /// <summary>
+        /// Copy updated values for all properties from the <paramref name="other"/>
+        /// </summary>
+        /// <param name="other"></param>
+        void UpdateTo(ICoreChildProvider other);
 
         /// <summary>
         /// Returns all known objects who are masquerading as o
