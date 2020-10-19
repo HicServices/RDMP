@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- reduced memory overhead during refreshes
+- Reduced memory overhead during refreshes
 - Fixed various graphical/performance issues when running in VDI environments with limited CPU
 - Fixed missing scrollbars in Explicit Column Typing user interface
 - Fixed various errors that could occur when a [Catalogue] referenced by an extraction is deleted outside of RDMP (e.g. by truncating the database table(s))
