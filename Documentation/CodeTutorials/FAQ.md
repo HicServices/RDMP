@@ -8,6 +8,7 @@
    1. [Does RDMP have an API?](#api)
    1. [Does RDMP Support Plugins?](#plugins)
    4. [How is RDMP versioned?](#how-is-rdmp-versioned)
+   7. [Updating the CLI](#updating-the-cli)
 1. Database Compatibility
    1. [What databases does RDMP support?](#databases)
    1. [How do I set a custom port / SSL certificate / connection string option?](#connectionStringKeywords)
@@ -166,6 +167,29 @@ Platform databases are divided into three tiers:
 |   3  | This tier is reserved for [Plugins](#plugins) which wish to persist objects/meta data in a database using the same versioning model (update scripts, data model) as the core RDMP databases.|
 
 During application startup (following installing an update) you will be prompted to apply patches on any platform databases that are not up to date.
+
+### Updating The CLI
+
+Download the [latest release binary](https://github.com/HicServices/RDMP/releases) (e.g. rdmp-cli-win-x64.zip) and unzip into a new empty folder (e.g. c:\temp\latest).  Locate your current CLI deployment folder (e.g. c:\rdmpcli\).
+
+Copy all files from the new release into your current CLI directory __EXCEPT__:
+
+- Databases.yaml (contains connection strings for your RDMP database)
+- NLog.config (contains logging settings)
+
+If running in linux ensure that the rdmp binary is executable e.g. `chmod +x ./rdmp`
+
+Ensure the new version matches expectations:
+
+```bash
+./rdmp.exe --help
+```
+
+Ensure all your plugins are uptodate, you can check compatiblity with:
+
+```
+./rdmp.exe cmd ListSupportedCommands --logstartup
+```
 
 ## Database Compatibility
 
