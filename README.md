@@ -24,7 +24,18 @@ Signed release binaries for the RDMP client and Command Line Interface (CLI) are
 
 You can build directly through Visual Studio (**2017 or later**) by opening HIC.DataManagementPlatform.sln.  You will also need to install the DotNetCore 2.2 SDK.  The startup project for the main RDMP user interface is ResearchDataManagementPlatform.csproj.
 
-Alternatively you can run `msbuild` or `rake build` (set path to MSBuild15CMD in `rakeconfig.rb` first) to perform a console build.
+You can build from the command line with:
+
+```
+dotnet build
+```
+
+Run tests with:
+
+```
+dotnet test ./scripts/run-all-tests.proj -f netcoreapp2.2 -c Release -p:BuildInParallel=false
+```
+
 
 ## Integration Test Database
 In addition to unit tests, the RDMP test suite includes many Integration tests which require writing to a database.  You can [read how to set up your test environment in Tests.md](Documentation/CodeTutorials/Tests.md).
