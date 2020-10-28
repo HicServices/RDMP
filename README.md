@@ -46,7 +46,7 @@ Total tests: 1455
  Total time: 1.5237 Minutes
 ```
 
-This is because many tests require RDMP platform databases and/or specific DBMS engines to run.  [Read how to set up your test environment in Tests.md](Documentation/CodeTutorials/Tests.md).
+This is because many tests require RDMP platform databases and/or specific [DBMS] engines to run.  [Read how to set up your test environment in Tests.md](Documentation/CodeTutorials/Tests.md).
 
 ## Contributing
 
@@ -57,3 +57,5 @@ We welcome all contributions including:
 - [Translations](./Documentation/CodeTutorials/Localization.md)
 - Documentation
 - [Code Contributions](./Documentation/CodeTutorials/Coding.md)
+
+[DBMS]: ./Documentation/CodeTutorials/Glossary.md#DBMS

@@ -26,7 +26,7 @@ RDMP interacts with relational databases (Sql Server, Oracle, PostgresSQL and My
 
 ### Type Determination
 
-Often we need to load untyped data (e.g. CSV) into a new table.  This requires picking DBMS appropriate types that will fit the content while still being useful for querying later on.  This functionality is handled by the [TypeGuesser](https://github.com/HicServices/TypeGuesser) library.  You can read more about how RDMP handles untyped data in [CSVHandling.md](./CSVHandling.md)
+Often we need to load untyped data (e.g. CSV) into a new table.  This requires picking [DBMS] appropriate types that will fit the content while still being useful for querying later on.  This functionality is handled by the [TypeGuesser](https://github.com/HicServices/TypeGuesser) library.  You can read more about how RDMP handles untyped data in [CSVHandling.md](./CSVHandling.md)
 
 ## Writting your first unit test
 
@@ -59,7 +59,7 @@ Run your test from visual studio or or the command line with:
 dotnet test --filter MyTestMethod
 ```
 
-Change the class to inherit from `UnitTests` and use the `WhenIHaveA<T>` method to get an RDMP object e.g. a Catalogue:
+Change the class to inherit from `UnitTests` and use the `WhenIHaveA<T>` method to get an RDMP object e.g. a [Catalogue]:
 
 ```csharp
 using NUnit.Framework;
@@ -102,3 +102,6 @@ RDMP has over 20 class diagrams which you can open if you have visual studio.  T
 If you have not already done so it is also a good idea to familiarise yourself with the [FAQ](./FAQ.md).
 
 If there is an area of the codebase that is confusing or you think would benefit from more documentation, open an Issue and describe it!
+
+[DBMS]: ./Glossary.md#DBMS
+[Catalogue]: ./Glossary.md#Catalogue
