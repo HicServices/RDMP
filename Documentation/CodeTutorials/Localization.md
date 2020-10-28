@@ -3,6 +3,8 @@
 ## Background
 This document describes how localization is implemented in RDMP.  The design follows the [approach set out by Microsoft](https://docs.microsoft.com/en-us/dotnet/standard/globalization-localization/).
 
+Localization is in it's infancy in RDMP, the framework is in place but no serious work has been undertaken.  We would welcome the opportunity to work with any interested parties on fully implementing the approach set out in this document.
+
 ## Strings
 All user visible strings in RDMP should be moved to [GlobalStrings.resx](../../Rdmp.Core/GlobalStrings.resx)
 

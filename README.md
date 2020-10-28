@@ -36,6 +36,24 @@ Run tests with:
 dotnet test ./scripts/run-all-tests.proj -f netcoreapp2.2 -c Release -p:BuildInParallel=false
 ```
 
+The first time you run tests you will likely see many inconclusive tests e.g.
 
-## Integration Test Database
-In addition to unit tests, the RDMP test suite includes many Integration tests which require writing to a database.  You can [read how to set up your test environment in Tests.md](Documentation/CodeTutorials/Tests.md).
+```
+Test Run Successful.
+Total tests: 1455
+     Passed: 571
+    Skipped: 2
+ Total time: 1.5237 Minutes
+```
+
+This is because many tests require RDMP platform databases and/or specific DBMS engines to run.  [Read how to set up your test environment in Tests.md](Documentation/CodeTutorials/Tests.md).
+
+## Contributing
+
+We welcome all contributions including:
+
+- [Issues and bug reports](https://github.com/HicServices/RDMP/issues)
+- Code Reviews
+- [Translations](./Documentation/CodeTutorials/Localization.md)
+- Documentation
+- [Code Contributions](./Documentation/CodeTutorials/Coding.md)
