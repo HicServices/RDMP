@@ -53,6 +53,40 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
             Assert.AreEqual(1, processed.Columns.Count);
             Assert.AreEqual("ReplacementName", processed.Columns[0].ColumnName);
         }
+
+        [Test]
+        public void ColumnDropper_NoMatchingColumnAtRuntime()
+        {
+            var dropper = new ColumnDropper
+            {
+                ColumnNameToDrop = "DoesNotExist"
+            };
+
+            var cts = new GracefulCancellationTokenSource();
+            var toProcess = new DataTable();
+            toProcess.Columns.Add("Column1");
+
+            var ex = Assert.Throws<InvalidOperationException>(() => dropper.ProcessPipelineData( toProcess, new ThrowImmediatelyDataLoadEventListener(), cts.Token));
+            Assert.IsTrue(ex.Message.Contains("does not exist in the supplied data table"));
+        }
+
+        [Test]
+        public void ColumnDropper_Successful()
+        {
+            var dropper = new ColumnDropper
+            {
+                ColumnNameToDrop = "ToDrop"
+            };
+
+            var cts = new GracefulCancellationTokenSource();
+            var toProcess = new DataTable();
+            toProcess.Columns.Add("ToDrop");
+
+            var processed = dropper.ProcessPipelineData( toProcess, new ThrowImmediatelyDataLoadEventListener(), cts.Token);
+
+            Assert.AreEqual(0, processed.Columns.Count);
+            Assert.AreEqual(false, processed.Columns.Contains("ToDrop"));
+        }
     }
 
     [Category("Unit")]
