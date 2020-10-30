@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added the ability to drag and drop aggregates into other CohortIdentificationConfigurations to import
+- Added Favourite/UnFavourite to right click context menus
 
 ### Fixed
 
