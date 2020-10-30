@@ -249,7 +249,8 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             "TestCaseSourceAttribute",
             "DescribeCommand", //aka ExecuteCommandDescribeCommand
             "MySqlConnector",
-            "DoSomething"
+            "DoSomething",
+            "MyTest",
         };
         #endregion
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)

@@ -118,7 +118,13 @@ namespace Tests.Common
 
             
             Console.WriteLine("Expecting Unit Test Catalogue To Be At Server=" + CatalogueRepository.DiscoveredServer.Name + " Database=" + CatalogueRepository.DiscoveredServer.GetCurrentDatabase());
-            Assert.IsTrue(CatalogueRepository.DiscoveredServer.Exists(), "Catalogue database does not exist, run 'rdmp.exe install ...' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
+            
+            if(!CatalogueRepository.DiscoveredServer.Exists())
+            {
+                Assert.Inconclusive("Catalogue database does not exist, run 'rdmp.exe install ...' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
+            }
+                
+
             Console.WriteLine("Found Catalogue");
 
             Console.WriteLine("Expecting Unit Test Data Export To Be At Server=" + DataExportRepository.DiscoveredServer.Name + " Database= " + DataExportRepository.DiscoveredServer.GetCurrentDatabase());
