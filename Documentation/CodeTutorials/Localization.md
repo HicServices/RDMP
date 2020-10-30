@@ -1,9 +1,9 @@
-# Localization
+# Localisation
 
 ## Background
-This document describes how localization is implemented in RDMP.  The design follows the [approach set out by Microsoft](https://docs.microsoft.com/en-us/dotnet/standard/globalization-localization/).
+This document describes how localisation is implemented in RDMP.  The design follows the [approach set out by Microsoft](https://docs.microsoft.com/en-us/dotnet/standard/globalization-localization/).
 
-Localization is in it's infancy in RDMP, the framework is in place but no serious work has been undertaken.  We would welcome the opportunity to work with any interested parties on fully implementing the approach set out in this document.
+Localisation is in it's infancy in RDMP, the framework is in place but no serious work has been undertaken.  We would welcome the opportunity to work with any interested parties on fully implementing the approach set out in this document.
 
 ## Strings
 All user visible strings in RDMP should be moved to [GlobalStrings.resx](../../Rdmp.Core/GlobalStrings.resx)
@@ -28,7 +28,7 @@ Where multiple strings are related they must have the same root e.g.:
 - CreateArchiveTableSuccess
 
 
-## Parameterized strings
+## Parameterised strings
 
 Where a string includes reference to a dynamic value e.g.
 
@@ -79,7 +79,7 @@ MessageBox.Show("Status was:" + TriggerStatus.Disabled.S());
 
 ## Testing
 
-You can test localization by adding the following to Program.cs
+You can test localisation by adding the following to Program.cs
 
 ```csharp
 Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("zh-Hans");
@@ -88,12 +88,12 @@ Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("zh
 
 ## Unit Testing
 
-Visual Studio plugin ReSharper shows missing translations and there are many good tools for interacting with resx files (even those aimed at translaters rather than programmers) so the amount of unit testing we need to do should be quite limited.
+Visual Studio plugin ReSharper shows missing translations and there are many good tools for interacting with resx files (even those aimed at translators rather than programmers) so the amount of unit testing we need to do should be quite limited.
 
 - We should write a test that confirms that all commands with tokens ({0},{1} etc) have the same number of distinct tokens in all languages (implementing overrides)
 - Maybe we can make `EvaluateNamespacesAndSolutionFoldersTests` detect incorrect usages of `Show` , `YesNo` where params don't match the number of {x} tokens too
 
 ## Outstanding Issues
 
-- RDMP makes xmldoc comments visible through the UI (via `CommentStore`).  [Localizing this will be difficult](https://github.com/dotnet/roslyn/issues/3371).
+- RDMP makes xmldoc comments visible through the UI (via `CommentStore`).  [Localising this will be difficult](https://github.com/dotnet/roslyn/issues/3371).
 
