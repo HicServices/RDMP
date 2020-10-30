@@ -70,7 +70,7 @@ namespace Rdmp.UI.Tests
             CommentStore = _commentStore;
 
             CoreIconProvider = new DataExportIconProvider(RepositoryLocator,null);
-            FavouritesProvider = new FavouritesProvider(this,repo.CatalogueRepository);
+            FavouritesProvider = new FavouritesProvider(this);
             HistoryProvider = new HistoryProvider(RepositoryLocator);
 
             _problemProviders = new List<IProblemProvider>(new IProblemProvider[]
