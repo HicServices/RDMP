@@ -65,9 +65,19 @@ namespace Rdmp.UI.LocationsMenu
 
             SetState(State.PickNewOrExisting);
 
-            //are we dealing with a database object repository?
-            var cataDb = _repositoryLocator.CatalogueRepository as TableRepository;
-            var dataExportDb = _repositoryLocator.DataExportRepository as TableRepository;
+            TableRepository cataDb = null;
+            TableRepository dataExportDb = null;
+            
+            try
+            {
+                //are we dealing with a database object repository?
+                cataDb = _repositoryLocator.CatalogueRepository as TableRepository;
+                dataExportDb = _repositoryLocator.DataExportRepository as TableRepository;
+            }
+            catch (CorruptRepositoryConnectionDetailsException)
+            {
+                MessageBox.Show("Current connection strings are invalid and have been cleared");
+            }
 
             //only enable connection string setting if it is a user settings repo
             tbDataExportManagerConnectionString.Enabled = 
