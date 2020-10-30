@@ -173,11 +173,15 @@ namespace Rdmp.UI.Menus
             Items.Add(treeMenuItem);
             PopulateTreeMenu(commonFunctionality, treeMenuItem);
 
+            if (databaseEntity != null) 
+                Add(new ExecuteCommandAddFavourite(_activator,databaseEntity));
+
             //add refresh and then finally help
             if (databaseEntity != null) 
                 Add(new ExecuteCommandRefreshObject(_activator, databaseEntity), Keys.F5);
             
-            Add(new ExecuteCommandShowKeywordHelp(_activator, _args));}
+            Add(new ExecuteCommandShowKeywordHelp(_activator, _args));
+        }
 
         private void PopulateTreeMenu(RDMPCollectionCommonFunctionality commonFunctionality, ToolStripMenuItem treeMenuItem)
         {
