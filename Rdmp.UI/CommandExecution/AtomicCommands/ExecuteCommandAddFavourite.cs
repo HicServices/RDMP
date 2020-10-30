@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs.NavigateTo;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -16,27 +17,56 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandAddFavourite : BasicUICommandExecution
     {
+        private DatabaseEntity _databaseEntity;
+
         public ExecuteCommandAddFavourite(IActivateItems activator) : base(activator)
         {
+        }
+
+        public ExecuteCommandAddFavourite(IActivateItems activator, DatabaseEntity databaseEntity) : this(activator)
+        {
+            _databaseEntity = databaseEntity;
+        }
+
+        public override string GetCommandName()
+        {
+            if(_databaseEntity == null)
+                return base.GetCommandName();
+
+            return Activator.FavouritesProvider.IsFavourite(_databaseEntity) ? "UnFavourite" : "Favourite";
         }
 
         public override void Execute()
         {
             base.Execute();
 
-            NavigateToObjectUI navigate = new NavigateToObjectUI(Activator){Text = "Add Favourite"};
-            navigate.CompletionAction = (a) =>
+            if(_databaseEntity != null)
             {
-                if (Activator.FavouritesProvider.IsFavourite(a))
-                    Show($"'{a}' is already a Favourite");
+                if(Activator.FavouritesProvider.IsFavourite(_databaseEntity))
+                    Activator.FavouritesProvider.RemoveFavourite(this,_databaseEntity);
                 else
-                    Activator.FavouritesProvider.AddFavourite(this, a);
-            };
-            navigate.Show();
+                    Activator.FavouritesProvider.AddFavourite(this,_databaseEntity);
+            }
+            else
+            {
+                NavigateToObjectUI navigate = new NavigateToObjectUI(Activator){Text = "Add Favourite"};
+                navigate.CompletionAction = (a) =>
+                {
+                    if (Activator.FavouritesProvider.IsFavourite(a))
+                        Show($"'{a}' is already a Favourite");
+                    else
+                        Activator.FavouritesProvider.AddFavourite(this, a);
+                };
+                navigate.Show();
+            }
+
         }
 
         public override Image GetImage(IIconProvider iconProvider)
         {
+            if(_databaseEntity != null && Activator.FavouritesProvider.IsFavourite(_databaseEntity))
+                return CatalogueIcons.StarHollow;
+
             return iconProvider.GetImage(RDMPConcept.Favourite,OverlayKind.Add);
         }
     }
