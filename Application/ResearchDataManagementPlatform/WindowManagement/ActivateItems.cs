@@ -106,7 +106,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             CoreChildProvider = GetChildProvider();
             
             //Shouldn't ever change externally to your session so doesn't need constantly refreshed
-            FavouritesProvider = new FavouritesProvider(this, repositoryLocator.CatalogueRepository);
+            FavouritesProvider = new FavouritesProvider(this);
             HistoryProvider = new HistoryProvider(repositoryLocator);
 
             //handle custom icons from plugin user interfaces in which
