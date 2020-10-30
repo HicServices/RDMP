@@ -4,7 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Globalization;
+using System.Linq;
 using System.Reflection;
+using System.Text;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
@@ -48,7 +52,23 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _property = _setOn.GetType().GetProperty(property);
 
             if(_property == null)
+            {
                 SetImpossible($"Unknown Property '{property}'");
+
+                //suggest similar sounding properties
+                var suggestions =
+                    _setOn.GetType().GetProperties().Where(c => CultureInfo.CurrentCulture.CompareInfo.IndexOf(c.Name,property, CompareOptions.IgnoreCase) >= 0).ToArray();
+
+                StringBuilder msg = new StringBuilder($"Unknown Property '{property}'");
+
+                if (suggestions.Any())
+                {
+                    msg.AppendLine("Did you mean:" + Environment.NewLine +
+                                string.Join(Environment.NewLine, suggestions.Select(p=>p.Name)));
+
+                    activator.Show(msg.ToString());
+                }
+            }
             else
             {
                 var picker = new CommandLineObjectPicker(new string[]{value ?? "NULL"},activator.RepositoryLocator);
