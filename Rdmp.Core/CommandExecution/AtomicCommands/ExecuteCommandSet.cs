@@ -59,13 +59,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 var suggestions =
                     _setOn.GetType().GetProperties().Where(c => CultureInfo.CurrentCulture.CompareInfo.IndexOf(c.Name,property, CompareOptions.IgnoreCase) >= 0).ToArray();
 
-                StringBuilder msg = new StringBuilder($"Unknown Property '{property}'");
-
                 if (suggestions.Any())
                 {
-                    msg.AppendLine("Did you mean:" + Environment.NewLine +
-                                string.Join(Environment.NewLine, suggestions.Select(p=>p.Name)));
-
+                    StringBuilder msg = new StringBuilder($"Unknown Property '{property}'");
+                    msg.AppendLine();
+                    msg.AppendLine("Did you mean:");
+                    foreach (var s in suggestions)
+                        msg.AppendLine(s.Name);
                     activator.Show(msg.ToString());
                 }
             }
