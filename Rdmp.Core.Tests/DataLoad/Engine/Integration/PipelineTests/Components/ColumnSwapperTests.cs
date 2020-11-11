@@ -231,21 +231,66 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 
             dtToSwap.Rows.Add(1, "Dave", 30);
             dtToSwap.Rows.Add(null, "Bob", 30);
-            dtToSwap.Rows.Add(2, "Frank", 50);
 
             var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
-            Assert.AreEqual(3, resultDt.Rows.Count);
+            Assert.AreEqual(2, resultDt.Rows.Count);
             AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
             Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
             
-            AreBasicallyEquals(null, resultDt.Rows[1]["Out"]);
+            AreBasicallyEquals(DBNull.Value, resultDt.Rows[1]["Out"]);
             Assert.AreEqual("Bob", resultDt.Rows[1]["Name"]);
             
-            AreBasicallyEquals(2, resultDt.Rows[2]["Out"]);
-            Assert.AreEqual("Frank", resultDt.Rows[2]["Name"]);
-            
 
+        }
+        /// <summary>
+        /// Tests ColumnSwapper when there are null values in the database mapping table
+        /// </summary>
+        [Test]
+        public void TestColumnSwapper_MappingTableNulls()
+        {
+            var dt = new DataTable();
+            dt.Columns.Add("In");
+            dt.Columns.Add("Out");
+
+            dt.Rows.Add(1, 1);
+            dt.Rows.Add(DBNull.Value, 3); // this value should be ignored
+            dt.Rows.Add(2, 2);
+
+            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+            TableInfo map;
+            ColumnInfo[] mapCols;
+
+            Import(db.CreateTable("Map", dt), out map, out mapCols);
+
+            var swapper = new ColumnSwapper();
+            swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
+            swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
+
+            swapper.Check(new ThrowImmediatelyCheckNotifier());
+
+            var dtToSwap = new DataTable();
+
+            dtToSwap.Columns.Add("In",typeof(int));
+            dtToSwap.Columns.Add("Name");
+            dtToSwap.Columns.Add("Age");
+
+            dtToSwap.Rows.Add(1, "Dave", 30);
+            dtToSwap.Rows.Add(null, "Bob", 30);
+
+            var toMem = new ToMemoryDataLoadEventListener(true);
+
+            var resultDt = swapper.ProcessPipelineData(dtToSwap,toMem , new GracefulCancellationToken());
+
+            //this is the primary thing we are testing here
+            Assert.Contains("Discarded 1 Null key values read from mapping table",toMem.GetAllMessagesByProgressEventType()[ProgressEventType.Warning].Select(m=>m.Message).ToArray());
+
+            Assert.AreEqual(2, resultDt.Rows.Count);
+            AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
+            Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+            
+            AreBasicallyEquals(DBNull.Value, resultDt.Rows[1]["Out"]);
+            Assert.AreEqual("Bob", resultDt.Rows[1]["Name"]);
         }
         /// <summary>
         /// Tests the systems ability to compare an integer in the input data table with a string in the database
