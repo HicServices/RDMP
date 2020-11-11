@@ -382,7 +382,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
                 }, -1);
 
             engine.Initialize(loadInfo);
-            engine.ExecutePipeline(new GracefulCancellationToken());
+            engine.ExecutePipeline(cancellationToken);
 
             if (source.TotalRowsRead == 0 && LoadNotRequiredIfNoRowsRead)
             {
