@@ -108,7 +108,7 @@ False - Fetch all columns in the remote table.  To use this option you will need
                     }, -1);
 
                 engine.Initialize(loadInfo);
-                engine.ExecutePipeline(new GracefulCancellationToken());
+                engine.ExecutePipeline(cancellationToken);
 
                 if (source.TotalRowsRead == 0)
                 {
