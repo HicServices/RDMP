@@ -52,7 +52,28 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             AssertFailWithFix("Some catalogues have NULL LoggingDataTasks","Set task to OMG YEAGH",toMem);   
         }
+        
+        [Test]
+        public void Test_MissingLoggingServer()
+        {
+            var lmd = WhenIHaveA<LoadMetadata>();
+            var cata1 = lmd.GetAllCatalogues().Single();
+            var cata2 = WhenIHaveA<Catalogue>();
+            cata2.LoadMetadata_ID = lmd.ID;
+            
+            cata1.LoggingDataTask = "OMG YEAGH";
+            cata1.LiveLoggingServer_ID = 2;
+            cata2.LoggingDataTask = "OMG YEAGH";
+            cata2.LiveLoggingServer_ID = null;
 
+            Assert.AreEqual(2,lmd.GetAllCatalogues().Count());
+
+            var checks = new MetadataLoggingConfigurationChecks(lmd);
+            var toMem = new ToMemoryCheckNotifier();
+            checks.Check(toMem);
+
+            AssertFailWithFix("Some catalogues have NULL LiveLoggingServer_ID","Set LiveLoggingServer_ID to 2",toMem);   
+        }
         private void AssertFailWithFix(string expectedMessage, string expectedFix, ToMemoryCheckNotifier toMem)
         {
             var msg = toMem.Messages.Where(m => m.Result == CheckResult.Fail).First();

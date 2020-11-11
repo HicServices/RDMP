@@ -65,11 +65,12 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
                     return;
             }
                 
+            #region Fix missing LoggingDataTask
             var missingTasks = catalogues.Where(c=>string.IsNullOrWhiteSpace(c.LoggingDataTask)).ToArray();
             var potentialTasks = catalogues.Except(missingTasks).Select(c=>c.LoggingDataTask).Distinct().ToArray();
 
             //If any Catalogues are missing tasks
-            if(missingTasks.Any() && potentialTasks.Length == 1)
+            if(missingTasks.Any())
             {
                 //but there is consensus for those that are not missing tasks
                 if(potentialTasks.Length == 1)
@@ -84,6 +85,27 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
                         }
                 }
             }
+            #endregion
+
+            #region Fix missing LiveLoggingServer_ID
+            var missingServer = catalogues.Where(c=>c.LiveLoggingServer_ID == null).ToArray();
+            var potentialServer = catalogues.Except(missingServer).Select(c=>c.LiveLoggingServer_ID).Distinct().ToArray();
+
+            if(missingServer.Any())
+            {
+                if(potentialServer.Length == 1)
+                {
+                    var fix = notifier.OnCheckPerformed(new CheckEventArgs("Some catalogues have NULL LiveLoggingServer_ID",CheckResult.Fail,null, $"Set LiveLoggingServer_ID to {potentialServer.Single()}"));
+
+                    if(fix)
+                        foreach(var cata in missingTasks)
+                        {
+                            cata.LiveLoggingServer_ID = potentialServer.Single();
+                            cata.SaveToDatabase();
+                        }
+                }
+            }
+            #endregion
 
             string distinctLoggingTask = null; 
             try
@@ -95,6 +117,7 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("Catalogues could not agreed on a single Logging Task", CheckResult.Fail, e));
             }
+               
 
             try
             {
