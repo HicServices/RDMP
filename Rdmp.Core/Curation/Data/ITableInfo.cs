@@ -101,5 +101,11 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         /// <returns></returns>
         string GetFullyQualifiedName();
+
+        /// <summary>
+        /// True if the object referenced is a database view
+        /// </summary>
+        bool IsView {get;set; }
+
     }
 }
