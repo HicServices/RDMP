@@ -6,6 +6,7 @@
 
 using System;
 using System.Linq;
+using NPOI.SS.Formula.Functions;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -63,7 +64,27 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
                 else
                     return;
             }
-            
+                
+            var missingTasks = catalogues.Where(c=>string.IsNullOrWhiteSpace(c.LoggingDataTask)).ToArray();
+            var potentialTasks = catalogues.Except(missingTasks).Select(c=>c.LoggingDataTask).Distinct().ToArray();
+
+            //If any Catalogues are missing tasks
+            if(missingTasks.Any() && potentialTasks.Length == 1)
+            {
+                //but there is consensus for those that are not missing tasks
+                if(potentialTasks.Length == 1)
+                {
+                    var fix = notifier.OnCheckPerformed(new CheckEventArgs("Some catalogues have NULL LoggingDataTasks",CheckResult.Fail,null, $"Set task to {potentialTasks.Single()}"));
+
+                    if(fix)
+                        foreach(var cata in missingTasks)
+                        {
+                            cata.LoggingDataTask = potentialTasks.Single();
+                            cata.SaveToDatabase();
+                        }
+                }
+            }
+
             string distinctLoggingTask = null; 
             try
             {
