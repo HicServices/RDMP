@@ -65,6 +65,8 @@ namespace Rdmp.Core.Caching
             if (CacheProgress == null)
                 throw new InvalidOperationException("No CacheProgress has been set");
 
+            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"CachingHost started for {CacheProgress} (CacheFillProgress={CacheProgress.CacheFillProgress}, CacheLagPeriod={CacheProgress.CacheLagPeriod}, ChunkPeriod={CacheProgress.ChunkPeriod}, Pipeline={CacheProgress.Pipeline})"));
+
             var permissionWindow = CacheProgress.PermissionWindow;
 
             _downloaders = new List<PermissionWindowCacheDownloader>
