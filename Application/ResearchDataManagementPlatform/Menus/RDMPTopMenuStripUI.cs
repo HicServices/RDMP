@@ -16,6 +16,7 @@ using Rdmp.Core.Logging;
 using Rdmp.Core.Reports;
 using Rdmp.UI;
 using Rdmp.UI.ChecksUI;
+using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
@@ -368,6 +369,14 @@ namespace ResearchDataManagementPlatform.Menus
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private void newSessionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(Activator.TypeText("Session Name","Name",100,"Session 0",out string sessionName,false))
+            {
+                _windowManager.StartSession(sessionName);
+            }
         }
     }
 }
