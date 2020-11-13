@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ColumnDropper that allows a user to specify the columns that should not be extracted in the pipeline.
 - Added Favourite/UnFavourite to right click context menus
 - CachingHost now logs the state of the CacheProgress being executed first thing on start
+- Home screen now supports right click context menu, drag and drop etc
 
 ### Fixed
 

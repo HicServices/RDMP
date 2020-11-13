@@ -11,6 +11,7 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
@@ -25,6 +26,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
         private bool _doneSetup = false;
         private Type _openType;
 
+        RDMPCollectionCommonFunctionality CommonTreeFunctionality { get;} = new RDMPCollectionCommonFunctionality();
+
         public HomeBoxUI()
         {
             InitializeComponent();
@@ -34,6 +37,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
         {
             _openType = openType;
 
+            
             if (!_doneSetup)
             {
                 _activator = activator;
@@ -72,7 +76,10 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
                 }
 
                 olvName.AspectGetter = (o) => ((HistoryEntry)o).Object.ToString();
-                olvName.ImageGetter = (o) => activator.CoreIconProvider.GetImage(((HistoryEntry)o).Object);
+                CommonTreeFunctionality.SetUp(RDMPCollection.None,olvRecent,activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings()
+                {
+                    SuppressChildrenAdder = true
+                });
 
                 _doneSetup = true;
             }

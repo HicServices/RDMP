@@ -28,15 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HomeBoxUI));
             this.lblTitle = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnNew = new System.Windows.Forms.ToolStripButton();
             this.btnNewDropdown = new System.Windows.Forms.ToolStripDropDownButton();
-            this.btnOpen = new System.Windows.Forms.ToolStripButton();
-            this.olvRecent = new BrightIdeasSoftware.ObjectListView();
-            this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnOpen = new System.Windows.Forms.ToolStripButton();
+            this.olvRecent = new BrightIdeasSoftware.TreeListView();
+            this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvRecent)).BeginInit();
             this.SuspendLayout();
@@ -84,6 +85,11 @@
             this.btnNewDropdown.Size = new System.Drawing.Size(29, 22);
             this.btnNewDropdown.Text = "newDropdown";
             // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
             // btnOpen
             // 
             this.btnOpen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -106,21 +112,18 @@
             this.olvRecent.Location = new System.Drawing.Point(0, 58);
             this.olvRecent.Name = "olvRecent";
             this.olvRecent.RowHeight = 19;
+            this.olvRecent.ShowGroups = false;
             this.olvRecent.Size = new System.Drawing.Size(480, 441);
             this.olvRecent.TabIndex = 3;
             this.olvRecent.UseCompatibleStateImageBehavior = false;
             this.olvRecent.View = System.Windows.Forms.View.Details;
+            this.olvRecent.VirtualMode = true;
             // 
             // olvName
             // 
             this.olvName.FillsFreeSpace = true;
             this.olvName.Groupable = false;
             this.olvName.Text = "Recent";
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // HomeBoxUI
             // 
@@ -146,7 +149,7 @@
         private System.Windows.Forms.ToolStripDropDownButton btnNewDropdown;
         private System.Windows.Forms.ToolStripButton btnOpen;
         private System.Windows.Forms.ToolStripButton btnNew;
-        private BrightIdeasSoftware.ObjectListView olvRecent;
+        private BrightIdeasSoftware.TreeListView olvRecent;
         private BrightIdeasSoftware.OLVColumn olvName;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     }
