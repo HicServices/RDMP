@@ -98,7 +98,7 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
                     var fix = notifier.OnCheckPerformed(new CheckEventArgs("Some catalogues have NULL LiveLoggingServer_ID",CheckResult.Fail,null, $"Set LiveLoggingServer_ID to {potentialServer.Single()}"));
 
                     if(fix)
-                        foreach(var cata in missingTasks)
+                        foreach(var cata in missingServer)
                         {
                             cata.LiveLoggingServer_ID = potentialServer.Single();
                             cata.SaveToDatabase();
@@ -115,7 +115,7 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
                         var fix = notifier.OnCheckPerformed(new CheckEventArgs("Some catalogues have NULL LiveLoggingServer_ID",CheckResult.Fail,null, $"Set LiveLoggingServer_ID to '{defaultLoggingServer}' (the default)"));
 
                         if(fix)
-                            foreach(var cata in missingTasks)
+                            foreach(var cata in missingServer)
                             {
                                 cata.LiveLoggingServer_ID = defaultLoggingServer.ID;
                                 cata.SaveToDatabase();
