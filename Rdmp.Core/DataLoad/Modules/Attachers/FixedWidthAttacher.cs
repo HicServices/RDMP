@@ -8,6 +8,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
@@ -34,7 +35,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
         public FileInfo PathToFormatFile { get; set; }
 
         DataTable _flatFile;
-        protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener)
+        protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
         {
             bHaveAlreadySubmittedData = false;
 
@@ -56,15 +57,16 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
         }
 
         private bool bHaveAlreadySubmittedData;
-        
+
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="maxBatchSize"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        protected override int IterativelyBatchLoadDataIntoDataTable(DataTable destination, int maxBatchSize)
+        protected override int IterativelyBatchLoadDataIntoDataTable(DataTable destination, int maxBatchSize,GracefulCancellationToken cancellationToken)
         {
             if (bHaveAlreadySubmittedData)
                 return 0;
