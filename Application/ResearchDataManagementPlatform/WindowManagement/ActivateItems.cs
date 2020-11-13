@@ -25,6 +25,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.UI;
@@ -778,6 +779,14 @@ namespace ResearchDataManagementPlatform.WindowManagement
             {
                 new CommandInvokerDelegate(typeof(IActivateItems),true,(p)=>this)
             };
+        }
+        public void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialObjects)
+        {
+            var panel = WindowFactory.Create(this,new SessionCollectionUI(),new SessionCollection(sessionName)
+            {
+                DatabaseObjects = initialObjects?.ToList() ?? new List<IMapsDirectlyToDatabaseTable>()
+            },CatalogueIcons.WindowLayout);
+            panel.Show(_mainDockPanel,DockState.DockLeft);
         }
     }
 }

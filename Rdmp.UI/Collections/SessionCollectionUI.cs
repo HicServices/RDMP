@@ -5,6 +5,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs.NavigateTo;
+using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using System;
 using System.Linq;
@@ -12,7 +13,7 @@ using System.Windows.Forms;
 
 namespace Rdmp.UI.Collections
 {
-    public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl
+    public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IConsultableBeforeClosing
     {
         private BrightIdeasSoftware.TreeListView olvTree;
         private BrightIdeasSoftware.OLVColumn olvName;
@@ -138,6 +139,14 @@ namespace Rdmp.UI.Collections
             ((System.ComponentModel.ISupportInitialize)(this.olvTree)).EndInit();
             this.ResumeLayout(false);
 
+        }
+
+        public void ConsultAboutClosing(object sender, FormClosingEventArgs e)
+        {
+            if(e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = !Activator.YesNo($"Close Session {Collection.SessionName}? (this will end the session)","End Session");
+            }
         }
 
         #endregion

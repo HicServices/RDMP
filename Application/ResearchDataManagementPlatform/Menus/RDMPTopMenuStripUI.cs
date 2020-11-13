@@ -373,10 +373,8 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void newSessionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(Activator.TypeText("Session Name","Name",100,"Session 0",out string sessionName,false))
-            {
-                _windowManager.StartSession(sessionName);
-            }
+            var cmd = new ExecuteCommandStartSession(Activator,null);
+            cmd.Execute();
         }
     }
 }

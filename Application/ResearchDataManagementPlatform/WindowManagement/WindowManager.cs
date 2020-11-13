@@ -394,12 +394,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return _trackedWindows.OfType<PersistableSingleDatabaseObjectDockContent>().SingleOrDefault(t => t.GetControl().GetType() == windowType && t.DatabaseObject.Equals(databaseObject));
         }
 
-        public void StartSession(string sessionName)
-        {
-            var panel = _windowFactory.Create(ActivateItems,new SessionCollectionUI(),new SessionCollection(sessionName),CatalogueIcons.WindowLayout);
-            panel.Show(_mainDockPanel,DockState.DockLeft);
-        }
-
         public PersistableObjectCollectionDockContent GetActiveWindowIfAnyFor(Type windowType, IPersistableObjectCollection collection)
         {
             return _trackedWindows.OfType<PersistableObjectCollectionDockContent>().SingleOrDefault(t => t.GetControl().GetType() == windowType && t.Collection.Equals(collection));
