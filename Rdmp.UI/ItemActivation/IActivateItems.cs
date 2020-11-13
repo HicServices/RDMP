@@ -163,5 +163,11 @@ namespace Rdmp.UI.ItemActivation
         /// <param name="sessionName"></param>
         /// <param name="initialSelectionIfAny">Initial root objects to be in scope (or null if not known)</param>
         void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialSelectionIfAny);
+
+        /// <summary>
+        /// Returns all currently open session uis
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<SessionCollectionUI> GetSessions();
     }
 }

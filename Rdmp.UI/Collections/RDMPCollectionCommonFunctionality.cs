@@ -466,8 +466,8 @@ namespace Rdmp.UI.Collections
 
                     if (many.Cast<object>().All(d => d is IMapsDirectlyToDatabaseTable))
                     {
-                        var mi = factory.CreateMenuItem(new ExecuteCommandStartSession(_activator, many.Cast<IMapsDirectlyToDatabaseTable>().ToArray()));
-                        menu.Items.Add(mi);
+                        menu.Items.Add(factory.CreateMenuItem(new ExecuteCommandStartSession(_activator, many.Cast<IMapsDirectlyToDatabaseTable>().ToArray())));
+                        menu.Items.Add(factory.CreateMenuItem(new ExecuteCommandAddToSession(_activator, many.Cast<IMapsDirectlyToDatabaseTable>().ToArray(),null)));
                     }
 
                     if (many.Cast<object>().All(d => d is IDisableable))

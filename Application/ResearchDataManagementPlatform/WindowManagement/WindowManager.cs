@@ -456,5 +456,15 @@ namespace ResearchDataManagementPlatform.WindowManagement
                     Navigation.Append(new TabNavigation(dc));
             }
         }
+
+        /// <summary>
+        /// Returns all tracked tabs currently open of the Type <typeparamref name="T"/>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public IEnumerable<T> GetAllWindows<T>()
+        {
+            return _trackedWindows.OfType<RDMPSingleControlTab>().Select(t => t.GetControl()).OfType<T>();
+        }
     }
 }

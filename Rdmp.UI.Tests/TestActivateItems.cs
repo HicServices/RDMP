@@ -295,6 +295,11 @@ namespace Rdmp.UI.Tests
         {
             throw new NotImplementedException();
         }
+
+        public IEnumerable<SessionCollectionUI> GetSessions()
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class TestActivateItemsResults:ICheckNotifier

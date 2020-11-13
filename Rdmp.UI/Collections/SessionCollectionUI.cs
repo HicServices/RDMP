@@ -65,6 +65,16 @@ namespace Rdmp.UI.Collections
 
         }
 
+        /// <summary>
+        /// Adds <paramref name="toAdd"/> to the list of objects tracked in the session
+        /// </summary>
+        /// <param name="toAdd"></param>
+        public void Add(IMapsDirectlyToDatabaseTable[] toAdd)
+        {
+            Collection.DatabaseObjects = toAdd.Union(Collection.DatabaseObjects).ToList();
+            RefreshSessionObjects();
+        }
+
         private void AddObjectToSession(object sender, EventArgs e)
         {
             var ui = new NavigateToObjectUI(Activator);
@@ -95,6 +105,11 @@ namespace Rdmp.UI.Collections
             //update to the new list
             Collection.DatabaseObjects = actualObjects;
             olvTree.RebuildAll(true);
+        }
+
+        public override string ToString()
+        {
+            return Collection?.SessionName ?? "Unamed Session";
         }
 
         #region InitializeComponent

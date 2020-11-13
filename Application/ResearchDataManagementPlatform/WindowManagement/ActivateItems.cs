@@ -788,5 +788,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
             },CatalogueIcons.WindowLayout);
             panel.Show(_mainDockPanel,DockState.DockLeft);
         }
+
+        
+        /// <inheritdoc/>
+        public IEnumerable<SessionCollectionUI> GetSessions()
+        {
+            return _windowManager.GetAllWindows<SessionCollectionUI>();
+        }
     }
 }
