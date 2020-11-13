@@ -55,7 +55,6 @@ namespace Rdmp.UI.Collections
                 {
                     // add custom options here
                 });
-                CommonTreeFunctionality.AxeChildren = new Type[] { typeof(CohortIdentificationConfiguration) };
             }
                 
             RefreshSessionObjects();
