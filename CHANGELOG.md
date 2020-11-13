@@ -23,11 +23,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - If input table contains nulls these are now passed through unchanged
   - If mapping table contains nulls these are ignored (and not used to map input nulls)
   - If input table column is of a different Type than the database table a suitable Type conversion is applied
+- Data load engine logging checks are better able to repair issues with missing logging server IDs / logging tasks
 - Better support for abort/cancel in
   - RemoteTableAttacher
   - ExcelAttacher
   - KVPAttacher
   - RemoteDatabaseAttacher
+
 
 ### Changed
 
