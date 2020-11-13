@@ -7,6 +7,7 @@
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 using ReusableLibraryCode.Checks;
 using System;
@@ -73,6 +74,35 @@ namespace Rdmp.Core.Tests.Curation.Integration
             checks.Check(toMem);
 
             AssertFailWithFix("Some catalogues have NULL LiveLoggingServer_ID","Set LiveLoggingServer_ID to 2",toMem);   
+        }
+        [Test]
+        public void Test_MissingLoggingServer_UseDefault()
+        {
+            var lmd = WhenIHaveA<LoadMetadata>();
+            var cata1 = lmd.GetAllCatalogues().Single();
+            var cata2 = WhenIHaveA<Catalogue>();
+            
+            var eds = WhenIHaveA<ExternalDatabaseServer>();
+            eds.Name = "My Logging Server";
+            eds.SaveToDatabase();
+
+            cata2.LoadMetadata_ID = lmd.ID;
+            
+            cata1.LoggingDataTask = "OMG YEAGH";
+            cata1.LiveLoggingServer_ID = null;
+            cata2.LoggingDataTask = "OMG YEAGH";
+            cata2.LiveLoggingServer_ID = null;
+
+            var defaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
+            defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID,eds);
+
+            Assert.AreEqual(2,lmd.GetAllCatalogues().Count());
+
+            var checks = new MetadataLoggingConfigurationChecks(lmd);
+            var toMem = new ToMemoryCheckNotifier();
+            checks.Check(toMem);
+
+            AssertFailWithFix("Some catalogues have NULL LiveLoggingServer_ID",$"Set LiveLoggingServer_ID to 'My Logging Server' (the default)",toMem);   
         }
         private void AssertFailWithFix(string expectedMessage, string expectedFix, ToMemoryCheckNotifier toMem)
         {

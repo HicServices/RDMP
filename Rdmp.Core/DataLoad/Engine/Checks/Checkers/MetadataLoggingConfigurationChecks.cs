@@ -104,6 +104,26 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
                             cata.SaveToDatabase();
                         }
                 }
+                else
+                {
+                    
+                    var defaults = _loadMetadata.CatalogueRepository.GetServerDefaults();
+                    var defaultLoggingServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+
+                    if(defaultLoggingServer != null)
+                    {
+                        var fix = notifier.OnCheckPerformed(new CheckEventArgs("Some catalogues have NULL LiveLoggingServer_ID",CheckResult.Fail,null, $"Set LiveLoggingServer_ID to '{defaultLoggingServer}' (the default)"));
+
+                        if(fix)
+                            foreach(var cata in missingTasks)
+                            {
+                                cata.LiveLoggingServer_ID = defaultLoggingServer.ID;
+                                cata.SaveToDatabase();
+                            }
+
+                    }
+
+                }
             }
             #endregion
 
