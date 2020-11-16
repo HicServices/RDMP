@@ -174,7 +174,10 @@ namespace Rdmp.UI.Menus
             PopulateTreeMenu(commonFunctionality, treeMenuItem);
 
             if (databaseEntity != null) 
+            {
                 Add(new ExecuteCommandAddFavourite(_activator,databaseEntity));
+                Add(new ExecuteCommandAddToSession(_activator,new IMapsDirectlyToDatabaseTable[]{ databaseEntity },null));
+            }
 
             //add refresh and then finally help
             if (databaseEntity != null) 
