@@ -6,29 +6,28 @@
 
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.Collections
+namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     /// <summary>
     /// Starts a new scoped session for one or more objects in the GUI
     /// </summary>
-    public class ExecuteCommandStartSession : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandStartSession : BasicUICommandExecution, IAtomicCommand
     {
         private IMapsDirectlyToDatabaseTable[] _initialSelection;
 
-        public ExecuteCommandStartSession(IActivateItems activator, IMapsDirectlyToDatabaseTable[] initialSelection):base(activator)
+        public ExecuteCommandStartSession(IActivateItems activator, IMapsDirectlyToDatabaseTable[] initialSelection) : base(activator)
         {
-            this._initialSelection = initialSelection;
+            _initialSelection = initialSelection;
         }
 
         public override void Execute()
         {
             base.Execute();
-            
-            if(Activator.TypeText("Session Name","Name",100,"Session 0",out string sessionName,false))
-                Activator.StartSession(sessionName,_initialSelection);
+
+            if (Activator.TypeText("Session Name", "Name", 100, "Session 0", out string sessionName, false))
+                Activator.StartSession(sessionName, _initialSelection);
         }
     }
 }

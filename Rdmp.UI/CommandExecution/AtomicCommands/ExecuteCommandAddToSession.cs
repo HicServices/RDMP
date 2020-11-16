@@ -6,25 +6,25 @@
 
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Rdmp.UI.Collections
+namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandAddToSession : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandAddToSession : BasicUICommandExecution, IAtomicCommand
     {
         private IMapsDirectlyToDatabaseTable[] _toAdd;
         private readonly SessionCollectionUI session;
 
-        public ExecuteCommandAddToSession(IActivateItems activator, IMapsDirectlyToDatabaseTable[] toAdd, SessionCollectionUI session):base(activator)
+        public ExecuteCommandAddToSession(IActivateItems activator, IMapsDirectlyToDatabaseTable[] toAdd, SessionCollectionUI session) : base(activator)
         {
-            this._toAdd = toAdd;
+            _toAdd = toAdd;
             this.session = session;
 
-            if(session == null && !activator.GetSessions().Any())
+            if (session == null && !activator.GetSessions().Any())
                 SetImpossible("There are no active Sessions");
 
         }
@@ -33,21 +33,21 @@ namespace Rdmp.UI.Collections
             base.Execute();
             var ses = session;
 
-            if(ses == null)
+            if (ses == null)
             {
                 var sessions = Activator.GetSessions().ToArray();
-                
-                if(sessions.Length == 1)
+
+                if (sessions.Length == 1)
                     ses = sessions[0];
                 else
                 {
-                    var dlg = new PickOneOrCancelDialog<SessionCollectionUI>(sessions,"Session");
-                    if(dlg.ShowDialog() == DialogResult.OK)
+                    var dlg = new PickOneOrCancelDialog<SessionCollectionUI>(sessions, "Session");
+                    if (dlg.ShowDialog() == DialogResult.OK)
                         ses = dlg.Picked;
-                }    
+                }
             }
-            
-            if(ses == null)
+
+            if (ses == null)
                 return;
             ses.Add(_toAdd);
         }

@@ -16,7 +16,6 @@ using Rdmp.Core.Logging;
 using Rdmp.Core.Reports;
 using Rdmp.UI;
 using Rdmp.UI.ChecksUI;
-using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
