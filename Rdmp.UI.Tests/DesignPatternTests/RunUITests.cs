@@ -78,7 +78,8 @@ typeof(ExecuteCommandReOrderAggregateContainer),
 typeof(ExecuteCommandUseCredentialsToAccessTableInfoData),
 typeof(ExecuteCommandCreateLookup),
 typeof(ExecuteCommandImportFilterDescriptionsFromShare),
-typeof(ExecuteCommandSetArgument)
+typeof(ExecuteCommandSetArgument),
+typeof(ExecuteCommandAddToSession)
 
             });
 

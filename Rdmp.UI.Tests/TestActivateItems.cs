@@ -290,6 +290,16 @@ namespace Rdmp.UI.Tests
         {
             throw new NotImplementedException();
         }
+
+        public void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialSelectionIfAny)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<SessionCollectionUI> GetSessions()
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class TestActivateItemsResults:ICheckNotifier

@@ -369,6 +369,12 @@ namespace ResearchDataManagementPlatform.Menus
         {
             Application.Exit();
         }
+
+        private void newSessionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var cmd = new ExecuteCommandStartSession(Activator,null);
+            cmd.Execute();
+        }
     }
 }
 
