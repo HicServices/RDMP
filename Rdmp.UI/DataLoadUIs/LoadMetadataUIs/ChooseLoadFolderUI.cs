@@ -10,8 +10,9 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
-
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs
 {
@@ -27,22 +28,30 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs
     /// to confirm that it is has an intact structure and then use it for your load.</para>
     /// 
     /// </summary>
-    public partial class ChooseLoadDirectoryUI : Form
+    public partial class ChooseLoadDirectoryUI : RDMPForm
     {
         /// <summary>
         /// The users final choice of project directory, also check DialogResult for Ok / Cancel
         /// </summary>
-        public LoadDirectory Result { get; private set; }
+        public string Result { get; private set; }
 
         Regex _endsWithDataFolder = new Regex(@"[/\\]Data[/\\ ]*$", RegexOptions.IgnoreCase);
 
-        public ChooseLoadDirectoryUI(ILoadMetadata loadMetadata)
+        public ChooseLoadDirectoryUI(IActivateItems activator, ILoadMetadata loadMetadata)
         {
             InitializeComponent();
             
+            SetItemActivator(activator);
+
             var help = loadMetadata.CatalogueRepository.CommentStore.GetDocumentationIfExists("ILoadMetadata.LocationOfFlatFiles",false,true);
             
             helpIcon1.SetHelpText("Location Of Flat Files",help);
+
+            if(!string.IsNullOrWhiteSpace(loadMetadata.LocationOfFlatFiles))
+            {
+                tbUseExisting.Text = loadMetadata.LocationOfFlatFiles;
+                CheckExistingProjectDirectory();
+            }
         }
 
         private void rb_CheckedChanged(object sender, EventArgs e)
@@ -84,7 +93,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs
                     if(!dir.Exists)
                         dir.Create();
 
-                    Result = LoadDirectory.CreateDirectoryStructure(dir.Parent,dir.Name);
+                    Result = LoadDirectory.CreateDirectoryStructure(dir.Parent,dir.Name).RootPath.FullName;
 
                     DialogResult = DialogResult.OK;
                     this.Close();
@@ -99,13 +108,19 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs
             {
                 try
                 {
-                    Result = new LoadDirectory(tbUseExisting.Text);
+                    var dir = new LoadDirectory(tbUseExisting.Text);
+                    Result = dir.RootPath.FullName;
                     DialogResult = DialogResult.OK;
                     this.Close();
                 }
                 catch (Exception exception)
                 {
-                    ExceptionViewer.Show(exception);
+                    if(Activator.YesNo($"Path is invalid, use anyway? ({exception.Message})","Invalid Path"))
+                    {
+                        Result = tbUseExisting.Text;
+                        DialogResult = DialogResult.OK;
+                        this.Close();
+                    }
                 }
             }
         }
