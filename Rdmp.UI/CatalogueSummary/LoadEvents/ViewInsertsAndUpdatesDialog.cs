@@ -118,7 +118,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
                 throw new Exception("No potential tables were found");
             
             if(potentialTableInfos.Select(t=>t.DatabaseType).Distinct().Count() > 1)
-                throw new Exception($"Tables found were from differernt DBMS Types {string.Join(",",potentialTableInfos.Select(t=>t.DatabaseType).Distinct())}");
+                throw new Exception($"Tables found were from different DBMS Types: {string.Join(",",potentialTableInfos.Select(t=>t.DatabaseType).Distinct())}");
 
             var syntax = potentialTableInfos.First().GetQuerySyntaxHelper();
 
