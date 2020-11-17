@@ -37,7 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Added timeout of 10 minutes (previously 30 seconds) for counting unique patient identifiers while writing metadata for extractions
-- Choose Load Directory now lets you specify invalid directories e.g. when building a load on one computer designed to run on seperate computer with an isolated file system.
+- Choose Load Directory now lets you specify invalid directories e.g. when building a load on one computer designed to run on separate computer with an isolated file system.
 
 ## [4.2.0] - 2020-10-19
 
