@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Choose Load Directory on DLE now shows old value during editing
 - Added property suggestions when using ExecuteCommandSet with an incorrect property name
 - Added the ability to drag and drop aggregates into other CohortIdentificationConfigurations to import
 - Added ColumnDropper that allows a user to specify the columns that should not be extracted in the pipeline.
@@ -36,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Added timeout of 10 minutes (previously 30 seconds) for counting unique patient identifiers while writing metadata for extractions
+- Choose Load Directory now lets you specify invalid directories e.g. when building a load on one computer designed to run on separate computer with an isolated file system.
 
 ## [4.2.0] - 2020-10-19
 
