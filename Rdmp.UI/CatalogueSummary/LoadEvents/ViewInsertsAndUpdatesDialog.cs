@@ -114,7 +114,15 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
         {
             checkNotifier.OnCheckPerformed(new CheckEventArgs("Table user is attempting to view updates/inserts for is called " + toAttemptToDisplay.TargetTable, CheckResult.Success));
             
-            string runtimeName = new MicrosoftQuerySyntaxHelper().GetRuntimeName(toAttemptToDisplay.TargetTable);
+            if(potentialTableInfos.Count == 0)
+                throw new Exception("No potential tables were found");
+            
+            if(potentialTableInfos.Select(t=>t.DatabaseType).Distinct().Count() > 1)
+                throw new Exception($"Tables found were from differernt DBMS Types {string.Join(",",potentialTableInfos.Select(t=>t.DatabaseType).Distinct())}");
+
+            var syntax = potentialTableInfos.First().GetQuerySyntaxHelper();
+
+            string runtimeName = syntax.GetRuntimeName(toAttemptToDisplay.TargetTable);
 
             checkNotifier.OnCheckPerformed(new CheckEventArgs("The runtime name of the table is " + runtimeName, CheckResult.Success));
 
