@@ -8,6 +8,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui
@@ -32,6 +34,13 @@ namespace Rdmp.Core.CommandLine.Gui
         /// Determines what is rendered in the list visually
         /// </summary>
         public Func<T, string> AspectGetter { get; set; }
+
+        /// <summary>
+        /// Ongoing filtering of a large collection should be cancelled when the user changes the filter even if it is not completed yet
+        /// </summary>
+        CancellationTokenSource _cancelFiltering = new CancellationTokenSource();
+        Task _currentFilterTask;
+        object _taskCancellationLock = new object();
 
         /// <summary>
         /// Protected constructor for derived classes that want to do funky filtering and hot swap out lists as search
@@ -162,7 +171,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 
                 mainInput.TextChanged += (s) =>
                 {
-                    listView.SetSource((_collection = BuildList(GetListAfterSearch(mainInput.Text.ToString()))).ToList());
+                    BeginFiltering(listView,mainInput.Text.ToString());
                 };
             }
             else
@@ -180,6 +189,28 @@ namespace Rdmp.Core.CommandLine.Gui
             return okClicked;
         }
 
+        
+
+        private void BeginFiltering(ListView listView,string searchTerm)
+        {
+            lock(_taskCancellationLock)
+            {
+                if(_currentFilterTask != null)
+                {
+                    _cancelFiltering.Cancel();
+                    _currentFilterTask.Wait();
+
+                    _cancelFiltering = new CancellationTokenSource();
+                }
+
+                _currentFilterTask = Task.Run(()=>
+                {
+                    _collection = BuildList(GetListAfterSearch(searchTerm,_cancelFiltering.Token));
+                    listView.SetSource(_collection.ToList());
+                });  
+            }         
+        }
+
         private IList<ListViewObject<T>> BuildList(IList<T> listOfT)
         {
             var toReturn = listOfT.Select(o=>new ListViewObject<T>(o,AspectGetter)).ToList();
@@ -190,12 +221,13 @@ namespace Rdmp.Core.CommandLine.Gui
             return toReturn;
         }
 
-        protected virtual IList<T> GetListAfterSearch(string searchString)
+        protected virtual IList<T> GetListAfterSearch(string searchString, CancellationToken token)
         {
             if(_publicCollection == null)
                 throw new InvalidOperationException("When using the protected constructor derived classes must override this method ");
 
-            return _publicCollection.Where(o =>
+            //stop the Contains searching when the user cancels the search
+            return _publicCollection.Where(o => !token.IsCancellationRequested &&
                 AspectGetter(o).Contains(searchString, StringComparison.CurrentCultureIgnoreCase)).ToList();
         }
 
