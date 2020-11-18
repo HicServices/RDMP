@@ -102,7 +102,7 @@ namespace Rdmp.UI.SimpleControls
             try
             {
                 var command = CommandGetter(CommandLineActivity.check);    
-                runner = _factory.CreateRunner(command);
+                runner = _factory.CreateRunner(Activator,command);
             }
             catch (Exception ex)
             {
@@ -166,7 +166,7 @@ namespace Rdmp.UI.SimpleControls
             try
             {
                 var command = CommandGetter(CommandLineActivity.run);
-                runner = _factory.CreateRunner(command);
+                runner = _factory.CreateRunner(Activator,command);
             }
             catch (Exception ex)
             {

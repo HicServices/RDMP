@@ -10,6 +10,7 @@ using FAnsi.Discovery;
 using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation;
@@ -41,13 +42,14 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
     public class ExampleDatasetsCreation
     {
         private IRDMPPlatformRepositoryServiceLocator _repos;
-        
+        private IBasicActivateItems _activator;
         public const int NumberOfPeople = 5000;
         public const int NumberOfRowsPerDataset = 10000;
         
-        public ExampleDatasetsCreation(IRDMPPlatformRepositoryServiceLocator repos)
+        public ExampleDatasetsCreation(IBasicActivateItems activator,IRDMPPlatformRepositoryServiceLocator repos)
         {
             this._repos = repos;
+            _activator = activator;
         }
 
         internal void Create(DiscoveredDatabase db, ICheckNotifier notifier, PlatformDatabaseCreationOptions options)
@@ -317,7 +319,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                     Pipeline = extractionPipeline.ID,
                     ExtractionConfiguration = extractionConfiguration.ID
                 };
-                var runnerExtract = new ExtractionRunner(optsExtract);
+                var runnerExtract = new ExtractionRunner(_activator,optsExtract);
                 try
                 {
                     runnerExtract.Run(_repos,new ThrowImmediatelyDataLoadEventListener(),notifier,new GracefulCancellationToken());

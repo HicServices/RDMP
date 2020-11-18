@@ -46,7 +46,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             
             TruncateDataTable();
 
-            var host = new ExtractionPipelineUseCase(_request.Configuration.Project, _request, p, DataLoadInfo.Empty);
+            var host = new ExtractionPipelineUseCase(new ThrowImmediatelyActivator(RepositoryLocator),,_request.Configuration.Project, _request, p, DataLoadInfo.Empty);
 
             var engine = host.GetEngine(p, new ThrowImmediatelyDataLoadEventListener());
             host.Source.AllowEmptyExtractions = allowEmptyDatasetExtractions;

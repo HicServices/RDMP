@@ -93,7 +93,7 @@ namespace Rdmp.Core.CommandExecution
             if (IsSingleObject)
             {
                 //Extract a single object (to file)
-                if (TargetFileInfo == null)
+                if (TargetFileInfo == null && BasicActivator.IsInteractive)
                 {
                     TargetFileInfo = BasicActivator.SelectFile("Path to output share definition to", "Share Definition", "*.sd");
 
@@ -103,7 +103,7 @@ namespace Rdmp.Core.CommandExecution
             }
             else
             {
-                if (TargetDirectoryInfo == null)
+                if (TargetDirectoryInfo == null && BasicActivator.IsInteractive)
                 {
                     TargetDirectoryInfo = BasicActivator.SelectDirectory("Output Directory");
 

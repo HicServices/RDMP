@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using FAnsi;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandLine.DatabaseCreation;
+using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Curation.Checks;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Repositories;

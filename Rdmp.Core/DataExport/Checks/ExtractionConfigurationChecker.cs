@@ -6,6 +6,7 @@
 
 using System.IO;
 using System.Linq;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction;
@@ -21,6 +22,7 @@ namespace Rdmp.Core.DataExport.Checks
     public class ExtractionConfigurationChecker:ICheckable
     {
         private IExtractionConfiguration _config;
+        private IBasicActivateItems _activator;
 
         /// <summary>
         /// True to fetch all <see cref="ISelectedDataSets"/> and check with <see cref="SelectedDataSetsChecker"/>
@@ -35,10 +37,12 @@ namespace Rdmp.Core.DataExport.Checks
         /// <summary>
         /// Prepares checking of the given <paramref name="config"/>
         /// </summary>
+        /// <param name="activator"></param>
         /// <param name="config"></param>
-        public ExtractionConfigurationChecker(IExtractionConfiguration config)
+        public ExtractionConfigurationChecker(IBasicActivateItems activator,IExtractionConfiguration config)
         {
             _config = config;
+            _activator = activator;
         }
 
         /// <summary>
@@ -135,7 +139,7 @@ namespace Rdmp.Core.DataExport.Checks
 
             if (CheckDatasets)
                 foreach (ISelectedDataSets s in _config.SelectedDataSets)
-                    new SelectedDataSetsChecker(s).Check(notifier);
+                    new SelectedDataSetsChecker(_activator,s).Check(notifier);
 
             //globals
             if (CheckGlobals)

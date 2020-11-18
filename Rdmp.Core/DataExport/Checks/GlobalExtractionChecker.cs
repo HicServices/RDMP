@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -26,21 +27,24 @@ namespace Rdmp.Core.DataExport.Checks
         private readonly ExtractionConfiguration _configuration;
         private readonly ExtractGlobalsCommand _command;
         private readonly IPipeline _alsoCheckPipeline;
+        private readonly IBasicActivateItems _activator;
 
         /// <summary>
         /// Prepares to check the globals extractable artifacts that should be fetched when extracting the <paramref name="configuration"/>
         /// </summary>
+        /// <param name="activator"></param>
         /// <param name="configuration"></param>
-        public GlobalExtractionChecker(ExtractionConfiguration configuration) : this (configuration, null, null)
+        public GlobalExtractionChecker(IBasicActivateItems activator,ExtractionConfiguration configuration) : this (activator,configuration, null, null)
         { }
 
 
-        /// <inheritdoc cref="GlobalExtractionChecker(ExtractionConfiguration)"/>
-        public GlobalExtractionChecker(ExtractionConfiguration configuration, ExtractGlobalsCommand command, IPipeline alsoCheckPipeline)
+        /// <inheritdoc cref="GlobalExtractionChecker(IBasicActivateItems,ExtractionConfiguration)"/>
+        public GlobalExtractionChecker(IBasicActivateItems activator,ExtractionConfiguration configuration, ExtractGlobalsCommand command, IPipeline alsoCheckPipeline)
         {
             this._configuration = configuration;
             this._command = command;
             this._alsoCheckPipeline = alsoCheckPipeline;
+            _activator = activator;
         }
 
         /// <summary>
@@ -58,7 +62,7 @@ namespace Rdmp.Core.DataExport.Checks
 
             if (_alsoCheckPipeline != null && _command != null)
             {
-                var engine = new ExtractionPipelineUseCase(_configuration.Project, _command, _alsoCheckPipeline, DataLoadInfo.Empty)
+                var engine = new ExtractionPipelineUseCase(_activator,_configuration.Project, _command, _alsoCheckPipeline, DataLoadInfo.Empty)
                                     .GetEngine(_alsoCheckPipeline, new FromCheckNotifierToDataLoadEventListener(notifier));
                 engine.Check(notifier);
             }

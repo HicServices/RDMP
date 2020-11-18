@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
@@ -138,7 +139,7 @@ namespace Tests.Common.Scenarios
         {
             var pipeline = SetupPipeline();
 
-            var runner = new ExtractionRunner(new ExtractionOptions()
+            var runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator),new ExtractionOptions()
             {
                 Command = CommandLineActivity.run, ExtractionConfiguration = _configuration.ID,
                 ExtractGlobals = true, Pipeline = pipeline.ID
@@ -168,7 +169,7 @@ namespace Tests.Common.Scenarios
             try
             {
                 pipeline = SetupPipeline();
-                pipelineUseCase = new ExtractionPipelineUseCase(_request.Configuration.Project, _request, pipeline, d);
+                pipelineUseCase = new ExtractionPipelineUseCase(new ThrowImmediatelyActivator(RepositoryLocator),_request.Configuration.Project, _request, pipeline, d);
 
                 pipelineUseCase.Execute(listener);
 

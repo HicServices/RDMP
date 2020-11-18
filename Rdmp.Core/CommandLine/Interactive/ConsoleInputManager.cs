@@ -22,7 +22,7 @@ using ReusableLibraryCode.Checks;
 namespace Rdmp.Core.CommandLine.Interactive
 {
     /// <summary>
-    /// Implementation of <see cref="IBasicActivateItems"/> that handles object selection and message notification via the console
+    /// Implementation of <see cref="IBasicActivateItems"/> that handles object selection and message notification but is <see cref="IsInteractive"/>=false and throws <see cref="InputDisallowedException"/> on any attempt to illicit user feedback
     /// </summary>
     public class ConsoleInputManager : BasicActivateItems
     {
