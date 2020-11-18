@@ -4,14 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.Core.Providers;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.UI.Menus.MenuItems;
 
 namespace Rdmp.UI.Menus
@@ -45,7 +43,7 @@ namespace Rdmp.UI.Menus
             Items.Add(extractability);
 
             var extract = new ToolStripMenuItem("Import/Export Descriptions");
-            Add(new ExecuteCommandExportObjectsToFileUI(_activator, new[] {catalogue}),Keys.None,extract);
+            Add(new ExecuteCommandExportObjectsToFile(_activator, new[] {catalogue}),Keys.None,extract);
             Add(new ExecuteCommandImportCatalogueDescriptionsFromShare(_activator, catalogue),Keys.None,extract);
             Add(new ExecuteCommandExportInDublinCoreFormat(_activator, catalogue),Keys.None,extract);
             Add(new ExecuteCommandImportDublinCoreFormat(_activator, catalogue), Keys.None, extract);

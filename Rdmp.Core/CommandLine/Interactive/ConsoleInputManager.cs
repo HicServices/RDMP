@@ -231,6 +231,46 @@ namespace Rdmp.Core.CommandLine.Interactive
             return null;
         }
         
+        public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
+        {
+            if (DisallowInput)
+                throw new InputDisallowedException($"Value required for '{prompt}'");
+
+            Console.WriteLine(prompt);
+            Console.WriteLine(@"Enter path with optional wildcards (e.g. c:\*.csv):");
+
+            var file = Console.ReadLine();
+            
+            var asterixIdx = file.IndexOf('*');
+
+            if(file != null)
+                if(asterixIdx != -1)
+                {
+                    int idxLastSlash = file.LastIndexOfAny(new []{Path.DirectorySeparatorChar,Path.AltDirectorySeparatorChar });
+
+                    if(idxLastSlash == -1 || asterixIdx < idxLastSlash)
+                        throw new Exception("Wildcards are only supported at the file level");
+
+                    var searchPattern = file.Substring(idxLastSlash+1);
+                    var dirStr = file.Substring(0,idxLastSlash);
+                    
+                    var dir = new DirectoryInfo(dirStr);
+
+                    if(!dir.Exists)
+                        throw new DirectoryNotFoundException("Could not find directory:" + dirStr);
+                                        
+                    return dir.GetFiles(searchPattern).ToArray();
+                }
+                else
+                {
+                    return new[]{new FileInfo(file) };
+                }
+
+                
+
+            return null;
+
+        }
         
 
         protected override bool SelectValueTypeImpl(string prompt, Type paramType, object initialValue,out object chosen)

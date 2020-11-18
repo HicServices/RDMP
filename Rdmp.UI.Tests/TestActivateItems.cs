@@ -280,7 +280,11 @@ namespace Rdmp.UI.Tests
         {
             return SelectFile(prompt, null, null);
         }
-
+        
+        public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
+        {
+            throw new NotImplementedException();
+        }
         public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
         {
             throw new NotImplementedException();
@@ -300,6 +304,7 @@ namespace Rdmp.UI.Tests
         {
             throw new NotImplementedException();
         }
+
     }
 
     public class TestActivateItemsResults:ICheckNotifier

@@ -94,6 +94,16 @@ namespace Rdmp.Core.CommandExecution
         /// <returns></returns>
         FileInfo SelectFile(string prompt);
 
+        
+        /// <summary>
+        /// Prompts user to select multiple files on disk that must exist and match the <paramref name="pattern"/>
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <param name="patternDescription">Type of file to select e.g. "Comma Separated Values"</param>
+        /// <param name="pattern">Pattern to restrict files to e.g. *.csv</param>
+        /// <returns>Selected files or null if no files chosen</returns>
+        FileInfo[] SelectFiles(string prompt,string patternDescription, string pattern);
+
         /// <summary>
         /// Prompts user to select a file on disk (that may or may not exist yet) with the given pattern
         /// </summary>

@@ -213,11 +213,15 @@ namespace Rdmp.Core.CommandExecution
 
         /// <inheritdoc/>
         public abstract FileInfo SelectFile(string prompt, string patternDescription, string pattern);
+        
+        /// <inheritdoc/>
+        public abstract FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern);
 
         /// <inheritdoc/>
         public virtual List<CommandInvokerDelegate> GetDelegates()
         {
             return new List<CommandInvokerDelegate>();
         }
+
     }
 }

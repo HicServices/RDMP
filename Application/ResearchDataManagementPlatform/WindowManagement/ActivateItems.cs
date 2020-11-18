@@ -728,6 +728,18 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return null;
         }
         
+        public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
+        {
+            var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = true};
+
+            if (patternDescription != null && pattern != null)
+                fb.Filter = patternDescription + "|" + pattern;
+
+            if (fb.ShowDialog() == DialogResult.OK)
+                return fb.FileNames.Select(f=>new FileInfo(f)).ToArray();
+            
+            return null;
+        }
 
         protected override bool SelectValueTypeImpl(string prompt, Type paramType, object initialValue, out object chosen)
         {
@@ -795,5 +807,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             return _windowManager.GetAllWindows<SessionCollectionUI>();
         }
+
     }
 }
