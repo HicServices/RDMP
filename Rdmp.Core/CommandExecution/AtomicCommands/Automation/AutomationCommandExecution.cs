@@ -8,27 +8,27 @@ using System;
 using CommandLine;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandLine.Options;
-using Rdmp.UI.ItemActivation;
+using Rdmp.Core.Startup;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands.Automation
+namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation
 {
-    public abstract class AutomationCommandExecution : BasicUICommandExecution
+    public abstract class AutomationCommandExecution : BasicCommandExecution
     {
         protected readonly Func<RDMPCommandLineOptions> CommandGetter;
-        public const string AutomationServiceExecutable = "rdmp.exe";
-        
+        public readonly string AutomationServiceExecutable = EnvironmentInfo.IsLinux ? "rdmp" : "rdmp.exe";
+
         private TableRepository _cataTableRepo;
         private TableRepository _dataExportTableRepo;
 
 
-        protected AutomationCommandExecution(IActivateItems activator, Func<RDMPCommandLineOptions> commandGetter) : base(activator)
+        protected AutomationCommandExecution(IBasicActivateItems activator, Func<RDMPCommandLineOptions> commandGetter) : base(activator)
         {
             CommandGetter = commandGetter;
 
-            _cataTableRepo =  Activator.RepositoryLocator.CatalogueRepository as TableRepository;
-            _dataExportTableRepo = Activator.RepositoryLocator.DataExportRepository as TableRepository;
+            _cataTableRepo = activator.RepositoryLocator.CatalogueRepository as TableRepository;
+            _dataExportTableRepo = activator.RepositoryLocator.DataExportRepository as TableRepository;
 
-            if(_cataTableRepo == null || _dataExportTableRepo == null)
+            if (_cataTableRepo == null || _dataExportTableRepo == null)
                 SetImpossible("Current repositories are not TableRepository");
         }
 
@@ -44,7 +44,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.Automation
 
         private void PopulateConnectionStringOptions(RDMPCommandLineOptions options)
         {
-            if (Activator == null)
+            if (BasicActivator == null)
                 return;
 
             if (string.IsNullOrWhiteSpace(options.CatalogueConnectionString))

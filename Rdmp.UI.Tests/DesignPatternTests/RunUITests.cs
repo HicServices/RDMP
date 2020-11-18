@@ -13,10 +13,10 @@ using Moq;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.Automation;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.CommandExecution.AtomicCommands.Automation;
 using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs.NavigateTo;
@@ -52,7 +52,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                 typeof(ExecuteCommandEditPipelineWithUseCase),
 
                 typeof(ExecuteCommandExportLoggedDataToCsv),
-                typeof(ExecuteCommandCopyRunCommandToClipboard),
+                typeof(ExecuteCommandGenerateRunCommand),
                 
                 typeof(ExecuteCommandRunDetached),
                 

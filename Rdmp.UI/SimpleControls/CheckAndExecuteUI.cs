@@ -8,10 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution.AtomicCommands.Automation;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.DataFlowPipeline;
-using Rdmp.UI.CommandExecution.AtomicCommands.Automation;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
@@ -57,8 +57,7 @@ namespace Rdmp.UI.SimpleControls
 
             _factory = new RunnerFactory();
 
-            CommonFunctionality.AddToMenu(new ExecuteCommandRunDetached(activator, Detatch_CommandGetter));
-            CommonFunctionality.AddToMenu(new ExecuteCommandCopyRunCommandToClipboard(activator, Detatch_CommandGetter));
+            CommonFunctionality.AddToMenu(new ExecuteCommandGenerateRunCommand(activator, Detatch_CommandGetter));
             
             loadProgressUI1.ApplyTheme(activator.Theme);
         }

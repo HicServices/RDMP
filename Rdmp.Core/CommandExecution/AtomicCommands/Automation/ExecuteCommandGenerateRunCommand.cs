@@ -6,26 +6,25 @@
 
 using System;
 using System.Drawing;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands.Automation
+namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation
 {
-    public class ExecuteCommandCopyRunCommandToClipboard : AutomationCommandExecution, IAtomicCommand
+    public class ExecuteCommandGenerateRunCommand : AutomationCommandExecution, IAtomicCommand
     {
-        public ExecuteCommandCopyRunCommandToClipboard(IActivateItems activator, Func<RDMPCommandLineOptions> commandGetter)
+        public ExecuteCommandGenerateRunCommand(IBasicActivateItems activator, Func<RDMPCommandLineOptions> commandGetter)
             : base(activator, commandGetter)
         {
-            
+
         }
 
         public override string GetCommandHelp()
         {
-            return "Generates the execute command line invocation (including arguments) and copies it to the Clipboard";
+            return "Generates the execute command line invocation (including arguments)";
         }
 
         public override Image GetImage(IIconProvider iconProvider)
@@ -37,7 +36,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.Automation
         {
             base.Execute();
 
-            System.Windows.Forms.Clipboard.SetText(GetCommandText());
+            BasicActivator.Show(GetCommandText());
         }
     }
 }
