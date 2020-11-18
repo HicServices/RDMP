@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - KVPAttacher
   - RemoteDatabaseAttacher
 - Fixed View Inserts/Updates dialog when using non SqlServer DBMS (e.g. MySql)
+- Fixed various layout and performance issues with RDMP console GUI.
 
 ### Changed
 
