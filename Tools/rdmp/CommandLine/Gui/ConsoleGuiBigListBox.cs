@@ -112,11 +112,12 @@ namespace Rdmp.Core.CommandLine.Gui
             };
 
             listView.SetSource( (_collection = BuildList(this.GetInitialSource())).ToList());
-            
+            win.Add(listView);
+
             var btnOk = new Button(_okText,true)
             {
                 Y = Pos.Bottom(listView),
-                Width = 5,
+                Width = 8,
                 Height = 1
             };
             btnOk.Clicked += () =>
@@ -132,7 +133,7 @@ namespace Rdmp.Core.CommandLine.Gui
             var btnCancel = new Button("Cancel")
             {
                 Y = Pos.Bottom(listView),
-                Width = 5,
+                Width = 10,
                 Height = 1
             };
             btnCancel.Clicked += Application.RequestStop;
@@ -144,17 +145,18 @@ namespace Rdmp.Core.CommandLine.Gui
                     X = 0,
                     Y = Pos.Bottom(listView),
                 };
+
+                win.Add(searchLabel);
             
                 var mainInput = new TextField ("") {
                     X = Pos.Right(searchLabel),
                     Y = Pos.Bottom(listView),
-                    Width = 70,
+                    Width = 40,
                 };
 
-                btnOk.X = 75;
-                btnCancel.X = 85;
+                btnOk.X = 45;
+                btnCancel.X = 55;
 
-                win.Add(searchLabel);
                 win.Add(mainInput);
                 mainInput.SetFocus();
                 
@@ -170,7 +172,6 @@ namespace Rdmp.Core.CommandLine.Gui
             }
 
             
-            win.Add(listView);
             win.Add(btnOk);
             win.Add(btnCancel);
             
