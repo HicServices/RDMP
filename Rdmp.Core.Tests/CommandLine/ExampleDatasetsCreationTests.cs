@@ -6,6 +6,7 @@
 
 using System.Linq;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
