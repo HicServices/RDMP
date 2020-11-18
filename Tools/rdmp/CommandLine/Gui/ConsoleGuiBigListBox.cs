@@ -41,6 +41,8 @@ namespace Rdmp.Core.CommandLine.Gui
         CancellationTokenSource _cancelFiltering = new CancellationTokenSource();
         Task _currentFilterTask;
         object _taskCancellationLock = new object();
+        
+        private ListView _listView;
 
         /// <summary>
         /// Protected constructor for derived classes that want to do funky filtering and hot swap out lists as search
@@ -112,7 +114,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 Height = Dim.Fill ()
             };
 
-            var listView = new ListView(new List<string>(new []{"Error"}))
+            _listView = new ListView(new List<string>(new []{"Error"}))
             {
                 X = 0,
                 Y = 0,
@@ -120,28 +122,28 @@ namespace Rdmp.Core.CommandLine.Gui
                 Width = Dim.Fill(2)
             };
 
-            listView.SetSource( (_collection = BuildList(this.GetInitialSource())).ToList());
-            win.Add(listView);
+            _listView.SetSource( (_collection = BuildList(this.GetInitialSource())).ToList());
+            win.Add(_listView);
 
             var btnOk = new Button(_okText,true)
             {
-                Y = Pos.Bottom(listView),
+                Y = Pos.Bottom(_listView),
                 Width = 8,
                 Height = 1
             };
             btnOk.Clicked += () =>
             {
-                if (listView.SelectedItem >= _collection.Count)
+                if (_listView.SelectedItem >= _collection.Count)
                     return;
 
                 okClicked = true;
                 Application.RequestStop();
-                Selected = _collection[listView.SelectedItem].Object;
+                Selected = _collection[_listView.SelectedItem].Object;
             };
 
             var btnCancel = new Button("Cancel")
             {
-                Y = Pos.Bottom(listView),
+                Y = Pos.Bottom(_listView),
                 Width = 10,
                 Height = 1
             };
@@ -152,26 +154,27 @@ namespace Rdmp.Core.CommandLine.Gui
                 var searchLabel = new Label("Search:")
                 {
                     X = 0,
-                    Y = Pos.Bottom(listView),
+                    Y = Pos.Bottom(_listView),
                 };
 
                 win.Add(searchLabel);
             
                 var mainInput = new TextField ("") {
                     X = Pos.Right(searchLabel),
-                    Y = Pos.Bottom(listView),
+                    Y = Pos.Bottom(_listView),
                     Width = 40,
                 };
 
-                btnOk.X = 45;
-                btnCancel.X = 55;
+                btnOk.X = 48;
+                btnCancel.X = 58;
 
                 win.Add(mainInput);
                 mainInput.SetFocus();
                 
                 mainInput.TextChanged += (s) =>
                 {
-                    BeginFiltering(listView,mainInput.Text.ToString());
+                    //run this in a thread because any locking or delay in this callback prevents the keypress registering!
+                    Task.Run(()=>BeginFiltering(mainInput.Text.ToString())); 
                 };
             }
             else
@@ -184,14 +187,24 @@ namespace Rdmp.Core.CommandLine.Gui
             win.Add(btnOk);
             win.Add(btnCancel);
             
+            var callback = Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds (500), Timer);
+
             Application.Run(win);
+
+            Application.MainLoop.RemoveTimeout(callback);
 
             return okClicked;
         }
 
-        
+        bool Timer (MainLoop caller)
+        {
+            var oldSelected = _listView.SelectedItem;
+            _listView.SetSource(_collection.ToList());
+            _listView.SelectedItem = oldSelected ;
+            return true;
+        }
 
-        private void BeginFiltering(ListView listView,string searchTerm)
+        private void BeginFiltering(string searchTerm)
         {
             lock(_taskCancellationLock)
             {
@@ -206,9 +219,8 @@ namespace Rdmp.Core.CommandLine.Gui
                 _currentFilterTask = Task.Run(()=>
                 {
                     _collection = BuildList(GetListAfterSearch(searchTerm,_cancelFiltering.Token));
-                    listView.SetSource(_collection.ToList());
                 });  
-            }         
+            }        
         }
 
         private IList<ListViewObject<T>> BuildList(IList<T> listOfT)

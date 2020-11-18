@@ -66,7 +66,7 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
             {
                 X = Pos.Right(btnSet) + 3,
                 Y = Pos.Bottom(list),
-                Width = 5,
+                Width = 9,
                 Height = 1
             };
 
@@ -89,8 +89,10 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
                             //redraws the list and re selects the current item
 
                             p.UpdateValue(cmd.NewValue ?? string.Empty);
+                            
+                            var oldSelected = list.SelectedItem;
                             list.SetSource(collection = collection.ToList());
-                            list.SelectedItem = list.SelectedItem;
+                            list.SelectedItem = oldSelected;
                         }
                         
                     }
