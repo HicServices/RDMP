@@ -210,7 +210,8 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
                 typeof(IExtractCommand),
                 typeof(IProject),
                 typeof(DataLoadInfo),
-                typeof(ICatalogueRepository)
+                typeof(ICatalogueRepository),
+                typeof(IBasicActivateItems)
             })
         {
             GenerateContext();
