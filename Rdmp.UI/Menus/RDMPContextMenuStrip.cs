@@ -213,7 +213,7 @@ namespace Rdmp.UI.Menus
             if (commonFunctionality.CheckColumnProvider != null)
             {
                 if (databaseEntity != null)
-                    Add(new ExecuteCommandCheck(_activator, databaseEntity, commonFunctionality.CheckColumnProvider.RecordWorst), Keys.None, inspectionMenuItem);
+                    Add(new ExecuteCommandCheckAsync(_activator, databaseEntity, commonFunctionality.CheckColumnProvider.RecordWorst), Keys.None, inspectionMenuItem);
 
                 var checkAll = new ToolStripMenuItem("Check All", null, (s, e) => commonFunctionality.CheckColumnProvider.CheckCheckables());
                 checkAll.Image = CatalogueIcons.TinyYellow;

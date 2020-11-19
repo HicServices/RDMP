@@ -4,47 +4,34 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Drawing;
-using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.ChecksUI;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandCheckAsync : BasicUICommandExecution,IAtomicCommand
+    /// <summary>
+    /// Checks a given <see cref="ICheckable"/> object reporting integrity to an <see cref="ICheckNotifier"/>
+    /// </summary>
+    public class ExecuteCommandCheck : BasicCommandExecution, IAtomicCommand
     {
         private readonly ICheckable _checkable;
-        private readonly Action<ICheckable, CheckResult> _reportWorstTo;
+        private ICheckNotifier _notifier;
 
-        public ExecuteCommandCheckAsync(IActivateItems activator, DatabaseEntity checkable): base(activator)
+        public ExecuteCommandCheck(IBasicActivateItems activator, ICheckable checkable, ICheckNotifier notifier) : base(activator)
         {
-            _checkable = checkable as ICheckable;
-
-            if(_checkable == null)
-                SetImpossible("Object is not checkable");
-        }
-        public ExecuteCommandCheckAsync(IActivateItems activator, DatabaseEntity checkable,Action<ICheckable,CheckResult> reportWorst): this(activator,checkable)
-        {
-            _reportWorstTo = reportWorst;
+            _checkable = checkable;
+            _notifier = notifier;
         }
 
         public override void Execute()
         {
             base.Execute();
 
-            var popupChecksUI = new PopupChecksUI("Checking " + _checkable, false);
-
-            if(_reportWorstTo != null)
-                popupChecksUI.AllChecksComplete += (s,a)=>_reportWorstTo(_checkable,a.CheckResults.GetWorst());
-
-            popupChecksUI.StartChecking(_checkable);
+            _checkable.Check(_notifier);
         }
+
 
         public override Image GetImage(IIconProvider iconProvider)
         {
