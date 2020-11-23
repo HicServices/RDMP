@@ -6,12 +6,13 @@
 
 using System;
 using Rdmp.Core;
+using Rdmp.Core.CommandExecution.CohortCreationCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.UI.CohortUI.ImportCustomData;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
@@ -55,7 +56,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
                 {
                     OverrideCommandName = "Query"
                 },
-                new ExecuteCommandCreateNewCohortFromFile(_activator)
+                new ExecuteCommandCreateNewCohortFromFile(_activator,null,null)
                 {
                     OverrideCommandName = GlobalStrings.FromFile
                 }

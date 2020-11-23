@@ -7,6 +7,7 @@
 using System;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.DataQualityEngine.Reports;
@@ -16,6 +17,7 @@ using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.CommandLine.Runners
 {
+
     internal class DqeRunner:IRunner
     {
         private readonly DqeOptions _options;

@@ -16,19 +16,24 @@ using System.Windows.Forms;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
+using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
+using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.UI;
+using Rdmp.UI.CohortUI.ImportCustomData;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.CommandExecution;
@@ -37,6 +42,7 @@ using Rdmp.UI.Copying;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Arranging;
+using Rdmp.UI.PipelineUIs.Pipelines;
 using Rdmp.UI.PluginChildProvision;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
@@ -808,5 +814,26 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return _windowManager.GetAllWindows<SessionCollectionUI>();
         }
 
+        public override IPipelineRunner GetPipelineRunner(IPipelineUseCase useCase, IPipeline pipeline)
+        {
+             
+            ConfigureAndExecutePipelineUI configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(useCase,this);
+            configureAndExecuteDialog.Dock = DockStyle.Fill;
+            
+            return configureAndExecuteDialog;
+        }
+
+        public override CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable, IProject project, string cohortInitialDescription)
+        {
+            var ui = new CohortCreationRequestUI(this,externalCohortTable,project);
+                
+            if(!string.IsNullOrWhiteSpace(cohortInitialDescription))
+                ui.CohortDescription = cohortInitialDescription + " (" + Environment.UserName + " - " + DateTime.Now + ")";
+
+            if (ui.ShowDialog() != DialogResult.OK)
+                return null;
+
+            return ui.Result;
+        }
     }
 }

@@ -11,8 +11,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CohortCommitting.Pipeline;
+using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
@@ -47,7 +51,8 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         /// <returns></returns>
         List<CommandInvokerDelegate> GetDelegates();
-        
+
+
         /// <summary>
         /// Stores the location of the Catalogue / Data Export repository databases and provides access to their objects
         /// </summary>
@@ -58,6 +63,21 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         /// <returns></returns>
         IEnumerable<Type> GetIgnoredCommands();
+
+        /// <summary>
+        /// Create a class capable of running a <see cref="IPipeline"/> under a given <see cref="IPipelineUseCase"/>.  This may be an async process e.g. non modal dialogues
+        /// </summary>
+        /// <returns></returns>
+        IPipelineRunner GetPipelineRunner(IPipelineUseCase useCase, IPipeline pipeline);
+
+        /// <summary>
+        /// Prompts the user to enter a description for a cohort they are trying to create including whether it is intended to replace an old version of another cohort.
+        /// </summary>
+        /// <param name="externalCohortTable">Where the user will be creating the cohort</param>
+        /// <param name="project">The project the cohort should be associated with</param>
+        /// <param name="cohortInitialDescription">Optional initial description for the cohort which may be changed by the user</param>
+        /// <returns></returns>
+        CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable, IProject project, string cohortInitialDescription);
 
         /// <summary>
         /// Prompts the user to pick from one of the <paramref name="availableObjects"/> one or more objects.  Returns null or empty if
@@ -271,5 +291,6 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         /// <param name="o"></param>
         void Activate(DatabaseEntity o);
+
     }
 }

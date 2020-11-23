@@ -6,24 +6,24 @@
 
 using System.Drawing;
 using System.Linq;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline.Events;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands
+namespace Rdmp.Core.CommandExecution.CohortCreationCommands
 {
-    public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration:CohortCreationCommandExecution
+    public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration : CohortCreationCommandExecution
     {
         private CohortIdentificationConfiguration _cic;
         private CohortIdentificationConfiguration[] _allConfigurations;
 
-        public ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(IActivateItems activator,ExternalCohortTable externalCohortTable = null) : base(activator)
+        public ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(IBasicActivateItems activator, ExternalCohortTable externalCohortTable) : base(activator)
         {
             _allConfigurations = activator.CoreChildProvider.AllCohortIdentificationConfigurations;
             ExternalCohortTable = externalCohortTable;
@@ -44,11 +44,13 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands
         {
             base.Execute();
 
-            if(_cic == null)
-                if(!SelectOne(Activator.RepositoryLocator.CatalogueRepository,out _cic))
-                    return;
+            if (_cic == null)
+                _cic = (CohortIdentificationConfiguration)BasicActivator.SelectOne("Select Cohort Builder Query", BasicActivator.GetAll<CohortIdentificationConfiguration>().ToArray());
 
-            var request = GetCohortCreationRequest("Patients in CohortIdentificationConfiguration '" + _cic  +"' (ID=" +_cic.ID +")" );
+            if (_cic == null)
+                return;
+
+            var request = GetCohortCreationRequest("Patients in CohortIdentificationConfiguration '" + _cic + "' (ID=" + _cic.ID + ")");
 
             //user choose to cancel the cohort creation request dialogue
             if (request == null)
@@ -57,16 +59,16 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands
             request.CohortIdentificationConfiguration = _cic;
 
             var configureAndExecute = GetConfigureAndExecuteControl(request, "Execute CIC " + _cic + " and commmit results");
-            
+
             configureAndExecute.PipelineExecutionFinishedsuccessfully += OnImportCompletedSuccessfully;
 
-            Activator.ShowWindow(configureAndExecute);
+            configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
         }
 
-        void OnImportCompletedSuccessfully(object sender, PipelineEngineEventArgs args)
+        void OnImportCompletedSuccessfully(object sender, PipelineEngineEventArgs u)
         {
             //see if we can associate the cic with the project
-            var cmd = new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(Activator).SetTarget(Project).SetTarget(_cic);
+            var cmd = new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(BasicActivator).SetTarget((Project)Project).SetTarget(_cic);
 
             //we can!
             if (!cmd.IsImpossible)
@@ -81,9 +83,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands
         public override IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
         {
             base.SetTarget(target);
-            
+
             if (target is CohortIdentificationConfiguration)
-                _cic = (CohortIdentificationConfiguration) target;
+                _cic = (CohortIdentificationConfiguration)target;
 
             return this;
         }

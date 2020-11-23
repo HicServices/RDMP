@@ -6,44 +6,34 @@
 
 using System;
 using System.Drawing;
-using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands
+namespace Rdmp.Core.CommandExecution.CohortCreationCommands
 {
-    internal class ExecuteCommandImportAlreadyExistingCohort : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, IAtomicCommand
     {
         private readonly ExternalCohortTable _externalCohortTable;
+        private readonly Func<int?> _existingCohortSelectorDelegate;
 
-        public ExecuteCommandImportAlreadyExistingCohort(IActivateItems activator, ExternalCohortTable externalCohortTable):base(activator)
+        public ExecuteCommandImportAlreadyExistingCohort(IBasicActivateItems activator, ExternalCohortTable externalCohortTable, Func<int?> existingCohortSelectorDelegate) : base(activator)
         {
             _externalCohortTable = externalCohortTable;
+            this._existingCohortSelectorDelegate = existingCohortSelectorDelegate;
         }
 
         public override void Execute()
         {
             base.Execute();
+            
+            var newId = _existingCohortSelectorDelegate();
 
-            SelectWhichCohortToImportUI importDialog = new SelectWhichCohortToImportUI(Activator,_externalCohortTable);
-
-            if (importDialog.ShowDialog() == DialogResult.OK)
+            if(newId.HasValue)
             {
-                int toAddID = importDialog.IDToImport;
-                try
-                {
-                    var newCohort = new ExtractableCohort(Activator.RepositoryLocator.DataExportRepository, _externalCohortTable, toAddID);
-                    Publish(_externalCohortTable);
-                }
-                catch (Exception exception)
-                {
-                    MessageBox.Show(exception.Message);
-                }
+                new ExtractableCohort(BasicActivator.RepositoryLocator.DataExportRepository, _externalCohortTable, newId.Value);
+                Publish(_externalCohortTable);
             }
         }
 

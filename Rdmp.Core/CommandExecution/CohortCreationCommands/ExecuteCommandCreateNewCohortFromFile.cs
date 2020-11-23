@@ -6,26 +6,24 @@
 
 using System.Drawing;
 using System.IO;
-using System.Windows.Forms;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands
+namespace Rdmp.Core.CommandExecution.CohortCreationCommands
 {
-    public class ExecuteCommandCreateNewCohortFromFile:CohortCreationCommandExecution
+    public class ExecuteCommandCreateNewCohortFromFile : CohortCreationCommandExecution
     {
         private FileInfo _file;
 
-        public ExecuteCommandCreateNewCohortFromFile(IActivateItems activator, ExternalCohortTable externalCohortTable = null) : base(activator)
+        public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, ExternalCohortTable externalCohortTable ) : base(activator)
         {
             ExternalCohortTable = externalCohortTable;
             UseTripleDotSuffix = true;
         }
-        public ExecuteCommandCreateNewCohortFromFile(IActivateItems activator, FileInfo file, ExternalCohortTable externalCohortTable = null)
+        public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, FileInfo file, ExternalCohortTable externalCohortTable)
             : base(activator)
         {
             _file = file;
@@ -50,19 +48,20 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands
             FlatFileToLoad flatFile;
 
             //if no explicit file has been chosen
-            if(_file == null)
+            if (_file == null)
             {
-                //get user to pick one
-                OpenFileDialog ofd = new OpenFileDialog();
-                if (ofd.ShowDialog() != DialogResult.OK)
-                    return;
+                var file = BasicActivator.SelectFile("Cohort file");
                 
-                flatFile = new FlatFileToLoad(new FileInfo(ofd.FileName));
+                //get user to pick one
+                if (file == null)
+                    return;
+
+                flatFile = new FlatFileToLoad(file);
             }
             else
                 flatFile = new FlatFileToLoad(_file);
-            
-            var request = GetCohortCreationRequest("Patient identifiers in file '" + flatFile.File.FullName +"'");
+
+            var request = GetCohortCreationRequest("Patient identifiers in file '" + flatFile.File.FullName + "'");
 
             //user choose to cancel the cohort creation request dialogue
             if (request == null)
@@ -73,8 +72,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands
             var configureAndExecuteDialog = GetConfigureAndExecuteControl(request, "Uploading File " + flatFile.File.Name);
 
             //add the flat file to the dialog with an appropriate description of what they are trying to achieve
-            
-            Activator.ShowWindow(configureAndExecuteDialog, true);
+            configureAndExecuteDialog.Run(BasicActivator.RepositoryLocator,null,null,null);
         }
     }
 }

@@ -6,27 +6,24 @@
 
 using System;
 using System.Linq;
-using System.Windows.Forms;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.Listeners;
 using Rdmp.Core.Providers;
-using Rdmp.UI.CohortUI.ImportCustomData;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.PipelineUIs.Pipelines;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands
+namespace Rdmp.Core.CommandExecution.CohortCreationCommands
 {
-    public abstract class CohortCreationCommandExecution :BasicUICommandExecution,IAtomicCommandWithTarget
+    public abstract class CohortCreationCommandExecution : BasicCommandExecution, IAtomicCommandWithTarget
     {
         protected ExternalCohortTable ExternalCohortTable;
-        protected Project Project;
-        
-        protected CohortCreationCommandExecution(IActivateItems activator) : base(activator)
+        protected IProject Project;
+
+        protected CohortCreationCommandExecution(IBasicActivateItems activator) : base(activator)
         {
             var dataExport = activator.CoreChildProvider as DataExportChildProvider;
 
@@ -39,30 +36,25 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands
             if (!dataExport.CohortSources.Any())
                 SetImpossible("There are no cohort sources configured, you must create one in the Saved Cohort tabs");
         }
-        protected CohortCreationRequest GetCohortCreationRequest(string cohortInitialDescription)
+        protected ICohortCreationRequest GetCohortCreationRequest(string cohortInitialDescription)
         {
             //user wants to create a new cohort
 
             //do we know where it's going to end up?
             if (ExternalCohortTable == null)
-                if (!SelectOne(Activator.RepositoryLocator.DataExportRepository, out ExternalCohortTable,null,true)) //not yet, get user to pick one
+                if (!SelectOne(BasicActivator.RepositoryLocator.DataExportRepository, out ExternalCohortTable, null, true)) //not yet, get user to pick one
                     return null;//user didn't select one and cancelled dialog
-            
+
             //and document the request
+            
 
             //Get a new request for the source they are trying to populate
-            CohortCreationRequestUI requestUI = new CohortCreationRequestUI(Activator,ExternalCohortTable, Project);
-
-            if(!string.IsNullOrWhiteSpace(cohortInitialDescription))
-                requestUI.CohortDescription = cohortInitialDescription + " (" + Environment.UserName + " - " + DateTime.Now + ")";
-
-            if (requestUI.ShowDialog() != DialogResult.OK)
-                return null;
+             var req = BasicActivator.GetCohortCreationRequest(ExternalCohortTable,Project, cohortInitialDescription);
 
             if (Project == null)
-                Project = requestUI.Project;
+                Project = req.Project;
 
-            return requestUI.Result;
+            return req;
         }
 
         public virtual IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
@@ -71,20 +63,19 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands
                 Project = (Project)target;
 
             if (target is ExternalCohortTable)
-                ExternalCohortTable = (ExternalCohortTable) target;
+                ExternalCohortTable = (ExternalCohortTable)target;
 
             return this;
         }
 
 
-        protected ConfigureAndExecutePipelineUI GetConfigureAndExecuteControl(CohortCreationRequest request, string description)
+        protected IPipelineRunner GetConfigureAndExecuteControl(ICohortCreationRequest request, string description)
         {
-            var catalogueRepository = Activator.RepositoryLocator.CatalogueRepository;
-            
-            ConfigureAndExecutePipelineUI configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(request,Activator);
-            configureAndExecuteDialog.Dock = DockStyle.Fill;
-            
-            configureAndExecuteDialog.PipelineExecutionFinishedsuccessfully += (o, args) => OnCohortCreatedSuccessfully(configureAndExecuteDialog, request);
+            var catalogueRepository = BasicActivator.RepositoryLocator.CatalogueRepository;
+
+            var pipelineRunner = BasicActivator.GetPipelineRunner(request,null);
+
+            pipelineRunner.PipelineExecutionFinishedsuccessfully += (o, args) => OnCohortCreatedSuccessfully(pipelineRunner, request);
 
             //add in the logging server
             var loggingServer = catalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
@@ -95,31 +86,22 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands
                 logManager.CreateNewLoggingTaskIfNotExists(ExtractableCohort.CohortLoggingTask);
 
                 //create a db listener 
-                var toDbListener = new ToLoggingDatabaseDataLoadEventListener(this, logManager,ExtractableCohort.CohortLoggingTask, description);
+                var toDbListener = new ToLoggingDatabaseDataLoadEventListener(this, logManager, ExtractableCohort.CohortLoggingTask, description);
 
                 //make all messages go to both the db and the UI
-                configureAndExecuteDialog.SetAdditionalProgressListener(toDbListener);
+                pipelineRunner.SetAdditionalProgressListener(toDbListener);
 
                 //after executing the pipeline finalise the db listener table info records
-                configureAndExecuteDialog.PipelineExecutionFinishedsuccessfully += (s,e)=>toDbListener.FinalizeTableLoadInfos();
+                pipelineRunner.PipelineExecutionFinishedsuccessfully += (s, e) => toDbListener.FinalizeTableLoadInfos();
             }
 
-            return configureAndExecuteDialog;
+            return pipelineRunner;
         }
 
-        private void OnCohortCreatedSuccessfully(ContainerControl responsibleControl, CohortCreationRequest request)
+        private void OnCohortCreatedSuccessfully(IPipelineRunner runner, ICohortCreationRequest request)
         {
-            if (responsibleControl.InvokeRequired)
-            {
-                responsibleControl.Invoke(new MethodInvoker(() => OnCohortCreatedSuccessfully(responsibleControl, request)));
-                return;
-            }
-
             if (request.CohortCreatedIfAny != null)
                 Publish(request.CohortCreatedIfAny);
-
-            if (Activator.YesNo("Pipeline reports it has successfully loaded the cohort, would you like to close the Form?", "Successfully Created Cohort"))
-                responsibleControl.ParentForm.Close();
         }
     }
 }

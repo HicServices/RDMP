@@ -10,14 +10,14 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.CohortCreationCommands;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataQualityEngine;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Reports;
-using Rdmp.UI;
 using Rdmp.UI.ChecksUI;
+using Rdmp.UI.CohortUI.ImportCustomData;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.LocationsMenu.Ticketing;
 using Rdmp.UI.MainFormUITabs;
@@ -222,8 +222,8 @@ namespace ResearchDataManagementPlatform.Menus
                 new ExecuteCommandCreateNewLoadMetadata(Activator),
                 new ExecuteCommandCreateNewStandardRegex(Activator),
                 new ExecuteCommandCreateNewCohortDatabaseUsingWizard(Activator),
-                new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator),
-                new ExecuteCommandCreateNewCohortFromFile(Activator),
+                new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator,null),
+                new ExecuteCommandCreateNewCohortFromFile(Activator,null),
                 new ExecuteCommandCreateNewCohortFromCatalogue(Activator),
                 new ExecuteCommandCreateNewExtractableDataSetPackage(Activator),
                 new ExecuteCommandCreateNewDataExtractionProject(Activator),

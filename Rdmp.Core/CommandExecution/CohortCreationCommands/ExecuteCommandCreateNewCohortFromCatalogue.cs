@@ -11,18 +11,16 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands
+namespace Rdmp.Core.CommandExecution.CohortCreationCommands
 {
     public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandExecution
     {
         private ExtractionInformation _extractionIdentifierColumn;
 
 
-        public ExecuteCommandCreateNewCohortFromCatalogue(IActivateItems activator,ExtractionInformation extractionInformation) : this(activator)
+        public ExecuteCommandCreateNewCohortFromCatalogue(IBasicActivateItems activator, ExtractionInformation extractionInformation) : this(activator)
         {
             if (!extractionInformation.IsExtractionIdentifier)
                 SetImpossible("Column is not marked IsExtractionIdentifier");
@@ -38,17 +36,17 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands
         }
 
         [UseWithObjectConstructor]
-        public ExecuteCommandCreateNewCohortFromCatalogue(IActivateItems activator, Catalogue catalogue): this(activator)
+        public ExecuteCommandCreateNewCohortFromCatalogue(IBasicActivateItems activator, Catalogue catalogue) : this(activator)
         {
             SetExtractionIdentifierColumn(GetExtractionInformationFromCatalogue(catalogue));
         }
 
-        public ExecuteCommandCreateNewCohortFromCatalogue(IActivateItems activator): base(activator)
+        public ExecuteCommandCreateNewCohortFromCatalogue(IBasicActivateItems activator) : base(activator)
         {
             UseTripleDotSuffix = true;
         }
 
-        public ExecuteCommandCreateNewCohortFromCatalogue(IActivateItems activator, ExternalCohortTable externalCohortTable) : this(activator)
+        public ExecuteCommandCreateNewCohortFromCatalogue(IBasicActivateItems activator, ExternalCohortTable externalCohortTable) : this(activator)
         {
             ExternalCohortTable = externalCohortTable;
         }
@@ -67,7 +65,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands
             return base.SetTarget(target);
         }
 
-        private ExtractionInformation GetExtractionInformationFromCatalogue(Catalogue catalogue)
+        private ExtractionInformation GetExtractionInformationFromCatalogue(ICatalogue catalogue)
         {
 
             var eis = catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
@@ -94,16 +92,16 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands
         {
             if (_extractionIdentifierColumn == null)
             {
-                var cata = SelectOne(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>());
+                var cata = (ICatalogue)BasicActivator.SelectOne("Select Catalogue to create cohort from", BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>());
 
-                if(cata == null)
+                if (cata == null)
                     return;
                 SetExtractionIdentifierColumn(GetExtractionInformationFromCatalogue(cata));
             }
 
             base.Execute();
 
-            var request = GetCohortCreationRequest("All patient identifiers in ExtractionInformation '" + _extractionIdentifierColumn.CatalogueItem.Catalogue + "." + _extractionIdentifierColumn.GetRuntimeName() + "'  (ID=" + _extractionIdentifierColumn.ID +")");
+            var request = GetCohortCreationRequest("All patient identifiers in ExtractionInformation '" + _extractionIdentifierColumn.CatalogueItem.Catalogue + "." + _extractionIdentifierColumn.GetRuntimeName() + "'  (ID=" + _extractionIdentifierColumn.ID + ")");
 
             //user choose to cancel the cohort creation request dialogue
             if (request == null)
@@ -111,8 +109,8 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands
 
             request.ExtractionIdentifierColumn = _extractionIdentifierColumn;
             var configureAndExecute = GetConfigureAndExecuteControl(request, "Import column " + _extractionIdentifierColumn + " as cohort and commmit results");
-            
-            Activator.ShowWindow(configureAndExecute);
+
+            configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
         }
 
         public override Image GetImage(IIconProvider iconProvider)

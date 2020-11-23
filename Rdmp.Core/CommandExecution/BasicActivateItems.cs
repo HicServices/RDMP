@@ -12,8 +12,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CohortCommitting.Pipeline;
+using Rdmp.Core.CommandLine.Interactive;
+using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
@@ -222,6 +227,42 @@ namespace Rdmp.Core.CommandExecution
         {
             return new List<CommandInvokerDelegate>();
         }
+        
+        /// <inheritdoc/>
+        public virtual IPipelineRunner GetPipelineRunner(IPipelineUseCase useCase, IPipeline pipeline)
+        {
+            return new PipelineRunner(useCase,pipeline);
+        }
+        
+        /// <inheritdoc/>
+        public virtual CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable, IProject project, string cohortInitialDescription)
+        {
+            int version;
+            var projectNumber = project?.ProjectNumber;
+            string name;
 
+            if(!this.TypeText("Name","Enter name for cohort",255,null,out name,false))
+                throw new Exception("User chose not to enter a name for the cohortand none was provided");
+
+
+            if(projectNumber == null)
+                if(this.SelectValueType("enter project number",typeof(int),0,out object chosen))
+                {
+                    projectNumber = (int)chosen;
+                }
+                else
+                    throw new Exception("User chose not to enter a Project number and none was provided");
+
+            
+            if(this.SelectValueType("enter version number for cohort",typeof(int),0,out object chosenVersion))
+            {
+                version = (int)chosenVersion;
+            }
+            else
+                throw new Exception("User chose not to enter a version number and none was provided");
+
+
+            return new CohortCreationRequest(project,new CohortDefinition(null,name,version,projectNumber.Value,externalCohortTable),RepositoryLocator.DataExportRepository,cohortInitialDescription);
+        }
     }
 }

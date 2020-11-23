@@ -10,9 +10,13 @@ using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Interactive.Picking;
+using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
@@ -342,6 +346,11 @@ namespace Rdmp.Core.CommandLine.Interactive
                         break;
                 }
             }
+        }
+
+        public override CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable, IProject project, string cohortInitialDescription)
+        {
+            throw new NotImplementedException();
         }
     }
 }
