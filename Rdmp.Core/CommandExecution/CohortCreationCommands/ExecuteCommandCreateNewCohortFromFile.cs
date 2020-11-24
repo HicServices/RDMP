@@ -7,6 +7,7 @@
 using System.Drawing;
 using System.IO;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.Icons.IconProvision;
@@ -19,24 +20,24 @@ namespace Rdmp.Core.CommandExecution.CohortCreationCommands
     {
         private FileInfo _file;
 
-        public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, ExternalCohortTable externalCohortTable ) : base(activator)
+        public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, ExternalCohortTable externalCohortTable ) :
+            base(activator,null,null,null)
         {
             ExternalCohortTable = externalCohortTable;
             UseTripleDotSuffix = true;
         }
         public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, FileInfo file, ExternalCohortTable externalCohortTable)
-            : this(activator,file,externalCohortTable,null,null)
+            : this(activator,file,externalCohortTable,null,null,null)
         {
         }
 
         [UseWithObjectConstructor]
-        public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, FileInfo file, ExternalCohortTable externalCohortTable, string cohortName, Project project)
-            : base(activator,cohortName)
+        public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, FileInfo file, ExternalCohortTable externalCohortTable, string cohortName, Project project, IPipeline pipeline)
+            : base(activator,cohortName,project,pipeline)
             {
                 _file = file;
                 ExternalCohortTable = externalCohortTable;
                 UseTripleDotSuffix = true;
-                Project = project;
             }
 
         public override string GetCommandHelp()

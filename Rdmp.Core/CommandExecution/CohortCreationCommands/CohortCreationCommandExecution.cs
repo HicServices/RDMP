@@ -11,6 +11,7 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.Listeners;
@@ -22,12 +23,15 @@ namespace Rdmp.Core.CommandExecution.CohortCreationCommands
     {
         protected ExternalCohortTable ExternalCohortTable;
         protected IProject Project;
+        protected IPipeline Pipeline;
         private string _explicitCohortName;
 
-        protected CohortCreationCommandExecution(IBasicActivateItems activator,string cohortName=null) : base(activator)
+        protected CohortCreationCommandExecution(IBasicActivateItems activator,string cohortName,Project project, IPipeline pipeline) : base(activator)
         {
             var dataExport = activator.CoreChildProvider as DataExportChildProvider;
             _explicitCohortName = cohortName;
+            Project = project;
+            Pipeline = pipeline;
 
             if (dataExport == null)
             {
@@ -65,18 +69,18 @@ namespace Rdmp.Core.CommandExecution.CohortCreationCommands
             }
         }
 
-        private ICohortCreationRequest GenerateCohortCreationRequestFromNameAndProject(string explicitCohortName, string auditLogDescription)
+        private ICohortCreationRequest GenerateCohortCreationRequestFromNameAndProject(string name, string auditLogDescription)
         {
             var existing = ExtractableCohort.GetImportableCohortDefinitions(ExternalCohortTable).Where(d=>d.Description.Equals(_explicitCohortName)).ToArray();
             var version = 1;
 
             // If the user has used this description before then we can just bump the version by 1
-            if(existing != null)
+            if(existing != null && existing.Any())
             {
                 version = existing.Max(v=>v.Version) + 1;
             }
 
-            return new CohortCreationRequest(Project,new CohortDefinition(null,_explicitCohortName,version,Project.ProjectNumber.Value,ExternalCohortTable),BasicActivator.RepositoryLocator.DataExportRepository,auditLogDescription);
+            return new CohortCreationRequest(Project,new CohortDefinition(null,name,version,Project.ProjectNumber.Value,ExternalCohortTable),BasicActivator.RepositoryLocator.DataExportRepository,auditLogDescription);
         }
 
         public virtual IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
@@ -95,7 +99,7 @@ namespace Rdmp.Core.CommandExecution.CohortCreationCommands
         {
             var catalogueRepository = BasicActivator.RepositoryLocator.CatalogueRepository;
 
-            var pipelineRunner = BasicActivator.GetPipelineRunner(request,null);
+            var pipelineRunner = BasicActivator.GetPipelineRunner(request,Pipeline);
 
             pipelineRunner.PipelineExecutionFinishedsuccessfully += (o, args) => OnCohortCreatedSuccessfully(pipelineRunner, request);
 

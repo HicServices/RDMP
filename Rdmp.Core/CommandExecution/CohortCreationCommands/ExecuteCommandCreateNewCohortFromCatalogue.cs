@@ -41,7 +41,8 @@ namespace Rdmp.Core.CommandExecution.CohortCreationCommands
             SetExtractionIdentifierColumn(GetExtractionInformationFromCatalogue(catalogue));
         }
 
-        public ExecuteCommandCreateNewCohortFromCatalogue(IBasicActivateItems activator) : base(activator)
+        public ExecuteCommandCreateNewCohortFromCatalogue(IBasicActivateItems activator) 
+            : base(activator,null,null,null)
         {
             UseTripleDotSuffix = true;
         }

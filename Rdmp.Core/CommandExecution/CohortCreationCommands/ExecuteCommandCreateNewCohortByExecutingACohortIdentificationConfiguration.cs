@@ -23,7 +23,8 @@ namespace Rdmp.Core.CommandExecution.CohortCreationCommands
         private CohortIdentificationConfiguration _cic;
         private CohortIdentificationConfiguration[] _allConfigurations;
 
-        public ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(IBasicActivateItems activator, ExternalCohortTable externalCohortTable) : base(activator)
+        public ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(IBasicActivateItems activator, ExternalCohortTable externalCohortTable) :
+            base(activator,null,null,null)
         {
             _allConfigurations = activator.CoreChildProvider.AllCohortIdentificationConfigurations;
             ExternalCohortTable = externalCohortTable;

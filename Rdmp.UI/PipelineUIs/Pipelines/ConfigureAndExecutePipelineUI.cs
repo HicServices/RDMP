@@ -295,7 +295,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
         public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
         {
-            this.Show();
+            Activator.ShowDialog(new SingleControlForm(this));
             return 0;
         }
     }
