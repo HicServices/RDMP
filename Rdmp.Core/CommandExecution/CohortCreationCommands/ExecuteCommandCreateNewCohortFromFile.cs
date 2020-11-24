@@ -10,6 +10,7 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution.CohortCreationCommands
@@ -24,12 +25,19 @@ namespace Rdmp.Core.CommandExecution.CohortCreationCommands
             UseTripleDotSuffix = true;
         }
         public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, FileInfo file, ExternalCohortTable externalCohortTable)
-            : base(activator)
+            : this(activator,file,externalCohortTable,null,null)
         {
-            _file = file;
-            ExternalCohortTable = externalCohortTable;
-            UseTripleDotSuffix = true;
         }
+
+        [UseWithObjectConstructor]
+        public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, FileInfo file, ExternalCohortTable externalCohortTable, string cohortName, Project project)
+            : base(activator,cohortName)
+            {
+                _file = file;
+                ExternalCohortTable = externalCohortTable;
+                UseTripleDotSuffix = true;
+                Project = project;
+            }
 
         public override string GetCommandHelp()
         {

@@ -22,10 +22,12 @@ namespace Rdmp.Core.CommandExecution.CohortCreationCommands
     {
         protected ExternalCohortTable ExternalCohortTable;
         protected IProject Project;
+        private string _explicitCohortName;
 
-        protected CohortCreationCommandExecution(IBasicActivateItems activator) : base(activator)
+        protected CohortCreationCommandExecution(IBasicActivateItems activator,string cohortName=null) : base(activator)
         {
             var dataExport = activator.CoreChildProvider as DataExportChildProvider;
+            _explicitCohortName = cohortName;
 
             if (dataExport == null)
             {
@@ -36,7 +38,7 @@ namespace Rdmp.Core.CommandExecution.CohortCreationCommands
             if (!dataExport.CohortSources.Any())
                 SetImpossible("There are no cohort sources configured, you must create one in the Saved Cohort tabs");
         }
-        protected ICohortCreationRequest GetCohortCreationRequest(string cohortInitialDescription)
+        protected ICohortCreationRequest GetCohortCreationRequest(string auditLogDescription)
         {
             //user wants to create a new cohort
 
@@ -46,15 +48,35 @@ namespace Rdmp.Core.CommandExecution.CohortCreationCommands
                     return null;//user didn't select one and cancelled dialog
 
             //and document the request
-            
 
-            //Get a new request for the source they are trying to populate
-             var req = BasicActivator.GetCohortCreationRequest(ExternalCohortTable,Project, cohortInitialDescription);
+            // if we have everything we need to create the cohort right here
+            if(!string.IsNullOrWhiteSpace(_explicitCohortName) && Project?.ProjectNumber != null)
+                return GenerateCohortCreationRequestFromNameAndProject(_explicitCohortName,auditLogDescription);
+            else{
+                // otherwise we are going to have to ask the user for it
 
-            if (Project == null)
-                Project = req.Project;
+                //Get a new request for the source they are trying to populate
+                var req = BasicActivator.GetCohortCreationRequest(ExternalCohortTable,Project, auditLogDescription);
 
-            return req;
+                if (Project == null)
+                    Project = req.Project;
+    
+                return req;
+            }
+        }
+
+        private ICohortCreationRequest GenerateCohortCreationRequestFromNameAndProject(string explicitCohortName, string auditLogDescription)
+        {
+            var existing = ExtractableCohort.GetImportableCohortDefinitions(ExternalCohortTable).Where(d=>d.Description.Equals(_explicitCohortName)).ToArray();
+            var version = 1;
+
+            // If the user has used this description before then we can just bump the version by 1
+            if(existing != null)
+            {
+                version = existing.Max(v=>v.Version) + 1;
+            }
+
+            return new CohortCreationRequest(Project,new CohortDefinition(null,_explicitCohortName,version,Project.ProjectNumber.Value,ExternalCohortTable),BasicActivator.RepositoryLocator.DataExportRepository,auditLogDescription);
         }
 
         public virtual IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
