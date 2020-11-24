@@ -9,6 +9,7 @@ using System.Drawing;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution.CohortCreationCommands
@@ -17,18 +18,29 @@ namespace Rdmp.Core.CommandExecution.CohortCreationCommands
     {
         private readonly ExternalCohortTable _externalCohortTable;
         private readonly Func<int?> _existingCohortSelectorDelegate;
+        private int? _explicitOriginIDToImport;
 
-        public ExecuteCommandImportAlreadyExistingCohort(IBasicActivateItems activator, ExternalCohortTable externalCohortTable, Func<int?> existingCohortSelectorDelegate) : base(activator)
+        private ExecuteCommandImportAlreadyExistingCohort(IBasicActivateItems activator, ExternalCohortTable externalCohortTable):base(activator)
         {
             _externalCohortTable = externalCohortTable;
+        }
+
+        public ExecuteCommandImportAlreadyExistingCohort(IBasicActivateItems activator, ExternalCohortTable externalCohortTable, Func<int?> existingCohortSelectorDelegate) : this(activator,externalCohortTable)
+        {
             this._existingCohortSelectorDelegate = existingCohortSelectorDelegate;
+        }
+        
+        [UseWithObjectConstructor]
+        public ExecuteCommandImportAlreadyExistingCohort(IBasicActivateItems activator, ExternalCohortTable externalCohortTable, int originIDToImport)  : this(activator,externalCohortTable)
+        {
+            _explicitOriginIDToImport = originIDToImport;
         }
 
         public override void Execute()
         {
             base.Execute();
             
-            var newId = _existingCohortSelectorDelegate();
+            var newId = _explicitOriginIDToImport ?? _existingCohortSelectorDelegate();
 
             if(newId.HasValue)
             {

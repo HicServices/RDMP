@@ -7,6 +7,7 @@
 using System.Drawing;
 using System.IO;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline.Requirements;
@@ -16,6 +17,9 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution.CohortCreationCommands
 {
+    /// <summary>
+    /// Loads private identifiers from a file using the given <see cref="Pipeline"/> to create a new <see cref="ExtractableCohort"/> for a given <see cref="Project"/> (which must have a ProjectNumber specified)
+    /// </summary>
     public class ExecuteCommandCreateNewCohortFromFile : CohortCreationCommandExecution
     {
         private FileInfo _file;
@@ -26,13 +30,29 @@ namespace Rdmp.Core.CommandExecution.CohortCreationCommands
             ExternalCohortTable = externalCohortTable;
             UseTripleDotSuffix = true;
         }
+
         public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, FileInfo file, ExternalCohortTable externalCohortTable)
             : this(activator,file,externalCohortTable,null,null,null)
         {
         }
-
+        
         [UseWithObjectConstructor]
-        public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, FileInfo file, ExternalCohortTable externalCohortTable, string cohortName, Project project, IPipeline pipeline)
+        public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, 
+            
+            [DemandsInitialization("A file containing private cohort identifiers")]
+            FileInfo file,
+            
+            [DemandsInitialization("Destination cohort database in which to store identifiers")]
+            ExternalCohortTable externalCohortTable,
+            
+            [DemandsInitialization("Name for cohort.  If the named cohort already exists then a new Version will be assumed e.g. Version 2")]
+            string cohortName,
+            
+            [DemandsInitialization("Project to associate cohort with, must have a ProjectNumber")]
+            Project project,
+            
+            [DemandsInitialization("Pipeline for reading from the file and allocating release identifiers")]
+            IPipeline pipeline)
             : base(activator,cohortName,project,pipeline)
             {
                 _file = file;
