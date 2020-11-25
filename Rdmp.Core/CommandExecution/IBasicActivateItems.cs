@@ -30,6 +30,7 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         bool IsInteractive {get;}
 
+
         /// <summary>
         /// Event triggered when objects should be brought to the users attention
         /// </summary>
@@ -291,6 +292,17 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         /// <param name="o"></param>
         void Activate(DatabaseEntity o);
+
+        /// <summary>
+        /// Handle the creation and configuring of a new <see cref="ICatalogue"/> often with user input about what column(s) should be extractable etc.  Return null if user cancelled the process somehow
+        /// </summary>
+        /// <param name="tableInfo">A reference to an existing table in a database upon which to point the Catalogue</param>
+        /// <param name="initialDescription">Some initial text to </param>
+        /// <param name="projectSpecific">Optional project to associate the <see cref="ICatalogue"/> created with </param>
+        /// <param name="targetFolder">Optional virtual folder into which to put the <see cref="ICatalogue"/> or null.  This is not a file system folder only a visual display to the user in the RDMP client</param>
+        /// <param name="extractionIdentifierColumns">Optional, which column(s) should be <see cref="ConcreteColumn.IsExtractionIdentifier"/></param>
+        /// <returns>A fully configured ready to go Catalogue or null if user cancelled process e.g. if <see cref="IsInteractive"/></returns>
+        ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo,ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, CatalogueFolder targetFolder);
 
     }
 }

@@ -47,6 +47,7 @@ using Rdmp.UI.PluginChildProvision;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleDialogs;
+using Rdmp.UI.SimpleDialogs.ForwardEngineering;
 using Rdmp.UI.SubComponents;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Theme;
@@ -838,5 +839,14 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             return ui.Result;
         }
+
+        public override ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo, ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific)
+        {
+            var ui = new ConfigureCatalogueExtractabilityUI(this, tableInfo, initialDescription, projectSpecific);
+            ui.ShowDialog();
+            
+            return ui.CatalogueCreatedIfAny;
+        }
+
     }
 }

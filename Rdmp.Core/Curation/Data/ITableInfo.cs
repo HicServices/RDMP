@@ -11,6 +11,7 @@ using FAnsi.Naming;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.EntityNaming;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
@@ -106,6 +107,10 @@ namespace Rdmp.Core.Curation.Data
         /// True if the object referenced is a database view
         /// </summary>
         bool IsView {get;set; }
-
+        
+        /// <summary>
+        /// The repository this object is stored in
+        /// </summary>
+        ICatalogueRepository CatalogueRepository { get; }
     }
 }

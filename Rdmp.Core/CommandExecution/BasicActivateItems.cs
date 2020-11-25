@@ -15,6 +15,7 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.CommandLine.Runners;
+using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -263,6 +264,37 @@ namespace Rdmp.Core.CommandExecution
 
 
             return new CohortCreationRequest(project,new CohortDefinition(null,name,version,projectNumber.Value,externalCohortTable),RepositoryLocator.DataExportRepository,cohortInitialDescription);
+        }
+        
+        /// <inheritdoc/>
+        public virtual ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo, ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific)
+        {
+            var engineer = new ForwardEngineerCatalogue(tableInfo,tableInfo.ColumnInfos,true);
+            engineer.ExecuteForwardEngineering(out ICatalogue cata, out _, out ExtractionInformation[] eis);
+
+            if(extractionIdentifierColumns != null)
+                foreach(var col in extractionIdentifierColumns)
+                {
+                    var match = eis.FirstOrDefault(ei=>ei.ColumnInfo?.ID == col.ID);
+                    if(match == null)
+                        throw new ArgumentException($"Supplied ColumnInfo {col.GetRuntimeName()} was not found amongst the columns created");
+
+                    match.IsExtractionIdentifier = true;
+                    match.SaveToDatabase();
+                }
+            
+            if(extractionIdentifierColumns != null && extractionIdentifierColumns.Any())
+            {
+                var eds = new ExtractableDataSet(RepositoryLocator.DataExportRepository,cata);
+                
+                if(projectSpecific != null)
+                {
+                    eds.Project_ID = projectSpecific.ID;
+                    eds.SaveToDatabase();
+                }
+            }
+
+            return cata;
         }
     }
 }

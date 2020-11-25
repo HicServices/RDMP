@@ -6,29 +6,26 @@
 
 using System.Drawing;
 using Rdmp.Core;
-using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.MainFormUITabs.SubComponents;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
 {
-    public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable:BasicUICommandExecution,IAtomicCommand,IAtomicCommandWithTarget
+    public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable : BasicCommandExecution, IAtomicCommand, IAtomicCommandWithTarget
     {
         private Project _project;
 
         public CatalogueFolder TargetFolder { get; set; }
-        
+
         /// <summary>
         /// Create a project specific Catalogue when command is executed by prompting the user to first pick a project
         /// </summary>
         public bool PromptForProject { get; set; }
 
-        public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IActivateItems activator) : base(activator)
+        public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IBasicActivateItems activator) : base(activator)
         {
             UseTripleDotSuffix = true;
         }
@@ -36,15 +33,17 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-            
-            if(PromptForProject)
-                if (SelectOne(Activator.RepositoryLocator.DataExportRepository, out Project p))
+
+            if (PromptForProject)
+                if (SelectOne(BasicActivator.RepositoryLocator.DataExportRepository, out Project p))
                     _project = p;
                 else
                     return; //dialogue was cancelled
 
-            var importTable = new ImportSQLTableUI(Activator,true){
-                TargetFolder = TargetFolder};
+            var importTable = new ImportSQLTableUI(Activator, true)
+            {
+                TargetFolder = TargetFolder
+            };
 
             if (_project != null)
                 importTable.SetProjectSpecific(_project);
@@ -58,7 +57,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         }
         public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
         {
-            if(target is Project)
+            if (target is Project)
                 _project = (Project)target;
 
             return this;

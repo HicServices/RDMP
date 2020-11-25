@@ -33,7 +33,7 @@ namespace Rdmp.Core.CommandExecution
         {
             base.Execute();
 
-            Catalogue c = null;
+            ICatalogue c = null;
 
             var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, _table);
             importer.DoImport(out TableInfo ti, out ColumnInfo[] cis);

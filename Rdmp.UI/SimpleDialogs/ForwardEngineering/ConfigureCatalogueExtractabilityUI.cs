@@ -55,8 +55,8 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
         private object[] _extractionCategories;
         
         private string NotExtractable = "Not Extractable";
-        private Catalogue _catalogue;
-        private TableInfo _tableInfo;
+        private ICatalogue _catalogue;
+        private ITableInfo _tableInfo;
         private bool _choicesFinalised;
         private HelpWorkflow _workflow;
         private CatalogueItem[] _catalogueItems;
@@ -66,10 +66,10 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
         /// <summary>
         /// the Project to associate the Catalogue with to make it ProjectSpecific (probably null)
         /// </summary>
-        private Project _projectSpecific;
+        private IProject _projectSpecific;
 
-        public Catalogue CatalogueCreatedIfAny { get { return _catalogue; }}
-        public TableInfo TableInfoCreated{get { return _tableInfo; }}
+        public ICatalogue CatalogueCreatedIfAny { get { return _catalogue; }}
+        public ITableInfo TableInfoCreated{get { return _tableInfo; }}
         public DiscoveredTable TableCreated { get; set; }
         public CatalogueFolder TargetFolder { get; set; }
 
@@ -77,13 +77,13 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
         
         ObjectSaverButton objectSaverButton1 = new ObjectSaverButton();
 
-        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, TableInfo tableInfo,string initialDescription, Project projectSpecificIfAny):this(activator)
+        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfo tableInfo,string initialDescription, IProject projectSpecificIfAny):this(activator)
         {
             _tableInfo = tableInfo;
             Initialize(activator, initialDescription, projectSpecificIfAny);
         }
 
-        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer, string initialDescription, Project projectSpecificIfAny):this(activator)
+        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer, string initialDescription, IProject projectSpecificIfAny):this(activator)
         {
             ColumnInfo[] cols;
             importer.DoImport(out _tableInfo, out cols);
@@ -101,7 +101,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             ContextMenuStrip.Items.Add(new SaveMenuItem(this));
         }
 
-        private void Initialize(IActivateItems activator,  string initialDescription, Project projectSpecificIfAny)
+        private void Initialize(IActivateItems activator,  string initialDescription, IProject projectSpecificIfAny)
         {
             CommonFunctionality.SetItemActivator(activator);
             var cols = _tableInfo.ColumnInfos;
