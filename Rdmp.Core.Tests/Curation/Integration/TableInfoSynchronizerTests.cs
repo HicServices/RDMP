@@ -20,7 +20,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
     public class TableInfoSynchronizerTests:DatabaseTests
     {
         private DiscoveredServer _server;
-        private TableInfo tableInfoCreated;
+        private ITableInfo tableInfoCreated;
         private ColumnInfo[] columnInfosCreated;
         private DiscoveredDatabase _database;
 
@@ -115,13 +115,8 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [TestCase(false)]
         public void SynchronizationTests_ColumnAddedWithCatalogue(bool acceptChanges)
         {
-            ForwardEngineerCatalogue cataEngineer = new ForwardEngineerCatalogue(tableInfoCreated,columnInfosCreated,true);
-
-            Catalogue cata;
-            CatalogueItem[] cataItems;
-            ExtractionInformation[] extractionInformations;
-            
-            cataEngineer.ExecuteForwardEngineering(out cata, out cataItems, out extractionInformations);
+            ForwardEngineerCatalogue cataEngineer = new ForwardEngineerCatalogue(tableInfoCreated,columnInfosCreated,true);            
+            cataEngineer.ExecuteForwardEngineering(out var cata, out var cataItems, out var extractionInformations);
 
             try
             {
@@ -184,7 +179,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
                     new DatabaseColumnRequest("F",new DatabaseTypeRequest(typeof(int)))
                 });
 
-            Import(tbl,out TableInfo ti,out _);
+            Import(tbl,out var ti,out _);
 
             var s = new TableInfoSynchronizer(ti);
             s.Synchronize(new ThrowImmediatelyCheckNotifier());

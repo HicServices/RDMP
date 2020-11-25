@@ -13,7 +13,7 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
 {
-    internal class ExecuteCommandCreateNewCatalogueFromTableInfo : CatalogueCreationCommandExecution
+    public class ExecuteCommandCreateNewCatalogueFromTableInfo : CatalogueCreationCommandExecution
     {
         private TableInfo _tableInfo;
 

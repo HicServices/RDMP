@@ -22,7 +22,7 @@ namespace Rdmp.Core.Curation.Data
     /// </summary>
     public class CatalogueFolder : IConvertible
     {
-        private readonly Catalogue _parent;
+        private readonly ICatalogue _parent;
         private string _path;
          
         /// <summary>
@@ -61,7 +61,7 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="folder"></param>
-        public CatalogueFolder(Catalogue parent, string folder)
+        public CatalogueFolder(ICatalogue parent, string folder)
         {
             //always Lower everything!
             folder = folder.ToLower();

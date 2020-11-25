@@ -16,10 +16,10 @@ namespace Rdmp.Core.Providers.Nodes
     public class DataAccessCredentialUsageNode:Node, IDeleteable
     {
         public DataAccessCredentials Credentials { get; private set; }
-        public TableInfo TableInfo { get; private set; }
+        public ITableInfo TableInfo { get; private set; }
         public DataAccessContext Context { get; private set; }
 
-        public DataAccessCredentialUsageNode(DataAccessCredentials credentials,TableInfo tableInfo,DataAccessContext context)
+        public DataAccessCredentialUsageNode(DataAccessCredentials credentials,ITableInfo tableInfo,DataAccessContext context)
         {
             Credentials = credentials;
             TableInfo = tableInfo;

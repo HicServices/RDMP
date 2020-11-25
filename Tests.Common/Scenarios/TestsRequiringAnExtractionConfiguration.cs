@@ -35,8 +35,8 @@ namespace Tests.Common.Scenarios
     [TestFixture]
     public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
     {
-        protected Catalogue _catalogue;
-        protected TableInfo _tableInfo;
+        protected ICatalogue _catalogue;
+        protected ITableInfo _tableInfo;
         protected ExtractableDataSet _extractableDataSet;
         protected Project _project;
         protected ExtractionConfiguration _configuration;

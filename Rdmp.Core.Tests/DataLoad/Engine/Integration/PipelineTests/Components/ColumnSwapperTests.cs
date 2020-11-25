@@ -40,10 +40,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
             dt.Rows.Add("D", 5); //oh dear D maps to 2 out values that's a violation! but if we don't see a D it doesn't matter
 
             var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-            TableInfo map;
-            ColumnInfo[] mapCols;
-
-            Import(db.CreateTable("Map", dt),out map,out mapCols);
+            
+            Import(db.CreateTable("Map", dt),out var map,out var mapCols);
 
             var swapper = new ColumnSwapper();
             swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
@@ -99,10 +97,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
             dt.Rows.Add("D", 5); //oh dear D maps to 2 out values that's a violation! but if we don't see a D it doesn't matter
 
             var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-            TableInfo map;
-            ColumnInfo[] mapCols;
 
-            Import(db.CreateTable("Map", dt), out map, out mapCols);
+            Import(db.CreateTable("Map", dt), out var map, out var mapCols);
 
             var swapper = new ColumnSwapper();
             swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
@@ -163,10 +159,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
             dt.Rows.Add("D", 5); //oh dear D maps to 2 out values that's a violation! but if we don't see a D it doesn't matter
 
             var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-            TableInfo map;
-            ColumnInfo[] mapCols;
 
-            Import(db.CreateTable("Map", dt), out map, out mapCols);
+            Import(db.CreateTable("Map", dt), out var map, out var mapCols);
 
             var swapper = new ColumnSwapper();
             swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
@@ -212,10 +206,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
             dt.Rows.Add(2, 2);
 
             var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-            TableInfo map;
-            ColumnInfo[] mapCols;
-
-            Import(db.CreateTable("Map", dt), out map, out mapCols);
+            
+            Import(db.CreateTable("Map", dt), out var map, out var mapCols);
 
             var swapper = new ColumnSwapper();
             swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
@@ -258,10 +250,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
             dt.Rows.Add(2, 2);
 
             var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-            TableInfo map;
-            ColumnInfo[] mapCols;
 
-            Import(db.CreateTable("Map", dt), out map, out mapCols);
+            Import(db.CreateTable("Map", dt), out var map, out var mapCols);
 
             var swapper = new ColumnSwapper();
             swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
@@ -308,12 +298,10 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
             dt.SetDoNotReType(true);
 
             var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-            TableInfo map;
-            ColumnInfo[] mapCols;
 
             DiscoveredTable mapTbl;
 
-            Import(mapTbl = db.CreateTable("Map", dt), out map, out mapCols);
+            Import(mapTbl = db.CreateTable("Map", dt), out var map, out var mapCols);
 
             Assert.AreEqual(typeof(string),mapTbl.DiscoverColumn("In").DataType.GetCSharpDataType(), "Expected map to be of string datatype");
 
@@ -352,12 +340,10 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
             dt.Rows.Add(3, 4);
 
             var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-            TableInfo map;
-            ColumnInfo[] mapCols;
-
+            
             DiscoveredTable mapTbl;
 
-            Import(mapTbl = db.CreateTable("Map", dt), out map, out mapCols);
+            Import(mapTbl = db.CreateTable("Map", dt), out var map, out var mapCols);
 
             Assert.AreEqual(typeof(int),mapTbl.DiscoverColumn("In").DataType.GetCSharpDataType(), "Expected map to be of int datatype");
 

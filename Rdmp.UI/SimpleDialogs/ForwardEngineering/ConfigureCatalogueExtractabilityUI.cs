@@ -113,7 +113,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             tbDescription.Text = initialDescription + " (" + Environment.UserName + " - " + DateTime.Now + ")";
             tbTableName.Text = _tableInfo.Name;
             _catalogue.SaveToDatabase();
-            objectSaverButton1.SetupFor(this,_catalogue,activator);
+            objectSaverButton1.SetupFor(this,(DatabaseEntity)_catalogue,activator);
 
             if (_binder == null)
             {
@@ -344,7 +344,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             IAtomicCommandWithTarget cmd;
             if(_projectSpecific != null)
             {
-                cmd = new ExecuteCommandMakeCatalogueProjectSpecific(Activator).SetTarget(_projectSpecific).SetTarget(_catalogue);
+                cmd = new ExecuteCommandMakeCatalogueProjectSpecific(Activator,_catalogue,_projectSpecific);
             
                 if (!cmd.IsImpossible)
                     cmd.Execute();
@@ -451,7 +451,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
                                 TableCreated.Drop();
                         }
                         else
-                            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(TableInfoCreated));
+                            Activator.Publish(TableInfoCreated);
                     }
                     else
                         e.Cancel = true;
@@ -473,7 +473,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             else
             {
                 if(CatalogueCreatedIfAny != null)
-                    Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(CatalogueCreatedIfAny));
+                    Activator.Publish(CatalogueCreatedIfAny);
             }
         }
 
@@ -514,7 +514,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             }
         }
 
-        private void SelectProject(Project projectSpecificIfAny)
+        private void SelectProject(IProject projectSpecificIfAny)
         {
             if (projectSpecificIfAny == null)
             {

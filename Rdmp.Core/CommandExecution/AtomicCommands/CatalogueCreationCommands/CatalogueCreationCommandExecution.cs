@@ -13,17 +13,25 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
     public abstract class CatalogueCreationCommandExecution : BasicCommandExecution, IAtomicCommandWithTarget
     {
         protected IProject ProjectSpecific;
+        
+        public CatalogueFolder TargetFolder {get;set; }
 
         protected const string Desc_ProjectSpecificParameter = "Optionally associate the Catalogue created with a specific Project, otherwise Null";
+        
+        /// <summary>
+        /// Create a project specific Catalogue when command is executed by prompting the user to first pick a project
+        /// </summary>
+        public bool PromptForProject { get; set; }
 
-        protected CatalogueCreationCommandExecution(IBasicActivateItems activator):this(activator,null)
+        protected CatalogueCreationCommandExecution(IBasicActivateItems activator):this(activator,null,null)
         {
 
         }
 
-        protected CatalogueCreationCommandExecution(IBasicActivateItems activator, IProject projectSpecific) :base(activator)
+        protected CatalogueCreationCommandExecution(IBasicActivateItems activator, IProject projectSpecific, CatalogueFolder targetFolder) :base(activator)
         {
             ProjectSpecific = projectSpecific;
+            TargetFolder = targetFolder;
         }
 
         public virtual IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
@@ -32,6 +40,15 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
                 ProjectSpecific = (Project)target;
 
             return this;
+        }
+
+        public override void Execute()
+        {
+            base.Execute();
+
+            if (PromptForProject)
+                if (SelectOne(BasicActivator.RepositoryLocator.DataExportRepository, out Project p))
+                    ProjectSpecific = p;
         }
     }
 }

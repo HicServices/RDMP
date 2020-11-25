@@ -71,7 +71,7 @@ namespace Rdmp.Core.Curation
 
 
         /// <inheritdoc/>
-        public void DoImport(out TableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated)
+        public void DoImport(out ITableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated)
         {
             var syntax = _tableValuedFunction.Database.Server.GetQuerySyntaxHelper();
             
@@ -102,7 +102,7 @@ namespace Rdmp.Core.Curation
         }
 
         /// <inheritdoc/>
-        public ColumnInfo CreateNewColumnInfo(TableInfo parent, DiscoveredColumn discoveredColumn)
+        public ColumnInfo CreateNewColumnInfo(ITableInfo parent, DiscoveredColumn discoveredColumn)
         {
             var toAdd =
                     new ColumnInfo((ICatalogueRepository) parent.Repository,discoveredColumn.GetFullyQualifiedName(),
@@ -117,7 +117,7 @@ namespace Rdmp.Core.Curation
             return toAdd;
         }
 
-        private ColumnInfo[] CreateColumnInfosBasedOnReturnColumnsOfFunction(TableInfo parent)
+        private ColumnInfo[] CreateColumnInfosBasedOnReturnColumnsOfFunction(ITableInfo parent)
         {
             List<ColumnInfo> newColumnInfosToReturn = new List<ColumnInfo>();
 
@@ -139,7 +139,7 @@ namespace Rdmp.Core.Curation
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="discoveredParameter"></param>
-        internal AnyTableSqlParameter CreateParameter(TableInfo parent, DiscoveredParameter discoveredParameter)
+        internal AnyTableSqlParameter CreateParameter(ITableInfo parent, DiscoveredParameter discoveredParameter)
         {
             var created = new AnyTableSqlParameter(_repository, parent, GetParamaterDeclarationSQL(discoveredParameter));
             ParametersCreated.Add(created);

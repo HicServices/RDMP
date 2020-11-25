@@ -184,7 +184,7 @@ namespace Rdmp.Core.CommandExecution
         protected abstract bool SelectValueTypeImpl(string prompt, Type paramType, object initialValue, out object chosen);
 
         /// <inheritdoc/>
-        public virtual void Publish(DatabaseEntity databaseEntity)
+        public virtual void Publish(IMapsDirectlyToDatabaseTable databaseEntity)
         {
             var fresh = GetChildProvider();
             CoreChildProvider.UpdateTo(fresh);
@@ -267,12 +267,19 @@ namespace Rdmp.Core.CommandExecution
         }
         
         /// <inheritdoc/>
-        public virtual ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo, ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific)
+        public virtual ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo, ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, CatalogueFolder catalogueFolder)
         {
+            // Create a new Catalogue based on the table info
             var engineer = new ForwardEngineerCatalogue(tableInfo,tableInfo.ColumnInfos,true);
             engineer.ExecuteForwardEngineering(out ICatalogue cata, out _, out ExtractionInformation[] eis);
 
-            if(extractionIdentifierColumns != null)
+            // if we know the linkable private identifier column(s)
+            if(extractionIdentifierColumns != null && extractionIdentifierColumns.Any())
+            {
+                // Make the Catalogue extractable
+                var eds = new ExtractableDataSet(RepositoryLocator.DataExportRepository,cata);
+
+                // Mark the columns specified IsExtractionIdentifier
                 foreach(var col in extractionIdentifierColumns)
                 {
                     var match = eis.FirstOrDefault(ei=>ei.ColumnInfo?.ID == col.ID);
@@ -282,16 +289,19 @@ namespace Rdmp.Core.CommandExecution
                     match.IsExtractionIdentifier = true;
                     match.SaveToDatabase();
                 }
-            
-            if(extractionIdentifierColumns != null && extractionIdentifierColumns.Any())
-            {
-                var eds = new ExtractableDataSet(RepositoryLocator.DataExportRepository,cata);
-                
+
+                // Catalogue must be extractable to be project specific
                 if(projectSpecific != null)
                 {
                     eds.Project_ID = projectSpecific.ID;
                     eds.SaveToDatabase();
                 }
+            }
+
+            if(catalogueFolder != null)
+            {
+                cata.Folder = catalogueFolder;
+                cata.SaveToDatabase();
             }
 
             return cata;

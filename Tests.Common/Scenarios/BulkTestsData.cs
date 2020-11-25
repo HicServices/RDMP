@@ -46,7 +46,7 @@ namespace Tests.Common.Scenarios
         /// <summary>
         /// Rdmp reference to the test table (<see cref="ImportAsCatalogue"/>)
         /// </summary>
-        public TableInfo tableInfo;
+        public ITableInfo tableInfo;
 
         /// <summary>
         /// Rdmp reference to the test table columns (<see cref="ImportAsCatalogue"/>)
@@ -141,13 +141,13 @@ namespace Tests.Common.Scenarios
         /// Creates Rdmp metadata objects (<see cref="catalogue"/>, <see cref="tableInfo"/> etc) which point to the <see cref="BulkDataTable"/>
         /// </summary>
         /// <returns></returns>
-        public Catalogue ImportAsCatalogue()
+        public ICatalogue ImportAsCatalogue()
         {
             TableInfoImporter f = new TableInfoImporter(_repository, BulkDataDatabase.ExpectTable(BulkDataTable));
             f.DoImport(out tableInfo,out columnInfos);
 
             ForwardEngineerCatalogue forwardEngineer = new ForwardEngineerCatalogue(tableInfo,columnInfos,true);
-            forwardEngineer.ExecuteForwardEngineering(out catalogue,out catalogueItems, out extractionInformations);
+            forwardEngineer.ExecuteForwardEngineering(out var catalogue,out var catalogueItems, out var extractionInformations);
 
             var chi = extractionInformations.Single(e => e.GetRuntimeName().Equals("chi"));
             chi.IsExtractionIdentifier = true;

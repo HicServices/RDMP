@@ -437,7 +437,7 @@ namespace Rdmp.Core.Curation.Data
             InjectKnown(columnInfo);
         }
 
-        public CatalogueItem ShallowClone(Catalogue into)
+        public CatalogueItem ShallowClone(ICatalogue into)
         {
             var clone = new CatalogueItem(CatalogueRepository, into, Name);
             CopyShallowValuesTo(clone);

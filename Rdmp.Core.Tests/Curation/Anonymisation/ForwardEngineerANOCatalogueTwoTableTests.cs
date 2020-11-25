@@ -23,14 +23,14 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation
     public class ForwardEngineerANOCatalogueTwoTableTests : TestsRequiringANOStore
     {
 
-        TableInfo t1;
+        ITableInfo t1;
         ColumnInfo[] c1;
 
-        TableInfo t2;
+        ITableInfo t2;
         ColumnInfo[] c2;
 
-        private Catalogue cata1;
-        private Catalogue cata2;
+        private ICatalogue cata1;
+        private ICatalogue cata2;
 
         private CatalogueItem[] cataItems1;
         private CatalogueItem[] cataItems2;
@@ -87,9 +87,9 @@ GO";
             var importer1 = new TableInfoImporter(CatalogueRepository, From.ExpectTable("Tests"));
             var importer2 = new TableInfoImporter(CatalogueRepository, From.ExpectTable("Results"));
 
-            importer1.DoImport(out t1,out c1);
+            importer1.DoImport(out var t1,out c1);
             
-            importer2.DoImport(out t2, out c2);
+            importer2.DoImport(out var t2, out c2);
 
             var engineer1 = new ForwardEngineerCatalogue(t1, c1, true);
             var engineer2 = new ForwardEngineerCatalogue(t2, c2, true);

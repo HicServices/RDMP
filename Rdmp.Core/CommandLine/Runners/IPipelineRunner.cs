@@ -6,9 +6,7 @@
 
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline.Events;
-using Rdmp.Core.Logging.Listeners;
 using ReusableLibraryCode.Progress;
-using System;
 
 namespace Rdmp.Core.CommandLine.Runners
 {

@@ -5,62 +5,47 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using Rdmp.Core;
-using Rdmp.Core.CommandExecution;
+using FAnsi.Discovery;
+using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
 {
-    public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable : BasicCommandExecution, IAtomicCommand, IAtomicCommandWithTarget
+    public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable : CatalogueCreationCommandExecution
     {
-        private Project _project;
+        private DiscoveredTable _importTable;
 
-        public CatalogueFolder TargetFolder { get; set; }
 
-        /// <summary>
-        /// Create a project specific Catalogue when command is executed by prompting the user to first pick a project
-        /// </summary>
-        public bool PromptForProject { get; set; }
-
-        public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IBasicActivateItems activator) : base(activator)
+        public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IBasicActivateItems activator) : this(activator,null,null,null)
         {
             UseTripleDotSuffix = true;
+        }
+
+        [UseWithObjectConstructor]
+        public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IBasicActivateItems activator, DiscoveredTable existingTable,IProject projectSpecific,CatalogueFolder targetFolder) : base(activator,projectSpecific,targetFolder)
+        {
+            _importTable = existingTable;
         }
 
         public override void Execute()
         {
             base.Execute();
 
-            if (PromptForProject)
-                if (SelectOne(BasicActivator.RepositoryLocator.DataExportRepository, out Project p))
-                    _project = p;
-                else
-                    return; //dialogue was cancelled
+            var tbl = _importTable ?? BasicActivator.SelectTable(false,"Table to import");
 
-            var importTable = new ImportSQLTableUI(Activator, true)
-            {
-                TargetFolder = TargetFolder
-            };
+            var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, tbl);
+            importer.DoImport(out var ti,out _);
 
-            if (_project != null)
-                importTable.SetProjectSpecific(_project);
-
-            importTable.ShowDialog();
+            BasicActivator.CreateAndConfigureCatalogue(ti,null,"Existing table",ProjectSpecific,TargetFolder);
         }
 
         public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import);
-        }
-        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
-        {
-            if (target is Project)
-                _project = (Project)target;
-
-            return this;
         }
 
         public override string GetCommandHelp()

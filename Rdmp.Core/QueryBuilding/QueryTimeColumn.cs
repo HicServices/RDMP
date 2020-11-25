@@ -112,7 +112,7 @@ namespace Rdmp.Core.QueryBuilding
         /// </summary>
         /// <param name="ColumnsInOrder"></param>
         /// <param name="tablesUsedInQuery"></param>
-        public static void SetLookupStatus(QueryTimeColumn[] ColumnsInOrder, List<TableInfo> tablesUsedInQuery)
+        public static void SetLookupStatus(QueryTimeColumn[] ColumnsInOrder, List<ITableInfo> tablesUsedInQuery)
         {
 
             ColumnInfo lastForeignKeyFound = null;

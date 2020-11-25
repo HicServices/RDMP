@@ -144,7 +144,7 @@ namespace Rdmp.Core.DataQualityEngine.Reports
             }
         }
 
-        public void CommitToDatabase(Evaluation evaluation, Catalogue catalogue, DbConnection con, DbTransaction transaction)
+        public void CommitToDatabase(Evaluation evaluation, ICatalogue catalogue, DbConnection con, DbTransaction transaction)
         {
             if(!_correctValuesCalculated)
                 throw new Exception("You must call CalculateFinalValues before committing to the database");

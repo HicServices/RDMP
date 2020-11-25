@@ -267,7 +267,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                 }
         }
 
-        private void ForExtractionInformations(Catalogue catalogue, Action<ExtractionInformation> action,params string[] extractionInformations)
+        private void ForExtractionInformations(ICatalogue catalogue, Action<ExtractionInformation> action,params string[] extractionInformations)
         {
             foreach(var e in extractionInformations.Select(s=>GetExtractionInformation(catalogue,s)))
                 action(e);
@@ -281,7 +281,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             p.SaveToDatabase();
         }
 
-        private ExtractionInformation CreateExtractionInformation(Catalogue catalogue, string name, string columnInfoName, string selectSQL)
+        private ExtractionInformation CreateExtractionInformation(ICatalogue catalogue, string name, string columnInfoName, string selectSQL)
         {
             var col = catalogue.GetTableInfoList(false).SelectMany(t=>t.ColumnInfos).SingleOrDefault(c=>c.GetRuntimeName() == columnInfoName);
             if(col == null)
@@ -294,7 +294,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             return new ExtractionInformation(_repos.CatalogueRepository,ci,col,selectSQL);
         }
 
-        private ExtractionConfiguration CreateExtractionConfiguration(Project project, ExtractableCohort cohort,string name,bool isReleased,ICheckNotifier notifier, params Catalogue[] catalogues)
+        private ExtractionConfiguration CreateExtractionConfiguration(Project project, ExtractableCohort cohort,string name,bool isReleased,ICheckNotifier notifier, params ICatalogue[] catalogues)
         {
             var extractionConfiguration = new ExtractionConfiguration(_repos.DataExportRepository,project);
             extractionConfiguration.Name = name;
@@ -452,7 +452,7 @@ UNPIVOT
 
         }
 
-        private IFilter CreateFilter(Catalogue cata, string name,string parentExtractionInformation, string whereSql,string desc)
+        private IFilter CreateFilter(ICatalogue cata, string name,string parentExtractionInformation, string whereSql,string desc)
         {
             var filter = new ExtractionFilter(_repos.CatalogueRepository,name,GetExtractionInformation(cata,parentExtractionInformation));
             filter.WhereSQL = whereSql;
@@ -473,7 +473,7 @@ UNPIVOT
         /// <param name="dimension1">The first dimension e.g. pass only one dimension to create a bar chart</param>
         /// <param name="isAxis">True if <paramref name="dimension1"/> should be created as a axis (creates a line chart)</param>
         /// <param name="dimension2">Optional second dimension to create (this will be the pivot column)</param>
-        private AggregateConfiguration CreateGraph(Catalogue cata, string name, string dimension1,bool isAxis, string dimension2)
+        private AggregateConfiguration CreateGraph(ICatalogue cata, string name, string dimension1,bool isAxis, string dimension2)
         {
             var ac = new AggregateConfiguration(_repos.CatalogueRepository,cata,name);
             ac.CountSQL = "count(*) as NumberOfRecords";
@@ -500,7 +500,7 @@ UNPIVOT
             return ac;
         }
 
-        private ExtractionInformation GetExtractionInformation(Catalogue cata, string name)
+        private ExtractionInformation GetExtractionInformation(ICatalogue cata, string name)
         {
             try
             {
@@ -564,22 +564,22 @@ UNPIVOT
             return null;
         }
 
-        private TableInfo ImportTableInfo(DiscoveredTable tbl)
+        private ITableInfo ImportTableInfo(DiscoveredTable tbl)
         {
             var importer = new TableInfoImporter(_repos.CatalogueRepository,tbl);
-            importer.DoImport(out TableInfo ti,out _);
+            importer.DoImport(out var ti,out _);
             
             return ti;
         }
         
-        private Catalogue ImportCatalogue(DiscoveredTable tbl)
+        private ICatalogue ImportCatalogue(DiscoveredTable tbl)
         {
             return ImportCatalogue(ImportTableInfo(tbl));
         }
-        private Catalogue ImportCatalogue(TableInfo ti)
+        private ICatalogue ImportCatalogue(ITableInfo ti)
         {
             var forwardEngineer = new ForwardEngineerCatalogue(ti,ti.ColumnInfos,true);
-            forwardEngineer.ExecuteForwardEngineering(out Catalogue cata, out _,out ExtractionInformation[] eis);
+            forwardEngineer.ExecuteForwardEngineering(out var cata, out _,out ExtractionInformation[] eis);
             
             //get descriptions of the columns from BadMedicine
             var desc = new Descriptions();

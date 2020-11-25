@@ -197,7 +197,7 @@ namespace Rdmp.Core.QueryBuilding
         /// <param name="primaryExtractionTable"></param>
         /// <param name="forceJoinsToTheseTables"></param>
         /// <returns></returns>
-        public static List<TableInfo> GetTablesUsedInQuery(ISqlQueryBuilder qb, out TableInfo primaryExtractionTable, TableInfo[] forceJoinsToTheseTables = null)
+        public static List<ITableInfo> GetTablesUsedInQuery(ISqlQueryBuilder qb, out ITableInfo primaryExtractionTable, ITableInfo[] forceJoinsToTheseTables = null)
         {
             if (qb.SelectColumns == null )
                 throw new QueryBuildingException("ISqlQueryBuilder.SelectedColumns is null");
@@ -205,7 +205,7 @@ namespace Rdmp.Core.QueryBuilding
             if(qb.SelectColumns.Count == 0)
                 throw new QueryBuildingException("There are no columns in the SELECT query");
 
-            List<TableInfo> toReturn = new List<TableInfo>(forceJoinsToTheseTables ?? new TableInfo[0]);
+            var toReturn = new List<ITableInfo>(forceJoinsToTheseTables ?? new ITableInfo[0]);
 
             if (forceJoinsToTheseTables != null)
             {
@@ -268,7 +268,7 @@ namespace Rdmp.Core.QueryBuilding
             return toReturn;
         }
 
-        private static List<TableInfo> AddOpportunisticJoins(List<TableInfo> toReturn, List<IFilter> filters)
+        private static List<ITableInfo> AddOpportunisticJoins(List<ITableInfo> toReturn, List<IFilter> filters)
         {
             //there must be at least one TableInfo here to do this... but we are going to look up all available JoinInfos from these tables to identify opportunistic joins
             foreach(var table in toReturn.ToArray())
@@ -320,7 +320,7 @@ namespace Rdmp.Core.QueryBuilding
 
             if (qb.JoinsUsedInQuery.Count == 0)
             {
-                TableInfo firstTable = null;
+                ITableInfo firstTable = null;
 
                 //is there only one table involved in the query?
                 if (qb.TablesUsedInQuery.Count == 1)
@@ -451,7 +451,7 @@ namespace Rdmp.Core.QueryBuilding
             return toReturn;
         }
 
-        private static bool TableIsLookupTable(TableInfo tableInfo,ISqlQueryBuilder qb)
+        private static bool TableIsLookupTable(ITableInfo tableInfo,ISqlQueryBuilder qb)
         {
             return
                 //tables where there is any columns which 
@@ -606,7 +606,7 @@ namespace Rdmp.Core.QueryBuilding
         /// </summary>
         /// <param name="tablesUsedInQuery"></param>
         /// <returns></returns>
-        public static IQuerySyntaxHelper GetSyntaxHelper(List<TableInfo> tablesUsedInQuery)
+        public static IQuerySyntaxHelper GetSyntaxHelper(List<ITableInfo> tablesUsedInQuery)
         {
             if (!tablesUsedInQuery.Any())
                 throw new QueryBuildingException("Could not pick an IQuerySyntaxHelper because the there were no TableInfos used in the query");

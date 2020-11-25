@@ -90,10 +90,12 @@ namespace Rdmp.UI.Tests
         
         public ICoreIconProvider CoreIconProvider { get; private set; }
 
-        public override void Publish(DatabaseEntity databaseEntity)
+        public override void Publish(IMapsDirectlyToDatabaseTable o)
         {
-            base.Publish(databaseEntity);
-            RefreshBus.Publish(this,new RefreshObjectEventArgs(databaseEntity));
+            base.Publish(o);
+
+            if(o is DatabaseEntity e)
+                RefreshBus.Publish(this,new RefreshObjectEventArgs(e));
         }
 
         public override void Show(string message)

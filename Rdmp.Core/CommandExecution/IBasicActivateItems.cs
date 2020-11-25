@@ -192,7 +192,7 @@ namespace Rdmp.Core.CommandExecution
         /// should invoke the RefreshBus system in Rdmp.UI
         /// </summary>
         /// <param name="databaseEntity"></param>
-        void Publish(DatabaseEntity databaseEntity);
+        void Publish(IMapsDirectlyToDatabaseTable databaseEntity);
 
         /// <summary>
         /// Display the given message to the user (e.g. in a MessageBox or out into the Console)

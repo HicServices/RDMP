@@ -32,7 +32,7 @@ namespace Rdmp.Core.Curation.ANOEngineering
     {
         private readonly ShareManager _shareManager;
 
-        public Catalogue Catalogue
+        public ICatalogue Catalogue
         {
             get { return _catalogue; }
             set
@@ -60,7 +60,7 @@ namespace Rdmp.Core.Curation.ANOEngineering
 
         [JsonIgnore]
         public HashSet<ITableInfo> SkippedTables = new HashSet<ITableInfo>();
-        private Catalogue _catalogue;
+        private ICatalogue _catalogue;
 
         /// <summary>
         /// This constructor is primarily intended for deserialization via <see cref="JsonConvertExtensions.DeserializeObject"/>.  You should 
@@ -78,7 +78,7 @@ namespace Rdmp.Core.Curation.ANOEngineering
                 DilutionOperations.Add((IDilutionOperation)constructor.Construct(operationType));
         }
 
-        public ForwardEngineerANOCataloguePlanManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator, Catalogue catalogue): this(repositoryLocator)
+        public ForwardEngineerANOCataloguePlanManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICatalogue catalogue): this(repositoryLocator)
         {
             Catalogue = catalogue;
 

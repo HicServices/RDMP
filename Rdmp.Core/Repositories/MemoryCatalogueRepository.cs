@@ -232,9 +232,9 @@ namespace Rdmp.Core.Repositories
         /// <summary>
         /// records which credentials can be used to access the table under which contexts
         /// </summary>
-        readonly Dictionary<TableInfo,Dictionary<DataAccessContext, DataAccessCredentials>> _credentialsDictionary = new Dictionary<TableInfo, Dictionary<DataAccessContext, DataAccessCredentials>>();
+        readonly Dictionary<ITableInfo,Dictionary<DataAccessContext, DataAccessCredentials>> _credentialsDictionary = new Dictionary<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>>();
 
-        public void CreateLinkBetween(DataAccessCredentials credentials, TableInfo tableInfo, DataAccessContext context)
+        public void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
         {
             if(!_credentialsDictionary.ContainsKey(tableInfo))
                 _credentialsDictionary.Add(tableInfo,new Dictionary<DataAccessContext, DataAccessCredentials>());
@@ -242,7 +242,7 @@ namespace Rdmp.Core.Repositories
             _credentialsDictionary[tableInfo].Add(context,credentials);
         }
 
-        public void BreakLinkBetween(DataAccessCredentials credentials, TableInfo tableInfo, DataAccessContext context)
+        public void BreakLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
         {
             if (!_credentialsDictionary.ContainsKey(tableInfo))
                 return;
@@ -250,7 +250,7 @@ namespace Rdmp.Core.Repositories
             _credentialsDictionary[tableInfo].Remove(context);
         }
 
-        public void BreakAllLinksBetween(DataAccessCredentials credentials, TableInfo tableInfo)
+        public void BreakAllLinksBetween(DataAccessCredentials credentials, ITableInfo tableInfo)
         {
             if(!_credentialsDictionary.ContainsKey(tableInfo))
                 return;
@@ -261,7 +261,7 @@ namespace Rdmp.Core.Repositories
                 _credentialsDictionary[tableInfo].Remove(context);
         }
 
-        public DataAccessCredentials GetCredentialsIfExistsFor(TableInfo tableInfo, DataAccessContext context)
+        public DataAccessCredentials GetCredentialsIfExistsFor(ITableInfo tableInfo, DataAccessContext context)
         {
             if(_credentialsDictionary.ContainsKey(tableInfo))
                 if (_credentialsDictionary[tableInfo].ContainsKey(context))
@@ -270,7 +270,7 @@ namespace Rdmp.Core.Repositories
             return null;
         }
 
-        public Dictionary<DataAccessContext, DataAccessCredentials> GetCredentialsIfExistsFor(TableInfo tableInfo)
+        public Dictionary<DataAccessContext, DataAccessCredentials> GetCredentialsIfExistsFor(ITableInfo tableInfo)
         {
             if (_credentialsDictionary.ContainsKey(tableInfo))
                 return _credentialsDictionary[tableInfo];
@@ -278,11 +278,11 @@ namespace Rdmp.Core.Repositories
             return null;
         }
 
-        public Dictionary<TableInfo, List<DataAccessCredentialUsageNode>> GetAllCredentialUsagesBy(DataAccessCredentials[] allCredentials, TableInfo[] allTableInfos)
+        public Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>> GetAllCredentialUsagesBy(DataAccessCredentials[] allCredentials, ITableInfo[] allTableInfos)
         {
-            var toreturn = new Dictionary<TableInfo, List<DataAccessCredentialUsageNode>>();
+            var toreturn = new Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>>();
 
-            foreach (KeyValuePair<TableInfo, Dictionary<DataAccessContext, DataAccessCredentials>> kvp in _credentialsDictionary)
+            foreach (KeyValuePair<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>> kvp in _credentialsDictionary)
             {
                 toreturn.Add(kvp.Key, new List<DataAccessCredentialUsageNode>());
 
@@ -293,15 +293,15 @@ namespace Rdmp.Core.Repositories
             return toreturn;
         }
 
-        public Dictionary<DataAccessContext, List<TableInfo>> GetAllTablesUsingCredentials(DataAccessCredentials credentials)
+        public Dictionary<DataAccessContext, List<ITableInfo>> GetAllTablesUsingCredentials(DataAccessCredentials credentials)
         {
-            var toreturn = new Dictionary<DataAccessContext, List<TableInfo>>();
+            var toreturn = new Dictionary<DataAccessContext, List<ITableInfo>>();
             
             //add the keys
             foreach (DataAccessContext context in Enum.GetValues(typeof (DataAccessContext)))
-                toreturn.Add(context, new List<TableInfo>());
+                toreturn.Add(context, new List<ITableInfo>());
 
-            foreach (KeyValuePair<TableInfo, Dictionary<DataAccessContext, DataAccessCredentials>> kvp in _credentialsDictionary)
+            foreach (KeyValuePair<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>> kvp in _credentialsDictionary)
                 foreach (KeyValuePair<DataAccessContext, DataAccessCredentials> forNode in kvp.Value)
                     toreturn[forNode.Key].Add(kvp.Key);
             
@@ -316,9 +316,9 @@ namespace Rdmp.Core.Repositories
         #endregion
 
         #region IAggregateForcedJoin
-        readonly Dictionary<AggregateConfiguration,List<TableInfo>> _forcedJoins = new Dictionary<AggregateConfiguration, List<TableInfo>>();
+        readonly Dictionary<AggregateConfiguration,List<ITableInfo>> _forcedJoins = new Dictionary<AggregateConfiguration, List<ITableInfo>>();
 
-        public TableInfo[] GetAllForcedJoinsFor(AggregateConfiguration configuration)
+        public ITableInfo[] GetAllForcedJoinsFor(AggregateConfiguration configuration)
         {
             if (!_forcedJoins.ContainsKey(configuration))
                 return new TableInfo[0];
@@ -326,7 +326,7 @@ namespace Rdmp.Core.Repositories
             return _forcedJoins[configuration].ToArray();
         }
 
-        public void BreakLinkBetween(AggregateConfiguration configuration, TableInfo tableInfo)
+        public void BreakLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)
         {
             if (!_forcedJoins.ContainsKey(configuration))
                 return;
@@ -334,10 +334,10 @@ namespace Rdmp.Core.Repositories
             _forcedJoins[configuration].Remove(tableInfo);
         }
 
-        public void CreateLinkBetween(AggregateConfiguration configuration, TableInfo tableInfo)
+        public void CreateLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)
         {
             if (!_forcedJoins.ContainsKey(configuration))
-                _forcedJoins.Add(configuration,new List<TableInfo>());
+                _forcedJoins.Add(configuration,new List<ITableInfo>());
 
             _forcedJoins[configuration].Add(tableInfo);
         }

@@ -12,7 +12,7 @@ namespace Rdmp.Core.CommandExecution.Combining
     public class CohortCombineToCreateCommandHelper
     {
 
-        public static ExtractionInformation PickOneExtractionIdentifier(IBasicActivateItems activator,Catalogue c, ExtractionInformation[] candidates)
+        public static ExtractionInformation PickOneExtractionIdentifier(IBasicActivateItems activator,ICatalogue c, ExtractionInformation[] candidates)
         {
             if (candidates.Length == 0)
                 throw new Exception("None of the ExtractionInformations in Catalogue " + c + " are marked IsExtractionIdentifier.  You will need to edit the Catalogue in CatalogueManager and select one of the columns in the dataset as the extraction identifier");

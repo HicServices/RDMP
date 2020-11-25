@@ -32,7 +32,7 @@ namespace Rdmp.Core.Curation.ANOEngineering
     {
         private readonly CatalogueRepository _catalogueRepository;
         private readonly ForwardEngineerANOCataloguePlanManager _planManager;
-        public Catalogue NewCatalogue { get; private set; }
+        public ICatalogue NewCatalogue { get; private set; }
         public LoadMetadata LoadMetadata { get; private set; }
         public LoadProgress LoadProgressIfAny { get; set; }
 
@@ -107,12 +107,9 @@ namespace Rdmp.Core.Curation.ANOEngineering
                         //Create the actual table
                         var tbl = _planManager.TargetDatabase.CreateTable(oldTableInfo.GetRuntimeName(), columnsToCreate.ToArray());
 
-                        TableInfo newTableInfo;
-                        ColumnInfo[] newColumnInfos;
-
                         //import the created table
                         TableInfoImporter importer = new TableInfoImporter(_catalogueRepository, tbl);
-                        importer.DoImport(out newTableInfo, out newColumnInfos);
+                        importer.DoImport(out var newTableInfo, out var newColumnInfos);
 
                         //Audit the parenthood of the TableInfo/ColumnInfos
                         AuditParenthood(oldTableInfo, newTableInfo);

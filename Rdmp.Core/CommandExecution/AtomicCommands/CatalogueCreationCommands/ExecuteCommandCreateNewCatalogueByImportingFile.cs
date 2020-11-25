@@ -4,15 +4,20 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Drawing;
 using System.IO;
 using FAnsi.Discovery;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.Combining;
+using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataFlowPipeline.Events;
+using Rdmp.Core.DataLoad.Engine.Pipeline;
+using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -24,16 +29,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
         private DiscoveredDatabase _targetDatabase;
         private IPipeline _pipeline;
 
-        public CatalogueFolder TargetFolder { get; set; }
-
         public FileInfo File { get; private set; }
 
         private string _extractionIdentifier;
 
-        /// <summary>
-        /// Create a project specific Catalogue when command is executed by prompting the user to first pick a project
-        /// </summary>
-        public bool PromptForProject { get; set; }
 
         private void CheckFile()
         {
@@ -59,7 +58,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
             [DemandsInitialization("Pipeline for reading the source file, applying any transforms and writting to the database")]
             Pipeline pipeline,
             [DemandsInitialization(Desc_ProjectSpecificParameter)]
-            Project projectSpecific) : base(activator,projectSpecific)
+            Project projectSpecific) : base(activator,projectSpecific,null)
         {
             File = file;
             _extractionIdentifier = extractionIdentifier;
@@ -88,23 +87,59 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
         {
             base.Execute();
 
-            if (PromptForProject)
-                if (SelectOne(BasicActivator.RepositoryLocator.DataExportRepository, out Project p))
-                    ProjectSpecific = p;
-                else
-                    return; //dialogue was cancelled
-
-
-
-            var dialog = new CreateNewCatalogueByImportingFileUI(Activator, this)
+            if(_pipeline == null)
             {
-                TargetFolder = TargetFolder
-            };
+                throw new Exception("No pipeline selected for upload");
+            }
 
-            if (_project != null)
-                dialog.SetProjectSpecific(_project);
+            var db  = _targetDatabase ?? BasicActivator.SelectDatabase(true,"Target database");
 
-            dialog.ShowDialog();
+            if(db == null)
+                return;
+            
+            var f = File ?? BasicActivator.SelectFile("File to upload");
+            
+            if(f == null)
+                return;
+
+            var useCase = new UploadFileUseCase(f, db);
+
+            var runner = BasicActivator.GetPipelineRunner(useCase,_pipeline);
+            runner.Run(BasicActivator.RepositoryLocator,null,null,null);
+
+            runner.PipelineExecutionFinishedsuccessfully += (s,e)=>OnPipelineCompleted(s,e,db);
+        }
+
+        private void OnPipelineCompleted(object sender, PipelineEngineEventArgs args, DiscoveredDatabase db)
+        {
+            var engine = args.PipelineEngine;
+
+            //todo figure out what it created
+            var dest = engine.DestinationObject as DataTableUploadDestination;
+            if(dest == null)
+                throw new Exception($"Destination of engine was unexpectedly not a DataTableUploadDestination despite use case {nameof(UploadFileUseCase)}");
+
+            if(!dest.CreatedTable)
+                throw new Exception($"Destination of engine reports that table was not created");
+            
+            if(string.IsNullOrWhiteSpace(dest.TargetTableName))
+                throw new Exception($"Destination of engine failed to populate {dest.TargetTableName}");
+
+            var tbl = db.ExpectTable(dest.TargetTableName);
+
+            if(!tbl.Exists())
+                throw new Exception($"Destination of engine claimed to have created {tbl.GetFullyQualifiedName()} but it did not exist");
+
+            var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository,tbl);
+            importer.DoImport(out var ti,out _);
+
+            var cata = BasicActivator.CreateAndConfigureCatalogue(ti,null,$"Import of file '{File.FullName}' by {Environment.UserName} on {DateTime.Now}",ProjectSpecific,TargetFolder);
+            
+            if(cata != null)
+            {
+                Publish(cata);
+                Emphasise(cata);
+            }
         }
 
         public override Image GetImage(IIconProvider iconProvider)

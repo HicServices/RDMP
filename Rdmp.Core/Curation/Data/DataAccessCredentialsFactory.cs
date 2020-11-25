@@ -34,7 +34,7 @@ namespace Rdmp.Core.Curation.Data
         /// <param name="username"></param>
         /// <param name="password"></param>
         /// <param name="usageContext"></param>
-        public DataAccessCredentials Create(TableInfo tableInfoCreated, string username, string password, DataAccessContext usageContext)
+        public DataAccessCredentials Create(ITableInfo tableInfoCreated, string username, string password, DataAccessContext usageContext)
         {
             DataAccessCredentials credentialsToAssociate = _cataRepository.TableInfoCredentialsManager.GetCredentialByUsernameAndPasswordIfExists(username, password);
 

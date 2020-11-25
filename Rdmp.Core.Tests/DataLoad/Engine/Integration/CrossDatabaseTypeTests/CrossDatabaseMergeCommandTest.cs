@@ -72,9 +72,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
             var fromTbl = From.CreateTable(DatabaseName + "_ToTable_STAGING", dt);
             
             //import the toTbl table as a TableInfo
-            TableInfo ti;
-            ColumnInfo[] cis;
-            var cata = Import(toTbl,out ti,out cis);
+            var cata = Import(toTbl,out var ti,out var cis);
 
             //put the backup trigger on the live table (this will also create the needed hic_ columns etc)
             var triggerImplementer = new TriggerImplementerFactory(databaseType).Create(toTbl);

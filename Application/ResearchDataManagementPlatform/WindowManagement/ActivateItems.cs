@@ -85,9 +85,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public IArrangeWindows WindowArranger { get; private set; }
         
-        public override void Publish(DatabaseEntity databaseEntity)
+        public override void Publish(IMapsDirectlyToDatabaseTable databaseEntity)
         {
-            RefreshBus.Publish(this,new RefreshObjectEventArgs(databaseEntity));
+            if(databaseEntity is DatabaseEntity de)
+                RefreshBus.Publish(this,new RefreshObjectEventArgs(de));
         }
 
         public override void Show(string message)
@@ -840,9 +841,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return ui.Result;
         }
 
-        public override ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo, ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific)
+        public override ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo, ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, CatalogueFolder folder)
         {
             var ui = new ConfigureCatalogueExtractabilityUI(this, tableInfo, initialDescription, projectSpecific);
+            ui.TargetFolder = folder;
             ui.ShowDialog();
             
             return ui.CatalogueCreatedIfAny;

@@ -173,10 +173,7 @@ INSERT INTO DiluteToBitFlagTests VALUES (" + insert + ")", con).ExecuteNonQuery(
             dt.Rows.Add(new[] {"Fish"});
 
             var tbl = db.CreateTable("DilutionNamerTest", dt);
-
-            TableInfo ti;
-            ColumnInfo[] cols;
-            Import(tbl,out ti,out cols);
+            Import(tbl,out var ti,out var cols);
 
             tbl.Rename("AAAA");
             var namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "AAAA");

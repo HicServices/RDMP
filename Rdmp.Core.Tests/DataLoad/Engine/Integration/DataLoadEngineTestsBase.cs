@@ -42,7 +42,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
         }
 
-        protected void CreateCSVProcessTask(LoadMetadata lmd, TableInfo ti, string regex)
+        protected void CreateCSVProcessTask(LoadMetadata lmd, ITableInfo ti, string regex)
         {
             var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.Mounting);
             pt.Path = typeof(AnySeparatorFileAttacher).FullName;
@@ -67,23 +67,17 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             return projectDirectory;
         }
 
-        protected TableInfo Import(DiscoveredTable tbl, LoadMetadata lmd, LogManager logManager)
+        protected ITableInfo Import(DiscoveredTable tbl, LoadMetadata lmd, LogManager logManager)
         {
             logManager.CreateNewLoggingTaskIfNotExists(lmd.Name);
 
             //import TableInfos
             var importer = new TableInfoImporter(CatalogueRepository, tbl);
-            TableInfo ti;
-            ColumnInfo[] cis;
-            importer.DoImport(out ti, out cis);
+            importer.DoImport(out var ti, out var cis);
 
             //create Catalogue
             var forwardEngineer = new ForwardEngineerCatalogue(ti, cis, true);
-
-            Catalogue cata;
-            CatalogueItem[] cataItems;
-            ExtractionInformation[] eis;
-            forwardEngineer.ExecuteForwardEngineering(out cata, out cataItems, out eis);
+            forwardEngineer.ExecuteForwardEngineering(out var cata, out var cataItems, out var eis);
 
             //make the catalogue use the load configuration
             cata.LoadMetadata_ID = lmd.ID;

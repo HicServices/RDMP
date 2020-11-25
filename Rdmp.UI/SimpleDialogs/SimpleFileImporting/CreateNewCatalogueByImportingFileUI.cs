@@ -436,9 +436,9 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             extractionPicker.ShowDialog();
 
             var catalogue = extractionPicker.CatalogueCreatedIfAny;
-            if (catalogue != null)
+            if (catalogue is DatabaseEntity de)
             {
-                Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(catalogue));
+                Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(de));
             
                 MessageBox.Show("Successfully imported new Dataset '" + catalogue + "'." +
                                 "\r\n" +

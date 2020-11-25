@@ -82,7 +82,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             var married = new Dictionary<CatalogueItem, ColumnInfo>();
 
-            TableInfo anyNewTable = null;
+            ITableInfo anyNewTable = null;
 
             foreach (DiscoveredTable discoveredTable in db.DiscoverTables(includeViews: false))
             {
@@ -94,11 +94,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 }
 
                 var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, discoveredTable);
-                TableInfo ti;
-                ColumnInfo[] cis;
-
+                
                 //import the table
-                importer.DoImport(out ti, out cis);
+                importer.DoImport(out var ti, out var cis);
 
                 anyNewTable = anyNewTable ?? ti;
 

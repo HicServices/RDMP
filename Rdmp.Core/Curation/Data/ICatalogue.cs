@@ -16,6 +16,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.Curation.Data
@@ -30,12 +31,18 @@ namespace Rdmp.Core.Curation.Data
     /// <para>Catalogues are always flat views although they can be built from multiple relational data tables underneath.</para>
     /// 
     /// </summary>
-    public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper,INamed, IMightBeDeprecated, IInjectKnown
+    public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper,INamed, IMightBeDeprecated, IInjectKnown, ICheckable
     {
+
+        /// <summary>
+        /// Returns where the object exists (e.g. database) as <see cref="ICatalogueRepository"/> or null if the object does not exist in a catalogue repository.
+        /// </summary>
+        ICatalogueRepository CatalogueRepository {get; }
+
         /// <summary>
         /// The load configuration (if any) which is used to load data into the Catalogue tables.  A single <see cref="LoadMetadata"/> can load multiple Catalogues.
         /// </summary>
-        int? LoadMetadata_ID { get; }
+        int? LoadMetadata_ID { get; set;}
 
         /// <summary>
         /// Name of a task in the logging database which should be used for documenting the loading of this Catalogue. 
@@ -79,6 +86,31 @@ namespace Rdmp.Core.Curation.Data
         /// datasets for cohort generation / extraction but don't want them to clog up your user interface.
         /// </summary>
         bool IsColdStorageDataset { get; set; }
+        
+        /// <summary>
+        /// A user defined hierarchical category which designates the role of the dataset e.g. '\datasets\extractable\labdata\'
+        /// <para>Should always start and end with a '\' even if it is the root (i.e. '\')</para>
+        /// </summary>
+        CatalogueFolder Folder {get;set; }
+
+        
+        /// <summary>
+        /// User specified free text field.  Not used for anything by RDMP.
+        /// <seealso cref="Periodicity"/>
+        /// </summary>
+        string Time_coverage {get;set;}
+        
+        /// <summary>
+        /// User specified period on how regularly the dataset is updated.  This does not have any technical bearing on how often it is loaded
+        /// and might be an outright lie.
+        /// </summary>
+         Catalogue.CataloguePeriodicity Periodicity{get;set;}
+
+        /// <summary>
+        /// Human readable description provided by the RDMP user that describes what the dataset contains.  
+        /// <para>This can be multiple paragraphs.</para>
+        /// </summary>
+        string Description {get;set;}
 
         /// <summary>
         /// The alledged user specified date at which data began being collected.  For a more accurate answer you should run the DQE (See also DatasetTimespanCalculator)
@@ -201,5 +233,12 @@ namespace Rdmp.Core.Curation.Data
         /// <param name="dataExportRepository">Pass null to fetch only the cached value (or null if that is not known)</param>
         /// <returns></returns>
         CatalogueExtractabilityStatus GetExtractabilityStatus(IDataExportRepository dataExportRepository);
+
+        
+        /// <summary>
+        /// Provides a new instance of the object (in the database).  Properties will be copied from this object (child objects will not be created).
+        /// </summary>
+        /// <returns></returns>
+        ICatalogue ShallowClone();
     }
 }
