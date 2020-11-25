@@ -139,9 +139,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             string line = "";
             foreach (string word in words)
             {
-                if ((line + word).Length > width)
+                if ((line + word).Length >= width)
                 {
-                    newSentence.AppendLine(line);
+                    newSentence.AppendLine(line.TrimEnd());
                     newSentence.Append(new string (' ',indent));
                     line = "";
                 }

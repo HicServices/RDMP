@@ -14,26 +14,45 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline.Events;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution.CohortCreationCommands
 {
+    /// <summary>
+    /// Generates and runs an SQL query based on a <see cref="CohortIdentificationConfiguration"/> and pipes the resulting private identifier list to create a new <see cref="ExtractableCohort"/>.
+    /// </summary>
     public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration : CohortCreationCommandExecution
     {
         private CohortIdentificationConfiguration _cic;
         private CohortIdentificationConfiguration[] _allConfigurations;
 
         public ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(IBasicActivateItems activator, ExternalCohortTable externalCohortTable) :
-            base(activator,null,null,null)
+            this(activator,null,null,null,null,null)
         {
             _allConfigurations = activator.CoreChildProvider.AllCohortIdentificationConfigurations;
-            ExternalCohortTable = externalCohortTable;
 
             if (!_allConfigurations.Any())
                 SetImpossible("You do not have any CohortIdentificationConfigurations yet, you can create them through the 'Cohorts Identification Toolbox' accessible through Window=>Cohort Identification");
 
-
             UseTripleDotSuffix = true;
+        }
+
+        [UseWithObjectConstructor]
+        public ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(IBasicActivateItems activator,
+            [DemandsInitialization("The cohort builder query that should be executed")]
+            CohortIdentificationConfiguration cic,
+            [DemandsInitialization(Desc_ExternalCohortTableParameter)]
+            ExternalCohortTable ect,
+            [DemandsInitialization(Desc_CohortNameParameter)]
+            string cohortName,
+            [DemandsInitialization(Desc_ProjectParameter)]
+            Project project,
+            [DemandsInitialization("Pipeline for executing the query, performing any required transforms on the output list and allocating release identifiers")]
+            IPipeline pipeline):
+            base(activator,ect,cohortName,project,pipeline)
+        {
+            _cic = cic;
         }
 
         public override string GetCommandHelp()

@@ -21,15 +21,40 @@ namespace Rdmp.Core.CommandExecution.CohortCreationCommands
 {
     public abstract class CohortCreationCommandExecution : BasicCommandExecution, IAtomicCommandWithTarget
     {
+        protected const string Desc_ExternalCohortTableParameter = "Destination cohort database in which to store identifiers";
+        protected const string Desc_CohortNameParameter = "Name for cohort.  If the named cohort already exists then a new Version will be assumed e.g. Version 2";
+        protected const string Desc_ProjectParameter = "Project to associate cohort with, must have a ProjectNumber";
+
         protected ExternalCohortTable ExternalCohortTable;
         protected IProject Project;
         protected IPipeline Pipeline;
         private string _explicitCohortName;
 
-        protected CohortCreationCommandExecution(IBasicActivateItems activator,string cohortName,Project project, IPipeline pipeline) : base(activator)
+        /// <summary>
+        /// Initialises base class with no targetting parameters, these will be prompted from the user at execution time assuming <see cref="IBasicActivateItems.IsInteractive"/>
+        /// </summary>
+        /// <param name="activator"></param>
+        protected CohortCreationCommandExecution(IBasicActivateItems activator)
+            :this(activator,null,null,null,null)
+        {
+
+        }
+
+        /// <summary>
+        /// Initialises common targetting parameters (where to store resulting identifiers etc)
+        /// </summary>
+        /// <param name="activator"></param>
+        /// <param name="externalCohortTable"></param>
+        /// <param name="cohortName"></param>
+        /// <param name="project"></param>
+        /// <param name="pipeline"></param>
+        protected CohortCreationCommandExecution(IBasicActivateItems activator,ExternalCohortTable externalCohortTable,string cohortName,Project project, IPipeline pipeline) : base(activator)
         {
             var dataExport = activator.CoreChildProvider as DataExportChildProvider;
+
+            //May be null
             _explicitCohortName = cohortName;
+            ExternalCohortTable = externalCohortTable;
             Project = project;
             Pipeline = pipeline;
 

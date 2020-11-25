@@ -42,7 +42,7 @@ namespace Rdmp.Core.CommandExecution.CohortCreationCommands
         }
 
         public ExecuteCommandCreateNewCohortFromCatalogue(IBasicActivateItems activator) 
-            : base(activator,null,null,null)
+            : base(activator,null,null,null,null)
         {
             UseTripleDotSuffix = true;
         }

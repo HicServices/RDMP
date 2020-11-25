@@ -25,9 +25,8 @@ namespace Rdmp.Core.CommandExecution.CohortCreationCommands
         private FileInfo _file;
 
         public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, ExternalCohortTable externalCohortTable ) :
-            base(activator,null,null,null)
+            base(activator,externalCohortTable,null,null,null)
         {
-            ExternalCohortTable = externalCohortTable;
             UseTripleDotSuffix = true;
         }
 
@@ -35,28 +34,27 @@ namespace Rdmp.Core.CommandExecution.CohortCreationCommands
             : this(activator,file,externalCohortTable,null,null,null)
         {
         }
-        
+
         [UseWithObjectConstructor]
         public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, 
             
             [DemandsInitialization("A file containing private cohort identifiers")]
             FileInfo file,
             
-            [DemandsInitialization("Destination cohort database in which to store identifiers")]
+            [DemandsInitialization(Desc_ExternalCohortTableParameter)]
             ExternalCohortTable externalCohortTable,
             
-            [DemandsInitialization("Name for cohort.  If the named cohort already exists then a new Version will be assumed e.g. Version 2")]
+            [DemandsInitialization(Desc_CohortNameParameter)]
             string cohortName,
             
-            [DemandsInitialization("Project to associate cohort with, must have a ProjectNumber")]
+            [DemandsInitialization(Desc_ProjectParameter)]
             Project project,
             
             [DemandsInitialization("Pipeline for reading from the file and allocating release identifiers")]
             IPipeline pipeline)
-            : base(activator,cohortName,project,pipeline)
+            : base(activator,externalCohortTable,cohortName,project,pipeline)
             {
                 _file = file;
-                ExternalCohortTable = externalCohortTable;
                 UseTripleDotSuffix = true;
             }
 
