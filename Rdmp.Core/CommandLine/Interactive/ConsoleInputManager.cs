@@ -245,9 +245,10 @@ namespace Rdmp.Core.CommandLine.Interactive
 
             var file = Console.ReadLine();
             
-            var asterixIdx = file.IndexOf('*');
-
             if(file != null)
+            {
+                var asterixIdx = file.IndexOf('*');
+
                 if(asterixIdx != -1)
                 {
                     int idxLastSlash = file.LastIndexOfAny(new []{Path.DirectorySeparatorChar,Path.AltDirectorySeparatorChar });
@@ -269,11 +270,9 @@ namespace Rdmp.Core.CommandLine.Interactive
                 {
                     return new[]{new FileInfo(file) };
                 }
-
-                
+            }
 
             return null;
-
         }
         
 

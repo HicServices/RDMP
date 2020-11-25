@@ -142,7 +142,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 foreach (var kvp in married)
                 {
                     //yup thats how we roll, the database is main memory!
-                    var ei = new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueRepository, kvp.Key, kvp.Value, kvp.Value.Name);
+                    new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueRepository, kvp.Key, kvp.Value, kvp.Value.Name);
                 }
 
             if (ignoredTables.Any())

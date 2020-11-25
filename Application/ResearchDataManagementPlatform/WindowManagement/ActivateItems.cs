@@ -708,12 +708,13 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override DirectoryInfo SelectDirectory(string prompt)
         {
-            var fb = new FolderBrowserDialog();
-
-            if (fb.ShowDialog() == DialogResult.OK)
-                return new DirectoryInfo(fb.SelectedPath);
+            using(var fb = new FolderBrowserDialog())
+            {
+                if (fb.ShowDialog() == DialogResult.OK)
+                    return new DirectoryInfo(fb.SelectedPath);
             
-            return null;
+                return null;
+            }
         }
 
         public override FileInfo SelectFile(string prompt)
@@ -723,28 +724,30 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
         {
-            var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = false};
+            using(var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = false})
+            {
+                if (patternDescription != null && pattern != null)
+                    fb.Filter = patternDescription + "|" + pattern;
 
-            if (patternDescription != null && pattern != null)
-                fb.Filter = patternDescription + "|" + pattern;
-
-            if (fb.ShowDialog() == DialogResult.OK)
-                return new FileInfo(fb.FileName);
+                if (fb.ShowDialog() == DialogResult.OK)
+                    return new FileInfo(fb.FileName);
             
-            return null;
+                return null;
+            }        
         }
         
         public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
         {
-            var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = true};
+            using(var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = true})
+            {
+                if (patternDescription != null && pattern != null)
+                    fb.Filter = patternDescription + "|" + pattern;
 
-            if (patternDescription != null && pattern != null)
-                fb.Filter = patternDescription + "|" + pattern;
-
-            if (fb.ShowDialog() == DialogResult.OK)
-                return fb.FileNames.Select(f=>new FileInfo(f)).ToArray();
+                if (fb.ShowDialog() == DialogResult.OK)
+                    return fb.FileNames.Select(f=>new FileInfo(f)).ToArray();
             
-            return null;
+                return null;
+            }
         }
 
         protected override bool SelectValueTypeImpl(string prompt, Type paramType, object initialValue, out object chosen)

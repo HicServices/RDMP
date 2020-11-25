@@ -34,12 +34,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation
 
         protected string GetCommandText()
         {
-            Parser p = new Parser();
-            var options = CommandGetter();
+            using(Parser p = new Parser())
+            {
+                var options = CommandGetter();
 
-            PopulateConnectionStringOptions(options);
+                PopulateConnectionStringOptions(options);
 
-            return AutomationServiceExecutable + " " + p.FormatCommandLine(options);
+                return AutomationServiceExecutable + " " + p.FormatCommandLine(options);
+            }
         }
 
         private void PopulateConnectionStringOptions(RDMPCommandLineOptions options)
