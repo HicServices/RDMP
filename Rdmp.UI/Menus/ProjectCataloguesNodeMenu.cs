@@ -17,7 +17,7 @@ namespace Rdmp.UI.Menus
         public ProjectCataloguesNodeMenu(RDMPContextMenuStripArgs args, ProjectCataloguesNode node) : base(args, node)
         {
             Add(new ExecuteCommandMakeCatalogueProjectSpecific(_activator).SetTarget(node.Project));
-            Add(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator).SetTarget(node.Project));
+            Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator).SetTarget(node.Project));
             Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator).SetTarget(node.Project));
         }
     }

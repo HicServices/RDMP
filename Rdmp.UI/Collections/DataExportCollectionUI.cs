@@ -149,7 +149,7 @@ namespace Rdmp.UI.Collections
             var mi = new ToolStripMenuItem("Project Specific Catalogue",Activator.CoreIconProvider.GetImage(RDMPConcept.ProjectCatalogue,OverlayKind.Add));
 
             var factory = new AtomicCommandUIFactory(Activator);
-            mi.DropDownItems.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCatalogueByImportingFile(Activator)
+            mi.DropDownItems.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator)
             {
                 OverrideCommandName = "From File...",
                 PromptForProject = true

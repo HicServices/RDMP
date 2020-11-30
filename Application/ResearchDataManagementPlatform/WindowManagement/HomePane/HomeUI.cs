@@ -42,7 +42,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
         private void BuildCommandLists()
         {
             boxCatalogue.SetUp(Activator,"Catalogue",typeof(Catalogue),_uiFactory,
-                new ExecuteCommandCreateNewCatalogueByImportingFile(_activator)
+                new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator)
                 {
                     OverrideCommandName = GlobalStrings.FromFile
                 },

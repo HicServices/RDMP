@@ -117,7 +117,7 @@ namespace Rdmp.UI.Collections
             
             if (isFirstTime)
             {
-                CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingFile(Activator),GlobalStrings.FromFile,null,"New...");
+                CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator),GlobalStrings.FromFile,null,"New...");
                 CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator),GlobalStrings.FromDatabase,null,"New...");
             }
 
@@ -188,7 +188,7 @@ namespace Rdmp.UI.Collections
             //Things that are always visible regardless
             CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[]
             {
-                new ExecuteCommandCreateNewCatalogueByImportingFile(a),
+                new ExecuteCommandCreateNewCatalogueByImportingFileUI(a),
                 new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(a),
                 new ExecuteCommandCreateNewEmptyCatalogue(a)
             };

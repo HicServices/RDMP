@@ -43,8 +43,8 @@ namespace Rdmp.UI.CommandExecution.Proposals
 
             var file = cmd as FileCollectionCombineable;
 
-            if(file != null)
-                return new ExecuteCommandCreateNewCatalogueByImportingFile(ItemActivator,file).SetTarget(project);
+            if(file != null && file.Files.Length == 1)
+                return new ExecuteCommandCreateNewCatalogueByImportingFileUI(ItemActivator,file.Files[0]).SetTarget(project);
 
             var aggCommand = cmd as AggregateConfigurationCombineable;
             

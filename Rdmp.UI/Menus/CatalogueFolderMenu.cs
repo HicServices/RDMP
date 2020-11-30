@@ -17,7 +17,7 @@ namespace Rdmp.UI.Menus
         public CatalogueFolderMenu(RDMPContextMenuStripArgs args, CatalogueFolder folder) : base(args, folder)
         {
             //Things that are always visible regardless
-            Add(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator)
+            Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator)
             {
                 TargetFolder = folder
             });

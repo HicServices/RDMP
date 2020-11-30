@@ -216,7 +216,7 @@ namespace ResearchDataManagementPlatform.Menus
             //Catalogue commands
             return new IAtomicCommand[]
             {
-                new ExecuteCommandCreateNewCatalogueByImportingFile(Activator),
+                new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator),
                 new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator),
                 new ExecuteCommandCreateNewTableInfoByImportingExistingDataTable(Activator),
                 new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator),

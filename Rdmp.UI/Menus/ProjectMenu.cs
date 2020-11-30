@@ -27,7 +27,7 @@ namespace Rdmp.UI.Menus
             Add(new ExecuteCommandRelease(_activator).SetTarget(project));
             Add(new ExecuteCommandExecuteExtractionConfiguration(_activator).SetTarget(project));
 
-            Add(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator)
+            Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator)
             {
                 OverrideCommandName = "From File..."
             }.SetTarget(project), Keys.None, AddProjectSpecificCatalogueMenuText,_activator.CoreIconProvider.GetImage(RDMPConcept.ProjectCatalogue,OverlayKind.Add));

@@ -151,7 +151,7 @@ namespace Rdmp.UI.CommandExecution
             if(file != null)
                 if(file.Files.Length == 1)
                 {
-                    var toReturn = new ExecuteCommandCreateNewCatalogueByImportingFile(_activator,file.Files[0]);
+                    var toReturn = new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator,file.Files[0]);
                     toReturn.TargetFolder = targetCatalogueFolder;
                     return toReturn;
                 }
