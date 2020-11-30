@@ -147,7 +147,7 @@ namespace Tests.Common.Scenarios
             f.DoImport(out tableInfo,out columnInfos);
 
             ForwardEngineerCatalogue forwardEngineer = new ForwardEngineerCatalogue(tableInfo,columnInfos,true);
-            forwardEngineer.ExecuteForwardEngineering(out var c,out var catalogueItems, out var extractionInformations);
+            forwardEngineer.ExecuteForwardEngineering(out var c,out catalogueItems, out extractionInformations);
             this.catalogue = c;
 
             var chi = extractionInformations.Single(e => e.GetRuntimeName().Equals("chi"));
