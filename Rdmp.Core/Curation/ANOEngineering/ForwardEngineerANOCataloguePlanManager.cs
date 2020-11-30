@@ -172,6 +172,8 @@ namespace Rdmp.Core.Curation.ANOEngineering
                 if (!refactorer.IsRefactorable(e))
                     notifier.OnCheckPerformed(new CheckEventArgs("ExtractionInformation '" + e + "' is a not refactorable due to reason:" + refactorer.GetReasonNotRefactorable(e), CheckResult.Fail));
             
+            notifier.OnCheckPerformed(new CheckEventArgs($"Preparing to evaluate {toMigrateTables.Length}' tables ({string.Join(",",toMigrateTables.Select(t=>t.GetFullyQualifiedName()))})", CheckResult.Success));
+
             foreach (TableInfo tableInfo in toMigrateTables)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("Evaluating TableInfo '" + tableInfo + "'", CheckResult.Success));
