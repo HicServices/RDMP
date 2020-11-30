@@ -15,6 +15,9 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
 {
+    /// <summary>
+    /// Creates a new <see cref="Catalogue"/> reference in the RDMP database pointing to a table (which must already exist) in a relational database
+    /// </summary>
     public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable : CatalogueCreationCommandExecution
     {
         private DiscoveredTable _importTable;
@@ -26,7 +29,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
         }
 
         [UseWithObjectConstructor]
-        public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IBasicActivateItems activator, DiscoveredTable existingTable,IProject projectSpecific,CatalogueFolder targetFolder) : base(activator,projectSpecific,targetFolder)
+        public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IBasicActivateItems activator,
+            [DemandsInitialization("An existing table that you want to import a reference to")]
+            DiscoveredTable existingTable,
+            [DemandsInitialization(CatalogueCreationCommandExecution.Desc_ProjectSpecificParameter)]
+            IProject projectSpecific,
+            
+            [DemandsInitialization(CatalogueCreationCommandExecution.Desc_TargetFolder)]
+            string targetFolder) : base(activator,projectSpecific,string.IsNullOrEmpty(targetFolder) ? null : new CatalogueFolder(targetFolder))
         {
             _importTable = existingTable;
         }

@@ -24,6 +24,9 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
 {
+    /// <summary>
+    /// Import a file (e.g. CSV, excel etc) into a relational database as a new table using a given <see cref="Pipeline"/> and create a reference to it in RDMP.
+    /// </summary>
     public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreationCommandExecution
     {
         private DiscoveredDatabase _targetDatabase;

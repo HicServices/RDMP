@@ -89,21 +89,7 @@ The RDMP command line client can be used to run unattended jobs (such as overnig
    
 <a name="cli"></a>
 ### Does RDMP have a Command Line Interface (CLI)
-Yes, the [rdmp](./../../Tools/rdmp/) program allows command line execution of all major engines in RDMP (Caching / Data Load / Cohort Creation / Extraction and Release).  To access the CLI command line help system run:
-
-```
-rdmp.exe --help
-```
-
-For help on each engine (verb) on the command line enter the verb (listed by the main --help command) followed by --help e.g.:
-
-```
-rdmp.exe dle --help
-```
-
-When performing an operation in the RDMP client application (e.g. releasing a dataset) you can instead select 'Copy Run Command To Clipboard'.  This will generate a CLI command that will perform the current action (e.g. extract [Project] X using Pipeline Y).  This can be helpful for scheduling long running tasks etc.
-
-![Accessing menu copy to clipboard](./Images/FAQ/CopyCommandToClipboard.png)
+Yes, read all about it in [./RdmpCommandLine.md]
 
 <a name="linux"></a>
 ### Does RDMP run under Linux

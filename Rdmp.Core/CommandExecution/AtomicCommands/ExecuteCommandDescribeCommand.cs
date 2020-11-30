@@ -59,7 +59,19 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
             else
             if(commandCtor == null || !invoker.IsSupported(commandCtor))
+            {
                 sb.AppendLine($"Command '{_commandType.Name}' is not supported by the current input type ({BasicActivator.GetType().Name})");
+                
+                if(commandCtor != null)
+                {
+                    var unsupported = commandCtor.GetParameters().Where(p=>!invoker.IsSupported(p)).ToArray();
+
+                    if(unsupported.Any())
+                        sb.AppendLine("The following parameter types (required by the command's constructor) were not supported:" + Environment.NewLine + string.Join(Environment.NewLine,unsupported.Select(p=> $"{p.Name }({p.ParameterType})")));
+                }
+                
+            }
+                
             else
             {
                 // For each thing the constructor takes
@@ -171,7 +183,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if(helpText != null)
             {
                 sb.AppendLine();
-                sb.AppendLine("Description: " + helpText);
+                sb.AppendLine("Description: " + Environment.NewLine + helpText);
             }
 
             sb.AppendLine();

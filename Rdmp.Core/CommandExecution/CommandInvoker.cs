@@ -241,7 +241,7 @@ namespace Rdmp.Core.CommandExecution
             return c.GetCustomAttribute<UseWithCommandLineAttribute>() != null || c.GetParameters().All(IsSupported);
         }
 
-        private bool IsSupported(ParameterInfo p)
+        public bool IsSupported(ParameterInfo p)
         {
             return GetDelegate(new RequiredArgument(p)) != null;
         }

@@ -17,7 +17,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
         public CatalogueFolder TargetFolder {get;set; }
 
         protected const string Desc_ProjectSpecificParameter = "Optionally associate the Catalogue created with a specific Project, otherwise Null";
-        
+        protected const string Desc_TargetFolder = "Optionally create the Catalogue in a virtual subdirectory e.g. /mycatalogues/, otherwise Null";
         /// <summary>
         /// Create a project specific Catalogue when command is executed by prompting the user to first pick a project
         /// </summary>
