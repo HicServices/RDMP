@@ -145,25 +145,25 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             string[] words = longString.Split(' ');
 
-            StringBuilder newSentence = new StringBuilder();
+            StringBuilder newSentence = new StringBuilder(longString.Length);
 
-
-            string line = "";
+            StringBuilder line = new StringBuilder(width);
             foreach (string word in words)
             {
-                if ((line + word).Length >= width)
+                if ((line.Length + word.Length) >= width)
                 {
-                    newSentence.AppendLine(line.TrimEnd());
+                    newSentence.AppendLine(line.ToString().TrimEnd());
                     newSentence.Append(new string (' ',indent));
-                    line = "";
+                    line.Clear();
                 }
 
-                line += string.Format("{0} ", word);
+                line.Append(word);
+                line.Append(" ");
             }
 
             if (line.Length > 0)
             {
-                newSentence.AppendLine(line);
+                newSentence.AppendLine(line.ToString().TrimEnd());
                 newSentence.Append(new string (' ',indent));
             }
 
