@@ -31,7 +31,7 @@ For help on each engine (verb) on the command line enter the verb (listed by the
 rdmp.exe dle --help
 ```
 
-When performing an operation in the RDMP client application (e.g. releasing a dataset) you can instead select 'Copy Run Command To Clipboard'.  This will generate a CLI command that will perform the current action (e.g. extract [Project] X using Pipeline Y).  This can be helpful for scheduling long running tasks etc.
+When performing an operation in the RDMP client application (e.g. releasing a dataset) you can instead select 'Copy Run Command To Clipboard'.  This will generate a CLI command that will perform the current action (e.g. extract [Project] X using [Pipeline] Y).  This can be helpful for scheduling long running tasks etc.
 
 ![Accessing menu copy to clipboard](./Images/FAQ/CopyCommandToClipboard.png)
 
@@ -77,7 +77,7 @@ Some commands require specifying a database (e.g. `CreateNewCatalogueByImporting
 | Parameter Type | Syntax |
 |----------|---------|
 | values  | For value types simply enter the value (e.g. `8`).  If text has spaces then wrap it in double quotes e.g. `"My cool Catalogue"` |
-| Database Objects (e.g. Catalogue)         |  Rdmp objects can be specified by ID (e.g. `Catalogue:2`) or by name using wild cards (e.g. `Catalogue:*bioch*`).  If a command accepts multiple objects you can specify a pattern (e.g. `Catalogue:intern*` would match all Catalogues starting with the word "intern".  Entering the Type name alone will return all objects (e.g. `Catalogue`)|
+| Database Objects (e.g. [Catalogue])         |  Rdmp objects can be specified by ID (e.g. `Catalogue:2`) or by name using wild cards (e.g. `Catalogue:*bioch*`).  If a command accepts multiple objects you can specify a pattern (e.g. `Catalogue:intern*` would match all Catalogues starting with the word "intern".  Entering the Type name alone will return all objects (e.g. `Catalogue`)|
 | DiscoveredDatabase  | To specify a database use the syntax `"DatabaseType:{DatabaseType}:[Name:{DatabaseName}:]{ConnectionString}"` e.g.  `"DatabaseType:MicrosoftSQLServer:Name:MyDb:Server=localhost\sqlexpress;Trusted_Connection=True;"`*|
 | DiscoveredTable | To specify a table use the syntax `"Table:{TableName}:[Schema:{SchemaIfAny}:][IsView:{True/False}]:DatabaseType:{DatabaseType}:Name:{DatabaseName}:{ConnectionString}"` e.g. `"Table:v_cool:Schema:dbo:IsView:True:DatabaseType:MicrosoftSQLServer:Name:MyDb:Server=localhost\sqlexpress;Trusted_Connection=True;"`*|
 | Null | If a parameter is optional then you can enter the word `Null` to ignore it |
@@ -95,3 +95,5 @@ You can access an interactive terminal similar to the RDMP gui client by running
 rdmp.exe gui
 ```
 
+[Pipeline]: ./Glossary.md#Pipeline
+[Catalogue]: ./Glossary.md#Catalogue

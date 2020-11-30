@@ -57,7 +57,7 @@ namespace Tests.Common.Scenarios
         /// Rdmp reference to the test table (<see cref="ImportAsCatalogue"/>).  <see cref="Catalogue"/> is the descriptive element while <see cref="tableInfo"/> is the 
         /// pointer to the underlying table.
         /// </summary>
-        public Catalogue catalogue;
+        public ICatalogue catalogue;
 
         /// <summary>
         /// Rdmp reference to the test table columns (<see cref="ImportAsCatalogue"/>).  <see cref="CatalogueItem"/> is the descriptive element while <see cref="columnInfos"/> is the 
@@ -147,7 +147,8 @@ namespace Tests.Common.Scenarios
             f.DoImport(out tableInfo,out columnInfos);
 
             ForwardEngineerCatalogue forwardEngineer = new ForwardEngineerCatalogue(tableInfo,columnInfos,true);
-            forwardEngineer.ExecuteForwardEngineering(out var catalogue,out var catalogueItems, out var extractionInformations);
+            forwardEngineer.ExecuteForwardEngineering(out var c,out var catalogueItems, out var extractionInformations);
+            this.catalogue = c;
 
             var chi = extractionInformations.Single(e => e.GetRuntimeName().Equals("chi"));
             chi.IsExtractionIdentifier = true;
