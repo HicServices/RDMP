@@ -5,6 +5,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui
@@ -55,6 +56,7 @@ namespace Rdmp.Core.CommandLine.Gui
         {
 			var menu = new MenuBar (new MenuBarItem [] {
 				new MenuBarItem ("_File", new MenuItem [] {
+					new MenuItem ("_Run...", "", () => Run()),
 					new MenuItem ("_Quit", "", () => Quit()),
 				}),
 			});
@@ -170,6 +172,25 @@ namespace Rdmp.Core.CommandLine.Gui
 				_activator.ShowException("Error getting node children",ex);
 				return new object[0];
             }
+        }
+
+		private void Run()
+        {
+            var commandInvoker = new CommandInvoker(_activator);
+            commandInvoker.CommandImpossible += (o, e) => { _activator.Show("Command Impossible because:" + e.Command.ReasonCommandImpossible);};
+            
+            var commands = commandInvoker.GetSupportedCommands();
+
+            var dlg = new ConsoleGuiBigListBox<Type>("Choose Command","Run",true,commands.ToList(),(t)=>BasicCommandExecution.GetCommandName(t.Name),false);
+            if (dlg.ShowDialog())
+                try
+                {
+                    commandInvoker.ExecuteCommand(dlg.Selected,null);
+                }
+                catch (Exception exception)
+                {
+                    _activator.ShowException("Run Failed",exception);
+                }
         }
     }
 }

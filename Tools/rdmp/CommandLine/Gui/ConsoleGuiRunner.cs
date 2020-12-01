@@ -62,25 +62,6 @@ namespace Rdmp.Core.CommandLine.Gui
             //one day this might be a problem but not today
             _activator.Publish(null);
         }
-
-        private void Run()
-        {
-            var commandInvoker = new CommandInvoker(_activator);
-            commandInvoker.CommandImpossible += (o, e) => { _activator.Show("Command Impossible because:" + e.Command.ReasonCommandImpossible);};
-            
-            var commands = commandInvoker.GetSupportedCommands();
-
-            var dlg = new ConsoleGuiBigListBox<Type>("Choose Command","Run",true,commands.ToList(),(t)=>BasicCommandExecution.GetCommandName(t.Name),false);
-            if (dlg.ShowDialog())
-                try
-                {
-                    commandInvoker.ExecuteCommand(dlg.Selected,null);
-                }
-                catch (Exception exception)
-                {
-                    _activator.ShowException("Run Failed",exception);
-                }
-        }
     }
 }
 
