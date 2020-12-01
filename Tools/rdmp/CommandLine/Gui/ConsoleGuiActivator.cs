@@ -24,6 +24,7 @@ namespace Rdmp.Core.CommandLine.Gui
     {
         public ConsoleGuiActivator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier) : base(repositoryLocator, globalErrorCheckNotifier)
         {
+            InteractiveDeletes = true;
         }
 
 
@@ -42,21 +43,22 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public override void Show(string message)
         {
-            var okButton = new Button("Ok", true);
-            okButton.Clicked += Application.RequestStop;
-            var dlg = new Dialog("Message", Math.Min(80,Application.Top.Frame.Width), Math.Min(20,Application.Top.Frame.Height),okButton);
+            GetDialogDimensions(out var w, out var h);
+            MessageBox.Query(w,h,"Message",message,"ok");
+        }
+        public override bool YesNo(string text, string caption, out bool chosen)
+        {
+            GetDialogDimensions(out var w, out var h);
+            int result = MessageBox.Query(w,h,caption,text,"yes","no","cancel");
+            chosen = result == 0;
 
-            dlg.Add(new TextView()
-            {
-                Text = message,
-                X = 0,
-                Y = 0,
-                Width = Dim.Fill(),
-                Height = Dim.Fill()-1,
-                ReadOnly = true
-            });
+            return result != 2;
+        }
 
-            Application.Run(dlg);
+        private void GetDialogDimensions(out int w, out int h)
+        {
+            w = Math.Min(80,Application.Top.Frame.Width -4);
+            h = Math.Min(20,Application.Top.Frame.Height -2);
         }
 
         public override bool TypeText(string header, string prompt, int maxLength, string initialText, out string text,
@@ -159,20 +161,6 @@ namespace Rdmp.Core.CommandLine.Gui
             return openDir.FilePaths?.Select(f=>new FileInfo(f))?.ToArray();
         }
 
-        public override bool YesNo(string text, string caption, out bool chosen)
-        {
-            var dlg = new ConsoleGuiBigListBox<bool>(text, "Ok", false, new List<bool>(new []{true,false}), (b) => b ? "Yes" : "No",false);
-
-            if (dlg.ShowDialog())
-            {
-                chosen = dlg.Selected;
-                return true;
-            }
-
-            chosen = false;
-            return false;
-        }
-
         public override bool SelectEnum(string prompt, Type enumType, out Enum chosen)
         {
             var dlg = new ConsoleGuiBigListBox<Enum>(prompt, "Ok", false, Enum.GetValues(enumType).Cast<Enum>().ToList(), null,false);
@@ -226,12 +214,10 @@ namespace Rdmp.Core.CommandLine.Gui
                 textView.Text = GetExceptionText(errorText, exception, toggleStack);
                 toggleStack = !toggleStack;
             };
-            var dlg = new Dialog("Error", Math.Min(Application.Top.Frame.Width, 80),
-                Math.Min(Application.Top.Frame.Height, 20),
-                btnOk,btnStack);
-            
-            
 
+            GetDialogDimensions(out var w, out var h);
+
+            var dlg = new Dialog("Error",w,h,btnOk,btnStack);            
             dlg.Add(textView);
             
             Application.Run(dlg);
@@ -246,6 +232,5 @@ namespace Rdmp.Core.CommandLine.Gui
         {
             return string.Join("\n",Regex.Matches( longString, ".{1,"+width+"}" ).Select( m => m.Value ).ToArray());
         }
-
     }
 }

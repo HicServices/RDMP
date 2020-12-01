@@ -13,11 +13,14 @@ using System.Threading.Tasks;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CohortCommitting.Pipeline;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
@@ -30,6 +33,9 @@ namespace Rdmp.Core.CommandExecution
     {
         /// <inheritdoc/>
         public virtual bool IsInteractive => true;
+
+        /// <inheritdoc/>
+        public bool InteractiveDeletes {get;set;}
 
         /// <inheritdoc/>
         public ICoreChildProvider CoreChildProvider { get; protected set;}
@@ -144,12 +150,113 @@ namespace Rdmp.Core.CommandExecution
         /// <inheritdoc/>
         public virtual bool DeleteWithConfirmation(IDeleteable deleteable)
         {
-            deleteable.DeleteInDatabase();
+            if (IsInteractive && InteractiveDeletes)
+            {
+                bool didDelete = InteractiveDelete(deleteable);
+                
+                if(didDelete && deleteable is IMapsDirectlyToDatabaseTable o)
+                    Publish(o);
 
-            if(deleteable is DatabaseEntity d)
-                Publish(d);
+                return didDelete;
+            }
+            else
+            {
+                deleteable.DeleteInDatabase();
 
-            return true;
+                if(deleteable is DatabaseEntity d)
+                    Publish(d);
+
+                return true;
+            }
+        }
+
+        protected virtual bool InteractiveDelete(IDeleteable deleteable)
+        {
+            var databaseObject = deleteable as DatabaseEntity;
+                        
+            //If there is some special way of describing the effects of deleting this object e.g. Selected Datasets
+            var customMessageDeletable = deleteable as IDeletableWithCustomMessage;
+            
+            if(databaseObject is Catalogue c)
+            {
+                if(c.GetExtractabilityStatus(RepositoryLocator.DataExportRepository).IsExtractable)
+                {
+                    if(YesNo("Catalogue must first be made non extractable before it can be deleted, mark non extractable?","Make Non Extractable"))
+                    {
+                        var cmd = new ExecuteCommandChangeExtractability(this,c);
+                        cmd.Execute();
+                    }
+                    else
+                        return false;
+                }
+            }
+
+            if( databaseObject is AggregateConfiguration ac && ac.IsJoinablePatientIndexTable())
+            {
+                var users = ac.JoinableCohortAggregateConfiguration?.Users?.Select(u=>u.AggregateConfiguration);
+                if(users != null)
+                {
+                    users = users.ToArray();
+                    if(users.Any())
+                    {
+                        Show($"Cannot Delete '{ac.Name}' because it is linked to by the following AggregateConfigurations:{Environment.NewLine}{string.Join(Environment.NewLine,users)}");
+                        return false;
+                    }                       
+                }
+            }
+
+            string overrideConfirmationText = null;
+
+            if (customMessageDeletable != null)
+                overrideConfirmationText = "Are you sure you want to " +customMessageDeletable.GetDeleteMessage() +"?";
+
+            //it has already been deleted before
+            if (databaseObject != null && !databaseObject.Exists())
+                return false;
+
+            string idText = "";
+
+            if (databaseObject != null)
+                idText = " ID=" + databaseObject.ID;
+
+            if (databaseObject != null)
+            {
+                var exports = RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectExport>(databaseObject).ToArray();
+                if(exports.Any(e=>e.Exists()))
+                    if(YesNo("This object has been shared as an ObjectExport.  Deleting it may prevent you loading any saved copies.  Do you want to delete the ObjectExport definition?","Delete ObjectExport"))
+                    {
+                        foreach(ObjectExport e in exports)
+                            e.DeleteInDatabase(); 
+                    }
+                    else
+                        return false;
+            }
+                        
+            if (
+                YesNo(
+                    overrideConfirmationText?? ("Are you sure you want to delete '" + deleteable + "'?")
+                +Environment.NewLine + "(" + deleteable.GetType().Name + idText +")",
+                "Delete " + deleteable.GetType().Name))
+            {
+                deleteable.DeleteInDatabase();
+                
+                if (databaseObject == null)
+                {
+                    var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(deleteable);
+                    if(descendancy != null)
+                        databaseObject = descendancy.Parents.OfType<DatabaseEntity>().LastOrDefault();
+                }
+
+                if (deleteable is IMasqueradeAs)
+                    databaseObject = databaseObject ?? ((IMasqueradeAs)deleteable).MasqueradingAs() as DatabaseEntity;
+
+                if (databaseObject == null)
+                    throw new NotSupportedException("IDeletable " + deleteable +
+                                                    " was not a DatabaseObject and it did not have a Parent in it's tree which was a DatabaseObject (DescendancyList)");
+                return true;
+            }
+
+            return false;
         }
 
         /// <inheritdoc/>

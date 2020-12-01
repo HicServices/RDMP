@@ -17,7 +17,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
 		const string Catalogues = "Catalogues";
 		const string Projects = "Projects";
-		const string Loads = "Loads";
+		const string Loads = "Data Loads";
 		const string CohortConfigs = "Cohort Configurations";
 		const string BuiltCohorts = "Built Cohorts";
 
@@ -89,6 +89,7 @@ namespace Rdmp.Core.CommandLine.Gui
 			top.Add(_win);
 
 			_treeView.SelectionChanged += SelectionChanged;
+            _treeView.KeyPress += treeView_KeyPress;
 
 			var statusBar = new StatusBar (new StatusItem [] {
 				new StatusItem(Key.ControlQ, "~^Q~ Quit", () => Quit()),
@@ -97,10 +98,36 @@ namespace Rdmp.Core.CommandLine.Gui
 			top.Add (statusBar);
         }
 
-        private void SelectionChanged(object sender, EventArgs e)
+        private void treeView_KeyPress(View.KeyEventEventArgs obj)
         {
-			if(_treeView.SelectedObject is IMapsDirectlyToDatabaseTable o)
-				SetSubWindow(new ConsoleGuiEdit(_activator,o));
+            try
+            {
+				switch(obj.KeyEvent.Key)
+				{
+					case Key.DeleteChar : 
+
+						if(_treeView.SelectedObject is IDeleteable d)
+							_activator.DeleteWithConfirmation(d);
+
+						obj.Handled = true;
+						break;
+				}
+            }
+            catch (Exception ex)
+            {
+				_activator.ShowException("Error",ex);
+            }
+        }
+
+        private void SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+			var imaps = e.NewValue as IMapsDirectlyToDatabaseTable;
+
+			if(e.NewValue is IMasqueradeAs masquerade)
+					imaps = masquerade.MasqueradingAs() as IMapsDirectlyToDatabaseTable;
+
+			if(imaps != null)
+				SetSubWindow(new ConsoleGuiEdit(_activator,imaps));
 			else
 				ClearSubWindow();
         }

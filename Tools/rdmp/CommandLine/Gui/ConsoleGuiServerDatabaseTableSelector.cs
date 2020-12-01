@@ -53,7 +53,8 @@ namespace Rdmp.Core.CommandLine.Gui
 
                 // By using Dim.Fill(), it will automatically resize without manual intervention
                 Width = Dim.Fill (),
-                Height = Dim.Fill ()
+                Height = Dim.Fill (),
+                Modal = true
             };
 
             //////////////////////////////////////////////// Username //////////////////////

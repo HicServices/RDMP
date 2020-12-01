@@ -106,6 +106,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public ActivateItems(ITheme theme,RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowFactory windowFactory, WindowManager windowManager, ICheckNotifier globalErrorCheckNotifier):base(repositoryLocator,globalErrorCheckNotifier)
         {
             Theme = theme;
+            InteractiveDeletes = true;
             WindowFactory = windowFactory;
             _mainDockPanel = mainDockPanel;
             _windowManager = windowManager;
@@ -220,94 +221,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override bool DeleteWithConfirmation(IDeleteable deleteable)
         {
-            var databaseObject = deleteable as DatabaseEntity;
-                        
-            //If there is some special way of describing the effects of deleting this object e.g. Selected Datasets
-            var customMessageDeletable = deleteable as IDeletableWithCustomMessage;
-            
-            if(databaseObject is Catalogue c)
-            {
-                if(c.GetExtractabilityStatus(RepositoryLocator.DataExportRepository).IsExtractable)
-                {
-                    if(YesNo("Catalogue must first be made non extractable before it can be deleted, mark non extractable?","Make Non Extractable"))
-                    {
-                        var cmd = new ExecuteCommandChangeExtractability(this,c);
-                        cmd.Execute();
-                    }
-                    else
-                        return false;
-                }
-            }
-
-            if( databaseObject is AggregateConfiguration ac && ac.IsJoinablePatientIndexTable())
-            {
-                var users = ac.JoinableCohortAggregateConfiguration?.Users?.Select(u=>u.AggregateConfiguration);
-                if(users != null)
-                {
-                    users = users.ToArray();
-                    if(users.Any())
-                    {
-                        WideMessageBox.Show("Cannot Delete",$"Cannot Delete '{ac.Name}' because it is linked to by the following AggregateConfigurations:{Environment.NewLine}{string.Join(Environment.NewLine,users)}");
-                        return false;
-                    }                       
-                }
-            }
-
-            string overrideConfirmationText = null;
-
-            if (customMessageDeletable != null)
-                overrideConfirmationText = "Are you sure you want to " +customMessageDeletable.GetDeleteMessage() +"?";
-
-            //it has already been deleted before
-            if (databaseObject != null && !databaseObject.Exists())
-                return false;
-
-            string idText = "";
-
-            if (databaseObject != null)
-                idText = " ID=" + databaseObject.ID;
-
-            if (databaseObject != null)
-            {
-                var exports = RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectExport>(databaseObject).ToArray();
-                if(exports.Any(e=>e.Exists()))
-                    if(YesNo("This object has been shared as an ObjectExport.  Deleting it may prevent you loading any saved copies.  Do you want to delete the ObjectExport definition?","Delete ObjectExport"))
-                    {
-                        foreach(ObjectExport e in exports)
-                            e.DeleteInDatabase(); 
-                    }
-                    else
-                        return false;
-            }
-                        
-            if (
-                YesNo(
-                    overrideConfirmationText?? ("Are you sure you want to delete '" + deleteable + "'?")
-                +Environment.NewLine + "(" + deleteable.GetType().Name + idText +")",
-                "Delete " + deleteable.GetType().Name))
-            {
-                deleteable.DeleteInDatabase();
+            var didDelete = InteractiveDelete(deleteable);
                 
-                if (databaseObject == null)
-                {
-                    var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(deleteable);
-                    if(descendancy != null)
-                        databaseObject = descendancy.Parents.OfType<DatabaseEntity>().LastOrDefault();
-                }
+            if(didDelete && deleteable is DatabaseEntity de)
+                RefreshBus.Publish(this, new RefreshObjectEventArgs(de){DeletedObjectDescendancy = CoreChildProvider.GetDescendancyListIfAnyFor(de)});
 
-                if (deleteable is IMasqueradeAs)
-                    databaseObject = databaseObject ?? ((IMasqueradeAs)deleteable).MasqueradingAs() as DatabaseEntity;
-
-                if (databaseObject == null)
-                    throw new NotSupportedException("IDeletable " + deleteable +
-                                                    " was not a DatabaseObject and it did not have a Parent in it's tree which was a DatabaseObject (DescendancyList)");
-
-                RefreshBus.Publish(this, new RefreshObjectEventArgs(databaseObject){DeletedObjectDescendancy = CoreChildProvider.GetDescendancyListIfAnyFor(databaseObject)});
-
-                return true;
-            }
-
-            return false;
+            return didDelete;
         }
         
         public override void RequestItemEmphasis(object sender, EmphasiseRequest request)

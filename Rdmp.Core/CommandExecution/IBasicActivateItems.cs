@@ -30,6 +30,10 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         bool IsInteractive {get;}
 
+        /// <summary>
+        /// True to prompt Yes/No and offer common fixes for being unable to directly delete an object.  Note that <see cref="IsInteractive"/> must be true for this flag to be respected
+        /// </summary>
+        bool InteractiveDeletes {get;set;}
 
         /// <summary>
         /// Event triggered when objects should be brought to the users attention

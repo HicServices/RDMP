@@ -45,8 +45,11 @@ namespace Terminal.Gui {
         public object SelectedObject { 
             get => selectedObject; 
             set {                
+                    var oldValue = selectedObject;
                     selectedObject = value; 
-                    SelectionChanged?.Invoke(this,new EventArgs());
+
+                    if(!ReferenceEquals(oldValue,value))
+                        SelectionChanged?.Invoke(this,new SelectionChangedEventArgs(this,oldValue,value));
                 }
             }
 
@@ -68,7 +71,7 @@ namespace Terminal.Gui {
         /// <summary>
         /// Called when the <see cref="SelectedObject"/> changes
         /// </summary>
-        public event EventHandler<EventArgs> SelectionChanged;
+        public event EventHandler<SelectionChangedEventArgs> SelectionChanged;
 
         /// <summary>
         /// Creates a new tree view with absolute positioning.  Use <see cref="AddObjects(IEnumerable{object})"/> to set set root objects for the tree
@@ -256,6 +259,9 @@ namespace Terminal.Gui {
                 case Key.End:
                     GoToEnd();
                     break;
+                default:
+                    // we don't care about this keystroke
+                    return false;
             }
 
             PositionCursor();
@@ -507,4 +513,32 @@ namespace Terminal.Gui {
 	/// <param name="model"></param>
 	/// <returns></returns>
 	public delegate bool CanExpandGetterDelegate(object model);
+
+    /// <summary>
+    /// Event arguments describing a change in selected object in a tree view
+    /// </summary>
+    public class SelectionChangedEventArgs : EventArgs
+    {
+        /// <summary>
+        /// The view in which the change occurred
+        /// </summary>
+        public TreeView Tree { get; }
+
+        /// <summary>
+        /// The previously selected value (can be null)
+        /// </summary>
+        public object OldValue { get; }
+
+        /// <summary>
+        /// The newly selected value in the <see cref="Tree"/> (can be null)
+        /// </summary>
+        public object NewValue { get; }
+
+        public SelectionChangedEventArgs(TreeView tree, object oldValue, object newValue)
+        {
+            Tree = tree;
+            OldValue = oldValue;
+            NewValue = newValue;
+        }
+    }
 }

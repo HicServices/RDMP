@@ -126,7 +126,8 @@ namespace Rdmp.Core.CommandLine.Gui
 
                 // By using Dim.Fill(), it will automatically resize without manual intervention
                 Width = Dim.Fill (),
-                Height = Dim.Fill ()
+                Height = Dim.Fill (),
+                Modal = true
             };
 
             _listView = new ListView(new List<string>(new []{"Error"}))
@@ -200,7 +201,7 @@ namespace Rdmp.Core.CommandLine.Gui
             
             win.Add(btnOk);
             win.Add(btnCancel);
-            
+
             var callback = Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds (500), Timer);
 
             Application.Run(win);
