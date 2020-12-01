@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -38,11 +39,12 @@ namespace Rdmp.Core.CommandLine.Gui
         /// <summary>
         /// Ongoing filtering of a large collection should be cancelled when the user changes the filter even if it is not completed yet
         /// </summary>
-        CancellationTokenSource _cancelFiltering = new CancellationTokenSource();
+        ConcurrentBag<CancellationTokenSource> _cancelFiltering = new ConcurrentBag<CancellationTokenSource>();
         Task _currentFilterTask;
         object _taskCancellationLock = new object();
         
         private ListView _listView;
+        private bool _changes;
 
         /// <summary>
         /// Protected constructor for derived classes that want to do funky filtering and hot swap out lists as search
@@ -94,6 +96,19 @@ namespace Rdmp.Core.CommandLine.Gui
             public override string ToString()
             {
                 return _displayFunc(Object);
+            }
+
+            public override int GetHashCode()
+            {
+                return Object.GetHashCode();
+            }
+
+            public override bool Equals(object obj)
+            {
+                if(obj is ListViewObject<T2> other)
+                    return Object.Equals(other.Object);
+                
+                return false;
             }
         }
 
@@ -173,8 +188,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 
                 mainInput.TextChanged += (s) =>
                 {
-                    //run this in a thread because any locking or delay in this callback prevents the keypress registering!
-                    Task.Run(()=>BeginFiltering(mainInput.Text.ToString())); 
+                    RestartFiltering(mainInput.Text.ToString()); 
                 };
             }
             else
@@ -198,29 +212,50 @@ namespace Rdmp.Core.CommandLine.Gui
 
         bool Timer (MainLoop caller)
         {
-            var oldSelected = _listView.SelectedItem;
-            _listView.SetSource(_collection.ToList());
-            _listView.SelectedItem = oldSelected ;
+            if(_changes)
+            {
+                lock(_taskCancellationLock)
+                {
+                    var oldSelected = _listView.SelectedItem;
+                    _listView.SetSource(_collection.ToList());
+
+                    if(oldSelected < _collection.Count)
+                        _listView.SelectedItem = oldSelected ;
+                    
+                    _changes = false;
+                    return true;
+                }
+            }           
+            
             return true;
         }
 
-        private void BeginFiltering(string searchTerm)
+        private void RestartFiltering(string searchTerm)
         {
+            
             lock(_taskCancellationLock)
             {
-                if(_currentFilterTask != null)
-                {
-                    _cancelFiltering.Cancel();
-                    _currentFilterTask.Wait();
+                //cancel any previous searches
+                foreach(var c in _cancelFiltering)
+                    c.Cancel();
+            
+                _cancelFiltering.Clear();
+            }
+            
+            var cts = new CancellationTokenSource();
+            _cancelFiltering.Add(cts);
 
-                    _cancelFiltering = new CancellationTokenSource();
+            _currentFilterTask = Task.Run(()=>
+            {
+                var result = BuildList(GetListAfterSearch(searchTerm,cts.Token));
+
+                lock(_taskCancellationLock)
+                {
+                    _collection = result;
+                    _changes = true;
                 }
-
-                _currentFilterTask = Task.Run(()=>
-                {
-                    _collection = BuildList(GetListAfterSearch(searchTerm,_cancelFiltering.Token));
-                });  
-            }        
+                    
+            });       
         }
 
         private IList<ListViewObject<T>> BuildList(IList<T> listOfT)
