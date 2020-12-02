@@ -116,7 +116,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
 			var statusBar = new StatusBar (new StatusItem [] {
 				new StatusItem(Key.ControlQ, "~^Q~ Quit", () => Quit()),
-				new StatusItem(Key.ControlM, "~^M~ Menu", () => Menu()),
+				new StatusItem(Key.ControlN, "~^N~ Menu", () => Menu()),
 				new StatusItem(Key.ControlR, "~^R~ Run", () => Run()),
 				new StatusItem(Key.ControlF, "~^F~ Find", () => Find()),
 				new StatusItem(Key.F5, "~F5~ Refresh", () => Publish()),
