@@ -6,8 +6,8 @@
 
 using System.Drawing;
 using System.Linq;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.CohortCreationCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -17,7 +17,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.Core.CommandExecution.CohortCreationCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
 {
     /// <summary>
     /// Generates and runs an SQL query based on a <see cref="CohortIdentificationConfiguration"/> and pipes the resulting private identifier list to create a new <see cref="ExtractableCohort"/>.
@@ -28,7 +28,7 @@ namespace Rdmp.Core.CommandExecution.CohortCreationCommands
         private CohortIdentificationConfiguration[] _allConfigurations;
 
         public ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(IBasicActivateItems activator, ExternalCohortTable externalCohortTable) :
-            this(activator,null,null,null,null,null)
+            this(activator, null, null, null, null, null)
         {
             _allConfigurations = activator.CoreChildProvider.AllCohortIdentificationConfigurations;
 
@@ -49,8 +49,8 @@ namespace Rdmp.Core.CommandExecution.CohortCreationCommands
             [DemandsInitialization(Desc_ProjectParameter)]
             Project project,
             [DemandsInitialization("Pipeline for executing the query, performing any required transforms on the output list and allocating release identifiers")]
-            IPipeline pipeline):
-            base(activator,ect,cohortName,project,pipeline)
+            IPipeline pipeline) :
+            base(activator, ect, cohortName, project, pipeline)
         {
             _cic = cic;
         }

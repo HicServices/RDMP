@@ -12,7 +12,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.Core.CommandExecution.CohortCreationCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
 {
     public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, IAtomicCommand
     {
