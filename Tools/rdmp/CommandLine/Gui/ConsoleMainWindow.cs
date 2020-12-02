@@ -1,5 +1,6 @@
 ﻿using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Gui.Windows;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
@@ -95,9 +96,59 @@ namespace Rdmp.Core.CommandLine.Gui
 
 			var statusBar = new StatusBar (new StatusItem [] {
 				new StatusItem(Key.ControlQ, "~^Q~ Quit", () => Quit()),
+				new StatusItem(Key.ControlM, "~^M~ Menu", () => Menu()),
+				new StatusItem(Key.ControlR, "~^R~ Run", () => Run()),
 			});
 
 			top.Add (statusBar);
+        }
+
+        private void Menu()
+        {
+			var commands = GetCommands().ToArray();
+
+			if(!commands.Any())
+				return;
+			
+			var maxWidth = commands.Max(c=>c.GetCommandName().Length);
+			var windowWidth = maxWidth + 8;
+			var windowHeight = commands.Length + 5;
+
+			var btnCancel = new Button("Cancel");
+			btnCancel.Clicked += ()=>Application.RequestStop();
+
+            var dlg = new Dialog("Menu",windowWidth,windowHeight,btnCancel);
+					
+			for(int i=0 ; i < commands.Length;i++)
+            {
+				var cmd = commands[i];
+				var btn = new Button(cmd.GetCommandName());
+				
+				btn.Clicked += ()=>{
+					Application.RequestStop(); 
+					cmd.Execute();
+					};
+
+				var buttonWidth = maxWidth + 4;
+
+				btn.X = (windowWidth/2) - (buttonWidth/2) - 1 /*window border*/;
+				btn.Y = i;
+				btn.Width = buttonWidth;
+				
+				dlg.Add(btn);
+            }
+
+			Application.Run(dlg);
+        }
+
+        private IEnumerable<IAtomicCommand> GetCommands()
+        {
+			var o = _treeView.SelectedObject;
+            if(o == null)
+				yield break;
+
+			if(o is IDeleteable d)
+				yield return new ExecuteCommandDelete(_activator,d);
         }
 
         private void treeView_KeyPress(View.KeyEventEventArgs obj)
