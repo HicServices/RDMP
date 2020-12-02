@@ -3,6 +3,11 @@ name: Build
 # Run this workflow every time a new commit pushed to your repository
 on: push
 
+env:
+  MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
+  ACCEPT_EULA: "Y"
+  MSSQL_PID: "developer"
+  
 jobs:
   # Set the job key. The key is displayed as the job name
   # when a job name is not provided
