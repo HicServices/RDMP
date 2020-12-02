@@ -15,7 +15,7 @@
         <dependencies>
 			      <dependency id="HIC.BadMedicine" version="0.1.6" />
             <dependency id="HIC.FAnsiSql" version="1.0.6" />
-            <dependency id="CsvHelper" version="17.0.0" />
+            <dependency id="CsvHelper" version="17.0.1" />
             <dependency id="Newtonsoft.Json" version="12.0.3"/>
             <dependency id="CommandLineParser" version="2.8.0" />
             <dependency id="SSH.NET" version="2016.1.0" />
