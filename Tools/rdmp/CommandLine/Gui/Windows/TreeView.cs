@@ -28,6 +28,7 @@ namespace Terminal.Gui {
         private ChildrenGetterDelegate childrenGetter;
         private CanExpandGetterDelegate canExpandGetter;
         private object selectedObject;
+        private int scrollOffset;
 
         /// <summary>
         /// Optional delegate where <see cref="ChildrenGetter"/> is expensive.  This should quickly return true/false for whether an object is expandable.  (e.g. indicating to a user that all folders can be expanded because they are folders without having to calculate contents)
@@ -42,16 +43,18 @@ namespace Terminal.Gui {
         /// <summary>
         /// The currently selected object in the tree
         /// </summary>
-        public object SelectedObject { 
-            get => selectedObject; 
-            set {                
-                    var oldValue = selectedObject;
-                    selectedObject = value; 
+        public object SelectedObject
+        {
+            get => selectedObject;
+            set
+            {
+                var oldValue = selectedObject;
+                selectedObject = value;
 
-                    if(!ReferenceEquals(oldValue,value))
-                        SelectionChanged?.Invoke(this,new SelectionChangedEventArgs(this,oldValue,value));
-                }
+                if (!ReferenceEquals(oldValue, value))
+                    SelectionChanged?.Invoke(this, new SelectionChangedEventArgs(this, oldValue, value));
             }
+        }
 
         /// <summary>
         /// The root objects in the tree, note that this collection is of root objects only
@@ -66,7 +69,12 @@ namespace Terminal.Gui {
         /// <summary>
         /// The amount of tree view that has been scrolled off the top of the screen (by the user scrolling down)
         /// </summary>
-        public int ScrollOffset { get; private set; }
+        public int ScrollOffset { 
+            get => scrollOffset;
+            set {
+                scrollOffset = Math.Max(0,value); 
+                }
+            }
 
         /// <summary>
         /// Called when the <see cref="SelectedObject"/> changes
@@ -177,6 +185,25 @@ namespace Terminal.Gui {
                 }
 
             }
+        }
+
+        /// <summary>
+        /// Returns the index of the object <paramref name="o"/> if it is currently expanded.  This can be used with <see cref="ScrollOffset"/> and <see cref="View.SetNeedsDisplay"/> to scroll to a specific object
+        /// </summary>
+        /// <remarks>Uses the Equals method and returns the first index at which the object is found or -1 if it is not found<remarks>
+        /// <param name="o"></param>
+        /// <returns>The index the object was found at or -1 if it is not currently revealed or not in the tree at all</returns>
+        public int GetScrollOffsetOf(object o)
+        {
+            var map = BuildLineMap();
+            for (int i = 0; i < map.Length; i++)
+            {
+                if (Equals(o, map[i].Model))
+                    return i;
+            }
+
+            //object not found
+            return -1;
         }
 
         /// <summary>

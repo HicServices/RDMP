@@ -1,8 +1,17 @@
-﻿using MapsDirectlyToDatabaseTable;
+﻿// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Gui.Windows;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using System;
 using System.Collections.Generic;
@@ -22,6 +31,7 @@ namespace Rdmp.Core.CommandLine.Gui
 		const string Loads = "Data Loads";
 		const string CohortConfigs = "Cohort Configurations";
 		const string BuiltCohorts = "Built Cohorts";
+		const string Other = "Other";
 
 		const int TreeViewWidthPercent = 50;
 
@@ -56,7 +66,8 @@ namespace Rdmp.Core.CommandLine.Gui
         internal void SetUp(Toplevel top)
         {
 			var menu = new MenuBar (new MenuBarItem [] {
-				new MenuBarItem ("_File", new MenuItem [] {
+				new MenuBarItem ("_File (F9)", new MenuItem [] {
+					new MenuItem ("_Find...", "", () => Find()),
 					new MenuItem ("_Run...", "", () => Run()),
 					new MenuItem ("_Quit", "", () => Quit()),
 				}),
@@ -86,7 +97,8 @@ namespace Rdmp.Core.CommandLine.Gui
 					Projects,
 					Loads,
 					CohortConfigs,
-					BuiltCohorts });
+					BuiltCohorts,
+					Other});
 
 			_win.Add(_treeView);
 			top.Add(_win);
@@ -98,9 +110,50 @@ namespace Rdmp.Core.CommandLine.Gui
 				new StatusItem(Key.ControlQ, "~^Q~ Quit", () => Quit()),
 				new StatusItem(Key.ControlM, "~^M~ Menu", () => Menu()),
 				new StatusItem(Key.ControlR, "~^R~ Run", () => Run()),
+				new StatusItem(Key.ControlF, "~^F~ Find", () => Find()),
 			});
 
 			top.Add (statusBar);
+        }
+
+        private void Find()
+        {
+            try
+            {
+                var dlg = new ConsoleGuiSelectOne(_activator.CoreChildProvider);
+				
+                if (dlg.ShowDialog())
+                {
+                    Show(dlg.Selected);
+                }
+            }
+            catch (Exception e)
+            {
+                _activator.ShowException("Unexpected error in open/edit tree",e);
+            }
+        }
+
+        private void Show(IMapsDirectlyToDatabaseTable selected)
+        {
+            var desc = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(selected);
+
+			if(desc == null)
+				return;
+
+			if(desc.Parents.Any())
+            {
+				var topLevelCategory = GetRootCategoryOf(desc.Parents[0].GetType());
+
+				if(topLevelCategory != null)
+					_treeView.Expand(topLevelCategory);
+            }
+
+			foreach(var p in desc.Parents)
+				_treeView.Expand(p);
+
+			_treeView.SelectedObject = selected;
+			_treeView.ScrollOffset = _treeView.GetScrollOffsetOf(selected);
+			_treeView.SetNeedsDisplay();
         }
 
         private void Menu()
@@ -110,7 +163,7 @@ namespace Rdmp.Core.CommandLine.Gui
 			if(!commands.Any())
 				return;
 			
-			var maxWidth = commands.Max(c=>c.GetCommandName().Length);
+			var maxWidth = commands.Max(c=>c.GetCommandName().Length + 4);
 			var windowWidth = maxWidth + 8;
 			var windowHeight = commands.Length + 5;
 
@@ -125,8 +178,19 @@ namespace Rdmp.Core.CommandLine.Gui
 				var btn = new Button(cmd.GetCommandName());
 				
 				btn.Clicked += ()=>{
-					Application.RequestStop(); 
-					cmd.Execute();
+					Application.RequestStop();
+                    try
+                    {
+						if(cmd.IsImpossible)
+							_activator.Show("Cannot run command because:" + Environment.NewLine + cmd.ReasonCommandImpossible);
+						else
+							cmd.Execute();
+                    }
+                    catch (Exception ex)
+                    {
+						_activator.ShowException("Command Failed",ex);
+                    }
+					
 					};
 
 				var buttonWidth = maxWidth + 4;
@@ -134,6 +198,7 @@ namespace Rdmp.Core.CommandLine.Gui
 				btn.X = (windowWidth/2) - (buttonWidth/2) - 1 /*window border*/;
 				btn.Y = i;
 				btn.Width = buttonWidth;
+				btn.TextAlignment = TextAlignment.Centered;
 				
 				dlg.Add(btn);
             }
@@ -145,10 +210,10 @@ namespace Rdmp.Core.CommandLine.Gui
         {
 			var o = _treeView.SelectedObject;
             if(o == null)
-				yield break;
+				return new IAtomicCommand[0];
 
-			if(o is IDeleteable d)
-				yield return new ExecuteCommandDelete(_activator,d);
+			var factory = new AtomicCommandFactory(_activator);
+			return factory.CreateCommands(o);
         }
 
         private void treeView_KeyPress(View.KeyEventEventArgs obj)
@@ -215,6 +280,9 @@ namespace Rdmp.Core.CommandLine.Gui
 				if (ReferenceEquals(model , BuiltCohorts) && dx != null)
 					return dx.Cohorts;
 
+				if(ReferenceEquals(model,Other))
+					return GetOtherCategoryChildren();
+
 				//sub brackets
 			    return _activator.CoreChildProvider.GetChildren(model) ?? new object[0];
             }
@@ -225,6 +293,45 @@ namespace Rdmp.Core.CommandLine.Gui
             }
         }
 
+        private IEnumerable<object> GetOtherCategoryChildren()
+        {
+            yield return _activator.CoreChildProvider.AllDashboardsNode;
+            yield return _activator.CoreChildProvider.AllRDMPRemotesNode;
+            yield return _activator.CoreChildProvider.AllObjectSharingNode;
+            yield return _activator.CoreChildProvider.AllPipelinesNode;
+            yield return _activator.CoreChildProvider.AllExternalServersNode;
+            yield return _activator.CoreChildProvider.AllDataAccessCredentialsNode;
+            yield return _activator.CoreChildProvider.AllANOTablesNode;
+            yield return _activator.CoreChildProvider.AllServersNode;
+            yield return _activator.CoreChildProvider.AllConnectionStringKeywordsNode;
+            yield return _activator.CoreChildProvider.AllStandardRegexesNode;
+            yield return _activator.CoreChildProvider.AllPluginsNode;
+        }
+
+        /// <summary>
+        /// Returns the root category e.g. <see cref="BuiltCohorts"/> for the next level down Type <paramref name="t"/>
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        private string GetRootCategoryOf(object o)
+        {
+			var type = o.GetType();
+
+			if(type == typeof(CatalogueFolder))
+				return Catalogues;
+			if(type == typeof(Project))
+				return Projects;
+			if(type == typeof(LoadMetadata))	
+				return Loads;
+			if(type == typeof(CohortIdentificationConfiguration))	
+				return CohortConfigs;
+			if(type == typeof(ExtractableCohort))
+				return BuiltCohorts;
+			if(GetOtherCategoryChildren().Any(a=>a.Equals(o)))
+				return Other;
+
+			return null;
+        }
 		private void Run()
         {
             var commandInvoker = new CommandInvoker(_activator);
