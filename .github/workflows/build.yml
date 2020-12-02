@@ -39,5 +39,5 @@ jobs:
         run: dotnet build --configuration Release --no-restore
       - name: Build Rdmp Installer
         run: dotnet publish "./Tools/rdmp" -r linux-x64
-      #- name: Test
-      #  run: dotnet test --no-restore --verbosity normal
+      - name: Test
+        run: dotnet test --no-restore --verbosity normal
