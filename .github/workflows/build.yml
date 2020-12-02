@@ -20,6 +20,10 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.1.301
+      - name: Install Sql Server
+        run: sudo apt-get install -y --no-install-recommends mssql-tools mssql-server
+      - name: Configure Sql Server
+        run: sudo /opt/mssql/bin/mssql-conf -n setup accept-eula
       - name: Install dependencies
         run: dotnet restore
       - name: Build
