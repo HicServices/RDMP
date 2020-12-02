@@ -39,5 +39,10 @@ jobs:
         run: dotnet build --configuration Release --no-restore
       - name: Build Rdmp Installer
         run: dotnet publish "./Tools/rdmp" -r linux-x64
-      - name: Test
-        run: dotnet test --no-restore --verbosity normal
+      - name: Initialise RDMP
+        run: dotnet Tools/rdmp/bin/Debug/netcoreapp2.2/linux-x64/rdmp.dll install localhost TEST_ -D -u sa -p "YourStrong!Passw0rd"
+      - name: Test Reusable code
+        run: dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --no-restore --verbosity normal
+      - name: Test Core code
+        run: dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --no-restore --verbosity normal
+        
