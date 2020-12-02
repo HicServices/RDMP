@@ -22,6 +22,11 @@ namespace Rdmp.Core.CommandLine.Gui
 {
     internal class ConsoleGuiActivator : BasicActivateItems
     {
+        /// <summary>
+        /// Fired when changes are made to an object (including if it has been deleted etc)
+        /// </summary>
+        public event Action<IMapsDirectlyToDatabaseTable> Published;
+
         public ConsoleGuiActivator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier) : base(repositoryLocator, globalErrorCheckNotifier)
         {
             InteractiveDeletes = true;
@@ -73,6 +78,12 @@ namespace Rdmp.Core.CommandLine.Gui
 
             text = null;
             return false;
+        }
+        public override void Publish(IMapsDirectlyToDatabaseTable databaseEntity)
+        {
+            base.Publish(databaseEntity);
+
+            Published?.Invoke(databaseEntity);
         }
 
         public override DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)

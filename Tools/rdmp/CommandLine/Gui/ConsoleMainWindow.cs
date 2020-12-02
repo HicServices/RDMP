@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Gui.Windows;
@@ -37,10 +38,16 @@ namespace Rdmp.Core.CommandLine.Gui
 
 		public View CurrentWindow {get;set;}
 
-        public ConsoleMainWindow(IBasicActivateItems activator)
+        public ConsoleMainWindow(ConsoleGuiActivator activator)
         {
 			_activator = activator;
+            activator.Published += Activator_Published;
 		}
+
+        private void Activator_Published(IMapsDirectlyToDatabaseTable obj)
+        {
+            _treeView.RefreshObject(obj,true);
+        }
 
         private void Quit()
         {
@@ -69,6 +76,7 @@ namespace Rdmp.Core.CommandLine.Gui
 				new MenuBarItem ("_File (F9)", new MenuItem [] {
 					new MenuItem ("_Find...", "", () => Find()),
 					new MenuItem ("_Run...", "", () => Run()),
+					new MenuItem ("_Refresh...", "", () => Publish()),
 					new MenuItem ("_Quit", "", () => Quit()),
 				}),
 			});
@@ -111,9 +119,18 @@ namespace Rdmp.Core.CommandLine.Gui
 				new StatusItem(Key.ControlM, "~^M~ Menu", () => Menu()),
 				new StatusItem(Key.ControlR, "~^R~ Run", () => Run()),
 				new StatusItem(Key.ControlF, "~^F~ Find", () => Find()),
+				new StatusItem(Key.F5, "~F5~ Refresh", () => Publish()),
 			});
 
 			top.Add (statusBar);
+        }
+
+        private void Publish()
+        {
+			var obj = GetObjectIfAnyBehind(_treeView.SelectedObject);
+
+			if(obj != null)
+	            _activator.Publish(obj);
         }
 
         private void Find()
@@ -239,15 +256,20 @@ namespace Rdmp.Core.CommandLine.Gui
 
         private void SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-			var imaps = e.NewValue as IMapsDirectlyToDatabaseTable;
-
-			if(e.NewValue is IMasqueradeAs masquerade)
-					imaps = masquerade.MasqueradingAs() as IMapsDirectlyToDatabaseTable;
+			var imaps = GetObjectIfAnyBehind(e.NewValue);
 
 			if(imaps != null)
 				SetSubWindow(new ConsoleGuiEdit(_activator,imaps));
 			else
 				ClearSubWindow();
+        }
+
+        private IMapsDirectlyToDatabaseTable GetObjectIfAnyBehind(object o)
+        {
+			if(o is IMasqueradeAs masquerade)
+				return masquerade.MasqueradingAs() as IMapsDirectlyToDatabaseTable;
+			
+			return o as IMapsDirectlyToDatabaseTable;
         }
 
         private void ClearSubWindow()

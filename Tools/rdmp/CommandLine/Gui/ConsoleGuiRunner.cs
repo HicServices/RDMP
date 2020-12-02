@@ -57,11 +57,6 @@ namespace Rdmp.Core.CommandLine.Gui
             return 0;
         }
 
-        private void Refresh()
-        {
-            //one day this might be a problem but not today
-            _activator.Publish(null);
-        }
     }
 }
 
