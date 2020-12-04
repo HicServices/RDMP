@@ -6,26 +6,23 @@
 
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
-using NPOI.OpenXmlFormats.Wordprocessing;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandDisableOrEnable : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandDisableOrEnable : BasicCommandExecution, IAtomicCommand
     {
         private IDisableable[] _targets;
 
-        public ExecuteCommandDisableOrEnable(IActivateItems itemActivator, IDisableable target):base(itemActivator)
+        public ExecuteCommandDisableOrEnable(IBasicActivateItems itemActivator, IDisableable target) : base(itemActivator)
         {
             UpdateViabilityForTarget(target);
-            _targets = new []{target};
+            _targets = new[] { target };
         }
-        
-        public ExecuteCommandDisableOrEnable(IActivateItems activator, IDisableable[] disableables) : base(activator)
+
+        public ExecuteCommandDisableOrEnable(IBasicActivateItems  activator, IDisableable[] disableables) : base(activator)
         {
             _targets = disableables;
 
@@ -34,10 +31,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 SetImpossible("No objects selected");
                 return;
             }
-                
+
             if (disableables.All(d => d.IsDisabled) || disableables.All(d => !d.IsDisabled))
             {
-                foreach (IDisableable d in _targets) 
+                foreach (IDisableable d in _targets)
                     UpdateViabilityForTarget(d);
             }
             else
@@ -50,20 +47,20 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             var container = target as CohortAggregateContainer;
 
             //don't let them disable the root container
-            if(container != null && container.IsRootContainer() && !container.IsDisabled)
+            if (container != null && container.IsRootContainer() && !container.IsDisabled)
                 SetImpossible("You cannot disable the root container of a cic");
 
             var aggregateConfiguration = target as AggregateConfiguration;
-            if(aggregateConfiguration != null)
-                if(!aggregateConfiguration.IsCohortIdentificationAggregate)
+            if (aggregateConfiguration != null)
+                if (!aggregateConfiguration.IsCohortIdentificationAggregate)
                     SetImpossible("Only cohort identification aggregates can be disabled");
                 else
-                if(aggregateConfiguration.IsJoinablePatientIndexTable() && !aggregateConfiguration.IsDisabled)
+                if (aggregateConfiguration.IsJoinablePatientIndexTable() && !aggregateConfiguration.IsDisabled)
                     SetImpossible("Joinable Patient Index Tables cannot be disabled");
 
-            if(target is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out string reason))
+            if (target is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out string reason))
                 SetImpossible(reason);
-                
+
         }
 
         public override void Execute()
@@ -73,22 +70,22 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             foreach (IDisableable d in _targets)
             {
                 d.IsDisabled = !d.IsDisabled;
-                d.SaveToDatabase();    
+                d.SaveToDatabase();
             }
 
             var toRefresh = _targets.FirstOrDefault();
 
-            if(toRefresh != null)
+            if (toRefresh != null)
                 Publish((DatabaseEntity)toRefresh);
         }
 
         public override string GetCommandName()
         {
-            if(_targets.Length == 1)
+            if (_targets.Length == 1)
                 return _targets[0].IsDisabled ? "Enable" : "Disable";
 
-            if(_targets.Length > 1)
-                return _targets.All(d=>d.IsDisabled)? "Enable All" : "Disable All";
+            if (_targets.Length > 1)
+                return _targets.All(d => d.IsDisabled) ? "Enable All" : "Disable All";
 
             return "Enable All";
         }

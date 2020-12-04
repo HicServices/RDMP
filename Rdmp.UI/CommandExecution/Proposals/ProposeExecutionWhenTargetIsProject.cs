@@ -49,7 +49,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             var aggCommand = cmd as AggregateConfigurationCombineable;
             
             if(aggCommand != null)
-                return new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(ItemActivator).SetTarget(project).SetTarget(aggCommand.Aggregate);
+                return new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(ItemActivator,aggCommand.Aggregate).SetTarget(project);
 
 
             return null;

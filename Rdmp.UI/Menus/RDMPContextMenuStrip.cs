@@ -123,6 +123,9 @@ namespace Rdmp.UI.Menus
 
         public void AddCommonMenuItems(RDMPCollectionCommonFunctionality commonFunctionality)
         {
+            
+            AddFactoryMenuItems();
+
             var deletable = _o as IDeleteable;
             var nameable = _o as INamed;
             var databaseEntity = _o as DatabaseEntity;
@@ -184,6 +187,24 @@ namespace Rdmp.UI.Menus
                 Add(new ExecuteCommandRefreshObject(_activator, databaseEntity), Keys.F5);
             
             Add(new ExecuteCommandShowKeywordHelp(_activator, _args));
+
+        }
+                
+        private void AddFactoryMenuItems()
+        {
+            var factory = new AtomicCommandFactory(_activator);
+                        
+            foreach (var toPresent in factory.GetCommandsWithPresentation(_o))
+            {
+                //we will add this ourselves in AddCommonMenuItems
+                if(toPresent.Command is ExecuteCommandDelete)
+                    continue;
+
+                if(toPresent.SuggestedCategory == null)
+                    Add(toPresent.Command);
+                else
+                    Add(toPresent.Command,Keys.None,toPresent.SuggestedCategory);                
+            }
         }
 
         private void PopulateTreeMenu(RDMPCollectionCommonFunctionality commonFunctionality, ToolStripMenuItem treeMenuItem)

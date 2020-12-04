@@ -68,20 +68,9 @@ namespace Rdmp.UI.Menus
             
             Add(new ExecuteCommandImportFilterContainerTree(_activator,selectedDataSet));
 
-            Add(new ExecuteCommandCreateNewFilter(_activator,
-                new DeployedExtractionFilterFactory(_activator.RepositoryLocator.DataExportRepository),
-                () => {
-                    selectedDataSet.CreateRootContainerIfNotExists();
-                    return selectedDataSet.RootFilterContainer;
-                }));
+            Add(new ExecuteCommandCreateNewFilter(_activator,selectedDataSet));
 
-            Add(new ExecuteCommandCreateNewFilterFromCatalogue(_activator,
-                selectedDataSet.ExtractableDataSet.Catalogue,
-                () =>
-                {
-                    selectedDataSet.CreateRootContainerIfNotExists();
-                    return selectedDataSet.RootFilterContainer;
-                }));
+            Add(new ExecuteCommandCreateNewFilterFromCatalogue(_activator,selectedDataSet));
             
             Items.Add(new ToolStripSeparator());
 

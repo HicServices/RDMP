@@ -7,35 +7,33 @@
 using System;
 using System.Drawing;
 using System.Linq;
-using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandCreateNewFilterFromCatalogue : BasicUICommandExecution, IAtomicCommand
+    public class ExecuteCommandCreateNewFilterFromCatalogue : BasicCommandExecution, IAtomicCommand
     {
-        private readonly Func<IContainer> _containerFunc;
         private IContainer _container;
         private ExtractionFilter[] _filters;
+        private IRootFilterContainerHost _host;
 
-        public ExecuteCommandCreateNewFilterFromCatalogue(IActivateItems itemActivator, IContainer container):this(itemActivator,container.GetCatalogueIfAny())
+        public ExecuteCommandCreateNewFilterFromCatalogue(IBasicActivateItems itemActivator, IContainer container) : this(itemActivator,container.GetCatalogueIfAny())
         {
             _container = container;
         }
 
-        public ExecuteCommandCreateNewFilterFromCatalogue(IActivateItems itemActivator,ICatalogue catalogue, Func<IContainer> containerFunc):this(itemActivator,catalogue)
+        public ExecuteCommandCreateNewFilterFromCatalogue(IBasicActivateItems itemActivator, IRootFilterContainerHost host) : this(itemActivator, host.GetCatalogue())
         {
-            _containerFunc = containerFunc;
+            _host = host;
         }
 
-        private ExecuteCommandCreateNewFilterFromCatalogue(IActivateItems itemActivator, ICatalogue catalogue):base(itemActivator)
+        private ExecuteCommandCreateNewFilterFromCatalogue(IBasicActivateItems itemActivator, ICatalogue catalogue) : base(itemActivator)
         {
-            if(catalogue == null)
+            if (catalogue == null)
             {
                 SetImpossible("No Catalogue found");
                 return;
@@ -43,8 +41,8 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             _filters = catalogue.GetAllFilters();
 
-            if(!_filters.Any())
-                SetImpossible("There are no Filters declared in Catalogue '" + catalogue +"'");
+            if (!_filters.Any())
+                SetImpossible("There are no Filters declared in Catalogue '" + catalogue + "'");
         }
         public override Image GetImage(IIconProvider iconProvider)
         {
@@ -55,17 +53,20 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            if (_containerFunc != null)
-                _container = _containerFunc();
+            if (_host != null && _container == null)
+            {
+                _host.CreateRootContainerIfNotExists();
+                _container = _host.RootFilterContainer;
+            }
 
-            var wizard = new FilterImportWizard(Activator);
+            var wizard = new FilterImportWizard(BasicActivator);
             var import = wizard.ImportOneFromSelection(_container, _filters);
 
             if (import != null)
             {
                 _container.AddChild(import);
-                Publish((DatabaseEntity) import);
-                Emphasise((DatabaseEntity) import);
+                Publish((DatabaseEntity)import);
+                Emphasise((DatabaseEntity)import);
                 Activate((DatabaseEntity)import);
             }
         }

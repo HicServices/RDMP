@@ -6,9 +6,12 @@
 
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Rdmp.Core.CommandExecution
@@ -20,6 +23,9 @@ namespace Rdmp.Core.CommandExecution
     {
         IBasicActivateItems _activator;
 
+        public const string Add = "Add";
+        public const string Extraction = "Extractability";
+        public const string Metadata = "Metadata";
         public AtomicCommandFactory(IBasicActivateItems activator)
         {
             _activator = activator;
@@ -32,24 +38,43 @@ namespace Rdmp.Core.CommandExecution
         /// <returns></returns>
         public IEnumerable<IAtomicCommand> CreateCommands(object o)
         {
+            return GetCommandsWithPresentation(o).Select(p=>p.Command);
+        }
+
+        public IEnumerable<CommandPresentation> GetCommandsWithPresentation(object o)
+        {
             if(o is Catalogue c)
             {
-                yield return new ExecuteCommandAddNewSupportingSqlTable(_activator, c);
-                yield return new ExecuteCommandAddNewSupportingDocument(_activator, c);
-                yield return new ExecuteCommandAddNewAggregateGraph(_activator, c);
-                yield return new ExecuteCommandAddNewCatalogueItem(_activator, c);
+                yield return new CommandPresentation(new ExecuteCommandAddNewSupportingSqlTable(_activator, c),Add);
+                yield return new CommandPresentation(new ExecuteCommandAddNewSupportingDocument(_activator, c),Add);
+                yield return new CommandPresentation(new ExecuteCommandAddNewAggregateGraph(_activator, c),Add);
+                yield return new CommandPresentation(new ExecuteCommandAddNewCatalogueItem(_activator, c),Add);
                                         
-                yield return new ExecuteCommandChangeExtractability(_activator, c);
-                yield return new ExecuteCommandMakeCatalogueProjectSpecific(_activator,c,null);
-                yield return new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c);
-                yield return new ExecuteCommandSetExtractionIdentifier(_activator,c);
+                yield return new CommandPresentation(new ExecuteCommandChangeExtractability(_activator, c),Extraction);
+                yield return new CommandPresentation(new ExecuteCommandMakeCatalogueProjectSpecific(_activator,c,null),Extraction);
+                yield return new CommandPresentation(new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c),Extraction);
+                yield return new CommandPresentation(new ExecuteCommandSetExtractionIdentifier(_activator,c),Extraction);
                                         
-                yield return new ExecuteCommandExportObjectsToFile(_activator, new[] {c});
-                yield return new ExecuteCommandExtractMetadata(_activator, new []{ c},null,null,null,false,null);
+                yield return new CommandPresentation(new ExecuteCommandExportObjectsToFile(_activator, new[] {c}),Metadata);
+                yield return new CommandPresentation(new ExecuteCommandExtractMetadata(_activator, new []{ c},null,null,null,false,null),Metadata);
+            }
+
+            if(o is AggregateConfiguration ac)
+            {
+                yield return new CommandPresentation(new ExecuteCommandDisableOrEnable(_activator, ac));
+                yield return new CommandPresentation(new ExecuteCommandAddNewFilterContainer(_activator,ac));
+                yield return new CommandPresentation(new ExecuteCommandImportFilterContainerTree(_activator,ac));
+                yield return new CommandPresentation(new ExecuteCommandCreateNewFilter(_activator,ac));
+                yield return new CommandPresentation(new ExecuteCommandCreateNewFilterFromCatalogue(_activator,ac));
+                
+                yield return new CommandPresentation(new ExecuteCommandSetFilterTreeShortcut(_activator,ac));
+                yield return new CommandPresentation(new ExecuteCommandSetFilterTreeShortcut(_activator,ac,null){OverrideCommandName="Clear Filter Tree Shortcut" });
+            
+                yield return new CommandPresentation(new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(_activator,ac));
             }
 
 			if(o is IDeleteable d)
-				yield return new ExecuteCommandDelete(_activator,d);
+				yield return new CommandPresentation(new ExecuteCommandDelete(_activator,d));
         }
     }
 }
