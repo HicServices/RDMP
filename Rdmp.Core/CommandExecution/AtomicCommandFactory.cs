@@ -61,7 +61,6 @@ namespace Rdmp.Core.CommandExecution
 
             if(o is AggregateConfiguration ac)
             {
-                yield return new CommandPresentation(new ExecuteCommandDisableOrEnable(_activator, ac));
                 yield return new CommandPresentation(new ExecuteCommandAddNewFilterContainer(_activator,ac));
                 yield return new CommandPresentation(new ExecuteCommandImportFilterContainerTree(_activator,ac));
                 yield return new CommandPresentation(new ExecuteCommandCreateNewFilter(_activator,ac));
@@ -72,9 +71,25 @@ namespace Rdmp.Core.CommandExecution
             
                 yield return new CommandPresentation(new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(_activator,ac));
             }
+            
+            if(o is IContainer container)
+            {
+                
+                string targetOperation = container.Operation == FilterContainerOperation.AND ? "OR" : "AND";
 
-			if(o is IDeleteable d)
-				yield return new CommandPresentation(new ExecuteCommandDelete(_activator,d));
+                yield return new CommandPresentation(new ExecuteCommandSet(_activator,container,nameof(IContainer.Operation),targetOperation){OverrideCommandName = $"Set Operation to {targetOperation}" });
+                
+                yield return new CommandPresentation(new ExecuteCommandCreateNewFilter(_activator,container.GetFilterFactory(),container));
+                yield return new CommandPresentation(new ExecuteCommandCreateNewFilterFromCatalogue(_activator, container));
+                yield return new CommandPresentation(new ExecuteCommandCreateNewFilterFromCatalogue(_activator, container));
+                yield return new CommandPresentation(new ExecuteCommandAddNewFilterContainer(_activator,container){OverrideCommandName = "Add SubContainer" });
+            }
+
+            if(o is IDisableable disable)
+                yield return new CommandPresentation(new ExecuteCommandDisableOrEnable(_activator, disable));
+
+			if(o is IDeleteable deletable)
+				yield return new CommandPresentation(new ExecuteCommandDelete(_activator,deletable));
         }
     }
 }
