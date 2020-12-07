@@ -9,7 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using Rdmp.UI.Icons.IconProvision;
+using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
 

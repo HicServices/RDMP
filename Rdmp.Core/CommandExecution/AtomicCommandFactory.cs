@@ -4,11 +4,20 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using FAnsi;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.Databases;
+using Rdmp.Core.Providers.Nodes;
+using Rdmp.Core.Providers.Nodes.CohortNodes;
+using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
+using Rdmp.Core.Providers.Nodes.SharingNodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -83,6 +92,94 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandCreateNewFilterFromCatalogue(_activator, container));
                 yield return new CommandPresentation(new ExecuteCommandCreateNewFilterFromCatalogue(_activator, container));
                 yield return new CommandPresentation(new ExecuteCommandAddNewFilterContainer(_activator,container){OverrideCommandName = "Add SubContainer" });
+            }
+            
+            if(o is AggregatesNode an)
+                yield return new CommandPresentation(new ExecuteCommandAddNewAggregateGraph(_activator, an.Catalogue));
+
+            if(o is AllANOTablesNode)
+            {
+                yield return new CommandPresentation(new ExecuteCommandCreateNewANOTable(_activator));
+            
+                yield return new CommandPresentation(new ExecuteCommandCreateNewExternalDatabaseServer(_activator,
+                new ANOStorePatcher(), PermissableDefaults.ANOStore) 
+                { OverrideCommandName = "Create ANOStore Database" });
+
+                yield return new CommandPresentation(new ExecuteCommandExportObjectsToFile(_activator,_activator.CoreChildProvider.AllANOTables));
+            }
+
+            if(o is AllCataloguesUsedByLoadMetadataNode aculmd)
+            {
+                yield return new CommandPresentation(new ExecuteCommandAssociateCatalogueWithLoadMetadata(_activator, aculmd.LoadMetadata));
+            }
+
+            if(o is AllDataAccessCredentialsNode)
+            {
+                yield return new CommandPresentation(new ExecuteCommandNewObject(_activator,
+                    ()=>new DataAccessCredentials(_activator.RepositoryLocator.CatalogueRepository, "New Blank Credentials " + Guid.NewGuid()))
+                    {
+                        OverrideCommandName= "Add New Credentials"
+                    });
+            }
+
+            if(o is AllConnectionStringKeywordsNode)
+            {
+                yield return new CommandPresentation(new ExecuteCommandNewObject(_activator,
+                    ()=>new ConnectionStringKeyword(_activator.RepositoryLocator.CatalogueRepository,DatabaseType.MicrosoftSQLServer,"NewKeyword", "v"))
+                    {
+                        OverrideCommandName= "Add New Connection String Keyword"
+                    });
+            }
+
+            if(o is AllExternalServersNode)
+            {
+                yield return new CommandPresentation(new ExecuteCommandCreateNewExternalDatabaseServer(_activator, null,PermissableDefaults.None));
+                
+                var assemblyDictionary = new Dictionary<PermissableDefaults, IPatcher>()
+                {
+                    {PermissableDefaults.DQE, new DataQualityEnginePatcher() },
+                    {PermissableDefaults.WebServiceQueryCachingServer_ID, new QueryCachingPatcher()},
+                    {PermissableDefaults.LiveLoggingServer_ID, new LoggingDatabasePatcher()},
+                    {PermissableDefaults.IdentifierDumpServer_ID, new IdentifierDumpDatabasePatcher()},
+                    {PermissableDefaults.ANOStore, new ANOStorePatcher()},
+                    {PermissableDefaults.CohortIdentificationQueryCachingServer_ID, new QueryCachingPatcher()}
+                };
+
+                foreach (var kvp in assemblyDictionary)
+                    yield return new CommandPresentation(new ExecuteCommandCreateNewExternalDatabaseServer(_activator, kvp.Value, kvp.Key));
+            }
+
+            if(o is AllFreeCohortIdentificationConfigurationsNode || o is AllProjectCohortIdentificationConfigurationsNode)
+                yield return new CommandPresentation(new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator));
+
+            if(o is AllGovernanceNode)
+                yield return new CommandPresentation(new ExecuteCommandCreateNewGovernancePeriod(_activator));
+
+            if(o is AllLoadMetadatasNode)
+            {
+                yield return new CommandPresentation(new ExecuteCommandCreateNewLoadMetadata(_activator));
+                yield return new CommandPresentation(new ExecuteCommandImportShareDefinitionList(_activator){OverrideCommandName = "Import Load"});
+            }
+
+            if(o is AllObjectImportsNode)
+                yield return new CommandPresentation(new ExecuteCommandImportShareDefinitionList(_activator));
+
+            if(o is AllPermissionWindowsNode)
+                yield return new CommandPresentation(new ExecuteCommandCreateNewPermissionWindow(_activator));
+
+            if(o is AllPluginsNode)
+            {
+                yield return new CommandPresentation(new ExecuteCommandAddPlugins(_activator));
+                yield return new CommandPresentation(new ExecuteCommandExportPlugins(_activator));
+            }
+
+            if(o is AllRDMPRemotesNode)
+                yield return new CommandPresentation(new ExecuteCommandCreateNewRemoteRDMP(_activator));
+
+            if(o is AllServersNode)
+            {
+                yield return new CommandPresentation(new ExecuteCommandImportTableInfo(_activator,null,false));
+                yield return new CommandPresentation(new ExecuteCommandBulkImportTableInfos(_activator));
             }
 
             if(o is IDisableable disable)

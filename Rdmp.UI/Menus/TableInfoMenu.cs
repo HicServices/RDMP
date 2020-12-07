@@ -19,7 +19,6 @@ using Rdmp.UI.ChecksUI;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.Menus.MenuItems;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Checks;
@@ -39,7 +38,7 @@ namespace Rdmp.UI.Menus
             : base(args, tableInfo)
         {
 
-            Add(new ExecuteCommandCreateNewTableInfoByImportingExistingDataTable(_activator),Keys.None,"New");
+            Add(new ExecuteCommandImportTableInfo(_activator,null,false),Keys.None,"New");
             Add(new ExecuteCommandCreateNewCatalogueFromTableInfo(_activator, tableInfo),Keys.None,"New");
                         
             Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null, tableInfo),Keys.None,"New");
@@ -57,16 +56,15 @@ namespace Rdmp.UI.Menus
                 _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to build Alter commands",CheckResult.Fail,ex));
             }
             
-            Items.Add("Synchronize TableInfo ", CatalogueIcons.Sync, delegate { TableInfo_Click(tableInfo); });
-            Items.Add("Synchronize ANO Configuration ", CatalogueIcons.Sync, delegate { SynchronizeANOConfiguration_Click(tableInfo); });
+            Add(new ExecuteCommandSyncTableInfo(_activator,tableInfo,false,false));
+            Add(new ExecuteCommandSyncTableInfo(_activator,tableInfo,true,false));
 
             Items.Add("Add ColumnInfo ", null, delegate { AddColumnInfo_Click(tableInfo); });
 
             _availableCredentials = RepositoryLocator.CatalogueRepository.GetAllObjects<DataAccessCredentials>();
-            var addPermission = new ToolStripMenuItem("Add Credential Usage Permission", _activator.CoreIconProvider.GetImage(RDMPConcept.DataAccessCredentials, OverlayKind.Add), (s, e) => AddCredentialPermission(tableInfo));
-            addPermission.Enabled = _availableCredentials.Any();
-            Items.Add(addPermission);
-
+            
+            Add(new ExecuteCommandUseCredentialsToAccessTableInfoData(_activator,null,tableInfo));
+            
             Items.Add(new ToolStripSeparator());
             Add(new ExecuteCommandViewData(_activator, tableInfo));
 
@@ -85,24 +83,6 @@ namespace Rdmp.UI.Menus
                 Items.Add("Configure Parameters...", _activator.CoreIconProvider.GetImage(RDMPConcept.ParametersNode), delegate { ConfigureTableInfoParameters(tableInfo); });
         }
 
-        private void AddCredentialPermission(TableInfo tableInfo)
-        {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, _availableCredentials, false, false);
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                var cmd = new DataAccessCredentialsCombineable((DataAccessCredentials)dialog.Selected);
-                var execute = new ExecuteCommandUseCredentialsToAccessTableInfoData(_activator, cmd, tableInfo);
-
-                if(execute.IsImpossible)
-                {
-                    MessageBox.Show(execute.ReasonCommandImpossible);
-                    return;
-                }
-
-                execute.Execute();
-            }
-        }
-
         private void ConfigurePrimaryKeyCollisionResolution_Click(TableInfo tableInfo)
         {
             var dialog = new ConfigurePrimaryKeyCollisionResolverUI(tableInfo,_activator);
@@ -110,74 +90,6 @@ namespace Rdmp.UI.Menus
         }
 
 
-        private void SynchronizeANOConfiguration_Click(TableInfo tableInfo)
-        {
-            //let use check the TableInfo accurately reflects the underlying database first
-            if (_activator.YesNo("Check that TableInfo is synchronized with underlying database first?", "Check database first?"))
-            {
-                try
-                {
-                    TableInfoSynchronizer synchronizer = new TableInfoSynchronizer(tableInfo);
-                    bool isSynchronized = synchronizer.Synchronize(new ThrowImmediatelyCheckNotifier());
-                    if (!isSynchronized)
-                    {
-                        MessageBox.Show("Unable to synchronize with ANO database because TableInfo is not synchronized with underlying database.");
-                        return;
-                    }
-                }
-                catch (Exception exception)
-                {
-                    MessageBox.Show(
-                        "Unable to check synchronization of TableInfo with underlying database (this check must be performed before checking ANO synchronization):" +
-                        exception.Message);
-                    return;
-                }
-            }
-
-            var ANOSynchronizer = new ANOTableInfoSynchronizer(tableInfo);
-
-            try
-            {
-                ANOSynchronizer.Synchronize(new MakeChangePopup(new YesNoYesToAllDialog()));
-
-                MessageBox.Show("ANO synchronization successful");
-            }
-            catch (ANOConfigurationException e)
-            {
-                ExceptionViewer.Show(e);
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show("Fatal error while attempting to synchronize (" + exception.Message + ")", exception);
-            }
-
-            Publish(tableInfo);
-        }
-
-        private void TableInfo_Click(TableInfo tableInfo)
-        {
-            TableInfoSynchronizer syncher = new TableInfoSynchronizer(tableInfo);
-
-            try
-            {
-                
-                bool wasSynchedsuccessfully = syncher.Synchronize(new MakeChangePopup(new YesNoYesToAllDialog()));
-
-                if (wasSynchedsuccessfully)
-                    MessageBox.Show("Synchronization complete, TableInfo is Synchronized with the live database");
-                else
-                    MessageBox.Show("Synchronization failed");
-            }
-            catch (Exception exception)
-            {
-                MessageBox.Show(exception.ToString());
-            }
-
-            Publish(tableInfo);
-
-            foreach (var c in syncher.ChangedCatalogues)
-                Publish(c);
-        }
 
         private void AddColumnInfo_Click(TableInfo tableInfo)
         {

@@ -8,7 +8,6 @@ using System.Drawing;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Referencing;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 

@@ -12,7 +12,6 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.ExtractionUIs.FilterUIs;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SubComponents.Graphs;
 using ReusableLibraryCode.Icons.IconProvision;

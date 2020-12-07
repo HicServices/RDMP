@@ -15,7 +15,6 @@ using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SubComponents.Graphs;
 using ReusableLibraryCode.Icons.IconProvision;

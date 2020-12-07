@@ -219,7 +219,7 @@ namespace ResearchDataManagementPlatform.Menus
             {
                 new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator),
                 new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator),
-                new ExecuteCommandCreateNewTableInfoByImportingExistingDataTable(Activator),
+                new ExecuteCommandImportTableInfo(Activator,null,false),
                 new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator),
                 new ExecuteCommandCreateNewLoadMetadata(Activator),
                 new ExecuteCommandCreateNewStandardRegex(Activator),

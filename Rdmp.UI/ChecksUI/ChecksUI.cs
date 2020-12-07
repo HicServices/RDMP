@@ -10,7 +10,6 @@ using System.Threading;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Checks;
 

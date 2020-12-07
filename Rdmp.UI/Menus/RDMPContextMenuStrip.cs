@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
@@ -19,7 +20,6 @@ using Rdmp.Core.Repositories;
 using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using ReusableLibraryCode.Checks;
@@ -31,7 +31,7 @@ namespace Rdmp.UI.Menus
     /// Base class for all right click context menus in <see cref="RDMPCollectionUI"/> controls.  These menus are built by reflection
     /// when the selected object is changed.
     /// </summary>
-    
+
     [System.ComponentModel.DesignerCategory("")]
     public class RDMPContextMenuStrip:ContextMenuStrip
     {

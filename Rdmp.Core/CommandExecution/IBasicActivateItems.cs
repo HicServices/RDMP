@@ -11,9 +11,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
@@ -40,6 +42,15 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         event EmphasiseItemHandler Emphasise;
 
+
+        /// <summary>
+        /// Show all objects in RDMP (with search).  If a single selection is made then invoke the callback
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <param name="callback"></param>
+        void SelectAnythingThen(string prompt, Action<IMapsDirectlyToDatabaseTable> callback);
+
+
         /// <summary>
         /// Component for recording object tree inheritance (for RDMPCollectionUI primarily but also for anyone who wants to know children of objects or all objects quickly without having to go back to the database)
         /// </summary>
@@ -49,6 +60,11 @@ namespace Rdmp.Core.CommandExecution
         /// Component class for discovering the default DQE, Logging servers etc configured in the current RDMP database
         /// </summary>
         IServerDefaults ServerDefaults { get; }
+        
+        /// <summary>
+        /// Component for telling you whether a given DatabaseEntity is one of the current users favourite objects and for toggling it
+        /// </summary>
+        FavouritesProvider FavouritesProvider { get;}
 
         /// <summary>
         /// Returns a dictionary of methods to call for each type of constructor parameter needed.  If no Type
@@ -94,7 +110,17 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="initialSearchText"></param>
         /// <returns></returns>
         IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,IMapsDirectlyToDatabaseTable[] availableObjects,string initialSearchText = null);
-
+        
+        /// <summary>
+        /// Prompts user or directly creates a new satelite database (e.g. logging / dqe etc) and returns a persistent reference to it
+        /// </summary>
+        /// <param name="catalogueRepository">The main catalogue database</param>
+        /// <param name="defaultToSet">If the created database is to become the new default database of it's type provide this</param>
+        /// <param name="db">The server in which the database should be created or null if the user is expected to pick themselves as part of the method e.g. through a UI</param>
+        /// <param name="patcher">The schema and patches to run to create the database</param>
+        /// <returns></returns>
+        ExternalDatabaseServer CreateNewPlatformDatabase(ICatalogueRepository catalogueRepository, PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db);
+         
         /// <summary>
         /// Prompts user to pick one of the <paramref name="availableObjects"/>
         /// </summary>
@@ -308,5 +334,11 @@ namespace Rdmp.Core.CommandExecution
         /// <returns>A fully configured ready to go Catalogue or null if user cancelled process e.g. if <see cref="IsInteractive"/></returns>
         ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo,ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, CatalogueFolder targetFolder);
 
+        /// <summary>
+        /// Returns true if creating a cohort through an interactive wizard is supported.  If a wizard was shown and suitable input received then <paramref name="cic"/> should be populated with the result
+        /// </summary>
+        /// <param name="cic"></param>
+        /// <returns>True if a wizard was shown even if no configuration was then created</returns>
+        bool ShowCohortWizard(out CohortIdentificationConfiguration cic);
     }
 }

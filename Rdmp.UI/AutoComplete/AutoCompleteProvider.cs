@@ -18,7 +18,6 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryBuilding;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ScintillaNET;
 
@@ -37,8 +36,14 @@ namespace Rdmp.UI.AutoComplete
 
         public AutoCompleteProvider(IActivateItems activator)
         {
+            var il = new ImageList();
+            foreach(var kvp in _activator.CoreIconProvider.GetImageList(true))
+            {
+                il.Images.Add(kvp.Key,kvp.Value);
+            }
+
             _activator = activator;
-            _imageList = _activator.CoreIconProvider.GetImageList(true);
+            _imageList = il;
             _autocomplete.ImageList = _imageList;
             _autocomplete.SearchPattern = @"[\w@\.]";
             _autocomplete.AllowsTabKey = true;

@@ -13,7 +13,6 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.DataViewing;
 using Rdmp.UI.DataViewing.Collections;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 

@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
@@ -19,6 +20,7 @@ using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -44,6 +46,9 @@ namespace Rdmp.Core.CommandExecution
         public IServerDefaults ServerDefaults { get; }
 
         /// <inheritdoc/>
+        public FavouritesProvider FavouritesProvider { get; private set; }
+
+        /// <inheritdoc/>
         public abstract bool YesNo(string text, string caption, out bool chosen);
 
         /// <inheritdoc/>
@@ -67,6 +72,9 @@ namespace Rdmp.Core.CommandExecution
             GlobalErrorCheckNotifier = globalErrorCheckNotifier;
 
             ServerDefaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
+            
+            //Shouldn't ever change externally to your session so doesn't need constantly refreshed
+            FavouritesProvider = new FavouritesProvider(this);
 
             // Note that this is virtual so can return null e.g. if other stuff has to happen with the activator before a valid child provider can be built (e.g. loading plugin user interfaces)
             CoreChildProvider = GetChildProvider();
@@ -412,6 +420,35 @@ namespace Rdmp.Core.CommandExecution
             }
 
             return cata;
+        }
+
+        public virtual ExternalDatabaseServer CreateNewPlatformDatabase(ICatalogueRepository catalogueRepository, PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db)
+        {
+            if(db == null)
+                throw new ArgumentException($"Database must be picked before calling {nameof(CreateNewPlatformDatabase)} when using {nameof(BasicActivateItems)}",nameof(db));
+
+            MasterDatabaseScriptExecutor executor = new MasterDatabaseScriptExecutor(db);
+            executor.CreateAndPatchDatabase(patcher,new AcceptAllCheckNotifier());
+
+            var eds = new ExternalDatabaseServer(catalogueRepository,"New " + (defaultToSet == PermissableDefaults.None ? "" :  defaultToSet.ToString()) + "Server",patcher);
+            eds.SetProperties(db);
+            
+            return eds;
+        }
+
+        public virtual bool ShowCohortWizard(out CohortIdentificationConfiguration cic)
+        {
+            cic = null;
+            return false;
+        }
+
+        public virtual void SelectAnythingThen(string prompt, Action<IMapsDirectlyToDatabaseTable> callback)
+        {
+            var selected = SelectOne(prompt, CoreChildProvider.GetAllSearchables().Keys.ToArray());
+
+            if(selected != null)
+                callback(selected);
+
         }
     }
 }

@@ -18,7 +18,6 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
-using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
@@ -27,6 +26,7 @@ using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 
 using Rdmp.UI.SimpleDialogs.SqlDialogs;
+using Rdmp.Core;
 
 namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement
 {

@@ -6,7 +6,6 @@
 
 using System.Windows.Forms;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;

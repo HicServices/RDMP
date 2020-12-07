@@ -156,11 +156,6 @@
     <Compile Update="SimpleControls\HeatmapUI.Designer.cs">
       <DependentUpon>HeatmapUI.cs</DependentUpon>
     </Compile>
-    <Compile Update="Icons\ChecksAndProgressIcons.Designer.cs">
-      <DependentUpon>ChecksAndProgressIcons.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
     <Compile Update="SimpleControls\KeyboardReminder.cs">
       <SubType>UserControl</SubType>
     </Compile>

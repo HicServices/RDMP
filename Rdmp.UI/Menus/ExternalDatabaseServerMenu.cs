@@ -13,7 +13,6 @@ using Rdmp.Core.Logging;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.DataViewing;
 using Rdmp.UI.DataViewing.Collections.Arbitrary;
-using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.UI.Menus

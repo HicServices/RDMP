@@ -16,6 +16,8 @@ using System.Windows.Forms;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
+using MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -39,7 +41,6 @@ using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.CommandExecution;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Copying;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Arranging;
 using Rdmp.UI.PipelineUIs.Pipelines;
@@ -48,9 +49,12 @@ using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SimpleDialogs.ForwardEngineering;
+using Rdmp.UI.SimpleDialogs.NavigateTo;
 using Rdmp.UI.SubComponents;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Theme;
+using Rdmp.UI.Versioning;
+using Rdmp.UI.Wizard;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
 using ReusableLibraryCode;
@@ -78,7 +82,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public ITheme Theme { get; private set; }
 
         public RefreshBus RefreshBus { get; private set; }
-        public FavouritesProvider FavouritesProvider { get; private set; }
         
         public List<IPluginUserInterface> PluginUserInterfaces { get; private set; }
         readonly UIObjectConstructor _constructor = new UIObjectConstructor();
@@ -115,8 +118,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             ConstructPluginChildProviders();
             CoreChildProvider = GetChildProvider();
             
-            //Shouldn't ever change externally to your session so doesn't need constantly refreshed
-            FavouritesProvider = new FavouritesProvider(this);
             HistoryProvider = new HistoryProvider(repositoryLocator);
 
             //handle custom icons from plugin user interfaces in which
@@ -564,6 +565,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public override DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
         {
             var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,true,true);
+            dialog.AllowTableValuedFunctionSelection = true;
             
             dialog.ShowDialog();
 
@@ -768,6 +770,34 @@ namespace ResearchDataManagementPlatform.WindowManagement
             
             return ui.CatalogueCreatedIfAny;
         }
+        public override ExternalDatabaseServer CreateNewPlatformDatabase(ICatalogueRepository catalogueRepository, PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db)
+        {
+            //launch the winforms UI for creating a database
+            return CreatePlatformDatabase.CreateNewExternalServer(catalogueRepository,defaultToSet,patcher);
+        }
 
+        public override bool ShowCohortWizard(out CohortIdentificationConfiguration cic)
+        {
+            var wizard = new CreateNewCohortIdentificationConfigurationUI(this);
+
+            if (wizard.ShowDialog() == DialogResult.OK)
+            {
+                cic = wizard.CohortIdentificationCriteriaCreatedIfAny;
+            }
+            else
+            {
+                cic = null;
+            }
+
+            // Wizard was shown so that's a thing
+            return true;
+        }
+
+        public override void SelectAnythingThen(string prompt, Action<IMapsDirectlyToDatabaseTable> callback)
+        {
+            NavigateToObjectUI navigate = new NavigateToObjectUI(this) { Text = prompt };
+            navigate.CompletionAction = callback;
+            navigate.Show();
+        }
     }
 }
