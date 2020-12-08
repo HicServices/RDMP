@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
@@ -14,10 +15,13 @@ using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataExport.DataExtraction;
+using Rdmp.Core.DataViewing;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CommandLine.Interactive
 {
@@ -337,9 +341,13 @@ namespace Rdmp.Core.CommandLine.Interactive
             }
         }
 
-        public override CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable, IProject project, string cohortInitialDescription)
+        public override void ShowData(IViewSQLAndResultsCollection collection)
         {
-            throw new NotImplementedException();
+            var point = collection.GetDataAccessPoint();
+            var db = DataAccessPortal.GetInstance().ExpectDatabase(point,DataAccessContext.InternalDataProcessing);
+            
+            var toRun = new ExtractTableVerbatim(db.Server,collection.GetSql(),Console.OpenStandardOutput(),",",null);
+            toRun.DoExtraction();
         }
     }
 }

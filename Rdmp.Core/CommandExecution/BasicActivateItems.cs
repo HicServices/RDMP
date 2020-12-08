@@ -25,6 +25,7 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataViewing;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
@@ -450,5 +451,7 @@ namespace Rdmp.Core.CommandExecution
                 callback(selected);
 
         }
+
+        public abstract void ShowData(IViewSQLAndResultsCollection collection);
     }
 }

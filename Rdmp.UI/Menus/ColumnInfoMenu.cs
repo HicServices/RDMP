@@ -10,8 +10,8 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.DataViewing;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.DataViewing;
 
 namespace Rdmp.UI.Menus
 {

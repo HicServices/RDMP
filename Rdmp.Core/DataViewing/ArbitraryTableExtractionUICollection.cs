@@ -11,15 +11,14 @@ using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
-using Rdmp.UI.AutoComplete;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.UI.DataViewing.Collections.Arbitrary
+namespace Rdmp.Core.DataViewing
 {
-    internal class ArbitraryTableExtractionUICollection : PersistableObjectCollection,IViewSQLAndResultsCollection, IDataAccessPoint, IDataAccessCredentials
+    public class ArbitraryTableExtractionUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection, IDataAccessPoint, IDataAccessCredentials
     {
         private DiscoveredTable _table;
-        
+
         public DatabaseType DatabaseType { get; set; }
 
         Dictionary<string, string> _arguments = new Dictionary<string, string>();
@@ -35,25 +34,25 @@ namespace Rdmp.UI.DataViewing.Collections.Arbitrary
             return Password ?? "";
         }
 
-        public string OverrideSql {get;set;}
-        
+        public string OverrideSql { get; set; }
+
         /// <summary>
         /// Needed for deserialization
         /// </summary>
         public ArbitraryTableExtractionUICollection()
         {
-            
+
         }
 
-        public ArbitraryTableExtractionUICollection(DiscoveredTable table) :this()
+        public ArbitraryTableExtractionUICollection(DiscoveredTable table) : this()
         {
             _table = table;
-            _arguments.Add(ServerKey,_table.Database.Server.Name);
+            _arguments.Add(ServerKey, _table.Database.Server.Name);
             _arguments.Add(DatabaseKey, _table.Database.GetRuntimeName());
-            _arguments.Add(TableKey,_table.GetRuntimeName());
+            _arguments.Add(TableKey, _table.GetRuntimeName());
             DatabaseType = table.Database.Server.DatabaseType;
 
-            _arguments.Add(DatabaseTypeKey,DatabaseType.ToString());
+            _arguments.Add(DatabaseTypeKey, DatabaseType.ToString());
 
 
             Username = table.Database.Server.ExplicitUsernameIfAny;
@@ -71,10 +70,10 @@ namespace Rdmp.UI.DataViewing.Collections.Arbitrary
 
             DatabaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), _arguments[DatabaseTypeKey]);
 
-            var server = new DiscoveredServer(Server,Database,DatabaseType,null,null);
+            var server = new DiscoveredServer(Server, Database, DatabaseType, null, null);
             _table = server.ExpectDatabase(Database).ExpectTable(_arguments[TableKey]);
         }
-        
+
         public IEnumerable<DatabaseEntity> GetToolStripObjects()
         {
             yield break;
@@ -91,7 +90,7 @@ namespace Rdmp.UI.DataViewing.Collections.Arbitrary
                 return OverrideSql;
 
             var response = _table.GetQuerySyntaxHelper().HowDoWeAchieveTopX(100);
-            
+
             switch (response.Location)
             {
                 case QueryComponent.SELECT:
@@ -99,7 +98,7 @@ namespace Rdmp.UI.DataViewing.Collections.Arbitrary
                 case QueryComponent.WHERE:
                     return "Select * from " + _table.GetFullyQualifiedName() + " WHERE " + response.SQL;
                 case QueryComponent.Postfix:
-                    return "Select * from " + _table.GetFullyQualifiedName() + " " + response.SQL ;
+                    return "Select * from " + _table.GetFullyQualifiedName() + " " + response.SQL;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -110,26 +109,28 @@ namespace Rdmp.UI.DataViewing.Collections.Arbitrary
             return "View " + _table.GetRuntimeName();
         }
 
-        public void AdjustAutocomplete(AutoCompleteProvider autoComplete)
+        public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
         {
             autoComplete.Add(_table);
         }
 
-        public string Server { 
-            get { return _arguments[ServerKey]; } 
+        public string Server
+        {
+            get { return _arguments[ServerKey]; }
             set { _arguments[ServerKey] = value; }
-            }
-        public string Database { 
+        }
+        public string Database
+        {
             get { return _arguments[DatabaseKey]; }
             set { _arguments[DatabaseKey] = value; }
-            }
+        }
 
-        
+
 
         public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
         {
             //we have our own credentials if we do
-            return string.IsNullOrWhiteSpace(Username)? null:this;
+            return string.IsNullOrWhiteSpace(Username) ? null : this;
         }
 
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
@@ -139,7 +140,7 @@ namespace Rdmp.UI.DataViewing.Collections.Arbitrary
 
         public bool DiscoverExistence(DataAccessContext context, out string reason)
         {
-            if(_table.Exists())
+            if (_table.Exists())
             {
                 reason = null;
                 return true;
@@ -147,7 +148,7 @@ namespace Rdmp.UI.DataViewing.Collections.Arbitrary
 
             reason = "Table " + _table + " did not exist";
             return false;
-                
+
         }
     }
 }

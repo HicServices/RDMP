@@ -18,6 +18,7 @@ using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
@@ -308,6 +309,10 @@ namespace Rdmp.UI.Tests
             throw new NotImplementedException();
         }
 
+        public override void ShowData(IViewSQLAndResultsCollection collection)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class TestActivateItemsResults:ICheckNotifier

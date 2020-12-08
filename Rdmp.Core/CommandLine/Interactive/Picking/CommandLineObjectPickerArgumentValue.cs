@@ -173,7 +173,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
 
             if(DatabaseEntities.Count != 1)
             {
-                _logger.Warn($"Pattern matched {DatabaseEntities.Count} objects '{RawValue}'");
+                _logger.Warn($"Pattern matched {DatabaseEntities.Count} objects '{RawValue}':{Environment.NewLine} {string.Join(Environment.NewLine,DatabaseEntities)}");
                 return null;
             }   
 

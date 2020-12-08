@@ -22,17 +22,12 @@ using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using Rdmp.UI.Menus.MenuItems;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Icons.IconProvision;
-
-
-
 
 namespace Rdmp.UI.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
     class TableInfoMenu : RDMPContextMenuStrip
     {
-        private DataAccessCredentials[] _availableCredentials;
 
         public TableInfoMenu(RDMPContextMenuStripArgs args, TableInfo tableInfo)
             : base(args, tableInfo)
@@ -60,9 +55,7 @@ namespace Rdmp.UI.Menus
             Add(new ExecuteCommandSyncTableInfo(_activator,tableInfo,true,false));
 
             Items.Add("Add ColumnInfo ", null, delegate { AddColumnInfo_Click(tableInfo); });
-
-            _availableCredentials = RepositoryLocator.CatalogueRepository.GetAllObjects<DataAccessCredentials>();
-            
+                        
             Add(new ExecuteCommandUseCredentialsToAccessTableInfoData(_activator,null,tableInfo));
             
             Items.Add(new ToolStripSeparator());

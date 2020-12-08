@@ -13,6 +13,7 @@ using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using NStack;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.DataViewing;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -242,6 +243,11 @@ namespace Rdmp.Core.CommandLine.Gui
         private string Wrap(string longString, int width)
         {
             return string.Join("\n",Regex.Matches( longString, ".{1,"+width+"}" ).Select( m => m.Value ).ToArray());
+        }
+
+        public override void ShowData(IViewSQLAndResultsCollection collection)
+        {
+            throw new NotImplementedException();
         }
     }
 }

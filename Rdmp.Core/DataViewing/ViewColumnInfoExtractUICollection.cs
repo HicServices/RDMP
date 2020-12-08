@@ -15,15 +15,14 @@ using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
-using Rdmp.UI.AutoComplete;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.UI.DataViewing.Collections
+namespace Rdmp.Core.DataViewing
 {
     /// <summary>
     /// Builds a query to fetch data in a <see cref="ColumnInfo"/> (Based on the <see cref="ViewType"/>)
     /// </summary>
-    public class ViewColumnInfoExtractUICollection : PersistableObjectCollection,IViewSQLAndResultsCollection
+    public class ViewColumnInfoExtractUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
     {
         public ViewType ViewType { get; private set; }
 
@@ -34,7 +33,7 @@ namespace Rdmp.UI.DataViewing.Collections
         {
         }
 
-        public ViewColumnInfoExtractUICollection(ColumnInfo c, ViewType viewType, IFilter filter = null): this()
+        public ViewColumnInfoExtractUICollection(ColumnInfo c, ViewType viewType, IFilter filter = null) : this()
         {
             DatabaseObjects.Add(c);
             if (filter != null)
@@ -44,15 +43,15 @@ namespace Rdmp.UI.DataViewing.Collections
 
         public override string SaveExtraText()
         {
-            return Helper.SaveDictionaryToString(new Dictionary<string, string>() {{"ViewType", ViewType.ToString()}});
+            return Helper.SaveDictionaryToString(new Dictionary<string, string>() { { "ViewType", ViewType.ToString() } });
         }
 
         public override void LoadExtraText(string s)
         {
             string value = Helper.GetValueIfExistsFromPersistString("ViewType", s);
-            ViewType = (ViewType) Enum.Parse(typeof (ViewType), value);
+            ViewType = (ViewType)Enum.Parse(typeof(ViewType), value);
         }
-        
+
         public IEnumerable<DatabaseEntity> GetToolStripObjects()
         {
             var filter = GetFilterIfAny() as ConcreteFilter;
@@ -73,7 +72,7 @@ namespace Rdmp.UI.DataViewing.Collections
 
         public string GetSql()
         {
-            var qb = new QueryBuilder(null, null,new []{ColumnInfo.TableInfo});
+            var qb = new QueryBuilder(null, null, new[] { ColumnInfo.TableInfo });
 
             if (ViewType == ViewType.TOP_100)
                 qb.TopX = 100;
@@ -81,7 +80,7 @@ namespace Rdmp.UI.DataViewing.Collections
             if (ViewType == ViewType.Distribution)
                 AddDistributionColumns(qb);
             else
-                qb.AddColumn(new ColumnInfoToIColumn(new MemoryRepository(),ColumnInfo));
+                qb.AddColumn(new ColumnInfoToIColumn(new MemoryRepository(), ColumnInfo));
 
             var filter = GetFilterIfAny();
             if (filter != null && !string.IsNullOrWhiteSpace(filter.WhereSQL))
@@ -92,7 +91,7 @@ namespace Rdmp.UI.DataViewing.Collections
 
             var sql = qb.SQL;
 
-            if(ViewType == ViewType.Aggregate)
+            if (ViewType == ViewType.Aggregate)
                 sql += " GROUP BY " + ColumnInfo;
 
             return sql;
@@ -101,17 +100,17 @@ namespace Rdmp.UI.DataViewing.Collections
         private void AddDistributionColumns(QueryBuilder qb)
         {
             var repo = new MemoryRepository();
-            qb.AddColumn(new SpontaneouslyInventedColumn(repo,"CountTotal", "count(1)"));
-            qb.AddColumn(new SpontaneouslyInventedColumn(repo,"CountNull", "SUM(CASE WHEN " + ColumnInfo.GetFullyQualifiedName() + " IS NULL THEN 1 ELSE 0  END)"));
-            qb.AddColumn(new SpontaneouslyInventedColumn(repo,"CountZero", "SUM(CASE WHEN " + ColumnInfo.GetFullyQualifiedName() + " = 0 THEN 1  ELSE 0 END)"));
+            qb.AddColumn(new SpontaneouslyInventedColumn(repo, "CountTotal", "count(1)"));
+            qb.AddColumn(new SpontaneouslyInventedColumn(repo, "CountNull", "SUM(CASE WHEN " + ColumnInfo.GetFullyQualifiedName() + " IS NULL THEN 1 ELSE 0  END)"));
+            qb.AddColumn(new SpontaneouslyInventedColumn(repo, "CountZero", "SUM(CASE WHEN " + ColumnInfo.GetFullyQualifiedName() + " = 0 THEN 1  ELSE 0 END)"));
 
-            qb.AddColumn(new SpontaneouslyInventedColumn(repo,"Max", "max(" + ColumnInfo.GetFullyQualifiedName() + ")"));
-            qb.AddColumn(new SpontaneouslyInventedColumn(repo,"Min", "min(" + ColumnInfo.GetFullyQualifiedName() + ")"));
+            qb.AddColumn(new SpontaneouslyInventedColumn(repo, "Max", "max(" + ColumnInfo.GetFullyQualifiedName() + ")"));
+            qb.AddColumn(new SpontaneouslyInventedColumn(repo, "Min", "min(" + ColumnInfo.GetFullyQualifiedName() + ")"));
 
             switch (ColumnInfo.GetQuerySyntaxHelper().DatabaseType)
             {
                 case DatabaseType.MicrosoftSQLServer:
-                    qb.AddColumn(new SpontaneouslyInventedColumn(repo,"stdev ", "stdev(" + ColumnInfo.GetFullyQualifiedName() + ")"));
+                    qb.AddColumn(new SpontaneouslyInventedColumn(repo, "stdev ", "stdev(" + ColumnInfo.GetFullyQualifiedName() + ")"));
                     break;
                 case DatabaseType.MySql:
                 case DatabaseType.Oracle:
@@ -130,7 +129,7 @@ namespace Rdmp.UI.DataViewing.Collections
             return ColumnInfo + "(" + ViewType + ")";
         }
 
-        public void AdjustAutocomplete(AutoCompleteProvider autoComplete)
+        public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
         {
             autoComplete.Add(ColumnInfo);
         }
@@ -142,7 +141,7 @@ namespace Rdmp.UI.DataViewing.Collections
 
         private IFilter GetFilterIfAny()
         {
-            return (IFilter) DatabaseObjects.SingleOrDefault(o => o is IFilter);
+            return (IFilter)DatabaseObjects.SingleOrDefault(o => o is IFilter);
         }
 
         public IQuerySyntaxHelper GetQuerySyntaxHelper()

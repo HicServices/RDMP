@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.DataAccess;
 
@@ -13,7 +12,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandUseCredentialsToAccessTableInfoData : BasicCommandExecution
     {
-        private readonly CatalogueRepository _catalogueRepository;
         private readonly DataAccessCredentials _credentials;
         private readonly TableInfo _tableInfo;
         private readonly DataAccessCredentials[] _available;
@@ -23,7 +21,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             DataAccessCredentials credentials, TableInfo targetTableInfo) : base(activator)
         {
             _credentials = credentials;
-            _catalogueRepository = _credentials.Repository as CatalogueRepository;
 
             _tableInfo = targetTableInfo;
             
@@ -52,7 +49,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if(creds == null)
                 return;
 
-            _catalogueRepository.TableInfoCredentialsManager.CreateLinkBetween(creds,_tableInfo,DataAccessContext.Any);
+            BasicActivator.RepositoryLocator.CatalogueRepository.TableInfoCredentialsManager.CreateLinkBetween(creds,_tableInfo,DataAccessContext.Any);
             Publish(_tableInfo);
         }
     }

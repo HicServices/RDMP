@@ -8,22 +8,20 @@ using System.Collections.Generic;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
-using Rdmp.UI.AutoComplete;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.UI.DataViewing.Collections
+namespace Rdmp.Core.DataViewing
 {
     /// <summary>
-    /// Input collection for upon which an SQL query can be built that results in a single result set.  This class is for
-    /// use with <see cref="ViewSQLAndResultsWithDataGridUI"/>
+    /// Input collection for upon which an SQL query can be built that results in a single result set.
     /// </summary>
-    public interface IViewSQLAndResultsCollection:IPersistableObjectCollection, IHasQuerySyntaxHelper
+    public interface IViewSQLAndResultsCollection : IPersistableObjectCollection, IHasQuerySyntaxHelper
     {
         IEnumerable<DatabaseEntity> GetToolStripObjects();
 
         IDataAccessPoint GetDataAccessPoint();
         string GetSql();
         string GetTabName();
-        void AdjustAutocomplete(AutoCompleteProvider autoComplete);
+        void AdjustAutocomplete(IAutoCompleteProvider autoComplete);
     }
 }

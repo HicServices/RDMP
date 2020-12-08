@@ -31,6 +31,7 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
@@ -41,6 +42,7 @@ using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.CommandExecution;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Copying;
+using Rdmp.UI.DataViewing;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Arranging;
 using Rdmp.UI.PipelineUIs.Pipelines;
@@ -798,6 +800,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
             NavigateToObjectUI navigate = new NavigateToObjectUI(this) { Text = prompt };
             navigate.CompletionAction = callback;
             navigate.Show();
+        }
+
+        public override void ShowData(IViewSQLAndResultsCollection collection)
+        {
+            Activate<ViewSQLAndResultsWithDataGridUI>(collection);
         }
     }
 }

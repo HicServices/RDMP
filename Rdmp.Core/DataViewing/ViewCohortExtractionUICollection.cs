@@ -11,24 +11,23 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.UI.AutoComplete;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.UI.DataViewing.Collections
+namespace Rdmp.Core.DataViewing
 {
-    internal class ViewCohortExtractionUICollection : PersistableObjectCollection,IViewSQLAndResultsCollection
+    public class ViewCohortExtractionUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
     {
         public ViewCohortExtractionUICollection()
         {
         }
 
-        public ViewCohortExtractionUICollection(ExtractableCohort cohort):this()
+        public ViewCohortExtractionUICollection(ExtractableCohort cohort) : this()
         {
             DatabaseObjects.Add(cohort);
         }
-        
+
         public ExtractableCohort Cohort { get { return DatabaseObjects.OfType<ExtractableCohort>().SingleOrDefault(); } }
-        
+
         public IEnumerable<DatabaseEntity> GetToolStripObjects()
         {
             yield return Cohort;
@@ -63,12 +62,12 @@ namespace Rdmp.UI.DataViewing.Collections
 
         public string GetTabName()
         {
-            return "Top 100 " + Cohort + "(V" + Cohort.ExternalVersion+")";
+            return "Top 100 " + Cohort + "(V" + Cohort.ExternalVersion + ")";
         }
 
-        public void AdjustAutocomplete(AutoCompleteProvider autoComplete)
+        public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
         {
-            if(Cohort == null)
+            if (Cohort == null)
                 return;
 
             var ect = Cohort.ExternalCohortTable;

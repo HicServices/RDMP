@@ -13,16 +13,15 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding;
-using Rdmp.UI.AutoComplete;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.UI.DataViewing.Collections
+namespace Rdmp.Core.DataViewing
 {
     /// <summary>
     /// Builds a query based on a <see cref="AggregateConfiguration"/> (either a sample of data in a graph or matching a cohort
-    /// (<see cref="Rdmp.Core.Curation.Data.Aggregation.AggregateConfiguration.IsCohortIdentificationAggregate"/>)
+    /// (<see cref="AggregateConfiguration.IsCohortIdentificationAggregate"/>)
     /// </summary>
-    public class ViewAggregateExtractUICollection : PersistableObjectCollection,IViewSQLAndResultsCollection
+    public class ViewAggregateExtractUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
     {
         public bool UseQueryCache { get; set; }
 
@@ -30,7 +29,7 @@ namespace Rdmp.UI.DataViewing.Collections
         {
         }
 
-        public ViewAggregateExtractUICollection(AggregateConfiguration config):this()
+        public ViewAggregateExtractUICollection(AggregateConfiguration config) : this()
         {
             DatabaseObjects.Add(config);
         }
@@ -41,10 +40,10 @@ namespace Rdmp.UI.DataViewing.Collections
             {
                 var cache = GetCacheServer();
                 if (cache != null)
-                   yield return cache;
+                    yield return cache;
             }
         }
-        
+
         private ExternalDatabaseServer GetCacheServer()
         {
             var cic = AggregateConfiguration.GetCohortIdentificationConfigurationIfAny();
@@ -64,8 +63,8 @@ namespace Rdmp.UI.DataViewing.Collections
             if (dim == null)
             {
                 var table = AggregateConfiguration.ForcedJoins.FirstOrDefault();
-                if(table == null)
-                    throw new Exception("AggregateConfiguration '" + AggregateConfiguration +"' has no AggregateDimensions and no TableInfo forced joins, we do not know where/what table to run the query on");
+                if (table == null)
+                    throw new Exception("AggregateConfiguration '" + AggregateConfiguration + "' has no AggregateDimensions and no TableInfo forced joins, we do not know where/what table to run the query on");
 
                 return table;
             }
@@ -83,9 +82,9 @@ namespace Rdmp.UI.DataViewing.Collections
                 var cic = ac.GetCohortIdentificationConfigurationIfAny();
                 var globals = cic.GetAllParameters();
 
-                var builder = new CohortQueryBuilder(ac, globals,null);
-                
-                if(UseQueryCache)
+                var builder = new CohortQueryBuilder(ac, globals, null);
+
+                if (UseQueryCache)
                     builder.CacheServer = GetCacheServer();
 
                 sql = builder.GetDatasetSampleSQL(100);
@@ -104,21 +103,24 @@ namespace Rdmp.UI.DataViewing.Collections
             return "View Top 100 " + AggregateConfiguration;
         }
 
-        public void AdjustAutocomplete(AutoCompleteProvider autoComplete)
+        public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
         {
-            if(AggregateConfiguration != null)
+            if (AggregateConfiguration != null)
                 autoComplete.Add(AggregateConfiguration);
         }
 
-        AggregateConfiguration AggregateConfiguration { get
+        AggregateConfiguration AggregateConfiguration
         {
-            return DatabaseObjects.OfType<AggregateConfiguration>().SingleOrDefault();
-        } }
+            get
+            {
+                return DatabaseObjects.OfType<AggregateConfiguration>().SingleOrDefault();
+            }
+        }
 
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             var a = AggregateConfiguration;
-            return a != null?a.GetQuerySyntaxHelper():null;
+            return a != null ? a.GetQuerySyntaxHelper() : null;
         }
     }
 }

@@ -11,9 +11,9 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.DataViewing;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
-using Rdmp.UI.AutoComplete;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.UI.DataViewing.Collections
@@ -107,7 +107,7 @@ namespace Rdmp.UI.DataViewing.Collections
             return TableInfo + "(" + ViewType + ")";
         }
 
-        public void AdjustAutocomplete(AutoCompleteProvider autoComplete)
+        public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
         {
             autoComplete.Add(TableInfo);
         }

@@ -6,6 +6,7 @@
 
 using System.Linq;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataViewing;
 using Rdmp.Core.Providers;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.DataViewing;
