@@ -36,8 +36,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
 
         public virtual IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
         {
-            if (target is Project)
-                ProjectSpecific = (Project)target;
+            if (target is Project project)
+                ProjectSpecific = project;
 
             return this;
         }

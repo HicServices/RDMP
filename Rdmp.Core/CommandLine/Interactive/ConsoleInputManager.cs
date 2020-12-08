@@ -13,11 +13,7 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Interactive.Picking;
-using Rdmp.Core.CommandLine.Runners;
-using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
 using ReusableLibraryCode;
@@ -244,35 +240,32 @@ namespace Rdmp.Core.CommandLine.Interactive
             Console.WriteLine(@"Enter path with optional wildcards (e.g. c:\*.csv):");
 
             var file = Console.ReadLine();
-            
-            if(file != null)
+
+            if (file == null) return null;
+            var asteriskIdx = file.IndexOf('*');
+
+            if(asteriskIdx != -1)
             {
-                var asterixIdx = file.IndexOf('*');
+                int idxLastSlash = file.LastIndexOfAny(new []{ Path.DirectorySeparatorChar,Path.AltDirectorySeparatorChar });
 
-                if(asterixIdx != -1)
-                {
-                    int idxLastSlash = file.LastIndexOfAny(new []{Path.DirectorySeparatorChar,Path.AltDirectorySeparatorChar });
+                if(idxLastSlash == -1 || asteriskIdx < idxLastSlash)
+                    throw new Exception("Wildcards are only supported at the file level");
 
-                    if(idxLastSlash == -1 || asterixIdx < idxLastSlash)
-                        throw new Exception("Wildcards are only supported at the file level");
-
-                    var searchPattern = file.Substring(idxLastSlash+1);
-                    var dirStr = file.Substring(0,idxLastSlash);
+                var searchPattern = file.Substring(idxLastSlash+1);
+                var dirStr = file.Substring(0,idxLastSlash);
                     
-                    var dir = new DirectoryInfo(dirStr);
+                var dir = new DirectoryInfo(dirStr);
 
-                    if(!dir.Exists)
-                        throw new DirectoryNotFoundException("Could not find directory:" + dirStr);
+                if(!dir.Exists)
+                    throw new DirectoryNotFoundException("Could not find directory:" + dirStr);
                                         
-                    return dir.GetFiles(searchPattern).ToArray();
-                }
-                else
-                {
-                    return new[]{new FileInfo(file) };
-                }
+                return dir.GetFiles(searchPattern).ToArray();
+            }
+            else
+            {
+                return new[]{ new FileInfo(file) };
             }
 
-            return null;
         }
         
 
@@ -281,7 +274,7 @@ namespace Rdmp.Core.CommandLine.Interactive
             if (DisallowInput)
                 throw new InputDisallowedException($"Value required for '{prompt}'");
 
-            Console.WriteLine("Enter value for " + prompt +":");
+            Console.WriteLine($"Enter value for {prompt}:");
             chosen = UsefulStuff.ChangeType(ReadLine(), paramType);
 
             return true;
@@ -295,10 +288,7 @@ namespace Rdmp.Core.CommandLine.Interactive
             Console.WriteLine(text + "(Y/n)");
             
             //if user picks no then it's false otherwise true
-            if (string.Equals(Console.ReadLine()?.Trim(), "n", StringComparison.CurrentCultureIgnoreCase))
-                chosen = false;
-            else
-                chosen = true;
+            chosen = !string.Equals(Console.ReadLine()?.Trim(), "n", StringComparison.CurrentCultureIgnoreCase);
 
             //user made a conscious decision
             return true;
@@ -311,7 +301,7 @@ namespace Rdmp.Core.CommandLine.Interactive
 
             Console.WriteLine(prompt +":");
 
-            //This implementation does not play nice with linux
+            //This implementation does not play nice with Linux
             if (EnvironmentInfo.IsLinux)
                 return Console.ReadLine();
             
