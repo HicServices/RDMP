@@ -166,6 +166,30 @@ namespace Terminal.Gui {
 		}
 
 		/// <summary>
+		/// Returns the currently expanded children of the passed object.  Returns an empty collection if the branch is not exposed or not expanded
+		/// </summary>
+		/// <param name="o">An object in the tree</param>
+		/// <returns></returns>
+		public IEnumerable<object> GetChildren (object o)
+		{
+			var branch = ObjectToBranch(o);
+
+			if(branch == null || !branch.IsExpanded)
+				return new object[0];
+
+			return branch.ChildBranches?.Values?.Select(b=>b.Model)?.ToArray() ?? new object[0];
+		}
+		/// <summary>
+		/// Returns the parent object of <paramref name="o"/> in the tree.  Returns null if the object is not exposed in the tree
+		/// </summary>
+		/// <param name="o">An object in the tree</param>
+		/// <returns></returns>
+		public object GetParent (object o)
+		{
+			return ObjectToBranch(o)?.Parent?.Model;
+		}
+
+		/// <summary>
 		/// Returns the string representation of model objects hosted in the tree.  Default implementation is to call <see cref="object.ToString"/>
 		/// </summary>
 		/// <value></value>
@@ -558,7 +582,7 @@ namespace Terminal.Gui {
 				// we already knew about some children so preserve the state of the old children
 
 				// first gather the new Children
-				var newChildren = tree.ChildrenGetter(this.Model).ToArray() ?? new object[0];
+				var newChildren = tree.ChildrenGetter(this.Model) ?? new object[0];
 
 				// Children who no longer appear need to go
 				foreach(var toRemove in ChildBranches.Keys.Except(newChildren).ToArray())
@@ -572,16 +596,16 @@ namespace Terminal.Gui {
 				
 				// New children need to be added
 				foreach(var newChild in newChildren)
-                {
+				{
 					// If we don't know about the child yet we need a new branch
-					if(!ChildBranches.ContainsKey(newChild))
+					if (!ChildBranches.ContainsKey (newChild)) {
 						ChildBranches.Add(newChild,new Branch(tree,this,newChild));
-					else
-                    {
+					}
+					else{
 						//we already have this object but update the reference anyway incase Equality match but the references are new
 						ChildBranches[newChild].Model = newChild;
-                    }					
-                }
+					}					
+				}
 			}
 			
 		}
