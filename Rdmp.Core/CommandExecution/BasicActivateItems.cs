@@ -134,7 +134,12 @@ namespace Rdmp.Core.CommandExecution
 
         public abstract bool SelectType(string prompt, Type[] available, out Type chosen);
         
-        public virtual void Activate(DatabaseEntity o)
+        public virtual bool CanActivate(object target)
+        {
+            return false;
+        }
+
+        public virtual void Activate(object o)
         {
             
         }

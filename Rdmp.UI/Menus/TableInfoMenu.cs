@@ -33,29 +33,9 @@ namespace Rdmp.UI.Menus
             : base(args, tableInfo)
         {
 
-            Add(new ExecuteCommandImportTableInfo(_activator,null,false),Keys.None,"New");
-            Add(new ExecuteCommandCreateNewCatalogueFromTableInfo(_activator, tableInfo),Keys.None,"New");
-                        
             Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null, tableInfo),Keys.None,"New");
             Add(new ExecuteCommandAddJoinInfo(_activator, tableInfo),Keys.None,"New");
-
-            
-            try
-            {
-                Add(new ExecuteCommandAlterTableName(_activator,tableInfo),Keys.None,Alter);
-                Add(new ExecuteCommandAlterTableCreatePrimaryKey(_activator,tableInfo),Keys.None, Alter);
-                Add(new ExecuteCommandAlterTableAddArchiveTrigger(_activator,tableInfo),Keys.None, Alter);
-            }
-            catch(Exception ex)
-            {
-                _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to build Alter commands",CheckResult.Fail,ex));
-            }
-            
-            Add(new ExecuteCommandSyncTableInfo(_activator,tableInfo,false,false));
-            Add(new ExecuteCommandSyncTableInfo(_activator,tableInfo,true,false));
-
-            Items.Add("Add ColumnInfo ", null, delegate { AddColumnInfo_Click(tableInfo); });
-                        
+                                    
             Add(new ExecuteCommandUseCredentialsToAccessTableInfoData(_activator,null,tableInfo));
             
             Items.Add(new ToolStripSeparator());
@@ -82,12 +62,6 @@ namespace Rdmp.UI.Menus
         }
 
 
-
-        private void AddColumnInfo_Click(TableInfo tableInfo)
-        {
-            var newColumnInfo = new ColumnInfo(RepositoryLocator.CatalogueRepository, Guid.NewGuid().ToString(), "fish", tableInfo);
-            Publish(newColumnInfo);
-        }
         
         private void ConfigureTableInfoParameters(TableInfo tableInfo)
         {

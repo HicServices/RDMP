@@ -8,6 +8,7 @@ using FAnsi;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.Core.Curation.Data;
@@ -18,6 +19,7 @@ using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.Providers.Nodes.SharingNodes;
+using ReusableLibraryCode.Checks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,8 +35,11 @@ namespace Rdmp.Core.CommandExecution
         IBasicActivateItems _activator;
 
         public const string Add = "Add";
+        public const string New = "New";
         public const string Extraction = "Extractability";
         public const string Metadata = "Metadata";
+        public const string Alter = "Alter";
+
         public AtomicCommandFactory(IBasicActivateItems activator)
         {
             _activator = activator;
@@ -52,6 +57,9 @@ namespace Rdmp.Core.CommandExecution
 
         public IEnumerable<CommandPresentation> GetCommandsWithPresentation(object o)
         {
+            if(_activator.CanActivate(o))
+                yield return new CommandPresentation(new ExecuteCommandActivate(_activator,o));
+
             if(o is Catalogue c)
             {
                 yield return new CommandPresentation(new ExecuteCommandAddNewSupportingSqlTable(_activator, c),Add);
@@ -185,6 +193,32 @@ namespace Rdmp.Core.CommandExecution
             if(o is TableInfo ti)
             {
                 yield return new CommandPresentation(new ExecuteCommandViewData(_activator, ti));
+                
+                yield return new CommandPresentation(new ExecuteCommandImportTableInfo(_activator,null,false),New);
+                yield return new CommandPresentation(new ExecuteCommandCreateNewCatalogueFromTableInfo(_activator, ti),New);
+                        
+                CommandPresentation[] alterCommands = null;
+                try
+                {
+                    alterCommands = new[]
+                    {
+                        new CommandPresentation(new ExecuteCommandAlterTableName(_activator,ti),Alter),
+                        new CommandPresentation(new ExecuteCommandAlterTableCreatePrimaryKey(_activator,ti), Alter),
+                        new CommandPresentation(new ExecuteCommandAlterTableAddArchiveTrigger(_activator,ti), Alter)
+                    };
+                }
+                catch(Exception ex)
+                {
+                    _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to build Alter commands",CheckResult.Fail,ex));
+                }
+                
+                if(alterCommands  != null)
+                    foreach (var item in alterCommands )
+                        yield return item;
+            
+                yield return new CommandPresentation(new ExecuteCommandSyncTableInfo(_activator,ti,false,false));
+                yield return new CommandPresentation(new ExecuteCommandSyncTableInfo(_activator,ti,true,false));
+                yield return new CommandPresentation(new ExecuteCommandNewObject(_activator,()=>new ColumnInfo(_activator.RepositoryLocator.CatalogueRepository, Guid.NewGuid().ToString(), "fish", ti)));
             }
                 
 

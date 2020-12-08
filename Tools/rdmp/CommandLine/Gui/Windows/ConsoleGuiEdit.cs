@@ -14,7 +14,7 @@ using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui.Windows
 {
-    class ConsoleGuiEdit : View
+    class ConsoleGuiEdit : Window
     {
         private readonly IBasicActivateItems _activator;
         public IMapsDirectlyToDatabaseTable DatabaseObject { get; }
@@ -41,10 +41,9 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
             {
                 X = 0,
                 Y = Pos.Bottom(list),
-                Width = 5,
-                Height = 1,
                 IsDefault = true
             };
+            
 
             btnSet.Clicked += () =>
             {
@@ -77,9 +76,17 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
                     }
                 }
             };
+
+            var btnClose = new Button("Close")
+            {
+                X =  Pos.Right(btnSet),
+                Y = Pos.Bottom(list)
+            };
+            btnClose.Clicked += ()=>Application.RequestStop();
             
             this.Add(list);
             this.Add(btnSet);
+            this.Add(btnClose);
         }
 
         /// <summary>

@@ -34,8 +34,6 @@ namespace Rdmp.Core.CommandLine.Gui
 		const string BuiltCohorts = "Built Cohorts";
 		const string Other = "Other";
 
-		const int TreeViewWidthPercent = 50;
-
 		public View CurrentWindow {get;set;}
 
         public ConsoleMainWindow(ConsoleGuiActivator activator)
@@ -52,22 +50,6 @@ namespace Rdmp.Core.CommandLine.Gui
         private void Quit()
         {
 			Application.RequestStop ();
-        }
-
-		/// <summary>
-		/// Lays out the new view so that it fits in the right pane and fills the screen
-		/// </summary>
-		/// <param name="v"></param>
-		public void SetSubWindow(View v)
-        {
-			ClearSubWindow();
-
-			v.X = Pos.Percent(TreeViewWidthPercent);
-			v.Y = 1;
-			v.Width = Dim.Fill();
-			v.Height = Dim.Fill();
-
-			_win.Add(CurrentWindow = v);
         }
 
         internal void SetUp(Toplevel top)
@@ -92,7 +74,7 @@ namespace Rdmp.Core.CommandLine.Gui
 			_treeView = new TreeView () {
 				X = 0,
 				Y = 0,
-				Width = Dim.Percent(TreeViewWidthPercent),
+				Width = Dim.Fill(),
 				Height = Dim.Fill()
 			};
 
@@ -111,12 +93,10 @@ namespace Rdmp.Core.CommandLine.Gui
 			_win.Add(_treeView);
 			top.Add(_win);
 
-			_treeView.SelectionChanged += SelectionChanged;
             _treeView.KeyPress += treeView_KeyPress;
 
 			var statusBar = new StatusBar (new StatusItem [] {
 				new StatusItem(Key.ControlQ, "~^Q~ Quit", () => Quit()),
-				new StatusItem(Key.ControlN, "~^N~ Menu", () => Menu()),
 				new StatusItem(Key.ControlR, "~^R~ Run", () => Run()),
 				new StatusItem(Key.ControlF, "~^F~ Find", () => Find()),
 				new StatusItem(Key.F5, "~F5~ Refresh", () => Publish()),
@@ -159,7 +139,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
 			if(desc.Parents.Any())
             {
-				var topLevelCategory = GetRootCategoryOf(desc.Parents[0].GetType());
+				var topLevelCategory = GetRootCategoryOf(desc.Parents[0]);
 
 				if(topLevelCategory != null)
 					_treeView.Expand(topLevelCategory);
@@ -239,6 +219,14 @@ namespace Rdmp.Core.CommandLine.Gui
             {
 				switch(obj.KeyEvent.Key)
 				{
+					case Key.Enter : 
+						if(_treeView.HasFocus)
+                        {
+							Menu();
+							obj.Handled = true;
+                        }
+						
+						break;
 					case Key.DeleteChar : 
 
 						if(_treeView.SelectedObject is IDeleteable d)
@@ -254,16 +242,6 @@ namespace Rdmp.Core.CommandLine.Gui
             }
         }
 
-        private void SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-			var imaps = GetObjectIfAnyBehind(e.NewValue);
-
-			if(imaps != null)
-				SetSubWindow(new ConsoleGuiEdit(_activator,imaps));
-			else
-				ClearSubWindow();
-        }
-
         private IMapsDirectlyToDatabaseTable GetObjectIfAnyBehind(object o)
         {
 			if(o is IMasqueradeAs masquerade)
@@ -272,13 +250,6 @@ namespace Rdmp.Core.CommandLine.Gui
 			return o as IMapsDirectlyToDatabaseTable;
         }
 
-        private void ClearSubWindow()
-        {
-			if(CurrentWindow != null)
-            {
-				_win.Remove(CurrentWindow);
-            }
-        }
 
         private IEnumerable<object> ChildGetter(object model)
         {

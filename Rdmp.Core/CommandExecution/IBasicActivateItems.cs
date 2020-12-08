@@ -34,6 +34,13 @@ namespace Rdmp.Core.CommandExecution
         bool IsInteractive {get;}
 
         /// <summary>
+        /// True if <see cref="Activate(object)"/> will work for the object
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
+        bool CanActivate(object o);
+
+        /// <summary>
         /// True to prompt Yes/No and offer common fixes for being unable to directly delete an object.  Note that <see cref="IsInteractive"/> must be true for this flag to be respected
         /// </summary>
         bool InteractiveDeletes {get;set;}
@@ -327,7 +334,7 @@ namespace Rdmp.Core.CommandExecution
         /// environment is not interactive e.g. console)
         /// </summary>
         /// <param name="o"></param>
-        void Activate(DatabaseEntity o);
+        void Activate(object o);
 
         /// <summary>
         /// Handle the creation and configuring of a new <see cref="ICatalogue"/> often with user input about what column(s) should be extractable etc.  Return null if user cancelled the process somehow

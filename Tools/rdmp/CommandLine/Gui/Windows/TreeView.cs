@@ -558,7 +558,7 @@ namespace Terminal.Gui {
 				// we already knew about some children so preserve the state of the old children
 
 				// first gather the new Children
-				var newChildren = tree.ChildrenGetter(this.Model) ?? new object[0];
+				var newChildren = tree.ChildrenGetter(this.Model).ToArray() ?? new object[0];
 
 				// Children who no longer appear need to go
 				foreach(var toRemove in ChildBranches.Keys.Except(newChildren).ToArray())
@@ -571,8 +571,17 @@ namespace Terminal.Gui {
 				}
 				
 				// New children need to be added
-				foreach(var toAdd in newChildren.Except(ChildBranches.Keys).ToArray())
-					ChildBranches.Add(toAdd,new Branch(tree,this,toAdd));
+				foreach(var newChild in newChildren)
+                {
+					// If we don't know about the child yet we need a new branch
+					if(!ChildBranches.ContainsKey(newChild))
+						ChildBranches.Add(newChild,new Branch(tree,this,newChild));
+					else
+                    {
+						//we already have this object but update the reference anyway incase Equality match but the references are new
+						ChildBranches[newChild].Model = newChild;
+                    }					
+                }
 			}
 			
 		}

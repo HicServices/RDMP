@@ -292,12 +292,14 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return false;
         }
 
-        public override void Activate(DatabaseEntity o)
+        public override bool CanActivate(object target)
         {
-            var cmd = new ExecuteCommandActivate(this, o);
-            
-            if(!cmd.IsImpossible)
-                cmd.Execute();
+            return CommandExecutionFactory.CanActivate(target);
+        }
+        public override void Activate(object o)
+        {
+            if(CommandExecutionFactory.CanActivate(o))
+                CommandExecutionFactory.Activate(o);
         }
 
         public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)

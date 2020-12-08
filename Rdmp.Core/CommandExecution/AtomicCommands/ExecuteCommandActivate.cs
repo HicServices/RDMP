@@ -5,20 +5,15 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using MapsDirectlyToDatabaseTable;
-using Rdmp.Core;
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
     /// <summary>
     /// Command for double clicking objects.
     /// </summary>
-    public class ExecuteCommandActivate : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandActivate : BasicCommandExecution, IAtomicCommand
     {
         private readonly object _o;
 
@@ -26,18 +21,18 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// Set to true to also emphasise the object being activated
         /// </summary>
         public bool AlsoShow { get; set; }
-        
-        public ExecuteCommandActivate(IActivateItems activator, object o) : base(activator)
-        {    
+
+        public ExecuteCommandActivate(IBasicActivateItems activator, object o) : base(activator)
+        {
             _o = o;
 
             var masquerader = _o as IMasqueradeAs;
 
             //if we have a masquerader and we cannot activate the masquerader, maybe we can activate what it is masquerading as?
-            if (masquerader != null && !Activator.CommandExecutionFactory.CanActivate(masquerader))
+            if (masquerader != null && !BasicActivator.CanActivate(masquerader))
                 _o = masquerader.MasqueradingAs();
 
-            if(!Activator.CommandExecutionFactory.CanActivate(_o))
+            if (!BasicActivator.CanActivate(_o))
                 SetImpossible(GlobalStrings.ObjectCannotBeActivated);
         }
 
@@ -58,9 +53,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            Activator.CommandExecutionFactory.Activate(_o);
-            
-            if( _o is DatabaseEntity d && AlsoShow)
+            BasicActivator.Activate(_o);
+
+            if (_o is DatabaseEntity d && AlsoShow)
                 Emphasise(d);
         }
     }

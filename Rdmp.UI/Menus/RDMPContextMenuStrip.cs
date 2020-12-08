@@ -197,7 +197,7 @@ namespace Rdmp.UI.Menus
             foreach (var toPresent in factory.GetCommandsWithPresentation(_o))
             {
                 //we will add this ourselves in AddCommonMenuItems
-                if(toPresent.Command is ExecuteCommandDelete)
+                if(toPresent.Command is ExecuteCommandDelete || toPresent.Command is ExecuteCommandActivate)
                     continue;
 
                 if(toPresent.SuggestedCategory == null)

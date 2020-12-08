@@ -13,6 +13,8 @@ using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using NStack;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandLine.Gui.Windows;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
@@ -249,6 +251,22 @@ namespace Rdmp.Core.CommandLine.Gui
         {
             var view = new ConsoleGuiSqlEditor(this,collection){Modal = true };
             Application.Run(view);
+        }
+
+        public override bool CanActivate(object o)
+        {
+            return o is IMapsDirectlyToDatabaseTable || o is IMasqueradeAs;
+        }
+
+        public override void Activate(object o)
+        {
+            var m = o as IMapsDirectlyToDatabaseTable ?? (o as IMasqueradeAs)?.MasqueradingAs() as IMapsDirectlyToDatabaseTable;
+            if(m != null)
+            {
+                var view = new ConsoleGuiEdit(this,m){Modal = true };
+                Application.Run(view);
+            }
+
         }
     }
 }
