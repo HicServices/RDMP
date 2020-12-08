@@ -38,9 +38,9 @@ namespace Tests.Common.Scenarios
         /// Set the Project_ID to your project to make this 'custom data'
         /// </summary>
         protected ExtractableDataSet CustomExtractableDataSet;
-        protected Catalogue CustomCatalogue;
+        protected ICatalogue CustomCatalogue;
         protected DiscoveredTable CustomTable;
-        protected TableInfo CustomTableInfo;
+        protected ITableInfo CustomTableInfo;
 
         /// <summary>
         /// Dictionary of the private and release IDs generated for the cohort, where Keys is a collection of private identifiers and Values are the corresponding release identifiers

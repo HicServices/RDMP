@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Repositories.Managers;
 
 namespace Rdmp.Core.Curation.Data
@@ -159,5 +160,9 @@ namespace Rdmp.Core.Curation.Data
 
         /// <inheritdoc />
         public abstract bool ShouldBeReadOnly(out string reason);
+
+        public abstract IContainer DeepCloneEntireTreeRecursivelyIncludingFilters();
+
+        public abstract IFilterFactory GetFilterFactory();
     }
 }

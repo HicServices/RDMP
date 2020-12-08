@@ -30,7 +30,7 @@ namespace Rdmp.UI.Tests.CommandExecution.Alter
             var db = GetCleanedServer(dbType);
             var tbl = db.CreateTable("MyTbl", new[] { new DatabaseColumnRequest("mycol", new DatabaseTypeRequest(typeof(string), 10)) });
 
-            Import(tbl, out TableInfo ti, out _);
+            Import(tbl, out var ti, out _);
 
             var ui = new UITests();
             var activator = new TestActivateItems(ui, new MemoryDataExportRepository());
@@ -71,7 +71,7 @@ namespace Rdmp.UI.Tests.CommandExecution.Alter
             var tbl = db.CreateTable("MyTbl", new[] { new DatabaseColumnRequest("mycol", new DatabaseTypeRequest(typeof(string), 10)) });
             var tblArchive = db.CreateTable("MyTbl_Archive", new[] { new DatabaseColumnRequest("mycol", new DatabaseTypeRequest(typeof(string), 10)) });
 
-            Import(tbl, out TableInfo ti, out _);
+            Import(tbl, out var ti, out _);
 
             var ui = new UITests();
             var activator = new TestActivateItems(ui, new MemoryDataExportRepository());

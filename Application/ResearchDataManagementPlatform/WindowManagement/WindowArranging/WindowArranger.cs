@@ -36,9 +36,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
         }
         
         public void SetupEditAnything(object sender, IMapsDirectlyToDatabaseTable o)
-        {
-            _windowManager.CloseAllWindows();
-            
+        {            
             _activator.RequestItemEmphasis(this, new EmphasiseRequest(o, int.MaxValue));
 
             var activate = new ExecuteCommandActivate(_activator, o);

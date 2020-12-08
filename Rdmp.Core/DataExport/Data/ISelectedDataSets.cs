@@ -6,6 +6,7 @@
 
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.DataExport.Data
@@ -13,7 +14,7 @@ namespace Rdmp.Core.DataExport.Data
     /// <summary>
     /// Represents the desire to extract a given dataset for a given <see cref="ExtractableDataSet"/> for a given <see cref="ExtractionConfiguration"/>.  
     /// </summary>
-    public interface ISelectedDataSets:IDeleteable,IRevertable, IMightBeReadOnly
+    public interface ISelectedDataSets:IDeleteable,IRevertable, IMightBeReadOnly,IRootFilterContainerHost
     {
         /// <summary>
         /// <see cref="IExtractionConfiguration"/> in which the <see cref="ExtractableDataSet_ID"/> is selected
@@ -25,13 +26,6 @@ namespace Rdmp.Core.DataExport.Data
         /// </summary>
         int ExtractableDataSet_ID { get; set; }
 
-        /// <summary>
-        /// The root AND/OR container which provides WHERE logic that should be included in the query when extracting the <see cref="ISelectedDataSets"/>
-        /// </summary>
-        int? RootFilterContainer_ID { get; set; }
-
-        /// <inheritdoc cref="RootFilterContainer_ID"/>
-        IContainer RootFilterContainer { get; }
 
         /// <inheritdoc cref="ExtractionConfiguration_ID"/>
         IExtractionConfiguration ExtractionConfiguration { get;}

@@ -6,6 +6,7 @@
 
 using System;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Checks;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 using Rdmp.Core.DataFlowPipeline;
@@ -20,7 +21,7 @@ namespace Rdmp.Core.Tests.DataExport
         [Test]
         public void CheckBasicConfiguration()
         {
-            new ProjectChecker(_project).Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
+            new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator),_project).Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
         }
 
         [Test]
@@ -30,7 +31,7 @@ namespace Rdmp.Core.Tests.DataExport
             _extractableDataSet.SaveToDatabase();
 
             //checking should fail
-            var exception = Assert.Throws<Exception>(() => new ProjectChecker( _project).Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true }));
+            var exception = Assert.Throws<Exception>(() => new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator), _project).Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true }));
             Assert.AreEqual("Dataset TestTable is set to DisableExtraction=true, probably someone doesn't want you extracting this dataset at the moment", exception.Message);
 
             //but if the user goes ahead and executes the extraction that should fail too

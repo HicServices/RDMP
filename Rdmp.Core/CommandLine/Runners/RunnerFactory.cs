@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
 
 namespace Rdmp.Core.CommandLine.Runners
@@ -14,7 +15,7 @@ namespace Rdmp.Core.CommandLine.Runners
     /// </summary>
     public class RunnerFactory
     {
-        public IRunner CreateRunner(RDMPCommandLineOptions command)
+        public IRunner CreateRunner(IBasicActivateItems activator,RDMPCommandLineOptions command)
         {
             if (command.Command == CommandLineActivity.none)
                 throw new Exception("No command has been set on '" + command.GetType().Name + "'");
@@ -29,7 +30,7 @@ namespace Rdmp.Core.CommandLine.Runners
                 return new CacheRunner(cacheOpts);
             
             if (command is ExtractionOptions extractionOpts )
-                return new ExtractionRunner(extractionOpts);
+                return new ExtractionRunner(activator,extractionOpts);
 
             if(command is ReleaseOptions releaseOpts )
                 return new ReleaseRunner(releaseOpts);

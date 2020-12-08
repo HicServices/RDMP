@@ -22,7 +22,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         /// </summary>
         /// <param name="configuration"></param>
         /// <returns></returns>
-        TableInfo[] GetAllForcedJoinsFor(AggregateConfiguration configuration);
+        ITableInfo[] GetAllForcedJoinsFor(AggregateConfiguration configuration);
 
         /// <summary>
         /// Deletes the mandate that the provided AggregateConfiguration should always join with the specified TableInfo regardless of what <see cref="AggregateDimension"/> are
@@ -30,7 +30,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         /// </summary>
         /// <param name="configuration"></param>
         /// <param name="tableInfo"></param>
-        void BreakLinkBetween(AggregateConfiguration configuration, TableInfo tableInfo);
+        void BreakLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo);
 
         /// <summary>
         /// Creates the mandate that the provided AggregateConfiguration should always join with the specified TableInfo regardless of what <see cref="AggregateDimension"/> are
@@ -41,6 +41,6 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         /// <seealso cref="AggregateForcedJoin.GetAllForcedJoinsFor"/>
         /// <param name="configuration"></param>
         /// <param name="tableInfo"></param>
-        void CreateLinkBetween(AggregateConfiguration configuration, TableInfo tableInfo);
+        void CreateLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo);
     }
 }

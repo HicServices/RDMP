@@ -11,8 +11,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CohortCommitting.Pipeline;
+using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
@@ -25,6 +29,7 @@ namespace Rdmp.Core.CommandExecution
         /// True for activators that can illicit immediate responses from users.  False for activators designed to run unattended e.g. command line/scripting
         /// </summary>
         bool IsInteractive {get;}
+
 
         /// <summary>
         /// Event triggered when objects should be brought to the users attention
@@ -47,7 +52,8 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         /// <returns></returns>
         List<CommandInvokerDelegate> GetDelegates();
-        
+
+
         /// <summary>
         /// Stores the location of the Catalogue / Data Export repository databases and provides access to their objects
         /// </summary>
@@ -58,6 +64,21 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         /// <returns></returns>
         IEnumerable<Type> GetIgnoredCommands();
+
+        /// <summary>
+        /// Create a class capable of running a <see cref="IPipeline"/> under a given <see cref="IPipelineUseCase"/>.  This may be an async process e.g. non modal dialogues
+        /// </summary>
+        /// <returns></returns>
+        IPipelineRunner GetPipelineRunner(IPipelineUseCase useCase, IPipeline pipeline);
+
+        /// <summary>
+        /// Prompts the user to enter a description for a cohort they are trying to create including whether it is intended to replace an old version of another cohort.
+        /// </summary>
+        /// <param name="externalCohortTable">Where the user will be creating the cohort</param>
+        /// <param name="project">The project the cohort should be associated with</param>
+        /// <param name="cohortInitialDescription">Optional initial description for the cohort which may be changed by the user</param>
+        /// <returns></returns>
+        CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable, IProject project, string cohortInitialDescription);
 
         /// <summary>
         /// Prompts the user to pick from one of the <paramref name="availableObjects"/> one or more objects.  Returns null or empty if
@@ -93,6 +114,16 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="prompt"></param>
         /// <returns></returns>
         FileInfo SelectFile(string prompt);
+
+        
+        /// <summary>
+        /// Prompts user to select multiple files on disk that must exist and match the <paramref name="pattern"/>
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <param name="patternDescription">Type of file to select e.g. "Comma Separated Values"</param>
+        /// <param name="pattern">Pattern to restrict files to e.g. *.csv</param>
+        /// <returns>Selected files or null if no files chosen</returns>
+        FileInfo[] SelectFiles(string prompt,string patternDescription, string pattern);
 
         /// <summary>
         /// Prompts user to select a file on disk (that may or may not exist yet) with the given pattern
@@ -161,7 +192,7 @@ namespace Rdmp.Core.CommandExecution
         /// should invoke the RefreshBus system in Rdmp.UI
         /// </summary>
         /// <param name="databaseEntity"></param>
-        void Publish(DatabaseEntity databaseEntity);
+        void Publish(IMapsDirectlyToDatabaseTable databaseEntity);
 
         /// <summary>
         /// Display the given message to the user (e.g. in a MessageBox or out into the Console)
@@ -261,5 +292,17 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         /// <param name="o"></param>
         void Activate(DatabaseEntity o);
+
+        /// <summary>
+        /// Handle the creation and configuring of a new <see cref="ICatalogue"/> often with user input about what column(s) should be extractable etc.  Return null if user cancelled the process somehow
+        /// </summary>
+        /// <param name="tableInfo">A reference to an existing table in a database upon which to point the Catalogue</param>
+        /// <param name="initialDescription">Some initial text to </param>
+        /// <param name="projectSpecific">Optional project to associate the <see cref="ICatalogue"/> created with </param>
+        /// <param name="targetFolder">Optional virtual folder into which to put the <see cref="ICatalogue"/> or null.  This is not a file system folder only a visual display to the user in the RDMP client</param>
+        /// <param name="extractionIdentifierColumns">Optional, which column(s) should be <see cref="ConcreteColumn.IsExtractionIdentifier"/></param>
+        /// <returns>A fully configured ready to go Catalogue or null if user cancelled process e.g. if <see cref="IsInteractive"/></returns>
+        ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo,ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, CatalogueFolder targetFolder);
+
     }
 }

@@ -33,7 +33,7 @@ namespace Tests.Common.Scenarios
         protected int RowsNow => LiveTable.GetRowCount();
 
         protected LoadMetadata TestLoadMetadata;
-        protected Catalogue TestCatalogue;
+        protected ICatalogue TestCatalogue;
         protected LoadDirectory LoadDirectory;
 
         public DiscoveredTable LiveTable { get; private set; }

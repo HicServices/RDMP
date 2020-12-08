@@ -17,11 +17,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,IAtomicCommandWithTarget
     {
-        private Catalogue _catalogue;
-        private Project _project;
+        private ICatalogue _catalogue;
+        private IProject _project;
 
         [UseWithObjectConstructor]
-        public ExecuteCommandMakeCatalogueProjectSpecific(IBasicActivateItems itemActivator,Catalogue catalogue, Project project):this(itemActivator)
+        public ExecuteCommandMakeCatalogueProjectSpecific(IBasicActivateItems itemActivator,ICatalogue catalogue, IProject project):this(itemActivator)
         {
             SetCatalogue(catalogue);
             _project = project;
@@ -83,7 +83,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             return this;
         }
 
-        private void SetCatalogue(Catalogue catalogue)
+        private void SetCatalogue(ICatalogue catalogue)
         {
             ResetImpossibleness();
 

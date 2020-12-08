@@ -57,10 +57,19 @@ namespace Rdmp.Core.CommandLine.Gui
             SetAspectGet(coreChildProvider);
         }
 
-        protected override IList<IMapsDirectlyToDatabaseTable> GetListAfterSearch(string searchText)
+        protected override IList<IMapsDirectlyToDatabaseTable> GetListAfterSearch(string searchText, CancellationToken token)
         {
-            return _scorer
-                .ScoreMatches(_masterCollection, searchText, new CancellationToken(),null)
+            if(token.IsCancellationRequested)
+                return new List<IMapsDirectlyToDatabaseTable>();
+             
+            var dict = _scorer.ScoreMatches(_masterCollection, searchText, token,null);
+
+            //can occur if user punches many keys at once
+            if(dict == null)
+                return new List<IMapsDirectlyToDatabaseTable>();
+
+            return
+                dict
                 .Where(score => score.Value > 0)
                 .OrderByDescending(score => score.Value)
                 .ThenByDescending(id => id.Key.Key.ID) //favour newer objects over ties

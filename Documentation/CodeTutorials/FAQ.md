@@ -8,6 +8,7 @@
    1. [Does RDMP have an API?](#api)
    1. [Does RDMP Support Plugins?](#plugins)
    4. [How is RDMP versioned?](#how-is-rdmp-versioned)
+   7. [Updating the CLI](#updating-the-cli)
 1. Database Compatibility
    1. [What databases does RDMP support?](#databases)
    1. [How do I set a custom port / SSL certificate / connection string option?](#connectionStringKeywords)
@@ -88,21 +89,7 @@ The RDMP command line client can be used to run unattended jobs (such as overnig
    
 <a name="cli"></a>
 ### Does RDMP have a Command Line Interface (CLI)
-Yes, the [rdmp](./../../Tools/rdmp/) program allows command line execution of all major engines in RDMP (Caching / Data Load / Cohort Creation / Extraction and Release).  To access the CLI command line help system run:
-
-```
-rdmp.exe --help
-```
-
-For help on each engine (verb) on the command line enter the verb (listed by the main --help command) followed by --help e.g.:
-
-```
-rdmp.exe dle --help
-```
-
-When performing an operation in the RDMP client application (e.g. releasing a dataset) you can instead select 'Copy Run Command To Clipboard'.  This will generate a CLI command that will perform the current action (e.g. extract [Project] X using Pipeline Y).  This can be helpful for scheduling long running tasks etc.
-
-![Accessing menu copy to clipboard](./Images/FAQ/CopyCommandToClipboard.png)
+Yes, read all about it in [./RdmpCommandLine.md]
 
 <a name="linux"></a>
 ### Does RDMP run under Linux
@@ -166,6 +153,29 @@ Platform databases are divided into three tiers:
 |   3  | This tier is reserved for [Plugins](#plugins) which wish to persist objects/meta data in a database using the same versioning model (update scripts, data model) as the core RDMP databases.|
 
 During application startup (following installing an update) you will be prompted to apply patches on any platform databases that are not up to date.
+
+### Updating The CLI
+
+Download the [latest release binary](https://github.com/HicServices/RDMP/releases) (e.g. rdmp-cli-win-x64.zip) and unzip into a new empty folder (e.g. c:\temp\latest).  Locate your current CLI deployment folder (e.g. c:\rdmpcli\).
+
+Copy all files from the new release into your current CLI directory __EXCEPT__:
+
+- Databases.yaml (contains connection strings for your RDMP database)
+- NLog.config (contains logging settings)
+
+If running in linux ensure that the rdmp binary is executable e.g. `chmod +x ./rdmp`
+
+Ensure the new version matches expectations:
+
+```bash
+./rdmp.exe --help
+```
+
+Ensure all your plugins are uptodate, you can check compatiblity with:
+
+```
+./rdmp.exe cmd ListSupportedCommands --logstartup
+```
 
 ## Database Compatibility
 

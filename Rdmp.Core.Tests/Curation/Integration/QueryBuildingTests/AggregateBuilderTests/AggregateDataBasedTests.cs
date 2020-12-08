@@ -63,7 +63,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
 
         #region Helper methods
 
-        private DiscoveredTable UploadTestDataAsTableToServer(DatabaseType type, out Catalogue catalogue, out ExtractionInformation[] extractionInformations, out TableInfo tableinfo)
+        private DiscoveredTable UploadTestDataAsTableToServer(DatabaseType type, out ICatalogue catalogue, out ExtractionInformation[] extractionInformations, out ITableInfo tableinfo)
         {
             var listener = new ThrowImmediatelyDataLoadEventListener();
             
@@ -79,12 +79,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
 
             Assert.IsTrue(tbl.Exists());
 
-            ColumnInfo[] cis;
-            new TableInfoImporter(CatalogueRepository, tbl).DoImport(out tableinfo, out cis);
-
-
-            CatalogueItem[] cataitems;
-            new ForwardEngineerCatalogue(tableinfo, cis, true).ExecuteForwardEngineering(out catalogue, out cataitems,out extractionInformations);
+            catalogue = Import(tbl,out tableinfo,out _,out _, out extractionInformations);
 
             return tbl;
         }
@@ -134,7 +129,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
         }
 
         private AggregateConfiguration SetupAggregateWithAxis(DatabaseType type, ExtractionInformation[] extractionInformations,
-            Catalogue catalogue, out AggregateDimension axisDimension)
+            ICatalogue catalogue, out AggregateDimension axisDimension)
         {
             var dateDimension =
                 extractionInformations.Single(
@@ -150,7 +145,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
         }
 
         private AggregateConfiguration SetupAggregateWithPivot(DatabaseType type, ExtractionInformation[] extractionInformations,
-            Catalogue catalogue, out AggregateDimension axisDimension, out AggregateDimension pivotDimension)
+            ICatalogue catalogue, out AggregateDimension axisDimension, out AggregateDimension pivotDimension)
         {
             var axisCol =
                 extractionInformations.Single(
@@ -179,10 +174,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
         //[TestCase(DatabaseType.Oracle)]// doesn't quite work yet :) needs full implementation of database abstraction layer for Oracle to work
         public void Count_CorrectNumberOfRowsCalculated(DatabaseType type)
         {
-            Catalogue catalogue;
-            ExtractionInformation[] extractionInformations;
-            TableInfo tableInfo;
-            var tbl = UploadTestDataAsTableToServer(type,out catalogue, out extractionInformations, out tableInfo);
+            var tbl = UploadTestDataAsTableToServer(type,out var catalogue, out var extractionInformations, out var tableInfo);
 
             var builder = new AggregateBuilder(null, "count(*)", null,new []{tableInfo});
             var resultTable = GetResultForBuilder(builder, tbl);
@@ -202,10 +194,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
         [TestCase(DatabaseType.MySql)]
         public void GroupBy_CategoryWithCount_Correct(DatabaseType type)
         {
-            Catalogue catalogue;
-            ExtractionInformation[] extractionInformations;
-            TableInfo tableInfo;
-            var tbl = UploadTestDataAsTableToServer(type, out catalogue, out extractionInformations, out tableInfo);
+            var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
 
             //setup the aggregate
             var categoryDimension = extractionInformations.Single(e => e.GetRuntimeName().Equals("Category", StringComparison.CurrentCultureIgnoreCase));
@@ -235,10 +224,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
         [TestCase(DatabaseType.MySql)]
         public void GroupBy_CategoryWithSum_Correct(DatabaseType type)
         {
-            Catalogue catalogue;
-            ExtractionInformation[] extractionInformations;
-            TableInfo tableInfo;
-            var tbl = UploadTestDataAsTableToServer(type, out catalogue, out extractionInformations, out tableInfo);
+            var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
 
             //setup the aggregate
             var categoryDimension = extractionInformations.Single(e => e.GetRuntimeName().Equals("Category", StringComparison.CurrentCultureIgnoreCase));
@@ -271,10 +257,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
         [TestCase(DatabaseType.MySql)]
         public void GroupBy_CategoryWithSum_WHEREStatement(DatabaseType type)
         {
-            Catalogue catalogue;
-            ExtractionInformation[] extractionInformations;
-            TableInfo tableInfo;
-            var tbl = UploadTestDataAsTableToServer(type, out catalogue, out extractionInformations, out tableInfo);
+            var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
 
             //setup the aggregate
             var categoryDimension = extractionInformations.Single(e => e.GetRuntimeName().Equals("Category", StringComparison.CurrentCultureIgnoreCase));
@@ -311,10 +294,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
         [TestCase(DatabaseType.MySql)]
         public void GroupBy_AxisWithSum_Correct(DatabaseType type)
         {
-            Catalogue catalogue;
-            ExtractionInformation[] extractionInformations;
-            TableInfo tableInfo;
-            var tbl = UploadTestDataAsTableToServer(type, out catalogue, out extractionInformations, out tableInfo);
+            var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
             
             //setup the aggregate with axis
             AggregateDimension dimension;
@@ -354,10 +334,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
         [TestCase(DatabaseType.MySql)]
         public void GroupBy_AxisWithCount_HAVING(DatabaseType type)
         {
-            Catalogue catalogue;
-            ExtractionInformation[] extractionInformations;
-            TableInfo tableInfo;
-            var tbl = UploadTestDataAsTableToServer(type, out catalogue, out extractionInformations, out tableInfo);
+            var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
 
             //setup the aggregate with axis
             AggregateDimension dimension;
@@ -400,10 +377,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
         [TestCase(DatabaseType.MySql)]
         public void GroupBy_AxisWithCount_WHERECorrect(DatabaseType type)
         {
-            Catalogue catalogue;
-            ExtractionInformation[] extractionInformations;
-            TableInfo tableInfo;
-            var tbl = UploadTestDataAsTableToServer(type, out catalogue, out extractionInformations, out tableInfo);
+            var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
 
             //setup the aggregate with axis
             AggregateDimension dimension;
@@ -440,10 +414,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
         [TestCase(DatabaseType.MySql)]
         public void GroupBy_PivotWithSum_Correct(DatabaseType type)
         {
-            Catalogue catalogue;
-            ExtractionInformation[] extractionInformations;
-            TableInfo tableInfo;
-            var tbl = UploadTestDataAsTableToServer(type, out catalogue, out extractionInformations, out tableInfo);
+            var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
 
             //setup the aggregate pivot (and axis)
             AggregateDimension axisDimension;
@@ -495,10 +466,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
         [TestCase(DatabaseType.MySql)]
         public void GroupBy_PivotWithSum_WHEREStatement(DatabaseType type)
         {
-            Catalogue catalogue;
-            ExtractionInformation[] extractionInformations;
-            TableInfo tableInfo;
-            var tbl = UploadTestDataAsTableToServer(type, out catalogue, out extractionInformations, out tableInfo);
+            var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
 
             //setup the aggregate pivot (and axis)
             AggregateDimension axisDimension;
@@ -555,10 +523,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
         [TestCase(DatabaseType.MySql)]
         public void GroupBy_PivotWithSum_Top2BasedonCountColumnDesc(DatabaseType type)
         {
-            Catalogue catalogue;
-            ExtractionInformation[] extractionInformations;
-            TableInfo tableInfo;
-            var tbl = UploadTestDataAsTableToServer(type, out catalogue, out extractionInformations, out tableInfo);
+            var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
 
             //setup the aggregate pivot (and axis)
             AggregateDimension axisDimension;
@@ -616,10 +581,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
         [TestCase(DatabaseType.MySql)]
         public void GroupBy_PivotWithSum_Top2AlphabeticalAsc_WHEREStatement(DatabaseType type)
         {
-            Catalogue catalogue;
-            ExtractionInformation[] extractionInformations;
-            TableInfo tableInfo;
-            var tbl = UploadTestDataAsTableToServer(type, out catalogue, out extractionInformations, out tableInfo);
+            var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
 
             //setup the aggregate pivot (and axis)
             AggregateDimension axisDimension;
@@ -680,10 +642,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
         [TestCase(DatabaseType.MySql)]
         public void GroupBy_PivotWithSum_HAVING_Top1_WHERE(DatabaseType type)
         {
-            Catalogue catalogue;
-            ExtractionInformation[] extractionInformations;
-            TableInfo tableInfo;
-            var tbl = UploadTestDataAsTableToServer(type, out catalogue, out extractionInformations, out tableInfo);
+            var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
 
             //setup the aggregate pivot (and axis)
             AggregateDimension axisDimension;

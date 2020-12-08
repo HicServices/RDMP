@@ -53,5 +53,10 @@ namespace Rdmp.Core.Curation.FilterImporting.Construction
         {
             return null;
         }
+
+        public IContainer CreateNewContainer()
+        {
+            throw new NotSupportedException("Catalogue level master filters do not support IContainers");
+        }
     }
 }

@@ -225,7 +225,7 @@ namespace Rdmp.Core.Curation.Data
         /// <para><remarks>You should next choose which <see cref="ColumnInfo"/> powers it and optionally create an <see cref="ExtractionInformation"/> to
         /// make the column extractable</remarks></para>
         /// </summary>
-        public CatalogueItem(ICatalogueRepository repository, Catalogue parent, string name)
+        public CatalogueItem(ICatalogueRepository repository, ICatalogue parent, string name)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
@@ -437,7 +437,7 @@ namespace Rdmp.Core.Curation.Data
             InjectKnown(columnInfo);
         }
 
-        public CatalogueItem ShallowClone(Catalogue into)
+        public CatalogueItem ShallowClone(ICatalogue into)
         {
             var clone = new CatalogueItem(CatalogueRepository, into, Name);
             CopyShallowValuesTo(clone);

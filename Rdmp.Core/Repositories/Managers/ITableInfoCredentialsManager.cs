@@ -23,7 +23,7 @@ namespace Rdmp.Core.Repositories.Managers
         /// <param name="credentials"></param>
         /// <param name="tableInfo"></param>
         /// <param name="context"></param>
-        void CreateLinkBetween(DataAccessCredentials credentials, TableInfo tableInfo,DataAccessContext context);
+        void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo,DataAccessContext context);
 
         /// <summary>
         /// Removes the right to use passed <paramref name="credentials"/> to access the <paramref name="tableInfo"/> under the <paramref name="context"/>
@@ -31,14 +31,14 @@ namespace Rdmp.Core.Repositories.Managers
         /// <param name="credentials"></param>
         /// <param name="tableInfo"></param>
         /// <param name="context"></param>
-        void BreakLinkBetween(DataAccessCredentials credentials, TableInfo tableInfo, DataAccessContext context);
+        void BreakLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context);
 
         /// <summary>
         /// Removes all rights to use the passed <paramref name="credentials"/> to access the <paramref name="tableInfo"/>
         /// </summary>
         /// <param name="credentials"></param>
         /// <param name="tableInfo"></param>
-        void BreakAllLinksBetween(DataAccessCredentials credentials, TableInfo tableInfo);
+        void BreakAllLinksBetween(DataAccessCredentials credentials, ITableInfo tableInfo);
 
         /// <summary>
         ///  Answers the question, "what is the best credential (if any) to use under the given context"
@@ -50,7 +50,7 @@ namespace Rdmp.Core.Repositories.Managers
         /// <param name="tableInfo"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-        DataAccessCredentials GetCredentialsIfExistsFor(TableInfo tableInfo, DataAccessContext context);
+        DataAccessCredentials GetCredentialsIfExistsFor(ITableInfo tableInfo, DataAccessContext context);
         
         /// <summary>
         /// Fetches all <see cref="DataAccessCredentials"/> (username and encrypted password) that can be used to access the <see cref="TableInfo"/> under any
@@ -58,7 +58,7 @@ namespace Rdmp.Core.Repositories.Managers
         /// </summary>
         /// <param name="tableInfo"></param>
         /// <returns></returns>
-        Dictionary<DataAccessContext,DataAccessCredentials> GetCredentialsIfExistsFor(TableInfo tableInfo);
+        Dictionary<DataAccessContext,DataAccessCredentials> GetCredentialsIfExistsFor(ITableInfo tableInfo);
 
         /// <summary>
         /// Returns all credential usage permissions for the given set of <paramref name="allTableInfos"/> and <paramref name="allCredentials"/>
@@ -66,14 +66,14 @@ namespace Rdmp.Core.Repositories.Managers
         /// <param name="allCredentials"></param>
         /// <param name="allTableInfos"></param>
         /// <returns></returns>
-        Dictionary<TableInfo, List<DataAccessCredentialUsageNode>> GetAllCredentialUsagesBy(DataAccessCredentials[] allCredentials, TableInfo[] allTableInfos);
+        Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>> GetAllCredentialUsagesBy(DataAccessCredentials[] allCredentials, ITableInfo[] allTableInfos);
 
         /// <summary>
         /// Returns all the <see cref="TableInfo"/> that are allowed to use the given <paramref name="credentials"/>
         /// </summary>
         /// <param name="credentials"></param>
         /// <returns></returns>
-        Dictionary<DataAccessContext, List<TableInfo>> GetAllTablesUsingCredentials(DataAccessCredentials credentials);
+        Dictionary<DataAccessContext, List<ITableInfo>> GetAllTablesUsingCredentials(DataAccessCredentials credentials);
 
         /// <summary>
         /// Returns the existing <see cref="DataAccessCredentials"/> if any which match the unencrypted <paramref name="username"/> and <paramref name="password"/> combination.  Throws

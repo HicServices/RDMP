@@ -7,6 +7,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Data;
 using ReusableLibraryCode.Checks;
 
@@ -19,6 +20,7 @@ namespace Rdmp.Core.DataExport.Checks
     public class ProjectChecker:ICheckable
     {
         private readonly IProject _project;
+        private readonly IBasicActivateItems _activator;
         IExtractionConfiguration[] _extractionConfigurations;
         private DirectoryInfo _projectDirectory;
 
@@ -35,10 +37,12 @@ namespace Rdmp.Core.DataExport.Checks
         /// <summary>
         /// Sets up the class to check the state of the <paramref name="project"/>
         /// </summary>
+        /// <param name="activator"></param>
         /// <param name="project"></param>
-        public ProjectChecker(IProject project)
+        public ProjectChecker(IBasicActivateItems activator,IProject project)
         {
             _project = project;
+            _activator = activator;
             CheckDatasets = true;
             CheckConfigurations = true;
         }
@@ -83,7 +87,7 @@ namespace Rdmp.Core.DataExport.Checks
             if (CheckConfigurations)
                 foreach (IExtractionConfiguration extractionConfiguration in _extractionConfigurations)
                 {
-                    var extractionConfigurationChecker = new ExtractionConfigurationChecker( extractionConfiguration) { CheckDatasets = CheckDatasets };
+                    var extractionConfigurationChecker = new ExtractionConfigurationChecker(_activator, extractionConfiguration) { CheckDatasets = CheckDatasets };
                     extractionConfigurationChecker.Check(notifier);
                 }
 

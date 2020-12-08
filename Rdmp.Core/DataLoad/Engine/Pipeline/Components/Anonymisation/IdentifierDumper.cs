@@ -28,7 +28,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
     /// </summary>
     public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
     {
-        public TableInfo TableInfo
+        public ITableInfo TableInfo
         {
             get { return _tableInfo; }
             set
@@ -38,7 +38,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
         }
 
         public List<PreLoadDiscardedColumn> ColumnsToRouteToSomewhereElse { get; set; }
-        private TableInfo _tableInfo;
+        private ITableInfo _tableInfo;
 
         private ExternalDatabaseServer _externalDatabaseServer;
         private DiscoveredDatabase _dumpDatabase;
@@ -50,7 +50,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
         
         public bool HaveDumpedRecords { get; private set; }
 
-        public IdentifierDumper(TableInfo tableInfo)
+        public IdentifierDumper(ITableInfo tableInfo)
         {
             TableInfo = tableInfo;
             var columnsToDump = tableInfo.PreLoadDiscardedColumns;

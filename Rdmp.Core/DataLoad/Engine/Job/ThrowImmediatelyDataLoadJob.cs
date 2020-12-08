@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
+using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -39,7 +40,7 @@ namespace Rdmp.Core.DataLoad.Engine.Job
         {
             _listener = listener;
         }
-        public ThrowImmediatelyDataLoadJob(HICDatabaseConfiguration configuration, params TableInfo[] regularTablesToLoad)
+        public ThrowImmediatelyDataLoadJob(HICDatabaseConfiguration configuration, params ITableInfo[] regularTablesToLoad)
         {
             _listener = new ThrowImmediatelyDataLoadEventListener();
             RegularTablesToLoad = new List<ITableInfo>(regularTablesToLoad);
@@ -50,7 +51,7 @@ namespace Rdmp.Core.DataLoad.Engine.Job
         public IDataLoadInfo DataLoadInfo { get; set; }
         public ILoadDirectory LoadDirectory { get; set; }
         public int JobID { get; set; }
-        public ILoadMetadata LoadMetadata { get; private set; }
+        public ILoadMetadata LoadMetadata { get; set; }
         public bool DisposeImmediately { get; private set; }
         public string ArchiveFilepath { get; private set; }
         public List<ITableInfo> RegularTablesToLoad { get; set; } = new List<ITableInfo>();
@@ -93,6 +94,10 @@ namespace Rdmp.Core.DataLoad.Engine.Job
         public void OnProgress(object sender, ProgressEventArgs e)
         {
             _listener.OnProgress(sender,e);
+        }
+        public ColumnInfo[] GetAllColumns()
+        {
+            return RegularTablesToLoad.SelectMany(t=>t.ColumnInfos).Union(LookupTablesToLoad.SelectMany(t=>t.ColumnInfos)).Distinct().ToArray();
         }
     }
 }

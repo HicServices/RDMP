@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using FAnsi.Discovery;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 
@@ -33,10 +34,10 @@ namespace Rdmp.Core.CommandExecution
         {
             base.Execute();
 
-            Catalogue c = null;
+            ICatalogue c = null;
 
             var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, _table);
-            importer.DoImport(out TableInfo ti, out ColumnInfo[] cis);
+            importer.DoImport(out var ti, out ColumnInfo[] cis);
             
             BasicActivator.Show($"Successfully imported new TableInfo { ti.Name} with ID {ti.ID}");
 
@@ -48,7 +49,7 @@ namespace Rdmp.Core.CommandExecution
                 BasicActivator.Show($"Successfully imported new Catalogue { c.Name} with ID {c.ID}");
             }
                 
-            Publish((DatabaseEntity) c ?? ti);
+            Publish((IMapsDirectlyToDatabaseTable)c ?? ti);
         }
     }
 }

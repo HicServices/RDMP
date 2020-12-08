@@ -13,8 +13,6 @@ using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using NStack;
 using Rdmp.Core.CommandExecution;
-using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -148,6 +146,18 @@ namespace Rdmp.Core.CommandLine.Gui
             
             return selected == null ? null : new FileInfo(selected);
         }
+        public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
+        {
+             var openDir = new OpenDialog(prompt,"Directory")
+            {
+                AllowsMultipleSelection = true,
+                AllowedFileTypes = pattern == null ? null : new []{pattern.TrimStart('*')}
+            };
+            
+            Application.Run(openDir);
+
+            return openDir.FilePaths?.Select(f=>new FileInfo(f))?.ToArray();
+        }
 
         public override bool YesNo(string text, string caption, out bool chosen)
         {
@@ -236,5 +246,6 @@ namespace Rdmp.Core.CommandLine.Gui
         {
             return string.Join("\n",Regex.Matches( longString, ".{1,"+width+"}" ).Select( m => m.Value ).ToArray());
         }
+
     }
 }

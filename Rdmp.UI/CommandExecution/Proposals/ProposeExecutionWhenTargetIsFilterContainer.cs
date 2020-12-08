@@ -53,10 +53,8 @@ namespace Rdmp.UI.CommandExecution.Proposals
                 
             }
 
-            var sourceContainerCommand = cmd as ContainerCombineable;
-            
             //drag a container into another container
-            if (sourceContainerCommand != null)
+            if ( cmd is ContainerCombineable sourceContainerCommand)
             {
                 //if the source and target are the same container
                 if (sourceContainerCommand.Container.Equals(targetContainer))
@@ -65,6 +63,8 @@ namespace Rdmp.UI.CommandExecution.Proposals
                 //is it a movement within the current container tree
                 if (sourceContainerCommand.AllContainersInEntireTreeFromRootDown.Contains(targetContainer))
                     return new ExecuteCommandMoveContainerIntoContainer(ItemActivator, sourceContainerCommand, targetContainer);
+
+                return new ExecuteCommandImportFilterContainerTree(ItemActivator,targetContainer,sourceContainerCommand.Container);
             }
             
             return null;

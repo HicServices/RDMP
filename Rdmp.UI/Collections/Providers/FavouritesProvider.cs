@@ -24,11 +24,11 @@ namespace Rdmp.UI.Collections.Providers
         private readonly ICatalogueRepository _catalogueRepository;
         public List<Favourite> CurrentFavourites { get; set; }
         
-        public FavouritesProvider(IActivateItems activator, ICatalogueRepository catalogueRepository)
+        public FavouritesProvider(IActivateItems activator)
         {
             _activator = activator;
-            _catalogueRepository = catalogueRepository;
-            CurrentFavourites = catalogueRepository.GetAllObjectsWhere<Favourite>("Username" , Environment.UserName).ToList();
+            _catalogueRepository = _activator.RepositoryLocator.CatalogueRepository;
+            CurrentFavourites = _catalogueRepository.GetAllObjectsWhere<Favourite>("Username" , Environment.UserName).ToList();
         }
 
         public void AddFavourite(object sender, IMapsDirectlyToDatabaseTable o)

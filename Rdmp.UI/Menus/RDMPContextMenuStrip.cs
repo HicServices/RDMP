@@ -39,7 +39,7 @@ namespace Rdmp.UI.Menus
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
         protected IActivateItems _activator;
         
-        private readonly AtomicCommandUIFactory AtomicCommandUIFactory;
+        protected readonly AtomicCommandUIFactory AtomicCommandUIFactory;
 
         protected ToolStripMenuItem ActivateCommandMenuItem;
         private RDMPContextMenuStripArgs _args;
@@ -173,11 +173,18 @@ namespace Rdmp.UI.Menus
             Items.Add(treeMenuItem);
             PopulateTreeMenu(commonFunctionality, treeMenuItem);
 
+            if (databaseEntity != null) 
+            {
+                Add(new ExecuteCommandAddFavourite(_activator,databaseEntity));
+                Add(new ExecuteCommandAddToSession(_activator,new IMapsDirectlyToDatabaseTable[]{ databaseEntity },null));
+            }
+
             //add refresh and then finally help
             if (databaseEntity != null) 
                 Add(new ExecuteCommandRefreshObject(_activator, databaseEntity), Keys.F5);
             
-            Add(new ExecuteCommandShowKeywordHelp(_activator, _args));}
+            Add(new ExecuteCommandShowKeywordHelp(_activator, _args));
+        }
 
         private void PopulateTreeMenu(RDMPCollectionCommonFunctionality commonFunctionality, ToolStripMenuItem treeMenuItem)
         {
@@ -206,7 +213,7 @@ namespace Rdmp.UI.Menus
             if (commonFunctionality.CheckColumnProvider != null)
             {
                 if (databaseEntity != null)
-                    Add(new ExecuteCommandCheck(_activator, databaseEntity, commonFunctionality.CheckColumnProvider.RecordWorst), Keys.None, inspectionMenuItem);
+                    Add(new ExecuteCommandCheckAsync(_activator, databaseEntity, commonFunctionality.CheckColumnProvider.RecordWorst), Keys.None, inspectionMenuItem);
 
                 var checkAll = new ToolStripMenuItem("Check All", null, (s, e) => commonFunctionality.CheckColumnProvider.CheckCheckables());
                 checkAll.Image = CatalogueIcons.TinyYellow;

@@ -159,9 +159,10 @@ namespace Rdmp.Core.CommandExecution
             return BasicActivator.YesNo(text,caption);
         }
 
-        protected virtual void Publish(DatabaseEntity o)
+        protected virtual void Publish(IMapsDirectlyToDatabaseTable o)
         {
-            BasicActivator.Publish(o);
+            if(o is DatabaseEntity d)
+                BasicActivator.Publish(d);
         }
         
         /// <summary>
@@ -289,7 +290,7 @@ namespace Rdmp.Core.CommandExecution
         {
             BasicActivator.Wait(title,task,cts);
         }
-        protected void Emphasise(DatabaseEntity o, int expansionDepth = 0)
+        protected void Emphasise(IMapsDirectlyToDatabaseTable o, int expansionDepth = 0)
         {
             BasicActivator.RequestItemEmphasis(this, new EmphasiseRequest(o, expansionDepth));
         }

@@ -68,6 +68,10 @@ namespace ReusableCodeTests
 
                 bool found = false;
 
+                // Not one we need to pass on to the package consumers
+                    if(package.Contains("Microsoft.NETFramework.ReferenceAssemblies.net461"))
+                        continue;
+
                 //analyzers do not have to be listed as a dependency in nuspec (but we should document them in packages.md)
                 if (!Analyzers.Contains(package) && nuspec != null)
                 {

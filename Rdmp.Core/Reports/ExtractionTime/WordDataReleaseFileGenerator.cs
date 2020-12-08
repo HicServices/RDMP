@@ -27,6 +27,8 @@ namespace Rdmp.Core.Reports.ExtractionTime
         protected IExtractableCohort Cohort { get; set; }
         protected IProject Project { get; set; }
 
+        const int CohortCountTimeoutInSeconds = 600; // 10 minutes
+
         public WordDataReleaseFileGenerator(IExtractionConfiguration configuration, IDataExportRepository repository)
         {
             _repository = repository;
@@ -136,7 +138,10 @@ namespace Rdmp.Core.Reports.ExtractionTime
                 string sql = "SELECT  TOP 1 LEFT(" + Cohort.GetReleaseIdentifier() + ",3) FROM " + ect.TableName + " WHERE " + Cohort.WhereSQL();
 
                 using(var cmd = db.Server.GetCommand(sql, con))
+                {
+                    cmd.CommandTimeout = CohortCountTimeoutInSeconds;
                     return (string)cmd.ExecuteScalar();
+                }
             }
         }
 
@@ -152,12 +157,12 @@ namespace Rdmp.Core.Reports.ExtractionTime
             SetTableCell(table,tableLine, 3, "Unique Individuals");
             tableLine++;
             
-            SetTableCell(table,tableLine, 0, Cohort.GetExternalData().ExternalVersion.ToString());
+            SetTableCell(table,tableLine, 0, Cohort.GetExternalData(CohortCountTimeoutInSeconds).ExternalVersion.ToString());
             SetTableCell(table,tableLine, 1, string.Format("{0} (ID={1}, OriginID={2})" , Cohort,Cohort.ID,Cohort.OriginID));//description fetched from remote table
 
             var lastExtracted = ExtractionResults.Any() ? ExtractionResults.Max(r => r.DateOfExtraction).ToString() : "Never";
             SetTableCell(table,tableLine, 2, lastExtracted);
-            SetTableCell(table,tableLine, 3, Cohort.CountDistinct.ToString("N0"));
+            SetTableCell(table,tableLine, 3, Cohort.GetCountDistinctFromDatabase(CohortCountTimeoutInSeconds).ToString("N0"));
         }
 
         private void CreateFileSummary(XWPFDocument document)

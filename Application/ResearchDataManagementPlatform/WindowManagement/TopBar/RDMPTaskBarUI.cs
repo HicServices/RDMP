@@ -148,8 +148,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 
         private void btnHome_Click(object sender, EventArgs e)
         {
-            _manager.CloseAllToolboxes();
-            _manager.CloseAllWindows();
             _manager.PopHome();
         }
 

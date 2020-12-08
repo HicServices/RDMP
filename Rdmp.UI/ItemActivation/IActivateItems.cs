@@ -156,7 +156,18 @@ namespace Rdmp.UI.ItemActivation
         /// <param name="databaseEntity"></param>
         /// <returns></returns>
         bool ShouldReloadFreshCopy(DatabaseEntity databaseEntity);
-        
 
+        /// <summary>
+        /// Start a new scoped session with a collection of objects
+        /// </summary>
+        /// <param name="sessionName"></param>
+        /// <param name="initialSelectionIfAny">Initial root objects to be in scope (or null if not known)</param>
+        void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialSelectionIfAny);
+
+        /// <summary>
+        /// Returns all currently open session uis
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<SessionCollectionUI> GetSessions();
     }
 }

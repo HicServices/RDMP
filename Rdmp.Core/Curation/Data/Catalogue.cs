@@ -106,10 +106,7 @@ namespace Rdmp.Core.Curation.Data
             set { SetField(ref  _name, value); }
         }
 
-        /// <summary>
-        /// A user defined hierarchical category which designates the role of the dataset e.g. '\datasets\extractable\labdata\'
-        /// <para>Should always start and end with a '\' even if it is the root (i.e. '\')</para>
-        /// </summary>
+        /// <inheritdoc/>
         [DoNotImportDescriptions]
         public CatalogueFolder Folder
         {
@@ -117,10 +114,7 @@ namespace Rdmp.Core.Curation.Data
             set { SetField(ref  _folder, value); }
         }
          
-        /// <summary>
-        /// Human readable description provided by the RDMP user that describes what the dataset contains.  
-        /// <para>This can be multiple paragraphs.</para>
-        /// </summary>
+        /// <inheritdoc/>
         public string Description
         {
             get { return _description; }
@@ -145,10 +139,7 @@ namespace Rdmp.Core.Curation.Data
             set { SetField(ref  _type, value); }
         }
 
-        /// <summary>
-        /// User specified period on how regularly the dataset is updated.  This does not have any technical bearing on how often it is loaded
-        /// and might be an outright lie.
-        /// </summary>
+        /// <inheritdoc/>
         public CataloguePeriodicity Periodicity
         {
             get { return _periodicity; }
@@ -211,10 +202,7 @@ namespace Rdmp.Core.Curation.Data
             set { SetField(ref  _updateSched, value); }
         }
 
-        /// <summary>
-        /// User specified free text field.  Not used for anything by RDMP.
-        /// <seealso cref="Periodicity"/>
-        /// </summary>
+        ///<inheritdoc/>
         public string Time_coverage
         {
             get { return _timeCoverage; }
@@ -1295,11 +1283,10 @@ namespace Rdmp.Core.Curation.Data
         }
         #endregion
 
-        /// <summary>
-        /// Provides a new instance of the object (in the database).  Properties will be copied from this object (child objects will not be created).
-        /// </summary>
-        /// <returns></returns>
-        public Catalogue ShallowClone()
+
+
+        /// <inheritdoc/>
+        public ICatalogue ShallowClone()
         {
             var clone = new Catalogue(CatalogueRepository, Name + " Clone");
             CopyShallowValuesTo(clone);

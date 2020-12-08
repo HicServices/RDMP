@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.UI.AggregationUIs.Advanced;
@@ -31,6 +32,9 @@ namespace Rdmp.UI.CommandExecution.Proposals
 
         public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, AggregateConfiguration targetAggregateConfiguration, InsertOption insertOption = InsertOption.Default)
         {
+            if(cmd is ContainerCombineable cc)
+                return new ExecuteCommandImportFilterContainerTree(ItemActivator,targetAggregateConfiguration,cc.Container);
+
             var sourceAggregateCommand = cmd as AggregateConfigurationCombineable;
 
             //if it is an aggregate being dragged

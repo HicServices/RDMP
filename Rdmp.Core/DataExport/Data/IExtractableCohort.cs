@@ -40,6 +40,13 @@ namespace Rdmp.Core.DataExport.Data
         int CountDistinct { get; }
 
         /// <summary>
+        /// Returns <see cref="CountDistinct"/> without caching and with an optional long timeout
+        /// </summary>
+        /// <param name="timeout">Timeout in seconds to allow operation to run for or -1 for default</param>
+        /// <returns></returns>
+        int GetCountDistinctFromDatabase(int timeout = -1);
+
+        /// <summary>
         /// The location of the cohort database in which this cohort is held (outside RDMP metadata databases).
         /// </summary>
         int ExternalCohortTable_ID { get; }
@@ -98,10 +105,10 @@ namespace Rdmp.Core.DataExport.Data
         string WhereSQL();
 
         /// <summary>
-        /// Returns information stored in your cohort database (pointed to by <see cref="IExternalCohortTable"/>) for the cohort.
+        /// Returns information stored in your cohort database (pointed to by <see cref="IExternalCohortTable"/>) for the cohort.  Fetches project number, version etc for this cohort.
         /// </summary>
-        /// <returns></returns>
-        IExternalCohortDefinitionData GetExternalData();
+        /// <param name="timeout">Number of seconds to allow query to execute for before giving up</param>
+        IExternalCohortDefinitionData GetExternalData(int timeout = -1);
         
         /// <summary>
         /// Returns the data type of the identifiable column (e.g. "varchar(10)")

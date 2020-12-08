@@ -15,10 +15,10 @@ namespace Tests.Common
 {
     public class TestableTableValuedFunction
     {
-        public TableInfo TableInfoCreated;
+        public ITableInfo TableInfoCreated;
         public ColumnInfo[] ColumnInfosCreated;
         public string CreateFunctionSQL;
-        public Catalogue Cata;
+        public ICatalogue Cata;
         public CatalogueItem[] CataItems;
         public ExtractionInformation[] ExtractionInformations;
 

@@ -44,5 +44,11 @@ namespace Rdmp.Core.Curation.FilterImporting.Construction
         /// </summary>
         /// <returns></returns>
         Type GetIContainerTypeIfAny();
+
+        /// <summary>
+        /// Creates a new filter container of the appropriate Type 
+        /// </summary>
+        /// <returns></returns>
+        IContainer CreateNewContainer();
     }
 }

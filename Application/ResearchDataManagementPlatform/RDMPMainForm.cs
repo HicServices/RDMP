@@ -132,8 +132,6 @@ namespace ResearchDataManagementPlatform
             //if there is no persist file or user wants to show the home screen always on startup
             if (!_persistenceFile.Exists || UserSettings.ShowHomeOnStartup)
             {
-                _windowManager.CloseAllToolboxes();
-                _windowManager.CloseAllWindows();
                 _windowManager.PopHome();
             }
             else

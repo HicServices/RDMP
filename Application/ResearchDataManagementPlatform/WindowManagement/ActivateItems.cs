@@ -16,18 +16,24 @@ using System.Windows.Forms;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
+using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
+using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.UI;
+using Rdmp.UI.CohortUI.ImportCustomData;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.CommandExecution;
@@ -36,10 +42,12 @@ using Rdmp.UI.Copying;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Arranging;
+using Rdmp.UI.PipelineUIs.Pipelines;
 using Rdmp.UI.PluginChildProvision;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleDialogs;
+using Rdmp.UI.SimpleDialogs.ForwardEngineering;
 using Rdmp.UI.SubComponents;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Theme;
@@ -77,9 +85,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public IArrangeWindows WindowArranger { get; private set; }
         
-        public override void Publish(DatabaseEntity databaseEntity)
+        public override void Publish(IMapsDirectlyToDatabaseTable databaseEntity)
         {
-            RefreshBus.Publish(this,new RefreshObjectEventArgs(databaseEntity));
+            if(databaseEntity is DatabaseEntity de)
+                RefreshBus.Publish(this,new RefreshObjectEventArgs(de));
         }
 
         public override void Show(string message)
@@ -106,7 +115,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             CoreChildProvider = GetChildProvider();
             
             //Shouldn't ever change externally to your session so doesn't need constantly refreshed
-            FavouritesProvider = new FavouritesProvider(this, repositoryLocator.CatalogueRepository);
+            FavouritesProvider = new FavouritesProvider(this);
             HistoryProvider = new HistoryProvider(repositoryLocator);
 
             //handle custom icons from plugin user interfaces in which
@@ -701,12 +710,13 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override DirectoryInfo SelectDirectory(string prompt)
         {
-            var fb = new FolderBrowserDialog();
-
-            if (fb.ShowDialog() == DialogResult.OK)
-                return new DirectoryInfo(fb.SelectedPath);
+            using(var fb = new FolderBrowserDialog())
+            {
+                if (fb.ShowDialog() == DialogResult.OK)
+                    return new DirectoryInfo(fb.SelectedPath);
             
-            return null;
+                return null;
+            }
         }
 
         public override FileInfo SelectFile(string prompt)
@@ -716,17 +726,31 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
         {
-            var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = false};
+            using(var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = false})
+            {
+                if (patternDescription != null && pattern != null)
+                    fb.Filter = patternDescription + "|" + pattern;
 
-            if (patternDescription != null && pattern != null)
-                fb.Filter = patternDescription + "|" + pattern;
-
-            if (fb.ShowDialog() == DialogResult.OK)
-                return new FileInfo(fb.FileName);
+                if (fb.ShowDialog() == DialogResult.OK)
+                    return new FileInfo(fb.FileName);
             
-            return null;
+                return null;
+            }        
         }
         
+        public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
+        {
+            using(var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = true})
+            {
+                if (patternDescription != null && pattern != null)
+                    fb.Filter = patternDescription + "|" + pattern;
+
+                if (fb.ShowDialog() == DialogResult.OK)
+                    return fb.FileNames.Select(f=>new FileInfo(f)).ToArray();
+            
+                return null;
+            }
+        }
 
         protected override bool SelectValueTypeImpl(string prompt, Type paramType, object initialValue, out object chosen)
         {
@@ -779,5 +803,52 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 new CommandInvokerDelegate(typeof(IActivateItems),true,(p)=>this)
             };
         }
+        public void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialObjects)
+        {
+            var panel = WindowFactory.Create(this,new SessionCollectionUI(),new SessionCollection(sessionName)
+            {
+                DatabaseObjects = initialObjects?.ToList() ?? new List<IMapsDirectlyToDatabaseTable>()
+            },CatalogueIcons.WindowLayout);
+            panel.Show(_mainDockPanel,DockState.DockLeft);
+        }
+
+        
+        /// <inheritdoc/>
+        public IEnumerable<SessionCollectionUI> GetSessions()
+        {
+            return _windowManager.GetAllWindows<SessionCollectionUI>();
+        }
+
+        public override IPipelineRunner GetPipelineRunner(IPipelineUseCase useCase, IPipeline pipeline)
+        {
+             
+            ConfigureAndExecutePipelineUI configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(useCase,this);
+            configureAndExecuteDialog.Dock = DockStyle.Fill;
+            
+            return configureAndExecuteDialog;
+        }
+
+        public override CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable, IProject project, string cohortInitialDescription)
+        {
+            var ui = new CohortCreationRequestUI(this,externalCohortTable,project);
+                
+            if(!string.IsNullOrWhiteSpace(cohortInitialDescription))
+                ui.CohortDescription = cohortInitialDescription + " (" + Environment.UserName + " - " + DateTime.Now + ")";
+
+            if (ui.ShowDialog() != DialogResult.OK)
+                return null;
+
+            return ui.Result;
+        }
+
+        public override ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo, ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, CatalogueFolder folder)
+        {
+            var ui = new ConfigureCatalogueExtractabilityUI(this, tableInfo, initialDescription, projectSpecific);
+            ui.TargetFolder = folder;
+            ui.ShowDialog();
+            
+            return ui.CatalogueCreatedIfAny;
+        }
+
     }
 }

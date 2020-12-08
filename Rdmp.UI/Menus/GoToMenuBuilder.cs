@@ -149,7 +149,15 @@ namespace Rdmp.UI.Menus
             }
 
             if (forObject is SelectedDataSets selectedDataSet)
-                AddGoTo<Catalogue>(menu,selectedDataSet.ExtractableDataSet.Catalogue_ID);
+                try
+                {
+                    AddGoTo<Catalogue>(menu,selectedDataSet.ExtractableDataSet.Catalogue_ID);
+                }
+                catch (KeyNotFoundException)
+                {
+                    Add(menu,new ImpossibleCommand("Catalogue has been deleted"){OverrideCommandName="Catalogue" });
+                }
+                
 
             if(forObject is TableInfo tableInfo)
                 AddGoTo(menu,()=>tableInfo.ColumnInfos.SelectMany(c=>_activator.CoreChildProvider.AllCatalogueItems.Where(catItem=>catItem.ColumnInfo_ID == c.ID).Select(catItem=>catItem.Catalogue)).Distinct(),"Catalogue(s)");

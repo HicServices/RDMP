@@ -8,6 +8,7 @@ using System;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
@@ -148,7 +149,7 @@ namespace Rdmp.UI.Collections
             var mi = new ToolStripMenuItem("Project Specific Catalogue",Activator.CoreIconProvider.GetImage(RDMPConcept.ProjectCatalogue,OverlayKind.Add));
 
             var factory = new AtomicCommandUIFactory(Activator);
-            mi.DropDownItems.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCatalogueByImportingFile(Activator)
+            mi.DropDownItems.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator)
             {
                 OverrideCommandName = "From File...",
                 PromptForProject = true

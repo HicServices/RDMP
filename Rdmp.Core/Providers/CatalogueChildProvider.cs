@@ -119,7 +119,7 @@ namespace Rdmp.Core.Providers
         public AllServersNode AllServersNode { get; private set; }
 
         public DataAccessCredentials[] AllDataAccessCredentials { get; set; }
-        public Dictionary<TableInfo, List<DataAccessCredentialUsageNode>> AllDataAccessCredentialUsages { get; set; }
+        public Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>> AllDataAccessCredentialUsages { get; set; }
 
         private Dictionary<int, List<ColumnInfo>> _tableInfosToColumnInfos;
         public ColumnInfo[] AllColumnInfos { get; private set; }
@@ -1192,7 +1192,7 @@ namespace Rdmp.Core.Providers
             //if the table has an identifier dump listed
             if (tableInfo.IdentifierDumpServer_ID != null)
             {
-                //if there is a dump (e.g. for dillution and dumping - not appearing in the live table)
+                //if there is a dump (e.g. for dilution and dumping - not appearing in the live table)
                 ExternalDatabaseServer server = AllExternalServers.Single(s => s.ID == tableInfo.IdentifierDumpServer_ID.Value);
 
                 children.Add(new IdentifierDumpServerUsageNode(tableInfo, server));

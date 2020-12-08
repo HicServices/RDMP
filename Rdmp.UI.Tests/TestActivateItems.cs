@@ -70,7 +70,7 @@ namespace Rdmp.UI.Tests
             CommentStore = _commentStore;
 
             CoreIconProvider = new DataExportIconProvider(RepositoryLocator,null);
-            FavouritesProvider = new FavouritesProvider(this,repo.CatalogueRepository);
+            FavouritesProvider = new FavouritesProvider(this);
             HistoryProvider = new HistoryProvider(RepositoryLocator);
 
             _problemProviders = new List<IProblemProvider>(new IProblemProvider[]
@@ -90,10 +90,12 @@ namespace Rdmp.UI.Tests
         
         public ICoreIconProvider CoreIconProvider { get; private set; }
 
-        public override void Publish(DatabaseEntity databaseEntity)
+        public override void Publish(IMapsDirectlyToDatabaseTable o)
         {
-            base.Publish(databaseEntity);
-            RefreshBus.Publish(this,new RefreshObjectEventArgs(databaseEntity));
+            base.Publish(o);
+
+            if(o is DatabaseEntity e)
+                RefreshBus.Publish(this,new RefreshObjectEventArgs(e));
         }
 
         public override void Show(string message)
@@ -280,7 +282,11 @@ namespace Rdmp.UI.Tests
         {
             return SelectFile(prompt, null, null);
         }
-
+        
+        public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
+        {
+            throw new NotImplementedException();
+        }
         public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
         {
             throw new NotImplementedException();
@@ -290,6 +296,17 @@ namespace Rdmp.UI.Tests
         {
             throw new NotImplementedException();
         }
+
+        public void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialSelectionIfAny)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<SessionCollectionUI> GetSessions()
+        {
+            throw new NotImplementedException();
+        }
+
     }
 
     public class TestActivateItemsResults:ICheckNotifier

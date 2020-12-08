@@ -24,7 +24,7 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation
     {
         private const string TableName = "ANOMigration";
 
-        private TableInfo _tableInfo;
+        private ITableInfo _tableInfo;
         private ColumnInfo[] _columnInfos;
         private ANOTable _anoConditionTable;
 

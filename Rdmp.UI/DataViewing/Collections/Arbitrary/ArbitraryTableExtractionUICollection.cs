@@ -20,7 +20,7 @@ namespace Rdmp.UI.DataViewing.Collections.Arbitrary
     {
         private DiscoveredTable _table;
         
-        public DatabaseType DatabaseType { get; private set; }
+        public DatabaseType DatabaseType { get; set; }
 
         Dictionary<string, string> _arguments = new Dictionary<string, string>();
         private const string DatabaseKey = "Database";
@@ -28,7 +28,7 @@ namespace Rdmp.UI.DataViewing.Collections.Arbitrary
         private const string TableKey = "Table";
         private const string DatabaseTypeKey = "DatabaseType";
 
-        public string Username { get; private set; }
+        public string Username { get; set; }
         public string Password { get; set; }
         public string GetDecryptedPassword()
         {
@@ -115,8 +115,14 @@ namespace Rdmp.UI.DataViewing.Collections.Arbitrary
             autoComplete.Add(_table);
         }
 
-        public string Server { get { return _arguments[ServerKey]; } }
-        public string Database { get { return _arguments[DatabaseKey]; } }
+        public string Server { 
+            get { return _arguments[ServerKey]; } 
+            set { _arguments[ServerKey] = value; }
+            }
+        public string Database { 
+            get { return _arguments[DatabaseKey]; }
+            set { _arguments[DatabaseKey] = value; }
+            }
 
         
 

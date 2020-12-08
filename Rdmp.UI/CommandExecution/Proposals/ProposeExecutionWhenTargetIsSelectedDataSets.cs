@@ -5,6 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ProjectUI.Datasets;
@@ -29,6 +31,10 @@ namespace Rdmp.UI.CommandExecution.Proposals
 
         public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, SelectedDataSets target, InsertOption insertOption = InsertOption.Default)
         {
+            
+            if(cmd is ContainerCombineable cc)
+                return new ExecuteCommandImportFilterContainerTree(ItemActivator,target,cc.Container);
+
             return null;
         }
     }

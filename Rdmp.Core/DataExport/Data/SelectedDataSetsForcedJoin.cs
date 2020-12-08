@@ -55,7 +55,7 @@ namespace Rdmp.Core.DataExport.Data
         /// <param name="repository"></param>
         /// <param name="sds"></param>
         /// <param name="tableInfo"></param>
-        public SelectedDataSetsForcedJoin(IDataExportRepository repository,SelectedDataSets sds, TableInfo tableInfo)
+        public SelectedDataSetsForcedJoin(IDataExportRepository repository,SelectedDataSets sds, ITableInfo tableInfo)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>()
             {

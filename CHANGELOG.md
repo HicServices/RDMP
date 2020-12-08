@@ -8,17 +8,57 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Choose Load Directory on DLE now shows old value during editing
+- Added property suggestions when using ExecuteCommandSet with an incorrect property name
+- Added the ability to drag and drop aggregates into other CohortIdentificationConfigurations to import
+- Added ColumnDropper that allows a user to specify the columns that should not be extracted in the pipeline.
+- Added Favourite/UnFavourite to right click context menus
+- CachingHost now logs the state of the CacheProgress being executed first thing on start
+- Home screen now supports right click context menu, drag and drop etc
+- Added 'Sessions'.  These are tree collection windows similar to Favourites but with a user defined name and limited duration (until closed)
+
 ### Fixed
 
-- reduced memory overhead during refreshes
+- Fixed startup error when user enters a corrupt connection string for platform database locations.  This bug affected syntactically invalid (malformed) connection strings (i.e. not simply connection strings that point to non existant databases)
+- Fixed various issues in ColumnSwapper
+  - If input table contains nulls these are now passed through unchanged
+  - If mapping table contains nulls these are ignored (and not used to map input nulls)
+  - If input table column is of a different Type than the database table a suitable Type conversion is applied
+- Data load engine logging checks are better able to repair issues with missing logging server IDs / logging tasks
+- Better support for abort/cancel in
+  - RemoteTableAttacher
+  - ExcelAttacher
+  - KVPAttacher
+  - RemoteDatabaseAttacher
+- Fixed View Inserts/Updates dialog when using non SqlServer DBMS (e.g. MySql)
+- Fixed various layout and performance issues with RDMP console GUI.
+
+### Changed
+
+- Added timeout of 10 minutes (previously 30 seconds) for counting unique patient identifiers while writing metadata for extractions
+- Choose Load Directory now lets you specify invalid directories e.g. when building a load on one computer designed to run on separate computer with an isolated file system.
+
+## [4.2.0] - 2020-10-19
+
+### Fixed
+
+- Reduced memory overhead during refreshes
 - Fixed various graphical/performance issues when running in VDI environments with limited CPU
+- Fixed missing scrollbars in Explicit Column Typing user interface
+- Fixed various errors that could occur when a [Catalogue] referenced by an extraction is deleted outside of RDMP (e.g. by truncating the database table(s))
 
 ### Added
 
+- Support for importing WHERE logic into extraction datasets from other configurations or cohort builder configurations
 - Pipeline ID and Name now recorded in logs for Data Extractions
 - Added support for viewing extraction logs in tree form (for a given ExtractionConfiguration)
 - Added `AllowIdentifiableExtractions` user setting.  Enabling this prevents RDMP reporting an error state when cohorts are created that have the same private and release ID fields.
 - Added GoTo from extraction/cohort building filters to the parent Catalogue level filter and vice versa
+- Added ability to suppress [LoadMetadata] triggers
+- Added ability for Plugins to store custom information about objects in the RDMP Catalogue platform database
+- Added IgnoreColumns setting for DLE to ignore specific columns in the final table completely (not created in RAW/STAGING and not migrated)
 
 ### Changed
 
@@ -538,7 +578,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.1.9...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.2.0...develop
+[4.2.0]: https://github.com/HicServices/RDMP/compare/v4.1.9...v4.2.0
 [4.1.9]: https://github.com/HicServices/RDMP/compare/v4.1.8...v4.1.9
 [4.1.8]: https://github.com/HicServices/RDMP/compare/v4.1.7...v4.1.8
 [4.1.7]: https://github.com/HicServices/RDMP/compare/v4.1.6...v4.1.7
@@ -592,3 +633,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [Lookup]: ./Documentation/CodeTutorials/Glossary.md#Lookup
 [CohortIdentificationConfiguration]: ./Documentation/CodeTutorials/Glossary.md#CohortIdentificationConfiguration
+[LoadMetadata]: ./Documentation/CodeTutorials/Glossary.md#LoadMetadata

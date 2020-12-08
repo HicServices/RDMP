@@ -15,7 +15,7 @@ namespace Rdmp.Core.Curation
     /// </summary>
     public class ForwardEngineerCatalogue
     {
-        private readonly TableInfo _tableInfo;
+        private readonly ITableInfo _tableInfo;
         private readonly ColumnInfo[] _columnInfos;
         private readonly bool _markAllExtractable;
 
@@ -25,7 +25,7 @@ namespace Rdmp.Core.Curation
         /// <param name="tableInfo"></param>
         /// <param name="columnInfos"></param>
         /// <param name="markAllExtractable"></param>
-        public ForwardEngineerCatalogue(TableInfo tableInfo, ColumnInfo[] columnInfos, bool markAllExtractable = false)
+        public ForwardEngineerCatalogue(ITableInfo tableInfo, ColumnInfo[] columnInfos, bool markAllExtractable = false)
         {
             _tableInfo = tableInfo;
             _columnInfos = columnInfos;
@@ -34,7 +34,7 @@ namespace Rdmp.Core.Curation
 
 
         /// <inheritdoc cref="ExecuteForwardEngineering()"/>
-        public void ExecuteForwardEngineering(out Catalogue catalogue, out CatalogueItem[] items, out ExtractionInformation[] extractionInformations)
+        public void ExecuteForwardEngineering(out ICatalogue catalogue, out CatalogueItem[] items, out ExtractionInformation[] extractionInformations)
         {
             ExecuteForwardEngineering(null, out catalogue, out items, out extractionInformations);
         }
@@ -45,11 +45,7 @@ namespace Rdmp.Core.Curation
         /// </summary>
         public void ExecuteForwardEngineering()
         {
-            Catalogue whoCaresCata;
-            CatalogueItem[] whoCaresItems;
-            ExtractionInformation[] whoCaresInformations;
-
-            ExecuteForwardEngineering(null,out whoCaresCata,out whoCaresItems,out whoCaresInformations);
+            ExecuteForwardEngineering(null,out _,out _,out _);
         }
 
         /// <summary>
@@ -58,17 +54,14 @@ namespace Rdmp.Core.Curation
         /// <para>These new columns are added to an existing <see cref="Catalogue"/>.  Use this if you want a dataset that draws data from 2 tables using a <see cref="JoinInfo"/></para>
         /// </summary>
         /// <param name="intoExistingCatalogue"></param>
-        public void ExecuteForwardEngineering(Catalogue intoExistingCatalogue)
+        public void ExecuteForwardEngineering(ICatalogue intoExistingCatalogue)
         {
-            Catalogue whoCaresCata;
-            CatalogueItem[] whoCaresItems;
-            ExtractionInformation[] whoCaresInformations;
 
-            ExecuteForwardEngineering(intoExistingCatalogue, out whoCaresCata, out whoCaresItems, out whoCaresInformations);
+            ExecuteForwardEngineering(intoExistingCatalogue, out _, out _, out _);
         }
 
         /// <inheritdoc cref="ExecuteForwardEngineering()"/>
-        public void ExecuteForwardEngineering(Catalogue intoExistingCatalogue,out Catalogue catalogue, out CatalogueItem[] catalogueItems, out ExtractionInformation[] extractionInformations)
+        public void ExecuteForwardEngineering(ICatalogue intoExistingCatalogue,out ICatalogue catalogue, out CatalogueItem[] catalogueItems, out ExtractionInformation[] extractionInformations)
         {
             var repo = _tableInfo.CatalogueRepository;
 

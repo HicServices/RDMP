@@ -29,7 +29,7 @@ namespace Rdmp.Core.QueryBuilding
     /// </summary>
     public class QueryBuilder : ISqlQueryBuilder
     {
-        private readonly TableInfo[] _forceJoinsToTheseTables;
+        private readonly ITableInfo[] _forceJoinsToTheseTables;
         object oSQLLock = new object();
 
         /// <inheritdoc/>
@@ -51,7 +51,7 @@ namespace Rdmp.Core.QueryBuilding
         /// <inheritdoc/>
         public List<QueryTimeColumn> SelectColumns { get; private set; }
         /// <inheritdoc/>
-        public List<TableInfo> TablesUsedInQuery { get; private set; }
+        public List<ITableInfo> TablesUsedInQuery { get; private set; }
         /// <inheritdoc/>
         public List<JoinInfo> JoinsUsedInQuery { get; private set; }
         /// <inheritdoc/>
@@ -67,7 +67,7 @@ namespace Rdmp.Core.QueryBuilding
         /// Optional field, this specifies where to start gargantuan joins such as when there are 3+ joins and multiple primary key tables e.g. in a star schema.
         /// If this is not set and there are too many JoinInfos defined in the Catalogue then the class will bomb out with the Exception 
         /// </summary>
-        public TableInfo PrimaryExtractionTable { get; set; }
+        public ITableInfo PrimaryExtractionTable { get; set; }
 
         /// <summary>
         /// A container that contains all the subcontainers and filters to be assembled during the query (use a SpontaneouslyInventedFilterContainer if you want to inject your 
@@ -147,7 +147,7 @@ namespace Rdmp.Core.QueryBuilding
         /// <param name="limitationSQL">Any text you want after SELECT to limit the results e.g. "DISTINCT" or "TOP 10"</param>
         /// <param name="hashingAlgorithm"></param>
         /// <param name="forceJoinsToTheseTables"></param>
-        public QueryBuilder(string limitationSQL, string hashingAlgorithm, TableInfo[] forceJoinsToTheseTables = null)
+        public QueryBuilder(string limitationSQL, string hashingAlgorithm, ITableInfo[] forceJoinsToTheseTables = null)
         {
             _forceJoinsToTheseTables = forceJoinsToTheseTables;
             SetLimitationSQL(limitationSQL);
@@ -212,8 +212,7 @@ namespace Rdmp.Core.QueryBuilding
             //work out all the filters 
             Filters = SqlQueryBuilderHelper.GetAllFiltersUsedInContainerTreeRecursively(RootFilterContainer);
            
-            TableInfo primary;
-            TablesUsedInQuery = SqlQueryBuilderHelper.GetTablesUsedInQuery(this, out primary, _forceJoinsToTheseTables);
+            TablesUsedInQuery = SqlQueryBuilderHelper.GetTablesUsedInQuery(this, out var primary, _forceJoinsToTheseTables);
 
             //force join to any TableInfos that would not be normally joined to but the user wants to anyway e.g. if there's WHERE sql that references them but no columns
             if (_forceJoinsToTheseTables != null)
