@@ -39,8 +39,11 @@ namespace Rdmp.Core.Curation.Data
     /// </summary>
     public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNameToo, IInjectKnown<ColumnInfo[]>,ICheckable
     {
-
-        
+        /// <summary>
+        /// Cached results of <see cref="GetQuerySyntaxHelper"/>
+        /// </summary>
+        private static Dictionary<DatabaseType, IQuerySyntaxHelper> _cachedSyntaxHelpers = new Dictionary<DatabaseType, IQuerySyntaxHelper>();
+                
         #region Database Properties
         private string _name;
         private DatabaseType _databaseType;
@@ -430,7 +433,10 @@ namespace Rdmp.Core.Curation.Data
         /// <inheritdoc/>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
-            return new QuerySyntaxHelperFactory().Create(DatabaseType);
+            if(!_cachedSyntaxHelpers.ContainsKey(DatabaseType))
+                _cachedSyntaxHelpers.Add(DatabaseType,new QuerySyntaxHelperFactory().Create(DatabaseType));
+
+            return _cachedSyntaxHelpers[DatabaseType];
         }
 
         /// <inheritdoc/>

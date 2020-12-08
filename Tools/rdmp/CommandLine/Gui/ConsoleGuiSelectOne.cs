@@ -70,7 +70,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
             return
                 dict
-                .Where(score => score.Value > 0)
+                .Where(score => !token.IsCancellationRequested && score.Value > 0)
                 .OrderByDescending(score => score.Value)
                 .ThenByDescending(id => id.Key.Key.ID) //favour newer objects over ties
                 .Take(MaxMatches)
