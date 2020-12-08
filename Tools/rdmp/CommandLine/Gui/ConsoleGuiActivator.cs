@@ -247,7 +247,8 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public override void ShowData(IViewSQLAndResultsCollection collection)
         {
-            throw new NotImplementedException();
+            var view = new ConsoleGuiSqlEditor(this,collection){Modal = true };
+            Application.Run(view);
         }
     }
 }

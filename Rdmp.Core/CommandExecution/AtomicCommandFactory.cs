@@ -182,6 +182,12 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandBulkImportTableInfos(_activator));
             }
 
+            if(o is TableInfo ti)
+            {
+                yield return new CommandPresentation(new ExecuteCommandViewData(_activator, ti));
+            }
+                
+
             if(o is IDisableable disable)
                 yield return new CommandPresentation(new ExecuteCommandDisableOrEnable(_activator, disable));
 

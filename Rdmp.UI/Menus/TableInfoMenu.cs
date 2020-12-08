@@ -59,7 +59,6 @@ namespace Rdmp.UI.Menus
             Add(new ExecuteCommandUseCredentialsToAccessTableInfoData(_activator,null,tableInfo));
             
             Items.Add(new ToolStripSeparator());
-            Add(new ExecuteCommandViewData(_activator, tableInfo));
 
             Add(new ExecuteCommandScriptTable(_activator, tableInfo));
 
