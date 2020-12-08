@@ -40,7 +40,7 @@ namespace Rdmp.Core.DataLoad.Engine.Job
         {
             _listener = listener;
         }
-        public ThrowImmediatelyDataLoadJob(HICDatabaseConfiguration configuration, params TableInfo[] regularTablesToLoad)
+        public ThrowImmediatelyDataLoadJob(HICDatabaseConfiguration configuration, params ITableInfo[] regularTablesToLoad)
         {
             _listener = new ThrowImmediatelyDataLoadEventListener();
             RegularTablesToLoad = new List<ITableInfo>(regularTablesToLoad);

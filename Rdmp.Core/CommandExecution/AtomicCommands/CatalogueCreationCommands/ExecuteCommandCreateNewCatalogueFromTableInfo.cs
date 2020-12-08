@@ -6,25 +6,22 @@
 
 using System.Drawing;
 using System.Linq;
-using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs.ForwardEngineering;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
 {
-    internal class ExecuteCommandCreateNewCatalogueFromTableInfo : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandCreateNewCatalogueFromTableInfo : CatalogueCreationCommandExecution
     {
         private TableInfo _tableInfo;
 
-        public ExecuteCommandCreateNewCatalogueFromTableInfo(IActivateItems activator, TableInfo tableInfo) : base(activator)
+        public ExecuteCommandCreateNewCatalogueFromTableInfo(IBasicActivateItems activator, TableInfo tableInfo) : base(activator)
         {
             _tableInfo = tableInfo;
 
-            if(activator.CoreChildProvider.AllCatalogues.Any(c=>c.Name.Equals(tableInfo.GetRuntimeName())))
+            if (activator.CoreChildProvider.AllCatalogues.Any(c => c.Name.Equals(tableInfo.GetRuntimeName())))
                 SetImpossible("There is already a Catalogue called '" + tableInfo.GetRuntimeName() + "'");
         }
 
@@ -33,14 +30,12 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var ui = new ConfigureCatalogueExtractabilityUI(Activator, _tableInfo, "Existing Table", null);
-            ui.ShowDialog();
-            var cata = ui.CatalogueCreatedIfAny;
-
-            if (cata != null)
+            var cata = BasicActivator.CreateAndConfigureCatalogue(_tableInfo,null,"Existing Table",ProjectSpecific,TargetFolder);
+            
+            if (cata is DatabaseEntity de)
             {
-                Publish(cata);
-                Emphasise(cata);
+                Publish(de);
+                Emphasise(de);
             }
         }
 

@@ -39,7 +39,7 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
     {
         private readonly bool _allowImportAsCatalogue;
         public ITableInfoImporter Importer { get; private set; }
-        public TableInfo TableInfoCreatedIfAny { get; private set; }
+        public ITableInfo TableInfoCreatedIfAny { get; private set; }
         public CatalogueFolder TargetFolder { get; set; }
 
         private Project _projectSpecific;
@@ -105,10 +105,11 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
             {
                 // logic to add credentials 
                     // parent.SetCredentials(); 
-                TableInfo ti;
-                ColumnInfo[] cols;
-                Importer.DoImport(out ti,out cols);
-                Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(ti));
+                Importer.DoImport(out var ti,out var cols);
+
+                if(ti is DatabaseEntity de)
+                    Activator.Publish(de);
+
                 TableInfoCreatedIfAny = ti;
             }
 

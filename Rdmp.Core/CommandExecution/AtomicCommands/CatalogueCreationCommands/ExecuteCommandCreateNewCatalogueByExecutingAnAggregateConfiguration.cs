@@ -7,34 +7,28 @@
 using System;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
 using FAnsi.Discovery;
 using Rdmp.Core.CohortCommitting.Pipeline;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline.Events;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.PipelineUIs.Pipelines;
-using Rdmp.UI.SimpleDialogs.ForwardEngineering;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
 {
-    public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration : BasicUICommandExecution,IAtomicCommandWithTarget
+
+    public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration : CatalogueCreationCommandExecution
     {
         private AggregateConfiguration _aggregateConfiguration;
         private ExtractableCohort _cohort;
         private DiscoveredTable _table;
-        private Project _projectSpecific;
 
-        public ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(IActivateItems activator) : base(activator)
+        public ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(IBasicActivateItems activator) : base(activator)
         {
-            
+
         }
 
         public override string GetCommandHelp()
@@ -47,61 +41,60 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             base.Execute();
 
             if (_aggregateConfiguration == null)
-                _aggregateConfiguration = SelectOne<AggregateConfiguration>(Activator.RepositoryLocator.CatalogueRepository);
+                _aggregateConfiguration = SelectOne<AggregateConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
 
-            if(_aggregateConfiguration == null)
+            if (_aggregateConfiguration == null)
                 return;
 
             if (_aggregateConfiguration.IsJoinablePatientIndexTable())
             {
-                var dr = MessageBox.Show("Would you like to constrain the records to only those in a committed cohort?","Cohort Records Only", MessageBoxButtons.YesNoCancel);
-
-                if(dr == DialogResult.Cancel)
+                if (!BasicActivator.YesNo("Would you like to constrain the records to only those in a committed cohort?", "Cohort Records Only", out bool chosen))
                     return;
 
-                if (dr == DialogResult.Yes)
+                if (chosen)
                 {
-                    _cohort = SelectOne<ExtractableCohort>(Activator.RepositoryLocator.DataExportRepository);
-                    
-                    if(_cohort == null)
+                    _cohort = SelectOne<ExtractableCohort>(BasicActivator.RepositoryLocator.DataExportRepository);
+
+                    if (_cohort == null)
                         return;
                 }
 
-                if(_cohort != null)
+                if (_cohort != null)
                 {
                     var externalData = _cohort.GetExternalData();
-                    if(externalData != null)
+                    if (externalData != null)
                     {
                         var projNumber = externalData.ExternalProjectNumber;
-                        var projs = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p=>p.ProjectNumber == projNumber).ToArray();
+                        var projs = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p => p.ProjectNumber == projNumber).ToArray();
                         if (projs.Length == 1)
-                            _projectSpecific = projs[0];
+                            ProjectSpecific = projs[0];
                     }
                 }
             }
 
-            _table = SelectTable(true,"Choose destination table name");
+            _table = SelectTable(true, "Choose destination table name");
 
             if (_table == null)
                 return;
-            
-            var useCase = new CreateTableFromAggregateUseCase(_aggregateConfiguration,_cohort,_table);
 
-            var ui = new ConfigureAndExecutePipelineUI(useCase,Activator);
-            ui.PipelineExecutionFinishedsuccessfully += ui_PipelineExecutionFinishedsuccessfully;
+            var useCase = new CreateTableFromAggregateUseCase(_aggregateConfiguration, _cohort, _table);
 
-            Activator.ShowWindow(ui, true);
+            var runner = BasicActivator.GetPipelineRunner(useCase, null /*TODO inject Pipeline in CLI constructor*/);
+
+            runner.PipelineExecutionFinishedsuccessfully += ui_PipelineExecutionFinishedsuccessfully;
+
+            runner.Run(BasicActivator.RepositoryLocator, null, null, null);
         }
 
         void ui_PipelineExecutionFinishedsuccessfully(object sender, PipelineEngineEventArgs args)
         {
-            if(!_table.Exists())
-                throw new Exception("Pipeline execute succesfully but the expected table '" + _table +"' did not exist");
-            
-            var importer = new TableInfoImporter(Activator.RepositoryLocator.CatalogueRepository, _table);
-            
-            var createCatalogue = new ConfigureCatalogueExtractabilityUI(Activator, importer, "Execution of '" + _aggregateConfiguration + "' (AggregateConfiguration ID =" + _aggregateConfiguration.ID+")",_projectSpecific);
-            createCatalogue.ShowDialog();
+            if (!_table.Exists())
+                throw new Exception("Pipeline execute succesfully but the expected table '" + _table + "' did not exist");
+
+            var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, _table);
+            importer.DoImport(out var ti,out _);
+
+            BasicActivator.CreateAndConfigureCatalogue(ti,null,"Execution of '" + _aggregateConfiguration + "' (AggregateConfiguration ID =" + _aggregateConfiguration.ID + ")",ProjectSpecific,TargetFolder);
         }
 
 
@@ -110,8 +103,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Execute);
         }
 
-        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+        public override IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
         {
+            base.SetTarget(target);
+
             var configuration = target as AggregateConfiguration;
             if (configuration != null)
                 _aggregateConfiguration = configuration;
@@ -119,10 +114,6 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             var cohort = target as ExtractableCohort;
             if (cohort != null)
                 _cohort = cohort;
-
-            var project = target as Project;
-            if (project != null)
-                _projectSpecific = project;
 
             return this;
         }

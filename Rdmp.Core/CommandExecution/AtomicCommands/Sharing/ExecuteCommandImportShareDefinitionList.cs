@@ -9,78 +9,73 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable.Attributes;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Icons.IconProvision;
 
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands.Sharing
+namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing
 {
-    public class ExecuteCommandImportShareDefinitionList : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandImportShareDefinitionList : BasicCommandExecution, IAtomicCommand
     {
-        public ExecuteCommandImportShareDefinitionList(IActivateItems activator):base(activator)
+        public ExecuteCommandImportShareDefinitionList(IBasicActivateItems activator) : base(activator)
         {
-            
+
         }
 
         public override void Execute()
         {
             base.Execute();
 
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "Sharing Definition File (*.sd)|*.sd";
-            ofd.Multiselect = true;
+            var selected = BasicActivator.SelectFiles("Select ShareDefinitions to import","Sharing Definition File","*.sd");
 
-
-            if (ofd.ShowDialog() == DialogResult.OK)
+            if (selected != null && selected.Any())
             {
                 try
                 {
-                    ShareManager shareManager = new ShareManager(Activator.RepositoryLocator);
+                    ShareManager shareManager = new ShareManager(BasicActivator.RepositoryLocator);
                     shareManager.LocalReferenceGetter = LocalReferenceGetter;
-                    foreach (var f in ofd.FileNames)
-                        using (var stream = File.Open(f, FileMode.Open))
+
+                    foreach (var f in selected)
+                        using (var stream = File.Open(f.FullName, FileMode.Open))
                             shareManager.ImportSharedObject(stream);
                 }
                 catch (Exception e)
                 {
-                    ExceptionViewer.Show("Error importing file(s)",e);
+                    BasicActivator.ShowException("Error importing file(s)", e);
                 }
             }
         }
+
+
 
         public override string GetCommandHelp()
         {
             return "Import serialized RDMP objects that have been shared with you in a share definition file.  If you already have the objects then they will be updated to match the file.";
         }
 
-        private int? LocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipAttribute,ShareDefinition shareDefinition)
+        private int? LocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipAttribute, ShareDefinition shareDefinition)
         {
-            MessageBox.Show("Choose a local object for '" + property + "' on " + Environment.NewLine
+            BasicActivator.Show("Choose a local object for '" + property + "' on " + Environment.NewLine
                             +
                             string.Join(Environment.NewLine,
                                 shareDefinition.Properties.Select(kvp => kvp.Key + ": " + kvp.Value)));
 
             var requiredType = relationshipAttribute.Cref;
 
-            if (Activator.RepositoryLocator.CatalogueRepository.SupportsObjectType(requiredType))
+            if (BasicActivator.RepositoryLocator.CatalogueRepository.SupportsObjectType(requiredType))
             {
-                var selected = SelectOne(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects(requiredType).Cast<DatabaseEntity>().ToArray());
+                var selected = SelectOne(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects(requiredType).Cast<DatabaseEntity>().ToArray());
                 if (selected != null)
                     return selected.ID;
             }
 
-            if (Activator.RepositoryLocator.DataExportRepository.SupportsObjectType(requiredType))
+            if (BasicActivator.RepositoryLocator.DataExportRepository.SupportsObjectType(requiredType))
             {
-                var selected = SelectOne(Activator.RepositoryLocator.DataExportRepository.GetAllObjects(requiredType).Cast<DatabaseEntity>().ToArray());
+                var selected = SelectOne(BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects(requiredType).Cast<DatabaseEntity>().ToArray());
                 if (selected != null)
                     return selected.ID;
             }

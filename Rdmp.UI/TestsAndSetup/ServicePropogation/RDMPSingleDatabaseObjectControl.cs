@@ -230,9 +230,9 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         /// <summary>
         /// Triggers an application refresh because a change has been made to <paramref name="e"/>
         /// </summary>
-        public void Publish(DatabaseEntity e)
+        public void Publish(IMapsDirectlyToDatabaseTable e)
         {
-            Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(e));
+            Activator.Publish(e);
         }
 
         /// <summary>

@@ -43,7 +43,7 @@ namespace Rdmp.Core.Repositories.Managers
 
 
         /// <inheritdoc/>
-        public void CreateLinkBetween(DataAccessCredentials credentials, TableInfo tableInfo,DataAccessContext context)
+        public void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo,DataAccessContext context)
         {
             using (var con = _repository.GetConnection())
             {
@@ -65,7 +65,7 @@ namespace Rdmp.Core.Repositories.Managers
         }
 
         /// <inheritdoc/>
-        public void BreakLinkBetween(DataAccessCredentials credentials, TableInfo tableInfo, DataAccessContext context)
+        public void BreakLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
         {
             _repository.Delete(
                 "DELETE FROM DataAccessCredentials_TableInfo WHERE DataAccessCredentials_ID = @cid AND TableInfo_ID = @tid and Context =@context",
@@ -78,7 +78,7 @@ namespace Rdmp.Core.Repositories.Managers
         }
 
         /// <inheritdoc/>
-        public void BreakAllLinksBetween(DataAccessCredentials credentials, TableInfo tableInfo)
+        public void BreakAllLinksBetween(DataAccessCredentials credentials, ITableInfo tableInfo)
         {
                  _repository.Delete("DELETE FROM DataAccessCredentials_TableInfo WHERE DataAccessCredentials_ID = @cid AND TableInfo_ID = @tid",
                 new Dictionary<string, object>()
@@ -89,7 +89,7 @@ namespace Rdmp.Core.Repositories.Managers
         }
 
         /// <inheritdoc/>
-        public DataAccessCredentials GetCredentialsIfExistsFor(TableInfo tableInfo, DataAccessContext context)
+        public DataAccessCredentials GetCredentialsIfExistsFor(ITableInfo tableInfo, DataAccessContext context)
         {
             int toReturn = -1;
 
@@ -131,7 +131,7 @@ namespace Rdmp.Core.Repositories.Managers
 
 
         /// <inheritdoc/>
-        public Dictionary<DataAccessContext,DataAccessCredentials> GetCredentialsIfExistsFor(TableInfo tableInfo)
+        public Dictionary<DataAccessContext,DataAccessCredentials> GetCredentialsIfExistsFor(ITableInfo tableInfo)
         {
             Dictionary<DataAccessContext, int> toReturn;
 
@@ -153,12 +153,12 @@ namespace Rdmp.Core.Repositories.Managers
         }
 
         /// <inheritdoc/>
-        public Dictionary<TableInfo, List<DataAccessCredentialUsageNode>> GetAllCredentialUsagesBy(DataAccessCredentials[] allCredentials, TableInfo[] allTableInfos)
+        public Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>> GetAllCredentialUsagesBy(DataAccessCredentials[] allCredentials, ITableInfo[] allTableInfos)
         {
             var allCredentialsDictionary = allCredentials.ToDictionary(k => k.ID, v => v);
             var allTablesDictionary = allTableInfos.ToDictionary(k => k.ID, v => v);
 
-            var toReturn = new Dictionary<TableInfo,List<DataAccessCredentialUsageNode>>();
+            var toReturn = new Dictionary<ITableInfo,List<DataAccessCredentialUsageNode>>();
 
             using (var con = _repository.GetConnection())
             {
@@ -197,7 +197,7 @@ namespace Rdmp.Core.Repositories.Managers
         }
 
         /// <inheritdoc/>
-        public Dictionary<DataAccessContext, List<TableInfo>> GetAllTablesUsingCredentials(DataAccessCredentials credentials)
+        public Dictionary<DataAccessContext, List<ITableInfo>> GetAllTablesUsingCredentials(DataAccessCredentials credentials)
         {
             Dictionary<DataAccessContext,List<int>> toReturn = new Dictionary<DataAccessContext, List<int>>();
 
@@ -229,7 +229,7 @@ namespace Rdmp.Core.Repositories.Managers
                 
             }
 
-            return toReturn.ToDictionary(k => k.Key, v => _repository.GetAllObjectsInIDList<TableInfo>(v.Value).ToList());
+            return toReturn.ToDictionary(k => k.Key, v => _repository.GetAllObjectsInIDList<TableInfo>(v.Value).Cast<ITableInfo>().ToList());
         }
 
         /// <summary>

@@ -184,9 +184,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             Assert.AreEqual(1,_table.GetRowCount());
             Assert.AreEqual(4,_archiveTable.GetRowCount());
 
-            TableInfo ti;
-            ColumnInfo[] cols;
-            Import(_table,out ti,out cols);
+            Import(_table,out var ti,out var cols);
             DiffDatabaseDataFetcher fetcher = new DiffDatabaseDataFetcher(1,ti,7,100);
             
             fetcher.FetchData(new AcceptAllCheckNotifier());

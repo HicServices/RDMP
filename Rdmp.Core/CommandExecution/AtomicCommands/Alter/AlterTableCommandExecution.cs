@@ -18,10 +18,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
     /// </summary>
     public abstract class AlterTableCommandExecution :BasicCommandExecution
     {
-        protected TableInfo TableInfo;
+        protected ITableInfo TableInfo;
         protected DiscoveredTable Table;
 
-        protected AlterTableCommandExecution(IBasicActivateItems activator, TableInfo tableInfo) : base(activator)
+        protected AlterTableCommandExecution(IBasicActivateItems activator, ITableInfo tableInfo) : base(activator)
         {
             TableInfo = tableInfo;
             try

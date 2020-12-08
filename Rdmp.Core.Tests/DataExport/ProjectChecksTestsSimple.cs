@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Checks;
 using Rdmp.Core.DataExport.Data;
 using ReusableLibraryCode.Checks;
@@ -26,7 +27,7 @@ namespace Rdmp.Core.Tests.DataExport
 
             try
             {
-                var ex = Assert.Throws<Exception>(()=>new ProjectChecker(p).Check(new ThrowImmediatelyCheckNotifier()));
+                var ex = Assert.Throws<Exception>(()=>new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator),p).Check(new ThrowImmediatelyCheckNotifier()));
                 Assert.AreEqual("Project does not have any ExtractionConfigurations yet",ex.Message);
 
             }
@@ -95,7 +96,7 @@ namespace Rdmp.Core.Tests.DataExport
                 Assert.IsTrue(remnantDir.Exists);
 
                 //resolve accepting deletion
-                new ProjectChecker(p).Check(new AcceptAllCheckNotifier());
+                new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator),p).Check(new AcceptAllCheckNotifier());
 
                 //boom remnant doesnt exist anymore (but parent does obviously)
                 Assert.IsTrue(dir.Exists);
@@ -170,7 +171,7 @@ namespace Rdmp.Core.Tests.DataExport
         {
             try
             {
-                new ProjectChecker(p).Check(notifier??new ThrowImmediatelyCheckNotifier() { ThrowOnWarning = true });
+                new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator),p).Check(notifier??new ThrowImmediatelyCheckNotifier() { ThrowOnWarning = true });
             }
             finally
             {

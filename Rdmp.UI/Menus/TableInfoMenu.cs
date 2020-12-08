@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.Alter;
+using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;

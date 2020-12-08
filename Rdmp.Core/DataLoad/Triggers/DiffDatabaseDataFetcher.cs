@@ -26,7 +26,7 @@ namespace Rdmp.Core.DataLoad.Triggers
     public class DiffDatabaseDataFetcher
     {
         private readonly int _batchSize;
-        private readonly TableInfo _tableInfo;
+        private readonly ITableInfo _tableInfo;
         private readonly int _dataLoadRunID;
         private readonly int _timeout;
 
@@ -37,7 +37,7 @@ namespace Rdmp.Core.DataLoad.Triggers
         public ColumnInfo[] _pks;
         private ColumnInfo[] _sharedColumns;
 
-        public DiffDatabaseDataFetcher(int batchSize, TableInfo tableInfo, int dataLoadRunID, int timeout)
+        public DiffDatabaseDataFetcher(int batchSize, ITableInfo tableInfo, int dataLoadRunID, int timeout)
         {
             _batchSize = batchSize;
             _tableInfo = tableInfo;

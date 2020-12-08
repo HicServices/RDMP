@@ -6,10 +6,9 @@
 
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.MainFormUITabs;
 

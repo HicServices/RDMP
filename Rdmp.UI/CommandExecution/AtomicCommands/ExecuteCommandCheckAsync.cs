@@ -17,26 +17,21 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandCheck : BasicUICommandExecution,IAtomicCommand
+    internal class ExecuteCommandCheckAsync : BasicUICommandExecution,IAtomicCommand
     {
         private readonly ICheckable _checkable;
         private readonly Action<ICheckable, CheckResult> _reportWorstTo;
 
-        public ExecuteCommandCheck(IActivateItems activator, DatabaseEntity checkable): base(activator)
+        public ExecuteCommandCheckAsync(IActivateItems activator, DatabaseEntity checkable): base(activator)
         {
             _checkable = checkable as ICheckable;
 
             if(_checkable == null)
                 SetImpossible("Object is not checkable");
         }
-        public ExecuteCommandCheck(IActivateItems activator, DatabaseEntity checkable,Action<ICheckable,CheckResult> reportWorst): this(activator,checkable)
+        public ExecuteCommandCheckAsync(IActivateItems activator, DatabaseEntity checkable,Action<ICheckable,CheckResult> reportWorst): this(activator,checkable)
         {
             _reportWorstTo = reportWorst;
-        }
-
-        public ExecuteCommandCheck(IActivateItems activator, ICheckable checkable) : base(activator)
-        {
-            _checkable = checkable;
         }
 
         public override void Execute()
@@ -49,9 +44,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 popupChecksUI.AllChecksComplete += (s,a)=>_reportWorstTo(_checkable,a.CheckResults.GetWorst());
 
             popupChecksUI.StartChecking(_checkable);
-
         }
-
 
         public override Image GetImage(IIconProvider iconProvider)
         {

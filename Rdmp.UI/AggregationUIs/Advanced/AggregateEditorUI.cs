@@ -67,7 +67,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
         private IAggregateBuilderOptions _options;
         private AggregateConfiguration _aggregate;
         
-        private List<TableInfo> _forcedJoins;
+        private List<ITableInfo> _forcedJoins;
 
         IQuerySyntaxHelper _querySyntaxHelper;
 

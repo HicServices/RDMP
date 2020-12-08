@@ -40,9 +40,7 @@ namespace Rdmp.Core.Curation.Data
         [NoMappingToDatabase]
         public IRepository Repository { get; set; }
         
-        /// <summary>
-        /// Returns <see cref="Repository"/> as <see cref="ICatalogueRepository"/> or null if the object does not exist in a catalogue repository.
-        /// </summary>
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public ICatalogueRepository CatalogueRepository
         {

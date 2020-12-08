@@ -6,20 +6,18 @@
 
 using System.IO;
 using System.Xml.Linq;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Reports.DublinCore;
-using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands.Sharing
+namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing
 {
-    internal class ExecuteCommandImportDublinCoreFormat : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandImportDublinCoreFormat : BasicCommandExecution, IAtomicCommand
     {
         private Catalogue _target;
         private FileInfo _toImport;
         readonly DublinCoreTranslater _translater = new DublinCoreTranslater();
 
-        public ExecuteCommandImportDublinCoreFormat(IActivateItems activator, Catalogue catalogue):base(activator)
+        public ExecuteCommandImportDublinCoreFormat(IBasicActivateItems activator, Catalogue catalogue) : base(activator)
         {
             _target = catalogue;
             UseTripleDotSuffix = true;
@@ -29,16 +27,16 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.Sharing
         {
             base.Execute();
 
-            if ((_toImport = _toImport?? SelectOpenFile("Dublin Core Xml|*.xml")) == null)
+            if ((_toImport = _toImport ?? BasicActivator.SelectFile("Enter Dublin Core Xml File Path:","Dublin Core Xml","*.xml")) == null)
                 return;
 
             var dc = new DublinCoreDefinition();
             var doc = XDocument.Load(_toImport.FullName);
             dc.LoadFrom(doc.Root);
 
-            _translater.Fill(_target,dc);
+            _translater.Fill(_target, dc);
             _target.SaveToDatabase();
-            
+
             Publish(_target);
         }
     }

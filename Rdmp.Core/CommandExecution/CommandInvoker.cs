@@ -58,7 +58,10 @@ namespace Rdmp.Core.CommandExecution
             AddDelegate(typeof(IRDMPPlatformRepositoryServiceLocator),true,(p)=>_repositoryLocator);
             AddDelegate(typeof(DirectoryInfo), false,(p) => _basicActivator.SelectDirectory($"Enter Directory for '{p.Name}'"));
             AddDelegate(typeof(FileInfo), false,(p) => _basicActivator.SelectFile($"Enter File for '{p.Name}'"));
-
+            
+            // Is the Global Check Notifier the best here? 
+            AddDelegate(typeof(ICheckNotifier),true,(p) => _basicActivator.GlobalErrorCheckNotifier);
+            
             AddDelegate(typeof(string), false,(p) =>
             
                 _basicActivator.TypeText("Value needed for parameter", p.Name, 1000, null, out string result, false)
@@ -238,7 +241,7 @@ namespace Rdmp.Core.CommandExecution
             return c.GetCustomAttribute<UseWithCommandLineAttribute>() != null || c.GetParameters().All(IsSupported);
         }
 
-        private bool IsSupported(ParameterInfo p)
+        public bool IsSupported(ParameterInfo p)
         {
             return GetDelegate(new RequiredArgument(p)) != null;
         }

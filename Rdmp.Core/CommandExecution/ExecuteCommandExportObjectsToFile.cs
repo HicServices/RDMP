@@ -5,14 +5,18 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Sharing.Dependency.Gathering;
+using ReusableLibraryCode;
+using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution
 {
@@ -31,28 +35,33 @@ namespace Rdmp.Core.CommandExecution
         private readonly ShareManager _shareManager;
         private readonly Gatherer _gatherer;
 
+        public bool ShowInExplorer { get; set; }
+
         public bool IsSingleObject { get { return _toExport.Length == 1; } }
 
-        public ExecuteCommandExportObjectsToFile(IRDMPPlatformRepositoryServiceLocator repositoryLocator,IMapsDirectlyToDatabaseTable toExport, FileInfo targetFileInfo = null):this(repositoryLocator,new []{toExport})
+        public ExecuteCommandExportObjectsToFile(IBasicActivateItems activator,IMapsDirectlyToDatabaseTable toExport, FileInfo targetFileInfo = null):this(activator,new []{toExport})
         {
             TargetFileInfo = targetFileInfo;
         }
 
-        public ExecuteCommandExportObjectsToFile(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IMapsDirectlyToDatabaseTable[] toExport, DirectoryInfo targetDirectoryInfo = null)
+        public ExecuteCommandExportObjectsToFile(IBasicActivateItems activator, IMapsDirectlyToDatabaseTable[] toExport, DirectoryInfo targetDirectoryInfo = null) : base(activator)
         {
-            _repositoryLocator = repositoryLocator;
+            _toExport = toExport;
+            ShowInExplorer = true;
+
+            _repositoryLocator = activator.RepositoryLocator;
             _toExport = toExport;
             
             TargetDirectoryInfo = targetDirectoryInfo;
 
-            _shareManager = new ShareManager(repositoryLocator);
+            _shareManager = new ShareManager(_repositoryLocator);
 
             if (toExport == null || !toExport.Any())
             {
                 SetImpossible("No objects exist to be exported");
                 return;
             }
-            _gatherer = new Gatherer(repositoryLocator);
+            _gatherer = new Gatherer(_repositoryLocator);
 
             var incompatible = toExport.FirstOrDefault(o => !_gatherer.CanGatherDependencies(o));
 
@@ -60,9 +69,48 @@ namespace Rdmp.Core.CommandExecution
                 SetImpossible("Object " + incompatible.GetType() + " is not supported by Gatherer");
         }
 
+        public override string GetCommandHelp()
+        {
+            return "Creates a share file with definitions for the supplied objects and all children";
+        }
+
+        public override Image GetImage(IIconProvider iconProvider)
+        {
+            return FamFamFamIcons.page_white_put;
+        }
+
+
+        public override string GetCommandName()
+        {
+            return "Export Object(s) to File...";
+        }
+
+
         public override void Execute()
         {
             base.Execute();
+       
+            if (IsSingleObject)
+            {
+                //Extract a single object (to file)
+                if (TargetFileInfo == null && BasicActivator.IsInteractive)
+                {
+                    TargetFileInfo = BasicActivator.SelectFile("Path to output share definition to", "Share Definition", "*.sd");
+
+                    if (TargetFileInfo == null)
+                        return;
+                }
+            }
+            else
+            {
+                if (TargetDirectoryInfo == null && BasicActivator.IsInteractive)
+                {
+                    TargetDirectoryInfo = BasicActivator.SelectDirectory("Output Directory");
+
+                    if (TargetDirectoryInfo == null)
+                        return;
+                }
+            }
 
             if (TargetFileInfo != null && IsSingleObject)
             {
@@ -75,7 +123,6 @@ namespace Rdmp.Core.CommandExecution
                 return;
             }
             
-
             if (TargetDirectoryInfo == null)
                 throw new Exception("No output directory set");
 
@@ -89,6 +136,10 @@ namespace Rdmp.Core.CommandExecution
                 var f = Path.Combine(TargetDirectoryInfo.FullName, filename);
                 File.WriteAllText(f, serial);
             }
+
+            
+            if (ShowInExplorer && TargetDirectoryInfo != null)
+                UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(TargetDirectoryInfo);
         }
     }
 }

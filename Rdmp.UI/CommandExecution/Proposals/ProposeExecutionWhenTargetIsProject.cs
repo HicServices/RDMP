@@ -6,6 +6,7 @@
 
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -42,8 +43,8 @@ namespace Rdmp.UI.CommandExecution.Proposals
 
             var file = cmd as FileCollectionCombineable;
 
-            if(file != null)
-                return new ExecuteCommandCreateNewCatalogueByImportingFile(ItemActivator,file).SetTarget(project);
+            if(file != null && file.Files.Length == 1)
+                return new ExecuteCommandCreateNewCatalogueByImportingFileUI(ItemActivator,file.Files[0]).SetTarget(project);
 
             var aggCommand = cmd as AggregateConfigurationCombineable;
             

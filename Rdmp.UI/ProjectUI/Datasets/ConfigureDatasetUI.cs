@@ -360,7 +360,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
             CommonFunctionality.AddToMenu(new ExecuteCommandShow(activator, databaseObject.ExtractableDataSet.Catalogue, 0, true), "Show Catalogue");
             CommonFunctionality.Add(new ExecuteCommandExecuteExtractionConfiguration(activator, databaseObject));
 
-            CommonFunctionality.AddChecks(new SelectedDataSetsChecker(SelectedDataSet));
+            CommonFunctionality.AddChecks(new SelectedDataSetsChecker(activator,SelectedDataSet));
 
             btnExclude.Enabled = !ReadOnly;
             btnExcludeAll.Enabled = !ReadOnly;

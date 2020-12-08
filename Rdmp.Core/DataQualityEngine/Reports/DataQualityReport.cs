@@ -13,10 +13,10 @@ namespace Rdmp.Core.DataQualityEngine.Reports
 {
     public abstract class DataQualityReport : IDataQualityReport
     {
-        protected Catalogue _catalogue;
+        protected ICatalogue _catalogue;
         public abstract void Check(ICheckNotifier notifier);
 
-        public virtual bool CatalogueSupportsReport(Catalogue c)
+        public virtual bool CatalogueSupportsReport(ICatalogue c)
         {
             _catalogue = c;
 
@@ -26,6 +26,6 @@ namespace Rdmp.Core.DataQualityEngine.Reports
             return checkNotifier.GetWorst() <= CheckResult.Warning;
 
         }
-        public abstract void GenerateReport(Catalogue c, IDataLoadEventListener listener, CancellationToken cancellationToken);
+        public abstract void GenerateReport(ICatalogue c, IDataLoadEventListener listener, CancellationToken cancellationToken);
     }
 }

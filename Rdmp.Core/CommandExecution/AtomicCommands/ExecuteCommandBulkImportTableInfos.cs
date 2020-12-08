@@ -10,33 +10,30 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Windows.Forms;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Attributes;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
-
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandBulkImportTableInfos : BasicUICommandExecution,IAtomicCommand
+    /// <summary>
+    /// Import references to many tables at once from a database as <see cref="TableInfo"/>.  Optionally importing descriptive metadata for them from <see cref="ShareDefinition"/> files
+    /// </summary>
+    public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomicCommand
     {
         private IExternalDatabaseServer _loggingServer;
 
-        public ExecuteCommandBulkImportTableInfos(IActivateItems activator):base(activator)
+        public ExecuteCommandBulkImportTableInfos(IBasicActivateItems activator) : base(activator)
         {
-            _loggingServer = Activator.ServerDefaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+            _loggingServer = activator.ServerDefaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
-            if(_loggingServer == null)
+            if (_loggingServer == null)
                 SetImpossible("There is no default logging server configured");
 
             UseTripleDotSuffix = true;
@@ -46,47 +43,46 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var db = SelectDatabase(false,"Import all Tables form Database...");
+            var db = SelectDatabase(false, "Import all Tables form Database...");
 
-            if(db == null)
+            if (db == null)
                 return;
 
 
-            ShareManager shareManager = new ShareManager(Activator.RepositoryLocator,LocalReferenceGetter);
+            ShareManager shareManager = new ShareManager(BasicActivator.RepositoryLocator, LocalReferenceGetter);
 
             List<ICatalogue> catalogues = new List<ICatalogue>();
 
             //don't do any double importing!
-            var existing = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>();
+            var existing = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>();
             var ignoredTables = new List<TableInfo>();
 
             if (YesNo("Would you also like to import ShareDefinitions (metadata)?", "Import Metadata From File(s)"))
             {
-                OpenFileDialog ofd = new OpenFileDialog() { Multiselect = true };
-                ofd.Filter = "Share Definitions|*.sd";
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    foreach (var f in ofd.FileNames)
-                        using (var stream = File.Open(f, FileMode.Open))
+                var chosen = BasicActivator.SelectFiles("Share Definition Files","Share Definitions","*.sd");
+
+                if(chosen != null)
+                    foreach (var f in chosen)
+                        using (var stream = File.Open(f.FullName, FileMode.Open))
                         {
                             var newObjects = shareManager.ImportSharedObject(stream);
 
-                            if(newObjects != null)
+                            if (newObjects != null)
                                 catalogues.AddRange(newObjects.OfType<ICatalogue>());
                         }
-                }
+                
             }
 
             bool generateCatalogues = false;
 
             if (YesNo("Would you like to try to guess non-matching Catalogues by Name?", "Guess by name"))
-                catalogues.AddRange(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>());
-            else if(YesNo("Would you like to generate empty Catalogues for non-matching tables instead?","Generate New Catalogues"))
+                catalogues.AddRange(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>());
+            else if (YesNo("Would you like to generate empty Catalogues for non-matching tables instead?", "Generate New Catalogues"))
                 generateCatalogues = true;
-            
+
             var married = new Dictionary<CatalogueItem, ColumnInfo>();
 
-            TableInfo anyNewTable = null;
+            ITableInfo anyNewTable = null;
 
             foreach (DiscoveredTable discoveredTable in db.DiscoverTables(includeViews: false))
             {
@@ -97,15 +93,13 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                     continue;
                 }
 
-                var importer = new TableInfoImporter(Activator.RepositoryLocator.CatalogueRepository, discoveredTable);
-                TableInfo ti;
-                ColumnInfo[] cis;
-
+                var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, discoveredTable);
+                
                 //import the table
-                importer.DoImport(out ti, out cis);
+                importer.DoImport(out var ti, out var cis);
 
                 anyNewTable = anyNewTable ?? ti;
-                     
+
                 //find a Catalogue of the same name (possibly imported from Share Definition)
                 var matchingCatalogues = catalogues.Where(c => c.Name.Equals(ti.GetRuntimeName(), StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
@@ -114,7 +108,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 {
                     //we know we want to import all these ColumnInfos
                     var unmatched = new List<ColumnInfo>(cis);
-                    
+
                     //But hopefully most already have orphan CatalogueItems we can hook them together to
                     foreach (var cataItem in matchingCatalogues[0].CatalogueItems)
                         if (cataItem.ColumnInfo_ID == null)
@@ -122,20 +116,20 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                             var matches = cataItem.GuessAssociatedColumn(cis, allowPartial: false).ToArray();
 
                             if (matches.Length == 1)
-                            {   
+                            {
                                 cataItem.SetColumnInfo(matches[0]);
                                 unmatched.Remove(matches[0]); //we married them together
-                                married.Add(cataItem,matches[0]);
+                                married.Add(cataItem, matches[0]);
                             }
                         }
 
                     //is anyone unmarried? i.e. new ColumnInfos that don't have CatalogueItems with the same name
                     foreach (ColumnInfo columnInfo in unmatched)
                     {
-                        var cataItem = new CatalogueItem(Activator.RepositoryLocator.CatalogueRepository, (Catalogue)matchingCatalogues[0], columnInfo.GetRuntimeName());
+                        var cataItem = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, (Catalogue)matchingCatalogues[0], columnInfo.GetRuntimeName());
                         cataItem.ColumnInfo_ID = columnInfo.ID;
                         cataItem.SaveToDatabase();
-                        married.Add(cataItem,columnInfo);
+                        married.Add(cataItem, columnInfo);
                     }
                 }
                 else if (generateCatalogues)
@@ -146,11 +140,11 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 foreach (var kvp in married)
                 {
                     //yup thats how we roll, the database is main memory!
-                    var ei = new ExtractionInformation(Activator.RepositoryLocator.CatalogueRepository, kvp.Key, kvp.Value, kvp.Value.Name);
+                    new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueRepository, kvp.Key, kvp.Value, kvp.Value.Name);
                 }
 
-            if(ignoredTables.Any())
-                WideMessageBox.Show("Ignored some tables","Ignored " + ignoredTables.Count + " tables because they already existed as TableInfos:" + string.Join(Environment.NewLine,ignoredTables.Select(ti=>ti.GetRuntimeName())));
+            if (ignoredTables.Any())
+                BasicActivator.Show("Ignored " + ignoredTables.Count + " tables because they already existed as TableInfos:" + string.Join(Environment.NewLine, ignoredTables.Select(ti => ti.GetRuntimeName())));
 
             if (anyNewTable != null)
             {

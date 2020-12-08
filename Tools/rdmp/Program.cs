@@ -14,6 +14,7 @@ using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
 using FAnsi.Implementations.PostgreSql;
 using NLog;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.CommandLine.Gui;
 using Rdmp.Core.CommandLine.Options;
@@ -184,12 +185,15 @@ namespace Rdmp.Core
             //if user wants to run checking chances are they don't want checks to fail becasue of errors logged during startup (MEF shows lots of errors!)
             if(opts.LogStartup && opts.Command == CommandLineActivity.check)
                 checker.Worst = LogLevel.Info;
-
+            
+            // where RDMP objects are stored
+            var repositoryLocator = opts.GetRepositoryLocator();
+            
             var runner = opts is ConsoleGuiOptions g ? 
                         new ConsoleGuiRunner(g):
-                         factory.CreateRunner(opts);
+                         factory.CreateRunner(new ThrowImmediatelyActivator(repositoryLocator,checker),opts);
 
-            int runExitCode = runner.Run(opts.GetRepositoryLocator(), listener, checker, new GracefulCancellationToken());
+            int runExitCode = runner.Run(repositoryLocator, listener, checker, new GracefulCancellationToken());
 
             if (opts.Command == CommandLineActivity.check)
                 checker.OnCheckPerformed(checker.Worst <= LogLevel.Warn

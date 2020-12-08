@@ -73,7 +73,7 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
             lmd.IgnoreTrigger = true;
             lmd.SaveToDatabase();
               
-            TableInfo ti = Import(tbl, lmd,logManager);
+            ITableInfo ti = Import(tbl, lmd,logManager);
             
             var projectDirectory = SetupLoadDirectory(lmd);
 

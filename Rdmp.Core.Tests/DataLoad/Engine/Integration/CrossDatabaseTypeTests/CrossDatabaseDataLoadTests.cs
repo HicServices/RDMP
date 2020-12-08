@@ -154,7 +154,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
                 lmd.SaveToDatabase();
             }   
 
-            TableInfo ti = Import(tbl, lmd,logManager);
+            ITableInfo ti = Import(tbl, lmd,logManager);
             
             var projectDirectory = SetupLoadDirectory(lmd);
 
@@ -349,8 +349,8 @@ MrMurder,2001-01-01,Yella");
             //create a new load
             var lmd = new LoadMetadata(CatalogueRepository, "MyLoading2");
             
-            TableInfo childTableInfo = Import(childTbl, lmd, logManager);
-            TableInfo parentTableInfo = Import(parentTbl,lmd,logManager);
+            ITableInfo childTableInfo = Import(childTbl, lmd, logManager);
+            ITableInfo parentTableInfo = Import(parentTbl,lmd,logManager);
 
             var projectDirectory = SetupLoadDirectory(lmd);
 

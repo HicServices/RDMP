@@ -24,17 +24,17 @@ namespace ReusableLibraryCode.DataAccess
         /// <summary>
         /// The name of the server e.g. localhost\sqlexpress
         /// </summary>
-        string Server { get; }
+        string Server { get; set;}
 
         /// <summary>
         /// The name of the database to connect to e.g. master, tempdb, MyCoolDb etc
         /// </summary>
-        string Database { get; }
+        string Database { get; set;}
 
         /// <summary>
         /// The DBMS type of the server e.g. Sql Server / MySql / Oracle
         /// </summary>
-        DatabaseType DatabaseType { get; }
+        DatabaseType DatabaseType { get; set;}
         
         /// <summary>
         /// The username/password to use when connecting to the server (otherwise integrated security is used)

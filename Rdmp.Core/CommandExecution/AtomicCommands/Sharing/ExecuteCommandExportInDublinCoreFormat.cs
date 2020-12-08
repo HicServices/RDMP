@@ -5,20 +5,20 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.IO;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Reports.DublinCore;
-using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands.Sharing
+namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing
 {
-    internal class ExecuteCommandExportInDublinCoreFormat : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandExportInDublinCoreFormat : BasicCommandExecution, IAtomicCommand
     {
         private readonly DublinCoreDefinition _definition;
         private FileInfo _toExport;
         readonly DublinCoreTranslater _translater = new DublinCoreTranslater();
 
-        public ExecuteCommandExportInDublinCoreFormat(IActivateItems activator, Catalogue catalogue) : base(activator)
+        public ExecuteCommandExportInDublinCoreFormat(IBasicActivateItems activator, Catalogue catalogue) : base(activator)
         {
             _definition = _translater.GenerateFrom(catalogue);
             UseTripleDotSuffix = true;
@@ -28,7 +28,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.Sharing
         {
             base.Execute();
 
-            if ((_toExport = _toExport??SelectSaveFile("Dublin Core Xml|*.xml")) == null)
+            if ((_toExport = _toExport ?? BasicActivator.SelectFile("Dublin Core Xml|*.xml")) == null)
                 return;
 
             using (var stream = File.OpenWrite(_toExport.FullName))

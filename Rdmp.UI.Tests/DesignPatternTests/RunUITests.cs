@@ -13,11 +13,11 @@ using Moq;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.Automation;
+using Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.CommandExecution.AtomicCommands.Automation;
-using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs.NavigateTo;
 using ReusableLibraryCode.Checks;
@@ -30,7 +30,6 @@ namespace Rdmp.UI.Tests.DesignPatternTests
         private List<Type> allowedToBeIncompatible
             = new List<Type>(new[]
             {
-                typeof(ExecuteCommandExportObjectsToFileUI),
                 typeof(ExecuteCommandShow),
                 typeof(ExecuteCommandSetDataAccessContextForCredentials),
                 typeof(ExecuteCommandActivate),
@@ -52,10 +51,8 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                 typeof(ExecuteCommandEditPipelineWithUseCase),
 
                 typeof(ExecuteCommandExportLoggedDataToCsv),
-                typeof(ExecuteCommandCopyRunCommandToClipboard),
-                
-                typeof(ExecuteCommandRunDetached),
-                
+                typeof(ExecuteCommandGenerateRunCommand),
+                                
                 typeof(ExecuteCommandShowXmlDoc),
                 typeof(ImpossibleCommand),
      

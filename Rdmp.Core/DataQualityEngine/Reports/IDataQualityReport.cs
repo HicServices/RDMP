@@ -17,7 +17,7 @@ namespace Rdmp.Core.DataQualityEngine.Reports
     /// </summary>
     public interface IDataQualityReport: ICheckable
     {
-        bool CatalogueSupportsReport(Catalogue c);
-        void GenerateReport(Catalogue c, IDataLoadEventListener listener,CancellationToken cancellationToken);
+        bool CatalogueSupportsReport(ICatalogue c);
+        void GenerateReport(ICatalogue c, IDataLoadEventListener listener,CancellationToken cancellationToken);
     }
 }

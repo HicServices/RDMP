@@ -324,7 +324,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             lookuptbl.Drop();
         }
 
-        private string GetSql(Catalogue mainCata)
+        private string GetSql(ICatalogue mainCata)
         {
             mainCata.ClearAllInjections();
 

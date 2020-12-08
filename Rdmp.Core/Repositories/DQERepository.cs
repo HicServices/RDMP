@@ -46,17 +46,17 @@ namespace Rdmp.Core.Repositories
              _connectionStringBuilder = DiscoveredServer.Builder;
         }
 
-        public Evaluation GetMostRecentEvaluationFor(Catalogue c)
+        public Evaluation GetMostRecentEvaluationFor(ICatalogue c)
         {
             return GetEvaluationsWhere("where DateOfEvaluation = (select MAX(DateOfEvaluation) from Evaluation where CatalogueID = " + c.ID + ")").SingleOrDefault();
         }
 
-        public IEnumerable<Evaluation> GetAllEvaluationsFor(Catalogue catalogue)
+        public IEnumerable<Evaluation> GetAllEvaluationsFor(ICatalogue catalogue)
         {
             return GetEvaluationsWhere("where CatalogueID = " + catalogue.ID + " order by DateOfEvaluation asc");
         }
 
-        public bool HasEvaluations(Catalogue catalogue)
+        public bool HasEvaluations(ICatalogue catalogue)
         {
             using (var con = GetConnection())
             {

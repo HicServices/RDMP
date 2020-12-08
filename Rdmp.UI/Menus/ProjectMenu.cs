@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -26,7 +27,7 @@ namespace Rdmp.UI.Menus
             Add(new ExecuteCommandRelease(_activator).SetTarget(project));
             Add(new ExecuteCommandExecuteExtractionConfiguration(_activator).SetTarget(project));
 
-            Add(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator)
+            Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator)
             {
                 OverrideCommandName = "From File..."
             }.SetTarget(project), Keys.None, AddProjectSpecificCatalogueMenuText,_activator.CoreIconProvider.GetImage(RDMPConcept.ProjectCatalogue,OverlayKind.Add));

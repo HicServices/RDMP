@@ -123,7 +123,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         /// <param name="repository"></param>
         /// <param name="parent"></param>
         /// <param name="name"></param>
-        public PreLoadDiscardedColumn(ICatalogueRepository repository, TableInfo parent, string name = null)
+        public PreLoadDiscardedColumn(ICatalogueRepository repository, ITableInfo parent, string name = null)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {

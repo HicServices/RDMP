@@ -10,6 +10,7 @@ using BrightIdeasSoftware;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -116,7 +117,7 @@ namespace Rdmp.UI.Collections
             
             if (isFirstTime)
             {
-                CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingFile(Activator),GlobalStrings.FromFile,null,"New...");
+                CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator),GlobalStrings.FromFile,null,"New...");
                 CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator),GlobalStrings.FromDatabase,null,"New...");
             }
 
@@ -187,7 +188,7 @@ namespace Rdmp.UI.Collections
             //Things that are always visible regardless
             CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[]
             {
-                new ExecuteCommandCreateNewCatalogueByImportingFile(a),
+                new ExecuteCommandCreateNewCatalogueByImportingFileUI(a),
                 new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(a),
                 new ExecuteCommandCreateNewEmptyCatalogue(a)
             };
