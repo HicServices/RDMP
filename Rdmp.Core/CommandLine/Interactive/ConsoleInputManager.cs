@@ -94,7 +94,16 @@ namespace Rdmp.Core.CommandLine.Interactive
                 throw new InputDisallowedException($"Value required for '{prompt}'");
 
             string chosenStr = GetString(prompt, Enum.GetNames(enumType).ToList());
-            chosen = (Enum)Enum.Parse(enumType, chosenStr);
+            try
+            {
+                chosen = (Enum)Enum.Parse(enumType, chosenStr);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine($"Could not parse value.  Valid Enum values are:{Environment.NewLine}{string.Join(Environment.NewLine,Enum.GetNames(enumType))}" );
+                throw;
+            }
+            
             return true;
         }
 
@@ -183,7 +192,6 @@ namespace Rdmp.Core.CommandLine.Interactive
             if (DisallowInput)
                 throw new InputDisallowedException("Value required");
 
-            Console.WriteLine($"Format: {picker.Format}");
             string line = ReadLine(picker.GetAutoCompleteIfAny());
 
             return picker.Parse(line, 0);
@@ -193,11 +201,6 @@ namespace Rdmp.Core.CommandLine.Interactive
             if (DisallowInput)
                 throw new InputDisallowedException("Value required");
 
-            Console.WriteLine("Enter value in one of the following formats:");
-
-            foreach (PickObjectBase p in pickers)
-                Console.WriteLine($"Format: {p.Format}");
-            
             string line = ReadLine(autoComplete);
             
             var picker = new CommandLineObjectPicker(new[]{line},RepositoryLocator,pickers);
