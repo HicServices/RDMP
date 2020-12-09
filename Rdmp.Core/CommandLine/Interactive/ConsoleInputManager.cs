@@ -59,7 +59,7 @@ namespace Rdmp.Core.CommandLine.Interactive
 
             Console.WriteLine(header);
             Console.Write(prompt +":");
-            text = ReadLine();
+            text = ReadLineWithAuto();
             return !string.IsNullOrWhiteSpace(text);
         }
 
@@ -69,7 +69,7 @@ namespace Rdmp.Core.CommandLine.Interactive
                 throw new InputDisallowedException($"Value required for '{taskDescription}'");
 
             Console.WriteLine(taskDescription);
-            var value = ReadLine(new PickDatabase());
+            var value = ReadLineWithAuto(new PickDatabase());
             return value.Database;
         }
 
@@ -79,7 +79,7 @@ namespace Rdmp.Core.CommandLine.Interactive
                 throw new InputDisallowedException($"Value required for '{taskDescription}'");
 
             Console.WriteLine(taskDescription);
-            var value = ReadLine(new PickTable());
+            var value = ReadLineWithAuto(new PickTable());
             return value.Table;
         }
 
@@ -137,7 +137,7 @@ namespace Rdmp.Core.CommandLine.Interactive
 
             Console.WriteLine(prompt);
 
-            var value = ReadLine(new PickObjectBase[]
+            var value = ReadLineWithAuto(new PickObjectBase[]
                 {new PickObjectByID(RepositoryLocator), new PickObjectByName(RepositoryLocator)},
                 availableObjects.Select(t=>t.GetType().Name).Distinct());
             
@@ -164,7 +164,7 @@ namespace Rdmp.Core.CommandLine.Interactive
             if (availableObjects.Length == 1 && allowAutoSelect)
                 return availableObjects[0];
 
-            var value = ReadLine(new PickObjectBase[]
+            var value = ReadLineWithAuto(new PickObjectBase[]
                 {new PickObjectByID(RepositoryLocator), new PickObjectByName(RepositoryLocator)},
                 availableObjects.Select(t=>t.GetType().Name).Distinct());
 
@@ -179,29 +179,31 @@ namespace Rdmp.Core.CommandLine.Interactive
             return chosen;
         }
 
-        private string ReadLine(IEnumerable<string> autoComplete = null)
+        private string ReadLineWithAuto(IEnumerable<string> autoComplete = null)
         {
             if (DisallowInput)
                 throw new InputDisallowedException("Value required");
 
-            return autoComplete != null ? GetString("", autoComplete.ToList()) : Console.ReadLine();
+            ReadLine.AutoCompletionHandler = new AutoComplete(autoComplete);
+
+            return ReadLine.Read();
         }
 
-        private CommandLineObjectPickerArgumentValue ReadLine(PickObjectBase picker)
+        private CommandLineObjectPickerArgumentValue ReadLineWithAuto(PickObjectBase picker)
         {
             if (DisallowInput)
                 throw new InputDisallowedException("Value required");
 
-            string line = ReadLine(picker.GetAutoCompleteIfAny());
+            string line = ReadLineWithAuto(picker.GetAutoCompleteIfAny());
 
             return picker.Parse(line, 0);
         }
-        private CommandLineObjectPickerArgumentValue ReadLine(PickObjectBase[] pickers,IEnumerable<string> autoComplete)
+        private CommandLineObjectPickerArgumentValue ReadLineWithAuto(PickObjectBase[] pickers,IEnumerable<string> autoComplete)
         {
             if (DisallowInput)
                 throw new InputDisallowedException("Value required");
 
-            string line = ReadLine(autoComplete);
+            string line = ReadLineWithAuto(autoComplete);
             
             var picker = new CommandLineObjectPicker(new[]{line},RepositoryLocator,pickers);
             return picker[0];
@@ -282,7 +284,7 @@ namespace Rdmp.Core.CommandLine.Interactive
                 throw new InputDisallowedException($"Value required for '{prompt}'");
 
             Console.WriteLine($"Enter value for {prompt}:");
-            chosen = UsefulStuff.ChangeType(ReadLine(), paramType);
+            chosen = UsefulStuff.ChangeType(ReadLineWithAuto(), paramType);
 
             return true;
         }
@@ -305,43 +307,9 @@ namespace Rdmp.Core.CommandLine.Interactive
         {
             if (DisallowInput)
                 throw new InputDisallowedException($"Value required for '{prompt}'");
-
-            Console.WriteLine(prompt +":");
-
-            //This implementation does not play nice with Linux
-            if (EnvironmentInfo.IsLinux)
-                return Console.ReadLine();
             
-            var cyclingAutoComplete = new CyclingAutoComplete();
-            while (true)
-            {
-                var result = ConsoleExt.ReadKey();
-                switch (result.Key)
-                {
-                    case ConsoleKey.Enter:
-                        var lowerLine = result.LineBeforeKeyPress.Line.ToLower();
-                        if (lowerLine == "exit")
-                            return "exit";
-                        else
-                        {
-                            var match = options.FirstOrDefault(c => c.ToLower() == lowerLine);
-
-                            if (match != null)
-                                return match;
-
-                            return result.LineBeforeKeyPress.Line;
-                        }
-
-                    case ConsoleKey.Tab:
-                        var shiftPressed = (result.Modifiers & ConsoleModifiers.Shift) != 0;
-                        var cyclingDirection = shiftPressed ? CyclingDirections.Backward : CyclingDirections.Forward;
-                        var autoCompletedLine =
-                            cyclingAutoComplete.AutoComplete(result.LineBeforeKeyPress.LineBeforeCursor,
-                                options, cyclingDirection,true);
-                        ConsoleExt.SetLine(autoCompletedLine);
-                        break;
-                }
-            }
+            ReadLine.AutoCompletionHandler = new AutoComplete(options);
+            return ReadLine.Read(prompt +":");
         }
 
         public override void ShowData(IViewSQLAndResultsCollection collection)
