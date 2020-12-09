@@ -111,6 +111,20 @@ namespace Rdmp.Core.CommandLine.Gui
 
 			if(obj != null)
 	            _activator.Publish(obj);
+			else
+            {
+				// Selected node is not refreshable
+
+				//refresh any object (to update core child provider)
+				var anyObject = _activator.CoreChildProvider.GetAllSearchables().Keys.FirstOrDefault();
+
+				if(anyObject != null)
+					_activator.Publish(anyObject);
+
+				//and refresh the selected tree node
+				_treeView.RefreshObject(_treeView.SelectedObject,true);
+            }
+				
         }
 
         private void Find()
@@ -268,7 +282,15 @@ namespace Rdmp.Core.CommandLine.Gui
 					return _activator.CoreChildProvider.AllLoadMetadatas;
 				
 				if (ReferenceEquals(model , CohortConfigs))
-					return _activator.CoreChildProvider.AllCohortIdentificationConfigurations;
+					if(dx != null)
+                    {
+						return new object[]{
+							dx.AllProjectCohortIdentificationConfigurationsNode,
+							dx.AllFreeCohortIdentificationConfigurationsNode 
+							};
+                    }
+					else
+						return _activator.CoreChildProvider.AllCohortIdentificationConfigurations;
 				
 				if (ReferenceEquals(model , BuiltCohorts) && dx != null)
 					return dx.Cohorts;
