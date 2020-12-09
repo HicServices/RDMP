@@ -43,7 +43,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-            WideMessageBox.Show(_title, _help, WideMessageBoxTheme.Help);
+            BasicActivator.Show(_title, _help);
         }
     }
 }

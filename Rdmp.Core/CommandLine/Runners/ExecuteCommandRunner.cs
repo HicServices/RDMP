@@ -112,7 +112,7 @@ namespace Rdmp.Core.CommandLine.Runners
                 }
                 catch (Exception ex)
                 {
-                    _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error,"Command Failed",ex));
+                    Console.WriteLine(ex.Message);
                 }
 
 

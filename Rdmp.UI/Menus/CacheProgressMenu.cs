@@ -18,9 +18,7 @@ namespace Rdmp.UI.Menus
             : base(args, cacheProgress)
         {
             Add(new ExecuteCommandEditCacheProgress(args.ItemActivator, cacheProgress));
-
-            Add(new ExecuteCommandSetPermissionWindow(_activator,cacheProgress));
-            
+                        
             ReBrandActivateAs("Execute Caching",RDMPConcept.CacheProgress,OverlayKind.Execute);
         }
     }

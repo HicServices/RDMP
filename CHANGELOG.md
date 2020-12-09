@@ -34,6 +34,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - RemoteDatabaseAttacher
 - Fixed View Inserts/Updates dialog when using non SqlServer DBMS (e.g. MySql)
 - Fixed various layout and performance issues with RDMP console GUI.
+- Fixed `rdmp cmd` loop exiting when commands entered result in error.
+- Fixed autocomplete in `rdmp cmd` mode and enabled for Linux
 
 ### Changed
 

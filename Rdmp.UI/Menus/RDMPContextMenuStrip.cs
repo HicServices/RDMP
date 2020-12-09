@@ -126,8 +126,6 @@ namespace Rdmp.UI.Menus
             
             AddFactoryMenuItems();
 
-            var deletable = _o as IDeleteable;
-            var nameable = _o as INamed;
             var databaseEntity = _o as DatabaseEntity;
 
             var treeMenuItem = AddMenuIfNotExists(Tree);
@@ -157,18 +155,6 @@ namespace Rdmp.UI.Menus
             if(Items.Count > 0)
                 Items.Add(new ToolStripSeparator());
 
-            //add delete/rename etc
-            if (deletable != null)
-            {
-                if (_args.Masquerader is IDeleteable)
-                    deletable = (IDeleteable)_args.Masquerader;
-
-                Add(new ExecuteCommandDelete(_activator, deletable), Keys.Delete);
-            }
-
-            if (nameable != null)
-                Add(new ExecuteCommandRename(_activator, nameable), Keys.F2);
-
             //add seldom used submenus (pin, view dependencies etc)
             Items.Add(inspectionMenuItem);
             PopulateInspectionMenu(commonFunctionality, inspectionMenuItem);
@@ -197,13 +183,18 @@ namespace Rdmp.UI.Menus
             foreach (var toPresent in factory.GetCommandsWithPresentation(_o))
             {
                 //we will add this ourselves in AddCommonMenuItems
-                if(toPresent.Command is ExecuteCommandDelete || toPresent.Command is ExecuteCommandActivate)
+                if(toPresent.Command is ExecuteCommandActivate)
                     continue;
 
+                var key = Keys.None;
+
+                if(!string.IsNullOrWhiteSpace(toPresent.SuggestedShortcut))
+                    Enum.TryParse<Keys>(toPresent.SuggestedShortcut,out key);
+
                 if(toPresent.SuggestedCategory == null)
-                    Add(toPresent.Command);
+                    Add(toPresent.Command,key);
                 else
-                    Add(toPresent.Command,Keys.None,toPresent.SuggestedCategory);                
+                    Add(toPresent.Command,key,toPresent.SuggestedCategory);                
             }
         }
 

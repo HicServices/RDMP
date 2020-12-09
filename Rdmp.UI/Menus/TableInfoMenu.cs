@@ -36,14 +36,6 @@ namespace Rdmp.UI.Menus
             Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null, tableInfo),Keys.None,"New");
             Add(new ExecuteCommandAddJoinInfo(_activator, tableInfo),Keys.None,"New");
                                     
-            Add(new ExecuteCommandUseCredentialsToAccessTableInfoData(_activator,null,tableInfo));
-            
-            Items.Add(new ToolStripSeparator());
-
-            Add(new ExecuteCommandScriptTable(_activator, tableInfo));
-
-            Items.Add(new ToolStripSeparator());
-            
             Items.Add("Configure Primary Key Collision Resolution ", CatalogueIcons.CollisionResolution, delegate { ConfigurePrimaryKeyCollisionResolution_Click(tableInfo); });
 
             Items.Add(new ToolStripSeparator());

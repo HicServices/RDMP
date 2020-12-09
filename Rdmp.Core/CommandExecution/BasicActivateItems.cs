@@ -312,7 +312,12 @@ namespace Rdmp.Core.CommandExecution
         }
 
         /// <inheritdoc/>
-        public abstract void Show(string message);
+        public void Show(string message)
+        {
+            Show("Message",message);
+        }
+
+        public abstract void Show(string title, string message);
 
         /// <inheritdoc/>
         public abstract bool TypeText(string header, string prompt, int maxLength, string initialText, out string text,

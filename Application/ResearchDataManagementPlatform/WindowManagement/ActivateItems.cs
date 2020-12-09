@@ -96,9 +96,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 RefreshBus.Publish(this,new RefreshObjectEventArgs(de));
         }
 
-        public override void Show(string message)
+        public override void Show(string title, string message)
         {
-            WideMessageBox.Show("Message",message,Environment.StackTrace,true,null,WideMessageBoxTheme.Help);
+            WideMessageBox.Show(title,message,Environment.StackTrace,true,null,WideMessageBoxTheme.Help);
         }
 
         public ICombineableFactory CommandFactory { get; private set; }

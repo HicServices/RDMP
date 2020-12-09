@@ -13,6 +13,7 @@ using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Providers.Nodes;
@@ -190,13 +191,17 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandBulkImportTableInfos(_activator));
             }
 
-            if(o is TableInfo ti)
+            if(Is(o,out TableInfo ti))
             {
                 yield return new CommandPresentation(new ExecuteCommandViewData(_activator, ti));
                 
                 yield return new CommandPresentation(new ExecuteCommandImportTableInfo(_activator,null,false),New);
                 yield return new CommandPresentation(new ExecuteCommandCreateNewCatalogueFromTableInfo(_activator, ti),New);
-                        
+                                    
+                yield return new CommandPresentation(new ExecuteCommandUseCredentialsToAccessTableInfoData(_activator,null,ti));
+            
+                yield return new CommandPresentation(new ExecuteCommandScriptTable(_activator, ti));
+
                 CommandPresentation[] alterCommands = null;
                 try
                 {
@@ -221,12 +226,50 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandNewObject(_activator,()=>new ColumnInfo(_activator.RepositoryLocator.CatalogueRepository, Guid.NewGuid().ToString(), "fish", ti)));
             }
                 
+            if(o is AllStandardRegexesNode)
+                yield return new CommandPresentation(new ExecuteCommandCreateNewStandardRegex(_activator));
 
-            if(o is IDisableable disable)
+            if(o is ArbitraryFolderNode f)
+                if(f.CommandGetter != null)
+                    foreach(IAtomicCommand cmd in f.CommandGetter())
+                        yield return new CommandPresentation(cmd);
+
+            if(o is CacheProgress cp)
+                yield return new CommandPresentation(new ExecuteCommandSetPermissionWindow(_activator,cp));
+
+            if(Is(o,out IDisableable disable))
                 yield return new CommandPresentation(new ExecuteCommandDisableOrEnable(_activator, disable));
 
-			if(o is IDeleteable deletable)
-				yield return new CommandPresentation(new ExecuteCommandDelete(_activator,deletable));
+            // If the root object is deletable offer deleting
+			if(Is(o,out IDeleteable deletable))
+				yield return new CommandPresentation(new ExecuteCommandDelete(_activator,deletable)){SuggestedShortcut="Delete" };
+                      
+            if(Is(o, out INamed n))
+                yield return new CommandPresentation(new ExecuteCommandRename(_activator, n)){SuggestedShortcut = "F2" };
+        }
+
+        /// <summary>
+        /// Returns o is <typeparamref name="T"/> but with auto unpacking of <see cref="IMasqueradeAs"/>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="o"></param>
+        /// <param name="match"></param>
+        /// <returns></returns>
+        private bool Is<T>(object o, out T match)
+        {
+            if(o is T)
+            {
+                match = (T)o;
+                return true;
+            }
+
+            if(o is IMasqueradeAs m)
+            {
+                return Is<T>(m.MasqueradingAs(),out match);
+            }
+
+            match = default(T);
+            return false;
         }
     }
 }

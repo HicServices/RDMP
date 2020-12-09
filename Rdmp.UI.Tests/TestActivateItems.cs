@@ -100,9 +100,9 @@ namespace Rdmp.UI.Tests
                 RefreshBus.Publish(this,new RefreshObjectEventArgs(e));
         }
 
-        public override void Show(string message)
+        public override void Show(string title,string message)
         {
-            Assert.Fail("Did not expect a MessageBox to be shown");
+            Assert.Fail($"Did not expect a MessageBox to be shown but it was '{message}'");
         }
 
         public ICombineableFactory CommandFactory { get; private set; }

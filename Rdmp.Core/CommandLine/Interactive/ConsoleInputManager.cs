@@ -46,7 +46,7 @@ namespace Rdmp.Core.CommandLine.Interactive
         public ConsoleInputManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier):base(repositoryLocator,globalErrorCheckNotifier)
         {
         }
-        public override void Show(string message)
+        public override void Show(string title,string message)
         {
             Console.WriteLine(message);
         }

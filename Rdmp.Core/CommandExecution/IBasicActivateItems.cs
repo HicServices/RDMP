@@ -243,6 +243,12 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="message"></param>
         void Show(string message);
 
+        /// <summary>
+        /// Display the given message to the user (e.g. in a MessageBox or out into the Console).  If provided <paramref name="title"/> may also be featured in the presentation
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="message"></param>
+        void Show(string title, string message);
         
         /// <summary>
         /// Prompts user to provide some textual input

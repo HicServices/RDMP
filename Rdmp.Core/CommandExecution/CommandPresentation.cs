@@ -14,6 +14,11 @@ namespace Rdmp.Core.CommandExecution
 
         public IAtomicCommand Command {get;set;}
 
+        /// <summary>
+        /// Key which should result in this command being fired e.g. "F2"
+        /// </summary>
+        public string SuggestedShortcut { get; set; }
+
         public CommandPresentation(IAtomicCommand command)
         {
             Command = command;

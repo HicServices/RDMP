@@ -49,10 +49,10 @@ namespace Rdmp.Core.CommandLine.Gui
             return false;
         }
 
-        public override void Show(string message)
+        public override void Show(string title, string message)
         {
             GetDialogDimensions(out var w, out var h);
-            MessageBox.Query(w,h,"Message",message,"ok");
+            MessageBox.Query(w,h,title,message,"ok");
         }
         public override bool YesNo(string text, string caption, out bool chosen)
         {

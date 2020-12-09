@@ -44,7 +44,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
         private void Activator_Published(IMapsDirectlyToDatabaseTable obj)
         {
-            _treeView.RefreshObject(obj,true);
+            _treeView.RebuildTree();
         }
 
         private void Quit()
@@ -56,6 +56,7 @@ namespace Rdmp.Core.CommandLine.Gui
         {
 			var menu = new MenuBar (new MenuBarItem [] {
 				new MenuBarItem ("_File (F9)", new MenuItem [] {
+					new MenuItem ("_New...", "", () => New()),
 					new MenuItem ("_Find...", "", () => Find()),
 					new MenuItem ("_Run...", "", () => Run()),
 					new MenuItem ("_Refresh...", "", () => Publish()),
@@ -94,11 +95,13 @@ namespace Rdmp.Core.CommandLine.Gui
 			top.Add(_win);
 
             _treeView.KeyPress += treeView_KeyPress;
+            _treeView.SelectionChanged += _treeView_SelectionChanged;
 
 			var statusBar = new StatusBar (new StatusItem [] {
 				new StatusItem(Key.ControlQ, "~^Q~ Quit", () => Quit()),
 				new StatusItem(Key.ControlR, "~^R~ Run", () => Run()),
 				new StatusItem(Key.ControlF, "~^F~ Find", () => Find()),
+				new StatusItem(Key.ControlN, "~^N~ New", () => New()),
 				new StatusItem(Key.F5, "~F5~ Refresh", () => Publish()),
 			});
 
@@ -165,6 +168,12 @@ namespace Rdmp.Core.CommandLine.Gui
 			_treeView.SelectedObject = selected;
 			_treeView.ScrollOffset = _treeView.GetScrollOffsetOf(selected);
 			_treeView.SetNeedsDisplay();
+        }
+
+        private void _treeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+			if(e.NewValue != null)
+	            _treeView.RefreshObject(e.NewValue);
         }
 
         private void Menu()
@@ -365,5 +374,20 @@ namespace Rdmp.Core.CommandLine.Gui
                     _activator.ShowException("Run Failed",exception);
                 }
         }
+        private void New()
+        {
+			var commandInvoker = new CommandInvoker(_activator);
+            commandInvoker.CommandImpossible += (o, e) => { _activator.Show("Command Impossible because:" + e.Command.ReasonCommandImpossible);};
+            
+            try
+            {
+                commandInvoker.ExecuteCommand(typeof(ExecuteCommandNewObject),null);
+            }
+            catch (Exception exception)
+            {
+                _activator.ShowException("New Object Failed",exception);
+            }
+        }
+
     }
 }

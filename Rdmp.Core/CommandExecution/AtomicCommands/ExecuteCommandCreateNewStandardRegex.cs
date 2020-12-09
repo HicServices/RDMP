@@ -5,24 +5,22 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandCreateNewStandardRegex : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandCreateNewStandardRegex : BasicCommandExecution, IAtomicCommand
     {
-        public ExecuteCommandCreateNewStandardRegex(IActivateItems activator):base(activator)
+        public ExecuteCommandCreateNewStandardRegex(IBasicActivateItems activator) : base(activator)
         {
-            
+
         }
 
         public override void Execute()
         {
-            var regex = new StandardRegex(Activator.RepositoryLocator.CatalogueRepository);
+            var regex = new StandardRegex(BasicActivator.RepositoryLocator.CatalogueRepository);
 
             Publish(regex);
             Emphasise(regex);
