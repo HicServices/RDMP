@@ -4,24 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Linq;
 using System.Windows.Forms;
-using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.CommandExecution.AtomicCommands.Alter;
-using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
-using Rdmp.Core.CommandExecution.Combining;
-using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.ChecksUI;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using Rdmp.UI.Menus.MenuItems;
 using Rdmp.UI.SimpleDialogs;
-using ReusableLibraryCode.Checks;
 
 namespace Rdmp.UI.Menus
 {

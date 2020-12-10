@@ -5,30 +5,34 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.ProjectUI;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandViewSelectedDataSetsExtractionSql:BasicUICommandExecution,IAtomicCommandWithTarget
+    public class ExecuteCommandViewSelectedDataSetsExtractionSql : BasicCommandExecution, IAtomicCommandWithTarget
     {
-        private ExtractionConfiguration _extractionConfiguration;
-        private SelectedDataSets _selectedDataSet;
-
+        private IExtractionConfiguration _extractionConfiguration;
+        private ISelectedDataSets _selectedDataSet;
+        
         [UseWithObjectConstructor]
-        public ExecuteCommandViewSelectedDataSetsExtractionSql(IActivateItems activator,ExtractionConfiguration extractionConfiguration)
+        public ExecuteCommandViewSelectedDataSetsExtractionSql(IBasicActivateItems activator, ExtractionConfiguration extractionConfiguration)
             : base(activator)
         {
             _extractionConfiguration = extractionConfiguration;
         }
 
-        public ExecuteCommandViewSelectedDataSetsExtractionSql(IActivateItems activator) : base(activator)
+        public ExecuteCommandViewSelectedDataSetsExtractionSql(IBasicActivateItems activator, SelectedDataSets sds)
+            : base(activator)
+        {
+            _extractionConfiguration = sds.ExtractionConfiguration;
+            _selectedDataSet = sds;
+        }
+        public ExecuteCommandViewSelectedDataSetsExtractionSql(IBasicActivateItems activator) : base(activator)
         {
         }
 
@@ -39,14 +43,14 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         public override Image GetImage(IIconProvider iconProvider)
         {
-            return iconProvider.GetImage(RDMPConcept.SQL,OverlayKind.Execute);
+            return iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute);
         }
 
         public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
         {
-            if(target is SelectedDataSets)
+            if (target is SelectedDataSets)
             {
-                _selectedDataSet =  target as SelectedDataSets;
+                _selectedDataSet = target as SelectedDataSets;
 
                 if (_selectedDataSet != null)
                     //must have datasets and have a cohort configured
@@ -54,9 +58,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                         SetImpossible("No cohort has been selected for ExtractionConfiguration");
             }
 
-            if(target is ExtractionConfiguration)
+            if (target is ExtractionConfiguration)
                 _extractionConfiguration = target as ExtractionConfiguration;
-            
+
             return this;
         }
 
@@ -65,12 +69,12 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             base.Execute();
 
             if (_selectedDataSet == null && _extractionConfiguration != null)
-                _selectedDataSet = SelectOne(Activator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<SelectedDataSets>(_extractionConfiguration));
+                _selectedDataSet = SelectOne(BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<SelectedDataSets>(_extractionConfiguration));
 
-            if(_selectedDataSet == null)
+            if (_selectedDataSet == null)
                 return;
 
-            Activator.Activate<ViewExtractionConfigurationSQLUI, SelectedDataSets>(_selectedDataSet);
+            BasicActivator.ShowData(new ViewSelectedDatasetExtractionUICollection(_selectedDataSet));
         }
     }
 }
