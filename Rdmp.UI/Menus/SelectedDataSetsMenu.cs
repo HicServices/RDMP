@@ -7,16 +7,12 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
-using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ProjectUI.Graphs;
 using Rdmp.UI.SimpleDialogs;
-using ReusableLibraryCode.Icons.IconProvision;
 
 
 namespace Rdmp.UI.Menus
@@ -59,36 +55,10 @@ namespace Rdmp.UI.Menus
             Items.Add(graphs);
             ////////////////////////////////////////////////////////////////////
             
-            Items.Add(new ToolStripSeparator());
-
-            var addRootFilter = new ToolStripMenuItem("Add Filter Container", _activator.CoreIconProvider.GetImage(RDMPConcept.FilterContainer, OverlayKind.Add) , (s, e) => AddFilterContainer());
-            addRootFilter.Enabled = root == null;
-            Items.Add(addRootFilter);
-            
-            Add(new ExecuteCommandImportFilterContainerTree(_activator,selectedDataSet));
-
-            Add(new ExecuteCommandCreateNewFilter(_activator,selectedDataSet));
-
-            Add(new ExecuteCommandCreateNewFilterFromCatalogue(_activator,selectedDataSet));
-            
-            Items.Add(new ToolStripSeparator());
-
-            Add(new ExecuteCommandViewSelectedDataSetsExtractionSql(_activator).SetTarget(selectedDataSet));
             
             Add(new ExecuteCommandViewThenVsNowSql(_activator, selectedDataSet));
 
             Add(new ExecuteCommandOpenExtractionDirectory(_activator, selectedDataSet));
-        }
-
-
-        private void AddFilterContainer()
-        {
-            var container = new FilterContainer(RepositoryLocator.DataExportRepository);
-            _selectedDataSet.RootFilterContainer_ID = container.ID;
-            _selectedDataSet.SaveToDatabase();
-
-            Publish(_selectedDataSet);
-            Emphasise(container);
         }
 
         private void GenerateExtractionGraphs(params AggregateConfiguration[] graphsToExecute)

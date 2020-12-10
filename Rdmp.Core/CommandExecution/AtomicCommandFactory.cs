@@ -16,6 +16,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Databases;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
@@ -236,6 +237,20 @@ namespace Rdmp.Core.CommandExecution
 
             if(o is CacheProgress cp)
                 yield return new CommandPresentation(new ExecuteCommandSetPermissionWindow(_activator,cp));
+
+            if(o is SelectedDataSets sds)
+            {
+                yield return new CommandPresentation(new ExecuteCommandAddNewFilterContainer(_activator,sds));
+            
+                yield return new CommandPresentation(new ExecuteCommandImportFilterContainerTree(_activator,sds));
+
+                yield return new CommandPresentation(new ExecuteCommandCreateNewFilter(_activator,sds));
+
+                yield return new CommandPresentation(new ExecuteCommandCreateNewFilterFromCatalogue(_activator,sds));
+            
+                yield return new CommandPresentation(new ExecuteCommandViewSelectedDataSetsExtractionSql(_activator,sds));
+            
+            }
 
             if(Is(o,out IDisableable disable))
                 yield return new CommandPresentation(new ExecuteCommandDisableOrEnable(_activator, disable));
