@@ -7,6 +7,37 @@ using System.Linq;
 namespace Terminal.Gui.Views {
 
 	/// <summary>
+	/// Defines rendering options that affect how the table is displayed
+	/// </summary>
+	public class TableStyle {
+		
+		/// <summary>
+		/// When scrolling down always lock the column headers in place as the first row of the table
+		/// </summary>
+		public bool AlwaysShowHeaders {get;set;} = false;
+
+		/// <summary>
+		/// True to render a solid line above the headers
+		/// </summary>
+		public bool ShowHorizontalHeaderOverline {get;set;} = true;
+
+		/// <summary>
+		/// True to render a solid line under the headers
+		/// </summary>
+		public bool ShowHorizontalHeaderUnderline {get;set;} = true;
+
+		/// <summary>
+		/// True to render a solid line vertical line between cells
+		/// </summary>
+		public bool ShowVerticalCellLines {get;set;} = true;
+
+		/// <summary>
+		/// True to render a solid line vertical line between headers
+		/// </summary>
+		public bool ShowVerticalHeaderLines {get;set;} = true;
+	}
+	
+	/// <summary>
 	/// View for tabular data based on a <see cref="DataTable"/>
 	/// </summary>
 	public class TableView : View {
@@ -16,12 +47,18 @@ namespace Terminal.Gui.Views {
 		private int selectedRow;
 		private int selectedColumn;
 		private DataTable table;
+		private TableStyle style = new TableStyle();
 
 		/// <summary>
 		/// The data table to render in the view.  Setting this property automatically updates and redraws the control.
 		/// </summary>
 		public DataTable Table { get => table; set {table = value; Update(); } }
-
+		
+		/// <summary>
+		/// Contains options for changing how the table is rendered
+		/// </summary>
+		public TableStyle Style { get => style; set {style = value; Update(); } }
+						
 		/// <summary>
 		/// Zero indexed offset for the upper left <see cref="DataColumn"/> to display in <see cref="Table"/>.
 		/// </summary>
@@ -71,7 +108,7 @@ namespace Terminal.Gui.Views {
 		public string NullSymbol { get; set; } = "-";
 
 		/// <summary>
-		/// The symbol to add after each cell value and header value to visually seperate values
+		/// The symbol to add after each cell value and header value to visually seperate values (if not using vertical gridlines)
 		/// </summary>
 		public char SeparatorSymbol { get; set; } = ' ';
 
@@ -102,24 +139,40 @@ namespace Terminal.Gui.Views {
 			Dictionary<DataColumn, int> columnsToRender = CalculateViewport (bounds);
 
 			Driver.SetAttribute (ColorScheme.Normal);
-
+			
 			//invalidate current row (prevents scrolling around leaving old characters in the frame
 			Driver.AddStr (new string (' ', bounds.Width));
 
-			// Render the headers
-			foreach (var kvp in columnsToRender) {
+			int line = 0;
 
-				Move (kvp.Value, 0);
-				Driver.AddStr (Truncate (kvp.Key.ColumnName + SeparatorSymbol, bounds.Width - kvp.Value));
-			}
+			if(ShouldRenderHeaders())
+            {
+				// Render something like:
+				/*
+				* ┌────────────────────┬──────────┬───────────┬──────────────┬─────────┐
+			      │ArithmeticComparator│chi       │Healthboard│Interpretation│Labnumber│
+                  └────────────────────┴──────────┴───────────┴──────────────┴─────────┘
+				*/
+				if(Style.ShowHorizontalHeaderOverline)
+                {
+					RenderHeaderOverline(line,bounds.Width,columnsToRender);
+					line++;
+                }
 
+				RenderHeaderMidline(line,bounds.Width,columnsToRender);
+				line++;
+
+				if(Style.ShowHorizontalHeaderUnderline)
+                {
+					RenderHeaderUnderline(line,bounds.Width,columnsToRender);
+					line++;
+                }
+            }
+					
 			//render the cells
-			for (int line = 1; line < frame.Height; line++) {
+			for (; line < frame.Height; line++) {
 
-				//invalidate current row (prevents scrolling around leaving old characters in the frame
-				Move (0, line);
-				Driver.SetAttribute (ColorScheme.Normal);
-				Driver.AddStr (new string (' ', bounds.Width));
+				ClearLine(line,bounds.Width);
 
 				//work out what Row to render
 				var rowToRender = RowOffset + (line - 1);
@@ -128,19 +181,171 @@ namespace Terminal.Gui.Views {
 				if ( Table == null || rowToRender >= Table.Rows.Count)
 					continue;
 
-				foreach (var kvp in columnsToRender) {
-					Move (kvp.Value, line);
+				RenderRow(line,bounds.Width,rowToRender,columnsToRender);
+			}
+		}
 
-					bool isSelectedCell = rowToRender == SelectedRow && kvp.Key.Ordinal == SelectedColumn;
+        /// <summary>
+        /// Clears a line of the console by filling it with spaces
+        /// </summary>
+        /// <param name="row"></param>
+        /// <param name="width"></param>
+        private void ClearLine(int row, int width)
+        {            
+			Move (0, row);
+			Driver.SetAttribute (ColorScheme.Normal);
+			Driver.AddStr (new string (' ', width));
+        }
 
-					Driver.SetAttribute (isSelectedCell ? ColorScheme.HotFocus : ColorScheme.Normal);
+        /// <summary>
+        /// Returns the amount of vertical space required to display the header
+        /// </summary>
+        /// <returns></returns>
+        private int GetHeaderHeight()
+        {
+			int heightRequired = 1;
+			
+			if(Style.ShowHorizontalHeaderOverline)
+				heightRequired++;
 
+			if(Style.ShowHorizontalHeaderUnderline)
+				heightRequired++;
+			
+			return heightRequired;
+        }
 
-					var valueToRender = GetRenderedVal (Table.Rows [rowToRender] [kvp.Key]) + SeparatorSymbol;
-					Driver.AddStr (Truncate (valueToRender, bounds.Width - kvp.Value));
-				}
+        private void RenderHeaderOverline(int row,int availableWidth, Dictionary<DataColumn, int> columnsToRender)
+        {
+			// Renders a line above table headers (when visible) like:
+			// ┌────────────────────┬──────────┬───────────┬──────────────┬─────────┐
+
+			
+			for(int c = 0;c< availableWidth;c++) {
+
+				var rune = Driver.HLine;
+
+                if (Style.ShowVerticalHeaderLines)
+                {
+							
+					if(c == 0)
+                    {
+						rune = Driver.ULCorner;
+                    }	
+					// if the next column is the start of a header
+					else if(columnsToRender.Values.Contains(c+1))
+                    {
+						rune = Driver.TopTee;
+                    }
+					else if(c == availableWidth -1)
+                    {
+						rune = Driver.URCorner;
+                    }
+                }
+
+				AddRuneAt(Driver,c,row,rune);
+			}
+        }
+
+        private void RenderHeaderMidline(int row,int availableWidth, Dictionary<DataColumn, int> columnsToRender)
+        {
+			// Renders something like:
+			// │ArithmeticComparator│chi       │Healthboard│Interpretation│Labnumber│
+						
+			ClearLine(row,availableWidth);
+
+			//render start of line
+			if(style.ShowVerticalHeaderLines)
+				AddRune(0,row,Driver.VLine);
+
+			foreach (var kvp in columnsToRender) {
+				
+				//where the header should start
+				var col = kvp.Value;
+
+				RenderSeparator(col-1,row);
+									
+				Move (col, row);
+				Driver.AddStr(Truncate (kvp.Key.ColumnName, availableWidth - kvp.Value));
+
 			}
 
+			//render end of line
+			if(style.ShowVerticalHeaderLines)
+				AddRune(availableWidth-1,row,Driver.VLine);
+        }
+
+
+        private void RenderHeaderUnderline(int row,int availableWidth, Dictionary<DataColumn, int> columnsToRender)
+        {
+			// Renders a line below the table headers (when visible) like:
+			// ├──────────┼───────────┼───────────────────┼──────────┼────────┼─────────────┤
+								
+			for(int c = 0;c< availableWidth;c++) {
+
+				var rune = Driver.HLine;
+
+                if (Style.ShowVerticalHeaderLines)
+                {
+					if(c == 0)
+                    {
+						rune = Style.ShowVerticalCellLines ? Driver.LeftTee : Driver.LLCorner;
+                    }	
+					// if the next column is the start of a header
+					else if(columnsToRender.Values.Contains(c+1))
+                    {
+						/*TODO: is this symbol in ?Driver?*/ 
+						var x = '┼';
+
+						rune = Style.ShowVerticalCellLines ? x :Driver.BottomTee;
+                    }
+					else if(c == availableWidth -1)
+                    {
+						rune = Style.ShowVerticalCellLines ? Driver.RightTee : Driver.LRCorner;
+                    }
+                }
+
+				AddRuneAt(Driver,c,row,rune);
+			}
+			
+        }
+        private void RenderRow(int row, int availableWidth, int rowToRender, Dictionary<DataColumn, int> columnsToRender)
+        {
+			//render start of line
+			if(style.ShowVerticalHeaderLines)
+				AddRune(0,row,Driver.VLine);
+
+			foreach (var kvp in columnsToRender) {
+
+				Move (kvp.Value, row);
+
+				bool isSelectedCell = rowToRender == SelectedRow && kvp.Key.Ordinal == SelectedColumn;
+
+				Driver.SetAttribute (isSelectedCell ? ColorScheme.HotFocus : ColorScheme.Normal);
+
+				var valueToRender = GetRenderedVal (Table.Rows [rowToRender] [kvp.Key]);
+				Driver.AddStr (Truncate (valueToRender, availableWidth - kvp.Value));
+
+				RenderSeparator(kvp.Value-1,row);
+			}
+
+			//render end of line
+			if(style.ShowVerticalHeaderLines)
+				AddRune(availableWidth-1,row,Driver.VLine);
+        }
+		
+        private void RenderSeparator(int col, int row)
+        {
+			if(col<0)
+				return;
+
+			Rune symbol = style.ShowVerticalHeaderLines ? Driver.VLine : SeparatorSymbol;
+			AddRune(col,row,symbol);
+        }
+
+        void AddRuneAt (ConsoleDriver d,int col, int row, Rune ch)
+		{
+			Move (col, row);
+			d.AddRune (ch);
 		}
 
 		/// <summary>
@@ -205,10 +410,9 @@ namespace Terminal.Gui.Views {
 				SelectedColumn =  Table == null ? 0 : Table.Columns.Count - 1;
 				Update ();
 				break;
-
 			default:
-					// Not a keystroke we care about
-					return false;
+				// Not a keystroke we care about
+				return false;
 			}
 			PositionCursor ();
 			return true;
@@ -267,10 +471,19 @@ namespace Terminal.Gui.Views {
 
 			if(Table == null)
 				return toReturn;
-
+			
 			int usedSpace = 0;
+
+			//if horizontal space is required at the start of the line (before the first header)
+			if(Style.ShowVerticalHeaderLines || Style.ShowVerticalCellLines)
+				usedSpace++;
+			
 			int availableHorizontalSpace = bounds.Width;
-			int rowsToRender = bounds.Height - 1; //1 reserved for the headers row
+			int rowsToRender = bounds.Height;
+
+			// reserved for the headers row
+			if(ShouldRenderHeaders())
+				rowsToRender -= GetHeaderHeight(); 
 
 			foreach (var col in Table.Columns.Cast<DataColumn> ().Skip (ColumnOffset)) {
 
@@ -285,13 +498,18 @@ namespace Terminal.Gui.Views {
 			return toReturn;
 		}
 
-		/// <summary>
-		/// Returns the maximum of the <paramref name="col"/> name and the maximum length of data that will be rendered starting at <see cref="RowOffset"/> and rendering <paramref name="rowsToRender"/>
-		/// </summary>
-		/// <param name="col"></param>
-		/// <param name="rowsToRender"></param>
-		/// <returns></returns>
-		private int CalculateMaxRowSize (DataColumn col, int rowsToRender)
+        private bool ShouldRenderHeaders()
+        {
+            return Style.AlwaysShowHeaders || rowOffset == 0;
+        }
+
+        /// <summary>
+        /// Returns the maximum of the <paramref name="col"/> name and the maximum length of data that will be rendered starting at <see cref="RowOffset"/> and rendering <paramref name="rowsToRender"/>
+        /// </summary>
+        /// <param name="col"></param>
+        /// <param name="rowsToRender"></param>
+        /// <returns></returns>
+        private int CalculateMaxRowSize (DataColumn col, int rowsToRender)
 		{
 			int spaceRequired = col.ColumnName.Length;
 
