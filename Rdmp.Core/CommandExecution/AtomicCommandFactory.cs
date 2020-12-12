@@ -14,6 +14,7 @@ using Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cache;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataExport.Data;
@@ -241,15 +242,17 @@ namespace Rdmp.Core.CommandExecution
             if(o is SelectedDataSets sds)
             {
                 yield return new CommandPresentation(new ExecuteCommandAddNewFilterContainer(_activator,sds));
-            
                 yield return new CommandPresentation(new ExecuteCommandImportFilterContainerTree(_activator,sds));
-
                 yield return new CommandPresentation(new ExecuteCommandCreateNewFilter(_activator,sds));
-
                 yield return new CommandPresentation(new ExecuteCommandCreateNewFilterFromCatalogue(_activator,sds));
-            
                 yield return new CommandPresentation(new ExecuteCommandViewSelectedDataSetsExtractionSql(_activator,sds));
             
+            }
+
+            if(o is IArgument a)
+            {
+                yield return new CommandPresentation(new ExecuteCommandSetArgument(_activator,a));
+
             }
 
             if(Is(o,out IDisableable disable))
