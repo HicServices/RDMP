@@ -6,6 +6,59 @@ using System.Linq;
 
 namespace Terminal.Gui.Views {
 
+	public class ColumnStyle {
+		
+		/// <summary>
+		/// Defines the default alignment for all values rendered in this column.  For custom alignment based on cell contents use <see cref="AlignmentGetter"/>.
+		/// </summary>
+		public TextAlignment Alignment {get;set;}
+	
+		/// <summary>
+		/// Defines a delegate for returning custom alignment per cell based on cell values.  When specified this will override <see cref="Alignment"/>
+		/// </summary>
+		public Func<object,TextAlignment> AlignmentGetter;
+
+		/// <summary>
+		/// Defines a delegate for returning custom representations of cell values.  If not set then <see cref="object.ToString()"/> is used.  Return values from your delegate may be truncated e.g. based on <see cref="MaxWidth"/>
+		/// </summary>
+		public Func<object,string> RepresentationGetter;
+
+		/// <summary>
+		/// Set the maximum width of the column in characters.  This value will be ignored if more than the tables <see cref="TableView.MaxCellWidth"/>.  Defaults to <see cref="TableView.DefaultMaxCellWidth"/>
+		/// </summary>
+		public int MaxWidth {get;set;} = TableView.DefaultMaxCellWidth;
+
+		/// <summary>
+		/// Set the minimum width of the column in characters.  This value will be ignored if more than the tables <see cref="TableView.MaxCellWidth"/> or the <see cref="MaxWidth"/>
+		/// </summary>
+		public int MinWidth {get;set;}
+
+		/// <summary>
+		/// Returns the alignment for the cell based on <paramref name="cellValue"/> and <see cref="AlignmentGetter"/>/<see cref="Alignment"/>
+		/// </summary>
+		/// <param name="cellValue"></param>
+		/// <returns></returns>
+		public TextAlignment GetAlignment(object cellValue)
+		{
+			if(AlignmentGetter != null)
+				return AlignmentGetter(cellValue);
+
+			return Alignment;
+		}
+
+		/// <summary>
+		/// Returns the full string to render (which may be truncated if too long) that the current style says best represents the given <paramref name="value"/>
+		/// </summary>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public string GetRepresentation (object value)
+		{
+			if(RepresentationGetter != null)
+				return RepresentationGetter(value);
+
+			return value?.ToString();
+		}
+	}
 	/// <summary>
 	/// Defines rendering options that affect how the table is displayed
 	/// </summary>
@@ -35,6 +88,21 @@ namespace Terminal.Gui.Views {
 		/// True to render a solid line vertical line between headers
 		/// </summary>
 		public bool ShowVerticalHeaderLines {get;set;} = true;
+
+		/// <summary>
+		/// Collection of columns for which you want special rendering (e.g. custom column lengths, text alignment etc)
+		/// </summary>
+		public Dictionary<DataColumn,ColumnStyle> ColumnStyles {get;set; }  = new Dictionary<DataColumn, ColumnStyle>();
+
+		/// <summary>
+		/// Returns the entry from <see cref="ColumnStyles"/> for the given <paramref name="col"/> or null if no custom styling is defined for it
+		/// </summary>
+		/// <param name="col"></param>
+		/// <returns></returns>
+		public ColumnStyle GetColumnStyleIfAny (DataColumn col)
+		{
+			return ColumnStyles.TryGetValue(col,out ColumnStyle result) ? result : null;
+		}
 	}
 	
 	/// <summary>
@@ -48,6 +116,11 @@ namespace Terminal.Gui.Views {
 		private int selectedColumn;
 		private DataTable table;
 		private TableStyle style = new TableStyle();
+
+		/// <summary>
+		/// The default maximum cell width for <see cref="TableView.MaxCellWidth"/> and <see cref="ColumnStyle.MaxWidth"/>
+		/// </summary>
+		public const int DefaultMaxCellWidth = 100;
 
 		/// <summary>
 		/// The data table to render in the view.  Setting this property automatically updates and redraws the control.
@@ -100,7 +173,7 @@ namespace Terminal.Gui.Views {
 		/// <summary>
 		/// The maximum number of characters to render in any given column.  This prevents one long column from pushing out all the others
 		/// </summary>
-		public int MaximumCellWidth { get; set; } = 100;
+		public int MaxCellWidth { get; set; } = DefaultMaxCellWidth;
 
 		/// <summary>
 		/// The text representation that should be rendered for cells with the value <see cref="DBNull.Value"/>
@@ -136,7 +209,7 @@ namespace Terminal.Gui.Views {
 			var frame = Frame;
 
 			// What columns to render at what X offset in viewport
-			Dictionary<DataColumn, int> columnsToRender = CalculateViewport (bounds);
+			var columnsToRender = CalculateViewport(bounds).ToArray();
 
 			Driver.SetAttribute (ColorScheme.Normal);
 			
@@ -145,29 +218,26 @@ namespace Terminal.Gui.Views {
 
 			int line = 0;
 
-			if(ShouldRenderHeaders())
-            {
+			if(ShouldRenderHeaders()){
 				// Render something like:
 				/*
-				* ┌────────────────────┬──────────┬───────────┬──────────────┬─────────┐
-			      │ArithmeticComparator│chi       │Healthboard│Interpretation│Labnumber│
-                  └────────────────────┴──────────┴───────────┴──────────────┴─────────┘
+					┌────────────────────┬──────────┬───────────┬──────────────┬─────────┐
+					│ArithmeticComparator│chi       │Healthboard│Interpretation│Labnumber│
+					└────────────────────┴──────────┴───────────┴──────────────┴─────────┘
 				*/
-				if(Style.ShowHorizontalHeaderOverline)
-                {
+				if(Style.ShowHorizontalHeaderOverline){
 					RenderHeaderOverline(line,bounds.Width,columnsToRender);
 					line++;
-                }
+				}
 
-				RenderHeaderMidline(line,bounds.Width,columnsToRender);
+				RenderHeaderMidline(line,columnsToRender);
 				line++;
 
-				if(Style.ShowHorizontalHeaderUnderline)
-                {
+				if(Style.ShowHorizontalHeaderUnderline){
 					RenderHeaderUnderline(line,bounds.Width,columnsToRender);
 					line++;
-                }
-            }
+				}
+			}
 					
 			//render the cells
 			for (; line < frame.Height; line++) {
@@ -175,34 +245,34 @@ namespace Terminal.Gui.Views {
 				ClearLine(line,bounds.Width);
 
 				//work out what Row to render
-				var rowToRender = RowOffset + (line - 1);
+				var rowToRender = RowOffset + (line - GetHeaderHeight());
 
 				//if we have run off the end of the table
-				if ( Table == null || rowToRender >= Table.Rows.Count)
+				if ( Table == null || rowToRender >= Table.Rows.Count || rowToRender < 0)
 					continue;
 
-				RenderRow(line,bounds.Width,rowToRender,columnsToRender);
+				RenderRow(line,rowToRender,columnsToRender);
 			}
 		}
 
-        /// <summary>
-        /// Clears a line of the console by filling it with spaces
-        /// </summary>
-        /// <param name="row"></param>
-        /// <param name="width"></param>
-        private void ClearLine(int row, int width)
-        {            
+		/// <summary>
+		/// Clears a line of the console by filling it with spaces
+		/// </summary>
+		/// <param name="row"></param>
+		/// <param name="width"></param>
+		private void ClearLine(int row, int width)
+		{            
 			Move (0, row);
 			Driver.SetAttribute (ColorScheme.Normal);
 			Driver.AddStr (new string (' ', width));
-        }
+		}
 
-        /// <summary>
-        /// Returns the amount of vertical space required to display the header
-        /// </summary>
-        /// <returns></returns>
-        private int GetHeaderHeight()
-        {
+		/// <summary>
+		/// Returns the amount of vertical space required to display the header
+		/// </summary>
+		/// <returns></returns>
+		private int GetHeaderHeight()
+		{
 			int heightRequired = 1;
 			
 			if(Style.ShowHorizontalHeaderOverline)
@@ -212,71 +282,90 @@ namespace Terminal.Gui.Views {
 				heightRequired++;
 			
 			return heightRequired;
-        }
+		}
 
-        private void RenderHeaderOverline(int row,int availableWidth, Dictionary<DataColumn, int> columnsToRender)
-        {
+		private void RenderHeaderOverline(int row,int availableWidth, ColumnToRender[] columnsToRender)
+		{
 			// Renders a line above table headers (when visible) like:
 			// ┌────────────────────┬──────────┬───────────┬──────────────┬─────────┐
 
-			
 			for(int c = 0;c< availableWidth;c++) {
 
 				var rune = Driver.HLine;
 
-                if (Style.ShowVerticalHeaderLines)
-                {
+				if (Style.ShowVerticalHeaderLines){
 							
-					if(c == 0)
-                    {
+					if(c == 0){
 						rune = Driver.ULCorner;
-                    }	
+					}	
 					// if the next column is the start of a header
-					else if(columnsToRender.Values.Contains(c+1))
-                    {
+					else if(columnsToRender.Any(r=>r.X == c+1)){
 						rune = Driver.TopTee;
-                    }
-					else if(c == availableWidth -1)
-                    {
+					}
+					else if(c == availableWidth -1){
 						rune = Driver.URCorner;
-                    }
-                }
+					}
+				}
 
 				AddRuneAt(Driver,c,row,rune);
 			}
-        }
+		}
 
-        private void RenderHeaderMidline(int row,int availableWidth, Dictionary<DataColumn, int> columnsToRender)
-        {
+		private void RenderHeaderMidline(int row, ColumnToRender[] columnsToRender)
+		{
 			// Renders something like:
 			// │ArithmeticComparator│chi       │Healthboard│Interpretation│Labnumber│
 						
-			ClearLine(row,availableWidth);
+			ClearLine(row,Bounds.Width);
 
 			//render start of line
 			if(style.ShowVerticalHeaderLines)
 				AddRune(0,row,Driver.VLine);
 
-			foreach (var kvp in columnsToRender) {
+			for(int i =0 ; i<columnsToRender.Length;i++) {
 				
-				//where the header should start
-				var col = kvp.Value;
+				var current =  columnsToRender[i];
+				var availableWidthForCell = GetCellWidth(columnsToRender,i);
 
-				RenderSeparator(col-1,row);
+				var colStyle = Style.GetColumnStyleIfAny(current.Column);
+				var colName = current.Column.ColumnName;
+
+				RenderSeparator(current.X-1,row,true);
 									
-				Move (col, row);
-				Driver.AddStr(Truncate (kvp.Key.ColumnName, availableWidth - kvp.Value));
+				Move (current.X, row);
+				
+				Driver.AddStr(TruncateOrPad(colName,colName,availableWidthForCell ,colStyle));
 
 			}
 
 			//render end of line
 			if(style.ShowVerticalHeaderLines)
-				AddRune(availableWidth-1,row,Driver.VLine);
-        }
+				AddRune(Bounds.Width-1,row,Driver.VLine);
+		}
 
+		/// <summary>
+		/// Calculates how much space is available to render index <paramref name="i"/> of the <paramref name="columnsToRender"/> given the remaining horizontal space
+		/// </summary>
+		/// <param name="columnsToRender"></param>
+		/// <param name="i"></param>
+		private int GetCellWidth (ColumnToRender [] columnsToRender, int i)
+		{
+			var current =  columnsToRender[i];
+			var next = i+1 < columnsToRender.Length ? columnsToRender[i+1] : null;
 
-        private void RenderHeaderUnderline(int row,int availableWidth, Dictionary<DataColumn, int> columnsToRender)
-        {
+			if(next == null) {
+				// cell can fill to end of the line
+				return Bounds.Width - current.X;
+			}
+			else {
+				// cell can fill up to next cell start				
+				return next.X - current.X;
+			}
+
+		}
+
+		private void RenderHeaderUnderline(int row,int availableWidth, ColumnToRender[] columnsToRender)
+		{
 			// Renders a line below the table headers (when visible) like:
 			// ├──────────┼───────────┼───────────────────┼──────────┼────────┼─────────────┤
 								
@@ -284,82 +373,118 @@ namespace Terminal.Gui.Views {
 
 				var rune = Driver.HLine;
 
-                if (Style.ShowVerticalHeaderLines)
-                {
-					if(c == 0)
-                    {
+				if (Style.ShowVerticalHeaderLines){
+					if(c == 0){
 						rune = Style.ShowVerticalCellLines ? Driver.LeftTee : Driver.LLCorner;
-                    }	
+					}	
 					// if the next column is the start of a header
-					else if(columnsToRender.Values.Contains(c+1))
-                    {
-						/*TODO: is this symbol in ?Driver?*/ 
-						var x = '┼';
-
-						rune = Style.ShowVerticalCellLines ? x :Driver.BottomTee;
-                    }
-					else if(c == availableWidth -1)
-                    {
+					else if(columnsToRender.Any(r=>r.X == c+1)){
+					
+						/*TODO: is ┼ symbol in Driver?*/ 
+						rune = Style.ShowVerticalCellLines ? '┼' :Driver.BottomTee;
+					}
+					else if(c == availableWidth -1){
 						rune = Style.ShowVerticalCellLines ? Driver.RightTee : Driver.LRCorner;
-                    }
-                }
+					}
+				}
 
 				AddRuneAt(Driver,c,row,rune);
 			}
 			
-        }
-        private void RenderRow(int row, int availableWidth, int rowToRender, Dictionary<DataColumn, int> columnsToRender)
-        {
+		}
+		private void RenderRow(int row, int rowToRender, ColumnToRender[] columnsToRender)
+		{
 			//render start of line
-			if(style.ShowVerticalHeaderLines)
+			if(style.ShowVerticalCellLines)
 				AddRune(0,row,Driver.VLine);
 
-			foreach (var kvp in columnsToRender) {
+			// Render cells for each visible header for the current row
+			for(int i=0;i< columnsToRender.Length ;i++) {
 
-				Move (kvp.Value, row);
+				var current = columnsToRender[i];
+				var availableWidthForCell = GetCellWidth(columnsToRender,i);
 
-				bool isSelectedCell = rowToRender == SelectedRow && kvp.Key.Ordinal == SelectedColumn;
+				var colStyle = Style.GetColumnStyleIfAny(current.Column);
 
+				// move to start of cell (in line with header positions)
+				Move (current.X, row);
+
+				// Set color scheme based on whether the current cell is the selected one
+				bool isSelectedCell = rowToRender == SelectedRow && current.Column.Ordinal == SelectedColumn;
 				Driver.SetAttribute (isSelectedCell ? ColorScheme.HotFocus : ColorScheme.Normal);
 
-				var valueToRender = GetRenderedVal (Table.Rows [rowToRender] [kvp.Key]);
-				Driver.AddStr (Truncate (valueToRender, availableWidth - kvp.Value));
+				var val = Table.Rows [rowToRender][current.Column];
 
-				RenderSeparator(kvp.Value-1,row);
+				// Render the (possibly truncated) cell value
+				var representation = GetRepresentation(val,colStyle);
+				
+				Driver.AddStr (TruncateOrPad(val,representation,availableWidthForCell,colStyle));
+				
+				// Reset color scheme to normal and render the vertical line (or space) at the end of the cell
+				Driver.SetAttribute (ColorScheme.Normal);
+				RenderSeparator(current.X-1,row,false);
 			}
 
 			//render end of line
-			if(style.ShowVerticalHeaderLines)
-				AddRune(availableWidth-1,row,Driver.VLine);
-        }
+			if(style.ShowVerticalCellLines)
+				AddRune(Bounds.Width-1,row,Driver.VLine);
+		}
 		
-        private void RenderSeparator(int col, int row)
-        {
+		private void RenderSeparator(int col, int row,bool isHeader)
+		{
 			if(col<0)
 				return;
+				
+			var renderLines = isHeader ? style.ShowVerticalHeaderLines : style.ShowVerticalCellLines;
 
-			Rune symbol = style.ShowVerticalHeaderLines ? Driver.VLine : SeparatorSymbol;
+			Rune symbol =  renderLines ? Driver.VLine : SeparatorSymbol;
 			AddRune(col,row,symbol);
-        }
+		}
 
-        void AddRuneAt (ConsoleDriver d,int col, int row, Rune ch)
+		void AddRuneAt (ConsoleDriver d,int col, int row, Rune ch)
 		{
 			Move (col, row);
 			d.AddRune (ch);
 		}
 
 		/// <summary>
-		/// Truncates <paramref name="valueToRender"/> so that it occupies a maximum of <paramref name="availableHorizontalSpace"/>
+		/// Truncates or pads <paramref name="representation"/> so that it occupies a exactly <paramref name="availableHorizontalSpace"/> using the alignment specified in <paramref name="style"/> (or left if no style is defined)
 		/// </summary>
-		/// <param name="valueToRender"></param>
+		/// <param name="originalCellValue">The object in this cell of the <see cref="Table"/></param>
+		/// <param name="representation">The string representation of <paramref name="originalCellValue"/></param>
 		/// <param name="availableHorizontalSpace"></param>
+		/// <param name="colStyle">Optional style indicating custom alignment for the cell</param>
 		/// <returns></returns>
-		private ustring Truncate (string valueToRender, int availableHorizontalSpace)
+		private string TruncateOrPad (object originalCellValue,string representation, int availableHorizontalSpace, ColumnStyle colStyle)
 		{
-			if (string.IsNullOrEmpty (valueToRender) || valueToRender.Length < availableHorizontalSpace)
-				return valueToRender;
+			if (string.IsNullOrEmpty (representation))
+				return representation;
 
-			return valueToRender.Substring (0, availableHorizontalSpace);
+			// if value is not wide enough
+			if(representation.Length < availableHorizontalSpace) {
+				
+				// pad it out with spaces to the given alignment
+				int toPad = availableHorizontalSpace - (representation.Length+1 /*leave 1 space for cell boundary*/);
+
+				switch(colStyle?.GetAlignment(originalCellValue) ?? TextAlignment.Left) {
+
+					case TextAlignment.Left : 
+						return representation + new string(' ',toPad);
+					case TextAlignment.Right : 
+						return new string(' ',toPad) + representation;
+					
+					// TODO: With single line cells, centered and justified are the same right?
+					case TextAlignment.Centered : 
+					case TextAlignment.Justified : 
+						return 
+							new string(' ',(int)Math.Floor(toPad/2.0)) + // round down
+							representation +
+							 new string(' ',(int)Math.Ceiling(toPad/2.0)) ; // round up
+				}
+			}
+
+			// value is too wide
+			return representation.Substring (0, availableHorizontalSpace);
 		}
 
 		/// <inheritdoc/>
@@ -435,20 +560,21 @@ namespace Terminal.Gui.Views {
 			SelectedColumn = Math.Max(Math.Min(SelectedColumn,Table.Columns.Count -1),0);
 			SelectedRow = Math.Max(Math.Min(SelectedRow,Table.Rows.Count -1),0);
 
-			Dictionary<DataColumn, int> columnsToRender = CalculateViewport (Bounds);
+			var columnsToRender = CalculateViewport (Bounds).ToArray();
+			var headerHeight = GetHeaderHeight();
 
 			//if we have scrolled too far to the left 
-			if (SelectedColumn < columnsToRender.Keys.Min (col => col.Ordinal)) {
+			if (SelectedColumn < columnsToRender.Min (r => r.Column.Ordinal)) {
 				ColumnOffset = SelectedColumn;
 			}
 
 			//if we have scrolled too far to the right
-			if (SelectedColumn > columnsToRender.Keys.Max (col => col.Ordinal)) {
+			if (SelectedColumn > columnsToRender.Max (r=> r.Column.Ordinal)) {
 				ColumnOffset = SelectedColumn;
 			}
 
 			//if we have scrolled too far down
-			if (SelectedRow > RowOffset + Bounds.Height - 1) {
+			if (SelectedRow >= RowOffset + (Bounds.Height - headerHeight)) {
 				RowOffset = SelectedRow;
 			}
 			//if we have scrolled too far up
@@ -465,18 +591,16 @@ namespace Terminal.Gui.Views {
 		/// <param name="bounds"></param>
 		/// <param name="padding"></param>
 		/// <returns></returns>
-		private Dictionary<DataColumn, int> CalculateViewport (Rect bounds, int padding = 1)
+		private IEnumerable<ColumnToRender> CalculateViewport (Rect bounds, int padding = 1)
 		{
-			Dictionary<DataColumn, int> toReturn = new Dictionary<DataColumn, int> ();
-
 			if(Table == null)
-				return toReturn;
+				yield break;
 			
 			int usedSpace = 0;
 
 			//if horizontal space is required at the start of the line (before the first header)
 			if(Style.ShowVerticalHeaderLines || Style.ShowVerticalCellLines)
-				usedSpace++;
+				usedSpace+=1;
 			
 			int availableHorizontalSpace = bounds.Width;
 			int rowsToRender = bounds.Height;
@@ -485,39 +609,74 @@ namespace Terminal.Gui.Views {
 			if(ShouldRenderHeaders())
 				rowsToRender -= GetHeaderHeight(); 
 
-			foreach (var col in Table.Columns.Cast<DataColumn> ().Skip (ColumnOffset)) {
+			bool first = true;
 
-				toReturn.Add (col, usedSpace);
-				usedSpace += CalculateMaxRowSize (col, rowsToRender) + padding;
+			foreach (var col in Table.Columns.Cast<DataColumn>().Skip (ColumnOffset)) {
 
-				if (usedSpace > availableHorizontalSpace)
-					return toReturn;
+				int startingIdxForCurrentHeader = usedSpace;
+				var colStyle = Style.GetColumnStyleIfAny(col);
 
+				// is there enough space for this column (and it's data)?
+				usedSpace += CalculateMaxCellWidth (col, rowsToRender,colStyle) + padding;
+
+				// no (don't render it) unless its the only column we are render (that must be one massively wide column!)
+				if (!first && usedSpace > availableHorizontalSpace)
+					yield break;
+
+				// there is space
+				yield return new ColumnToRender(col, startingIdxForCurrentHeader);
+				first=false;
 			}
-
-			return toReturn;
 		}
 
-        private bool ShouldRenderHeaders()
-        {
-            return Style.AlwaysShowHeaders || rowOffset == 0;
-        }
+		private bool ShouldRenderHeaders()
+		{
+			if(Table == null || Table.Columns.Count == 0)
+				return false;
 
-        /// <summary>
-        /// Returns the maximum of the <paramref name="col"/> name and the maximum length of data that will be rendered starting at <see cref="RowOffset"/> and rendering <paramref name="rowsToRender"/>
-        /// </summary>
-        /// <param name="col"></param>
-        /// <param name="rowsToRender"></param>
-        /// <returns></returns>
-        private int CalculateMaxRowSize (DataColumn col, int rowsToRender)
+		    return Style.AlwaysShowHeaders || rowOffset == 0;
+		}
+
+		/// <summary>
+		/// Returns the maximum of the <paramref name="col"/> name and the maximum length of data that will be rendered starting at <see cref="RowOffset"/> and rendering <paramref name="rowsToRender"/>
+		/// </summary>
+		/// <param name="col"></param>
+		/// <param name="rowsToRender"></param>
+		/// <param name="colStyle"></param>
+		/// <returns></returns>
+		private int CalculateMaxCellWidth(DataColumn col, int rowsToRender,ColumnStyle colStyle)
 		{
 			int spaceRequired = col.ColumnName.Length;
+
+			// if table has no rows
+			if(RowOffset < 0)
+				return spaceRequired;
+
 
 			for (int i = RowOffset; i < RowOffset + rowsToRender && i < Table.Rows.Count; i++) {
 
 				//expand required space if cell is bigger than the last biggest cell or header
-				spaceRequired = Math.Max (spaceRequired, GetRenderedVal (Table.Rows [i] [col]).Length);
+				spaceRequired = Math.Max (spaceRequired, GetRepresentation(Table.Rows [i][col],colStyle).Length);
 			}
+
+			// Don't require more space than the style allows
+			if(colStyle != null){
+
+				// enforce maximum cell width based on style
+				if(spaceRequired > colStyle.MaxWidth) {
+					spaceRequired = colStyle.MaxWidth;
+				}
+
+				// enforce minimum cell width based on style
+				if(spaceRequired < colStyle.MinWidth) {
+					spaceRequired = colStyle.MinWidth;
+				}
+			}
+			
+			// enforce maximum cell width based on global table style
+			if(spaceRequired > MaxCellWidth)
+				spaceRequired = MaxCellWidth;
+
 
 			return spaceRequired;
 		}
@@ -526,20 +685,37 @@ namespace Terminal.Gui.Views {
 		/// Returns the value that should be rendered to best represent a strongly typed <paramref name="value"/> read from <see cref="Table"/>
 		/// </summary>
 		/// <param name="value"></param>
+		/// <param name="colStyle">Optional style defining how to represent cell values</param>
 		/// <returns></returns>
-		private string GetRenderedVal (object value)
+		private string GetRepresentation(object value,ColumnStyle colStyle)
 		{
 			if (value == null || value == DBNull.Value) {
 				return NullSymbol;
 			}
 
-			var representation = value.ToString ();
+			return colStyle != null ? colStyle.GetRepresentation(value): value.ToString();
+		}
+	}
 
-			//if it is too long to fit
-			if (representation.Length > MaximumCellWidth)
-				return representation.Substring (0, MaximumCellWidth);
+	/// <summary>
+	/// Describes a desire to render a column at a given horizontal position in the UI
+	/// </summary>
+	internal class ColumnToRender {
 
-			return representation;
+		/// <summary>
+		/// The column to render
+		/// </summary>
+		public DataColumn Column {get;set;}
+
+		/// <summary>
+		/// The horizontal position to begin rendering the column at
+		/// </summary>
+		public int X{get;set;}
+
+		public ColumnToRender (DataColumn col, int x)
+		{
+			Column = col;
+			X = x;
 		}
 	}
 }
