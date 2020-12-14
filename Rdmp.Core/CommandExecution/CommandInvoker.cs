@@ -223,15 +223,15 @@ namespace Rdmp.Core.CommandExecution
 
         public object GetValueForParameterOfType(PropertyInfo propertyInfo)
         {
-            return GetValueFor(new RequiredArgument(propertyInfo));
+            return GetValueForParameterOfType(new RequiredArgument(propertyInfo));
         }
 
         public object GetValueForParameterOfType(ParameterInfo parameterInfo)
         {
-            return GetValueFor(new RequiredArgument(parameterInfo));
+            return GetValueForParameterOfType(new RequiredArgument(parameterInfo));
         }
 
-        private object GetValueFor(RequiredArgument a)
+        public object GetValueForParameterOfType(RequiredArgument a)
         {
             return GetDelegate(a)?.Run(a);
         }
