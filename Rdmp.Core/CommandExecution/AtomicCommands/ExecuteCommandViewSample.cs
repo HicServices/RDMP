@@ -7,27 +7,22 @@
 using System;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.DataViewing;
-using Rdmp.UI.DataViewing.Collections;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandViewSample : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandViewSample : BasicCommandExecution, IAtomicCommand
     {
         private readonly AggregateConfiguration _aggregate;
 
-        public ExecuteCommandViewSample(IActivateItems activator, AggregateConfiguration aggregate):base(activator)
+        public ExecuteCommandViewSample(IBasicActivateItems activator, AggregateConfiguration aggregate) : base(activator)
         {
             _aggregate = aggregate;
 
-            if(_aggregate.IsCohortIdentificationAggregate && _aggregate.GetCohortIdentificationConfigurationIfAny() == null)
+            if (_aggregate.IsCohortIdentificationAggregate && _aggregate.GetCohortIdentificationConfigurationIfAny() == null)
                 SetImpossible("Cohort Identification Aggregate is an orphan (it's cic has been deleted)");
 
             UseTripleDotSuffix = true;
@@ -44,22 +39,13 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             //if it has a cic with a query cache AND it uses joinables.  Since this is a TOP 100 select * from dataset the cache on CHI is useless only patient index tables used by this query are useful if cached
             if (cic != null && cic.QueryCachingServer_ID != null && _aggregate.PatientIndexJoinablesUsed.Any())
             {
-                switch (MessageBox.Show("Use Query Cache when building query?", "Use Configured Cache", MessageBoxButtons.YesNoCancel))
-                {
-                    case DialogResult.Cancel:
+                if(!BasicActivator.YesNo("Use Query Cache when building query?", "Use Configured Cache",out bool chosen))
                         return;
-                    case DialogResult.Yes:
-                        collection.UseQueryCache = true;
-                        break;
-                    case DialogResult.No:
-                        collection.UseQueryCache = false;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+
+                collection.UseQueryCache = chosen;
             }
 
-            Activator.Activate<ViewSQLAndResultsWithDataGridUI>(collection);
+            BasicActivator.ShowData(collection);
         }
 
         public override Image GetImage(IIconProvider iconProvider)

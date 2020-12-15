@@ -25,6 +25,7 @@ using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 using Rdmp.Core.Providers.Nodes.SharingNodes;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,6 +45,7 @@ namespace Rdmp.Core.CommandExecution
         public const string Extraction = "Extractability";
         public const string Metadata = "Metadata";
         public const string Alter = "Alter";
+        public const string SetUsageContext = "Set Context";
 
         public AtomicCommandFactory(IBasicActivateItems activator)
         {
@@ -83,6 +85,7 @@ namespace Rdmp.Core.CommandExecution
 
             if(o is AggregateConfiguration ac)
             {
+                yield return new CommandPresentation(new ExecuteCommandViewSample(_activator, ac));
                 yield return new CommandPresentation(new ExecuteCommandAddNewFilterContainer(_activator,ac));
                 yield return new CommandPresentation(new ExecuteCommandImportFilterContainerTree(_activator,ac));
                 yield return new CommandPresentation(new ExecuteCommandCreateNewFilter(_activator,ac));
@@ -133,6 +136,14 @@ namespace Rdmp.Core.CommandExecution
                     {
                         OverrideCommandName= "Add New Credentials"
                     });
+            }
+
+            if(o is DataAccessCredentialUsageNode usage)
+            {
+                var existingUsages = _activator.RepositoryLocator.CatalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(usage.TableInfo);
+
+                foreach (DataAccessContext context in Enum.GetValues(typeof(DataAccessContext)))
+                    yield return new CommandPresentation(new ExecuteCommandSetDataAccessContextForCredentials(_activator, usage, context, existingUsages),SetUsageContext);
             }
 
             if(o is AllConnectionStringKeywordsNode)
