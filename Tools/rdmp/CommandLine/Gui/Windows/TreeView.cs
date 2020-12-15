@@ -64,30 +64,146 @@ namespace Terminal.Gui {
 		{
 			Text = text;
 		}
-
-
 	}
 
 	/// <summary>
-	/// Hierarchical tree view with expandable branches.  Branch objects are dynamically determined when expanded using a user defined <see cref="ChildrenGetterDelegate"/>
+	/// Interface for supplying data to a <see cref="TreeView"/> on demand as root level nodes are expanded by the user
+	/// </summary>
+	public interface ITreeBuilder
+	{
+		/// <summary>
+		/// Returns true if <see cref="CanExpand"/> is implemented by this class
+		/// </summary>
+		/// <value></value>
+		bool SupportsCanExpand {get;}
+
+		/// <summary>
+		/// Returns true/false for whether a model has children.  This method should be implemented when <see cref="GetChildren"/> is an expensive operation otherwise <see cref="SupportsCanExpand"/> should return false (in which case this method will not be called)
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		bool CanExpand(object model);
+
+		/// <summary>
+		/// Returns all children of a given <paramref name="model"/> which should be added to the tree as new branches underneath it
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		IEnumerable<object> GetChildren(object model);
+	}
+
+	/// <summary>
+	/// Abstract implementation of <see cref="ITreeBuilder"/>
+	/// </summary>
+	public abstract class TreeBuilder : ITreeBuilder {
+
+		/// <inheritdoc/>
+		public bool SupportsCanExpand { get; protected set;} = false;
+
+		/// <summary>
+		/// Override this method to return a rapid answer as to whether <see cref="GetChildren(object)"/> returns results.
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		public virtual bool CanExpand (object model){
+			
+			return GetChildren(model).Any();
+		}
+
+		/// <inheritdoc/>
+		public abstract IEnumerable<object> GetChildren (object model);
+
+		/// <summary>
+		/// Constructs base and initializes <see cref="SupportsCanExpand"/>
+		/// </summary>
+		/// <param name="supportsCanExpand">Pass true if you intend to implement <see cref="CanExpand(object)"/> otherwise false</param>
+		public TreeBuilder(bool supportsCanExpand)
+		{
+			SupportsCanExpand = supportsCanExpand;
+		}
+	}
+
+	/// <summary>
+	/// <see cref="ITreeBuilder"/> implementation for <see cref="TreeNode"/> objects
+	/// </summary>
+	public class TreeNodeBuilder : TreeBuilder {
+		
+		/// <summary>
+		/// Initialises a new instance of builder for any model objects of Type <see cref="ITreeNode"/>
+		/// </summary>
+		public TreeNodeBuilder():base(false)
+		{
+			
+		}
+
+		/// <summary>
+		/// Returns <see cref="ITreeNode.Children"/> from <paramref name="model"/>
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		public override IEnumerable<object> GetChildren (object model)
+		{
+			return model is ITreeNode n ? n.Children : Enumerable.Empty<object>();
+		}
+	}
+
+	/// <summary>
+	/// Implementation of <see cref="ITreeBuilder"/> that uses user defined functions
+	/// </summary>
+	public class DelegateTreeBuilder : TreeBuilder
+	{
+		private Func<object,IEnumerable<object>> childGetter;
+		private Func<object,bool> canExpand;
+
+		/// <summary>
+		/// Constructs an implementation of <see cref="ITreeBuilder"/> that calls the user defined method <paramref name="childGetter"/> to determine children
+		/// </summary>
+		/// <param name="childGetter"></param>
+		/// <returns></returns>
+   		public DelegateTreeBuilder(Func<object,IEnumerable<object>> childGetter) : base(false)
+		{
+			this.childGetter = childGetter;
+		}
+
+		/// <summary>
+		/// Constructs an implementation of <see cref="ITreeBuilder"/> that calls the user defined method <paramref name="childGetter"/> to determine children and <paramref name="canExpand"/> to determine expandability
+		/// </summary>
+		/// <param name="childGetter"></param>
+		/// <param name="canExpand"></param>
+		/// <returns></returns>
+		public DelegateTreeBuilder(Func<object,IEnumerable<object>> childGetter, Func<object,bool> canExpand) : base(true)
+		{
+			this.childGetter = childGetter;
+			this.canExpand = canExpand;
+		}
+
+		/// <summary>
+		/// Returns whether a node can be expanded based on the delegate passed during construction
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		public override bool CanExpand (object model)
+		{
+			return canExpand?.Invoke(model) ?? base.CanExpand (model);
+		}
+
+		/// <summary>
+		/// Returns children using the delegate method passed during construction
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		public override IEnumerable<object> GetChildren (object model)
+		{
+			return childGetter.Invoke(model);
+		}
+	}
+
+
+	/// <summary>
+	/// Hierarchical tree view with expandable branches.  Branch objects are dynamically determined when expanded using a user defined <see cref="ITreeBuilder"/>
 	/// </summary>
 	public class TreeView : View
 	{   
-		/// <summary>
-		/// Default implementation of a <see cref="ChildrenGetterDelegate"/>.  Supports returning children of <see cref="ITreeNode"/> or otherwise returns an empty collection (i.e. no children)
-		/// </summary>
-		static ChildrenGetterDelegate DefaultChildrenGetter = (s)=>{return s is ITreeNode n ? n.Children : Enumerable.Empty<object>();};
-
-		/// <summary>
-		/// This is the delegate that will be used to fetch the children of a model object
-		/// </summary>
-		public ChildrenGetterDelegate ChildrenGetter {
-			get { return childrenGetter ?? DefaultChildrenGetter; }
-			set { childrenGetter = value; }
-		}
-	
-		private ChildrenGetterDelegate childrenGetter;
-		private CanExpandGetterDelegate canExpandGetter;
 		private int scrollOffset;
 
 		/// <summary>
@@ -97,13 +213,15 @@ namespace Terminal.Gui {
 		public bool ShowBranchLines {get;set;} = true;
 
 		/// <summary>
-		/// Optional delegate where <see cref="ChildrenGetter"/> is expensive.  This should quickly return true/false for whether an object is expandable.  (e.g. indicating to a user that all folders can be expanded because they are folders without having to calculate contents)
+		/// True to render <see cref="ExpandableSymbol"/> next to branches that can be expanded.  Defaults to true
 		/// </summary>
-		/// <remarks>When this is null <see cref="ChildrenGetter"/> is used directly to determine if a node should be expandable</remarks>
-		public CanExpandGetterDelegate CanExpandGetter {
-			get { return canExpandGetter; }
-			set { canExpandGetter = value; }
-		}
+		public bool ShowExpandableSymbol {get;set;} = true;
+
+		/// <summary>
+		/// Determines how sub branches of the tree are dynamically built at runtime as the user expands root nodes
+		/// </summary>
+		/// <value></value>
+		public ITreeBuilder TreeBuilder { get;set;}
 
 		/// <summary>
 		/// private variable for <see cref="SelectedObject"/>
@@ -179,11 +297,20 @@ namespace Terminal.Gui {
 
 
 		/// <summary>
-		/// Creates a new tree view with absolute positioning.  Use <see cref="AddObjects(IEnumerable{object})"/> to set set root objects for the tree
+		/// Creates a new tree view with absolute positioning.  Use <see cref="AddObjects(IEnumerable{object})"/> to set set root objects for the tree.  
 		/// </summary>
-		public TreeView ():base()
+		public TreeView():base()
 		{
 			CanFocus = true;
+			TreeBuilder = new TreeNodeBuilder();
+		}
+
+		/// <summary>
+		/// Initialises <see cref="TreeBuilder"/>.Creates a new tree view with absolute positioning.  Use <see cref="AddObjects(IEnumerable{object})"/> to set set root objects for the tree.
+		/// </summary>
+		public TreeView(ITreeBuilder builder) : this()
+		{
+			TreeBuilder = builder;
 		}
 
 		/// <summary>
@@ -348,11 +475,6 @@ namespace Terminal.Gui {
 				}
 			}
 		}
-
-		/// <summary>
-		/// Symbol to use for expanded branch nodes to indicate to the user that they can be collapsed.  Defaults to '-'
-		/// </summary>
-		public Rune ExpandedSymbol {get;set;} = '-';
 
 		/// <summary>
 		/// Symbol to use for branch nodes that can be expanded to indicate this to the user.  Defaults to '+'
@@ -580,10 +702,10 @@ namespace Terminal.Gui {
 		/// </summary>
 		public virtual void FetchChildren()
 		{
-			if (tree.ChildrenGetter == null)
+			if (tree.TreeBuilder == null)
 				return;
 
-			var children = tree.ChildrenGetter(this.Model) ?? new object[0];
+			var children = tree.TreeBuilder.GetChildren(this.Model) ?? Enumerable.Empty<object>();
 
 			this.ChildBranches = children.ToDictionary(k=>k,val=>new Branch(tree,this,val));
 		}
@@ -597,6 +719,10 @@ namespace Terminal.Gui {
 		/// <param name="availableWidth"></param>
 		public virtual void Draw(ConsoleDriver driver,ColorScheme colorScheme, int y, int availableWidth)
 		{
+			driver.SetAttribute(tree.SelectedObject == Model ?
+				colorScheme.HotFocus :
+				colorScheme.Normal);
+
 			// Everything on line before the expansion run and branch text
 			Rune[] prefix = GetLinePrefix(driver).ToArray();
 			Rune expansion = GetExpandableIcon(driver);
@@ -606,23 +732,17 @@ namespace Terminal.Gui {
 			            
 			tree.Move(0,y);
 
-			driver.SetAttribute(colorScheme.Normal);
-
 			foreach(Rune r in prefix)
 				driver.AddRune(r);
 
 			driver.AddRune(expansion);
 
-			driver.SetAttribute(tree.SelectedObject == Model ?
-				colorScheme.HotFocus :
-				colorScheme.Normal);
-
 			driver.AddStr(lineBody);
-
-			driver.SetAttribute(colorScheme.Normal);
 
 			if(remainingWidth > 0)
 				driver.AddStr(new string(' ',remainingWidth));
+
+			driver.SetAttribute(colorScheme.Normal);
 		}
 
 		/// <summary>
@@ -637,6 +757,8 @@ namespace Terminal.Gui {
 				for(int i = 0; i < Depth; i++) {
 					yield return new Rune(' ');
 				}
+
+				yield break;
 			}
 
 			// yield indentations with runes appropriate to the state of the parents
@@ -646,6 +768,8 @@ namespace Terminal.Gui {
 					yield return new Rune(' ');
 				else
 					yield return driver.VLine;
+
+				yield return new Rune(' ');
 			}
 
 			if(IsLast())
@@ -677,15 +801,15 @@ namespace Terminal.Gui {
 		public Rune GetExpandableIcon(ConsoleDriver driver)
 		{
 			if(IsExpanded)
-				return tree.ExpandedSymbol;
+				return driver.HLine;
 
 			var leafSymbol = tree.ShowBranchLines ? driver.HLine : ' ';
 
 			if(ChildBranches == null) {
 			
 				//if there is a rapid method for determining whether there are children
-				if(tree.CanExpandGetter != null) {
-					return tree.CanExpandGetter(Model) ? tree.ExpandableSymbol : leafSymbol;
+				if(tree.TreeBuilder.SupportsCanExpand) {
+					return tree.TreeBuilder.CanExpand(Model) && tree.ShowExpandableSymbol? tree.ExpandableSymbol : leafSymbol;
 				}
 				
 				//there is no way of knowing whether we can expand without fetching the children
@@ -693,7 +817,7 @@ namespace Terminal.Gui {
 			}
 
 			//we fetched or already know the children, so return whether we are a leaf or a expandable branch
-			return ChildBranches.Any() ? tree.ExpandableSymbol : leafSymbol;
+			return ChildBranches.Any() && tree.ShowExpandableSymbol? tree.ExpandableSymbol : leafSymbol;
 		}
 
 		/// <summary>
@@ -736,7 +860,7 @@ namespace Terminal.Gui {
 				// we already knew about some children so preserve the state of the old children
 
 				// first gather the new Children
-				var newChildren = tree.ChildrenGetter(this.Model) ?? new object[0];
+				var newChildren = tree.TreeBuilder?.GetChildren(this.Model) ?? Enumerable.Empty<object>();
 
 				// Children who no longer appear need to go
 				foreach(var toRemove in ChildBranches.Keys.Except(newChildren).ToArray())
@@ -800,13 +924,6 @@ namespace Terminal.Gui {
 			return Parent.ChildBranches.Values.LastOrDefault() == this;
 		}
 	}
-   
-	/// <summary>
-	/// Delegates of this type are used to fetch the children of the given model object
-	/// </summary>
-	/// <param name="model">The parent whose children should be fetched</param>
-	/// <returns>An enumerable over the children</returns>
-	public delegate IEnumerable<object> ChildrenGetterDelegate(object model);
 
 	/// <summary>
 	/// Delegates of this type are used to fetch string representations of user's model objects
@@ -814,14 +931,6 @@ namespace Terminal.Gui {
 	/// <param name="model"></param>
 	/// <returns></returns>
 	public delegate string AspectGetterDelegate(object model);
-
-	/// <summary>
-	/// Delegates of this type are used to quickly display to the user whether a given user object can be expanded when fetching it's children is expensive (e.g. indicating to a user that all 1000 folders can be expanded because they are folders without having to calculate contents)
-	/// </summary>
-	/// <param name="model"></param>
-	/// <returns></returns>
-	public delegate bool CanExpandGetterDelegate(object model);
-
 	
 	/// <summary>
 	/// Event arguments describing a change in selected object in a tree view

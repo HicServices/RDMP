@@ -81,7 +81,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
 
 			// Determines how to compute children of any given branch
-			_treeView.ChildrenGetter = ChildGetter;
+			_treeView.TreeBuilder = new DelegateTreeBuilder(ChildGetter);
 			_treeView.AddObjects(
 				new string[]{ 
 					Catalogues,
