@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -42,7 +43,7 @@ namespace Rdmp.Core.Curation.Data
         /// <summary>
         /// Cached results of <see cref="GetQuerySyntaxHelper"/>
         /// </summary>
-        private static Dictionary<DatabaseType, IQuerySyntaxHelper> _cachedSyntaxHelpers = new Dictionary<DatabaseType, IQuerySyntaxHelper>();
+        private static ConcurrentDictionary<DatabaseType, IQuerySyntaxHelper> _cachedSyntaxHelpers = new ConcurrentDictionary<DatabaseType, IQuerySyntaxHelper>();
                 
         #region Database Properties
         private string _name;
@@ -433,10 +434,7 @@ namespace Rdmp.Core.Curation.Data
         /// <inheritdoc/>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
-            if(!_cachedSyntaxHelpers.ContainsKey(DatabaseType))
-                _cachedSyntaxHelpers.Add(DatabaseType,new QuerySyntaxHelperFactory().Create(DatabaseType));
-
-            return _cachedSyntaxHelpers[DatabaseType];
+            return _cachedSyntaxHelpers.GetOrAdd(DatabaseType,new QuerySyntaxHelperFactory().Create(DatabaseType));
         }
 
         /// <inheritdoc/>
