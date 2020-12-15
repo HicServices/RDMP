@@ -292,7 +292,7 @@ namespace Rdmp.Core.CommandExecution
         
         protected bool SelectMany<T>(T[] available, out T[] selected, string initialSearchText = null) where T : DatabaseEntity
         {
-            selected = (T[]) BasicActivator.SelectMany("Select Objects", typeof(T), available,initialSearchText);
+            selected = BasicActivator.SelectMany("Select Objects", typeof(T), available,initialSearchText)?.Cast<T>()?.ToArray();
             return selected != null && selected.Any();
         }
 

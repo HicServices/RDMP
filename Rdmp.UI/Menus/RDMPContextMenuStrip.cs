@@ -54,6 +54,9 @@ namespace Rdmp.UI.Menus
         {
             _o = o;
             _args = args;
+
+            //we will add this ourselves in AddCommonMenuItems
+            _args.SkipCommand<ExecuteCommandActivate>();
             
             _activator = _args.ItemActivator;
 
@@ -182,8 +185,7 @@ namespace Rdmp.UI.Menus
                         
             foreach (var toPresent in factory.GetCommandsWithPresentation(_o))
             {
-                //we will add this ourselves in AddCommonMenuItems
-                if(toPresent.Command is ExecuteCommandActivate)
+                if(_args.ShouldSkipCommand(toPresent.Command))
                     continue;
 
                 var key = Keys.None;

@@ -10,6 +10,7 @@ using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -21,6 +22,7 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
+using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 using Rdmp.Core.Providers.Nodes.SharingNodes;
 using ReusableLibraryCode.Checks;
 using System;
@@ -246,7 +248,26 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandCreateNewFilter(_activator,sds));
                 yield return new CommandPresentation(new ExecuteCommandCreateNewFilterFromCatalogue(_activator,sds));
                 yield return new CommandPresentation(new ExecuteCommandViewSelectedDataSetsExtractionSql(_activator,sds));
+            }
             
+            if(o is ProjectCataloguesNode pcn)
+            {
+                yield return new CommandPresentation(new ExecuteCommandMakeCatalogueProjectSpecific(_activator).SetTarget(pcn.Project));
+                yield return new CommandPresentation(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator).SetTarget(pcn.Project));
+                yield return new CommandPresentation(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator).SetTarget(pcn.Project));
+            }
+
+            if(o is ProjectCohortIdentificationConfigurationAssociationsNode pccan)
+            {
+                yield return new CommandPresentation(new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator).SetTarget(pccan.Project));
+                yield return new CommandPresentation(new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator).SetTarget(pccan.Project));
+            }
+
+            if(o is ProjectSavedCohortsNode savedCohortsNode )
+            {
+                yield return new CommandPresentation(new ExecuteCommandCreateNewCohortFromFile(_activator,null).SetTarget(savedCohortsNode.Project));
+                yield return new CommandPresentation(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator,null).SetTarget(savedCohortsNode.Project));
+                yield return new CommandPresentation(new ExecuteCommandCreateNewCohortFromCatalogue(_activator).SetTarget(savedCohortsNode.Project));
             }
 
             if(o is IArgument a)

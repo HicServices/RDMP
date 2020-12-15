@@ -89,9 +89,17 @@ namespace Rdmp.Core.CommandExecution
 
             _argumentDelegates.Add(new CommandInvokerArrayDelegate(typeof(IMapsDirectlyToDatabaseTable),false,(p)=>
             {
-                IMapsDirectlyToDatabaseTable[] available = GetAllObjectsOfType(p.Type.GetElementType());
-                return _basicActivator.SelectMany(GetPromptFor(p),p.Type.GetElementType(), available);
-              
+                IMapsDirectlyToDatabaseTable[] available = GetAllObjectsOfType(p.Type.GetElementType());                
+                var result = _basicActivator.SelectMany(GetPromptFor(p),p.Type.GetElementType(), available);
+                
+                if(result == null)
+                    return null;
+                
+                var typedArray = Array.CreateInstance(p.Type.GetElementType(),result.Length);
+                for(int i=0;i<typedArray.Length;i++)
+                    typedArray.SetValue(result[i],i);
+                     
+                return typedArray;
             }));
                    
 

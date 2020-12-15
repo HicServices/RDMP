@@ -112,7 +112,8 @@ namespace Rdmp.Core.CommandLine.Gui
         {
             //todo make this handle multi selection
             var chosen = SelectOne(prompt, availableObjects, initialSearchText);
-            return chosen == null?null : new []{chosen};
+
+            return chosen == null?null : new IMapsDirectlyToDatabaseTable[]{chosen};
         }
 
         public override IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,

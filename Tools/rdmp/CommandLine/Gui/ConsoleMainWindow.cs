@@ -320,6 +320,7 @@ namespace Rdmp.Core.CommandLine.Gui
         private IEnumerable<object> GetOtherCategoryChildren()
         {
             yield return _activator.CoreChildProvider.AllDashboardsNode;
+			yield return _activator.CoreChildProvider.AllGovernanceNode;
             yield return _activator.CoreChildProvider.AllRDMPRemotesNode;
             yield return _activator.CoreChildProvider.AllObjectSharingNode;
             yield return _activator.CoreChildProvider.AllPipelinesNode;
