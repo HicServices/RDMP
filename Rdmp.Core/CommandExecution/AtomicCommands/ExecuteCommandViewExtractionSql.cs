@@ -14,25 +14,25 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandViewSelectedDataSetsExtractionSql : BasicCommandExecution, IAtomicCommandWithTarget
+    public class ExecuteCommandViewExtractionSql : BasicCommandExecution, IAtomicCommandWithTarget
     {
         private IExtractionConfiguration _extractionConfiguration;
         private ISelectedDataSets _selectedDataSet;
         
         [UseWithObjectConstructor]
-        public ExecuteCommandViewSelectedDataSetsExtractionSql(IBasicActivateItems activator, ExtractionConfiguration extractionConfiguration)
+        public ExecuteCommandViewExtractionSql(IBasicActivateItems activator, ExtractionConfiguration extractionConfiguration)
             : base(activator)
         {
             _extractionConfiguration = extractionConfiguration;
         }
 
-        public ExecuteCommandViewSelectedDataSetsExtractionSql(IBasicActivateItems activator, SelectedDataSets sds)
+        public ExecuteCommandViewExtractionSql(IBasicActivateItems activator, SelectedDataSets sds)
             : base(activator)
         {
             _extractionConfiguration = sds.ExtractionConfiguration;
             _selectedDataSet = sds;
         }
-        public ExecuteCommandViewSelectedDataSetsExtractionSql(IBasicActivateItems activator) : base(activator)
+        public ExecuteCommandViewExtractionSql(IBasicActivateItems activator) : base(activator)
         {
         }
 

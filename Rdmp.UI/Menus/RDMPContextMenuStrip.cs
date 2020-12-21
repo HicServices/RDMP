@@ -196,7 +196,7 @@ namespace Rdmp.UI.Menus
                 if(toPresent.SuggestedCategory == null)
                     Add(toPresent.Command,key);
                 else
-                    Add(toPresent.Command,key,toPresent.SuggestedCategory);                
+                    Add(toPresent.Command,toPresent.Ctrl ? Keys.Control | key : key,toPresent.SuggestedCategory);
             }
         }
 

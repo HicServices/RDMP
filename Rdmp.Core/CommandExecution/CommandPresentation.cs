@@ -18,6 +18,11 @@ namespace Rdmp.Core.CommandExecution
         /// Key which should result in this command being fired e.g. "F2"
         /// </summary>
         public string SuggestedShortcut { get; set; }
+        
+        /// <summary>
+        /// True to require Ctrl key to be pressed when <see cref="SuggestedCategory"/>
+        /// </summary>
+        public bool Ctrl { get; internal set; }
 
         public CommandPresentation(IAtomicCommand command)
         {

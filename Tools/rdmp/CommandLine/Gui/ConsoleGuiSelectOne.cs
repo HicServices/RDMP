@@ -53,7 +53,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public ConsoleGuiSelectOne(ICoreChildProvider coreChildProvider, IMapsDirectlyToDatabaseTable[] availableObjects):this()
         {
-            _masterCollection = coreChildProvider.GetAllSearchables().Where(k=> availableObjects.Contains(k.Key)).ToDictionary(k=>k.Key,v=>v.Value);
+            _masterCollection = availableObjects.ToDictionary(k=>k,v=>coreChildProvider.GetDescendancyListIfAnyFor(v));
             SetAspectGet(coreChildProvider);
         }
 

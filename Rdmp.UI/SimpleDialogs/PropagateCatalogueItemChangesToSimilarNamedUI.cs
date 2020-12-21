@@ -108,7 +108,7 @@ namespace Rdmp.UI.SimpleDialogs
             if(ci == null)
                 return;
 
-            var menu =  new CatalogueItemMenu(new RDMPContextMenuStripArgs(Activator), ci);
+            var menu =  new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(Activator), ci);
             menu.Show(Cursor.Position);
         }
 

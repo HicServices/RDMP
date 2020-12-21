@@ -6,24 +6,22 @@
 
 using System;
 using System.Drawing;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandCreateNewEmptyCatalogue : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandCreateNewEmptyCatalogue : BasicCommandExecution, IAtomicCommand
     {
         public CatalogueFolder TargetFolder { get; set; }
 
-        public ExecuteCommandCreateNewEmptyCatalogue(IActivateItems activator) : base(activator)
+        public ExecuteCommandCreateNewEmptyCatalogue(IBasicActivateItems activator) : base(activator)
         {
-            
+
         }
 
-        
+
         public override string GetCommandName()
         {
             return base.GetCommandName() + " (Not Recommended)";
@@ -43,14 +41,14 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var c = new Catalogue(Activator.RepositoryLocator.CatalogueRepository, "New Catalogue " + Guid.NewGuid());
+            var c = new Catalogue(BasicActivator.RepositoryLocator.CatalogueRepository, "New Catalogue " + Guid.NewGuid());
 
             if (TargetFolder != null)
             {
                 c.Folder = TargetFolder;
                 c.SaveToDatabase();
             }
-                
+
 
             Publish(c);
             Emphasise(c);

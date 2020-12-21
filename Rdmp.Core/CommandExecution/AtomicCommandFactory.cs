@@ -83,6 +83,25 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandExtractMetadata(_activator, new []{ c},null,null,null,false,null),Metadata);
             }
 
+            if(o is CatalogueFolder cf)
+            {
+                yield return new CommandPresentation(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator)
+                {
+                    TargetFolder = cf
+                });
+                yield return new CommandPresentation(new ExecuteCommandCreateNewEmptyCatalogue(_activator){
+                    TargetFolder = cf
+                });
+            }
+
+            if(o is CatalogueItem ci)
+            {
+                yield return new CommandPresentation(new ExecuteCommandLinkCatalogueItemToColumnInfo(_activator, ci));
+                yield return new CommandPresentation(new ExecuteCommandMakeCatalogueItemExtractable(_activator, ci));
+                yield return new CommandPresentation(new ExecuteCommandChangeExtractionCategory(_activator, ci.ExtractionInformation));
+                yield return new CommandPresentation(new ExecuteCommandImportCatalogueItemDescription(_activator, ci)){SuggestedShortcut= "I",Ctrl=true };
+            }
+
             if(o is AggregateConfiguration ac)
             {
                 yield return new CommandPresentation(new ExecuteCommandViewSample(_activator, ac));
@@ -258,7 +277,7 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandImportFilterContainerTree(_activator,sds));
                 yield return new CommandPresentation(new ExecuteCommandCreateNewFilter(_activator,sds));
                 yield return new CommandPresentation(new ExecuteCommandCreateNewFilterFromCatalogue(_activator,sds));
-                yield return new CommandPresentation(new ExecuteCommandViewSelectedDataSetsExtractionSql(_activator,sds));
+                yield return new CommandPresentation(new ExecuteCommandViewExtractionSql(_activator,sds));
             }
             
             if(o is ProjectCataloguesNode pcn)

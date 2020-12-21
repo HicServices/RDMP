@@ -24,7 +24,7 @@ namespace Rdmp.Core.CommandLine.Gui
     class ConsoleMainWindow
     {
         private Window _win;
-        private TreeView _treeView;
+        private TreeView<object> _treeView;
         private IBasicActivateItems _activator;
 
 		const string Catalogues = "Catalogues";
@@ -72,7 +72,7 @@ namespace Rdmp.Core.CommandLine.Gui
 				Height = Dim.Fill(1) // status bar
 			};
 
-			_treeView = new TreeView () {
+			_treeView = new TreeView<object> () {
 				X = 0,
 				Y = 0,
 				Width = Dim.Fill(),
@@ -81,7 +81,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
 
 			// Determines how to compute children of any given branch
-			_treeView.TreeBuilder = new DelegateTreeBuilder(ChildGetter);
+			_treeView.TreeBuilder = new DelegateTreeBuilder<object>(ChildGetter);
 			_treeView.AddObjects(
 				new string[]{ 
 					Catalogues,
@@ -170,7 +170,7 @@ namespace Rdmp.Core.CommandLine.Gui
 			_treeView.SetNeedsDisplay();
         }
 
-        private void _treeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void _treeView_SelectionChanged(object sender, SelectionChangedEventArgs<object> e)
         {
 			if(e.NewValue != null)
 	            _treeView.RefreshObject(e.NewValue);
