@@ -6,7 +6,6 @@
 
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
-using Rdmp.Core.CommandExecution.CohortCreationCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.UI.CohortUI.ImportCustomData;

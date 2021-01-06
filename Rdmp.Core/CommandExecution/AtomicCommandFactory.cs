@@ -17,6 +17,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.Curation.Data.Referencing;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers.Nodes;
@@ -313,6 +314,9 @@ namespace Rdmp.Core.CommandExecution
 			if(Is(o,out IDeleteable deletable))
 				yield return new CommandPresentation(new ExecuteCommandDelete(_activator,deletable)){SuggestedShortcut="Delete" };
                       
+            if(Is(o, out ReferenceOtherObjectDatabaseEntity reference))
+                yield return new CommandPresentation(new ExecuteCommandShowRelatedObject(_activator,reference));
+
             if(Is(o, out INamed n))
                 yield return new CommandPresentation(new ExecuteCommandRename(_activator, n)){SuggestedShortcut = "F2" };
         }

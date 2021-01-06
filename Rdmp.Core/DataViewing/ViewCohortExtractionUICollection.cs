@@ -15,6 +15,9 @@ using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataViewing
 {
+    /// <summary>
+    /// <see cref="IViewSQLAndResultsCollection"/> for querying a sample of records in an <see cref="ExtractableCohort"/> (list of patient identifiers)
+    /// </summary>
     public class ViewCohortExtractionUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
     {
         public ViewCohortExtractionUICollection()

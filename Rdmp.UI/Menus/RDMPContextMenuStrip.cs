@@ -150,7 +150,7 @@ namespace Rdmp.UI.Menus
                 }
                 catch (Exception ex)
                 {
-                    _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(ex.Message,
+                    _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs($"Plugin '{plugin.GetType().Name}' failed in call to 'GetAdditionalRightClickMenuItems':"+ Environment.NewLine + ex.Message,
                         CheckResult.Fail, ex));
                 }
             }

@@ -11,17 +11,16 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Spontaneous;
-using Rdmp.Core.DataViewing;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.UI.DataViewing.Collections
+namespace Rdmp.Core.DataViewing
 {
     /// <summary>
     /// Builds a query to fetch data from a <see cref="TableInfo"/>
     /// </summary>
-    public class ViewTableInfoExtractUICollection :PersistableObjectCollection, IViewSQLAndResultsCollection
+    public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
     {
         public ViewType ViewType { get; private set; }
 
@@ -37,30 +36,30 @@ namespace Rdmp.UI.DataViewing.Collections
         {
             DatabaseObjects.Add(t);
 
-            if(filter != null)
+            if (filter != null)
                 DatabaseObjects.Add(filter);
             ViewType = viewType;
         }
 
         public override string SaveExtraText()
         {
-            return Helper.SaveDictionaryToString(new Dictionary<string, string>() {{"ViewType", ViewType.ToString()}});
+            return Helper.SaveDictionaryToString(new Dictionary<string, string>() { { "ViewType", ViewType.ToString() } });
         }
 
         public override void LoadExtraText(string s)
         {
             string value = Helper.GetValueIfExistsFromPersistString("ViewType", s);
-            ViewType = (ViewType) Enum.Parse(typeof (ViewType), value);
+            ViewType = (ViewType)Enum.Parse(typeof(ViewType), value);
         }
 
         public object GetDataObject()
         {
-            return DatabaseObjects.Single(o=>o is ColumnInfo || o is TableInfo);
+            return DatabaseObjects.Single(o => o is ColumnInfo || o is TableInfo);
         }
 
         public IFilter GetFilterIfAny()
         {
-            return (IFilter) DatabaseObjects.SingleOrDefault(o => o is IFilter);
+            return (IFilter)DatabaseObjects.SingleOrDefault(o => o is IFilter);
         }
         public IEnumerable<DatabaseEntity> GetToolStripObjects()
         {
@@ -78,20 +77,20 @@ namespace Rdmp.UI.DataViewing.Collections
         public string GetSql()
         {
             var qb = new QueryBuilder(null, null);
-            
-            if(ViewType ==  ViewType.TOP_100)
-            qb.TopX = 100;
+
+            if (ViewType == ViewType.TOP_100)
+                qb.TopX = 100;
 
             var memoryRepository = new MemoryCatalogueRepository();
 
-            qb.AddColumnRange(TableInfo.ColumnInfos.Select(c => new ColumnInfoToIColumn(memoryRepository,c)).ToArray());
+            qb.AddColumnRange(TableInfo.ColumnInfos.Select(c => new ColumnInfoToIColumn(memoryRepository, c)).ToArray());
 
             var filter = GetFilterIfAny();
-            if(filter != null)
+            if (filter != null)
                 qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(memoryRepository, null, new[] { filter }, FilterContainerOperation.AND);
-            
-            if(ViewType == ViewType.Aggregate)
-                qb.AddCustomLine("count(*),",QueryComponent.QueryTimeColumn);
+
+            if (ViewType == ViewType.Aggregate)
+                qb.AddCustomLine("count(*),", QueryComponent.QueryTimeColumn);
 
             var sql = qb.SQL;
 
@@ -99,7 +98,7 @@ namespace Rdmp.UI.DataViewing.Collections
                 throw new NotSupportedException("ViewType.Aggregate can only be applied to ColumnInfos not TableInfos");
 
             return sql;
-        
+
         }
 
         public string GetTabName()

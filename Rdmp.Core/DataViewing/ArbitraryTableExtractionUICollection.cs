@@ -15,6 +15,9 @@ using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataViewing
 {
+    /// <summary>
+    /// <see cref="IViewSQLAndResultsCollection"/> for querying samples of arbitrary tables / columns
+    /// </summary>
     public class ArbitraryTableExtractionUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection, IDataAccessPoint, IDataAccessCredentials
     {
         private DiscoveredTable _table;

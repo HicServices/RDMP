@@ -6,7 +6,6 @@
 
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
-using Rdmp.Core.CommandExecution.CohortCreationCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;

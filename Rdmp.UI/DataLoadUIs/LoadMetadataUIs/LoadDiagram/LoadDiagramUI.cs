@@ -25,7 +25,6 @@ using Rdmp.UI.CommandExecution;
 using Rdmp.UI.Copying;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using Rdmp.UI.DataViewing;
-using Rdmp.UI.DataViewing.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Icons.IconProvision;

@@ -17,7 +17,7 @@ using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.Listeners;
 using Rdmp.Core.Providers;
 
-namespace Rdmp.Core.CommandExecution.CohortCreationCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
 {
     public abstract class CohortCreationCommandExecution : BasicCommandExecution, IAtomicCommandWithTarget
     {
@@ -35,7 +35,7 @@ namespace Rdmp.Core.CommandExecution.CohortCreationCommands
         /// </summary>
         /// <param name="activator"></param>
         protected CohortCreationCommandExecution(IBasicActivateItems activator)
-            :this(activator,null,null,null,null)
+            : this(activator, null, null, null, null)
         {
 
         }
@@ -48,7 +48,7 @@ namespace Rdmp.Core.CommandExecution.CohortCreationCommands
         /// <param name="cohortName"></param>
         /// <param name="project"></param>
         /// <param name="pipeline"></param>
-        protected CohortCreationCommandExecution(IBasicActivateItems activator,ExternalCohortTable externalCohortTable,string cohortName,Project project, IPipeline pipeline) : base(activator)
+        protected CohortCreationCommandExecution(IBasicActivateItems activator, ExternalCohortTable externalCohortTable, string cohortName, Project project, IPipeline pipeline) : base(activator)
         {
             var dataExport = activator.CoreChildProvider as DataExportChildProvider;
 
@@ -79,33 +79,34 @@ namespace Rdmp.Core.CommandExecution.CohortCreationCommands
             //and document the request
 
             // if we have everything we need to create the cohort right here
-            if(!string.IsNullOrWhiteSpace(_explicitCohortName) && Project?.ProjectNumber != null)
-                return GenerateCohortCreationRequestFromNameAndProject(_explicitCohortName,auditLogDescription);
-            else{
+            if (!string.IsNullOrWhiteSpace(_explicitCohortName) && Project?.ProjectNumber != null)
+                return GenerateCohortCreationRequestFromNameAndProject(_explicitCohortName, auditLogDescription);
+            else
+            {
                 // otherwise we are going to have to ask the user for it
 
                 //Get a new request for the source they are trying to populate
-                var req = BasicActivator.GetCohortCreationRequest(ExternalCohortTable,Project, auditLogDescription);
+                var req = BasicActivator.GetCohortCreationRequest(ExternalCohortTable, Project, auditLogDescription);
 
                 if (Project == null)
                     Project = req.Project;
-    
+
                 return req;
             }
         }
 
         private ICohortCreationRequest GenerateCohortCreationRequestFromNameAndProject(string name, string auditLogDescription)
         {
-            var existing = ExtractableCohort.GetImportableCohortDefinitions(ExternalCohortTable).Where(d=>d.Description.Equals(_explicitCohortName)).ToArray();
+            var existing = ExtractableCohort.GetImportableCohortDefinitions(ExternalCohortTable).Where(d => d.Description.Equals(_explicitCohortName)).ToArray();
             var version = 1;
 
             // If the user has used this description before then we can just bump the version by 1
-            if(existing != null && existing.Any())
+            if (existing != null && existing.Any())
             {
-                version = existing.Max(v=>v.Version) + 1;
+                version = existing.Max(v => v.Version) + 1;
             }
 
-            return new CohortCreationRequest(Project,new CohortDefinition(null,name,version,Project.ProjectNumber.Value,ExternalCohortTable),BasicActivator.RepositoryLocator.DataExportRepository,auditLogDescription);
+            return new CohortCreationRequest(Project, new CohortDefinition(null, name, version, Project.ProjectNumber.Value, ExternalCohortTable), BasicActivator.RepositoryLocator.DataExportRepository, auditLogDescription);
         }
 
         public virtual IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
@@ -124,7 +125,7 @@ namespace Rdmp.Core.CommandExecution.CohortCreationCommands
         {
             var catalogueRepository = BasicActivator.RepositoryLocator.CatalogueRepository;
 
-            var pipelineRunner = BasicActivator.GetPipelineRunner(request,Pipeline);
+            var pipelineRunner = BasicActivator.GetPipelineRunner(request, Pipeline);
 
             pipelineRunner.PipelineExecutionFinishedsuccessfully += (o, args) => OnCohortCreatedSuccessfully(pipelineRunner, request);
 

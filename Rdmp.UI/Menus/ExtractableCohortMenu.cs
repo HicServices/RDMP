@@ -10,7 +10,6 @@ using Rdmp.Core.DataViewing;
 using Rdmp.Core.Providers;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.DataViewing;
-using Rdmp.UI.DataViewing.Collections;
 
 namespace Rdmp.UI.Menus
 {

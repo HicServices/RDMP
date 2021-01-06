@@ -23,7 +23,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
         private const string SolutionName = "HIC.DataManagementPlatform.sln";
         public List<string> csFilesFound = new List<string>();
 
-        private string[] PermissableDuplicates = new[]
+        public static string[] Whitelist = new[]
         {
             "Program.cs",
             "Settings.Designer.cs",
@@ -32,7 +32,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests
             "ToolTips.Designer.cs",
             "Resources.Designer.cs",
             "ProjectInstaller.cs",
-            "ProjectInstaller.Designer.cs"
+            "ProjectInstaller.Designer.cs",
+            "TableView.cs",
+            "TreeView.cs"
         };
 
         [Test]
@@ -188,7 +190,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
 
                     foreach (var found in tidy.csFilesFound)
                         if (csFilesFound.Any(otherFile => Path.GetFileName(otherFile).Equals(Path.GetFileName(found))))
-                            if (!PermissableDuplicates.Contains(Path.GetFileName(found)))
+                            if (!Whitelist.Contains(Path.GetFileName(found)))
                                 Error("Found 2+ files called " + Path.GetFileName(found));
 
                     csFilesFound.AddRange(tidy.csFilesFound);
@@ -212,7 +214,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
 
             foreach (var file in csFilesFound)
             {
-                if (file.Contains(".Designer.cs"))
+                if (file.Contains(".Designer.cs") || EvaluateNamespacesAndSolutionFoldersTests.Whitelist.Contains(file))
                     continue;
 
                 bool changes = false;

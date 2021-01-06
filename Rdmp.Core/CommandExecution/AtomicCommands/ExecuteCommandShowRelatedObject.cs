@@ -8,27 +8,26 @@ using System.Drawing;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Referencing;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandShowRelatedObject : BasicUICommandExecution
+    public class ExecuteCommandShowRelatedObject : BasicCommandExecution
     {
         private DatabaseEntity _toShow;
 
-        public ExecuteCommandShowRelatedObject(IActivateItems activator, ReferenceOtherObjectDatabaseEntity node) : base(activator)
+        public ExecuteCommandShowRelatedObject(IBasicActivateItems activator, ReferenceOtherObjectDatabaseEntity node) : base(activator)
         {
-            _toShow = (DatabaseEntity)node.GetReferencedObject(Activator.RepositoryLocator);
-            if(_toShow == null)
+            _toShow = (DatabaseEntity)node.GetReferencedObject(BasicActivator.RepositoryLocator);
+            if (_toShow == null)
                 SetImpossible("Reference is an orphan");
         }
-        
+
         public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.AllObjectSharingNode);
         }
-        
+
         public override void Execute()
         {
             Emphasise(_toShow);

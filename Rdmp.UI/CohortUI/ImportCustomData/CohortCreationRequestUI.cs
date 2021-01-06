@@ -9,7 +9,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CohortCommitting.Pipeline;
-using Rdmp.Core.CommandExecution.CohortCreationCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;

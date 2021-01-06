@@ -45,7 +45,6 @@ namespace Rdmp.UI.Tests
 
         public ITheme Theme { get {return this;}}
         public RefreshBus RefreshBus { get; private set; }
-        public FavouritesProvider FavouritesProvider { get; private set; }
         public List<IPluginUserInterface> PluginUserInterfaces { get; private set; }
         public IArrangeWindows WindowArranger { get; private set; }
 
@@ -72,7 +71,6 @@ namespace Rdmp.UI.Tests
             CommentStore = _commentStore;
 
             CoreIconProvider = new DataExportIconProvider(RepositoryLocator,null);
-            FavouritesProvider = new FavouritesProvider(this);
             HistoryProvider = new HistoryProvider(RepositoryLocator);
 
             _problemProviders = new List<IProblemProvider>(new IProblemProvider[]

@@ -7,7 +7,6 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Repositories.Construction;
-using Rdmp.UI.DataViewing.Collections;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {

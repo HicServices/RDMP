@@ -6,7 +6,6 @@
 
 using System.Drawing;
 using System.IO;
-using Rdmp.Core.CommandExecution.CohortCreationCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
