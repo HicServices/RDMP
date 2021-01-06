@@ -7,10 +7,11 @@
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataViewing;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.DataViewing;
 
 namespace Rdmp.UI.Menus
 {

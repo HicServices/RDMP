@@ -13,7 +13,7 @@ namespace Rdmp.Core.Curation
     /// <summary>
     /// Interface for objects with <see cref="IContainer"/> (WHERE) logic defined for them
     /// </summary>
-    public interface IRootFilterContainerHost: ISaveable
+    public interface IRootFilterContainerHost: ISaveable, IMapsDirectlyToDatabaseTable
     {
         
         /// <summary>
@@ -32,6 +32,11 @@ namespace Rdmp.Core.Curation
         /// </summary>
         /// <returns></returns>
         IContainer RootFilterContainer {get;}
+
+        /// <summary>
+        /// Creates an appropriate filter to be the root of the hierarchy (See <see cref="RootFilterContainer"/>)
+        /// </summary>
+        void CreateRootContainerIfNotExists();
 
         /// <summary>
         /// Returns a filter factory of the appropriate Type for creating filters in the <see cref="RootFilterContainer"/>

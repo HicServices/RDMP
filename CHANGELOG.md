@@ -34,11 +34,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - RemoteDatabaseAttacher
 - Fixed View Inserts/Updates dialog when using non SqlServer DBMS (e.g. MySql)
 - Fixed various layout and performance issues with RDMP console GUI.
+- Fixed `rdmp cmd` loop exiting when commands entered result in error.
+- Fixed autocomplete in `rdmp cmd` mode and enabled for Linux
 
 ### Changed
 
 - Added timeout of 10 minutes (previously 30 seconds) for counting unique patient identifiers while writing metadata for extractions
 - Choose Load Directory now lets you specify invalid directories e.g. when building a load on one computer designed to run on separate computer with an isolated file system.
+- Reinvented Console Gui to more closely resemble the windows client
 
 ### Dependencies
 

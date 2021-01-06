@@ -162,7 +162,7 @@ namespace Rdmp.UI.CommandExecution
         private ICommandExecution CreateWhenTargetIsATableInfo(ICombineToMakeCommand cmd, TableInfo targetTableInfo)
         {
             if (cmd is DataAccessCredentialsCombineable sourceDataAccessCredentialsCombineable)
-                return new ExecuteCommandUseCredentialsToAccessTableInfoData(_activator,sourceDataAccessCredentialsCombineable, targetTableInfo);
+                return new ExecuteCommandUseCredentialsToAccessTableInfoData(_activator,sourceDataAccessCredentialsCombineable.DataAccessCredentials, targetTableInfo);
 
             return null;
         }

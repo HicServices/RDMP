@@ -47,6 +47,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
 
             var tbl = _importTable ?? BasicActivator.SelectTable(false,"Table to import");
 
+            if(tbl == null)
+                return;
+
             var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, tbl);
             importer.DoImport(out var ti,out _);
 

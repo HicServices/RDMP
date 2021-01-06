@@ -26,9 +26,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
         private ExtractableCohort _cohort;
         private DiscoveredTable _table;
 
-        public ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(IBasicActivateItems activator) : base(activator)
+        public ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(IBasicActivateItems activator,AggregateConfiguration ac) : base(activator)
         {
-
+            _aggregateConfiguration = ac;
         }
 
         public override string GetCommandHelp()

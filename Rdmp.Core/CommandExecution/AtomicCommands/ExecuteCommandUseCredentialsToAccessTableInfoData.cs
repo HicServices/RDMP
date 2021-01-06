@@ -4,9 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.DataAccess;
 
@@ -14,34 +12,44 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandUseCredentialsToAccessTableInfoData : BasicCommandExecution
     {
-        private readonly CatalogueRepository _catalogueRepository;
         private readonly DataAccessCredentials _credentials;
         private readonly TableInfo _tableInfo;
+        private readonly DataAccessCredentials[] _available;
 
         [UseWithObjectConstructor]
         public ExecuteCommandUseCredentialsToAccessTableInfoData(IBasicActivateItems activator,
-            DataAccessCredentials credentials, TableInfo targetTableInfo) : this(activator,
-            new DataAccessCredentialsCombineable(credentials), targetTableInfo)
+            DataAccessCredentials credentials, TableInfo targetTableInfo) : base(activator)
         {
-
-        }
-
-        public ExecuteCommandUseCredentialsToAccessTableInfoData(IBasicActivateItems activator,DataAccessCredentialsCombineable sourceDataAccessCredentialsCombineable, TableInfo targetTableInfo) : base(activator)
-        {
-            _credentials = sourceDataAccessCredentialsCombineable.DataAccessCredentials;
-            _catalogueRepository = _credentials.Repository as CatalogueRepository;
+            _credentials = credentials;
 
             _tableInfo = targetTableInfo;
             
-            if(sourceDataAccessCredentialsCombineable.CurrentUsage[DataAccessContext.Any].Contains(targetTableInfo))
-                SetImpossible(sourceDataAccessCredentialsCombineable.DataAccessCredentials + " is already used to access " + targetTableInfo + " under Any context");
+            if(_credentials == null)
+            {
+                _available = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<DataAccessCredentials>();
+
+                if(_available.Length == 0)
+                    SetImpossible("There are no credentials configured");
+            }
+            else
+            {
+                var usage = _credentials.GetAllTableInfosThatUseThis();
+                
+                if(usage[DataAccessContext.Any].Contains(targetTableInfo))
+                    SetImpossible(_credentials + " is already used to access " + targetTableInfo + " under Any context");
+            }
         }
 
         public override void Execute()
         {
             base.Execute();
+            
+            var creds = _credentials ?? (DataAccessCredentials)BasicActivator.SelectOne("Select Credentials",_available);
 
-            _catalogueRepository.TableInfoCredentialsManager.CreateLinkBetween(_credentials,_tableInfo,DataAccessContext.Any);
+            if(creds == null)
+                return;
+
+            BasicActivator.RepositoryLocator.CatalogueRepository.TableInfoCredentialsManager.CreateLinkBetween(creds,_tableInfo,DataAccessContext.Any);
             Publish(_tableInfo);
         }
     }

@@ -10,7 +10,6 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 

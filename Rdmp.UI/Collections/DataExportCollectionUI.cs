@@ -7,6 +7,7 @@
 using System;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.Curation.Data;

@@ -16,15 +16,11 @@ namespace Rdmp.Core.CommandExecution.Combining
     public class DataAccessCredentialsCombineable : ICombineToMakeCommand
     {
         public DataAccessCredentials DataAccessCredentials { get; private set; }
-        public Dictionary<DataAccessContext, List<ITableInfo>> CurrentUsage { get; set; }
          
         public DataAccessCredentialsCombineable(DataAccessCredentials dataAccessCredentials)
         {
-            DataAccessCredentials = dataAccessCredentials;
-            CurrentUsage = DataAccessCredentials.GetAllTableInfosThatUseThis();
+            DataAccessCredentials = dataAccessCredentials; 
         }
-
-        
 
         public string GetSqlString()
         {

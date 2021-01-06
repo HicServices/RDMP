@@ -36,6 +36,7 @@ namespace Rdmp.Core.CommandLine.Gui
         public bool OkClicked { get; private set; }
 
         private CheckBox CbIsView;
+        private CheckBox CbIsTableValuedFunc;
 
         public ConsoleGuiServerDatabaseTableSelector(IBasicActivateItems activator,string prompt, string okText, bool showTableComponents)
         {
@@ -53,7 +54,8 @@ namespace Rdmp.Core.CommandLine.Gui
 
                 // By using Dim.Fill(), it will automatically resize without manual intervention
                 Width = Dim.Fill (),
-                Height = Dim.Fill ()
+                Height = Dim.Fill (),
+                Modal = true
             };
 
             //////////////////////////////////////////////// Username //////////////////////
@@ -95,7 +97,6 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 X = 0,
                 Y = Pos.Bottom(lblPassword),
-                Width = 10,
                 Height = 1
             };
             btnDatabaseType.Clicked += () =>
@@ -143,7 +144,6 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 X = Pos.Right(tbDatabase),
                 Y = Pos.Bottom(lblServer),
-                Width = 15,
                 Height = 0
             };
             btnCreateDatabase.Clicked += CreateDatabase;
@@ -173,8 +173,14 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 X = 0,
                 Y = Pos.Bottom(lblSchema),
-                Width = Dim.Fill()
             };
+            
+            CbIsTableValuedFunc = new CheckBox("Is Func")
+            {
+                X = Pos.Right(CbIsView) + 5,
+                Y = Pos.Bottom(lblSchema),
+            };
+            
 
             var lblTable = new Label("Table:")
             {
@@ -209,6 +215,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 win.Add(lblSchema);
                 win.Add(tbSchema);
                 win.Add(CbIsView);
+                win.Add(CbIsTableValuedFunc);
                 win.Add(lblTable);
                 win.Add(tbTable);
             }
@@ -219,7 +226,6 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 X = 0,
                 Y = _showTableComponents ? Pos.Bottom(lblTable) : Pos.Bottom(lblDatabase),
-                Width = 5,
                 Height = 1
             };
             btnOk.Clicked += () =>
@@ -232,7 +238,6 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 X = Pos.Right(btnOk)+10,
                 Y = _showTableComponents ? Pos.Bottom(lblTable) : Pos.Bottom(lblDatabase),
-                Width = 5,
                 Height = 1
             };
             btnCancel.Clicked += Application.RequestStop;
@@ -295,9 +300,10 @@ namespace Rdmp.Core.CommandLine.Gui
             if (string.IsNullOrWhiteSpace(Database))
                 return null;
 
-            return new DiscoveredServer(Server,Database,DatabaseType,Username,Password).ExpectDatabase(Database).ExpectTable(Table,Schema,TableType);
-        }
+            if(CbIsTableValuedFunc.Checked)
+                return new DiscoveredServer(Server,Database,DatabaseType,Username,Password).ExpectDatabase(Database).ExpectTableValuedFunction(Table,Schema);
 
-        
+            return new DiscoveredServer(Server,Database,DatabaseType,Username,Password).ExpectDatabase(Database).ExpectTable(Table,Schema,TableType);
+        }       
     }
 }

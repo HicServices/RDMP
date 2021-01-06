@@ -189,6 +189,16 @@ namespace Rdmp.Core.CommandExecution
         }
 
         /// <summary>
+        /// Displays the given message to the user with the given title
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="message"></param>
+        protected void Show(string title, string message)
+        {
+            BasicActivator.Show(title,message);
+        }
+
+        /// <summary>
         /// Displays the given message to the user, calling String.Format 
         /// </summary>
         /// <param name="message"></param>
@@ -282,7 +292,7 @@ namespace Rdmp.Core.CommandExecution
         
         protected bool SelectMany<T>(T[] available, out T[] selected, string initialSearchText = null) where T : DatabaseEntity
         {
-            selected = (T[]) BasicActivator.SelectMany("Select Objects", typeof(T), available,initialSearchText);
+            selected = BasicActivator.SelectMany("Select Objects", typeof(T), available,initialSearchText)?.Cast<T>()?.ToArray();
             return selected != null && selected.Any();
         }
 

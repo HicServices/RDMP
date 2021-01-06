@@ -11,12 +11,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataViewing;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
@@ -30,11 +33,36 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         bool IsInteractive {get;}
 
+        /// <summary>
+        /// True if <see cref="Activate(object)"/> will work for the object
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
+        bool CanActivate(object o);
+
+        /// <summary>
+        /// True to prompt Yes/No and offer common fixes for being unable to directly delete an object.  Note that <see cref="IsInteractive"/> must be true for this flag to be respected
+        /// </summary>
+        bool InteractiveDeletes {get;set;}
 
         /// <summary>
         /// Event triggered when objects should be brought to the users attention
         /// </summary>
         event EmphasiseItemHandler Emphasise;
+
+
+        /// <summary>
+        /// Show all objects in RDMP (with search).  If a single selection is made then invoke the callback
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <param name="callback"></param>
+        void SelectAnythingThen(string prompt, Action<IMapsDirectlyToDatabaseTable> callback);
+        
+        /// <summary>
+        /// Show some SQL and the data that it returns.  This should be non modal
+        /// </summary>
+        /// <param name="collection"></param>
+        void ShowData(IViewSQLAndResultsCollection collection);
 
         /// <summary>
         /// Component for recording object tree inheritance (for RDMPCollectionUI primarily but also for anyone who wants to know children of objects or all objects quickly without having to go back to the database)
@@ -45,6 +73,11 @@ namespace Rdmp.Core.CommandExecution
         /// Component class for discovering the default DQE, Logging servers etc configured in the current RDMP database
         /// </summary>
         IServerDefaults ServerDefaults { get; }
+        
+        /// <summary>
+        /// Component for telling you whether a given DatabaseEntity is one of the current users favourite objects and for toggling it
+        /// </summary>
+        FavouritesProvider FavouritesProvider { get;}
 
         /// <summary>
         /// Returns a dictionary of methods to call for each type of constructor parameter needed.  If no Type
@@ -90,7 +123,17 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="initialSearchText"></param>
         /// <returns></returns>
         IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,IMapsDirectlyToDatabaseTable[] availableObjects,string initialSearchText = null);
-
+        
+        /// <summary>
+        /// Prompts user or directly creates a new satelite database (e.g. logging / dqe etc) and returns a persistent reference to it
+        /// </summary>
+        /// <param name="catalogueRepository">The main catalogue database</param>
+        /// <param name="defaultToSet">If the created database is to become the new default database of it's type provide this</param>
+        /// <param name="db">The server in which the database should be created or null if the user is expected to pick themselves as part of the method e.g. through a UI</param>
+        /// <param name="patcher">The schema and patches to run to create the database</param>
+        /// <returns></returns>
+        ExternalDatabaseServer CreateNewPlatformDatabase(ICatalogueRepository catalogueRepository, PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db);
+         
         /// <summary>
         /// Prompts user to pick one of the <paramref name="availableObjects"/>
         /// </summary>
@@ -200,6 +243,12 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="message"></param>
         void Show(string message);
 
+        /// <summary>
+        /// Display the given message to the user (e.g. in a MessageBox or out into the Console).  If provided <paramref name="title"/> may also be featured in the presentation
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="message"></param>
+        void Show(string title, string message);
         
         /// <summary>
         /// Prompts user to provide some textual input
@@ -291,7 +340,7 @@ namespace Rdmp.Core.CommandExecution
         /// environment is not interactive e.g. console)
         /// </summary>
         /// <param name="o"></param>
-        void Activate(DatabaseEntity o);
+        void Activate(object o);
 
         /// <summary>
         /// Handle the creation and configuring of a new <see cref="ICatalogue"/> often with user input about what column(s) should be extractable etc.  Return null if user cancelled the process somehow
@@ -304,5 +353,11 @@ namespace Rdmp.Core.CommandExecution
         /// <returns>A fully configured ready to go Catalogue or null if user cancelled process e.g. if <see cref="IsInteractive"/></returns>
         ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo,ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, CatalogueFolder targetFolder);
 
+        /// <summary>
+        /// Returns true if creating a cohort through an interactive wizard is supported.  If a wizard was shown and suitable input received then <paramref name="cic"/> should be populated with the result
+        /// </summary>
+        /// <param name="cic"></param>
+        /// <returns>True if a wizard was shown even if no configuration was then created</returns>
+        bool ShowCohortWizard(out CohortIdentificationConfiguration cic);
     }
 }

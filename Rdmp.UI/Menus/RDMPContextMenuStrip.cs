@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
@@ -19,7 +20,6 @@ using Rdmp.Core.Repositories;
 using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using ReusableLibraryCode.Checks;
@@ -31,7 +31,7 @@ namespace Rdmp.UI.Menus
     /// Base class for all right click context menus in <see cref="RDMPCollectionUI"/> controls.  These menus are built by reflection
     /// when the selected object is changed.
     /// </summary>
-    
+
     [System.ComponentModel.DesignerCategory("")]
     public class RDMPContextMenuStrip:ContextMenuStrip
     {
@@ -54,6 +54,9 @@ namespace Rdmp.UI.Menus
         {
             _o = o;
             _args = args;
+
+            //we will add this ourselves in AddCommonMenuItems
+            _args.SkipCommand<ExecuteCommandActivate>();
             
             _activator = _args.ItemActivator;
 
@@ -69,7 +72,7 @@ namespace Rdmp.UI.Menus
             if(o is DatabaseEntity e)
             {
                 var gotoMenuBuilder = new GoToMenuBuilder(_activator);
-                Items.Add(gotoMenuBuilder.GetMenu(e));
+                Items.Add(gotoMenuBuilder.GetMenu(e,args.Masquerader));
 
             }
         }
@@ -123,8 +126,9 @@ namespace Rdmp.UI.Menus
 
         public void AddCommonMenuItems(RDMPCollectionCommonFunctionality commonFunctionality)
         {
-            var deletable = _o as IDeleteable;
-            var nameable = _o as INamed;
+            
+            AddFactoryMenuItems();
+
             var databaseEntity = _o as DatabaseEntity;
 
             var treeMenuItem = AddMenuIfNotExists(Tree);
@@ -146,25 +150,13 @@ namespace Rdmp.UI.Menus
                 }
                 catch (Exception ex)
                 {
-                    _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(ex.Message,
+                    _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs($"Plugin '{plugin.GetType().Name}' failed in call to 'GetAdditionalRightClickMenuItems':"+ Environment.NewLine + ex.Message,
                         CheckResult.Fail, ex));
                 }
             }
 
             if(Items.Count > 0)
                 Items.Add(new ToolStripSeparator());
-
-            //add delete/rename etc
-            if (deletable != null)
-            {
-                if (_args.Masquerader is IDeleteable)
-                    deletable = (IDeleteable)_args.Masquerader;
-
-                Add(new ExecuteCommandDelete(_activator, deletable), Keys.Delete);
-            }
-
-            if (nameable != null)
-                Add(new ExecuteCommandRename(_activator, nameable), Keys.F2);
 
             //add seldom used submenus (pin, view dependencies etc)
             Items.Add(inspectionMenuItem);
@@ -184,6 +176,28 @@ namespace Rdmp.UI.Menus
                 Add(new ExecuteCommandRefreshObject(_activator, databaseEntity), Keys.F5);
             
             Add(new ExecuteCommandShowKeywordHelp(_activator, _args));
+
+        }
+                
+        private void AddFactoryMenuItems()
+        {
+            var factory = new AtomicCommandFactory(_activator);
+                        
+            foreach (var toPresent in factory.GetCommandsWithPresentation(_o))
+            {
+                if(_args.ShouldSkipCommand(toPresent.Command))
+                    continue;
+
+                var key = Keys.None;
+
+                if(!string.IsNullOrWhiteSpace(toPresent.SuggestedShortcut))
+                    Enum.TryParse<Keys>(toPresent.SuggestedShortcut,out key);
+
+                if(toPresent.SuggestedCategory == null)
+                    Add(toPresent.Command,key);
+                else
+                    Add(toPresent.Command,toPresent.Ctrl ? Keys.Control | key : key,toPresent.SuggestedCategory);
+            }
         }
 
         private void PopulateTreeMenu(RDMPCollectionCommonFunctionality commonFunctionality, ToolStripMenuItem treeMenuItem)

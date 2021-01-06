@@ -24,12 +24,30 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private IArgumentHost _host;
         private IArgument _arg;
         private object _value;
+
+        private bool _promptUser = false;
         
         public ExecuteCommandSetArgument(IBasicActivateItems activator,IArgumentHost host, IArgument arg, object value):base(activator)
         {
             _host = host;
             _arg = arg;
             _value = value;
+        }
+
+
+        /// <summary>
+        /// Interactive constructor that prompts for value at execution time
+        /// </summary>
+        /// <param name="activator"></param>
+        /// <param name="arg"></param>
+        /// <returns></returns>
+        public ExecuteCommandSetArgument(IBasicActivateItems activator, IArgument arg):base(activator)
+        {
+            _arg = arg;
+            _promptUser = true;
+
+            if(!activator.IsInteractive)
+                SetImpossible("Activator does not support interactive mode");
         }
 
         /// <summary>
@@ -107,7 +125,15 @@ argValue    New value for argument e.g. Null, True, Catalogue:5 etc")]
         {
             base.Execute();
 
-            _arg.SetValue(_value);
+            var value = _value;
+
+            if(_promptUser)
+            {
+                var invoker = new CommandInvoker(BasicActivator);
+                value = invoker.GetValueForParameterOfType(new RequiredArgument(_arg));
+            }
+
+            _arg.SetValue(value);
             _arg.SaveToDatabase();
             
             if(_arg is DatabaseEntity de)

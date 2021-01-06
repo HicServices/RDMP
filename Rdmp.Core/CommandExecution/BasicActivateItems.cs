@@ -12,14 +12,20 @@ using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.CohortCommitting.Pipeline;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataViewing;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
@@ -32,10 +38,16 @@ namespace Rdmp.Core.CommandExecution
         public virtual bool IsInteractive => true;
 
         /// <inheritdoc/>
+        public bool InteractiveDeletes {get;set;}
+
+        /// <inheritdoc/>
         public ICoreChildProvider CoreChildProvider { get; protected set;}
 
         /// <inheritdoc/>
         public IServerDefaults ServerDefaults { get; }
+
+        /// <inheritdoc/>
+        public FavouritesProvider FavouritesProvider { get; private set; }
 
         /// <inheritdoc/>
         public abstract bool YesNo(string text, string caption, out bool chosen);
@@ -61,6 +73,9 @@ namespace Rdmp.Core.CommandExecution
             GlobalErrorCheckNotifier = globalErrorCheckNotifier;
 
             ServerDefaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
+            
+            //Shouldn't ever change externally to your session so doesn't need constantly refreshed
+            FavouritesProvider = new FavouritesProvider(this);
 
             // Note that this is virtual so can return null e.g. if other stuff has to happen with the activator before a valid child provider can be built (e.g. loading plugin user interfaces)
             CoreChildProvider = GetChildProvider();
@@ -119,7 +134,12 @@ namespace Rdmp.Core.CommandExecution
 
         public abstract bool SelectType(string prompt, Type[] available, out Type chosen);
         
-        public virtual void Activate(DatabaseEntity o)
+        public virtual bool CanActivate(object target)
+        {
+            return false;
+        }
+
+        public virtual void Activate(object o)
         {
             
         }
@@ -144,12 +164,113 @@ namespace Rdmp.Core.CommandExecution
         /// <inheritdoc/>
         public virtual bool DeleteWithConfirmation(IDeleteable deleteable)
         {
-            deleteable.DeleteInDatabase();
+            if (IsInteractive && InteractiveDeletes)
+            {
+                bool didDelete = InteractiveDelete(deleteable);
+                
+                if(didDelete && deleteable is IMapsDirectlyToDatabaseTable o)
+                    Publish(o);
 
-            if(deleteable is DatabaseEntity d)
-                Publish(d);
+                return didDelete;
+            }
+            else
+            {
+                deleteable.DeleteInDatabase();
 
-            return true;
+                if(deleteable is DatabaseEntity d)
+                    Publish(d);
+
+                return true;
+            }
+        }
+
+        protected virtual bool InteractiveDelete(IDeleteable deleteable)
+        {
+            var databaseObject = deleteable as DatabaseEntity;
+                        
+            //If there is some special way of describing the effects of deleting this object e.g. Selected Datasets
+            var customMessageDeletable = deleteable as IDeletableWithCustomMessage;
+            
+            if(databaseObject is Catalogue c)
+            {
+                if(c.GetExtractabilityStatus(RepositoryLocator.DataExportRepository).IsExtractable)
+                {
+                    if(YesNo("Catalogue must first be made non extractable before it can be deleted, mark non extractable?","Make Non Extractable"))
+                    {
+                        var cmd = new ExecuteCommandChangeExtractability(this,c);
+                        cmd.Execute();
+                    }
+                    else
+                        return false;
+                }
+            }
+
+            if( databaseObject is AggregateConfiguration ac && ac.IsJoinablePatientIndexTable())
+            {
+                var users = ac.JoinableCohortAggregateConfiguration?.Users?.Select(u=>u.AggregateConfiguration);
+                if(users != null)
+                {
+                    users = users.ToArray();
+                    if(users.Any())
+                    {
+                        Show($"Cannot Delete '{ac.Name}' because it is linked to by the following AggregateConfigurations:{Environment.NewLine}{string.Join(Environment.NewLine,users)}");
+                        return false;
+                    }                       
+                }
+            }
+
+            string overrideConfirmationText = null;
+
+            if (customMessageDeletable != null)
+                overrideConfirmationText = "Are you sure you want to " +customMessageDeletable.GetDeleteMessage() +"?";
+
+            //it has already been deleted before
+            if (databaseObject != null && !databaseObject.Exists())
+                return false;
+
+            string idText = "";
+
+            if (databaseObject != null)
+                idText = " ID=" + databaseObject.ID;
+
+            if (databaseObject != null)
+            {
+                var exports = RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectExport>(databaseObject).ToArray();
+                if(exports.Any(e=>e.Exists()))
+                    if(YesNo("This object has been shared as an ObjectExport.  Deleting it may prevent you loading any saved copies.  Do you want to delete the ObjectExport definition?","Delete ObjectExport"))
+                    {
+                        foreach(ObjectExport e in exports)
+                            e.DeleteInDatabase(); 
+                    }
+                    else
+                        return false;
+            }
+                        
+            if (
+                YesNo(
+                    overrideConfirmationText?? ("Are you sure you want to delete '" + deleteable + "'?")
+                +Environment.NewLine + "(" + deleteable.GetType().Name + idText +")",
+                "Delete " + deleteable.GetType().Name))
+            {
+                deleteable.DeleteInDatabase();
+                
+                if (databaseObject == null)
+                {
+                    var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(deleteable);
+                    if(descendancy != null)
+                        databaseObject = descendancy.Parents.OfType<DatabaseEntity>().LastOrDefault();
+                }
+
+                if (deleteable is IMasqueradeAs)
+                    databaseObject = databaseObject ?? ((IMasqueradeAs)deleteable).MasqueradingAs() as DatabaseEntity;
+
+                if (databaseObject == null)
+                    throw new NotSupportedException("IDeletable " + deleteable +
+                                                    " was not a DatabaseObject and it did not have a Parent in it's tree which was a DatabaseObject (DescendancyList)");
+                return true;
+            }
+
+            return false;
         }
 
         /// <inheritdoc/>
@@ -191,7 +312,12 @@ namespace Rdmp.Core.CommandExecution
         }
 
         /// <inheritdoc/>
-        public abstract void Show(string message);
+        public void Show(string message)
+        {
+            Show("Message",message);
+        }
+
+        public abstract void Show(string title, string message);
 
         /// <inheritdoc/>
         public abstract bool TypeText(string header, string prompt, int maxLength, string initialText, out string text,
@@ -306,5 +432,36 @@ namespace Rdmp.Core.CommandExecution
 
             return cata;
         }
+
+        public virtual ExternalDatabaseServer CreateNewPlatformDatabase(ICatalogueRepository catalogueRepository, PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db)
+        {
+            if(db == null)
+                throw new ArgumentException($"Database must be picked before calling {nameof(CreateNewPlatformDatabase)} when using {nameof(BasicActivateItems)}",nameof(db));
+
+            MasterDatabaseScriptExecutor executor = new MasterDatabaseScriptExecutor(db);
+            executor.CreateAndPatchDatabase(patcher,new AcceptAllCheckNotifier());
+
+            var eds = new ExternalDatabaseServer(catalogueRepository,"New " + (defaultToSet == PermissableDefaults.None ? "" :  defaultToSet.ToString()) + "Server",patcher);
+            eds.SetProperties(db);
+            
+            return eds;
+        }
+
+        public virtual bool ShowCohortWizard(out CohortIdentificationConfiguration cic)
+        {
+            cic = null;
+            return false;
+        }
+
+        public virtual void SelectAnythingThen(string prompt, Action<IMapsDirectlyToDatabaseTable> callback)
+        {
+            var selected = SelectOne(prompt, CoreChildProvider.GetAllSearchables().Keys.ToArray());
+
+            if(selected != null)
+                callback(selected);
+
+        }
+
+        public abstract void ShowData(IViewSQLAndResultsCollection collection);
     }
 }

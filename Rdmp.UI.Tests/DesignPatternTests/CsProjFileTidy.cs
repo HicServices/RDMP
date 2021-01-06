@@ -26,7 +26,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
         private string[] Whitelist = new[]
         {
             "Attributes.cs", "AssemblyInfo.cs", "Annotations.cs", "StageArgs.cs" ,"ICustomUI.cs","MapsDirectlyToDatabaseTableStatelessDefinition.cs",
-            "IObjectUsedByOtherObjectNode.cs", "IInjectKnown.cs", "Themes.cs"
+            "IObjectUsedByOtherObjectNode.cs", "IInjectKnown.cs", "Themes.cs","TableView.cs","TreeView.cs"
         };
 
         public CsProjFileTidy(FileInfo csProjFile)

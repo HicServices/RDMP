@@ -28,7 +28,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public override void Execute()
         {
-            Show(_tableInfo.Discover(DataAccessContext.InternalDataProcessing).ScriptTableCreation(false,false,false));
+            Show($"Script for {_tableInfo.GetRuntimeName()}",_tableInfo.Discover(DataAccessContext.InternalDataProcessing).ScriptTableCreation(false,false,false));
         }
 
         public override Image GetImage(IIconProvider iconProvider)

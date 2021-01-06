@@ -64,7 +64,7 @@ namespace Rdmp.Core.CommandExecution
             
             AddDelegate(typeof(string), false,(p) =>
             
-                _basicActivator.TypeText("Value needed for parameter", p.Name, 1000, null, out string result, false)
+                _basicActivator.TypeText("Value needed for parameter", GetPromptFor(p), 1000, null, out string result, false)
                 ? result
                 : throw new OperationCanceledException());
 
@@ -73,10 +73,10 @@ namespace Rdmp.Core.CommandExecution
                     ? chosen 
                     : throw new OperationCanceledException());
 
-            AddDelegate(typeof(DiscoveredDatabase),false,(p)=>_basicActivator.SelectDatabase(true,"Value needed for parameter " + p.Name));
-            AddDelegate(typeof(DiscoveredTable),false,(p)=>_basicActivator.SelectTable(true,"Value needed for parameter " + p.Name));
+            AddDelegate(typeof(DiscoveredDatabase),false,(p)=>_basicActivator.SelectDatabase(true,GetPromptFor(p)));
+            AddDelegate(typeof(DiscoveredTable),false,(p)=>_basicActivator.SelectTable(true,GetPromptFor(p)));
 
-            AddDelegate(typeof(DatabaseEntity),false, (p) =>_basicActivator.SelectOne(p.Name, GetAllObjectsOfType(p.Type)));
+            AddDelegate(typeof(DatabaseEntity),false, (p) =>_basicActivator.SelectOne(GetPromptFor(p), GetAllObjectsOfType(p.Type)));
             AddDelegate(typeof(IMightBeDeprecated),false, SelectOne<IMightBeDeprecated>);
             AddDelegate(typeof(IDisableable),false, SelectOne<IDisableable>);
             AddDelegate(typeof(INamed),false, SelectOne<INamed>);
@@ -84,19 +84,27 @@ namespace Rdmp.Core.CommandExecution
             AddDelegate(typeof(ILoggedActivityRootObject),false, SelectOne<ILoggedActivityRootObject>);
             AddDelegate(typeof(IRootFilterContainerHost),false, SelectOne<IRootFilterContainerHost>);            
 
-            AddDelegate(typeof(Enum),false,(p)=>_basicActivator.SelectEnum("Value needed for parameter " + p.Name , p.Type, out Enum chosen)?chosen:null);
+            AddDelegate(typeof(Enum),false,(p)=>_basicActivator.SelectEnum(GetPromptFor(p) , p.Type, out Enum chosen)?chosen:null);
 
 
             _argumentDelegates.Add(new CommandInvokerArrayDelegate(typeof(IMapsDirectlyToDatabaseTable),false,(p)=>
             {
-                IMapsDirectlyToDatabaseTable[] available = GetAllObjectsOfType(p.Type.GetElementType());
-                return _basicActivator.SelectMany(p.Name,p.Type.GetElementType(), available);
-              
+                IMapsDirectlyToDatabaseTable[] available = GetAllObjectsOfType(p.Type.GetElementType());                
+                var result = _basicActivator.SelectMany(GetPromptFor(p),p.Type.GetElementType(), available);
+                
+                if(result == null)
+                    return null;
+                
+                var typedArray = Array.CreateInstance(p.Type.GetElementType(),result.Length);
+                for(int i=0;i<typedArray.Length;i++)
+                    typedArray.SetValue(result[i],i);
+                     
+                return typedArray;
             }));
                    
 
             AddDelegate(typeof(ICheckable), false,
-                (p)=>_basicActivator.SelectOne(p.Name, 
+                (p)=>_basicActivator.SelectOne(GetPromptFor(p), 
                     _basicActivator.GetAll<ICheckable>()
                         .Where(p.Type.IsInstanceOfType)
                         .Cast<IMapsDirectlyToDatabaseTable>()
@@ -123,10 +131,15 @@ namespace Rdmp.Core.CommandExecution
             );
 
             _argumentDelegates.Add(new CommandInvokerValueTypeDelegate((p)=>
-                _basicActivator.SelectValueType(p.Name, p.Type, null, out object chosen) 
+                _basicActivator.SelectValueType(GetPromptFor(p), p.Type, null, out object chosen) 
                     ? chosen 
                     : throw new OperationCanceledException()));
 
+        }
+
+        private string GetPromptFor(RequiredArgument p)
+        {
+            return $"Value needed for {p.Name} ({p.Type.Name})";
         }
 
         private void AddDelegate(Type type,bool isAuto, Func<RequiredArgument, object> func)
@@ -218,15 +231,15 @@ namespace Rdmp.Core.CommandExecution
 
         public object GetValueForParameterOfType(PropertyInfo propertyInfo)
         {
-            return GetValueFor(new RequiredArgument(propertyInfo));
+            return GetValueForParameterOfType(new RequiredArgument(propertyInfo));
         }
 
         public object GetValueForParameterOfType(ParameterInfo parameterInfo)
         {
-            return GetValueFor(new RequiredArgument(parameterInfo));
+            return GetValueForParameterOfType(new RequiredArgument(parameterInfo));
         }
 
-        private object GetValueFor(RequiredArgument a)
+        public object GetValueForParameterOfType(RequiredArgument a)
         {
             return GetDelegate(a)?.Run(a);
         }
