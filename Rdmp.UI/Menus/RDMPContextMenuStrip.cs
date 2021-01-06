@@ -72,7 +72,7 @@ namespace Rdmp.UI.Menus
             if(o is DatabaseEntity e)
             {
                 var gotoMenuBuilder = new GoToMenuBuilder(_activator);
-                Items.Add(gotoMenuBuilder.GetMenu(e));
+                Items.Add(gotoMenuBuilder.GetMenu(e,args.Masquerader));
 
             }
         }

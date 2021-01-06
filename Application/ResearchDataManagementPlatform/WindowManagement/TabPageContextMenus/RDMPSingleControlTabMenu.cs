@@ -32,7 +32,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TabPageContextMenus
             if (tab is PersistableSingleDatabaseObjectDockContent single)
             {
                 var builder = new GoToMenuBuilder(activator);
-                Items.Add(builder.GetMenu(single.DatabaseObject));
+                Items.Add(builder.GetMenu(single.DatabaseObject,null));
             }
 
             Items.Add("Refresh", FamFamFamIcons.arrow_refresh, (s, e) => _tab.HandleUserRequestingTabRefresh(activator));

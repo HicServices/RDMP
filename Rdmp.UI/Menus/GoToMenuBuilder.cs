@@ -44,7 +44,7 @@ namespace Rdmp.UI.Menus
             _commandFactory = new AtomicCommandUIFactory(activator);
         }
 
-        public ToolStripMenuItem GetMenu(IMapsDirectlyToDatabaseTable forObject)
+        public ToolStripMenuItem GetMenu(IMapsDirectlyToDatabaseTable forObject, IMasqueradeAs masqueraderIfAny)
         {
             //forget old values, get them up to the minute
             if(forObject is IInjectKnown ii)
@@ -206,9 +206,9 @@ namespace Rdmp.UI.Menus
                     ,"Extraction Configurations");
             
             //if it is a masquerader and masquerading as a DatabaseEntity then add a goto the object
-            if (forObject is IMasqueradeAs masquerader)
+            if (masqueraderIfAny != null)
             {
-                if(masquerader.MasqueradingAs() is DatabaseEntity m)
+                if(masqueraderIfAny.MasqueradingAs() is DatabaseEntity m)
                     AddGoTo(menu,m,m.GetType().Name);
             }
 
