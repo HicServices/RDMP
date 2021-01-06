@@ -3,11 +3,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NStack;
 
 namespace Terminal.Gui {
 
 	/// <summary>
-	/// Interface to implement when you want <see cref="TreeView{T}"/> to automatically determine children for your class
+	/// Interface to implement when you want the regular (non generic) <see cref="TreeView"/> to automatically determine children for your class (without having to specify a <see cref="ITreeBuilder{T}"/>)
 	/// </summary>
 	public interface ITreeNode
 	{
@@ -25,7 +26,7 @@ namespace Terminal.Gui {
 	}
 
 	/// <summary>
-	/// Simple class for representing nodes of a <see cref="TreeView{T}"/>.
+	/// Simple class for representing nodes, use with regular (non generic) <see cref="TreeView"/>.
 	/// </summary>
 	public class TreeNode : ITreeNode
 	{
@@ -80,6 +81,7 @@ namespace Terminal.Gui {
 		/// <summary>
 		/// Returns true/false for whether a model has children.  This method should be implemented when <see cref="GetChildren"/> is an expensive operation otherwise <see cref="SupportsCanExpand"/> should return false (in which case this method will not be called)
 		/// </summary>
+		/// <remarks>Only implement this method if you have a very fast way of determining whether an object can have children e.g. checking a Type (directories can always be expanded)</remarks>
 		/// <param name="model"></param>
 		/// <returns></returns>
 		bool CanExpand(T model);
@@ -93,7 +95,7 @@ namespace Terminal.Gui {
 	}
 
 	/// <summary>
-	/// Abstract implementation of <see cref="ITreeBuilder{T}"/>
+	/// Abstract implementation of <see cref="ITreeBuilder{T}"/>.
 	/// </summary>
 	public abstract class TreeBuilder<T> : ITreeBuilder<T> {
 
@@ -101,7 +103,7 @@ namespace Terminal.Gui {
 		public bool SupportsCanExpand { get; protected set;} = false;
 
 		/// <summary>
-		/// Override this method to return a rapid answer as to whether <see cref="GetChildren(T)"/> returns results.
+		/// Override this method to return a rapid answer as to whether <see cref="GetChildren(T)"/> returns results.  If you are implementing this method ensure you passed true in base constructor or set <see cref="SupportsCanExpand"/>
 		/// </summary>
 		/// <param name="model"></param>
 		/// <returns></returns>
@@ -250,12 +252,6 @@ namespace Terminal.Gui {
 		/// Symbol to use for branch nodes that can be expanded to indicate this to the user.  Defaults to '+'. Set to null to hide
 		/// </summary>
 		public Rune? ExpandableSymbol {get;set;} = '+';
-
-		/// <summary>
-		/// Optional color scheme to use when rendering <see cref="ExpandableSymbol"/> (defaults to null)
-		/// </summary>
-		public Attribute? ExpandableSymbolColor {get;set; }
-
 				
 		/// <summary>
 		/// Symbol to use for branch nodes that can be collapsed (are currently expanded).  Defaults to '-'.  Set to null to hide
@@ -263,9 +259,14 @@ namespace Terminal.Gui {
 		public Rune? CollapseableSymbol {get;set;} = '-';
 
 		/// <summary>
-		/// Optional color scheme to use when rendering <see cref="CollapseableSymbol"/> (defaults to null)
+		/// Set to true to highlight expand/collapse symbols in hot key color
 		/// </summary>
-		public Attribute? CollapseableSymbolColor {get;set; }
+		public bool ColorExpandSymbol {get;set;}
+
+		/// <summary>
+		/// Invert console colours used to render the expand symbol
+		/// </summary>
+		public bool InvertExpandSymbolColors {get;set;}
 
 	}
 
@@ -579,6 +580,98 @@ namespace Terminal.Gui {
 			return true;
 		}
 
+		///<inheritdoc/>
+		public override bool MouseEvent (MouseEvent me)
+		{
+			if (!me.Flags.HasFlag (MouseFlags.Button1Clicked) && !me.Flags.HasFlag (MouseFlags.Button1DoubleClicked) &&
+				me.Flags != MouseFlags.WheeledDown && me.Flags != MouseFlags.WheeledUp)
+				return false;
+
+			if (!HasFocus && CanFocus) {
+				SetFocus ();
+			}
+
+
+			if (me.Flags == MouseFlags.WheeledDown) {
+
+				ScrollOffset++;
+				SetNeedsDisplay();
+
+				return true;
+			} else if (me.Flags == MouseFlags.WheeledUp) {
+				ScrollOffset--;
+				SetNeedsDisplay();
+
+				return true;
+			}
+
+			if(me.Flags == MouseFlags.Button1Clicked) {
+
+				var map = BuildLineMap();
+				
+				var idx = me.OfY + ScrollOffset;
+
+				// click is outside any visible nodes
+				if(idx < 0 || idx >= map.Length) {
+					return false;
+				}
+				
+				// The line they clicked on
+				var clickedBranch = map[idx];
+
+				bool isExpandToggleAttempt = clickedBranch.IsHitOnExpandableSymbol(Driver,me.OfX);
+				
+				// If we are already selected (double click)
+				if(Equals(SelectedObject,clickedBranch.Model)) 
+					isExpandToggleAttempt = true;
+
+				// if they clicked on the +/- expansion symbol
+				if( isExpandToggleAttempt) {
+
+					if (clickedBranch.IsExpanded) {
+						clickedBranch.Collapse();
+					}
+					else
+					if(clickedBranch.CanExpand())
+						clickedBranch.Expand();
+					else {
+						SelectedObject = clickedBranch.Model; // It is a leaf node
+					}
+				}
+				else {
+					// It is a first click somewhere in the current line that doesn't look like an expansion/collapse attempt
+					SelectedObject = clickedBranch.Model;
+				}
+
+				SetNeedsDisplay();
+				return true;
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Positions the cursor at the start of the selected objects line (if visible)
+		/// </summary>
+		public override void PositionCursor()
+		{
+			if (CanFocus && HasFocus && Visible && SelectedObject != null) 
+			{
+				var map = BuildLineMap();
+				var idx = Array.FindIndex(map,b=>b.Model.Equals(SelectedObject));
+
+				// if currently selected line is visible
+				if(idx - ScrollOffset >= 0 && idx - ScrollOffset  < Bounds.Height)
+					Move(0,idx - ScrollOffset);
+				else
+					base.PositionCursor();
+
+			} else {
+				base.PositionCursor();
+			}			
+		}
+
+
 		/// <summary>
 		/// Determines systems behaviour when the left arrow key is pressed.  Default behaviour is to collapse the current tree node if possible otherwise changes selection to current branches parent
 		/// </summary>
@@ -591,6 +684,7 @@ namespace Terminal.Gui {
 				var parent = GetParent(SelectedObject);
 				if(parent != null){
 					SelectedObject = parent;
+					AdjustSelection(0);
 					SetNeedsDisplay();
 				}
 			}
@@ -624,7 +718,7 @@ namespace Terminal.Gui {
 		/// </summary>
 		/// <remarks>If nothing is currently selected the first root is selected.  If the selected object is no longer in the tree the first object is selected</remarks>
 		/// <param name="offset"></param>
-		private void AdjustSelection (int offset)
+		public void AdjustSelection (int offset)
 		{
 			if(SelectedObject == null){
 				SelectedObject = roots.Keys.FirstOrDefault();
@@ -789,32 +883,57 @@ namespace Terminal.Gui {
 		{
 			// true if the current line of the tree is the selected one and control has focus
 			bool isSelected = tree.SelectedObject == Model && tree.HasFocus;
-			Attribute lineColor = isSelected? colorScheme.HotFocus : colorScheme.Normal;
+			Attribute lineColor = isSelected? colorScheme.Focus : colorScheme.Normal;
 
 			driver.SetAttribute(lineColor);
 
 			// Everything on line before the expansion run and branch text
 			Rune[] prefix = GetLinePrefix(driver).ToArray();
 			Rune expansion = GetExpandableSymbol(driver);
-			Attribute? expansionColor = GetExpandableSymbolColor();
 			string lineBody = tree.AspectGetter(Model);
 
-			var remainingWidth = availableWidth - (prefix.Length + 1 + lineBody.Length);
-			            
+			// How much space is left after prefix and expansion symbol?
+			var remainingWidth = availableWidth - (prefix.Sum(Rune.ColumnWidth) + Rune.ColumnWidth(expansion) );
+
+			// If body of line is too long
+			if(lineBody.Sum(l=>Rune.ColumnWidth(l)) > remainingWidth)
+			{
+				// remaining space is zero and truncate the line
+				lineBody = new string(lineBody.TakeWhile(c=>(remainingWidth -= Rune.ColumnWidth(c)) > 0).ToArray());
+				remainingWidth = 0;
+			}
+			else{
+
+				// line is short so remaining width will be whatever comes after the line body
+				remainingWidth -= lineBody.Length;
+			}
+
 			tree.Move(0,y);
 
-			foreach(Rune r in prefix)
+			foreach(Rune r in prefix){
 				driver.AddRune(r);
+			}
 
-			// if it is not the curerntly selected line render the expansion symbol in the appropriate color scheme
-			if(!isSelected && expansionColor.HasValue)
-				driver.SetAttribute(expansionColor.Value);
+			// pick color for expanded symbol
+			if(tree.Style.ColorExpandSymbol || tree.Style.InvertExpandSymbolColors)
+			{
+				Attribute color;
+
+				if(tree.Style.ColorExpandSymbol)
+					color = isSelected ? tree.ColorScheme.HotFocus : tree.ColorScheme.HotNormal;
+				else
+					color = lineColor;
+
+		//		if(tree.Style.InvertExpandSymbolColors)
+			//		color = new Attribute(color.Background,color.Foreground);
+
+				driver.SetAttribute(color);
+			}
 
 			driver.AddRune(expansion);
 			
 			//reset the line color if it was changed for rendering expansion symbol
 			driver.SetAttribute(lineColor);
-
 			driver.AddStr(lineBody);
 
 			if(remainingWidth > 0)
@@ -887,21 +1006,6 @@ namespace Terminal.Gui {
 				return tree.Style.ExpandableSymbol ?? leafSymbol;
 
 			return leafSymbol;
-		}
-
-		/// <summary>
-		/// Returns an appropriate color according to the <see cref="TreeStyle"/> for displaying the <see cref="GetExpandableSymbol(ConsoleDriver)"/>
-		/// </summary>
-		/// <returns></returns>
-		public Attribute? GetExpandableSymbolColor()
-		{
-			if(IsExpanded)
-				return tree.Style.CollapseableSymbolColor;
-
-			if(CanExpand())
-				return tree.Style.ExpandableSymbolColor;
-
-			return null;
 		}
 
 		/// <summary>
@@ -1028,6 +1132,32 @@ namespace Terminal.Gui {
 				return this == tree.roots.Values.LastOrDefault();
 
 			return Parent.ChildBranches.Values.LastOrDefault() == this;
+		}
+
+		/// <summary>
+		/// Returns true if the given x offset on the branch line is the +/- symbol.  Returns false if not showing expansion symbols or leaf node etc
+		/// </summary>
+		/// <param name="driver"></param>
+		/// <param name="x"></param>
+		/// <returns></returns>
+		internal bool IsHitOnExpandableSymbol (ConsoleDriver driver, int x)
+		{
+			// if leaf node then we cannot expand
+			if(!CanExpand())
+				return false;
+
+
+			// if we could theoretically expand
+			if(!IsExpanded && tree.Style.ExpandableSymbol != null) {
+				return x == GetLinePrefix(driver).Count();
+			}
+
+			// if we could theoretically collapse
+			if(IsExpanded && tree.Style.CollapseableSymbol != null) {
+				return x == GetLinePrefix(driver).Count();
+			}
+
+			return false;
 		}
 	}
 
