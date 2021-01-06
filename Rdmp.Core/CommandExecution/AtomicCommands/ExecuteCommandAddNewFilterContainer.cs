@@ -8,6 +8,7 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using System;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -34,7 +35,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             base.Execute();
             
-            var factory = _container?.GetFilterFactory() ?? _host.GetFilterFactory();
+            var factory = _container?.GetFilterFactory() ?? _host?.GetFilterFactory();
+
+            if(factory == null)
+                throw new Exception("Unable to determine FilterFactory, is host and container null?");
+
             var newContainer = factory.CreateNewContainer();
             
             if(_host != null)
@@ -44,6 +49,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
             else
             {
+                if(_container == null)
+                    throw new Exception("Command should take container or host but both were null");
+               
                 _container.AddChild(newContainer);
             }
             

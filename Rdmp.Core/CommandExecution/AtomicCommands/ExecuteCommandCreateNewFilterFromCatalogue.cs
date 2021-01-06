@@ -59,6 +59,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 _container = _host.RootFilterContainer;
             }
 
+            if(_container == null)
+                throw new Exception("Container was null, either host failed to create or explicit null container was chosen");
+
             var wizard = new FilterImportWizard(BasicActivator);
             var import = wizard.ImportOneFromSelection(_container, _filters);
 

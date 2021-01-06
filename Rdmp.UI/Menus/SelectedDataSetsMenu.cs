@@ -27,8 +27,6 @@ namespace Rdmp.UI.Menus
             _selectedDataSet = selectedDataSet;
             _extractionConfiguration = _selectedDataSet.ExtractionConfiguration;
 
-            var root = selectedDataSet.RootFilterContainer;
-
             Add(new ExecuteCommandExecuteExtractionConfiguration(_activator, selectedDataSet));
 
             Add(new ExecuteCommandRelease(_activator).SetTarget(selectedDataSet));
