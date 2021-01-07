@@ -145,7 +145,7 @@ namespace Rdmp.UI.Collections
                 Tree.ItemActivate += CommonItemActivation;
 
             Tree.CellRightClick += CommonRightClick;
-            Tree.SelectionChanged += (s,e)=>RefreshContextMenuStrip();
+            Tree.KeyUp += CommonKeyPress;
             
             if(iconColumn != null)
                 iconColumn.ImageGetter += ImageGetter;
@@ -315,6 +315,7 @@ namespace Rdmp.UI.Collections
         // Tracks when RefreshContextMenuStrip is called to prevent rebuilding on select and right click in rapid succession
         private object _lastMenuObject;
         private DateTime _lastMenuBuilt = DateTime.Now;
+        private ContextMenuStrip _menu;
 
         private void RefreshContextMenuStrip()
         {
@@ -323,15 +324,13 @@ namespace Rdmp.UI.Collections
                 return;
 
             //clear the old menu strip first so old shortcuts cannot be activated during 
-            if(Tree.ContextMenuStrip != null)
-                Tree.ContextMenuStrip.Dispose();
-
-            Tree.ContextMenuStrip = null;
+            if(_menu != null)
+                _menu.Dispose();
 
             if(Tree.SelectedObjects.Count <= 1)
-                Tree.ContextMenuStrip = GetMenuIfExists(_lastMenuObject = Tree.SelectedObject);
+                _menu = GetMenuIfExists(_lastMenuObject = Tree.SelectedObject);
             else
-                Tree.ContextMenuStrip = GetMenuIfExists(_lastMenuObject = Tree.SelectedObjects);
+                _menu = GetMenuIfExists(_lastMenuObject = Tree.SelectedObjects);
 
             _lastMenuBuilt = DateTime.Now;
         }
@@ -343,7 +342,20 @@ namespace Rdmp.UI.Collections
             {
                 Tree.SelectedObject = e.Model;
                 RefreshContextMenuStrip();
+                _menu?.Show(Tree.PointToScreen(e.Location));
             }
+        }
+
+        public void CommonKeyPress(object sender , KeyEventArgs e)
+        {
+            RefreshContextMenuStrip();
+
+            if(_menu != null)
+            {
+                var options = _menu.Items.OfType<ToolStripMenuItem>().FirstOrDefault(mi=>mi.ShortcutKeys == e.KeyCode);
+                options?.PerformClick();
+            }
+            
         }
 
         void _activator_Emphasise(object sender, EmphasiseEventArgs args)

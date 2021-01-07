@@ -194,7 +194,7 @@ namespace Rdmp.UI.Menus
                     Enum.TryParse<Keys>(toPresent.SuggestedShortcut,out key);
 
                 if(toPresent.SuggestedCategory == null)
-                    Add(toPresent.Command,key);
+                    Add(toPresent.Command,toPresent.Ctrl ? Keys.Control | key : key);
                 else
                     Add(toPresent.Command,toPresent.Ctrl ? Keys.Control | key : key,toPresent.SuggestedCategory);
             }
