@@ -28,7 +28,11 @@ jobs:
       - name: Install Sql Server
         run: choco install sql-server-2019
       - name: Build
-        run: dotnet build --configuration Release
+        run: |
+          dotnet clean --configuration Release
+          dotnet nuget locals all --clear
+          dotnet nuget restore
+          dotnet build --configuration Release
       - name: Initialise RDMP
         run: dotnet Tools/rdmp/bin/Release/netcoreapp2.2/win-x64/rdmp.dll install localhost TEST_
       - name: Test Reusable code
