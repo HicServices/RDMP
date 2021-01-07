@@ -15,7 +15,7 @@ jobs:
     # Name the Job
     name: Lint code base
     # Set the type of machine to run on
-    runs-on: ubuntu-18.04
+    runs-on: windows-latest
 
     steps:
       # Checks out a copy of your repository on the ubuntu-latest machine
