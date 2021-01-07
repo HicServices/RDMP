@@ -27,14 +27,10 @@ jobs:
           dotnet-version: 3.1.301
       - name: Install Sql Server
         run: choco install sql-server-2019
-      - name: Install dependencies
-        run: dotnet restore
       - name: Build
-        run: dotnet build --configuration Release --no-restore
-      - name: Build Rdmp Installer
-        run: dotnet publish "./Tools/rdmp" -r win-x64
+        run: dotnet build --configuration Release
       - name: Initialise RDMP
-        run: dotnet Tools/rdmp/bin/Debug/netcoreapp2.2/win-x64/rdmp.dll install localhost TEST_
+        run: dotnet Tools/rdmp/bin/Release/netcoreapp2.2/win-x64/rdmp.dll install localhost TEST_
       - name: Test Reusable code
         run: dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --no-restore --verbosity normal
       - name: Test Core code
