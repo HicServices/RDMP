@@ -45,4 +45,21 @@ jobs:
         run: dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --no-restore --verbosity normal
       - name: Test Core code
         run: dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --no-restore --verbosity normal
-        
+      - name: Package
+        run: |
+          dotnet publish -r win-x64 -c Release -o PublishWindows
+          dotnet publish -r linux-x64 -c Release -o PublishLinux --self-contained false
+          
+      - name: Sign
+        shell: cmd
+        run: |
+            powershell.exe -nologo -noprofile -command "& { [IO.File]::WriteAllBytes("GitHubActionsWorkflow.pfx", [System.Convert]::FromBase64String("${{ secrets.DIGICERT_PFX }}")); }"
+            "C:\Program Files (x86)\Windows Kits\10\bin\x86\signtool.exe" Sign /f GitHubActionsWorkflow.pfx /p ${{ secrets.DIGICERT_PASSWORD }} /fd sha256 /tr http://timestamp.digicert.com /td sha256 PublishWindows/*.dll PublishWindows/*.exe  PublishLinux/*.dll
+            mkdir dist
+            powershell.exe -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('Tools/rdmp/PublishWindows', 'dist/rdmp-cli-win-x64.zip'); [IO.Compression.ZipFile]::CreateFromDirectory('Tools/rdmp/PublishLinux', 'dist/rdmp-cli-linux-x64.zip'); }"
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: dist
+          path: |
+            dist
