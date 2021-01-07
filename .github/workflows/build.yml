@@ -18,16 +18,6 @@ jobs:
     runs-on: windows-latest
 
     steps:
-        # Checks out a copy of your repository on the ubuntu-latest machine
-      - name: Get the Ref
-        id: get-ref
-        uses: ankitvgupta/ref-to-tag-action@master
-        with:
-          ref: ${{ github.ref }}
-          head_ref: ${{ github.head_ref }}
-      - name: Get the tag
-        run: echo "The tag was ${{ steps.get-ref.outputs.tag }}"
-
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Setup .NET Core
@@ -53,6 +43,11 @@ jobs:
           dotnet publish -r win-x64 -c Release -o PublishWindows
           dotnet publish -r linux-x64 -c Release -o PublishLinux --self-contained false
           
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        shell: bash
+
       - name: Sign
         if: contains(github.ref, 'refs/tags/v')
         shell: cmd
