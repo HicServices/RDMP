@@ -25,22 +25,16 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 3.1.301
-      - name: Add MSFT code signing key
-        run: wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
-      - name: Add MSFT package repo
-        run: sudo add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubuntu/18.04/mssql-server-2019.list)"
       - name: Install Sql Server
-        run: sudo apt-get install -y --no-install-recommends mssql-tools mssql-server
-      - name: Configure Sql Server
-        run: sudo -E /opt/mssql/bin/mssql-conf -n setup accept-eula
+        run: choco install sql-server-2019
       - name: Install dependencies
         run: dotnet restore
       - name: Build
         run: dotnet build --configuration Release --no-restore
       - name: Build Rdmp Installer
-        run: dotnet publish "./Tools/rdmp" -r linux-x64
+        run: dotnet publish "./Tools/rdmp" -r win-x64
       - name: Initialise RDMP
-        run: dotnet Tools/rdmp/bin/Debug/netcoreapp2.2/linux-x64/rdmp.dll install localhost TEST_ -D -u sa -p "YourStrong!Passw0rd"
+        run: dotnet Tools/rdmp/bin/Debug/netcoreapp2.2/win-x64/rdmp.dll install localhost TEST_
       - name: Test Reusable code
         run: dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --no-restore --verbosity normal
       - name: Test Core code
