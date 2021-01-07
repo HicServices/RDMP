@@ -312,15 +312,28 @@ namespace Rdmp.UI.Collections
             return new RDMPCollectionCommonFunctionalityTreeHijacker(view);
         }
         
+        // Tracks when RefreshContextMenuStrip is called to prevent rebuilding on select and right click in rapid succession
+        private object _lastMenuObject;
+        private DateTime _lastMenuBuilt = DateTime.Now;
+
         private void RefreshContextMenuStrip()
         {
+            // appropriate menu has already been created recently
+            if(_lastMenuObject == Tree.SelectedObject && DateTime.Now.Subtract(_lastMenuBuilt) < TimeSpan.FromSeconds(2))
+                return;
+
             //clear the old menu strip first so old shortcuts cannot be activated during 
+            if(Tree.ContextMenuStrip != null)
+                Tree.ContextMenuStrip.Dispose();
+
             Tree.ContextMenuStrip = null;
 
             if(Tree.SelectedObjects.Count <= 1)
-                Tree.ContextMenuStrip = GetMenuIfExists(Tree.SelectedObject);
+                Tree.ContextMenuStrip = GetMenuIfExists(_lastMenuObject = Tree.SelectedObject);
             else
-                Tree.ContextMenuStrip = GetMenuIfExists(Tree.SelectedObjects);
+                Tree.ContextMenuStrip = GetMenuIfExists(_lastMenuObject = Tree.SelectedObjects);
+
+            _lastMenuBuilt = DateTime.Now;
         }
 
         public void CommonRightClick(object sender, CellRightClickEventArgs e)

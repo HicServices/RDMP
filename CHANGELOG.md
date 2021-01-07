@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed various layout and performance issues with RDMP console GUI.
 - Fixed `rdmp cmd` loop exiting when commands entered result in error.
 - Fixed autocomplete in `rdmp cmd` mode and enabled for Linux
+- Fixed right click context menu being built twice on right click a new node (once for selection and once for right click)
 
 ### Changed
 
