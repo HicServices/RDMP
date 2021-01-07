@@ -13,12 +13,21 @@ jobs:
   # when a job name is not provided
   super-lint:
     # Name the Job
-    name: Lint code base
+    name: Build, test, package and sign release
     # Set the type of machine to run on
     runs-on: windows-latest
 
     steps:
-      # Checks out a copy of your repository on the ubuntu-latest machine
+        # Checks out a copy of your repository on the ubuntu-latest machine
+      - name: Get the Ref
+        id: get-ref
+        uses: ankitvgupta/ref-to-tag-action@master
+        with:
+          ref: ${{ github.ref }}
+          head_ref: ${{ github.head_ref }}
+      - name: Get the tag
+        run: echo "The tag was ${{ steps.get-ref.outputs.tag }}"
+
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Setup .NET Core
@@ -34,7 +43,7 @@ jobs:
           dotnet nuget restore
           dotnet build --configuration Release
       - name: Initialise RDMP
-        run: dotnet Tools/rdmp/bin/Release/netcoreapp2.2/rdmp.dll install localhost TEST_
+        run: dotnet Tools/rdmp/bin/Release/netcoreapp3.1/rdmp.dll install localhost TEST_
       - name: Test Reusable code
         run: dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --no-restore --verbosity normal
       - name: Test Core code
@@ -45,12 +54,25 @@ jobs:
           dotnet publish -r linux-x64 -c Release -o PublishLinux --self-contained false
           
       - name: Sign
+        if: contains(github.ref, 'refs/tags/v')
         shell: cmd
         run: |
             powershell.exe -nologo -noprofile -command "& { [IO.File]::WriteAllBytes("GitHubActionsWorkflow.pfx", [System.Convert]::FromBase64String("${{ secrets.DIGICERT_PFX }}")); }"
             "C:\Program Files (x86)\Windows Kits\10\bin\x86\signtool.exe" Sign /f GitHubActionsWorkflow.pfx /p ${{ secrets.DIGICERT_PASSWORD }} /fd sha256 /tr http://timestamp.digicert.com /td sha256 PublishWindows/*.dll PublishWindows/*.exe  PublishLinux/*.dll
             mkdir dist
             powershell.exe -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('Tools/rdmp/PublishWindows', 'dist/rdmp-cli-win-x64.zip'); [IO.Compression.ZipFile]::CreateFromDirectory('Tools/rdmp/PublishLinux', 'dist/rdmp-cli-linux-x64.zip'); }"
+      
+      - name: Nuget packages
+        if: contains(github.ref, 'refs/tags/v')
+        run: |
+          nuget pack Plugin/Plugin.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version #{version}
+          nuget pack Plugin.UI/Plugin.UI.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version #{version}
+          nuget pack Plugin.Test/Plugin.Test.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version #{version}
+		
+          nuget push HIC.RDMP.Plugin.#{version}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey #{NUGETKEY}
+      		nuget push HIC.RDMP.Plugin.UI.#{version}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey #{NUGETKEY}
+      		nuget push HIC.RDMP.Plugin.Test.#{version}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey #{NUGETKEY}
+          
       - name: Archive production artifacts
         uses: actions/upload-artifact@v2
         with:
