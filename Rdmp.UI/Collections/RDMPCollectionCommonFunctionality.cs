@@ -211,6 +211,7 @@ namespace Rdmp.UI.Collections
             Tree.RebuildAll(true);
             
             Tree.FormatRow += Tree_FormatRow;
+            Tree.KeyDown += Tree_KeyDown;
             Tree.CellToolTipGetter += Tree_CellToolTipGetter;
 
             if(Settings.AllowSorting)
@@ -238,6 +239,16 @@ namespace Rdmp.UI.Collections
             else
                 foreach (OLVColumn c in Tree.AllColumns)
                     c.Sortable = false;
+        }
+
+        private void Tree_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(_shortcutKeys.Contains(e.KeyCode))
+            {
+
+                // Prevents bong sound
+                e.SuppressKeyPress = true;
+            }
         }
 
         void Tree_KeyPress(object sender, KeyPressEventArgs e)
@@ -316,6 +327,12 @@ namespace Rdmp.UI.Collections
         private object _lastMenuObject;
         private DateTime _lastMenuBuilt = DateTime.Now;
         private ContextMenuStrip _menu;
+        HashSet<Keys> _shortcutKeys = new HashSet<Keys>(){
+            Keys.I,
+            Keys.Delete,
+            Keys.F1,
+            Keys.F5
+        };
 
         private void RefreshContextMenuStrip()
         {
@@ -348,14 +365,18 @@ namespace Rdmp.UI.Collections
 
         public void CommonKeyPress(object sender , KeyEventArgs e)
         {
-            RefreshContextMenuStrip();
-
-            if(_menu != null)
+            if(_shortcutKeys.Contains(e.KeyCode))
             {
-                var options = _menu.Items.OfType<ToolStripMenuItem>().FirstOrDefault(mi=>mi.ShortcutKeys == e.KeyCode);
-                options?.PerformClick();
+                RefreshContextMenuStrip();
+
+                if(_menu != null)
+                {
+                    var options = _menu.Items.OfType<ToolStripMenuItem>().FirstOrDefault(mi=>mi.ShortcutKeys == (e.Control ? Keys.Control | e.KeyCode : e.KeyCode));
+                    options?.PerformClick();
+                    e.Handled = true;
+                    e.SuppressKeyPress = true;
+                }
             }
-            
         }
 
         void _activator_Emphasise(object sender, EmphasiseEventArgs args)
