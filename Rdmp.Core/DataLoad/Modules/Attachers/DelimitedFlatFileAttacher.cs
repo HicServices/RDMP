@@ -25,13 +25,13 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
     public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
     {
         protected DelimitedFlatFileDataFlowSource _source;
-        
+
         [DemandsInitialization(DelimitedFlatFileDataFlowSource.ForceHeaders_DemandDescription)]
         public string ForceHeaders {
             get { return _source.ForceHeaders; }
             set { _source.ForceHeaders = value; }
         }
-        
+
         [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreQuotes_DemandDescription)]
         public bool IgnoreQuotes
         {
@@ -72,7 +72,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
             get { return _source.IgnoreBadReads; }
             set { _source.IgnoreBadReads = value; }
         }
-        
+
         [DemandsInitialization(DelimitedFlatFileDataFlowSource.ThrowOnEmptyFiles_DemandDescription,DefaultValue = true)]
         public bool ThrowOnEmptyFiles
         {
@@ -92,6 +92,13 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
         {
             get { return _source.MaximumErrorsToReport; }
             set { _source.MaximumErrorsToReport = value; }
+        }
+
+        [DemandsInitialization(DelimitedFlatFileDataFlowSource.OADates_DemandDescription,DefaultValue = false)]
+        public string OADates
+        {
+            get { return _source.OADates; }
+            set { _source.OADates = value; }
         }
 
         [DemandsInitialization(ExcelDataFlowSource.AddFilenameColumnNamed_DemandDescription)]

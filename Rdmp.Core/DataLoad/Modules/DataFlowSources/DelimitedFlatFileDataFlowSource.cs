@@ -92,12 +92,15 @@ This will not help you avoid bad data as the full file structure must still be r
         [DemandsInitialization(IgnoreQuotes_DemandDescription)]
         public bool IgnoreBlankLines { get; set; }
 
+        [DemandsInitialization(AODates_DemandDescription)]
+        public bool AODates { get; set; }
+
         [DemandsInitialization(MakeHeaderNamesSane_DemandDescription,DemandType.Unspecified,true)]
         public bool MakeHeaderNamesSane { get; set; }
 
         [DemandsInitialization("True (recommended) if you want to impute the datatypes from the data being loaded, False if you want to load everything as strings", DemandType.Unspecified,true)]
         public bool StronglyTypeInput { get; set; }
-        
+
         [DemandsInitialization("BatchSize to use when predicting datatypes i.e. if you set this to 1000 then the first 1000 rows have int field then the 5000th row has a string you will get an error.  Set to 0 to use MaxBatchSize.  Set to -1 to load the entire file before computing datatypes (can result in out of memory for super large files)")]
         public int StronglyTypeInputBatchSize { get; set; }
 
