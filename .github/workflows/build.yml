@@ -56,16 +56,22 @@ jobs:
             "C:\Program Files (x86)\Windows Kits\10\bin\x86\signtool.exe" Sign /f GitHubActionsWorkflow.pfx /p ${{ secrets.DIGICERT_PASSWORD }} /fd sha256 /tr http://timestamp.digicert.com /td sha256 PublishWindows/*.dll PublishWindows/*.exe  PublishLinux/*.dll
             mkdir dist
             powershell.exe -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('Tools/rdmp/PublishWindows', 'dist/rdmp-cli-win-x64.zip'); [IO.Compression.ZipFile]::CreateFromDirectory('Tools/rdmp/PublishLinux', 'dist/rdmp-cli-linux-x64.zip'); }"
+            git clone --recursive https://github.com/squirrel/squirrel.windows
+            cd squirrel.windows
+            nuget restore
+            dotnet build --configuration Release
+            msbuild /p:Configuration=Release
       
       - name: Nuget packages
         if: contains(github.ref, 'refs/tags/v')
         run: |
-          nuget pack Plugin/Plugin.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version #{version}
-          nuget pack Plugin.UI/Plugin.UI.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version #{version}
-          nuget pack Plugin.Test/Plugin.Test.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version #{version}
-          nuget push HIC.RDMP.Plugin.#{version}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey #{NUGETKEY}
-          nuget push HIC.RDMP.Plugin.UI.#{version}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey #{NUGETKEY}
-          nuget push HIC.RDMP.Plugin.Test.#{version}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey #{NUGETKEY}
+          nuget pack Plugins/Plugin/Plugin.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version ${{ steps.get_version.outputs.VERSION }}
+          nuget pack Plugins/Plugin.UI/Plugin.UI.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version ${{ steps.get_version.outputs.VERSION }}
+          nuget pack Plugins/Plugin.Test/Plugin.Test.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version ${{ steps.get_version.outputs.VERSION }}
+          nuget pack Application/ResearchDataManagementPlatform/RDMP.nuspec -Properties Configuration=Release -Version ${{ steps.get_version.outputs.VERSION }}
+          nuget push HIC.RDMP.Plugin.${{ steps.get_version.outputs.VERSION }}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey #{NUGETKEY}
+          nuget push HIC.RDMP.Plugin.UI.${{ steps.get_version.outputs.VERSION }}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey #{NUGETKEY}
+          nuget push HIC.RDMP.Plugin.Test.${{ steps.get_version.outputs.VERSION }}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey #{NUGETKEY}
           
       - name: Archive production artifacts
         uses: actions/upload-artifact@v2
@@ -73,3 +79,12 @@ jobs:
           name: dist
           path: |
             dist
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        if: contains(github.ref, 'refs/tags/v')
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist/*.zip
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
