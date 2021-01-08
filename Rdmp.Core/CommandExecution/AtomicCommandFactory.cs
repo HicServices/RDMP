@@ -258,7 +258,7 @@ namespace Rdmp.Core.CommandExecution
             
                 yield return new CommandPresentation(new ExecuteCommandSyncTableInfo(_activator,ti,false,false));
                 yield return new CommandPresentation(new ExecuteCommandSyncTableInfo(_activator,ti,true,false));
-                yield return new CommandPresentation(new ExecuteCommandNewObject(_activator,()=>new ColumnInfo(_activator.RepositoryLocator.CatalogueRepository, Guid.NewGuid().ToString(), "fish", ti)));
+                yield return new CommandPresentation(new ExecuteCommandNewObject(_activator,()=>new ColumnInfo(_activator.RepositoryLocator.CatalogueRepository, Guid.NewGuid().ToString(), "fish", ti)){OverrideCommandName = "Add New ColumnInfo" });
             }
                 
             if(o is AllStandardRegexesNode)

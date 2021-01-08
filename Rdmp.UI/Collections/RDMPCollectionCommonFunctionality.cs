@@ -145,7 +145,7 @@ namespace Rdmp.UI.Collections
                 Tree.ItemActivate += CommonItemActivation;
 
             Tree.CellRightClick += CommonRightClick;
-            Tree.SelectionChanged += (s,e)=>RefreshContextMenuStrip();
+            Tree.KeyUp += CommonKeyPress;
             
             if(iconColumn != null)
                 iconColumn.ImageGetter += ImageGetter;
@@ -211,6 +211,7 @@ namespace Rdmp.UI.Collections
             Tree.RebuildAll(true);
             
             Tree.FormatRow += Tree_FormatRow;
+            Tree.KeyDown += Tree_KeyDown;
             Tree.CellToolTipGetter += Tree_CellToolTipGetter;
 
             if(Settings.AllowSorting)
@@ -238,6 +239,16 @@ namespace Rdmp.UI.Collections
             else
                 foreach (OLVColumn c in Tree.AllColumns)
                     c.Sortable = false;
+        }
+
+        private void Tree_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(_shortcutKeys.Contains(e.KeyCode))
+            {
+
+                // Prevents bong sound
+                e.SuppressKeyPress = true;
+            }
         }
 
         void Tree_KeyPress(object sender, KeyPressEventArgs e)
@@ -312,15 +323,33 @@ namespace Rdmp.UI.Collections
             return new RDMPCollectionCommonFunctionalityTreeHijacker(view);
         }
         
+        // Tracks when RefreshContextMenuStrip is called to prevent rebuilding on select and right click in rapid succession
+        private object _lastMenuObject;
+        private DateTime _lastMenuBuilt = DateTime.Now;
+        private ContextMenuStrip _menu;
+        HashSet<Keys> _shortcutKeys = new HashSet<Keys>(){
+            Keys.I,
+            Keys.Delete,
+            Keys.F1,
+            Keys.F5
+        };
+
         private void RefreshContextMenuStrip()
         {
+            // appropriate menu has already been created recently
+            if(_lastMenuObject == Tree.SelectedObject && DateTime.Now.Subtract(_lastMenuBuilt) < TimeSpan.FromSeconds(2))
+                return;
+
             //clear the old menu strip first so old shortcuts cannot be activated during 
-            Tree.ContextMenuStrip = null;
+            if(_menu != null)
+                _menu.Dispose();
 
             if(Tree.SelectedObjects.Count <= 1)
-                Tree.ContextMenuStrip = GetMenuIfExists(Tree.SelectedObject);
+                _menu = GetMenuIfExists(_lastMenuObject = Tree.SelectedObject);
             else
-                Tree.ContextMenuStrip = GetMenuIfExists(Tree.SelectedObjects);
+                _menu = GetMenuIfExists(_lastMenuObject = Tree.SelectedObjects);
+
+            _lastMenuBuilt = DateTime.Now;
         }
 
         public void CommonRightClick(object sender, CellRightClickEventArgs e)
@@ -330,6 +359,23 @@ namespace Rdmp.UI.Collections
             {
                 Tree.SelectedObject = e.Model;
                 RefreshContextMenuStrip();
+                _menu?.Show(Tree.PointToScreen(e.Location));
+            }
+        }
+
+        public void CommonKeyPress(object sender , KeyEventArgs e)
+        {
+            if(_shortcutKeys.Contains(e.KeyCode))
+            {
+                RefreshContextMenuStrip();
+
+                if(_menu != null)
+                {
+                    var options = _menu.Items.OfType<ToolStripMenuItem>().FirstOrDefault(mi=>mi.ShortcutKeys == (e.Control ? Keys.Control | e.KeyCode : e.KeyCode));
+                    options?.PerformClick();
+                    e.Handled = true;
+                    e.SuppressKeyPress = true;
+                }
             }
         }
 
