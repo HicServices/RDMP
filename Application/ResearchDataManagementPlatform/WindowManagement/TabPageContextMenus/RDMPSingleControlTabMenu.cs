@@ -6,7 +6,6 @@
 
 using System.Windows.Forms;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
@@ -33,7 +32,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TabPageContextMenus
             if (tab is PersistableSingleDatabaseObjectDockContent single)
             {
                 var builder = new GoToMenuBuilder(activator);
-                Items.Add(builder.GetMenu(single.DatabaseObject));
+                Items.Add(builder.GetMenu(single.DatabaseObject,null));
             }
 
             Items.Add("Refresh", FamFamFamIcons.arrow_refresh, (s, e) => _tab.HandleUserRequestingTabRefresh(activator));

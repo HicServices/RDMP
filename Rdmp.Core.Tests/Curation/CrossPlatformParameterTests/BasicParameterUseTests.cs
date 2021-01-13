@@ -55,15 +55,10 @@ namespace Rdmp.Core.Tests.Curation.CrossPlatformParameterTests
                 var tbl = db.ExpectTable(tableName);
 
                 var importer = new TableInfoImporter(CatalogueRepository, tbl);
-                TableInfo ti;
-                ColumnInfo[] ci;
-                importer.DoImport(out ti,out ci);
+                importer.DoImport(out var ti,out var ci);
             
                 var engineer = new ForwardEngineerCatalogue(ti, ci,true);
-                Catalogue cata;
-                CatalogueItem[] cis;
-                ExtractionInformation[] ei;
-                engineer.ExecuteForwardEngineering(out cata, out cis, out ei);
+                engineer.ExecuteForwardEngineering(out var cata, out var cis, out var ei);
                 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 /////////////////////////////////THE ACTUAL PROPER TEST////////////////////////////////////

@@ -5,10 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core;
+using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
-using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
+using Rdmp.UI.CohortUI.ImportCustomData;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 
@@ -71,8 +72,8 @@ namespace Rdmp.UI.Collections
         private void SetupToolStrip()
         {
             CommonFunctionality.ClearToolStrip();
-            CommonFunctionality.Add(new ExecuteCommandCreateNewCohortFromFile(Activator),GlobalStrings.FromFile,null,"New...");
-            CommonFunctionality.Add(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator),"From Query",null,"New...");
+            CommonFunctionality.Add(new ExecuteCommandCreateNewCohortFromFile(Activator,null),GlobalStrings.FromFile,null,"New...");
+            CommonFunctionality.Add(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator,null),"From Query",null,"New...");
         }
 
         public static bool IsRootObject(object root)

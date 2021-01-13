@@ -44,7 +44,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
 
         bool _haveServedData = false;
 
-        protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener)
+        protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
         {
             _haveServedData = false;
             _fileToLoad = fileToLoad;
@@ -55,7 +55,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
             _hostedSource.PreInitialize(new FlatFileToLoad(fileToLoad),listener);
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,  "About to start processing " + fileToLoad.FullName));
 
-            _dataTable = _hostedSource.GetChunk(listener, new GracefulCancellationToken());
+            _dataTable = _hostedSource.GetChunk(listener, cancellationToken);
 
             if (!string.IsNullOrEmpty(ForceReplacementHeaders))
             {
@@ -76,7 +76,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
             }
 
             //all data should now be exhausted
-            if(_hostedSource.GetChunk(listener,new GracefulCancellationToken())!= null)
+            if(_hostedSource.GetChunk(listener,cancellationToken)!= null)
                 throw new Exception("Hosted source served more than 1 chunk, expected all the data to be read from the Excel file in one go");
         }
 
@@ -97,7 +97,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
             return sb.ToString();
         }
 
-        protected override int IterativelyBatchLoadDataIntoDataTable(DataTable loadTarget, int maxBatchSize)
+        protected override int IterativelyBatchLoadDataIntoDataTable(DataTable loadTarget, int maxBatchSize,GracefulCancellationToken cancellationToken)
         {
             if (!_haveServedData)
             {

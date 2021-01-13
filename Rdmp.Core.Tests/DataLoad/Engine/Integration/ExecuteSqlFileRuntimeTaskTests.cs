@@ -74,9 +74,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             var tbl = db.CreateTable("Fish", dt);
 
-            TableInfo ti;
-            ColumnInfo[] cols;
-            Import(tbl,out ti,out cols);
+            Import(tbl,out var ti,out var cols);
 
             FileInfo f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Bob.sql"));
             
@@ -116,9 +114,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             var tbl = db.CreateTable("Fish", dt);
 
-            TableInfo ti;
-            ColumnInfo[] cols;
-            Import(tbl,out ti,out cols);
+            Import(tbl,out var ti,out var cols);
 
             string sql = @"UPDATE {T:0} Set {C:0} = 1";
             
@@ -172,9 +168,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             var tableName = "AAAAAAA";
 
-            TableInfo ti;
-            ColumnInfo[] cols;
-            Import(tbl, out ti, out cols);
+            Import(tbl, out var ti, out var cols);
             
             FileInfo f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Bob.sql"));
 

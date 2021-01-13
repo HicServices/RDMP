@@ -32,9 +32,7 @@ namespace Rdmp.Core.Tests.Curation.Unit
                 new DatabaseColumnRequest("MyCol", type)
             });
 
-            ColumnInfo[] cis;
-            TableInfo ti;
-            Import(t, out ti, out cis);
+            Import(t, out var ti, out var cis);
             
             Assert.AreEqual(expectedLength,cis.Single().Discover(DataAccessContext.InternalDataProcessing).DataType.GetLengthIfString());
 

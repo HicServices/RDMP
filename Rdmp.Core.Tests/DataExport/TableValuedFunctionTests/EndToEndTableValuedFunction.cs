@@ -35,11 +35,11 @@ namespace Rdmp.Core.Tests.DataExport.TableValuedFunctionTests
     public class EndToEndTableValuedFunction:DatabaseTests
     {
         private ExtractionInformation _nonTvfExtractionIdentifier;
-        private Catalogue _nonTvfCatalogue;
-        private TableInfo _nonTvfTableInfo;
+        private ICatalogue _nonTvfCatalogue;
+        private ITableInfo _nonTvfTableInfo;
         private ExternalCohortTable _externalCohortTable;
-        private Catalogue _tvfCatalogue;
-        private TableInfo _tvfTableInfo;
+        private ICatalogue _tvfCatalogue;
+        private ITableInfo _tvfTableInfo;
 
         //the cohort database
         private DiscoveredDatabase _discoveredCohortDatabase;
@@ -205,16 +205,10 @@ end
             var tblvf = _database.ExpectTableValuedFunction("GetTopXRandom");
 
             var importer = new TableValuedFunctionImporter(CatalogueRepository, tblvf);
-
-            TableInfo tbl;
-            ColumnInfo[] cols;
-            importer.DoImport(out tbl,out cols);
+            importer.DoImport(out var tbl,out var cols);
 
             var engineer = new ForwardEngineerCatalogue(tbl, cols, true);
-            Catalogue cata;
-            CatalogueItem[] cis;
-            ExtractionInformation[] eis;
-            engineer.ExecuteForwardEngineering(out cata, out cis, out eis);
+            engineer.ExecuteForwardEngineering(out var cata, out var cis, out var eis);
 
             Assert.AreEqual("chi", eis[0].GetRuntimeName());
             eis[0].IsExtractionIdentifier = true;
@@ -242,15 +236,10 @@ end
                 _database.GetRuntimeName(), "NonTVFTable",
                 DatabaseType.MicrosoftSQLServer,_database.Server.ExplicitUsernameIfAny,_database.Server.ExplicitPasswordIfAny);
 
-            TableInfo tbl;
-            ColumnInfo[] cols;
-            importer.DoImport(out tbl,out cols);
+            importer.DoImport(out var tbl,out var cols);
 
             var engineer = new ForwardEngineerCatalogue(tbl, cols, true);
-            Catalogue cata;
-            CatalogueItem[] cis;
-            ExtractionInformation[] eis;
-            engineer.ExecuteForwardEngineering(out cata,out cis, out eis);
+            engineer.ExecuteForwardEngineering(out var cata,out var cis, out var eis);
             
             _nonTvfExtractionIdentifier  = eis.Single();
             _nonTvfExtractionIdentifier.IsExtractionIdentifier = true;

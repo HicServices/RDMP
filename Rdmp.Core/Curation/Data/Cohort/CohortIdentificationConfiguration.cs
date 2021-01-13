@@ -504,7 +504,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
         /// <param name="catalogue"></param>
         /// <param name="candidates"></param>
         /// <returns></returns>
-        public delegate ExtractionInformation ChooseWhichExtractionIdentifierToUseFromManyHandler(Catalogue catalogue, ExtractionInformation[] candidates);
+        public delegate ExtractionInformation ChooseWhichExtractionIdentifierToUseFromManyHandler(ICatalogue catalogue, ExtractionInformation[] candidates);
 
 
         /// <summary>
@@ -517,7 +517,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
         ///  marked IsExtractionIdentifier</param>
         /// <param name="importMandatoryFilters"></param>
         /// <returns></returns>
-        public AggregateConfiguration CreateNewEmptyConfigurationForCatalogue(Catalogue catalogue, ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers, bool importMandatoryFilters = true)
+        public AggregateConfiguration CreateNewEmptyConfigurationForCatalogue(ICatalogue catalogue, ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers, bool importMandatoryFilters = true)
         {
             var extractionIdentifier = (ExtractionInformation)GetExtractionIdentifierFrom(catalogue, resolveMultipleExtractionIdentifiers);
 
@@ -539,7 +539,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
             return configuration;
         }
 
-        private void ImportMandatoryFilters(Catalogue catalogue, AggregateConfiguration configuration, ISqlParameter[] globalParameters)
+        private void ImportMandatoryFilters(ICatalogue catalogue, AggregateConfiguration configuration, ISqlParameter[] globalParameters)
         {
             var filterImporter = new FilterImporter(new AggregateFilterFactory((ICatalogueRepository) catalogue.Repository), globalParameters);
 
@@ -612,7 +612,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
             return extractionIdentifier;
         }
 
-        private IColumn GetExtractionIdentifierFrom(Catalogue catalogue, ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers)
+        private IColumn GetExtractionIdentifierFrom(ICatalogue catalogue, ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers)
         {
             //the aggregate they are cloning does not have an extraction identifier but the dataset might still have one
             var catalogueCandidates = catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(e => e.IsExtractionIdentifier).ToArray();

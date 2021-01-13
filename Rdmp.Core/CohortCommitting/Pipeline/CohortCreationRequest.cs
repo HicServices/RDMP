@@ -91,7 +91,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline
 
         public string DescriptionForAuditLog { get; set; }
 
-        public CohortCreationRequest(Project project, CohortDefinition newCohortDefinition, IDataExportRepository repository, string descriptionForAuditLog)
+        public CohortCreationRequest(IProject project, ICohortDefinition newCohortDefinition, IDataExportRepository repository, string descriptionForAuditLog)
         {
             _repository = repository;
             Project = project;

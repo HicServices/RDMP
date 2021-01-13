@@ -18,6 +18,10 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
+using System.ComponentModel;
+using TypeGuesser;
+using System.Globalization;
+using TypeGuesser.Deciders;
 
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations.Swapping
 {
@@ -48,8 +52,21 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
 
         [DemandsInitialization(@"Setting this to true will leave the original input column in your DataTable (so your table will have both input and output columns instead of a substitution)", DefaultValue = true)]
         public bool KeepInputColumnToo { get; set; }
+                
+        private CultureInfo _culture;
+        [DemandsInitialization("The culture to use e.g. when Type translations are required")]
+        public CultureInfo Culture
+        {
+            get => _culture ?? CultureInfo.CurrentCulture;
+            set => _culture = value;
+        }
 
         Dictionary<object,List<object>> _mappingTable;
+        
+        /// <summary>
+        /// The Type of objects that are stored in the Keys of <see cref="_mappingTable"/>.  For use when input types do not match the mapping table types
+        /// </summary>
+        Type _keyType;
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
         {
@@ -65,11 +82,17 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
                 throw new Exception("DataTable already contained a field '" + toColumnName +"'");
 
             if(_mappingTable == null)
-                BuildMappingTable();
+                BuildMappingTable(listener);
+
+            if(!_mappingTable.Any())
+                throw new Exception("Mapping table was empty");
+
+            if(_keyType == null)
+                throw new Exception("Unable to determine key datatype for mapping table");
 
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Mapping table resulted in " + _mappingTable.Count + " unique possible input values"));
-
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Mapping table resulted in " + _mappingTable.Sum(kvp=>kvp.Value.Count) + " unique possible output values"));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Mapping table Key is of Type " + _keyType));
 
             //add the new column (the output column)
             toProcess.Columns.Add(toColumnName);
@@ -81,11 +104,55 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
 
             List<object[]> newRows = new List<object[]>();
             List<DataRow> toDrop = new List<DataRow>();
-            
+
+            // Flag and anonymous method for converting between input data type and mapping table datatype
+            bool doTypeConversion = false;
+            Func<object,object> typeConversion=null;
+
+            //if there is a difference between the input column datatype and the mapping table datatatype
+            if(toProcess.Columns[idxFrom].DataType != _keyType)
+            {
+                //tell the user
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,$"Input DataTable column {fromColumnName} is of data type {toProcess.Columns[idxFrom].DataType}, this differs from mapping table which is {_keyType}.  Type conversion will take place between these two Types when performing lookup"));
+                doTypeConversion = true;
+
+                //work out a suitable anonymous method for converting between the Types
+                if(_keyType == typeof(string))
+                    typeConversion = (a)=>a.ToString();
+                else
+                {
+                    try
+                    {
+                        var deciderFactory = new TypeDeciderFactory(Culture);
+                        IDecideTypesForStrings decider = deciderFactory.Create(_keyType);
+                        typeConversion = (a)=>decider.Parse(a.ToString());
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception($"Error building Type convertion decider for the mapping table key type {_keyType}",ex);
+                    }   
+                }
+                    
+            }
+                
             foreach (DataRow row in toProcess.Rows)
             {
                 var fromValue = row[idxFrom];
                 
+                //ignore null inputs, pass them straight through
+                if(fromValue == DBNull.Value)
+                {
+                    row[idxTo] = DBNull.Value;
+                    continue;
+                }
+
+                //if we have to do a Type conversion
+                if(doTypeConversion)
+                {
+                    // convert the input value to the mapping table key Type
+                    fromValue = typeConversion(fromValue);
+                }
+
                 //if we don't have the key value
                 if(!_mappingTable.ContainsKey(fromValue))
                     if(CrashIfNoMappingsFound)
@@ -151,7 +218,7 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
             return toProcess;
         }
 
-        private void BuildMappingTable()
+        private void BuildMappingTable(IDataLoadEventListener listener)
         {
             //Get a new mapping table in memory
             _mappingTable = new Dictionary<object, List<object>>();
@@ -161,6 +228,9 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
 
             var fromColumnName = MappingFromColumn.GetRuntimeName();
             var toColumnName = MappingToColumn.GetRuntimeName();
+            
+            // The number of null key values found in the mapping table (these are ignored)
+            int nulls = 0;
 
             //pull back all the data
             using (var con = server.GetConnection())
@@ -176,14 +246,35 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
                     {
                         while (r.Read())
                         {
-                            if(!_mappingTable.ContainsKey(r[fromColumnName]))
-                                _mappingTable.Add(r[fromColumnName],new List<object>());
+                            var keyVal = r[fromColumnName];
 
-                            _mappingTable[r[fromColumnName]].Add(r[toColumnName]);
+                            if(keyVal != DBNull.Value)
+                            {
+                                if(_keyType == null)
+                                    _keyType = keyVal.GetType();
+                                else
+                                {
+                                    if(_keyType != keyVal.GetType())
+                                        throw new Exception($"Database mapping table Keys were of mixed Types {_keyType} and {keyVal.GetType()}");
+                                }
+                            }
+                            else
+                            {
+                                nulls++;
+                                continue;
+                            }
+
+                            if(!_mappingTable.ContainsKey(keyVal))
+                                _mappingTable.Add(keyVal,new List<object>());
+
+                            _mappingTable[keyVal].Add(r[toColumnName]);
                         }
                     }
                 }
             }
+
+            if(nulls > 0)
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,$"Discarded {nulls} Null key values read from mapping table"));
         }
 
         private string GetMappingTableSql()

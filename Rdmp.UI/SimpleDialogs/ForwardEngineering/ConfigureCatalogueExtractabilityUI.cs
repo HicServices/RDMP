@@ -19,7 +19,6 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus.MenuItems;
 using Rdmp.UI.Refreshing;
@@ -55,8 +54,8 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
         private object[] _extractionCategories;
         
         private string NotExtractable = "Not Extractable";
-        private Catalogue _catalogue;
-        private TableInfo _tableInfo;
+        private ICatalogue _catalogue;
+        private ITableInfo _tableInfo;
         private bool _choicesFinalised;
         private HelpWorkflow _workflow;
         private CatalogueItem[] _catalogueItems;
@@ -66,10 +65,10 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
         /// <summary>
         /// the Project to associate the Catalogue with to make it ProjectSpecific (probably null)
         /// </summary>
-        private Project _projectSpecific;
+        private IProject _projectSpecific;
 
-        public Catalogue CatalogueCreatedIfAny { get { return _catalogue; }}
-        public TableInfo TableInfoCreated{get { return _tableInfo; }}
+        public ICatalogue CatalogueCreatedIfAny { get { return _catalogue; }}
+        public ITableInfo TableInfoCreated{get { return _tableInfo; }}
         public DiscoveredTable TableCreated { get; set; }
         public CatalogueFolder TargetFolder { get; set; }
 
@@ -77,13 +76,13 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
         
         ObjectSaverButton objectSaverButton1 = new ObjectSaverButton();
 
-        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, TableInfo tableInfo,string initialDescription, Project projectSpecificIfAny):this(activator)
+        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfo tableInfo,string initialDescription, IProject projectSpecificIfAny):this(activator)
         {
             _tableInfo = tableInfo;
             Initialize(activator, initialDescription, projectSpecificIfAny);
         }
 
-        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer, string initialDescription, Project projectSpecificIfAny):this(activator)
+        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer, string initialDescription, IProject projectSpecificIfAny):this(activator)
         {
             ColumnInfo[] cols;
             importer.DoImport(out _tableInfo, out cols);
@@ -101,7 +100,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             ContextMenuStrip.Items.Add(new SaveMenuItem(this));
         }
 
-        private void Initialize(IActivateItems activator,  string initialDescription, Project projectSpecificIfAny)
+        private void Initialize(IActivateItems activator,  string initialDescription, IProject projectSpecificIfAny)
         {
             CommonFunctionality.SetItemActivator(activator);
             var cols = _tableInfo.ColumnInfos;
@@ -113,7 +112,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             tbDescription.Text = initialDescription + " (" + Environment.UserName + " - " + DateTime.Now + ")";
             tbTableName.Text = _tableInfo.Name;
             _catalogue.SaveToDatabase();
-            objectSaverButton1.SetupFor(this,_catalogue,activator);
+            objectSaverButton1.SetupFor(this,(DatabaseEntity)_catalogue,activator);
 
             if (_binder == null)
             {
@@ -344,7 +343,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             IAtomicCommandWithTarget cmd;
             if(_projectSpecific != null)
             {
-                cmd = new ExecuteCommandMakeCatalogueProjectSpecific(Activator).SetTarget(_projectSpecific).SetTarget(_catalogue);
+                cmd = new ExecuteCommandMakeCatalogueProjectSpecific(Activator,_catalogue,_projectSpecific);
             
                 if (!cmd.IsImpossible)
                     cmd.Execute();
@@ -451,7 +450,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
                                 TableCreated.Drop();
                         }
                         else
-                            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(TableInfoCreated));
+                            Activator.Publish(TableInfoCreated);
                     }
                     else
                         e.Cancel = true;
@@ -473,7 +472,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             else
             {
                 if(CatalogueCreatedIfAny != null)
-                    Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(CatalogueCreatedIfAny));
+                    Activator.Publish(CatalogueCreatedIfAny);
             }
         }
 
@@ -514,7 +513,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             }
         }
 
-        private void SelectProject(Project projectSpecificIfAny)
+        private void SelectProject(IProject projectSpecificIfAny)
         {
             if (projectSpecificIfAny == null)
             {

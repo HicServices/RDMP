@@ -43,7 +43,7 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests
             header.Rows.Add("2", "0202020202", 50, new DateTime(2002, 2, 2), "T");
 
             var hTbl = From.CreateTable("header",header);
-            var cata = Import(hTbl,out TableInfo hTi, out _);
+            var cata = Import(hTbl,out var hTi, out _);
             cata.Name = "My Combo Join Catalogue";
             cata.SaveToDatabase();
 
@@ -66,7 +66,7 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests
             var rTbl = From.CreateTable("results", results);
             
             var importer = new TableInfoImporter(CatalogueRepository,rTbl);
-            importer.DoImport(out TableInfo rTi,out ColumnInfo[] rColInfos);
+            importer.DoImport(out var rTi,out ColumnInfo[] rColInfos);
 
             var fe = new ForwardEngineerCatalogue(rTi,rColInfos,true);
             fe.ExecuteForwardEngineering(cata);

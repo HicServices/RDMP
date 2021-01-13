@@ -6,12 +6,11 @@
 
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
-using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.Menus
@@ -27,7 +26,7 @@ namespace Rdmp.UI.Menus
 
             Add(new ExecuteCommandEditLoadMetadataDescription(_activator, loadMetadata));
 
-            Add(new ExecuteCommandExportObjectsToFileUI(_activator, new IMapsDirectlyToDatabaseTable[] {loadMetadata}));
+            Add(new ExecuteCommandExportObjectsToFile(_activator, new IMapsDirectlyToDatabaseTable[] {loadMetadata}));
 
             Items.Add(new ToolStripSeparator());
 

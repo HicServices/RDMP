@@ -17,7 +17,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.Validation
 {
     public class ReferentialIntegrityConstraintTests :DatabaseTests
     {
-        private TableInfo _tableInfo;
+        private ITableInfo _tableInfo;
         private ColumnInfo[] _columnInfo;
         private ReferentialIntegrityConstraint _constraint;
 

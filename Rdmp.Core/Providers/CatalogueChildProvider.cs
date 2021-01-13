@@ -119,7 +119,7 @@ namespace Rdmp.Core.Providers
         public AllServersNode AllServersNode { get; private set; }
 
         public DataAccessCredentials[] AllDataAccessCredentials { get; set; }
-        public Dictionary<TableInfo, List<DataAccessCredentialUsageNode>> AllDataAccessCredentialUsages { get; set; }
+        public Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>> AllDataAccessCredentialUsages { get; set; }
 
         private Dictionary<int, List<ColumnInfo>> _tableInfosToColumnInfos;
         public ColumnInfo[] AllColumnInfos { get; private set; }

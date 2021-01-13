@@ -5,40 +5,24 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.Curation.Data.ImportExport;
 using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui.Windows
 {
-    class ConsoleGuiEdit
+    class ConsoleGuiEdit : Window
     {
-        private readonly BasicActivateItems _activator;
+        private readonly IBasicActivateItems _activator;
         public IMapsDirectlyToDatabaseTable DatabaseObject { get; }
 
-        public ConsoleGuiEdit(BasicActivateItems activator, IMapsDirectlyToDatabaseTable databaseObject)
+        public ConsoleGuiEdit(IBasicActivateItems activator, IMapsDirectlyToDatabaseTable databaseObject)
         {
             _activator = activator;
             DatabaseObject = databaseObject;
-        }
-
-        public void ShowDialog()
-        {
-            var win = new Window("Edit " + DatabaseObject.GetType().Name)
-            {
-                X = 0,
-                Y = 0,
-
-                // By using Dim.Fill(), it will automatically resize without manual intervention
-                Width = Dim.Fill(),
-                Height = Dim.Fill()
-            };
-
 
             var collection =
 
@@ -57,20 +41,10 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
             {
                 X = 0,
                 Y = Pos.Bottom(list),
-                Width = 5,
-                Height = 1,
                 IsDefault = true
             };
+            
 
-            var btnClose = new Button("Close")
-            {
-                X = Pos.Right(btnSet) + 3,
-                Y = Pos.Bottom(list),
-                Width = 5,
-                Height = 1
-            };
-
-            btnClose.Clicked += Application.RequestStop;
             btnSet.Clicked += () =>
             {
                 if (list.SelectedItem != -1)
@@ -89,8 +63,10 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
                             //redraws the list and re selects the current item
 
                             p.UpdateValue(cmd.NewValue ?? string.Empty);
+                            
+                            var oldSelected = list.SelectedItem;
                             list.SetSource(collection = collection.ToList());
-                            list.SelectedItem = list.SelectedItem;
+                            list.SelectedItem = oldSelected;
                         }
                         
                     }
@@ -98,15 +74,19 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
                     {
                         _activator.ShowException("Failed to set Property",e);
                     }
-                    
                 }
             };
 
-            win.Add(list);
-            win.Add(btnSet);
-            win.Add(btnClose);
-
-            Application.Run(win);
+            var btnClose = new Button("Close")
+            {
+                X =  Pos.Right(btnSet),
+                Y = Pos.Bottom(list)
+            };
+            btnClose.Clicked += ()=>Application.RequestStop();
+            
+            this.Add(list);
+            this.Add(btnSet);
+            this.Add(btnClose);
         }
 
         /// <summary>

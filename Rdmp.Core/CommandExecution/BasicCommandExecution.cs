@@ -159,9 +159,10 @@ namespace Rdmp.Core.CommandExecution
             return BasicActivator.YesNo(text,caption);
         }
 
-        protected virtual void Publish(DatabaseEntity o)
+        protected virtual void Publish(IMapsDirectlyToDatabaseTable o)
         {
-            BasicActivator.Publish(o);
+            if(o is DatabaseEntity d)
+                BasicActivator.Publish(d);
         }
         
         /// <summary>
@@ -185,6 +186,16 @@ namespace Rdmp.Core.CommandExecution
         protected void Show(string message)
         {
             BasicActivator.Show(message);
+        }
+
+        /// <summary>
+        /// Displays the given message to the user with the given title
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="message"></param>
+        protected void Show(string title, string message)
+        {
+            BasicActivator.Show(title,message);
         }
 
         /// <summary>
@@ -281,7 +292,7 @@ namespace Rdmp.Core.CommandExecution
         
         protected bool SelectMany<T>(T[] available, out T[] selected, string initialSearchText = null) where T : DatabaseEntity
         {
-            selected = (T[]) BasicActivator.SelectMany("Select Objects", typeof(T), available,initialSearchText);
+            selected = BasicActivator.SelectMany("Select Objects", typeof(T), available,initialSearchText)?.Cast<T>()?.ToArray();
             return selected != null && selected.Any();
         }
 
@@ -289,7 +300,7 @@ namespace Rdmp.Core.CommandExecution
         {
             BasicActivator.Wait(title,task,cts);
         }
-        protected void Emphasise(DatabaseEntity o, int expansionDepth = 0)
+        protected void Emphasise(IMapsDirectlyToDatabaseTable o, int expansionDepth = 0)
         {
             BasicActivator.RequestItemEmphasis(this, new EmphasiseRequest(o, expansionDepth));
         }

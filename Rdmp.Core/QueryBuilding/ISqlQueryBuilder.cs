@@ -45,7 +45,7 @@ namespace Rdmp.Core.QueryBuilding
         /// 
         /// <para>Do not modify this manually</para>
         /// </summary>
-        List<TableInfo> TablesUsedInQuery { get; }
+        List<ITableInfo> TablesUsedInQuery { get; }
         
         /// <summary>
         /// The DBMS syntax the query builder has picked to use (can be null of query building failed or has not happened yet)
@@ -77,7 +77,7 @@ namespace Rdmp.Core.QueryBuilding
         /// <summary>
         /// The single <see cref="TableInfo"/> amongst <see cref="TablesUsedInQuery"/> that was <see cref="TableInfo.IsPrimaryExtractionTable"/>
         /// </summary>
-        TableInfo PrimaryExtractionTable { get; }
+        ITableInfo PrimaryExtractionTable { get; }
         
         /// <summary>
         /// Manages the addition of <see cref="ISqlParameter"/> to the <see cref="ISqlQueryBuilder"/> in a scoped way (globals, query level etc).

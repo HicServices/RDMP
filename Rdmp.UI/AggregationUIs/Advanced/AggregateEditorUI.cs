@@ -15,6 +15,7 @@ using FAnsi.Discovery.QuerySyntax.Aggregation;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
@@ -24,7 +25,6 @@ using Rdmp.Core.QueryBuilding.Options;
 using Rdmp.UI.AutoComplete;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Copying;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
@@ -67,7 +67,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
         private IAggregateBuilderOptions _options;
         private AggregateConfiguration _aggregate;
         
-        private List<TableInfo> _forcedJoins;
+        private List<ITableInfo> _forcedJoins;
 
         IQuerySyntaxHelper _querySyntaxHelper;
 

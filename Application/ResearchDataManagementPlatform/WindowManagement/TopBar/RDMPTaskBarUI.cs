@@ -7,12 +7,13 @@
 using System;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI;
 using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.Theme;
 using ResearchDataManagementPlatform.WindowManagement.HomePane;
@@ -148,8 +149,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 
         private void btnHome_Click(object sender, EventArgs e)
         {
-            _manager.CloseAllToolboxes();
-            _manager.CloseAllWindows();
             _manager.PopHome();
         }
 

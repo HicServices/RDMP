@@ -40,9 +40,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             var tbl = db.CreateTable("MyTable", dt);
 
-            TableInfo ti;
-            ColumnInfo[] cis;
-            Import(tbl,out ti,out cis);
+            Import(tbl,out var ti,out var cis);
 
             var pk = cis.Single(c => c.GetRuntimeName().Equals("PK"));
             pk.IsPrimaryKey = true;
@@ -81,9 +79,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             var tbl = db.CreateTable("MyTable", dt);
 
-            TableInfo ti;
-            ColumnInfo[] cis;
-            Import(tbl, out ti, out cis);
+            Import(tbl, out var ti, out var cis);
 
             var pk = cis.Single(c => c.GetRuntimeName().Equals("PK"));
             pk.IsPrimaryKey = true;
@@ -127,9 +123,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             var tbl = db.CreateTable("MyTable", dt);
 
-            TableInfo ti;
-            ColumnInfo[] cis;
-            Import(tbl, out ti, out cis);
+            Import(tbl, out var ti, out var cis);
 
             tbl.Rename("AAAA");
             var namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db,"AAAA");
@@ -181,9 +175,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             var tbl = db.CreateTable("MyTable", dt);
 
-            TableInfo ti;
-            ColumnInfo[] cis;
-            Import(tbl, out ti, out cis);
+            Import(tbl, out var ti, out var cis);
 
             var pk = cis.Single(c => c.GetRuntimeName().Equals("PK"));
             pk.IsPrimaryKey = true;
@@ -234,9 +226,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             var tbl = db.CreateTable("MyTable", dt);
 
-            TableInfo ti;
-            ColumnInfo[] cis;
-            Import(tbl, out ti, out cis);
+            Import(tbl, out var ti, out var cis);
 
             var pk = cis.Single(c => c.GetRuntimeName().Equals("PK"));
             pk.IsPrimaryKey = true;
@@ -292,9 +282,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             var tbl = db.CreateTable("MyTable", dt);
 
-            TableInfo ti;
-            ColumnInfo[] cis;
-            Import(tbl, out ti, out cis);
+            Import(tbl, out var ti, out var cis);
 
             var pk = cis.Single(c => c.GetRuntimeName().Equals("PK1"));
             pk.IsPrimaryKey = true;

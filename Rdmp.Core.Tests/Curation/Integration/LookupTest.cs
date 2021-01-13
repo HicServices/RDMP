@@ -9,7 +9,7 @@ using System.Data;
 using System.Linq;
 using FAnsi;
 using NUnit.Framework;
-using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper;
 using Rdmp.Core.QueryBuilding;
@@ -324,7 +324,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             lookuptbl.Drop();
         }
 
-        private string GetSql(Catalogue mainCata)
+        private string GetSql(ICatalogue mainCata)
         {
             mainCata.ClearAllInjections();
 

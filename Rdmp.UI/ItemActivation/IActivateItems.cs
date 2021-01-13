@@ -8,13 +8,15 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Providers;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.CommandExecution;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation.Arranging;
 using Rdmp.UI.PluginChildProvision;
 using Rdmp.UI.Refreshing;
@@ -40,10 +42,6 @@ namespace Rdmp.UI.ItemActivation
         /// </summary>
         RefreshBus RefreshBus { get; }
         
-        /// <summary>
-        /// Component for telling you whether a given DatabaseEntity is one of the current users favourite objects and for toggling it
-        /// </summary>
-        FavouritesProvider FavouritesProvider { get;}
 
         /// <summary>
         /// List of the currently loaded IPluginUserInterface classes (these allow injection of additional tree items, tailoring context menus etc).  This list will
@@ -156,7 +154,18 @@ namespace Rdmp.UI.ItemActivation
         /// <param name="databaseEntity"></param>
         /// <returns></returns>
         bool ShouldReloadFreshCopy(DatabaseEntity databaseEntity);
-        
 
+        /// <summary>
+        /// Start a new scoped session with a collection of objects
+        /// </summary>
+        /// <param name="sessionName"></param>
+        /// <param name="initialSelectionIfAny">Initial root objects to be in scope (or null if not known)</param>
+        void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialSelectionIfAny);
+
+        /// <summary>
+        /// Returns all currently open session uis
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<SessionCollectionUI> GetSessions();
     }
 }

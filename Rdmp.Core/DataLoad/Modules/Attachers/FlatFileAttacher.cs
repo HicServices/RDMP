@@ -32,7 +32,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
         public string FilePattern { get; set; }
 
         [DemandsInitialization("The table name to load with data from the file (this will be the RAW version of the table)")]
-        public TableInfo TableToLoad { get; set; }
+        public ITableInfo TableToLoad { get; set; }
 
         [DemandsInitialization("Alternative to `TableToLoad`, type table name in if you want to load a custom table e.g. one created by another load component (that doesn't exist in LIVE).  The table name should should not contain wrappers such as square brackets (e.g. \"My Table1\")")]
         public string TableName { get; set; }
@@ -94,14 +94,14 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
             }
 
             foreach (var fileToLoad in filesToLoad)
-                LoadFile(table, fileToLoad, _dbInfo, timer, job);
+                LoadFile(table, fileToLoad, _dbInfo, timer, job,cancellationToken);
 
             timer.Stop();
 
             return ExitCodeType.Success;
         }
 
-        private void LoadFile(DiscoveredTable tableToLoad, FileInfo fileToLoad, DiscoveredDatabase dbInfo, Stopwatch timer, IDataLoadJob job)
+        private void LoadFile(DiscoveredTable tableToLoad, FileInfo fileToLoad, DiscoveredDatabase dbInfo, Stopwatch timer, IDataLoadJob job, GracefulCancellationToken token)
         {
             using (var con = dbInfo.Server.GetConnection())
             {
@@ -118,7 +118,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
 
                     //bulk insert ito destination
                     job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to open file " + fileToLoad.FullName));
-                    OpenFile(fileToLoad,job);
+                    OpenFile(fileToLoad,job,token);
 
                     //confirm the validity of the headers
                     ConfirmFlatFileHeadersAgainstDataTable(dt,job);
@@ -133,7 +133,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
                     try
                     {
                         //while there is data to be loaded into table 
-                        while (IterativelyBatchLoadDataIntoDataTable(dt, maxBatchSize) != 0)
+                        while (IterativelyBatchLoadDataIntoDataTable(dt, maxBatchSize,token) != 0)
                         {
                             DropEmptyColumns(dt);
                             ConfirmFitToDestination(dt, tableToLoad, job);
@@ -165,7 +165,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
             }
         }
 
-        protected abstract void OpenFile(FileInfo fileToLoad,IDataLoadEventListener listener);
+        protected abstract void OpenFile(FileInfo fileToLoad,IDataLoadEventListener listener,GracefulCancellationToken cancellationToken);
         protected abstract void CloseFile();
         
         public override void Check(ICheckNotifier notifier)
@@ -211,8 +211,9 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
         /// </summary>
         /// <param name="dt"></param>
         /// <param name="maxBatchSize"></param>
+        /// <param name="cancellationToken"></param>
         /// <returns>return the number of rows read, if you return >0 then you will be called again to get more data (if during this second or subsequent call there is no more data to read from source, return 0)</returns>
-        protected abstract int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize);
+        protected abstract int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize,GracefulCancellationToken cancellationToken);
         
 
         private void DropEmptyColumns(DataTable dt)

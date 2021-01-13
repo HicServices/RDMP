@@ -15,7 +15,6 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.DashboardTabs.Construction;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleControls;
 

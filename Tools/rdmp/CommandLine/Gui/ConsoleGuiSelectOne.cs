@@ -53,15 +53,24 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public ConsoleGuiSelectOne(ICoreChildProvider coreChildProvider, IMapsDirectlyToDatabaseTable[] availableObjects):this()
         {
-            _masterCollection = coreChildProvider.GetAllSearchables().Where(k=> availableObjects.Contains(k.Key)).ToDictionary(k=>k.Key,v=>v.Value);
+            _masterCollection = availableObjects.ToDictionary(k=>k,v=>coreChildProvider.GetDescendancyListIfAnyFor(v));
             SetAspectGet(coreChildProvider);
         }
 
-        protected override IList<IMapsDirectlyToDatabaseTable> GetListAfterSearch(string searchText)
+        protected override IList<IMapsDirectlyToDatabaseTable> GetListAfterSearch(string searchText, CancellationToken token)
         {
-            return _scorer
-                .ScoreMatches(_masterCollection, searchText, new CancellationToken(),null)
-                .Where(score => score.Value > 0)
+            if(token.IsCancellationRequested)
+                return new List<IMapsDirectlyToDatabaseTable>();
+             
+            var dict = _scorer.ScoreMatches(_masterCollection, searchText, token,null);
+
+            //can occur if user punches many keys at once
+            if(dict == null)
+                return new List<IMapsDirectlyToDatabaseTable>();
+
+            return
+                dict
+                .Where(score => !token.IsCancellationRequested && score.Value > 0)
                 .OrderByDescending(score => score.Value)
                 .ThenByDescending(id => id.Key.Key.ID) //favour newer objects over ties
                 .Take(MaxMatches)

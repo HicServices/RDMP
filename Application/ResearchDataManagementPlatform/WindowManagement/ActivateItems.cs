@@ -16,33 +16,47 @@ using System.Windows.Forms;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
+using MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core;
+using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
+using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
+using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataViewing;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.UI;
+using Rdmp.UI.CohortUI.ImportCustomData;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.CommandExecution;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Copying;
-using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.DataViewing;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Arranging;
+using Rdmp.UI.PipelineUIs.Pipelines;
 using Rdmp.UI.PluginChildProvision;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleDialogs;
+using Rdmp.UI.SimpleDialogs.ForwardEngineering;
+using Rdmp.UI.SimpleDialogs.NavigateTo;
 using Rdmp.UI.SubComponents;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Theme;
+using Rdmp.UI.Versioning;
+using Rdmp.UI.Wizard;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
 using ReusableLibraryCode;
@@ -70,21 +84,21 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public ITheme Theme { get; private set; }
 
         public RefreshBus RefreshBus { get; private set; }
-        public FavouritesProvider FavouritesProvider { get; private set; }
         
         public List<IPluginUserInterface> PluginUserInterfaces { get; private set; }
         readonly UIObjectConstructor _constructor = new UIObjectConstructor();
 
         public IArrangeWindows WindowArranger { get; private set; }
         
-        public override void Publish(DatabaseEntity databaseEntity)
+        public override void Publish(IMapsDirectlyToDatabaseTable databaseEntity)
         {
-            RefreshBus.Publish(this,new RefreshObjectEventArgs(databaseEntity));
+            if(databaseEntity is DatabaseEntity de)
+                RefreshBus.Publish(this,new RefreshObjectEventArgs(de));
         }
 
-        public override void Show(string message)
+        public override void Show(string title, string message)
         {
-            WideMessageBox.Show("Message",message,Environment.StackTrace,true,null,WideMessageBoxTheme.Help);
+            WideMessageBox.Show(title,message,Environment.StackTrace,true,null,WideMessageBoxTheme.Help);
         }
 
         public ICombineableFactory CommandFactory { get; private set; }
@@ -97,6 +111,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public ActivateItems(ITheme theme,RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowFactory windowFactory, WindowManager windowManager, ICheckNotifier globalErrorCheckNotifier):base(repositoryLocator,globalErrorCheckNotifier)
         {
             Theme = theme;
+            InteractiveDeletes = true;
             WindowFactory = windowFactory;
             _mainDockPanel = mainDockPanel;
             _windowManager = windowManager;
@@ -105,8 +120,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             ConstructPluginChildProviders();
             CoreChildProvider = GetChildProvider();
             
-            //Shouldn't ever change externally to your session so doesn't need constantly refreshed
-            FavouritesProvider = new FavouritesProvider(this, repositoryLocator.CatalogueRepository);
             HistoryProvider = new HistoryProvider(repositoryLocator);
 
             //handle custom icons from plugin user interfaces in which
@@ -211,94 +224,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override bool DeleteWithConfirmation(IDeleteable deleteable)
         {
-            var databaseObject = deleteable as DatabaseEntity;
-                        
-            //If there is some special way of describing the effects of deleting this object e.g. Selected Datasets
-            var customMessageDeletable = deleteable as IDeletableWithCustomMessage;
-            
-            if(databaseObject is Catalogue c)
-            {
-                if(c.GetExtractabilityStatus(RepositoryLocator.DataExportRepository).IsExtractable)
-                {
-                    if(YesNo("Catalogue must first be made non extractable before it can be deleted, mark non extractable?","Make Non Extractable"))
-                    {
-                        var cmd = new ExecuteCommandChangeExtractability(this,c);
-                        cmd.Execute();
-                    }
-                    else
-                        return false;
-                }
-            }
-
-            if( databaseObject is AggregateConfiguration ac && ac.IsJoinablePatientIndexTable())
-            {
-                var users = ac.JoinableCohortAggregateConfiguration?.Users?.Select(u=>u.AggregateConfiguration);
-                if(users != null)
-                {
-                    users = users.ToArray();
-                    if(users.Any())
-                    {
-                        WideMessageBox.Show("Cannot Delete",$"Cannot Delete '{ac.Name}' because it is linked to by the following AggregateConfigurations:{Environment.NewLine}{string.Join(Environment.NewLine,users)}");
-                        return false;
-                    }                       
-                }
-            }
-
-            string overrideConfirmationText = null;
-
-            if (customMessageDeletable != null)
-                overrideConfirmationText = "Are you sure you want to " +customMessageDeletable.GetDeleteMessage() +"?";
-
-            //it has already been deleted before
-            if (databaseObject != null && !databaseObject.Exists())
-                return false;
-
-            string idText = "";
-
-            if (databaseObject != null)
-                idText = " ID=" + databaseObject.ID;
-
-            if (databaseObject != null)
-            {
-                var exports = RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectExport>(databaseObject).ToArray();
-                if(exports.Any(e=>e.Exists()))
-                    if(YesNo("This object has been shared as an ObjectExport.  Deleting it may prevent you loading any saved copies.  Do you want to delete the ObjectExport definition?","Delete ObjectExport"))
-                    {
-                        foreach(ObjectExport e in exports)
-                            e.DeleteInDatabase(); 
-                    }
-                    else
-                        return false;
-            }
-                        
-            if (
-                YesNo(
-                    overrideConfirmationText?? ("Are you sure you want to delete '" + deleteable + "'?")
-                +Environment.NewLine + "(" + deleteable.GetType().Name + idText +")",
-                "Delete " + deleteable.GetType().Name))
-            {
-                deleteable.DeleteInDatabase();
+            var didDelete = InteractiveDelete(deleteable);
                 
-                if (databaseObject == null)
-                {
-                    var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(deleteable);
-                    if(descendancy != null)
-                        databaseObject = descendancy.Parents.OfType<DatabaseEntity>().LastOrDefault();
-                }
+            if(didDelete && deleteable is DatabaseEntity de)
+                RefreshBus.Publish(this, new RefreshObjectEventArgs(de){DeletedObjectDescendancy = CoreChildProvider.GetDescendancyListIfAnyFor(de)});
 
-                if (deleteable is IMasqueradeAs)
-                    databaseObject = databaseObject ?? ((IMasqueradeAs)deleteable).MasqueradingAs() as DatabaseEntity;
-
-                if (databaseObject == null)
-                    throw new NotSupportedException("IDeletable " + deleteable +
-                                                    " was not a DatabaseObject and it did not have a Parent in it's tree which was a DatabaseObject (DescendancyList)");
-
-                RefreshBus.Publish(this, new RefreshObjectEventArgs(databaseObject){DeletedObjectDescendancy = CoreChildProvider.GetDescendancyListIfAnyFor(databaseObject)});
-
-                return true;
-            }
-
-            return false;
+            return didDelete;
         }
         
         public override void RequestItemEmphasis(object sender, EmphasiseRequest request)
@@ -361,12 +292,14 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return false;
         }
 
-        public override void Activate(DatabaseEntity o)
+        public override bool CanActivate(object target)
         {
-            var cmd = new ExecuteCommandActivate(this, o);
-            
-            if(!cmd.IsImpossible)
-                cmd.Execute();
+            return CommandExecutionFactory.CanActivate(target);
+        }
+        public override void Activate(object o)
+        {
+            if(CommandExecutionFactory.CanActivate(o))
+                CommandExecutionFactory.Activate(o);
         }
 
         public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
@@ -636,6 +569,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public override DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
         {
             var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,true,true);
+            dialog.AllowTableValuedFunctionSelection = true;
             
             dialog.ShowDialog();
 
@@ -701,12 +635,13 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override DirectoryInfo SelectDirectory(string prompt)
         {
-            var fb = new FolderBrowserDialog();
-
-            if (fb.ShowDialog() == DialogResult.OK)
-                return new DirectoryInfo(fb.SelectedPath);
+            using(var fb = new FolderBrowserDialog())
+            {
+                if (fb.ShowDialog() == DialogResult.OK)
+                    return new DirectoryInfo(fb.SelectedPath);
             
-            return null;
+                return null;
+            }
         }
 
         public override FileInfo SelectFile(string prompt)
@@ -716,17 +651,31 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
         {
-            var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = false};
+            using(var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = false})
+            {
+                if (patternDescription != null && pattern != null)
+                    fb.Filter = patternDescription + "|" + pattern;
 
-            if (patternDescription != null && pattern != null)
-                fb.Filter = patternDescription + "|" + pattern;
-
-            if (fb.ShowDialog() == DialogResult.OK)
-                return new FileInfo(fb.FileName);
+                if (fb.ShowDialog() == DialogResult.OK)
+                    return new FileInfo(fb.FileName);
             
-            return null;
+                return null;
+            }        
         }
         
+        public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
+        {
+            using(var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = true})
+            {
+                if (patternDescription != null && pattern != null)
+                    fb.Filter = patternDescription + "|" + pattern;
+
+                if (fb.ShowDialog() == DialogResult.OK)
+                    return fb.FileNames.Select(f=>new FileInfo(f)).ToArray();
+            
+                return null;
+            }
+        }
 
         protected override bool SelectValueTypeImpl(string prompt, Type paramType, object initialValue, out object chosen)
         {
@@ -778,6 +727,86 @@ namespace ResearchDataManagementPlatform.WindowManagement
             {
                 new CommandInvokerDelegate(typeof(IActivateItems),true,(p)=>this)
             };
+        }
+        public void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialObjects)
+        {
+            var panel = WindowFactory.Create(this,new SessionCollectionUI(),new SessionCollection(sessionName)
+            {
+                DatabaseObjects = initialObjects?.ToList() ?? new List<IMapsDirectlyToDatabaseTable>()
+            },CatalogueIcons.WindowLayout);
+            panel.Show(_mainDockPanel,DockState.DockLeft);
+        }
+
+        
+        /// <inheritdoc/>
+        public IEnumerable<SessionCollectionUI> GetSessions()
+        {
+            return _windowManager.GetAllWindows<SessionCollectionUI>();
+        }
+
+        public override IPipelineRunner GetPipelineRunner(IPipelineUseCase useCase, IPipeline pipeline)
+        {
+             
+            ConfigureAndExecutePipelineUI configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(useCase,this);
+            configureAndExecuteDialog.Dock = DockStyle.Fill;
+            
+            return configureAndExecuteDialog;
+        }
+
+        public override CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable, IProject project, string cohortInitialDescription)
+        {
+            var ui = new CohortCreationRequestUI(this,externalCohortTable,project);
+                
+            if(!string.IsNullOrWhiteSpace(cohortInitialDescription))
+                ui.CohortDescription = cohortInitialDescription + " (" + Environment.UserName + " - " + DateTime.Now + ")";
+
+            if (ui.ShowDialog() != DialogResult.OK)
+                return null;
+
+            return ui.Result;
+        }
+
+        public override ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo, ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, CatalogueFolder folder)
+        {
+            var ui = new ConfigureCatalogueExtractabilityUI(this, tableInfo, initialDescription, projectSpecific);
+            ui.TargetFolder = folder;
+            ui.ShowDialog();
+            
+            return ui.CatalogueCreatedIfAny;
+        }
+        public override ExternalDatabaseServer CreateNewPlatformDatabase(ICatalogueRepository catalogueRepository, PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db)
+        {
+            //launch the winforms UI for creating a database
+            return CreatePlatformDatabase.CreateNewExternalServer(catalogueRepository,defaultToSet,patcher);
+        }
+
+        public override bool ShowCohortWizard(out CohortIdentificationConfiguration cic)
+        {
+            var wizard = new CreateNewCohortIdentificationConfigurationUI(this);
+
+            if (wizard.ShowDialog() == DialogResult.OK)
+            {
+                cic = wizard.CohortIdentificationCriteriaCreatedIfAny;
+            }
+            else
+            {
+                cic = null;
+            }
+
+            // Wizard was shown so that's a thing
+            return true;
+        }
+
+        public override void SelectAnythingThen(string prompt, Action<IMapsDirectlyToDatabaseTable> callback)
+        {
+            NavigateToObjectUI navigate = new NavigateToObjectUI(this) { Text = prompt };
+            navigate.CompletionAction = callback;
+            navigate.Show();
+        }
+
+        public override void ShowData(IViewSQLAndResultsCollection collection)
+        {
+            Activate<ViewSQLAndResultsWithDataGridUI>(collection);
         }
     }
 }

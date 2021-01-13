@@ -40,7 +40,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
         private FileInfo _file;
         private Project _projectSpecific;
 
-        public Catalogue CatalogueCreatedIfAny { get; private set; }
+        public ICatalogue CatalogueCreatedIfAny { get; private set; }
 
         public CreateNewCatalogueByImportingFileUI_Advanced(IActivateItems activator,DiscoveredDatabase database,FileInfo file, bool alsoForwardEngineerCatalogue,Project projectSpecific)
         {

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories.Construction;
@@ -17,7 +18,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     /// <summary>
     /// Creates a new <see cref="DatabaseEntity"/> in the RDMP Platform database with the provided arguments.
     /// </summary>
-    class ExecuteCommandNewObject:BasicCommandExecution
+    public class ExecuteCommandNewObject:BasicCommandExecution
     {
         /// <summary>
         /// The type of <see cref="DatabaseEntity"/> the user wants to construct
@@ -29,6 +30,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// values
         /// </summary>
         private CommandLineObjectPicker _picker;
+        private Func<IMapsDirectlyToDatabaseTable> _func;
 
         /// <summary>
         /// Interactive constructor, user will be prompted for values at execute time
@@ -70,18 +72,33 @@ args    Dynamic list of values to satisfy the types constructor")]
             _picker = picker;
         }
 
+        /// <summary>
+        /// Create a new instance of an object using the provided func
+        /// </summary>
+        /// <param name="activator"></param>
+        /// <param name="callCtor"></param>
+        public ExecuteCommandNewObject(IBasicActivateItems activator, Func<IMapsDirectlyToDatabaseTable> callCtor) : base(activator)
+        {
+            _func = callCtor;
+        }
 
         public override void Execute()
         {
             base.Execute();
 
-            var instance = (DatabaseEntity)Construct(_type,
+            IMapsDirectlyToDatabaseTable instance;
+            if(_func != null)
+                instance = _func();
+            else
+            {
+                instance = (DatabaseEntity)Construct(_type,
 
                 //use the IRepository constructor of the _type
                 o=>o.GetRepositoryConstructor(_type), 
                 
                 //first argument is the Type, the rest are fed into the constructor of _type
                 _picker?.Arguments?.Skip(1));
+            }
             
             if(instance == null)
                 throw new Exception("Failed to construct object with provided parameters");

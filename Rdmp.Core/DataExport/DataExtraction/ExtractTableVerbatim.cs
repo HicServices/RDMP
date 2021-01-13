@@ -27,6 +27,7 @@ namespace Rdmp.Core.DataExport.DataExtraction
         private readonly string _dateTimeFormat;
         private string _specificSQLTableName;
         private DiscoveredServer _server;
+        private Stream _stream;
 
         public string OutputFilename { get; private set; }
 
@@ -38,7 +39,7 @@ namespace Rdmp.Core.DataExport.DataExtraction
             _tableNames = tableNames;
             _outputDirectory = outputDirectory;
             _separator = separator;
-            _dateTimeFormat = dateTimeFormat;
+            _dateTimeFormat = dateTimeFormat ?? GetDefaultDateTimeFormat();
             _server = server;
         }
 
@@ -66,8 +67,28 @@ namespace Rdmp.Core.DataExport.DataExtraction
             _specificSQLTableName = outputName;
             _outputDirectory = outputDirectory;
             _separator = separator;
-            _dateTimeFormat = dateTimeFormat;
+            _dateTimeFormat = dateTimeFormat?? GetDefaultDateTimeFormat();
             _server = server;
+        }
+
+        private string GetDefaultDateTimeFormat()
+        {
+            return "yyyy-MM-dd hh:mm:ss";
+        }
+
+
+        /// <summary>
+        /// Runs the supplied SQL and puts it out to the <paramref name="stream"/> specified, will deal with stripping separators etc automatically
+        /// </summary>
+        /// <param name="server"></param>
+        /// <param name="sql">Some SQL you want to run (instead of a specific table)</param>
+        /// <param name="stream">The output stream to write data to</param>
+        /// <param name="separator"></param>
+        /// <param name="dateTimeFormat"></param>
+        public ExtractTableVerbatim(DiscoveredServer server, string sql,Stream stream, string separator,string dateTimeFormat)
+            :this(server, sql,null,null, separator,dateTimeFormat)
+        {
+            _stream = stream;
         }
 
         public int DoExtraction()
@@ -99,18 +120,35 @@ namespace Rdmp.Core.DataExport.DataExtraction
 
             using (DbCommand cmdExtract = _server.GetCommand(sql, con))
             {
-                if (!Directory.Exists(_outputDirectory.FullName))
-                    Directory.CreateDirectory(_outputDirectory.FullName);
+                string filename = null;
 
-                string filename = tableName.Replace("[", "").Replace("]", "").ToLower().Trim();
+                if (_outputDirectory !=null)
+                {
+                    if(!Directory.Exists(_outputDirectory.FullName))
+                        Directory.CreateDirectory(_outputDirectory.FullName);
 
-                if (!filename.EndsWith(".csv"))
-                    filename += ".csv";
+                    filename = tableName.Replace("[", "").Replace("]", "").ToLower().Trim();
 
-                OutputFilename = Path.Combine(_outputDirectory.FullName , filename);
+                    if (!filename.EndsWith(".csv"))
+                        filename += ".csv";
+                }
 
-                StreamWriter sw = new StreamWriter(OutputFilename);
+                StreamWriter sw;
+                
+                if(_stream != null)
+                    sw = new StreamWriter(_stream);
+                else
+                { 
+                    if(_outputDirectory == null)
+                        throw new Exception($"{nameof(_outputDirectory)} cannot be null when using file output mode (only with an explicit stream out).");
+                    
+                    if(filename == null)
+                        throw new Exception($"{nameof(filename)} cannot be null when using file output mode (only with an explicit stream out).");
 
+                    OutputFilename = Path.Combine(_outputDirectory.FullName , filename);
+                    sw = new StreamWriter(OutputFilename);
+                }
+                 
                 cmdExtract.CommandTimeout = 500000;
 
                 using(DbDataReader r = cmdExtract.ExecuteReader())

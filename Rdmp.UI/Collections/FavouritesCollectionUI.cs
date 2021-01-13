@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -53,7 +54,34 @@ namespace Rdmp.UI.Collections
 
         private void RefreshFavourites()
         {
-            var potentialRootFavourites = Activator.CoreChildProvider.GetAllSearchables().Where(kvp => Activator.FavouritesProvider.IsFavourite(kvp.Key)).ToArray();
+            var actualRootFavourites = FindRootObjects(Activator,IncludeObject);
+            
+            //no change in root favouratism
+            if (favourites.SequenceEqual(actualRootFavourites))
+                return;
+
+            //remove old objects
+            foreach (var unfavourited in favourites.Except(actualRootFavourites))
+                tlvFavourites.RemoveObject(unfavourited);
+
+            //add new objects
+            foreach (var newFavourite in actualRootFavourites.Except(favourites))
+                tlvFavourites.AddObject(newFavourite);
+
+            //update to the new list
+            favourites = actualRootFavourites;
+            tlvFavourites.RebuildAll(true);
+        }
+
+        /// <summary>
+        /// Returns all root objects in RDMP that match the <paramref name="condition"/>.  Handles unpicking tree collisions e.g. where <paramref name="condition"/> matches 2 objects with one being the child of the other
+        /// </summary>
+        /// <param name="activator"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public static List<IMapsDirectlyToDatabaseTable> FindRootObjects(IActivateItems activator, Func<IMapsDirectlyToDatabaseTable, bool> condition)
+        {
+            var potentialRootFavourites = activator.CoreChildProvider.GetAllSearchables().Where(k=>condition(k.Key)).ToArray();
 
             List<IMapsDirectlyToDatabaseTable> hierarchyCollisions = new List<IMapsDirectlyToDatabaseTable>();
 
@@ -80,22 +108,18 @@ namespace Rdmp.UI.Collections
                     actualRootFavourites.Add(currentFavourite.Key);
             }
 
+            return actualRootFavourites;
+        }
 
-            //no change in root favouratism
-            if (favourites.SequenceEqual(actualRootFavourites))
-                return;
 
-            //remove old objects
-            foreach (var unfavourited in favourites.Except(actualRootFavourites))
-                tlvFavourites.RemoveObject(unfavourited);
-
-            //add new objects
-            foreach (var newFavourite in actualRootFavourites.Except(favourites))
-                tlvFavourites.AddObject(newFavourite);
-
-            //update to the new list
-            favourites = actualRootFavourites;
-            tlvFavourites.RebuildAll(true);
+        /// <summary>
+        /// Return true if the object should be displayed in this pane
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        protected virtual bool IncludeObject(IMapsDirectlyToDatabaseTable key)
+        {
+            return Activator.FavouritesProvider.IsFavourite(key);
         }
 
         public static bool IsRootObject(IActivateItems activator, object root)

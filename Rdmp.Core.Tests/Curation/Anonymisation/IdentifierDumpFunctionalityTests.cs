@@ -22,7 +22,7 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation
 {
     public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSuite
     {
-        private TableInfo tableInfoCreated;
+        private ITableInfo tableInfoCreated;
         ColumnInfo[] columnInfosCreated;
         
         BulkTestsData _bulkData;

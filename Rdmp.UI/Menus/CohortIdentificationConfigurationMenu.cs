@@ -4,17 +4,15 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.Core.Providers;
+using Rdmp.UI.CohortUI.ImportCustomData;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.SubComponents;
 
 namespace Rdmp.UI.Menus
@@ -35,7 +33,7 @@ namespace Rdmp.UI.Menus
                 
             Items.Add(new ToolStripSeparator());
 
-            _executeAndImportCommand = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator).SetTarget(cic);
+            _executeAndImportCommand = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator,null).SetTarget(cic);
             
             Add(_executeAndImportCommand);
             

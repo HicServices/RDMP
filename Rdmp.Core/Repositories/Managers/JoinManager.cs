@@ -44,7 +44,7 @@ namespace Rdmp.Core.Repositories.Managers
                     .ToArray();
         }
 
-        public JoinInfo[] GetAllJoinInfosWhereTableContains(TableInfo tableInfo,JoinInfoType type)
+        public JoinInfo[] GetAllJoinInfosWhereTableContains(ITableInfo tableInfo,JoinInfoType type)
         {
             var ids = new HashSet<int>(tableInfo.ColumnInfos.Select(c => c.ID));
 

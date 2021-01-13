@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using MapsDirectlyToDatabaseTable;
 using Newtonsoft.Json;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Repositories;
@@ -23,7 +24,7 @@ namespace Rdmp.Core.Curation.Data.Serialization
         private readonly ShareManager _shareManager;
 
         /// <summary>
-        /// Creates a new serializer for objects stored in RDMP platform databases (only supports <see cref="DatabaseEntity"/>)
+        /// Creates a new serializer for objects stored in RDMP platform databases (only supports <see cref="IMapsDirectlyToDatabaseTable"/>)
         /// 
         /// </summary>
         /// <param name="repositoryLocator"></param>
@@ -33,7 +34,7 @@ namespace Rdmp.Core.Curation.Data.Serialization
         }
 
         /// <summary>
-        /// Serializes a <see cref="DatabaseEntity"/> by sharing it with <see cref="ShareManager.GetObjectFromPersistenceString"/>.  This
+        /// Serializes a <see cref="IMapsDirectlyToDatabaseTable"/> by sharing it with <see cref="ShareManager.GetObjectFromPersistenceString"/>.  This
         /// creates a pointer only e.g. "Catalogue 123" and if an <see cref="ObjectExport"/> exists then also the <see cref="ObjectExport.SharingUID"/> 
         /// so that the JSON can be used in other instances (that have imported the <see cref="ShareDefinition"/> of the serialized object)
         /// </summary>
@@ -50,12 +51,12 @@ namespace Rdmp.Core.Curation.Data.Serialization
 
             writer.WriteStartObject();
             writer.WritePropertyName("PersistenceString");
-            writer.WriteRawValue('"' + _shareManager.GetPersistenceString((DatabaseEntity)value) + '"');
+            writer.WriteRawValue('"' + _shareManager.GetPersistenceString((IMapsDirectlyToDatabaseTable)value) + '"');
             writer.WriteEndObject();
         }
         
         /// <summary>
-        /// Deserializes a persisted <see cref="DatabaseEntity"/> by resolving it as a reference and fetching the original 
+        /// Deserializes a persisted <see cref="IMapsDirectlyToDatabaseTable"/> by resolving it as a reference and fetching the original 
         /// object using <see cref="ShareManager.GetObjectFromPersistenceString"/>.
         /// </summary>
         /// <param name="reader"></param>
@@ -91,13 +92,13 @@ namespace Rdmp.Core.Curation.Data.Serialization
         }
 
         /// <summary>
-        /// True if <paramref name="objectType"/> is a <see cref="DatabaseEntity"/> (the only thing this class can serialize)
+        /// True if <paramref name="objectType"/> is a <see cref="IMapsDirectlyToDatabaseTable"/> (the only thing this class can serialize)
         /// </summary>
         /// <param name="objectType"></param>
         /// <returns></returns>
         public override bool CanConvert(Type objectType)
         {
-            return typeof(DatabaseEntity).IsAssignableFrom(objectType);
+            return typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(objectType);
         }
     }
 }

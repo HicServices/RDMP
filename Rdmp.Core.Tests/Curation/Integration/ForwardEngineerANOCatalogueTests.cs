@@ -145,9 +145,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof (string), 10), false)
             });
 
-            TableInfo ti;
-            ColumnInfo[] cols;
-            var cata = Import(tbl,out ti,out cols);
+            var cata = Import(tbl,out var ti,out var cols);
 
             var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator, cata);
             planManager.TargetDatabase = db;
@@ -212,25 +210,17 @@ namespace Rdmp.Core.Tests.Curation.Integration
             //Necks table already exists in the destination so will be skipped for migration but still needs to be imported
             var tblToNeck = dbTo.CreateTable("Necks", cols);
 
-
-            TableInfo fromHeadsTableInfo;
-            ColumnInfo[] fromHeadsColumnInfo;
-            TableInfo fromNeckTableInfo;
-            ColumnInfo[] fromNeckColumnInfo;
-            TableInfo toNecksTableInfo = null;
-            ColumnInfo[] toNecksColumnInfo = null;
-
             TableInfoImporter i1 = new TableInfoImporter(CatalogueRepository, tblFromHeads);
-            i1.DoImport(out fromHeadsTableInfo,out fromHeadsColumnInfo);
+            i1.DoImport(out var fromHeadsTableInfo,out var fromHeadsColumnInfo);
 
             TableInfoImporter i2 = new TableInfoImporter(CatalogueRepository, tblFromNeck);
-            i2.DoImport(out fromNeckTableInfo,out fromNeckColumnInfo);
+            i2.DoImport(out var fromNeckTableInfo,out var fromNeckColumnInfo);
             
             //Table already exists but does the in Catalogue reference exist?
             if(tableInfoAlreadyExistsForSkippedTable)
             {
                 TableInfoImporter i3 = new TableInfoImporter(CatalogueRepository, tblToNeck);
-                i3.DoImport(out toNecksTableInfo,out toNecksColumnInfo);
+                i3.DoImport(out var toNecksTableInfo,out var toNecksColumnInfo);
             }
 
             //Create a JoinInfo so the query builder knows how to connect the tables
@@ -240,10 +230,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 );
 
             var cataEngineer = new ForwardEngineerCatalogue(fromHeadsTableInfo, fromHeadsColumnInfo, true);
-            Catalogue cata;
-            CatalogueItem[] cataItems;
-            ExtractionInformation[] extractionInformations;
-            cataEngineer.ExecuteForwardEngineering(out cata,out cataItems,out extractionInformations);
+            cataEngineer.ExecuteForwardEngineering(out var cata,out var cataItems,out var extractionInformations);
 
             var cataEngineer2 = new ForwardEngineerCatalogue(fromNeckTableInfo, fromNeckColumnInfo, true);
             cataEngineer2.ExecuteForwardEngineering(cata);
@@ -337,10 +324,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             //import a reference to the table
             TableInfoImporter importer = new TableInfoImporter(CatalogueRepository,lookupTbl);
-
-            ColumnInfo[] lookupColumnInfos;
-            TableInfo lookupTableInfo;
-            importer.DoImport(out lookupTableInfo,out lookupColumnInfos);
+            importer.DoImport(out var lookupTableInfo,out var lookupColumnInfos);
 
             //Create a Lookup reference
             var ciSex = bulk.catalogue.CatalogueItems.Single(c => c.Name == "sex");

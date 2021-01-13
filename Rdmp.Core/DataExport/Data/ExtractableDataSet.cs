@@ -76,7 +76,7 @@ namespace Rdmp.Core.DataExport.Data
         /// Defines that the given Catalogue is extractable to researchers as a data set, this is stored in the DataExport database
         /// </summary>
         /// <returns></returns>
-        public ExtractableDataSet(IDataExportRepository repository, Catalogue catalogue, bool disableExtraction =false)
+        public ExtractableDataSet(IDataExportRepository repository, ICatalogue catalogue, bool disableExtraction =false)
         {
             Repository = repository;
             Repository.InsertAndHydrate(this, new Dictionary<string, object>

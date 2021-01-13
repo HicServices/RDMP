@@ -57,7 +57,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
             return new ParameterCollectionUIOptions(UseCaseIFilter, value, ParameterLevel.QueryLevel, pm);
         }
 
-        public ParameterCollectionUIOptions Create(TableInfo tableInfo)
+        public ParameterCollectionUIOptions Create(ITableInfo tableInfo)
         {
             var pm = new ParameterManager();
             pm.AddParametersFor(tableInfo);

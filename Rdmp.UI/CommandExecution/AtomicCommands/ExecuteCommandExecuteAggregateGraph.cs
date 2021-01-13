@@ -9,7 +9,6 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.AggregationUIs;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 

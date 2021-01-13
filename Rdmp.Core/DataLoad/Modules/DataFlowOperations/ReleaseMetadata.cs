@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Serialization;
@@ -27,9 +28,10 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations
     /// <para>This serialization includes the allocation of SharingUIDs to allow for later updates and to prevent duplicate loading in the destination.  In addition it handles
     /// system boundaries e.g. it doesn't serialize <see cref="LoadMetadata"/> of the <see cref="Catalogue"/> or other deployment specific objects</para>
     /// </summary>
-    public class ReleaseMetadata : IPluginDataFlowComponent<ReleaseAudit>, IPipelineRequirement<ReleaseData>
+    public class ReleaseMetadata : IPluginDataFlowComponent<ReleaseAudit>, IPipelineRequirement<ReleaseData>, IPipelineRequirement<IBasicActivateItems>
     {
         private ReleaseData _releaseData;
+        private IBasicActivateItems _activator;
 
         public ReleaseAudit ProcessPipelineData(ReleaseAudit toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
@@ -52,7 +54,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations
 
             var outputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.METADATA_FOLDER_NAME);
             
-            var cmd = new ExecuteCommandExportObjectsToFile(_releaseData.RepositoryLocator, allCatalogues, outputFolder);
+            var cmd = new ExecuteCommandExportObjectsToFile(_activator, allCatalogues, outputFolder);
             cmd.Execute();
             
             return toProcess;
@@ -74,6 +76,11 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations
         public void Check(ICheckNotifier notifier)
         {
             notifier.OnCheckPerformed(new CheckEventArgs("No checking needed", CheckResult.Success));
+        }
+
+        public void PreInitialize(IBasicActivateItems value, IDataLoadEventListener listener)
+        {
+            _activator = value;
         }
     }
 }

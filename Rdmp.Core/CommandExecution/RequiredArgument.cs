@@ -7,6 +7,7 @@
 using System;
 using System.Reflection;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
 
 namespace Rdmp.Core.CommandExecution
 {
@@ -41,6 +42,15 @@ namespace Rdmp.Core.CommandExecution
             HasDefaultValue = parameterInfo.HasDefaultValue;
             DefaultValue = parameterInfo.DefaultValue;
             DemandIfAny = parameterInfo.GetCustomAttribute<DemandsInitializationAttribute>();
+        }
+        public RequiredArgument(IArgument a)
+        {
+            Name = a.Name;
+            Type = a.GetSystemType();
+            ReflectionObject = a;
+            HasDefaultValue = true;
+            DefaultValue = a.GetValueAsSystemType();
+            DemandIfAny = null;
         }
     }
 }

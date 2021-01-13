@@ -114,7 +114,7 @@ namespace Rdmp.Core.Curation.Data
         /// credentials are used e.g. <see cref="DataAccessContext.DataLoad"/>
         /// </summary>
         /// <returns></returns>
-        public Dictionary<DataAccessContext, List<TableInfo>> GetAllTableInfosThatUseThis()
+        public Dictionary<DataAccessContext, List<ITableInfo>> GetAllTableInfosThatUseThis()
         {
             return CatalogueRepository.TableInfoCredentialsManager.GetAllTablesUsingCredentials(this);
         }

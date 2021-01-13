@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -32,6 +33,7 @@ namespace Rdmp.Core.CommandLine.Runners
     public class ExtractionRunner : ManyRunner
     {
         private ExtractionOptions _options;
+        private IBasicActivateItems _activator;
         ExtractionConfiguration _configuration;
         IProject _project;
 
@@ -42,9 +44,10 @@ namespace Rdmp.Core.CommandLine.Runners
         object _oLock = new object();
         public Dictionary<ISelectedDataSets, ExtractCommand> ExtractCommands { get;private set; }
 
-        public ExtractionRunner(ExtractionOptions extractionOpts):base(extractionOpts)
+        public ExtractionRunner(IBasicActivateItems activator,ExtractionOptions extractionOpts):base(extractionOpts)
         {
             _options = extractionOpts;
+            _activator = activator;
             ExtractCommands = new Dictionary<ISelectedDataSets, ExtractCommand>();
         }
 
@@ -107,13 +110,13 @@ namespace Rdmp.Core.CommandLine.Runners
 
             if(globalCommand != null)
             {
-                var useCase = new ExtractionPipelineUseCase(_project, _globalsCommand, _pipeline, dataLoadInfo) { Token = Token };
+                var useCase = new ExtractionPipelineUseCase(_activator,_project, _globalsCommand, _pipeline, dataLoadInfo) { Token = Token };
                 useCase.Execute(fork);
             }
 
             if (datasetCommand != null)
             {
-                var executeUseCase = new ExtractionPipelineUseCase(_project, datasetCommand, _pipeline, dataLoadInfo) { Token = Token };
+                var executeUseCase = new ExtractionPipelineUseCase(_activator,_project, datasetCommand, _pipeline, dataLoadInfo) { Token = Token };
                 executeUseCase.Execute(fork);
             }
 
@@ -131,13 +134,13 @@ namespace Rdmp.Core.CommandLine.Runners
                 return new ICheckable[0];
             }
 
-            checkables.Add(new ProjectChecker(_configuration.Project)
+            checkables.Add(new ProjectChecker(_activator,_configuration.Project)
             {
                 CheckDatasets = false,
                 CheckConfigurations = false
             });
 
-            checkables.Add(new ExtractionConfigurationChecker( _configuration)
+            checkables.Add(new ExtractionConfigurationChecker(_activator, _configuration)
             {
                 CheckDatasets = false,
                 CheckGlobals = false
@@ -149,10 +152,10 @@ namespace Rdmp.Core.CommandLine.Runners
                 var datasetCommand = runnable as ExtractDatasetCommand;
 
                 if (globalsCommand != null)
-                    checkables.Add(new GlobalExtractionChecker(_configuration, globalsCommand, _pipeline));
+                    checkables.Add(new GlobalExtractionChecker(_activator,_configuration, globalsCommand, _pipeline));
 
                 if (datasetCommand != null)
-                    checkables.Add(new SelectedDataSetsChecker(datasetCommand.SelectedDataSets,  false, _pipeline));
+                    checkables.Add(new SelectedDataSetsChecker(_activator,datasetCommand.SelectedDataSets,  false, _pipeline));
             }
             
             return checkables.ToArray();

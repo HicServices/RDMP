@@ -12,8 +12,6 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons;
-using Rdmp.UI.Progress;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.Theme;
 using ReusableLibraryCode.Progress;

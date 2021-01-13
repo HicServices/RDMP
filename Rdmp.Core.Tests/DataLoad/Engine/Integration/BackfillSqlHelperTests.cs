@@ -22,7 +22,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
     public class BackfillSqlHelperTests : FromToDatabaseTests
     {
-        private Catalogue _catalogue;
+        private ICatalogue _catalogue;
         
         #region Housekeeping
 
@@ -125,15 +125,13 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
             CreateTableWithColumnDefinitions(To,tableName, liveTableDefinition);
         }
 
-        private TableInfo AddTableToCatalogue(string databaseName, string tableName, string pkName, out ColumnInfo[] ciList, bool createCatalogue = false)
+        private ITableInfo AddTableToCatalogue(string databaseName, string tableName, string pkName, out ColumnInfo[] ciList, bool createCatalogue = false)
         {
-            TableInfo ti;
-
             var expectedTable = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(databaseName).ExpectTable(tableName);
 
             var resultsImporter = new TableInfoImporter(CatalogueRepository, expectedTable);
 
-            resultsImporter.DoImport(out ti, out ciList);
+            resultsImporter.DoImport(out var ti, out ciList);
 
             var pkResult = ciList.Single(info => info.GetRuntimeName().Equals(pkName));
             pkResult.IsPrimaryKey = true;

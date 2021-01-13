@@ -24,7 +24,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
     public class BackfillTests : FromToDatabaseTests
     {
         
-        private Catalogue _catalogue;
+        private ICatalogue _catalogue;
         
 
         [SetUp]
@@ -1003,7 +1003,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             tiHeaders.DeleteInDatabase();
         }
 
-        private TableInfo AddSamplesTableToCatalogue(string databaseName, out ColumnInfo[] ciList)
+        private ITableInfo AddSamplesTableToCatalogue(string databaseName, out ColumnInfo[] ciList)
         {
             var ti = AddTableToCatalogue(databaseName, "Samples", "ID", out ciList, true);
             _catalogue.Name = databaseName;
@@ -1014,7 +1014,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             return ti;
         }
 
-        private TableInfo AddResultsTableToCatalogue(string databaseName, ColumnInfo[] ciSamples)
+        private ITableInfo AddResultsTableToCatalogue(string databaseName, ColumnInfo[] ciSamples)
         {
             ColumnInfo[] ciList;
             var ti = AddTableToCatalogue(databaseName, "Results", "ID", out ciList);
@@ -1026,7 +1026,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             return ti;
         }
 
-        private TableInfo AddHeaderTableToCatalogue(string databaseName, ColumnInfo[] ciSamples)
+        private ITableInfo AddHeaderTableToCatalogue(string databaseName, ColumnInfo[] ciSamples)
         {
             ColumnInfo[] ciList;
             var ti = AddTableToCatalogue(databaseName, "Header", "ID", out ciList);
@@ -1042,14 +1042,12 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             return ti;
         }
 
-        private TableInfo AddTableToCatalogue(string databaseName, string tableName, string pkName, out ColumnInfo[] ciList, bool createCatalogue = false)
+        private ITableInfo AddTableToCatalogue(string databaseName, string tableName, string pkName, out ColumnInfo[] ciList, bool createCatalogue = false)
         {
-            TableInfo ti;
-
             var table = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(databaseName).ExpectTable(tableName);
             var resultsImporter = new TableInfoImporter(CatalogueRepository, table);
             
-            resultsImporter.DoImport(out ti, out ciList);
+            resultsImporter.DoImport(out var ti, out ciList);
             
             var pkResult = ciList.Single(info => info.GetRuntimeName().Equals(pkName));
             pkResult.IsPrimaryKey = true;

@@ -8,6 +8,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [4.2.1] - 2021-01-13
+
+### Added
+
+- Choose Load Directory on DLE now shows old value during editing
+- Added property suggestions when using ExecuteCommandSet with an incorrect property name
+- Added the ability to drag and drop aggregates into other CohortIdentificationConfigurations to import
+- Added ColumnDropper that allows a user to specify the columns that should not be extracted in the pipeline.
+- Added Favourite/UnFavourite to right click context menus
+- CachingHost now logs the state of the CacheProgress being executed first thing on start
+- Home screen now supports right click context menu, drag and drop etc
+- Added 'Sessions'.  These are tree collection windows similar to Favourites but with a user defined name and limited duration (until closed)
+
+### Fixed
+
+- Fixed startup error when user enters a corrupt connection string for platform database locations.  This bug affected syntactically invalid (malformed) connection strings (i.e. not simply connection strings that point to non existant databases)
+- Fixed various issues in ColumnSwapper
+  - If input table contains nulls these are now passed through unchanged
+  - If mapping table contains nulls these are ignored (and not used to map input nulls)
+  - If input table column is of a different Type than the database table a suitable Type conversion is applied
+- Data load engine logging checks are better able to repair issues with missing logging server IDs / logging tasks
+- Better support for abort/cancel in
+  - RemoteTableAttacher
+  - ExcelAttacher
+  - KVPAttacher
+  - RemoteDatabaseAttacher
+- Fixed View Inserts/Updates dialog when using non SqlServer DBMS (e.g. MySql)
+- Fixed various layout and performance issues with RDMP console GUI.
+- Fixed `rdmp cmd` loop exiting when commands entered result in error.
+- Fixed autocomplete in `rdmp cmd` mode and enabled for Linux
+- Fixed right click context menu being built twice on right click a new node (once for selection and once for right click)
+
+### Changed
+
+- Added timeout of 10 minutes (previously 30 seconds) for counting unique patient identifiers while writing metadata for extractions
+- Choose Load Directory now lets you specify invalid directories e.g. when building a load on one computer designed to run on separate computer with an isolated file system.
+- Reinvented Console Gui to more closely resemble the windows client
+
+### Dependencies
+
+- Bump SSH.NET from 2016.1.0 to 2020.0.0
+
 ## [4.2.0] - 2020-10-19
 
 ### Fixed
@@ -542,7 +584,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.2.0...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.2.1...develop
+[4.2.1]: https://github.com/HicServices/RDMP/compare/v4.2.0...v4.2.1
 [4.2.0]: https://github.com/HicServices/RDMP/compare/v4.1.9...v4.2.0
 [4.1.9]: https://github.com/HicServices/RDMP/compare/v4.1.8...v4.1.9
 [4.1.8]: https://github.com/HicServices/RDMP/compare/v4.1.7...v4.1.8

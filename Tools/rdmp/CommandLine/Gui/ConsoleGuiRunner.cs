@@ -40,37 +40,9 @@ namespace Rdmp.Core.CommandLine.Gui
             var top = Application.Top;
             
             // Creates the top-level window to show
-            var win = new Window ("RDMP v" + 
-FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion) {
-                X = 0,
-                Y = 1, // Leave one row for the toplevel menu
-
-                // By using Dim.Fill(), it will automatically resize without manual intervention
-                Width = Dim.Fill (),
-                Height = Dim.Fill ()
-            };
-            top.Add (win);
-
-            // Creates a menubar, the item "New" has a help menu.
-            var menu = new MenuBar (new MenuBarItem [] {
-                new MenuBarItem ("_File", new MenuItem [] {
-                    new MenuItem("_Open","",Open),
-                    new MenuItem("Open _Tree","",OpenTree),
-                    new MenuItem("_Run","",Run),
-                    new MenuItem("Re_fresh","",Refresh),
-                    new MenuItem ("_Quit", "", () => { top.Running = false; })
-                })
-            });
-
-
-            top.Add (menu);
+            var win = new ConsoleMainWindow(_activator);
+            win.SetUp(top);
             
-            top.Add(new Label("Press F9 for menu")
-            {
-                X = Pos.Center(),
-                Y = Pos.Center()
-            });
-
             try
             {
                 Application.Run();
@@ -85,64 +57,6 @@ FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).Product
             return 0;
         }
 
-        private void Refresh()
-        {
-            //one day this might be a problem but not today
-            _activator.Publish(null);
-        }
-
-        private void OpenTree()
-        {
-            try
-            {
-                var dlg = new ConsoleGuiSelectOne(_activator.CoreChildProvider);
-                if (dlg.ShowDialog())
-                {
-                    var edit = new ConsoleGuiTree(_activator,dlg.Selected);
-                    edit.ShowDialog();
-                }
-            }
-            catch (Exception e)
-            {
-                _activator.ShowException("Unexpected error in open/edit tree",e);
-            }
-        }
-
-        private void Run()
-        {
-            var commandInvoker = new CommandInvoker(_activator);
-            commandInvoker.CommandImpossible += (o, e) => { _activator.Show("Command Impossible because:" + e.Command.ReasonCommandImpossible);};
-            
-            var commands = commandInvoker.GetSupportedCommands();
-
-            var dlg = new ConsoleGuiBigListBox<Type>("Choose Command","Run",true,commands.ToList(),(t)=>BasicCommandExecution.GetCommandName(t.Name),false);
-            if (dlg.ShowDialog())
-                try
-                {
-                    commandInvoker.ExecuteCommand(dlg.Selected,null);
-                }
-                catch (Exception exception)
-                {
-                    _activator.ShowException("Run Failed",exception);
-                }
-        }
-
-        public void Open()
-        {
-            try
-            {
-                var dlg = new ConsoleGuiSelectOne(_activator.CoreChildProvider);
-                if (dlg.ShowDialog())
-                {
-                    var edit = new ConsoleGuiEdit(_activator,dlg.Selected);
-                    edit.ShowDialog();
-                }
-            }
-            catch (Exception e)
-            {
-                _activator.ShowException("Unexpected error in open/edit",e);
-            }
-        }
     }
 }
 

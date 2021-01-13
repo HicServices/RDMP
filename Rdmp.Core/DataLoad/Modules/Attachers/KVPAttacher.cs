@@ -46,7 +46,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
         public string TargetDataTableValueColumnName { get; set; }
 
         #region Attacher Functionality
-        protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener)
+        protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
         {
             if(BatchesReadyForProcessing.Any())
                 throw new NotSupportedException("There are still batches awaiting dispatch to RAW, we cannot open a new file at this time");
@@ -57,7 +57,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
             var dataFlow = new KVPAttacherPipelineUseCase(this, flatFileToLoad).GetEngine(PipelineForReadingFromFlatFile, listener);
 
             //will result in the opening and processing of the file and the passing of DataTables through the Pipeline finally arriving at the destination (us) in ProcessPipelineData
-            dataFlow.ExecutePipeline(new GracefulCancellationToken());
+            dataFlow.ExecutePipeline(cancellationToken);
 
         }
 
@@ -93,7 +93,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
 
         }
         
-        protected override int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize)
+        protected override int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize,GracefulCancellationToken cancellationToken)
         {
             //there are no batches for processing
             if (!BatchesReadyForProcessing.Any())

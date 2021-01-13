@@ -38,9 +38,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 new DatabaseColumnRequest("Frank",new DatabaseTypeRequest(typeof(int))) 
             });
 
-            TableInfo ti;
-            ColumnInfo[] cols;
-            Import(tbl, out ti, out cols);
+            Import(tbl, out var ti, out var cols);
 
             var maxer = new TableVarcharMaxer();
             maxer.AllDataTypes = allDataTypes;
@@ -87,9 +85,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 new DatabaseColumnRequest("Frrrrr ##' ank",new DatabaseTypeRequest(typeof(int))) 
             });
 
-            TableInfo ti;
-            ColumnInfo[] cols;
-            Import(tbl, out ti, out cols);
+            Import(tbl, out var ti, out var cols);
 
             var maxer = new TableVarcharMaxer();
             maxer.TableRegexPattern = new Regex(".*");

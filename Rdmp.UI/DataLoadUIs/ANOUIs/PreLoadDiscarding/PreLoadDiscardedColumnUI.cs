@@ -7,8 +7,8 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using Rdmp.Core;
 using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus.MenuItems;
 using Rdmp.UI.Rules;

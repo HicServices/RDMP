@@ -9,13 +9,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using Rdmp.UI;
 using Rdmp.UI.Collections;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup;
@@ -455,6 +455,16 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 if(_mainDockPanel.ActiveDocument is DockContent dc)
                     Navigation.Append(new TabNavigation(dc));
             }
+        }
+
+        /// <summary>
+        /// Returns all tracked tabs currently open of the Type <typeparamref name="T"/>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public IEnumerable<T> GetAllWindows<T>()
+        {
+            return _trackedWindows.OfType<RDMPSingleControlTab>().Select(t => t.GetControl()).OfType<T>();
         }
     }
 }
