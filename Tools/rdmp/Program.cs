@@ -227,7 +227,6 @@ namespace Rdmp.Core
 
             PopulateConnectionStringsFromYamlIfMissing(opts);
             
-            var listener = new NLogIDataLoadEventListener(false);
             var checker = new NLogICheckNotifier(true, false);
 
             var start = new Startup.Startup(GetEnvironmentInfo(),opts.GetRepositoryLocator());
