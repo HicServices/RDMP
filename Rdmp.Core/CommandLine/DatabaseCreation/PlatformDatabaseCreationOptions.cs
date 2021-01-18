@@ -12,7 +12,7 @@ using CommandLine.Text;
 namespace Rdmp.Core.CommandLine.DatabaseCreation
 {
     /// <summary>
-    /// Command line arguments for DatabaseCreation.exe
+    /// Command line arguments for install verb of rdmp CLI
     /// </summary>
     [Verb("install" , HelpText = "Creates RMDP platform databases in the target database server")]
     public class PlatformDatabaseCreationOptions
