@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -273,6 +274,104 @@ namespace MapsDirectlyToDatabaseTable.Versioning
                 notifier.OnCheckPerformed(new CheckEventArgs("Error occurred during patching", CheckResult.Fail, e));
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Patches the <see cref="Database"/> with ONLY the patches that are outstanding from <paramref name="patcher"/>
+        /// </summary>
+        /// <param name="patcher"></param>
+        /// <param name="notifier"></param>
+        /// <param name="patchPreviewShouldIRunIt"></param>
+        /// <param name="backupDatabaseFunc"></param>
+        /// <returns></returns>
+        public bool PatchDatabase(IPatcher patcher, ICheckNotifier notifier, Func<Patch, bool> patchPreviewShouldIRunIt, Func<bool> backupDatabaseFunc)
+        {
+            var status = Patch.IsPatchingRequired(Database,patcher, out var databaseVersion, out var patchesInDatabase, out var allPatchesInAssembly);
+
+            if(status != Patch.PatchingState.Required)
+                return false;
+
+            bool stop = false;
+            var hostAssemblyVersion = new Version(FileVersionInfo.GetVersionInfo(patcher.GetDbAssembly().Location).FileVersion);
+
+            //start with the assumption that we will apply all patches
+            SortedDictionary<string, Patch> toApply = new SortedDictionary<string, Patch>();
+
+            foreach (Patch potentialInstallable in allPatchesInAssembly.Values.Except(patchesInDatabase))
+                toApply.Add(potentialInstallable.locationInAssembly, potentialInstallable);
+
+            try
+            {
+                //make sure the existing patches in the live database are not freaky phantom patches
+                foreach (Patch patch in patchesInDatabase)
+                    //if patch is not in database assembly
+                    if (!allPatchesInAssembly.Any(a => a.Value.Equals(patch)))
+                    {
+                        notifier.OnCheckPerformed(new CheckEventArgs(
+                            "The database contains an unexplained patch called " + patch.locationInAssembly +
+                            " (it is not in " + patcher.GetDbAssembly().FullName + " ) so how did it get there?", CheckResult.Warning,
+                            null));
+                    }
+                    else if (!allPatchesInAssembly[patch.locationInAssembly].GetScriptBody().Equals(patch.GetScriptBody()))
+                    {
+                        notifier.OnCheckPerformed(new CheckEventArgs(
+                            "The contents of patch " + patch.locationInAssembly +
+                            " are different between live database and the database patching assembly", CheckResult.Warning,
+                            null));
+
+                        //do not apply this patch
+                        toApply.Remove(patch.locationInAssembly);
+                    }
+                    else
+                    {
+                        //we found it and it was intact
+                        notifier.OnCheckPerformed(new CheckEventArgs("Patch " + patch.locationInAssembly + " was previously installed successfully so no need to touch it",CheckResult.Success, null));
+                    
+                        //do not apply this patch
+                        toApply.Remove(patch.locationInAssembly);
+
+                    }
+            }
+            catch (Exception exception)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Patch evaluation failed", CheckResult.Fail, exception));
+                stop = true;
+            }            
+
+            //if any of the patches we are trying to apply are earlier than the latest in the database
+            IEnumerable<Patch> missedOppertunities = toApply.Values.Where(p => p.DatabaseVersionNumber < patchesInDatabase.Max(p2 => p2.DatabaseVersionNumber));
+            foreach (Patch missedOppertunity in missedOppertunities)
+            {
+                stop = true;
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    "Patch " + missedOppertunity.locationInAssembly +
+                    " cannot be applied because it's version number is " + missedOppertunity.DatabaseVersionNumber +
+                    " but the current database is at version " + databaseVersion
+                    + Environment.NewLine
+                    + " Contents of patch was:" + Environment.NewLine +missedOppertunity.EntireScript
+                    , CheckResult.Fail, null));
+            }
+
+            //if the patches to be applied would bring the version number above that of the host Library
+            foreach (Patch futurePatch in toApply.Values.Where(patch => patch.DatabaseVersionNumber > hostAssemblyVersion))
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    "Cannot apply patch "+futurePatch.locationInAssembly+" because it's database version number is "+futurePatch.DatabaseVersionNumber+" which is higher than the currently loaded host assembly (" +patcher.GetDbAssembly().FullName+ "). ", CheckResult.Fail, null));
+                stop = true;
+                
+            }
+
+            if (stop)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Abandonning patching process (no patches have been applied) because of one or more previous errors",CheckResult.Fail, null));
+                return false;
+            }
+
+            //todo: Only ms has a backup implementation in FAnsi currently
+            bool backupDatabase = Database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer &&
+                            backupDatabaseFunc();
+
+            return PatchDatabase(toApply, notifier, patchPreviewShouldIRunIt, backupDatabase);
         }
 
 

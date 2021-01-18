@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added `patch` command to rdmp CLI e.g. `./rdmp patch -b`
+
 ### Fixed
 
 - Fixed erroneous warning where some characters were wrongly reported as illegal e.g. '#' in Filter names 
