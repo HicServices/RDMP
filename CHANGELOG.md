@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Fixed
+
+- Fixed erroneous warning where some characters were wrongly reported as illegal e.g. '#' in Filter names 
+
 ## [4.2.1] - 2021-01-13
 
 ### Added
