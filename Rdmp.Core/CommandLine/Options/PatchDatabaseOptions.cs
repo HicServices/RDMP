@@ -5,15 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using CommandLine;
-using Rdmp.Core.CommandLine.Options;
 
-namespace Rdmp.Core.CommandLine.DatabaseCreation
+namespace Rdmp.Core.CommandLine.Options
 {
+    /// <summary>
+    /// Command line options for patching RDMP databases
+    /// </summary>
     [Verb("patch", HelpText = "Patches all RDMP platform databases")]
     public class PatchDatabaseOptions : RDMPCommandLineOptions
     {
-        
-        [Option('b',Required = false, HelpText = @"Pass to backup databases prior to patching (if patching is required)")]
-        public bool BackupDatabase{ get;set; } = false;
+
+        [Option('b', Required = false, HelpText = @"Pass to backup databases prior to patching (if patching is required)")]
+        public bool BackupDatabase { get; set; } = false;
     }
 }
