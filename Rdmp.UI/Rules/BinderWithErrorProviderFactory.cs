@@ -41,7 +41,7 @@ namespace Rdmp.UI.Rules
             if (property.GetCustomAttributes(typeof(NotNullAttribute), true).Any())
                 new NotNullRule<T>(_activator, databaseObject, getter, c);
 
-            if(dataMember.Equals("Name") && databaseObject is INamed && !(databaseObject is ExternalDatabaseServer))
+            if(dataMember.Equals("Name") && databaseObject is INamed)
                 new NoBadNamesRule<T>(_activator, databaseObject, getter, c);
         }
     }
