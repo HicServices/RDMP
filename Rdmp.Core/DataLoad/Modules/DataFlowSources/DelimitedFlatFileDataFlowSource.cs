@@ -387,17 +387,16 @@ This will not help you avoid bad data as the full file structure must still be r
                 throw new Exception("Could not open file " + fileToLoad.FullName + " because the file Separator has not been set yet, make sure to set all relevant [DemandsInitialization] properties");
 
             StreamReader sr = new StreamReader(fileToLoad.FullName);
-            _reader = new CsvReader(sr, new CsvConfiguration(Culture)
+            _reader = new CsvReader(new CsvParser(sr, new CsvHelper.Configuration.CsvConfiguration(Culture)
             {
                 Delimiter = Separator,
                 HasHeaderRecord = string.IsNullOrWhiteSpace(ForceHeaders),
-                ShouldSkipRecord = ShouldSkipRecord
-            });
-
-            EventHandlers.RegisterEvents(_reader.Configuration);
-
-            _reader.Configuration.IgnoreBlankLines = IgnoreBlankLines;
-            _reader.Configuration.IgnoreQuotes = IgnoreQuotes;
+                ShouldSkipRecord = ShouldSkipRecord,
+                IgnoreBlankLines = IgnoreBlankLines,
+                BadDataFound = s => EventHandlers.BadDataFound(new FlatFileLine(s), true),
+                ReadingExceptionOccurred = EventHandlers.ReadingExceptionOccurred,
+                //IgnoreQuotes = IgnoreQuotes - IgnoreQuotes feature removed in CsvHelper 20.0.0 for unknown reasons
+            }));
 
             Headers.GetHeadersFromFile(_reader); 
         }
@@ -406,7 +405,7 @@ This will not help you avoid bad data as the full file structure must still be r
         
         private bool ShouldSkipRecord(string[] strings)
         {
-            if (_reader.Context.RawRow == 1 //first line of file
+            if (_reader.Context.Parser.RawRow == 1 //first line of file
                 && !string.IsNullOrWhiteSpace(ForceHeaders) //and we are forcing headers
                 && ForceHeadersReplacesFirstLineInFile) //and those headers replace the first line of the file
             {
@@ -445,7 +444,7 @@ This will not help you avoid bad data as the full file structure must still be r
                     currentRow = new FlatFileLine(_reader.Context);
 
                     //if there is bad data on the current row just read the next
-                    if (DataPusher.BadLines.Contains(_reader.Context.RawRow))
+                    if (DataPusher.BadLines.Contains(_reader.Context.Parser.RawRow))
                         continue;
                 }
 

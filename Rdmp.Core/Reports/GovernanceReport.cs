@@ -9,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using CsvHelper;
+using CsvHelper.Configuration;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Repositories;
@@ -36,10 +37,8 @@ namespace Rdmp.Core.Reports
 
             using (var s = new StreamWriter(f.FullName))
             {
-                using (CsvWriter writer = new CsvWriter(s,CultureInfo.CurrentCulture))
+                using (CsvWriter writer = new CsvWriter(s,new CsvConfiguration(CultureInfo.CurrentCulture) {Delimiter = ","}))
                 {
-                    writer.Configuration.Delimiter = ",";
-
                     writer.WriteField("Extractable Datasets");
                     writer.NextRecord();
                         
