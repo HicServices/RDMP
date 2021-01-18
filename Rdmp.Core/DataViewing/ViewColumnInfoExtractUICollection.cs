@@ -40,6 +40,13 @@ namespace Rdmp.Core.DataViewing
                 DatabaseObjects.Add(filter);
             ViewType = viewType;
         }
+        public ViewColumnInfoExtractUICollection(ColumnInfo c, ViewType viewType, IContainer container) : this()
+        {
+            DatabaseObjects.Add(c);
+            if (container != null)
+                DatabaseObjects.Add(container);
+            ViewType = viewType;
+        }
 
         public override string SaveExtraText()
         {
@@ -54,10 +61,11 @@ namespace Rdmp.Core.DataViewing
 
         public IEnumerable<DatabaseEntity> GetToolStripObjects()
         {
-            var filter = GetFilterIfAny() as ConcreteFilter;
+            if (GetFilterIfAny() is ConcreteFilter f)
+                yield return f;
 
-            if (filter != null)
-                yield return filter;
+            if (GetContainerIfAny() is ConcreteContainer c)
+                yield return c;
 
             yield return ColumnInfo.TableInfo;
         }
@@ -83,8 +91,19 @@ namespace Rdmp.Core.DataViewing
                 qb.AddColumn(new ColumnInfoToIColumn(new MemoryRepository(), ColumnInfo));
 
             var filter = GetFilterIfAny();
+            var container = GetContainerIfAny();
+
+            if(filter != null && container != null)
+                throw new Exception("Cannot generate SQL with both filter and container");
+
             if (filter != null && !string.IsNullOrWhiteSpace(filter.WhereSQL))
+            {
                 qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null, new[] { filter }, FilterContainerOperation.AND);
+            }
+            else if(container != null)
+            {
+                qb.RootFilterContainer = container;
+            }
 
             if (ViewType == ViewType.Aggregate)
                 qb.AddCustomLine("count(*),", QueryComponent.QueryTimeColumn);
@@ -143,6 +162,11 @@ namespace Rdmp.Core.DataViewing
         {
             return (IFilter)DatabaseObjects.SingleOrDefault(o => o is IFilter);
         }
+        private IContainer GetContainerIfAny()
+        {
+            return (IContainer)DatabaseObjects.SingleOrDefault(o => o is IContainer);
+        }
+
 
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
