@@ -20,7 +20,7 @@
             <dependency id="CommandLineParser" version="2.8.0" />
             <dependency id="SSH.NET" version="2020.0.0" />
             <dependency id="NUnit" version="3.13.0" />
-            <dependency id="Moq" version="4.15.2" />
+            <dependency id="Moq" version="4.16.0" />
             <dependency id="NLog" version="4.7.6" />
             <dependency id="YamlDotNet" version="9.1.1" />
             <dependency id="Microsoft.NET.Test.Sdk" version="16.8.3" />
