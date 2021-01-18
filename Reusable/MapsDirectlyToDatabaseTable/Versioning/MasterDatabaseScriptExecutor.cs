@@ -257,14 +257,14 @@ namespace MapsDirectlyToDatabaseTable.Versioning
                         notifier.OnCheckPerformed(new CheckEventArgs("Executed patch " + patch.Value, CheckResult.Success, null));
                     }
                     else
-                        throw new Exception("User decided not to execute patch " + patch.Key + " aborting ");
+                        throw new Exception("User decided not to execute patch " + patch.Key + " - aborting ");
                 }
                 
                 SetVersion("Patching",maxPatchVersion.ToString());
                 notifier.OnCheckPerformed(new CheckEventArgs("Updated database version to " + maxPatchVersion.ToString(), CheckResult.Success, null));
 
                 //all went fine
-                notifier.OnCheckPerformed(new CheckEventArgs("All Patches applied, transaction committed", CheckResult.Success, null));
+                notifier.OnCheckPerformed(new CheckEventArgs("All patches applied, transaction committed", CheckResult.Success, null));
                 
                 return true;
 
@@ -339,16 +339,16 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             }            
 
             //if any of the patches we are trying to apply are earlier than the latest in the database
-            IEnumerable<Patch> missedOppertunities = toApply.Values.Where(p => p.DatabaseVersionNumber < patchesInDatabase.Max(p2 => p2.DatabaseVersionNumber));
-            foreach (Patch missedOppertunity in missedOppertunities)
+            IEnumerable<Patch> missedOpportunities = toApply.Values.Where(p => p.DatabaseVersionNumber < patchesInDatabase.Max(p2 => p2.DatabaseVersionNumber));
+            foreach (Patch missedOpportunity in missedOpportunities)
             {
                 stop = true;
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    "Patch " + missedOppertunity.locationInAssembly +
-                    " cannot be applied because it's version number is " + missedOppertunity.DatabaseVersionNumber +
+                    "Patch " + missedOpportunity.locationInAssembly +
+                    " cannot be applied because its version number is " + missedOpportunity.DatabaseVersionNumber +
                     " but the current database is at version " + databaseVersion
                     + Environment.NewLine
-                    + " Contents of patch was:" + Environment.NewLine +missedOppertunity.EntireScript
+                    + " Contents of patch was:" + Environment.NewLine +missedOpportunity.EntireScript
                     , CheckResult.Fail, null));
             }
 
@@ -356,18 +356,18 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             foreach (Patch futurePatch in toApply.Values.Where(patch => patch.DatabaseVersionNumber > hostAssemblyVersion))
             {
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    "Cannot apply patch "+futurePatch.locationInAssembly+" because it's database version number is "+futurePatch.DatabaseVersionNumber+" which is higher than the currently loaded host assembly (" +patcher.GetDbAssembly().FullName+ "). ", CheckResult.Fail, null));
+                    "Cannot apply patch "+futurePatch.locationInAssembly+" because its database version number is "+futurePatch.DatabaseVersionNumber+" which is higher than the currently loaded host assembly (" +patcher.GetDbAssembly().FullName+ "). ", CheckResult.Fail, null));
                 stop = true;
                 
             }
 
             if (stop)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Abandonning patching process (no patches have been applied) because of one or more previous errors",CheckResult.Fail, null));
+                notifier.OnCheckPerformed(new CheckEventArgs("Abandoning patching process (no patches have been applied) because of one or more previous errors",CheckResult.Fail, null));
                 return false;
             }
 
-            //todo: Only ms has a backup implementation in FAnsi currently
+            //todo: Only MS SQL has a backup implementation in FAnsi currently
             bool backupDatabase = Database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer &&
                             backupDatabaseFunc();
 
@@ -410,7 +410,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             var initialPatch = patcher.GetInitialCreateScriptContents(Database);
             CreateDatabase(initialPatch, notifier);
 
-            //get everything in the /up/ folder that are .sql
+            //get everything in the /up/ folder that is .sql
             var patches = patcher.GetAllPatchesInAssembly(Database);
             PatchDatabase(patches,notifier,(p)=>true);//apply all patches without question
         }
