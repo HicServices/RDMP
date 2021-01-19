@@ -81,7 +81,7 @@ namespace Rdmp.Core.Reports
                         int completed = 0;
 
 
-                        foreach (Catalogue c in _args.Catalogues)
+                        foreach (Catalogue c in _args.Catalogues.OrderBy(c=>c.Name))
                         {
                             listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(completed++, ProgressType.Records, _args.Catalogues.Length), sw.Elapsed));
 
