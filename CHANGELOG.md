@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added `patch` command to rdmp CLI e.g. `./rdmp patch -b`
+- Added ProjectName to ExtractionConfiguration objects visualisation in Find / Select popups
 
 ### Fixed
 
