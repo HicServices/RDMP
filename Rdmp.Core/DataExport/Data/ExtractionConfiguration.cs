@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -292,6 +293,13 @@ namespace Rdmp.Core.DataExport.Data
 
 
         #endregion
+
+        /// <summary>
+        /// Returns <see cref="Project.Name"/>
+        /// </summary>
+        [NoMappingToDatabase]
+        [UsefulProperty]
+        public string ProjectName{ get=>Project.Name;}
 
         /// <summary>
         /// Creates a new extraction configuration in the <paramref name="repository"/> database for the provided <paramref name="project"/>.
