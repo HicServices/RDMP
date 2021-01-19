@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed erroneous warning where some characters were wrongly reported as illegal e.g. '#' in Filter names 
 
+### Changed
+
+- Metadata report now lists Catalogues in alphabetical order
+
 ### Dependencies
 
 - Bump Moq from 4.15.2 to 4.16.0
