@@ -144,7 +144,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
                                 dt.Rows.Clear(); //very important otherwise we add more to the end of the table but still insert last batches records resulting in exponentially multiplying upload sizes of duplicate records!
 
                                 job.OnProgress(this,
-                                    new ProgressEventArgs(dbInfo.GetRuntimeName(),
+                                    new ProgressEventArgs(tableToLoad.GetFullyQualifiedName(),
                                         new ProgressMeasurement(recordsCreatedSoFar, ProgressType.Records), timer.Elapsed));
                             }
                             catch (Exception e)
