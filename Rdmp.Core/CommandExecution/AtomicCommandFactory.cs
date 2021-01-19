@@ -20,6 +20,7 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Referencing;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataViewing;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
@@ -126,8 +127,10 @@ namespace Rdmp.Core.CommandExecution
                 
                 yield return new CommandPresentation(new ExecuteCommandCreateNewFilter(_activator,container.GetFilterFactory(),container));
                 yield return new CommandPresentation(new ExecuteCommandCreateNewFilterFromCatalogue(_activator, container));
-                yield return new CommandPresentation(new ExecuteCommandCreateNewFilterFromCatalogue(_activator, container));
                 yield return new CommandPresentation(new ExecuteCommandAddNewFilterContainer(_activator,container){OverrideCommandName = "Add SubContainer" });
+               
+                yield return new CommandPresentation(new ExecuteCommandViewFilterMatchData(_activator, container, ViewType.TOP_100));
+                yield return new CommandPresentation(new ExecuteCommandViewFilterMatchData(_activator, container, ViewType.Aggregate));
             }
             
             if(o is AggregatesNode an)
@@ -225,6 +228,13 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandImportTableInfo(_activator,null,false));
                 yield return new CommandPresentation(new ExecuteCommandBulkImportTableInfos(_activator));
             }
+
+            if(Is(o, out IFilter filter))
+            {
+                yield return new CommandPresentation(new ExecuteCommandViewFilterMatchData(_activator, filter, ViewType.TOP_100));
+                yield return new CommandPresentation(new ExecuteCommandViewFilterMatchData(_activator, filter, ViewType.Aggregate));
+            }
+
 
             if(Is(o,out TableInfo ti))
             {

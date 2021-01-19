@@ -19,8 +19,6 @@ namespace Rdmp.UI.Menus
     {
         public FilterMenu(RDMPContextMenuStripArgs args, IFilter filter): base(args, (DatabaseEntity)filter)
         {
-            Add(new ExecuteCommandViewFilterMatchData(args.ItemActivator, filter, ViewType.TOP_100));
-            Add(new ExecuteCommandViewFilterMatchData(args.ItemActivator, filter, ViewType.Aggregate));
             Add(new ExecuteCommandViewFilterMatchGraph(_activator, filter));
 
             Items.Add(new ToolStripSeparator());
