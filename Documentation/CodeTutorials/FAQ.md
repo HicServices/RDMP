@@ -89,7 +89,7 @@ The RDMP command line client can be used to run unattended jobs (such as overnig
    
 <a name="cli"></a>
 ### Does RDMP have a Command Line Interface (CLI)
-Yes, read all about it in [./RdmpCommandLine.md]
+Yes, read all about it in [CommandLine](./RdmpCommandLine.md)
 
 <a name="linux"></a>
 ### Does RDMP run under Linux

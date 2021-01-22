@@ -6,6 +6,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using CommandLine;
 using FAnsi.Implementation;
@@ -13,7 +14,9 @@ using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
 using FAnsi.Implementations.PostgreSql;
+using MapsDirectlyToDatabaseTable.Versioning;
 using NLog;
+using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.CommandLine.Gui;
@@ -88,7 +91,8 @@ namespace Rdmp.Core
                             PackOptions,
                             ExecuteCommandOptions,
                             ConsoleGuiOptions,
-                            PlatformDatabaseCreationOptions>(args)
+                            PlatformDatabaseCreationOptions,
+                            PatchDatabaseOptions>(args)
                         .MapResult(
                             //Add new verbs as options here and invoke relevant runner
                             (DleOptions opts) => Run(opts),
@@ -101,6 +105,7 @@ namespace Rdmp.Core
                             (PlatformDatabaseCreationOptions opts) => Run(opts),
                             (ExecuteCommandOptions opts) => RunCmd(opts),
                             (ConsoleGuiOptions opts) => Run(opts),
+                            (PatchDatabaseOptions opts) => Run(opts),
                             errs => 1);
 
                 NLog.LogManager.GetCurrentClassLogger().Info("Exiting with code " + returnCode);
@@ -211,6 +216,42 @@ namespace Rdmp.Core
                 return 1;
 
             return 0;
+        }
+        
+        private static int Run(PatchDatabaseOptions opts)
+        {
+            ImplementationManager.Load<MicrosoftSQLImplementation>();
+            ImplementationManager.Load<MySqlImplementation>();
+            ImplementationManager.Load<OracleImplementation>();
+            ImplementationManager.Load<PostgreSqlImplementation>();
+
+            PopulateConnectionStringsFromYamlIfMissing(opts);
+            
+            var checker = new NLogICheckNotifier(true, false);
+
+            var start = new Startup.Startup(GetEnvironmentInfo(),opts.GetRepositoryLocator());
+            bool badTimes = false;
+
+            start.DatabaseFound += (s,e)=>{
+                
+                var db = e.Repository.DiscoveredServer.GetCurrentDatabase();
+                     
+                if(e.Status == Startup.Events.RDMPPlatformDatabaseStatus.RequiresPatching)
+                {
+                    var mds = new MasterDatabaseScriptExecutor(db);
+                    mds.PatchDatabase(e.Patcher, checker, (p) => true, () => opts.BackupDatabase);
+                }
+
+                if(e.Status <= Startup.Events.RDMPPlatformDatabaseStatus.Broken)
+                {
+                    checker.OnCheckPerformed(new CheckEventArgs($"Database {db} had status {e.Status}",CheckResult.Fail));
+                    badTimes = true;
+                }                    
+            };
+
+            start.DoStartup(new IgnoreAllErrorsCheckNotifier());
+
+            return badTimes ? -1 :0;
         }
 
         private static void PopulateConnectionStringsFromYamlIfMissing(RDMPCommandLineOptions opts)

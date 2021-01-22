@@ -8,12 +8,11 @@ using System;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
+using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Logging;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.DataViewing;
-using Rdmp.UI.DataViewing.Collections.Arbitrary;
-using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.UI.Menus

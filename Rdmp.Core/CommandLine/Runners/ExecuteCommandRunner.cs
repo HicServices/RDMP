@@ -101,13 +101,20 @@ namespace Rdmp.Core.CommandLine.Runners
             {
                 Console.WriteLine("Enter Command (or 'exit')");
                 var command = _input.GetString("Command", _commands.Keys.ToList());
+                try
+                {
+                    command = GetCommandAndPickerFromLine(command, out _picker,repositoryLocator);
 
-                command = GetCommandAndPickerFromLine(command, out _picker,repositoryLocator);
+                    if (string.Equals(command, "exit", StringComparison.CurrentCultureIgnoreCase))
+                        break;
 
-                if (string.Equals(command, "exit", StringComparison.CurrentCultureIgnoreCase))
-                    break;
+                    RunCommand(command);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
 
-                RunCommand(command);
 
                 _picker = null;
             }

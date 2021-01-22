@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Providers.Nodes;
@@ -19,24 +20,6 @@ namespace Rdmp.UI.Menus
     {
         public AllExternalServersNodeMenu(RDMPContextMenuStripArgs args, AllExternalServersNode node) : base(args,node)
         {
-            var assemblyDictionary = new Dictionary<PermissableDefaults, IPatcher>();
-
-            Add(new ExecuteCommandCreateNewExternalDatabaseServer(_activator, null,PermissableDefaults.None));
-
-            Items.Add(new ToolStripSeparator());
-
-            //Add(new ExecuteCommandConfigureDefaultServers());
-
-            assemblyDictionary.Add(PermissableDefaults.DQE, new DataQualityEnginePatcher());
-            assemblyDictionary.Add(PermissableDefaults.WebServiceQueryCachingServer_ID, new QueryCachingPatcher());
-            assemblyDictionary.Add(PermissableDefaults.LiveLoggingServer_ID, new LoggingDatabasePatcher());
-            assemblyDictionary.Add(PermissableDefaults.IdentifierDumpServer_ID, new IdentifierDumpDatabasePatcher());
-            assemblyDictionary.Add(PermissableDefaults.ANOStore, new ANOStorePatcher());
-            assemblyDictionary.Add(PermissableDefaults.CohortIdentificationQueryCachingServer_ID, new QueryCachingPatcher());
-
-            foreach (var kvp in assemblyDictionary)
-                Add(new ExecuteCommandCreateNewExternalDatabaseServer(_activator, kvp.Value, kvp.Key));
-
             Add(new ExecuteCommandConfigureDefaultServers(_activator));
         }
     }

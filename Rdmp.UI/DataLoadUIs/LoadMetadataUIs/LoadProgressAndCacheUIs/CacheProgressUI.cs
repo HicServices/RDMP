@@ -7,10 +7,10 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using Rdmp.Core;
 using Rdmp.Core.Caching.Pipeline;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.Pipelines;
-using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers;

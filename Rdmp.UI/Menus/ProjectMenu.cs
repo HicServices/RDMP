@@ -16,16 +16,15 @@ namespace Rdmp.UI.Menus
     [System.ComponentModel.DesignerCategory("")]
     class ProjectMenu:RDMPContextMenuStrip
     {
-        private readonly Project _project;
         private const string AddProjectSpecificCatalogueMenuText = "Add Project Specific Catalogue";
 
         public ProjectMenu(RDMPContextMenuStripArgs args, Project project)
             : base(args,project)
         {
-            _project = project;
-
             Add(new ExecuteCommandRelease(_activator).SetTarget(project));
             Add(new ExecuteCommandExecuteExtractionConfiguration(_activator).SetTarget(project));
+
+            args.SkipCommand<ExecuteCommandCreateNewCatalogueByImportingFile>();
 
             Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator)
             {

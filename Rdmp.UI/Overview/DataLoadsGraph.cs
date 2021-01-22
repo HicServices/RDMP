@@ -19,7 +19,6 @@ using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.PastEvents;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.DashboardTabs.Construction;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;

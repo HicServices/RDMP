@@ -6,7 +6,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-...
+### Added
+
+- Added `patch` command to rdmp CLI e.g. `./rdmp patch -b`
+- Added ProjectName to ExtractionConfiguration objects visualisation in Find / Select popups
+
+### Fixed
+
+- Fixed erroneous warning where some characters were wrongly reported as illegal e.g. '#' in Filter names 
+- Fixed RemoteDatabaseAttacher not logging table name (only database)
+
+### Changed
+
+- Metadata report now lists Catalogues in alphabetical order
+
+### Dependencies
+
+- Bump Moq from 4.15.2 to 4.16.0
+- Bump YamlDotNet from 9.1.1 to 9.1.4
+- Bump NLog from 4.7.6 to 4.7.7
+
+## [4.2.1] - 2021-01-13
 
 ### Added
 
@@ -34,11 +54,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - RemoteDatabaseAttacher
 - Fixed View Inserts/Updates dialog when using non SqlServer DBMS (e.g. MySql)
 - Fixed various layout and performance issues with RDMP console GUI.
+- Fixed `rdmp cmd` loop exiting when commands entered result in error.
+- Fixed autocomplete in `rdmp cmd` mode and enabled for Linux
+- Fixed right click context menu being built twice on right click a new node (once for selection and once for right click)
 
 ### Changed
 
 - Added timeout of 10 minutes (previously 30 seconds) for counting unique patient identifiers while writing metadata for extractions
 - Choose Load Directory now lets you specify invalid directories e.g. when building a load on one computer designed to run on separate computer with an isolated file system.
+- Reinvented Console Gui to more closely resemble the windows client
+
+### Dependencies
+
+- Bump SSH.NET from 2016.1.0 to 2020.0.0
 
 ## [4.2.0] - 2020-10-19
 
@@ -578,7 +606,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.2.0...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.2.1...develop
+[4.2.1]: https://github.com/HicServices/RDMP/compare/v4.2.0...v4.2.1
 [4.2.0]: https://github.com/HicServices/RDMP/compare/v4.1.9...v4.2.0
 [4.1.9]: https://github.com/HicServices/RDMP/compare/v4.1.8...v4.1.9
 [4.1.8]: https://github.com/HicServices/RDMP/compare/v4.1.7...v4.1.8

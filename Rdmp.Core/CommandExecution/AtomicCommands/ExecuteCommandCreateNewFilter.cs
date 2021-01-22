@@ -6,7 +6,9 @@
 
 using System;
 using System.Drawing;
+using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -17,18 +19,23 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     {
         private IFilterFactory _factory;
         private IContainer _container;
-        private Func<IContainer> _containerFunc;
+        private IRootFilterContainerHost _host;
 
+        public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, IRootFilterContainerHost host):base(activator)
+        {
+            _factory = host.GetFilterFactory();
+            _container = host.RootFilterContainer;
+            _host = host;
+
+            if(_container == null && _host is AggregateConfiguration ac && ac.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
+                SetImpossible("Aggregate is set to use another's filter container tree");
+        }
         public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, IFilterFactory factory, IContainer container = null):base(activator)
         {
             _factory = factory;
             _container = container;
         }
-        public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, IFilterFactory factory, Func<IContainer> containerFunc):base(activator)
-        {
-            _factory = factory;
-            _containerFunc = containerFunc;
-        }
+
         public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Filter, OverlayKind.Add);
@@ -40,8 +47,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             var f = (DatabaseEntity)_factory.CreateNewFilter("New Filter " + Guid.NewGuid());
 
-            if (_containerFunc != null)
-                _container = _containerFunc();
+            if(_host != null && _container == null)
+            {
+                if(_host.RootFilterContainer_ID == null)
+                    _host.CreateRootContainerIfNotExists();
+                
+                _container = _host.RootFilterContainer;       
+            }
 
             if (_container != null)
                 _container.AddChild((IFilter)f);

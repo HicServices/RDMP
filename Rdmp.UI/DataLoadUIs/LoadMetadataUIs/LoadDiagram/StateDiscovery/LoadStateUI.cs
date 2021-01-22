@@ -8,7 +8,6 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery
 {

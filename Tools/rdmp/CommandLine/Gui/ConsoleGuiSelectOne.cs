@@ -53,7 +53,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public ConsoleGuiSelectOne(ICoreChildProvider coreChildProvider, IMapsDirectlyToDatabaseTable[] availableObjects):this()
         {
-            _masterCollection = coreChildProvider.GetAllSearchables().Where(k=> availableObjects.Contains(k.Key)).ToDictionary(k=>k.Key,v=>v.Value);
+            _masterCollection = availableObjects.ToDictionary(k=>k,v=>coreChildProvider.GetDescendancyListIfAnyFor(v));
             SetAspectGet(coreChildProvider);
         }
 
@@ -70,7 +70,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
             return
                 dict
-                .Where(score => score.Value > 0)
+                .Where(score => !token.IsCancellationRequested && score.Value > 0)
                 .OrderByDescending(score => score.Value)
                 .ThenByDescending(id => id.Key.Key.ID) //favour newer objects over ties
                 .Take(MaxMatches)

@@ -273,19 +273,19 @@ $end");
             FileAssert.Exists(outFile);
             var resultText = File.ReadAllText(outFile);
 
-            StringAssert.AreEqualIgnoringCase(@"## ffff
-A cool dataset with interesting stuff
-Price: $30
-| Column | Description |
-| Col1 | some info about column 1 |
-| Col2 | some info about column 2 |
-## Demog
+            StringAssert.AreEqualIgnoringCase(@"## Demog
 This is expensive dataset: $30 to use
 Price: $30
 | Column | Description |
 | Name | Name of the patient |
 | Address | Where they live |
-| Postcode | Patients postcode |",resultText.TrimEnd());
+| Postcode | Patients postcode |
+## ffff
+A cool dataset with interesting stuff
+Price: $30
+| Column | Description |
+| Col1 | some info about column 1 |
+| Col2 | some info about column 2 |",resultText.TrimEnd());
         }
 
         [Test]

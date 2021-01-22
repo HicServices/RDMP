@@ -4,8 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 
@@ -16,6 +19,8 @@ namespace Rdmp.UI.Menus
     /// </summary>
     public class RDMPContextMenuStripArgs
     {
+        private HashSet<Type> _skipCommands = new HashSet<Type>();
+
         public IActivateItems ItemActivator { get; set; }
         public object CurrentlyPinnedObject { get; set; }
         public IMasqueradeAs Masquerader { get; set; }
@@ -32,6 +37,25 @@ namespace Rdmp.UI.Menus
         {
             Tree = tree;
             Model = model;
+        }
+
+        /// <summary>
+        /// Notifies the menu builder that we do not want to show a given Type of command for this menu e.g. because we have a better UI we plan to make available instead
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        public void SkipCommand<T>() where T:IAtomicCommand
+        {
+            _skipCommands.Add(typeof(T));
+        }
+
+        /// <summary>
+        /// Returns true if <see cref="SkipCommand{T}"/> has been called for this command type
+        /// </summary>
+        /// <param name="cmd"></param>
+        /// <returns></returns>
+        public bool ShouldSkipCommand(IAtomicCommand cmd)
+        {
+            return _skipCommands.Contains(cmd.GetType());
         }
 
         /// <summary>

@@ -14,15 +14,17 @@ using System.Windows.Forms;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
+using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.DataViewing;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.CommandExecution;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Arranging;
 using Rdmp.UI.PluginChildProvision;
@@ -43,7 +45,6 @@ namespace Rdmp.UI.Tests
 
         public ITheme Theme { get {return this;}}
         public RefreshBus RefreshBus { get; private set; }
-        public FavouritesProvider FavouritesProvider { get; private set; }
         public List<IPluginUserInterface> PluginUserInterfaces { get; private set; }
         public IArrangeWindows WindowArranger { get; private set; }
 
@@ -70,7 +71,6 @@ namespace Rdmp.UI.Tests
             CommentStore = _commentStore;
 
             CoreIconProvider = new DataExportIconProvider(RepositoryLocator,null);
-            FavouritesProvider = new FavouritesProvider(this);
             HistoryProvider = new HistoryProvider(RepositoryLocator);
 
             _problemProviders = new List<IProblemProvider>(new IProblemProvider[]
@@ -98,9 +98,9 @@ namespace Rdmp.UI.Tests
                 RefreshBus.Publish(this,new RefreshObjectEventArgs(e));
         }
 
-        public override void Show(string message)
+        public override void Show(string title,string message)
         {
-            Assert.Fail("Did not expect a MessageBox to be shown");
+            Assert.Fail($"Did not expect a MessageBox to be shown but it was '{message}'");
         }
 
         public ICombineableFactory CommandFactory { get; private set; }
@@ -307,6 +307,10 @@ namespace Rdmp.UI.Tests
             throw new NotImplementedException();
         }
 
+        public override void ShowData(IViewSQLAndResultsCollection collection)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class TestActivateItemsResults:ICheckNotifier

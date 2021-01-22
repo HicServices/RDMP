@@ -17,9 +17,9 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
     /// </summary>
     public class ANOTableInfoSynchronizer
     {
-        private readonly TableInfo _tableToSync;
+        private readonly ITableInfo _tableToSync;
 
-        public ANOTableInfoSynchronizer(TableInfo tableToSync)
+        public ANOTableInfoSynchronizer(ITableInfo tableToSync)
         {
             _tableToSync = tableToSync;
         }
