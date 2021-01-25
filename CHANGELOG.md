@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump Moq from 4.15.2 to 4.16.0
 - Bump YamlDotNet from 9.1.1 to 9.1.4
 - Bump NLog from 4.7.6 to 4.7.7
+- Bump SSH.NET from 2020.0.0 to 2020.0.1
 
 ## [4.2.1] - 2021-01-13
 
