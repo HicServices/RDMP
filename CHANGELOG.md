@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Metadata report now lists Catalogues in alphabetical order
+- Changed hierarchy multiple parents state to be a Warning instead of an Error
 
 ### Dependencies
 
