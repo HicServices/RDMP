@@ -12,17 +12,16 @@ using Rdmp.Core.DataExport.Data;
 using ReusableLibraryCode;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Rdmp.Core.Providers
 {
     public abstract class ProblemProvider:IProblemProvider
     {
-        private HashSet<Type> _ignoreBadNamesFor = new HashSet<Type>(new[] { 
+        public static HashSet<Type> IgnoreBadNamesFor = new HashSet<Type>(new[] { 
             typeof(TableInfo),
             typeof(ColumnInfo),
-            typeof(ExtractionFilter),
-            typeof(AggregateFilter),
-            typeof(DeployedExtractionFilter),
+            typeof(IFilter),
             typeof(Pipeline)});
         
         /// <inheritdoc/>
@@ -33,7 +32,7 @@ namespace Rdmp.Core.Providers
 
         public string DescribeProblem(object o)
         {
-            if(o is INamed n && !_ignoreBadNamesFor.Contains(o.GetType()) && UsefulStuff.IsBadName(n.Name))
+            if(o is INamed n && !IgnoreBadNamesFor.Any(t=>t.IsInstanceOfType(o)) && UsefulStuff.IsBadName(n.Name))
                 return "Name contains illegal characters";
 
             return DescribeProblemImpl(o);

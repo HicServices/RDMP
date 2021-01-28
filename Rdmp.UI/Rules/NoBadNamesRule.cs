@@ -5,8 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Linq;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Providers;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode;
 
@@ -21,6 +23,9 @@ namespace Rdmp.UI.Rules
 
         protected override string IsValid(object currentValue, Type typeToTest)
         {
+            if(ProblemProvider.IgnoreBadNamesFor.Any(t=>t.IsAssignableFrom(typeof(T))))
+                return null;
+
             if(currentValue is string s)
                 return UsefulStuff.IsBadName(s) ? "Name contains illegal characters":null;
 

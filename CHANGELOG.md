@@ -8,6 +8,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [4.2.2] - 2021-01-20
+
+### Added
+
+- Added `patch` command to rdmp CLI e.g. `./rdmp patch -b`
+- Added ProjectName to ExtractionConfiguration objects visualisation in Find / Select popups
+
+### Fixed
+
+- Fixed erroneous warning where some characters were wrongly reported as illegal e.g. '#' in Filter names 
+- Fixed RemoteDatabaseAttacher not logging table name (only database)
+
+### Changed
+
+- Metadata report now lists Catalogues in alphabetical order
+- Changed hierarchy multiple parents state to be a Warning instead of an Error
+
+### Dependencies
+
+- Bump Moq from 4.15.2 to 4.16.0
+- Bump YamlDotNet from 9.1.1 to 9.1.4
+- Bump NLog from 4.7.6 to 4.7.7
+- Bump SSH.NET from 2020.0.0 to 2020.0.1
+
 ## [4.2.1] - 2021-01-13
 
 ### Added
@@ -584,7 +608,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.2.1...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.2.2...develop
+[4.2.2]: https://github.com/HicServices/RDMP/compare/v4.2.1...v4.2.2
 [4.2.1]: https://github.com/HicServices/RDMP/compare/v4.2.0...v4.2.1
 [4.2.0]: https://github.com/HicServices/RDMP/compare/v4.1.9...v4.2.0
 [4.1.9]: https://github.com/HicServices/RDMP/compare/v4.1.8...v4.1.9

@@ -89,7 +89,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 NewlineSubstitution = _newlineSub
             };
-            reporter.GenerateReport(catas.Cast<Catalogue>().ToArray(),outputDir,template, fileNaming, _oneFile);
+            reporter.GenerateReport(catas.Cast<Catalogue>().OrderBy(c=>c.Name).ToArray(),outputDir,template, fileNaming, _oneFile);
         }
     }
 }

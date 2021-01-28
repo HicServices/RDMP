@@ -1315,7 +1315,7 @@ namespace Rdmp.Core.Providers
             //there was a horrible problem with 
             _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(
                 "Could not add '" + key + "' to Ascendancy Tree with parents " + newRoute +
-                " because it is already listed under hierarchy " + oldRoute, CheckResult.Fail));
+                " because it is already listed under hierarchy " + oldRoute, CheckResult.Warning));
             
             return oldRoute;
         
