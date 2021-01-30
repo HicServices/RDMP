@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Fixed
+
+- Fixed proxy objects context menus not functioning correctly since 4.2.0 (e.g. Catalogues associated with a load) for some commands
+
 ## [4.2.2] - 2021-01-20
 
 ### Added
