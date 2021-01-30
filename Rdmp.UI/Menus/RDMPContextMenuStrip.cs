@@ -183,7 +183,7 @@ namespace Rdmp.UI.Menus
         {
             var factory = new AtomicCommandFactory(_activator);
                         
-            foreach (var toPresent in factory.GetCommandsWithPresentation(_o))
+            foreach (var toPresent in factory.GetCommandsWithPresentation(_args.Masquerader ?? _o))
             {
                 if(_args.ShouldSkipCommand(toPresent.Command))
                     continue;
