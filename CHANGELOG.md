@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Fixed 
+
+- Fixed rare threading issue with tree representations of Lookups
+
 ## [4.2.2] - 2021-01-20
 
 ### Added
