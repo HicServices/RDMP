@@ -171,7 +171,6 @@ namespace Rdmp.Core.Providers
         /// Collection of all objects for which there are masqueraders
         /// </summary>
         public ConcurrentDictionary<object,HashSet<IMasqueradeAs>> AllMasqueraders { get; private set; }
-        private object oAllMasqueradersHashSetLock = new object();
 
         private IChildProvider[] _pluginChildProviders;
         private readonly ICatalogueRepository _catalogueRepository;
@@ -1294,7 +1293,7 @@ namespace Rdmp.Core.Providers
                 if (!AllMasqueraders.ContainsKey(key))
                     AllMasqueraders.AddOrUpdate(key, new HashSet<IMasqueradeAs>(), (o, set) => set);
 
-                lock(oAllMasqueradersHashSetLock)
+                lock(AllMasqueraders)
                     AllMasqueraders[key].Add(masquerader);
             }
             
