@@ -12,14 +12,45 @@ using NUnit.Framework;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper;
+using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
+using ReusableLibraryCode.Checks;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration
 {
     public class LookupTest : DatabaseTests
     {
+
+        [Test]
+        public void Test_MultipleLookupReferences()
+        {
+            var tiHeader = new TableInfo(CatalogueRepository,"Head");
+            var tiHeader_Code = new ColumnInfo(CatalogueRepository,"code","",tiHeader);
+                       
+            var tiLookup = new TableInfo(CatalogueRepository,"z_HeadLookup");
+            var tiLookup_Code = new ColumnInfo(CatalogueRepository,"code","",tiLookup);
+            var tiLookup_Desc = new ColumnInfo(CatalogueRepository,"desc","",tiLookup);
+
+            var lookup = new Lookup(CatalogueRepository,tiLookup_Desc,tiHeader_Code,tiLookup_Code,ExtractionJoinType.Left,null);
+
+            var cata1 = new Catalogue(CatalogueRepository,"Catalogue1");
+            var cata2 = new Catalogue(CatalogueRepository,"Catalogue2");
+
+            var cata1_code = new CatalogueItem(CatalogueRepository,cata1,"code");
+            var cata1_desc = new CatalogueItem(CatalogueRepository,cata1,"desc");
+            new ExtractionInformation(CatalogueRepository,cata1_code,tiHeader_Code,"[tbl]..[code]");
+            new ExtractionInformation(CatalogueRepository,cata1_desc,tiLookup_Desc,"[lookup]..[desc]");
+
+            var cata2_code = new CatalogueItem(CatalogueRepository,cata2,"code");
+            var cata2_desc = new CatalogueItem(CatalogueRepository,cata2,"desc");
+            new ExtractionInformation(CatalogueRepository,cata2_code,tiHeader_Code,"[tbl]..[code]");
+            new ExtractionInformation(CatalogueRepository,cata2_desc,tiLookup_Desc,"[lookup]..[desc]");
+            
+            new CatalogueChildProvider(CatalogueRepository,null, new ThrowImmediatelyCheckNotifier(){ThrowOnWarning=true},null);
+            
+        }
 
         [Test]
         public void CreateLookup_linkWithSelfThrowsException()
