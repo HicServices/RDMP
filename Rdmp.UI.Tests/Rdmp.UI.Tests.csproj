@@ -20,7 +20,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="NunitXml.TestLogger" Version="2.1.80" />
+    <PackageReference Include="NunitXml.TestLogger" Version="3.0.91" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Application\ResearchDataManagementPlatform\ResearchDataManagementPlatform.csproj" />
