@@ -8,12 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Added user setting `ShowPipelineCompletedPopup` for always popping a modal dialog on completion of a pipeline execution in the GUI client (e.g. committing a cohort)
+
+## [4.2.3] - 2021-02-01
+
 ### Fixed 
 
 - Fixed rare threading issue with tree representations of Lookups
 - Fixed proxy objects context menus not functioning correctly since 4.2.0 (e.g. Catalogues associated with a load) for some commands
 
-## [4.2.2] - 2021-01-20
+## [4.2.2] - 2021-01-28
 
 ### Added
 
@@ -613,7 +619,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.2.2...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.2.3...develop
+[4.2.3]: https://github.com/HicServices/RDMP/compare/v4.2.2...v4.2.3
 [4.2.2]: https://github.com/HicServices/RDMP/compare/v4.2.1...v4.2.2
 [4.2.1]: https://github.com/HicServices/RDMP/compare/v4.2.0...v4.2.1
 [4.2.0]: https://github.com/HicServices/RDMP/compare/v4.1.9...v4.2.0
