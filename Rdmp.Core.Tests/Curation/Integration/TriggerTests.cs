@@ -18,6 +18,8 @@ using ReusableLibraryCode.Exceptions;
 using Tests.Common;
 using System.Collections.Generic;
 using TypeGuesser;
+using System.Linq;
+using System.Data;
 
 namespace Rdmp.Core.Tests.Curation.Integration
 {
@@ -129,6 +131,8 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 {"hic_dataLoadRunID",7 } 
             });
 
+            var liveOldRow = _table.GetDataTable().Rows.Cast<DataRow>().Single(r=>r["bubbles"] as int? ==3);
+            Assert.AreEqual(new DateTime(2001,1,2),((DateTime)liveOldRow[SpecialFieldNames.ValidFrom]));
 
             RunSQL("UPDATE {0} set bubbles =99",_table.GetFullyQualifiedName());
 
@@ -150,6 +154,9 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 //legacy today it is 99
                 Assert.AreEqual(99, ExecuteScalar("Select bubbles FROM TriggerTests_Legacy(GETDATE()) where name = 'Franky'"));
             }
+
+            var liveNewRow = _table.GetDataTable().Rows.Cast<DataRow>().Single(r=>r["bubbles"] as int? ==99);
+            Assert.AreEqual(DateTime.Now.Date,((DateTime)liveNewRow[SpecialFieldNames.ValidFrom]).Date);
         }
 
         [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
@@ -180,6 +187,8 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             Thread.Sleep(500);
             RunSQL("UPDATE {0} SET bubbles=4",_table.GetFullyQualifiedName());
+
+            Thread.Sleep(500);
 
             Assert.AreEqual(1,_table.GetRowCount());
             Assert.AreEqual(4,_archiveTable.GetRowCount());
