@@ -154,9 +154,14 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 //legacy today it is 99
                 Assert.AreEqual(99, ExecuteScalar("Select bubbles FROM TriggerTests_Legacy(GETDATE()) where name = 'Franky'"));
             }
-
+            
+            // Live row should now reflect that it is validFrom today
             var liveNewRow = _table.GetDataTable().Rows.Cast<DataRow>().Single(r=>r["bubbles"] as int? ==99);
             Assert.AreEqual(DateTime.Now.Date,((DateTime)liveNewRow[SpecialFieldNames.ValidFrom]).Date);
+
+            // Archived row should not have had it's validFrom field broken
+            var archivedRow = _archiveTable.GetDataTable().Rows.Cast<DataRow>().Single(r=>r["bubbles"] as int? ==3);
+            Assert.AreEqual(new DateTime(2001,1,2),((DateTime)archivedRow[SpecialFieldNames.ValidFrom]));
         }
 
         [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
