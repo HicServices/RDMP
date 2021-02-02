@@ -111,6 +111,8 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
             
             return string.Format(@"BEGIN
     INSERT INTO {0} SET {1},hic_validTo=now(),hic_userID=CURRENT_USER(),hic_status='U';
+
+	SET NEW.hic_validFrom = now();
   END", _archiveTable.GetFullyQualifiedName(),
                 string.Join(",", _columns.Select(c =>syntax.EnsureWrapped( c.GetRuntimeName()) + "=OLD." + syntax.EnsureWrapped(c.GetRuntimeName()))));
         }
