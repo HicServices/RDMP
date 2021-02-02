@@ -215,6 +215,10 @@ namespace ReusableLibraryCode.Settings
             get { return AppSettings.GetValueOrDefault("DebugPerformance", false); }
             set { AppSettings.AddOrUpdateValue("DebugPerformance", value); } }
 
+        public static bool ShowPipelineCompletedPopup { 
+            get { return AppSettings.GetValueOrDefault("ShowPipelineCompletedPopup", false); }
+            set { AppSettings.AddOrUpdateValue("ShowPipelineCompletedPopup", value); } }
+
         #endregion
 
         public static bool GetTutorialDone(Guid tutorialGuid)
