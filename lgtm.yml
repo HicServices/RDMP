@@ -1,8 +1,6 @@
 extraction:
   csharp:
     index:
-      solution: "HIC.DataManagementPlatform.sln"
-      vstools_version: "15"
-      msbuild:
-        configuration: "release"
-        platform: "Any CPU"
+      build_command:
+        - dotnet restore
+        - dotnet build HIC.DataManagementPlatform.sln /v:q
