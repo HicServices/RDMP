@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [4.2.3] - 2021-02-01
+
 ### Fixed 
 
 - Fixed rare threading issue with tree representations of Lookups
@@ -17,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Bump NUnit from 3.13.0 to 3.13.1
 
-## [4.2.2] - 2021-01-20
+## [4.2.2] - 2021-01-28
 
 ### Added
 
@@ -617,7 +619,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.2.2...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.2.3...develop
+[4.2.3]: https://github.com/HicServices/RDMP/compare/v4.2.2...v4.2.3
 [4.2.2]: https://github.com/HicServices/RDMP/compare/v4.2.1...v4.2.2
 [4.2.1]: https://github.com/HicServices/RDMP/compare/v4.2.0...v4.2.1
 [4.2.0]: https://github.com/HicServices/RDMP/compare/v4.1.9...v4.2.0
