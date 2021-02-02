@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Added CLI commands for viewing/changing `UserSettings` e.g. AllowIdentifiableExtractions
+
 ## [4.2.3] - 2021-02-01
 
 ### Fixed 
