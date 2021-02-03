@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added CLI commands for viewing/changing `UserSettings` e.g. AllowIdentifiableExtractions
 - Added user setting `ShowPipelineCompletedPopup` for always popping a modal dialog on completion of a pipeline execution in the GUI client (e.g. committing a cohort)
+- Added new flexible file/directory extraction component `SimpleFileExtractor`
+
+### Changed
+
+- Globals tickbox can now be checked even when there are no explicit files (this allows implicit files e.g. `SimpleFileExtractor` to still run)
+
 
 ### Fixed 
 
