@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added CLI commands for viewing/changing `UserSettings` e.g. AllowIdentifiableExtractions
 - Added user setting `ShowPipelineCompletedPopup` for always popping a modal dialog on completion of a pipeline execution in the GUI client (e.g. committing a cohort)
 
 ### Fixed 
@@ -22,6 +23,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed rare threading issue with tree representations of Lookups
 - Fixed proxy objects context menus not functioning correctly since 4.2.0 (e.g. Catalogues associated with a load) for some commands
+
+### Dependencies
+
+- Bump NUnit from 3.13.0 to 3.13.1
 
 ## [4.2.2] - 2021-01-28
 
