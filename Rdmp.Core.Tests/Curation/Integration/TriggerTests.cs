@@ -180,20 +180,20 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 {"hic_validFrom",new DateTime(2001,1,2)} ,
                 {"hic_dataLoadRunID",7 } 
             });
-
-            Thread.Sleep(500);
+            
+            Thread.Sleep(1000);
             RunSQL("UPDATE {0} SET bubbles=1",_table.GetFullyQualifiedName());
-
-            Thread.Sleep(500);
+            
+            Thread.Sleep(1000);
             RunSQL("UPDATE {0} SET bubbles=2",_table.GetFullyQualifiedName());
-
-            Thread.Sleep(500);
+            
+            Thread.Sleep(1000);
             RunSQL("UPDATE {0} SET bubbles=3",_table.GetFullyQualifiedName());
-
-            Thread.Sleep(500);
+            
+            Thread.Sleep(1000);
             RunSQL("UPDATE {0} SET bubbles=4",_table.GetFullyQualifiedName());
 
-            Thread.Sleep(500);
+            Thread.Sleep(1000);
 
             Assert.AreEqual(1,_table.GetRowCount());
             Assert.AreEqual(4,_archiveTable.GetRowCount());
