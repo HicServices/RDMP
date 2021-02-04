@@ -266,12 +266,7 @@ namespace Rdmp.UI.ProjectUI
             //enable all to start with 
             tlvDatasets.EnableObjects(tlvDatasets.Objects);
 
-            tlvDatasets.DisableObjects(_globals);
             tlvDatasets.DisableObjects(_bundledStuff);
-
-            //if there are no globals disable this option
-            if(!_globals.Any())
-                tlvDatasets.DisableObject(_globalsFolder);
 
             //if there are no project specific datasets
             if (_datasets.All(sds => sds.ExtractableDataSet.Project_ID == null))
