@@ -39,6 +39,9 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
 
             if(PerPatient && Pattern.IndexOf("$p") == -1)
                 notifier.OnCheckPerformed(new CheckEventArgs($"PerPatient is true but Pattern {Pattern} did not contain token $p",CheckResult.Fail));
+
+            if(!PerPatient && Pattern.IndexOf("$p") != -1)
+                notifier.OnCheckPerformed(new CheckEventArgs($"PerPatient is false but Pattern {Pattern} contains token $p.  This token will never be matched in MoveAll mode",CheckResult.Fail));
         }
 
         protected override void MoveFiles(ExtractGlobalsCommand command, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
