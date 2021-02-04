@@ -16,6 +16,9 @@ using System.IO;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
 {
+    /// <summary>
+    /// Component for copying directory trees or top level files from a location on disk to the output directory of a project extraction.  Supports substituting private identifiers for release identifiers in top level file/directory names
+    /// </summary>
     public class SimpleFileExtractor : FileExtractor
     {
         [DemandsInitialization("Location of files on disk that should be copied to the output directory", Mandatory = true)]
