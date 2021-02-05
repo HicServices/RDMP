@@ -18,6 +18,8 @@ using ReusableLibraryCode.Exceptions;
 using Tests.Common;
 using System.Collections.Generic;
 using TypeGuesser;
+using System.Linq;
+using System.Data;
 
 namespace Rdmp.Core.Tests.Curation.Integration
 {
@@ -129,6 +131,8 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 {"hic_dataLoadRunID",7 } 
             });
 
+            var liveOldRow = _table.GetDataTable().Rows.Cast<DataRow>().Single(r=>r["bubbles"] as int? ==3);
+            Assert.AreEqual(new DateTime(2001,1,2),((DateTime)liveOldRow[SpecialFieldNames.ValidFrom]));
 
             RunSQL("UPDATE {0} set bubbles =99",_table.GetFullyQualifiedName());
 
@@ -150,6 +154,14 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 //legacy today it is 99
                 Assert.AreEqual(99, ExecuteScalar("Select bubbles FROM TriggerTests_Legacy(GETDATE()) where name = 'Franky'"));
             }
+            
+            // Live row should now reflect that it is validFrom today
+            var liveNewRow = _table.GetDataTable().Rows.Cast<DataRow>().Single(r=>r["bubbles"] as int? ==99);
+            Assert.AreEqual(DateTime.Now.Date,((DateTime)liveNewRow[SpecialFieldNames.ValidFrom]).Date);
+
+            // Archived row should not have had it's validFrom field broken
+            var archivedRow = _archiveTable.GetDataTable().Rows.Cast<DataRow>().Single(r=>r["bubbles"] as int? ==3);
+            Assert.AreEqual(new DateTime(2001,1,2),((DateTime)archivedRow[SpecialFieldNames.ValidFrom]));
         }
 
         [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
@@ -168,18 +180,20 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 {"hic_validFrom",new DateTime(2001,1,2)} ,
                 {"hic_dataLoadRunID",7 } 
             });
-
-            Thread.Sleep(500);
+            
+            Thread.Sleep(1000);
             RunSQL("UPDATE {0} SET bubbles=1",_table.GetFullyQualifiedName());
-
-            Thread.Sleep(500);
+            
+            Thread.Sleep(1000);
             RunSQL("UPDATE {0} SET bubbles=2",_table.GetFullyQualifiedName());
-
-            Thread.Sleep(500);
+            
+            Thread.Sleep(1000);
             RunSQL("UPDATE {0} SET bubbles=3",_table.GetFullyQualifiedName());
-
-            Thread.Sleep(500);
+            
+            Thread.Sleep(1000);
             RunSQL("UPDATE {0} SET bubbles=4",_table.GetFullyQualifiedName());
+
+            Thread.Sleep(1000);
 
             Assert.AreEqual(1,_table.GetRowCount());
             Assert.AreEqual(4,_archiveTable.GetRowCount());

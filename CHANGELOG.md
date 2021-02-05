@@ -8,12 +8,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [4.2.4] - 2021-02-05
+
+### Added
+
+- Added CLI commands for viewing/changing `UserSettings` e.g. AllowIdentifiableExtractions
+- Added user setting `ShowPipelineCompletedPopup` for always popping a modal dialog on completion of a pipeline execution in the GUI client (e.g. committing a cohort)
+- Added new flexible file/directory extraction component `SimpleFileExtractor`
+
+### Changed
+
+- Globals tickbox can now be checked even when there are no explicit files (this allows implicit files e.g. `SimpleFileExtractor` to still run)
+
+
+### Fixed 
+
+- Fixed MySql backup trigger implementation not updating validTo on the new row entering the table on UPDATE operations
+
 ## [4.2.3] - 2021-02-01
 
 ### Fixed 
 
 - Fixed rare threading issue with tree representations of Lookups
 - Fixed proxy objects context menus not functioning correctly since 4.2.0 (e.g. Catalogues associated with a load) for some commands
+
+### Dependencies
+
+- Bump NUnit from 3.13.0 to 3.13.1
 
 ## [4.2.2] - 2021-01-28
 
@@ -615,7 +636,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.2.3...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.2.4...develop
+[4.2.4]: https://github.com/HicServices/RDMP/compare/v4.2.3...v4.2.4
 [4.2.3]: https://github.com/HicServices/RDMP/compare/v4.2.2...v4.2.3
 [4.2.2]: https://github.com/HicServices/RDMP/compare/v4.2.1...v4.2.2
 [4.2.1]: https://github.com/HicServices/RDMP/compare/v4.2.0...v4.2.1
