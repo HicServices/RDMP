@@ -605,13 +605,17 @@ Get in touch with us at noreply@nobody.com",resultText.TrimEnd());
 
             File.WriteAllText(template.FullName,
                 @"# Welcome
-
-    We love data here, see our datasets:
-
-- Datasets
+- [Background](#background)
+- [Datasets](#datasets)
 $foreach Catalogue
    - [$Name](#$Name)
 $end
+
+# Background
+
+Boy do we love our datasets here!
+
+# Datasets
 
 $foreach Catalogue
 ## $Name
@@ -634,12 +638,16 @@ Get in touch with us at noreply@nobody.com");
             var resultText = File.ReadAllText(outFile);
 
             StringAssert.AreEqualIgnoringCase(@"# Welcome
-
-    We love data here, see our datasets:
-
-- Datasets
+- [Background](#background)
+- [Datasets](#datasets)
    - [Demog](#Demog)
    - [ffff](#ffff)
+
+# Background
+
+Boy do we love our datasets here!
+
+# Datasets
 
 ## Demog
 This is expensive dataset: $30 to use
