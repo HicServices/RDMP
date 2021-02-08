@@ -93,56 +93,61 @@ namespace Rdmp.Core.Reports
 
             StreamWriter outFile = null;
             
-            if(oneFile)
-                outFile = new StreamWriter(File.Create(Path.Combine(outputDirectory.FullName, outname)));
-
-            if (templateBody.Contains(LoopCatalogues))
+            try
             {
-                if (oneFile)
+                if(oneFile)
+                    outFile = new StreamWriter(File.Create(Path.Combine(outputDirectory.FullName, outname)));
+
+                if (templateBody.Contains(LoopCatalogues))
                 {
-                    foreach(var section in SplitCatalogueLoops(templateBody))
+                    if (oneFile)
                     {
-                        if(section.IsPlainText)
+                        foreach(var section in SplitCatalogueLoops(templateBody))
                         {
-                            outFile.WriteLine(string.Join(Environment.NewLine,section.Body));
+                            if(section.IsPlainText)
+                            {
+                                outFile.WriteLine(string.Join(Environment.NewLine,section.Body));
+                            }
+                            else
+                            {
+                                foreach (Catalogue catalogue in catalogues)
+                                {
+                                    var newContents = DoReplacements(section.Body.ToArray(), catalogue,section);
+                                    outFile.WriteLine(newContents);
+                                }
+                            }
                         }
+                    }
+                    else
+                        throw new Exception($"'{LoopCatalogues}' is on valid when extracting in oneFile mode (a single document for all Catalogues' metadata)");
+                }
+                else
+                {
+                    foreach (Catalogue catalogue in catalogues)
+                    {
+                        var newContents = DoReplacements(templateBody, catalogue,null);
+
+                        if (oneFile) 
+                            outFile.WriteLine(newContents);
                         else
                         {
-                            foreach (Catalogue catalogue in catalogues)
+                            string filename = DoReplacements(new[] {fileNaming}, catalogue,null).Trim();
+
+                            using (var sw = new StreamWriter(Path.Combine(outputDirectory.FullName,filename)))
                             {
-                                var newContents = DoReplacements(section.Body.ToArray(), catalogue,section);
-                                outFile.WriteLine(newContents);
+                                sw.Write(newContents);
+                                sw.Flush();
+                                sw.Close();
                             }
                         }
                     }
                 }
-                else
-                    throw new Exception($"'{LoopCatalogues}' is on valid when extracting in oneFile mode (a single document for all Catalogues' metadata)");
             }
-            else
+            finally
             {
-                foreach (Catalogue catalogue in catalogues)
-                {
-                    var newContents = DoReplacements(templateBody, catalogue,null);
-
-                    if (oneFile) 
-                        outFile.WriteLine(newContents);
-                    else
-                    {
-                        string filename = DoReplacements(new[] {fileNaming}, catalogue,null).Trim();
-
-                        using (var sw = new StreamWriter(Path.Combine(outputDirectory.FullName,filename)))
-                        {
-                            sw.Write(newContents);
-                            sw.Flush();
-                            sw.Close();
-                        }
-                    }
-                }
-            }
-                
-            outFile?.Flush();
-            outFile?.Dispose();
+                outFile?.Flush();
+                outFile?.Dispose();
+            }   
         }
 
         private IEnumerable<CatalogueSection> SplitCatalogueLoops(string[] templateBody)
@@ -161,7 +166,7 @@ namespace Rdmp.Core.Reports
                 if(str.Trim().Equals(LoopCatalogueItems))
                 {
                     if(currentSection == null || currentSection.IsPlainText)
-                        throw new CustomMetadataReportException($"Error, Unexpected '{str}' on line {i+1}.  Current section is plain text, '{LoopCatalogueItems}' can only appear within a '{LoopCatalogues}' block",i+1);
+                        throw new CustomMetadataReportException($"Error, Unexpected '{str}' on line {i+1}.  Current section is plain text, '{LoopCatalogueItems}' can only appear within a '{LoopCatalogues}' block (you cannot mix and match top level loop elements)",i+1);
 
                     // ignore dives into CatalogueItems
                     depth++;
@@ -174,7 +179,10 @@ namespace Rdmp.Core.Reports
                 if(str.Trim().Equals(LoopCatalogues))
                 {
                     if(currentSection != null)
-                        yield return currentSection;
+                        if(currentSection.IsPlainText)
+                            yield return currentSection;
+                        else
+                            throw new CustomMetadataReportException($"Unexpected '{str}' before the end of the last one on line {i+1}",i+1);
                     
                     // start new section looping Catalogues
                     currentSection = new CatalogueSection(false,i);
@@ -184,14 +192,14 @@ namespace Rdmp.Core.Reports
                 // is it an end loop
                 if(str.Trim().Equals(EndLoop))
                 {
+                    if(currentSection == null || currentSection.IsPlainText)
+                        throw new CustomMetadataReportException($"Error, encountered '{str}' on line {i+1} while not in a {LoopCatalogues} block",i+1);
+
                     depth--;
 
                     // does end loop correspond to ending a $foreach Catalogue
                     if(depth == 0)
                     {
-                        if(currentSection.IsPlainText)
-                            throw new CustomMetadataReportException($"Error, encountered '{str}' on line {i+1} while not in a {LoopCatalogues} block",i+1);
-
                         yield return currentSection;
                         currentSection = null;
                     }
@@ -203,7 +211,6 @@ namespace Rdmp.Core.Reports
                         // $end is for a CatalogueItem block so preserve it in the body
                         currentSection.Body.Add(str);
                     }
-                    
                 }
                 else
                 {

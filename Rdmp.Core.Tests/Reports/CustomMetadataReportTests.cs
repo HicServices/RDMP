@@ -657,7 +657,124 @@ Price: $30
 
 Get in touch with us at noreply@nobody.com",resultText.TrimEnd());
         }
+                
+        [Test]
+        public void TestCustomMetadataReport_ErrorCondition_ExtraStartBlock()
+        {
+            Setup2Catalogues(out Catalogue c1,out Catalogue c2);
 
+            var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
+            var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
+
+            if(outDir.Exists)
+                outDir.Delete(true);
+            
+            outDir.Create();
+
+            File.WriteAllText(template.FullName,
+                @"# Welcome
+- Datasets
+$foreach Catalogue
+$foreach Catalogue
+
+some more text
+");
+
+            var cmd = new ExecuteCommandExtractMetadata(null, new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
+            var ex = Assert.Throws<CustomMetadataReportException>(()=>cmd.Execute());
+
+            Assert.AreEqual("Unexpected '$foreach Catalogue' before the end of the last one on line 4",ex.Message);
+            Assert.AreEqual(4,ex.LineNumber);
+        } 
+        [Test]
+        public void TestCustomMetadataReport_ErrorCondition_UnexpectedEndBlock()
+        {
+            Setup2Catalogues(out Catalogue c1,out Catalogue c2);
+
+            var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
+            var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
+
+            if(outDir.Exists)
+                outDir.Delete(true);
+            
+            outDir.Create();
+
+            File.WriteAllText(template.FullName,
+                @"# Welcome
+- Datasets
+$end
+$foreach Catalogue
+
+some more text
+");
+
+            var cmd = new ExecuteCommandExtractMetadata(null, new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
+            var ex = Assert.Throws<CustomMetadataReportException>(()=>cmd.Execute());
+
+            Assert.AreEqual("Error, encountered '$end' on line 3 while not in a $foreach Catalogue block",ex.Message);
+            Assert.AreEqual(3,ex.LineNumber);
+        }
+
+        
+        [Test]
+        public void TestCustomMetadataReport_ErrorCondition_TooManyEndBlocks()
+        {
+            Setup2Catalogues(out Catalogue c1,out Catalogue c2);
+
+            var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
+            var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
+
+            if(outDir.Exists)
+                outDir.Delete(true);
+            
+            outDir.Create();
+
+            File.WriteAllText(template.FullName,
+                @"# Welcome
+- Datasets
+$foreach Catalogue
+$end
+$end
+
+some more text
+");
+
+            var cmd = new ExecuteCommandExtractMetadata(null, new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
+            var ex = Assert.Throws<CustomMetadataReportException>(()=>cmd.Execute());
+
+            Assert.AreEqual("Error, encountered '$end' on line 5 while not in a $foreach Catalogue block",ex.Message);
+            Assert.AreEqual(5,ex.LineNumber);
+        }
+        [Test]
+        public void TestCustomMetadataReport_ErrorCondition_MixingTopLevelBlocks()
+        {
+            Setup2Catalogues(out Catalogue c1,out Catalogue c2);
+
+            var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
+            var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
+
+            if(outDir.Exists)
+                outDir.Delete(true);
+            
+            outDir.Create();
+
+            File.WriteAllText(template.FullName,
+                @"# Welcome
+- Datasets
+$foreach CatalogueItem
+$end
+$foreach Catalogue
+$end
+
+some more text
+");
+
+            var cmd = new ExecuteCommandExtractMetadata(null, new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
+            var ex = Assert.Throws<CustomMetadataReportException>(()=>cmd.Execute());
+            
+            Assert.AreEqual("Error, Unexpected '$foreach CatalogueItem' on line 3.  Current section is plain text, '$foreach CatalogueItem' can only appear within a '$foreach Catalogue' block (you cannot mix and match top level loop elements)",ex.Message);
+            Assert.AreEqual(3,ex.LineNumber);
+        }
         #endregion
     }
 
