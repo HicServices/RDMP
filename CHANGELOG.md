@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Better error reporting when item validators crash during validation execution (now includes constraint type, column name and value being validated).
+
 ## [4.2.4] - 2021-02-05
 
 ### Added

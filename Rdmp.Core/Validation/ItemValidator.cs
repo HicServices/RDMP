@@ -64,9 +64,15 @@ namespace Rdmp.Core.Validation
 
         private ValidationFailure ValidatePrimaryConstraint(object columnValue)
         {
-            if (PrimaryConstraint != null)
-                return PrimaryConstraint.Validate(columnValue);
-
+            try
+            {
+                if (PrimaryConstraint != null)
+                    return PrimaryConstraint.Validate(columnValue);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error processing PrimaryConstraint validator of Type {PrimaryConstraint.GetType().Name} on column {TargetProperty}.  Value being validated was '{columnValue}'",ex);
+            }
             return null;
         }
 
@@ -74,10 +80,18 @@ namespace Rdmp.Core.Validation
         {
             foreach (ISecondaryConstraint secondaryConstraint in SecondaryConstraints)
             {
-                ValidationFailure result = secondaryConstraint.Validate(columnValue, otherColumns, otherColumnNames);
+                
+                try
+                {
+                    ValidationFailure result = secondaryConstraint.Validate(columnValue, otherColumns, otherColumnNames);
 
-                if (result != null)
-                    return result;
+                    if (result != null)
+                        return result;
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Error processing Secondary Constraint validator of Type {secondaryConstraint.GetType().Name} on column {TargetProperty}.  Value being validated was '{columnValue}'",ex);
+                }
             }
 
             return null;
