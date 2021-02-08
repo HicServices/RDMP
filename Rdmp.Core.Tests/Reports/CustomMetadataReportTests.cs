@@ -18,6 +18,37 @@ namespace Rdmp.Core.Tests.Reports
 {
     class CustomMetadataReportTests : UnitTests
     {
+        private void Setup2Catalogues(out Catalogue c1, out Catalogue c2)
+        {
+            c1 = WhenIHaveA<Catalogue>();
+            c1.Name = "ffff";
+            c1.Description = "A cool dataset with interesting stuff";
+            c1.SaveToDatabase();
+
+            var c1ci1 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c1, "Col1");
+            c1ci1.Description = "some info about column 1";
+            c1ci1.SaveToDatabase();
+
+            var c1ci2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c1, "Col2");
+            c1ci2.Description = "some info about column 2";
+            c1ci2.SaveToDatabase();
+            
+            c2 = WhenIHaveA<Catalogue>();
+            c2.Name = "Demog";
+            c2.Description = "This is expensive dataset: $30 to use";
+            c2.SaveToDatabase();
+
+            var c2ci1 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c2, "Name");
+            c2ci1.Description = "Name of the patient";
+            c2ci1.SaveToDatabase();
+            var c2ci2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c2, "Address");
+            c2ci2.Description = "Where they live";
+            c2ci2.SaveToDatabase();
+            var c2ci3 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c2, "Postcode");
+            c2ci3.Description = "Patients postcode";
+            c2ci3.SaveToDatabase();
+        }
+
         [TestCase(true)]
         [TestCase(false)]
         public void TestCustomMetadataReport_SingleCatalogue(bool oneFile)
@@ -217,35 +248,7 @@ A cool dataset with interesting stuff
         [Test]
         public void TestCustomMetadataReport_TwoCataloguesWithItems()
         {
-            var c1 = WhenIHaveA<Catalogue>();
-            c1.Name = "ffff";
-            c1.Description = "A cool dataset with interesting stuff";
-            c1.SaveToDatabase();
-
-            var c1ci1 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c1, "Col1");
-            c1ci1.Description = "some info about column 1";
-            c1ci1.SaveToDatabase();
-
-            var c1ci2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c1, "Col2");
-            c1ci2.Description = "some info about column 2";
-            c1ci2.SaveToDatabase();
-
-            
-            var c2 = WhenIHaveA<Catalogue>();
-            c2.Name = "Demog";
-            c2.Description = "This is expensive dataset: $30 to use";
-            c2.SaveToDatabase();
-
-            var c2ci1 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c2, "Name");
-            c2ci1.Description = "Name of the patient";
-            c2ci1.SaveToDatabase();
-            var c2ci2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c2, "Address");
-            c2ci2.Description = "Where they live";
-            c2ci2.SaveToDatabase();
-            var c2ci3 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c2, "Postcode");
-            c2ci3.Description = "Patients postcode";
-            c2ci3.SaveToDatabase();
-
+            Setup2Catalogues(out Catalogue c1,out Catalogue c2);
 
             var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
             var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
@@ -420,5 +423,242 @@ A cool<br/>dataset with interesting stuff
 | Col1 | some info about column 1 |
 | Col2 | some info <br/>about column 2 |",resultText.TrimEnd());
         }
+    #region Loop Catalogues tests
+        
+        [Test]
+        public void TestCustomMetadataReport_LoopCataloguesPrefix()
+        {
+            Setup2Catalogues(out Catalogue c1,out Catalogue c2);
+
+            var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
+            var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
+
+            if(outDir.Exists)
+                outDir.Delete(true);
+            
+            outDir.Create();
+
+            File.WriteAllText(template.FullName,
+                @"# Welcome
+
+We love data here, see our datasets:
+
+$foreach Catalogue
+## Catalogue '$Name'
+$Description
+Price: $30
+| Column | Description |
+$foreach CatalogueItem
+| $Name | $Description |
+$end
+$end");
+
+            var cmd = new ExecuteCommandExtractMetadata(null, new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
+            cmd.Execute();
+
+            var outFile = Path.Combine(outDir.FullName, "Datasets.md");
+
+            FileAssert.Exists(outFile);
+            var resultText = File.ReadAllText(outFile);
+
+            StringAssert.AreEqualIgnoringCase(@"# Welcome
+
+We love data here, see our datasets:
+
+## Catalogue 'Demog'
+This is expensive dataset: $30 to use
+Price: $30
+| Column | Description |
+| Name | Name of the patient |
+| Address | Where they live |
+| Postcode | Patients postcode |
+## Catalogue 'ffff'
+A cool dataset with interesting stuff
+Price: $30
+| Column | Description |
+| Col1 | some info about column 1 |
+| Col2 | some info about column 2 |",resultText.TrimEnd());
+        }
+        
+        [Test]
+        public void TestCustomMetadataReport_LoopCataloguesSuffix()
+        {
+            Setup2Catalogues(out Catalogue c1,out Catalogue c2);
+
+            var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
+            var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
+
+            if(outDir.Exists)
+                outDir.Delete(true);
+            
+            outDir.Create();
+
+            File.WriteAllText(template.FullName,
+                @"$foreach Catalogue
+## Catalogue '$Name'
+$Description
+Price: $30
+| Column | Description |
+$foreach CatalogueItem
+| $Name | $Description |
+$end
+$end
+
+Get in touch with us at noreply@nobody.com");
+
+            var cmd = new ExecuteCommandExtractMetadata(null, new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
+            cmd.Execute();
+
+            var outFile = Path.Combine(outDir.FullName, "Datasets.md");
+
+            FileAssert.Exists(outFile);
+            var resultText = File.ReadAllText(outFile);
+
+            StringAssert.AreEqualIgnoringCase(@"## Catalogue 'Demog'
+This is expensive dataset: $30 to use
+Price: $30
+| Column | Description |
+| Name | Name of the patient |
+| Address | Where they live |
+| Postcode | Patients postcode |
+## Catalogue 'ffff'
+A cool dataset with interesting stuff
+Price: $30
+| Column | Description |
+| Col1 | some info about column 1 |
+| Col2 | some info about column 2 |
+
+Get in touch with us at noreply@nobody.com",resultText.TrimEnd());
+        }
+        [Test]
+        public void TestCustomMetadataReport_LoopCataloguesPrefixAndSuffix()
+        {
+            Setup2Catalogues(out Catalogue c1,out Catalogue c2);
+
+            var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
+            var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
+
+            if(outDir.Exists)
+                outDir.Delete(true);
+            
+            outDir.Create();
+
+            File.WriteAllText(template.FullName,
+                @"# Welcome
+
+We love data here, see our datasets:
+
+$foreach Catalogue
+## Catalogue '$Name'
+$Description
+Price: $30
+| Column | Description |
+$foreach CatalogueItem
+| $Name | $Description |
+$end
+$end
+
+Get in touch with us at noreply@nobody.com");
+
+            var cmd = new ExecuteCommandExtractMetadata(null, new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
+            cmd.Execute();
+
+            var outFile = Path.Combine(outDir.FullName, "Datasets.md");
+
+            FileAssert.Exists(outFile);
+            var resultText = File.ReadAllText(outFile);
+
+            StringAssert.AreEqualIgnoringCase(@"# Welcome
+
+We love data here, see our datasets:
+
+## Catalogue 'Demog'
+This is expensive dataset: $30 to use
+Price: $30
+| Column | Description |
+| Name | Name of the patient |
+| Address | Where they live |
+| Postcode | Patients postcode |
+## Catalogue 'ffff'
+A cool dataset with interesting stuff
+Price: $30
+| Column | Description |
+| Col1 | some info about column 1 |
+| Col2 | some info about column 2 |
+
+Get in touch with us at noreply@nobody.com",resultText.TrimEnd());
+        }
+
+
+        [Test]
+        public void TestCustomMetadataReport_LoopCataloguesTableOfContents()
+        {
+            Setup2Catalogues(out Catalogue c1,out Catalogue c2);
+
+            var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
+            var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
+
+            if(outDir.Exists)
+                outDir.Delete(true);
+            
+            outDir.Create();
+
+            File.WriteAllText(template.FullName,
+                @"# Welcome
+
+    We love data here, see our datasets:
+
+- Datasets
+$foreach Catalogue
+   - [$Name](#$Name)
+$end
+
+$foreach Catalogue
+## $Name
+$Description
+Price: $30
+| Column | Description |
+$foreach CatalogueItem
+| $Name | $Description |
+$end
+$end
+
+Get in touch with us at noreply@nobody.com");
+
+            var cmd = new ExecuteCommandExtractMetadata(null, new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
+            cmd.Execute();
+
+            var outFile = Path.Combine(outDir.FullName, "Datasets.md");
+
+            FileAssert.Exists(outFile);
+            var resultText = File.ReadAllText(outFile);
+
+            StringAssert.AreEqualIgnoringCase(@"# Welcome
+
+    We love data here, see our datasets:
+
+- Datasets
+   - [Demog](#Demog)
+   - [ffff](#ffff)
+
+## Demog
+This is expensive dataset: $30 to use
+Price: $30
+| Column | Description |
+| Name | Name of the patient |
+| Address | Where they live |
+| Postcode | Patients postcode |
+## ffff
+A cool dataset with interesting stuff
+Price: $30
+| Column | Description |
+| Col1 | some info about column 1 |
+| Col2 | some info about column 2 |
+
+Get in touch with us at noreply@nobody.com",resultText.TrimEnd());
+        }
+
+        #endregion
     }
+
 }

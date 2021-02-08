@@ -33,6 +33,12 @@ namespace Rdmp.Core.Reports
 
         Dictionary<string,Func<CatalogueItem,object>> ReplacementsCatalogueItem = new Dictionary<string, Func<CatalogueItem,object>>();
 
+        
+        /// <summary>
+        /// Control line that begins looping Catalogues
+        /// </summary>
+        public const string LoopCatalogues = "$foreach Catalogue";
+
         /// <summary>
         /// Control line that begins looping CatalogueItems of a Catalogue
         /// </summary>
@@ -83,36 +89,155 @@ namespace Rdmp.Core.Reports
             
             var templateBody = File.ReadAllLines(template.FullName);
 
-            string outname = DoReplacements(new []{fileNaming},catalogues.First()).Trim();
+            string outname = DoReplacements(new []{fileNaming},catalogues.First(),null).Trim();
 
             StreamWriter outFile = null;
             
             if(oneFile)
                 outFile = new StreamWriter(File.Create(Path.Combine(outputDirectory.FullName, outname)));
 
-            foreach (Catalogue catalogue in catalogues)
+            if (templateBody.Contains(LoopCatalogues))
             {
-                var newContents = DoReplacements(templateBody, catalogue);
-
-                if (oneFile) 
-                    outFile.WriteLine(newContents);
-                else
+                if (oneFile)
                 {
-                    string filename = DoReplacements(new[] {fileNaming}, catalogue).Trim();
-
-                    using (var sw = new StreamWriter(Path.Combine(outputDirectory.FullName,filename)))
+                    foreach(var section in SplitCatalogueLoops(templateBody))
                     {
-                        sw.Write(newContents);
-                        sw.Flush();
-                        sw.Close();
+                        if(section.IsPlainText)
+                        {
+                            outFile.WriteLine(string.Join(Environment.NewLine,section.Body));
+                        }
+                        else
+                        {
+                            foreach (Catalogue catalogue in catalogues)
+                            {
+                                var newContents = DoReplacements(section.Body.ToArray(), catalogue,section);
+                                outFile.WriteLine(newContents);
+                            }
+                        }
+                    }
+                }
+                else
+                    throw new Exception($"'{LoopCatalogues}' is on valid when extracting in oneFile mode (a single document for all Catalogues' metadata)");
+            }
+            else
+            {
+                foreach (Catalogue catalogue in catalogues)
+                {
+                    var newContents = DoReplacements(templateBody, catalogue,null);
+
+                    if (oneFile) 
+                        outFile.WriteLine(newContents);
+                    else
+                    {
+                        string filename = DoReplacements(new[] {fileNaming}, catalogue,null).Trim();
+
+                        using (var sw = new StreamWriter(Path.Combine(outputDirectory.FullName,filename)))
+                        {
+                            sw.Write(newContents);
+                            sw.Flush();
+                            sw.Close();
+                        }
                     }
                 }
             }
+                
             outFile?.Flush();
             outFile?.Dispose();
         }
 
-        private string DoReplacements(string[] strs, Catalogue catalogue)
+        private IEnumerable<CatalogueSection> SplitCatalogueLoops(string[] templateBody)
+        {
+            if(templateBody.Length == 0)
+                yield break;
+
+            CatalogueSection currentSection = null;
+            int depth = 0;
+
+            for(int i=0;i< templateBody.Length ;i++)
+            {
+                var str = templateBody[i];
+
+                // is it trying to loop catalogue items
+                if(str.Trim().Equals(LoopCatalogueItems))
+                {
+                    if(currentSection == null || currentSection.IsPlainText)
+                        throw new CustomMetadataReportException($"Error, Unexpected '{str}' on line {i+1}.  Current section is plain text, '{LoopCatalogueItems}' can only appear within a '{LoopCatalogues}' block",i+1);
+
+                    // ignore dives into CatalogueItems
+                    depth++;
+
+                    // but preserve it in the body because it will be needed later
+                    currentSection.Body.Add(str);
+                }
+                else
+                // is it a loop Catalogues
+                if(str.Trim().Equals(LoopCatalogues))
+                {
+                    if(currentSection != null)
+                        yield return currentSection;
+                    
+                    // start new section looping Catalogues
+                    currentSection = new CatalogueSection(false,i);
+                    depth = 1;
+                }
+                else
+                // is it an end loop
+                if(str.Trim().Equals(EndLoop))
+                {
+                    depth--;
+
+                    // does end loop correspond to ending a $foreach Catalogue
+                    if(depth == 0)
+                    {
+                        if(currentSection.IsPlainText)
+                            throw new CustomMetadataReportException($"Error, encountered '{str}' on line {i+1} while not in a {LoopCatalogues} block",i+1);
+
+                        yield return currentSection;
+                        currentSection = null;
+                    }
+                    else
+                    if(depth <0)
+                        throw new CustomMetadataReportException($"Error, unexpected '{str}' on line {i+1}",i+1);
+                    else
+                    {
+                        // $end is for a CatalogueItem block so preserve it in the body
+                        currentSection.Body.Add(str);
+                    }
+                    
+                }
+                else
+                {
+                    // it's just a regular line of text
+
+                    //if it's the first line of a new block we get a plaintext block
+                    if(currentSection == null)
+                        currentSection = new CatalogueSection(true,i);
+
+                    currentSection.Body.Add(str);
+                }
+            }
+            
+            if(currentSection != null)
+                if(currentSection.IsPlainText)
+                    yield return currentSection;
+                else 
+                    throw new CustomMetadataReportException($"Reached end of template without finding an expected {EndLoop}",templateBody.Length);
+        }
+
+        private class CatalogueSection
+        {
+            public int LineNumber { get;set;}
+            public bool IsPlainText { get;set;}
+            public List<string> Body {get;set; } = new List<string>();
+
+            public CatalogueSection(bool isPlainText, int lineNumber)
+            {
+                IsPlainText = isPlainText;
+                LineNumber = lineNumber;
+            }
+        }
+
+        private string DoReplacements(string[] strs, Catalogue catalogue, CatalogueSection section)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -123,7 +248,7 @@ namespace Rdmp.Core.Reports
 
                 if (str.Trim().Equals(LoopCatalogueItems, StringComparison.CurrentCultureIgnoreCase))
                 {
-                    index = DoReplacements(strs, index, out copy,catalogue.CatalogueItems) + 1;
+                    index = DoReplacements(strs, index, out copy,catalogue.CatalogueItems,section) + 1;
                 }
                 else
                 {
@@ -132,10 +257,10 @@ namespace Rdmp.Core.Reports
                             copy = copy.Replace(r.Key, ValueToString(r.Value(catalogue)));
                 }
 
-                sb.AppendLine(copy.Trim());
+                sb.AppendLine(copy.TrimEnd());
             }
 
-            return sb.ToString().Trim();
+            return sb.ToString().TrimEnd();
         }
 
         /// <summary>
@@ -145,8 +270,9 @@ namespace Rdmp.Core.Reports
         /// <param name="index">The line in <paramref name="strs"/> in which the foreach was detected</param>
         /// <param name="result">The results of consuming the foreach block</param>
         /// <param name="catalogueItems"></param>
+        /// <param name="section"></param>
         /// <returns>The index in <paramref name="strs"/> where the $end was detected</returns>
-        private int DoReplacements(string[] strs, int index, out string result, CatalogueItem[] catalogueItems)
+        private int DoReplacements(string[] strs, int index, out string result, CatalogueItem[] catalogueItems,CatalogueSection section)
         {
             // The foreach template block as extracted from strs
             StringBuilder block = new StringBuilder();
@@ -157,10 +283,13 @@ namespace Rdmp.Core.Reports
             int i = index+1;
             bool blockTerminated = false;
 
+            int sectionOffset = section?.LineNumber ??0;
+
             //starting on the next line after $foreach until the end of the file
             for (; i < strs.Length; i++)
             {
                 var current = strs[i];
+                int lineNumberHuman = i +1+sectionOffset;
 
                 if (current.Trim().Equals(EndLoop, StringComparison.CurrentCultureIgnoreCase))
                 {
@@ -169,13 +298,13 @@ namespace Rdmp.Core.Reports
                 }
 
                 if(current == LoopCatalogueItems)
-                    throw new CustomMetadataReportException($"Error, encountered '{current}' on line {i+1} before the end of current block which started on line {index +1}.  Make sure to add {EndLoop} at the end of each loop",i+1);
+                    throw new CustomMetadataReportException($"Error, encountered '{current}' on line {lineNumberHuman} before the end of current block which started on line {lineNumberHuman}.  Make sure to add {EndLoop} at the end of each loop",lineNumberHuman);
 
                 block.AppendLine(current);
             }
 
             if(!blockTerminated)
-                throw new CustomMetadataReportException($"Expected {EndLoop} to match $foreach which started on line {index+1}",index+1);
+                throw new CustomMetadataReportException($"Expected {EndLoop} to match $foreach which started on line {index+1+sectionOffset}",index+1+sectionOffset);
 
             foreach (CatalogueItem ci in catalogueItems) 
                 sbResult.AppendLine(DoReplacements(block.ToString(), ci));
