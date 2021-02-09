@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
+using FAnsi.Extensions;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
@@ -287,10 +288,9 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
                 //if the SQL data type has degraded e.g. varchar(10) to varchar(50) or datetime to varchar(20)
                 if(oldSqlType != newSqlType)
                 {
-                    // Do not alter types of any columns where an explicit type was ordered
-                    if(ExplicitTypes != null && ExplicitTypes.Any(c => c.ColumnName.Equals(column.ColumnName, StringComparison.CurrentCultureIgnoreCase)))
+                    if(AbandonAlter(oldSqlType,newSqlType, out string reason))
                     {
-                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Considered resizing column '" + column + "' from '" + oldSqlType + "' to '" + newSqlType + "' but decided not to because there is an ExplicitWriteType"));
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"Considered resizing column '{column}' from '{oldSqlType }' to '{ newSqlType }' but decided not to because:{reason}"));
                         continue;
                     }
                     
@@ -310,6 +310,29 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
             
             swMeasuringStrings.Stop();
             listener.OnProgress(this,new ProgressEventArgs("Measuring DataType Sizes",new ProgressMeasurement(_affectedRows + toProcess.Rows.Count,ProgressType.Records),swMeasuringStrings.Elapsed));
+        }
+
+        /// <summary>
+        /// Returns true if we should not be trying to do this alter after all
+        /// </summary>
+        /// <param name="oldSqlType"></param>
+        /// <param name="newSqlType"></param>
+        /// <param name="reason"></param>
+        /// <returns></returns>
+        private bool AbandonAlter(string oldSqlType, string newSqlType, out string reason)
+        {
+            var basicallyDecimalAlready = new List<string>(){ "real","double","float","single"};
+
+            var first = basicallyDecimalAlready.FirstOrDefault(c=>oldSqlType.Contains(c,CompareOptions.IgnoreCase));
+
+            if(first != null && newSqlType.Contains("decimal"))
+            {
+                reason = $"Resizing from {first} to decimal is a bad idea and likely to fail";
+                return false;
+            }
+
+            reason = null;
+            return false;
         }
 
         public void Abort(IDataLoadEventListener listener)
