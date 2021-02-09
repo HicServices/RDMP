@@ -287,6 +287,13 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
                 //if the SQL data type has degraded e.g. varchar(10) to varchar(50) or datetime to varchar(20)
                 if(oldSqlType != newSqlType)
                 {
+                    // Do not alter types of any columns where an explicit type was ordered
+                    if(ExplicitTypes != null && ExplicitTypes.Any(c => c.ColumnName.Equals(column.ColumnName, StringComparison.CurrentCultureIgnoreCase)))
+                    {
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Considered resizing column '" + column + "' from '" + oldSqlType + "' to '" + newSqlType + "' but decided not to because there is an ExplicitWriteType"));
+                        continue;
+                    }
+                    
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Resizing column '" + column + "' from '" + oldSqlType + "' to '" + newSqlType + "'"));
 
                     var col = tbl.DiscoverColumn(column.ColumnName,_managedConnection.ManagedTransaction);
