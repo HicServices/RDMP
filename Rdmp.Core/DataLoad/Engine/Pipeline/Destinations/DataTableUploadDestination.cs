@@ -315,17 +315,17 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
         /// <summary>
         /// Returns true if we should not be trying to do this alter after all
         /// </summary>
-        /// <param name="oldSqlType"></param>
-        /// <param name="newSqlType"></param>
-        /// <param name="reason"></param>
-        /// <returns></returns>
-        private bool AbandonAlter(string oldSqlType, string newSqlType, out string reason)
+        /// <param name="oldSqlType">The database proprietary type you are considering altering from</param>
+        /// <param name="newSqlType">The ANSI SQL type you are considering altering to</param>
+        /// <param name="reason">Null or the reason we are returning true</param>
+        /// <returns>True if the proposed alter is a bad idea and shouldn't be attempted</returns>
+        protected virtual bool AbandonAlter(string oldSqlType, string newSqlType, out string reason)
         {
             var basicallyDecimalAlready = new List<string>(){ "real","double","float","single"};
 
             var first = basicallyDecimalAlready.FirstOrDefault(c=>oldSqlType.Contains(c,CompareOptions.IgnoreCase));
 
-            if(first != null && newSqlType.Contains("decimal"))
+            if(first != null && newSqlType.Contains("decimal",CompareOptions.IgnoreCase))
             {
                 reason = $"Resizing from {first} to decimal is a bad idea and likely to fail";
                 return false;
