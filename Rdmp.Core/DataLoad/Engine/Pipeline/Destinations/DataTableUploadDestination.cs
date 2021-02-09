@@ -288,15 +288,16 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
                 //if the SQL data type has degraded e.g. varchar(10) to varchar(50) or datetime to varchar(20)
                 if(oldSqlType != newSqlType)
                 {
-                    if(AbandonAlter(oldSqlType,newSqlType, out string reason))
+                    var col = tbl.DiscoverColumn(column.ColumnName,_managedConnection.ManagedTransaction);
+
+
+                    if(AbandonAlter(col.DataType.SQLType,newSqlType, out string reason))
                     {
-                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"Considered resizing column '{column}' from '{oldSqlType }' to '{ newSqlType }' but decided not to because:{reason}"));
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"Considered resizing column '{column}' from '{col.DataType.SQLType }' to '{ newSqlType }' but decided not to because:{reason}"));
                         continue;
                     }
                     
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Resizing column '" + column + "' from '" + oldSqlType + "' to '" + newSqlType + "'"));
-
-                    var col = tbl.DiscoverColumn(column.ColumnName,_managedConnection.ManagedTransaction);
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Resizing column '" + column + "' from '" + col.DataType.SQLType + "' to '" + newSqlType + "'"));
 
                     //try changing the Type to the legit type
                     col.DataType.AlterTypeTo(newSqlType, _managedConnection.ManagedTransaction, AlterTimeout);
@@ -328,7 +329,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
             if(first != null && newSqlType.Contains("decimal",CompareOptions.IgnoreCase))
             {
                 reason = $"Resizing from {first} to decimal is a bad idea and likely to fail";
-                return false;
+                return true;
             }
 
             reason = null;
