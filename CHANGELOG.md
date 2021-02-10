@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added ability to cancel ongoing queries in CLI Sql Editor
 - Added 'Reset Sql' and 'Clear Sql' buttons to CLI Sql Editor
+- Added view data/aggregate etc on ColumnInfo objects to list of commands accessible from the CLI gui
 
 ## [4.2.4] - 2021-02-05
 
