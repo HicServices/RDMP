@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Added ability to search for objects by ID in console gui
+
 ## [4.2.4] - 2021-02-05
 
 ### Added
