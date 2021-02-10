@@ -10,7 +10,9 @@ using ReusableLibraryCode.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Text;
+using System.Threading.Tasks;
 using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui
@@ -21,6 +23,9 @@ namespace Rdmp.Core.CommandLine.Gui
         private readonly IViewSQLAndResultsCollection _collection;
         private TableView tableView;
         private TextView textView;
+        private Button _btnRunOrCancel;
+        private Task _runSqlTask;
+        private DbCommand _runSqlCmd;
 
         public ConsoleGuiSqlEditor(IBasicActivateItems activator,IViewSQLAndResultsCollection collection)
         {
@@ -39,16 +44,16 @@ namespace Rdmp.Core.CommandLine.Gui
 
             Add(textView);
 
-            var btnRun = new Button("Run"){
+            _btnRunOrCancel = new Button("Run"){
                 X= 0,
                 Y=Pos.Bottom(textView),
                 };
 
-            btnRun.Clicked += ()=>RunSql();
-            Add(btnRun);
+            _btnRunOrCancel.Clicked += ()=>RunOrCancel();
+            Add(_btnRunOrCancel);
 
             var btnClose = new Button("Close"){
-                X= Pos.Right(btnRun),
+                X= Pos.Right(_btnRunOrCancel),
                 Y= Pos.Bottom(textView),
                 };
             btnClose.Clicked += ()=>Application.RequestStop();
@@ -65,6 +70,27 @@ namespace Rdmp.Core.CommandLine.Gui
             Add(tableView);
         }
 
+        private void RunOrCancel()
+        {
+            // if task is still running we should cancel
+            if(_runSqlTask  != null && !_runSqlTask.IsCompleted)
+            {
+                // Cancel the sql command and let that naturally end the task
+                _runSqlCmd?.Cancel();
+            }
+            else
+            {
+                _runSqlTask = Task.Run(()=>RunSql());
+                _btnRunOrCancel.Text = "Cancel";
+                _btnRunOrCancel.SetNeedsDisplay();
+            }
+        }
+        
+        private void SetReadyToRun()
+        {
+            _btnRunOrCancel.Text = "Run";
+            _btnRunOrCancel.SetNeedsDisplay();
+        }
         private void RunSql()
         {
             try
@@ -82,7 +108,9 @@ namespace Rdmp.Core.CommandLine.Gui
                 using(var con = db.Server.GetConnection())
                 {
                     con.Open();
-                    using(var da = db.Server.GetDataAdapter(sql,con))
+                    _runSqlCmd = db.Server.GetCommand(sql,con);
+
+                    using(var da = db.Server.GetDataAdapter(_runSqlCmd))
                     {
                         var dt = new DataTable();
                         da.Fill(dt);
@@ -94,6 +122,10 @@ namespace Rdmp.Core.CommandLine.Gui
             catch (Exception ex)
             {
                 _activator.ShowException("Failed to run query",ex);
+            }
+            finally
+            {
+                SetReadyToRun();
             }
         }
     }
