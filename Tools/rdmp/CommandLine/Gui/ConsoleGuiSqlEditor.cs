@@ -27,6 +27,11 @@ namespace Rdmp.Core.CommandLine.Gui
         private Task _runSqlTask;
         private DbCommand _runSqlCmd;
 
+        /// <summary>
+        /// The original SQL this control was launched with
+        /// </summary>
+        private string _orignalSql;
+
         public ConsoleGuiSqlEditor(IBasicActivateItems activator,IViewSQLAndResultsCollection collection)
         {
             this._activator = activator;
@@ -39,7 +44,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 Y=0,
                 Width = Dim.Fill(),
                 Height = Dim.Percent(30),
-                Text = collection.GetSql().Replace("\r\n","\n")
+                Text = _orignalSql = collection.GetSql().Replace("\r\n","\n")
             };
 
             Add(textView);
@@ -52,8 +57,25 @@ namespace Rdmp.Core.CommandLine.Gui
             _btnRunOrCancel.Clicked += ()=>RunOrCancel();
             Add(_btnRunOrCancel);
 
-            var btnClose = new Button("Close"){
+            var resetSql = new Button("Reset Sql"){
                 X= Pos.Right(_btnRunOrCancel),
+                Y= Pos.Bottom(textView),
+                };
+
+            resetSql.Clicked += ()=>ResetSql();
+            Add(resetSql);
+
+            var clearSql = new Button("Clear Sql"){
+                X= Pos.Right(resetSql),
+                Y= Pos.Bottom(textView),
+                };
+
+            clearSql.Clicked += ()=>ClearSql();
+            Add(clearSql);
+
+
+            var btnClose = new Button("Close"){
+                X= Pos.Right(clearSql),
                 Y= Pos.Bottom(textView),
                 };
             btnClose.Clicked += ()=>Application.RequestStop();
@@ -68,6 +90,18 @@ namespace Rdmp.Core.CommandLine.Gui
                 };
 
             Add(tableView);
+        }
+
+        private void ClearSql()
+        {
+            textView.Text = "";
+            textView.SetNeedsDisplay();
+        }
+
+        private void ResetSql()
+        {
+            textView.Text = _orignalSql;
+            textView.SetNeedsDisplay();
         }
 
         private void RunOrCancel()
