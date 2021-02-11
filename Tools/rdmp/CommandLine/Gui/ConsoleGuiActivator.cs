@@ -52,7 +52,22 @@ namespace Rdmp.Core.CommandLine.Gui
         public override void Show(string title, string message)
         {
             GetDialogDimensions(out var w, out var h);
-            MessageBox.Query(w,h,title,message,"ok");
+            
+            var btn = new Button("Ok");
+            btn.Clicked +=()=>Application.RequestStop();
+            
+
+            using(var dlg = new Dialog(title,w,h,btn))
+            {
+                dlg.Add(new TextView()
+                    { 
+                        Width = Dim.Fill(),
+                        Height = Dim.Fill(1),
+                        Text = message.Replace("\r\n","\n"),
+                        ReadOnly = true
+                    });
+                Application.Run(dlg);
+            }
         }
         public override bool YesNo(string text, string caption, out bool chosen)
         {
