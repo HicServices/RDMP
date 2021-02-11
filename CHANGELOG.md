@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Better error reporting when item validators crash during validation execution (now includes constraint type, column name and value being validated).
+- Added 'Go To' commands to CLI gui
+
+### Fixed 
+
+- Fixed CLI GUI message boxes bug with very long messages
 
 ## [4.2.4] - 2021-02-05
 
@@ -23,7 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Globals tickbox can now be checked even when there are no explicit files (this allows implicit files e.g. `SimpleFileExtractor` to still run)
-
 
 ### Fixed 
 
