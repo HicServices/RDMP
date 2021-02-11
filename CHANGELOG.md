@@ -6,12 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Dependencies
-
-- Bump System.Drawing.Common from 5.0.0 to 5.0.1
-
 ### Added
 
+- More detailed logging of Type decisions when extracting to database
+- Added ability to cancel ongoing queries in CLI Sql Editor
+- Added 'Reset Sql' and 'Clear Sql' buttons to CLI Sql Editor
+- Added view data/aggregate etc on ColumnInfo objects to list of commands accessible from the CLI gui
+- Added 'Go To' commands to CLI gui
+- Exposed 'Add New Process Task...' to load stages in CLI menu
 - Better error reporting when item validators crash during validation execution (now includes constraint type, column name and value being validated).
 - Added 'Go To' commands to CLI gui
 - Exposed 'Add New Process Task...' to load stages in CLI menu
@@ -19,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed 
 
 - Fixed CLI GUI message boxes bug with very long messages
+
+### Dependencies
+
+- Bump System.Drawing.Common from 5.0.0 to 5.0.1
 
 ## [4.2.4] - 2021-02-05
 
