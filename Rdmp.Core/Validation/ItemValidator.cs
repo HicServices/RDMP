@@ -64,16 +64,16 @@ namespace Rdmp.Core.Validation
 
         private ValidationFailure ValidatePrimaryConstraint(object columnValue)
         {
-            try
-            {
-                if (PrimaryConstraint != null)
-                    return PrimaryConstraint.Validate(columnValue);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error processing PrimaryConstraint validator of Type {PrimaryConstraint.GetType().Name} on column {TargetProperty}.  Value being validated was '{columnValue}'",ex);
-            }
+          if (PrimaryConstraint == null)
             return null;
+          try
+          {
+                return PrimaryConstraint.Validate(columnValue);
+          }
+          catch (Exception ex)
+          {
+              throw new Exception($"Error processing PrimaryConstraint validator of Type {PrimaryConstraint.GetType().Name} on column {TargetProperty}.  Value being validated was '{columnValue}'",ex);
+          }
         }
 
         private ValidationFailure ValidateSecondayConstraints(object columnValue, object[] otherColumns, string[] otherColumnNames)
