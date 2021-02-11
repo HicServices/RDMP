@@ -38,12 +38,13 @@ namespace Rdmp.Core.CommandExecution
     /// <summary>
     /// Builds lists of <see cref="IAtomicCommand"/> for any given RDMP object
     /// </summary>
-    public class AtomicCommandFactory
+    public class AtomicCommandFactory : CommandFactoryBase
     {
         IBasicActivateItems _activator;
-
+        GoToCommandFactory _goto;
         public const string Add = "Add";
         public const string New = "New";
+        public const string GoTo = "Go To";
         public const string Extraction = "Extractability";
         public const string Metadata = "Metadata";
         public const string Alter = "Alter";
@@ -52,6 +53,7 @@ namespace Rdmp.Core.CommandExecution
         public AtomicCommandFactory(IBasicActivateItems activator)
         {
             _activator = activator;
+            _goto = new GoToCommandFactory(_activator);
         }
 
         /// <summary>
@@ -66,6 +68,11 @@ namespace Rdmp.Core.CommandExecution
 
         public IEnumerable<CommandPresentation> GetCommandsWithPresentation(object o)
         {
+            foreach(var cmd in _goto.GetCommands(o))
+            {
+                yield return new CommandPresentation(cmd,GoTo);
+            }
+
             if(_activator.CanActivate(o))
                 yield return new CommandPresentation(new ExecuteCommandActivate(_activator,o));
 
@@ -328,30 +335,6 @@ namespace Rdmp.Core.CommandExecution
 
             if(Is(o, out INamed n))
                 yield return new CommandPresentation(new ExecuteCommandRename(_activator, n)){SuggestedShortcut = "F2" };
-        }
-
-        /// <summary>
-        /// Returns o is <typeparamref name="T"/> but with auto unpacking of <see cref="IMasqueradeAs"/>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="o"></param>
-        /// <param name="match"></param>
-        /// <returns></returns>
-        private bool Is<T>(object o, out T match)
-        {
-            if(o is T)
-            {
-                match = (T)o;
-                return true;
-            }
-
-            if(o is IMasqueradeAs m)
-            {
-                return Is<T>(m.MasqueradingAs(),out match);
-            }
-
-            match = default(T);
-            return false;
         }
     }
 }

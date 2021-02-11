@@ -116,5 +116,10 @@ namespace Rdmp.Core.Startup
         {
             return _linkedRepositoryProvider.GetObjectByID<T>(value);
         }
+
+        public IMapsDirectlyToDatabaseTable GetObjectByID(Type t, int value)
+        {
+            return _linkedRepositoryProvider.GetObjectByID(t,value);
+        }
     }
 }
