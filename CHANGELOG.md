@@ -6,20 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-...
+### Dependencies
+
+- Bump System.Drawing.Common from 5.0.0 to 5.0.1
 
 ### Added
 
 - Better error reporting when item validators crash during validation execution (now includes constraint type, column name and value being validated).
 - Added 'Go To' commands to CLI gui
+- Exposed 'Add New Process Task...' to load stages in CLI menu
 
 ### Fixed 
 
 - Fixed CLI GUI message boxes bug with very long messages
 
 ## [4.2.4] - 2021-02-05
-
-### Added
 
 - Added CLI commands for viewing/changing `UserSettings` e.g. AllowIdentifiableExtractions
 - Added user setting `ShowPipelineCompletedPopup` for always popping a modal dialog on completion of a pipeline execution in the GUI client (e.g. committing a cohort)
