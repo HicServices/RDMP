@@ -283,6 +283,13 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandNewObject(_activator,()=>new ColumnInfo(_activator.RepositoryLocator.CatalogueRepository, Guid.NewGuid().ToString(), "fish", ti)){OverrideCommandName = "Add New ColumnInfo" });
             }
                 
+            if(Is(o,out ColumnInfo colInfo))
+            {
+                yield return new CommandPresentation(new ExecuteCommandViewData(_activator, ViewType.TOP_100, colInfo),"View Data");
+                yield return new CommandPresentation(new ExecuteCommandViewData(_activator, ViewType.Aggregate, colInfo),"View Data");
+                yield return new CommandPresentation(new ExecuteCommandViewData(_activator, ViewType.Distribution, colInfo),"View Data");
+            }
+
             if(Is(o, out AllStandardRegexesNode _))
                 yield return new CommandPresentation(new ExecuteCommandCreateNewStandardRegex(_activator));
 
