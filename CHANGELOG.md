@@ -18,9 +18,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added 'Go To' commands to CLI gui
 
-## [4.2.4] - 2021-02-05
-
 ### Added
+
+- Exposed 'Add New Process Task...' to load stages in CLI menu
+
+## [4.2.4] - 2021-02-05
 
 - Added CLI commands for viewing/changing `UserSettings` e.g. AllowIdentifiableExtractions
 - Added user setting `ShowPipelineCompletedPopup` for always popping a modal dialog on completion of a pipeline execution in the GUI client (e.g. committing a cohort)

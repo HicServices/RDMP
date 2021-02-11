@@ -214,6 +214,12 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandImportShareDefinitionList(_activator){OverrideCommandName = "Import Load"});
             }
 
+            if(Is(o,out LoadStageNode lsn))
+            {
+                yield return new CommandPresentation(new ExecuteCommandCreateNewClassBasedProcessTask(_activator,lsn.LoadMetadata,lsn.LoadStage,null));
+                yield return new CommandPresentation(new ExecuteCommandCreateNewFileBasedProcessTask(_activator,ProcessTaskType.SQLFile,lsn.LoadMetadata,lsn.LoadStage));
+                yield return new CommandPresentation(new ExecuteCommandCreateNewFileBasedProcessTask(_activator,ProcessTaskType.Executable,lsn.LoadMetadata,lsn.LoadStage));
+            }
             if(Is(o,out AllObjectImportsNode _))
                 yield return new CommandPresentation(new ExecuteCommandImportShareDefinitionList(_activator));
 
