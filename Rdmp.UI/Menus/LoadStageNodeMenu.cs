@@ -28,6 +28,9 @@ namespace Rdmp.UI.Menus
         {
             _loadStageNode = loadStageNode;
             _mef = _activator.RepositoryLocator.CatalogueRepository.MEF;
+
+            args.SkipCommand<ExecuteCommandCreateNewClassBasedProcessTask>();
+            args.SkipCommand<ExecuteCommandCreateNewFileBasedProcessTask>();
             
            AddMenu<IDataProvider>("Add Cached Data Provider",t=>typeof(ICachedDataProvider).IsAssignableFrom(t));
            AddMenu<IDataProvider>("Add Data Provider", t=> !typeof(ICachedDataProvider).IsAssignableFrom(t));
