@@ -6,21 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Dependencies
+### Added
 
-- Bump System.Drawing.Common from 5.0.0 to 5.0.1
+- Added ability to cancel ongoing queries in CLI Sql Editor
+- Added 'Reset Sql' and 'Clear Sql' buttons to CLI Sql Editor
+- Added view data/aggregate etc on ColumnInfo objects to list of commands accessible from the CLI gui
+- Added 'Go To' commands to CLI gui
+- Exposed 'Add New Process Task...' to load stages in CLI menu
 
 ### Fixed 
 
 - Fixed CLI GUI message boxes bug with very long messages
 
-### Added
+### Dependencies
 
-- Added 'Go To' commands to CLI gui
-
-### Added
-
-- Exposed 'Add New Process Task...' to load stages in CLI menu
+- Bump System.Drawing.Common from 5.0.0 to 5.0.1
 
 ## [4.2.4] - 2021-02-05
 
