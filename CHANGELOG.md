@@ -6,20 +6,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-...
-
 ### Added
 
 - Added `$foreach Catalogue` option for custom metadata report templates (to allow prefix, suffixes, table of contents etc)
+- Added ability to search for objects by ID in console gui
+- More detailed logging of Type decisions when extracting to database
+- Added ability to cancel ongoing queries in CLI Sql Editor
+- Added 'Reset Sql' and 'Clear Sql' buttons to CLI Sql Editor
+- Added view data/aggregate etc on ColumnInfo objects to list of commands accessible from the CLI gui
+- Added 'Go To' commands to CLI gui
+- Exposed 'Add New Process Task...' to load stages in CLI menu
 
+### Fixed
 
-### Fixed 
-
+- Fixed CLI database selection UI not using password mask symbol (`*`)
+- Fixed CLI GUI message boxes bug with very long messages
 - Fixed Custom Metadata template stripping preceeding whitespace in templated lines e.g. `"  - $Name"` (like you might find in a table of contents section of a template)
 
-## [4.2.4] - 2021-02-05
+### Dependencies
 
-### Added
+- Bump System.Drawing.Common from 5.0.0 to 5.0.1
+
+## [4.2.4] - 2021-02-05
 
 - Added CLI commands for viewing/changing `UserSettings` e.g. AllowIdentifiableExtractions
 - Added user setting `ShowPipelineCompletedPopup` for always popping a modal dialog on completion of a pipeline execution in the GUI client (e.g. committing a cohort)
@@ -28,7 +36,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Globals tickbox can now be checked even when there are no explicit files (this allows implicit files e.g. `SimpleFileExtractor` to still run)
-
 
 ### Fixed 
 
