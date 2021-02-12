@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added `$foreach Catalogue` option for custom metadata report templates (to allow prefix, suffixes, table of contents etc)
 - Added ability to search for objects by ID in console gui
 - More detailed logging of Type decisions when extracting to database
 - Added ability to cancel ongoing queries in CLI Sql Editor
@@ -20,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed CLI database selection UI not using password mask symbol (`*`)
 - Fixed CLI GUI message boxes bug with very long messages
+- Fixed Custom Metadata template stripping preceeding whitespace in templated lines e.g. `"  - $Name"` (like you might find in a table of contents section of a template)
 
 ### Dependencies
 
