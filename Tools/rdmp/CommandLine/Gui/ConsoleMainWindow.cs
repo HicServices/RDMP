@@ -40,6 +40,7 @@ namespace Rdmp.Core.CommandLine.Gui
         {
 			_activator = activator;
             activator.Published += Activator_Published;
+			activator.Emphasise += (s,e)=>Show(e.Request.ObjectToEmphasise);
 		}
 
         private void Activator_Published(IMapsDirectlyToDatabaseTable obj)
@@ -166,7 +167,7 @@ namespace Rdmp.Core.CommandLine.Gui
 				_treeView.Expand(p);
 
 			_treeView.SelectedObject = selected;
-			_treeView.ScrollOffset = _treeView.GetScrollOffsetOf(selected);
+			_treeView.ScrollOffsetVertical = _treeView.GetScrollOffsetOf(selected)-1;
 			_treeView.SetNeedsDisplay();
         }
 
@@ -179,6 +180,15 @@ namespace Rdmp.Core.CommandLine.Gui
         private void Menu()
         {
 			var commands = GetCommands().ToArray();
+
+			foreach(var gotoCommands in commands.OfType<ExecuteCommandShow>())
+            {
+				gotoCommands.FetchDestinationObjects();
+				gotoCommands.OverrideCommandName = "Go To:" + gotoCommands.OverrideCommandName;
+            }
+			
+			// only show viable commands
+			commands = commands.Where(c=>!c.IsImpossible).ToArray();
 
 			if(!commands.Any())
 				return;
