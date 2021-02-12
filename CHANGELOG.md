@@ -15,8 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added 'Go To' commands to CLI gui
 - Exposed 'Add New Process Task...' to load stages in CLI menu
 
-### Fixed 
+### Fixed
 
+- Fixed CLI database selection UI not using password mask symbol (`*`)
 - Fixed CLI GUI message boxes bug with very long messages
 
 ### Dependencies
