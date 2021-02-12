@@ -669,5 +669,44 @@ old""", chunk.Rows[2][2]);
             dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
             Assert.IsNull(dt);
         }
+
+        /// <summary>
+        /// Depicts a case where quotes appear at the start of a string field, in order to parse this IgnoreQuotes is needed
+        /// </summary>
+        [TestCase(true)]
+        [TestCase(false)]
+        public void Test_IgnoreQuotes(bool ignoreQuotes)
+        {
+            var f = Path.Combine(TestContext.CurrentContext.WorkDirectory,"talk.csv");
+            
+            File.WriteAllText(f,@"Field1,Field2
+1,Watch out guys its Billie ""The Killer"" Cole
+2,""The Killer""? I've heard of him hes a bad un");
+
+            DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+            source.PreInitialize(new FlatFileToLoad(new FileInfo(f)), new ThrowImmediatelyDataLoadEventListener());
+            source.Separator = ",";
+            source.MaxBatchSize = DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize;
+            source.StronglyTypeInputBatchSize = DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize;
+            source.StronglyTypeInput = true;
+            source.IgnoreQuotes = ignoreQuotes;
+
+            if(!ignoreQuotes)
+            {
+                var toMem = new ToMemoryDataLoadEventListener(true);
+                var ex = Assert.Throws<ParserException>(()=>source.GetChunk(toMem,new GracefulCancellationToken()));
+                Assert.AreEqual(2,ex.ReadingContext.RawRow);
+                source.Dispose(new ThrowImmediatelyDataLoadEventListener(),null);
+            }
+            else
+            {
+                var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+                Assert.AreEqual(2, dt.Rows.Count);
+                Assert.AreEqual(@"Watch out guys its Billie ""The Killer"" Cole",dt.Rows[0]["Field2"]);
+                Assert.AreEqual(@"""The Killer""? I've heard of him hes a bad un",dt.Rows[1]["Field2"]);
+                source.Dispose(new ThrowImmediatelyDataLoadEventListener(),null);
+            }
+            
+        }
     }
 }
