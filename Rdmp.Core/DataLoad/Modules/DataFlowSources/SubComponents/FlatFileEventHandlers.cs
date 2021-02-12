@@ -55,7 +55,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
         
         public bool ReadingExceptionOccurred(CsvHelperException obj)
         {
-            var line = new FlatFileLine(obj.ReadingContext);
+            var line = new FlatFileLine(obj.Context);
 
             switch (_strategy)
             {
@@ -64,12 +64,12 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
                         _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Ignored ReadingException on " + line.GetLineDescription(), obj));
 
                     //move to next line
-                    _dataPusher.BadLines.Add(obj.ReadingContext.RawRow);
+                    _dataPusher.BadLines.Add(obj.Context.Parser.RawRow);
 
                     break;
                 case BadDataHandlingStrategy.DivertRows:
 
-                    DivertErrorRow(new FlatFileLine(obj.ReadingContext), obj);
+                    DivertErrorRow(new FlatFileLine(obj.Context), obj);
                     break;
 
                 case BadDataHandlingStrategy.ThrowException:
@@ -135,12 +135,5 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
             //move to next line
             _dataPusher.BadLines.Add(line.LineNumber);
         }
-
-        public void RegisterEvents(IReaderConfiguration configuration)
-        {
-            configuration.BadDataFound = s=>BadDataFound(new FlatFileLine(s),true);
-            configuration.ReadingExceptionOccurred = ReadingExceptionOccurred;
-        }
-
     }
 }

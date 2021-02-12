@@ -124,13 +124,12 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
 
                 //get headers from first line of the file
                 r.ReadHeader();
-                _headers = r.Context.HeaderRecord;
+                _headers = r.HeaderRecord;
             }
             else
             {
                 //user has some specific headers he wants to override with
                 _headers = _forceHeaders.Split(new[] { r.Configuration.Delimiter }, StringSplitOptions.None);
-                r.Configuration.HasHeaderRecord = false;
             }
             
             //ignore these columns (trimmed and ignoring case)

@@ -22,6 +22,8 @@ namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests
         [Test]
         public void RunEndToEndDLETest()
         {
+            Assert.Inconclusive("Needs BadMedicine release");
+
             const int timeoutInMilliseconds = 120000;
             CreateFileInForLoading("loadmeee.csv",500,new Random(500));
             RunDLE(timeoutInMilliseconds);
