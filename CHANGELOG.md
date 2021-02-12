@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added `$foreach Catalogue` option for custom metadata report templates (to allow prefix, suffixes, table of contents etc)
+- Added ability to search for objects by ID in console gui
 - More detailed logging of Type decisions when extracting to database
 - Added ability to cancel ongoing queries in CLI Sql Editor
 - Added 'Reset Sql' and 'Clear Sql' buttons to CLI Sql Editor
@@ -15,10 +17,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added 'Go To' commands to CLI gui
 - Exposed 'Add New Process Task...' to load stages in CLI menu
 - Added 'ViewCatalogueData' command for CLI and CLI GUI use
+- Better error reporting when item validators crash during validation execution (now includes constraint type, column name and value being validated).
+- Added 'Go To' commands to CLI gui
+- Exposed 'Add New Process Task...' to load stages in CLI menu
 
-### Fixed 
+### Fixed
 
+- Fixed CLI database selection UI not using password mask symbol (`*`)
 - Fixed CLI GUI message boxes bug with very long messages
+- Fixed Custom Metadata template stripping preceeding whitespace in templated lines e.g. `"  - $Name"` (like you might find in a table of contents section of a template)
 
 ### Dependencies
 

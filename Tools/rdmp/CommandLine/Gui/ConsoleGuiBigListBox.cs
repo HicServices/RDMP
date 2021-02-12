@@ -45,6 +45,7 @@ namespace Rdmp.Core.CommandLine.Gui
         
         private ListView _listView;
         private bool _changes;
+        private TextField mainInput;
 
         /// <summary>
         /// Protected constructor for derived classes that want to do funky filtering and hot swap out lists as search
@@ -175,21 +176,21 @@ namespace Rdmp.Core.CommandLine.Gui
 
                 win.Add(searchLabel);
             
-                var mainInput = new TextField ("") {
+                mainInput = new TextField ("") {
                     X = Pos.Right(searchLabel),
                     Y = Pos.Bottom(_listView),
-                    Width = 40,
+                    Width = 30,
                 };
 
-                btnOk.X = 48;
-                btnCancel.X = 58;
+                btnOk.X = 38;
+                btnCancel.X = 48;
 
                 win.Add(mainInput);
                 mainInput.SetFocus();
                 
                 mainInput.TextChanged += (s) =>
                 {
-                    RestartFiltering(mainInput.Text.ToString()); 
+                    RestartFiltering(); 
                 };
             }
             else
@@ -202,6 +203,8 @@ namespace Rdmp.Core.CommandLine.Gui
             win.Add(btnOk);
             win.Add(btnCancel);
 
+            AddMoreButtonsAfter(win,btnCancel);
+
             var callback = Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds (500), Timer);
 
             Application.Run(win);
@@ -209,6 +212,16 @@ namespace Rdmp.Core.CommandLine.Gui
             Application.MainLoop.RemoveTimeout(callback);
 
             return okClicked;
+        }
+
+        
+
+        /// <summary>
+        /// Last minute method for adding extra stuff to the window (to the right of <paramref name="btnCancel"/>)
+        /// </summary>
+        /// <param name="btnCancel"></param>
+        protected virtual void AddMoreButtonsAfter(Window win, Button btnCancel)
+        {
         }
 
         bool Timer (MainLoop caller)
@@ -230,8 +243,12 @@ namespace Rdmp.Core.CommandLine.Gui
             
             return true;
         }
+        protected void RestartFiltering()
+        {
+            RestartFiltering(mainInput.Text.ToString());
+        }
 
-        private void RestartFiltering(string searchTerm)
+        protected void RestartFiltering(string searchTerm)
         {
             
             lock(_taskCancellationLock)
