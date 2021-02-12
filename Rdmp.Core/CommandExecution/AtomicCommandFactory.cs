@@ -78,6 +78,8 @@ namespace Rdmp.Core.CommandExecution
 
             if(Is(o,out Catalogue c))
             {
+                yield return new CommandPresentation(new ExecuteCommandViewCatalogueData(_activator,c,-1));
+
                 yield return new CommandPresentation(new ExecuteCommandAddNewSupportingSqlTable(_activator, c),Add);
                 yield return new CommandPresentation(new ExecuteCommandAddNewSupportingDocument(_activator, c),Add);
                 yield return new CommandPresentation(new ExecuteCommandAddNewAggregateGraph(_activator, c),Add);
