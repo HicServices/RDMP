@@ -32,6 +32,16 @@ namespace Rdmp.Core.CommandLine.Gui
         /// </summary>
         private string _orignalSql;
 
+        /// <summary>
+        /// The number of seconds to allow queries to run for, can be changed by user
+        /// </summary>
+        private int _timeout = DefaultTimeout;
+
+        /// <summary>
+        /// The default number of seconds to allow queries to run for when no value or an invalid value is specified by the user
+        /// </summary>
+        public const int DefaultTimeout = 300;
+
         public ConsoleGuiSqlEditor(IBasicActivateItems activator,IViewSQLAndResultsCollection collection)
         {
             this._activator = activator;
@@ -58,7 +68,7 @@ namespace Rdmp.Core.CommandLine.Gui
             Add(_btnRunOrCancel);
 
             var resetSql = new Button("Reset Sql"){
-                X= Pos.Right(_btnRunOrCancel),
+                X= Pos.Right(_btnRunOrCancel)+1,
                 Y= Pos.Bottom(textView),
                 };
 
@@ -66,16 +76,32 @@ namespace Rdmp.Core.CommandLine.Gui
             Add(resetSql);
 
             var clearSql = new Button("Clear Sql"){
-                X= Pos.Right(resetSql),
+                X= Pos.Right(resetSql)+1,
                 Y= Pos.Bottom(textView),
                 };
 
             clearSql.Clicked += ()=>ClearSql();
             Add(clearSql);
 
+            var lblTimeout = new Label("Timeout:")
+            {
+                X = Pos.Right(clearSql)+1,
+                Y = Pos.Bottom(textView)
+            };
+            Add(lblTimeout);
+
+            var tbTimeout = new TextField(_timeout.ToString())
+            {
+                X = Pos.Right(lblTimeout),
+                Y = Pos.Bottom(textView),
+                Width = 5
+            };
+            tbTimeout.TextChanged += TbTimeout_TextChanged;
+            
+            Add(tbTimeout);
 
             var btnClose = new Button("Close"){
-                X= Pos.Right(clearSql),
+                X= Pos.Right(tbTimeout)+1,
                 Y= Pos.Bottom(textView),
                 };
             btnClose.Clicked += ()=>Application.RequestStop();
@@ -90,6 +116,14 @@ namespace Rdmp.Core.CommandLine.Gui
                 };
 
             Add(tableView);
+        }
+
+        private void TbTimeout_TextChanged(NStack.ustring value)
+        {
+            if(int.TryParse(value.ToString(),out int newTimeout))
+                _timeout = newTimeout < 0 ? DefaultTimeout : newTimeout;
+            else
+                _timeout = DefaultTimeout;
         }
 
         private void ClearSql()
@@ -143,6 +177,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 {
                     con.Open();
                     _runSqlCmd = db.Server.GetCommand(sql,con);
+                    _runSqlCmd.CommandTimeout = _timeout;
 
                     using(var da = db.Server.GetDataAdapter(_runSqlCmd))
                     {

@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - More detailed logging of Type decisions when extracting to database
 - Added ability to cancel ongoing queries in CLI Sql Editor
 - Added 'Reset Sql' and 'Clear Sql' buttons to CLI Sql Editor
+- Added ability to set custom timeout for queries in CLI Sql Editor
 - Added view data/aggregate etc on ColumnInfo objects to list of commands accessible from the CLI gui
 - Added 'Go To' commands to CLI gui
 - Exposed 'Add New Process Task...' to load stages in CLI menu
