@@ -4,13 +4,17 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using CsvHelper;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataViewing;
 using ReusableLibraryCode.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Globalization;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Terminal.Gui;
@@ -100,8 +104,15 @@ namespace Rdmp.Core.CommandLine.Gui
             
             Add(tbTimeout);
 
-            var btnClose = new Button("Close"){
+            var btnSave = new Button("Save"){
                 X= Pos.Right(tbTimeout)+1,
+                Y= Pos.Bottom(textView),
+                };
+            btnSave.Clicked += ()=>Save();
+            Add(btnSave);
+
+            var btnClose = new Button("Close"){
+                X= Pos.Right(btnSave)+1,
                 Y= Pos.Bottom(textView),
                 };
             btnClose.Clicked += ()=>Application.RequestStop();
@@ -116,6 +127,57 @@ namespace Rdmp.Core.CommandLine.Gui
                 };
 
             Add(tableView);
+        }
+
+        private void Save()
+        {
+            try
+            {
+                var tbl = tableView.Table;
+
+                if(tbl == null)
+                {
+                    MessageBox.ErrorQuery("Cannot Save","No Table Loaded","Ok");
+                    return;
+                }
+
+                var sfd = new SaveDialog("Save","Pick file location to save");
+                Application.Run(sfd);
+
+                if(sfd.Canceled)
+                    return;
+
+                if(sfd.FilePath != null)
+                {
+                    using(var writer = new StreamWriter(File.OpenWrite(sfd.FilePath.ToString())))
+                        using(var w = new CsvWriter(writer,CultureInfo.CurrentCulture))
+                        {
+                            // write headers
+                            foreach(DataColumn c in tbl.Columns)
+                                w.WriteField(c.ColumnName);
+
+                            w.NextRecord();
+
+                            // write rows
+                            foreach (DataRow r in tbl.Rows)
+                            {
+                                foreach (var item in r.ItemArray)
+                                {
+                                    w.WriteField(item);
+                                }
+
+                                w.NextRecord();
+                            }
+                        }
+                    
+                    MessageBox.Query("File Saved","Save completed","Ok");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.ErrorQuery("Save Failed",ex.Message,"Ok");
+            }
+            
         }
 
         private void TbTimeout_TextChanged(NStack.ustring value)
