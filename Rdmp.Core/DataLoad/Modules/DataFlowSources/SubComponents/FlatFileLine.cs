@@ -34,13 +34,13 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
         /// <summary>
         /// The state of the CSVReader when the line was read
         /// </summary>
-        public ReadingContext ReadingContext { get; set; }
+        public CsvContext ReadingContext { get; set; }
 
-        public FlatFileLine(ReadingContext context)
+        public FlatFileLine(CsvContext context)
         {
-            LineNumber = context.RawRow;
-            Cells = context.Record;
-            RawRecord = context.RawRecord;
+            LineNumber = context.Parser.RawRow;
+            Cells = context.Parser.Record;
+            RawRecord = context.Parser.RawRecord;
             ReadingContext = context;
 
             //Doesn't seem to be correct:  StartPosition = context.RawRecordStartPosition;
