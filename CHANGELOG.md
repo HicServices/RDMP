@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Dependencies
 
 - Bump System.Drawing.Common from 5.0.0 to 5.0.1
+- Bump HIC.BadMedicine from 0.1.6 to 1.0.0
 
 ## [4.2.4] - 2021-02-05
 
