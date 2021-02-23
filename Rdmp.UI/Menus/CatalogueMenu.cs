@@ -23,8 +23,6 @@ namespace Rdmp.UI.Menus
 
         public CatalogueMenu(RDMPContextMenuStripArgs args, Catalogue catalogue):base(args,catalogue)
         {
-            //create right click context menu
-            Add(new ExecuteCommandViewCatalogueExtractionSql(_activator).SetTarget(catalogue));
 
             Add(new ExecuteCommandGenerateMetadataReport(_activator, catalogue),Keys.None,AtomicCommandFactory.Metadata);
             Add(new ExecuteCommandImportCatalogueDescriptionsFromShare(_activator, catalogue),Keys.None,AtomicCommandFactory.Metadata);
@@ -34,6 +32,9 @@ namespace Rdmp.UI.Menus
             Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, catalogue,null), Keys.None, AtomicCommandFactory.Add);
 
             Items.Add(new DQEMenuItem(_activator,catalogue));
+
+            //create right click context menu
+            Add(new ExecuteCommandViewCatalogueExtractionSqlUI(_activator){OverrideCommandName = "View Extraction Sql"}.SetTarget(catalogue));
         }
 
     }

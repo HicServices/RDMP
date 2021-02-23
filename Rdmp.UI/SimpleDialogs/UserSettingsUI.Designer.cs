@@ -51,6 +51,7 @@
             this.hlpDebugPerformance = new Rdmp.UI.SimpleControls.HelpIcon();
             this.cbAllowIdentifiableExtractions = new System.Windows.Forms.CheckBox();
             this.hlpIdentifiableExtractions = new Rdmp.UI.SimpleControls.HelpIcon();
+            this.cbShowPipelineCompletedPopup = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // cbShowHomeOnStartup
@@ -281,11 +282,23 @@
             this.hlpIdentifiableExtractions.SuppressClick = false;
             this.hlpIdentifiableExtractions.TabIndex = 14;
             // 
+            // cbShowPipelineCompletedPopup
+            // 
+            this.cbShowPipelineCompletedPopup.AutoSize = true;
+            this.cbShowPipelineCompletedPopup.Location = new System.Drawing.Point(298, 120);
+            this.cbShowPipelineCompletedPopup.Name = "cbShowPipelineCompletedPopup";
+            this.cbShowPipelineCompletedPopup.Size = new System.Drawing.Size(180, 17);
+            this.cbShowPipelineCompletedPopup.TabIndex = 15;
+            this.cbShowPipelineCompletedPopup.Text = "Show Pipeline Completed Popup";
+            this.cbShowPipelineCompletedPopup.UseVisualStyleBackColor = true;
+            this.cbShowPipelineCompletedPopup.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
+            // 
             // UserSettingsFileUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(742, 565);
+            this.Controls.Add(this.cbShowPipelineCompletedPopup);
             this.Controls.Add(this.hlpIdentifiableExtractions);
             this.Controls.Add(this.cbAllowIdentifiableExtractions);
             this.Controls.Add(this.hlpDebugPerformance);
@@ -339,5 +352,6 @@
         private SimpleControls.HelpIcon hlpDebugPerformance;
         private System.Windows.Forms.CheckBox cbAllowIdentifiableExtractions;
         private SimpleControls.HelpIcon hlpIdentifiableExtractions;
+        private System.Windows.Forms.CheckBox cbShowPipelineCompletedPopup;
     }
 }

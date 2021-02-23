@@ -71,7 +71,7 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 X = Pos.Right(lbluser),
                 Y = 0,
-                Width = Dim.Fill(),
+                Width = 15,
             };
             tbuser.TextChanged += (s) => Username = tbuser.Text.ToString();
             
@@ -87,13 +87,15 @@ namespace Rdmp.Core.CommandLine.Gui
             var tbPassword = new TextField(string.Empty){
                 X = Pos.Right(lblPassword),
                 Y = Pos.Bottom(lbluser),
-                Width = Dim.Fill()
+                Width = 15,
+                Secret = true
             };
+
             tbPassword.TextChanged += (s) => Password = tbPassword.Text.ToString();
 
             //////////////////////// Database Type /////////////
 
-            var btnDatabaseType = new Button("Database Type")
+            var btnDatabaseType = new Button($"Database Type ({DatabaseType})")
             {
                 X = 0,
                 Y = Pos.Bottom(lblPassword),
@@ -104,6 +106,8 @@ namespace Rdmp.Core.CommandLine.Gui
                 if (_activator.SelectEnum("Database Type", typeof(DatabaseType), out Enum chosen))
                 {
                     DatabaseType = (DatabaseType) chosen;
+                    btnDatabaseType.Text = $"Database Type ({chosen})";
+                    win.SetNeedsDisplay();
                 }
             };
 
@@ -119,7 +123,7 @@ namespace Rdmp.Core.CommandLine.Gui
             var tbServer = new TextField(string.Empty){
                 X = Pos.Right(lblServer),
                 Y = Pos.Bottom(btnDatabaseType),
-                Width = Dim.Fill()
+                Width = 17
             };
             tbServer.TextChanged += (s) => Server = tbServer.Text.ToString();
             
@@ -136,13 +140,13 @@ namespace Rdmp.Core.CommandLine.Gui
             var tbDatabase = new TextField(string.Empty){
                 X = Pos.Right(lblDatabase),
                 Y = Pos.Bottom(lblServer),
-                Width = Dim.Fill() - 20
+                Width = 15
             };
             tbDatabase.TextChanged += (s) => Database = tbDatabase.Text.ToString();
 
             var btnCreateDatabase = new Button("Create Database")
             {
-                X = Pos.Right(tbDatabase),
+                X = Pos.Right(tbDatabase) + 1,
                 Y = Pos.Bottom(lblServer),
                 Height = 0
             };

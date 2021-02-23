@@ -38,12 +38,13 @@ namespace Rdmp.Core.CommandExecution
     /// <summary>
     /// Builds lists of <see cref="IAtomicCommand"/> for any given RDMP object
     /// </summary>
-    public class AtomicCommandFactory
+    public class AtomicCommandFactory : CommandFactoryBase
     {
         IBasicActivateItems _activator;
-
+        GoToCommandFactory _goto;
         public const string Add = "Add";
         public const string New = "New";
+        public const string GoTo = "Go To";
         public const string Extraction = "Extractability";
         public const string Metadata = "Metadata";
         public const string Alter = "Alter";
@@ -52,6 +53,7 @@ namespace Rdmp.Core.CommandExecution
         public AtomicCommandFactory(IBasicActivateItems activator)
         {
             _activator = activator;
+            _goto = new GoToCommandFactory(_activator);
         }
 
         /// <summary>
@@ -66,11 +68,18 @@ namespace Rdmp.Core.CommandExecution
 
         public IEnumerable<CommandPresentation> GetCommandsWithPresentation(object o)
         {
+            foreach(var cmd in _goto.GetCommands(o))
+            {
+                yield return new CommandPresentation(cmd,GoTo);
+            }
+
             if(_activator.CanActivate(o))
                 yield return new CommandPresentation(new ExecuteCommandActivate(_activator,o));
 
-            if(o is Catalogue c)
+            if(Is(o,out Catalogue c))
             {
+                yield return new CommandPresentation(new ExecuteCommandViewCatalogueData(_activator,c,-1));
+
                 yield return new CommandPresentation(new ExecuteCommandAddNewSupportingSqlTable(_activator, c),Add);
                 yield return new CommandPresentation(new ExecuteCommandAddNewSupportingDocument(_activator, c),Add);
                 yield return new CommandPresentation(new ExecuteCommandAddNewAggregateGraph(_activator, c),Add);
@@ -85,7 +94,7 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandExtractMetadata(_activator, new []{ c},null,null,null,false,null),Metadata);
             }
 
-            if(o is CatalogueFolder cf)
+            if(Is(o,out CatalogueFolder cf))
             {
                 yield return new CommandPresentation(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator)
                 {
@@ -96,7 +105,7 @@ namespace Rdmp.Core.CommandExecution
                 });
             }
 
-            if(o is CatalogueItem ci)
+            if(Is(o,out  CatalogueItem ci))
             {
                 yield return new CommandPresentation(new ExecuteCommandLinkCatalogueItemToColumnInfo(_activator, ci));
                 yield return new CommandPresentation(new ExecuteCommandMakeCatalogueItemExtractable(_activator, ci));
@@ -104,7 +113,7 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandImportCatalogueItemDescription(_activator, ci)){SuggestedShortcut= "I",Ctrl=true };
             }
 
-            if(o is AggregateConfiguration ac)
+            if(Is(o,out  AggregateConfiguration ac))
             {
                 yield return new CommandPresentation(new ExecuteCommandViewSample(_activator, ac));
                 yield return new CommandPresentation(new ExecuteCommandAddNewFilterContainer(_activator,ac));
@@ -118,9 +127,8 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(_activator,ac));
             }
             
-            if(o is IContainer container)
+            if(Is(o,out  IContainer container))
             {
-                
                 string targetOperation = container.Operation == FilterContainerOperation.AND ? "OR" : "AND";
 
                 yield return new CommandPresentation(new ExecuteCommandSet(_activator,container,nameof(IContainer.Operation),targetOperation){OverrideCommandName = $"Set Operation to {targetOperation}" });
@@ -133,10 +141,10 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandViewFilterMatchData(_activator, container, ViewType.Aggregate));
             }
             
-            if(o is AggregatesNode an)
+            if(Is(o,out AggregatesNode an))
                 yield return new CommandPresentation(new ExecuteCommandAddNewAggregateGraph(_activator, an.Catalogue));
 
-            if(o is AllANOTablesNode)
+            if(Is(o,out AllANOTablesNode _))
             {
                 yield return new CommandPresentation(new ExecuteCommandCreateNewANOTable(_activator));
             
@@ -147,12 +155,12 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandExportObjectsToFile(_activator,_activator.CoreChildProvider.AllANOTables));
             }
 
-            if(o is AllCataloguesUsedByLoadMetadataNode aculmd)
+            if(Is(o,out AllCataloguesUsedByLoadMetadataNode aculmd))
             {
                 yield return new CommandPresentation(new ExecuteCommandAssociateCatalogueWithLoadMetadata(_activator, aculmd.LoadMetadata));
             }
 
-            if(o is AllDataAccessCredentialsNode)
+            if(Is(o,out AllDataAccessCredentialsNode _))
             {
                 yield return new CommandPresentation(new ExecuteCommandNewObject(_activator,
                     ()=>new DataAccessCredentials(_activator.RepositoryLocator.CatalogueRepository, "New Blank Credentials " + Guid.NewGuid()))
@@ -161,7 +169,7 @@ namespace Rdmp.Core.CommandExecution
                     });
             }
 
-            if(o is DataAccessCredentialUsageNode usage)
+            if(Is(o,out DataAccessCredentialUsageNode usage))
             {
                 var existingUsages = _activator.RepositoryLocator.CatalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(usage.TableInfo);
 
@@ -169,7 +177,7 @@ namespace Rdmp.Core.CommandExecution
                     yield return new CommandPresentation(new ExecuteCommandSetDataAccessContextForCredentials(_activator, usage, context, existingUsages),SetUsageContext);
             }
 
-            if(o is AllConnectionStringKeywordsNode)
+            if(Is(o,out AllConnectionStringKeywordsNode _))
             {
                 yield return new CommandPresentation(new ExecuteCommandNewObject(_activator,
                     ()=>new ConnectionStringKeyword(_activator.RepositoryLocator.CatalogueRepository,DatabaseType.MicrosoftSQLServer,"NewKeyword", "v"))
@@ -178,7 +186,7 @@ namespace Rdmp.Core.CommandExecution
                     });
             }
 
-            if(o is AllExternalServersNode)
+            if(Is(o,out AllExternalServersNode _))
             {
                 yield return new CommandPresentation(new ExecuteCommandCreateNewExternalDatabaseServer(_activator, null,PermissableDefaults.None));
                 
@@ -196,34 +204,46 @@ namespace Rdmp.Core.CommandExecution
                     yield return new CommandPresentation(new ExecuteCommandCreateNewExternalDatabaseServer(_activator, kvp.Value, kvp.Key));
             }
 
-            if(o is AllFreeCohortIdentificationConfigurationsNode || o is AllProjectCohortIdentificationConfigurationsNode)
+            if(Is(o,out AllFreeCohortIdentificationConfigurationsNode _) || Is(o,out AllProjectCohortIdentificationConfigurationsNode _))
                 yield return new CommandPresentation(new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator));
 
-            if(o is AllGovernanceNode)
+            if(Is(o,out AllGovernanceNode _))
                 yield return new CommandPresentation(new ExecuteCommandCreateNewGovernancePeriod(_activator));
 
-            if(o is AllLoadMetadatasNode)
+            if(Is(o,out AllLoadMetadatasNode _))
             {
                 yield return new CommandPresentation(new ExecuteCommandCreateNewLoadMetadata(_activator));
                 yield return new CommandPresentation(new ExecuteCommandImportShareDefinitionList(_activator){OverrideCommandName = "Import Load"});
             }
 
-            if(o is AllObjectImportsNode)
+            if(Is(o,out LoadStageNode lsn))
+            {
+                yield return new CommandPresentation(new ExecuteCommandCreateNewClassBasedProcessTask(_activator,lsn.LoadMetadata,lsn.LoadStage,null));
+                yield return new CommandPresentation(new ExecuteCommandCreateNewFileBasedProcessTask(_activator,ProcessTaskType.SQLFile,lsn.LoadMetadata,lsn.LoadStage));
+                yield return new CommandPresentation(new ExecuteCommandCreateNewFileBasedProcessTask(_activator,ProcessTaskType.Executable,lsn.LoadMetadata,lsn.LoadStage));
+            }
+
+            if(Is(o, out LoadDirectoryNode ldn))
+            {
+                yield return new CommandPresentation(new ExecuteCommandSet(_activator,ldn.LoadMetadata,typeof(LoadMetadata).GetProperty(nameof(LoadMetadata.LocationOfFlatFiles))));
+            }
+
+            if(Is(o,out AllObjectImportsNode _))
                 yield return new CommandPresentation(new ExecuteCommandImportShareDefinitionList(_activator));
 
-            if(o is AllPermissionWindowsNode)
+            if(Is(o,out AllPermissionWindowsNode _))
                 yield return new CommandPresentation(new ExecuteCommandCreateNewPermissionWindow(_activator));
 
-            if(o is AllPluginsNode)
+            if(Is(o,out AllPluginsNode _))
             {
                 yield return new CommandPresentation(new ExecuteCommandAddPlugins(_activator));
                 yield return new CommandPresentation(new ExecuteCommandExportPlugins(_activator));
             }
 
-            if(o is AllRDMPRemotesNode)
+            if(Is(o,out AllRDMPRemotesNode _))
                 yield return new CommandPresentation(new ExecuteCommandCreateNewRemoteRDMP(_activator));
 
-            if(o is AllServersNode)
+            if(Is(o,out AllServersNode _))
             {
                 yield return new CommandPresentation(new ExecuteCommandImportTableInfo(_activator,null,false));
                 yield return new CommandPresentation(new ExecuteCommandBulkImportTableInfos(_activator));
@@ -271,18 +291,25 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandNewObject(_activator,()=>new ColumnInfo(_activator.RepositoryLocator.CatalogueRepository, Guid.NewGuid().ToString(), "fish", ti)){OverrideCommandName = "Add New ColumnInfo" });
             }
                 
-            if(o is AllStandardRegexesNode)
+            if(Is(o,out ColumnInfo colInfo))
+            {
+                yield return new CommandPresentation(new ExecuteCommandViewData(_activator, ViewType.TOP_100, colInfo),"View Data");
+                yield return new CommandPresentation(new ExecuteCommandViewData(_activator, ViewType.Aggregate, colInfo),"View Data");
+                yield return new CommandPresentation(new ExecuteCommandViewData(_activator, ViewType.Distribution, colInfo),"View Data");
+            }
+
+            if(Is(o, out AllStandardRegexesNode _))
                 yield return new CommandPresentation(new ExecuteCommandCreateNewStandardRegex(_activator));
 
-            if(o is ArbitraryFolderNode f)
+            if(Is(o, out ArbitraryFolderNode f))
                 if(f.CommandGetter != null)
                     foreach(IAtomicCommand cmd in f.CommandGetter())
                         yield return new CommandPresentation(cmd);
 
-            if(o is CacheProgress cp)
+            if(Is(o, out CacheProgress cp))
                 yield return new CommandPresentation(new ExecuteCommandSetPermissionWindow(_activator,cp));
 
-            if(o is SelectedDataSets sds)
+            if(Is(o, out SelectedDataSets sds))
             {
                 yield return new CommandPresentation(new ExecuteCommandAddNewFilterContainer(_activator,sds));
                 yield return new CommandPresentation(new ExecuteCommandImportFilterContainerTree(_activator,sds));
@@ -291,27 +318,27 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandViewExtractionSql(_activator,sds));
             }
             
-            if(o is ProjectCataloguesNode pcn)
+            if(Is(o, out ProjectCataloguesNode pcn))
             {
                 yield return new CommandPresentation(new ExecuteCommandMakeCatalogueProjectSpecific(_activator).SetTarget(pcn.Project));
                 yield return new CommandPresentation(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator).SetTarget(pcn.Project));
                 yield return new CommandPresentation(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator).SetTarget(pcn.Project));
             }
 
-            if(o is ProjectCohortIdentificationConfigurationAssociationsNode pccan)
+            if(Is(o, out ProjectCohortIdentificationConfigurationAssociationsNode pccan))
             {
                 yield return new CommandPresentation(new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator).SetTarget(pccan.Project));
                 yield return new CommandPresentation(new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator).SetTarget(pccan.Project));
             }
 
-            if(o is ProjectSavedCohortsNode savedCohortsNode )
+            if(Is(o, out ProjectSavedCohortsNode savedCohortsNode ))
             {
                 yield return new CommandPresentation(new ExecuteCommandCreateNewCohortFromFile(_activator,null).SetTarget(savedCohortsNode.Project));
                 yield return new CommandPresentation(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator,null).SetTarget(savedCohortsNode.Project));
                 yield return new CommandPresentation(new ExecuteCommandCreateNewCohortFromCatalogue(_activator).SetTarget(savedCohortsNode.Project));
             }
 
-            if(o is IArgument a)
+            if(Is(o, out IArgument a))
             {
                 yield return new CommandPresentation(new ExecuteCommandSetArgument(_activator,a));
 
@@ -329,30 +356,6 @@ namespace Rdmp.Core.CommandExecution
 
             if(Is(o, out INamed n))
                 yield return new CommandPresentation(new ExecuteCommandRename(_activator, n)){SuggestedShortcut = "F2" };
-        }
-
-        /// <summary>
-        /// Returns o is <typeparamref name="T"/> but with auto unpacking of <see cref="IMasqueradeAs"/>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="o"></param>
-        /// <param name="match"></param>
-        /// <returns></returns>
-        private bool Is<T>(object o, out T match)
-        {
-            if(o is T)
-            {
-                match = (T)o;
-                return true;
-            }
-
-            if(o is IMasqueradeAs m)
-            {
-                return Is<T>(m.MasqueradingAs(),out match);
-            }
-
-            match = default(T);
-            return false;
         }
     }
 }

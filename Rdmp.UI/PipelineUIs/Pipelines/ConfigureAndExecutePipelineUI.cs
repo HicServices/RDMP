@@ -10,6 +10,7 @@ using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -23,8 +24,7 @@ using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
-
-
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.PipelineUIs.Pipelines
 {
@@ -187,6 +187,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             progressUI1.ShowRunning(true);
 
             bool success = false;
+            Exception exception = null;
 
             //start a new thread
             Task t = new Task(() =>
@@ -199,6 +200,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
                 catch (Exception ex)
                 {
                     fork.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Pipeline execution failed", ex));
+                    exception = ex;
                 }
                 
             }
@@ -219,6 +221,20 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
                 progressUI1.ShowRunning(false);
 
                 btnExecute.Text = "Execute"; //make it so user can execute again
+
+                if(UserSettings.ShowPipelineCompletedPopup)
+                {
+                    if(success)
+                        WideMessageBox.Show("Pipeline Completed","Pipeline execution completed",WideMessageBoxTheme.Help);
+                    else
+                    {
+                        var worst = progressUI1.GetWorst();
+
+                        if(UserSettings.ShowPipelineCompletedPopup)
+                            ExceptionViewer.Show("Pipeline crashed",exception ?? worst?.Exception);
+                    }
+                }
+
             }, TaskScheduler.FromCurrentSynchronizationContext());
 
             t.Start();

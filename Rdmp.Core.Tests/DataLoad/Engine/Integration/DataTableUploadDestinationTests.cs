@@ -1263,6 +1263,48 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
             Assert.AreEqual(expectedTypeForBatch2, tt.GetCSharpTypeForSQLDBType(colAfter.DataType.SQLType));
         }
+
+        
+        [Test]
+        public void TwoBatch_ExplicitRealDataType()
+        {
+            var token = new GracefulCancellationToken();
+            DiscoveredDatabase db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+            var toConsole = new ThrowImmediatelyDataLoadEventListener();
+            var toMemory = new ToMemoryDataLoadEventListener(true);
+
+            DataTableUploadDestination destination = new DataTableUploadDestination();
+            destination.PreInitialize(db, toConsole);
+            destination.AllowResizingColumnsAtUploadTime = true;
+            destination.AddExplicitWriteType("FloatCol","real");
+
+            DataTable dt1 = new DataTable();
+            dt1.Columns.Add("FloatCol", typeof(string));
+            dt1.Rows.Add(new[] { "1.51" });
+
+            dt1.TableName = "DataTableUploadDestinationTests";
+
+            DataTable dt2 = new DataTable();
+            dt2.Columns.Add("FloatCol", typeof(string));
+            dt2.Rows.Add(new[] { "99.9999" });
+
+            dt2.TableName = "DataTableUploadDestinationTests";
+
+            destination.ProcessPipelineData(dt1, toConsole, token);
+
+            Assert.AreEqual("real", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("FloatCol").DataType.SQLType);
+
+            destination.ProcessPipelineData(dt2, toMemory, token);
+
+            destination.Dispose(toConsole, null);
+
+            Assert.IsTrue(db.ExpectTable("DataTableUploadDestinationTests").Exists());
+            Assert.AreEqual(2, db.ExpectTable("DataTableUploadDestinationTests").GetRowCount());
+
+            // should still be real
+            Assert.AreEqual("real", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("FloatCol").DataType.SQLType);
+
+        }
         #endregion
     }
 }

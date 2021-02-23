@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
+using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui
 {
@@ -17,6 +18,7 @@ namespace Rdmp.Core.CommandLine.Gui
     {
         private readonly Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> _masterCollection;
         private SearchablesMatchScorer _scorer;
+        private TextField txtId;
 
         /// <summary>
         /// The maximum number of objects to show in the list box
@@ -51,6 +53,25 @@ namespace Rdmp.Core.CommandLine.Gui
 
         }
 
+        protected override void AddMoreButtonsAfter(Window win, Button btnCancel)
+        {
+            var lbl = new Label("ID:"){
+                X = Pos.Right(btnCancel) + 1,
+                Y = Pos.Top(btnCancel)
+            };
+            win.Add(lbl);
+            
+            txtId = new TextField(){
+                X = Pos.Right(lbl),
+                Y = Pos.Top(lbl),
+                Width = 5
+            };
+
+            txtId.TextChanged += s=>RestartFiltering();
+
+            win.Add(txtId);
+        }
+
         public ConsoleGuiSelectOne(ICoreChildProvider coreChildProvider, IMapsDirectlyToDatabaseTable[] availableObjects):this()
         {
             _masterCollection = availableObjects.ToDictionary(k=>k,v=>coreChildProvider.GetDescendancyListIfAnyFor(v));
@@ -62,6 +83,11 @@ namespace Rdmp.Core.CommandLine.Gui
             if(token.IsCancellationRequested)
                 return new List<IMapsDirectlyToDatabaseTable>();
              
+            if(int.TryParse(txtId.Text.ToString(), out int searchForID))
+                _scorer.ID = searchForID;
+            else 
+                _scorer.ID = null;
+
             var dict = _scorer.ScoreMatches(_masterCollection, searchText, token,null);
 
             //can occur if user punches many keys at once

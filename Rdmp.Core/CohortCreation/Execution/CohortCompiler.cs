@@ -295,7 +295,7 @@ namespace Rdmp.Core.CohortCreation.Execution
                 throw new KeyNotFoundException("Cannot launch task because it is not in the list of current Tasks");
 
             if(compileable.State != CompilationState.NotScheduled)
-                throw new ArgumentException("Task must be in state NotScheduled, try clicking refreshing");
+                throw new ArgumentException($"Task must be in state NotScheduled but was {compileable.State}");
 
             KickOff(compileable, Tasks[compileable], timeout, cacheOnCompletion);
         }

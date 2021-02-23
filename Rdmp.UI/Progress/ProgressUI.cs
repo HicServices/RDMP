@@ -398,6 +398,22 @@ namespace Rdmp.UI.Progress
         {
             lblCrashed.Visible = true;
         }
+
+        
+        /// <summary>
+        /// Returns the worst message recorded in the UI
+        /// </summary>
+        /// <returns></returns>
+        public NotifyEventArgs GetWorst()
+        {
+            
+            var worstEntry = (olvProgressEvents.Objects ?? new object[0]).OfType<ProgressUIEntry>().Union(NotificationQueue).OrderByDescending(e=>e.ProgressEventType).FirstOrDefault();
+            
+            if(worstEntry == null)
+                return null;
+
+            return new NotifyEventArgs(worstEntry.ProgressEventType,worstEntry.Message,worstEntry.Exception);
+        }
     }
     internal class QueuedProgressMessage
     {

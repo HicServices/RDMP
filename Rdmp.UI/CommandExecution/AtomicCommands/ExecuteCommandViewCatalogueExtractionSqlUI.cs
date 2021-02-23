@@ -16,17 +16,17 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandViewCatalogueExtractionSql:BasicUICommandExecution,IAtomicCommandWithTarget
+    public class ExecuteCommandViewCatalogueExtractionSqlUI:BasicUICommandExecution,IAtomicCommandWithTarget
     {
         private Catalogue _catalogue;
 
         [UseWithObjectConstructor]
-        public ExecuteCommandViewCatalogueExtractionSql(IActivateItems activator,Catalogue catalogue): this(activator)
+        public ExecuteCommandViewCatalogueExtractionSqlUI(IActivateItems activator,Catalogue catalogue): this(activator)
         {
             _catalogue = catalogue;
         }
 
-        public ExecuteCommandViewCatalogueExtractionSql(IActivateItems activator) : base(activator)
+        public ExecuteCommandViewCatalogueExtractionSqlUI(IActivateItems activator) : base(activator)
         {
         }
 

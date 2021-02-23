@@ -68,13 +68,26 @@ namespace Rdmp.UI.Menus
                     
             if(o != null && !(o is RDMPCollection))
                 ActivateCommandMenuItem = Add(new ExecuteCommandActivate(_activator,args.Masquerader?? o));
+        }
 
-            if(o is DatabaseEntity e)
+        /// <summary>
+        /// Register an event for opening the supplied dropdown that fetches all lazy objects and updates command viability of subitems (see <see cref="ExecuteCommandShow.FetchDestinationObjects"/>
+        /// </summary>
+        /// <param name="gotoMenu"></param>
+        public static void RegisterFetchGoToObjecstCallback(ToolStripMenuItem gotoMenu)
+        {
+            gotoMenu.DropDownOpening += (s, e) =>
             {
-                var gotoMenuBuilder = new GoToMenuBuilder(_activator);
-                Items.Add(gotoMenuBuilder.GetMenu(e,args.Masquerader));
-
-            }
+                    foreach(var mi in gotoMenu.DropDownItems.OfType<ToolStripMenuItem>())
+                    {
+                        if(mi.Tag is ExecuteCommandShow cmd)
+                        {   
+                            cmd.FetchDestinationObjects();
+                            mi.Enabled = !cmd.IsImpossible;
+                            mi.ToolTipText = cmd.ReasonCommandImpossible;
+                        }
+                    }
+            };
         }
 
         protected void ReBrandActivateAs(string newTextForActivate, RDMPConcept newConcept, OverlayKind overlayKind = OverlayKind.None)
@@ -176,14 +189,18 @@ namespace Rdmp.UI.Menus
                 Add(new ExecuteCommandRefreshObject(_activator, databaseEntity), Keys.F5);
             
             Add(new ExecuteCommandShowKeywordHelp(_activator, _args));
+            
+            var gotoMenu = Items.OfType<ToolStripMenuItem>().FirstOrDefault(i=>i.Text.Equals(AtomicCommandFactory.GoTo));
 
+            if(gotoMenu != null)
+                RegisterFetchGoToObjecstCallback(gotoMenu);
         }
                 
         private void AddFactoryMenuItems()
         {
             var factory = new AtomicCommandFactory(_activator);
                         
-            foreach (var toPresent in factory.GetCommandsWithPresentation(_o))
+            foreach (var toPresent in factory.GetCommandsWithPresentation(_args.Masquerader ?? _o))
             {
                 if(_args.ShouldSkipCommand(toPresent.Command))
                     continue;

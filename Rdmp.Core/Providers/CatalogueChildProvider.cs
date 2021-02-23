@@ -963,7 +963,8 @@ namespace Rdmp.Core.Providers
 
 
                 //record the children
-                AddToDictionaries(new HashSet<object>(lookups), descendancy.Add(lookupsNode));
+                AddToDictionaries(new HashSet<object>(lookups.Select(l=>new CatalogueLookupUsageNode(c,l))), 
+                    descendancy.Add(lookupsNode));
             }
 
             if (regularAggregates.Any())
@@ -1292,7 +1293,8 @@ namespace Rdmp.Core.Providers
                 if (!AllMasqueraders.ContainsKey(key))
                     AllMasqueraders.AddOrUpdate(key, new HashSet<IMasqueradeAs>(), (o, set) => set);
 
-                AllMasqueraders[key].Add(masquerader);
+                lock(AllMasqueraders)
+                    AllMasqueraders[key].Add(masquerader);
             }
             
         }
@@ -1315,7 +1317,7 @@ namespace Rdmp.Core.Providers
             //there was a horrible problem with 
             _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(
                 "Could not add '" + key + "' to Ascendancy Tree with parents " + newRoute +
-                " because it is already listed under hierarchy " + oldRoute, CheckResult.Fail));
+                " because it is already listed under hierarchy " + oldRoute, CheckResult.Warning));
             
             return oldRoute;
         
