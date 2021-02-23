@@ -255,6 +255,13 @@ namespace Rdmp.UI.SimpleDialogs
                 if(split.Length >=2 && CommentStore.ContainsKey(split[1]))
                     NavigateTo(split[1]);
             }
+            else
+            {
+                var text = e.LinkText.TrimEnd('.',')');
+
+                if(CommentStore.ContainsKey(text))
+                    NavigateTo(text);
+            }
         }
 
         private void NavigateTo(string keyword)
