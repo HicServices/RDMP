@@ -22,7 +22,7 @@ build_script:
   - ps: Rename-Item -Path "./Tests.Common/TestDatabases.appveyor.txt" -NewName "TestDatabases.txt"
   - ps: dotnet build HIC.DataManagementPlatform.sln /v:q
   - ps: dotnet publish "./Tools/rdmp" -r win-x64
-  - ps: ./Tools/rdmp/bin/Debug/netcoreapp2.2/win-x64/rdmp install localhost\SQL2017 TEST_ -D -u sa -p Password12!
+  - ps: ./Tools/rdmp/bin/Debug/netcoreapp3.1/win-x64/rdmp install localhost\SQL2017 TEST_ -D -u sa -p Password12!
   
   # Run the windows tests with a custom encryption key
   - ps: Remove-Item "./Tools/rdmp/bin/Debug/netcoreapp2.2/win-x64/Databases.yaml"
