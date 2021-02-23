@@ -49,7 +49,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AutocompleteMenu" Version="1.3.5" />
     <PackageReference Include="fernandreu.ScintillaNET" Version="4.0.4" />
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net461" Version="1.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

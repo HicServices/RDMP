@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using AutocompleteMenuNS;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
@@ -25,38 +24,38 @@ using ScintillaNET;
 namespace Rdmp.UI.AutoComplete
 {
     /// <summary>
-    /// Creates autocomplete menu items for <see cref="AutocompleteMenuNS"/> library based on RDMP objects (e.g. <see cref="TableInfo"/>)
+    /// Creates autocomplete strings based on RDMP objects (e.g. <see cref="TableInfo"/>)
     /// </summary>
     public class AutoCompleteProvider : IAutoCompleteProvider
     {
-        private readonly IActivateItems _activator;
-        private AutocompleteMenu _autocomplete = new AutocompleteMenu();
-
-        List<AutocompleteItem> items = new List<AutocompleteItem>();
-        private ImageList _imageList;
+        HashSet<string> items = new HashSet<string>();
 
         public AutoCompleteProvider(IActivateItems activator)
         {
-            _activator = activator;
-
-            var il = new ImageList();
-            foreach(var kvp in _activator.CoreIconProvider.GetImageList(true))
-            {
-                il.Images.Add(kvp.Key,kvp.Value);
-            }
-
-            _imageList = il;
-            _autocomplete.ImageList = _imageList;
-            _autocomplete.SearchPattern = @"[\w@\.]";
-            _autocomplete.AllowsTabKey = true;
         }
-
 
         public void RegisterForEvents(Scintilla queryEditor)
         {
-            _autocomplete.TargetControlWrapper = new ScintillaWrapper(queryEditor);
+            queryEditor.CharAdded += scintilla_CharAdded;
         }
-        
+
+
+        private void scintilla_CharAdded(object sender, CharAddedEventArgs e)
+        {
+            var scintilla = (Scintilla)sender;
+
+            // Find the word start
+            var currentPos = scintilla.CurrentPosition;
+            var wordStartPos = scintilla.WordStartPosition(currentPos, false);
+
+            // Display the autocompletion list
+            var lenEntered = currentPos - wordStartPos;
+            if (lenEntered > 0)
+            {
+                if (!scintilla.AutoCActive)
+                    scintilla.AutoCShow(lenEntered, string.Join(' ',items.ToArray()));
+            }
+        }
         public void Add(ITableInfo tableInfo)
         {
             Add(tableInfo,LoadStage.PostLoad);
@@ -69,40 +68,21 @@ namespace Rdmp.UI.AutoComplete
             var table = tableInfo.GetRuntimeName(stage);
             var dbName = tableInfo.GetDatabaseRuntimeName(stage);
 
-            var snip = new SubstringAutocompleteItem(col);
-            snip.MenuText = col;
-
             var fullySpecified = syntaxHelper.EnsureFullyQualified(dbName, tableInfo.Schema, table, col);
-
-            snip.Text = fullySpecified;
-            snip.Tag = columnInfo;
-            snip.ImageIndex = GetIndexFor(columnInfo, RDMPConcept.ColumnInfo.ToString());
-            
-            AddUnlessDuplicate(snip);
+           
+            AddUnlessDuplicate(fullySpecified);
         }
 
         public void Add(ColumnInfo columnInfo)
         {
-            var snip = new SubstringAutocompleteItem(columnInfo.GetRuntimeName());
-            snip.MenuText = columnInfo.GetRuntimeName();
-            snip.Text = columnInfo.GetFullyQualifiedName();
-            snip.Tag = columnInfo;
-            snip.ImageIndex = GetIndexFor(columnInfo, RDMPConcept.ColumnInfo.ToString());
-
-            AddUnlessDuplicate(snip);
+            AddUnlessDuplicate(columnInfo.GetFullyQualifiedName());
         }
 
         private void Add(PreLoadDiscardedColumn discardedColumn, ITableInfo tableInfo, string rawDbName)
         {
-            var snip = new SubstringAutocompleteItem(discardedColumn.GetRuntimeName());
             var colName = discardedColumn.GetRuntimeName();
-            snip.MenuText = colName;
-
-            snip.Text = tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(rawDbName,null, tableInfo.GetRuntimeName(), colName);
-            snip.Tag = discardedColumn;
-            snip.ImageIndex = GetIndexFor(discardedColumn, RDMPConcept.ColumnInfo.ToString());
-
-            AddUnlessDuplicate(snip);
+            
+            AddUnlessDuplicate(tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(rawDbName,null, tableInfo.GetRuntimeName(), colName));
         }
 
         public void Add(IColumn column)
@@ -116,51 +96,15 @@ namespace Rdmp.UI.AutoComplete
             {
                 return;
             }
-            var snip = new SubstringAutocompleteItem(runtimeName);
-            snip.MenuText = column.GetRuntimeName();
-            snip.Text = column.SelectSQL;
-            snip.Tag = column;
-            snip.ImageIndex = GetImageIndexForType(column);
 
-            AddUnlessDuplicate(snip);
+            AddUnlessDuplicate(column.SelectSQL);
         }
 
-        private void AddUnlessDuplicate(AutocompleteItem snip)
+        private void AddUnlessDuplicate(string text)
         {
-            //already got this snip
-            if(items.Any(i=>i.Text.Equals(snip.Text) && i.MenuText.Equals(snip.MenuText)))
-                return;
-
-            if(_activator == null)
-                throw new Exception("You cannot add items to AutoCompleteProvider until it has an ItemActivator");
-
-            snip.ToolTipTitle = "Code Snip";
-            snip.ToolTipText = snip.Text;
-            
-            items.Add(snip);
-
-            _autocomplete.SetAutocompleteItems(items);
+            items.Add(text);
         }
         
-        private int GetIndexFor(object o, string key)
-        {
-            return _imageList.Images.IndexOfKey(IsFavourite(o) ? key + "Favourite" : key);
-        }
-        
-        private bool IsFavourite(object potentialFavourite)
-        {
-            var dbObj = potentialFavourite as IMapsDirectlyToDatabaseTable;
-            return  dbObj != null && _activator.FavouritesProvider.IsFavourite(dbObj);
-        }
-
-        private int GetImageIndexForType(IColumn column)
-        {
-            if (column is ExtractionInformation || column is ExtractableColumn || column is ReleaseIdentifierSubstitution)
-                return GetIndexFor(column, RDMPConcept.ExtractionInformation.ToString());
-
-            return GetIndexFor(column, RDMPConcept.ColumnInfo.ToString());
-        }
-
         public void AddSQLKeywords(IQuerySyntaxHelper syntaxHelper)
         {
             if (syntaxHelper == null)
@@ -168,34 +112,19 @@ namespace Rdmp.UI.AutoComplete
 
             foreach (KeyValuePair<string, string> kvp in syntaxHelper.GetSQLFunctionsDictionary())
             {
-                var snip = new SubstringAutocompleteItem(kvp.Key);
-                snip.MenuText = kvp.Key;
-                snip.Text = kvp.Value;
-                snip.Tag = kvp;
-                snip.ImageIndex = GetIndexFor(null, RDMPConcept.SQL.ToString());//sql icon
-
-                AddUnlessDuplicate(snip);
+                AddUnlessDuplicate(kvp.Value);
             }
         }
 
         public void Add(ISqlParameter parameter)
         {
-            string name = parameter.ParameterName;
-
-            var snip = new SubstringAutocompleteItem(name);
-            snip.Tag = name;
-            snip.Text = parameter.ParameterName;
-            snip.ImageIndex = GetIndexFor(parameter, RDMPConcept.ParametersNode.ToString());//parameter icon
-
-            snip.ToolTipText = snip.ToString();
-
-            AddUnlessDuplicate(snip);
+            AddUnlessDuplicate(parameter.ParameterName);
         }
         
         public void Add(ITableInfo tableInfo, LoadStage loadStage)
         {
             //we already have it or it is not setup properly
-            if(items.Any(i=>i.Tag.Equals(tableInfo))||string.IsNullOrWhiteSpace(tableInfo.Database) || string.IsNullOrWhiteSpace(tableInfo.Server))
+            if(string.IsNullOrWhiteSpace(tableInfo.Database) || string.IsNullOrWhiteSpace(tableInfo.Server))
                 return;
             
             var runtimeName = tableInfo.GetRuntimeName(loadStage);
@@ -203,13 +132,7 @@ namespace Rdmp.UI.AutoComplete
 
             var syntaxHelper = tableInfo.GetQuerySyntaxHelper();
             var fullSql = syntaxHelper.EnsureFullyQualified(dbName,null, runtimeName);
-
-            var snip = new SubstringAutocompleteItem(tableInfo.GetRuntimeName());
-            snip.MenuText = runtimeName; //name of table
-            snip.Text = fullSql;//full SQL
-            snip.Tag = tableInfo; //record object for future reference
-            snip.ImageIndex = GetIndexFor(tableInfo,RDMPConcept.TableInfo.ToString());
-            
+                        
 
             foreach (IHasStageSpecificRuntimeName o in tableInfo.GetColumnsAtStage(loadStage))
             {
@@ -224,22 +147,12 @@ namespace Rdmp.UI.AutoComplete
                 else throw new Exception("Expected IHasStageSpecificRuntimeName returned by TableInfo.GetColumnsAtStage to return only ColumnInfos and PreLoadDiscardedColumns.  It returned a '" + o.GetType().Name +"'");
             }
 
-            AddUnlessDuplicate(snip);
+            AddUnlessDuplicate(fullSql);
         }
 
         public void Add(DiscoveredTable discoveredTable)
-        {
-            if (items.Any(i => i.Tag.Equals(discoveredTable)))
-                return;
-            
-            var snip = new SubstringAutocompleteItem(discoveredTable.GetRuntimeName());
-            snip.MenuText = discoveredTable.GetRuntimeName(); //name of table
-            snip.Text = discoveredTable.GetFullyQualifiedName();//full SQL
-            snip.Tag = discoveredTable; //record object for future reference
-            snip.ImageIndex = GetIndexFor(discoveredTable, RDMPConcept.TableInfo.ToString());
-
-
-            AddUnlessDuplicate(snip);
+        {            
+            AddUnlessDuplicate(discoveredTable.GetFullyQualifiedName());
 
             DiscoveredColumn[] columns = null;
             try
@@ -259,59 +172,17 @@ namespace Rdmp.UI.AutoComplete
 
         private void Add(DiscoveredColumn discoveredColumn)
         {
-            if (items.Any(i => i.Tag.Equals(discoveredColumn)))
-                return;
-
-            var snip = new SubstringAutocompleteItem(discoveredColumn.GetRuntimeName());
-            snip.MenuText = discoveredColumn.GetRuntimeName(); //name of table
-            snip.Text = discoveredColumn.GetFullyQualifiedName();//full SQL
-            snip.Tag = discoveredColumn; //record object for future reference
-            snip.ImageIndex = GetIndexFor(discoveredColumn, RDMPConcept.ColumnInfo.ToString());
-
-            AddUnlessDuplicate(snip);
+            AddUnlessDuplicate(discoveredColumn.GetFullyQualifiedName());
         }
 
         public void Clear()
         {
             items.Clear();
-            _autocomplete.SetAutocompleteItems(items);
         }
 
         public void Add(Type type)
         {
-            //we already have it
-            if (items.Any(i => i.Tag.Equals(type)))
-                return;
-
-            var snip = new SubstringAutocompleteItem(type.Name);
-            snip.MenuText = type.Name; //name of table
-            snip.Text = type.Name;//full text
-            snip.Tag = type; //record object for future reference
-
-            if (!_imageList.Images.ContainsKey(type.Name))
-            {
-                var img = _activator.CoreIconProvider.GetImage(type);
-                if (img != null)
-                    _imageList.Images.Add(type.Name, img);
-            }
-
-            snip.ImageIndex = GetIndexFor(type, type.Name);
-            items.Add(snip);
-
-            _autocomplete.SetAutocompleteItems(items);
-        }
-
-        public bool IsShowing()
-        {
-            if (_autocomplete == null)
-                return false;
-
-            return _autocomplete.Visible;
-        }
-
-        public void UnRegister()
-        {
-            _autocomplete.TargetControlWrapper = null;
+            items.Add(type.Name);
         }
 
         public void Add(AggregateConfiguration aggregateConfiguration)
