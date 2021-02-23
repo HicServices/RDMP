@@ -2,7 +2,7 @@ extraction:
   csharp:
     index:
       solution: "HIC.DataManagementPlatform.sln"
-      vstools_version: "15"
+      vstools_version: "16"
       msbuild:
         configuration: "release"
         platform: "Any CPU"
