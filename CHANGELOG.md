@@ -144,6 +144,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ability for Plugins to store custom information about objects in the RDMP Catalogue platform database
 - Added IgnoreColumns setting for DLE to ignore specific columns in the final table completely (not created in RAW/STAGING and not migrated)
 
+### Changed
+
+- CLI tools now built for .Net Core 3.1 since 2.2 has reached EOL
+
 ## [4.1.9] - 2020-09-17
 
 ### Added
