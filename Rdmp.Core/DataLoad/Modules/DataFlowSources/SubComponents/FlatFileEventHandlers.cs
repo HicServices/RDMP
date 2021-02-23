@@ -56,7 +56,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
         public bool ReadingExceptionOccurred(ReadingExceptionOccurredArgs args)
         {
             var obj = args.Exception;
-            var line = new FlatFileLine(obj.Context);
+            var line = new FlatFileLine(obj.Context,true);
 
             switch (_strategy)
             {
@@ -70,7 +70,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
                     break;
                 case BadDataHandlingStrategy.DivertRows:
 
-                    DivertErrorRow(new FlatFileLine(obj.Context), obj);
+                    DivertErrorRow(new FlatFileLine(obj.Context,true), obj);
                     break;
 
                 case BadDataHandlingStrategy.ThrowException:

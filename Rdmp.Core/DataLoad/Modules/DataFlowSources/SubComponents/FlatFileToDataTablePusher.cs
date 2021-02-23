@@ -200,7 +200,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
                 //try adding the next row
                 if (reader.Read())
                 {
-                    peekedLine = new FlatFileLine(reader.Context);
+                    peekedLine = new FlatFileLine(reader.Context,false);
 
                     //peeked line was 'valid' on it's own
                     if (peekedLine.Cells.Length >= _headers.Length)
