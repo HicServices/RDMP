@@ -25,8 +25,7 @@
     <EmbeddedResource Remove="Updates\UpdaterUI.resx" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DockPanelSuite" Version="3.1.0-beta2" />
-    <PackageReference Include="DockPanelSuite.ThemeVS2015" Version="3.1.0-beta2" />
+    <PackageReference Include="DockPanelSuite.ThemeVS2015" Version="3.1.0-beta7" />
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net461" Version="1.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -41,15 +40,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
-    <Compile Update="RDMPMainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Update="RDMPMainForm.cs" />
     <Compile Update="RDMPMainForm.Designer.cs">
       <DependentUpon>RDMPMainForm.cs</DependentUpon>
     </Compile>
-    <Compile Update="WindowManagement\HomePane\HomeUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="WindowManagement\HomePane\HomeUI.cs" />
     <Compile Update="WindowManagement\HomePane\HomeUI.Designer.cs">
       <DependentUpon>HomeUI.cs</DependentUpon>
     </Compile>
@@ -65,9 +60,7 @@
     <Compile Update="WindowManagement\TopBar\RDMPTaskBarUI.Designer.cs">
       <DependentUpon>RDMPTaskBarUI.cs</DependentUpon>
     </Compile>
-    <Compile Update="Menus\RDMPTopMenuStripUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Menus\RDMPTopMenuStripUI.cs" />
     <Compile Update="Menus\RDMPTopMenuStripUI.Designer.cs">
       <DependentUpon>RDMPTopMenuStripUI.cs</DependentUpon>
     </Compile>
