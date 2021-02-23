@@ -69,7 +69,7 @@ task :build_low_warning, [:config,:level,:aserrors] => :restorepackages do |msb,
 end
 
 task :createtestdb, [:config] do |t, args|
-	Dir.chdir("Tools/rdmp/bin/#{args.config}/netcoreapp2.2") do
+	Dir.chdir("Tools/rdmp/bin/#{args.config}/netcoreapp3.1") do
         sh "dotnet ./rdmp.dll install #{DBSERVER} #{DBPREFIX} -D"
     end
 end
