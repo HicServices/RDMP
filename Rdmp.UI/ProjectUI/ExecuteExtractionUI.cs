@@ -13,6 +13,7 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
@@ -265,12 +266,7 @@ namespace Rdmp.UI.ProjectUI
             //enable all to start with 
             tlvDatasets.EnableObjects(tlvDatasets.Objects);
 
-            tlvDatasets.DisableObjects(_globals);
             tlvDatasets.DisableObjects(_bundledStuff);
-
-            //if there are no globals disable this option
-            if(!_globals.Any())
-                tlvDatasets.DisableObject(_globalsFolder);
 
             //if there are no project specific datasets
             if (_datasets.All(sds => sds.ExtractableDataSet.Project_ID == null))

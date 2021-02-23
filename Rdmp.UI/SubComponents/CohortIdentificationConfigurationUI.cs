@@ -12,10 +12,12 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core;
 using Rdmp.Core.CohortCreation;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.CohortCreation.Execution.Joinables;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -23,15 +25,12 @@ using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.QueryCaching.Aggregation;
+using Rdmp.UI.CohortUI.ImportCustomData;
 using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
-using Rdmp.UI.SimpleControls;
 using Rdmp.UI.SimpleDialogs;
-using Rdmp.UI.SubComponents.EmptyLineElements;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Icons.IconProvision;
 using Timer = System.Windows.Forms.Timer;
@@ -106,8 +105,8 @@ namespace Rdmp.UI.SubComponents
             AssociatedCollection = RDMPCollection.Cohort;
 
             
-            timer.Tick += refreshThreadCountPeriodically_Tick;
-            timer.Interval = 500;
+            timer.Tick += refreshColumnValues;
+            timer.Interval = 2000;
             timer.Start();
             
             olvCount.AspectGetter = Count_AspectGetter;
@@ -204,10 +203,10 @@ namespace Rdmp.UI.SubComponents
             }
         }
         
-        private void refreshThreadCountPeriodically_Tick(object sender, EventArgs e)
+        private void refreshColumnValues(object sender, EventArgs e)
         {
             if(!tlvCic.IsDisposed)
-                tlvCic.RebuildColumns();
+                tlvCic.RefreshObjects(tlvCic.Objects.Cast<object>().ToArray());
         }
         
         public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)

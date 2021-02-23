@@ -44,10 +44,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             var tbl = db.CreateTable("MyTable",dt);
 
             Assert.AreEqual(1, tbl.GetRowCount());
-            
-            TableInfo ti;
-            ColumnInfo[] cols;
-            Import(tbl, out ti, out cols);
+            Import(tbl, out var ti, out var cols);
 
             //Create a virtual RAW column
             if (scenario == Scenario.MissingPreLoadDiscardedColumn || scenario == Scenario.MissingPreLoadDiscardedColumnButSelectStar)

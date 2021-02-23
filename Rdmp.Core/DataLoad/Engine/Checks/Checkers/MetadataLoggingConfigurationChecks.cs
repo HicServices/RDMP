@@ -6,6 +6,7 @@
 
 using System;
 using System.Linq;
+using NPOI.SS.Formula.Functions;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -63,7 +64,69 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
                 else
                     return;
             }
-            
+                
+            #region Fix missing LoggingDataTask
+            var missingTasks = catalogues.Where(c=>string.IsNullOrWhiteSpace(c.LoggingDataTask)).ToArray();
+            var potentialTasks = catalogues.Except(missingTasks).Select(c=>c.LoggingDataTask).Distinct().ToArray();
+
+            //If any Catalogues are missing tasks
+            if(missingTasks.Any())
+            {
+                //but there is consensus for those that are not missing tasks
+                if(potentialTasks.Length == 1)
+                {
+                    var fix = notifier.OnCheckPerformed(new CheckEventArgs("Some catalogues have NULL LoggingDataTasks",CheckResult.Fail,null, $"Set task to {potentialTasks.Single()}"));
+
+                    if(fix)
+                        foreach(var cata in missingTasks)
+                        {
+                            cata.LoggingDataTask = potentialTasks.Single();
+                            cata.SaveToDatabase();
+                        }
+                }
+            }
+            #endregion
+
+            #region Fix missing LiveLoggingServer_ID
+            var missingServer = catalogues.Where(c=>c.LiveLoggingServer_ID == null).ToArray();
+            var potentialServer = catalogues.Except(missingServer).Select(c=>c.LiveLoggingServer_ID).Distinct().ToArray();
+
+            if(missingServer.Any())
+            {
+                if(potentialServer.Length == 1)
+                {
+                    var fix = notifier.OnCheckPerformed(new CheckEventArgs("Some catalogues have NULL LiveLoggingServer_ID",CheckResult.Fail,null, $"Set LiveLoggingServer_ID to {potentialServer.Single()}"));
+
+                    if(fix)
+                        foreach(var cata in missingServer)
+                        {
+                            cata.LiveLoggingServer_ID = potentialServer.Single();
+                            cata.SaveToDatabase();
+                        }
+                }
+                else
+                {
+                    
+                    var defaults = _loadMetadata.CatalogueRepository.GetServerDefaults();
+                    var defaultLoggingServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+
+                    if(defaultLoggingServer != null)
+                    {
+                        var fix = notifier.OnCheckPerformed(new CheckEventArgs("Some catalogues have NULL LiveLoggingServer_ID",CheckResult.Fail,null, $"Set LiveLoggingServer_ID to '{defaultLoggingServer}' (the default)"));
+
+                        if(fix)
+                            foreach(var cata in missingServer)
+                            {
+                                cata.LiveLoggingServer_ID = defaultLoggingServer.ID;
+                                cata.SaveToDatabase();
+                            }
+
+                    }
+
+                }
+            }
+            #endregion
+
             string distinctLoggingTask = null; 
             try
             {
@@ -74,6 +137,7 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("Catalogues could not agreed on a single Logging Task", CheckResult.Fail, e));
             }
+               
 
             try
             {

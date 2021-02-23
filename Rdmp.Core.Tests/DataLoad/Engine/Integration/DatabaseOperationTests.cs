@@ -100,10 +100,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             //create a new catalogue for test data (in the test data catalogue)
             var cat = new Catalogue(CatalogueRepository, "DeleteMe");
             TableInfoImporter importer = new TableInfoImporter(CatalogueRepository, builder.DataSource, database, table, DatabaseType.MicrosoftSQLServer, builder.UserID, builder.Password);
-
-            TableInfo tableInfo;
-            ColumnInfo[] columnInfos;
-            importer.DoImport(out tableInfo, out columnInfos);
+            importer.DoImport(out var tableInfo, out var columnInfos);
 
             toCleanUp.Push(cat);
 

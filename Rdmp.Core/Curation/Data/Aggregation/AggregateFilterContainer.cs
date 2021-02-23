@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Curation.Data.Aggregation
@@ -89,7 +90,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         /// filters.  This is a recursive operation that will clone the entire tree no matter how deep.
         /// </summary>
         /// <returns></returns>
-        public AggregateFilterContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
+        public override IContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
         {
             //clone ourselves
             AggregateFilterContainer clone = ShallowClone();
@@ -109,7 +110,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
             foreach (AggregateFilterContainer toCloneSubcontainer in GetSubContainers())
             {
                 //clone the subcontainer recursively
-                AggregateFilterContainer clonedSubcontainer =
+                var clonedSubcontainer =
                     toCloneSubcontainer.DeepCloneEntireTreeRecursivelyIncludingFilters();
 
                 //get the returned filter subcontainer and assocaite it with the cloned version of this
@@ -145,6 +146,11 @@ namespace Rdmp.Core.Curation.Data.Aggregation
                 return null;
 
             return ((AggregateFilterContainer)parentContainer).GetAggregate();
+        }
+
+        public override IFilterFactory GetFilterFactory()
+        {
+            return new AggregateFilterFactory(CatalogueRepository);
         }
     }
 }

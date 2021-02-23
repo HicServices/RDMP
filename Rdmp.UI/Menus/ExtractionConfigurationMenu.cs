@@ -10,7 +10,6 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ProjectUI;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -30,6 +29,8 @@ namespace Rdmp.UI.Menus
             Add(new ExecuteCommandRelease(_activator).SetTarget(extractionConfiguration));
 
             Add(new ExecuteCommandChooseCohort(_activator, extractionConfiguration));
+
+            Add(new ExecuteCommandViewLogs(_activator,extractionConfiguration));
             
             /////////////////Add Datasets/////////////
             Add(new ExecuteCommandAddDatasetsToConfiguration(_activator,extractionConfiguration));

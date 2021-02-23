@@ -158,7 +158,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
 
             var lookupTbl = tbl2.Database.CreateTable("z_fff", dtLookup);
 
-            Import(lookupTbl, out TableInfo ti, out ColumnInfo[] columnInfos);
+            Import(lookupTbl, out var ti, out ColumnInfo[] columnInfos);
 
             var lookup =  new Lookup(CatalogueRepository, columnInfos[0], 
                 _columnToTransform,

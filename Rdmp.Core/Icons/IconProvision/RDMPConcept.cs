@@ -70,6 +70,7 @@ namespace Rdmp.Core.Icons.IconProvision
         Filter,
         ExtractionFilterParameterSet,
         ParametersNode,
+        ExtendedProperty,
 
         AggregateTopX,
         AggregateContinuousDateAxis,

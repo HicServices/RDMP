@@ -6,8 +6,11 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui
@@ -32,6 +35,17 @@ namespace Rdmp.Core.CommandLine.Gui
         /// Determines what is rendered in the list visually
         /// </summary>
         public Func<T, string> AspectGetter { get; set; }
+
+        /// <summary>
+        /// Ongoing filtering of a large collection should be cancelled when the user changes the filter even if it is not completed yet
+        /// </summary>
+        ConcurrentBag<CancellationTokenSource> _cancelFiltering = new ConcurrentBag<CancellationTokenSource>();
+        Task _currentFilterTask;
+        object _taskCancellationLock = new object();
+        
+        private ListView _listView;
+        private bool _changes;
+        private TextField mainInput;
 
         /// <summary>
         /// Protected constructor for derived classes that want to do funky filtering and hot swap out lists as search
@@ -84,6 +98,19 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 return _displayFunc(Object);
             }
+
+            public override int GetHashCode()
+            {
+                return Object.GetHashCode();
+            }
+
+            public override bool Equals(object obj)
+            {
+                if(obj is ListViewObject<T2> other)
+                    return Object.Equals(other.Object);
+                
+                return false;
+            }
         }
 
         /// <summary>
@@ -100,10 +127,11 @@ namespace Rdmp.Core.CommandLine.Gui
 
                 // By using Dim.Fill(), it will automatically resize without manual intervention
                 Width = Dim.Fill (),
-                Height = Dim.Fill ()
+                Height = Dim.Fill (),
+                Modal = true
             };
 
-            var listView = new ListView(new List<string>(new []{"Error"}))
+            _listView = new ListView(new List<string>(new []{"Error"}))
             {
                 X = 0,
                 Y = 0,
@@ -111,56 +139,58 @@ namespace Rdmp.Core.CommandLine.Gui
                 Width = Dim.Fill(2)
             };
 
-            listView.SetSource( (_collection = BuildList(this.GetInitialSource())).ToList());
-            
+            _listView.SetSource( (_collection = BuildList(this.GetInitialSource())).ToList());
+            win.Add(_listView);
+
             var btnOk = new Button(_okText,true)
             {
-                Y = Pos.Bottom(listView),
-                Width = 5,
-                Height = 1,
-                Clicked = () =>
-                {
-                    if(listView.SelectedItem >= _collection.Count)
-                        return;
+                Y = Pos.Bottom(_listView),
+                Width = 8,
+                Height = 1
+            };
+            btnOk.Clicked += () =>
+            {
+                if (_listView.SelectedItem >= _collection.Count)
+                    return;
 
-                    okClicked = true;
-                    Application.RequestStop();
-                    Selected = _collection[listView.SelectedItem].Object;
-                }
+                okClicked = true;
+                Application.RequestStop();
+                Selected = _collection[_listView.SelectedItem].Object;
             };
 
             var btnCancel = new Button("Cancel")
             {
-                Y = Pos.Bottom(listView),
-                Width = 5,
-                Height = 1,
-                Clicked = Application.RequestStop
+                Y = Pos.Bottom(_listView),
+                Width = 10,
+                Height = 1
             };
-            
+            btnCancel.Clicked += Application.RequestStop;
+
             if (_addSearch)
             {
                 var searchLabel = new Label("Search:")
                 {
                     X = 0,
-                    Y = Pos.Bottom(listView),
+                    Y = Pos.Bottom(_listView),
                 };
-            
-                var mainInput = new TextField ("") {
-                    X = Pos.Right(searchLabel),
-                    Y = Pos.Bottom(listView),
-                    Width = 70,
-                };
-
-                btnOk.X = 75;
-                btnCancel.X = 85;
 
                 win.Add(searchLabel);
+            
+                mainInput = new TextField ("") {
+                    X = Pos.Right(searchLabel),
+                    Y = Pos.Bottom(_listView),
+                    Width = 30,
+                };
+
+                btnOk.X = 38;
+                btnCancel.X = 48;
+
                 win.Add(mainInput);
                 mainInput.SetFocus();
                 
                 mainInput.TextChanged += (s) =>
                 {
-                    listView.SetSource((_collection = BuildList(GetListAfterSearch(mainInput.Text.ToString()))).ToList());
+                    RestartFiltering(); 
                 };
             }
             else
@@ -170,13 +200,80 @@ namespace Rdmp.Core.CommandLine.Gui
             }
 
             
-            win.Add(listView);
             win.Add(btnOk);
             win.Add(btnCancel);
-            
+
+            AddMoreButtonsAfter(win,btnCancel);
+
+            var callback = Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds (500), Timer);
+
             Application.Run(win);
 
+            Application.MainLoop.RemoveTimeout(callback);
+
             return okClicked;
+        }
+
+        
+
+        /// <summary>
+        /// Last minute method for adding extra stuff to the window (to the right of <paramref name="btnCancel"/>)
+        /// </summary>
+        /// <param name="btnCancel"></param>
+        protected virtual void AddMoreButtonsAfter(Window win, Button btnCancel)
+        {
+        }
+
+        bool Timer (MainLoop caller)
+        {
+            if(_changes)
+            {
+                lock(_taskCancellationLock)
+                {
+                    var oldSelected = _listView.SelectedItem;
+                    _listView.SetSource(_collection.ToList());
+
+                    if(oldSelected < _collection.Count)
+                        _listView.SelectedItem = oldSelected ;
+                    
+                    _changes = false;
+                    return true;
+                }
+            }           
+            
+            return true;
+        }
+        protected void RestartFiltering()
+        {
+            RestartFiltering(mainInput.Text.ToString());
+        }
+
+        protected void RestartFiltering(string searchTerm)
+        {
+            
+            lock(_taskCancellationLock)
+            {
+                //cancel any previous searches
+                foreach(var c in _cancelFiltering)
+                    c.Cancel();
+            
+                _cancelFiltering.Clear();
+            }
+            
+            var cts = new CancellationTokenSource();
+            _cancelFiltering.Add(cts);
+
+            _currentFilterTask = Task.Run(()=>
+            {
+                var result = BuildList(GetListAfterSearch(searchTerm,cts.Token));
+
+                lock(_taskCancellationLock)
+                {
+                    _collection = result;
+                    _changes = true;
+                }
+                    
+            });       
         }
 
         private IList<ListViewObject<T>> BuildList(IList<T> listOfT)
@@ -189,12 +286,13 @@ namespace Rdmp.Core.CommandLine.Gui
             return toReturn;
         }
 
-        protected virtual IList<T> GetListAfterSearch(string searchString)
+        protected virtual IList<T> GetListAfterSearch(string searchString, CancellationToken token)
         {
             if(_publicCollection == null)
                 throw new InvalidOperationException("When using the protected constructor derived classes must override this method ");
 
-            return _publicCollection.Where(o =>
+            //stop the Contains searching when the user cancels the search
+            return _publicCollection.Where(o => !token.IsCancellationRequested &&
                 AspectGetter(o).Contains(searchString, StringComparison.CurrentCultureIgnoreCase)).ToList();
         }
 

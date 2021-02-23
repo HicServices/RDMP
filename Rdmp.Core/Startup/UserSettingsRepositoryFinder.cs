@@ -83,10 +83,18 @@ namespace Rdmp.Core.Startup
             //user may have a DataExportManager
             string dataExportManagerConnectionString = UserSettings.DataExportConnectionString;
 
-            var newrepo = new LinkedRepositoryProvider(catalogueString, dataExportManagerConnectionString);
+            LinkedRepositoryProvider newrepo;
+
+            try
+            {
+                newrepo = new LinkedRepositoryProvider(catalogueString, dataExportManagerConnectionString);
+            }
+            catch (Exception ex)
+            {
+                throw new CorruptRepositoryConnectionDetailsException($"Unable to create {nameof(LinkedRepositoryProvider)}",ex);
+            }
 
             //preserve the currently loaded MEF assemblies
-
 
             //if we have a new repo
             if (newrepo.CatalogueRepository != null)
@@ -107,6 +115,11 @@ namespace Rdmp.Core.Startup
         public IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable
         {
             return _linkedRepositoryProvider.GetObjectByID<T>(value);
+        }
+
+        public IMapsDirectlyToDatabaseTable GetObjectByID(Type t, int value)
+        {
+            return _linkedRepositoryProvider.GetObjectByID(t,value);
         }
     }
 }

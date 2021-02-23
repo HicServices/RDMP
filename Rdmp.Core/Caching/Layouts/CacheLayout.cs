@@ -27,6 +27,11 @@ namespace Rdmp.Core.Caching.Layouts
         public ILoadCachePathResolver Resolver {  get; private set;}
         public DirectoryInfo RootDirectory { get; private set; }
 
+        /// <summary>
+        /// When archiving files what compression level should be used to add/update new files (only applies if <see cref="ArchiveType"/> is zip).  Defaults to Optimal
+        /// </summary>
+        public CompressionLevel Compression {get;set; } = CompressionLevel.Optimal;
+
         public CacheLayout(DirectoryInfo rootDirectory, string dateFormat, CacheArchiveType cacheArchiveType, CacheFileGranularity granularity, ILoadCachePathResolver resolver)
         {
             DateFormat = dateFormat;
@@ -174,30 +179,41 @@ namespace Rdmp.Core.Caching.Layouts
                 Directory.CreateDirectory(archiveDirectory);
 
             // todo: should control whether using existing files is allowed or whether should throw if we the archive already exists
-            var zipArchiveMode = archiveFilepath.Exists ? ZipArchiveMode.Update : ZipArchiveMode.Create;
             if (ArchiveType == CacheArchiveType.Zip)
-                using (var zipArchive = ZipFile.Open(archiveFilepath.FullName, zipArchiveMode))
+            {
+                ZipArchiveMode zipArchiveMode;
+                var ziptmp = archiveFilepath.FullName + ".tmp";
+                if (archiveFilepath.Exists)
                 {
+                    zipArchiveMode = ZipArchiveMode.Update;
+                    File.Copy(archiveFilepath.FullName, ziptmp, true);
+                }
+                else
+                {
+                    zipArchiveMode = ZipArchiveMode.Create;
+                    File.Delete(ziptmp);
+                }
+                using (var zipArchive = ZipFile.Open(ziptmp, zipArchiveMode))
+                {
+                    var existing=new HashSet<string>();
                     // Entries can't be inspected if the zip archive has been opened in create mode
-                    if (zipArchiveMode == ZipArchiveMode.Update)
+                    if (zipArchiveMode==ZipArchiveMode.Update)
+                        foreach (var zipArchiveEntry in zipArchive.Entries)
+                            existing.Add(zipArchiveEntry.Name);
+
+                    foreach (var dataFile in files)
                     {
-                        var entries = zipArchive.Entries;
-                        // don't add an entry where one already exists for a particular dataFile
-                        foreach (var dataFile in files.Where(dataFile => entries.All(e => e.Name != dataFile.Name)))
-                        {
-                            zipArchive.CreateEntryFromFile(dataFile.FullName, dataFile.Name, CompressionLevel.Optimal);
-                        }
-                    }
-                    else
-                    {
-                        // We are creating a new file, so don't have to check for the existence of entries.
-                        foreach (var dataFile in files)
-                        {
-                            zipArchive.CreateEntryFromFile(dataFile.FullName, dataFile.Name, CompressionLevel.Optimal);
-                        }
-                        
+                        if (!existing.Contains(dataFile.Name))
+                            zipArchive.CreateEntryFromFile(dataFile.FullName, dataFile.Name, Compression);
                     }
                 }
+                // TODO: On .Net Core 3.0 and later, we can use the 3-argument variant of .Move to do this atomically
+                // Until then, File.Replace will have to do
+                if (File.Exists(archiveFilepath.FullName))
+                    File.Replace(ziptmp,archiveFilepath.FullName,null,true);
+                else
+                    File.Move(ziptmp,archiveFilepath.FullName);
+            }
         }
     }
 }

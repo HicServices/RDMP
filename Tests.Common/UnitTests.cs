@@ -99,6 +99,13 @@ namespace Tests.Common
             if (typeof(T) == typeof(Catalogue))
                 return (T)(object)Save(new Catalogue(Repository, "Mycata"));
 
+            
+            if (typeof(T) == typeof(ExtendedProperty))
+            {
+                return (T)(object)new ExtendedProperty(Repository,Save(new Catalogue(Repository, "Mycata")),"TestProp",0);
+            }
+                
+
             if (typeof(T) == typeof(CatalogueItem))
             {
                 var cata = new Catalogue(Repository, "Mycata");

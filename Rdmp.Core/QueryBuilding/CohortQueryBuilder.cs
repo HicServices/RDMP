@@ -123,7 +123,7 @@ namespace Rdmp.Core.QueryBuilding
         {
             if (_childProvider == null)
                 _childProvider = new CatalogueChildProvider(
-                    configuration?.CatalogueRepository ?? container.CatalogueRepository, null, null);
+                    configuration?.CatalogueRepository ?? container.CatalogueRepository, null, null,null);
         }
 
 

@@ -13,7 +13,6 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
@@ -34,7 +33,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
     /// </summary>
     public partial class CohortCreationRequestUI : RDMPForm
     {
-        private readonly ExternalCohortTable _target;
+        private readonly IExternalCohortTable _target;
         private DataExportRepository _repository;
         
         public string CohortDescription
@@ -43,7 +42,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             set { tbDescription.Text = value; }
         }
 
-        public CohortCreationRequestUI(IActivateItems activator,ExternalCohortTable target, Project project =null):base(activator)
+        public CohortCreationRequestUI(IActivateItems activator,IExternalCohortTable target, IProject project =null):base(activator)
         {
             _target = target;
 
@@ -64,7 +63,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
 
         
         public CohortCreationRequest Result { get; set; }
-        public Project Project { get; set; }
+        public IProject Project { get; set; }
 
         private void btnOk_Click(object sender, EventArgs e)
         {
@@ -260,7 +259,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             }
         }
 
-        private void SetProject(Project project)
+        private void SetProject(IProject project)
         {
             Project = project;
 
@@ -313,6 +312,6 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
         {
             SetProject(null);
         }
-        
+
     }
 }

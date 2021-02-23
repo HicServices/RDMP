@@ -5,8 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Connections;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataFlowPipeline.Requirements;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CohortCommitting.Pipeline
@@ -14,11 +17,15 @@ namespace Rdmp.Core.CohortCommitting.Pipeline
     /// <summary>
     /// See CohortCreationRequest
     ///  </summary>
-    public interface ICohortCreationRequest : ICheckable, IHasDesignTimeMode
+    public interface ICohortCreationRequest : ICheckable, IHasDesignTimeMode, IPipelineUseCase
     {
         IProject Project { get; }
         ICohortDefinition NewCohortDefinition { get; set; }
-        
+        ExtractionInformation ExtractionIdentifierColumn { get; set; }
+        CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
+        ExtractableCohort CohortCreatedIfAny { get; }
+        FlatFileToLoad FileToLoad { get; set; }
+
         int ImportAsExtractableCohort(bool deprecateOldCohortOnSuccess);
         void PushToServer(IManagedConnection transaction);
     }

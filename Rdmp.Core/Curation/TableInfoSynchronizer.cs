@@ -24,7 +24,7 @@ namespace Rdmp.Core.Curation
     /// </summary>
     public class TableInfoSynchronizer
     {
-        private readonly TableInfo _tableToSync;
+        private readonly ITableInfo _tableToSync;
         private DiscoveredServer _toSyncTo;
         private ICatalogueRepository _repository;
 
@@ -35,7 +35,7 @@ namespace Rdmp.Core.Curation
         /// collation types etc match the reality.  Pass in an alternative 
         /// </summary>
         /// <param name="tableToSync"></param>
-        public TableInfoSynchronizer(TableInfo tableToSync)
+        public TableInfoSynchronizer(ITableInfo tableToSync)
         {
             _tableToSync = tableToSync;
             _repository = _tableToSync.CatalogueRepository;
@@ -203,10 +203,7 @@ namespace Rdmp.Core.Curation
                         ForwardEngineerCatalogue c = new ForwardEngineerCatalogue(_tableToSync, added.ToArray(), true);
 
                         //In the Catalogue
-                        Catalogue cata;
-                        CatalogueItem[] cis;
-                        ExtractionInformation[] eis;
-                        c.ExecuteForwardEngineering(relatedCatalogues[0],out cata,out cis, out eis);
+                        c.ExecuteForwardEngineering(relatedCatalogues[0],out var cata,out var cis, out var eis);
                         
                         //make them extractable only as internal since it is likely they could contain sensitive data if user is just used to hammering Ok on all dialogues
                         foreach (var e in eis)

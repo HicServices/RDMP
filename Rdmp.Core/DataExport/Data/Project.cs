@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Checks;
@@ -147,7 +148,7 @@ namespace Rdmp.Core.DataExport.Data
 
         public void Check(ICheckNotifier notifier)
         {
-            new ProjectChecker(this).Check(notifier);
+            new ProjectChecker(new ThrowImmediatelyActivator(new RepositoryProvider(DataExportRepository),notifier),this).Check(notifier);
         }
 
         /// <summary>

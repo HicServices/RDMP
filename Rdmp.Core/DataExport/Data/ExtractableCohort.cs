@@ -19,6 +19,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Progress;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.DataExport.Data
 {
@@ -108,7 +109,7 @@ namespace Rdmp.Core.DataExport.Data
                     return _countDistinct;
                 else
                 {
-                    _countDistinct = CountDISTINCTCohortInDatabase();
+                    _countDistinct = GetCountDistinctFromDatabase();
                     return _countDistinct;
                 }
             }
@@ -184,10 +185,8 @@ namespace Rdmp.Core.DataExport.Data
             ClearAllInjections();
         }
 
-        /// <summary>
-        /// Fetches and returns project number, version etc listed in the remote cohort database for this cohort
-        /// </summary>
-        public IExternalCohortDefinitionData GetExternalData()
+        /// <inheritdoc/>
+        public IExternalCohortDefinitionData GetExternalData(int timeout = -1)
         {
             var db = ExternalCohortTable.Discover();
 
@@ -209,6 +208,9 @@ where
                 con.Open();
                 using (var getDescription = db.Server.GetCommand(sql, con))
                 {
+                    if(timeout != -1)
+                        getDescription.CommandTimeout = timeout;
+
                     using (var r = getDescription.ExecuteReader())
                     {
                         if (!r.Read())
@@ -327,15 +329,16 @@ where
             }
         }
 
-        private int CountDISTINCTCohortInDatabase()
+        /// <inheritdoc/>
+        public int GetCountDistinctFromDatabase(int timeout = -1)
         {
             var syntax = GetQuerySyntaxHelper();
             
             return Convert.ToInt32(ExecuteScalar("SELECT count(DISTINCT "+
-                                                 syntax.EnsureWrapped(GetReleaseIdentifier(true))+") FROM " + ExternalCohortTable.TableName + " WHERE " + WhereSQL()));
+                                                 syntax.EnsureWrapped(GetReleaseIdentifier(true))+") FROM " + ExternalCohortTable.TableName + " WHERE " + WhereSQL(),timeout));
         }
 
-        private object ExecuteScalar(string sql)
+        private object ExecuteScalar(string sql, int timeout = -1)
         {
             var ect = ExternalCohortTable;
 
@@ -345,7 +348,13 @@ where
                 con.Open();
 
                 using(var cmd = db.Server.GetCommand(sql, con))
+                {
+                    if(timeout != -1)
+                        cmd.CommandTimeout = timeout;
+
                     return cmd.ExecuteScalar();
+                }
+                    
             }
         }
         
@@ -426,13 +435,13 @@ where
                 ? ExternalCohortTable.ReleaseIdentifierField
                 : OverrideReleaseIdentifierSQL;
 
-            if (toReturn.Equals(ExternalCohortTable.PrivateIdentifierField))
+            if (toReturn.Equals(ExternalCohortTable.PrivateIdentifierField) && !UserSettings.AllowIdentifiableExtractions)
                 throw new Exception("ReleaseIdentifier for cohort " + ID +
                                     " is the same as the PrivateIdentifierSQL, this is forbidden");
 
             var syntaxHelper = GetQuerySyntaxHelper();
 
-            if (syntaxHelper.GetRuntimeName(toReturn).Equals(syntaxHelper.GetRuntimeName(ExternalCohortTable.PrivateIdentifierField)))
+            if (syntaxHelper.GetRuntimeName(toReturn).Equals(syntaxHelper.GetRuntimeName(ExternalCohortTable.PrivateIdentifierField)) && !UserSettings.AllowIdentifiableExtractions)
                 throw new Exception("ReleaseIdentifier for cohort " + ID +
                                     " is the same as the PrivateIdentifierSQL, this is forbidden");
 
@@ -600,7 +609,7 @@ where
         /// <inheritdoc/>
         public void ClearAllInjections()
         {
-            _cacheData = new Lazy<IExternalCohortDefinitionData>(GetExternalData);
+            _cacheData = new Lazy<IExternalCohortDefinitionData>(()=>GetExternalData());
             _knownExternalCohortTable = new Lazy<IExternalCohortTable>(()=>Repository.GetObjectByID<ExternalCohortTable>(ExternalCohortTable_ID));
         }
 

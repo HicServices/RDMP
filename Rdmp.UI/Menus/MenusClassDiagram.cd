@@ -1,84 +1,80 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Comment CommentText="Right click menus are entirely constructed and assigned via reflection.  When a tree object is right clicked all RDMPContextMenuStrip classes are evaluated for those with a compatible constructor (taking the object being right clicked or one of it's interfaces).  Once one menu with a good compatible constructor has been found it is constructed and displayed.">
-    <Position X="0.5" Y="0.5" Height="1.253" Width="3.353" />
+  <Comment CommentText="Right click menus are entirely constructed and assigned via reflection.  When a tree object is right clicked all RDMPContextMenuStrip classes are evaluated for those with a compatible constructor (taking the object being right clicked or one of it's interfaces).  Once one menu with a good compatible constructor has been found it is constructed and displayed.&#xD;&#xA;&#xD;&#xA;NOTE: Even if no menu is found a menu is still created and common items added based on the class interfaces e.g. IDeleteable classes will get the ExecuteCommandDelete added (this is handled by AtomicCommandFactory)">
+    <Position X="0.5" Y="0.5" Height="2.472" Width="3.353" />
+  </Comment>
+  <Comment CommentText="Handles all commands (menu items) that are available in both Command Line and Gui Client(s)">
+    <Position X="1.146" Y="7" Height="0.451" Width="6.436" />
+  </Comment>
+  <Comment CommentText="Handles all commands that are only available in the WinForms Gui Client">
+    <Position X="1" Y="5.573" Height="0.451" Width="6.436" />
   </Comment>
   <Class Name="Rdmp.UI.Menus.RDMPContextMenuStrip" Collapsed="true">
-    <Position X="4" Y="0.5" Width="2.5" />
+    <Position X="4.5" Y="1.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAIAAAAAACUAAgBAAEAAAAAQAAAAEAAgAAAASAAAgQA=</HashCode>
+      <HashCode>AAIAAAEFACeAIgBAAEAAAAAQAAAAGAAgAACACAAAgQA=</HashCode>
       <FileName>Menus\RDMPContextMenuStrip.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Rdmp.UI.Menus.CatalogueItemMenu" Collapsed="true">
-    <Position X="1.25" Y="2.75" Width="2.25" />
+    <Position X="1.75" Y="3.75" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAABAAAAAIABAAAAAAAIgAAEAAAAAAAAAAgIAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Menus\CatalogueItemMenu.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Rdmp.UI.Menus.LoadMetadataMenu" Collapsed="true">
-    <Position X="4.25" Y="2.75" Width="2.25" />
+    <Position X="4.75" Y="3.75" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAIAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Menus\LoadMetadataMenu.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Rdmp.UI.Menus.TableInfoMenu" Collapsed="true">
-    <Position X="7.25" Y="2.75" Width="2" />
+    <Position X="7.75" Y="3.75" Width="2" />
     <TypeIdentifier>
-      <HashCode>ABAAAAAAAQAAAAAAIAAAAAAAAAAgAAABQAAAAAACAAE=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAACAAA=</HashCode>
       <FileName>Menus\TableInfoMenu.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Rdmp.UI.Menus.AggregateConfigurationMenu" Collapsed="true">
-    <Position X="0.5" Y="3.75" Width="1.5" />
+    <Position X="1" Y="4.75" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAASAAAAAAAAAAAAAAABAAAAIIAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Menus\AggregateConfigurationMenu.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Rdmp.UI.Menus.AggregateFilterContainerMenu" Collapsed="true">
-    <Position X="7.25" Y="3.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAIAAAAAAIAAEAAAAAAAAAAgAgAAAAAAAAAgAAA=</HashCode>
-      <FileName>Menus\AggregateFilterContainerMenu.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="Rdmp.UI.Menus.CatalogueMenu" Collapsed="true">
-    <Position X="9.5" Y="3.75" Width="1.5" />
+    <Position X="10" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAQAAAAACAAAAAAAAAAAAAAAAAAAAAABAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Menus\CatalogueMenu.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Rdmp.UI.Menus.ColumnInfoMenu" Collapsed="true">
-    <Position X="14" Y="3.75" Width="1.5" />
+    <Position X="14.5" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Menus\ColumnInfoMenu.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Rdmp.UI.Menus.DataAccessCredentialUsageNodeMenu" Collapsed="true">
-    <Position X="18.75" Y="3.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAIAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Menus\DataAccessCredentialUsageNodeMenu.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="Rdmp.UI.Menus.DocumentationNodeMenu" Collapsed="true">
-    <Position X="11.75" Y="3.75" Width="1.5" />
+    <Position X="12.25" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Menus\DocumentationNodeMenu.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Rdmp.UI.Menus.ExtractionInformationMenu" Collapsed="true">
-    <Position X="16.25" Y="3.75" Width="1.5" />
+    <Position X="16.75" Y="4.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAIAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Menus\ExtractionInformationMenu.cs</FileName>
     </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.CommandExecution.AtomicCommandFactory" Collapsed="true">
+    <Position X="1.25" Y="6.25" Width="2.25" />
+    <TypeIdentifier />
   </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

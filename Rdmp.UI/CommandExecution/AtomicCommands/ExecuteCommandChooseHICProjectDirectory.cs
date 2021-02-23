@@ -10,7 +10,6 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
@@ -34,10 +33,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var dialog = new ChooseLoadDirectoryUI(_loadMetadata);
+            var dialog = new ChooseLoadDirectoryUI(Activator,_loadMetadata);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                _loadMetadata.LocationOfFlatFiles = dialog.Result.RootPath.FullName;
+                _loadMetadata.LocationOfFlatFiles = dialog.Result;
                 _loadMetadata.SaveToDatabase();
                 Publish(_loadMetadata);
             }

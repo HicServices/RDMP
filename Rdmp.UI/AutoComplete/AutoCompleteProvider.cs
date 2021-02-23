@@ -16,9 +16,9 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryBuilding;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ScintillaNET;
 
@@ -27,7 +27,7 @@ namespace Rdmp.UI.AutoComplete
     /// <summary>
     /// Creates autocomplete menu items for <see cref="AutocompleteMenuNS"/> library based on RDMP objects (e.g. <see cref="TableInfo"/>)
     /// </summary>
-    public class AutoCompleteProvider
+    public class AutoCompleteProvider : IAutoCompleteProvider
     {
         private readonly IActivateItems _activator;
         private AutocompleteMenu _autocomplete = new AutocompleteMenu();
@@ -38,7 +38,14 @@ namespace Rdmp.UI.AutoComplete
         public AutoCompleteProvider(IActivateItems activator)
         {
             _activator = activator;
-            _imageList = _activator.CoreIconProvider.GetImageList(true);
+
+            var il = new ImageList();
+            foreach(var kvp in _activator.CoreIconProvider.GetImageList(true))
+            {
+                il.Images.Add(kvp.Key,kvp.Value);
+            }
+
+            _imageList = il;
             _autocomplete.ImageList = _imageList;
             _autocomplete.SearchPattern = @"[\w@\.]";
             _autocomplete.AllowsTabKey = true;

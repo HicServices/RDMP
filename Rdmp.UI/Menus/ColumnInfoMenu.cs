@@ -6,11 +6,12 @@
 
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.DataViewing;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.DataViewing;
 
 namespace Rdmp.UI.Menus
 {
@@ -18,14 +19,7 @@ namespace Rdmp.UI.Menus
     class ColumnInfoMenu : RDMPContextMenuStrip
     {
         public ColumnInfoMenu(RDMPContextMenuStripArgs args, ColumnInfo columnInfo) : base(args, columnInfo)
-        {
-            var miViewData = new ToolStripMenuItem("View Data");
-            Items.Add(miViewData);
-
-            Add(new ExecuteCommandViewData(_activator, ViewType.TOP_100, columnInfo),Keys.None,miViewData);
-            Add(new ExecuteCommandViewData(_activator, ViewType.Aggregate, columnInfo), Keys.None, miViewData);
-            Add(new ExecuteCommandViewData(_activator, ViewType.Distribution, columnInfo), Keys.None, miViewData);
-            
+        {            
             Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null,columnInfo.TableInfo));
 
             Items.Add(new ToolStripSeparator());
@@ -35,6 +29,11 @@ namespace Rdmp.UI.Menus
             Add(new ExecuteCommandAnonymiseColumnInfo(_activator, columnInfo));
             
             Add(new ExecuteCommandAlterColumnType(_activator, columnInfo), Keys.None, Alter);
+
+            var miIgnore = AtomicCommandUIFactory.CreateMenuItem(new ExecuteCommandSet(_activator,columnInfo,typeof(ColumnInfo).GetProperty(nameof(ColumnInfo.IgnoreInLoads))));
+            miIgnore.Checked = columnInfo.IgnoreInLoads;
+            miIgnore.Text = "Ignore In Loads";
+            Items.Add(miIgnore);
         }
     }
 }

@@ -6,6 +6,7 @@
 
 using System.Linq;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -32,7 +33,7 @@ namespace Rdmp.Core.Tests.CommandLine
 
             //create all the stuff
             var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
-            var creator = new ExampleDatasetsCreation(RepositoryLocator);
+            var creator = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(RepositoryLocator),RepositoryLocator);
             creator.Create(db,new ThrowImmediatelyCheckNotifier(),new PlatformDatabaseCreationOptions(){Seed = 500,DropDatabases = true });
 
             //should be at least 2 views (marked as view)

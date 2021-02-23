@@ -13,8 +13,9 @@ using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using NStack;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandLine.Gui.Windows;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Providers;
+using Rdmp.Core.DataViewing;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -24,9 +25,14 @@ namespace Rdmp.Core.CommandLine.Gui
 {
     internal class ConsoleGuiActivator : BasicActivateItems
     {
+        /// <summary>
+        /// Fired when changes are made to an object (including if it has been deleted etc)
+        /// </summary>
+        public event Action<IMapsDirectlyToDatabaseTable> Published;
+
         public ConsoleGuiActivator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier) : base(repositoryLocator, globalErrorCheckNotifier)
         {
-            CoreChildProvider = new DataExportChildProvider(RepositoryLocator,null,GlobalErrorCheckNotifier);
+            InteractiveDeletes = true;
         }
 
 
@@ -43,28 +49,39 @@ namespace Rdmp.Core.CommandLine.Gui
             return false;
         }
 
-        public override void Publish(DatabaseEntity databaseEntity)
+        public override void Show(string title, string message)
         {
-            //refresh the child provider because there could be new objects
-            CoreChildProvider = new DataExportChildProvider(RepositoryLocator,null,GlobalErrorCheckNotifier);
+            GetDialogDimensions(out var w, out var h);
+            
+            var btn = new Button("Ok");
+            btn.Clicked +=()=>Application.RequestStop();
+            
+
+            using(var dlg = new Dialog(title,w,h,btn))
+            {
+                dlg.Add(new TextView()
+                    { 
+                        Width = Dim.Fill(),
+                        Height = Dim.Fill(1),
+                        Text = message.Replace("\r\n","\n"),
+                        ReadOnly = true
+                    });
+                Application.Run(dlg);
+            }
+        }
+        public override bool YesNo(string text, string caption, out bool chosen)
+        {
+            GetDialogDimensions(out var w, out var h);
+            int result = MessageBox.Query(w,h,caption,text,"yes","no","cancel");
+            chosen = result == 0;
+
+            return result != 2;
         }
 
-        public override void Show(string message)
+        private void GetDialogDimensions(out int w, out int h)
         {
-            var dlg = new Dialog("Message", Math.Min(80,Application.Top.Frame.Width), Math.Min(20,Application.Top.Frame.Height),
-                new Button("Ok", true){Clicked = Application.RequestStop});
-
-            dlg.Add(new TextView()
-            {
-                Text = message,
-                X = 0,
-                Y = 0,
-                Width = Dim.Fill(),
-                Height = Dim.Fill()-1,
-                ReadOnly = true
-            });
-
-            Application.Run(dlg);
+            w = Math.Min(80,Application.Top.Frame.Width -4);
+            h = Math.Min(20,Application.Top.Frame.Height -2);
         }
 
         public override bool TypeText(string header, string prompt, int maxLength, string initialText, out string text,
@@ -79,6 +96,12 @@ namespace Rdmp.Core.CommandLine.Gui
 
             text = null;
             return false;
+        }
+        public override void Publish(IMapsDirectlyToDatabaseTable databaseEntity)
+        {
+            base.Publish(databaseEntity);
+
+            Published?.Invoke(databaseEntity);
         }
 
         public override DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
@@ -104,7 +127,8 @@ namespace Rdmp.Core.CommandLine.Gui
         {
             //todo make this handle multi selection
             var chosen = SelectOne(prompt, availableObjects, initialSearchText);
-            return chosen == null?null : new []{chosen};
+
+            return chosen == null?null : new IMapsDirectlyToDatabaseTable[]{chosen};
         }
 
         public override IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
@@ -154,19 +178,17 @@ namespace Rdmp.Core.CommandLine.Gui
             
             return selected == null ? null : new FileInfo(selected);
         }
-
-        public override bool YesNo(string text, string caption, out bool chosen)
+        public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
         {
-            var dlg = new ConsoleGuiBigListBox<bool>(text, "Ok", false, new List<bool>(new []{true,false}), (b) => b ? "Yes" : "No",false);
-
-            if (dlg.ShowDialog())
+             var openDir = new OpenDialog(prompt,"Directory")
             {
-                chosen = dlg.Selected;
-                return true;
-            }
+                AllowsMultipleSelection = true,
+                AllowedFileTypes = pattern == null ? null : new []{pattern.TrimStart('*')}
+            };
+            
+            Application.Run(openDir);
 
-            chosen = false;
-            return false;
+            return openDir.FilePaths?.Select(f=>new FileInfo(f))?.ToArray();
         }
 
         public override bool SelectEnum(string prompt, Type enumType, out Enum chosen)
@@ -213,19 +235,19 @@ namespace Rdmp.Core.CommandLine.Gui
 
             bool toggleStack = true;
 
-            var dlg = new Dialog("Error", Math.Min(Application.Top.Frame.Width, 80),
-                Math.Min(Application.Top.Frame.Height, 20),
-                new Button("Ok", true){Clicked = Application.RequestStop},
-                new Button("Stack"){Clicked = ()=>
-                    {
-                        //flip between stack / no stack
-                        textView.Text = GetExceptionText(errorText,exception,toggleStack);
-                        toggleStack = !toggleStack;
-                    }
-                });
-            
-            
+            var btnOk = new Button("Ok", true);
+            btnOk.Clicked += Application.RequestStop;
+            var btnStack = new Button("Stack");
+            btnStack.Clicked += () =>
+            {
+                //flip between stack / no stack
+                textView.Text = GetExceptionText(errorText, exception, toggleStack);
+                toggleStack = !toggleStack;
+            };
 
+            GetDialogDimensions(out var w, out var h);
+
+            var dlg = new Dialog("Error",w,h,btnOk,btnStack);            
             dlg.Add(textView);
             
             Application.Run(dlg);
@@ -239,6 +261,28 @@ namespace Rdmp.Core.CommandLine.Gui
         private string Wrap(string longString, int width)
         {
             return string.Join("\n",Regex.Matches( longString, ".{1,"+width+"}" ).Select( m => m.Value ).ToArray());
+        }
+
+        public override void ShowData(IViewSQLAndResultsCollection collection)
+        {
+            var view = new ConsoleGuiSqlEditor(this,collection){Modal = true };
+            Application.Run(view);
+        }
+
+        public override bool CanActivate(object o)
+        {
+            return o is IMapsDirectlyToDatabaseTable || o is IMasqueradeAs;
+        }
+
+        public override void Activate(object o)
+        {
+            var m = o as IMapsDirectlyToDatabaseTable ?? (o as IMasqueradeAs)?.MasqueradingAs() as IMapsDirectlyToDatabaseTable;
+            if(m != null)
+            {
+                var view = new ConsoleGuiEdit(this,m){Modal = true };
+                Application.Run(view);
+            }
+
         }
     }
 }

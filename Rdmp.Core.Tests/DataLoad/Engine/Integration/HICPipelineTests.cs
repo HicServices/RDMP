@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation;
@@ -259,13 +260,13 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 options.Command = CommandLineActivity.check;
 
                 //run checks (with ignore errors if we are sending dodgy credentials)
-                new RunnerFactory().CreateRunner(options).Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), 
+                new RunnerFactory().CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator),options).Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), 
                     sendDodgyCredentials?
                     (ICheckNotifier) new IgnoreAllErrorsCheckNotifier(): new AcceptAllCheckNotifier(), new GracefulCancellationToken());
 
                 //run load
                 options.Command = CommandLineActivity.run;
-                var runner = new RunnerFactory().CreateRunner(options);
+                var runner = new RunnerFactory().CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator),options);
 
                 
                 if (sendDodgyCredentials)

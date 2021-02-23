@@ -21,6 +21,7 @@ using Rdmp.Core.Logging;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
+using Rdmp.Core.CommandExecution;
 
 namespace Rdmp.Core.DataExport.Checks
 {
@@ -32,22 +33,25 @@ namespace Rdmp.Core.DataExport.Checks
     {
         private readonly bool _checkGlobals;
         private readonly IPipeline _alsoCheckPipeline;
+        private readonly IBasicActivateItems _activator;
 
         /// <summary>
         /// The selected dataset being checked
         /// </summary>
         public ISelectedDataSets SelectedDataSet { get; private set; }
-        
+
         /// <summary>
         /// prepares to check the dataset as it is selected in an <see cref="ExtractionConfiguration"/>.  Optionally checks an extraction <see cref="Pipeline"/> and globals
         /// </summary>
+        /// <param name="activator"></param>
         /// <param name="selectedDataSet"></param>
         /// <param name="checkGlobals"></param>
         /// <param name="alsoCheckPipeline"></param>
-        public SelectedDataSetsChecker(ISelectedDataSets selectedDataSet, bool checkGlobals = false, IPipeline alsoCheckPipeline = null)
+        public SelectedDataSetsChecker(IBasicActivateItems activator, ISelectedDataSets selectedDataSet, bool checkGlobals = false, IPipeline alsoCheckPipeline = null)
         {
             _checkGlobals = checkGlobals;
             _alsoCheckPipeline = alsoCheckPipeline;
+            _activator = activator;
             SelectedDataSet = selectedDataSet;
         }
 
@@ -189,7 +193,7 @@ namespace Rdmp.Core.DataExport.Checks
 
             if (_alsoCheckPipeline != null)
             {
-                var engine = new ExtractionPipelineUseCase(request.Project, request, _alsoCheckPipeline, DataLoadInfo.Empty)
+                var engine = new ExtractionPipelineUseCase(_activator,request.Project, request, _alsoCheckPipeline, DataLoadInfo.Empty)
                                     .GetEngine(_alsoCheckPipeline, new FromCheckNotifierToDataLoadEventListener(notifier));
                 engine.Check(notifier);
             }

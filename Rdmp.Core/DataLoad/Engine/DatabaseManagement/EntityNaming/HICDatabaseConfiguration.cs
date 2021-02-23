@@ -6,14 +6,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi;
 using FAnsi.Discovery;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming
@@ -46,6 +49,11 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming
         public Regex UpdateButDoNotDiff { get; set; }
 
         /// <summary>
+        /// Optional Regex for fields which will be completedly ignored at STAGING=>LIVE migration
+        /// </summary>
+        public Regex IgnoreColumns { get; internal set; }
+
+        /// <summary>
         /// Preferred Constructor, creates RAW, STAGING, LIVE connection strings based on the data access points in the LoadMetadata, also respects the ServerDefaults for RAW override (if any)
         /// </summary>
         /// <param name="lmd"></param>
@@ -53,6 +61,16 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming
         public HICDatabaseConfiguration(ILoadMetadata lmd, INameDatabasesAndTablesDuringLoads namer = null):
             this(lmd.GetDistinctLiveDatabaseServer(), namer, lmd.CatalogueRepository.GetServerDefaults(),lmd.OverrideRAWServer)
         {
+            var globalIgnorePattern = GetGlobalIgnorePatternIfAny(lmd.CatalogueRepository);
+            
+            if(globalIgnorePattern != null && !string.IsNullOrWhiteSpace(globalIgnorePattern.Regex))
+                IgnoreColumns = new Regex(globalIgnorePattern.Regex);
+
+        }
+
+        public static StandardRegex GetGlobalIgnorePatternIfAny(ICatalogueRepository repository)
+        {
+            return repository.GetAllObjects<StandardRegex>().OrderBy(r=>r.ID).FirstOrDefault(r=>r.ConceptName == StandardRegex.DataLoadEngineGlobalIgnorePattern);
         }
 
         /// <summary>

@@ -53,7 +53,9 @@ namespace Rdmp.Core.Reports
 
                     Dictionary<GovernancePeriod, ICatalogue[]> govs = _repository.GetAllObjects<GovernancePeriod>().ToDictionary(period => period, period => period.GovernedCatalogues.ToArray());
             
-                    foreach (Catalogue catalogue in _repository.GetAllObjects<Catalogue>().Where(c=>c.CatalogueItems.Any(ci=>ci.ExtractionInformation != null)))
+                    foreach (Catalogue catalogue in _repository.GetAllObjects<Catalogue>()
+                        .Where(c=>c.CatalogueItems.Any(ci=>ci.ExtractionInformation != null))
+                        .OrderBy(c=>c.Name))
                     {
                         if (catalogue.IsDeprecated || catalogue.IsColdStorageDataset || catalogue.IsInternalDataset)
                             continue;

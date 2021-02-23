@@ -9,10 +9,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
@@ -80,7 +80,7 @@ namespace Rdmp.UI.LoadExecutionUIs
 
             CommonFunctionality.AddToMenu(new ExecuteCommandEditLoadMetadataDescription(activator, _loadMetadata));
             
-            CommonFunctionality.Add(new ExecuteCommandViewLoadMetadataLogs(activator, (LoadMetadata) databaseObject));
+            CommonFunctionality.Add(new ExecuteCommandViewLogs(activator, (LoadMetadata) databaseObject));
             
             CommonFunctionality.Add(dd_DebugOptions);
 

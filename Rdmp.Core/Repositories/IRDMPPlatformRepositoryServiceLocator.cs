@@ -6,6 +6,8 @@
 
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.Core.Providers;
+using System;
 
 namespace Rdmp.Core.Repositories
 {
@@ -35,5 +37,15 @@ namespace Rdmp.Core.Repositories
         /// <param name="value"></param>
         /// <returns></returns>
         IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable;
+
+
+        /// <summary>
+        ///  Cross repository method equivallent to GetObjectByID.  Only works if <paramref name="t"/> is a Type supported by either
+        ///  CatalogueRepository / DataExportRepository (i.e. you can't fetch something like an <see cref="Evaluation"/> - which is a DQE object)
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        IMapsDirectlyToDatabaseTable GetObjectByID(Type t,int value);
     }
 }

@@ -8,7 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -17,6 +19,7 @@ using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 using Rdmp.Core.DataExport.DataRelease.Audit;
 using Rdmp.Core.Logging;
+using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
@@ -274,9 +277,30 @@ namespace Rdmp.Core.DataExport.Data
             }
         }
 
+        /// <summary>
+        /// Returns a name suitable for describing the extraction of a dataset(s) from this configuration (in a <see cref="DataLoadInfo"/>)
+        /// </summary>
+        /// <returns></returns>
+        public string GetLoggingRunName()
+        {
+            return Project.Name + " " + GetExtractionLoggingName();
+        }
+
+        private string GetExtractionLoggingName()
+        {
+            return "(ExtractionConfiguration ID=" + ID + ")";
+        }
+
 
         #endregion
-        
+
+        /// <summary>
+        /// Returns <see cref="Project.Name"/>
+        /// </summary>
+        [NoMappingToDatabase]
+        [UsefulProperty]
+        public string ProjectName{ get=>Project.Name;}
+
         /// <summary>
         /// Creates a new extraction configuration in the <paramref name="repository"/> database for the provided <paramref name="project"/>.
         /// </summary>
@@ -412,7 +436,7 @@ namespace Rdmp.Core.DataExport.Data
                                 continue;
 
                             //there was one to clone so clone it recursively (all subcontainers) including filters then set the root filter to the new clone 
-                            FilterContainer cloneRootContainer = rootContainer.DeepCloneEntireTreeRecursivelyIncludingFilters();
+                            IContainer cloneRootContainer = rootContainer.DeepCloneEntireTreeRecursivelyIncludingFilters();
                             newSelectedDataSet.RootFilterContainer_ID = cloneRootContainer.ID;
                             newSelectedDataSet.SaveToDatabase();
                         }
@@ -710,6 +734,33 @@ namespace Rdmp.Core.DataExport.Data
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return new IHasDependencies[0];
+        }
+
+        public DiscoveredServer GetDistinctLoggingDatabase()
+        {
+            return GetDistinctLoggingServer(false).Discover(DataAccessContext.Logging).Server;
+        }
+
+        public DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen)
+        {
+            serverChosen = GetDistinctLoggingServer(false);
+            return serverChosen.Discover(DataAccessContext.Logging).Server;
+        }
+
+        public string GetDistinctLoggingTask()
+        {
+            return ExecuteDatasetExtractionSource.AuditTaskName;
+        }
+
+        /// <summary>
+        /// Returns runs from the data extraction task where the run was for this ExtractionConfiguration
+        /// </summary>
+        /// <param name="runs"></param>
+        /// <returns></returns>
+        public IEnumerable<ArchivalDataLoadInfo> FilterRuns(IEnumerable<ArchivalDataLoadInfo> runs)
+        {
+            // allow for the project name changing but not our ID
+            return runs.Where(r=>r.Description.Contains(GetExtractionLoggingName()));
         }
     }
 }

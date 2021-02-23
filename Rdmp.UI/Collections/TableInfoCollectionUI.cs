@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -106,7 +107,7 @@ namespace Rdmp.UI.Collections
 
             CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=> new IAtomicCommand[]
             {
-                new ExecuteCommandCreateNewTableInfoByImportingExistingDataTable(a),
+                new ExecuteCommandImportTableInfo(a,null,false),
                 new ExecuteCommandBulkImportTableInfos(a)
             };
             

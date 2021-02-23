@@ -77,6 +77,8 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Sources
                 
                 while (_reader.Read())
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
+
                     AddRowToDataTable(chunk, _reader);
                     readThisBatch ++;
 

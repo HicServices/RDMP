@@ -4,9 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
@@ -32,8 +35,18 @@ namespace ResearchDataManagementPlatform.WindowManagement.TabPageContextMenus
 
             if (tab is PersistableSingleDatabaseObjectDockContent single)
             {
-                var builder = new GoToMenuBuilder(activator);
-                Items.Add(builder.GetMenu(single.DatabaseObject));
+                var uiFactory = new AtomicCommandUIFactory(activator);
+                var builder = new GoToCommandFactory(activator);
+
+                var gotoMenu = new ToolStripMenuItem(AtomicCommandFactory.GoTo){Enabled = false };
+                Items.Add(gotoMenu);
+                
+                foreach(var cmd in builder.GetCommands(single.DatabaseObject))
+                {
+                    gotoMenu.DropDownItems.Add(uiFactory.CreateMenuItem(cmd));
+                    gotoMenu.Enabled = true;
+                }
+                RDMPContextMenuStrip.RegisterFetchGoToObjecstCallback(gotoMenu);
             }
 
             Items.Add("Refresh", FamFamFamIcons.arrow_refresh, (s, e) => _tab.HandleUserRequestingTabRefresh(activator));

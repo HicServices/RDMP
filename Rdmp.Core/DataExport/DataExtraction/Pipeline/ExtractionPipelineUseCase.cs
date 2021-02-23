@@ -7,6 +7,7 @@
 using System;
 using System.Data;
 using System.Linq;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
@@ -41,7 +42,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
         /// </summary>
         public IExecuteDatasetExtractionDestination Destination { get; private set; }
       
-        public ExtractionPipelineUseCase(IProject project, IExtractCommand extractCommand, IPipeline pipeline, DataLoadInfo dataLoadInfo)
+        public ExtractionPipelineUseCase(IBasicActivateItems activator,IProject project, IExtractCommand extractCommand, IPipeline pipeline, DataLoadInfo dataLoadInfo)
         {
             _dataLoadInfo = dataLoadInfo;
             ExtractCommand = extractCommand;
@@ -53,6 +54,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
             AddInitializationObject(project);
             AddInitializationObject(_dataLoadInfo);
             AddInitializationObject(project.DataExportRepository.CatalogueRepository);
+            AddInitializationObject(activator);
 
             GenerateContext();
         }
@@ -77,6 +79,9 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
             try
             {
                 ExtractCommand.ElevateState(ExtractCommandState.WaitingToExecute);
+
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"Running Extraction {ExtractCommand} with Pipeline {_pipeline.Name} (ID={_pipeline.ID})"));
+
                 var engine = GetEngine(_pipeline, listener);
 
                 try
@@ -205,7 +210,8 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
                 typeof(IExtractCommand),
                 typeof(IProject),
                 typeof(DataLoadInfo),
-                typeof(ICatalogueRepository)
+                typeof(ICatalogueRepository),
+                typeof(IBasicActivateItems)
             })
         {
             GenerateContext();

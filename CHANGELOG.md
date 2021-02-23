@@ -6,7 +6,149 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-...
+### Added
+
+- Added `$foreach Catalogue` option for custom metadata report templates (to allow prefix, suffixes, table of contents etc)
+- Added ability to search for objects by ID in console gui
+- More detailed logging of Type decisions when extracting to database
+- Added ability to cancel ongoing queries in CLI Sql Editor
+- Added 'Reset Sql' and 'Clear Sql' buttons to CLI Sql Editor
+- Added ability to set custom timeout for queries in CLI Sql Editor
+- Added ability to save results of CLI Sql Editor (table) to CSV
+- Added view data/aggregate etc on ColumnInfo objects to list of commands accessible from the CLI gui
+- Added 'Go To' commands to CLI gui
+- Exposed 'Add New Process Task...' to load stages in CLI menu
+- Added 'ViewCatalogueData' command for CLI and CLI GUI use
+- Better error reporting when item validators crash during validation execution (now includes constraint type, column name and value being validated).
+- Added 'Go To' commands to CLI gui
+- Exposed 'Add New Process Task...' to load stages in CLI menu
+
+### Fixed
+
+- Fixed CLI database selection UI not using password mask symbol (`*`)
+- Fixed CLI GUI message boxes bug with very long messages
+- Fixed Custom Metadata template stripping preceeding whitespace in templated lines e.g. `"  - $Name"` (like you might find in a table of contents section of a template)
+
+### Dependencies
+
+- Bump System.Drawing.Common from 5.0.0 to 5.0.1
+
+## [4.2.4] - 2021-02-05
+
+- Added CLI commands for viewing/changing `UserSettings` e.g. AllowIdentifiableExtractions
+- Added user setting `ShowPipelineCompletedPopup` for always popping a modal dialog on completion of a pipeline execution in the GUI client (e.g. committing a cohort)
+- Added new flexible file/directory extraction component `SimpleFileExtractor`
+
+### Changed
+
+- Globals tickbox can now be checked even when there are no explicit files (this allows implicit files e.g. `SimpleFileExtractor` to still run)
+
+### Fixed 
+
+- Fixed MySql backup trigger implementation not updating validTo on the new row entering the table on UPDATE operations
+
+## [4.2.3] - 2021-02-01
+
+### Fixed 
+
+- Fixed rare threading issue with tree representations of Lookups
+- Fixed proxy objects context menus not functioning correctly since 4.2.0 (e.g. Catalogues associated with a load) for some commands
+
+### Dependencies
+
+- Bump NUnit from 3.13.0 to 3.13.1
+
+## [4.2.2] - 2021-01-28
+
+### Added
+
+- Added `patch` command to rdmp CLI e.g. `./rdmp patch -b`
+- Added ProjectName to ExtractionConfiguration objects visualisation in Find / Select popups
+
+### Fixed
+
+- Fixed erroneous warning where some characters were wrongly reported as illegal e.g. '#' in Filter names 
+- Fixed RemoteDatabaseAttacher not logging table name (only database)
+
+### Changed
+
+- Metadata report now lists Catalogues in alphabetical order
+- Changed hierarchy multiple parents state to be a Warning instead of an Error
+
+### Dependencies
+
+- Bump Moq from 4.15.2 to 4.16.0
+- Bump YamlDotNet from 9.1.1 to 9.1.4
+- Bump NLog from 4.7.6 to 4.7.7
+- Bump SSH.NET from 2020.0.0 to 2020.0.1
+
+## [4.2.1] - 2021-01-13
+
+### Added
+
+- Choose Load Directory on DLE now shows old value during editing
+- Added property suggestions when using ExecuteCommandSet with an incorrect property name
+- Added the ability to drag and drop aggregates into other CohortIdentificationConfigurations to import
+- Added ColumnDropper that allows a user to specify the columns that should not be extracted in the pipeline.
+- Added Favourite/UnFavourite to right click context menus
+- CachingHost now logs the state of the CacheProgress being executed first thing on start
+- Home screen now supports right click context menu, drag and drop etc
+- Added 'Sessions'.  These are tree collection windows similar to Favourites but with a user defined name and limited duration (until closed)
+
+### Fixed
+
+- Fixed startup error when user enters a corrupt connection string for platform database locations.  This bug affected syntactically invalid (malformed) connection strings (i.e. not simply connection strings that point to non existant databases)
+- Fixed various issues in ColumnSwapper
+  - If input table contains nulls these are now passed through unchanged
+  - If mapping table contains nulls these are ignored (and not used to map input nulls)
+  - If input table column is of a different Type than the database table a suitable Type conversion is applied
+- Data load engine logging checks are better able to repair issues with missing logging server IDs / logging tasks
+- Better support for abort/cancel in
+  - RemoteTableAttacher
+  - ExcelAttacher
+  - KVPAttacher
+  - RemoteDatabaseAttacher
+- Fixed View Inserts/Updates dialog when using non SqlServer DBMS (e.g. MySql)
+- Fixed various layout and performance issues with RDMP console GUI.
+- Fixed `rdmp cmd` loop exiting when commands entered result in error.
+- Fixed autocomplete in `rdmp cmd` mode and enabled for Linux
+- Fixed right click context menu being built twice on right click a new node (once for selection and once for right click)
+
+### Changed
+
+- Added timeout of 10 minutes (previously 30 seconds) for counting unique patient identifiers while writing metadata for extractions
+- Choose Load Directory now lets you specify invalid directories e.g. when building a load on one computer designed to run on separate computer with an isolated file system.
+- Reinvented Console Gui to more closely resemble the windows client
+
+### Dependencies
+
+- Bump SSH.NET from 2016.1.0 to 2020.0.0
+
+## [4.2.0] - 2020-10-19
+
+### Fixed
+
+- Reduced memory overhead during refreshes
+- Fixed various graphical/performance issues when running in VDI environments with limited CPU
+- Fixed missing scrollbars in Explicit Column Typing user interface
+- Fixed various errors that could occur when a [Catalogue] referenced by an extraction is deleted outside of RDMP (e.g. by truncating the database table(s))
+
+### Added
+
+- Support for importing WHERE logic into extraction datasets from other configurations or cohort builder configurations
+- Pipeline ID and Name now recorded in logs for Data Extractions
+- Added support for viewing extraction logs in tree form (for a given ExtractionConfiguration)
+- Added `AllowIdentifiableExtractions` user setting.  Enabling this prevents RDMP reporting an error state when cohorts are created that have the same private and release ID fields.
+- Added GoTo from extraction/cohort building filters to the parent Catalogue level filter and vice versa
+- Added ability to suppress [LoadMetadata] triggers
+- Added ability for Plugins to store custom information about objects in the RDMP Catalogue platform database
+- Added IgnoreColumns setting for DLE to ignore specific columns in the final table completely (not created in RAW/STAGING and not migrated)
+
+## [4.1.9] - 2020-09-17
+
+### Added
+
+- Added ExplicitDateTimeFormat property to flat file attachers and pipeline sources.  Allows custom parsing of dates e.g. where no delimiters exist (e.g. 010120)
 
 ## [4.1.8] - 2020-08-17
 
@@ -516,7 +658,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.1.8...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.2.4...develop
+[4.2.4]: https://github.com/HicServices/RDMP/compare/v4.2.3...v4.2.4
+[4.2.3]: https://github.com/HicServices/RDMP/compare/v4.2.2...v4.2.3
+[4.2.2]: https://github.com/HicServices/RDMP/compare/v4.2.1...v4.2.2
+[4.2.1]: https://github.com/HicServices/RDMP/compare/v4.2.0...v4.2.1
+[4.2.0]: https://github.com/HicServices/RDMP/compare/v4.1.9...v4.2.0
+[4.1.9]: https://github.com/HicServices/RDMP/compare/v4.1.8...v4.1.9
 [4.1.8]: https://github.com/HicServices/RDMP/compare/v4.1.7...v4.1.8
 [4.1.7]: https://github.com/HicServices/RDMP/compare/v4.1.6...v4.1.7
 [4.1.6]: https://github.com/HicServices/RDMP/compare/v4.1.5...v4.1.6
@@ -569,3 +717,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [Lookup]: ./Documentation/CodeTutorials/Glossary.md#Lookup
 [CohortIdentificationConfiguration]: ./Documentation/CodeTutorials/Glossary.md#CohortIdentificationConfiguration
+[LoadMetadata]: ./Documentation/CodeTutorials/Glossary.md#LoadMetadata

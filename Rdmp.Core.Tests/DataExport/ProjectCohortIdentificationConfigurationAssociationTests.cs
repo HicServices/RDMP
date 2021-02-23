@@ -55,11 +55,11 @@ namespace Rdmp.Core.Tests.DataExport
             Assert.IsEmpty( p.GetAssociatedCohortIdentificationConfigurations());
 
             //error should be reported in top right of program
-            var ex = Assert.Throws<Exception>(()=>new DataExportChildProvider(new RepositoryProvider(memory), null, new ThrowImmediatelyCheckNotifier()));
+            var ex = Assert.Throws<Exception>(()=>new DataExportChildProvider(new RepositoryProvider(memory), null, new ThrowImmediatelyCheckNotifier(),null));
             StringAssert.IsMatch(@"Failed to find Associated Cohort Identification Configuration with ID \d+ which was supposed to be associated with my proj", ex.Message);
 
             //but UI should still respond
-            var childProvider = new DataExportChildProvider(new RepositoryProvider(memory), null, new IgnoreAllErrorsCheckNotifier());
+            var childProvider = new DataExportChildProvider(new RepositoryProvider(memory), null, new IgnoreAllErrorsCheckNotifier(),null);
 
             //the orphan cic should not appear in the tree view under Project=>Cohorts=>Associated Cics
             var cohorts = childProvider.GetChildren(p).OfType<ProjectCohortsNode>().Single();

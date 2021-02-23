@@ -100,7 +100,9 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
         [DemandsInitialization(Attacher.Culture_DemandDescription)]
         public override CultureInfo Culture { get => _source.Culture; set => _source.Culture = value; }
 
-        private GracefulCancellationToken cancellationToken = new GracefulCancellationToken();
+        [DemandsInitialization(Attacher.ExplicitDateTimeFormat_DemandDescription)]
+        public override string ExplicitDateTimeFormat {get => _source.ExplicitDateTimeFormat; set => _source.ExplicitDateTimeFormat = value; }
+
 
           protected DelimitedFlatFileAttacher(char separator)
           {
@@ -120,7 +122,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
         private IDataLoadEventListener _listener;
         private FileInfo _currentFile;
 
-        protected override int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize)
+        protected override int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize,GracefulCancellationToken cancellationToken)
         {
             _source.MaxBatchSize = maxBatchSize;
             _source.SetDataTable(dt);
@@ -140,7 +142,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
             return dt.Rows.Count;
         }
 
-        protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener)
+        protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
         {
             _source.StronglyTypeInput = false;
             _source.StronglyTypeInputBatchSize = 0;

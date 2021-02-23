@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.PastEvents;
@@ -21,45 +22,28 @@ using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus.MenuItems;
+using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-
-
 using ReusableLibraryCode;
-using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.CatalogueSummary.LoadEvents
 {
     /// <summary>
-    /// Shows the longitudinal history of all data loads of the selected Catalogue (dataset).  This is an expandable tree including all progress messages, errors, table load notifications
+    /// Shows the longitudinal history of all data loads of a given object (e.g. data load).  This is an expandable tree including all progress messages, errors, table load notifications
     /// etc.
     /// 
     /// <para>Right clicking on red error messages will allow you to resolve them into yellow state (error has been investigated and did not result in any serious problems / data integrity loss etc).
     /// This launches the ResolveFatalErrors dialog.  You can resolve multiple errors at the same time by selecting all the errors at once and then right clicking one of them.</para>
-    /// 
-    /// <para>Right clicking a live table load message will let you view a sample of the the UPDATES / INSERTS that happened during the data load (launches ViewInsertsAndUpdatesDialog).</para>
-    /// 
     /// </summary>
-    public partial class LoadEventsTreeView : LoadEventsTreeView_Design
+    public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionControl
     {
-        private LoadMetadata _loadMetadata;
-        
+        public LoadEventsTreeViewObjectCollection Collection {get;set;}
+                
         private BackgroundWorker _populateLoadHistory = new BackgroundWorker();
         private ArchivalDataLoadInfo[] _populateLoadHistoryResults = new ArchivalDataLoadInfo[0];
         private CancellationTokenSource _populateLoadHistoryCancel;
         
-
-        [Browsable(false)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public LoadMetadata LoadMetadata
-        {
-            get { return _loadMetadata; }
-            private set
-            {
-                _loadMetadata = value;
-                PopulateLoadHistory();
-            }
-        }
 
         readonly ToolStripTextBox _tbFilterBox = new ToolStripTextBox();
         readonly ToolStripButton _btnApplyFilter = new ToolStripButton("Apply");
@@ -91,7 +75,6 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
             //We will handle this ourselves because default behaviour is to limit the amount of text copied
             treeView1.CopySelectionOnControlC = false;
 
-            AssociatedCollection = RDMPCollection.DataLoad;
             _btnApplyFilter.Click += (s, e) => ApplyFilter(_tbFilterBox.Text);
             _tbToFetch.TextChanged += TbToFetchTextChanged;
             _btnFetch.Click += (s,e)=>PopulateLoadHistory();
@@ -281,8 +264,9 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
             {
                 try
                 {
-                    _logManager = new LogManager(_loadMetadata.GetDistinctLoggingDatabase());
-                    results = _logManager.GetArchivalDataLoadInfos(_loadMetadata.GetDistinctLoggingTask(), _populateLoadHistoryCancel.Token,null, _toFetch).ToArray();
+                    _logManager = new LogManager(Collection.RootObject.GetDistinctLoggingDatabase());
+                    var unfilteredResults = _logManager.GetArchivalDataLoadInfos(Collection.RootObject.GetDistinctLoggingTask(), _populateLoadHistoryCancel.Token,null, _toFetch);
+                    results = Collection.RootObject.FilterRuns(unfilteredResults).ToArray();
                 }
                 catch (OperationCanceledException)//user cancels
                 {
@@ -293,7 +277,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
             }
             catch (Exception exception)
             {
-                ragSmiley1.Fatal(exception);
+                CommonFunctionality.Fatal("Failed to popualte load history",exception);
             }
         }
 
@@ -306,7 +290,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
             //clear the tree
             ClearObjects();
 
-            if (LoadMetadata == null)
+            if (Collection?.RootObject == null)
                 return;
 
 
@@ -343,6 +327,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
         public void ApplyFilter(string filter)
         {
             treeView1.ModelFilter = new TextMatchFilter(treeView1, filter,StringComparison.CurrentCultureIgnoreCase);
+            treeView1.UseFiltering = !string.IsNullOrWhiteSpace(filter);
             
         }
 
@@ -359,12 +344,12 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
                 RightClickMenu.Items.Add(new AtomicCommandMenuItem(cmd, Activator));
             }
 
-            if (tli != null && _loadMetadata != null)
+            if (tli != null && Collection?.RootObject is LoadMetadata lmd)
             {
                 //if it is not a freaky temp table
                 if (!tli.TargetTable.EndsWith("_STAGING") && !tli.TargetTable.EndsWith("_RAW"))
                 {
-                    var mi = new ToolStripMenuItem("View Inserts/Updates", null, (a, b) => new ViewInsertsAndUpdatesDialog(tli, _loadMetadata.GetDistinctTableInfoList(true)).Show());
+                    var mi = new ToolStripMenuItem("View Inserts/Updates", null, (a, b) => new ViewInsertsAndUpdatesDialog(tli, lmd.GetDistinctTableInfoList(true)).Show());
 
                     //if there are inserts/updates
                     if( tli.Inserts > 0 || tli.Updates > 0 )
@@ -437,12 +422,29 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
             }
         }
         
-        public override void SetDatabaseObject(IActivateItems activator, LoadMetadata databaseObject)
+        
+        
+        public IPersistableObjectCollection GetCollection()
         {
-            base.SetDatabaseObject(activator,databaseObject);
-            ragSmiley1.Reset();
+            return Collection;
+        }
 
-            LoadMetadata = databaseObject;
+        public string GetTabName()
+        {
+            return "Logs:" + Collection?.RootObject?.ToString();
+        }
+
+        public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+        {
+        }
+
+        public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
+        {
+            SetItemActivator(activator);
+
+            Collection = (LoadEventsTreeViewObjectCollection)collection;
+            
+            CommonFunctionality.ClearToolStrip();
 
             CommonFunctionality.Add(new ToolStripLabel("Filter:"));
             CommonFunctionality.Add(_tbFilterBox);
@@ -453,11 +455,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
             CommonFunctionality.Add(_tbToFetch);
             CommonFunctionality.Add(_btnFetch);
 
+            PopulateLoadHistory();
         }
-    }
-
-    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LoadEventsTreeView_Design, UserControl>))]
-    public abstract class LoadEventsTreeView_Design : RDMPSingleDatabaseObjectControl<LoadMetadata>
-    {
     }
 }

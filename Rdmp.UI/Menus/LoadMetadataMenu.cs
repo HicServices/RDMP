@@ -6,12 +6,11 @@
 
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
-using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.Menus
@@ -21,18 +20,34 @@ namespace Rdmp.UI.Menus
     {
         public LoadMetadataMenu(RDMPContextMenuStripArgs args, LoadMetadata loadMetadata) : base(args, loadMetadata)
         {
-            Add(new ExecuteCommandViewLoadMetadataLogs(_activator).SetTarget(loadMetadata));
+            Add(new ExecuteCommandViewLogs(_activator,loadMetadata));
 
             Add(new ExecuteCommandViewLoadDiagram(_activator,loadMetadata));
 
             Add(new ExecuteCommandEditLoadMetadataDescription(_activator, loadMetadata));
 
-            Add(new ExecuteCommandExportObjectsToFileUI(_activator, new IMapsDirectlyToDatabaseTable[] {loadMetadata}));
+            Add(new ExecuteCommandExportObjectsToFile(_activator, new IMapsDirectlyToDatabaseTable[] {loadMetadata}));
 
             Items.Add(new ToolStripSeparator());
 
             Add(new ExecuteCommandOverrideRawServer(_activator, loadMetadata));
             Add(new ExecuteCommandCreateNewLoadMetadata(_activator));
+
+            var mi_advanced = new ToolStripMenuItem("Advanced");
+            Add(new ExecuteCommandSetGlobalDleIgnorePattern(_activator),Keys.None,mi_advanced);
+            Add(new ExecuteCommandSetIgnoredColumns(_activator,loadMetadata),Keys.None,mi_advanced);
+            Add(new ExecuteCommandSetIgnoredColumns(_activator,loadMetadata,null){OverrideCommandName = "Clear Ignored Columns" },Keys.None,mi_advanced);
+
+            var mi_ignoreTrigger = AtomicCommandUIFactory.CreateMenuItem(
+            new ExecuteCommandSet(_activator,loadMetadata,typeof(LoadMetadata).GetProperty(nameof(LoadMetadata.IgnoreTrigger)))
+            {
+                OverrideCommandName = "Ignore Trigger"
+            }
+            );
+            mi_ignoreTrigger.Checked = loadMetadata.IgnoreTrigger;
+            mi_advanced.DropDownItems.Add(mi_ignoreTrigger);
+
+            Items.Add(mi_advanced);
             
             ReBrandActivateAs("Check and Execute",RDMPConcept.LoadMetadata,OverlayKind.Execute);
         }

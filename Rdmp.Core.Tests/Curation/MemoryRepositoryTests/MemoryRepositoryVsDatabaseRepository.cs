@@ -93,27 +93,15 @@ namespace Rdmp.Core.Tests.Curation.MemoryRepositoryTests
             
             var importer1 = new TableInfoImporter(memoryRepository, tbl, DataAccessContext.Any);
 
-            TableInfo memTableInfo;
-            ColumnInfo[] memColumnInfos;
-            Catalogue memCatalogue;
-            CatalogueItem[] memCatalogueItems;
-            ExtractionInformation[] memExtractionInformations;
-
-            importer1.DoImport(out memTableInfo,out memColumnInfos);
+            importer1.DoImport(out var memTableInfo,out var memColumnInfos);
             var forwardEngineer1 = new ForwardEngineerCatalogue(memTableInfo, memColumnInfos);
-            forwardEngineer1.ExecuteForwardEngineering(out memCatalogue,out memCatalogueItems,out memExtractionInformations);
+            forwardEngineer1.ExecuteForwardEngineering(out var memCatalogue,out var memCatalogueItems,out var memExtractionInformations);
 
-
-            TableInfo dbTableInfo;
-            ColumnInfo[] dbColumnInfos;
-            Catalogue dbCatalogue;
-            CatalogueItem[] dbCatalogueItems;
-            ExtractionInformation[] dbExtractionInformations;
 
             var importerdb = new TableInfoImporter(CatalogueRepository, tbl, DataAccessContext.Any);
-            importerdb.DoImport(out dbTableInfo, out dbColumnInfos);
+            importerdb.DoImport(out var dbTableInfo, out var dbColumnInfos);
             var forwardEngineer2 = new ForwardEngineerCatalogue(dbTableInfo, dbColumnInfos);
-            forwardEngineer2.ExecuteForwardEngineering(out dbCatalogue, out dbCatalogueItems, out dbExtractionInformations);
+            forwardEngineer2.ExecuteForwardEngineering(out var dbCatalogue, out var dbCatalogueItems, out var dbExtractionInformations);
 
 
             UnitTests.AssertAreEqual(memCatalogue,dbCatalogue);

@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine;
@@ -18,8 +19,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     {
         private readonly LoadMetadata _loadMetadata;
         private readonly LoadStage _loadStage;
-        private readonly Type _type;
-        private readonly ProcessTaskType _processTaskType;
+        private Type _type;
+        private ProcessTaskType _processTaskType;
 
         public ExecuteCommandCreateNewClassBasedProcessTask(IBasicActivateItems activator, LoadMetadata loadMetadata, LoadStage loadStage, 
             [DemandsInitialization("Class to execute, must be an attacher, mutilater etc", TypeOf = typeof(IDisposeAfterDataLoad))]
@@ -27,6 +28,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             _loadMetadata = loadMetadata;
             _loadStage = loadStage;
+
+            if(type != null)
+                SetType(type);
+
+        }
+
+        private void SetType(Type type)
+        {
             _type = type;
 
             if (typeof(IAttacher).IsAssignableFrom(_type))
@@ -41,11 +50,27 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 SetImpossible($"Type '{_type}' was not a compatible one e.g. IAttacher, IDataProvider or IMutilateDataTables");
             }
-
+        }
+        private Type[] GetProcessTaskTypes()
+        {
+            return BasicActivator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().
+                Where(t=>
+                typeof(IAttacher).IsAssignableFrom(t) ||
+                typeof(IDataProvider).IsAssignableFrom(t) ||
+                typeof(IMutilateDataTables).IsAssignableFrom(t)).ToArray();
         }
 
         public override void Execute()
         {
+            if(_type == null)
+            {
+                
+                if(BasicActivator.SelectType("Process Type",GetProcessTaskTypes(),out Type chosen))
+                    _type = chosen;
+                else
+                    return;
+            }
+
             ProcessTask newTask = new ProcessTask(BasicActivator.RepositoryLocator.CatalogueRepository,_loadMetadata, _loadStage);
             newTask.Path = _type.FullName;
             newTask.ProcessTaskType = _processTaskType;
@@ -57,5 +82,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             Publish(_loadMetadata);
             Activate(newTask);
         }
+
     }
 }

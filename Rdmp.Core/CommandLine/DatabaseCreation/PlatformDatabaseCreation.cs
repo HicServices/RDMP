@@ -8,6 +8,7 @@ using System;
 using System.Data.SqlClient;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
@@ -25,6 +26,10 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
         public const string DefaultDQEDatabaseName = "DQE";
         public const string DefaultLoggingDatabaseName = "Logging";
 
+        /// <summary>
+        /// Creates new databases on the given server for RDMP platform databases
+        /// </summary>
+        /// <param name="options"></param>
         public void CreatePlatformDatabases(PlatformDatabaseCreationOptions options)
         {
             Create(DefaultCatalogueDatabaseName, new CataloguePatcher(), options);
@@ -45,7 +50,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
 
             if(options.ExampleDatasets)
             {
-                var examples = new ExampleDatasetsCreation(repo);
+                var examples = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(repo,null),repo);
                 var server = new DiscoveredServer(options.GetBuilder("ExampleData"));
                 
                 examples.Create(server.GetCurrentDatabase(),new ThrowImmediatelyCheckNotifier(){WriteToConsole = true },options);

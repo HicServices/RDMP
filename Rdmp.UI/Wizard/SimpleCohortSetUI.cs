@@ -17,7 +17,6 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.Wizard
@@ -240,7 +239,7 @@ namespace Rdmp.UI.Wizard
             
             var filterOp = (FilterContainerOperation) ddAndOr.SelectedItem;
 
-            AggregateFilterContainer filterContainer;
+            IContainer filterContainer;
             if (aggregate.RootFilterContainer_ID != null)
             {
                 //this is the case if there are mandatory filters in the dataset

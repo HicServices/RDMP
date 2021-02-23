@@ -41,8 +41,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             icol1.Order = 1;
             queryBuilder.AddColumn(icol1);
 
-            TableInfo primary;
-            var tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out primary,null);
+            var tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out var primary,null);
             
             Assert.AreEqual(1,tablesUsed.Count);
             Assert.AreEqual(head,tablesUsed[0]);

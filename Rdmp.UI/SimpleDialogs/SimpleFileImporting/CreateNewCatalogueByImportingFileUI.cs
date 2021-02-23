@@ -13,6 +13,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using FAnsi.Discovery;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -23,8 +25,6 @@ using Rdmp.Core.DataLoad.Engine.Pipeline;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs.ForwardEngineering;
@@ -435,9 +435,9 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             extractionPicker.ShowDialog();
 
             var catalogue = extractionPicker.CatalogueCreatedIfAny;
-            if (catalogue != null)
+            if (catalogue is DatabaseEntity de)
             {
-                Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(catalogue));
+                Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(de));
             
                 MessageBox.Show("Successfully imported new Dataset '" + catalogue + "'." +
                                 "\r\n" +

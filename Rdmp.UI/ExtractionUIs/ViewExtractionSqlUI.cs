@@ -11,17 +11,16 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
-using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.DataViewing;
-using Rdmp.UI.DataViewing.Collections.Arbitrary;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
@@ -109,49 +108,18 @@ namespace Rdmp.UI.ExtractionUIs
                 //only allow reordering when all are visible or only internal are visible otherwise user could select core only and do a reorder leaving supplemental columns as freaky orphans all down at the bottom fo the SQL!
                 bLoading = true;
 
-                List<ExtractionInformation> extractionInformations = new List<ExtractionInformation>();
-
-                if (rbInternal.Checked)
-                {
-                    extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Internal));
-                }
-                else
-                {
-                    //always add the project specific ones
-                    extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific));
-                    extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Core));
-
-                    if (rbSupplemental.Checked || rbSpecialApproval.Checked)
-                        extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Supplemental));
-
-                    if (rbSpecialApproval.Checked)
-                        extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.SpecialApprovalRequired));
-
-                }
-
-                //sort by Default Order
-                extractionInformations.Sort();
-                
-                //add to listbox
-                olvExtractionInformations.ClearObjects();
-                olvExtractionInformations.AddObjects(extractionInformations.ToArray());
+                List<ExtractionInformation> extractionInformations = GetSelectedExtractionInformations();
                 
                 //add the available filters
-                var filters = extractionInformations.SelectMany(ei => ei.ExtractionFilters).ToArray();
-
-                //remove deleted ones
-                if (olvFilters.Objects != null)
-                    foreach (ExtractionFilter f in olvFilters.Objects.Cast<ExtractionFilter>().Except(filters).ToArray())
-                        olvFilters.RemoveObject(f);
-
-                //add new ones
-                foreach (ExtractionFilter f in filters)
-                    if (olvFilters.IndexOf(f) == -1)
-                        olvFilters.AddObject(f);
+                SetupAvailableFilters(extractionInformations);
                 
                 //generate SQL -- only make it readonly after setting the .Text otherwise it ignores the .Text setting even though it is programatical
                 QueryPreview.ReadOnly = false;
-                QueryPreview.Text = GenerateExtractionSQLForCatalogue(extractionInformations.ToArray());
+
+                
+                var collection = GetCollection(extractionInformations);
+
+                QueryPreview.Text = collection.GetSql();
                 CommonFunctionality.ScintillaGoRed(QueryPreview, false);
                 QueryPreview.ReadOnly = true;
             }
@@ -166,34 +134,66 @@ namespace Rdmp.UI.ExtractionUIs
             }
 
         }
-        private string GenerateExtractionSQLForCatalogue(ExtractionInformation[] extractionInformations)
+
+        private void SetupAvailableFilters(List<ExtractionInformation> extractionInformations)
         {
-            QueryBuilder builder = new QueryBuilder(null,null);
-            builder.AddColumnRange(extractionInformations);
-            
-            List<ExtractionFilter> filters = new List<ExtractionFilter>();
+            var filters = extractionInformations.SelectMany(ei => ei.ExtractionFilters).ToArray();
 
-            foreach (ExtractionFilter f in olvFilters.CheckedObjects)
-                filters.Add(f);
+                //remove deleted ones
+                if (olvFilters.Objects != null)
+                    foreach (ExtractionFilter f in olvFilters.Objects.Cast<ExtractionFilter>().Except(filters).ToArray())
+                        olvFilters.RemoveObject(f);
 
-            builder.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null,filters.ToArray(),FilterContainerOperation.AND);
-            return builder.SQL;
+                //add new ones
+                foreach (ExtractionFilter f in filters)
+                    if (olvFilters.IndexOf(f) == -1)
+                        olvFilters.AddObject(f);
         }
-        
-        private void BtnRun_Click(object sender, EventArgs e)
-        {
-            var t = _catalogue.GetTableInfoList(false).FirstOrDefault();
 
-            if(t == null)
-                Activator.Show("Could not determine what table underlies the Catalogue");
+        private List<ExtractionInformation> GetSelectedExtractionInformations()
+        {
+            var extractionInformations = new List<ExtractionInformation>();
+
+            if (rbInternal.Checked)
+            {
+                extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Internal));
+            }
             else
             {
-                Activator.Activate<ViewSQLAndResultsWithDataGridUI>(
-                    new ArbitraryTableExtractionUICollection(t.Discover(DataAccessContext.InternalDataProcessing))
-                    {
-                        OverrideSql = QueryPreview.Text
-                    });
+                //always add the project specific ones
+                extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific));
+                extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Core));
+
+                if (rbSupplemental.Checked || rbSpecialApproval.Checked)
+                    extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Supplemental));
+
+                if (rbSpecialApproval.Checked)
+                    extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.SpecialApprovalRequired));
+
             }
+
+            //sort by Default Order
+            extractionInformations.Sort();
+                
+            //add to listbox
+            olvExtractionInformations.ClearObjects();
+            olvExtractionInformations.AddObjects(extractionInformations.ToArray());
+
+            return extractionInformations;
+        }
+
+        private ViewCatalogueDataCollection GetCollection(List<ExtractionInformation> extractionInformations)
+        {
+            var collection = new ViewCatalogueDataCollection(_catalogue);
+                collection.DatabaseObjects.AddRange(olvFilters.CheckedObjects.OfType<IFilter>());
+                collection.DatabaseObjects.AddRange(extractionInformations);
+
+            return collection;
+        }
+
+        private void BtnRun_Click(object sender, EventArgs e)
+        {
+            Activator.ShowData(GetCollection(GetSelectedExtractionInformations()));
         }
 
 

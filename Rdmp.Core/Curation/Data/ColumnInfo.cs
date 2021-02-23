@@ -53,6 +53,7 @@ namespace Rdmp.Core.Curation.Data
         private int? _duplicateRecordResolutionOrder;
         private bool _duplicateRecordResolutionIsAscending;
         private string _collation;
+        private bool _ignoreInLoads;
 
         /// <summary>
         /// ID of the <see cref="TableInfo"/> that this <see cref="ColumnInfo"/> belongs to.
@@ -200,6 +201,15 @@ namespace Rdmp.Core.Curation.Data
             set { SetField(ref  _duplicateRecordResolutionIsAscending, value); }
         }
 
+        /// <summary>
+        /// Set to True to ignore this column when doing data loads
+        /// </summary>
+        public bool IgnoreInLoads
+        {
+            get { return _ignoreInLoads; }
+            set { SetField(ref  _ignoreInLoads, value); }
+        }
+
         #endregion
 
         #region Relationships
@@ -276,7 +286,7 @@ namespace Rdmp.Core.Curation.Data
         /// <param name="name"></param>
         /// <param name="type"></param>
         /// <param name="parent"></param>
-        public ColumnInfo(ICatalogueRepository repository, string name, string type, TableInfo parent)
+        public ColumnInfo(ICatalogueRepository repository, string name, string type, ITableInfo parent)
         {
             //defaults
             DuplicateRecordResolutionIsAscending = true;
@@ -285,7 +295,8 @@ namespace Rdmp.Core.Curation.Data
             {
                 {"Name", name != null ? (object) name : DBNull.Value},
                 {"Data_type", type != null ? (object) type : DBNull.Value},
-                {"TableInfo_ID", parent.ID}
+                {"TableInfo_ID", parent.ID},
+                { "IgnoreInLoads",false}
             });
 
             ClearAllInjections();
@@ -302,6 +313,7 @@ namespace Rdmp.Core.Curation.Data
             Source = r["Source"].ToString();
             Description = r["Description"].ToString();
             Collation = r["Collation"] as string;
+            IgnoreInLoads = ObjectToNullableBool(r["IgnoreInLoads"]) ?? false;
 
             //try to turn string value in database into enum value
             ColumnStatus dbStatus;

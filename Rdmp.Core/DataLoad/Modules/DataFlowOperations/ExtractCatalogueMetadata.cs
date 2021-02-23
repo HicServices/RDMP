@@ -8,6 +8,7 @@ using System;
 using System.Data;
 using System.IO;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
@@ -24,9 +25,10 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations
     /// 
     /// <para>The Metadata Naming Pattern will also override the table name in the DataTable flow object.</para>
     /// </summary>
-    public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPipelineRequirement<IExtractCommand>
+    public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPipelineRequirement<IExtractCommand>, IPipelineRequirement<IBasicActivateItems>
     {
         private IExtractCommand _request;
+        private IBasicActivateItems _activator;
 
         [DemandsInitialization(@"How do you want to name datasets, use the following tokens if you need them:   
          $p - Project Name ('e.g. My Project')
@@ -58,7 +60,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations
                 var outputFile = new FileInfo(Path.Combine(outputFolder.FullName, toProcess.TableName + ".sd"));
 
                 catalogue.Name = toProcess.TableName;
-                var cmd = new ExecuteCommandExportObjectsToFile(new RepositoryProvider(extractDatasetCommand.DataExportRepository), catalogue, outputFile);
+                var cmd = new ExecuteCommandExportObjectsToFile(_activator, catalogue, outputFile);
                 cmd.Execute();
                 catalogue.RevertToDatabaseState();
 
@@ -114,6 +116,11 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations
         public void PreInitialize(IExtractCommand value, IDataLoadEventListener listener)
         {
             _request = value;
+        }
+
+        public void PreInitialize(IBasicActivateItems value, IDataLoadEventListener listener)
+        {
+            _activator = value;
         }
     }
 }

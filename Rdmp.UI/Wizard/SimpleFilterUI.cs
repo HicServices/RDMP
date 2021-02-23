@@ -13,7 +13,6 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using IContainer = Rdmp.Core.Curation.Data.IContainer;
 

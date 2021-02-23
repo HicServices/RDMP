@@ -34,7 +34,7 @@ namespace Rdmp.Core.Tests.CohortCreation
 
             _chiExtractionInformation = aggregate1.AggregateDimensions.Single().ExtractionInformation;
 
-            _container = aggregate1.RootFilterContainer;
+            _container = (AggregateFilterContainer)aggregate1.RootFilterContainer;
 
             _filter = new AggregateFilter(CatalogueRepository,"folk", _container);
         }

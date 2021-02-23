@@ -16,7 +16,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
     {
         private SelectSQLRefactorer _refactorer;
 
-        public ExecuteCommandAlterTableName(IBasicActivateItems activator, TableInfo tableInfo) : base(activator,tableInfo)
+        public ExecuteCommandAlterTableName(IBasicActivateItems activator, ITableInfo tableInfo) : base(activator,tableInfo)
         {
             if(IsImpossible)
                 return;

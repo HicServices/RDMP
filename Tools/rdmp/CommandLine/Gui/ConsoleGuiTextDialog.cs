@@ -33,7 +33,8 @@ namespace Rdmp.Core.CommandLine.Gui
 
                 // By using Dim.Fill(), it will automatically resize without manual intervention
                 Width = Dim.Fill (),
-                Height = Dim.Fill ()
+                Height = Dim.Fill (),
+                Modal = true
             };
 
             var textField = new TextField(_initialText ?? "")
@@ -50,13 +51,13 @@ namespace Rdmp.Core.CommandLine.Gui
                 Y = Pos.Bottom(textField),
                 Width = 10,
                 Height = 1,
-                IsDefault = true,
-                Clicked = () =>
-                {
-                    okClicked = true;
-                    ResultText = textField.Text.ToString();
-                    Application.RequestStop();
-                }
+                IsDefault = true
+            };
+            btnOk.Clicked += () =>
+            {
+                okClicked = true;
+                ResultText = textField.Text.ToString();
+                Application.RequestStop();
             };
 
             var btnCancel = new Button("Cancel",true)
@@ -64,12 +65,12 @@ namespace Rdmp.Core.CommandLine.Gui
                 X = Pos.Right(btnOk),
                 Y = Pos.Bottom(textField),
                 Width = 10,
-                Height = 1,
-                Clicked = () =>
-                {
-                    okClicked = false;
-                    Application.RequestStop();
-                }
+                Height = 1
+            };
+            btnCancel.Clicked += () =>
+            {
+                okClicked = false;
+                Application.RequestStop();
             };
 
             win.Add(textField);

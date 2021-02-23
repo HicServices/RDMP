@@ -4,11 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers.Nodes.UsedByProject;
+using Rdmp.UI.CohortUI.ImportCustomData;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
+using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.Menus
 {
@@ -34,7 +37,20 @@ namespace Rdmp.UI.Menus
             else
                 Add(new ExecuteCommandShowSummaryOfCohorts(_activator, externalCohortTable));
 
-            Add(new ExecuteCommandImportAlreadyExistingCohort(_activator, _externalCohortTable));
+            Add(new ExecuteCommandImportAlreadyExistingCohort(_activator, _externalCohortTable,PickExistingCohortId));
+        }
+
+        private int? PickExistingCohortId()
+        {
+            
+            SelectWhichCohortToImportUI importDialog = new SelectWhichCohortToImportUI(_activator, _externalCohortTable);
+
+            if (importDialog.ShowDialog() == DialogResult.OK)
+            {
+                return importDialog.IDToImport;
+            }
+
+            return null;
         }
     }
 }

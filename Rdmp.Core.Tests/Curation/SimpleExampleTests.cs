@@ -52,9 +52,7 @@ namespace Rdmp.Core.Tests.Curation
             Assert.IsTrue(tbl.DiscoverColumn("MyCol").IsPrimaryKey);
 
             //create a reference to the table in RMDP
-            TableInfo tableInfo;
-            ColumnInfo[] columnInfos;
-            Import(tbl, out tableInfo, out columnInfos);
+            Import(tbl, out var tableInfo, out var columnInfos);
 
             //setup credentials for the table in RDMP (this will be Inconclusive if you have not enabled it in TestDatabases.txt
             SetupLowPrivilegeUserRightsFor(tableInfo,TestLowPrivilegePermissions.Reader);

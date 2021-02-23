@@ -15,8 +15,6 @@ using Rdmp.Core.Icons;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Startup;
 using Rdmp.Core.Startup.Events;
-using Rdmp.UI.Icons;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.LocationsMenu;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.Versioning;

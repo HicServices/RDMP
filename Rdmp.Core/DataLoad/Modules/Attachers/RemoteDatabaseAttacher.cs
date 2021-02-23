@@ -97,7 +97,7 @@ False - Fetch all columns in the remote table.  To use this option you will need
                 var engine = new DataFlowPipelineEngine<DataTable>(context, source, destination, job);
 
                 ITableLoadInfo loadInfo = job.DataLoadInfo.CreateTableLoadInfo("Truncate RAW table " + table,
-                    _dbInfo.Server.Name + "." + _dbInfo.GetRuntimeName(),
+                    _dbInfo.Server.Name + "." + _dbInfo.GetRuntimeName() + "." + table,
                     new[]
                     {
                         new DataSource(
@@ -108,7 +108,7 @@ False - Fetch all columns in the remote table.  To use this option you will need
                     }, -1);
 
                 engine.Initialize(loadInfo);
-                engine.ExecutePipeline(new GracefulCancellationToken());
+                engine.ExecutePipeline(cancellationToken);
 
                 if (source.TotalRowsRead == 0)
                 {

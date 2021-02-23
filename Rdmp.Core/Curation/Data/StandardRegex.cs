@@ -21,6 +21,11 @@ namespace Rdmp.Core.Curation.Data
     /// </summary>
     public class StandardRegex : DatabaseEntity, ICheckable
     {
+        /// <summary>
+        /// Reserved name for global parameter defining the Regex for ignoring columns in data load engine e.g. if you don't want hic_ columns but instead want audit_ or something
+        /// </summary>
+        public const string DataLoadEngineGlobalIgnorePattern = "DataLoadEngineGlobalIgnorePattern";
+
         #region Database Properties
         private string _conceptName;
         private string _regex;

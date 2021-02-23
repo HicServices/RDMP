@@ -100,7 +100,7 @@ namespace Rdmp.Core.Curation
         #endregion
         
         /// <inheritdoc/>
-        public void DoImport(out TableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated)
+        public void DoImport(out ITableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated)
         {
             string tableName;
             string databaseName;
@@ -161,7 +161,7 @@ namespace Rdmp.Core.Curation
         }
 
         /// <inheritdoc/>
-        public ColumnInfo CreateNewColumnInfo(TableInfo parent,DiscoveredColumn discoveredColumn)
+        public ColumnInfo CreateNewColumnInfo(ITableInfo parent,DiscoveredColumn discoveredColumn)
         {
             var col = new ColumnInfo((ICatalogueRepository) parent.Repository,discoveredColumn.GetFullyQualifiedName(), discoveredColumn.DataType.SQLType, parent);
 
@@ -179,13 +179,10 @@ namespace Rdmp.Core.Curation
             return col;
         }
         
-        /// <inheritdoc cref="DoImport(out TableInfo,out ColumnInfo[])"/>
+        /// <inheritdoc cref="DoImport(out ITableInfo,out ColumnInfo[])"/>
         public void DoImport()
         {
-            TableInfo ignored;
-            ColumnInfo[] alsoIgnored;
-
-            DoImport(out ignored, out alsoIgnored);
+            DoImport(out _, out _);
         }
 
         private static readonly string[] ProhibitedNames = new[]
