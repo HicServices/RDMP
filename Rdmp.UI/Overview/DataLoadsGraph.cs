@@ -252,7 +252,7 @@ namespace Rdmp.UI.Overview
                 }
 
             });
-            t.SetApartmentState(ApartmentState.STA);
+            //t.SetApartmentState(ApartmentState.STA);
             t.Start();
         }
 

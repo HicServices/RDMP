@@ -110,7 +110,8 @@ namespace ResearchDataManagementPlatform
             _rdmpTopMenuStrip1.SetWindowManager(_windowManager);
             
             //put the version of the software into the window title
-            _version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
+            
+            _version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             
             //put the current platform database into the window title too
             if (Activator?.RepositoryLocator?.CatalogueRepository is TableRepository connectedTo)
