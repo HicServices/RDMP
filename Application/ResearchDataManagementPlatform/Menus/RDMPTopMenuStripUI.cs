@@ -146,7 +146,7 @@ namespace ResearchDataManagementPlatform.Menus
         {
             try
             {
-                System.Diagnostics.Process.Start("https://github.com/HicServices/RDMP#user-manual");
+                UsefulStuff.OpenUrl("https://github.com/HicServices/RDMP#research-data-management-platform");
             }
             catch (Exception exception)
             {
