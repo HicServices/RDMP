@@ -67,7 +67,7 @@ namespace Rdmp.UI.Tutorials
             var tutorial = TutorialsAvailable.FirstOrDefault(t => t.CommandType == workflow.Command.GetType());
 
             if (tutorial == null)
-                throw new Exception("Unexpected HelpWorkflow encountered, it doesn't have a tutorial description in TutorialsAvailable");
+                return Guid.Empty;
 
             return tutorial.Guid;
         }

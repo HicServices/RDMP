@@ -40,7 +40,7 @@
             // 
             this.btnCloseHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCloseHelp.Image = ((System.Drawing.Image)(resources.GetObject("btnCloseHelp.Image")));
-            this.btnCloseHelp.Location = new System.Drawing.Point(374, 1);
+            this.btnCloseHelp.Location = new System.Drawing.Point(378, 1);
             this.btnCloseHelp.Name = "btnCloseHelp";
             this.btnCloseHelp.Size = new System.Drawing.Size(23, 23);
             this.btnCloseHelp.TabIndex = 17;
@@ -50,9 +50,9 @@
             // btnOption1
             // 
             this.btnOption1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnOption1.Location = new System.Drawing.Point(3, 71);
+            this.btnOption1.Location = new System.Drawing.Point(3, 78);
             this.btnOption1.Name = "btnOption1";
-            this.btnOption1.Size = new System.Drawing.Size(208, 23);
+            this.btnOption1.Size = new System.Drawing.Size(208, 19);
             this.btnOption1.TabIndex = 16;
             this.btnOption1.Text = "Option that might exist";
             this.btnOption1.UseVisualStyleBackColor = true;
@@ -65,7 +65,7 @@
             this.lblHelp.BackColor = System.Drawing.Color.Cornsilk;
             this.lblHelp.Location = new System.Drawing.Point(0, 0);
             this.lblHelp.Name = "lblHelp";
-            this.lblHelp.Size = new System.Drawing.Size(372, 68);
+            this.lblHelp.Size = new System.Drawing.Size(372, 76);
             this.lblHelp.TabIndex = 15;
             this.lblHelp.Text = "Some Help text that is useful to the user";
             // 
