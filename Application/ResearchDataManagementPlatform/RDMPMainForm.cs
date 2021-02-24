@@ -152,7 +152,7 @@ namespace ResearchDataManagementPlatform
                     //delete the persistence file and try again
                     MessageBox.Show("Persistence file corrupt, application will restart without persistence");
                     _persistenceFile.Delete();
-                    Application.Restart();
+                    ApplicationRestarter.Restart();
                 }
             }
          
