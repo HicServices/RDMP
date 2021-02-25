@@ -25,13 +25,13 @@ build_script:
   - ps: ./Tools/rdmp/bin/Debug/net5.0/win-x64/rdmp install localhost\SQL2017 TEST_ -D -u sa -p Password12!
   
   # Run the windows tests with a custom encryption key
-  - ps: Remove-Item "./Tools/rdmp/bin/Debug/netcoreapp3.1/win-x64/Databases.yaml"
+  - ps: Remove-Item "./Tools/rdmp/bin/Debug/net5.0/win-x64/Databases.yaml"
   - ps: Move-Item -Path "./Tests.Common/Databases.appveyor.yaml" -Destination "./Tools/rdmp/bin/Debug/net5.0/win-x64/Databases.yaml"
   - ps: ./Tools/rdmp/bin/Debug/net5.0/win-x64/rdmp cmd CreatePrivateKey ./MyKey.key
   
   - ps: dotnet test "./Rdmp.UI.Tests/Rdmp.UI.Tests.csproj"
   
-  # Run code coverage on non UI tests (UI tests run in net461 while the rest run in netcoreapp3.1)
+  # Run code coverage on non UI tests
   - cmd: "\"packages/opencover/4.7.922/tools/OpenCover.Console.exe\" -returntargetcode -target:\"c:/program files/dotnet/dotnet.exe\" -targetargs:\"test ./scripts/run-all-tests.proj -f net5.0-windows -c Release -p:BuildInParallel=false\" -filter:\"+[*Rdmp.Core*]* +[*ReusableLibraryCode*]* +[*MapsDirectlyToDatabaseTable*]* -[*Tests*]*\"  -output:coverage.xml -register:appveyor -oldStyle -hideskipped:File"
   - cmd: packages\coveralls.io\1.4.2\tools\coveralls.net.exe --opencover coverage.xml -r %COVERALLS_REPO_TOKEN%
 
