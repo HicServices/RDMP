@@ -2,7 +2,6 @@ extraction:
   csharp:
     index:
       solution:
-      - ./Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj
       - ./Tools/rdmp/rdmp.csproj
       - ./Tests.Common/Tests.Common.csproj
       - ./Plugins/Plugin.Test/Plugin.Test.csproj
