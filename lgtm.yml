@@ -1,6 +1,6 @@
 extraction:
   csharp:
     index:
+      solution: ./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj
       dotnet:
         version: 5.0.103
-        arguments: ./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj
