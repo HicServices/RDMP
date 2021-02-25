@@ -3,8 +3,3 @@ extraction:
     index:
       dotnet:
         version: 5.0.103
-      solution: "HIC.DataManagementPlatform.sln"
-      vstools_version: "16"
-      msbuild:
-        configuration: "release"
-        platform: "Any CPU"
