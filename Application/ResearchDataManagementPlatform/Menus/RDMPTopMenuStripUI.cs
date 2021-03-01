@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using AutoUpdaterDotNET;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
@@ -343,10 +344,15 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //TODO: find an updater fix for Squirrel
-           /* var ui = new UpdaterUI();
-            var f = new SingleControlForm(ui);
-            f.ShowDialog();*/
+            try
+            {
+                AutoUpdater.ReportErrors = true;
+                AutoUpdater.Start("https://github.com/HicServices/RDMP/releases.xml");
+            }
+            catch (Exception ex)
+            {
+                ExceptionViewer.Show(ex);
+            }
         }
 
         private void ListAllTypesToolStripMenuItem_Click(object sender, EventArgs e)
