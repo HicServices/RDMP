@@ -4,8 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Drawing;
 using System.Linq;
+using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -24,14 +26,48 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         protected readonly LogViewerFilter _filter;
         protected ExternalDatabaseServer[] _loggingServers;
 
-        [UseWithObjectConstructor]
+           [UseWithCommandLine(
+            ParameterHelpList = "<root> <table?> <id?>", 
+            ParameterHelpBreakdown = @"root object to view logs for or logging server
+table? Only required if <root> is logging server, specifies the table to view e.g. DataLoadRun
+int? Optional, if <root> is logging server this can be a specific audit id to show")]
+        public ExecuteCommandViewLogs(IBasicActivateItems activator,CommandLineObjectPicker picker):base(activator)
+        {
+            if(picker.Length == 0)
+            {
+                SetImpossible("Insufficient arguments supplied");
+                return;
+            }
+
+            if (picker[0].HasValueOfType(typeof(DatabaseEntity)))
+            {
+                var obj = picker[0].GetValueForParameterOfType(typeof(DatabaseEntity));
+                
+                if(obj is ILoggedActivityRootObject root)
+                    RootObject =  root;
+                if(obj is ExternalDatabaseServer eds)
+                    _loggingServers = new ExternalDatabaseServer[]{eds};
+            }
+
+            LoggingTables table = LoggingTables.None;
+            
+            if(picker.Length >= 1)
+                if(Enum.TryParse(picker[0].RawValue, out table))
+                    _filter = new LogViewerFilter(table);
+            
+            if(picker.Length >= 2)
+                if(int.TryParse(picker[0].RawValue, out int id))
+                {
+                    _filter = new LogViewerFilter(table,id);
+                }
+
+        }
+
         public ExecuteCommandViewLogs(IBasicActivateItems activator, ILoggedActivityRootObject rootObject) : base(activator)
         {
             RootObject = rootObject;
         }
 
-
-        [UseWithObjectConstructor]
         public ExecuteCommandViewLogs(IBasicActivateItems activator) : this(activator,new LogViewerFilter(LoggingTables.DataLoadTask))
         {
 
