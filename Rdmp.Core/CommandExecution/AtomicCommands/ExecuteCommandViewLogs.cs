@@ -4,33 +4,43 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Drawing;
 using System.Linq;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Databases;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories.Construction;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.Logging;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandViewLoggedData : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandViewLogs : BasicCommandExecution, IAtomicCommand
     {
+        public ILoggedActivityRootObject RootObject { get; }
         protected readonly LogViewerFilter _filter;
         protected ExternalDatabaseServer[] _loggingServers;
 
         [UseWithObjectConstructor]
-        public ExecuteCommandViewLoggedData(IActivateItems activator) : this(activator,null)
+        public ExecuteCommandViewLogs(IBasicActivateItems activator, ILoggedActivityRootObject rootObject) : base(activator)
+        {
+            RootObject = rootObject;
+        }
+
+
+        [UseWithObjectConstructor]
+        public ExecuteCommandViewLogs(IBasicActivateItems activator) : this(activator,new LogViewerFilter(LoggingTables.DataLoadTask))
         {
 
         }
 
-        public ExecuteCommandViewLoggedData(IActivateItems activator, LogViewerFilter filter) : base(activator)
+        public ExecuteCommandViewLogs(IBasicActivateItems activator, LogViewerFilter filter) : base(activator)
         {
             _filter = filter ?? new LogViewerFilter(LoggingTables.DataLoadTask);
-            _loggingServers = Activator.RepositoryLocator.CatalogueRepository.GetAllDatabases<LoggingDatabasePatcher>();
+            _loggingServers = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllDatabases<LoggingDatabasePatcher>();
 
             if(!_loggingServers.Any())
                 SetImpossible("There are no logging servers");
@@ -45,15 +55,29 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var server = SelectOne(_loggingServers,null,true);
-
-            LoggingTabUI loggingTabUI =  Activator.Activate<LoggingTabUI, ExternalDatabaseServer>(server);
-            loggingTabUI.SetFilter(_filter);
+            
+            if(RootObject != null)
+            {
+                BasicActivator.ShowLogs(RootObject);
+            }
+            else
+            {
+                var server = SelectOne(_loggingServers,null,true);
+                BasicActivator.ShowLogs(server,_filter);
+            }
         }
 
         public override string GetCommandName()
         {
-            return UsefulStuff.PascalCaseStringToHumanReadable(_filter.LoggingTable.ToString());
+            return
+                _filter != null ? 
+                UsefulStuff.PascalCaseStringToHumanReadable(_filter.LoggingTable.ToString())
+                : base.GetCommandName();
+        }
+
+        public override Image GetImage(IIconProvider iconProvider)
+        {
+            return iconProvider.GetImage(RDMPConcept.Logging);
         }
     }
 }

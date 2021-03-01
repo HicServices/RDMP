@@ -96,7 +96,7 @@ namespace ResearchDataManagementPlatform.Menus
         }
         private void logViewerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandViewLoggedData(Activator, new LogViewerFilter(LoggingTables.DataLoadTask));
+            var cmd = new ExecuteCommandViewLogs(Activator, new LogViewerFilter(LoggingTables.DataLoadTask));
             cmd.Execute();
         }
         

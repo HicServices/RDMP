@@ -21,11 +21,14 @@ using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.Logging;
+using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
@@ -326,6 +329,7 @@ namespace Rdmp.Core.CommandExecution
         /// <inheritdoc/>
         public abstract DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription);
 
+
         /// <inheritdoc/>
         public abstract DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription);
         
@@ -463,5 +467,36 @@ namespace Rdmp.Core.CommandExecution
         }
 
         public abstract void ShowData(IViewSQLAndResultsCollection collection);
+
+        /// <summary>
+        /// Presents user with log info about <paramref name="rootObject"/>.  Inheritors may wish to use <see cref="GetLogs(ILoggedActivityRootObject)"/>.
+        /// </summary>
+        /// <param name="rootObject"></param>
+        public abstract void ShowLogs(ILoggedActivityRootObject rootObject);
+
+        /// <summary>
+        /// Presents user with top down view of logged activity across all objects
+        /// </summary>
+        /// <param name="loggingServer"></param>
+        /// <param name="filter"></param>
+        public virtual void ShowLogs(ExternalDatabaseServer loggingServer, LogViewerFilter filter)
+        {
+            ShowData(new ViewLogsCollection(loggingServer,filter));
+        }
+
+        /// <summary>
+        /// Returns all logged activities for <paramref name="rootObject"/>
+        /// </summary>
+        /// <param name="rootObject"></param>
+        /// <returns></returns>
+        protected IEnumerable<ArchivalDataLoadInfo> GetLogs(ILoggedActivityRootObject rootObject)
+        {
+            var db = rootObject.GetDistinctLoggingDatabase();
+            var task = rootObject.GetDistinctLoggingTask();
+
+            var lm = new LogManager(db);
+            return rootObject.FilterRuns(lm.GetArchivalDataLoadInfos(task));
+        }
+
     }
 }

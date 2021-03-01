@@ -16,10 +16,12 @@ using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.Logging;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
@@ -32,6 +34,19 @@ namespace Rdmp.Core.CommandExecution
         /// True for activators that can illicit immediate responses from users.  False for activators designed to run unattended e.g. command line/scripting
         /// </summary>
         bool IsInteractive {get;}
+
+        /// <summary>
+        /// Display information about the logged activities of the <paramref name="rootObject"/>
+        /// </summary>
+        /// <param name="rootObject"></param>
+        void ShowLogs(ILoggedActivityRootObject rootObject);
+
+        /// <summary>
+        /// Display top down information about logged activities
+        /// </summary>
+        /// <param name="loggingServer">The server to query for logs</param>
+        /// <param name="filter"></param>
+        void ShowLogs(ExternalDatabaseServer loggingServer, LogViewerFilter filter);
 
         /// <summary>
         /// True if <see cref="Activate(object)"/> will work for the object

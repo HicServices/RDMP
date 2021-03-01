@@ -147,18 +147,18 @@ namespace Rdmp.UI.Logging
             {
                 case LoggingTables.DataLoadRun:
 
-                    yield return new ExecuteCommandViewLoggedData(Activator, new LogViewerFilter(LoggingTables.ProgressLog) { Run = rowId });
-                    yield return new ExecuteCommandViewLoggedData(Activator,  new LogViewerFilter(LoggingTables.FatalError) { Run = rowId });
-                    yield return new ExecuteCommandViewLoggedData(Activator, new LogViewerFilter(LoggingTables.TableLoadRun) { Run = rowId });
+                    yield return new ExecuteCommandViewLogs(Activator, new LogViewerFilter(LoggingTables.ProgressLog) { Run = rowId });
+                    yield return new ExecuteCommandViewLogs(Activator,  new LogViewerFilter(LoggingTables.FatalError) { Run = rowId });
+                    yield return new ExecuteCommandViewLogs(Activator, new LogViewerFilter(LoggingTables.TableLoadRun) { Run = rowId });
 
                     yield return new ExecuteCommandExportLoggedDataToCsv(Activator, new LogViewerFilter(LoggingTables.ProgressLog) { Run = rowId });
                     break;
                 case LoggingTables.DataLoadTask:
-                    yield return new ExecuteCommandViewLoggedData(Activator, new LogViewerFilter(LoggingTables.DataLoadRun) { Task = rowId });
+                    yield return new ExecuteCommandViewLogs(Activator, new LogViewerFilter(LoggingTables.DataLoadRun) { Task = rowId });
                     break;
 
                 case LoggingTables.TableLoadRun:
-                    yield return new ExecuteCommandViewLoggedData(Activator, new LogViewerFilter(LoggingTables.DataSource) { Table = rowId });
+                    yield return new ExecuteCommandViewLogs(Activator, new LogViewerFilter(LoggingTables.DataSource) { Table = rowId });
                     break;
 
             }
@@ -331,7 +331,7 @@ namespace Rdmp.UI.Logging
                 {
                     if(f.LoggingTable != LoggingTables.None)
                     {
-                        var cmd = new ExecuteCommandViewLoggedData(activator,f);
+                        var cmd = new ExecuteCommandViewLogs(activator,f);
                         cmd.Execute();
                     }
                 });

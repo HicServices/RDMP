@@ -15,6 +15,7 @@ using NStack;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Gui.Windows;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
@@ -282,7 +283,12 @@ namespace Rdmp.Core.CommandLine.Gui
                 var view = new ConsoleGuiEdit(this,m){Modal = true };
                 Application.Run(view);
             }
+        }
 
+        public override void ShowLogs(ILoggedActivityRootObject rootObject)
+        {
+            var view = new ConsoleGuiViewLogs(rootObject);
+            Application.Run(view);
         }
     }
 }
