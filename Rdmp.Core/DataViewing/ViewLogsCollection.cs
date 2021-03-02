@@ -7,27 +7,29 @@
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
-using Rdmp.Core.DataViewing;
 using Rdmp.Core.Logging;
 using ReusableLibraryCode.DataAccess;
 using System.Collections.Generic;
 
-namespace Rdmp.Core.CommandExecution
+namespace Rdmp.Core.DataViewing
 {
-    public class ViewLogsCollection : PersistableObjectCollection,IViewSQLAndResultsCollection
+    /// <summary>
+    /// Collection that builds SQL for querying the logging database tables
+    /// </summary>
+    public class ViewLogsCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
     {
         private ExternalDatabaseServer _loggingServer;
         private LogViewerFilter _filter;
 
         public ViewLogsCollection(ExternalDatabaseServer loggingServer, LogViewerFilter filter)
         {
-            this._loggingServer = loggingServer;
-            this._filter = filter;
+            _loggingServer = loggingServer;
+            _filter = filter;
         }
 
         public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
         {
-            
+
         }
 
         public IDataAccessPoint GetDataAccessPoint()
