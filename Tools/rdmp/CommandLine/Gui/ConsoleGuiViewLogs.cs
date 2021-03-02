@@ -18,20 +18,44 @@ namespace Rdmp.Core.CommandLine.Gui
     internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
     {
         private IBasicActivateItems _activator;
+        private readonly ArchivalDataLoadInfo[] _archivalDataLoadInfos;
         private TreeView<object> _treeView;
 
         public ConsoleGuiViewLogs(IBasicActivateItems activator, ILoggedActivityRootObject rootObject, ArchivalDataLoadInfo[] archivalDataLoadInfos)
         {
             this._activator = activator;
+            this._archivalDataLoadInfos = archivalDataLoadInfos;
             Modal = true;
 
             var lbl = new Label($"Logs for '{rootObject}' ({archivalDataLoadInfos.Length:N0} entries)");
             Add(lbl);
 
+            var lblFilter = new Label("Filter:"){
+                Y = Pos.Bottom(lbl)
+            };
+
+            Add(lblFilter);
+
+            var btnAll = new Button("All"){
+                Y = Pos.Bottom(lbl),
+                X = Pos.Right(lblFilter)
+            };
+            btnAll.Clicked += BtnAll_Clicked;
+            Add(btnAll);
+
+            var btnFailing = new Button("Failing"){
+                Y = Pos.Bottom(lbl),
+                X = Pos.Right(btnAll)
+            };
+            btnFailing.Clicked += BtnFailing_Clicked;
+            Add(btnFailing);
+
+
+
             _treeView = new TreeView<object>()
             {
                 X= 0,
-                Y= Pos.Bottom(lbl),
+                Y= Pos.Bottom(lblFilter),
                 Width = Dim.Fill(),
                 Height = Dim.Fill(1),
             };
@@ -47,6 +71,18 @@ namespace Rdmp.Core.CommandLine.Gui
             close.Clicked += Quit;
 
 			Add(close);
+        }
+
+        private void BtnFailing_Clicked()
+        {
+            _treeView.ClearObjects();
+            _treeView.AddObjects(_archivalDataLoadInfos.Where(a=>a.HasErrors));
+        }
+
+        private void BtnAll_Clicked()
+        {
+            _treeView.ClearObjects();
+            _treeView.AddObjects(_archivalDataLoadInfos);
         }
 
         private void TreeView_KeyPress(KeyEventEventArgs obj)
