@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed CLI database selection UI not using password mask symbol (`*`)
 - Fixed CLI GUI message boxes bug with very long messages
 - Fixed Custom Metadata template stripping preceeding whitespace in templated lines e.g. `"  - $Name"` (like you might find in a table of contents section of a template)
+- Fixed 'Set Global Dle Ignore Pattern' failing the first time it is used by creating a StandardRegex with no/null Pattern
 
 ### Dependencies
 

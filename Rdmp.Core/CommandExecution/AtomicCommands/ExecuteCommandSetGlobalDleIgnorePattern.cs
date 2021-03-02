@@ -49,7 +49,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 {
                     ConceptName = StandardRegex.DataLoadEngineGlobalIgnorePattern,
                     Description = "Regex that will be applied as an ignore when running the data load engine",
-                    Regex = ""
+                    Regex = "^ignore_.*"
 
                 };
                 existing.SaveToDatabase();
