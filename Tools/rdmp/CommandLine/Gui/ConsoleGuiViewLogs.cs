@@ -17,20 +17,21 @@ namespace Rdmp.Core.CommandLine.Gui
 {
     internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
     {
-        private ILoggedActivityRootObject rootObject;
         private IBasicActivateItems _activator;
         private TreeView<object> _treeView;
 
         public ConsoleGuiViewLogs(IBasicActivateItems activator, ILoggedActivityRootObject rootObject, ArchivalDataLoadInfo[] archivalDataLoadInfos)
         {
-            this.rootObject = rootObject;
             this._activator = activator;
             Modal = true;
+
+            var lbl = new Label($"Logs for '{rootObject}' ({archivalDataLoadInfos.Length:N0} entries)");
+            Add(lbl);
 
             _treeView = new TreeView<object>()
             {
                 X= 0,
-                Y=0,
+                Y= Pos.Bottom(lbl),
                 Width = Dim.Fill(),
                 Height = Dim.Fill(1),
             };
@@ -50,7 +51,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
         private void TreeView_KeyPress(KeyEventEventArgs obj)
         {
-            if(obj.KeyEvent.Key == Key.Enter && _treeView.SelectedObject != null)
+            if(obj.KeyEvent.Key == Key.Enter && _treeView.SelectedObject != null && _treeView.HasFocus)
             {
                 obj.Handled = true;
 				_activator.Show(_treeView.AspectGetter(_treeView.SelectedObject));
@@ -61,7 +62,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public bool CanExpand(object model)
         {
-            return model is ArchivalDataLoadInfo || model is Category || model is ArchivalTableLoadInfo;
+            return model is ArchivalDataLoadInfo || (model is Category c && c.GetChildren().Any())|| model is ArchivalTableLoadInfo;
         }
 
         public IEnumerable<object> GetChildren(object model)
@@ -103,9 +104,9 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 switch(_type)
                 {
-                    case LoggingTables.FatalError : return $"Errors ({_dli.Errors.Count})";
-                    case LoggingTables.TableLoadRun : return $"Tables Loaded ({_dli.TableLoadInfos.Count})";
-                    case LoggingTables.ProgressLog : return "Progress Log";
+                    case LoggingTables.FatalError : return $"Errors ({_dli.Errors.Count:N0})";
+                    case LoggingTables.TableLoadRun : return $"Tables Loaded ({_dli.TableLoadInfos.Count:N0})";
+                    case LoggingTables.ProgressLog : return $"Progress Log ({_dli.Progress.Count:N0})";
                 }
 
                 return base.ToString();
