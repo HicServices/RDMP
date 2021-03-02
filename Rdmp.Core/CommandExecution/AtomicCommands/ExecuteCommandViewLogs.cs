@@ -73,6 +73,12 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
 
         }
 
+        public ExecuteCommandViewLogs(IBasicActivateItems activator, ExternalDatabaseServer loggingServer,LogViewerFilter filter) : base(activator)
+        {
+            _filter = filter ?? new LogViewerFilter(LoggingTables.DataLoadTask);
+            _loggingServers = new ExternalDatabaseServer[]{ loggingServer};
+        }
+
         public ExecuteCommandViewLogs(IBasicActivateItems activator, LogViewerFilter filter) : base(activator)
         {
             _filter = filter ?? new LogViewerFilter(LoggingTables.DataLoadTask);

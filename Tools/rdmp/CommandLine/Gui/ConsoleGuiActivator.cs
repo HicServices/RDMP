@@ -135,6 +135,9 @@ namespace Rdmp.Core.CommandLine.Gui
         public override IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
             string initialSearchText = null, bool allowAutoSelect = false)
         {
+            if(allowAutoSelect && availableObjects.Length == 1)
+                return availableObjects[0];
+
             var dlg = new ConsoleGuiSelectOne(CoreChildProvider,availableObjects);
             if (dlg.ShowDialog())
                 return dlg.Selected;
@@ -287,7 +290,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public override void ShowLogs(ILoggedActivityRootObject rootObject)
         {
-            var view = new ConsoleGuiViewLogs(rootObject);
+            var view = new ConsoleGuiViewLogs(this,rootObject,GetLogs(rootObject).ToArray());
             Application.Run(view);
         }
     }
