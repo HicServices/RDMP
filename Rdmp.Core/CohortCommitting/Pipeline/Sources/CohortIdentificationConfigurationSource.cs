@@ -79,8 +79,10 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Sources
 
         private DataTable GetDataTable(IDataLoadEventListener listener)
         {
-            if(listener != null)
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to lookup which server to interrogate for CohortIdentificationConfiguration " + _cohortIdentificationConfiguration));
+            if(listener == null)
+                listener = new ThrowImmediatelyDataLoadEventListener();
+
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to lookup which server to interrogate for CohortIdentificationConfiguration " + _cohortIdentificationConfiguration));
 
             if(_cohortIdentificationConfiguration.RootCohortAggregateContainer_ID == null)
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "CohortIdentificationConfiguration '" + _cohortIdentificationConfiguration + "' has no RootCohortAggregateContainer_ID, is it empty?"));
