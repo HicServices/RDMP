@@ -5,29 +5,27 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections;
-using System.Windows.Forms;
-using BrightIdeasSoftware;
+using System.Collections.Generic;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 
-namespace Rdmp.UI.Collections
+namespace Rdmp.Core
 {
     /// <summary>
-    /// Compares model objects bearing in mind that anything that is compared against IOrderable MUST come in that order.  This class is a wrapper for 
-    /// ModelObjectComparer that looks out for IOrderable objects passing through and enforces that order.
+    /// Compares model objects bearing in mind that anything that is compared against IOrderable MUST come in that order.  This class can wrap
+    /// another IComparer that looks out for IOrderable objects passing through and enforces that order.
     /// 
     /// <para>This class is designed to modify the behaviour of TreeListView to ensure that despite the users worst efforts, the order of IOrderable nodes is always
     /// Ascending</para>
     /// </summary>
-    public class OrderableComparer : IComparer
+    public class OrderableComparer : IComparer, IComparer<object>
     {
-        private readonly ModelObjectComparer _modelComparer;
+        private readonly IComparer _nestedComparer;
 
-        public OrderableComparer(OLVColumn primarySortColumn, SortOrder primarySortOrder)
+        public OrderableComparer(IComparer nestedComparer)
         {
-            if(primarySortColumn != null)
-                _modelComparer = new ModelObjectComparer(primarySortColumn, primarySortOrder);
+            _nestedComparer = nestedComparer;
         }
 
         /// <summary>
@@ -41,7 +39,7 @@ namespace Rdmp.UI.Collections
         {
             //Use IOrderable.Order
             if (x is IOrderable xOrderable && y is IOrderable yOrderable)
-                    return xOrderable.Order - yOrderable.Order;
+                return xOrderable.Order - yOrderable.Order;
 
             if (x is IOrderable xOnly)
                 return xOnly.Order;
@@ -51,11 +49,11 @@ namespace Rdmp.UI.Collections
                 return -yOnly.Order;
 
             //or use whatever the model is
-            if (_modelComparer != null)
-                return _modelComparer.Compare(x, y);
-            
-            
-            return string.Compare(x.ToString(),y.ToString());
+            if (_nestedComparer != null)
+                return _nestedComparer.Compare(x, y);
+
+
+            return string.Compare(x.ToString(), y.ToString());
         }
 
         /// <summary>
@@ -65,7 +63,7 @@ namespace Rdmp.UI.Collections
         /// <returns></returns>
         private bool ShouldSortByName(object x)
         {
-             return x is INamed && !(x is IProject);
+            return x is INamed && !(x is IProject);
         }
     }
 }

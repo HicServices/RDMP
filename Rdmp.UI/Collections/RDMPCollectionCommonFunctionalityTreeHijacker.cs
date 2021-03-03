@@ -4,8 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using Rdmp.Core;
 
 namespace Rdmp.UI.Collections
 {
@@ -36,8 +38,11 @@ namespace Rdmp.UI.Collections
         }
 
         protected override TreeListView.BranchComparer GetBranchComparer()
-        {            
-            return new TreeListView.BranchComparer(new OrderableComparer(_lastSortColumn, _lastSortOrder));
+        {   
+            return new TreeListView.BranchComparer(
+                new OrderableComparer(
+                _lastSortColumn != null ? new ModelObjectComparer(_lastSortColumn, _lastSortOrder) : null)
+                );
         }
     }
 }
