@@ -38,13 +38,13 @@ namespace Terminal.Gui {
 		/// Children of the current node
 		/// </summary>
 		/// <returns></returns>
-		public IList<ITreeNode> Children {get;set;} = new List<ITreeNode>();
+		public virtual IList<ITreeNode> Children {get;set;} = new List<ITreeNode>();
 		
 		/// <summary>
 		/// Text to display in tree node for current entry
 		/// </summary>
 		/// <value></value>
-		public string Text {get;set;}
+		public virtual string Text {get;set;}
 
 		/// <summary>
 		/// Optionally allows you to store some custom data/class here.
@@ -318,6 +318,13 @@ namespace Terminal.Gui {
 		/// <value></value>
 		public bool MultiSelect {get;set;} = true;
 
+
+		/// <summary>
+		/// True makes a letter key press navigate to the next visible branch that begins with that letter/digit
+		/// </summary>
+		/// <value></value>
+		public bool AllowLetterBasedNavigation {get;set;} = true;
+
 		/// <summary>
 		/// The currently selected object in the tree.  When <see cref="MultiSelect"/> is true this is the object at which the cursor is at
 		/// </summary>
@@ -331,6 +338,17 @@ namespace Terminal.Gui {
 					OnSelectionChanged(new SelectionChangedEventArgs<T>(this,oldValue,value));
 			}
 		}
+
+
+		/// <summary>
+		/// This event is raised when an object is activated e.g. by double clicking or pressing <see cref="ObjectActivationKey"/>
+		/// </summary>
+		public event Action<ObjectActivatedEventArgs<T>> ObjectActivated;
+
+		/// <summary>
+		/// Key which when pressed triggers <see cref="TreeView{T}.ObjectActivated"/>.  Defaults to Enter
+		/// </summary>
+		public Key ObjectActivationKey {get;set;} = Key.Enter;
 
 		/// <summary>
 		/// Secondary selected regions of tree when <see cref="MultiSelect"/> is true
@@ -648,7 +666,38 @@ namespace Terminal.Gui {
 		/// <inheritdoc/>
 		public override bool ProcessKey (KeyEvent keyEvent)
 		{
+			if(keyEvent.Key == ObjectActivationKey)
+			{
+				 var o = SelectedObject;
+
+				 if(o != null){
+				 	OnObjectActivated(new ObjectActivatedEventArgs<T>(this,o));
+					
+					PositionCursor ();
+					return true;
+				 }				
+			}
+			
+			if(keyEvent.KeyValue >0 && keyEvent.KeyValue <0xFFFF){
+
+				var character = (char)keyEvent.KeyValue;
+
+				// if it is a single character pressed without any control keys
+				if(char.IsLetterOrDigit(character) && AllowLetterBasedNavigation && !keyEvent.IsShift && !keyEvent.IsAlt && !keyEvent.IsCtrl)
+				{				
+					// search for next branch that begins with that letter
+					var characterAsStr = character.ToString();
+					AdjustSelectionToNext(b=>AspectGetter(b.Model).StartsWith(characterAsStr,StringComparison.CurrentCultureIgnoreCase));
+
+					PositionCursor ();
+					return true;
+				}
+
+			}
+			
+
 			switch (keyEvent.Key) {
+				
 				case Key.CursorRight:
 					Expand(SelectedObject);
 				break;
@@ -668,6 +717,12 @@ namespace Terminal.Gui {
 				case Key.CursorDown | Key.ShiftMask:
 					AdjustSelection(1,keyEvent.Key.HasFlag(Key.ShiftMask));
 				break;
+				case Key.CursorUp | Key.CtrlMask:
+					AdjustSelectionToBranchStart();
+				break;
+				case Key.CursorDown | Key.CtrlMask:
+					AdjustSelectionToBranchEnd();
+				break;
 				case Key.PageUp:
 				case Key.PageUp | Key.ShiftMask:
 					AdjustSelection(-Bounds.Height,keyEvent.Key.HasFlag(Key.ShiftMask));
@@ -677,9 +732,9 @@ namespace Terminal.Gui {
 				case Key.PageDown | Key.ShiftMask:
 					AdjustSelection(Bounds.Height,keyEvent.Key.HasFlag(Key.ShiftMask));
 				break;
-				case Key.ControlA:
+				/*case Key.A | Key.CtrlMask:
 					SelectAll();
-					break;
+					break;*/
 				case Key.Home:
 					GoToFirst();
 				break;
@@ -694,6 +749,15 @@ namespace Terminal.Gui {
 
 			PositionCursor ();
 			return true;
+		}
+
+		/// <summary>
+		/// Raises the <see cref="ObjectActivated"/> event
+		/// </summary>
+		/// <param name="e"></param>
+		protected virtual void OnObjectActivated(ObjectActivatedEventArgs<T> e)
+		{
+			ObjectActivated?.Invoke(e);
 		}
 
 		///<inheritdoc/>
@@ -721,7 +785,7 @@ namespace Terminal.Gui {
 				return true;
 			}
 
-		/*	if (me.Flags == MouseFlags.WheeledRight) {
+			/*if (me.Flags == MouseFlags.WheeledRight) {
 
 				ScrollOffsetHorizontal++;
 				SetNeedsDisplay();
@@ -899,24 +963,152 @@ namespace Terminal.Gui {
 
 					SelectedObject = newBranch.Model;
 
- 					/*this -1 allows for possible horizontal scroll bar in the last row of the control*/
-					int leaveSpace = Style.LeaveLastRow ? 1 :0;
-					
-					if(newIdx < ScrollOffsetVertical) {
-						//if user has scrolled up too far to see their selection
-						ScrollOffsetVertical = newIdx;
-					}
-					else if(newIdx >= ScrollOffsetVertical + Bounds.Height - leaveSpace){
-						
-						//if user has scrolled off bottom of visible tree
-						ScrollOffsetVertical = Math.Max(0,(newIdx+1) - (Bounds.Height-leaveSpace));
-					}
+					EnsureVisible(SelectedObject);
 				}
 
 			}
-
-			InvalidateLineMap();						
+						
 			SetNeedsDisplay();
+		}
+
+		/// <summary>
+		/// Moves the selection to the first child in the currently selected level
+		/// </summary>
+		public void AdjustSelectionToBranchStart()
+		{
+			var o = SelectedObject;
+			if(o == null)
+				return;
+
+			var map = BuildLineMap();
+
+			int currentIdx = Array.FindIndex(map,b=>Equals(b.Model,o));
+
+			if(currentIdx == -1)
+				return;
+
+			var currentBranch = map[currentIdx];
+			var next = currentBranch;
+
+			for(;currentIdx >= 0;currentIdx--)
+			{
+				//if it is the beginning of the current depth of branch
+				if(currentBranch.Depth != next.Depth){
+
+						SelectedObject = currentBranch.Model;
+						EnsureVisible(currentBranch.Model);
+						SetNeedsDisplay();
+						return;
+					}
+				
+				// look at next branch up for consideration
+				currentBranch = next;
+				next = map[currentIdx];
+			}
+
+			// We ran all the way to top of tree
+			GoToFirst();
+		}
+
+		/// <summary>
+		/// Moves the selection to the last child in the currently selected level
+		/// </summary>
+		public void AdjustSelectionToBranchEnd()
+		{
+			var o = SelectedObject;
+			if(o == null)
+				return;
+
+			var map = BuildLineMap();
+
+			int currentIdx = Array.FindIndex(map,b=>Equals(b.Model,o));
+
+			if(currentIdx == -1)
+				return;
+
+			var currentBranch = map[currentIdx];
+			var next = currentBranch;
+
+			for(;currentIdx < map.Length;currentIdx++)
+			{
+				//if it is the end of the current depth of branch
+				if(currentBranch.Depth != next.Depth){
+
+						SelectedObject = currentBranch.Model;
+						EnsureVisible(currentBranch.Model);
+						SetNeedsDisplay();
+						return;
+					}
+				
+				// look at next branch for consideration
+				currentBranch = next;
+				next = map[currentIdx];
+			}
+
+			GoToEnd();
+		}
+
+
+		/// <summary>
+		/// Sets the selection to the next branch that matches the <paramref name="predicate"/>
+		/// </summary>
+		/// <param name="predicate"></param>
+		private void AdjustSelectionToNext (Func<Branch<T>, bool> predicate)
+		{
+			var map = BuildLineMap();
+
+			// empty map means we can't select anything anyway
+			if(map.Length == 0)
+				return;
+			
+			// Start searching from the first element in the map
+			var idxStart = 0;
+			
+			// or the current selected branch
+			if(SelectedObject !=null)
+				idxStart = Array.FindIndex(map,b=>Equals(b.Model,SelectedObject));
+
+			// if currently selected object mysteriously vanished, search from beginning
+			if(idxStart == -1)
+				idxStart = 0;
+
+			// loop around all indexes and back to first index
+			for(int idxCur = (idxStart+1)%map.Length;idxCur != idxStart;idxCur = (idxCur+1) % map.Length)
+			{
+				if(predicate(map[idxCur]))
+				{
+					SelectedObject = map[idxCur].Model;
+					EnsureVisible(map[idxCur].Model);
+					SetNeedsDisplay();
+					return;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Adjusts the <see cref="ScrollOffsetVertical"/> to ensure the given <paramref name="model"/> is visible.  Has no effect if already visible
+		/// </summary>
+		public void EnsureVisible(T model)
+		{
+			var map = BuildLineMap();
+			
+			var idx = Array.FindIndex(map,b=>Equals(b.Model,model));
+
+			if(idx == -1)
+				return;
+
+			/*this -1 allows for possible horizontal scroll bar in the last row of the control*/
+			int leaveSpace = Style.LeaveLastRow ? 1 :0;
+					
+			if(idx < ScrollOffsetVertical) {
+				//if user has scrolled up too far to see their selection
+				ScrollOffsetVertical = idx;
+			}
+			else if(idx >= ScrollOffsetVertical + Bounds.Height - leaveSpace){
+						
+				//if user has scrolled off bottom of visible tree
+				ScrollOffsetVertical = Math.Max(0,(idx+1) - (Bounds.Height-leaveSpace));
+			}
 		}
 
 		/// <summary>
@@ -1124,6 +1316,37 @@ namespace Terminal.Gui {
 		}
 	}
 
+	/// <summary>
+	/// Event args for the <see cref="TreeView{T}.ObjectActivated"/> event
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	public class ObjectActivatedEventArgs<T> where T : class {
+
+		/// <summary>
+		/// The tree in which the activation occurred
+		/// </summary>
+		/// <value></value>
+		public TreeView<T> Tree {get;}
+
+		/// <summary>
+		/// The object that was selected at the time of activation
+		/// </summary>
+		/// <value></value>
+		public T ActivatedObject {get;}
+
+
+		/// <summary>
+		/// Creates a new instance documenting activation of the <paramref name="activated"/> object
+		/// </summary>
+		/// <param name="tree">Tree in which the activation is happening</param>
+		/// <param name="activated">What object is being activated</param>
+		public ObjectActivatedEventArgs(TreeView<T> tree, T activated)
+		{
+			Tree = tree;
+			ActivatedObject = activated;
+		}
+	}
+
 	class TreeSelection<T> where T : class {
 
 		public Branch<T> Origin {get;}
@@ -1277,8 +1500,8 @@ namespace Terminal.Gui {
 				else
 					color = lineColor;
 
-			/*	if(tree.Style.InvertExpandSymbolColors)
-					color = new Attribute(color.Background,color.Foreground);*/
+		//		if(tree.Style.InvertExpandSymbolColors)
+		//			color = new Attribute(color.Background,color.Foreground);
 
 				driver.SetAttribute(color);
 			}

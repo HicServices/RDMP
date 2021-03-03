@@ -61,7 +61,7 @@ namespace Rdmp.Core.CommandLine.Gui
             };
             _treeView.TreeBuilder = this;
             _treeView.AddObjects(archivalDataLoadInfos);
-            _treeView.KeyPress += TreeView_KeyPress;
+            _treeView.ObjectActivated += _treeView_ObjectActivated; ;
             Add(_treeView);
 
 			var close = new Button("Quit"){
@@ -71,6 +71,11 @@ namespace Rdmp.Core.CommandLine.Gui
             close.Clicked += Quit;
 
 			Add(close);
+        }
+
+        private void _treeView_ObjectActivated(ObjectActivatedEventArgs<object> obj)
+        {
+			_activator.Show(_treeView.AspectGetter(_treeView.SelectedObject));
         }
 
         private void BtnFailing_Clicked()
@@ -83,15 +88,6 @@ namespace Rdmp.Core.CommandLine.Gui
         {
             _treeView.ClearObjects();
             _treeView.AddObjects(_archivalDataLoadInfos);
-        }
-
-        private void TreeView_KeyPress(KeyEventEventArgs obj)
-        {
-            if(obj.KeyEvent.Key == Key.Enter && _treeView.SelectedObject != null && _treeView.HasFocus)
-            {
-                obj.Handled = true;
-				_activator.Show(_treeView.AspectGetter(_treeView.SelectedObject));
-            }
         }
 
         public bool SupportsCanExpand => true;
