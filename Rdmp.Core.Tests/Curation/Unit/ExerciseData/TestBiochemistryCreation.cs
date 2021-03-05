@@ -21,6 +21,8 @@ namespace Rdmp.Core.Tests.Curation.Unit.ExerciseData
         [TestCase(100000)]
         public void CreateCSV(int numberOfRecords)
         {
+            Assert.Inconclusive("Needs BadMedicine release");
+
             var r = new Random(500);
             var people = new PersonCollection();
             people.GeneratePeople(100,r);

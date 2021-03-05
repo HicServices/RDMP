@@ -34,6 +34,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
         [TestCase(false)]
         public void SQLServerDestination(bool lookupsEtc)
         {
+            Assert.Inconclusive("Needs BadMedicine release");
             DiscoveredDatabase dbToExtractTo = null;
 
             var ci = new CatalogueItem(CatalogueRepository, _catalogue, "YearOfBirth");

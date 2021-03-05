@@ -23,6 +23,8 @@ namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests
         [Test]
         public void RunEndToEndDLECacheTest()
         {
+            Assert.Inconclusive("Needs BadMedicine release");
+
             RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
             RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
