@@ -57,7 +57,7 @@ namespace Terminal.Gui {
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return Text ?? "Unamed Node";
+			return Text ?? "Unnamed Node";
 		}
 
 		/// <summary>
@@ -243,7 +243,7 @@ namespace Terminal.Gui {
 		public TreeView ()
 		{
 			TreeBuilder = new TreeNodeBuilder();
-			AspectGetter = o=>o == null ? "Null" : (o.Text ?? o?.ToString() ?? "Unamed Node");
+			AspectGetter = o=>o == null ? "Null" : (o.Text ?? o?.ToString() ?? "Unnamed Node");
 		}
 	}
 	
@@ -279,7 +279,7 @@ namespace Terminal.Gui {
 		public bool InvertExpandSymbolColors {get;set;}
 
 		/// <summary>
-		/// True to leave the last row of the control free for overwritting (e.g. by a scrollbar). When True scrolling will be triggered on the second last row of the control rather than the last.
+		/// True to leave the last row of the control free for overwriting (e.g. by a scrollbar). When True, scrolling will be triggered on the second last row of the control rather than the last.
 		/// </summary>
 		/// <value></value>
 		public bool LeaveLastRow {get;set;}
