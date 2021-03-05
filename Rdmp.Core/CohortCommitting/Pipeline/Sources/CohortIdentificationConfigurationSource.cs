@@ -98,7 +98,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Sources
             
             if(rootContainerTask.State == CompilationState.Executing)
             {
-                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,"Root container task was unexpectedly still executing... lets give it a little longer to run"));
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,"Root container task was unexpectedly still executing... let's give it a little longer to run"));
                 
                 int countdown = Math.Max(5000,Timeout*1000);
                 while(rootContainerTask.State == CompilationState.Executing && countdown>0)
