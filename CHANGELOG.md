@@ -31,6 +31,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed 'Set Global Dle Ignore Pattern' failing the first time it is used by creating a StandardRegex with no/null Pattern
 - Fixed order of branches in CLI gui tree
 
+### Changed
+
+- Changed message about inaccessible cohorts to a warning instead of an error. 
+ 
 ### Dependencies
 
 - Bump System.Drawing.Common from 5.0.0 to 5.0.1
