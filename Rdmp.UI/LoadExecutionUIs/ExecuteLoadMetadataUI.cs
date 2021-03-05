@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;

@@ -450,6 +450,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             if(Path.GetFileName(mdFile) == "Glossary.md")
                 return;
 
+            if(Path.GetFileName(mdFile) == "template.md")
+                return;
+
             var glossaryHeaders = 
                 new HashSet<string>(
                 File.ReadAllLines(glossaryPath)

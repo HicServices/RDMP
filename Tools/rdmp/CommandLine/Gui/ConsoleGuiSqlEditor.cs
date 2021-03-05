@@ -125,8 +125,17 @@ namespace Rdmp.Core.CommandLine.Gui
             Width = Dim.Fill(),
             Height = Dim.Fill()
                 };
-
+            tableView.CellActivated += TableView_CellActivated;
             Add(tableView);
+        }
+
+        private void TableView_CellActivated(CellActivatedEventArgs obj)
+        {
+            var val = obj.Table.Rows[obj.Row][obj.Col];
+            if(val != null && val != DBNull.Value)
+            {
+                _activator.Show(val.ToString());
+            }
         }
 
         private void Save()
