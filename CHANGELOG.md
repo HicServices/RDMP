@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- RDMP GUI now targets 3.1 instead of dotnet framework 4.6.1
+- .Net 5.0 for all, instead of Framework 4.6.1+Core 2.2+Standard 2.0 mix
 - Query editor autocomplete now uses integrated autocomplete (no icons, better matching)
 
 ### Added
