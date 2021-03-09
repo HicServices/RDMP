@@ -141,7 +141,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
             _destination = new DataTableUploadDestination();
             
-            PrimeDestinationTypesBasedOnCatalogueTypes(toProcess);
+            PrimeDestinationTypesBasedOnCatalogueTypes(listener,toProcess);
 
             _destination.AllowResizingColumnsAtUploadTime = true;
             _destination.AlterTimeout = AlterTimeout;
@@ -151,7 +151,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             return _destination;
         }
 
-        private void PrimeDestinationTypesBasedOnCatalogueTypes(DataTable toProcess)
+        private void PrimeDestinationTypesBasedOnCatalogueTypes(IDataLoadEventListener listener, DataTable toProcess)
         { 
             //if the extraction is of a Catalogue
             var datasetCommand = _request as IExtractDatasetCommand;
@@ -168,8 +168,22 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 var catItem = extractionInformation.CatalogueItem;
 
                 //if we do not know the data type or the ei is a transform
-                if (catItem == null || catItem.ColumnInfo == null || extractionInformation.IsProperTransform())
+                if (catItem == null)
+                {
+                    listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,$"Did not copy Types for ExtractionInformation {extractionInformation} (ID={extractionInformation.ID}) because it had no associated CatalogueItem"));
+                        continue;
+                }
+                if(catItem.ColumnInfo == null)
+                {
+                    listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,$"Did not copy Types for ExtractionInformation {extractionInformation} (ID={extractionInformation.ID}) because it had no associated ColumnInfo"));
+                        continue;
+                }
+                    
+                if(extractionInformation.IsProperTransform())
+                {
+                    listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,$"Did not copy Types for ExtractionInformation {extractionInformation} (ID={extractionInformation.ID}) because it is a Transform"));
                     continue;
+                }
 
                 string destinationType = GetDestinationDatabaseType(extractionInformation);
                 
@@ -183,6 +197,8 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 //if user wants to copy collation types and the destination server is the same type as the origin server
                 if (CopyCollations && _destinationDatabase.Server.DatabaseType == catItem.ColumnInfo.TableInfo.DatabaseType)
                     addedType.Collation = catItem.ColumnInfo.Collation;
+
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"Set Type for {columnName} to {destinationType} (IsPrimaryKey={(addedType.IsPrimaryKey ? "true":"false")}) to match the source table"));
             }
 
             foreach (ReleaseIdentifierSubstitution sub in datasetCommand.QueryBuilder.SelectColumns.Where(sc => sc.IColumn is ReleaseIdentifierSubstitution).Select(sc => sc.IColumn))

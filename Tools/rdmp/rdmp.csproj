@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ProjectGuid>{A6107DDC-8268-4902-A994-233B00480113}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AssemblyTitle>rdmp</AssemblyTitle>
@@ -30,13 +30,13 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="SecurityCodeScan" Version="3.5.3">
+    <PackageReference Include="SecurityCodeScan.VS2019" Version="5.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Terminal.Gui" Version="0.90.3" />
     <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
-    <PackageReference Include="YamlDotNet" Version="9.1.0" />
+    <PackageReference Include="YamlDotNet" Version="9.1.4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Rdmp.Core\Rdmp.Core.csproj" />

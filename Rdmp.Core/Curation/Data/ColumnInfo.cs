@@ -286,7 +286,7 @@ namespace Rdmp.Core.Curation.Data
         /// <param name="name"></param>
         /// <param name="type"></param>
         /// <param name="parent"></param>
-        public ColumnInfo(ICatalogueRepository repository, string name, string type, TableInfo parent)
+        public ColumnInfo(ICatalogueRepository repository, string name, string type, ITableInfo parent)
         {
             //defaults
             DuplicateRecordResolutionIsAscending = true;

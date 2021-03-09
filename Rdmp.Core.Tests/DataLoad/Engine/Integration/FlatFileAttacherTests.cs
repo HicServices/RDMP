@@ -319,9 +319,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             sw.Close();
             sw.Dispose();
 
-            TableInfo ti;
-            ColumnInfo[] cols;
-            Import(_table, out ti, out cols);
+            Import(_table, out var ti, out var cols);
 
             var attacher = new AnySeparatorFileAttacher();
             attacher.Initialize(LoadDirectory, _database);
@@ -377,9 +375,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             sw.Close();
             sw.Dispose();
 
-            TableInfo ti;
-            ColumnInfo[] cols;
-            Import(_table, out ti, out cols);
+            Import(_table, out var ti, out var cols);
 
             var attacher = new AnySeparatorFileAttacher();
             attacher.Initialize(LoadDirectory, _database);
@@ -450,7 +446,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 );
 
 
-            Import(tbl,out TableInfo ti,out _);
+            Import(tbl,out var ti,out _);
             var attacher = new AnySeparatorFileAttacher();
             attacher.Separator = ",";
             attacher.FilePattern = "bob*";

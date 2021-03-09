@@ -8,6 +8,8 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
+using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories.Construction;
@@ -57,7 +59,19 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
             else
             if(commandCtor == null || !invoker.IsSupported(commandCtor))
+            {
                 sb.AppendLine($"Command '{_commandType.Name}' is not supported by the current input type ({BasicActivator.GetType().Name})");
+                
+                if(commandCtor != null)
+                {
+                    var unsupported = commandCtor.GetParameters().Where(p=>!invoker.IsSupported(p)).ToArray();
+
+                    if(unsupported.Any())
+                        sb.AppendLine("The following parameter types (required by the command's constructor) were not supported:" + Environment.NewLine + string.Join(Environment.NewLine,unsupported.Select(p=> $"{p.Name }({p.ParameterType})")));
+                }
+                
+            }
+                
             else
             {
                 // For each thing the constructor takes
@@ -73,7 +87,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     sb.Append($"<{req.Name}> ");
 
                     //document it for the breakdown table
-                    sbParameters.AppendLine($"{req.Name}\t{req.Type.Name}\t{req.DemandIfAny?.Description}");
+                    sbParameters.AppendLine(FormatParameterDescription(req,commandCtor));
                 }
 
             }
@@ -83,6 +97,77 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 
             BasicActivator.Show(sb.ToString());
 
+        }
+
+        private string FormatParameterDescription(RequiredArgument req,ConstructorInfo ctor)
+        {
+            int nameColWidth = ctor.GetParameters().Max(p=>p.Name.Length);
+            int typeColWidth = ctor.GetParameters().Max(p=>p.ParameterType.Name.Length);
+
+            try
+            {
+                if(BasicActivator is ConsoleInputManager)
+                {              
+                    var name = req.Name.Length < nameColWidth ? req.Name.PadRight(nameColWidth) : req.Name.Substring(0,nameColWidth);
+                    var type = req.Type.Name.Length < typeColWidth ? req.Type.Name.PadRight(typeColWidth) : req.Type.Name.Substring(0,typeColWidth);
+                    
+                    var desc = req.DemandIfAny?.Description;
+
+                    if(string.IsNullOrWhiteSpace(desc))
+                        return $"{name} {type}";
+                    else
+                    {
+                        var availableWidth = Console.WindowWidth;
+                        var occupied = nameColWidth + 1 + typeColWidth + 1;
+
+                        var availableDescriptionWidth = availableWidth - occupied;
+
+                        if(availableDescriptionWidth < 0)
+                            return $"{name} {type}";
+
+                        var wrappedDesc = Wrap(desc,availableDescriptionWidth,occupied);
+
+                        return $"{name} {type} {wrappedDesc}";
+                    }
+
+                }
+
+            }
+            catch (Exception)
+            {
+                return $"{req.Name}\t{req.Type.Name}\t{req.DemandIfAny?.Description}";
+            }
+
+            return $"{req.Name}\t{req.Type.Name}\t{req.DemandIfAny?.Description}";
+        }
+        
+        private string Wrap(string longString, int width, int indent)
+        {
+            string[] words = longString.Split(' ');
+
+            StringBuilder newSentence = new StringBuilder(longString.Length);
+
+            StringBuilder line = new StringBuilder(width);
+            foreach (string word in words)
+            {
+                if ((line.Length + word.Length) >= width)
+                {
+                    newSentence.AppendLine(line.ToString().TrimEnd());
+                    newSentence.Append(new string (' ',indent));
+                    line.Clear();
+                }
+
+                line.Append(word);
+                line.Append(" ");
+            }
+
+            if (line.Length > 0)
+            {
+                newSentence.AppendLine(line.ToString().TrimEnd());
+                newSentence.Append(new string (' ',indent));
+            }
+
+            return newSentence.ToString().Trim();
         }
 
         private void PopulateBasicCommandInfo(StringBuilder sb)
@@ -98,7 +183,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if(helpText != null)
             {
                 sb.AppendLine();
-                sb.AppendLine("Description: " + helpText);
+                sb.AppendLine("Description: " + Environment.NewLine + helpText);
             }
 
             sb.AppendLine();

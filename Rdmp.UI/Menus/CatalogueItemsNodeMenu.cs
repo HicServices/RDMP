@@ -12,7 +12,6 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -32,81 +31,13 @@ namespace Rdmp.UI.Menus
 
             Add(new ExecuteCommandReOrderColumns(_activator, node.Catalogue));
             
-            Items.Add("Guess Associated Columns From TableInfo...", iconProvider.GetImage(RDMPConcept.ExtractionInformation,OverlayKind.Problem), (s, e) => GuessAssociatedColumns(node.Catalogue));
+            Add(new ExecuteCommandGuessAssociatedColumns(_activator, node.Catalogue,null));
 
             Add(new ExecuteCommandChangeExtractionCategory(_activator,node.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any)));
 
             Add(new ExecuteCommandImportCatalogueItemDescriptions(_activator, node.Catalogue,null/*pick at runtime*/));
         }
          
-        private void GuessAssociatedColumns(Catalogue c)
-        {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>(), false, false);
-
-            int itemsSeen = 0;
-            int itemsQualifying = 0;
-            int successCount = 0;
-            int failCount = 0;
-
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                var selectedTableInfo = (TableInfo)dialog.Selected;
-
-                //get all columns for the selected parent
-                ColumnInfo[] guessPool = selectedTableInfo.ColumnInfos.ToArray();
-                foreach (CatalogueItem catalogueItem in c.CatalogueItems)
-                {
-                    itemsSeen++;
-                    //catalogue item already has one an associated column so skip it
-                    if (catalogueItem.ColumnInfo_ID != null)
-                        continue;
-
-                    //guess the associated columns
-                    ColumnInfo[] guesses = catalogueItem.GuessAssociatedColumn(guessPool).ToArray();
-
-                    itemsQualifying++;
-
-                    //if there is exactly 1 column that matches the guess
-                    if (guesses.Length == 1)
-                    {
-                        catalogueItem.SetColumnInfo(guesses[0]);
-                        successCount++;
-                    }
-                    else
-                    {
-                        bool acceptedOne = false;
-
-                        for (int i = 0; i < guesses.Length; i++)
-                        //note that this sneakily also deals with case where guesses is empty
-                        {
-                            if (_activator.YesNo(
-                                    "Found multiple matches, approve match?:" + Environment.NewLine + catalogueItem.Name +
-                                    Environment.NewLine + guesses[i], "Multiple matched guesses"))
-                            {
-                                catalogueItem.SetColumnInfo(guesses[i]);
-                                successCount++;
-                                acceptedOne = true;
-                                break;
-                            }
-                        }
-
-                        if (!acceptedOne)
-                            failCount++;
-                    }
-
-                }
-
-                MessageBox.Show(
-                    "Examined:" + itemsSeen + " CatalogueItems" + Environment.NewLine +
-                    "Orphans Seen:" + itemsQualifying + Environment.NewLine +
-                    "Guess Success:" + successCount + Environment.NewLine +
-                    "Guess Failed:" + failCount + Environment.NewLine
-                    );
-
-                Publish(c);
-            }
-        }
-
         private void PasteClipboardAsNewCatalogueItems(Catalogue c)
         {
             string[] toImport = UsefulStuff.GetInstance().GetArrayOfColumnNamesFromStringPastedInByUser(Clipboard.GetText()).ToArray();

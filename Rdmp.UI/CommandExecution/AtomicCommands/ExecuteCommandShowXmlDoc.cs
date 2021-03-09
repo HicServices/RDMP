@@ -7,7 +7,6 @@
 using System.Drawing;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -44,7 +43,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-            WideMessageBox.Show(_title, _help, WideMessageBoxTheme.Help);
+            BasicActivator.Show(_title, _help);
         }
     }
 }

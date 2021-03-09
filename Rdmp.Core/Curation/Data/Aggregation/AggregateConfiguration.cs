@@ -237,7 +237,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         /// or there are other tables you want joined in addition the user can specify them in this property Populated via <see cref="AggregateForcedJoin"/>
         /// </summary>
         [NoMappingToDatabase]
-        public TableInfo[] ForcedJoins
+        public ITableInfo[] ForcedJoins
         {
             get { return CatalogueRepository.AggregateForcedJoinManager.GetAllForcedJoinsFor(this); }
         }

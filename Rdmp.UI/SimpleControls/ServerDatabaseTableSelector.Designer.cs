@@ -50,14 +50,14 @@ namespace Rdmp.UI.SimpleControls
             this.btnRefreshDatabases = new System.Windows.Forms.Button();
             this.btnRefreshTables = new System.Windows.Forms.Button();
             this.databaseTypeUI1 = new Rdmp.UI.SimpleControls.DatabaseTypeUI();
-            this.ragSmiley1 = new RAGSmiley();
+            this.ragSmiley1 = new Rdmp.UI.ChecksUI.RAGSmiley();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
             this.SuspendLayout();
             // 
             // lblTable
             // 
             this.lblTable.AutoSize = true;
-            this.lblTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.lblTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblTable.Location = new System.Drawing.Point(5, 122);
             this.lblTable.Name = "lblTable";
             this.lblTable.Size = new System.Drawing.Size(37, 13);
@@ -66,11 +66,11 @@ namespace Rdmp.UI.SimpleControls
             // 
             // cbxTable
             // 
-            this.cbxTable.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.cbxTable.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbxTable.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append;
             this.cbxTable.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
-            this.cbxTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.cbxTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.cbxTable.FormattingEnabled = true;
             this.cbxTable.Location = new System.Drawing.Point(64, 119);
             this.cbxTable.Name = "cbxTable";
@@ -81,7 +81,7 @@ namespace Rdmp.UI.SimpleControls
             // label43
             // 
             this.label43.AutoSize = true;
-            this.label43.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.label43.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label43.Location = new System.Drawing.Point(5, 84);
             this.label43.Name = "label43";
             this.label43.Size = new System.Drawing.Size(56, 13);
@@ -90,11 +90,11 @@ namespace Rdmp.UI.SimpleControls
             // 
             // cbxDatabase
             // 
-            this.cbxDatabase.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.cbxDatabase.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbxDatabase.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
             this.cbxDatabase.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
-            this.cbxDatabase.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.cbxDatabase.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.cbxDatabase.FormattingEnabled = true;
             this.cbxDatabase.Location = new System.Drawing.Point(64, 81);
             this.cbxDatabase.Name = "cbxDatabase";
@@ -107,7 +107,7 @@ namespace Rdmp.UI.SimpleControls
             // label50
             // 
             this.label50.AutoSize = true;
-            this.label50.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.label50.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label50.Location = new System.Drawing.Point(5, 57);
             this.label50.Name = "label50";
             this.label50.Size = new System.Drawing.Size(41, 13);
@@ -116,15 +116,15 @@ namespace Rdmp.UI.SimpleControls
             // 
             // cbxServer
             // 
-            this.cbxServer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.cbxServer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbxServer.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
             this.cbxServer.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
-            this.cbxServer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.cbxServer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.cbxServer.FormattingEnabled = true;
             this.cbxServer.Location = new System.Drawing.Point(64, 54);
             this.cbxServer.Name = "cbxServer";
-            this.cbxServer.Size = new System.Drawing.Size(406, 21);
+            this.cbxServer.Size = new System.Drawing.Size(372, 21);
             this.cbxServer.TabIndex = 2;
             this.cbxServer.SelectedIndexChanged += new System.EventHandler(this.cbxServer_SelectedIndexChanged);
             this.cbxServer.Leave += new System.EventHandler(this.cbxServer_Leave);
@@ -132,7 +132,7 @@ namespace Rdmp.UI.SimpleControls
             // lblOr
             // 
             this.lblOr.AutoSize = true;
-            this.lblOr.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.lblOr.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblOr.Location = new System.Drawing.Point(214, 142);
             this.lblOr.Name = "lblOr";
             this.lblOr.Size = new System.Drawing.Size(23, 13);
@@ -141,7 +141,7 @@ namespace Rdmp.UI.SimpleControls
             // 
             // lblTableValuedFunction
             // 
-            this.lblTableValuedFunction.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.lblTableValuedFunction.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblTableValuedFunction.Location = new System.Drawing.Point(5, 138);
             this.lblTableValuedFunction.Name = "lblTableValuedFunction";
             this.lblTableValuedFunction.Size = new System.Drawing.Size(56, 40);
@@ -150,11 +150,11 @@ namespace Rdmp.UI.SimpleControls
             // 
             // cbxTableValueFunctions
             // 
-            this.cbxTableValueFunctions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.cbxTableValueFunctions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbxTableValueFunctions.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append;
             this.cbxTableValueFunctions.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
-            this.cbxTableValueFunctions.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.cbxTableValueFunctions.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.cbxTableValueFunctions.FormattingEnabled = true;
             this.cbxTableValueFunctions.Location = new System.Drawing.Point(64, 157);
             this.cbxTableValueFunctions.Name = "cbxTableValueFunctions";
@@ -165,7 +165,7 @@ namespace Rdmp.UI.SimpleControls
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label1.Location = new System.Drawing.Point(17, 6);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(89, 13);
@@ -175,7 +175,7 @@ namespace Rdmp.UI.SimpleControls
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.label2.Location = new System.Drawing.Point(17, 31);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(102, 13);
@@ -186,7 +186,7 @@ namespace Rdmp.UI.SimpleControls
             // 
             this.tbUsername.Location = new System.Drawing.Point(125, 3);
             this.tbUsername.Name = "tbUsername";
-            this.tbUsername.Size = new System.Drawing.Size(329, 20);
+            this.tbUsername.Size = new System.Drawing.Size(329, 23);
             this.tbUsername.TabIndex = 0;
             this.tbUsername.TextChanged += new System.EventHandler(this.tbUsername_TextChanged);
             // 
@@ -195,7 +195,7 @@ namespace Rdmp.UI.SimpleControls
             this.tbPassword.Location = new System.Drawing.Point(125, 28);
             this.tbPassword.Name = "tbPassword";
             this.tbPassword.PasswordChar = '*';
-            this.tbPassword.Size = new System.Drawing.Size(329, 20);
+            this.tbPassword.Size = new System.Drawing.Size(329, 23);
             this.tbPassword.TabIndex = 1;
             // 
             // llLoading
@@ -203,7 +203,7 @@ namespace Rdmp.UI.SimpleControls
             this.llLoading.AutoSize = true;
             this.llLoading.Location = new System.Drawing.Point(61, 103);
             this.llLoading.Name = "llLoading";
-            this.llLoading.Size = new System.Drawing.Size(97, 13);
+            this.llLoading.Size = new System.Drawing.Size(108, 15);
             this.llLoading.TabIndex = 6;
             this.llLoading.TabStop = true;
             this.llLoading.Text = "Cancel Connection";
@@ -247,9 +247,10 @@ namespace Rdmp.UI.SimpleControls
             // 
             this.databaseTypeUI1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.databaseTypeUI1.DatabaseType = FAnsi.DatabaseType.MicrosoftSQLServer;
-            this.databaseTypeUI1.Location = new System.Drawing.Point(470, 50);
+            this.databaseTypeUI1.Location = new System.Drawing.Point(443, 50);
+            this.databaseTypeUI1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.databaseTypeUI1.Name = "databaseTypeUI1";
-            this.databaseTypeUI1.Size = new System.Drawing.Size(150, 28);
+            this.databaseTypeUI1.Size = new System.Drawing.Size(177, 28);
             this.databaseTypeUI1.TabIndex = 168;
             this.databaseTypeUI1.DatabaseTypeChanged += new System.EventHandler(this.databaseTypeUI1_DatabaseTypeChanged);
             // 
@@ -259,6 +260,7 @@ namespace Rdmp.UI.SimpleControls
             this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
             this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.ragSmiley1.Location = new System.Drawing.Point(3, 97);
+            this.ragSmiley1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ragSmiley1.Name = "ragSmiley1";
             this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
             this.ragSmiley1.TabIndex = 5;

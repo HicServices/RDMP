@@ -55,9 +55,14 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
 
             return string.Format(@"BEGIN
     INSERT INTO {0} ({1},hic_validTo,hic_userID,hic_status) VALUES ({2},CURRENT_DATE,USER,'U');
+
+  :new.{3} := sysdate;
+
+
   END", _archiveTable.GetFullyQualifiedName(),
                 string.Join(",", _columns.Select(c => syntax.EnsureWrapped(c.GetRuntimeName()))),
-                string.Join(",", _columns.Select(c => ":old." + syntax.EnsureWrapped(c.GetRuntimeName()))));
+                string.Join(",", _columns.Select(c => ":old." + syntax.EnsureWrapped(c.GetRuntimeName()))),
+                syntax.EnsureWrapped(SpecialFieldNames.ValidFrom));
         }
 
         protected override void AssertTriggerBodiesAreEqual(string sqlThen, string sqlNow)

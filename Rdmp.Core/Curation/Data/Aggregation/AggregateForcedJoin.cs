@@ -25,7 +25,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         }
 
         /// <inheritdoc/>
-        public TableInfo[] GetAllForcedJoinsFor(AggregateConfiguration configuration)
+        public ITableInfo[] GetAllForcedJoinsFor(AggregateConfiguration configuration)
         {
             return
                 _repository.SelectAllWhere<TableInfo>(
@@ -34,13 +34,13 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         }
 
         /// <inheritdoc/>
-        public void BreakLinkBetween(AggregateConfiguration configuration, TableInfo tableInfo)
+        public void BreakLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)
         {
             _repository.Delete(string.Format("DELETE FROM AggregateForcedJoin WHERE AggregateConfiguration_ID = {0} AND TableInfo_ID = {1}", configuration.ID, tableInfo.ID));
         }
 
         /// <inheritdoc/>
-        public void CreateLinkBetween(AggregateConfiguration configuration, TableInfo tableInfo)
+        public void CreateLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)
         {
             using (var con = _repository.GetConnection())
                 using(var cmd = DatabaseCommandHelper.GetCommand(

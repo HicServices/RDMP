@@ -124,9 +124,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
                 Assert.IsTrue(tbl.Exists());
 
-                TableInfo ti;
-                ColumnInfo[] cols;
-                Import(tbl,out ti,out cols);
+                Import(tbl,out var ti,out var cols);
 
                 Assert.AreEqual("Omg",ti.Schema);
                 var tbl2 = ti.Discover(DataAccessContext.InternalDataProcessing);
@@ -165,9 +163,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 Assert.IsTrue(tvf.Exists());
 
                 var importerTvf = new TableValuedFunctionImporter(CatalogueRepository, tvf);
-                TableInfo tvfTi;
-                ColumnInfo[] tvfCols;
-                importerTvf.DoImport(out tvfTi,out tvfCols);
+                importerTvf.DoImport(out var tvfTi,out var tvfCols);
 
                 Assert.AreEqual("Omg",tvfTi.Schema);
 
@@ -188,7 +184,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             dt.Columns.Add("FF");
 
             var tbl = db.CreateTable("MyTable",dt);
-            Import(tbl,out TableInfo tblInfo,out _);
+            Import(tbl,out var tblInfo,out _);
             
             Assert.IsTrue(tblInfo.Discover(DataAccessContext.InternalDataProcessing).Exists());
             Assert.AreEqual(TableType.Table,tblInfo.Discover(DataAccessContext.InternalDataProcessing).TableType);
@@ -219,7 +215,7 @@ syntax.EnsureWrapped("FF"));
             }
 
             var view = tbl.Database.ExpectTable("MyView",null,TableType.View);
-            Import(view,out TableInfo viewInfo,out _);
+            Import(view,out var viewInfo,out _);
 
             var sync = new TableInfoSynchronizer(viewInfo);
             sync.Synchronize(new ThrowImmediatelyCheckNotifier());

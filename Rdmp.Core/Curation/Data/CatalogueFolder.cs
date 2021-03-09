@@ -22,7 +22,7 @@ namespace Rdmp.Core.Curation.Data
     /// </summary>
     public class CatalogueFolder : IConvertible
     {
-        private readonly Catalogue _parent;
+        private readonly ICatalogue _parent;
         private string _path;
          
         /// <summary>
@@ -61,7 +61,7 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="folder"></param>
-        public CatalogueFolder(Catalogue parent, string folder)
+        public CatalogueFolder(ICatalogue parent, string folder)
         {
             //always Lower everything!
             folder = folder.ToLower();
@@ -70,8 +70,11 @@ namespace Rdmp.Core.Curation.Data
             Path = folder;
         }
 
-        //private because this is a folder that does not know who it's associated Catalogues are (and indeed there might not even be any e.g. if user has \2001\Research\ then probably the \2001\ folder is empty, certainly the root is probably empty)
-        private CatalogueFolder(string path)
+        /// <summary>
+        /// Creates a folder that does not know who it's associated Catalogues are (and indeed there might not even be any e.g. if user has \2001\Research\ then probably the \2001\ folder is empty, certainly the root is probably empty)
+        /// </summary>
+        /// <param name="path"></param>
+        public CatalogueFolder(string path)
         {
             Path = path;
         }

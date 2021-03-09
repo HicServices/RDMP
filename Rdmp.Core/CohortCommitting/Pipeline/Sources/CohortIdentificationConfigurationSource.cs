@@ -8,6 +8,7 @@ using System;
 using System.Data;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Rdmp.Core.CohortCreation;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data;
@@ -78,8 +79,10 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Sources
 
         private DataTable GetDataTable(IDataLoadEventListener listener)
         {
-            if(listener != null)
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to lookup which server to interrogate for CohortIdentificationConfiguration " + _cohortIdentificationConfiguration));
+            if(listener == null)
+                listener = new ThrowImmediatelyDataLoadEventListener();
+
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to lookup which server to interrogate for CohortIdentificationConfiguration " + _cohortIdentificationConfiguration));
 
             if(_cohortIdentificationConfiguration.RootCohortAggregateContainer_ID == null)
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "CohortIdentificationConfiguration '" + _cohortIdentificationConfiguration + "' has no RootCohortAggregateContainer_ID, is it empty?"));
@@ -92,6 +95,18 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Sources
                 rootContainerTask = RunRootContainerOnlyNoCaching(cohortCompiler);
             else
                 rootContainerTask =  RunAllTasksWithRunner(cohortCompiler,listener);
+            
+            if(rootContainerTask.State == CompilationState.Executing)
+            {
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,"Root container task was unexpectedly still executing... let's give it a little longer to run"));
+                
+                int countdown = Math.Max(5000,Timeout*1000);
+                while(rootContainerTask.State == CompilationState.Executing && countdown>0)
+                {
+                    Task.Delay(100).Wait();
+                    countdown -=100;
+                }
+            }
 
             if (rootContainerTask.State != CompilationState.Finished)
                 throw new Exception("CohortIdentificationCriteria execution resulted in state '" + rootContainerTask.State + "'", rootContainerTask.CrashMessage);
@@ -121,7 +136,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Sources
             cohortCompiler.LaunchSingleTask(task, Timeout,false);
 
             //timeout is in seconds
-            int countDown = Timeout * 1000;
+            int countDown = Math.Max(5000,Timeout * 1000);
 
             while (
                 //hasn't timed out
@@ -131,7 +146,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Sources
                     task.State == CompilationState.Executing || task.State == CompilationState.NotScheduled || task.State == CompilationState.Scheduled)
                 )
             {
-                Thread.Sleep(100);
+                Task.Delay(100).Wait();
                 countDown -= 100;
             }
 

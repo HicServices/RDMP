@@ -10,6 +10,8 @@ using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
@@ -20,9 +22,9 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
-
-
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.PipelineUIs.Pipelines
 {
@@ -41,9 +43,9 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
     /// like cohort committing, data extraction etc.</para>
     /// 
     /// </summary>
-    public partial class ConfigureAndExecutePipelineUI : RDMPUserControl
+    public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineRunner
     {
-        private readonly PipelineUseCase _useCase;
+        private readonly IPipelineUseCase _useCase;
         private PipelineSelectionUI _pipelineSelectionUI;
         private PipelineDiagramUI pipelineDiagram1;
 
@@ -61,7 +63,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
         readonly List<object> _initializationObjects = new List<object>();
 
-       public ConfigureAndExecutePipelineUI(PipelineUseCase useCase, IActivateItems activator)
+       public ConfigureAndExecutePipelineUI(IPipelineUseCase useCase, IActivateItems activator)
         {
            _useCase = useCase;
            
@@ -101,7 +103,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
            lblTask.Text = "Task:" + useCase.GetType().Name;
         }
-        
+
         private bool _pipelineOptionsSet = false;
 
         
@@ -185,6 +187,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             progressUI1.ShowRunning(true);
 
             bool success = false;
+            Exception exception = null;
 
             //start a new thread
             Task t = new Task(() =>
@@ -197,6 +200,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
                 catch (Exception ex)
                 {
                     fork.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Pipeline execution failed", ex));
+                    exception = ex;
                 }
                 
             }
@@ -217,6 +221,20 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
                 progressUI1.ShowRunning(false);
 
                 btnExecute.Text = "Execute"; //make it so user can execute again
+
+                if(UserSettings.ShowPipelineCompletedPopup)
+                {
+                    if(success)
+                        WideMessageBox.Show("Pipeline Completed","Pipeline execution completed",WideMessageBoxTheme.Help);
+                    else
+                    {
+                        var worst = progressUI1.GetWorst();
+
+                        if(UserSettings.ShowPipelineCompletedPopup)
+                            ExceptionViewer.Show("Pipeline crashed",exception ?? worst?.Exception);
+                    }
+                }
+
             }, TaskScheduler.FromCurrentSynchronizationContext());
 
             t.Start();
@@ -289,6 +307,12 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
         public void SetAdditionalProgressListener(IDataLoadEventListener listener)
         {
             fork = new ForkDataLoadEventListener(progressUI1,listener);
+        }
+
+        public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
+        {
+            Activator.ShowDialog(new SingleControlForm(this));
+            return 0;
         }
     }
 }

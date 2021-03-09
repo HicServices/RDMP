@@ -69,7 +69,7 @@ namespace Rdmp.Core.QueryBuilding.Parameters
         /// <summary>
         /// Records parameters from the <see cref="TableInfo"/> at the appropriate <see cref="ParameterLevel"/>
         /// </summary>
-        public void AddParametersFor(List<TableInfo> tableInfos)
+        public void AddParametersFor(List<ITableInfo> tableInfos)
         {
             AddParametersFor(tableInfos.ToArray(), ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo]);
         }
@@ -77,7 +77,7 @@ namespace Rdmp.Core.QueryBuilding.Parameters
         /// <summary>
         /// Records parameters from the <see cref="TableInfo"/> at the appropriate <see cref="ParameterLevel"/>
         /// </summary>
-        public void AddParametersFor(TableInfo tableInfo)
+        public void AddParametersFor(ITableInfo tableInfo)
         {
             AddParametersFor(tableInfo, ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo]);
         }

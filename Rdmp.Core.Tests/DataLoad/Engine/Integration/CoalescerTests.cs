@@ -81,9 +81,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             var tbl = db.CreateTable(dt.TableName, dt);
 
             var importer = new TableInfoImporter(CatalogueRepository, tbl);
-            TableInfo tableInfo;
-            ColumnInfo[] colInfos;
-            importer.DoImport(out tableInfo,out colInfos);
+            importer.DoImport(out var tableInfo,out var colInfos);
 
             //lie about what hte primary key is because this component is designed to run in the RAW environment and we are simulating a LIVE TableInfo (correctly)
             var pk = colInfos.Single(c => c.GetRuntimeName().Equals("pk"));

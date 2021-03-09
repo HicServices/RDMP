@@ -110,7 +110,7 @@ namespace Rdmp.Core.Curation.Data
         /// <param name="repository"></param>
         /// <param name="parent"></param>
         /// <param name="name"></param>
-        public SupportingDocument(ICatalogueRepository repository, Catalogue parent, string name)
+        public SupportingDocument(ICatalogueRepository repository, ICatalogue parent, string name)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {

@@ -12,8 +12,6 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons;
-using Rdmp.UI.Progress;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.Theme;
 using ReusableLibraryCode.Progress;
@@ -399,6 +397,22 @@ namespace Rdmp.UI.Progress
         public void SetFatal()
         {
             lblCrashed.Visible = true;
+        }
+
+        
+        /// <summary>
+        /// Returns the worst message recorded in the UI
+        /// </summary>
+        /// <returns></returns>
+        public NotifyEventArgs GetWorst()
+        {
+            
+            var worstEntry = (olvProgressEvents.Objects ?? new object[0]).OfType<ProgressUIEntry>().Union(NotificationQueue).OrderByDescending(e=>e.ProgressEventType).FirstOrDefault();
+            
+            if(worstEntry == null)
+                return null;
+
+            return new NotifyEventArgs(worstEntry.ProgressEventType,worstEntry.Message,worstEntry.Exception);
         }
     }
     internal class QueuedProgressMessage

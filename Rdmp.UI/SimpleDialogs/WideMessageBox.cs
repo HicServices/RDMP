@@ -12,9 +12,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
-using Rdmp.Core.Icons;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons;
 using Rdmp.UI.SimpleControls;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -256,6 +254,13 @@ namespace Rdmp.UI.SimpleDialogs
                 var split = e.LinkText.Split('#');
                 if(split.Length >=2 && CommentStore.ContainsKey(split[1]))
                     NavigateTo(split[1]);
+            }
+            else
+            {
+                var text = e.LinkText.TrimEnd('.',')');
+
+                if(CommentStore.ContainsKey(text))
+                    NavigateTo(text);
             }
         }
 

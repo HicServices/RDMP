@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Logging;
@@ -340,7 +341,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
 
             if (category != null)
             {
-                var cmd = new ExecuteCommandViewLoggedData(Activator,new LogViewerFilter(category.AssociatedTable){Run = category.RunId});
+                var cmd = new ExecuteCommandViewLogs(Activator,new LogViewerFilter(category.AssociatedTable){Run = category.RunId});
                 RightClickMenu.Items.Add(new AtomicCommandMenuItem(cmd, Activator));
             }
 
@@ -394,10 +395,10 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
                 return;
             
             if(o is ArchivalDataLoadInfo dli)
-                new ExecuteCommandViewLoggedData(Activator,new LogViewerFilter(LoggingTables.DataLoadRun){Run = dli.ID}).Execute();
+                new ExecuteCommandViewLogs(Activator,new LogViewerFilter(LoggingTables.DataLoadRun){Run = dli.ID}).Execute();
             else 
             if (o is LoadEventsTreeView_Category cat)
-                new ExecuteCommandViewLoggedData(Activator,  new LogViewerFilter(cat.AssociatedTable) { Run = cat.RunId}).Execute();
+                new ExecuteCommandViewLogs(Activator,  new LogViewerFilter(cat.AssociatedTable) { Run = cat.RunId}).Execute();
             else 
             if(o is IHasSummary s)
                 WideMessageBox.Show(s);

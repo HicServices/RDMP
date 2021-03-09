@@ -145,7 +145,7 @@ namespace Rdmp.Core.Curation.Data
         /// <param name="repository"></param>
         /// <param name="parent"></param>
         /// <param name="name"></param>
-        public SupportingSQLTable(ICatalogueRepository repository, Catalogue parent, string name)
+        public SupportingSQLTable(ICatalogueRepository repository, ICatalogue parent, string name)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {

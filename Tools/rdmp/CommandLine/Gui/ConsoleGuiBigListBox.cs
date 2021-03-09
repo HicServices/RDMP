@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -38,11 +39,13 @@ namespace Rdmp.Core.CommandLine.Gui
         /// <summary>
         /// Ongoing filtering of a large collection should be cancelled when the user changes the filter even if it is not completed yet
         /// </summary>
-        CancellationTokenSource _cancelFiltering = new CancellationTokenSource();
+        ConcurrentBag<CancellationTokenSource> _cancelFiltering = new ConcurrentBag<CancellationTokenSource>();
         Task _currentFilterTask;
         object _taskCancellationLock = new object();
         
         private ListView _listView;
+        private bool _changes;
+        private TextField mainInput;
 
         /// <summary>
         /// Protected constructor for derived classes that want to do funky filtering and hot swap out lists as search
@@ -95,6 +98,19 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 return _displayFunc(Object);
             }
+
+            public override int GetHashCode()
+            {
+                return Object.GetHashCode();
+            }
+
+            public override bool Equals(object obj)
+            {
+                if(obj is ListViewObject<T2> other)
+                    return Object.Equals(other.Object);
+                
+                return false;
+            }
         }
 
         /// <summary>
@@ -111,7 +127,8 @@ namespace Rdmp.Core.CommandLine.Gui
 
                 // By using Dim.Fill(), it will automatically resize without manual intervention
                 Width = Dim.Fill (),
-                Height = Dim.Fill ()
+                Height = Dim.Fill (),
+                Modal = true
             };
 
             _listView = new ListView(new List<string>(new []{"Error"}))
@@ -159,22 +176,21 @@ namespace Rdmp.Core.CommandLine.Gui
 
                 win.Add(searchLabel);
             
-                var mainInput = new TextField ("") {
+                mainInput = new TextField ("") {
                     X = Pos.Right(searchLabel),
                     Y = Pos.Bottom(_listView),
-                    Width = 40,
+                    Width = 30,
                 };
 
-                btnOk.X = 48;
-                btnCancel.X = 58;
+                btnOk.X = 38;
+                btnCancel.X = 48;
 
                 win.Add(mainInput);
                 mainInput.SetFocus();
                 
                 mainInput.TextChanged += (s) =>
                 {
-                    //run this in a thread because any locking or delay in this callback prevents the keypress registering!
-                    Task.Run(()=>BeginFiltering(mainInput.Text.ToString())); 
+                    RestartFiltering(); 
                 };
             }
             else
@@ -186,7 +202,9 @@ namespace Rdmp.Core.CommandLine.Gui
             
             win.Add(btnOk);
             win.Add(btnCancel);
-            
+
+            AddMoreButtonsAfter(win,btnCancel);
+
             var callback = Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds (500), Timer);
 
             Application.Run(win);
@@ -196,31 +214,66 @@ namespace Rdmp.Core.CommandLine.Gui
             return okClicked;
         }
 
-        bool Timer (MainLoop caller)
+        
+
+        /// <summary>
+        /// Last minute method for adding extra stuff to the window (to the right of <paramref name="btnCancel"/>)
+        /// </summary>
+        /// <param name="btnCancel"></param>
+        protected virtual void AddMoreButtonsAfter(Window win, Button btnCancel)
         {
-            var oldSelected = _listView.SelectedItem;
-            _listView.SetSource(_collection.ToList());
-            _listView.SelectedItem = oldSelected ;
-            return true;
         }
 
-        private void BeginFiltering(string searchTerm)
+        bool Timer (MainLoop caller)
         {
+            if(_changes)
+            {
+                lock(_taskCancellationLock)
+                {
+                    var oldSelected = _listView.SelectedItem;
+                    _listView.SetSource(_collection.ToList());
+
+                    if(oldSelected < _collection.Count)
+                        _listView.SelectedItem = oldSelected ;
+                    
+                    _changes = false;
+                    return true;
+                }
+            }           
+            
+            return true;
+        }
+        protected void RestartFiltering()
+        {
+            RestartFiltering(mainInput.Text.ToString());
+        }
+
+        protected void RestartFiltering(string searchTerm)
+        {
+            
             lock(_taskCancellationLock)
             {
-                if(_currentFilterTask != null)
-                {
-                    _cancelFiltering.Cancel();
-                    _currentFilterTask.Wait();
+                //cancel any previous searches
+                foreach(var c in _cancelFiltering)
+                    c.Cancel();
+            
+                _cancelFiltering.Clear();
+            }
+            
+            var cts = new CancellationTokenSource();
+            _cancelFiltering.Add(cts);
 
-                    _cancelFiltering = new CancellationTokenSource();
+            _currentFilterTask = Task.Run(()=>
+            {
+                var result = BuildList(GetListAfterSearch(searchTerm,cts.Token));
+
+                lock(_taskCancellationLock)
+                {
+                    _collection = result;
+                    _changes = true;
                 }
-
-                _currentFilterTask = Task.Run(()=>
-                {
-                    _collection = BuildList(GetListAfterSearch(searchTerm,_cancelFiltering.Token));
-                });  
-            }        
+                    
+            });       
         }
 
         private IList<ListViewObject<T>> BuildList(IList<T> listOfT)

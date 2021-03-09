@@ -28,6 +28,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		rakeconfig.rb = rakeconfig.rb
 		rakefile.rb = rakefile.rb
 		README.md = README.md
+		releases.xml = releases.xml
 		SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
 	EndProjectSection
 EndProject
@@ -71,6 +72,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		Documentation\CodeTutorials\MultipleExtractionIdentifiers.md = Documentation\CodeTutorials\MultipleExtractionIdentifiers.md
 		Documentation\CodeTutorials\Packages.md = Documentation\CodeTutorials\Packages.md
 		Documentation\CodeTutorials\PluginWriting.md = Documentation\CodeTutorials\PluginWriting.md
+		Documentation\CodeTutorials\RdmpCommandLine.md = Documentation\CodeTutorials\RdmpCommandLine.md
 		Documentation\CodeTutorials\Tests.md = Documentation\CodeTutorials\Tests.md
 		Documentation\CodeTutorials\UserInterfaceOverview.md = Documentation\CodeTutorials\UserInterfaceOverview.md
 		Documentation\CodeTutorials\Validation.md = Documentation\CodeTutorials\Validation.md

@@ -6,23 +6,30 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Providers;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataExport.DataExtraction;
+using Rdmp.Core.DataViewing;
+using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CommandLine.Interactive
 {
     /// <summary>
-    /// Implementation of <see cref="IBasicActivateItems"/> that handles object selection and message notification via the console
+    /// Implementation of <see cref="IBasicActivateItems"/> that handles object selection and message notification but is <see cref="IsInteractive"/>=false and throws <see cref="InputDisallowedException"/> on any attempt to illicit user feedback
     /// </summary>
     public class ConsoleInputManager : BasicActivateItems
     {
@@ -42,7 +49,7 @@ namespace Rdmp.Core.CommandLine.Interactive
         public ConsoleInputManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier):base(repositoryLocator,globalErrorCheckNotifier)
         {
         }
-        public override void Show(string message)
+        public override void Show(string title,string message)
         {
             Console.WriteLine(message);
         }
@@ -55,7 +62,7 @@ namespace Rdmp.Core.CommandLine.Interactive
 
             Console.WriteLine(header);
             Console.Write(prompt +":");
-            text = ReadLine();
+            text = ReadLineWithAuto();
             return !string.IsNullOrWhiteSpace(text);
         }
 
@@ -65,7 +72,7 @@ namespace Rdmp.Core.CommandLine.Interactive
                 throw new InputDisallowedException($"Value required for '{taskDescription}'");
 
             Console.WriteLine(taskDescription);
-            var value = ReadLine(new PickDatabase());
+            var value = ReadLineWithAuto(new PickDatabase());
             return value.Database;
         }
 
@@ -75,7 +82,7 @@ namespace Rdmp.Core.CommandLine.Interactive
                 throw new InputDisallowedException($"Value required for '{taskDescription}'");
 
             Console.WriteLine(taskDescription);
-            var value = ReadLine(new PickTable());
+            var value = ReadLineWithAuto(new PickTable());
             return value.Table;
         }
 
@@ -90,7 +97,16 @@ namespace Rdmp.Core.CommandLine.Interactive
                 throw new InputDisallowedException($"Value required for '{prompt}'");
 
             string chosenStr = GetString(prompt, Enum.GetNames(enumType).ToList());
-            chosen = (Enum)Enum.Parse(enumType, chosenStr);
+            try
+            {
+                chosen = (Enum)Enum.Parse(enumType, chosenStr);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine($"Could not parse value.  Valid Enum values are:{Environment.NewLine}{string.Join(Environment.NewLine,Enum.GetNames(enumType))}" );
+                throw;
+            }
+            
             return true;
         }
 
@@ -124,7 +140,7 @@ namespace Rdmp.Core.CommandLine.Interactive
 
             Console.WriteLine(prompt);
 
-            var value = ReadLine(new PickObjectBase[]
+            var value = ReadLineWithAuto(new PickObjectBase[]
                 {new PickObjectByID(RepositoryLocator), new PickObjectByName(RepositoryLocator)},
                 availableObjects.Select(t=>t.GetType().Name).Distinct());
             
@@ -151,7 +167,7 @@ namespace Rdmp.Core.CommandLine.Interactive
             if (availableObjects.Length == 1 && allowAutoSelect)
                 return availableObjects[0];
 
-            var value = ReadLine(new PickObjectBase[]
+            var value = ReadLineWithAuto(new PickObjectBase[]
                 {new PickObjectByID(RepositoryLocator), new PickObjectByName(RepositoryLocator)},
                 availableObjects.Select(t=>t.GetType().Name).Distinct());
 
@@ -166,35 +182,31 @@ namespace Rdmp.Core.CommandLine.Interactive
             return chosen;
         }
 
-        private string ReadLine(IEnumerable<string> autoComplete = null)
+        private string ReadLineWithAuto(IEnumerable<string> autoComplete = null)
         {
             if (DisallowInput)
                 throw new InputDisallowedException("Value required");
 
-            return autoComplete != null ? GetString("", autoComplete.ToList()) : Console.ReadLine();
+            ReadLine.AutoCompletionHandler = new AutoComplete(autoComplete);
+
+            return ReadLine.Read();
         }
 
-        private CommandLineObjectPickerArgumentValue ReadLine(PickObjectBase picker)
+        private CommandLineObjectPickerArgumentValue ReadLineWithAuto(PickObjectBase picker)
         {
             if (DisallowInput)
                 throw new InputDisallowedException("Value required");
 
-            Console.WriteLine($"Format: {picker.Format}");
-            string line = ReadLine(picker.GetAutoCompleteIfAny());
+            string line = ReadLineWithAuto(picker.GetAutoCompleteIfAny());
 
             return picker.Parse(line, 0);
         }
-        private CommandLineObjectPickerArgumentValue ReadLine(PickObjectBase[] pickers,IEnumerable<string> autoComplete)
+        private CommandLineObjectPickerArgumentValue ReadLineWithAuto(PickObjectBase[] pickers,IEnumerable<string> autoComplete)
         {
             if (DisallowInput)
                 throw new InputDisallowedException("Value required");
 
-            Console.WriteLine("Enter value in one of the following formats:");
-
-            foreach (PickObjectBase p in pickers)
-                Console.WriteLine($"Format: {p.Format}");
-            
-            string line = ReadLine(autoComplete);
+            string line = ReadLineWithAuto(autoComplete);
             
             var picker = new CommandLineObjectPicker(new[]{line},RepositoryLocator,pickers);
             return picker[0];
@@ -231,6 +243,42 @@ namespace Rdmp.Core.CommandLine.Interactive
             return null;
         }
         
+        public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
+        {
+            if (DisallowInput)
+                throw new InputDisallowedException($"Value required for '{prompt}'");
+
+            Console.WriteLine(prompt);
+            Console.WriteLine(@"Enter path with optional wildcards (e.g. c:\*.csv):");
+
+            var file = Console.ReadLine();
+
+            if (file == null) return null;
+            var asteriskIdx = file.IndexOf('*');
+
+            if(asteriskIdx != -1)
+            {
+                int idxLastSlash = file.LastIndexOfAny(new []{ Path.DirectorySeparatorChar,Path.AltDirectorySeparatorChar });
+
+                if(idxLastSlash == -1 || asteriskIdx < idxLastSlash)
+                    throw new Exception("Wildcards are only supported at the file level");
+
+                var searchPattern = file.Substring(idxLastSlash+1);
+                var dirStr = file.Substring(0,idxLastSlash);
+                    
+                var dir = new DirectoryInfo(dirStr);
+
+                if(!dir.Exists)
+                    throw new DirectoryNotFoundException("Could not find directory:" + dirStr);
+                                        
+                return dir.GetFiles(searchPattern).ToArray();
+            }
+            else
+            {
+                return new[]{ new FileInfo(file) };
+            }
+
+        }
         
 
         protected override bool SelectValueTypeImpl(string prompt, Type paramType, object initialValue,out object chosen)
@@ -238,8 +286,8 @@ namespace Rdmp.Core.CommandLine.Interactive
             if (DisallowInput)
                 throw new InputDisallowedException($"Value required for '{prompt}'");
 
-            Console.WriteLine("Enter value for " + prompt +":");
-            chosen = UsefulStuff.ChangeType(ReadLine(), paramType);
+            Console.WriteLine($"Enter value for {prompt}:");
+            chosen = UsefulStuff.ChangeType(ReadLineWithAuto(), paramType);
 
             return true;
         }
@@ -252,10 +300,7 @@ namespace Rdmp.Core.CommandLine.Interactive
             Console.WriteLine(text + "(Y/n)");
             
             //if user picks no then it's false otherwise true
-            if (string.Equals(Console.ReadLine()?.Trim(), "n", StringComparison.CurrentCultureIgnoreCase))
-                chosen = false;
-            else
-                chosen = true;
+            chosen = !string.Equals(Console.ReadLine()?.Trim(), "n", StringComparison.CurrentCultureIgnoreCase);
 
             //user made a conscious decision
             return true;
@@ -265,41 +310,52 @@ namespace Rdmp.Core.CommandLine.Interactive
         {
             if (DisallowInput)
                 throw new InputDisallowedException($"Value required for '{prompt}'");
-
-            Console.WriteLine(prompt +":");
-
-            //This implementation does not play nice with linux
-            if (EnvironmentInfo.IsLinux)
-                return Console.ReadLine();
             
-            var cyclingAutoComplete = new CyclingAutoComplete();
-            while (true)
+            ReadLine.AutoCompletionHandler = new AutoComplete(options);
+            return ReadLine.Read(prompt +":");
+        }
+
+        public override void ShowData(IViewSQLAndResultsCollection collection)
+        {
+            var point = collection.GetDataAccessPoint();
+            var db = DataAccessPortal.GetInstance().ExpectDatabase(point,DataAccessContext.InternalDataProcessing);
+            
+            var toRun = new ExtractTableVerbatim(db.Server,collection.GetSql(),Console.OpenStandardOutput(),",",null);
+            toRun.DoExtraction();
+        }
+
+        public override void ShowLogs(ILoggedActivityRootObject rootObject)
+        {
+            foreach(var load in base.GetLogs(rootObject).OrderByDescending(l=>l.StartTime))
             {
-                var result = ConsoleExt.ReadKey();
-                switch (result.Key)
+                Console.WriteLine(load.Description);
+                Console.WriteLine(load.StartTime);
+                
+                Console.WriteLine("Errors:" + load.Errors.Count);
+                
+                foreach(var error in load.Errors)
                 {
-                    case ConsoleKey.Enter:
-                        var lowerLine = result.LineBeforeKeyPress.Line.ToLower();
-                        if (lowerLine == "exit")
-                            return "exit";
-                        else
-                        {
-                            var match = options.FirstOrDefault(c => c.ToLower() == lowerLine);
+                    error.GetSummary(out string title, out string body, out _, out CheckResult _);
 
-                            if (match != null)
-                                return match;
+                    Console.WriteLine($"\t{title}");
+                    Console.WriteLine($"\t{body}");
+                }
+                                
+                Console.WriteLine("Tables Loaded:");
 
-                            return result.LineBeforeKeyPress.Line;
-                        }
-
-                    case ConsoleKey.Tab:
-                        var shiftPressed = (result.Modifiers & ConsoleModifiers.Shift) != 0;
-                        var cyclingDirection = shiftPressed ? CyclingDirections.Backward : CyclingDirections.Forward;
-                        var autoCompletedLine =
-                            cyclingAutoComplete.AutoComplete(result.LineBeforeKeyPress.LineBeforeCursor,
-                                options, cyclingDirection,true);
-                        ConsoleExt.SetLine(autoCompletedLine);
-                        break;
+                foreach(var t in load.TableLoadInfos)
+                {
+                    Console.WriteLine($"\t{t}: I={t.Inserts:N0} U={t.Updates:N0} D={t.Deletes:N0}");
+                
+                    foreach(var source in t.DataSources)    
+                        Console.WriteLine($"\t\tSource:{source.Source}");
+                }
+                
+                Console.WriteLine("Progress:");
+                
+                foreach(var p in load.Progress)
+                {
+                    Console.WriteLine($"\t{p.Date} {p.Description}");
                 }
             }
         }

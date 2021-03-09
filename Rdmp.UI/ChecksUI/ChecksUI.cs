@@ -10,7 +10,6 @@ using System.Threading;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Checks;
 
@@ -241,7 +240,9 @@ namespace Rdmp.UI.ChecksUI
         public void TerminateWithExtremePrejudice()
         {
             if (_checkingThread != null && _checkingThread.IsAlive)
+#pragma warning disable SYSLIB0006 // Type or member is obsolete
                 _checkingThread.Abort();
+#pragma warning restore SYSLIB0006 // Type or member is obsolete
 
             btnAbortChecking.Enabled = false;
         }

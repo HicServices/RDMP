@@ -8,8 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus;
 using Rdmp.UI.Menus.MenuItems;
@@ -30,12 +30,12 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory
 
         public ToolStripMenuItem CreateMenuItem(IAtomicCommand command)
         {
-            return new AtomicCommandMenuItem(command, _activator);
+            return new AtomicCommandMenuItem(command, _activator){Tag = command };
         }
 
         public AtomicCommandLinkLabel CreateLinkLabel(IAtomicCommand command)
         {
-            return new AtomicCommandLinkLabel(_iconProvider,command);
+            return new AtomicCommandLinkLabel(_iconProvider,command){Tag = command };
         }
 
         public RDMPContextMenuStrip CreateMenu(IActivateItems activator,TreeListView tree, RDMPCollection collection, params IAtomicCommand[] commands)

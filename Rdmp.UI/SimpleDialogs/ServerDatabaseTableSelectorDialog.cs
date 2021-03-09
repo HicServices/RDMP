@@ -51,6 +51,8 @@ namespace Rdmp.UI.SimpleDialogs
         public DiscoveredDatabase SelectedDatabase { get { return serverDatabaseTableSelector1.GetDiscoveredDatabase(); } }
         public DiscoveredTable SelectedTable { get { return serverDatabaseTableSelector1.GetDiscoveredTable(); }}
 
+        public bool AllowTableValuedFunctionSelection { get { return serverDatabaseTableSelector1.AllowTableValuedFunctionSelection;} set { serverDatabaseTableSelector1.AllowTableValuedFunctionSelection = value;}}
+
         private void btnOk_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.OK;

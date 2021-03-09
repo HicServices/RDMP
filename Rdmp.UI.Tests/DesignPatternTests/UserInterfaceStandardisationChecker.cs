@@ -75,7 +75,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
             _csFilesList = csFilesList;
 
             //All node classes should have equality compare members so that tree expansion works properly
-            foreach (Type nodeClass in mef.GetAllTypes().Where(t => t.Name.EndsWith("Node") && !t.IsAbstract && !t.IsInterface))
+            foreach (Type nodeClass in mef.GetAllTypes().Where(t => typeof(Node).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
             {
                 if(nodeClass.Namespace == null || nodeClass.Namespace.StartsWith("System"))
                     continue;

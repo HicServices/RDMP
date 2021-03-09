@@ -41,7 +41,7 @@ namespace Rdmp.Core.QueryBuilding
     /// </summary>
     public class AggregateBuilder : ISqlQueryBuilder
     {
-        private readonly TableInfo[] _forceJoinsToTheseTables;
+        private readonly ITableInfo[] _forceJoinsToTheseTables;
 
         /// <inheritdoc/>
         public string SQL { get
@@ -89,7 +89,7 @@ namespace Rdmp.Core.QueryBuilding
         public List<QueryTimeColumn> SelectColumns { get; private set; }
 
         /// <inheritdoc/>
-        public List<TableInfo> TablesUsedInQuery { get; private set; }
+        public List<ITableInfo> TablesUsedInQuery { get; private set; }
         
         /// <inheritdoc/>
         public List<JoinInfo> JoinsUsedInQuery { get; private set; }
@@ -117,7 +117,7 @@ namespace Rdmp.Core.QueryBuilding
         public bool CheckSyntax { get; set; }
 
         /// <inheritdoc/>
-        public TableInfo PrimaryExtractionTable { get; private set; }
+        public ITableInfo PrimaryExtractionTable { get; private set; }
 
         /// <inheritdoc/>
         public ParameterManager ParameterManager { get; private set; }
@@ -167,7 +167,7 @@ namespace Rdmp.Core.QueryBuilding
         /// <param name="countSQL"></param>
         /// <param name="aggregateConfigurationIfAny"></param>
         /// <param name="forceJoinsToTheseTables">Tables you definetly want the query to join against in the FROM section (compatible <see cref="JoinInfo"/> must exist if there are multiple)</param>
-        public AggregateBuilder(string limitationSQL, string countSQL,AggregateConfiguration aggregateConfigurationIfAny,TableInfo[] forceJoinsToTheseTables)
+        public AggregateBuilder(string limitationSQL, string countSQL,AggregateConfiguration aggregateConfigurationIfAny,ITableInfo[] forceJoinsToTheseTables)
             : this(limitationSQL, countSQL, aggregateConfigurationIfAny)
         {
             _forceJoinsToTheseTables = forceJoinsToTheseTables;
@@ -297,8 +297,7 @@ namespace Rdmp.Core.QueryBuilding
             if(_queryLevelParameterProvider != null)
                 ParameterManager.AddParametersFor(_queryLevelParameterProvider,ParameterLevel.QueryLevel);
 
-            TableInfo primary;
-            TablesUsedInQuery = SqlQueryBuilderHelper.GetTablesUsedInQuery(this, out primary, _forceJoinsToTheseTables);
+            TablesUsedInQuery = SqlQueryBuilderHelper.GetTablesUsedInQuery(this, out var primary, _forceJoinsToTheseTables);
 
             var tables = _forceJoinsToTheseTables != null
                 ? TablesUsedInQuery.Union(_forceJoinsToTheseTables).ToList()

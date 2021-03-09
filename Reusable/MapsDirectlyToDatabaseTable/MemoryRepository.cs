@@ -233,7 +233,7 @@ namespace MapsDirectlyToDatabaseTable
 
         public Version GetVersion()
         {
-            return new Version(FileVersionInfo.GetVersionInfo(GetType().Assembly.Location).FileVersion);
+            return GetType().Assembly.GetName().Version;
         }
         
         

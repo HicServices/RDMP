@@ -80,7 +80,7 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming
         /// <param name="namer">optionally lets you specify how to pick database names for the temporary bubbles STAGING and RAW</param>
         /// <param name="defaults">optionally specifies the location to get RAW default server from</param>
         /// <param name="overrideRAWServer">optionally specifies an explicit server to use for RAW</param>
-        internal HICDatabaseConfiguration(DiscoveredServer liveServer, INameDatabasesAndTablesDuringLoads namer = null, IServerDefaults defaults = null, IExternalDatabaseServer overrideRAWServer = null)
+        public HICDatabaseConfiguration(DiscoveredServer liveServer, INameDatabasesAndTablesDuringLoads namer = null, IServerDefaults defaults = null, IExternalDatabaseServer overrideRAWServer = null)
         {
             //respects the override of LIVE server
             var liveDatabase = liveServer.GetCurrentDatabase();

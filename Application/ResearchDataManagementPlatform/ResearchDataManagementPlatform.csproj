@@ -2,11 +2,13 @@
   <PropertyGroup>
     <ProjectGuid>{550988FD-F1FA-41D8-BE0F-00B4DE47D320}</ProjectGuid>
     <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <TargetFramework>net461</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
-	<NoWarn>1701;1702;CS1591</NoWarn>
+	<NoWarn>1701;1702;CS1591;NU1701</NoWarn>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
@@ -17,13 +19,20 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="DockPanelSuite" Version="3.1.0-beta2" />
-    <PackageReference Include="DockPanelSuite.ThemeVS2015" Version="3.1.0-beta2" />
+    <Compile Remove="Updates\UpdaterUI.cs" />
+    <Compile Remove="Updates\UpdaterUI.Designer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="Updates\UpdaterUI.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Autoupdater.NET.Official" Version="1.6.4" />
+    <PackageReference Include="DockPanelSuite.ThemeVS2015" Version="3.1.0-beta7" />
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net461" Version="1.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="SecurityCodeScan" Version="3.5.3">
+    <PackageReference Include="SecurityCodeScan.VS2019" Version="5.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
@@ -33,18 +42,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
-    <Compile Update="RDMPMainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Update="RDMPMainForm.cs" />
     <Compile Update="RDMPMainForm.Designer.cs">
       <DependentUpon>RDMPMainForm.cs</DependentUpon>
     </Compile>
-    <Compile Update="WindowManagement\HomePane\HomeUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Updates\UpdaterUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="WindowManagement\HomePane\HomeUI.cs" />
     <Compile Update="WindowManagement\HomePane\HomeUI.Designer.cs">
       <DependentUpon>HomeUI.cs</DependentUpon>
     </Compile>
@@ -60,9 +62,7 @@
     <Compile Update="WindowManagement\TopBar\RDMPTaskBarUI.Designer.cs">
       <DependentUpon>RDMPTaskBarUI.cs</DependentUpon>
     </Compile>
-    <Compile Update="Menus\RDMPTopMenuStripUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="Menus\RDMPTopMenuStripUI.cs" />
     <Compile Update="Menus\RDMPTopMenuStripUI.Designer.cs">
       <DependentUpon>RDMPTopMenuStripUI.cs</DependentUpon>
     </Compile>

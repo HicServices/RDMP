@@ -32,7 +32,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
         public string FilePattern { get; set; }
 
         [DemandsInitialization("The table name to load with data from the file (this will be the RAW version of the table)")]
-        public TableInfo TableToLoad { get; set; }
+        public ITableInfo TableToLoad { get; set; }
 
         [DemandsInitialization("Alternative to `TableToLoad`, type table name in if you want to load a custom table e.g. one created by another load component (that doesn't exist in LIVE).  The table name should should not contain wrappers such as square brackets (e.g. \"My Table1\")")]
         public string TableName { get; set; }
@@ -144,7 +144,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
                                 dt.Rows.Clear(); //very important otherwise we add more to the end of the table but still insert last batches records resulting in exponentially multiplying upload sizes of duplicate records!
 
                                 job.OnProgress(this,
-                                    new ProgressEventArgs(dbInfo.GetRuntimeName(),
+                                    new ProgressEventArgs(tableToLoad.GetFullyQualifiedName(),
                                         new ProgressMeasurement(recordsCreatedSoFar, ProgressType.Records), timer.Elapsed));
                             }
                             catch (Exception e)

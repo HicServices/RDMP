@@ -65,7 +65,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
             return Request.QueryBuilder.SQL;
         }
         
-        private IEnumerable<TableInfo> GetProperTables()
+        private IEnumerable<ITableInfo> GetProperTables()
         {
             if(Request.QueryBuilder.SQLOutOfDate)
                 Request.QueryBuilder.RegenerateSQL();

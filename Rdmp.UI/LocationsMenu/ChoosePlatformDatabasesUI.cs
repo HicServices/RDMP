@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using FAnsi;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandLine.DatabaseCreation;
+using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Curation.Checks;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Repositories;
@@ -349,7 +350,7 @@ namespace Rdmp.UI.LocationsMenu
         private void RestartApplication()
         {
             MessageBox.Show("Connection Strings Changed, the application will now restart");
-            Application.Restart();
+            ApplicationRestarter.Restart();
         }
 
         private void btnCreateNew_Click(object sender, EventArgs e)

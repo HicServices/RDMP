@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Checks;
@@ -116,7 +117,7 @@ namespace Rdmp.Core.DataExport.Data
                     }
                     catch (Exception)
                     {
-                        throw ex;
+                        throw;
                     }
                     throw new Exception("Could not create a new Project because there is already another Project in the system (" + offender + ") which is missing a Project Number.  All projects must have a ProjectNumber, there can be 1 Project at a time which does not have a number and that is one that is being built by the user right now.  Either delete Project " + offender + " or give it a project number", ex);
 
@@ -147,7 +148,7 @@ namespace Rdmp.Core.DataExport.Data
 
         public void Check(ICheckNotifier notifier)
         {
-            new ProjectChecker(this).Check(notifier);
+            new ProjectChecker(new ThrowImmediatelyActivator(new RepositoryProvider(DataExportRepository),notifier),this).Check(notifier);
         }
 
         /// <summary>

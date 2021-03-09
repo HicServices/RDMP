@@ -8,16 +8,18 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using AutoUpdaterDotNET;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataQualityEngine;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Reports;
-using Rdmp.UI;
 using Rdmp.UI.ChecksUI;
+using Rdmp.UI.CohortUI.ImportCustomData;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.LocationsMenu.Ticketing;
 using Rdmp.UI.MainFormUITabs;
@@ -95,7 +97,7 @@ namespace ResearchDataManagementPlatform.Menus
         }
         private void logViewerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandViewLoggedData(Activator, new LogViewerFilter(LoggingTables.DataLoadTask));
+            var cmd = new ExecuteCommandViewLogs(Activator, new LogViewerFilter(LoggingTables.DataLoadTask));
             cmd.Execute();
         }
         
@@ -145,7 +147,7 @@ namespace ResearchDataManagementPlatform.Menus
         {
             try
             {
-                System.Diagnostics.Process.Start("https://github.com/HicServices/RDMP#user-manual");
+                UsefulStuff.OpenUrl("https://github.com/HicServices/RDMP#research-data-management-platform");
             }
             catch (Exception exception)
             {
@@ -215,15 +217,15 @@ namespace ResearchDataManagementPlatform.Menus
             //Catalogue commands
             return new IAtomicCommand[]
             {
-                new ExecuteCommandCreateNewCatalogueByImportingFile(Activator),
+                new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator),
                 new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator),
-                new ExecuteCommandCreateNewTableInfoByImportingExistingDataTable(Activator),
+                new ExecuteCommandImportTableInfo(Activator,null,false),
                 new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator),
                 new ExecuteCommandCreateNewLoadMetadata(Activator),
                 new ExecuteCommandCreateNewStandardRegex(Activator),
                 new ExecuteCommandCreateNewCohortDatabaseUsingWizard(Activator),
-                new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator),
-                new ExecuteCommandCreateNewCohortFromFile(Activator),
+                new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator,null),
+                new ExecuteCommandCreateNewCohortFromFile(Activator,null),
                 new ExecuteCommandCreateNewCohortFromCatalogue(Activator),
                 new ExecuteCommandCreateNewExtractableDataSetPackage(Activator),
                 new ExecuteCommandCreateNewDataExtractionProject(Activator),
@@ -342,9 +344,15 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var ui = new UpdaterUI();
-            var f = new SingleControlForm(ui);
-            f.ShowDialog();
+            try
+            {
+                AutoUpdater.ReportErrors = true;
+                AutoUpdater.Start("https://github.com/HicServices/RDMP/releases.xml");
+            }
+            catch (Exception ex)
+            {
+                ExceptionViewer.Show(ex);
+            }
         }
 
         private void ListAllTypesToolStripMenuItem_Click(object sender, EventArgs e)

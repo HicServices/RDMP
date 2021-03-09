@@ -6,7 +6,99 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-...
+### Changed
+
+- .Net 5.0 for all, instead of Framework 4.6.1+Core 2.2+Standard 2.0 mix
+- Query editor autocomplete now uses integrated autocomplete (no icons, better matching)
+
+### Added
+
+- Added `$foreach Catalogue` option for custom metadata report templates (to allow prefix, suffixes, table of contents etc)
+- Added ability to search for objects by ID in console gui
+- More detailed logging of Type decisions when extracting to database
+- Added ability to cancel ongoing queries in CLI Sql Editor
+- Added 'Reset Sql' and 'Clear Sql' buttons to CLI Sql Editor
+- Added ability to set custom timeout for queries in CLI Sql Editor
+- Added ability to save results of CLI Sql Editor (table) to CSV
+- Added view data/aggregate etc on ColumnInfo objects to list of commands accessible from the CLI gui
+- Added 'Go To' commands to CLI gui
+- Exposed 'Add New Process Task...' to load stages in CLI menu
+- Added 'ViewCatalogueData' command for CLI and CLI GUI use
+- Better error reporting when item validators crash during validation execution (now includes constraint type, column name and value being validated).
+- Added 'Go To' commands to CLI gui
+- Exposed 'Add New Process Task...' to load stages in CLI menu
+- Exposed 'View Logs' commands on CLI and CLI gui
+- Added minimum timeout of 5 seconds for `CohortIdentificationConfigurationSource`
+
+### Fixed
+
+- Fixed CLI database selection UI not using password mask symbol (`*`)
+- Fixed CLI GUI message boxes bug with very long messages
+- Fixed Custom Metadata template stripping preceeding whitespace in templated lines e.g. `"  - $Name"` (like you might find in a table of contents section of a template)
+- Fixed 'Set Global Dle Ignore Pattern' failing the first time it is used by creating a StandardRegex with no/null Pattern
+- Fixed order of branches in CLI gui tree
+
+### Changed
+
+- Changed message about inaccessible cohorts to a warning instead of an error. 
+ 
+### Dependencies
+
+- Bump System.Drawing.Common from 5.0.0 to 5.0.1
+- Bump Moq from 4.16.0 to 4.16.1
+- Bump Microsoft.NET.Test.Sdk from 16.8.3 to 16.9.1
+- Bump NLog from 4.7.7 to 4.7.8
+
+## [4.2.4] - 2021-02-05
+
+- Added CLI commands for viewing/changing `UserSettings` e.g. AllowIdentifiableExtractions
+- Added user setting `ShowPipelineCompletedPopup` for always popping a modal dialog on completion of a pipeline execution in the GUI client (e.g. committing a cohort)
+- Added new flexible file/directory extraction component `SimpleFileExtractor`
+
+### Changed
+
+- Globals tickbox can now be checked even when there are no explicit files (this allows implicit files e.g. `SimpleFileExtractor` to still run)
+
+### Fixed 
+
+- Fixed MySql backup trigger implementation not updating validTo on the new row entering the table on UPDATE operations
+
+## [4.2.3] - 2021-02-01
+
+### Fixed 
+
+- Fixed rare threading issue with tree representations of Lookups
+- Fixed proxy objects context menus not functioning correctly since 4.2.0 (e.g. Catalogues associated with a load) for some commands
+
+### Dependencies
+
+- Bump NUnit from 3.13.0 to 3.13.1
+
+## [4.2.2] - 2021-01-28
+
+### Added
+
+- Added `patch` command to rdmp CLI e.g. `./rdmp patch -b`
+- Added ProjectName to ExtractionConfiguration objects visualisation in Find / Select popups
+
+### Fixed
+
+- Fixed erroneous warning where some characters were wrongly reported as illegal e.g. '#' in Filter names 
+- Fixed RemoteDatabaseAttacher not logging table name (only database)
+
+### Changed
+
+- Metadata report now lists Catalogues in alphabetical order
+- Changed hierarchy multiple parents state to be a Warning instead of an Error
+
+### Dependencies
+
+- Bump Moq from 4.15.2 to 4.16.0
+- Bump YamlDotNet from 9.1.1 to 9.1.4
+- Bump NLog from 4.7.6 to 4.7.7
+- Bump SSH.NET from 2020.0.0 to 2020.0.1
+
+## [4.2.1] - 2021-01-13
 
 ### Added
 
@@ -34,11 +126,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - RemoteDatabaseAttacher
 - Fixed View Inserts/Updates dialog when using non SqlServer DBMS (e.g. MySql)
 - Fixed various layout and performance issues with RDMP console GUI.
+- Fixed `rdmp cmd` loop exiting when commands entered result in error.
+- Fixed autocomplete in `rdmp cmd` mode and enabled for Linux
+- Fixed right click context menu being built twice on right click a new node (once for selection and once for right click)
 
 ### Changed
 
 - Added timeout of 10 minutes (previously 30 seconds) for counting unique patient identifiers while writing metadata for extractions
 - Choose Load Directory now lets you specify invalid directories e.g. when building a load on one computer designed to run on separate computer with an isolated file system.
+- Reinvented Console Gui to more closely resemble the windows client
+
+### Dependencies
+
+- Bump SSH.NET from 2016.1.0 to 2020.0.0
 
 ## [4.2.0] - 2020-10-19
 
@@ -59,6 +159,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ability to suppress [LoadMetadata] triggers
 - Added ability for Plugins to store custom information about objects in the RDMP Catalogue platform database
 - Added IgnoreColumns setting for DLE to ignore specific columns in the final table completely (not created in RAW/STAGING and not migrated)
+
+### Changed
+
+- CLI tools now built for .Net Core 3.1 since 2.2 has reached EOL
 
 ## [4.1.9] - 2020-09-17
 
@@ -574,7 +678,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.2.0...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.2.4...develop
+[4.2.4]: https://github.com/HicServices/RDMP/compare/v4.2.3...v4.2.4
+[4.2.3]: https://github.com/HicServices/RDMP/compare/v4.2.2...v4.2.3
+[4.2.2]: https://github.com/HicServices/RDMP/compare/v4.2.1...v4.2.2
+[4.2.1]: https://github.com/HicServices/RDMP/compare/v4.2.0...v4.2.1
 [4.2.0]: https://github.com/HicServices/RDMP/compare/v4.1.9...v4.2.0
 [4.1.9]: https://github.com/HicServices/RDMP/compare/v4.1.8...v4.1.9
 [4.1.8]: https://github.com/HicServices/RDMP/compare/v4.1.7...v4.1.8

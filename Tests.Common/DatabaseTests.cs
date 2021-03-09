@@ -593,30 +593,23 @@ delete from {1}..Project
 
         }
 
-        protected Catalogue Import(DiscoveredTable tbl, out TableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated, out CatalogueItem[] catalogueItems, out ExtractionInformation[] extractionInformations)
+        protected ICatalogue Import(DiscoveredTable tbl, out ITableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated, out CatalogueItem[] catalogueItems, out ExtractionInformation[] extractionInformations)
         {
             var importer = new TableInfoImporter(CatalogueRepository, tbl);
             importer.DoImport(out tableInfoCreated,out columnInfosCreated);
 
             var forwardEngineer = new ForwardEngineerCatalogue(tableInfoCreated, columnInfosCreated,true);
-
-            Catalogue catalogue;
-            forwardEngineer.ExecuteForwardEngineering(out catalogue,out catalogueItems,out extractionInformations);
+            forwardEngineer.ExecuteForwardEngineering(out var catalogue,out catalogueItems,out extractionInformations);
 
             return catalogue;
         }
 
-        protected Catalogue Import(DiscoveredTable tbl)
+        protected ICatalogue Import(DiscoveredTable tbl)
         {
-            TableInfo tableInfoCreated;
-            ColumnInfo[] columnInfosCreated;
-            CatalogueItem[] catalogueItems;
-            ExtractionInformation[] extractionInformations;
-
-            return Import(tbl, out tableInfoCreated, out columnInfosCreated, out catalogueItems,out extractionInformations);
+            return Import(tbl, out _, out _, out _,out _);
         }
 
-        protected Catalogue Import(DiscoveredTable tbl, out TableInfo tableInfoCreated,out ColumnInfo[] columnInfosCreated)
+        protected ICatalogue Import(DiscoveredTable tbl, out ITableInfo tableInfoCreated,out ColumnInfo[] columnInfosCreated)
         {
             CatalogueItem[] catalogueItems;
             ExtractionInformation[] extractionInformations;
@@ -681,13 +674,13 @@ delete from {1}..Project
         {
             SetupLowPrivilegeUserRightsFor(db, permissions, null);
         }
-        protected void SetupLowPrivilegeUserRightsFor(TableInfo ti, TestLowPrivilegePermissions permissions)
+        protected void SetupLowPrivilegeUserRightsFor(ITableInfo ti, TestLowPrivilegePermissions permissions)
         {
             var db = DataAccessPortal.GetInstance().ExpectDatabase(ti, DataAccessContext.InternalDataProcessing);
             SetupLowPrivilegeUserRightsFor(db, permissions, ti);
         }
 
-        private void SetupLowPrivilegeUserRightsFor(DiscoveredDatabase db, TestLowPrivilegePermissions permissions, TableInfo ti)
+        private void SetupLowPrivilegeUserRightsFor(DiscoveredDatabase db, TestLowPrivilegePermissions permissions, ITableInfo ti)
         {
             var dbType = db.Server.DatabaseType;
 

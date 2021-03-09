@@ -12,16 +12,16 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Checks;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryBuilding;
-using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ProjectUI.Datasets.Node;
 using Rdmp.UI.Refreshing;
@@ -360,7 +360,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
             CommonFunctionality.AddToMenu(new ExecuteCommandShow(activator, databaseObject.ExtractableDataSet.Catalogue, 0, true), "Show Catalogue");
             CommonFunctionality.Add(new ExecuteCommandExecuteExtractionConfiguration(activator, databaseObject));
 
-            CommonFunctionality.AddChecks(new SelectedDataSetsChecker(SelectedDataSet));
+            CommonFunctionality.AddChecks(new SelectedDataSetsChecker(activator,SelectedDataSet));
 
             btnExclude.Enabled = !ReadOnly;
             btnExcludeAll.Enabled = !ReadOnly;

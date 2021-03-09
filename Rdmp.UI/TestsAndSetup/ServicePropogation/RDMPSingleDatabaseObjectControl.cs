@@ -9,9 +9,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
@@ -230,9 +230,9 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         /// <summary>
         /// Triggers an application refresh because a change has been made to <paramref name="e"/>
         /// </summary>
-        public void Publish(DatabaseEntity e)
+        public void Publish(IMapsDirectlyToDatabaseTable e)
         {
-            Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(e));
+            Activator.Publish(e);
         }
 
         /// <summary>

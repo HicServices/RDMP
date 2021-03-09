@@ -300,10 +300,10 @@ namespace Rdmp.UI.Tests
             //https://referencesource.microsoft.com/#system.windows.forms/winforms/Managed/System/WinForms/ErrorProvider.cs.html,11db4fca371f280c
             List<string> toReturn = new List<string>();
 
-            var hashtable = (Hashtable) typeof (ErrorProvider).GetField("items",BindingFlags.Instance | BindingFlags.NonPublic).GetValue(errorProvider);
+            var hashtable = (Hashtable) typeof (ErrorProvider).GetField("_items",BindingFlags.Instance | BindingFlags.NonPublic).GetValue(errorProvider);
 
             foreach (var entry in hashtable.Values)
-                toReturn.Add((string)entry.GetType().GetField("error", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(entry));
+                toReturn.Add((string)entry.GetType().GetField("_error", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(entry));
 
             return toReturn;
         }

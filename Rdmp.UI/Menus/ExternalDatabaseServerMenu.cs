@@ -6,14 +6,14 @@
 
 using System;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
+using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Logging;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.DataViewing;
-using Rdmp.UI.DataViewing.Collections.Arbitrary;
-using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.UI.Menus
@@ -28,12 +28,12 @@ namespace Rdmp.UI.Menus
             if (server.WasCreatedBy(new LoggingDatabasePatcher()))
             {
                 var viewLogs = new ToolStripMenuItem("View Logs",CatalogueIcons.Logging);
-                Add(new ExecuteCommandViewLoggedData(_activator, new LogViewerFilter(LoggingTables.DataLoadTask)), Keys.None,viewLogs);
-                Add(new ExecuteCommandViewLoggedData(_activator, new LogViewerFilter(LoggingTables.DataLoadRun)), Keys.None, viewLogs);
-                Add(new ExecuteCommandViewLoggedData(_activator, new LogViewerFilter(LoggingTables.FatalError)), Keys.None, viewLogs);
-                Add(new ExecuteCommandViewLoggedData(_activator, new LogViewerFilter(LoggingTables.TableLoadRun)), Keys.None, viewLogs);
-                Add(new ExecuteCommandViewLoggedData(_activator, new LogViewerFilter(LoggingTables.DataSource)), Keys.None, viewLogs);
-                Add(new ExecuteCommandViewLoggedData(_activator, new LogViewerFilter(LoggingTables.ProgressLog)), Keys.None, viewLogs);
+                Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.DataLoadTask)), Keys.None,viewLogs);
+                Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.DataLoadRun)), Keys.None, viewLogs);
+                Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.FatalError)), Keys.None, viewLogs);
+                Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.TableLoadRun)), Keys.None, viewLogs);
+                Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.DataSource)), Keys.None, viewLogs);
+                Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.ProgressLog)), Keys.None, viewLogs);
 
                 viewLogs.DropDownItems.Add(new ToolStripSeparator());
 

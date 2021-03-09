@@ -5,10 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
-using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
+using Rdmp.UI.CohortUI.ImportCustomData;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals
@@ -35,12 +36,12 @@ namespace Rdmp.UI.CommandExecution.Proposals
             var cicCommand = cmd as CohortIdentificationConfigurationCommand;
             if (cicCommand != null)
                 return
-                    new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(ItemActivator).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project);
+                    new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(ItemActivator,null).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project);
             
             //drop a file on the SavedCohorts node to commit it
             var fileCommand = cmd as FileCollectionCombineable;
             if(fileCommand != null && fileCommand.Files.Length == 1)
-                return new ExecuteCommandCreateNewCohortFromFile(ItemActivator,fileCommand.Files[0]).SetTarget(target.Project);
+                return new ExecuteCommandCreateNewCohortFromFile(ItemActivator,fileCommand.Files[0],null).SetTarget(target.Project);
 
             //drop a Project Specific Catalogue onto it
             if (cmd is CatalogueCombineable catalogueCombineable)

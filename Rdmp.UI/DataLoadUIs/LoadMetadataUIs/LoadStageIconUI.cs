@@ -6,8 +6,7 @@
 
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.UI.Icons.IconProvision;
-
+using Rdmp.Core.Icons.IconProvision;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs
 {

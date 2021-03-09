@@ -149,12 +149,15 @@ LANGUAGE 'plpgsql';"
                 string.Format(@"BEGIN
             INSERT INTO {0}({1},""hic_validTo"",""hic_userID"",hic_status)
             VALUES({2},now(),current_user,'U');
+
+            NEW.{3} := NOW();
  
             RETURN NEW;
             END;",
                     _archiveTable.GetFullyQualifiedName()                                                                          
                     , string.Join(",", _columns.Select(c => syntax.EnsureWrapped(c.GetRuntimeName()))),         
-                    string.Join(",", _columns.Select(c => "OLD." + syntax.EnsureWrapped(c.GetRuntimeName()))));
+                    string.Join(",", _columns.Select(c => "OLD." + syntax.EnsureWrapped(c.GetRuntimeName()))),
+                    syntax.EnsureWrapped(SpecialFieldNames.ValidFrom));
 
         }
 

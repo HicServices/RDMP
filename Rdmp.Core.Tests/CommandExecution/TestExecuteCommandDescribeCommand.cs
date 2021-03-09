@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Moq;
 using NUnit.Framework;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Tests.Common;

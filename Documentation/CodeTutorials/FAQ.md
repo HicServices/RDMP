@@ -38,7 +38,7 @@
    1. [What is a Catalogue?](#whatisacatalogue)
    1. [Can I share/export/import my dataset metadata?](#sharing)
    1. [Is there a Data Quality Engine?](#dqe)
-   4. [How do I create a [Catalogue] from 2+ tables?](#2tablecatalogues)
+   4. [How do I create a Catalogue from 2+ tables?](#2tablecatalogues)
 1. User Interface Programming
    1. [How are user interfaces implemented in RDMP?](#uioverview)
    1. [Whats with the _Design user interface classes?](#abstractDesignerPattern)
@@ -89,21 +89,7 @@ The RDMP command line client can be used to run unattended jobs (such as overnig
    
 <a name="cli"></a>
 ### Does RDMP have a Command Line Interface (CLI)
-Yes, the [rdmp](./../../Tools/rdmp/) program allows command line execution of all major engines in RDMP (Caching / Data Load / Cohort Creation / Extraction and Release).  To access the CLI command line help system run:
-
-```
-rdmp.exe --help
-```
-
-For help on each engine (verb) on the command line enter the verb (listed by the main --help command) followed by --help e.g.:
-
-```
-rdmp.exe dle --help
-```
-
-When performing an operation in the RDMP client application (e.g. releasing a dataset) you can instead select 'Copy Run Command To Clipboard'.  This will generate a CLI command that will perform the current action (e.g. extract [Project] X using Pipeline Y).  This can be helpful for scheduling long running tasks etc.
-
-![Accessing menu copy to clipboard](./Images/FAQ/CopyCommandToClipboard.png)
+Yes, read all about it in [CommandLine](./RdmpCommandLine.md)
 
 <a name="linux"></a>
 ### Does RDMP run under Linux

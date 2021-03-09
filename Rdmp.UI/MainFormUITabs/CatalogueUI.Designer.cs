@@ -746,17 +746,19 @@ namespace Rdmp.UI.MainFormUITabs
             // label34
             // 
             this.label34.AutoSize = true;
-            this.label34.Location = new System.Drawing.Point(44, 231);
+            this.label34.Location = new System.Drawing.Point(32, 207);
+            this.label34.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(83, 13);
+            this.label34.Size = new System.Drawing.Size(95, 15);
             this.label34.TabIndex = 9;
             this.label34.Text = "Additional Fields";
             // 
             // btnExpandOrCollapse
             // 
-            this.btnExpandOrCollapse.Location = new System.Drawing.Point(9, 226);
+            this.btnExpandOrCollapse.Location = new System.Drawing.Point(10, 204);
+            this.btnExpandOrCollapse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnExpandOrCollapse.Name = "btnExpandOrCollapse";
-            this.btnExpandOrCollapse.Size = new System.Drawing.Size(29, 23);
+            this.btnExpandOrCollapse.Size = new System.Drawing.Size(22, 21);
             this.btnExpandOrCollapse.TabIndex = 8;
             this.btnExpandOrCollapse.Text = "+";
             this.btnExpandOrCollapse.UseVisualStyleBackColor = true;

@@ -7,11 +7,11 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using Rdmp.Core;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Sharing.Refactoring;
 using Rdmp.UI.ChecksUI;
-using Rdmp.UI.Collections;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using Rdmp.UI.ItemActivation;

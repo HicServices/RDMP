@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
@@ -192,11 +193,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
                 dt, 
                 new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50))});
 
-            TableInfo tableInfo;
-            ColumnInfo[] columnInfos;
-            CatalogueItem[] cataItems;
-            ExtractionInformation[] extractionInformations;
-            _catalogue = Import(tbl, out tableInfo, out columnInfos, out cataItems, out extractionInformations);
+            _catalogue = Import(tbl, out var tableInfo, out var columnInfos, out var cataItems, out var extractionInformations);
 
             ExtractionInformation privateID = extractionInformations.First(e => e.GetRuntimeName().Equals("PrivateID"));
             privateID.IsExtractionIdentifier = true;
@@ -218,12 +215,8 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
                 column.SaveToDatabase();
             }
 
-            ExtractionConfiguration configuration;
-            IExtractableDataSet extractableDataSet;
-            Project project;
-
             SetupDataExport(testTableName, _catalogue,
-                            out configuration, out extractableDataSet, out project);
+                            out var configuration, out var extractableDataSet, out var project);
 
             configuration.Cohort_ID = _extractableCohort.ID;
             configuration.SaveToDatabase();
@@ -231,7 +224,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             return new ExtractDatasetCommand( configuration, new ExtractableDatasetBundle(extractableDataSet));
         }
 
-        private void SetupDataExport(string testDbName, Catalogue catalogue, out ExtractionConfiguration extractionConfiguration, out IExtractableDataSet extractableDataSet, out Project project)
+        private void SetupDataExport(string testDbName, ICatalogue catalogue, out ExtractionConfiguration extractionConfiguration, out IExtractableDataSet extractableDataSet, out IProject project)
         {
             extractableDataSet = new ExtractableDataSet(DataExportRepository, catalogue);
 

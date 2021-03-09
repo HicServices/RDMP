@@ -6,10 +6,12 @@
 
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataViewing;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
-using Rdmp.UI.DataViewing;
 
 namespace Rdmp.UI.Menus
 {
@@ -17,8 +19,6 @@ namespace Rdmp.UI.Menus
     {
         public FilterMenu(RDMPContextMenuStripArgs args, IFilter filter): base(args, (DatabaseEntity)filter)
         {
-            Add(new ExecuteCommandViewFilterMatchData(args.ItemActivator, filter, ViewType.TOP_100));
-            Add(new ExecuteCommandViewFilterMatchData(args.ItemActivator, filter, ViewType.Aggregate));
             Add(new ExecuteCommandViewFilterMatchGraph(_activator, filter));
 
             Items.Add(new ToolStripSeparator());
@@ -27,7 +27,7 @@ namespace Rdmp.UI.Menus
             if (dis != null)
                 Add(new ExecuteCommandDisableOrEnable(_activator, dis));
 
-            Add(new ExecuteCommandExportObjectsToFileUI(_activator, new[] {filter}));
+            Add(new ExecuteCommandExportObjectsToFile(_activator, new[] {filter}));
             Add(new ExecuteCommandImportFilterDescriptionsFromShare(_activator, filter));
             
         }

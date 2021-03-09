@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using Rdmp.Core.Startup;
 using Rdmp.UI.SimpleDialogs;
@@ -29,6 +30,12 @@ namespace Rdmp.UI.TestsAndSetup
             this.dataExportConnection = dataExportConnection;
         }
 
+        public HashSet<string> IgnoreExceptions = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase){ 
+            
+            // This error seems to come from ObjectTreeView but seems harmless
+            "Value cannot be null. (Parameter 'owningItem')",
+            };
+
         public void Show(bool requiresDataExportDatabaseToo)
         {
             Application.EnableVisualStyles();
@@ -37,7 +44,16 @@ namespace Rdmp.UI.TestsAndSetup
             Scintilla.SetDestroyHandleBehavior(true);
 
             //tell me when you blow up somewhere in the windows API instead of somewhere sensible
-            Application.ThreadException += GlobalExceptionHandler.Instance.Handle;
+            Application.ThreadException += (s,e)=>{
+
+                var msg = e.Exception?.Message;
+                if(msg != null && IgnoreExceptions.Contains(msg))
+                {
+                    return;
+                }
+
+                GlobalExceptionHandler.Instance.Handle(s,e);
+                };
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             AppDomain.CurrentDomain.UnhandledException += GlobalExceptionHandler.Instance.Handle;
 

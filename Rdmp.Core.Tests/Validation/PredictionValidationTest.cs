@@ -27,7 +27,8 @@ namespace Rdmp.Core.Tests.Validation
             var prediction = new Prediction(new ChiSexPredictor(), targetField);
             var v = CreateInitialisedValidator(prediction);
 
-            Assert.Throws<MissingFieldException>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
+            var ex = Assert.Throws<Exception>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
+            Assert.IsInstanceOf<MissingFieldException>(ex.InnerException);
         }
 
         [Test]
@@ -42,7 +43,9 @@ namespace Rdmp.Core.Tests.Validation
         {
             var prediction = new Prediction();
             var v = CreateInitialisedValidator(prediction);
-            Assert.Throws <InvalidOperationException>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
+
+            var ex = Assert.Throws <Exception>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
+            Assert.IsInstanceOf<InvalidOperationException>(ex.InnerException);
         }
 
         [Test]
@@ -51,7 +54,8 @@ namespace Rdmp.Core.Tests.Validation
             var prediction = new Prediction();
             prediction.Rule = new ChiSexPredictor();
             var v = CreateInitialisedValidator(prediction);
-            Assert.Throws <InvalidOperationException>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
+            var ex = Assert.Throws<Exception>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
+            Assert.IsInstanceOf<InvalidOperationException>(ex.InnerException);
         }
 
         [Test]
@@ -60,7 +64,8 @@ namespace Rdmp.Core.Tests.Validation
             var prediction = new Prediction();
             prediction.TargetColumn = "chi";
             var v = CreateInitialisedValidator(prediction);
-            Assert.Throws<InvalidOperationException>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
+            var ex = Assert.Throws<Exception>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
+            Assert.IsInstanceOf<InvalidOperationException>(ex.InnerException);
         }
         #endregion
 

@@ -7,7 +7,6 @@
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Icons.IconProvision;
 
 namespace Rdmp.UI.Menus
 {

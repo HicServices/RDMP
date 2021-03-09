@@ -6,11 +6,11 @@
 
 using System;
 using System.Collections.Generic;
+using Rdmp.Core;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.AggregationUIs;
-using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;

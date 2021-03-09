@@ -6,7 +6,6 @@
 
 using System;
 using NUnit.Framework;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 

@@ -25,7 +25,7 @@ namespace Rdmp.Core.DataQualityEngine.Data
         public int CatalogueID {get; set; }
 
         [NoMappingToDatabase]
-        public Catalogue Catalogue { get; private set; }
+        public ICatalogue Catalogue { get; private set; }
         
         [NoMappingToDatabase]
         public RowState[] RowStates { get; set; }
@@ -68,7 +68,7 @@ namespace Rdmp.Core.DataQualityEngine.Data
         /// <summary>
         /// Starts a new evaluation with the given transaction
         /// </summary>
-        internal Evaluation(DQERepository dqeRepository,Catalogue c)
+        internal Evaluation(DQERepository dqeRepository,ICatalogue c)
         {
             DQERepository = dqeRepository;
             Catalogue = c;

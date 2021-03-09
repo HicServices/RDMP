@@ -50,7 +50,7 @@ namespace Rdmp.Core.DataQualityEngine.Reports
         string _loggingTask;
         LogManager _logManager;
 
-        public CatalogueConstraintReport(Catalogue catalogue, string dataLoadRunFieldName)
+        public CatalogueConstraintReport(ICatalogue catalogue, string dataLoadRunFieldName)
         {
             _dataLoadRunFieldName = dataLoadRunFieldName;
             _catalogue = catalogue;
@@ -83,7 +83,7 @@ namespace Rdmp.Core.DataQualityEngine.Reports
 
         private bool haveComplainedAboutNullCategories = false;
 
-        public override void GenerateReport(Catalogue c, IDataLoadEventListener listener, CancellationToken cancellationToken)
+        public override void GenerateReport(ICatalogue c, IDataLoadEventListener listener, CancellationToken cancellationToken)
         {
             SetupLogging(c.CatalogueRepository);
 

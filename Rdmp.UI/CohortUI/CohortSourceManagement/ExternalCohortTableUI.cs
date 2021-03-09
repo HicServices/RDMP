@@ -7,9 +7,9 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using Rdmp.Core;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;

@@ -291,7 +291,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             tableInfo2.SaveToDatabase();
 
 
-            TableInfo[] TablesThatUseCredential = creds.GetAllTableInfosThatUseThis()[DataAccessContext.InternalDataProcessing].ToArray();
+            ITableInfo[] TablesThatUseCredential = creds.GetAllTableInfosThatUseThis()[DataAccessContext.InternalDataProcessing].ToArray();
 
             Assert.AreEqual(TablesThatUseCredential[0], tableInfo1);
             Assert.AreEqual(TablesThatUseCredential[1], tableInfo2); 

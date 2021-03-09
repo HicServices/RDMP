@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -39,8 +40,11 @@ namespace Rdmp.Core.Curation.Data
     /// </summary>
     public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNameToo, IInjectKnown<ColumnInfo[]>,ICheckable
     {
-
-        
+        /// <summary>
+        /// Cached results of <see cref="GetQuerySyntaxHelper"/>
+        /// </summary>
+        private static ConcurrentDictionary<DatabaseType, IQuerySyntaxHelper> _cachedSyntaxHelpers = new ConcurrentDictionary<DatabaseType, IQuerySyntaxHelper>();
+                
         #region Database Properties
         private string _name;
         private DatabaseType _databaseType;
@@ -107,14 +111,8 @@ namespace Rdmp.Core.Curation.Data
             get { return _validationXml; }
             set { SetField(ref _validationXml, value); }
         }
-
-        /// <summary>
-        /// <para>Indicates that this TableInfo should be the first table joined in any query that has multiple other TableInfos</para>
-        /// 
-        /// <para>When determining how to join a collection of TableInfos the <see cref="QueryBuilder"/> will attempt to find <see cref="JoinInfo"/> pairings between <see cref="ColumnInfo"/> in
-        /// the tables.  If it cannot work out how to resolve the join order (e.g. if there are 3+ tables and joins going in both directions) then it will demand that one of the 
-        /// <see cref="TableInfo"/> be picked as the first table from which all other tables should then be joined.</para>
-        /// </summary>
+                
+        /// <inheritdoc/>
         public bool IsPrimaryExtractionTable
         {
             get { return _isPrimaryExtractionTable; }
@@ -273,11 +271,8 @@ namespace Rdmp.Core.Curation.Data
         {
             return GetQuerySyntaxHelper().EnsureFullyQualified(Database, Schema, GetRuntimeName());
         }
-
-        /// <summary>
-        /// Returns <see cref="Database"/> trimmed of any database qualifiers (e.g. square brackets)
-        /// </summary>
-        /// <returns></returns>
+                
+        /// <inheritdoc cref="ITableInfo.GetDatabaseRuntimeName()"/>
         public string GetDatabaseRuntimeName()
         {
             return Database.Trim(QuerySyntaxHelper.TableNameQualifiers);
@@ -405,12 +400,7 @@ namespace Rdmp.Core.Curation.Data
             return _catalogueRepository.IsLookupTable(this);
         }
 
-        /// <summary>
-        /// Returns all Catalogues which have any CatalogueItems which are associated with any of the ColumnInfos of this TableInfo.  If this is a lookup table then expect to get back 
-        /// a whole bunch of catalogues.  If you have multiple extractable catalogues that all present different views of a single TableInfo then they will all be returned.  The normal
-        /// behaviour though for a regular data table with one catalogue used for extraction would be for a single Catalogue to get returned.
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public Catalogue[] GetAllRelatedCatalogues()
         {
             return CatalogueRepository.GetAllCataloguesUsing(this);
@@ -444,7 +434,7 @@ namespace Rdmp.Core.Curation.Data
         /// <inheritdoc/>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
-            return new QuerySyntaxHelperFactory().Create(DatabaseType);
+            return _cachedSyntaxHelpers.GetOrAdd(DatabaseType,new QuerySyntaxHelperFactory().Create(DatabaseType));
         }
 
         /// <inheritdoc/>
