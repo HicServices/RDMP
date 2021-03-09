@@ -223,11 +223,17 @@ namespace ReusableLibraryCode.Settings
 
         public static bool GetTutorialDone(Guid tutorialGuid)
         {
+            if(tutorialGuid == Guid.Empty)
+                return false;
+
             return AppSettings.GetValueOrDefault("T_" + tutorialGuid.ToString("N"), false); 
         }
         
         public static void SetTutorialDone(Guid tutorialGuid,bool value)
         {
+            if(tutorialGuid == Guid.Empty)
+                return;
+
             AppSettings.AddOrUpdateValue("T_" + tutorialGuid.ToString("N"), value);
         }
 

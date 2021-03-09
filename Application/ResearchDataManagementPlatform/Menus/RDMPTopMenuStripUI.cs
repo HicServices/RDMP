@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using AutoUpdaterDotNET;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
@@ -146,7 +147,7 @@ namespace ResearchDataManagementPlatform.Menus
         {
             try
             {
-                System.Diagnostics.Process.Start("https://github.com/HicServices/RDMP#user-manual");
+                UsefulStuff.OpenUrl("https://github.com/HicServices/RDMP#research-data-management-platform");
             }
             catch (Exception exception)
             {
@@ -343,9 +344,15 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var ui = new UpdaterUI();
-            var f = new SingleControlForm(ui);
-            f.ShowDialog();
+            try
+            {
+                AutoUpdater.ReportErrors = true;
+                AutoUpdater.Start("https://github.com/HicServices/RDMP/releases.xml");
+            }
+            catch (Exception ex)
+            {
+                ExceptionViewer.Show(ex);
+            }
         }
 
         private void ListAllTypesToolStripMenuItem_Click(object sender, EventArgs e)

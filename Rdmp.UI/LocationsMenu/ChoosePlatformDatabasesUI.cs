@@ -350,7 +350,7 @@ namespace Rdmp.UI.LocationsMenu
         private void RestartApplication()
         {
             MessageBox.Show("Connection Strings Changed, the application will now restart");
-            Application.Restart();
+            ApplicationRestarter.Restart();
         }
 
         private void btnCreateNew_Click(object sender, EventArgs e)

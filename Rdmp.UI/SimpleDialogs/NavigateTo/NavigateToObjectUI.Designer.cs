@@ -41,7 +41,7 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
             // panel1
             // 
             this.panel1.Controls.Add(this.textBox1);
-            this.panel1.Location = new System.Drawing.Point(25, 28);
+            this.panel1.Location = new System.Drawing.Point(25, 23);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(631, 20);
             this.panel1.TabIndex = 1;

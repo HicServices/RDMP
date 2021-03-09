@@ -47,11 +47,31 @@ namespace Rdmp.UI.Tests
             //to start with lets make sure all fields and properties are different on the two classes except where we expect them to be the same
             BindingFlags bindFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 
-            foreach(var prop in typeof(DataExportChildProvider).GetProperties().Where(p=>!skip.Contains(p.Name)))
-                Assert.AreNotSame(prop.GetValue(cp1),prop.GetValue(cp2),$"Prop {prop} was unexpectedly the same between child providers");
+            foreach(var prop in typeof(DataExportChildProvider).GetProperties().Where(p => !skip.Contains(p.Name)))
+            {
+                var val1 = prop.GetValue(cp1);
+                var val2 = prop.GetValue(cp2);
+
+                // these are exempt, I guess 2 seperate empty arrays are now considered 'same'
+                if(val1 is Array a1 && val2 is Array a2 && a1.Length == 0 && a2.Length == 0)
+                    continue;
+
+                Assert.AreNotSame(val1,val2,$"Prop {prop} was unexpectedly the same between child providers");
+            }
+                
 
             foreach(var field in typeof(DataExportChildProvider).GetFields(bindFlags).Where(p=>!skip.Contains(p.Name)))
-                Assert.AreNotSame(field.GetValue(cp1),field.GetValue(cp2),$"Field {field} was unexpectedly the same between child providers");
+            {
+                var val1 = field.GetValue(cp1);
+                var val2 = field.GetValue(cp2);
+
+                // these are exempt, I guess 2 seperate empty arrays are now considered 'same'
+                if(val1 is Array a1 && val2 is Array a2 && a1.Length == 0 && a2.Length == 0)
+                    continue;
+
+                Assert.AreNotSame(val1,val2,$"Field {field} was unexpectedly the same between child providers");
+            }
+                
 
             // Now call UpdateTo to make cp1 look like cp2
             cp1.UpdateTo(cp2);

@@ -182,7 +182,7 @@ namespace Rdmp.UI
 		/// <param name="position">Insert position</param>
 		public void InsertLink(string text, string hyperlink, int position)
 		{
-			if (position < 0 || position > this.Text.Length)
+			if (position < 0 || position > this.Rtf.Length)
 				throw new ArgumentOutOfRangeException("position");
 
             //if it ends with whitespace then we have to put that outside the RTF

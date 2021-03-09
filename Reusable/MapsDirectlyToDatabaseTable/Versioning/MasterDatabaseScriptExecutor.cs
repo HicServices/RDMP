@@ -292,7 +292,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
                 return false;
 
             bool stop = false;
-            var hostAssemblyVersion = new Version(FileVersionInfo.GetVersionInfo(patcher.GetDbAssembly().Location).FileVersion);
+            var hostAssemblyVersion = patcher.GetDbAssembly().GetName().Version;
 
             //start with the assumption that we will apply all patches
             SortedDictionary<string, Patch> toApply = new SortedDictionary<string, Patch>();

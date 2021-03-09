@@ -290,7 +290,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(43, 190);
+            this.label1.Location = new System.Drawing.Point(23, 168);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(83, 13);
             this.label1.TabIndex = 160;
@@ -298,9 +298,9 @@
             // 
             // btnExpandOrCollapse
             // 
-            this.btnExpandOrCollapse.Location = new System.Drawing.Point(8, 185);
+            this.btnExpandOrCollapse.Location = new System.Drawing.Point(2, 165);
             this.btnExpandOrCollapse.Name = "btnExpandOrCollapse";
-            this.btnExpandOrCollapse.Size = new System.Drawing.Size(29, 23);
+            this.btnExpandOrCollapse.Size = new System.Drawing.Size(20, 20);
             this.btnExpandOrCollapse.TabIndex = 159;
             this.btnExpandOrCollapse.Text = "+";
             this.btnExpandOrCollapse.UseVisualStyleBackColor = true;

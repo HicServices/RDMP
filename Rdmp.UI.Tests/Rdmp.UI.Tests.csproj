@@ -1,10 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <LangVersion>7.1</LangVersion>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
+    <NoWarn>NU1701</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
@@ -26,10 +27,5 @@
     <ProjectReference Include="..\Application\ResearchDataManagementPlatform\ResearchDataManagementPlatform.csproj" />
     <ProjectReference Include="..\Rdmp.UI\Rdmp.UI.csproj" />
     <ProjectReference Include="..\Tests.Common\Tests.Common.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Windows.Forms">
-      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.6.1\System.Windows.Forms.dll</HintPath>
-    </Reference>
   </ItemGroup>
 </Project>

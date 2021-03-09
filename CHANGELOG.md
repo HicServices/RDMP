@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- RDMP GUI now targets 3.1 instead of dotnet framework 4.6.1
+- Query editor autocomplete now uses integrated autocomplete (no icons, better matching)
+
 ### Added
 
 - Added `$foreach Catalogue` option for custom metadata report templates (to allow prefix, suffixes, table of contents etc)
