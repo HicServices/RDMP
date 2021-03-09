@@ -44,10 +44,6 @@ jobs:
         run: |
           dotnet publish -r win-x64 -c Release -o PublishWindows
           dotnet publish -r linux-x64 -c Release -o PublishLinux --self-contained false
-          nuget pack Plugins/Plugin/Plugin.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version ${{ steps.get_version.outputs.VERSION }}
-          nuget pack Plugins/Plugin.UI/Plugin.UI.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version ${{ steps.get_version.outputs.VERSION }}
-          nuget pack Plugins/Plugin.Test/Plugin.Test.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version ${{ steps.get_version.outputs.VERSION }}
-          nuget pack Application/ResearchDataManagementPlatform/RDMP.nuspec -Properties Configuration=Release -Version ${{ steps.get_version.outputs.VERSION }}
           
       - name: Get the version
         id: get_version
@@ -66,6 +62,10 @@ jobs:
       - name: Nuget packages
         if: contains(github.ref, 'refs/tags/v')
         run: |
+          nuget pack Plugins/Plugin/Plugin.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version ${{ steps.get_version.outputs.VERSION }}
+          nuget pack Plugins/Plugin.UI/Plugin.UI.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version ${{ steps.get_version.outputs.VERSION }}
+          nuget pack Plugins/Plugin.Test/Plugin.Test.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version ${{ steps.get_version.outputs.VERSION }}
+          nuget pack Application/ResearchDataManagementPlatform/RDMP.nuspec -Properties Configuration=Release -Version ${{ steps.get_version.outputs.VERSION }}
           nuget push HIC.RDMP.Plugin.${{ steps.get_version.outputs.VERSION }}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey #{NUGETKEY}
           nuget push HIC.RDMP.Plugin.UI.${{ steps.get_version.outputs.VERSION }}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey #{NUGETKEY}
           nuget push HIC.RDMP.Plugin.Test.${{ steps.get_version.outputs.VERSION }}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey #{NUGETKEY}
