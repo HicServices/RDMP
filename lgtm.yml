@@ -1,15 +1,6 @@
 extraction:
   csharp:
     index:
-      solution:
-      - ./Tools/rdmp/rdmp.csproj
-      - ./Tests.Common/Tests.Common.csproj
-      - ./Plugins/Plugin.Test/Plugin.Test.csproj
-      - ./Plugins/Plugin/Plugin.csproj
-      - ./Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj
-      - ./Reusable/MapsDirectlyToDatabaseTable/MapsDirectlyToDatabaseTable.csproj
-      - ./Reusable/ReusableLibraryCode/ReusableLibraryCode.csproj
-      - ./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj
-      - ./Rdmp.Core/Rdmp.Core.csproj
+      buildless: true
       dotnet:
         version: 5.0.103
