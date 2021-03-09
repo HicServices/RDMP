@@ -22,7 +22,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
         public int LineNumber { get; private set; }
 
         /// <summary>
-        /// The values as interpreted by CsvHelper for the current line
+        /// The values as interpreted by CsvHelper for the current line or null if the crrent line is broken
         /// </summary>
         public string[] Cells { get; set; }
 
@@ -34,13 +34,13 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
         /// <summary>
         /// The state of the CSVReader when the line was read
         /// </summary>
-        public ReadingContext ReadingContext { get; set; }
+        public CsvContext ReadingContext { get; set; }
 
-        public FlatFileLine(ReadingContext context)
+        public FlatFileLine(CsvContext context, bool isBrokenLine)
         {
-            LineNumber = context.RawRow;
-            Cells = context.Record;
-            RawRecord = context.RawRecord;
+            LineNumber = context.Parser.RawRow;
+            Cells = isBrokenLine ? null : context.Parser.Record/*Calling this property causes callback BadDataFound callback to be invoked resulting in stack overflow!*/;
+            RawRecord = context.Parser.RawRecord;
             ReadingContext = context;
 
             //Doesn't seem to be correct:  StartPosition = context.RawRecordStartPosition;

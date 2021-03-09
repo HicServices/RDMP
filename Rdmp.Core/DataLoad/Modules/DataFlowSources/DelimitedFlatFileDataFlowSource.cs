@@ -391,22 +391,22 @@ This will not help you avoid bad data as the full file structure must still be r
             {
                 Delimiter = Separator,
                 HasHeaderRecord = string.IsNullOrWhiteSpace(ForceHeaders),
-                ShouldSkipRecord = ShouldSkipRecord
+                ShouldSkipRecord = ShouldSkipRecord,
+                IgnoreBlankLines = IgnoreBlankLines,
+                Mode = IgnoreQuotes ? CsvMode.Escape : CsvMode.RFC4180,
+                BadDataFound = s => EventHandlers.BadDataFound(new FlatFileLine(s.Context,true), true),
+                ReadingExceptionOccurred = EventHandlers.ReadingExceptionOccurred,
             });
-
-            EventHandlers.RegisterEvents(_reader.Configuration);
-
-            _reader.Configuration.IgnoreBlankLines = IgnoreBlankLines;
-            _reader.Configuration.IgnoreQuotes = IgnoreQuotes;
 
             Headers.GetHeadersFromFile(_reader); 
         }
 
         
         
-        private bool ShouldSkipRecord(string[] strings)
+        private bool ShouldSkipRecord(ShouldSkipRecordArgs args)
         {
-            if (_reader.Context.RawRow == 1 //first line of file
+            var strings = args.Record;
+            if (_reader.Parser.RawRow == 1 //first line of file
                 && !string.IsNullOrWhiteSpace(ForceHeaders) //and we are forcing headers
                 && ForceHeadersReplacesFirstLineInFile) //and those headers replace the first line of the file
             {
@@ -442,10 +442,10 @@ This will not help you avoid bad data as the full file structure must still be r
                 }
                 else
                 {
-                    currentRow = new FlatFileLine(_reader.Context);
+                    currentRow = new FlatFileLine(_reader.Context,false);
 
                     //if there is bad data on the current row just read the next
-                    if (DataPusher.BadLines.Contains(_reader.Context.RawRow))
+                    if (DataPusher.BadLines.Contains(_reader.Parser.RawRow))
                         continue;
                 }
 

@@ -695,7 +695,7 @@ old""", chunk.Rows[2][2]);
             {
                 var toMem = new ToMemoryDataLoadEventListener(true);
                 var ex = Assert.Throws<ParserException>(()=>source.GetChunk(toMem,new GracefulCancellationToken()));
-                Assert.AreEqual(2,ex.ReadingContext.RawRow);
+                Assert.AreEqual(2,ex.Context.Parser.RawRow);
                 source.Dispose(new ThrowImmediatelyDataLoadEventListener(),null);
             }
             else
