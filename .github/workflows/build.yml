@@ -23,7 +23,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 3.1.301
+          dotnet-version: 5.0.200
       - name: Install Sql Server
         run: choco install sql-server-2019
       - name: Build
