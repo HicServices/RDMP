@@ -18,8 +18,10 @@ using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Logging;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.Collections;
@@ -308,6 +310,16 @@ namespace Rdmp.UI.Tests
         }
 
         public override void ShowData(IViewSQLAndResultsCollection collection)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ShowLogs(ILoggedActivityRootObject rootObject)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ShowLogs(ExternalDatabaseServer loggingServer, LogViewerFilter filter)
         {
             throw new NotImplementedException();
         }

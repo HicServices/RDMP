@@ -21,6 +21,7 @@ using Rdmp.Core.Curation.Data.Referencing;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.Logging;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
@@ -75,6 +76,10 @@ namespace Rdmp.Core.CommandExecution
 
             if(_activator.CanActivate(o))
                 yield return new CommandPresentation(new ExecuteCommandActivate(_activator,o));
+
+            if(Is(o, out ILoggedActivityRootObject root)){
+                yield return new CommandPresentation(new ExecuteCommandViewLogs(_activator,root));
+            }
 
             if(Is(o,out Catalogue c))
             {
@@ -202,6 +207,17 @@ namespace Rdmp.Core.CommandExecution
 
                 foreach (var kvp in assemblyDictionary)
                     yield return new CommandPresentation(new ExecuteCommandCreateNewExternalDatabaseServer(_activator, kvp.Value, kvp.Key));
+            }
+
+            if(Is(o, out ExternalDatabaseServer eds))
+            {
+                if(eds.WasCreatedBy(new LoggingDatabasePatcher()))
+                {
+                    yield return new CommandPresentation(new ExecuteCommandViewLogs(_activator,eds,new LogViewerFilter(LoggingTables.DataLoadRun)));
+                    yield return new CommandPresentation(new ExecuteCommandViewLogs(_activator,eds,new LogViewerFilter(LoggingTables.FatalError)));
+                    yield return new CommandPresentation(new ExecuteCommandViewLogs(_activator,eds,new LogViewerFilter(LoggingTables.ProgressLog)));
+                    yield return new CommandPresentation(new ExecuteCommandViewLogs(_activator,eds,new LogViewerFilter(LoggingTables.TableLoadRun)));
+                }
             }
 
             if(Is(o,out AllFreeCohortIdentificationConfigurationsNode _) || Is(o,out AllProjectCohortIdentificationConfigurationsNode _))

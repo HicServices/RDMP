@@ -27,15 +27,18 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Logging;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.UI;
+using Rdmp.UI.CatalogueSummary.LoadEvents;
 using Rdmp.UI.CohortUI.ImportCustomData;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
@@ -45,6 +48,7 @@ using Rdmp.UI.Copying;
 using Rdmp.UI.DataViewing;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Arranging;
+using Rdmp.UI.Logging;
 using Rdmp.UI.PipelineUIs.Pipelines;
 using Rdmp.UI.PluginChildProvision;
 using Rdmp.UI.Refreshing;
@@ -807,6 +811,18 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public override void ShowData(IViewSQLAndResultsCollection collection)
         {
             Activate<ViewSQLAndResultsWithDataGridUI>(collection);
+        }
+
+        public override void ShowLogs(ILoggedActivityRootObject rootObject)
+        {
+            Activate<LoadEventsTreeView>(new LoadEventsTreeViewObjectCollection(rootObject));
+        }
+
+        public override void ShowLogs(ExternalDatabaseServer loggingServer, LogViewerFilter filter)
+        {
+            LoggingTabUI loggingTabUI =  Activate<LoggingTabUI, ExternalDatabaseServer>(loggingServer);
+            if(filter != null)
+                loggingTabUI.SetFilter(filter);
         }
     }
 }

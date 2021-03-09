@@ -198,6 +198,11 @@ namespace Rdmp.Core
                         new ConsoleGuiRunner(g):
                          factory.CreateRunner(new ThrowImmediatelyActivator(repositoryLocator,checker),opts);
 
+            // Let's not worry about global errors during the CreateRunner process
+            // These are mainly UI/GUI and unrelated to the actual process to run
+            if (checker.Worst > LogLevel.Warn)
+                checker.Worst = LogLevel.Warn;
+
             int runExitCode = runner.Run(repositoryLocator, listener, checker, new GracefulCancellationToken());
 
             if (opts.Command == CommandLineActivity.check)

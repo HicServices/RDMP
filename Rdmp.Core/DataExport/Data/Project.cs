@@ -117,7 +117,7 @@ namespace Rdmp.Core.DataExport.Data
                     }
                     catch (Exception)
                     {
-                        throw ex;
+                        throw;
                     }
                     throw new Exception("Could not create a new Project because there is already another Project in the system (" + offender + ") which is missing a Project Number.  All projects must have a ProjectNumber, there can be 1 Project at a time which does not have a number and that is one that is being built by the user right now.  Either delete Project " + offender + " or give it a project number", ex);
 

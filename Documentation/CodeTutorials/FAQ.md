@@ -38,7 +38,7 @@
    1. [What is a Catalogue?](#whatisacatalogue)
    1. [Can I share/export/import my dataset metadata?](#sharing)
    1. [Is there a Data Quality Engine?](#dqe)
-   4. [How do I create a [Catalogue] from 2+ tables?](#2tablecatalogues)
+   4. [How do I create a Catalogue from 2+ tables?](#2tablecatalogues)
 1. User Interface Programming
    1. [How are user interfaces implemented in RDMP?](#uioverview)
    1. [Whats with the _Design user interface classes?](#abstractDesignerPattern)

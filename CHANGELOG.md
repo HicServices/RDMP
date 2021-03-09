@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- .Net 5.0 for all, instead of Framework 4.6.1+Core 2.2+Standard 2.0 mix
+- Query editor autocomplete now uses integrated autocomplete (no icons, better matching)
+
 ### Added
 
 - Added `$foreach Catalogue` option for custom metadata report templates (to allow prefix, suffixes, table of contents etc)
@@ -22,18 +27,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Better error reporting when item validators crash during validation execution (now includes constraint type, column name and value being validated).
 - Added 'Go To' commands to CLI gui
 - Exposed 'Add New Process Task...' to load stages in CLI menu
+- Exposed 'View Logs' commands on CLI and CLI gui
+- Added minimum timeout of 5 seconds for `CohortIdentificationConfigurationSource`
 
 ### Fixed
 
 - Fixed CLI database selection UI not using password mask symbol (`*`)
 - Fixed CLI GUI message boxes bug with very long messages
 - Fixed Custom Metadata template stripping preceeding whitespace in templated lines e.g. `"  - $Name"` (like you might find in a table of contents section of a template)
+- Fixed 'Set Global Dle Ignore Pattern' failing the first time it is used by creating a StandardRegex with no/null Pattern
+- Fixed order of branches in CLI gui tree
 
+### Changed
+
+- Changed message about inaccessible cohorts to a warning instead of an error. 
+ 
 ### Dependencies
 
 - Bump System.Drawing.Common from 5.0.0 to 5.0.1
 - Bump HIC.BadMedicine from 0.1.6 to 1.0.0
 - Bump CsvHelper from 19.0.0 to 24.0.1
+- Bump Moq from 4.16.0 to 4.16.1
+- Bump Microsoft.NET.Test.Sdk from 16.8.3 to 16.9.1
+- Bump NLog from 4.7.7 to 4.7.8
 
 ## [4.2.4] - 2021-02-05
 
@@ -145,6 +161,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ability to suppress [LoadMetadata] triggers
 - Added ability for Plugins to store custom information about objects in the RDMP Catalogue platform database
 - Added IgnoreColumns setting for DLE to ignore specific columns in the final table completely (not created in RAW/STAGING and not migrated)
+
+### Changed
+
+- CLI tools now built for .Net Core 3.1 since 2.2 has reached EOL
 
 ## [4.1.9] - 2020-09-17
 

@@ -14,9 +14,12 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Interactive.Picking;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
 using ReusableLibraryCode;
@@ -319,6 +322,42 @@ namespace Rdmp.Core.CommandLine.Interactive
             
             var toRun = new ExtractTableVerbatim(db.Server,collection.GetSql(),Console.OpenStandardOutput(),",",null);
             toRun.DoExtraction();
+        }
+
+        public override void ShowLogs(ILoggedActivityRootObject rootObject)
+        {
+            foreach(var load in base.GetLogs(rootObject).OrderByDescending(l=>l.StartTime))
+            {
+                Console.WriteLine(load.Description);
+                Console.WriteLine(load.StartTime);
+                
+                Console.WriteLine("Errors:" + load.Errors.Count);
+                
+                foreach(var error in load.Errors)
+                {
+                    error.GetSummary(out string title, out string body, out _, out CheckResult _);
+
+                    Console.WriteLine($"\t{title}");
+                    Console.WriteLine($"\t{body}");
+                }
+                                
+                Console.WriteLine("Tables Loaded:");
+
+                foreach(var t in load.TableLoadInfos)
+                {
+                    Console.WriteLine($"\t{t}: I={t.Inserts:N0} U={t.Updates:N0} D={t.Deletes:N0}");
+                
+                    foreach(var source in t.DataSources)    
+                        Console.WriteLine($"\t\tSource:{source.Source}");
+                }
+                
+                Console.WriteLine("Progress:");
+                
+                foreach(var p in load.Progress)
+                {
+                    Console.WriteLine($"\t{p.Date} {p.Description}");
+                }
+            }
         }
     }
 }

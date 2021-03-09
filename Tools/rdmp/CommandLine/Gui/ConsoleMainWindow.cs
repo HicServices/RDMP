@@ -286,6 +286,13 @@ namespace Rdmp.Core.CommandLine.Gui
 
         private IEnumerable<object> ChildGetter(object model)
         {
+			return ChildGetterUnordered(model).OrderBy(o=>o,new OrderableComparer(null));
+        }
+
+
+        private IEnumerable<object> ChildGetterUnordered(object model)
+        {
+			
 			var dx = _activator.CoreChildProvider as DataExportChildProvider;
 
             try
