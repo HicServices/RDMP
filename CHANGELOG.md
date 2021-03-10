@@ -44,7 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
 ### Dependencies
 
-- Bump System.Drawing.Common from 5.0.0 to 5.0.1
+- Bump System.Drawing.Common from 5.0.0 to 5.0.2
 - Bump Moq from 4.16.0 to 4.16.1
 - Bump Microsoft.NET.Test.Sdk from 16.8.3 to 16.9.1
 - Bump NLog from 4.7.7 to 4.7.8
