@@ -7,6 +7,8 @@
     <Copyright>Copyright ©  2019</Copyright>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <version>4.2.4-pre</version>
 	<NoWarn>1701;1702;CS1591;NU1701</NoWarn>
     <LangVersion>7.1</LangVersion>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
@@ -20,8 +22,6 @@
   <ItemGroup>
     <None Remove="en_US.aff" />
     <None Remove="en_US.dic" />
-    <None Remove="Hunspellx64.dll" />
-    <None Remove="Hunspellx86.dll" />
     <None Remove="hyph_en_US.dic" />
     <None Remove="Pencil.cur" />
   </ItemGroup>
@@ -35,10 +35,10 @@
     <Content Include="en_US.dic">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Hunspellx64.dll">
+    <Content Include="Hunspellx64.dll" Pack="true" PackagePath="runtimes\win-x64\native" >
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Hunspellx86.dll">
+    <Content Include="Hunspellx86.dll" Pack="true" PackagePath="runtimes\win-x64\native">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="hyph_en_US.dic">

@@ -4,6 +4,7 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\SMI\</SolutionDir>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<NoWarn>1701;1702;CS1591</NoWarn>
     <LangVersion>7.1</LangVersion>
     <DebugType>full</DebugType>
