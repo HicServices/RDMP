@@ -5,8 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution.Combining;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Icons.IconProvision;
+using ReusableLibraryCode.Icons.IconProvision;
+using System;
+using System.Drawing;
+using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -30,6 +36,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
         }
 
+        public ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(IBasicActivateItems activator, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
+        {
+
+            _targetCohortAggregateContainer = targetCohortAggregateContainer;
+
+        }
         public ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(IBasicActivateItems activator,CatalogueCombineable catalogueCombineable, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
         {
             _catalogueCombineable = catalogueCombineable;
@@ -42,17 +54,49 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 SetImpossible(reason);
         }
 
+        public override Image GetImage(IIconProvider iconProvider)
+        {
+            return iconProvider.GetImage(RDMPConcept.Catalogue,OverlayKind.Add);
+        }
+
         public override void Execute()
         {
             base.Execute();
 
-            
-            var cmd = _catalogueCombineable.GenerateAggregateConfigurationFor(BasicActivator,_targetCohortAggregateContainer,!SkipMandatoryFilterCreation);
-            if(cmd != null)
+            // if user hasn't picked a Catalogue yet
+            if(_catalogueCombineable == null)
             {
-                _postImportCommand = 
-                    new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(BasicActivator,cmd, _targetCohortAggregateContainer)
-                        {DoNotClone = true};
+                if(!SelectMany(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
+                {
+                    // user didn't pick one
+                    return;
+                }
+
+                // for each catalogue they picked
+                foreach (Catalogue catalogue in selected)
+                {
+                    // add it to the cic container
+                    Execute(new CatalogueCombineable(catalogue),catalogue == selected.Last());
+                }
+            }
+            else
+            {
+                Execute(_catalogueCombineable,true);
+            }
+
+        }
+
+        private void Execute(CatalogueCombineable catalogueCombineable, bool publish)
+        {
+            var cmd = catalogueCombineable.GenerateAggregateConfigurationFor(BasicActivator, _targetCohortAggregateContainer, !SkipMandatoryFilterCreation);
+            if (cmd != null)
+            {
+                _postImportCommand =
+                    new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(BasicActivator, cmd, _targetCohortAggregateContainer)
+                    {
+                        DoNotClone = true,
+                        NoPublish = !publish
+                    };
                 _postImportCommand.Execute();
             }
         }

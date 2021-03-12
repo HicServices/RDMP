@@ -32,13 +32,6 @@ namespace Rdmp.UI.Menus
             var cic = _container.GetCohortIdentificationConfiguration();
 
 
-            Add(new ExecuteCommandAddCohortSubContainer(_activator,container));
-
-
-            Add(new ExecuteCommandDisableOrEnable(_activator, container));
-            
-            Items.Add("Add Catalogue(s) into container", _activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Import), (s, e) => AddCatalogues());
-
             Items.Add("Add Aggregate(s) into container", _activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph, OverlayKind.Import), (s, e) => AddAggregates());
             Items.Add("Import (Copy of) Cohort Set into container", _activator.CoreIconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Import), (s, e) => AddCohortAggregate());
             Add(new ExecuteCommandImportCohortIdentificationConfiguration(_activator,null,container));
@@ -149,44 +142,6 @@ namespace Rdmp.UI.Menus
                     catch (Exception e)
                     {
                         checks.OnCheckPerformed(new CheckEventArgs("Failed to add AggregateConfiguration " + aggregateConfiguration + "(see Exception for details)", CheckResult.Fail, e));
-                    }
-                }
-            }
-        }
-
-        private void AddCatalogues()
-        {
-            SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(),false,false);
-            dialog.AllowMultiSelect = true;
-
-            if(dialog.ShowDialog() == DialogResult.OK)
-            {
-                if(!dialog.MultiSelected.Any())
-                    return;
-
-                PopupChecksUI checks = new PopupChecksUI("Adding Catalogues",true);
-
-
-                foreach (Catalogue catalogue in dialog.MultiSelected)
-                {
-                    try
-                    {
-                        var cmd = new CatalogueCombineable(catalogue);
-                        var cmdExecution = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator, cmd, _container);
-                        if (cmdExecution.IsImpossible)
-                            checks.OnCheckPerformed(
-                                new CheckEventArgs(
-                                    "Could not add Catalogue " + catalogue + " because of Reason:" +
-                                    cmdExecution.ReasonCommandImpossible, CheckResult.Fail));
-                        else
-                        {
-                            cmdExecution.Execute();
-                            checks.OnCheckPerformed(new CheckEventArgs("Successfully added Catalogue " + catalogue,CheckResult.Success));
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        checks.OnCheckPerformed(new CheckEventArgs("Failed to add Catalogue " + catalogue + "(see Exception for details)",CheckResult.Fail, e));
                     }
                 }
             }

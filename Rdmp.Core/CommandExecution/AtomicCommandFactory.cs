@@ -361,6 +361,12 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer, SetOperation.EXCEPT), SetContainerOperation);
                 yield return new CommandPresentation(new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer, SetOperation.UNION), SetContainerOperation);
                 yield return new CommandPresentation(new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer, SetOperation.INTERSECT), SetContainerOperation);
+
+
+                yield return new CommandPresentation(new ExecuteCommandAddCohortSubContainer(_activator, cohortAggregateContainer));
+
+                yield return new CommandPresentation(new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator, cohortAggregateContainer),New);
+
             }
 
 

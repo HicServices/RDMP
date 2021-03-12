@@ -23,7 +23,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// not need cloning.
         /// </summary>
         public bool DoNotClone { get; set; }
-        
+
         public ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(IBasicActivateItems activator,AggregateConfigurationCombineable aggregateConfigurationCommand, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
         {
             _aggregateConfigurationCombineable = aggregateConfigurationCommand;
