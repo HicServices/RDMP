@@ -43,6 +43,11 @@ namespace Rdmp.Core.CommandExecution
         public Image OverrideIcon { get; set; }
 
         /// <summary>
+        /// Set to true to suppress the <see cref="Publish(IMapsDirectlyToDatabaseTable)"/> method.  Only use if you are running multiple commands one after the other and don't want to wait for state updates
+        /// </summary>
+        public bool NoPublish { get; set; }
+
+        /// <summary>
         /// The prefix that must appear on all Types derived from <see cref="BasicCommandExecution"/> in order to be rendered correctly in
         /// menus, called from the command line etc.
         /// </summary>
@@ -161,6 +166,10 @@ namespace Rdmp.Core.CommandExecution
 
         protected virtual void Publish(IMapsDirectlyToDatabaseTable o)
         {
+
+            if (NoPublish)
+                return;
+
             if(o is DatabaseEntity d)
                 BasicActivator.Publish(d);
         }
