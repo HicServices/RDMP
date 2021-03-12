@@ -31,12 +31,6 @@ namespace Rdmp.UI.Menus
             _container = container;
             var cic = _container.GetCohortIdentificationConfiguration();
 
-            var setOperation = new ToolStripMenuItem("Set Operation");
-            setOperation.DropDownItems.Add(GetChangeOperationMenuItem(SetOperation.EXCEPT));
-            setOperation.DropDownItems.Add(GetChangeOperationMenuItem(SetOperation.UNION));
-            setOperation.DropDownItems.Add(GetChangeOperationMenuItem(SetOperation.INTERSECT));
-            Items.Add(setOperation);
-
 
             Add(new ExecuteCommandAddCohortSubContainer(_activator,container));
 
@@ -198,48 +192,5 @@ namespace Rdmp.UI.Menus
             }
         }
 
-        private ToolStripMenuItem GetChangeOperationMenuItem(SetOperation operation)
-        {
-            var setOperationMenuItem = new ToolStripMenuItem("Set " + operation, null, (o, args) => SetOperationTo(operation));
-
-            switch (operation)
-            {
-                case SetOperation.UNION:
-                    setOperationMenuItem.Image = CatalogueIcons.UNION;
-                    break;
-                case SetOperation.INTERSECT:
-                    setOperationMenuItem.Image = CatalogueIcons.INTERSECT;
-                    break;
-                case SetOperation.EXCEPT:
-                    setOperationMenuItem.Image = CatalogueIcons.EXCEPT;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("operation");
-            }
-
-            setOperationMenuItem.Enabled = _container.Operation != operation;
-            
-            return setOperationMenuItem;
-        }
-
-        public void SetOperationTo(SetOperation newOperation)
-        {
-            var oldOperation = _container.Operation;
-            _container.Operation = newOperation;
-
-            //if the old name was UNION and we are changing to INTERSECT Operation then we should probably change the Name too! even if they have something like 'INTERSECT the people who are big and small' and they change to UNION we want it to be changed to 'UNION the people who are big and small'
-            if (_container.Name.StartsWith(oldOperation.ToString()))
-                _container.Name = newOperation + _container.Name.Substring(oldOperation.ToString().Length);
-            else
-            {
-                var dialog = new TypeTextOrCancelDialog("New name for container?","You have changed the operation, do you want to give it a new description?", 1000, _container.Name);
-
-                if (dialog.ShowDialog() == DialogResult.OK)
-                    _container.Name = dialog.ResultText;
-            }
-            _container.SaveToDatabase();
-            Publish(_container);
-
-        }
     }
 }

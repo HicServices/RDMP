@@ -15,6 +15,7 @@ using Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cache;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Referencing;
@@ -50,6 +51,7 @@ namespace Rdmp.Core.CommandExecution
         public const string Metadata = "Metadata";
         public const string Alter = "Alter";
         public const string SetUsageContext = "Set Context";
+        public const string SetContainerOperation = "Set Operation";
 
         public AtomicCommandFactory(IBasicActivateItems activator)
         {
@@ -354,7 +356,15 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandCreateNewCohortFromCatalogue(_activator).SetTarget(savedCohortsNode.Project));
             }
 
-            if(Is(o, out IArgument a))
+            if (Is(o, out CohortAggregateContainer cohortAggregateContainer))
+            {
+                yield return new CommandPresentation(new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer, SetOperation.EXCEPT), SetContainerOperation);
+                yield return new CommandPresentation(new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer, SetOperation.UNION), SetContainerOperation);
+                yield return new CommandPresentation(new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer, SetOperation.INTERSECT), SetContainerOperation);
+            }
+
+
+            if (Is(o, out IArgument a))
             {
                 yield return new CommandPresentation(new ExecuteCommandSetArgument(_activator,a));
 
