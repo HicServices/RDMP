@@ -8,9 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
@@ -251,6 +254,43 @@ FETCH NEXT " + batchSize + @" ROWS ONLY", conn.Connection,conn.Transaction))
                 return LoadProgress.LoadMetadata.GetAllCatalogues().Cast<Catalogue>().Distinct().ToArray();
             
             return PermissionWindow.CacheProgresses.SelectMany(p => p.LoadProgress.LoadMetadata.GetAllCatalogues()).Cast<Catalogue>().Distinct().ToArray();
+        }
+
+        /// <summary>
+        /// Returns
+        /// </summary>
+        /// <returns></returns>
+        public DiscoveredServer GetDistinctLoggingDatabase()
+        {
+            return CatalogueRepository.GetDefaultLogManager()?.Server ?? throw new Exception("No default logging server configured");
+        }
+
+        public DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen)
+        {
+            serverChosen = CatalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+            return GetDistinctLoggingDatabase();
+        }
+
+        /// <summary>
+        /// Returns the unique logging name for <see cref="ArchivalDataLoadInfo"/> runs of this cache
+        /// </summary>
+        /// <returns></returns>
+        public string GetLoggingRunName()
+        {
+            return $"Caching {Name}";
+        }
+
+
+        public string GetDistinctLoggingTask()
+        {
+            return "caching";
+        }
+
+        public IEnumerable<ArchivalDataLoadInfo> FilterRuns(IEnumerable<ArchivalDataLoadInfo> runs)
+        {
+            var name = GetLoggingRunName();
+
+            return runs.Where(r => r.Description?.Equals(name, StringComparison.CurrentCultureIgnoreCase) ?? false);
         }
     }
 }

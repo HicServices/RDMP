@@ -33,9 +33,10 @@ namespace Rdmp.Core.CommandLine.Runners
 
         public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,ICheckNotifier checkNotifier, GracefulCancellationToken token)
         {
-            const string dataLoadTask = "caching";
+            
 
             CacheProgress cp = repositoryLocator.CatalogueRepository.GetObjectByID<CacheProgress>(_options.CacheProgress);
+            string dataLoadTask = cp.GetDistinctLoggingTask();
 
             var defaults = repositoryLocator.CatalogueRepository.GetServerDefaults();
             var loggingServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
@@ -52,7 +53,7 @@ namespace Rdmp.Core.CommandLine.Runners
                 case CommandLineActivity.run:
 
                     //Setup dual listeners for the Cache process, one ticks the lifeline one very message and one logs to the logging db
-                    var toLog = new ToLoggingDatabaseDataLoadEventListener(this, logManager, dataLoadTask, "Caching " + cp);
+                    var toLog = new ToLoggingDatabaseDataLoadEventListener(this, logManager, dataLoadTask, cp.GetLoggingRunName());
                     var forkListener = new ForkDataLoadEventListener(toLog, listener);
                     try
                     {
