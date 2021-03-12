@@ -40,6 +40,7 @@ namespace Rdmp.UI.SimpleDialogs
             cbDebugPerformance.Checked = UserSettings.DebugPerformance;
             cbAllowIdentifiableExtractions.Checked = UserSettings.AllowIdentifiableExtractions;
             cbShowPipelineCompletedPopup.Checked = UserSettings.ShowPipelineCompletedPopup;
+            cbFiveSecondsWarning.Checked = UserSettings.WarnOnTimeoutOnExtractionChecks;
 
             ddTheme.DataSource = new []
             {
@@ -106,6 +107,9 @@ namespace Rdmp.UI.SimpleDialogs
             
             if(cb == cbShowPipelineCompletedPopup)
                 UserSettings.ShowPipelineCompletedPopup = cb.Checked;
+
+            if (cb == cbFiveSecondsWarning)
+                UserSettings.WarnOnTimeoutOnExtractionChecks = cb.Checked;
         }
 
         private void ddTheme_SelectedIndexChanged(object sender, EventArgs e)
