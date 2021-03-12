@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -221,6 +222,28 @@ namespace Rdmp.Core.Providers
 
         public string DescribeProblem(CohortAggregateContainer container)
         {
+            // Make sure if the user has the default configuration (Root, Inclusion, Exclusion) that they do not mess up the ordering and get very confused
+
+            // if the container is inclusion make sure the user hasn't reordered the container to make it act as exclusion instead!
+            if (container.Name?.Contains(ExecuteCommandCreateNewCohortIdentificationConfiguration.InclusionCriteriaName) ?? false)
+            {
+                // if there is a parent container
+                var parents = _childProvider.GetDescendancyListIfAnyFor(container);
+                if (parents != null && parents.Last() is CohortAggregateContainer parentContainer)
+                {
+                    // which is EXCEPT
+                    if (parentContainer.Operation == SetOperation.EXCEPT)
+                    {
+                        // then something called 'inclusion criteria' should be the first among them
+                        var first = _childProvider.GetChildren(parentContainer).OfType<IOrderable>().OrderBy(o => o.Order).FirstOrDefault();
+                        if (first != null && (!first.Equals(container)))
+                        {
+                            return $"{container.Name} must be the first container in the parent set.  Please re-order it to be the first";
+                        }
+                    }
+                }
+            }
+
             //if it's a root container don't check
             if (_childProvider.AllCohortIdentificationConfigurations.Any(c =>
                 c.RootCohortAggregateContainer_ID == container.ID))
@@ -239,6 +262,8 @@ namespace Rdmp.Core.Providers
             //are there any children with the same order in this container?
             if (children.OfType<IOrderable>().GroupBy(o => o.Order).Any(g => g.Count() > 1))
                 return "Child order is ambiguous, show the Order column and reorder contents";
+
+
 
             return null;
         }

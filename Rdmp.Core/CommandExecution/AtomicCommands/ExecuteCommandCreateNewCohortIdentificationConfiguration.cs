@@ -25,6 +25,16 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private Project _associateWithProject;
         private string _name;
 
+        /// <summary>
+        /// Name to give the inclusion component of new cics created by this command
+        /// </summary>
+        public static string InclusionCriteriaName = "Inclusion Criteria";
+
+        /// <summary>
+        /// Name to give the exclusion component of new cics created by this command
+        /// </summary>
+        public static string ExclusionCriteriaName = "Exclusion Criteria";
+
         public ExecuteCommandCreateNewCohortIdentificationConfiguration(IBasicActivateItems activator) : base(activator)
         {
             if (!activator.CoreChildProvider.AllCatalogues.Any())
@@ -101,16 +111,23 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             var cic = new CohortIdentificationConfiguration(BasicActivator.RepositoryLocator.CatalogueRepository, name);
             cic.CreateRootContainerIfNotExists();
-            var exclusion = cic.RootCohortAggregateContainer;
-            exclusion.Name = "Exclusion Criteria";
-            exclusion.Operation = SetOperation.EXCEPT;
-            exclusion.SaveToDatabase();
+            var root = cic.RootCohortAggregateContainer;
+            root.Name = "Root Container";
+            root.Operation = SetOperation.EXCEPT;
+            root.SaveToDatabase();
 
             var inclusion = new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueRepository, SetOperation.UNION);
-            inclusion.Name = "Inclusion Criteria";
+            inclusion.Name = InclusionCriteriaName;
+            inclusion.Order = 0;
             inclusion.SaveToDatabase();
 
-            exclusion.AddChild(inclusion);
+            var exclusion = new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueRepository, SetOperation.UNION);
+            exclusion.Name = ExclusionCriteriaName;
+            exclusion.Order = 1;
+            exclusion.SaveToDatabase();
+
+            root.AddChild(inclusion);
+            root.AddChild(exclusion);
 
             return cic;
         }
