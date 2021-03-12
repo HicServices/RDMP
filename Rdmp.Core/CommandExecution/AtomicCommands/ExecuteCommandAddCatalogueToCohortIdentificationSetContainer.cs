@@ -41,17 +41,21 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             _targetCohortAggregateContainer = targetCohortAggregateContainer;
 
+            if (targetCohortAggregateContainer.ShouldBeReadOnly(out string reason))
+                SetImpossible(reason);
         }
-        public ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(IBasicActivateItems activator,CatalogueCombineable catalogueCombineable, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
+        public ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(IBasicActivateItems activator,CatalogueCombineable catalogueCombineable, CohortAggregateContainer targetCohortAggregateContainer) : this(activator,targetCohortAggregateContainer)
         {
             _catalogueCombineable = catalogueCombineable;
             _targetCohortAggregateContainer = targetCohortAggregateContainer;
 
-            if(!catalogueCombineable.ContainsAtLeastOneExtractionIdentifier)
+            UpdateIsImpossibleFor(catalogueCombineable);
+        }
+
+        private void UpdateIsImpossibleFor(CatalogueCombineable catalogueCombineable)
+        {
+            if (!catalogueCombineable.ContainsAtLeastOneExtractionIdentifier)
                 SetImpossible("Catalogue " + catalogueCombineable.Catalogue + " does not contain any IsExtractionIdentifier columns");
-            
-            if(targetCohortAggregateContainer.ShouldBeReadOnly(out string reason))
-                SetImpossible(reason);
         }
 
         public override Image GetImage(IIconProvider iconProvider)
@@ -75,8 +79,16 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 // for each catalogue they picked
                 foreach (Catalogue catalogue in selected)
                 {
+
+                    var combineable = new CatalogueCombineable(catalogue);
+
+                    UpdateIsImpossibleFor(combineable);
+                    
+                    if(IsImpossible)
+                        throw new ImpossibleCommandException(this, ReasonCommandImpossible);
+
                     // add it to the cic container
-                    Execute(new CatalogueCombineable(catalogue),catalogue == selected.Last());
+                    Execute(combineable, catalogue == selected.Last());
                 }
             }
             else

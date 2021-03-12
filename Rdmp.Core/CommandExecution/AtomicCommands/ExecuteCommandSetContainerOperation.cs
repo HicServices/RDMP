@@ -26,6 +26,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             _container = container;
             _operation = operation;
+
+            if (container.ShouldBeReadOnly(out string reason))
+            {
+                SetImpossible(reason);
+            }
         }
 
         public override string GetCommandName()

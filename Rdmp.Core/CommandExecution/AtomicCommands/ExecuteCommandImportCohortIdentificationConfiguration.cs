@@ -8,11 +8,8 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Icons.IconProvision;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -34,7 +31,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 SetImpossible("You must specify a container");
                 return;
             }
-                
+
+            if (intoContainer.ShouldBeReadOnly(out string reason))
+            {
+                SetImpossible(reason);
+            }   
         }
         public override Image GetImage(IIconProvider iconProvider)
         {

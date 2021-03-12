@@ -4,21 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Linq;
 using System.Windows.Forms;
-using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.CommandExecution.Combining;
-using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SubComponents.Graphs;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Icons.IconProvision;
-using PopupChecksUI = Rdmp.UI.ChecksUI.PopupChecksUI;
 
 namespace Rdmp.UI.Menus
 {
@@ -30,16 +21,6 @@ namespace Rdmp.UI.Menus
         {
             _container = container;
             var cic = _container.GetCohortIdentificationConfiguration();
-
-
-            Items.Add("Add Aggregate(s) into container", _activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph, OverlayKind.Import), (s, e) => AddAggregates());
-            Items.Add("Import (Copy of) Cohort Set into container", _activator.CoreIconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Import), (s, e) => AddCohortAggregate());
-            Add(new ExecuteCommandImportCohortIdentificationConfiguration(_activator,null,container));
-
-            foreach (ToolStripMenuItem item in Items)
-                item.Enabled = item.Enabled && (cic != null && !cic.Frozen);
-
-            Add(new ExecuteCommandUnMergeCohortIdentificationConfiguration(_activator,container));
 
             //Add Graph results of container commands
 
@@ -76,73 +57,6 @@ namespace Rdmp.UI.Menus
                     }
 
                     Items.Add(matchIdentifiers);
-                }
-            }
-        }
-
-        private void AddCohortAggregate()
-        {
-            var cohortAggregates = _activator.CoreChildProvider.AllAggregateConfigurations.Where(c=>
-                c.IsCohortIdentificationAggregate && !c.IsJoinablePatientIndexTable()).ToArray();
-
-            if (!cohortAggregates.Any())
-            {
-                MessageBox.Show("You do not currently have any cohort sets");
-                return;
-            }
-
-            AddAggregates(cohortAggregates);
-        }
-
-        private void AddAggregates()
-        {
-
-            var nonCohortAggregates = RepositoryLocator.CatalogueRepository.GetAllObjects<AggregateConfiguration>().Where(c => !c.IsCohortIdentificationAggregate).ToArray();
-
-            if (!nonCohortAggregates.Any())
-            {
-                MessageBox.Show("You do not currently have any non-cohort AggregateConfigurations");
-                return;
-            }
-
-            AddAggregates(nonCohortAggregates);
-        }
-
-        private void AddAggregates(AggregateConfiguration[] userCanPickFrom)
-        {
-
-            SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, userCanPickFrom, false, false);
-            dialog.AllowMultiSelect = true;
-
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                if (!dialog.MultiSelected.Any())
-                    return;
-
-                PopupChecksUI checks = new PopupChecksUI("Adding Aggregate(s)", true);
-
-
-                foreach (AggregateConfiguration aggregateConfiguration in dialog.MultiSelected)
-                {
-                    try
-                    {
-                        var cmd = new AggregateConfigurationCombineable(aggregateConfiguration);
-                        var cmdExecution = new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator, cmd, _container);
-                        if (cmdExecution.IsImpossible)
-                            checks.OnCheckPerformed(
-                                new CheckEventArgs(
-                                    "Could not add AggregateConfiguration " + aggregateConfiguration + " because of Reason:" +
-                                    cmdExecution.ReasonCommandImpossible, CheckResult.Fail));
-                        else
-                        {
-                            cmdExecution.Execute();
-                            checks.OnCheckPerformed(new CheckEventArgs("Successfully added AggregateConfiguration " + aggregateConfiguration, CheckResult.Success));
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        checks.OnCheckPerformed(new CheckEventArgs("Failed to add AggregateConfiguration " + aggregateConfiguration + "(see Exception for details)", CheckResult.Fail, e));
-                    }
                 }
             }
         }

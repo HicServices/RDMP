@@ -18,6 +18,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public ExecuteCommandAddCohortSubContainer(IBasicActivateItems activator, CohortAggregateContainer container):base(activator)
         {
             this._container = container;
+
+            if (container.ShouldBeReadOnly(out string reason))
+            {
+                SetImpossible(reason);
+            }
         }
 
         public override Image GetImage(IIconProvider iconProvider)
