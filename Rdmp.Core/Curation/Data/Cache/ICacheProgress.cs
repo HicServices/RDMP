@@ -7,12 +7,14 @@
 using System;
 using System.Collections.Generic;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.Logging.PastEvents;
 
 namespace Rdmp.Core.Curation.Data.Cache
 {
     /// <inheritdoc/>
-    public interface ICacheProgress : INamed
+    public interface ICacheProgress : INamed, ILoggedActivityRootObject
     {
         /// <summary>
         /// <para>The amount of time that has to have passed beyond the <see cref="CacheLagPeriod"/> before a fetch will be initiated.</para>
@@ -98,5 +100,11 @@ namespace Rdmp.Core.Curation.Data.Cache
         /// </summary>
         /// <returns></returns>
         TimeSpan GetShortfall();
+
+        /// <summary>
+        /// Returns the unique logging name for <see cref="ArchivalDataLoadInfo"/> runs of this cache
+        /// </summary>
+        /// <returns></returns>
+        string GetLoggingRunName();
     }
 }

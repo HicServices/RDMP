@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Exposed 'Add New Process Task...' to load stages in CLI menu
 - Exposed 'View Logs' commands on CLI and CLI gui
 - Added minimum timeout of 5 seconds for `CohortIdentificationConfigurationSource`
+- 'View Logs' tree view now accessible for CacheProgress objects
 
 ### Fixed
 
