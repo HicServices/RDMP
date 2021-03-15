@@ -53,7 +53,7 @@
             this.hlpIdentifiableExtractions = new Rdmp.UI.SimpleControls.HelpIcon();
             this.cbShowPipelineCompletedPopup = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.cbFiveSecondsWarning = new System.Windows.Forms.CheckBox();
+            this.cbWarnOnTimeoutOnExtractionChecks = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -322,7 +322,7 @@
             // groupBox1
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.cbFiveSecondsWarning);
+            this.groupBox1.Controls.Add(this.cbWarnOnTimeoutOnExtractionChecks);
             this.groupBox1.Location = new System.Drawing.Point(447, 255);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(407, 385);
@@ -330,16 +330,16 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Warnings Settings";
             // 
-            // cbFiveSecondsWarning
+            // cbWarnOnTimeoutOnExtractionChecks
             // 
-            this.cbFiveSecondsWarning.AutoSize = true;
-            this.cbFiveSecondsWarning.Location = new System.Drawing.Point(7, 23);
-            this.cbFiveSecondsWarning.Name = "cbFiveSecondsWarning";
-            this.cbFiveSecondsWarning.Size = new System.Drawing.Size(261, 19);
-            this.cbFiveSecondsWarning.TabIndex = 0;
-            this.cbFiveSecondsWarning.Text = "5 seconds timeout when checking Extraction";
-            this.cbFiveSecondsWarning.UseVisualStyleBackColor = true;
-            this.cbFiveSecondsWarning.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
+            this.cbWarnOnTimeoutOnExtractionChecks.AutoSize = true;
+            this.cbWarnOnTimeoutOnExtractionChecks.Location = new System.Drawing.Point(7, 23);
+            this.cbWarnOnTimeoutOnExtractionChecks.Name = "cbWarnOnTimeoutOnExtractionChecks";
+            this.cbWarnOnTimeoutOnExtractionChecks.Size = new System.Drawing.Size(261, 19);
+            this.cbWarnOnTimeoutOnExtractionChecks.TabIndex = 0;
+            this.cbWarnOnTimeoutOnExtractionChecks.Text = "5 seconds timeout when checking Extraction";
+            this.cbWarnOnTimeoutOnExtractionChecks.UseVisualStyleBackColor = true;
+            this.cbWarnOnTimeoutOnExtractionChecks.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // UserSettingsFileUI
             // 
@@ -406,6 +406,6 @@
         private SimpleControls.HelpIcon hlpIdentifiableExtractions;
         private System.Windows.Forms.CheckBox cbShowPipelineCompletedPopup;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.CheckBox cbFiveSecondsWarning;
+        private System.Windows.Forms.CheckBox cbWarnOnTimeoutOnExtractionChecks;
     }
 }
