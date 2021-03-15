@@ -53,7 +53,7 @@
             this.hlpIdentifiableExtractions = new Rdmp.UI.SimpleControls.HelpIcon();
             this.cbShowPipelineCompletedPopup = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.cbWarnOnTimeoutOnExtractionChecks = new System.Windows.Forms.CheckBox();
+            this.clbWarnings = new System.Windows.Forms.CheckedListBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -85,7 +85,7 @@
             this.cbEmphasiseOnTabChanged.Location = new System.Drawing.Point(46, 85);
             this.cbEmphasiseOnTabChanged.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbEmphasiseOnTabChanged.Name = "cbEmphasiseOnTabChanged";
-            this.cbEmphasiseOnTabChanged.Size = new System.Drawing.Size(235, 19);
+            this.cbEmphasiseOnTabChanged.Size = new System.Drawing.Size(234, 19);
             this.cbEmphasiseOnTabChanged.TabIndex = 2;
             this.cbEmphasiseOnTabChanged.Text = "Show Object Collection On Tab Change";
             this.cbEmphasiseOnTabChanged.UseVisualStyleBackColor = true;
@@ -97,7 +97,7 @@
             this.cbConfirmExit.Location = new System.Drawing.Point(46, 112);
             this.cbConfirmExit.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbConfirmExit.Name = "cbConfirmExit";
-            this.cbConfirmExit.Size = new System.Drawing.Size(155, 19);
+            this.cbConfirmExit.Size = new System.Drawing.Size(156, 19);
             this.cbConfirmExit.TabIndex = 2;
             this.cbConfirmExit.Text = "Confirm Application Exit";
             this.cbConfirmExit.UseVisualStyleBackColor = true;
@@ -109,7 +109,7 @@
             this.label2.Location = new System.Drawing.Point(28, 227);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(52, 15);
+            this.label2.Size = new System.Drawing.Size(51, 15);
             this.label2.TabIndex = 3;
             this.label2.Text = "Theme*:";
             // 
@@ -119,7 +119,7 @@
             this.cbThemeMenus.Location = new System.Drawing.Point(89, 255);
             this.cbThemeMenus.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbThemeMenus.Name = "cbThemeMenus";
-            this.cbThemeMenus.Size = new System.Drawing.Size(152, 19);
+            this.cbThemeMenus.Size = new System.Drawing.Size(150, 19);
             this.cbThemeMenus.TabIndex = 4;
             this.cbThemeMenus.Text = "Apply Theme To Menus";
             this.cbThemeMenus.UseVisualStyleBackColor = true;
@@ -287,7 +287,7 @@
             this.cbAllowIdentifiableExtractions.Location = new System.Drawing.Point(348, 112);
             this.cbAllowIdentifiableExtractions.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbAllowIdentifiableExtractions.Name = "cbAllowIdentifiableExtractions";
-            this.cbAllowIdentifiableExtractions.Size = new System.Drawing.Size(178, 19);
+            this.cbAllowIdentifiableExtractions.Size = new System.Drawing.Size(179, 19);
             this.cbAllowIdentifiableExtractions.TabIndex = 13;
             this.cbAllowIdentifiableExtractions.Text = "Allow Identifiable Extractions";
             this.cbAllowIdentifiableExtractions.UseVisualStyleBackColor = true;
@@ -322,7 +322,7 @@
             // groupBox1
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.cbWarnOnTimeoutOnExtractionChecks);
+            this.groupBox1.Controls.Add(this.clbWarnings);
             this.groupBox1.Location = new System.Drawing.Point(447, 255);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(407, 385);
@@ -330,16 +330,14 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Warnings Settings";
             // 
-            // cbWarnOnTimeoutOnExtractionChecks
+            // clbWarnings
             // 
-            this.cbWarnOnTimeoutOnExtractionChecks.AutoSize = true;
-            this.cbWarnOnTimeoutOnExtractionChecks.Location = new System.Drawing.Point(7, 23);
-            this.cbWarnOnTimeoutOnExtractionChecks.Name = "cbWarnOnTimeoutOnExtractionChecks";
-            this.cbWarnOnTimeoutOnExtractionChecks.Size = new System.Drawing.Size(261, 19);
-            this.cbWarnOnTimeoutOnExtractionChecks.TabIndex = 0;
-            this.cbWarnOnTimeoutOnExtractionChecks.Text = "5 seconds timeout when checking Extraction";
-            this.cbWarnOnTimeoutOnExtractionChecks.UseVisualStyleBackColor = true;
-            this.cbWarnOnTimeoutOnExtractionChecks.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
+            this.clbWarnings.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.clbWarnings.FormattingEnabled = true;
+            this.clbWarnings.Location = new System.Drawing.Point(3, 19);
+            this.clbWarnings.Name = "clbWarnings";
+            this.clbWarnings.Size = new System.Drawing.Size(401, 363);
+            this.clbWarnings.TabIndex = 1;
             // 
             // UserSettingsFileUI
             // 
@@ -374,7 +372,6 @@
             this.Name = "UserSettingsFileUI";
             this.Text = "User Settings";
             this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -406,6 +403,6 @@
         private SimpleControls.HelpIcon hlpIdentifiableExtractions;
         private System.Windows.Forms.CheckBox cbShowPipelineCompletedPopup;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.CheckBox cbWarnOnTimeoutOnExtractionChecks;
+        private System.Windows.Forms.CheckedListBox clbWarnings;
     }
 }

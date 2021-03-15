@@ -22,6 +22,8 @@ namespace Rdmp.UI.SimpleDialogs
     {
         private bool _bLoaded;
 
+        const string WarnOnTimeoutOnExtractionChecks = "Extraction checks timeout";
+
         public UserSettingsFileUI(IActivateItems activator)
         {
             InitializeComponent();
@@ -40,7 +42,10 @@ namespace Rdmp.UI.SimpleDialogs
             cbDebugPerformance.Checked = UserSettings.DebugPerformance;
             cbAllowIdentifiableExtractions.Checked = UserSettings.AllowIdentifiableExtractions;
             cbShowPipelineCompletedPopup.Checked = UserSettings.ShowPipelineCompletedPopup;
-            cbWarnOnTimeoutOnExtractionChecks.Checked = UserSettings.WarnOnTimeoutOnExtractionChecks;
+
+            clbWarnings.Items.Add(WarnOnTimeoutOnExtractionChecks, UserSettings.WarnOnTimeoutOnExtractionChecks);
+
+            clbWarnings.ItemCheck += ClbWarnings_ItemCheck;
 
             ddTheme.DataSource = new []
             {
@@ -66,6 +71,16 @@ namespace Rdmp.UI.SimpleDialogs
                 cmd.Execute();
                 btnClearFavourites.Enabled = !cmd.IsImpossible;
             };
+        }
+
+        private void ClbWarnings_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            var item = clbWarnings.Items[e.Index];
+
+            if(Equals(item , WarnOnTimeoutOnExtractionChecks))
+            {
+                UserSettings.WarnOnTimeoutOnExtractionChecks = e.NewValue == CheckState.Checked;
+            }
         }
 
         private void cb_CheckedChanged(object sender, EventArgs e)
@@ -107,9 +122,6 @@ namespace Rdmp.UI.SimpleDialogs
             
             if(cb == cbShowPipelineCompletedPopup)
                 UserSettings.ShowPipelineCompletedPopup = cb.Checked;
-
-            if (cb == cbWarnOnTimeoutOnExtractionChecks)
-                UserSettings.WarnOnTimeoutOnExtractionChecks = cb.Checked;
         }
 
         private void ddTheme_SelectedIndexChanged(object sender, EventArgs e)
