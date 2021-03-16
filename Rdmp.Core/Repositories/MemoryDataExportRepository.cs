@@ -37,7 +37,9 @@ namespace Rdmp.Core.Repositories
         {
             var col = GetAllObjects<ExtractableColumn>().Where(ec => ec.IsExtractionIdentifier).ToArray();
 
-            return GetAllObjects<ISelectedDataSets>().Where(sds => col.All(c => c.ExtractableDataSet_ID != sds.ExtractableDataSet_ID)).ToArray();
+            return GetAllObjects<ISelectedDataSets>()
+                        .Where(sds => !col.Any(c => c.ExtractableDataSet_ID == sds.ExtractableDataSet_ID
+                                               && c.ExtractionConfiguration_ID == sds.ExtractionConfiguration_ID)).ToArray();
         }
 
 

@@ -107,7 +107,9 @@ select 1 FROM ExtractableColumn ec where
 ec.ExtractableDataSet_ID = sds.ExtractableDataSet_ID
 AND
 ec.IsExtractionIdentifier = 1
-)","ID").ToArray();
+AND
+ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
+)", "ID").ToArray();
         }
 
         private readonly Dictionary<Type, IRowVerCache> _caches = new Dictionary<Type, IRowVerCache>();
