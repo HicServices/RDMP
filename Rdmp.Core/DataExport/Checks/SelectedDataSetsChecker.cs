@@ -81,6 +81,8 @@ namespace Rdmp.Core.DataExport.Checks
                 return;
             }
 
+            CheckSynchWithCatalogue(notifier);
+
             var request = new ExtractDatasetCommand( config, cohort, new ExtractableDatasetBundle(ds),
                 selectedcols, new HICProjectSalt(project), new ExtractionDirectory(project.ExtractionDirectory, config)) { TopX = 1 };
 
@@ -196,6 +198,46 @@ namespace Rdmp.Core.DataExport.Checks
                 var engine = new ExtractionPipelineUseCase(_activator,request.Project, request, _alsoCheckPipeline, DataLoadInfo.Empty)
                                     .GetEngine(_alsoCheckPipeline, new FromCheckNotifierToDataLoadEventListener(notifier));
                 engine.Check(notifier);
+            }
+        }
+
+        private void CheckSynchWithCatalogue(ICheckNotifier notifier)
+        {
+            //get the catalogue and then all the items
+            var _dataSet = SelectedDataSet.ExtractableDataSet;
+            var _config = (ExtractionConfiguration)SelectedDataSet.ExtractionConfiguration;
+
+            ICatalogue cata;
+            try
+            {
+                cata = _dataSet.Catalogue;
+            }
+            catch (Exception e)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Unable to find Catalogue for ExtractableDataSet", CheckResult.Fail, e));
+                return;
+            }
+
+            HashSet<IColumn> allCatalogueColumns = new HashSet<IColumn>();
+
+            //add all the extractable columns from the current Catalogue
+            foreach (ExtractionInformation e in cata.GetAllExtractionInformation(ExtractionCategory.Core))
+                allCatalogueColumns.Add(e);
+
+            //plus all the Project Specific columns
+            foreach (ExtractionInformation e in _config.Project.GetAllProjectCatalogueColumns(ExtractionCategory.ProjectSpecific))
+                allCatalogueColumns.Add(e);
+
+            //add the already included ones on the right
+            var allExtractableColumns = _config.GetAllExtractableColumnsFor(_dataSet).Cast<IColumn>();
+
+            if (!allCatalogueColumns.All(cc => allExtractableColumns.Contains(cc, new ColumnEqualityComparer())))
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(SelectedDataSet + " Core Extractable Colums are different then what is set in the Catalogue", CheckResult.Warning));
+            }
+            if (allExtractableColumns.Any(ec => ((ExtractableColumn)ec).IsOutOfSync()))
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(SelectedDataSet + " Extractable Colums are out of sync with their Catalogue definition", CheckResult.Warning));
             }
         }
     }
