@@ -131,8 +131,9 @@ namespace Rdmp.Core.DataExport.Checks
                 notifier.OnCheckPerformed(new CheckEventArgs($"There are { grouping.Count() } columns in the extract ({request.DatasetBundle?.DataSet}) that share the same Order '{ grouping.Key }'",CheckResult.Fail));
 
             // Warn user if stuff is out of sync with the Catalogue version (changes have happened to the master but not propgated to the copy in this extraction)
-            foreach (var c in selectedcols.OfType<ExtractableColumn>().Where(c => c.IsOutOfSync()))
-                notifier.OnCheckPerformed(new CheckEventArgs($"Column {c} in dataset {ds} in config {config} is out of sync with CatalogueItem version", CheckResult.Warning));
+            var outOfSync = selectedcols.OfType<ExtractableColumn>().Where(c => c.IsOutOfSync()).ToArray();
+            if(outOfSync.Any())
+                notifier.OnCheckPerformed(new CheckEventArgs($"Column(s) in dataset '{ds}' in config '{config}' is out of sync with CatalogueItem version(s):{ Environment.NewLine + string.Join(',', outOfSync.Select(o => o.ToString() + Environment.NewLine))}", CheckResult.Warning));
 
             foreach (ExtractionInformation ei in cata.GetAllExtractionInformation(ExtractionCategory.Any))
                 if (ei.ExtractionCategory == ExtractionCategory.Core || ei.ExtractionCategory == ExtractionCategory.ProjectSpecific)
