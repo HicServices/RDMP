@@ -81,7 +81,16 @@ namespace Rdmp.Core.DataExport.Checks
                 return;
             }
 
-            CheckSynchWithCatalogue(notifier);
+            ICatalogue cata;
+            try
+            {
+                cata = ds.Catalogue;
+            }
+            catch (Exception e)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Unable to find Catalogue for ExtractableDataSet", CheckResult.Fail, e));
+                return;
+            }
 
             var request = new ExtractDatasetCommand( config, cohort, new ExtractableDatasetBundle(ds),
                 selectedcols, new HICProjectSalt(project), new ExtractionDirectory(project.ExtractionDirectory, config)) { TopX = 1 };
@@ -120,12 +129,32 @@ namespace Rdmp.Core.DataExport.Checks
             //when 2+ columns have the same Order it's a problem because
             foreach (IGrouping<int, IColumn> grouping in request.ColumnsToExtract.GroupBy(c=>c.Order).Where(g=>g.Count()>1))
                 notifier.OnCheckPerformed(new CheckEventArgs($"There are { grouping.Count() } columns in the extract ({request.DatasetBundle?.DataSet}) that share the same Order '{ grouping.Key }'",CheckResult.Fail));
-            
+
+            // Warn user if stuff is out of sync with the Catalogue version (changes have happened to the master but not propgated to the copy in this extraction)
+            foreach (var c in selectedcols.OfType<ExtractableColumn>().Where(c => c.IsOutOfSync()))
+                notifier.OnCheckPerformed(new CheckEventArgs($"Column {c} in dataset {ds} in config {config} is out of sync with CatalogueItem version", CheckResult.Warning));
+
+            foreach (ExtractionInformation ei in cata.GetAllExtractionInformation(ExtractionCategory.Any))
+                if (ei.ExtractionCategory == ExtractionCategory.Core || ei.ExtractionCategory == ExtractionCategory.ProjectSpecific)
+                {
+                    // if it is not selected for extraction, why?
+                    if(!selectedcols.OfType<ExtractableColumn>().Any(ec=>ec.CatalogueExtractionInformation_ID == ei.ID))
+                    {
+                        // these will be substituted for ReleaseIdentifierSubstitution
+                        if (ei.IsExtractionIdentifier)
+                            continue;
+
+                        notifier.OnCheckPerformed(new CheckEventArgs($"ExtractableColumn {ei} is {ei.ExtractionCategory} but not included in {ds} in {config}", CheckResult.Warning));
+                    }
+                }
+
             //Make sure cohort and dataset are on same server before checking (can still get around this at runtime by using ExecuteCrossServerDatasetExtractionSource)
-            if(!cohortServer.Server.Name.Equals(server.Name,StringComparison.CurrentCultureIgnoreCase) || !cohortServer.Server.DatabaseType.Equals(server.DatabaseType))
+            if (!cohortServer.Server.Name.Equals(server.Name,StringComparison.CurrentCultureIgnoreCase) || !cohortServer.Server.DatabaseType.Equals(server.DatabaseType))
+            {
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Cohort is on server '{cohortServer.Server.Name}' ({cohortServer.Server.DatabaseType}) but dataset '{request.DatasetBundle?.DataSet}' is on '{server.Name}' ({server.DatabaseType})"
                     , CheckResult.Warning));
+            }
             else
             {
                 //Try to fetch TOP 1 data
@@ -183,7 +212,6 @@ namespace Rdmp.Core.DataExport.Checks
                 }
             }
 
-            var cata = ds.Catalogue;
             var fetchOptions = _checkGlobals ? FetchOptions.ExtractableGlobalsAndLocals : FetchOptions.ExtractableLocals;
 
             foreach (var supportingDocument in cata.GetAllSupportingDocuments(fetchOptions))
@@ -198,46 +226,6 @@ namespace Rdmp.Core.DataExport.Checks
                 var engine = new ExtractionPipelineUseCase(_activator,request.Project, request, _alsoCheckPipeline, DataLoadInfo.Empty)
                                     .GetEngine(_alsoCheckPipeline, new FromCheckNotifierToDataLoadEventListener(notifier));
                 engine.Check(notifier);
-            }
-        }
-
-        private void CheckSynchWithCatalogue(ICheckNotifier notifier)
-        {
-            //get the catalogue and then all the items
-            var _dataSet = SelectedDataSet.ExtractableDataSet;
-            var _config = (ExtractionConfiguration)SelectedDataSet.ExtractionConfiguration;
-
-            ICatalogue cata;
-            try
-            {
-                cata = _dataSet.Catalogue;
-            }
-            catch (Exception e)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Unable to find Catalogue for ExtractableDataSet", CheckResult.Fail, e));
-                return;
-            }
-
-            HashSet<IColumn> allCatalogueColumns = new HashSet<IColumn>();
-
-            //add all the extractable columns from the current Catalogue
-            foreach (ExtractionInformation e in cata.GetAllExtractionInformation(ExtractionCategory.Core))
-                allCatalogueColumns.Add(e);
-
-            //plus all the Project Specific columns
-            foreach (ExtractionInformation e in _config.Project.GetAllProjectCatalogueColumns(ExtractionCategory.ProjectSpecific))
-                allCatalogueColumns.Add(e);
-
-            //add the already included ones on the right
-            var allExtractableColumns = _config.GetAllExtractableColumnsFor(_dataSet).Cast<IColumn>();
-
-            if (!allCatalogueColumns.All(cc => allExtractableColumns.Contains(cc, new ColumnEqualityComparer())))
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs(SelectedDataSet + " Core Extractable Colums are different then what is set in the Catalogue", CheckResult.Warning));
-            }
-            if (allExtractableColumns.Any(ec => ((ExtractableColumn)ec).IsOutOfSync()))
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs(SelectedDataSet + " Extractable Colums are out of sync with their Catalogue definition", CheckResult.Warning));
             }
         }
     }
