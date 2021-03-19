@@ -5,33 +5,22 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution;
-using System;
-using Terminal.Gui;
+using Rdmp.Core.CommandLine.Options;
+using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.CommandLine.Gui
+namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
 {
-    
-    internal class ExecuteCommandRunConsoleGuiView : BasicCommandExecution
+    class RunDataQualityEngineWindow : RunEngineWindow<DqeOptions>
     {
-        private readonly Func<Window> windowConstructor;
-
-        /// <summary>
-        /// Command for running a console gui UI.
-        /// </summary>
-        /// <param name="activator"></param>
-        /// <param name="windowConstructor">Called only when/if the command is executed</param>
-        public ExecuteCommandRunConsoleGuiView(IBasicActivateItems activator, Func<Window> windowConstructor):base(activator)
+        public RunDataQualityEngineWindow(IBasicActivateItems activator, Catalogue c)
+            : base(activator, () => GetCommand(c))
         {
-            this.windowConstructor = windowConstructor;
+
         }
 
-        public override void Execute()
+        private static DqeOptions GetCommand(Catalogue c)
         {
-            base.Execute();
-            
-            var window = windowConstructor();
-
-            Application.Run(window);
+            return new DqeOptions { Catalogue = c.ID };
         }
     }
 }

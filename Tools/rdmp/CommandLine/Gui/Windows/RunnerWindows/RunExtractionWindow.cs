@@ -8,32 +8,34 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.DataRelease.Pipeline;
+using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using System;
 using System.Linq;
-using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
 {
-    class RunReleaseWindow : RunEngineWindow<ReleaseOptions>
+    class RunExtractionWindow : RunEngineWindow<ExtractionOptions>
     {
-        private IExtractionConfiguration[] configs;
+        public RunExtractionWindow(IBasicActivateItems activator, ExtractionConfiguration ec) : base(activator, () => GetRunCommand(ec))
+        {
 
-        public RunReleaseWindow(IBasicActivateItems activator, IProject project):base(activator,()=>new ReleaseOptions())
-        {
-            configs = project.ExtractionConfigurations.Where(c => !c.IsReleased).ToArray();
-        }
-        public RunReleaseWindow(IBasicActivateItems activator, ExtractionConfiguration ec) : base(activator, () => new ReleaseOptions())
-        {
-            configs = new IExtractionConfiguration[] { ec };
         }
 
+        private static ExtractionOptions GetRunCommand(ExtractionConfiguration ec)
+        {
+            return new ExtractionOptions()
+            {
+                ExtractionConfiguration = ec.ID,
+                ExtractGlobals = true,
+            };
+        }
 
-        protected override void AdjustCommand(ReleaseOptions opts, CommandLineActivity activity)
+
+        protected override void AdjustCommand(ExtractionOptions opts, CommandLineActivity activity)
         {
             base.AdjustCommand(opts, activity);
 
-            var useCase = new ReleaseUseCase();
+            var useCase = ExtractionPipelineUseCase.DesignTime();
 
             var compatible = useCase.FilterCompatiblePipelines(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>()).ToArray();
 
@@ -42,7 +44,7 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
                 throw new Exception("No compatible pipelines");
             }
 
-            var pipe = BasicActivator.SelectOne("Release Pipeline", compatible, null, true);
+            var pipe = BasicActivator.SelectOne("Extraction Pipeline", compatible, null, true);
 
             if (pipe == null)
             {
@@ -50,11 +52,6 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
             }
 
             opts.Pipeline = pipe.ID;
-            opts.Configurations = configs.Select(c=>c.ID).ToArray();
-            opts.ReleaseGlobals = true;
-
-            // all datasets
-            opts.SelectedDataSets = null;
         }
     }
 }
