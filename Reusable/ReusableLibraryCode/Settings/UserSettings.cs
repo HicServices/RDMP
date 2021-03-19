@@ -219,6 +219,11 @@ namespace ReusableLibraryCode.Settings
             get { return AppSettings.GetValueOrDefault("ShowPipelineCompletedPopup", false); }
             set { AppSettings.AddOrUpdateValue("ShowPipelineCompletedPopup", value); } }
 
+        public static bool WarnOnTimeoutOnExtractionChecks {
+            get { return AppSettings.GetValueOrDefault("WarnOnTimeoutOnExtractionChecks", true); }
+            set { AppSettings.AddOrUpdateValue("WarnOnTimeoutOnExtractionChecks", value); }
+        }
+
         #endregion
 
         public static bool GetTutorialDone(Guid tutorialGuid)
