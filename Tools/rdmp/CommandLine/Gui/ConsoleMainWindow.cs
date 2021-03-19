@@ -9,6 +9,7 @@ using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Gui.Windows;
+using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -243,7 +244,29 @@ namespace Rdmp.Core.CommandLine.Gui
 				return new IAtomicCommand[0];
 
 			var factory = new AtomicCommandFactory(_activator);
-			return factory.CreateCommands(o);
+			return 
+				factory.CreateCommands(o).Union(GetExtraCommands(o));
+        }
+
+        private IEnumerable<IAtomicCommand> GetExtraCommands(object o)
+        {
+            if(o is LoadMetadata lmd)
+            {
+
+				var opts = new DleOptions()
+				{
+					LoadMetadata = lmd.ID,
+					Iterative = false,
+				};
+
+				//	if (lp != null)
+				//	options.LoadProgress = lp.ID;
+				//
+				//DaysToLoad = Convert.ToInt32(udDaysPerJob.Value),
+
+				yield return new ExecuteCommandRunConsoleGuiView(_activator, 
+					() => new RunRunEngineWindow(_activator, () => opts)){ OverrideCommandName = "Run Load" };
+			}
         }
 
         private void treeView_KeyPress(View.KeyEventEventArgs obj)
