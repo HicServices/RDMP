@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
@@ -37,6 +38,7 @@ namespace Rdmp.UI.AutoComplete
         public void RegisterForEvents(Scintilla queryEditor)
         {
             queryEditor.CharAdded += scintilla_CharAdded;
+            queryEditor.AutoCIgnoreCase = true;
         }
 
 
@@ -48,14 +50,24 @@ namespace Rdmp.UI.AutoComplete
             var currentPos = scintilla.CurrentPosition;
             var wordStartPos = scintilla.WordStartPosition(currentPos, false);
 
+            var list = items.SelectMany(GetBits).OrderBy(a => a).Where(s=>!string.IsNullOrWhiteSpace(s)).Distinct().ToList();
+
             // Display the autocompletion list
             var lenEntered = currentPos - wordStartPos;
             if (lenEntered > 0)
             {
-                if (!scintilla.AutoCActive)
-                    scintilla.AutoCShow(lenEntered, string.Join(' ',items.ToArray()));
+                    scintilla.AutoCShow(lenEntered, string.Join(' ', list));                    
             }
         }
+
+        private IEnumerable<string> GetBits(string arg)
+        {
+       //     yield return arg;
+
+            foreach (Match m in Regex.Matches(arg, @"\b\w*\b"))
+                yield return m.Value;
+        }
+
         public void Add(ITableInfo tableInfo)
         {
             Add(tableInfo,LoadStage.PostLoad);
