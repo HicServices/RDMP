@@ -42,7 +42,7 @@ namespace Rdmp.Core.CommandLine.Gui
             var dlg = new ConsoleGuiTextDialog(prompt,initialValue?.ToString());
             if (dlg.ShowDialog())
             {
-                chosen = dlg.ResultText;
+                chosen = Convert.ChangeType(dlg.ResultText,paramType);
                 return true;
             }
             

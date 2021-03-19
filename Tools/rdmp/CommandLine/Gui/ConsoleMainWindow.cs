@@ -259,11 +259,6 @@ namespace Rdmp.Core.CommandLine.Gui
 					Iterative = false,
 				};
 
-				//	if (lp != null)
-				//	options.LoadProgress = lp.ID;
-				//
-				//DaysToLoad = Convert.ToInt32(udDaysPerJob.Value),
-
 				yield return new ExecuteCommandRunConsoleGuiView(_activator, 
 					() => new RunRunEngineWindow(_activator, () => opts)){ OverrideCommandName = "Run Load" };
 			}

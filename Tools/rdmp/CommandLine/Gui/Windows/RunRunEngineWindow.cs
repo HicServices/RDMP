@@ -1,6 +1,7 @@
 ﻿using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands.Automation;
 using Rdmp.Core.CommandLine.Options;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Startup;
 using System;
@@ -90,11 +91,36 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
             {
                 var opts = commandGetter();
                 opts.Command = CommandLineActivity.run;
+
+                AdjustCommand(opts);
+
                 Run(() => opts);
             }
             catch (Exception ex)
             {
                 activator.ShowException("Error Starting Execute", ex);
+            }
+        }
+
+        private void AdjustCommand(RDMPCommandLineOptions opts)
+        {
+            if(opts is DleOptions dleOpts)
+            {
+                var lmd = activator.RepositoryLocator.CatalogueRepository.GetObjectByID<LoadMetadata>(dleOpts.LoadMetadata);
+                
+                if(lmd.LoadProgresses.Any())
+                {
+                    var lp = (LoadProgress)activator.SelectOne("Load Progres", lmd.LoadProgresses, null, true);
+                    if (lp == null)
+                        return;
+
+                    dleOpts.LoadProgress = lp.ID;
+
+                    if (activator.SelectValueType("Days to Load", typeof(int), lp.DefaultNumberOfDaysToLoadEachTime, out object chosen))
+                        dleOpts.DaysToLoad = (int)chosen;
+                    else
+                        return;
+                }
             }
         }
 
