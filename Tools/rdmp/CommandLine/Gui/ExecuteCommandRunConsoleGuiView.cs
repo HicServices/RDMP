@@ -11,6 +11,7 @@ using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui
 {
+    /*
     internal class ExecuteCommandRunConsoleGuiView : BasicCommandExecution
     {
         private readonly Func<Window> windowConstructor;
@@ -36,5 +37,5 @@ namespace Rdmp.Core.CommandLine.Gui
 
         }
 
-    }
+    }*/
 }

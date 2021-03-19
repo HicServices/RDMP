@@ -17,7 +17,7 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="o"></param>
         /// <param name="match"></param>
         /// <returns></returns>
-        protected bool Is<T>(object o, out T match)
+        public static bool Is<T>(object o, out T match)
         {
             if(o is T)
             {

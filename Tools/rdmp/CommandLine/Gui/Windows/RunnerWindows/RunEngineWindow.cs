@@ -1,47 +1,49 @@
-﻿using Rdmp.Core.CommandExecution;
+﻿// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands.Automation;
 using Rdmp.Core.CommandLine.Options;
-using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Startup;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Terminal.Gui;
 
-namespace Rdmp.Core.CommandLine.Gui.Windows
+namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
 {
-    class RunRunEngineWindow : Window
+
+    class RunEngineWindow<T> : Window where T : RDMPCommandLineOptions
     {
         private Process process;
         private TextView textView;
-        private readonly IBasicActivateItems activator;
-        private readonly Func<RDMPCommandLineOptions> commandGetter;
+        protected readonly IBasicActivateItems BasicActivator;
+        private readonly Func<T> commandGetter;
         private object timer;
 
-        public RunRunEngineWindow(IBasicActivateItems activator, Func<RDMPCommandLineOptions> commandGetter)
+        public RunEngineWindow(IBasicActivateItems activator, Func<T> commandGetter)
         {
             Modal = true;
 
             var check = new Button("Check") { X = 0 };
             check.Clicked += () => Check();
-            this.Add(check);
+            Add(check);
 
             var execute = new Button("Execute") { X = Pos.Right(check) };
             execute.Clicked += () => Execute();
-            this.Add(execute);
+            Add(execute);
 
             var clear = new Button("Clear Output") { X = Pos.Right(execute) };
             clear.Clicked += () => ClearOutput();
-            this.Add(clear);
+            Add(clear);
 
             var abort = new Button("Abort") { X = Pos.Right(clear) };
             abort.Clicked += () => Abort();
-            this.Add(abort);
+            Add(abort);
 
             var close = new Button("Close") { X = Pos.Right(abort) };
             close.Clicked += () =>
@@ -49,13 +51,13 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
                 Application.MainLoop.RemoveTimeout(timer);
                 Application.RequestStop();
             };
-                        
-            this.Add(close);
+
+            Add(close);
 
             textView = new TextView() { ReadOnly = true, Y = 1, Width = Dim.Fill(), Height = Dim.Fill() };
-            this.Add(textView);
+            Add(textView);
 
-            this.activator = activator;
+            BasicActivator = activator;
             this.commandGetter = commandGetter;
 
             timer = Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds(300), Tick);
@@ -81,7 +83,7 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
             }
             catch (Exception ex)
             {
-                activator.ShowException("Error Aborting Process", ex);
+                BasicActivator.ShowException("Error Aborting Process", ex);
             }
         }
 
@@ -92,36 +94,23 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
                 var opts = commandGetter();
                 opts.Command = CommandLineActivity.run;
 
-                AdjustCommand(opts);
+                AdjustCommand(opts, opts.Command);
 
                 Run(() => opts);
             }
             catch (Exception ex)
             {
-                activator.ShowException("Error Starting Execute", ex);
+                BasicActivator.ShowException("Error Starting Execute", ex);
             }
         }
 
-        private void AdjustCommand(RDMPCommandLineOptions opts)
+        /// <summary>
+        /// Override in subclasses to get last minute choices e.g. what pipeline to use for an extraction
+        /// </summary>
+        /// <param name="opts"></param>
+        protected virtual void AdjustCommand(T opts, CommandLineActivity activity)
         {
-            if(opts is DleOptions dleOpts)
-            {
-                var lmd = activator.RepositoryLocator.CatalogueRepository.GetObjectByID<LoadMetadata>(dleOpts.LoadMetadata);
-                
-                if(lmd.LoadProgresses.Any())
-                {
-                    var lp = (LoadProgress)activator.SelectOne("Load Progres", lmd.LoadProgresses, null, true);
-                    if (lp == null)
-                        return;
 
-                    dleOpts.LoadProgress = lp.ID;
-
-                    if (activator.SelectValueType("Days to Load", typeof(int), lp.DefaultNumberOfDaysToLoadEachTime, out object chosen))
-                        dleOpts.DaysToLoad = (int)chosen;
-                    else
-                        return;
-                }
-            }
         }
 
         private void Check()
@@ -130,15 +119,18 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
             {
                 var opts = commandGetter();
                 opts.Command = CommandLineActivity.check;
+
+                AdjustCommand(opts, opts.Command);
+
                 Run(() => opts);
             }
             catch (Exception ex)
             {
-                activator.ShowException("Error Starting Checks", ex);
+                BasicActivator.ShowException("Error Starting Checks", ex);
             }
         }
 
-        private void Run(Func<RDMPCommandLineOptions> commandGetter)
+        private void Run(Func<T> commandGetter)
         {
             ClearOutput();
 
@@ -149,7 +141,7 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
                 MessageBox.ErrorQuery("Could not find rdmp binary", $"Could not find {binary}", "Ok");
                 return;
             }
-            var cmd = new ExecuteCommandGenerateRunCommand(activator, commandGetter);
+            var cmd = new ExecuteCommandGenerateRunCommand(BasicActivator, commandGetter);
             var args = cmd.GetCommandText(true);
 
             process = new Process
@@ -171,7 +163,7 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
                 while (!process.StandardOutput.EndOfStream)
                 {
                     var line = process.StandardOutput.ReadLine().Trim();
-                    textView.Text = line + "\n" + textView.Text?.Replace("\r\n","\n");
+                    textView.Text = line + "\n" + textView.Text?.Replace("\r\n", "\n");
                 }
             });
         }
