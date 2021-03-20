@@ -32,13 +32,21 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation
                 SetImpossible("Current repositories are not TableRepository");
         }
 
-        protected string GetCommandText()
+        /// <summary>
+        /// Generates command line arguments for the current engine
+        /// </summary>
+        /// <param name="argsOnly"></param>
+        /// <returns></returns>
+        public string GetCommandText(bool argsOnly = false)
         {
             using(Parser p = new Parser())
             {
                 var options = CommandGetter();
 
                 PopulateConnectionStringOptions(options);
+
+                if (argsOnly)
+                    return p.FormatCommandLine(options);
 
                 return AutomationServiceExecutable + " " + p.FormatCommandLine(options);
             }

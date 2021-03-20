@@ -5,21 +5,19 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandCreateNewLoadProgress : BasicUICommandExecution,IAtomicCommand
+    internal class ExecuteCommandCreateNewLoadProgress : BasicCommandExecution, IAtomicCommand
     {
         private readonly LoadMetadata _loadMetadata;
 
-        public ExecuteCommandCreateNewLoadProgress(IActivateItems activator, LoadMetadata loadMetadata) : base(activator)
+        public ExecuteCommandCreateNewLoadProgress(IBasicActivateItems activator, LoadMetadata loadMetadata) : base(activator)
         {
             _loadMetadata = loadMetadata;
         }
@@ -33,7 +31,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var lp = new LoadProgress((ICatalogueRepository) _loadMetadata.Repository, _loadMetadata);
+            var lp = new LoadProgress((ICatalogueRepository)_loadMetadata.Repository, _loadMetadata);
             Publish(_loadMetadata);
             Emphasise(lp);
         }

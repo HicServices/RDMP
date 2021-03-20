@@ -233,7 +233,13 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandImportShareDefinitionList(_activator){OverrideCommandName = "Import Load"});
             }
 
-            if(Is(o,out LoadStageNode lsn))
+
+            if (Is(o, out LoadMetadataScheduleNode scheduleNode))
+            {
+                yield return new CommandPresentation(new ExecuteCommandCreateNewLoadProgress(_activator, scheduleNode.LoadMetadata));
+            }
+
+            if (Is(o,out LoadStageNode lsn))
             {
                 yield return new CommandPresentation(new ExecuteCommandCreateNewClassBasedProcessTask(_activator,lsn.LoadMetadata,lsn.LoadStage,null));
                 yield return new CommandPresentation(new ExecuteCommandCreateNewFileBasedProcessTask(_activator,ProcessTaskType.SQLFile,lsn.LoadMetadata,lsn.LoadStage));
