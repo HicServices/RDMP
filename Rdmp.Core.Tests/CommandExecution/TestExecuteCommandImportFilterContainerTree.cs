@@ -8,12 +8,14 @@ using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using ReusableLibraryCode.Checks;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Tests.Common;
 
@@ -97,6 +99,55 @@ namespace Rdmp.Core.Tests.CommandExecution
 
             Assert.AreNotEqual(filterToImport.GetType(),ac.RootFilterContainer.GetFilters()[0].GetType());
             
+
+        }
+
+        
+        [Test]
+        public void TestImportTree_FromCohortIdentificationConfiguration_ToSelectedDatasets_PreserveOperation()
+        {
+            var sds = WhenIHaveA<SelectedDataSets>();
+
+            var cata = sds.ExtractableDataSet.Catalogue;
+
+            var cic = new CohortIdentificationConfiguration(Repository,"my cic");
+            cic.CreateRootContainerIfNotExists();
+
+            var ac = new AggregateConfiguration(Repository,cata,"myagg");
+            ac.CreateRootContainerIfNotExists();
+            cic.RootCohortAggregateContainer.AddChild(ac,1);
+
+            var filterToImport = new AggregateFilter(Repository,"MyFilter"){WhereSQL = "true" };
+            var root = ac.RootFilterContainer;
+            root.AddChild(filterToImport);
+            root.Operation = FilterContainerOperation.OR;
+            root.SaveToDatabase();
+
+            // add 2 subcontainers, these should also get cloned and should preserve the Operation correctly
+            root.AddChild(new AggregateFilterContainer(Repository, FilterContainerOperation.AND));
+            root.AddChild(new AggregateFilterContainer(Repository, FilterContainerOperation.OR));
+
+            //there should be no root container
+            Assert.IsNull(sds.RootFilterContainer);
+            
+            //run the command
+            var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
+            mgr.DisallowInput = true;
+            var cmd = new ExecuteCommandImportFilterContainerTree(mgr,sds,ac);
+            
+            Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
+            cmd.Execute();
+            
+            sds.ClearAllInjections();
+            Assert.AreEqual(FilterContainerOperation.OR, sds.RootFilterContainer.Operation);
+            Assert.IsNotNull(sds.RootFilterContainer);
+            Assert.AreEqual(1,sds.RootFilterContainer.GetFilters().Length);
+
+            var subContainers = sds.RootFilterContainer.GetSubContainers();
+            Assert.AreEqual(2, subContainers.Length);
+            Assert.AreEqual(1, subContainers.Count(e=>e.Operation == FilterContainerOperation.AND));
+            Assert.AreEqual(1, subContainers.Count(e => e.Operation == FilterContainerOperation.OR));
+
 
         }
 
