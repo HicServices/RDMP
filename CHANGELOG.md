@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Exposed 'View Logs' commands on CLI and CLI gui
 - Added minimum timeout of 5 seconds for `CohortIdentificationConfigurationSource`
 - 'View Logs' tree view now accessible for CacheProgress objects
+- Console GUI now shows important information (e.g. 'Disabled') in brackets next to items where state is highly important
 
 ### Fixed
 

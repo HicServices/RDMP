@@ -17,6 +17,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
+using Rdmp.Core.Providers.Nodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -100,6 +101,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
             _treeView.KeyPress += treeView_KeyPress;
             _treeView.SelectionChanged += _treeView_SelectionChanged;
+			_treeView.AspectGetter = AspectGetter;
 
 			var statusBar = new StatusBar (new StatusItem [] {
 				new StatusItem(Key.ControlQ, "~^Q~ Quit", () => Quit()),
@@ -110,6 +112,41 @@ namespace Rdmp.Core.CommandLine.Gui
 			});
 
 			top.Add (statusBar);
+        }
+
+        private string AspectGetter(object model)
+		{
+			if (model is IContainer container)
+            {
+				return $"{container} ({container.Operation})"; 
+			}
+
+			if (model is CohortAggregateContainer setContainer)
+			{
+				return $"{setContainer} ({setContainer.Operation})";
+			}
+
+			if (model is ExtractionInformation ei)
+			{
+				return $"{ei} ({ei.ExtractionCategory})";
+			}
+
+			if ( model is CatalogueItemsNode cin)
+            {
+				return $"{cin} ({cin.CatalogueItems.Length})";
+            }
+
+			if (model is TableInfoServerNode server)
+			{
+				return $"{server.ServerName} ({server.DatabaseType})";
+			}
+
+			if (model is IDisableable d)
+            {
+				return d.IsDisabled ? d.ToString() + " (Disabled)" : d.ToString();
+            }
+
+			return model?.ToString() ?? "Null Object";
         }
 
         private void Publish()
