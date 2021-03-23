@@ -51,6 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump Moq from 4.16.0 to 4.16.1
 - Bump Microsoft.NET.Test.Sdk from 16.8.3 to 16.9.1
 - Bump NLog from 4.7.7 to 4.7.8
+- Bump Newtonsoft.Json from 12.0.3 to 13.0.1
 
 ## [4.2.4] - 2021-02-05
 
