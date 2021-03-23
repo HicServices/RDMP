@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Exposed 'View Logs' commands on CLI and CLI gui
 - Added minimum timeout of 5 seconds for `CohortIdentificationConfigurationSource`
 - 'View Logs' tree view now accessible for CacheProgress objects
+- Console GUI now shows important information (e.g. 'Disabled') in brackets next to items where state is highly important
 
 ### Fixed
 
@@ -38,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Custom Metadata template stripping preceeding whitespace in templated lines e.g. `"  - $Name"` (like you might find in a table of contents section of a template)
 - Fixed 'Set Global Dle Ignore Pattern' failing the first time it is used by creating a StandardRegex with no/null Pattern
 - Fixed order of branches in CLI gui tree
+- Fixed importing filter containers not saving Operation (AND/OR)
 
 ### Changed
 
@@ -50,6 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump Microsoft.NET.Test.Sdk from 16.8.3 to 16.9.1
 - Bump NLog from 4.7.7 to 4.7.8
 - Bump SecurityCodeScan.VS2019 from 5.0.0 to 5.1.0
+- Bump Newtonsoft.Json from 12.0.3 to 13.0.1
 
 ## [4.2.4] - 2021-02-05
 
