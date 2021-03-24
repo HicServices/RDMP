@@ -95,7 +95,19 @@ namespace Rdmp.UI.ScintillaHelper
                     }
 
                     var hunspell = new Hunspell(aff,dic);
-                    toReturn.TextChanged += (s,e)=>scintilla_TextChanged(s,e,hunspell);
+
+                    DateTime lastCheckedSpelling = DateTime.MinValue;
+
+                    toReturn.KeyPress += (s, e) =>
+                    {
+                        if (DateTime.Now.Subtract(lastCheckedSpelling) > TimeSpan.FromSeconds(10))
+                        {
+                            lastCheckedSpelling = DateTime.Now;
+                            CheckSpelling((Scintilla)s, hunspell);
+                        }
+                    };
+
+                    toReturn.Leave += (s,e)=> CheckSpelling((Scintilla)s,hunspell);
                     toReturn.Disposed += (s, e) => scintilla_Disposed(s, e, hunspell);
                     scintillaMenu.Hunspell = hunspell;
                 }
@@ -117,22 +129,21 @@ namespace Rdmp.UI.ScintillaHelper
             hunspell.Dispose();
         }
 
-        private void scintilla_TextChanged(object sender, EventArgs e, Hunspell hunspell)
+        public static void CheckSpelling(Scintilla scintilla, Hunspell hunspell)
         {
-            var _scintilla = (Scintilla)sender;
-
-            if (string.IsNullOrWhiteSpace(_scintilla.Text))
+            if (string.IsNullOrWhiteSpace(scintilla.Text))
                 return;
 
-                _scintilla.Indicators[8].Style = IndicatorStyle.Squiggle;
-                _scintilla.Indicators[8].ForeColor = Color.Red;
-                _scintilla.IndicatorCurrent = 8;
-                _scintilla.IndicatorClearRange(0, _scintilla.TextLength);
+            scintilla.Indicators[8].Style = IndicatorStyle.Squiggle;
+            scintilla.Indicators[8].ForeColor = Color.Red;
+            scintilla.IndicatorCurrent = 8;
+            scintilla.IndicatorClearRange(0, scintilla.TextLength);
 
-                foreach (Match m in Regex.Matches(_scintilla.Text, @"\b\w*\b"))
-                    if (!hunspell.Spell(m.Value))
-                        _scintilla.IndicatorFillRange(m.Index, m.Length);
-            
+            foreach (Match m in Regex.Matches(scintilla.Text, @"\b\w*\b"))
+                if (!hunspell.Spell(m.Value))
+                {
+                    scintilla.IndicatorFillRange(m.Index, m.Length);
+                }            
         }
 
         private void OnDragEnter(object sender, DragEventArgs dragEventArgs, ICombineableFactory commandFactory)

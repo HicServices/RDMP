@@ -25,6 +25,7 @@ namespace Rdmp.UI.ScintillaHelper
         private ToolStripMenuItem _miDelete;
         private ToolStripMenuItem _miSelectAll;
         private ToolStripMenuItem _miWordwrap;
+        private ToolStripMenuItem _miCheckSpelling;
         private ToolStripMenuItem _miSpelling;
 
         /// <summary>
@@ -47,6 +48,12 @@ namespace Rdmp.UI.ScintillaHelper
 
             Items.Add(this._miRedo);
             
+            _miCheckSpelling = new ToolStripMenuItem("Check Spelling",null,
+                (s,ea)=>ScintillaTextEditorFactory.CheckSpelling(_scintilla,Hunspell)) {
+                ShortcutKeys = Keys.F7 };
+            
+            Items.Add(_miCheckSpelling);
+
             Items.Add(new ToolStripSeparator());
 
             _miWordwrap = new ToolStripMenuItem("Word Wrap");
