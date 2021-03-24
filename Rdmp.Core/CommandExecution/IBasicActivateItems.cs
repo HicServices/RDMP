@@ -61,6 +61,12 @@ namespace Rdmp.Core.CommandExecution
         bool InteractiveDeletes {get;set;}
 
         /// <summary>
+        /// Finds the nearest database object to <paramref name="publish"/> in it's hierarchy and issues a publish
+        /// </summary>
+        /// <param name="publish"></param>
+        void PublishNearest(object publish);
+
+        /// <summary>
         /// Event triggered when objects should be brought to the users attention
         /// </summary>
         event EmphasiseItemHandler Emphasise;

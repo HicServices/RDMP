@@ -165,23 +165,45 @@ namespace Rdmp.Core.CommandExecution
         public abstract void ShowException(string errorText, Exception exception);
 
         /// <inheritdoc/>
+        public void PublishNearest(object publish)
+        {
+            if (publish != null)
+            {
+                if (publish is DatabaseEntity d)
+                    Publish(d);
+                else
+                {
+                    var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(publish);
+
+                    if (descendancy != null)
+                    {
+                        var parent = descendancy.Parents.OfType<DatabaseEntity>().LastOrDefault();
+
+                        if (parent != null)
+                            Publish(parent);
+                    }
+                }
+            }
+        }
+
+        /// <inheritdoc/>
         public virtual bool DeleteWithConfirmation(IDeleteable deleteable)
         {
             if (IsInteractive && InteractiveDeletes)
             {
                 bool didDelete = InteractiveDelete(deleteable);
-                
-                if(didDelete && deleteable is IMapsDirectlyToDatabaseTable o)
-                    Publish(o);
+
+                if (didDelete)
+                {
+                    PublishNearest(deleteable);
+                }   
 
                 return didDelete;
             }
             else
             {
                 deleteable.DeleteInDatabase();
-
-                if(deleteable is DatabaseEntity d)
-                    Publish(d);
+                PublishNearest(deleteable);
 
                 return true;
             }

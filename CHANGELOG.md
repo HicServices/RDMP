@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - .Net 5.0 for all, instead of Framework 4.6.1+Core 2.2+Standard 2.0 mix
 - Query editor autocomplete now uses integrated autocomplete (no icons, better matching)
+- Throttled how often spelling is checked in Scintilla controls.
 
 ### Added
 
@@ -41,6 +42,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed order of branches in CLI gui tree
 - Fixed importing filter containers not saving Operation (AND/OR)
 - Fixed right click menu not showing when right clicking after selecting multiple objects
+- Fixed some delete commands not updating the UI until refreshed (e.g. disassociating a [Catalogue] from a [LoadMetadata])
+- Fixed text on disassociating a [Catalogue] from a [LoadMetadata]
 
 ### Changed
 
