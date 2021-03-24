@@ -34,20 +34,21 @@ namespace Rdmp.UI.ScintillaHelper
         /// </summary>
         public Hunspell Hunspell { get; set; }
 
-        public ScintillaMenu(Scintilla scintilla): base()
+        public ScintillaMenu(Scintilla scintilla, bool spellCheck) : base()
         {
             _scintilla = scintilla;
-            InitContextMenu();
+            InitContextMenu(spellCheck);
         }
 
-        private void InitContextMenu()
+        private void InitContextMenu(bool spellCheck)
         {
             this._miUndo = new ToolStripMenuItem("Undo",null, (s, ea) => _scintilla.Undo());
             Items.Add(this._miUndo);
             this._miRedo = new ToolStripMenuItem("Redo", null, (s, ea) => _scintilla.Redo());
 
             Items.Add(this._miRedo);
-            if(Hunspell != null)
+
+            if (spellCheck)
             {
                 _miCheckSpelling = new ToolStripMenuItem("Check Spelling", null,
                 (s, ea) => ScintillaTextEditorFactory.CheckSpelling(_scintilla, Hunspell))
@@ -56,8 +57,7 @@ namespace Rdmp.UI.ScintillaHelper
                 };
 
                 Items.Add(_miCheckSpelling);
-            }
-            
+            }         
 
             Items.Add(new ToolStripSeparator());
 

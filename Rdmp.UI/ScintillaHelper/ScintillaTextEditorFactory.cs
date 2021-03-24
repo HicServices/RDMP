@@ -73,7 +73,7 @@ namespace Rdmp.UI.ScintillaHelper
             }
 
             toReturn.WrapMode = (WrapMode)UserSettings.WrapMode;
-            var scintillaMenu = new ScintillaMenu(toReturn);
+            var scintillaMenu = new ScintillaMenu(toReturn, spellCheck);
             toReturn.ContextMenuStrip = scintillaMenu;
 
             try
