@@ -358,9 +358,10 @@ namespace Rdmp.UI.Collections
             if(Tree.SelectedObjects.Count <= 1)
             {
                 Tree.SelectedObject = e.Model;
-                RefreshContextMenuStrip();
-                _menu?.Show(Tree.PointToScreen(e.Location));
             }
+
+            RefreshContextMenuStrip();
+            _menu?.Show(Tree.PointToScreen(e.Location));
         }
 
         public void CommonKeyPress(object sender , KeyEventArgs e)

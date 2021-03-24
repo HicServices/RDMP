@@ -40,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed 'Set Global Dle Ignore Pattern' failing the first time it is used by creating a StandardRegex with no/null Pattern
 - Fixed order of branches in CLI gui tree
 - Fixed importing filter containers not saving Operation (AND/OR)
+- Fixed right click menu not showing when right clicking after selecting multiple objects
 
 ### Changed
 
