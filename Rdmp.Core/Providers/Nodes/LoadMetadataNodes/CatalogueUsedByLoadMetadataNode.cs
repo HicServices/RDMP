@@ -27,7 +27,7 @@ namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes
 
         public string GetDeleteMessage()
         {
-            return "disassociate Catalogue '" + User +"' from it's Load logic";
+            return "disassociate Catalogue '" + ObjectBeingUsed +"' from it's Load logic";
         }
     }
 }

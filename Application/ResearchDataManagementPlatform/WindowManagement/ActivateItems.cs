@@ -224,18 +224,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             
             return content;
         }
-
-
-        public override bool DeleteWithConfirmation(IDeleteable deleteable)
-        {
-            var didDelete = InteractiveDelete(deleteable);
                 
-            if(didDelete && deleteable is DatabaseEntity de)
-                RefreshBus.Publish(this, new RefreshObjectEventArgs(de){DeletedObjectDescendancy = CoreChildProvider.GetDescendancyListIfAnyFor(de)});
-
-            return didDelete;
-        }
-        
         public override void RequestItemEmphasis(object sender, EmphasiseRequest request)
         {
             //ensure a relevant Toolbox is available
