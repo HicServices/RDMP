@@ -47,12 +47,17 @@ namespace Rdmp.UI.ScintillaHelper
             this._miRedo = new ToolStripMenuItem("Redo", null, (s, ea) => _scintilla.Redo());
 
             Items.Add(this._miRedo);
+            if(Hunspell != null)
+            {
+                _miCheckSpelling = new ToolStripMenuItem("Check Spelling", null,
+                (s, ea) => ScintillaTextEditorFactory.CheckSpelling(_scintilla, Hunspell))
+                {
+                    ShortcutKeys = Keys.F7
+                };
+
+                Items.Add(_miCheckSpelling);
+            }
             
-            _miCheckSpelling = new ToolStripMenuItem("Check Spelling",null,
-                (s,ea)=>ScintillaTextEditorFactory.CheckSpelling(_scintilla,Hunspell)) {
-                ShortcutKeys = Keys.F7 };
-            
-            Items.Add(_miCheckSpelling);
 
             Items.Add(new ToolStripSeparator());
 
