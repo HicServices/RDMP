@@ -44,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed right click menu not showing when right clicking after selecting multiple objects
 - Fixed some delete commands not updating the UI until refreshed (e.g. disassociating a [Catalogue] from a [LoadMetadata])
 - Fixed text on disassociating a [Catalogue] from a [LoadMetadata]
+- Fixed sort order not being respected in cohort summary screen
 
 ### Changed
 

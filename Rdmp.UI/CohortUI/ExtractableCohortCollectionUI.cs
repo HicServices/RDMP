@@ -48,8 +48,15 @@ namespace Rdmp.UI.CohortUI
             lbCohortDatabaseTable.ButtonClick += lbCohortDatabaseTable_ButtonClick;
             lbCohortDatabaseTable.RowHeight = 19;
 
+            lbCohortDatabaseTable.BeforeSorting += BeforeSorting;
         }
 
+        private void BeforeSorting(object sender, BeforeSortingEventArgs e)
+        {
+            this.lbCohortDatabaseTable.ListViewItemSorter = new ColumnComparer(
+                        e.ColumnToSort,e.SortOrder , e.SecondaryColumnToSort, e.SecondarySortOrder);
+            e.Handled = true;
+        }
 
         void lbCohortDatabaseTable_ButtonClick(object sender, CellClickEventArgs e)
         {
