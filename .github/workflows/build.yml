@@ -30,10 +30,10 @@ jobs:
           args: install sql-server-2019
       - name: Build
         run: |
-          dotnet clean --configuration Release
+          dotnet clean --configuration Release --nologo --verbosity quiet
           dotnet nuget locals all --clear
-          dotnet nuget restore
-          dotnet build --configuration Release
+          dotnet restore
+          dotnet build --configuration Release --nologo --verbosity quiet
       - name: Initialise RDMP
         run: dotnet Tools/rdmp/bin/Release/net5.0/rdmp.dll install localhost TEST_
       - name: Test Reusable code
@@ -42,8 +42,8 @@ jobs:
         run: dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --no-restore --verbosity normal
       - name: Package
         run: |
-          dotnet publish -r win-x64 -c Release -o PublishWindows
-          dotnet publish -r linux-x64 -c Release -o PublishLinux
+          dotnet publish Rdmp.UI/Rdmp.UI.csproj -r win-x64 -c Release -o PublishWindows --verbosity quiet --nologo
+          dotnet publish Tools/rdmp/rdmp.csproj -r linux-x64 -c Release -o PublishLinux --verbosity quiet --nologo
           
       - name: Get the version
         id: get_version
