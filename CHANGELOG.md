@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed some delete commands not updating the UI until refreshed (e.g. disassociating a [Catalogue] from a [LoadMetadata])
 - Fixed text on disassociating a [Catalogue] from a [LoadMetadata]
 - Fixed sort order not being respected in cohort summary screen
+- Fixed DQE graph when data has dates before the year 1,000
 
 ### Changed
 
