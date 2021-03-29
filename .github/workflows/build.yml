@@ -43,7 +43,7 @@ jobs:
       - name: Package
         run: |
           dotnet publish -r win-x64 -c Release -o PublishWindows
-          dotnet publish -r linux-x64 -c Release -o PublishLinux --self-contained false
+          dotnet publish -r linux-x64 -c Release -o PublishLinux
           
       - name: Get the version
         id: get_version
