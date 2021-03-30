@@ -287,9 +287,15 @@ namespace Rdmp.Core.CommandLine.Gui
 					new ExecuteCommandCreateNewCatalogueByImportingFile(_activator),
 					new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator),
 				};
-            }
+			}
+			if (ReferenceEquals(o, Loads))
+			{
+				return new IAtomicCommand[] {
+					new ExecuteCommandCreateNewLoadMetadata(_activator),
+				};
+			}
 
-            if(o == null)
+			if (o == null)
 				return new IAtomicCommand[0];
 
 			var factory = new AtomicCommandFactory(_activator);

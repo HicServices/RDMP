@@ -239,6 +239,11 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandCreateNewLoadProgress(_activator, scheduleNode.LoadMetadata));
             }
 
+            if(Is(o, out LoadProgress loadProgress))
+            {
+                yield return new CommandPresentation(new ExecuteCommandCreateNewCacheProgress(_activator, loadProgress));
+            }
+
             if (Is(o,out LoadStageNode lsn))
             {
                 yield return new CommandPresentation(new ExecuteCommandCreateNewClassBasedProcessTask(_activator,lsn.LoadMetadata,lsn.LoadStage,null));
