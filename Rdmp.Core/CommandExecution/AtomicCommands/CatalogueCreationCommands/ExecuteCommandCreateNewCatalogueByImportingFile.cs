@@ -107,18 +107,17 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
 
             if(db == null)
                 return;
+
+            File = File ?? BasicActivator.SelectFile("File to upload");
             
-            var f = File ?? BasicActivator.SelectFile("File to upload");
-            
-            if(f == null)
+            if(File == null)
                 return;
 
-            var useCase = new UploadFileUseCase(f, db);
+            var useCase = new UploadFileUseCase(File, db);
 
             var runner = BasicActivator.GetPipelineRunner(useCase,_pipeline);
+            runner.PipelineExecutionFinishedsuccessfully += (s, e) => OnPipelineCompleted(s, e, db);
             runner.Run(BasicActivator.RepositoryLocator,null,null,null);
-
-            runner.PipelineExecutionFinishedsuccessfully += (s,e)=>OnPipelineCompleted(s,e,db);
         }
 
         private void OnPipelineCompleted(object sender, PipelineEngineEventArgs args, DiscoveredDatabase db)
