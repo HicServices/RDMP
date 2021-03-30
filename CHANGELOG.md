@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added minimum timeout of 5 seconds for `CohortIdentificationConfigurationSource`
 - 'View Logs' tree view now accessible for CacheProgress objects
 - Console GUI now shows important information (e.g. 'Disabled') in brackets next to items where state is highly important
+- Console GUI root nodes now offer sensible commands (e.g. create new Catalogue)
 
 ### Fixed
 
@@ -46,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed text on disassociating a [Catalogue] from a [LoadMetadata]
 - Fixed sort order not being respected in cohort summary screen
 - Fixed DQE graph when data has dates before the year 1,000
+- Fixed `ExecuteCommandCreateNewCatalogueByImportingFile` when using blank constructor and from CLI GUI
 
 ### Changed
 

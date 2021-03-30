@@ -7,6 +7,7 @@
 using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
@@ -92,7 +93,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
 
             if(_pipeline == null)
             {
-                throw new Exception("No pipeline selected for upload");
+                var pipelines = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>();
+                
+                var compatible = UploadFileUseCase.DesignTime().FilterCompatiblePipelines(pipelines).ToArray();
+
+                _pipeline = (IPipeline)BasicActivator.SelectOne("File Upload Pipeline", compatible);
+
+                if (_pipeline == null)
+                    throw new Exception("No pipeline selected for upload");
             }
 
             var db  = _targetDatabase ?? BasicActivator.SelectDatabase(true,"Target database");
