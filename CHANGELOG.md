@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - .Net 5.0 for all, instead of Framework 4.6.1+Core 2.2+Standard 2.0 mix
 - Query editor autocomplete now uses integrated autocomplete (no icons, better matching)
+- Throttled how often spelling is checked in Scintilla controls.
 
 ### Added
 
@@ -31,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added minimum timeout of 5 seconds for `CohortIdentificationConfigurationSource`
 - 'View Logs' tree view now accessible for CacheProgress objects
 - Added query/result tabs to CLI GUI Sql editor
+- Console GUI now shows important information (e.g. 'Disabled') in brackets next to items where state is highly important
 
 ### Fixed
 
@@ -39,6 +41,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Custom Metadata template stripping preceeding whitespace in templated lines e.g. `"  - $Name"` (like you might find in a table of contents section of a template)
 - Fixed 'Set Global Dle Ignore Pattern' failing the first time it is used by creating a StandardRegex with no/null Pattern
 - Fixed order of branches in CLI gui tree
+- Fixed importing filter containers not saving Operation (AND/OR)
+- Fixed right click menu not showing when right clicking after selecting multiple objects
+- Fixed some delete commands not updating the UI until refreshed (e.g. disassociating a [Catalogue] from a [LoadMetadata])
+- Fixed text on disassociating a [Catalogue] from a [LoadMetadata]
+- Fixed sort order not being respected in cohort summary screen
+- Fixed DQE graph when data has dates before the year 1,000
 
 ### Changed
 
@@ -49,7 +57,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump System.Drawing.Common from 5.0.0 to 5.0.2
 - Bump Moq from 4.16.0 to 4.16.1
 - Bump Microsoft.NET.Test.Sdk from 16.8.3 to 16.9.1
-- Bump NLog from 4.7.7 to 4.7.8
+- Bump NLog from 4.7.7 to 4.7.9
+- Bump SecurityCodeScan.VS2019 from 5.0.0 to 5.1.0
+- Bump Newtonsoft.Json from 12.0.3 to 13.0.1
+- Bump YamlDotNet from 9.1.4 to 10.0.0
 
 ## [4.2.4] - 2021-02-05
 

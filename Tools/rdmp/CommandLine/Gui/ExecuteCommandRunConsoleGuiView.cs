@@ -4,34 +4,34 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.Curation.Data;
+using Rdmp.Core.CommandExecution;
+using System;
+using Terminal.Gui;
 
-namespace Rdmp.Core.CommandExecution
+namespace Rdmp.Core.CommandLine.Gui
 {
-    public abstract class CommandFactoryBase
+    
+    internal class ExecuteCommandRunConsoleGuiView : BasicCommandExecution
     {
+        private readonly Func<Window> windowConstructor;
+
         /// <summary>
-        /// Returns o is <typeparamref name="T"/> but with auto unpacking of <see cref="IMasqueradeAs"/>
+        /// Command for running a console gui UI.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="o"></param>
-        /// <param name="match"></param>
-        /// <returns></returns>
-        public static bool Is<T>(object o, out T match)
+        /// <param name="activator"></param>
+        /// <param name="windowConstructor">Called only when/if the command is executed</param>
+        public ExecuteCommandRunConsoleGuiView(IBasicActivateItems activator, Func<Window> windowConstructor):base(activator)
         {
-            if(o is T)
-            {
-                match = (T)o;
-                return true;
-            }
+            this.windowConstructor = windowConstructor;
+        }
 
-            if(o is IMasqueradeAs m)
-            {
-                return Is<T>(m.MasqueradingAs(),out match);
-            }
+        public override void Execute()
+        {
+            base.Execute();
+            
+            var window = windowConstructor();
 
-            match = default(T);
-            return false;
+            Application.Run(window);
         }
     }
 }

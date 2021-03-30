@@ -159,6 +159,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 var newRoot = factory.CreateNewContainer();
                 newRoot.Operation = from.Operation;
+                newRoot.SaveToDatabase();
                 _into.RootFilterContainer_ID = newRoot.ID;
                 _into.SaveToDatabase();
                 
@@ -177,6 +178,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 var subContainer = factory.CreateNewContainer();
                 subContainer.Operation = container.Operation;
+                subContainer.SaveToDatabase();
                 into.AddChild(subContainer);
 
                 DeepClone(subContainer,container,factory);            

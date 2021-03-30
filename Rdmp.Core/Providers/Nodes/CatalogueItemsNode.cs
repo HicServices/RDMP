@@ -14,11 +14,12 @@ namespace Rdmp.Core.Providers.Nodes
     public class CatalogueItemsNode:Node
     {
         public Catalogue Catalogue { get; set; }
+        public CatalogueItem[] CatalogueItems { get; }
 
         public CatalogueItemsNode(Catalogue catalogue, CatalogueItem[] cis)
         {
             Catalogue = catalogue;
-            
+            CatalogueItems = cis;
         }
 
         public override string ToString()

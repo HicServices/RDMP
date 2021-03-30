@@ -9,11 +9,15 @@ using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Gui.Windows;
+using Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
+using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
+using Rdmp.Core.Providers.Nodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -97,6 +101,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
             _treeView.KeyPress += treeView_KeyPress;
             _treeView.SelectionChanged += _treeView_SelectionChanged;
+			_treeView.AspectGetter = AspectGetter;
 
 			var statusBar = new StatusBar (new StatusItem [] {
 				new StatusItem(Key.ControlQ, "~^Q~ Quit", () => Quit()),
@@ -107,6 +112,41 @@ namespace Rdmp.Core.CommandLine.Gui
 			});
 
 			top.Add (statusBar);
+        }
+
+        private string AspectGetter(object model)
+		{
+			if (model is IContainer container)
+            {
+				return $"{container} ({container.Operation})"; 
+			}
+
+			if (model is CohortAggregateContainer setContainer)
+			{
+				return $"{setContainer} ({setContainer.Operation})";
+			}
+
+			if (model is ExtractionInformation ei)
+			{
+				return $"{ei} ({ei.ExtractionCategory})";
+			}
+
+			if ( model is CatalogueItemsNode cin)
+            {
+				return $"{cin} ({cin.CatalogueItems.Length})";
+            }
+
+			if (model is TableInfoServerNode server)
+			{
+				return $"{server.ServerName} ({server.DatabaseType})";
+			}
+
+			if (model is IDisableable d)
+            {
+				return d.IsDisabled ? d.ToString() + " (Disabled)" : d.ToString();
+            }
+
+			return model?.ToString() ?? "Null Object";
         }
 
         private void Publish()
@@ -243,8 +283,49 @@ namespace Rdmp.Core.CommandLine.Gui
 				return new IAtomicCommand[0];
 
 			var factory = new AtomicCommandFactory(_activator);
-			return factory.CreateCommands(o);
+			return
+				GetExtraCommands(o).Union(factory.CreateCommands(o));
         }
+
+        private IEnumerable<IAtomicCommand> GetExtraCommands(object o)
+        {
+            if(CommandFactoryBase.Is(o, out LoadMetadata lmd))
+            {
+				yield return new ExecuteCommandRunConsoleGuiView(_activator, 
+					() => new RunDleWindow(_activator, lmd)){ OverrideCommandName = "Execute Load..." };
+			}
+
+			if (CommandFactoryBase.Is(o, out Project p))
+			{
+				yield return new ExecuteCommandRunConsoleGuiView(_activator,
+					() => new RunReleaseWindow(_activator,p))
+				{ OverrideCommandName = "Release..." };
+			}
+			if (CommandFactoryBase.Is(o, out ExtractionConfiguration ec))
+			{
+				yield return new ExecuteCommandRunConsoleGuiView(_activator,
+					() => new RunReleaseWindow(_activator, ec))
+				{ OverrideCommandName = "Release..." };
+
+				yield return new ExecuteCommandRunConsoleGuiView(_activator,
+					() => new RunExtractionWindow(_activator, ec))
+				{ OverrideCommandName = "Extract..." };
+			}
+
+			if(CommandFactoryBase.Is(o, out CacheProgress cp))
+			{
+				yield return new ExecuteCommandRunConsoleGuiView(_activator,
+					() => new RunCacheWindow(_activator, cp))
+				{ OverrideCommandName = "Run Cache..." };
+			}
+
+			if(CommandFactoryBase.Is(o, out Catalogue c))
+            {
+				yield return new ExecuteCommandRunConsoleGuiView(_activator,
+					() => new RunDataQualityEngineWindow(_activator, c))
+				{ OverrideCommandName = "Run DQE..." };
+			}
+		}
 
         private void treeView_KeyPress(View.KeyEventEventArgs obj)
         {

@@ -62,25 +62,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     {
                         try
                         {
-                            var publish = _deletables.FirstOrDefault();
-
-                            if (publish != null)
-                            {
-                                if (publish is DatabaseEntity d) 
-                                    Publish(d);
-                                else
-                                {
-                                    var descendancy = BasicActivator.CoreChildProvider.GetDescendancyListIfAnyFor(publish);
-
-                                    if (descendancy != null)
-                                    {
-                                        var parent = descendancy.Parents.OfType<DatabaseEntity>().LastOrDefault();
-
-                                        if(parent != null)
-                                            Publish(parent);
-                                    }
-                                }
-                            }
+                            BasicActivator.PublishNearest(_deletables.FirstOrDefault());
                         }
                         catch(Exception ex)
                         {

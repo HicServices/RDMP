@@ -116,7 +116,7 @@ namespace Rdmp.UI
         /// <returns></returns>
         private int GetOffset(string yearMonth)
         {
-            var matchMonthName = Regex.Match(yearMonth, @"\d{4}-([A-Za-z]+)");
+            var matchMonthName = Regex.Match(yearMonth, @"\d+-([A-Za-z]+)");
 
             if(matchMonthName.Success)
             {
@@ -124,7 +124,7 @@ namespace Rdmp.UI
                 return DateTime.ParseExact(monthName, "MMMM", CultureInfo.CurrentCulture).Month;
             }
 
-            var matchMonthDigit = Regex.Match(yearMonth, @"\d{4}-(\d+)");
+            var matchMonthDigit = Regex.Match(yearMonth, @"\d+-(\d+)");
 
             if (!matchMonthDigit.Success)
                 throw new Exception("Regex did not match expected YYYY-MM!");
