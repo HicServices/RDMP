@@ -147,6 +147,10 @@ namespace Rdmp.Core.CommandLine.Gui
 				return d.IsDisabled ? d.ToString() + " (Disabled)" : d.ToString();
             }
 
+			if (model is IArgument arg)
+			{
+				return $"{arg} ({(string.IsNullOrWhiteSpace(arg.Value) ? "Null" : arg.Value)})";
+			}
 			return model?.ToString() ?? "Null Object";
         }
 

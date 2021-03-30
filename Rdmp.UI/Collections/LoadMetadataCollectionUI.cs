@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
+using BrightIdeasSoftware;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation;
@@ -15,6 +16,7 @@ using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.Collections
 {
@@ -83,6 +85,11 @@ namespace Rdmp.UI.Collections
 
             
             CommonFunctionality.Add(new ExecuteCommandCreateNewLoadMetadata(Activator),"New");
+
+
+            olvValue.IsVisible = UserSettings.ShowColumnValue;
+            olvValue.VisibilityChanged += (s, e) => UserSettings.ShowColumnValue = ((OLVColumn)s).IsVisible;
+            olvValue.AspectGetter = (s) => (s as IArgument)?.Value;
 
         }
 
