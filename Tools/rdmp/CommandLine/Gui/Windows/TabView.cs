@@ -165,7 +165,7 @@ namespace Terminal.Gui
 
 
 		/// <summary>
-		/// Initialzies a <see cref="TabView"/> class using <see cref="LayoutStyle.Computed"/> layout.
+		/// Initializes a <see cref="TabView"/> class using <see cref="LayoutStyle.Computed"/> layout.
 		/// </summary>
 		public TabView() : base()
 		{
