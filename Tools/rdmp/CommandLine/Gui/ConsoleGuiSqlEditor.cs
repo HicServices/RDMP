@@ -26,6 +26,7 @@ namespace Rdmp.Core.CommandLine.Gui
         private readonly IBasicActivateItems _activator;
         private readonly IViewSQLAndResultsCollection _collection;
         private TableView tableView;
+        private TabView tabView;
         private TextView textView;
         private Button _btnRunOrCancel;
         private Task _runSqlTask;
@@ -40,6 +41,8 @@ namespace Rdmp.Core.CommandLine.Gui
         /// The number of seconds to allow queries to run for, can be changed by user
         /// </summary>
         private int _timeout = DefaultTimeout;
+        private Tab queryTab;
+        private Tab resultTab;
 
         /// <summary>
         /// The default number of seconds to allow queries to run for when no value or an invalid value is specified by the user
@@ -52,36 +55,52 @@ namespace Rdmp.Core.CommandLine.Gui
             this._collection = collection;
             Modal = true;
 
+            // Tabs (query and results)
+            tabView = new TabView() { Width = Dim.Fill(), Height = Dim.Fill(), Y = 1 };
+
             textView = new TextView()
             {
-                X= 0,
-                Y=0,
+                X = 0,
+                Y = 0,
                 Width = Dim.Fill(),
-                Height = Dim.Percent(30),
-                Text = _orignalSql = collection.GetSql().Replace("\r\n","\n")
+                Height = Dim.Fill(),
+                Text = _orignalSql = collection.GetSql().Replace("\r\n", "\n")
             };
 
-            Add(textView);
+            tabView.AddTab(queryTab = new Tab("Query", textView),true);
+
+            tableView = new TableView()
+            {
+                X = 0,
+                Y = 0,
+                Width = Dim.Fill(),
+                Height = Dim.Fill()
+            };
+
+            tableView.CellActivated += TableView_CellActivated;
+
+            tabView.AddTab(resultTab = new Tab("Results", tableView), false);
+
+            Add(tabView);
+
+            // Buttons on top of control
 
             _btnRunOrCancel = new Button("Run"){
                 X= 0,
-                Y=Pos.Bottom(textView),
+                Y= 0,
                 };
 
             _btnRunOrCancel.Clicked += ()=>RunOrCancel();
             Add(_btnRunOrCancel);
 
             var resetSql = new Button("Reset Sql"){
-                X= Pos.Right(_btnRunOrCancel)+1,
-                Y= Pos.Bottom(textView),
-                };
+                X= Pos.Right(_btnRunOrCancel)+1};
 
             resetSql.Clicked += ()=>ResetSql();
             Add(resetSql);
 
             var clearSql = new Button("Clear Sql"){
                 X= Pos.Right(resetSql)+1,
-                Y= Pos.Bottom(textView),
                 };
 
             clearSql.Clicked += ()=>ClearSql();
@@ -90,14 +109,12 @@ namespace Rdmp.Core.CommandLine.Gui
             var lblTimeout = new Label("Timeout:")
             {
                 X = Pos.Right(clearSql)+1,
-                Y = Pos.Bottom(textView)
             };
             Add(lblTimeout);
 
             var tbTimeout = new TextField(_timeout.ToString())
             {
                 X = Pos.Right(lblTimeout),
-                Y = Pos.Bottom(textView),
                 Width = 5
             };
             tbTimeout.TextChanged += TbTimeout_TextChanged;
@@ -106,27 +123,16 @@ namespace Rdmp.Core.CommandLine.Gui
 
             var btnSave = new Button("Save"){
                 X= Pos.Right(tbTimeout)+1,
-                Y= Pos.Bottom(textView),
                 };
             btnSave.Clicked += ()=>Save();
             Add(btnSave);
 
             var btnClose = new Button("Close"){
                 X= Pos.Right(btnSave)+1,
-                Y= Pos.Bottom(textView),
                 };
             btnClose.Clicked += ()=>Application.RequestStop();
             Add(btnClose);
 
-            
-            tableView = new TableView(){
-            X = 0,
-            Y = Pos.Bottom(btnClose),
-            Width = Dim.Fill(),
-            Height = Dim.Fill()
-                };
-            tableView.CellActivated += TableView_CellActivated;
-            Add(tableView);
         }
 
         private void TableView_CellActivated(CellActivatedEventArgs obj)
@@ -201,12 +207,16 @@ namespace Rdmp.Core.CommandLine.Gui
         {
             textView.Text = "";
             textView.SetNeedsDisplay();
+
+            tabView.SelectedTab = queryTab;
         }
 
         private void ResetSql()
         {
             textView.Text = _orignalSql;
             textView.SetNeedsDisplay();
+
+            tabView.SelectedTab = queryTab;
         }
 
         private void RunOrCancel()
@@ -222,6 +232,8 @@ namespace Rdmp.Core.CommandLine.Gui
                 _runSqlTask = Task.Run(()=>RunSql());
                 _btnRunOrCancel.Text = "Cancel";
                 _btnRunOrCancel.SetNeedsDisplay();
+
+                tabView.SelectedTab = resultTab;
             }
         }
         
