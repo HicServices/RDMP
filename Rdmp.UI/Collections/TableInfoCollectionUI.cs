@@ -49,6 +49,11 @@ namespace Rdmp.UI.Collections
             olvDataType.IsVisible = UserSettings.ShowColumnDataType;
             olvDataType.VisibilityChanged += (s, e) => UserSettings.ShowColumnDataType = ((OLVColumn)s).IsVisible;
 
+
+            olvValue.AspectGetter = (s)=> (s as IArgument)?.Value;
+            olvValue.IsVisible = UserSettings.ShowColumnValue;
+            olvValue.VisibilityChanged += (s, e) => UserSettings.ShowColumnValue = ((OLVColumn)s).IsVisible;
+
         }
 
 

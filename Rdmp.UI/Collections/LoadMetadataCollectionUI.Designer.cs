@@ -34,16 +34,18 @@ namespace Rdmp.UI.Collections
             this.components = new System.ComponentModel.Container();
             this.tlvLoadMetadata = new BrightIdeasSoftware.TreeListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvValue = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             ((System.ComponentModel.ISupportInitialize)(this.tlvLoadMetadata)).BeginInit();
             this.SuspendLayout();
             // 
             // tlvLoadMetadata
             // 
             this.tlvLoadMetadata.AllColumns.Add(this.olvName);
+            this.tlvLoadMetadata.AllColumns.Add(this.olvValue);
             this.tlvLoadMetadata.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.SingleClick;
             this.tlvLoadMetadata.CellEditUseWholeCell = false;
             this.tlvLoadMetadata.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvName});
+            this.olvName, this.olvValue});
             this.tlvLoadMetadata.Cursor = System.Windows.Forms.Cursors.Default;
             this.tlvLoadMetadata.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlvLoadMetadata.Location = new System.Drawing.Point(0, 0);
@@ -58,9 +60,16 @@ namespace Rdmp.UI.Collections
             // olvName
             // 
             this.olvName.AspectName = "ToString";
-            this.olvName.FillsFreeSpace = true;
             this.olvName.Text = "Load Metadata";
+            this.olvName.FillsFreeSpace = true;
             this.olvName.MinimumWidth = 100;
+            // 
+            // olvValue
+            // 
+            this.olvValue.AspectName = "Value";
+            this.olvValue.Text = "Value";
+            this.olvValue.FillsFreeSpace = false;
+            this.olvValue.IsEditable = false;
             // 
             // LoadMetadataCollectionUI
             // 
@@ -78,5 +87,6 @@ namespace Rdmp.UI.Collections
 
         private TreeListView tlvLoadMetadata;
         private OLVColumn olvName;
+        private OLVColumn olvValue;
     }
 }

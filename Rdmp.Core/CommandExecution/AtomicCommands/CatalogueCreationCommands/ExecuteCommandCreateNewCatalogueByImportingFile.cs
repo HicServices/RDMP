@@ -7,6 +7,7 @@
 using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
@@ -92,25 +93,31 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
 
             if(_pipeline == null)
             {
-                throw new Exception("No pipeline selected for upload");
+                var pipelines = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>();
+                
+                var compatible = UploadFileUseCase.DesignTime().FilterCompatiblePipelines(pipelines).ToArray();
+
+                _pipeline = (IPipeline)BasicActivator.SelectOne("File Upload Pipeline", compatible);
+
+                if (_pipeline == null)
+                    throw new Exception("No pipeline selected for upload");
             }
 
             var db  = _targetDatabase ?? BasicActivator.SelectDatabase(true,"Target database");
 
             if(db == null)
                 return;
+
+            File = File ?? BasicActivator.SelectFile("File to upload");
             
-            var f = File ?? BasicActivator.SelectFile("File to upload");
-            
-            if(f == null)
+            if(File == null)
                 return;
 
-            var useCase = new UploadFileUseCase(f, db);
+            var useCase = new UploadFileUseCase(File, db);
 
             var runner = BasicActivator.GetPipelineRunner(useCase,_pipeline);
+            runner.PipelineExecutionFinishedsuccessfully += (s, e) => OnPipelineCompleted(s, e, db);
             runner.Run(BasicActivator.RepositoryLocator,null,null,null);
-
-            runner.PipelineExecutionFinishedsuccessfully += (s,e)=>OnPipelineCompleted(s,e,db);
         }
 
         private void OnPipelineCompleted(object sender, PipelineEngineEventArgs args, DiscoveredDatabase db)
