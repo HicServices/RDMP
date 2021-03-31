@@ -18,7 +18,7 @@ namespace Terminal.Gui
 		/// The text to display in a <see cref="TabView"/>
 		/// </summary>
 		/// <value></value>
-		public ustring Text { get => text ?? "Unamed"; set => text = value; }
+		public ustring Text { get => text ?? "Unnamed"; set => text = value; }
 
 		/// <summary>
 		/// The control to display when the tab is selected
