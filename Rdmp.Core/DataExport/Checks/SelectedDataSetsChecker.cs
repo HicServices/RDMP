@@ -134,21 +134,18 @@ namespace Rdmp.Core.DataExport.Checks
             // Warn user if stuff is out of sync with the Catalogue version (changes have happened to the master but not propgated to the copy in this extraction)
             var outOfSync = selectedcols.OfType<ExtractableColumn>().Where(c => c.IsOutOfSync()).ToArray();
             if(outOfSync.Any())
-                notifier.OnCheckPerformed(new CheckEventArgs($"Column(s) in dataset '{ds}' in config '{config}' is out of sync with CatalogueItem version(s):{ Environment.NewLine + string.Join(',', outOfSync.Select(o => o.ToString() + Environment.NewLine))}", CheckResult.Warning));
+                notifier.OnCheckPerformed(new CheckEventArgs($"'{ds}' columns out of sync with CatalogueItem version(s): { Environment.NewLine + string.Join(',', outOfSync.Select(o => o.ToString() + Environment.NewLine)) }" +
+                    $"{ Environment.NewLine } Extraction Configuration: '{config}' ", CheckResult.Warning));
 
-            foreach (ExtractionInformation ei in cata.GetAllExtractionInformation(ExtractionCategory.Any))
-                if (ei.ExtractionCategory == ExtractionCategory.Core || ei.ExtractionCategory == ExtractionCategory.ProjectSpecific)
-                {
-                    // if it is not selected for extraction, why?
-                    if(!selectedcols.OfType<ExtractableColumn>().Any(ec=>ec.CatalogueExtractionInformation_ID == ei.ID))
-                    {
-                        // these will be substituted for ReleaseIdentifierSubstitution
-                        if (ei.IsExtractionIdentifier)
-                            continue;
+            var nonSelectedCore = cata.GetAllExtractionInformation(ExtractionCategory.Core)
+                                      .Union(cata.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific))
+                                      .Where(ei => !ei.IsExtractionIdentifier &&
+                                                   !selectedcols.OfType<ExtractableColumn>().Any(ec => ec.CatalogueExtractionInformation_ID == ei.ID))
+                                      .ToArray();
 
-                        notifier.OnCheckPerformed(new CheckEventArgs($"ExtractableColumn {ei} is {ei.ExtractionCategory} but not included in {ds} in {config}", CheckResult.Warning));
-                    }
-                }
+            if (nonSelectedCore.Any())
+                notifier.OnCheckPerformed(new CheckEventArgs($"'{ds}' Core columns not selected for extractions: { Environment.NewLine + string.Join(',', nonSelectedCore.Select(o => o.ToString() + Environment.NewLine)) }" +
+                    $"{ Environment.NewLine } Extraction Configuration: '{config}' ", CheckResult.Warning));
 
             //Make sure cohort and dataset are on same server before checking (can still get around this at runtime by using ExecuteCrossServerDatasetExtractionSource)
             if (!cohortServer.Server.Name.Equals(server.Name,StringComparison.CurrentCultureIgnoreCase) || !cohortServer.Server.DatabaseType.Equals(server.DatabaseType))
