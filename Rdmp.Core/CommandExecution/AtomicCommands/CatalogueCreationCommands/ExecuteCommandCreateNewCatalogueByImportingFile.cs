@@ -128,10 +128,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
             var dest = engine.DestinationObject as DataTableUploadDestination;
             if(dest == null)
                 throw new Exception($"Destination of engine was unexpectedly not a DataTableUploadDestination despite use case {nameof(UploadFileUseCase)}");
-
-            if(!dest.CreatedTable)
-                throw new Exception($"Destination of engine reports that table was not created");
-            
+                        
             if(string.IsNullOrWhiteSpace(dest.TargetTableName))
                 throw new Exception($"Destination of engine failed to populate {dest.TargetTableName}");
 

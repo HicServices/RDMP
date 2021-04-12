@@ -67,6 +67,10 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
 
         public string TargetTableName { get; private set; }
 
+        /// <summary>
+        /// True if a new table was created or re-created by the execution of this destination.  False if 
+        /// the table already existed e.g. data was simply added
+        /// </summary>
         public bool CreatedTable { get; private set; }
         
         private IBulkCopy _bulkcopy;

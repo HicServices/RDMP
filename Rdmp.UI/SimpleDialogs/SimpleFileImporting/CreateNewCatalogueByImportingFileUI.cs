@@ -241,11 +241,20 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             _context = new DataFlowPipelineContextFactory<DataTable>().Create(PipelineUsage.LoadsSingleFlatFile);
             _context.MustHaveDestination = typeof(DataTableUploadDestination);
 
+            if (cbOther.Checked)
+            {
+                _context.MustHaveSource = typeof(IDataFlowSource<DataTable>);
+            }
+            else
             if (_selectedFile.Extension == ".csv" || _selectedFile.Extension == ".txt")
-                _context.MustHaveSource = typeof (DelimitedFlatFileDataFlowSource);
-
-            if(_selectedFile.Extension.StartsWith(".xls"))
+            {
+                _context.MustHaveSource = typeof(DelimitedFlatFileDataFlowSource);
+            }
+            else
+            if (_selectedFile.Extension.StartsWith(".xls"))
+            {
                 _context.MustHaveSource = typeof(ExcelDataFlowSource);
+            }   
 
             var compatiblePipelines = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>().Where(_context.IsAllowable).ToArray();
 
@@ -256,7 +265,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             }
 
             ddPipeline.DataSource = compatiblePipelines;
-            ddPipeline.SelectedItem = compatiblePipelines.First();
+            ddPipeline.SelectedItem = compatiblePipelines.FirstOrDefault();
         }
 
         private enum State
@@ -468,6 +477,11 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             //if the sane name doesn't match the 
             tbTableName.ForeColor = !tbTableName.Text.Equals(QuerySyntaxHelper.MakeHeaderNameSensible(tbTableName.Text),
                 StringComparison.CurrentCultureIgnoreCase) ? Color.Red : Color.Black;
+        }
+
+        private void cbOther_CheckedChanged(object sender, EventArgs e)
+        {
+            IdentifyCompatiblePipelines();
         }
     }
 }
