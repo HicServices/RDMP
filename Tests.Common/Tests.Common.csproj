@@ -30,7 +30,7 @@
     <PackageReference Include="Moq" Version="4.16.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.4" />
     <PackageReference Include="NUnit" Version="3.13.1" />
-    <PackageReference Include="YamlDotNet" Version="11.1.0" />
+    <PackageReference Include="YamlDotNet" Version="11.1.1" />
     <PackageReference Include="HIC.BadMedicine" Version="0.1.6" />
   </ItemGroup>
   <ItemGroup>
