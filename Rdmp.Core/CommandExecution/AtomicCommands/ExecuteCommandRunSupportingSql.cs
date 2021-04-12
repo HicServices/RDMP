@@ -39,8 +39,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             base.Execute();
             var collection = new ViewSupportingSqlCollection(SupportingSQLTable);
 
-            // are we in interactive mode with a query
-            if(!string.IsNullOrWhiteSpace(SupportingSQLTable.SQL) && BasicActivator.IsInteractive)
+            // windows GUI client needs to confirm dangerous queries (don't want missclicks to do bad things)
+            if (!string.IsNullOrWhiteSpace(SupportingSQLTable.SQL) &&
+                string.Equals(BasicActivator.GetType().Name, "ActivateItems"))
             {
                 // does the query look dangerous, if so give them a choice to back out
                 bool requireConfirm =
