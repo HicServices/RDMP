@@ -55,7 +55,7 @@ namespace Rdmp.Core.CommandLine.Runners
             var exitCode = toMemory.GetWorst() >= ProgressEventType.Error ? -1:0;
 
             if(exitCode ==0)
-                PipelineExecutionFinishedsuccessfully(this,new PipelineEngineEventArgs(engine));
+                PipelineExecutionFinishedsuccessfully?.Invoke(this,new PipelineEngineEventArgs(engine));
 
             return exitCode;
         }

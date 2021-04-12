@@ -35,6 +35,7 @@ namespace Rdmp.UI.Collections
             this.tlvTableInfos = new BrightIdeasSoftware.TreeListView();
             this.olvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvDataType = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvValue = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.tlvTableInfos)).BeginInit();
             this.SuspendLayout();
@@ -43,10 +44,12 @@ namespace Rdmp.UI.Collections
             // 
             this.tlvTableInfos.AllColumns.Add(this.olvColumn1);
             this.tlvTableInfos.AllColumns.Add(this.olvDataType);
+            this.tlvTableInfos.AllColumns.Add(this.olvValue);            
             this.tlvTableInfos.CellEditUseWholeCell = false;
             this.tlvTableInfos.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvColumn1,
-            this.olvDataType});
+            this.olvDataType,
+            this.olvValue});
             this.tlvTableInfos.Cursor = System.Windows.Forms.Cursors.Default;
             this.tlvTableInfos.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlvTableInfos.Location = new System.Drawing.Point(0, 0);
@@ -72,6 +75,15 @@ namespace Rdmp.UI.Collections
             this.olvDataType.IsEditable = false;
             this.olvDataType.Text = "DataType";
             this.olvDataType.Width = 110;
+
+            // 
+            // olvValue
+            // 
+            this.olvValue.AspectName = "Value";
+            this.olvValue.IsEditable = false;
+            this.olvValue.Text = "Value";
+            this.olvValue.Width = 110;
+            
             // 
             // imageList1
             // 
@@ -101,5 +113,6 @@ namespace Rdmp.UI.Collections
         private OLVColumn olvColumn1;
         private System.Windows.Forms.ImageList imageList1;
         private OLVColumn olvDataType;
+        private OLVColumn olvValue;
     }
 }

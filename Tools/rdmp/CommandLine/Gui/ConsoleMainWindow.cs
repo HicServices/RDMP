@@ -8,6 +8,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.CommandLine.Gui.Windows;
 using Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
 using Rdmp.Core.CommandLine.Options;
@@ -146,6 +147,10 @@ namespace Rdmp.Core.CommandLine.Gui
 				return d.IsDisabled ? d.ToString() + " (Disabled)" : d.ToString();
             }
 
+			if (model is IArgument arg)
+			{
+				return $"{arg} ({(string.IsNullOrWhiteSpace(arg.Value) ? "Null" : arg.Value)})";
+			}
 			return model?.ToString() ?? "Null Object";
         }
 
@@ -279,7 +284,22 @@ namespace Rdmp.Core.CommandLine.Gui
         private IEnumerable<IAtomicCommand> GetCommands()
         {
 			var o = _treeView.SelectedObject;
-            if(o == null)
+
+			if(ReferenceEquals(o,  Catalogues))
+            {
+				return new IAtomicCommand[] {
+					new ExecuteCommandCreateNewCatalogueByImportingFile(_activator),
+					new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator),
+				};
+			}
+			if (ReferenceEquals(o, Loads))
+			{
+				return new IAtomicCommand[] {
+					new ExecuteCommandCreateNewLoadMetadata(_activator),
+				};
+			}
+
+			if (o == null)
 				return new IAtomicCommand[0];
 
 			var factory = new AtomicCommandFactory(_activator);

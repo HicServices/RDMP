@@ -31,8 +31,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Exposed 'View Logs' commands on CLI and CLI gui
 - Added minimum timeout of 5 seconds for `CohortIdentificationConfigurationSource`
 - 'View Logs' tree view now accessible for CacheProgress objects
+- Added query/result tabs to CLI GUI Sql editor
 - Console GUI now shows important information (e.g. 'Disabled') in brackets next to items where state is highly important
 - Added new command RunSupportingSql
+- Console GUI root nodes now offer sensible commands (e.g. create new Catalogue)
+- Added Value column to tree views (allows user to quickly see current arguments' values)
 
 ### Fixed
 
@@ -47,6 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed text on disassociating a [Catalogue] from a [LoadMetadata]
 - Fixed sort order not being respected in cohort summary screen
 - Fixed DQE graph when data has dates before the year 1,000
+- Fixed `ExecuteCommandCreateNewCatalogueByImportingFile` when using blank constructor and from CLI GUI
 
 ### Changed
 
@@ -56,11 +60,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Bump System.Drawing.Common from 5.0.0 to 5.0.2
 - Bump Moq from 4.16.0 to 4.16.1
-- Bump Microsoft.NET.Test.Sdk from 16.8.3 to 16.9.1
+- Bump Microsoft.NET.Test.Sdk from 16.8.3 to 16.9.4
 - Bump NLog from 4.7.7 to 4.7.9
 - Bump SecurityCodeScan.VS2019 from 5.0.0 to 5.1.0
 - Bump Newtonsoft.Json from 12.0.3 to 13.0.1
-- Bump YamlDotNet from 9.1.4 to 10.0.0
+- Bump YamlDotNet from 9.1.4 to 11.1.0
 
 ## [4.2.4] - 2021-02-05
 
