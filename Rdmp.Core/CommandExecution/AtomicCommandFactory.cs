@@ -119,6 +119,11 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandImportCatalogueItemDescription(_activator, ci)){SuggestedShortcut= "I",Ctrl=true };
             }
 
+            if(Is(o, out SupportingSQLTable sqlTable))
+            {
+                yield return new CommandPresentation(new ExecuteCommandRunSupportingSql(_activator,sqlTable));
+            }
+
             if(Is(o,out  AggregateConfiguration ac))
             {
                 yield return new CommandPresentation(new ExecuteCommandViewSample(_activator, ac));

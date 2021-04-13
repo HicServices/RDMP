@@ -33,6 +33,5 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             BasicActivator.ShowData(collection);
         }
-
     }
 }
