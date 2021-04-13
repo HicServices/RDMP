@@ -18,8 +18,7 @@ namespace Rdmp.Core.CommandLine.Gui
         private Tab graphTab;
 
         public ConsoleGuiViewGraph(IBasicActivateItems activator, AggregateConfiguration aggregate) :
-            base
-            (activator, new ViewAggregateExtractUICollection(aggregate) { TopX = null })
+            base (activator, new ViewAggregateExtractUICollection(aggregate) { TopX = null })
         {
             graphView = new GraphView()
             {

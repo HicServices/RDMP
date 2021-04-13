@@ -998,6 +998,12 @@ namespace Rdmp.Core.Providers
                 childrenObjects.Add(node);
             }
 
+            // show the dimensions in the tree
+            foreach (var dim in aggregateConfiguration.AggregateDimensions)
+            {
+                childrenObjects.Add(dim);
+            }
+                        
             //we can step into this twice, once via Catalogue children and once via CohortIdentificationConfiguration children
             //if we get in via Catalogue children then descendancy will be Ignore=true we don't end up emphasising into CatalogueCollectionUI when
             //really user wants to see it in CohortIdentificationCollectionUI

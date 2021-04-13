@@ -230,6 +230,29 @@ namespace Rdmp.Core.Curation.Data.Aggregation
             return new[] { AggregateConfiguration };
         }
 
-        
+        public override void DeleteInDatabase()
+        {
+            var ac = AggregateConfiguration;
+
+            if(ac != null)
+            {
+                if(ac.PivotOnDimensionID == ID)
+                {
+                    ac.PivotOnDimensionID = null;
+                    ac.SaveToDatabase();
+
+                }
+            }
+            var axis = ac.GetAxisIfAny();
+            
+            if(axis != null && axis.AggregateDimension_ID == ID)
+            {
+                axis.DeleteInDatabase();
+            }
+
+            //delete it in the database
+            base.DeleteInDatabase();
+        }
+
     }
 }
