@@ -15,6 +15,7 @@ using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction;
@@ -358,6 +359,11 @@ namespace Rdmp.Core.CommandLine.Interactive
                     Console.WriteLine($"\t{p.Date} {p.Description}");
                 }
             }
+        }
+
+        public override void ShowGraph(AggregateConfiguration aggregate)
+        {
+            throw new NotSupportedException();
         }
     }
 }

@@ -62,23 +62,5 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 if(!askYesNo || YesNo($"Set as the default {permissableDefault} server?", "Set as default"))
                     defaults.SetDefault(permissableDefault,newServer);
         }
-
-        
-        /// <summary>
-        /// Runs checks on the <paramref name="checkable"/> and calls <see cref="BasicCommandExecution.SetImpossible(string)"/> if there are any failures
-        /// </summary>
-        /// <param name="checkable"></param>
-        protected void SetImpossibleIfFailsChecks(ICheckable checkable)
-        {
-            try
-            {
-                checkable.Check(new ThrowImmediatelyCheckNotifier());
-            }
-            catch (Exception e)
-            {
-
-                SetImpossible(ExceptionHelper.ExceptionToListOfInnerMessages(e));
-            }
-        }
     }
 }

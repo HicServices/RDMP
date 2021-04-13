@@ -15,6 +15,7 @@ using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -34,6 +35,12 @@ namespace Rdmp.Core.CommandExecution
         /// True for activators that can illicit immediate responses from users.  False for activators designed to run unattended e.g. command line/scripting
         /// </summary>
         bool IsInteractive {get;}
+
+        /// <summary>
+        /// When implemented should display a graph of the data in <paramref name="aggregate"/>
+        /// </summary>
+        /// <param name="aggregate"></param>
+        void ShowGraph(AggregateConfiguration aggregate);
 
         /// <summary>
         /// Display information about the logged activities of the <paramref name="rootObject"/>

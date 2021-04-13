@@ -38,6 +38,7 @@ using Rdmp.Core.Logging;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.UI;
+using Rdmp.UI.AggregationUIs;
 using Rdmp.UI.CatalogueSummary.LoadEvents;
 using Rdmp.UI.CohortUI.ImportCustomData;
 using Rdmp.UI.Collections;
@@ -812,6 +813,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
             LoggingTabUI loggingTabUI =  Activate<LoggingTabUI, ExternalDatabaseServer>(loggingServer);
             if(filter != null)
                 loggingTabUI.SetFilter(filter);
+        }
+
+        public override void ShowGraph(AggregateConfiguration aggregate)
+        {
+            var graph = Activate<AggregateGraphUI, AggregateConfiguration>(aggregate);
+            graph.LoadGraphAsync();
         }
     }
 }

@@ -129,7 +129,11 @@ namespace Rdmp.Core.CommandExecution
                 
                 yield return new CommandPresentation(new ExecuteCommandSetFilterTreeShortcut(_activator,ac));
                 yield return new CommandPresentation(new ExecuteCommandSetFilterTreeShortcut(_activator,ac,null){OverrideCommandName="Clear Filter Tree Shortcut" });
-            
+
+                //only allow them to execute graph if it is normal aggregate graph
+                if (!ac.IsCohortIdentificationAggregate)
+                    yield return new CommandPresentation(new ExecuteCommandExecuteAggregateGraph(_activator, ac));
+
                 yield return new CommandPresentation(new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(_activator,ac));
             }
             
