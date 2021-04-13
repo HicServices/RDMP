@@ -23,7 +23,7 @@ namespace Rdmp.Core.CommandLine.Gui
 {
     class ConsoleGuiSqlEditor : Window
     {
-        private readonly IBasicActivateItems _activator;
+        protected readonly IBasicActivateItems Activator;
         private readonly IViewSQLAndResultsCollection _collection;
         private TableView tableView;
         protected TabView TabView;
@@ -51,7 +51,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public ConsoleGuiSqlEditor(IBasicActivateItems activator,IViewSQLAndResultsCollection collection)
         {
-            this._activator = activator;
+            this.Activator = activator;
             this._collection = collection;
             Modal = true;
 
@@ -140,7 +140,7 @@ namespace Rdmp.Core.CommandLine.Gui
             var val = obj.Table.Rows[obj.Row][obj.Col];
             if(val != null && val != DBNull.Value)
             {
-                _activator.Show(val.ToString());
+                Activator.Show(val.ToString());
             }
         }
 
@@ -275,7 +275,7 @@ namespace Rdmp.Core.CommandLine.Gui
             }
             catch (Exception ex)
             {
-                _activator.ShowException("Failed to run query",ex);
+                Activator.ShowException("Failed to run query",ex);
             }
             finally
             {
