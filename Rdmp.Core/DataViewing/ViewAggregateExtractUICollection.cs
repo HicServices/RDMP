@@ -96,7 +96,7 @@ namespace Rdmp.Core.DataViewing
             }
             else
             {
-                var builder = ac.GetQueryBuilder(TopX);
+                var builder = ac.GetQueryBuilder();
                 sql = builder.SQL;
             }
 
