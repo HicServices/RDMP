@@ -30,13 +30,6 @@ namespace Rdmp.Core.CommandLine.Gui
             this.aggregate = aggregate;
         }
 
-        /// <summary>
-        /// Styles that will be used to render graph series
-        /// </summary>
-        public GraphCellToRender[] StyleList { get; private set; } = new GraphCellToRender[]
-        { 
-            new GraphCellToRender('x')
-        };
 
         protected override void OnQueryCompleted(DataTable dt)
         {
@@ -90,134 +83,64 @@ namespace Rdmp.Core.CommandLine.Gui
                 {
                     SetupMultiBarSeries(dt, countColumnName, boundsWidth, boundsHeight);
                 }
-                
-                return;
             }
-
-
-            //last column is always the X axis, then for each column before it add a series with Y values coming from that column
-            for (int i = 0; i < dt.Columns.Count - 1; i++)
+            else
             {
-                if (axis != null)
-                {
-                    switch (axis.AxisIncrement)
-                    {
-                        
-                        case AxisIncrement.Day:
-                            graphView.AxisX.Text = "Day";
-
-
-                            if (dt.Rows.Count <= 370)
-                            {
-                                //by two weeks
-                                graphView.AxisX.Increment = 14;
-                                graphView.AxisX.ShowLabelsEvery = 1;
-                            }
-                            else
-                            {
-                                graphView.AxisX.Increment = 28;
-                                graphView.AxisX.ShowLabelsEvery = 1;
-                            }
-
-                            break;
-                        case AxisIncrement.Month:
-
-                            //x axis is the number of rows in the data table
-                            graphView.AxisX.Text = "Month";
-
-
-                            //if it is less than or equal to ~3 years at once - with 
-                            if (dt.Rows.Count <= 40)
-                            {
-                                //by month
-                                graphView.AxisX.Increment = 3;
-                                graphView.AxisX.ShowLabelsEvery = 1;
-                            }
-                            else
-                            {
-                                //by year
-                                graphView.AxisX.Increment = 12;
-                                graphView.AxisX.ShowLabelsEvery = 1;
-                            }
-
-                            break;
-                        case AxisIncrement.Year:
-
-                            graphView.AxisX.Text = "Year";
-
-                            if (dt.Rows.Count <= 10)
-                            {
-                                //by year
-                                graphView.AxisX.Increment = 1;
-                                graphView.AxisX.ShowLabelsEvery = 1;
-                            }
-                            else
-                            {
-                                graphView.AxisX.Increment = 5;
-                                graphView.AxisX.ShowLabelsEvery = 1;
-                            }
-
-                            break;
-
-                        case AxisIncrement.Quarter:
-
-                            //x axis is the number of rows in the data table
-                            graphView.AxisX.Text = "Quarter";
-
-
-                            //if it is less than or equal to ~3 years at once - with 
-                            if (dt.Rows.Count <= 12)
-                            {
-                                graphView.AxisX.Increment = 4;
-                                graphView.AxisX.ShowLabelsEvery = 1;
-                            }
-                            else
-                            {
-                                //by year
-                                graphView.AxisX.Increment = 16;
-                                graphView.AxisX.ShowLabelsEvery = 1;
-                            }
-
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
-                else
-                {
-                    graphView.AxisX.Text = dt.Columns[0].ColumnName;
-                }
-
-                //Set the Y axis title
-                if (countColumnName != null)
-                    try
-                    {
-                        graphView.AxisY.Text = aggregate.GetQuerySyntaxHelper().GetRuntimeName(countColumnName);
-                    }
-                    catch (Exception)
-                    {
-                        graphView.AxisY.Text = "Count";
-                        //sometimes you can't get a runtime name e.g. it is count(*) with no alias
-                    }
-
-                // TODO: needs some kind of rounding probably
-                graphView.AxisY.LabelGetter = (v)=>v.GraphSpace.Y.ToString();
-
-                //avoid buffer overun
-                if (i > graphView.Series.Count - 1)
-                {
-                    // if theres a continuous date axis use line chart
-                    if(axis != null)
-                    {
-                        graphView.Series.Add(new ScatterSeries()
-                        {
-                            Fill = StyleList[i % StyleList.Length],
-                        });
-                    }
-                }
+                SetupLineGraph(dt, axis,countColumnName, boundsWidth, boundsHeight);
             }
 
-            int cells = dt.Columns.Count * dt.Rows.Count;
+        }
+
+        private void SetupLineGraph(DataTable dt, AggregateContinuousDateAxis axis, string countColumnName, int boundsWidth, int boundsHeight)
+        {
+            graphView.AxisY.Text = countColumnName;
+            graphView.GraphColor = Driver.MakeAttribute(Color.White, Color.Black);
+
+            var xIncrement = 1/(boundsWidth / (decimal)dt.Rows.Count);
+            
+            graphView.MarginBottom = 2;
+            graphView.AxisX.Increment = xIncrement * 10;
+            graphView.AxisX.ShowLabelsEvery = 1;
+            graphView.AxisX.Text = axis.AxisIncrement.ToString();
+            graphView.AxisX.LabelGetter = (v) =>
+            {
+                var x = (int)v.GraphSpace.X;
+                return x < 0 || x >= dt.Rows.Count ? "" : dt.Rows[x][0].ToString();
+            };
+
+            decimal minY = 0M;
+            decimal maxY = 1M;
+
+            var colors = GetColors(dt.Columns.Count - 1);
+
+
+            for(int i=1;i<dt.Columns.Count;i++)
+            {
+
+                var series = new PathAnnotation() { BeforeSeries = true, LineColor = colors[i - 1]};
+                int row = 0;
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    var yVal = Convert.ToDecimal(dr[i]);
+
+                    minY = Math.Min(minY, yVal);
+                    maxY = Math.Max(maxY, yVal);
+
+                    series.Points.Add(new PointD(row++, yVal));
+                }
+
+                graphView.Annotations.Add(series);
+            }
+
+            var yIncrement = boundsHeight/(maxY - minY);
+
+            graphView.CellSize = new PointD(xIncrement, yIncrement);
+
+            graphView.AxisY.LabelGetter = (v) => FormatValue(v.GraphSpace.Y,minY,maxY);
+            graphView.MarginLeft = (uint)(Math.Max(FormatValue(maxY, minY, maxY).Length, FormatValue(minY, minY, maxY).Length)) + 1;
+
+
         }
 
         private void SetupBarSeries(DataTable dt,string countColumnName, int boundsWidth, int boundsHeight)
@@ -287,21 +210,21 @@ namespace Rdmp.Core.CommandLine.Gui
         {
             var colors = new Attribute[15];
 
-            colors[0] = Application.Driver.MakeAttribute(Color.Blue, Color.Black);
-            colors[1] = Application.Driver.MakeAttribute(Color.Green, Color.Black);
-            colors[2] = Application.Driver.MakeAttribute(Color.Cyan, Color.Black);
-            colors[3] = Application.Driver.MakeAttribute(Color.Red, Color.Black);
-            colors[4] = Application.Driver.MakeAttribute(Color.Magenta, Color.Black);
-            colors[5] = Application.Driver.MakeAttribute(Color.Brown, Color.Black);
-            colors[6] = Application.Driver.MakeAttribute(Color.Gray, Color.Black);
-            colors[7] = Application.Driver.MakeAttribute(Color.DarkGray, Color.Black);
-            colors[8] = Application.Driver.MakeAttribute(Color.BrightBlue, Color.Black);
-            colors[9] = Application.Driver.MakeAttribute(Color.BrightGreen, Color.Black);
-            colors[10] = Application.Driver.MakeAttribute(Color.BrighCyan, Color.Black);
-            colors[11] = Application.Driver.MakeAttribute(Color.BrightRed, Color.Black);
-            colors[12] = Application.Driver.MakeAttribute(Color.BrightMagenta, Color.Black);
-            colors[13] = Application.Driver.MakeAttribute(Color.BrightYellow, Color.Black);
-            colors[14] = Application.Driver.MakeAttribute(Color.White, Color.Black);
+            colors[0] = Driver.MakeAttribute(Color.Blue, Color.Black);
+            colors[1] = Driver.MakeAttribute(Color.Green, Color.Black);
+            colors[2] = Driver.MakeAttribute(Color.Cyan, Color.Black);
+            colors[3] = Driver.MakeAttribute(Color.Red, Color.Black);
+            colors[4] = Driver.MakeAttribute(Color.Magenta, Color.Black);
+            colors[5] = Driver.MakeAttribute(Color.Brown, Color.Black);
+            colors[6] = Driver.MakeAttribute(Color.Gray, Color.Black);
+            colors[7] = Driver.MakeAttribute(Color.DarkGray, Color.Black);
+            colors[8] = Driver.MakeAttribute(Color.BrightBlue, Color.Black);
+            colors[9] = Driver.MakeAttribute(Color.BrightGreen, Color.Black);
+            colors[10] = Driver.MakeAttribute(Color.BrighCyan, Color.Black);
+            colors[11] = Driver.MakeAttribute(Color.BrightRed, Color.Black);
+            colors[12] = Driver.MakeAttribute(Color.BrightMagenta, Color.Black);
+            colors[13] = Driver.MakeAttribute(Color.BrightYellow, Color.Black);
+            colors[14] = Driver.MakeAttribute(Color.White, Color.Black);
 
             var toReturn = new List<Attribute>();
 
