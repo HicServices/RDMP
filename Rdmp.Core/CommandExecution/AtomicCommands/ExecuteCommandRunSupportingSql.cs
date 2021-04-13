@@ -6,6 +6,7 @@
 
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataViewing;
+using System.Text.RegularExpressions;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -43,12 +44,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if (!string.IsNullOrWhiteSpace(SupportingSQLTable.SQL) &&
                 string.Equals(BasicActivator.GetType().Name, "ActivateItems"))
             {
+                
                 // does the query look dangerous, if so give them a choice to back out
-                bool requireConfirm =
-                    SupportingSQLTable.SQL.Contains("update", System.StringComparison.CurrentCultureIgnoreCase) ||
-                    SupportingSQLTable.SQL.Contains("delete", System.StringComparison.CurrentCultureIgnoreCase) ||
-                    SupportingSQLTable.SQL.Contains("drop", System.StringComparison.CurrentCultureIgnoreCase) ||
-                    SupportingSQLTable.SQL.Contains("truncate", System.StringComparison.CurrentCultureIgnoreCase);
+                bool requireConfirm = Regex.IsMatch(SupportingSQLTable.SQL, @"\b(update|delete|drop|truncate)\b", RegexOptions.IgnoreCase);
 
                 if(requireConfirm)
                 {
