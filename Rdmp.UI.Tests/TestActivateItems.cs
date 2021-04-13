@@ -17,6 +17,7 @@ using NUnit.Framework;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataViewing;
@@ -320,6 +321,11 @@ namespace Rdmp.UI.Tests
         }
 
         public override void ShowLogs(ExternalDatabaseServer loggingServer, LogViewerFilter filter)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ShowGraph(AggregateConfiguration aggregate)
         {
             throw new NotImplementedException();
         }

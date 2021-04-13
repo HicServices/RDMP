@@ -25,6 +25,11 @@ namespace Rdmp.Core.DataViewing
     {
         public bool UseQueryCache { get; set; }
 
+        /// <summary>
+        /// How big should the sample be
+        /// </summary>
+        public int? TopX { get; set; } = 100;
+
         public ViewAggregateExtractUICollection()
         {
         }
@@ -87,11 +92,11 @@ namespace Rdmp.Core.DataViewing
                 if (UseQueryCache)
                     builder.CacheServer = GetCacheServer();
 
-                sql = builder.GetDatasetSampleSQL(100);
+                sql = TopX.HasValue ? builder.GetDatasetSampleSQL(TopX.Value) : builder.SQL;
             }
             else
             {
-                var builder = ac.GetQueryBuilder();
+                var builder = ac.GetQueryBuilder(TopX);
                 sql = builder.SQL;
             }
 
