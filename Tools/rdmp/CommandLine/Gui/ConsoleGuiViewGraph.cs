@@ -112,11 +112,10 @@ namespace Rdmp.Core.CommandLine.Gui
 
             var colors = GetColors(dt.Columns.Count - 1);
 
-
-            for(int i=1;i<dt.Columns.Count;i++)
+            for (int i=1;i<dt.Columns.Count;i++)
             {
 
-                var series = new PathAnnotation() { BeforeSeries = true, LineColor = colors[i - 1]};
+                var series = new PathAnnotation() { LineColor = colors[i - 1]};
                 int row = 0;
 
                 foreach (DataRow dr in dt.Rows)
@@ -132,14 +131,40 @@ namespace Rdmp.Core.CommandLine.Gui
                 graphView.Annotations.Add(series);
             }
 
-            var yIncrement = boundsHeight/(maxY - minY);
+            var yIncrement = 1/((boundsHeight- graphView.MarginBottom)/(maxY - minY));
 
             graphView.CellSize = new PointD(xIncrement, yIncrement);
 
             graphView.AxisY.LabelGetter = (v) => FormatValue(v.GraphSpace.Y,minY,maxY);
             graphView.MarginLeft = (uint)(Math.Max(FormatValue(maxY, minY, maxY).Length, FormatValue(minY, minY, maxY).Length)) + 1;
 
+            var legend = GetLegend(dt,boundsWidth,boundsHeight);
 
+            for (int i = 1; i < dt.Columns.Count; i++)
+            {
+                legend.AddEntry(new GraphCellToRender('.', colors[i - 1]), dt.Columns[i].ColumnName);
+            }
+        }
+
+        /// <summary>
+        /// Creates a new empty legend based on the column names of <paramref name="dt"/>
+        /// </summary>
+        /// <param name="dt"></param>
+        /// <param name="boundsWidth"></param>
+        /// <param name="boundsHeight"></param>
+        /// <returns></returns>
+        private LegendAnnotation GetLegend(DataTable dt, int boundsWidth, int boundsHeight)
+        {
+            // Configure legend
+            var seriesNames = dt.Columns.Cast<DataColumn>().Skip(1).Select(c => c.ColumnName).ToArray();
+
+            var legendWidth = Math.Min(seriesNames.Max(s => s.Length) + 4, boundsWidth / 10);
+            var legendHeight = Math.Min(seriesNames.Length + 2, (int)(boundsHeight * 0.9));
+
+            var legend = new LegendAnnotation(new Rect(boundsWidth - legendWidth, 0, legendWidth, legendHeight));
+            graphView.Annotations.Add(legend);
+
+            return legend;
         }
 
         private void SetupBarSeries(DataTable dt,string countColumnName, int boundsWidth, int boundsHeight)
@@ -242,11 +267,20 @@ namespace Rdmp.Core.CommandLine.Gui
             var mediumStiple = '\u2592';
             graphView.GraphColor = Driver.MakeAttribute(Color.White, Color.Black);
 
-            var barSeries = new MultiBarSeries(numberOfBars, numberOfBars+1,1, colors);
+            // Configure legend
+            var legend = GetLegend(dt,boundsWidth,boundsHeight);
+
+            for(int i=1;i < dt.Columns.Count; i++)
+            {
+                legend.AddEntry(new GraphCellToRender(mediumStiple, colors[i-1]), dt.Columns[i].ColumnName);
+            }
+
+            // Configure multi bar series
+            var barSeries = new MultiBarSeries(numberOfBars, numberOfBars + 1, 1, colors);
 
             decimal min = 0M;
             decimal max = 1M;
-            
+
             foreach (DataRow dr in dt.Rows)
             {
                 var label = dr[0].ToString();
@@ -269,7 +303,7 @@ namespace Rdmp.Core.CommandLine.Gui
             // Configure Axis, Margins etc
 
             // make sure whole graph fits on axis
-            decimal yIncrement = (max - min) / (boundsHeight);
+            decimal yIncrement = (max - min) / (boundsHeight - 2/*MarginBottom*/);
 
             // 1 bar per row of console
             graphView.CellSize = new PointD(1, yIncrement);
