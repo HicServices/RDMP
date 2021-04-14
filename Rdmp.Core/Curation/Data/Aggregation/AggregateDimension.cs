@@ -243,7 +243,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
 
                 }
             }
-            var axis = ac.GetAxisIfAny();
+            var axis = ac?.GetAxisIfAny();
             
             if(axis != null && axis.AggregateDimension_ID == ID)
             {
