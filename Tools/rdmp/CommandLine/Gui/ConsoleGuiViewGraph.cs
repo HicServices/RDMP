@@ -115,7 +115,7 @@ namespace Rdmp.Core.CommandLine.Gui
             for (int i=1;i<dt.Columns.Count;i++)
             {
 
-                var series = new PathAnnotation() { LineColor = colors[i - 1]};
+                var series = new PathAnnotation() { LineColor = colors[i - 1],BeforeSeries = true };
                 int row = 0;
 
                 foreach (DataRow dr in dt.Rows)

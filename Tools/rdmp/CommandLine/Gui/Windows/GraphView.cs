@@ -246,7 +246,7 @@ namespace Terminal.Gui
 		public RectangleD ScreenToGraphSpace(Rect screenArea)
 		{
 			// get position of the bottom left
-			var pos = ScreenToGraphSpace(screenArea.Left, screenArea.Bottom);
+			var pos = ScreenToGraphSpace(screenArea.Left, screenArea.Bottom - 1);
 
 			return new RectangleD(pos.X, pos.Y, screenArea.Width * CellSize.X, screenArea.Height * CellSize.Y);
 		}
