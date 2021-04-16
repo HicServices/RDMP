@@ -123,13 +123,15 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             //see if it is passing checks
             ToMemoryCheckNotifier notifier = new ToMemoryCheckNotifier();
             Result.Check(notifier);
-            if (notifier.GetWorst() == CheckResult.Success)
+            if (notifier.GetWorst() <= CheckResult.Warning)
             {
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
             else
             {
+                MessageBox.Show("Checks must pass before continuing");
+
                 //if it is not passing checks display the results of the failing checking
                 ragSmiley1.Reset();
                 Result.Check(ragSmiley1);

@@ -89,7 +89,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
                 var req = BasicActivator.GetCohortCreationRequest(ExternalCohortTable, Project, auditLogDescription);
 
                 if (Project == null)
-                    Project = req.Project;
+                    Project = req?.Project;
 
                 return req;
             }
