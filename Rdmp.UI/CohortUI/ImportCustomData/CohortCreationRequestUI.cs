@@ -130,6 +130,8 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             }
             else
             {
+                MessageBox.Show("Checks must pass before continuing");
+
                 //if it is not passing checks display the results of the failing checking
                 ragSmiley1.Reset();
                 Result.Check(ragSmiley1);
