@@ -67,7 +67,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         [DemandsInitialization("True to copy the column collations from the source database when creating the destination database.  Only works if both the source and destination have the same DatabaseType.  Excludes columns which feature a transform as part of extraction.",DefaultValue=false)]
         public bool CopyCollations { get; set; }
 
-        [DemandsInitialization("True to always drop the destination database table(s) if they exist during pre-execution checks", DefaultValue = false)]
+        [DemandsInitialization("True to always drop the destination database table(s) from the destination if they already existed", DefaultValue = false)]
         public bool AlwaysDropExtractionTables { get; set; }
 
         private DiscoveredDatabase _destinationDatabase;
