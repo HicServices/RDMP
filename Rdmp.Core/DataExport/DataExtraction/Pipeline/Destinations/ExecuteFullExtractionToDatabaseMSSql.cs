@@ -67,6 +67,9 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         [DemandsInitialization("True to copy the column collations from the source database when creating the destination database.  Only works if both the source and destination have the same DatabaseType.  Excludes columns which feature a transform as part of extraction.",DefaultValue=false)]
         public bool CopyCollations { get; set; }
 
+        [DemandsInitialization("True to always drop the destination database table(s) if they exist during pre-execution checks", DefaultValue = false)]
+        public bool AlwaysDropExtractionTables { get; set; }
+
         private DiscoveredDatabase _destinationDatabase;
         private DataTableUploadDestination _destination;
 
@@ -124,10 +127,28 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 var tblName = _toProcess.TableName;
 
                 //See if table already exists on the server (likely to cause problems including duplication, schema changes in configuration etc)
-                if (_destinationDatabase.ExpectTable(tblName).Exists())
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                                            "A table called " + tblName + " already exists on server " + TargetDatabaseServer + 
+                var existing = _destinationDatabase.ExpectTable(tblName);
+                if (existing.Exists())
+                {
+                    if (AlwaysDropExtractionTables)
+                    {
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                                            $"Table {existing.GetFullyQualifiedName()} already exists, dropping because setting {nameof(AlwaysDropExtractionTables)} is on"));
+                        existing.Drop();
+
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                                            $"Table {existing.GetFullyQualifiedName()} was dropped"));
+
+                        // since we dropped it we should treat it as if it was never there to begin with
+                        _tableDidNotExistAtStartOfLoad = true;
+                    }
+                    else
+                    {
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                                            "A table called " + tblName + " already exists on server " + TargetDatabaseServer +
                                             ", data load might crash if it is populated and/or has an incompatible schema"));
+                    }
+                }
                 else
                 {
                     _tableDidNotExistAtStartOfLoad = true;
