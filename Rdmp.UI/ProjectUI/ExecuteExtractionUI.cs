@@ -20,6 +20,7 @@ using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction;
+using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.UsedByNodes;
@@ -214,6 +215,13 @@ namespace Rdmp.UI.ProjectUI
         private object State_AspectGetter(object rowobject)
         {
             var state = GetState(rowobject);
+
+            if(state is ExtractCommandState ecs)
+            {
+                if(ecs == ExtractCommandState.WaitingForSQLServer)
+                    return "WaitingForDatabase";
+            }
+
             return state == null ? null : state.ToString();
         }
         

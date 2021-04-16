@@ -50,6 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed sort order not being respected in cohort summary screen
 - Fixed DQE graph when data has dates before the year 1,000
 - Fixed `ExecuteCommandCreateNewCatalogueByImportingFile` when using blank constructor and from CLI GUI
+- Fixed extraction UI showing "WaitingForSQLServer" when DBMS might not be (now says "WaitingForDatabase").
 
 ### Changed
 
