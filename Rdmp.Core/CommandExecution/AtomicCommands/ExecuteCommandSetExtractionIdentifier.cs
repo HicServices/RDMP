@@ -138,7 +138,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             ConcreteColumn[] selected = null;
 
-            if (toPick.Length > 0)
+            if (toPick != null && toPick.Length > 0)
             {
                 selected = allColumns.Where(a => toPick.Contains(a.GetRuntimeName())).ToArray();
 
