@@ -443,8 +443,8 @@ namespace Tests.Common
             {
                 var eds = WhenIHaveA<ExtractableDataSet>();
                 var config = WhenIHaveA<ExtractionConfiguration>();
-                               
-                foreach(var ei in eds.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
+
+                foreach (var ei in eds.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
                 {
                     var ec = new ExtractableColumn(Repository, eds, config,ei,ei.Order,ei.SelectSQL);
                 }
@@ -511,7 +511,9 @@ namespace Tests.Common
 
                 var eds = new ExtractableDataSet(Repository, ei.CatalogueItem.Catalogue);
                 var config  = WhenIHaveA<ExtractionConfiguration>();
-                return (T)(object)new ExtractableColumn(Repository,eds,config,ei,0,ei.SelectSQL);
+                config.AddDatasetToConfiguration(eds);
+
+                return (T)(object) config.GetAllExtractableColumnsFor(eds).Single();
             }
             
             if (typeof (T) == typeof(FilterContainer))
