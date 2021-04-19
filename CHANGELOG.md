@@ -57,7 +57,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Changed message about inaccessible cohorts to a warning instead of an error. 
- 
+- Collation is now explicitly specified when creating a new cohort source using the wizard (as long as there is a single collation amongst existing ColumnInfo of that type)
+
 ### Dependencies
 
 - Bump System.Drawing.Common from 5.0.0 to 5.0.2

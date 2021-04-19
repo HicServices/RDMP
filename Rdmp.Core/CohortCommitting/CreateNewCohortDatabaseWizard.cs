@@ -96,17 +96,30 @@ namespace Rdmp.Core.CohortCommitting
                 
                 var idColumn = definitionTable.DiscoverColumn("id");
                 var foreignKey = new DatabaseColumnRequest(_definitionTableForeignKeyField,new DatabaseTypeRequest(typeof (int)), false) {IsPrimaryKey = true};
-                
 
-                var cohortTable = _targetDatabase.CreateTable("Cohort",new []
+                // Look up the collations of all the private identifier columns
+                var collations = privateIdentifierPrototype.MatchingExtractionInformations
+                    .Select(e => e.ColumnInfo?.Collation)
+                    .Where(c => !string.IsNullOrWhiteSpace(c))
+                    .Distinct()
+                    .ToArray();
+
+                var cohortTable = _targetDatabase.CreateTable("Cohort", new[]
                 {
-                 new DatabaseColumnRequest(privateIdentifierPrototype.RuntimeName,privateIdentifierPrototype.DataType,false){IsPrimaryKey = true},
-                 new DatabaseColumnRequest(_releaseIdentifierFieldName,new DatabaseTypeRequest(typeof(string),300)){AllowNulls = AllowNullReleaseIdentifiers}, 
+                 new DatabaseColumnRequest(privateIdentifierPrototype.RuntimeName,privateIdentifierPrototype.DataType,false)
+                 {
+                     IsPrimaryKey = true,
+
+                     // if there is a single collation amongst private identifier prototype references we must use that collation
+                     // when creating the private column so that the DBMS can link them no bother
+                     Collation = collations.Length == 1 ? collations[0]:null
+                 },
+                 new DatabaseColumnRequest(_releaseIdentifierFieldName,new DatabaseTypeRequest(typeof(string),300)){AllowNulls = AllowNullReleaseIdentifiers},
                  foreignKey
                 }
                 ,
                 //foreign key between id and cohortDefinition_id
-                new Dictionary<DatabaseColumnRequest, DiscoveredColumn>() { { foreignKey,idColumn } },true);
+                new Dictionary<DatabaseColumnRequest, DiscoveredColumn>() { { foreignKey, idColumn } }, true); ;
 
                 
                 notifier.OnCheckPerformed(new CheckEventArgs("About to create pointer to the source", CheckResult.Success));
