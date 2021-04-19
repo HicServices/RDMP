@@ -94,7 +94,7 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandChangeExtractability(_activator, c),Extraction);
                 yield return new CommandPresentation(new ExecuteCommandMakeCatalogueProjectSpecific(_activator,c,null),Extraction);
                 yield return new CommandPresentation(new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c),Extraction);
-                yield return new CommandPresentation(new ExecuteCommandSetExtractionIdentifier(_activator,c,null),Extraction);
+                yield return new CommandPresentation(new ExecuteCommandSetExtractionIdentifier(_activator,c,null,null),Extraction);
                                         
                 yield return new CommandPresentation(new ExecuteCommandExportObjectsToFile(_activator, new[] {c}),Metadata);
                 yield return new CommandPresentation(new ExecuteCommandExtractMetadata(_activator, new []{ c},null,null,null,false,null),Metadata);
@@ -349,7 +349,7 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandCreateNewFilter(_activator,sds));
                 yield return new CommandPresentation(new ExecuteCommandCreateNewFilterFromCatalogue(_activator,sds));
                 yield return new CommandPresentation(new ExecuteCommandViewExtractionSql(_activator,sds));
-                yield return new CommandPresentation(new ExecuteCommandSetExtractionIdentifier(_activator, sds.GetCatalogue(), sds.ExtractionConfiguration));
+                yield return new CommandPresentation(new ExecuteCommandSetExtractionIdentifier(_activator, sds.GetCatalogue(), sds.ExtractionConfiguration,null));
             }
             
             if(Is(o, out ProjectCataloguesNode pcn))

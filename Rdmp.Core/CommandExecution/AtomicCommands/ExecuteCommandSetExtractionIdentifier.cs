@@ -29,17 +29,26 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private ConcreteColumn[] _alreadyMarkedInConfiguration;
 
         /// <summary>
+        /// Explicit columns to pick rather than prompting to choose at runtime
+        /// </summary>
+        private string[] toPick;
+
+        /// <summary>
         /// Change which column is the linkage identifier in a <see cref="Catalogue"/> either at a global level or for a specific <paramref name="inConfiguration"/>
         /// </summary>
         /// <param name="activator"></param>
         /// <param name="catalogue"></param>
         /// <param name="inConfiguration"></param>
+        /// <param name="column"></param>
         public ExecuteCommandSetExtractionIdentifier(IBasicActivateItems activator,
             [DemandsInitialization("The dataset you want to change the extraction identifier for")]
             ICatalogue catalogue,
 
-            [DemandsInitialization("The specific extraction you want the change made in or Null for the Catalogue itself (will affect all future extractions)")]
-            IExtractionConfiguration inConfiguration):base(activator)
+            [DemandsInitialization("Optional - The specific extraction you want the change made in or Null for the Catalogue itself (will affect all future extractions)")]
+            IExtractionConfiguration inConfiguration,
+
+            [DemandsInitialization("Optional - The Column name(s) you want to select as the new linkage identifier(s).  Comma seperate multiple entries if needed")]
+            string column) :base(activator)
         {
             _catalogue = catalogue;
             _inConfiguration = inConfiguration;
@@ -76,6 +85,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 }
 
                 _alreadyMarked = _extractionInformations.Where(ei => ei.IsExtractionIdentifier).ToArray();
+            }
+
+            if(!string.IsNullOrWhiteSpace(column))
+            {
+                toPick = column.Split(',', StringSplitOptions.RemoveEmptyEntries);
             }
 
         }
@@ -122,27 +136,44 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         }
         private void ChangeFor(string initialSearchText,ConcreteColumn[] allColumns)
         {
-            if (SelectMany(allColumns, out ConcreteColumn[] selected, initialSearchText))
+            ConcreteColumn[] selected = null;
+
+            if (toPick.Length > 0)
             {
-                if (selected.Length == 0)
-                    if (!YesNo("Do you want to clear the Extraction Identifier?", "Clear Extraction Identifier?"))
-                        return;
+                selected = allColumns.Where(a => toPick.Contains(a.GetRuntimeName())).ToArray();
 
-                if (selected.Length > 1)
-                    if (!YesNo("Are you sure you want multiple linkable extraction identifier columns (most datasets only have 1 person ID column in them)?", "Multiple IsExtractionIdentifier columns?"))
-                        return;
-
-                foreach (var ec in allColumns)
+                if(selected.Length != toPick.Length)
                 {
-                    bool newValue = selected.Contains(ec);
-
-                    if (ec.IsExtractionIdentifier != newValue)
-                    {
-                        ec.IsExtractionIdentifier = newValue;
-                        ec.SaveToDatabase();
-                    }
+                    throw new Exception($"Could not find column(s) {string.Join(',', toPick)} amongst available columns ({string.Join(',',allColumns.Select(c=>c.GetRuntimeName()))})");
                 }
             }
+            else
+            {
+                if (SelectMany(allColumns, out selected, initialSearchText))
+                {
+                    if (selected.Length == 0)
+                        if (!YesNo("Do you want to clear the Extraction Identifier?", "Clear Extraction Identifier?"))
+                            return;
+
+                    if (selected.Length > 1)
+                        if (!YesNo("Are you sure you want multiple linkable extraction identifier columns (most datasets only have 1 person ID column in them)?", "Multiple IsExtractionIdentifier columns?"))
+                            return;
+                }
+                else
+                    return;
+            }
+
+            foreach (var ec in allColumns)
+            {
+                bool newValue = selected.Contains(ec);
+
+                if (ec.IsExtractionIdentifier != newValue)
+                {
+                    ec.IsExtractionIdentifier = newValue;
+                    ec.SaveToDatabase();
+                }
+            }
+            
         }
     }
 }
