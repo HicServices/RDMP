@@ -98,7 +98,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             var cols = _alreadyMarked ?? _alreadyMarkedInConfiguration;
 
-            if (cols.Length == 0)
+            if (cols == null || cols.Length == 0)
                 return base.GetCommandName();
 
             return base.GetCommandName() + "(" + string.Join(",", cols.Select(e=>e.GetRuntimeName())) + ")";
