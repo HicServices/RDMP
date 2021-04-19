@@ -4,40 +4,90 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Drawing;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
+    /// <summary>
+    /// Change which column is used to perform linkage against a cohort.  This command supports both changing the global setting on a <see cref="Catalogue"/>
+    /// or changing it only for a specific <see cref="ExtractionConfiguration"/>
+    /// </summary>
     public class ExecuteCommandSetExtractionIdentifier : BasicCommandExecution, IAtomicCommand
     {
-        private Catalogue _catalogue;
+        private ICatalogue _catalogue;
         private ExtractionInformation[] _extractionInformations;
         private ExtractionInformation[] _alreadyMarked;
 
-        public ExecuteCommandSetExtractionIdentifier(IBasicActivateItems activator,Catalogue catalogue):base(activator)
+        private readonly IExtractionConfiguration _inConfiguration;
+        private ConcreteColumn[] _selectedDataSetColumns;
+        private ConcreteColumn[] _alreadyMarkedInConfiguration;
+
+        /// <summary>
+        /// Change which column is the linkage identifier in a <see cref="Catalogue"/> either at a global level or for a specific <paramref name="inConfiguration"/>
+        /// </summary>
+        /// <param name="activator"></param>
+        /// <param name="catalogue"></param>
+        /// <param name="inConfiguration"></param>
+        public ExecuteCommandSetExtractionIdentifier(IBasicActivateItems activator,
+            [DemandsInitialization("The dataset you want to change the extraction identifier for")]
+            ICatalogue catalogue,
+
+            [DemandsInitialization("The specific extraction you want the change made in or Null for the Catalogue itself (will affect all future extractions)")]
+            IExtractionConfiguration inConfiguration):base(activator)
         {
             _catalogue = catalogue;
-
+            _inConfiguration = inConfiguration;
             _catalogue.ClearAllInjections();
 
-            _extractionInformations = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
+            if(inConfiguration != null)
+            {
+                var allEds = inConfiguration.GetAllExtractableDataSets();
+                var eds = allEds.FirstOrDefault(sds => sds.Catalogue_ID == _catalogue.ID);
+                if(eds == null)
+                {
+                    SetImpossible($"Catalogue '{_catalogue}' is not part of ExtractionConfiguration '{inConfiguration}'");
+                    return;
+                }
 
-            if(_extractionInformations.Length == 0)
-                SetImpossible("Catalogue does not have any extractable columns");
+                _selectedDataSetColumns = inConfiguration.GetAllExtractableColumnsFor(eds);
 
-            _alreadyMarked = _extractionInformations.Where(ei => ei.IsExtractionIdentifier).ToArray();
+                if (_selectedDataSetColumns.Length == 0)
+                {
+                    SetImpossible($"Catalogue '{_catalogue}' in '{inConfiguration}' does not have any extractable columns");
+                    return;
+                }
+
+                _alreadyMarkedInConfiguration = _selectedDataSetColumns.Where(ei => ei.IsExtractionIdentifier).ToArray();
+            }
+            else
+            {
+                _extractionInformations = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
+
+                if (_extractionInformations.Length == 0)
+                {
+                    SetImpossible("Catalogue does not have any extractable columns");
+                    return;
+                }
+
+                _alreadyMarked = _extractionInformations.Where(ei => ei.IsExtractionIdentifier).ToArray();
+            }
+
         }
 
         public override string GetCommandName()
         {
-            if(_alreadyMarked.Length == 0)
+            var cols = _alreadyMarked ?? _alreadyMarkedInConfiguration;
+
+            if (cols.Length == 0)
                 return base.GetCommandName();
 
-            return base.GetCommandName() + "(" + string.Join(",", _alreadyMarked.Select(e=>e.GetRuntimeName())) + ")";
+            return base.GetCommandName() + "(" + string.Join(",", cols.Select(e=>e.GetRuntimeName())) + ")";
         }
 
         public override Image GetImage(IIconProvider iconProvider)
@@ -54,31 +104,44 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            string initialSearchText = _alreadyMarked.Length == 1 ? _alreadyMarked[0].GetRuntimeName():null;
+            var oldCols = _alreadyMarked ?? _alreadyMarkedInConfiguration;
 
-            if (SelectMany(_extractionInformations, out ExtractionInformation[] selected, initialSearchText))
+            string initialSearchText = oldCols.Length == 1 ? oldCols[0].GetRuntimeName():null;
+
+            if(_inConfiguration != null)
             {
-                if(selected.Length == 0)
-                    if(!YesNo("Do you want to clear the Extraction Identifier?", "Clear Extraction Identifier?"))
+                ChangeFor(initialSearchText, _selectedDataSetColumns);
+                Publish(_inConfiguration);
+            }
+            else
+            {
+                ChangeFor(initialSearchText, _extractionInformations);
+                Publish(_catalogue);
+            }
+
+        }
+        private void ChangeFor(string initialSearchText,ConcreteColumn[] allColumns)
+        {
+            if (SelectMany(allColumns, out ConcreteColumn[] selected, initialSearchText))
+            {
+                if (selected.Length == 0)
+                    if (!YesNo("Do you want to clear the Extraction Identifier?", "Clear Extraction Identifier?"))
                         return;
 
                 if (selected.Length > 1)
                     if (!YesNo("Are you sure you want multiple linkable extraction identifier columns (most datasets only have 1 person ID column in them)?", "Multiple IsExtractionIdentifier columns?"))
                         return;
 
-                foreach(var ei in _extractionInformations)
+                foreach (var ec in allColumns)
                 {
-                    bool newValue = selected.Contains(ei);
+                    bool newValue = selected.Contains(ec);
 
-                    if(ei.IsExtractionIdentifier != newValue)
+                    if (ec.IsExtractionIdentifier != newValue)
                     {
-                        ei.IsExtractionIdentifier = newValue;
-                        ei.SaveToDatabase();
+                        ec.IsExtractionIdentifier = newValue;
+                        ec.SaveToDatabase();
                     }
                 }
-
-
-                Publish(_catalogue);
             }
         }
     }
