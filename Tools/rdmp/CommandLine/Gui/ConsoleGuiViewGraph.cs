@@ -5,9 +5,11 @@ using Rdmp.Core.DataViewing;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using Terminal.Gui;
 using Attribute = Terminal.Gui.Attribute;
+using Color = Terminal.Gui.Color;
 
 namespace Rdmp.Core.CommandLine.Gui
 {
@@ -95,7 +97,7 @@ namespace Rdmp.Core.CommandLine.Gui
             graphView.AxisY.Text = countColumnName;
             graphView.GraphColor = Driver.MakeAttribute(Color.White, Color.Black);
 
-            var xIncrement = 1/(boundsWidth / (decimal)dt.Rows.Count);
+            var xIncrement = 1f/(boundsWidth / (float)dt.Rows.Count);
             
             graphView.MarginBottom = 2;
             graphView.AxisX.Increment = xIncrement * 10;
@@ -103,12 +105,12 @@ namespace Rdmp.Core.CommandLine.Gui
             graphView.AxisX.Text = axis.AxisIncrement.ToString();
             graphView.AxisX.LabelGetter = (v) =>
             {
-                var x = (int)v.GraphSpace.X;
+                var x = (int)v.Value;
                 return x < 0 || x >= dt.Rows.Count ? "" : dt.Rows[x][0].ToString();
             };
 
-            decimal minY = 0M;
-            decimal maxY = 1M;
+            float minY = 0;
+            float maxY = 1;
 
             var colors = GetColors(dt.Columns.Count - 1);
 
@@ -120,12 +122,12 @@ namespace Rdmp.Core.CommandLine.Gui
 
                 foreach (DataRow dr in dt.Rows)
                 {
-                    var yVal = Convert.ToDecimal(dr[i]);
+                    var yVal = (float)Convert.ToDouble(dr[i]);
 
                     minY = Math.Min(minY, yVal);
                     maxY = Math.Max(maxY, yVal);
 
-                    series.Points.Add(new PointD(row++, yVal));
+                    series.Points.Add(new PointF(row++, yVal));
                 }
 
                 graphView.Annotations.Add(series);
@@ -133,9 +135,9 @@ namespace Rdmp.Core.CommandLine.Gui
 
             var yIncrement = 1/((boundsHeight- graphView.MarginBottom)/(maxY - minY));
 
-            graphView.CellSize = new PointD(xIncrement, yIncrement);
+            graphView.CellSize = new PointF(xIncrement, yIncrement);
 
-            graphView.AxisY.LabelGetter = (v) => FormatValue(v.GraphSpace.Y,minY,maxY);
+            graphView.AxisY.LabelGetter = (v) => FormatValue(v.Value,minY,maxY);
             graphView.MarginLeft = (uint)(Math.Max(FormatValue(maxY, minY, maxY).Length, FormatValue(minY, minY, maxY).Length)) + 1;
 
             var legend = GetLegend(dt,boundsWidth,boundsHeight);
@@ -177,8 +179,8 @@ namespace Rdmp.Core.CommandLine.Gui
             int row = 0;
             int widestCategory = 0;
 
-            decimal min = 0M;
-            decimal max = 1M;
+            float min = 0;
+            float max = 1;
 
             foreach (DataRow dr in dt.Rows)
             {
@@ -189,7 +191,7 @@ namespace Rdmp.Core.CommandLine.Gui
                     label = "<Null>";
                 }
 
-                var val = Convert.ToDecimal(dr[1]);
+                var val = (float)Convert.ToDouble(dr[1]);
 
                 min = Math.Min(min, val);
                 max = Math.Max(max, val);
@@ -206,13 +208,13 @@ namespace Rdmp.Core.CommandLine.Gui
             // Configure Axis, Margins etc
 
             // make sure whole graph fits on axis
-            decimal xIncrement = (max - min) / (boundsWidth);
+            float xIncrement = (max - min) / (boundsWidth);
 
             // 1 bar per row of console
-            graphView.CellSize = new PointD(xIncrement, 1);
+            graphView.CellSize = new PointF(xIncrement, 1);
 
             graphView.Series.Add(barSeries);
-            graphView.AxisY.LabelGetter = barSeries.GetLabelText;
+            graphView.AxisY.Increment = 0;
             barSeries.Orientation = Orientation.Horizontal;
             graphView.MarginBottom = 2;
             graphView.MarginLeft = (uint)widestCategory + 1;
@@ -220,14 +222,14 @@ namespace Rdmp.Core.CommandLine.Gui
             // work out how to space x axis without scrolling
             graphView.AxisX.Increment = 10 * xIncrement;
             graphView.AxisX.ShowLabelsEvery = 1;
-            graphView.AxisX.LabelGetter = (v) => FormatValue(v.GraphSpace.X, min, max);
+            graphView.AxisX.LabelGetter = (v) => FormatValue(v.Value, min, max);
             graphView.AxisX.Text = countColumnName;
 
             graphView.AxisY.Increment = 1;
             graphView.AxisY.ShowLabelsEvery = 1;
 
             // scroll to the top of the bar chart so that the natural scroll direction (down) is preserved
-            graphView.ScrollOffset = new PointD(0, barSeries.Bars.Count - boundsHeight + 4);
+            graphView.ScrollOffset = new PointF(0, barSeries.Bars.Count - boundsHeight + 4);
         }
 
         private List<Attribute> GetColors(int numberNeeded)
@@ -278,8 +280,8 @@ namespace Rdmp.Core.CommandLine.Gui
             // Configure multi bar series
             var barSeries = new MultiBarSeries(numberOfBars, numberOfBars + 1, 1, colors);
 
-            decimal min = 0M;
-            decimal max = 1M;
+            float min = 0;
+            float max = 1;
 
             foreach (DataRow dr in dt.Rows)
             {
@@ -289,7 +291,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 {
                     label = "<Null>";
                 }
-                var vals = dr.ItemArray.Skip(1).Select(Convert.ToDecimal).ToArray();
+                var vals = dr.ItemArray.Skip(1).Select(v=>(float)Convert.ToDouble(v)).ToArray();
 
                 barSeries.AddBars(label, mediumStiple, vals);
 
@@ -303,10 +305,10 @@ namespace Rdmp.Core.CommandLine.Gui
             // Configure Axis, Margins etc
 
             // make sure whole graph fits on axis
-            decimal yIncrement = (max - min) / (boundsHeight - 2/*MarginBottom*/);
+            float yIncrement = (max - min) / (boundsHeight - 2/*MarginBottom*/);
 
             // 1 bar per row of console
-            graphView.CellSize = new PointD(1, yIncrement);
+            graphView.CellSize = new PointF(1, yIncrement);
 
             graphView.Series.Add(barSeries);
             graphView.MarginBottom = 2;
@@ -315,15 +317,15 @@ namespace Rdmp.Core.CommandLine.Gui
             // work out how to space x axis without scrolling
             graphView.AxisY.Increment = yIncrement*5;
             graphView.AxisY.ShowLabelsEvery = 1;
-            graphView.AxisY.LabelGetter = (v) => FormatValue(v.GraphSpace.Y, min, max);
+            graphView.AxisY.LabelGetter = (v) => FormatValue(v.Value, min, max);
             graphView.AxisY.Text = countColumnName;
 
             graphView.AxisX.Increment = numberOfBars+1;
             graphView.AxisX.ShowLabelsEvery = 1;
-            graphView.AxisX.LabelGetter = (v) => barSeries.SubSeries.First().GetLabelText(v);
+            graphView.AxisX.Increment = 0;
             graphView.AxisX.Text = dt.Columns[0].ColumnName;
         }
-        private string FormatValue(decimal val, decimal min, decimal max)
+        private string FormatValue(float val, float min, float max)
         {
             if (val < min)
                 return "";
@@ -333,13 +335,12 @@ namespace Rdmp.Core.CommandLine.Gui
                 return val.ToString("N0");
             }
 
-            if (val >= 0.01M)
+            if (val >= 0.01f)
                 return val.ToString("N2");
-            if (val > 0.0001M)
+            if (val > 0.0001f)
                 return val.ToString("N4");
-            if (val > 0.000001M)
+            if (val > 0.000001f)
                 return val.ToString("N6");
-
 
             return val.ToString();
         }
