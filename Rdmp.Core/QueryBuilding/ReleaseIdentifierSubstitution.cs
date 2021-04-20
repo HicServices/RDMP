@@ -108,9 +108,10 @@ namespace Rdmp.Core.QueryBuilding
 
                     //but replace all instances of CHI with PROCHI (or Barcode, or whatever)
                     if(!Alias.Contains(toReplace) || Regex.Matches(Alias,Regex.Escape(toReplace)).Count > 1)
-                        throw new Exception("Expected OriginalDatasetColumn " + OriginalDatasetColumn.Alias + " to have the text \"" + toReplace + "\" appearing once (and only once in it's name)," +
-                                            "we planned to replace that text with:" + toReplaceWith);
-
+                    {
+                        throw new Exception(
+                            $"Failed to resolve multiple extraction identifiers in dataset.  Either mark a single column as the IsExtractionIdentifier for this extraction or ensure all columns are of compatible type and have the text \"{toReplace}\" appearing once (and only once in its name)");
+                    }
                    
                    Alias = Alias.Replace(toReplace,toReplaceWith);
                 }
