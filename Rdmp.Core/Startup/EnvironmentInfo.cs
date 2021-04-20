@@ -6,12 +6,21 @@
 
 using ReusableLibraryCode.Checks;
 using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
 namespace Rdmp.Core.Startup
 {
+
+    [Flags]
+    public enum PluginFolders
+    {
+        None = 0,
+        Main = 1,
+        Windows = 4,
+    }
+
     /// <summary>
     /// Class for describing the runtime environment in which <see cref="Startup"/> is executing e.g. under
     /// Windows / Linux in net461 or netcoreapp2.2.  This determines which plugin binary files are loaded
@@ -19,53 +28,25 @@ namespace Rdmp.Core.Startup
     public class EnvironmentInfo
     {
         /// <summary>
-        /// List of RIDs that are allowed for <see cref="RuntimeIdentifier"/>
-        /// </summary>
-        public static ReadOnlyCollection<string> SupportedRIDs = new ReadOnlyCollection<string>(new string[]
-            {
-                "linux",
-                "win",
-                "osx"
-            });
-
-        /// <summary>
         /// The target framework of the running application e.g. "netcoreapp2.2", "net461".  This determines which
         /// plugins versions are loaded.  Leave blank to not load any plugins.
         /// </summary>
-        public string TargetFramework;
+        public PluginFolders PluginsToLoad;
 
         /// <summary>
-        /// The RID of the currently executing environment e.g. "linux", "win".  Does not include 
+        /// Creates a new instance specifying which plugins should be loaded.
         /// </summary>
-        public string RuntimeIdentifier { get; set; }
-
-        /// <summary>
-        /// Creates a new instance specifying your applications build target.  <see cref="RuntimeIdentifier"/> will be guessed
-        /// based on the System.Environment.OSVersion.Platform
-        /// </summary>
-        public EnvironmentInfo(string targetFramework):this()
+        public EnvironmentInfo(PluginFolders pluginsToLoad):this()
         {
-            TargetFramework = targetFramework;
+            PluginsToLoad = pluginsToLoad;
         }
 
         /// <summary>
-        /// Returns true if all the information is available to make plugin compatibility decisions.
-        /// </summary>
-        /// <returns></returns>
-        public bool IsLegal()
-        {
-            if(string.IsNullOrWhiteSpace(TargetFramework) || string.IsNullOrWhiteSpace(RuntimeIdentifier))
-                return false;
-
-            return SupportedRIDs.Contains(RuntimeIdentifier);
-        }
-
-        /// <summary>
-        /// Creates a new instance in which plugins are not loaded (no <see cref="TargetFramework"/> is known).
+        /// Creates a new instance in which plugins are not loaded.
         /// </summary>
         public EnvironmentInfo()
         {
-            RuntimeIdentifier = IsLinux ? "linux" : "win";
+            PluginsToLoad = PluginFolders.None;
         }
 
         public static bool IsLinux
@@ -81,26 +62,43 @@ namespace Rdmp.Core.Startup
         /// Returns the nupkg archive subdirectory that should be loaded with the current environment 
         /// e.g. /lib/net461
         /// </summary>
-        internal DirectoryInfo GetPluginSubDirectory(DirectoryInfo root, ICheckNotifier notifier)
+        internal IEnumerable<DirectoryInfo> GetPluginSubDirectories(DirectoryInfo root, ICheckNotifier notifier)
         {
             if(!root.Name.Equals("lib"))
                 throw new ArgumentException("Expected " + root.FullName + " to be the 'lib' directory");
-            
-            var frameworkDir = root.EnumerateDirectories(TargetFramework).Cast<DirectoryInfo>().SingleOrDefault();
-            
-            if(frameworkDir == null)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Could not find a matching framework directory for " + TargetFramework  + " in folder:" + root ,CheckResult.Warning));
-                return null;
-            }
-                
-            
-            //if we know the OS
-            if(!string.IsNullOrWhiteSpace(RuntimeIdentifier))
-                //return the OS subdir (or the root if there is no RID dir)
-                return frameworkDir.EnumerateDirectories(RuntimeIdentifier).Cast<DirectoryInfo>().SingleOrDefault() ?? frameworkDir;
 
-            return frameworkDir;
+            // if we are loading the main codebase of plugins
+            if (PluginsToLoad.HasFlag(PluginFolders.Main))
+            {
+                // find the main dir
+                var mainDir = root.GetDirectories().FirstOrDefault(d=>string.Equals("main",d.Name,StringComparison.CurrentCultureIgnoreCase));
+
+                if (mainDir != null)
+                {
+                    // great, go load the dlls in there
+                    yield return mainDir;
+                }
+                else
+                {
+                    // plugin has no main directory, maybe it is not built correctly
+                    notifier.OnCheckPerformed(new CheckEventArgs($"Could not find an expected folder called '/lib/main' in folder:" + root, CheckResult.Warning));
+                }   
+            }
+
+            // if we are to load the windows specific (e.g. winforms) plugins too?
+            if (PluginsToLoad.HasFlag(PluginFolders.Windows))
+            {
+                // see if current plugin has winforms stuff
+                var winDir = root.GetDirectories().FirstOrDefault(d => string.Equals("main", d.Name, StringComparison.CurrentCultureIgnoreCase));
+
+                if (winDir != null)
+                {
+                    //yes
+                    yield return winDir;
+                }
+
+                // if no then no big dael
+            }
         }
     }
 }

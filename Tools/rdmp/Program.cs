@@ -36,7 +36,7 @@ namespace Rdmp.Core
     {
         private static EnvironmentInfo GetEnvironmentInfo()
         {
-            return new EnvironmentInfo("netcoreapp2.2");
+            return new EnvironmentInfo(PluginFolders.Main);
         }
         
         static int Main(string[] args)

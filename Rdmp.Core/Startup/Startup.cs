@@ -69,9 +69,6 @@ namespace Rdmp.Core.Startup
         {
             bool foundCatalogue = false;
 
-            notifier.OnCheckPerformed(new CheckEventArgs("Environment TargetFramework:" + _environmentInfo.TargetFramework, CheckResult.Success));
-            notifier.OnCheckPerformed(new CheckEventArgs("Environment RuntimeIdentifier:" + _environmentInfo.RuntimeIdentifier, CheckResult.Success));
-            
             notifier.OnCheckPerformed(new CheckEventArgs("Loading core assemblies",CheckResult.Success));
 
             Assembly.Load(typeof(Catalogue).Assembly.FullName);
@@ -301,13 +298,7 @@ namespace Rdmp.Core.Startup
                     else
                         notifier.OnCheckPerformed(new CheckEventArgs("Found existing directory '" + outDir.FullName+"' so didn't bother unzipping.",CheckResult.Success));
 
-                    var dir = _environmentInfo.GetPluginSubDirectory(outDir.CreateSubdirectory("lib"),notifier);
-                    
-                    //it is a UI only plugin? or plugin doesn't support the current runtime/platform
-                    if(dir == null)
-                        continue;
-
-                    toLoad.Add(dir);
+                    toLoad.AddRange(_environmentInfo.GetPluginSubDirectories(outDir.CreateSubdirectory("lib"), notifier));
 
                     //tell them we downloaded it
                     MEFFileDownloaded(this,
