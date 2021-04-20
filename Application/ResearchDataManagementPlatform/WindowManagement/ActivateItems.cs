@@ -193,6 +193,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
             else
                 CoreChildProvider.UpdateTo(temp);
 
+            RefreshBus.ChildProvider = CoreChildProvider;
+
             return CoreChildProvider;
         }
         
