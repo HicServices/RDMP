@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.0.0]
+
 ### Changed
 
 - .Net 5.0 for all, instead of Framework 4.6.1+Core 2.2+Standard 2.0 mix
@@ -699,7 +701,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.2.4...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v5.0.0...develop
+[5.0.0]: https://github.com/HicServices/RDMP/compare/v4.2.4...v5.0.0
 [4.2.4]: https://github.com/HicServices/RDMP/compare/v4.2.3...v4.2.4
 [4.2.3]: https://github.com/HicServices/RDMP/compare/v4.2.2...v4.2.3
 [4.2.2]: https://github.com/HicServices/RDMP/compare/v4.2.1...v4.2.2
