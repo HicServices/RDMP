@@ -191,6 +191,18 @@ namespace ReusableLibraryCode
 
         }
 
+        public static DirectoryInfo GetExecutableDirectory()
+        {
+            var exeLocation = Process.GetCurrentProcess()?.MainModule?.FileName;
+
+            if(!string.IsNullOrWhiteSpace(exeLocation))
+            {
+                return new DirectoryInfo(Path.GetDirectoryName(exeLocation));
+            }
+
+            return new DirectoryInfo(Environment.CurrentDirectory);
+        }
+
         public static string HashFile(string filename, int retryCount = 6)
         {
             try

@@ -33,6 +33,10 @@ namespace Rdmp.Core.Startup
         /// </summary>
         public PluginFolders PluginsToLoad;
 
+
+        public const string MainSubDir = "main";
+        public const string WindowsSubDir = "windows";
+
         /// <summary>
         /// Creates a new instance specifying which plugins should be loaded.
         /// </summary>
@@ -71,7 +75,7 @@ namespace Rdmp.Core.Startup
             if (PluginsToLoad.HasFlag(PluginFolders.Main))
             {
                 // find the main dir
-                var mainDir = root.GetDirectories().FirstOrDefault(d=>string.Equals("main",d.Name,StringComparison.CurrentCultureIgnoreCase));
+                var mainDir = root.GetDirectories().FirstOrDefault(d=>string.Equals(MainSubDir,d.Name,StringComparison.CurrentCultureIgnoreCase));
 
                 if (mainDir != null)
                 {
@@ -81,7 +85,7 @@ namespace Rdmp.Core.Startup
                 else
                 {
                     // plugin has no main directory, maybe it is not built correctly
-                    notifier.OnCheckPerformed(new CheckEventArgs($"Could not find an expected folder called '/lib/main' in folder:" + root, CheckResult.Warning));
+                    notifier.OnCheckPerformed(new CheckEventArgs($"Could not find an expected folder called '/lib/{MainSubDir}' in folder:" + root, CheckResult.Warning));
                 }   
             }
 
@@ -89,7 +93,7 @@ namespace Rdmp.Core.Startup
             if (PluginsToLoad.HasFlag(PluginFolders.Windows))
             {
                 // see if current plugin has winforms stuff
-                var winDir = root.GetDirectories().FirstOrDefault(d => string.Equals("main", d.Name, StringComparison.CurrentCultureIgnoreCase));
+                var winDir = root.GetDirectories().FirstOrDefault(d => string.Equals(WindowsSubDir, d.Name, StringComparison.CurrentCultureIgnoreCase));
 
                 if (winDir != null)
                 {
