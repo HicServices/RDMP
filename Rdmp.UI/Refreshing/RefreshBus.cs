@@ -52,6 +52,7 @@ namespace Rdmp.UI.Refreshing
 
                     //refresh it from the child provider
                     if (e.Exists)
+                    {
                         if (ChildProvider != null)
                         {
                             var fresh = ChildProvider.GetLatestCopyOf(e.Object);
@@ -63,6 +64,14 @@ namespace Rdmp.UI.Refreshing
                         }
                         else
                             e.Object.RevertToDatabaseState();
+                    }
+                    else
+                    {
+                        if(ChildProvider != null && e.DeletedObjectDescendancy == null)
+                        {
+                            e.DeletedObjectDescendancy = ChildProvider.GetDescendancyListIfAnyFor(e.Object);
+                        }
+                    }                        
 
                     RefreshObject?.Invoke(sender, e);
                 }
