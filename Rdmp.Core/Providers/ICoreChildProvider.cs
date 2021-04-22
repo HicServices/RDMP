@@ -112,7 +112,6 @@ namespace Rdmp.Core.Providers
         /// <returns></returns>
         IEnumerable<IMasqueradeAs> GetMasqueradersOf(object o);
 
-        DatabaseEntity GetLatestCopyOf(DatabaseEntity e);
         
         AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get; }
 
