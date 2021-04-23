@@ -33,6 +33,12 @@ namespace ReusableCodeTests
 
             string currentVersion = match.Groups[1].Value;
 
+            // When looking for the header in the change logs don't worry about -rc1 -rc2 etc
+            if (currentVersion.Contains('-'))
+            {
+                currentVersion = currentVersion.Substring(0, currentVersion.IndexOf('-'));
+            }
+
             var changeLog = File.ReadAllText(changeLogPath);
 
             Assert.IsTrue(changeLog.Contains($"## [{currentVersion}]"), $"{changeLogPath} did not contain a header for the current version '{currentVersion}'");
