@@ -44,7 +44,9 @@ jobs:
         run: |
           dotnet publish Rdmp.UI/Rdmp.UI.csproj -r win-x64 -c Release -o PublishWindows --verbosity quiet --nologo
           dotnet publish Tools/rdmp/rdmp.csproj -r linux-x64 -c Release -o PublishLinux --verbosity quiet --nologo
-          
+      - name: BundleSource
+        shell: cmd
+        run: powershell -noexit -executionpolicy bypass "& ./BundleSourceIntoZipFile.ps1"
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
