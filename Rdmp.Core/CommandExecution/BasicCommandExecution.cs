@@ -387,5 +387,22 @@ namespace Rdmp.Core.CommandExecution
 
             return constructor.Invoke(constructorValues.ToArray());
         }
+
+        /// <summary>
+        /// Runs checks on the <paramref name="checkable"/> and calls <see cref="SetImpossible(string)"/> if there are any failures
+        /// </summary>
+        /// <param name="checkable"></param>
+        protected void SetImpossibleIfFailsChecks(ICheckable checkable)
+        {
+            try
+            {
+                checkable.Check(new ThrowImmediatelyCheckNotifier());
+            }
+            catch (Exception e)
+            {
+
+                SetImpossible(ExceptionHelper.ExceptionToListOfInnerMessages(e));
+            }
+        }
     }
 }

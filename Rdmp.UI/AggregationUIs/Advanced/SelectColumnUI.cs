@@ -154,18 +154,12 @@ namespace Rdmp.UI.AggregationUIs.Advanced
                     //user is trying to remove a dimension
                     if (dimensionColumn != null)
                     {
+                        dimensionColumn.DeleteInDatabase();
 
                         //get the master it was based on
                         var extractionInformation = dimensionColumn.ExtractionInformation;
                         try
                         {
-                            if (dimensionColumn.ID == _aggregate.PivotOnDimensionID)
-                            {
-                                _aggregate.PivotOnDimensionID = null;
-                                _aggregate.SaveToDatabase();
-                            }
-
-                            //delete it in the database
                             dimensionColumn.DeleteInDatabase();
                         }
                         catch (Exception ex)
@@ -174,6 +168,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
                             ExceptionViewer.Show(ex);
                             return;
                         }
+
                         //remove it from the inclusion list
                         _includedColumns.Remove(dimensionColumn);
                         olvSelectColumns.RemoveObject(dimensionColumn);

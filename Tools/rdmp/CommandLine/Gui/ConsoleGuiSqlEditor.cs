@@ -23,10 +23,10 @@ namespace Rdmp.Core.CommandLine.Gui
 {
     class ConsoleGuiSqlEditor : Window
     {
-        private readonly IBasicActivateItems _activator;
+        protected readonly IBasicActivateItems Activator;
         private readonly IViewSQLAndResultsCollection _collection;
         private TableView tableView;
-        private TabView tabView;
+        protected TabView TabView;
         private TextView textView;
         private Button _btnRunOrCancel;
         private Task _runSqlTask;
@@ -51,12 +51,12 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public ConsoleGuiSqlEditor(IBasicActivateItems activator,IViewSQLAndResultsCollection collection)
         {
-            this._activator = activator;
+            this.Activator = activator;
             this._collection = collection;
             Modal = true;
 
             // Tabs (query and results)
-            tabView = new TabView() { Width = Dim.Fill(), Height = Dim.Fill(), Y = 1 };
+            TabView = new TabView() { Width = Dim.Fill(), Height = Dim.Fill(), Y = 1 };
 
             textView = new TextView()
             {
@@ -67,7 +67,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 Text = _orignalSql = collection.GetSql().Replace("\r\n", "\n")
             };
 
-            tabView.AddTab(queryTab = new Tab("Query", textView),true);
+            TabView.AddTab(queryTab = new Tab("Query", textView),true);
 
             tableView = new TableView()
             {
@@ -79,9 +79,9 @@ namespace Rdmp.Core.CommandLine.Gui
 
             tableView.CellActivated += TableView_CellActivated;
 
-            tabView.AddTab(resultTab = new Tab("Results", tableView), false);
+            TabView.AddTab(resultTab = new Tab("Results", tableView), false);
 
-            Add(tabView);
+            Add(TabView);
 
             // Buttons on top of control
 
@@ -140,7 +140,7 @@ namespace Rdmp.Core.CommandLine.Gui
             var val = obj.Table.Rows[obj.Row][obj.Col];
             if(val != null && val != DBNull.Value)
             {
-                _activator.Show(val.ToString());
+                Activator.Show(val.ToString());
             }
         }
 
@@ -208,7 +208,7 @@ namespace Rdmp.Core.CommandLine.Gui
             textView.Text = "";
             textView.SetNeedsDisplay();
 
-            tabView.SelectedTab = queryTab;
+            TabView.SelectedTab = queryTab;
         }
 
         private void ResetSql()
@@ -216,7 +216,7 @@ namespace Rdmp.Core.CommandLine.Gui
             textView.Text = _orignalSql;
             textView.SetNeedsDisplay();
 
-            tabView.SelectedTab = queryTab;
+            TabView.SelectedTab = queryTab;
         }
 
         private void RunOrCancel()
@@ -233,7 +233,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 _btnRunOrCancel.Text = "Cancel";
                 _btnRunOrCancel.SetNeedsDisplay();
 
-                tabView.SelectedTab = resultTab;
+                TabView.SelectedTab = resultTab;
             }
         }
         
@@ -268,17 +268,24 @@ namespace Rdmp.Core.CommandLine.Gui
                         da.Fill(dt);
 
                         tableView.Table = dt;
+
+                        OnQueryCompleted(dt);
                     }   
                 }
             }
             catch (Exception ex)
             {
-                _activator.ShowException("Failed to run query",ex);
+                Activator.ShowException("Failed to run query",ex);
             }
             finally
             {
                 SetReadyToRun();
             }
+        }
+
+        protected virtual void OnQueryCompleted(DataTable dt)
+        {
+            
         }
     }
 }
