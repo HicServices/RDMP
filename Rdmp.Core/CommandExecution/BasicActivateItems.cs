@@ -520,5 +520,7 @@ namespace Rdmp.Core.CommandExecution
             return rootObject.FilterRuns(lm.GetArchivalDataLoadInfos(task));
         }
 
+        /// <inheritdoc/>
+        public abstract void ShowGraph(AggregateConfiguration aggregate);
     }
 }

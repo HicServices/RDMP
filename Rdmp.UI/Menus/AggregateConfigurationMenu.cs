@@ -7,17 +7,11 @@
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
-using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SubComponents.Graphs;
-using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.Menus
 {
@@ -26,9 +20,6 @@ namespace Rdmp.UI.Menus
     {
         public AggregateConfigurationMenu(RDMPContextMenuStripArgs args, AggregateConfiguration aggregate): base(args, aggregate)
         {
-            //only allow them to execute graph if it is normal aggregate graph
-            if (!aggregate.IsCohortIdentificationAggregate)
-                Add(new ExecuteCommandExecuteAggregateGraph(_activator, aggregate));
             
             Add(new ExecuteCommandViewSqlParameters(_activator,aggregate));
 

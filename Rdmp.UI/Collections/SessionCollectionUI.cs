@@ -8,7 +8,10 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs.NavigateTo;
@@ -78,8 +81,21 @@ namespace Rdmp.UI.Collections
         /// Adds <paramref name="toAdd"/> to the list of objects tracked in the session
         /// </summary>
         /// <param name="toAdd"></param>
-        public void Add(IMapsDirectlyToDatabaseTable[] toAdd)
+        public void Add(params IMapsDirectlyToDatabaseTable[] toAdd)
         {
+            for(int i=0;i< toAdd.Length;i++)
+            {
+                //unwrap pipelines
+                if(toAdd[i] is PipelineCompatibleWithUseCaseNode pcn)
+                {
+                    toAdd[i] = pcn.Pipeline;
+                }
+                else if(toAdd[i] is SpontaneousObject)
+                {
+                    throw new NotSupportedException("Object cannot be added to sessions");
+                }
+            }
+
             Collection.DatabaseObjects = toAdd.Union(Collection.DatabaseObjects).ToList();
             RefreshSessionObjects();
         }
@@ -87,17 +103,14 @@ namespace Rdmp.UI.Collections
         private void AddObjectToSession(object sender, EventArgs e)
         {
             var ui = new NavigateToObjectUI(Activator);
-            ui.CompletionAction = (s)=>
-            {
-                Collection.DatabaseObjects.Add(s);
-                RefreshSessionObjects();
-            };
+            ui.CompletionAction = (s)=>Add(s);
             ui.Show();
         }
 
         private void RefreshSessionObjects()
         {
-            var actualObjects = FavouritesCollectionUI.FindRootObjects(Activator,Collection.DatabaseObjects.Contains);
+            var actualObjects = FavouritesCollectionUI.FindRootObjects(Activator,Collection.DatabaseObjects.Contains)
+                .Union(Collection.DatabaseObjects.OfType<Pipeline>()).ToList();
             
             //no change in root favouratism
             if (actualObjects.SequenceEqual(olvTree.Objects.OfType<IMapsDirectlyToDatabaseTable>()))

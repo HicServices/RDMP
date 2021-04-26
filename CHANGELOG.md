@@ -40,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Value column to tree views (allows user to quickly see current arguments' values)
 - Added 'other' checkbox to 'Create Catalogue by importing a file' (for selecting custom piplelines)
 - Command SetExtractionIdentifier now supports changing the linkage identifier for specific ExtractionConfigurations only
+- Added new command `AlterTableMakeDistinct`
 
 ### Fixed
 
@@ -58,6 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed extraction UI showing "WaitingForSQLServer" when DBMS might not be (now says "WaitingForDatabase").
 - Fixed bug where some UI tabs would not update when changes were made to child objects (e.g. deleting a dataset from an extraction using another window in the client)
 - Fixed support for UNC paths in SupportingDocument extraction (e.g. \\myserver\somedir\myfile.txt)
+- Fixed not being able to add `Pipeline` objects to Sessions
 
 ### Changed
 

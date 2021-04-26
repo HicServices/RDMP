@@ -134,7 +134,11 @@ namespace Rdmp.Core.CommandExecution
                 
                 yield return new CommandPresentation(new ExecuteCommandSetFilterTreeShortcut(_activator,ac));
                 yield return new CommandPresentation(new ExecuteCommandSetFilterTreeShortcut(_activator,ac,null){OverrideCommandName="Clear Filter Tree Shortcut" });
-            
+
+                //only allow them to execute graph if it is normal aggregate graph
+                if (!ac.IsCohortIdentificationAggregate)
+                    yield return new CommandPresentation(new ExecuteCommandExecuteAggregateGraph(_activator, ac));
+
                 yield return new CommandPresentation(new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(_activator,ac));
             }
             
@@ -307,7 +311,8 @@ namespace Rdmp.Core.CommandExecution
                     {
                         new CommandPresentation(new ExecuteCommandAlterTableName(_activator,ti),Alter),
                         new CommandPresentation(new ExecuteCommandAlterTableCreatePrimaryKey(_activator,ti), Alter),
-                        new CommandPresentation(new ExecuteCommandAlterTableAddArchiveTrigger(_activator,ti), Alter)
+                        new CommandPresentation(new ExecuteCommandAlterTableAddArchiveTrigger(_activator,ti), Alter),
+                        new CommandPresentation(new ExecuteCommandAlterTableMakeDistinct(_activator,ti), Alter)
                     };
                 }
                 catch(Exception ex)
@@ -378,13 +383,13 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer, SetOperation.UNION), SetContainerOperation);
                 yield return new CommandPresentation(new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer, SetOperation.INTERSECT), SetContainerOperation);
 
-                yield return new CommandPresentation(new ExecuteCommandAddCohortSubContainer(_activator, cohortAggregateContainer));
+                yield return new CommandPresentation(new ExecuteCommandAddCohortSubContainer(_activator, cohortAggregateContainer), Add);
 
-                yield return new CommandPresentation(new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator, cohortAggregateContainer),New);
-                yield return new CommandPresentation(new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator, cohortAggregateContainer, true),New);
-                yield return new CommandPresentation(new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator, cohortAggregateContainer, false), New);
+                yield return new CommandPresentation(new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator, cohortAggregateContainer), Add);
+                yield return new CommandPresentation(new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator, cohortAggregateContainer, true),Add);
+                yield return new CommandPresentation(new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator, cohortAggregateContainer, false), Add);
 
-                yield return new CommandPresentation(new ExecuteCommandImportCohortIdentificationConfiguration(_activator, null, cohortAggregateContainer));
+                yield return new CommandPresentation(new ExecuteCommandImportCohortIdentificationConfiguration(_activator, null, cohortAggregateContainer), Add);
                 yield return new CommandPresentation(new ExecuteCommandUnMergeCohortIdentificationConfiguration(_activator, cohortAggregateContainer));
 
             }

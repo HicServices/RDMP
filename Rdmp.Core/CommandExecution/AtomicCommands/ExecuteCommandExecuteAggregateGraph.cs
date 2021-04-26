@@ -5,26 +5,23 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.AggregationUIs;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandExecuteAggregateGraph:BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandExecuteAggregateGraph : BasicCommandExecution, IAtomicCommand
     {
         private readonly AggregateConfiguration _aggregate;
 
-        public ExecuteCommandExecuteAggregateGraph(IActivateItems activator,AggregateConfiguration aggregate) : base(activator)
+        public ExecuteCommandExecuteAggregateGraph(IBasicActivateItems activator, AggregateConfiguration aggregate) : base(activator)
         {
             _aggregate = aggregate;
 
-            if (aggregate.IsCohortIdentificationAggregate) 
+            if (aggregate.IsCohortIdentificationAggregate)
                 SetImpossible("AggregateConfiguration is a Cohort aggregate");
-            
+
             SetImpossibleIfFailsChecks(aggregate);
 
             UseTripleDotSuffix = true;
@@ -39,8 +36,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var graph = Activator.Activate<AggregateGraphUI, AggregateConfiguration>(_aggregate);
-            graph.LoadGraphAsync();
+            BasicActivator.ShowGraph(_aggregate);
         }
 
         public override Image GetImage(IIconProvider iconProvider)
