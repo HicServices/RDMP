@@ -28,8 +28,7 @@ namespace Rdmp.Core.Startup
     public class EnvironmentInfo
     {
         /// <summary>
-        /// The target framework of the running application e.g. "netcoreapp2.2", "net461".  This determines which
-        /// plugins versions are loaded.  Leave blank to not load any plugins.
+        /// Flags indicating which plugins versions to load, if any.
         /// </summary>
         private readonly PluginFolders _pluginsToLoad;
 
