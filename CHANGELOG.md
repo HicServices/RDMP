@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Value column to tree views (allows user to quickly see current arguments' values)
 - Added 'other' checkbox to 'Create Catalogue by importing a file' (for selecting custom piplelines)
 - Command SetExtractionIdentifier now supports changing the linkage identifier for specific ExtractionConfigurations only
+- Added new command `AlterTableMakeDistinct`
 
 ### Fixed
 
