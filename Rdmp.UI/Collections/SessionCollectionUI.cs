@@ -103,11 +103,7 @@ namespace Rdmp.UI.Collections
         private void AddObjectToSession(object sender, EventArgs e)
         {
             var ui = new NavigateToObjectUI(Activator);
-            ui.CompletionAction = (s)=>
-            {
-                Add(s);
-                RefreshSessionObjects();
-            };
+            ui.CompletionAction = (s)=>Add(s);
             ui.Show();
         }
 
