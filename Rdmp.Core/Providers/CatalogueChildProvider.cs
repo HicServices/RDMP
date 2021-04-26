@@ -1342,12 +1342,10 @@ namespace Rdmp.Core.Providers
                 //if we don't have a record of any children in the child dictionary for the parent model object
                 if (!_childDictionary.ContainsKey(model))
                 {
-                    //if they want the children of a Pipeline (which we don't track) we will have to look under PipelineUseCase instead
+                    //if they want the children of a Pipeline (which we don't track) just serve the components
                     if (model is Pipeline p)
                     {
-                        var useCase = PipelineUseCases.SingleOrDefault(u => u.Pipelines.Contains(p));
-                        if (useCase != null)
-                            return GetChildren(useCase);
+                        return p.PipelineComponents.ToArray();
                     }
                 
                     return new object[0];//return none
