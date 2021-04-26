@@ -31,26 +31,17 @@ namespace Rdmp.Core.Startup
         /// The target framework of the running application e.g. "netcoreapp2.2", "net461".  This determines which
         /// plugins versions are loaded.  Leave blank to not load any plugins.
         /// </summary>
-        public PluginFolders PluginsToLoad;
-
+        private readonly PluginFolders _pluginsToLoad;
 
         public const string MainSubDir = "main";
         public const string WindowsSubDir = "windows";
 
         /// <summary>
-        /// Creates a new instance specifying which plugins should be loaded.
+        /// Creates a new instance, optionally specifying which plugins should be loaded, default none.
         /// </summary>
-        public EnvironmentInfo(PluginFolders pluginsToLoad):this()
+        public EnvironmentInfo(PluginFolders pluginsToLoad=PluginFolders.None)
         {
-            PluginsToLoad = pluginsToLoad;
-        }
-
-        /// <summary>
-        /// Creates a new instance in which plugins are not loaded.
-        /// </summary>
-        public EnvironmentInfo()
-        {
-            PluginsToLoad = PluginFolders.None;
+            _pluginsToLoad = pluginsToLoad;
         }
 
         public static bool IsLinux
@@ -72,10 +63,10 @@ namespace Rdmp.Core.Startup
                 throw new ArgumentException("Expected " + root.FullName + " to be the 'lib' directory");
 
             // if we are loading the main codebase of plugins
-            if (PluginsToLoad.HasFlag(PluginFolders.Main))
+            if (_pluginsToLoad.HasFlag(PluginFolders.Main))
             {
                 // find the main dir
-                var mainDir = root.GetDirectories().FirstOrDefault(d=>string.Equals(MainSubDir,d.Name,StringComparison.CurrentCultureIgnoreCase));
+                var mainDir = root.GetDirectories(MainSubDir,new EnumerationOptions {MatchCasing = MatchCasing.CaseInsensitive,AttributesToSkip = 0}).FirstOrDefault();
 
                 if (mainDir != null)
                 {
@@ -90,10 +81,14 @@ namespace Rdmp.Core.Startup
             }
 
             // if we are to load the windows specific (e.g. winforms) plugins too?
-            if (PluginsToLoad.HasFlag(PluginFolders.Windows))
+            if (_pluginsToLoad.HasFlag(PluginFolders.Windows))
             {
                 // see if current plugin has winforms stuff
-                var winDir = root.GetDirectories().FirstOrDefault(d => string.Equals(WindowsSubDir, d.Name, StringComparison.CurrentCultureIgnoreCase));
+                var winDir=root.GetDirectories(WindowsSubDir, new EnumerationOptions
+                {
+                    MatchCasing = MatchCasing.CaseInsensitive,
+                    AttributesToSkip = 0
+                }).FirstOrDefault();
 
                 if (winDir != null)
                 {
@@ -101,7 +96,7 @@ namespace Rdmp.Core.Startup
                     yield return winDir;
                 }
 
-                // if no then no big dael
+                // if not then no big deal
             }
         }
     }
