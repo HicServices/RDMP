@@ -311,7 +311,8 @@ namespace Rdmp.Core.CommandExecution
                     {
                         new CommandPresentation(new ExecuteCommandAlterTableName(_activator,ti),Alter),
                         new CommandPresentation(new ExecuteCommandAlterTableCreatePrimaryKey(_activator,ti), Alter),
-                        new CommandPresentation(new ExecuteCommandAlterTableAddArchiveTrigger(_activator,ti), Alter)
+                        new CommandPresentation(new ExecuteCommandAlterTableAddArchiveTrigger(_activator,ti), Alter),
+                        new CommandPresentation(new ExecuteCommandAlterTableMakeDistinct(_activator,ti), Alter)
                     };
                 }
                 catch(Exception ex)
