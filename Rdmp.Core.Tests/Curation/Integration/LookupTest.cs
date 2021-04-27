@@ -192,7 +192,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             catch (Exception ex)
             {
                 Console.Write(ex.ToString());
-                throw ex;
+                throw;
             }
             finally
             {

@@ -42,12 +42,11 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             this.lblWhere = new System.Windows.Forms.Label();
             this.pQueryEditor = new System.Windows.Forms.Panel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.autocompleteReminder = new KeyboardReminder();
             this.panel1 = new System.Windows.Forms.Panel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.pParameters = new System.Windows.Forms.Panel();
+            this.parameterCollectionUI1 = new Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.ParameterCollectionUI();
             this.label3 = new System.Windows.Forms.Label();
-            this.parameterCollectionUI1 = new ParameterCollectionUI();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -59,9 +58,10 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(29, 6);
+            this.label1.Location = new System.Drawing.Point(34, 7);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(63, 13);
+            this.label1.Size = new System.Drawing.Size(71, 15);
             this.label1.TabIndex = 0;
             this.label1.Text = "Filter Name:";
             // 
@@ -69,9 +69,10 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             // 
             this.cbIsMandatory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbIsMandatory.AutoSize = true;
-            this.cbIsMandatory.Location = new System.Drawing.Point(815, 5);
+            this.cbIsMandatory.Location = new System.Drawing.Point(956, 6);
+            this.cbIsMandatory.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbIsMandatory.Name = "cbIsMandatory";
-            this.cbIsMandatory.Size = new System.Drawing.Size(84, 17);
+            this.cbIsMandatory.Size = new System.Drawing.Size(92, 19);
             this.cbIsMandatory.TabIndex = 9;
             this.cbIsMandatory.Text = "IsMandatory";
             this.toolTip1.SetToolTip(this.cbIsMandatory, "Mandatory filters are automatically added to ExtractionConfigurations and Cohort " +
@@ -82,17 +83,19 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             // 
             this.tbFilterName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbFilterName.Location = new System.Drawing.Point(98, 3);
+            this.tbFilterName.Location = new System.Drawing.Point(114, 3);
+            this.tbFilterName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbFilterName.Name = "tbFilterName";
-            this.tbFilterName.Size = new System.Drawing.Size(711, 20);
+            this.tbFilterName.Size = new System.Drawing.Size(829, 23);
             this.tbFilterName.TabIndex = 1;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(29, 28);
+            this.label2.Location = new System.Drawing.Point(34, 32);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(63, 13);
+            this.label2.Size = new System.Drawing.Size(70, 15);
             this.label2.TabIndex = 2;
             this.label2.Text = "Description:";
             // 
@@ -101,18 +104,21 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             this.tbFilterDescription.AcceptsReturn = true;
             this.tbFilterDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbFilterDescription.Location = new System.Drawing.Point(98, 25);
+            this.tbFilterDescription.Location = new System.Drawing.Point(114, 29);
+            this.tbFilterDescription.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbFilterDescription.Multiline = true;
             this.tbFilterDescription.Name = "tbFilterDescription";
-            this.tbFilterDescription.Size = new System.Drawing.Size(1189, 89);
+            this.tbFilterDescription.Size = new System.Drawing.Size(1386, 102);
             this.tbFilterDescription.TabIndex = 3;
             // 
             // lblWhere
             // 
             this.lblWhere.AutoSize = true;
-            this.lblWhere.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblWhere.Dock = System.Windows.Forms.DockStyle.Left;
+            this.lblWhere.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.lblWhere.ForeColor = System.Drawing.Color.Blue;
-            this.lblWhere.Location = new System.Drawing.Point(8, 4);
+            this.lblWhere.Location = new System.Drawing.Point(0, 0);
+            this.lblWhere.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblWhere.Name = "lblWhere";
             this.lblWhere.Size = new System.Drawing.Size(53, 13);
             this.lblWhere.TabIndex = 5;
@@ -120,21 +126,12 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             // 
             // pQueryEditor
             // 
-            this.pQueryEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pQueryEditor.Location = new System.Drawing.Point(67, 3);
+            this.pQueryEditor.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pQueryEditor.Location = new System.Drawing.Point(53, 0);
+            this.pQueryEditor.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pQueryEditor.Name = "pQueryEditor";
-            this.pQueryEditor.Size = new System.Drawing.Size(1209, 256);
+            this.pQueryEditor.Size = new System.Drawing.Size(1439, 333);
             this.pQueryEditor.TabIndex = 0;
-            // 
-            // autocompleteReminder
-            // 
-            this.autocompleteReminder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.autocompleteReminder.Location = new System.Drawing.Point(67, 265);
-            this.autocompleteReminder.Name = "autocompleteReminder";
-            this.autocompleteReminder.Size = new System.Drawing.Size(64, 20);
-            this.autocompleteReminder.TabIndex = 29;
             // 
             // panel1
             // 
@@ -146,8 +143,9 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             this.panel1.Controls.Add(this.cbIsMandatory);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1290, 612);
+            this.panel1.Size = new System.Drawing.Size(1505, 706);
             this.panel1.TabIndex = 30;
             // 
             // splitContainer1
@@ -155,7 +153,8 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.Location = new System.Drawing.Point(8, 120);
+            this.splitContainer1.Location = new System.Drawing.Point(9, 138);
+            this.splitContainer1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -166,11 +165,11 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.autocompleteReminder);
             this.splitContainer1.Panel2.Controls.Add(this.pQueryEditor);
             this.splitContainer1.Panel2.Controls.Add(this.lblWhere);
-            this.splitContainer1.Size = new System.Drawing.Size(1279, 489);
-            this.splitContainer1.SplitterDistance = 197;
+            this.splitContainer1.Size = new System.Drawing.Size(1492, 564);
+            this.splitContainer1.SplitterDistance = 226;
+            this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 30;
             // 
             // pParameters
@@ -179,37 +178,42 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pParameters.Controls.Add(this.parameterCollectionUI1);
-            this.pParameters.Location = new System.Drawing.Point(67, 3);
+            this.pParameters.Location = new System.Drawing.Point(78, 3);
+            this.pParameters.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pParameters.Name = "pParameters";
-            this.pParameters.Size = new System.Drawing.Size(1209, 191);
+            this.pParameters.Size = new System.Drawing.Size(1410, 219);
             this.pParameters.TabIndex = 6;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.ForeColor = System.Drawing.Color.Blue;
-            this.label3.Location = new System.Drawing.Point(6, 3);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(48, 13);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Params";
             // 
             // parameterCollectionUI1
             // 
             this.parameterCollectionUI1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.parameterCollectionUI1.Location = new System.Drawing.Point(0, 0);
+            this.parameterCollectionUI1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.parameterCollectionUI1.Name = "parameterCollectionUI1";
-            this.parameterCollectionUI1.Size = new System.Drawing.Size(1209, 191);
+            this.parameterCollectionUI1.Size = new System.Drawing.Size(1410, 219);
             this.parameterCollectionUI1.TabIndex = 0;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Dock = System.Windows.Forms.DockStyle.Left;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label3.ForeColor = System.Drawing.Color.Blue;
+            this.label3.Location = new System.Drawing.Point(0, 0);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(48, 13);
+            this.label3.TabIndex = 5;
+            this.label3.Text = "Params";
             // 
             // ExtractionFilterUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.panel1);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "ExtractionFilterUI";
-            this.Size = new System.Drawing.Size(1290, 612);
+            this.Size = new System.Drawing.Size(1505, 706);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -233,7 +237,6 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
         private System.Windows.Forms.Label lblWhere;
         private System.Windows.Forms.Panel pQueryEditor;
         private System.Windows.Forms.ToolTip toolTip1;
-        private KeyboardReminder autocompleteReminder;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.SplitContainer splitContainer1;

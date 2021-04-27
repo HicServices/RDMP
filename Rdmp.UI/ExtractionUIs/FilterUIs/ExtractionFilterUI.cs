@@ -73,12 +73,11 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
             QueryEditor.TextChanged += QueryEditor_TextChanged;
             pQueryEditor.Controls.Add(QueryEditor);
+            QueryEditor.Dock = DockStyle.Fill;
             #endregion QueryEditor
 
-            
-            ObjectSaverButton1.BeforeSave += BeforeSave;
 
-            autocompleteReminder.Setup("Show Objects",Keys.Control,Keys.Space);
+            ObjectSaverButton1.BeforeSave += BeforeSave;
         }
 
         void QueryEditor_TextChanged(object sender, EventArgs e)

@@ -163,7 +163,14 @@ namespace Rdmp.Core.Curation.Data
             if (URL == null || string.IsNullOrWhiteSpace(URL.AbsoluteUri) || !URL.IsFile)
                 return null;
 
-            return new FileInfo(Uri.UnescapeDataString(URL.AbsolutePath));
+            var unescaped = Uri.UnescapeDataString(URL.AbsolutePath);
+
+            if (URL.IsUnc)
+            {
+                return new FileInfo(@"\\" + URL.Host + unescaped);
+            }
+
+            return new FileInfo(unescaped);
         }
     }
 }
