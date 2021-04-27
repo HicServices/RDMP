@@ -85,7 +85,7 @@ namespace Rdmp.Core.Startup
                 // see if current plugin has winforms stuff
                 var winDir=root.GetDirectories(WindowsSubDir, new EnumerationOptions
                 {
-                    MatchCasing = MatchCasing.CaseInsensitive,
+                    MatchCasing = MatchCasing.PlatformDefault,
                     AttributesToSkip = 0
                 }).FirstOrDefault();
 
