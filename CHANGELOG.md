@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - .Net 5.0 for all, instead of Framework 4.6.1+Core 2.2+Standard 2.0 mix
 - Query editor autocomplete now uses integrated autocomplete (no icons, better matching)
 - Throttled how often spelling is checked in Scintilla controls.
+- Changed message about inaccessible cohorts to a warning instead of an error. 
+- Collation is now explicitly specified when creating a new cohort source using the wizard (as long as there is a single collation amongst existing ColumnInfo of that type)
 
 ### Added
 
@@ -61,11 +63,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug where some UI tabs would not update when changes were made to child objects (e.g. deleting a dataset from an extraction using another window in the client)
 - Fixed support for UNC paths in SupportingDocument extraction (e.g. \\myserver\somedir\myfile.txt)
 - Fixed not being able to add `Pipeline` objects to Sessions
-
-### Changed
-
-- Changed message about inaccessible cohorts to a warning instead of an error. 
-- Collation is now explicitly specified when creating a new cohort source using the wizard (as long as there is a single collation amongst existing ColumnInfo of that type)
 
 ### Dependencies
 
