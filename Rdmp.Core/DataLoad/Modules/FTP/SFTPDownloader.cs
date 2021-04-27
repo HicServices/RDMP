@@ -37,7 +37,7 @@ namespace Rdmp.Core.DataLoad.Modules.FTP
             
             using(var sftp = new SftpClient(_host,_username,_password))
             {
-                if (KeepAlive)
+                if (KeepAlive && KeepAliveIntervalMilliseconds > 0)
                 {
                     sftp.KeepAliveInterval =   TimeSpan.FromMilliseconds(KeepAliveIntervalMilliseconds);
                 }
