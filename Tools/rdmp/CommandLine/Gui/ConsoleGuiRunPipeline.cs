@@ -15,6 +15,8 @@ using ReusableLibraryCode.Progress;
 using ReusableLibraryCode.Settings;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 using Terminal.Gui;
 
@@ -27,6 +29,7 @@ namespace Rdmp.Core.CommandLine.Gui
         private IPipeline pipeline;
 
         private TextView results;
+        private TableView tableView;
         public event PipelineEngineEventHandler PipelineExecutionFinishedsuccessfully;
 
         GracefulCancellationTokenSource cancellation;
@@ -35,6 +38,7 @@ namespace Rdmp.Core.CommandLine.Gui
         HashSet<IDataLoadEventListener> additionals = new HashSet<IDataLoadEventListener>();
         private PipelineRunner runner;
         private PipelineEngineEventArgs successArgs;
+        private DataTable progressDataTable;
 
         public ConsoleGuiRunPipeline(IBasicActivateItems activator,IPipelineUseCase useCase, IPipeline pipeline)
         {
@@ -60,9 +64,15 @@ namespace Rdmp.Core.CommandLine.Gui
             btnClose.Clicked += () => Application.RequestStop();
             Add(btnClose);
 
-            //TODO : Progress messages
-            //Add(results = new TableView() { Y = 1, Width = Dim.Fill(), Height = Dim.Fill() });
-            Add(results = new TextView() { Y = 2, Width = Dim.Fill(), Height = Dim.Fill()});
+            Add(tableView = new TableView() { Y = 2, Width = Dim.Fill(), Height = 6 });
+
+            progressDataTable = new DataTable();
+            progressDataTable.Columns.Add("Name");
+            progressDataTable.Columns.Add("Progress",typeof(int));
+
+            tableView.Table = progressDataTable;
+
+            Add(results = new TextView() { Y = Pos.Bottom(tableView), Width = Dim.Fill(), Height = Dim.Fill()});
         }
 
         private void BtnCancel_Clicked()
@@ -146,9 +156,24 @@ namespace Rdmp.Core.CommandLine.Gui
             results.SetNeedsDisplay();
         }
 
+        
+
         public void OnProgress(object sender, ProgressEventArgs e)
         {
-            // todo
+            lock (progressDataTable)
+            {
+                var existing = progressDataTable.Rows.Cast<DataRow>().FirstOrDefault(r => Equals(r["Name"], e.TaskDescription));
+                if (existing != null)
+                {
+                    existing["Progress"] = e.Progress.Value;
+                }
+                else
+                {
+                    progressDataTable.Rows.Add(e.TaskDescription, e.Progress.Value);
+                }
+            }
+
+            tableView.Update();
         }
 
         public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
