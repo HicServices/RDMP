@@ -423,7 +423,7 @@ namespace Rdmp.Core.CommandLine.Gui
 						return _activator.CoreChildProvider.AllCohortIdentificationConfigurations;
 				
 				if (ReferenceEquals(model , BuiltCohorts) && dx != null)
-					return dx.Cohorts;
+					return dx.CohortSources;
 
 				if(ReferenceEquals(model,Other))
 					return GetOtherCategoryChildren();
