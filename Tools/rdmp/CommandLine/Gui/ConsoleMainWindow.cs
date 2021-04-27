@@ -100,6 +100,7 @@ namespace Rdmp.Core.CommandLine.Gui
 			_win.Add(_treeView);
 			top.Add(_win);
 
+            _treeView.ObjectActivated += _treeView_ObjectActivated;
             _treeView.KeyPress += treeView_KeyPress;
             _treeView.SelectionChanged += _treeView_SelectionChanged;
 			_treeView.AspectGetter = AspectGetter;
@@ -114,6 +115,11 @@ namespace Rdmp.Core.CommandLine.Gui
 
 			top.Add (statusBar);
         }
+
+        private void _treeView_ObjectActivated(ObjectActivatedEventArgs<object> obj)
+        {
+			Menu();
+		}
 
         private string AspectGetter(object model)
 		{
@@ -349,18 +355,15 @@ namespace Rdmp.Core.CommandLine.Gui
 
         private void treeView_KeyPress(View.KeyEventEventArgs obj)
         {
+			if(!_treeView.CanFocus || !_treeView.HasFocus)
+            {
+				return;
+            }
+
             try
             {
 				switch(obj.KeyEvent.Key)
 				{
-					case Key.Enter : 
-						if(_treeView.HasFocus)
-                        {
-							Menu();
-							obj.Handled = true;
-                        }
-						
-						break;
 					case Key.DeleteChar : 
 
 						if(_treeView.SelectedObject is IDeleteable d)
