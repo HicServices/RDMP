@@ -155,17 +155,34 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations
 
                     var tbl = Request.NewCohortDefinition.LocationOfCohort.DiscoverCohortTable();
 
+                    bool isIdentifiable = string.Equals(_releaseIdentifier, _privateIdentifier);
+
                     using (var bulkCopy = tbl.BeginBulkInsert(connection.ManagedTransaction))
                     {
                         var dt = new DataTable();
                         dt.Columns.Add(_privateIdentifier);
-                        dt.Columns.Add(_releaseIdentifier);
+
+                        // don't add 2 columns if they are the same column!
+                        if (!isIdentifiable)
+                        {
+                            dt.Columns.Add(_releaseIdentifier);
+                        }
 
                         //add the ID as another column 
                         dt.Columns.Add(_fk);
 
                         foreach (KeyValuePair<object, object> kvp in _cohortDictionary)
-                            dt.Rows.Add(kvp.Key, kvp.Value, Request.NewCohortDefinition.ID);
+                        {
+                            if (isIdentifiable)
+                            {
+                                dt.Rows.Add(kvp.Key, Request.NewCohortDefinition.ID);
+                            }
+                            else
+                            {
+                                dt.Rows.Add(kvp.Key, kvp.Value, Request.NewCohortDefinition.ID);
+                            }
+                        }
+                            
 
                         bulkCopy.Upload(dt);
                     }

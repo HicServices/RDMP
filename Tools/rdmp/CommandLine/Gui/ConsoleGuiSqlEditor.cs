@@ -232,8 +232,6 @@ namespace Rdmp.Core.CommandLine.Gui
                 _runSqlTask = Task.Run(()=>RunSql());
                 _btnRunOrCancel.Text = "Cancel";
                 _btnRunOrCancel.SetNeedsDisplay();
-
-                TabView.SelectedTab = resultTab;
             }
         }
         
@@ -268,6 +266,13 @@ namespace Rdmp.Core.CommandLine.Gui
                         da.Fill(dt);
 
                         tableView.Table = dt;
+
+                        // if query resulted in some data show it
+                        if (dt.Columns.Count > 0)
+                        {
+                            TabView.SelectedTab = resultTab;
+                        }
+                            
 
                         OnQueryCompleted(dt);
                     }   

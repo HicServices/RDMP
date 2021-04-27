@@ -9,14 +9,17 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using NStack;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Gui.Windows;
+using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
@@ -70,7 +73,7 @@ namespace Rdmp.Core.CommandLine.Gui
             btn.Clicked +=()=>Application.RequestStop();
             
 
-            using(var dlg = new Dialog(title,w,h,btn))
+            using(var dlg = new Dialog(title, w, h, btn) { Modal = true })
             {
                 dlg.Add(new TextView()
                     { 
@@ -310,6 +313,12 @@ namespace Rdmp.Core.CommandLine.Gui
         {
             var view = new ConsoleGuiViewGraph(this, aggregate);
             Application.Run(view);
+        }
+
+
+        public override IPipelineRunner GetPipelineRunner(IPipelineUseCase useCase, IPipeline pipeline)
+        {
+            return new ConsoleGuiRunPipeline(this,useCase, pipeline);
         }
     }
 }
