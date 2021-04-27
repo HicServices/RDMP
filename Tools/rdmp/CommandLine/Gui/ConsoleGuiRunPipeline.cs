@@ -14,6 +14,7 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using ReusableLibraryCode.Settings;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -22,13 +23,13 @@ using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui
 {
-    internal class ConsoleGuiRunPipeline : Window,IPipelineRunner, IDataLoadEventListener
+    internal class ConsoleGuiRunPipeline : Window,IPipelineRunner, IDataLoadEventListener, IListDataSource
     {
         private readonly IBasicActivateItems activator;
         private IPipelineUseCase useCase;
         private IPipeline pipeline;
 
-        private TextView results;
+        private ListView results;
         private TableView tableView;
         public event PipelineEngineEventHandler PipelineExecutionFinishedsuccessfully;
 
@@ -39,6 +40,10 @@ namespace Rdmp.Core.CommandLine.Gui
         private PipelineRunner runner;
         private PipelineEngineEventArgs successArgs;
         private DataTable progressDataTable;
+        
+        private List<NotifyEventArgs> notifyEventArgs = new List<NotifyEventArgs>();
+
+        public int Count => notifyEventArgs.Count;
 
         public ConsoleGuiRunPipeline(IBasicActivateItems activator,IPipelineUseCase useCase, IPipeline pipeline)
         {
@@ -64,7 +69,11 @@ namespace Rdmp.Core.CommandLine.Gui
             btnClose.Clicked += () => Application.RequestStop();
             Add(btnClose);
 
-            Add(tableView = new TableView() { Y = 2, Width = Dim.Fill(), Height = 6 });
+            Add(tableView = new TableView() { Y = 2, Width = Dim.Fill(), Height = 7 });
+            tableView.Style.ShowHorizontalHeaderOverline = false;
+            tableView.Style.AlwaysShowHeaders = true;
+            tableView.Style.ShowVerticalCellLines = true;
+            tableView.Style.ShowHorizontalHeaderUnderline = false;
 
             progressDataTable = new DataTable();
             progressDataTable.Columns.Add("Name");
@@ -72,7 +81,32 @@ namespace Rdmp.Core.CommandLine.Gui
 
             tableView.Table = progressDataTable;
 
-            Add(results = new TextView() { Y = Pos.Bottom(tableView), Width = Dim.Fill(), Height = Dim.Fill()});
+            Add(results = new ListView(this) { Y = Pos.Bottom(tableView), Width = Dim.Fill(), Height = Dim.Fill()});
+            results.KeyPress += Results_KeyPress;
+
+
+        }
+
+        private void Results_KeyPress(KeyEventEventArgs obj)
+        {
+            if(obj.KeyEvent.Key == Key.Enter && results.HasFocus)
+            {
+                if(results.SelectedItem <= notifyEventArgs.Count)
+                {
+                    var selected = notifyEventArgs[results.SelectedItem];
+                    
+                    if(selected.Exception != null || selected.ProgressEventType == ProgressEventType.Error)
+                    {
+                        activator.ShowException(selected.Message, selected.Exception);
+                    }
+                    else
+                    {
+                        activator.Show(selected.Message);
+                    }
+                }
+
+                obj.Handled = true;
+            }
         }
 
         private void BtnCancel_Clicked()
@@ -133,7 +167,7 @@ namespace Rdmp.Core.CommandLine.Gui
             successArgs = args;
             if (UserSettings.ShowPipelineCompletedPopup)
             {
-                if(activator.YesNo("Close Window?","Pipeline completed successfully"))
+                if(MessageBox.Query("Pipeline completed successfully", "Close Window?","Yes","No") == 0)
                 {
                     Application.RequestStop();
                 }
@@ -152,8 +186,11 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public void OnNotify(object sender, NotifyEventArgs e)
         {
-            results.Text += e.Message.Replace("\r\n","\n") + '\n';
-            results.SetNeedsDisplay();
+            lock(notifyEventArgs)
+            {
+                notifyEventArgs.Add(e);
+                results.SetNeedsDisplay();
+            }
         }
 
         
@@ -200,6 +237,38 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 additionals.Add(toAdd);
             }
+        }
+
+        public void Render(ListView container, ConsoleDriver driver, bool selected, int item, int col, int line, int width)
+        {
+            if(item >= notifyEventArgs.Count)
+            {
+                return;
+            }
+
+            var str = notifyEventArgs[item].ProgressEventType + " " + notifyEventArgs[item].Message;
+
+            if(str.Length > width)
+            {
+                str = str.Substring(0, width);
+            }
+
+            results.Move(col, line);
+            driver.AddStr(str);
+        }
+
+        public bool IsMarked(int item)
+        {
+            return false;
+        }
+
+        public void SetMark(int item, bool value)
+        {
+        }
+
+        public IList ToList()
+        {
+            return notifyEventArgs;
         }
     }
 }

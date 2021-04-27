@@ -18,6 +18,7 @@ using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Checks;
@@ -77,6 +78,7 @@ namespace Rdmp.Core.CommandExecution
             AddDelegate(typeof(DiscoveredTable),false,(p)=>_basicActivator.SelectTable(true,GetPromptFor(p)));
 
             AddDelegate(typeof(DatabaseEntity),false, (p) =>_basicActivator.SelectOne(GetPromptFor(p), GetAllObjectsOfType(p.Type)));
+            AddDelegate(typeof(IPipeline), false, SelectPipeline);
             AddDelegate(typeof(IMightBeDeprecated),false, SelectOne<IMightBeDeprecated>);
             AddDelegate(typeof(IDisableable),false, SelectOne<IDisableable>);
             AddDelegate(typeof(INamed),false, SelectOne<INamed>);
@@ -135,6 +137,11 @@ namespace Rdmp.Core.CommandExecution
                     ? chosen 
                     : throw new OperationCanceledException()));
 
+        }
+
+        private IPipeline SelectPipeline(RequiredArgument arg)
+        {
+            return (IPipeline)_basicActivator.SelectOne(GetPromptFor(arg), _basicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>().ToArray());
         }
 
         private string GetPromptFor(RequiredArgument p)

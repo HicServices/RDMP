@@ -73,7 +73,7 @@ namespace Rdmp.Core.CommandLine.Gui
             btn.Clicked +=()=>Application.RequestStop();
             
 
-            using(var dlg = new Dialog(title,w,h,btn))
+            using(var dlg = new Dialog(title, w, h, btn) { Modal = true })
             {
                 dlg.Add(new TextView()
                     { 
