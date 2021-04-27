@@ -1518,15 +1518,6 @@ namespace Rdmp.Core.Providers
             }
         }
 
-        public DatabaseEntity GetLatestCopyOf(DatabaseEntity e)
-        {
-            lock(WriteLock)
-            {
-                return _descendancyDictionary.Keys.OfType<DatabaseEntity>().SingleOrDefault(k => k.Equals(e));
-            }
-        }
-
-
         protected T[] GetAllObjects<T>(IRepository repository) where T : IMapsDirectlyToDatabaseTable
         {
             lock(WriteLock)

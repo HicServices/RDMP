@@ -22,6 +22,7 @@ using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.CommandLine.Gui;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Logging.Listeners.NLogListeners;
 using Rdmp.Core.Startup;
@@ -36,13 +37,11 @@ namespace Rdmp.Core
     {
         private static EnvironmentInfo GetEnvironmentInfo()
         {
-            return new EnvironmentInfo("netcoreapp2.2");
+            return new EnvironmentInfo(PluginFolders.Main);
         }
         
         static int Main(string[] args)
         {
-            Console.WriteLine("Environment:"+ Environment.Version);
-
             try
             {    
                 string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -59,10 +58,15 @@ namespace Rdmp.Core
             {
                 Console.WriteLine("Could not load NLog.config:" + ex.Message);
             }
+            
+            var logger = LogManager.GetCurrentClassLogger();
+
+            logger.Info("Dotnet Version:" + Environment.Version);
+            logger.Info("RDMP Version:" + typeof(Catalogue).Assembly.GetName().Version);
 
             PreStartup();
 
-            return HandleArguments(args);
+            return HandleArguments(args,logger);
         }
         
         private static void PreStartup()
@@ -75,7 +79,7 @@ namespace Rdmp.Core
             ImplementationManager.Load<PostgreSqlImplementation>();
         }
 
-        private static int HandleArguments(string[] args)
+        private static int HandleArguments(string[] args, Logger logger)
         {
             try
             {
@@ -108,13 +112,13 @@ namespace Rdmp.Core
                             (PatchDatabaseOptions opts) => Run(opts),
                             errs => 1);
 
-                NLog.LogManager.GetCurrentClassLogger().Info("Exiting with code " + returnCode);
+                logger.Info("Exiting with code " + returnCode);
                 return returnCode;
             }
             catch (Exception e)
             {
-                NLog.LogManager.GetCurrentClassLogger().Error(e.Message);
-                NLog.LogManager.GetCurrentClassLogger().Info(e, "Fatal error occurred so returning -1");
+                logger.Error(e.Message);
+                logger.Info(e, "Fatal error occurred so returning -1");
                 return -1;
             }
         }

@@ -44,14 +44,14 @@ https://github.com/HicServices/RDMPExamplePlugins
  <a name="helloWorldPlugin"></a>
  # Hello World Plugin
 
-Rdmp plugins must be packaged as [NuGet packages](https://en.wikipedia.org/wiki/NuGet) (e.g. MyPlugin.0.0.1.nupkg).  The package must contain compiled runtime binaries for both net461 and netcoreapp2.2 (for plugins that should also run in the CLI).  
+Rdmp plugins must be packaged as [NuGet packages](https://en.wikipedia.org/wiki/NuGet) (e.g. MyPlugin.0.0.1.nupkg).
 
 It is recommended to write all your plugin code in a single csproj targetting [Dot Net Standard](https://docs.microsoft.com/en-us/dotnet/standard/net-standard) and produce the runtime binaries by writting two empty projects that reference it.  You can see an example of this in the [Rdmp.Dicom plugin](https://github.com/HicServices/RdmpDicom)
 
-To begin with we can create a UI only plugin (net461).  Create the following in Visual Studio Solution:
+To begin with we can create a UI only plugin (`net5.0-windows`).  Create the following in Visual Studio Solution:
 
 ```
-\MyPlugin\MyPlugin.csproj (Targetting net461)
+\MyPlugin\MyPlugin.csproj (Targetting `net5.0-windows`)
 \MyPlugin.nuspec
 \MyPlugin.sln
 ```
@@ -103,11 +103,11 @@ In `MyPlugin.nuspec` write the following:
         <authors>Me</authors>
         <description>My RDMP Plugin</description>
         <dependencies>
-            <dependency id="HIC.RDMP.Plugin" version="3.0" />
+            <dependency id="HIC.RDMP.Plugin" version="5.0" />
         </dependencies>
     </metadata>
     <files>
-    <file src="MyPlugin\bin\Debug\net461\*" target="lib\net461" />	
+    <file src="MyPlugin\bin\Debug\net461\*" target="lib\windows" />	
     </files>
 </package>
 ```
@@ -229,14 +229,14 @@ Your command will also be available under the `File=>Run...` dialog.
 <a name="basicAnoPlugin"></a>
 # A (very) basic Anonymisation Plugin
 
-We have seen how UI plugins work, now we will write a plugin which functions both through the UI and from the CLI running under the cross platform `netcoreapp2.2` runtime.
+We have seen how UI plugins work, now we will write a plugin which functions both through the UI and from the CLI running under the cross platform `net5.0` runtime.
 
 Create a new solution with the following projects.
 
 ```
-\MyPipelinePlugin\MyPipelinePlugin.csproj (TargetFramework netstandard2.0)
-\Plugin\net461\net461.csproj                (TargetFramework net461)
-\Plugin\netcoreapp2.2\netcoreapp2.2.csproj  (TargetFramework netcoreapp2.2)
+\MyPipelinePlugin\MyPipelinePlugin.csproj                     (TargetFramework net5.0)
+\Plugin\net5.0\net5.0.csproj                                  (TargetFramework net5.0)
+\Plugin\net5.0-windows\net5.0-windows.csproj                  (TargetFramework net5.0-windows)
 \MyPipelinePlugin.nuspec
 \MyPipelinePlugin.sln
 ```
@@ -252,25 +252,27 @@ In MyPipelinePlugin.nuspec add the following:
 		<authors>Health Informatics Service, University of Dundee</authors>
 		<description>Example Pipeline Plugin Component </description>
 		<dependencies>
-            <dependency id="HIC.RDMP.Plugin" version="3.0" />
+            <dependency id="HIC.RDMP.Plugin" version="5.0" />
 		</dependencies>
     </metadata>
   <files>
-    <file src="Plugin\net461\bin\Debug\net461\*" exclude="**/net461.dll" target="lib\net461" />
-	<file src="Plugin\netcoreapp2.2\bin\Debug\netcoreapp2.2\win-x64\publish\*" exclude="**/netcoreapp2.2.dll" target="lib\netcoreapp2.2\win\" />
+    <file src="Plugin\net5.0\bin\Debug\net5.0\publish\*" target="lib\main" />
+	<file src="Plugin\net5.0-windows\bin\Debug\net5.0-windows\win-x64\publish\*" target="lib\windows" />
   </files>
 </package>
 ```
 
-Add a Project reference to `MyPipelinePlugin.csproj` from both net461.csproj and netcoreapp2.2.csproj:
+Add a Project reference to `MyPipelinePlugin.csproj` from both net5.0.csproj and net5.0-windows.csproj:
 
 ![What it should look like](Images/PipelinePluginSolution.png)
 
-To build the plugin run the following in the netcoreapp2.2 project directory:
+To build the plugin run the following in the net5.0 project directory:
 
 ```
-cd \ExamplePipelinePlugin\MyPipelinePlugin\Plugin\netcoreapp2.2\
-dotnet publish -r win-x64
+cd \ExamplePipelinePlugin\MyPipelinePlugin\Plugin\net5.0\
+dotnet publish --self-contained false
+cd \ExamplePipelinePlugin\MyPipelinePlugin\Plugin\net5.0-windows\
+dotnet publish -r win-x64 --self-contained false
 ```
 
 Next run the nuspec file:
@@ -282,13 +284,11 @@ nuget pack .\MyPipelinePlugin.nuspec
 This should produce a file `MyPipelinePlugin.0.0.1.nupkg` containing the following directories:
 
 ```
-lib\net461\
-lib\netcoreapp2.2\win\
+lib\main\
+lib\windows\
 ```
 
 When uploaded into RDMP as a plugin, the appropriate platform/runtime will be selected.  
-
-Since the CLI runs as a cross platform netcoreapp you can publish your plugin for linux and include that in the plugin too if you want (This will enable your plugin to be consumed by the CLI when published for linux).
 
 You can test that the plugin is loaded correctly by compiling and running the cli:
 
@@ -296,7 +296,7 @@ You can test that the plugin is loaded correctly by compiling and running the cl
 cd Tools\rdmp
 dotnet publish -r win-x64
 
-cd .\bin\Debug\netcoreapp2.2\win-x64\publish\
+cd .\bin\Debug\net5.0\win-x64\publish\
 
 .\rdmp.exe list -t Catalogue --servername localhost\sqlexpress --cataloguedatabasename RDMP_Catalogue --logstartup --command run
 ```
@@ -376,7 +376,7 @@ namespace MyPipelinePlugin
 }
 ```
 
-Increase the plugin version number to 0.0.2 in `MyPipelinePlugin.nuspec` and compile the project (don't forget to publish netcoreapp2.2 if running the CLI).  Run `nuget pack MyPipelinePlugin.nuspec` and upload the new version of the plugin: `MyPipelinePlugin.0.0.2.nupkg`
+Increase the plugin version number to 0.0.2 in `MyPipelinePlugin.nuspec` and compile the project (don't forget to also run the `dotnet publish` commands above).  Run `nuget pack MyPipelinePlugin.nuspec` and upload the new version of the plugin: `MyPipelinePlugin.0.0.2.nupkg`
 
 Restart RDMP client and select `New Catalogue From File` from the home screen.
 
@@ -620,7 +620,7 @@ Test the plugin by importing demography.csv again through the pipeline with the 
 ## Unit Tests 
 We definetly want to write some unit/integration tests for this component.  Create a new project called MyPipelinePluginTests.  
 
-Set the TargetFramework to `netcoreapp2.2`
+Set the TargetFramework to `net5.0`
 
 Add a reference MyPipelinePlugin.csproj and reference the following NuGet packages:
 
@@ -702,7 +702,7 @@ Run the unit test again.  It should fail at test fixture setup with something li
 
 ```
 Message: OneTimeSetUp: System.TypeInitializationException : The type initializer for 'Tests.Common.DatabaseTests' threw an exception.
-  ----> System.IO.FileNotFoundException : Could not find file 'E:\RDMPExamplePlugins\ExamplePipelinePlugin\MyPipelinePlugin\MyPipelinePluginTests\bin\Debug\netcoreapp2.2\TestDatabases.txt'
+  ----> System.IO.FileNotFoundException : Could not find file 'E:\RDMPExamplePlugins\ExamplePipelinePlugin\MyPipelinePlugin\MyPipelinePluginTests\bin\Debug\net5.0\TestDatabases.txt'
 
 ```
 
@@ -726,7 +726,7 @@ Or you can compile the RMDP CLI yourself and run it from the bin directory.
 Or you can use rdmp.dll with the dotnet command from the packages directory (helpful for continuous integration builds) e.g.
 
 ```
-cd C:\Users\tznind\.nuget\packages\hic.rdmp.plugin\3.0.13-rc\tools\netcoreapp2.2\publish\
+cd C:\Users\tznind\.nuget\packages\hic.rdmp.plugin\3.0.13-rc\tools\net5.0\publish\
 dotnet rdmp.dll install localhost\sqlexpress TEST_
 ```
 

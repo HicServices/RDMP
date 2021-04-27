@@ -133,9 +133,10 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void openExeDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            
             try
             {
-                UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(new DirectoryInfo(Environment.CurrentDirectory));
+                UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(UsefulStuff.GetExecutableDirectory());
             }
             catch (Exception exception)
             {

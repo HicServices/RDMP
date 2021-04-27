@@ -6,11 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.0.0]
+
 ### Changed
 
 - .Net 5.0 for all, instead of Framework 4.6.1+Core 2.2+Standard 2.0 mix
 - Query editor autocomplete now uses integrated autocomplete (no icons, better matching)
 - Throttled how often spelling is checked in Scintilla controls.
+- Changed message about inaccessible cohorts to a warning instead of an error. 
+- Collation is now explicitly specified when creating a new cohort source using the wizard (as long as there is a single collation amongst existing ColumnInfo of that type)
 
 ### Added
 
@@ -40,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Command SetExtractionIdentifier now supports changing the linkage identifier for specific ExtractionConfigurations only
 - Added new command `AlterTableMakeDistinct`
 - Added CLI GUI window for running Pipelines that displays progress
+- Added RDMP.Core version number to logs at startup of rdmp cli
 
 ### Fixed
 
@@ -57,12 +62,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed `ExecuteCommandCreateNewCatalogueByImportingFile` when using blank constructor and from CLI GUI
 - Fixed extraction UI showing "WaitingForSQLServer" when DBMS might not be (now says "WaitingForDatabase").
 - Fixed bug where some UI tabs would not update when changes were made to child objects (e.g. deleting a dataset from an extraction using another window in the client)
+- Fixed support for UNC paths in SupportingDocument extraction (e.g. \\myserver\somedir\myfile.txt)
 - Fixed not being able to add `Pipeline` objects to Sessions
-
-### Changed
-
-- Changed message about inaccessible cohorts to a warning instead of an error. 
-- Collation is now explicitly specified when creating a new cohort source using the wizard (as long as there is a single collation amongst existing ColumnInfo of that type)
 
 ### Dependencies
 
@@ -703,7 +704,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v4.2.4...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v5.0.0...develop
+[5.0.0]: https://github.com/HicServices/RDMP/compare/v4.2.4...v5.0.0
 [4.2.4]: https://github.com/HicServices/RDMP/compare/v4.2.3...v4.2.4
 [4.2.3]: https://github.com/HicServices/RDMP/compare/v4.2.2...v4.2.3
 [4.2.2]: https://github.com/HicServices/RDMP/compare/v4.2.1...v4.2.2

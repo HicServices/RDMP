@@ -45,7 +45,12 @@ namespace ResearchDataManagementPlatform
 
         private static object RunApp(ResearchDataManagementPlatformOptions arg)
         {
-            RDMPBootStrapper<RDMPMainForm> bootStrapper = new RDMPBootStrapper<RDMPMainForm>(new EnvironmentInfo("net461"),arg.CatalogueConnectionString, arg.DataExportConnectionString);
+            RDMPBootStrapper<RDMPMainForm> bootStrapper =
+                new RDMPBootStrapper<RDMPMainForm>(
+                    new EnvironmentInfo(PluginFolders.Main | PluginFolders.Windows),
+                    arg.CatalogueConnectionString,
+                    arg.DataExportConnectionString);
+
             bootStrapper.Show(false);
             return 0;
         }

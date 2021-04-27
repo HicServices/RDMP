@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -16,6 +17,8 @@ using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.Startup;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Extensions;
 using ReusableLibraryCode.Progress;
@@ -54,7 +57,7 @@ namespace Rdmp.Core.CommandLine.Runners
             Version rdmpDependencyVersion;
 
             //find the manifest that lists name, version etc
-            using (var zf = ZipFile.OpenRead(toCommit.FullName))
+            using (var zf = _packOpts.Prune ? ZipFile.Open(toCommit.FullName,ZipArchiveMode.Update) : ZipFile.OpenRead(toCommit.FullName))
             {
                 var manifests = zf.Entries.Where(e => e.FullName.EndsWith(PluginPackageManifest)).ToArray();
 
@@ -80,6 +83,8 @@ namespace Rdmp.Core.CommandLine.Runners
 
                     rdmpDependencyVersion = new Version(versionSuffix.Replace(rdmpDependencyNode.Attribute("version").Value, ""));
                 }
+
+                PruneFile(toCommit,zf, checkNotifier);
             }
 
             var runningSoftwareVersion = new Version(FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion);
@@ -87,9 +92,62 @@ namespace Rdmp.Core.CommandLine.Runners
             if (!rdmpDependencyVersion.IsCompatibleWith(runningSoftwareVersion, 2))
                 throw new NotSupportedException(string.Format("Plugin version {0} is incompatible with current running version of RDMP ({1}).", pluginVersion, runningSoftwareVersion));
 
+            if (!_packOpts.Prune)
+            {
+                UploadFile(repositoryLocator,checkNotifier,toCommit,pluginVersion,rdmpDependencyVersion);
+            }
+
+
+            return 0;
+        }
+
+        private void PruneFile(FileInfo toCommit, ZipArchive zf, ICheckNotifier listener)
+        {
+            var current = UsefulStuff.GetExecutableDirectory();
+
+            listener.OnCheckPerformed(new CheckEventArgs($"Reading RDMP core dlls in directory '{current}'",CheckResult.Success));
+
+            var rdmpCoreFiles = current.GetFiles("*.dll");
+
+            string main = $"^/?lib/{EnvironmentInfo.MainSubDir}/.*.dll";
+            string windows = $"^/?lib/{EnvironmentInfo.WindowsSubDir}/.*.dll";
+
+            var inMain = new List<ZipArchiveEntry>();
+            var inWindows = new List<ZipArchiveEntry>();
+
+            foreach (var e in zf.Entries.ToArray())
+            {
+                if(rdmpCoreFiles.Any(f=>f.Name.Equals(e.Name)))
+                {
+                    listener.OnCheckPerformed(new CheckEventArgs($"Deleting '{e.FullName}'", CheckResult.Success));
+                    e.Delete();
+                    continue;
+                }
+
+                if(Regex.IsMatch(e.FullName,main))
+                {
+                    inMain.Add(e);
+                }
+                else if (Regex.IsMatch(e.FullName, windows))
+                {
+                    inWindows.Add(e);
+                }
+            }
+
+            foreach(var dup in inWindows.Where(e=>inMain.Any(o=>o.Name.Equals(e.Name))).ToArray())
+            {
+                listener.OnCheckPerformed(new CheckEventArgs($"Deleting '{dup.FullName}' because it is already in 'main' subdir", CheckResult.Success));
+                dup.Delete();
+            }
+                
+        }
+
+        private void UploadFile(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier checkNotifier, FileInfo toCommit, Version pluginVersion, Version rdmpDependencyVersion)
+        {
+
             // delete EXACT old versions of the Plugin
             var oldVersion = repositoryLocator.CatalogueRepository.GetAllObjects<Curation.Data.Plugin>().SingleOrDefault(p => p.Name.Equals(toCommit.Name) && p.PluginVersion == pluginVersion);
-            
+
             if (oldVersion != null)
                 throw new Exception("There is already a plugin called " + oldVersion.Name);
 
@@ -105,8 +163,6 @@ namespace Rdmp.Core.CommandLine.Runners
                     CheckResult.Fail, e));
                 throw;
             }
-
-            return 0;
         }
     }
 }

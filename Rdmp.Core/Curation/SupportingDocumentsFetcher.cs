@@ -88,8 +88,7 @@ namespace Rdmp.Core.Curation
                             CheckResult.Success));
                 else
                     notifier.OnCheckPerformed(
-                        new CheckEventArgs("SupportingDocument " + document + "(ID=" + document.ID +
-                                           ") does not map to an existing file despite being flagged as Extractable",
+                        new CheckEventArgs($"SupportingDocument {document }(ID={ document.ID }) does not map to an existing file despite being flagged as Extractable.  Expected it to exist and be at '{toCopy}'",
                             CheckResult.Fail));
             }
             catch (Exception e)
