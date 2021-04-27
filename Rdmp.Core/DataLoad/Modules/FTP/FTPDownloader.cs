@@ -60,6 +60,9 @@ namespace Rdmp.Core.DataLoad.Modules.FTP
         [DemandsInitialization("The directory on the FTP server that you want to download files from")]
         public string RemoteDirectory { get; set; }
 
+        [DemandsInitialization("True to set keep alive", DefaultValue = true)]
+        public bool KeepAlive { get; set; }
+
 
         public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
         {
@@ -187,7 +190,8 @@ namespace Rdmp.Core.DataLoad.Modules.FTP
                 reqFTP.Credentials = new NetworkCredential(_username, _password);
                 reqFTP.Method = WebRequestMethods.Ftp.ListDirectory;
                 reqFTP.Timeout = TimeoutInSeconds*1000;
-
+                reqFTP.KeepAlive = KeepAlive;
+                
                 reqFTP.Proxy = null;
                 reqFTP.KeepAlive = false;
                 reqFTP.UsePassive = true;
