@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Rdmp.Core.Curation;
+using Rdmp.Core.Curation.Data;
 using Renci.SshNet;
 using ReusableLibraryCode.Progress;
 
@@ -22,6 +23,10 @@ namespace Rdmp.Core.DataLoad.Modules.FTP
     /// </summary>
     public class SFTPDownloader:FTPDownloader
     {
+
+        [DemandsInitialization("The keep-alive interval.  In milliseconds.  Requires KeepAlive to be set to take effect.")]
+        public int KeepAliveIntervalMilliseconds { get; set; }
+
         protected override void Download(string file, ILoadDirectory destination,IDataLoadEventListener job)
         {
             if (file.Contains("/") || file.Contains("\\"))
@@ -32,6 +37,11 @@ namespace Rdmp.Core.DataLoad.Modules.FTP
             
             using(var sftp = new SftpClient(_host,_username,_password))
             {
+                if (KeepAlive)
+                {
+                    sftp.KeepAliveInterval =   TimeSpan.FromMilliseconds(KeepAliveIntervalMilliseconds);
+                }
+
                 sftp.ConnectionInfo.Timeout = new TimeSpan(0, 0, 0, TimeoutInSeconds);
                 sftp.Connect();
                 
