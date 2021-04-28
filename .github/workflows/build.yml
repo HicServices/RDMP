@@ -37,9 +37,9 @@ jobs:
       - name: Initialise RDMP
         run: dotnet Tools/rdmp/bin/Release/net5.0/rdmp.dll install localhost TEST_
       - name: Test Reusable code
-        run: dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --no-restore --verbosity quiet -c Release
+        run: dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --no-build --verbosity quiet -c Release
       - name: Test Core code
-        run: dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --no-restore --verbosity quiet -c Release
+        run: dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --no-build --verbosity quiet -c Release
       - name: Package
         run: |
           dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 -c Release -o PublishWinForms --verbosity quiet --nologo
