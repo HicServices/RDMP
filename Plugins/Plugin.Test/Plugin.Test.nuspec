@@ -44,18 +44,18 @@
         </dependencies>
     </metadata>
     <files>
-		<file src="bin\$configuration$\netstandard2.0\MapsDirectlyToDatabaseTable.dll" target="lib\netstandard2.0"/>
-		<file src="bin\$configuration$\netstandard2.0\MapsDirectlyToDatabaseTable.pdb" target="lib\netstandard2.0"/>
-		<file src="bin\$configuration$\netstandard2.0\MapsDirectlyToDatabaseTable.xml" target="lib\netstandard2.0"/>
-		<file src="bin\$configuration$\netstandard2.0\Rdmp.Core.dll" target="lib\netstandard2.0"/>
-		<file src="bin\$configuration$\netstandard2.0\Rdmp.Core.pdb" target="lib\netstandard2.0"/>
-		<file src="bin\$configuration$\netstandard2.0\Rdmp.Core.xml" target="lib\netstandard2.0"/>
-		<file src="bin\$configuration$\netstandard2.0\ReusableLibraryCode.dll" target="lib\netstandard2.0"/>
-		<file src="bin\$configuration$\netstandard2.0\ReusableLibraryCode.pdb" target="lib\netstandard2.0"/>
-		<file src="bin\$configuration$\netstandard2.0\ReusableLibraryCode.xml" target="lib\netstandard2.0"/>
-		<file src="bin\$configuration$\netstandard2.0\Tests.Common.dll" target="lib\netstandard2.0"/>
-		<file src="bin\$configuration$\netstandard2.0\Tests.Common.pdb" target="lib\netstandard2.0"/>
-		<file src="bin\$configuration$\netstandard2.0\Tests.Common.xml" target="lib\netstandard2.0"/>
-		<file src="bin\$configuration$\netstandard2.0\TestDatabases.txt" target="content"/>
+		<file src="bin\$configuration$\net5.0\MapsDirectlyToDatabaseTable.dll" target="lib\net5.0"/>
+		<file src="bin\$configuration$\net5.0\MapsDirectlyToDatabaseTable.pdb" target="lib\net5.0"/>
+		<file src="bin\$configuration$\net5.0\MapsDirectlyToDatabaseTable.xml" target="lib\net5.0"/>
+		<file src="bin\$configuration$\net5.0\Rdmp.Core.dll" target="lib\net5.0"/>
+		<file src="bin\$configuration$\net5.0\Rdmp.Core.pdb" target="lib\net5.0"/>
+		<file src="bin\$configuration$\net5.0\Rdmp.Core.xml" target="lib\net5.0"/>
+		<file src="bin\$configuration$\net5.0\ReusableLibraryCode.dll" target="lib\net5.0"/>
+		<file src="bin\$configuration$\net5.0\ReusableLibraryCode.pdb" target="lib\net5.0"/>
+		<file src="bin\$configuration$\net5.0\ReusableLibraryCode.xml" target="lib\net5.0"/>
+		<file src="bin\$configuration$\net5.0\Tests.Common.dll" target="lib\net5.0"/>
+		<file src="bin\$configuration$\net5.0\Tests.Common.pdb" target="lib\net5.0"/>
+		<file src="bin\$configuration$\net5.0\Tests.Common.xml" target="lib\net5.0"/>
+		<file src="bin\$configuration$\net5.0\TestDatabases.txt" target="content"/>
     </files>
 </package>
