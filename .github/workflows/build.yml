@@ -51,7 +51,7 @@ jobs:
       - name: Get the version
         id: get_version
         # Get the tag name e.g. v5.0.0 but skip the 'v'
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//:1}
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
         shell: bash
 
       - name: Sign
