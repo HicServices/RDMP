@@ -50,7 +50,8 @@ jobs:
         run: powershell -noexit -executionpolicy bypass "& ./BundleSourceIntoZipFile.ps1"
       - name: Get the version
         id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        # Get the tag name e.g. v5.0.0 but skip the 'v'
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//:1}
         shell: bash
 
       - name: Sign
