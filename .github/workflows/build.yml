@@ -72,8 +72,6 @@ jobs:
           nuget pack Plugins/Plugin.Test/Plugin.Test.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version ${{ steps.get_version.outputs.VERSION }}
           nuget pack Application/ResearchDataManagementPlatform/RDMP.nuspec -Properties Configuration=Release -Version ${{ steps.get_version.outputs.VERSION }}
 
-          cmd /c "dir *.nupkg /s/b"
-
           nuget push HIC.RDMP.Plugin.${{ steps.get_version.outputs.VERSION }}.nupkg -skipDuplicate -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_KEY }}
           nuget push HIC.RDMP.Plugin.UI.${{ steps.get_version.outputs.VERSION }}.nupkg -skipDuplicate -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_KEY }}
           nuget push HIC.RDMP.Plugin.Test.${{ steps.get_version.outputs.VERSION }}.nupkg -skipDuplicate -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_KEY }}
