@@ -44,6 +44,7 @@ namespace Rdmp.Core.CommandLine.Gui
         private List<NotifyEventArgs> notifyEventArgs = new List<NotifyEventArgs>();
 
         public int Count => notifyEventArgs.Count;
+        public int Length => notifyEventArgs.Count;
 
         public ConsoleGuiRunPipeline(IBasicActivateItems activator,IPipelineUseCase useCase, IPipeline pipeline)
         {
@@ -239,7 +240,7 @@ namespace Rdmp.Core.CommandLine.Gui
             }
         }
 
-        public void Render(ListView container, ConsoleDriver driver, bool selected, int item, int col, int line, int width)
+        public void Render(ListView container, ConsoleDriver driver, bool selected, int item, int col, int line, int width, int start=0)
         {
             if(item >= notifyEventArgs.Count)
             {
