@@ -8,8 +8,11 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using Terminal.Gui;
+using Terminal.Gui.Graphs;
+using static Terminal.Gui.TabView;
 using Attribute = Terminal.Gui.Attribute;
 using Color = Terminal.Gui.Color;
+using PointF = Terminal.Gui.PointF;
 
 namespace Rdmp.Core.CommandLine.Gui
 {
@@ -246,7 +249,7 @@ namespace Rdmp.Core.CommandLine.Gui
             colors[7] = Driver.MakeAttribute(Color.DarkGray, Color.Black);
             colors[8] = Driver.MakeAttribute(Color.BrightBlue, Color.Black);
             colors[9] = Driver.MakeAttribute(Color.BrightGreen, Color.Black);
-            colors[10] = Driver.MakeAttribute(Color.BrighCyan, Color.Black);
+            colors[10] = Driver.MakeAttribute(Color.BrightCyan, Color.Black);
             colors[11] = Driver.MakeAttribute(Color.BrightRed, Color.Black);
             colors[12] = Driver.MakeAttribute(Color.BrightMagenta, Color.Black);
             colors[13] = Driver.MakeAttribute(Color.BrightYellow, Color.Black);

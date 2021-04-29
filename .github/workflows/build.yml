@@ -32,14 +32,14 @@ jobs:
         run: |
           dotnet clean --configuration Release --nologo --verbosity quiet
           dotnet nuget locals all --clear
-          dotnet restore
+          dotnet restore -v:q
           dotnet build --configuration Release --nologo --verbosity quiet
       - name: Initialise RDMP
         run: dotnet Tools/rdmp/bin/Release/net5.0/rdmp.dll install localhost TEST_
       - name: Test Reusable code
-        run: dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --no-restore --verbosity normal
+        run: dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --no-build --verbosity quiet -c Release
       - name: Test Core code
-        run: dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --no-restore --verbosity normal
+        run: dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --no-build --verbosity quiet -c Release
       - name: Package
         run: |
           dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 -c Release -o PublishWinForms --verbosity quiet --nologo
@@ -50,6 +50,7 @@ jobs:
         run: powershell -noexit -executionpolicy bypass "& ./BundleSourceIntoZipFile.ps1"
       - name: Get the version
         id: get_version
+        # Get the tag name e.g. v5.0.0 but skip the 'v'
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
         shell: bash
 
