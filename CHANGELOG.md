@@ -74,6 +74,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump SecurityCodeScan.VS2019 from 5.0.0 to 5.1.0
 - Bump Newtonsoft.Json from 12.0.3 to 13.0.1
 - Bump YamlDotNet from 9.1.4 to 11.1.1
+- Bump NUnit from 3.13.1 to 3.13.2
 
 ## [4.2.4] - 2021-02-05
 

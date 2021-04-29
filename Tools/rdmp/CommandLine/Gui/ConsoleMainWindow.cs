@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Terminal.Gui;
+using Terminal.Gui.Trees;
 
 namespace Rdmp.Core.CommandLine.Gui
 {
@@ -106,10 +107,10 @@ namespace Rdmp.Core.CommandLine.Gui
 			_treeView.AspectGetter = AspectGetter;
 
 			var statusBar = new StatusBar (new StatusItem [] {
-				new StatusItem(Key.ControlQ, "~^Q~ Quit", () => Quit()),
-				new StatusItem(Key.ControlR, "~^R~ Run", () => Run()),
-				new StatusItem(Key.ControlF, "~^F~ Find", () => Find()),
-				new StatusItem(Key.ControlN, "~^N~ New", () => New()),
+				new StatusItem(Key.Q | Key.CtrlMask, "~^Q~ Quit", () => Quit()),
+				new StatusItem(Key.R | Key.CtrlMask, "~^R~ Run", () => Run()),
+				new StatusItem(Key.F | Key.CtrlMask, "~^F~ Find", () => Find()),
+				new StatusItem(Key.N | Key.CtrlMask, "~^N~ New", () => New()),
 				new StatusItem(Key.F5, "~F5~ Refresh", () => Publish()),
 			});
 
