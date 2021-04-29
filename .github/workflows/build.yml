@@ -27,7 +27,7 @@ jobs:
       - name: Install MS SQL 2019
         uses: crazy-max/ghaction-chocolatey@v1
         with:
-          args: install sql-server-2019 --params="'/IgnorePendingReboot'"
+          args: install sql-server-2019 --params="'/IgnorePendingReboot'" --no-progress
       - name: Build
         run: |
           dotnet clean --configuration Release --nologo --verbosity quiet
