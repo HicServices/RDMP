@@ -46,17 +46,17 @@
         </dependencies>
     </metadata>
   <files>
-    <file src="bin\$configuration$\net5.0-windows\MapsDirectlyToDatabaseTable.dll" target="lib\net5.0-windows"/>
-    <file src="bin\$configuration$\net5.0-windows\MapsDirectlyToDatabaseTable.pdb" target="lib\net5.0-windows"/>
-    <file src="bin\$configuration$\net5.0-windows\MapsDirectlyToDatabaseTable.xml" target="lib\net5.0-windows"/>
-    <file src="bin\$configuration$\net5.0-windows\Rdmp.Core.dll" target="lib\net5.0-windows"/>
-    <file src="bin\$configuration$\net5.0-windows\Rdmp.Core.pdb" target="lib\net5.0-windows"/>
-    <file src="bin\$configuration$\net5.0-windows\Rdmp.Core.xml" target="lib\net5.0-windows"/>
-    <file src="bin\$configuration$\net5.0-windows\Rdmp.UI.dll" target="lib\net5.0-windows"/>
-    <file src="bin\$configuration$\net5.0-windows\Rdmp.UI.pdb" target="lib\net5.0-windows"/>
-    <file src="bin\$configuration$\net5.0-windows\Rdmp.UI.xml" target="lib\net5.0-windows"/>
-    <file src="bin\$configuration$\net5.0-windows\ReusableLibraryCode.dll" target="lib\net5.0-windows"/>
-    <file src="bin\$configuration$\net5.0-windows\ReusableLibraryCode.pdb" target="lib\net5.0-windows"/>
-    <file src="bin\$configuration$\net5.0-windows\ReusableLibraryCode.xml" target="lib\net5.0-windows"/>
+    <file src="bin\$configuration$\net5.0-windows7.0\MapsDirectlyToDatabaseTable.dll" target="lib\net5.0-windows7.0"/>
+    <file src="bin\$configuration$\net5.0-windows7.0\MapsDirectlyToDatabaseTable.pdb" target="lib\net5.0-windows7.0"/>
+    <file src="bin\$configuration$\net5.0-windows7.0\MapsDirectlyToDatabaseTable.xml" target="lib\net5.0-windows7.0"/>
+    <file src="bin\$configuration$\net5.0-windows7.0\Rdmp.Core.dll" target="lib\net5.0-windows7.0"/>
+    <file src="bin\$configuration$\net5.0-windows7.0\Rdmp.Core.pdb" target="lib\net5.0-windows7.0"/>
+    <file src="bin\$configuration$\net5.0-windows7.0\Rdmp.Core.xml" target="lib\net5.0-windows7.0"/>
+    <file src="bin\$configuration$\net5.0-windows7.0\Rdmp.UI.dll" target="lib\net5.0-windows7.0"/>
+    <file src="bin\$configuration$\net5.0-windows7.0\Rdmp.UI.pdb" target="lib\net5.0-windows7.0"/>
+    <file src="bin\$configuration$\net5.0-windows7.0\Rdmp.UI.xml" target="lib\net5.0-windows7.0"/>
+    <file src="bin\$configuration$\net5.0-windows7.0\ReusableLibraryCode.dll" target="lib\net5.0-windows7.0"/>
+    <file src="bin\$configuration$\net5.0-windows7.0\ReusableLibraryCode.pdb" target="lib\net5.0-windows7.0"/>
+    <file src="bin\$configuration$\net5.0-windows7.0\ReusableLibraryCode.xml" target="lib\net5.0-windows7.0"/>
   </files>
 </package>
