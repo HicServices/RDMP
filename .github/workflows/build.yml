@@ -58,8 +58,8 @@ jobs:
         if: contains(github.ref, 'refs/tags/v')
         shell: cmd
         run: |
-            powershell.exe -nologo -noprofile -command "& { [IO.File]::WriteAllBytes("GitHubActionsWorkflow.pfx", [System.Convert]::FromBase64String("${{ secrets.DIGICERT_PFX }}")); }"
-            "C:\Program Files (x86)\Windows Kits\10\bin\x86\signtool.exe" Sign /f GitHubActionsWorkflow.pfx /p ${{ secrets.DIGICERT_PASSWORD }} /fd sha256 /tr http://timestamp.digicert.com /td sha256 PublishWindows/*.dll PublishWindows/*.exe  PublishLinux/*.dll PublishWinForms/*.exe PublishWinForms/*.dll
+            powershell.exe -nologo -noprofile -command "& { [IO.File]::WriteAllBytes(\"GitHubActionsWorkflow.pfx\", [System.Convert]::FromBase64String(\"${{ secrets.DIGICERT_PFX }}\")); }"
+            "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\x86\\signtool.exe" Sign /f GitHubActionsWorkflow.pfx /p ${{ secrets.DIGICERT_PASSWORD }} /fd sha256 /tr http://timestamp.digicert.com /td sha256 PublishWindows/*.dll PublishWindows/*.exe  PublishLinux/*.dll PublishWinForms/*.exe PublishWinForms/*.dll
             mkdir dist
             powershell.exe -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('PublishWindows', 'dist/rdmp-cli-win-x64.zip'); [IO.Compression.ZipFile]::CreateFromDirectory('PublishLinux', 'dist/rdmp-cli-linux-x64.zip'); [IO.Compression.ZipFile]::CreateFromDirectory('PublishWinForms', 'dist/rdmp-client.zip');}"
       
@@ -71,7 +71,7 @@ jobs:
           nuget pack Plugins/Plugin.Test/Plugin.Test.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version ${{ steps.get_version.outputs.VERSION }}
           nuget pack Application/ResearchDataManagementPlatform/RDMP.nuspec -Properties Configuration=Release -Version ${{ steps.get_version.outputs.VERSION }}
 
-          dir *.nupkg /s/b
+          cmd /c "dir *.nupkg /s/b"
 
           nuget push HIC.RDMP.Plugin.${{ steps.get_version.outputs.VERSION }}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_KEY }}
           nuget push HIC.RDMP.Plugin.UI.${{ steps.get_version.outputs.VERSION }}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_KEY }}
