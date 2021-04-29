@@ -18,6 +18,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Terminal.Gui;
+using static Terminal.Gui.TabView;
 
 namespace Rdmp.Core.CommandLine.Gui
 {
@@ -135,7 +136,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
         }
 
-        private void TableView_CellActivated(CellActivatedEventArgs obj)
+        private void TableView_CellActivated(TableView.CellActivatedEventArgs obj)
         {
             var val = obj.Table.Rows[obj.Row][obj.Col];
             if(val != null && val != DBNull.Value)
