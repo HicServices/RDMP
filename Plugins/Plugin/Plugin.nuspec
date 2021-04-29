@@ -44,6 +44,6 @@
     <file src="bin\$configuration$\net5.0\*.pdb" target="lib\net5.0" exclude="bin\$configuration$\net5.0\Plugin.pdb" />
     <file src="bin\$configuration$\net5.0\*.xml" target="lib\net5.0" exclude="bin\$configuration$\net5.0\Plugin.xml" />
 
-    <file src="..\..\Tools\rdmp\bin\$configuration$\netcoreapp2.2\**\*" target="tools\netcoreapp2.2"/>
+    <file src="..\..\Tools\rdmp\bin\$configuration$\net5.0\**\*" target="tools\net5.0"/>
   </files>
 </package>
