@@ -13,12 +13,12 @@
         <description>UI package for plugin development</description>
         <copyright>Copyright 2018-2019</copyright>
         <dependencies>
-			      <dependency id="HIC.BadMedicine" version="0.1.6" />
+			<dependency id="HIC.BadMedicine" version="0.1.6" />
             <dependency id="HIC.FAnsiSql" version="1.0.6" />
             <dependency id="DockPanelSuite.ThemeVS2015" version="2.13.0" />
             <dependency id="CsvHelper" version="19.0.0" />
-			      <dependency id="NHunspell" version="1.2.5554.16953" />
-			      <dependency id="Newtonsoft.Json" version="13.0.1"/>
+			<dependency id="NHunspell" version="1.2.5554.16953" />
+			<dependency id="Newtonsoft.Json" version="13.0.1"/>
             <dependency id="fernandreu.ScintillaNET" version="4.0.4" />
             <dependency id="ObjectListView.Official" version="2.9.1" />
             <dependency id="CommandLineParser" version="2.8.0" />
@@ -46,17 +46,17 @@
         </dependencies>
     </metadata>
   <files>
-    <file src="bin\$configuration$\net461\MapsDirectlyToDatabaseTable.dll" target="lib\net461"/>
-    <file src="bin\$configuration$\net461\MapsDirectlyToDatabaseTable.pdb" target="lib\net461"/>
-    <file src="bin\$configuration$\net461\MapsDirectlyToDatabaseTable.xml" target="lib\net461"/>
-    <file src="bin\$configuration$\net461\Rdmp.Core.dll" target="lib\net461"/>
-    <file src="bin\$configuration$\net461\Rdmp.Core.pdb" target="lib\net461"/>
-    <file src="bin\$configuration$\net461\Rdmp.Core.xml" target="lib\net461"/>
-    <file src="bin\$configuration$\net461\Rdmp.UI.dll" target="lib\net461"/>
-    <file src="bin\$configuration$\net461\Rdmp.UI.pdb" target="lib\net461"/>
-    <file src="bin\$configuration$\net461\Rdmp.UI.xml" target="lib\net461"/>
-    <file src="bin\$configuration$\net461\ReusableLibraryCode.dll" target="lib\net461"/>
-    <file src="bin\$configuration$\net461\ReusableLibraryCode.pdb" target="lib\net461"/>
-    <file src="bin\$configuration$\net461\ReusableLibraryCode.xml" target="lib\net461"/>
+    <file src="bin\$configuration$\net5.0-windows\MapsDirectlyToDatabaseTable.dll" target="lib\net5.0-windows"/>
+    <file src="bin\$configuration$\net5.0-windows\MapsDirectlyToDatabaseTable.pdb" target="lib\net5.0-windows"/>
+    <file src="bin\$configuration$\net5.0-windows\MapsDirectlyToDatabaseTable.xml" target="lib\net5.0-windows"/>
+    <file src="bin\$configuration$\net5.0-windows\Rdmp.Core.dll" target="lib\net5.0-windows"/>
+    <file src="bin\$configuration$\net5.0-windows\Rdmp.Core.pdb" target="lib\net5.0-windows"/>
+    <file src="bin\$configuration$\net5.0-windows\Rdmp.Core.xml" target="lib\net5.0-windows"/>
+    <file src="bin\$configuration$\net5.0-windows\Rdmp.UI.dll" target="lib\net5.0-windows"/>
+    <file src="bin\$configuration$\net5.0-windows\Rdmp.UI.pdb" target="lib\net5.0-windows"/>
+    <file src="bin\$configuration$\net5.0-windows\Rdmp.UI.xml" target="lib\net5.0-windows"/>
+    <file src="bin\$configuration$\net5.0-windows\ReusableLibraryCode.dll" target="lib\net5.0-windows"/>
+    <file src="bin\$configuration$\net5.0-windows\ReusableLibraryCode.pdb" target="lib\net5.0-windows"/>
+    <file src="bin\$configuration$\net5.0-windows\ReusableLibraryCode.xml" target="lib\net5.0-windows"/>
   </files>
 </package>
