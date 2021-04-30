@@ -345,14 +345,15 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            var url = "https://github.com/HicServices/RDMP/rdmp-client.xml";
             try
             {
                 AutoUpdater.ReportErrors = true;
-                AutoUpdater.Start("https://github.com/HicServices/RDMP/releases.xml");
+                AutoUpdater.Start(url);
             }
             catch (Exception ex)
             {
-                ExceptionViewer.Show(ex);
+                Activator.ShowException($"Failed to update from {url}", ex);
             }
         }
 
