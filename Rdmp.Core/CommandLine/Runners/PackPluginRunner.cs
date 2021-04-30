@@ -84,7 +84,10 @@ namespace Rdmp.Core.CommandLine.Runners
                     rdmpDependencyVersion = new Version(versionSuffix.Replace(rdmpDependencyNode.Attribute("version").Value, ""));
                 }
 
-                PruneFile(toCommit,zf, checkNotifier);
+                if (_packOpts.Prune)
+                {
+                    PruneFile(toCommit, zf, checkNotifier);
+                }
             }
 
             var runningSoftwareVersion = new Version(FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion);
