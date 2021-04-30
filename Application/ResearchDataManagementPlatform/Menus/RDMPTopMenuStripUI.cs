@@ -345,7 +345,7 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var url = "https://github.com/HicServices/RDMP/rdmp-client.xml";
+            var url = "https://raw.githubusercontent.com/HicServices/RDMP/master/rdmp-client.xml";
             try
             {
                 AutoUpdater.ReportErrors = true;
