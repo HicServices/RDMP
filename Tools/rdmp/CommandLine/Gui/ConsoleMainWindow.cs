@@ -470,11 +470,13 @@ namespace Rdmp.Core.CommandLine.Gui
 				return Projects;
 			if(type == typeof(LoadMetadata))	
 				return Loads;
-			if(type == typeof(CohortIdentificationConfiguration))	
+			if (type == typeof(AllLoadMetadatasNode))
+				return Loads;
+			if (type == typeof(CohortIdentificationConfiguration))	
 				return CohortConfigs;
 			if(type == typeof(ExtractableCohort))
 				return BuiltCohorts;
-			if(GetOtherCategoryChildren().Any(a=>a.Equals(o)))
+			if (GetOtherCategoryChildren().Any(a=>a.Equals(o)))
 				return Other;
 
 			return null;
