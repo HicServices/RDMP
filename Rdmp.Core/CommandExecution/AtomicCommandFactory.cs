@@ -51,6 +51,7 @@ namespace Rdmp.Core.CommandExecution
         public const string Alter = "Alter";
         public const string SetUsageContext = "Set Context";
         public const string SetContainerOperation = "Set Operation";
+        public const string Graph = "Graph";
 
         public AtomicCommandFactory(IBasicActivateItems activator)
         {
@@ -130,8 +131,16 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandAddNewFilterContainer(_activator,ac));
                 yield return new CommandPresentation(new ExecuteCommandImportFilterContainerTree(_activator,ac));
                 yield return new CommandPresentation(new ExecuteCommandCreateNewFilter(_activator,ac));
-                yield return new CommandPresentation(new ExecuteCommandSetPivot(_activator, ac));
-                yield return new CommandPresentation(new ExecuteCommandSetPivot(_activator, ac, null) { OverrideCommandName = "Clear Pivot" });
+
+
+                // graph options
+
+                yield return new CommandPresentation(new ExecuteCommandSetPivot(_activator, ac), Graph);
+                yield return new CommandPresentation(new ExecuteCommandSetPivot(_activator, ac, null) { OverrideCommandName = "Clear Pivot" }, Graph);
+                yield return new CommandPresentation(new ExecuteCommandSetAxis(_activator, ac), Graph);
+                yield return new CommandPresentation(new ExecuteCommandSetAxis(_activator, ac, null) { OverrideCommandName = "Clear Axis" }, Graph);
+
+
                 yield return new CommandPresentation(new ExecuteCommandCreateNewFilterFromCatalogue(_activator,ac));
                 
                 yield return new CommandPresentation(new ExecuteCommandSetFilterTreeShortcut(_activator,ac));

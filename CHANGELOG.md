@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added RDMP.Core version number to logs at startup of rdmp cli
 - Added graph commands to CLI:
   - ExecuteCommandSetPivot
+  - ExecuteCommandSetAxis
 
 
 ### Fixed
