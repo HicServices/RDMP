@@ -26,6 +26,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 return;
             }
 
+            if (aggregate.GetAxisIfAny() != null)
+            {
+                SetImpossible($"AggregateConfiguration {aggregate} already has an axis");
+                return;
+            }
+
             askAtRuntime = true;
         }
 
@@ -72,7 +78,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 if (aggregate.GetAxisIfAny() != null)
                 {
-
+                    throw new Exception($"Aggregate {aggregate} already has an axis");
                 }
 
                 var opts = new AggregateBuilderOptionsFactory().Create(aggregate);
