@@ -240,6 +240,29 @@ namespace Rdmp.Core.Curation.Data.Aggregation
             return new[] { AggregateConfiguration };
         }
 
+        /// <summary>
+        /// Returns true if the <see cref="AggregateDimension"/> is likely to return a date based on the underlying column
+        /// data type.  If the <see cref="SelectSQL"/> is a transform this may be inaccurate.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsDate()
+        {
+            var col = ColumnInfo;
+
+            if (col == null)
+                return false;
+
+            try
+            {
+                return col.GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(col.Data_type) == typeof(DateTime);
+            }
+            catch (Exception)
+            {
+                //it's some kind of wierd type eh?
+                return false;
+            }
+        }
+
         public override void DeleteInDatabase()
         {
             var ac = AggregateConfiguration;

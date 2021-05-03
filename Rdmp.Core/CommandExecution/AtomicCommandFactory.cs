@@ -130,6 +130,8 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandAddNewFilterContainer(_activator,ac));
                 yield return new CommandPresentation(new ExecuteCommandImportFilterContainerTree(_activator,ac));
                 yield return new CommandPresentation(new ExecuteCommandCreateNewFilter(_activator,ac));
+                yield return new CommandPresentation(new ExecuteCommandSetPivot(_activator, ac));
+                yield return new CommandPresentation(new ExecuteCommandSetPivot(_activator, ac, null) { OverrideCommandName = "Clear Pivot" });
                 yield return new CommandPresentation(new ExecuteCommandCreateNewFilterFromCatalogue(_activator,ac));
                 
                 yield return new CommandPresentation(new ExecuteCommandSetFilterTreeShortcut(_activator,ac));

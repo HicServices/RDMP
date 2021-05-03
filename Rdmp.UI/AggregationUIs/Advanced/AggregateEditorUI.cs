@@ -306,7 +306,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
                 dimensions = dimensions.Except(new[] {axisIfAny}).ToArray();//don't offer the axis as a pivot dimension!
 
             //don't let them pivot on a date, that's just a bad idea
-            ddPivotDimension.Items.AddRange(dimensions.Where(d=>!IsDate(d)).ToArray());
+            ddPivotDimension.Items.AddRange(dimensions.Where(d=>!d.IsDate()).ToArray());
             
             if(pivotIfAny != null)
                 ddPivotDimension.SelectedItem = pivotIfAny;
@@ -377,7 +377,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
                 allDimensions = allDimensions.Except(new[] {pivotIfAny}).ToArray();
             
             ddAxisDimension.Items.Clear();
-            ddAxisDimension.Items.AddRange(allDimensions.Where(IsDate).ToArray());
+            ddAxisDimension.Items.AddRange(allDimensions.Where(d=>d.IsDate()).ToArray());
 
             //should only be one
             var axisDimensions = allDimensions.Where(d => d.AggregateContinuousDateAxis != null).ToArray();
@@ -401,28 +401,10 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             ddAxisDimension.SelectedItem = axisIfAny;
             aggregateContinuousDateAxisUI1.Dimension = axisIfAny;
 
-            if(!IsDate(axisIfAny))
+            if(!axisIfAny.IsDate())
                 _errorProviderAxis.SetError(ddAxisDimension, "Column is not a DateTime");
             else
                 _errorProviderAxis.Clear();
-        }
-
-        bool IsDate(AggregateDimension dimension)
-        {
-            var col = dimension.ColumnInfo;
-            
-            if (col == null)
-                return false;
-
-            try
-            {
-                return col.GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(col.Data_type) == typeof(DateTime);
-            }
-            catch (Exception)
-            {
-                //it's some kind of wierd type eh?
-                return false;
-            }
         }
 
         private void ddAxisDimension_SelectedIndexChanged(object sender, EventArgs e)
