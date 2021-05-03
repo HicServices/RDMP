@@ -14,7 +14,7 @@ namespace Rdmp.Core.CommandLine.Options
     /// <summary>
     /// Runs a given RDMP command specified by <see cref="CommandName"/> from the CLI.  See <see cref="ExecuteCommandRunner"/> for implementation.
     /// </summary>
-    [Verb("cmd",HelpText = "Run the named IAtomicCommand")]
+    [Verb("cmd",HelpText = "Run the specified command.  To list commands run 'rdmp cmd ListSupportedCommands'")]
     public class ExecuteCommandOptions : RDMPCommandLineOptions
     {
 
