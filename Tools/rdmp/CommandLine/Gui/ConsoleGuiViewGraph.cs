@@ -125,7 +125,8 @@ namespace Rdmp.Core.CommandLine.Gui
 
                 foreach (DataRow dr in dt.Rows)
                 {
-                    var yVal = (float)Convert.ToDouble(dr[i]);
+                    // Treat nulls as 0
+                    var yVal = dr[i] == DBNull.Value ? 0 : (float)Convert.ToDouble(dr[i]);
 
                     minY = Math.Min(minY, yVal);
                     maxY = Math.Max(maxY, yVal);
@@ -194,7 +195,8 @@ namespace Rdmp.Core.CommandLine.Gui
                     label = "<Null>";
                 }
 
-                var val = (float)Convert.ToDouble(dr[1]);
+                // treat nulls as 0
+                var val = dr[1] == DBNull.Value ? 0 : (float)Convert.ToDouble(dr[1]);
 
                 min = Math.Min(min, val);
                 max = Math.Max(max, val);
@@ -239,21 +241,21 @@ namespace Rdmp.Core.CommandLine.Gui
         {
             var colors = new Attribute[15];
 
-            colors[0] = Driver.MakeAttribute(Color.Blue, Color.Black);
+            colors[0] = Driver.MakeAttribute(Color.White, Color.Black);
             colors[1] = Driver.MakeAttribute(Color.Green, Color.Black);
-            colors[2] = Driver.MakeAttribute(Color.Cyan, Color.Black);
-            colors[3] = Driver.MakeAttribute(Color.Red, Color.Black);
-            colors[4] = Driver.MakeAttribute(Color.Magenta, Color.Black);
-            colors[5] = Driver.MakeAttribute(Color.Brown, Color.Black);
-            colors[6] = Driver.MakeAttribute(Color.Gray, Color.Black);
-            colors[7] = Driver.MakeAttribute(Color.DarkGray, Color.Black);
-            colors[8] = Driver.MakeAttribute(Color.BrightBlue, Color.Black);
-            colors[9] = Driver.MakeAttribute(Color.BrightGreen, Color.Black);
-            colors[10] = Driver.MakeAttribute(Color.BrightCyan, Color.Black);
-            colors[11] = Driver.MakeAttribute(Color.BrightRed, Color.Black);
-            colors[12] = Driver.MakeAttribute(Color.BrightMagenta, Color.Black);
-            colors[13] = Driver.MakeAttribute(Color.BrightYellow, Color.Black);
-            colors[14] = Driver.MakeAttribute(Color.White, Color.Black);
+            colors[2] = Driver.MakeAttribute(Color.Blue, Color.Black);
+            colors[3] = Driver.MakeAttribute(Color.Cyan, Color.Black);
+            colors[4] = Driver.MakeAttribute(Color.Red, Color.Black);
+            colors[5] = Driver.MakeAttribute(Color.Magenta, Color.Black);
+            colors[6] = Driver.MakeAttribute(Color.Brown, Color.Black);
+            colors[7] = Driver.MakeAttribute(Color.Gray, Color.Black);
+            colors[8] = Driver.MakeAttribute(Color.DarkGray, Color.Black);
+            colors[9] = Driver.MakeAttribute(Color.BrightBlue, Color.Black);
+            colors[10] = Driver.MakeAttribute(Color.BrightGreen, Color.Black);
+            colors[11] = Driver.MakeAttribute(Color.BrightCyan, Color.Black);
+            colors[12] = Driver.MakeAttribute(Color.BrightRed, Color.Black);
+            colors[13] = Driver.MakeAttribute(Color.BrightMagenta, Color.Black);
+            colors[14] = Driver.MakeAttribute(Color.BrightYellow, Color.Black);
 
             var toReturn = new List<Attribute>();
 
@@ -294,7 +296,8 @@ namespace Rdmp.Core.CommandLine.Gui
                 {
                     label = "<Null>";
                 }
-                var vals = dr.ItemArray.Skip(1).Select(v=>(float)Convert.ToDouble(v)).ToArray();
+                var vals = dr.ItemArray.Skip(1)
+                    .Select(v=>v == DBNull.Value ? 0 : (float)Convert.ToDouble(v)).ToArray();
 
                 barSeries.AddBars(label, mediumStiple, vals);
 

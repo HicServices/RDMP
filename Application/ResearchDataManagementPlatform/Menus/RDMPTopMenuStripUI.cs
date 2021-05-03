@@ -346,6 +346,13 @@ namespace ResearchDataManagementPlatform.Menus
         private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var url = "https://raw.githubusercontent.com/HicServices/RDMP/master/rdmp-client.xml";
+
+            // Give user a chance to change the URL that is updating from
+            if(!Activator.TypeText("Update Location","Url:",int.MaxValue,url,out url,false))
+            {
+                return;
+            }
+
             try
             {
                 AutoUpdater.ReportErrors = true;

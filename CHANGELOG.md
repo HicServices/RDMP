@@ -45,6 +45,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added new command `AlterTableMakeDistinct`
 - Added CLI GUI window for running Pipelines that displays progress
 - Added RDMP.Core version number to logs at startup of rdmp cli
+- Added graph commands to CLI:
+  - ExecuteCommandSetPivot
+  - ExecuteCommandSetAxis
+  - ExecuteCommandAddDimension
+
 
 ### Fixed
 

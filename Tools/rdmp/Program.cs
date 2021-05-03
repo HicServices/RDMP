@@ -14,6 +14,7 @@ using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
 using FAnsi.Implementations.PostgreSql;
+using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NLog;
 using Rdmp.Core;
@@ -35,6 +36,8 @@ namespace Rdmp.Core
 {
     class Program
     {
+        const int REPO_ERROR = 7;
+
         private static EnvironmentInfo GetEnvironmentInfo()
         {
             return new EnvironmentInfo(PluginFolders.Main);
@@ -184,7 +187,15 @@ namespace Rdmp.Core
             ImplementationManager.Load<PostgreSqlImplementation>();
 
             PopulateConnectionStringsFromYamlIfMissing(opts);
-            
+
+            // where RDMP objects are stored
+            var repositoryLocator = opts.GetRepositoryLocator();
+
+            if (!CheckRepo(repositoryLocator))
+            {
+                return REPO_ERROR;
+            }
+
             var listener = new NLogIDataLoadEventListener(false);
             var checker = new NLogICheckNotifier(true, false);
 
@@ -194,10 +205,7 @@ namespace Rdmp.Core
             //if user wants to run checking chances are they don't want checks to fail becasue of errors logged during startup (MEF shows lots of errors!)
             if(opts.LogStartup && opts.Command == CommandLineActivity.check)
                 checker.Worst = LogLevel.Info;
-            
-            // where RDMP objects are stored
-            var repositoryLocator = opts.GetRepositoryLocator();
-            
+           
             var runner = opts is ConsoleGuiOptions g ? 
                         new ConsoleGuiRunner(g):
                          factory.CreateRunner(new ThrowImmediatelyActivator(repositoryLocator,checker),opts);
@@ -235,10 +243,17 @@ namespace Rdmp.Core
             ImplementationManager.Load<PostgreSqlImplementation>();
 
             PopulateConnectionStringsFromYamlIfMissing(opts);
-            
+
+            var repo = opts.GetRepositoryLocator();
+
+            if(!CheckRepo(repo))
+            {
+                return REPO_ERROR;
+            }
+
             var checker = new NLogICheckNotifier(true, false);
 
-            var start = new Startup.Startup(GetEnvironmentInfo(),opts.GetRepositoryLocator());
+            var start = new Startup.Startup(GetEnvironmentInfo(),repo);
             bool badTimes = false;
 
             start.DatabaseFound += (s,e)=>{
@@ -261,6 +276,33 @@ namespace Rdmp.Core
             start.DoStartup(new IgnoreAllErrorsCheckNotifier());
 
             return badTimes ? -1 :0;
+        }
+
+        private static bool CheckRepo(Repositories.IRDMPPlatformRepositoryServiceLocator repo)
+        {
+            var logger = LogManager.GetCurrentClassLogger();
+            if(repo is LinkedRepositoryProvider l)
+            {
+                if(l.CatalogueRepository is TableRepository c)
+                {
+                    if(!c.DiscoveredServer.Exists())
+                    {
+                        logger.Error($"Could not reach {c.DiscoveredServer} (Database:{c.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
+                        return false;
+                    }
+                }
+
+                if (l.DataExportRepository is TableRepository d)
+                {
+                    if (!d.DiscoveredServer.Exists())
+                    {
+                        logger.Error($"Could not reach {d.DiscoveredServer} (Database:{d.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
         private static void PopulateConnectionStringsFromYamlIfMissing(RDMPCommandLineOptions opts)
