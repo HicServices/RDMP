@@ -176,7 +176,17 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         /// <inheritdoc/>
         public string GetRuntimeName()
         {
-            return string.IsNullOrWhiteSpace(Alias) ? AggregateConfiguration.GetQuerySyntaxHelper().GetRuntimeName(SelectSQL):Alias;
+            if(string.IsNullOrWhiteSpace(Alias))
+            {
+                var syntax = _knownExtractionInformation.Value?.ColumnInfo?.GetQuerySyntaxHelper() ??
+                    AggregateConfiguration.GetQuerySyntaxHelper();
+
+                return syntax.GetRuntimeName(SelectSQL);
+            }
+            else
+            {
+                return Alias;
+            }
         }
 
         
