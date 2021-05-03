@@ -134,7 +134,7 @@ namespace Rdmp.Core.CommandExecution
 
 
                 // graph options
-
+                yield return new CommandPresentation(new ExecuteCommandAddDimension(_activator, ac), Graph);
                 yield return new CommandPresentation(new ExecuteCommandSetPivot(_activator, ac), Graph);
                 yield return new CommandPresentation(new ExecuteCommandSetPivot(_activator, ac, null) { OverrideCommandName = "Clear Pivot" }, Graph);
                 yield return new CommandPresentation(new ExecuteCommandSetAxis(_activator, ac), Graph);
