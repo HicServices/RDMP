@@ -78,6 +78,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 Height = Dim.Fill()
             };
 
+            tableView.Style.AlwaysShowHeaders = true;
             tableView.CellActivated += TableView_CellActivated;
 
             TabView.AddTab(resultTab = new Tab("Results", tableView), false);
@@ -128,7 +129,7 @@ namespace Rdmp.Core.CommandLine.Gui
             btnSave.Clicked += ()=>Save();
             Add(btnSave);
 
-            var btnClose = new Button("Close"){
+            var btnClose = new Button("Clos_e"){
                 X= Pos.Right(btnSave)+1,
                 };
             btnClose.Clicked += ()=>Application.RequestStop();
