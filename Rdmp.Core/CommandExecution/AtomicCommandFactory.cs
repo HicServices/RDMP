@@ -51,7 +51,7 @@ namespace Rdmp.Core.CommandExecution
         public const string Alter = "Alter";
         public const string SetUsageContext = "Set Context";
         public const string SetContainerOperation = "Set Operation";
-        public const string Graph = "Graph";
+        public const string Dimensions = "Dimensions";
 
         public AtomicCommandFactory(IBasicActivateItems activator)
         {
@@ -134,11 +134,11 @@ namespace Rdmp.Core.CommandExecution
 
 
                 // graph options
-                yield return new CommandPresentation(new ExecuteCommandAddDimension(_activator, ac), Graph);
-                yield return new CommandPresentation(new ExecuteCommandSetPivot(_activator, ac), Graph);
-                yield return new CommandPresentation(new ExecuteCommandSetPivot(_activator, ac, null) { OverrideCommandName = "Clear Pivot" }, Graph);
-                yield return new CommandPresentation(new ExecuteCommandSetAxis(_activator, ac), Graph);
-                yield return new CommandPresentation(new ExecuteCommandSetAxis(_activator, ac, null) { OverrideCommandName = "Clear Axis" }, Graph);
+                yield return new CommandPresentation(new ExecuteCommandAddDimension(_activator, ac), Dimensions);
+                yield return new CommandPresentation(new ExecuteCommandSetPivot(_activator, ac), Dimensions);
+                yield return new CommandPresentation(new ExecuteCommandSetPivot(_activator, ac, null) { OverrideCommandName = "Clear Pivot" }, Dimensions);
+                yield return new CommandPresentation(new ExecuteCommandSetAxis(_activator, ac), Dimensions);
+                yield return new CommandPresentation(new ExecuteCommandSetAxis(_activator, ac, null) { OverrideCommandName = "Clear Axis" }, Dimensions);
 
 
                 yield return new CommandPresentation(new ExecuteCommandCreateNewFilterFromCatalogue(_activator,ac));
