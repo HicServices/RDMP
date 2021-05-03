@@ -84,7 +84,9 @@ namespace Rdmp.Core.Providers
         
         public AggregateConfiguration[] AllAggregateConfigurations { get; private set; }
         public AggregateDimension[] AllAggregateDimensions { get; private set; }
-        
+
+        public AggregateContinuousDateAxis[] AllAggregateContinuousDateAxis { get; private set; }
+
         public AllRDMPRemotesNode AllRDMPRemotesNode { get; private set; }
         public RemoteRDMP[] AllRemoteRDMPs { get; set; }
 
@@ -322,6 +324,7 @@ namespace Rdmp.Core.Providers
 
             AllAggregateConfigurations = GetAllObjects<AggregateConfiguration>(repository);
             AllAggregateDimensions = GetAllObjects<AggregateDimension>(repository);
+            AllAggregateContinuousDateAxis = GetAllObjects<AggregateContinuousDateAxis>(repository);
 
             //to start with all aggregates are orphans (we prune this as we determine descendency in AddChildren methods
             OrphanAggregateConfigurations = new HashSet<AggregateConfiguration>(AllAggregateConfigurations.Where(ac=>ac.IsCohortIdentificationAggregate));
@@ -1003,11 +1006,17 @@ namespace Rdmp.Core.Providers
             {
                 childrenObjects.Add(dim);
             }
-                        
+
+            // show the axis (if any) in the tree.  If there are multiple axis in this tree then that is bad but maybe the user can delete one of them to fix the situation
+            foreach(var axis in AllAggregateContinuousDateAxis.Where(a => aggregateConfiguration.AggregateDimensions.Any(d => d.ID == a.AggregateDimension_ID)))
+            {
+                childrenObjects.Add(axis);
+            }
+
             //we can step into this twice, once via Catalogue children and once via CohortIdentificationConfiguration children
             //if we get in via Catalogue children then descendancy will be Ignore=true we don't end up emphasising into CatalogueCollectionUI when
             //really user wants to see it in CohortIdentificationCollectionUI
-            if(aggregateConfiguration.RootFilterContainer_ID != null)
+            if (aggregateConfiguration.RootFilterContainer_ID != null)
             {
                 var container = AllAggregateContainersDictionary[(int) aggregateConfiguration.RootFilterContainer_ID];
                 
@@ -1561,7 +1570,8 @@ namespace Rdmp.Core.Providers
             _allColumnInfos = otherCat._allColumnInfos;
             AllAggregateConfigurations= otherCat.AllAggregateConfigurations;
             AllAggregateDimensions= otherCat.AllAggregateDimensions;
-            AllRDMPRemotesNode= otherCat.AllRDMPRemotesNode;
+            AllAggregateContinuousDateAxis = otherCat.AllAggregateContinuousDateAxis;
+            AllRDMPRemotesNode = otherCat.AllRDMPRemotesNode;
             AllRemoteRDMPs = otherCat.AllRemoteRDMPs;
             AllDashboardsNode = otherCat.AllDashboardsNode;
             AllDashboards = otherCat.AllDashboards;

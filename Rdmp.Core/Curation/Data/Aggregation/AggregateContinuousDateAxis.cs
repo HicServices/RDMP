@@ -103,5 +103,10 @@ namespace Rdmp.Core.Curation.Data.Aggregation
             EndDate = r["EndDate"].ToString();
             AxisIncrement = (AxisIncrement) r["AxisIncrement"];
         }
+
+        public override string ToString()
+        {
+            return "Axis";
+        }
     }
 }
