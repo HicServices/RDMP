@@ -95,7 +95,7 @@ namespace Rdmp.Core.CommandLine.Gui
             _btnRunOrCancel.Clicked += ()=>RunOrCancel();
             Add(_btnRunOrCancel);
 
-            var resetSql = new Button("Reset Sql"){
+            var resetSql = new Button("Reset Sq_l"){
                 X= Pos.Right(_btnRunOrCancel)+1};
 
             resetSql.Clicked += ()=>ResetSql();
