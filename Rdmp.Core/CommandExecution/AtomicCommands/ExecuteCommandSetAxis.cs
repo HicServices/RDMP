@@ -6,6 +6,9 @@ using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
+    /// <summary>
+    /// Sets the <see cref="AggregateContinuousDateAxis"/> on a graph <see cref="AggregateConfiguration"/>
+    /// </summary>
     public class ExecuteCommandSetAxis : BasicCommandExecution
     {
         private readonly AggregateConfiguration aggregate;

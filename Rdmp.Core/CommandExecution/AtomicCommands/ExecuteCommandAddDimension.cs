@@ -7,6 +7,9 @@ using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
+    /// <summary>
+    /// Adds a new <see cref="AggregateDimension"/> to a <see cref="AggregateConfiguration"/> based on one of the associated <see cref="Catalogue"/> <see cref="ExtractionInformation"/>
+    /// </summary>
     public class ExecuteCommandAddDimension : BasicCommandExecution
     {
         private readonly AggregateConfiguration aggregate;
