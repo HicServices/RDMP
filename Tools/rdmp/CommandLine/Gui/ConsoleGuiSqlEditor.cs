@@ -273,6 +273,7 @@ namespace Rdmp.Core.CommandLine.Gui
                         if (dt.Columns.Count > 0)
                         {
                             TabView.SelectedTab = resultTab;
+                            TabView.SetNeedsDisplay();
                         }
                             
 
