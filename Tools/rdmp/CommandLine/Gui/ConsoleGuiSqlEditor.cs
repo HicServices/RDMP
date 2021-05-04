@@ -132,9 +132,20 @@ namespace Rdmp.Core.CommandLine.Gui
             var btnClose = new Button("Clos_e"){
                 X= Pos.Right(btnSave)+1,
                 };
-            btnClose.Clicked += ()=>Application.RequestStop();
-            Add(btnClose);
 
+
+            var timeout = Application.MainLoop.AddTimeout(TimeSpan.FromSeconds(1),(s)=>
+            {
+                this.SetNeedsDisplay();
+                return true;
+            });
+
+            btnClose.Clicked += ()=>{
+                Application.RequestStop();
+                Application.MainLoop.RemoveTimeout(timeout);
+                };
+                
+            Add(btnClose);
         }
 
         private void TableView_CellActivated(TableView.CellActivatedEventArgs obj)
