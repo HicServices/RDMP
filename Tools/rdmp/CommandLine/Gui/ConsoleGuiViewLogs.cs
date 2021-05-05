@@ -51,6 +51,13 @@ namespace Rdmp.Core.CommandLine.Gui
             btnFailing.Clicked += BtnFailing_Clicked;
             Add(btnFailing);
 
+            var btnPassing = new Button("Passing")
+            {
+                Y = Pos.Bottom(lbl),
+                X = Pos.Right(btnFailing)
+            };
+            btnPassing.Clicked += BtnPassing_Clicked;
+            Add(btnPassing);
 
 
             _treeView = new TreeView<object>()
@@ -82,9 +89,15 @@ namespace Rdmp.Core.CommandLine.Gui
         private void BtnFailing_Clicked()
         {
             _treeView.ClearObjects();
-            _treeView.AddObjects(_archivalDataLoadInfos.Where(a=>a.HasErrors));
+            _treeView.AddObjects(_archivalDataLoadInfos.Where(a=>a.HasErrors || !a.EndTime.HasValue));
         }
 
+        private void BtnPassing_Clicked()
+        {
+            _treeView.ClearObjects();
+            _treeView.AddObjects(_archivalDataLoadInfos.Where(a => !a.HasErrors && a.EndTime.HasValue));
+        }
+        
         private void BtnAll_Clicked()
         {
             _treeView.ClearObjects();
