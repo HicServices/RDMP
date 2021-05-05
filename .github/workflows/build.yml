@@ -26,9 +26,7 @@ jobs:
         with:
           dotnet-version: 5.0.200
       - name: Install MS SQL 2019
-        uses: crazy-max/ghaction-chocolatey@v1
-        with:
-          args: install sql-server-2019 --params="'/IgnorePendingReboot'" --no-progress
+        run: Choco-Install -PackageName sql-server-2019
       - name: Build
         run: |
           dotnet clean --configuration Release --nologo --verbosity quiet
