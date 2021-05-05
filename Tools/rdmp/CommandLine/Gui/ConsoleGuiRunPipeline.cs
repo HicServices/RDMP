@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -26,11 +27,10 @@ namespace Rdmp.Core.CommandLine.Gui
     internal class ConsoleGuiRunPipeline : Window,IPipelineRunner, IDataLoadEventListener, IListDataSource
     {
         private readonly IBasicActivateItems activator;
-        private IPipelineUseCase useCase;
-        private IPipeline pipeline;
-
-        private ListView results;
-        private TableView tableView;
+        private IPipelineUseCase _useCase;
+        private IPipeline _pipeline;
+        private ListView _results;
+        private TableView _tableView;
         public event PipelineEngineEventHandler PipelineExecutionFinishedsuccessfully;
 
         GracefulCancellationTokenSource cancellation;
@@ -46,17 +46,31 @@ namespace Rdmp.Core.CommandLine.Gui
         public int Count => notifyEventArgs.Count;
         public int Length => notifyEventArgs.Count;
 
+        Label _lblPipeline;
+        private Pipeline[] _compatiblePipelines;
+
         public ConsoleGuiRunPipeline(IBasicActivateItems activator,IPipelineUseCase useCase, IPipeline pipeline)
         {
             Modal = true;
             this.activator = activator;
-            this.useCase = useCase;
-            this.pipeline = pipeline;
+            this._useCase = useCase;
+            this._pipeline = pipeline;
+
+            _compatiblePipelines = useCase.FilterCompatiblePipelines(activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>()).ToArray();
 
             Width = Dim.Fill();
             Height = Dim.Fill();
 
-            Add(new Label("Pipeline:" + pipeline.Name));
+            if(pipeline == null && _compatiblePipelines.Length == 1)
+            {
+                this._pipeline = _compatiblePipelines[0];
+            }
+                        
+            Add(_lblPipeline = new Label("Pipeline:" + (this._pipeline?.Name ?? "<<NOT SELECTED>>")) { Width = Dim.Fill()-20});
+
+            var btnChoose = new Button("Choose Pipeline") { X = Pos.Right(_lblPipeline)};
+            btnChoose.Clicked += BtnChoose_Clicked;
+            Add(btnChoose);
 
             var btnRun = new Button("Run") { Y = 1 };
             btnRun.Clicked += BtnRun_Clicked;
@@ -70,31 +84,37 @@ namespace Rdmp.Core.CommandLine.Gui
             btnClose.Clicked += () => Application.RequestStop();
             Add(btnClose);
 
-            Add(tableView = new TableView() { Y = 2, Width = Dim.Fill(), Height = 7 });
-            tableView.Style.ShowHorizontalHeaderOverline = false;
-            tableView.Style.AlwaysShowHeaders = true;
-            tableView.Style.ShowVerticalCellLines = true;
-            tableView.Style.ShowHorizontalHeaderUnderline = false;
+            Add(_tableView = new TableView() { Y = 2, Width = Dim.Fill(), Height = 7 });
+            _tableView.Style.ShowHorizontalHeaderOverline = false;
+            _tableView.Style.AlwaysShowHeaders = true;
+            _tableView.Style.ShowVerticalCellLines = true;
+            _tableView.Style.ShowHorizontalHeaderUnderline = false;
 
             progressDataTable = new DataTable();
             progressDataTable.Columns.Add("Name");
             progressDataTable.Columns.Add("Progress",typeof(int));
 
-            tableView.Table = progressDataTable;
+            _tableView.Table = progressDataTable;
 
-            Add(results = new ListView(this) { Y = Pos.Bottom(tableView), Width = Dim.Fill(), Height = Dim.Fill()});
-            results.KeyPress += Results_KeyPress;
+            Add(_results = new ListView(this) { Y = Pos.Bottom(_tableView), Width = Dim.Fill(), Height = Dim.Fill()});
+            _results.KeyPress += Results_KeyPress;
 
 
         }
 
+        private void BtnChoose_Clicked()
+        {
+            _pipeline = (IPipeline)activator.SelectOne("Pipeline", _compatiblePipelines);
+            _lblPipeline.Text = "Pipeline:" + (_pipeline?.Name ?? "<<NOT SELECTED>>");
+        }
+
         private void Results_KeyPress(KeyEventEventArgs obj)
         {
-            if(obj.KeyEvent.Key == Key.Enter && results.HasFocus)
+            if(obj.KeyEvent.Key == Key.Enter && _results.HasFocus)
             {
-                if(results.SelectedItem <= notifyEventArgs.Count)
+                if(_results.SelectedItem <= notifyEventArgs.Count)
                 {
-                    var selected = notifyEventArgs[results.SelectedItem];
+                    var selected = notifyEventArgs[_results.SelectedItem];
                     
                     if(selected.Exception != null || selected.ProgressEventType == ProgressEventType.Error)
                     {
@@ -136,7 +156,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 return;
             }
 
-            runner = new PipelineRunner(useCase, pipeline);
+            runner = new PipelineRunner(_useCase, _pipeline);
             foreach(var l in additionals)
             {
                 runner.AdditionalListeners.Add(l);
@@ -144,7 +164,7 @@ namespace Rdmp.Core.CommandLine.Gui
             runner.PipelineExecutionFinishedsuccessfully += Runner_PipelineExecutionFinishedsuccessfully;
             
             // clear old results
-            results.Text = "";
+            _results.Text = "";
 
             Task.Run(()=>
             {
@@ -190,7 +210,7 @@ namespace Rdmp.Core.CommandLine.Gui
             lock(notifyEventArgs)
             {
                 notifyEventArgs.Add(e);
-                results.SetNeedsDisplay();
+                _results.SetNeedsDisplay();
             }
         }
 
@@ -211,7 +231,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 }
             }
 
-            tableView.Update();
+            _tableView.Update();
         }
 
         public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
@@ -254,7 +274,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 str = str.Substring(0, width);
             }
 
-            results.Move(col, line);
+            _results.Move(col, line);
             driver.AddStr(str);
         }
 
