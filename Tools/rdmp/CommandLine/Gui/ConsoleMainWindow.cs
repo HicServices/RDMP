@@ -305,6 +305,18 @@ namespace Rdmp.Core.CommandLine.Gui
 					new ExecuteCommandCreateNewLoadMetadata(_activator),
 				};
 			}
+			if (ReferenceEquals(o, Projects))
+			{
+				return new IAtomicCommand[] {
+					new ExecuteCommandNewObject(_activator,typeof(Project)){OverrideCommandName = "New Project" }
+				};
+			}
+			if (ReferenceEquals(o, CohortConfigs))
+			{
+				return new IAtomicCommand[] {
+					new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator)
+				};
+			}
 
 			if (o == null)
 				return new IAtomicCommand[0];
