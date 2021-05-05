@@ -11,6 +11,7 @@ using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation;
@@ -166,11 +167,11 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             vOperations.Folder = new CatalogueFolder(vOperations,@"\admissions");
             vOperations.SaveToDatabase();
 
-             
-            //Create cohort store database
-            var wizard = new CreateNewCohortDatabaseWizard(db,_repos.CatalogueRepository,_repos.DataExportRepository,false);
-            var externalCohortTable = wizard.CreateDatabase(new PrivateIdentifierPrototype("chi","varchar(10)"),new ThrowImmediatelyCheckNotifier());
-            
+
+            var cmdCreateCohortTable = new ExecuteCommandCreateNewCohortStore(_activator, db, false, "chi", "varchar(10)");
+            cmdCreateCohortTable.Execute();
+            var externalCohortTable = cmdCreateCohortTable.Created;
+
             //Find the pipeline for committing cohorts
             var cohortCreationPipeline = _repos.CatalogueRepository.GetAllObjects<Pipeline>().FirstOrDefault(p=>p?.Source?.Class == typeof(CohortIdentificationConfigurationSource).FullName);
             
