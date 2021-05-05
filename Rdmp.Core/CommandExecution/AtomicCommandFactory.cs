@@ -285,6 +285,7 @@ namespace Rdmp.Core.CommandExecution
             if(Is(o,out AllPluginsNode _))
             {
                 yield return new CommandPresentation(new ExecuteCommandAddPlugins(_activator));
+                yield return new CommandPresentation(new ExecuteCommandPrunePlugin(_activator));
                 yield return new CommandPresentation(new ExecuteCommandExportPlugins(_activator));
             }
 

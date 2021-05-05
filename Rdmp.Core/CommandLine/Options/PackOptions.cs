@@ -20,7 +20,7 @@ namespace Rdmp.Core.CommandLine.Options
         [Option('f',"file",Required = true, HelpText = "The " + PackPluginRunner.PluginPackageSuffix + " plugin file to add")]
         public string File { get; set; }
 
-        [Option('p',"prune", HelpText = "Modifies the " + PackPluginRunner.PluginPackageSuffix + " plugin file by removing duplicate dlls or those already contained in RDMP core")]
+        [Option('p',"prune", HelpText = "Modifies the " + PackPluginRunner.PluginPackageSuffix + " plugin file by removing duplicate dlls or those already contained in RDMP core before uploading to database")]
         public bool Prune { get; set; }
 
         [Usage]
