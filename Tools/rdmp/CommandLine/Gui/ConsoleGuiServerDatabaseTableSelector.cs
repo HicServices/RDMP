@@ -147,8 +147,7 @@ namespace Rdmp.Core.CommandLine.Gui
             var btnCreateDatabase = new Button("Create Database")
             {
                 X = Pos.Right(tbDatabase) + 1,
-                Y = Pos.Bottom(lblServer),
-                Height = 0
+                Y = Pos.Bottom(lblServer)
             };
             btnCreateDatabase.Clicked += CreateDatabase;
 

@@ -396,7 +396,7 @@ namespace Rdmp.Core.CommandExecution
         {
             try
             {
-                checkable.Check(new ThrowImmediatelyCheckNotifier());
+                checkable.Check(new ThrowImmediatelyCheckNotifier() { WriteToConsole = false });
             }
             catch (Exception e)
             {
