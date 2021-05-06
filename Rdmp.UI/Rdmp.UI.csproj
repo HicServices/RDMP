@@ -50,10 +50,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="fernandreu.ScintillaNET" Version="4.0.4" />
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net461" Version="1.0.0">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
     <PackageReference Include="NHunspell" Version="1.2.5554.16953" />
     <PackageReference Include="ObjectListView.Official" Version="2.9.1" />
     <PackageReference Include="SecurityCodeScan.VS2019" Version="5.1.0">
