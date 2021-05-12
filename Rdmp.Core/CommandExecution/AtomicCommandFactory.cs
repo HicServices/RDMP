@@ -391,6 +391,14 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandImportAlreadyExistingCohort(_activator,null,savedCohortsNode.Project));
             }
 
+            if(Is(o,out ExternalCohortTable ect))
+            {
+                yield return new CommandPresentation(new ExecuteCommandCreateNewCohortFromFile(_activator, ect));
+                yield return new CommandPresentation(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, ect));
+                yield return new CommandPresentation(new ExecuteCommandCreateNewCohortFromCatalogue(_activator, ect));
+                yield return new CommandPresentation(new ExecuteCommandImportAlreadyExistingCohort(_activator, ect, null));
+            }
+
             if (Is(o, out CohortAggregateContainer cohortAggregateContainer))
             {
                 yield return new CommandPresentation(new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer, SetOperation.EXCEPT), SetContainerOperation);
