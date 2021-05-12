@@ -362,6 +362,9 @@ namespace Rdmp.Core.CommandExecution
         /// <inheritdoc/>
         public abstract IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
             string initialSearchText = null, bool allowAutoSelect = false);
+        
+        /// <inheritdoc/>
+        public abstract bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null, bool allowAutoSelect = false);
 
         /// <inheritdoc/>
         public abstract DirectoryInfo SelectDirectory(string prompt);
@@ -522,5 +525,6 @@ namespace Rdmp.Core.CommandExecution
 
         /// <inheritdoc/>
         public abstract void ShowGraph(AggregateConfiguration aggregate);
+
     }
 }

@@ -55,6 +55,8 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="filter"></param>
         void ShowLogs(ExternalDatabaseServer loggingServer, LogViewerFilter filter);
 
+
+
         /// <summary>
         /// True if <see cref="Activate(object)"/> will work for the object
         /// </summary>
@@ -171,6 +173,18 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="allowAutoSelect"></param>
         /// <returns></returns>
         IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null, bool allowAutoSelect = false);
+
+        /// <summary>
+        /// Prompts user to pick one of <paramref name="available"/> objects
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="prompt"></param>
+        /// <param name="available"></param>
+        /// <param name="selected"></param>
+        /// <param name="initialSearchText"></param>
+        /// <param name="allowAutoSelect">Determines behaviour when <paramref name="available"/> has only one element.  True to auto select the only object available</param>
+        /// <returns>True if a selection was made</returns>
+        bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null, bool allowAutoSelect = false);
 
         /// <summary>
         /// Prompts user to select a directory on disk

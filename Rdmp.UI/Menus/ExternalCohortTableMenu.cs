@@ -11,46 +11,21 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers.Nodes.UsedByProject;
 using Rdmp.UI.CohortUI.ImportCustomData;
 using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
     class ExternalCohortTableMenu : RDMPContextMenuStrip
-    {
-        private readonly ExternalCohortTable _externalCohortTable;
-        
+    {        
         public ExternalCohortTableMenu(RDMPContextMenuStripArgs args, ExternalCohortTable externalCohortTable): base(args, externalCohortTable)
         {
-            _externalCohortTable = externalCohortTable;
-
-            Items.Add(new ToolStripSeparator());
-            Add(new ExecuteCommandCreateNewCohortFromFile(_activator,_externalCohortTable));
-            Add(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator,_externalCohortTable));
-            Add(new ExecuteCommandCreateNewCohortFromCatalogue(_activator,externalCohortTable));
-            Items.Add(new ToolStripSeparator());
-
             var projectOnlyNode = args.Masquerader as CohortSourceUsedByProjectNode;
-
             if (projectOnlyNode != null)
                 Add(new ExecuteCommandShowSummaryOfCohorts(_activator, projectOnlyNode));
             else
                 Add(new ExecuteCommandShowSummaryOfCohorts(_activator, externalCohortTable));
-
-            Add(new ExecuteCommandImportAlreadyExistingCohort(_activator, _externalCohortTable,PickExistingCohortId));
-        }
-
-        private int? PickExistingCohortId()
-        {
-            
-            SelectWhichCohortToImportUI importDialog = new SelectWhichCohortToImportUI(_activator, _externalCohortTable);
-
-            if (importDialog.ShowDialog() == DialogResult.OK)
-            {
-                return importDialog.IDToImport;
-            }
-
-            return null;
         }
     }
 }
