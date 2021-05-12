@@ -43,10 +43,10 @@ namespace Rdmp.Core.CommandLine.Gui
 
         protected override bool SelectValueTypeImpl(string prompt, Type paramType, object initialValue, out object chosen)
         {
-            var dlg = new ConsoleGuiTextDialog(prompt,initialValue?.ToString());
+            var dlg = new ConsoleGuiTextDialog(prompt, initialValue?.ToString());
             if (dlg.ShowDialog())
             {
-                if(string.IsNullOrWhiteSpace(dlg.ResultText) || dlg.ResultText.Equals("null", StringComparison.CurrentCultureIgnoreCase))
+                if (string.IsNullOrWhiteSpace(dlg.ResultText) || dlg.ResultText.Equals("null", StringComparison.CurrentCultureIgnoreCase))
                 {
                     chosen = null;
                 }
@@ -57,10 +57,10 @@ namespace Rdmp.Core.CommandLine.Gui
                     chosen = Convert.ChangeType(dlg.ResultText, wrappedType ?? paramType);
                 }
 
-                
+
                 return true;
             }
-            
+
             chosen = null;
             return false;
         }
@@ -68,27 +68,27 @@ namespace Rdmp.Core.CommandLine.Gui
         public override void Show(string title, string message)
         {
             GetDialogDimensions(out var w, out var h);
-            
-            var btn = new Button("Ok");
-            btn.Clicked +=()=>Application.RequestStop();
-            
 
-            using(var dlg = new Dialog(title, w, h, btn) { Modal = true })
+            var btn = new Button("Ok");
+            btn.Clicked += () => Application.RequestStop();
+
+
+            using (var dlg = new Dialog(title, w, h, btn) { Modal = true })
             {
                 dlg.Add(new TextView()
-                    { 
-                        Width = Dim.Fill(),
-                        Height = Dim.Fill(1),
-                        Text = message.Replace("\r\n","\n"),
-                        ReadOnly = true
-                    });
+                {
+                    Width = Dim.Fill(),
+                    Height = Dim.Fill(1),
+                    Text = message.Replace("\r\n", "\n"),
+                    ReadOnly = true
+                });
                 Application.Run(dlg);
             }
         }
         public override bool YesNo(string text, string caption, out bool chosen)
         {
             GetDialogDimensions(out var w, out var h);
-            int result = MessageBox.Query(w,h,caption,text,"yes","no","cancel");
+            int result = MessageBox.Query(w, h, caption, text, "yes", "no", "cancel");
             chosen = result == 0;
 
             return result != 2;
@@ -96,14 +96,14 @@ namespace Rdmp.Core.CommandLine.Gui
 
         private void GetDialogDimensions(out int w, out int h)
         {
-            w = Math.Min(80,Application.Top.Frame.Width -4);
-            h = Math.Min(20,Application.Top.Frame.Height -2);
+            w = Math.Min(80, Application.Top.Frame.Width - 4);
+            h = Math.Min(20, Application.Top.Frame.Height - 2);
         }
 
         public override bool TypeText(string header, string prompt, int maxLength, string initialText, out string text,
             bool requireSaneHeaderText)
         {
-            var dlg = new ConsoleGuiTextDialog(prompt,initialText);
+            var dlg = new ConsoleGuiTextDialog(prompt, initialText);
             if (dlg.ShowDialog())
             {
                 text = dlg.ResultText;
@@ -122,7 +122,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public override DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
         {
-            var dlg = new ConsoleGuiServerDatabaseTableSelector(this, taskDescription, "Ok",false);
+            var dlg = new ConsoleGuiServerDatabaseTableSelector(this, taskDescription, "Ok", false);
             if (dlg.ShowDialog())
                 return dlg.GetDiscoveredDatabase();
 
@@ -131,7 +131,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public override DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
         {
-            var dlg = new ConsoleGuiServerDatabaseTableSelector(this, taskDescription, "Ok",true);
+            var dlg = new ConsoleGuiServerDatabaseTableSelector(this, taskDescription, "Ok", true);
             if (dlg.ShowDialog())
                 return dlg.GetDiscoveredTable();
 
@@ -144,20 +144,42 @@ namespace Rdmp.Core.CommandLine.Gui
             //todo make this handle multi selection
             var chosen = SelectOne(prompt, availableObjects, initialSearchText);
 
-            return chosen == null?null : new IMapsDirectlyToDatabaseTable[]{chosen};
+            return chosen == null ? null : new IMapsDirectlyToDatabaseTable[] { chosen };
         }
 
         public override IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
             string initialSearchText = null, bool allowAutoSelect = false)
         {
-            if(allowAutoSelect && availableObjects.Length == 1)
+            if (allowAutoSelect && availableObjects.Length == 1)
                 return availableObjects[0];
 
-            var dlg = new ConsoleGuiSelectOne(CoreChildProvider,availableObjects);
+            var dlg = new ConsoleGuiSelectOne(CoreChildProvider, availableObjects);
             if (dlg.ShowDialog())
                 return dlg.Selected;
 
             return null;
+        }
+
+
+        /// <inheritdoc/>
+        public override bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null, bool allowAutoSelect = false)
+        {
+            if (allowAutoSelect && available.Length == 1)
+            {
+                selected = available[0];
+                return true;
+            }
+
+            var dlg = new ConsoleGuiBigListBox<T>(prompt,"Ok",true,available,t=>t.ToString(),true);
+
+            if (dlg.ShowDialog())
+            {
+                selected = dlg.Selected;
+                return true;
+            }
+
+            selected = default(T);
+            return false;
         }
 
         public override DirectoryInfo SelectDirectory(string prompt)

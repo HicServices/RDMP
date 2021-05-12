@@ -183,6 +183,28 @@ namespace Rdmp.Core.CommandLine.Interactive
             return chosen;
         }
 
+        public override bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null, bool allowAutoSelect = false)
+        {
+            for(int i=0;i<available.Length;i++)
+            {
+                Console.WriteLine(i + ":" + available[i]);
+            }
+
+            var result = Console.ReadLine();
+
+            if(int.TryParse(result, out int idx))
+            {
+                if(idx >= 0 && idx < available.Length)
+                {
+                    selected = available[idx];
+                    return true;
+                }
+            }
+
+            selected = default(T);
+            return false;
+        }
+
         private string ReadLineWithAuto(IEnumerable<string> autoComplete = null)
         {
             if (DisallowInput)

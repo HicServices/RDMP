@@ -387,6 +387,8 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandCreateNewCohortFromFile(_activator,null).SetTarget(savedCohortsNode.Project));
                 yield return new CommandPresentation(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator,null).SetTarget(savedCohortsNode.Project));
                 yield return new CommandPresentation(new ExecuteCommandCreateNewCohortFromCatalogue(_activator).SetTarget(savedCohortsNode.Project));
+
+                yield return new CommandPresentation(new ExecuteCommandImportAlreadyExistingCohort(_activator,null));
             }
 
             if (Is(o, out CohortAggregateContainer cohortAggregateContainer))

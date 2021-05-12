@@ -629,6 +629,20 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return null; //user didn't select one of the IMapsDirectlyToDatabaseTable objects shown in the dialog
         }
 
+        public override bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null, bool allowAutoSelect = false)
+        {
+            var pick = new PickOneOrCancelDialog<T>(available, prompt);
+
+            if(pick.ShowDialog() == DialogResult.OK)
+            {
+                selected = pick.Picked;
+                return true;
+            }
+
+            selected = default(T);
+            return false;
+        }
+
         public override DirectoryInfo SelectDirectory(string prompt)
         {
             using(var fb = new FolderBrowserDialog())

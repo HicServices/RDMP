@@ -6,6 +6,7 @@
 
 using System;
 using System.Drawing;
+using System.Linq;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
@@ -17,18 +18,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
     public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, IAtomicCommand
     {
         private readonly ExternalCohortTable _externalCohortTable;
-        private readonly Func<int?> _existingCohortSelectorDelegate;
         private int? _explicitOriginIDToImport;
 
-        private ExecuteCommandImportAlreadyExistingCohort(IBasicActivateItems activator, ExternalCohortTable externalCohortTable):base(activator)
+        public ExecuteCommandImportAlreadyExistingCohort(IBasicActivateItems activator, ExternalCohortTable externalCohortTable):base(activator)
         {
             _externalCohortTable = externalCohortTable;
         }
 
-        public ExecuteCommandImportAlreadyExistingCohort(IBasicActivateItems activator, ExternalCohortTable externalCohortTable, Func<int?> existingCohortSelectorDelegate) : this(activator,externalCohortTable)
-        {
-            this._existingCohortSelectorDelegate = existingCohortSelectorDelegate;
-        }
         
         [UseWithObjectConstructor]
         public ExecuteCommandImportAlreadyExistingCohort(IBasicActivateItems activator, ExternalCohortTable externalCohortTable, int originIDToImport)  : this(activator,externalCohortTable)
@@ -39,14 +35,40 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
         public override void Execute()
         {
             base.Execute();
-            
-            var newId = _explicitOriginIDToImport ?? _existingCohortSelectorDelegate();
 
+            var ect = _externalCohortTable;
+
+            if (ect == null)
+            {
+                var available = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<ExternalCohortTable>();
+                if(!SelectOne(available,out ect,null,true))
+                {
+                    return;
+                }   
+            }
+
+
+            var newId = _explicitOriginIDToImport ?? GetWhichCohortToImport(ect);
+
+            
             if(newId.HasValue)
             {
-                new ExtractableCohort(BasicActivator.RepositoryLocator.DataExportRepository, _externalCohortTable, newId.Value);
-                Publish(_externalCohortTable);
+                new ExtractableCohort(BasicActivator.RepositoryLocator.DataExportRepository, ect, newId.Value);
+                Publish(ect);
             }
+        }
+
+        private int? GetWhichCohortToImport(ExternalCohortTable ect)
+        {
+
+            var available = ExtractableCohort.GetImportableCohortDefinitions(ect).ToArray();
+
+            if(BasicActivator.SelectObject("Import Cohort",available, out CohortDefinition cd))
+            {
+                return cd.ID;
+            }
+
+            return null;
         }
 
         public override Image GetImage(IIconProvider iconProvider)

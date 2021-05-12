@@ -11,6 +11,7 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers.Nodes.UsedByProject;
 using Rdmp.UI.CohortUI.ImportCustomData;
 using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.Menus
@@ -37,20 +38,7 @@ namespace Rdmp.UI.Menus
             else
                 Add(new ExecuteCommandShowSummaryOfCohorts(_activator, externalCohortTable));
 
-            Add(new ExecuteCommandImportAlreadyExistingCohort(_activator, _externalCohortTable,PickExistingCohortId));
-        }
-
-        private int? PickExistingCohortId()
-        {
-            
-            SelectWhichCohortToImportUI importDialog = new SelectWhichCohortToImportUI(_activator, _externalCohortTable);
-
-            if (importDialog.ShowDialog() == DialogResult.OK)
-            {
-                return importDialog.IDToImport;
-            }
-
-            return null;
+            Add(new ExecuteCommandImportAlreadyExistingCohort(_activator, _externalCohortTable));
         }
     }
 }
