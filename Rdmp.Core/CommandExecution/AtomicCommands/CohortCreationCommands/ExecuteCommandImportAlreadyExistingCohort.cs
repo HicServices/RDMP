@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -18,16 +19,23 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
     public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, IAtomicCommand
     {
         private readonly ExternalCohortTable _externalCohortTable;
+        private readonly IProject specificProject;
         private int? _explicitOriginIDToImport;
 
-        public ExecuteCommandImportAlreadyExistingCohort(IBasicActivateItems activator, ExternalCohortTable externalCohortTable):base(activator)
+        public ExecuteCommandImportAlreadyExistingCohort(IBasicActivateItems activator, ExternalCohortTable externalCohortTable, IProject specificProject):base(activator)
         {
             _externalCohortTable = externalCohortTable;
+            this.specificProject = specificProject;
+
+            if(specificProject != null && specificProject.ProjectNumber == null)
+            {
+                SetImpossible("Project does not have a ProjectNumber yet");
+            }
         }
 
         
         [UseWithObjectConstructor]
-        public ExecuteCommandImportAlreadyExistingCohort(IBasicActivateItems activator, ExternalCohortTable externalCohortTable, int originIDToImport)  : this(activator,externalCohortTable)
+        public ExecuteCommandImportAlreadyExistingCohort(IBasicActivateItems activator, ExternalCohortTable externalCohortTable, int originIDToImport)  : this(activator,externalCohortTable,null)
         {
             _explicitOriginIDToImport = originIDToImport;
         }
@@ -60,9 +68,35 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
 
         private int? GetWhichCohortToImport(ExternalCohortTable ect)
         {
+            // the cohorts in the database
+            var available = ExtractableCohort.GetImportableCohortDefinitions(ect).Where(c=>c.ID.HasValue).ToArray();
 
-            var available = ExtractableCohort.GetImportableCohortDefinitions(ect).ToArray();
+            // the ones we already know about
+            var existing = new HashSet<int>(BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableCohort>().Select(c=>c.OriginID));
 
+            // new ones we don't know about yet
+            available = available.Where(c => !existing.Contains(c.ID.Value)).ToArray();
+
+            // if there are no new ones
+            if (!available.Any())
+            {
+                BasicActivator.Show($"There are no new cohorts");
+                return null;
+            }
+
+            // we only care about ones associated to this project
+            if (specificProject != null)
+            {
+                available = available.Where(a => a.ProjectNumber == specificProject.ProjectNumber).ToArray();
+
+                if(!available.Any())
+                {
+                    BasicActivator.Show($"There are no new cohorts to import for ProjectNumber {specificProject.ProjectNumber}");
+                    return null;
+                }
+            }
+
+            // pick which one to import
             if(BasicActivator.SelectObject("Import Cohort",available, out CohortDefinition cd))
             {
                 return cd.ID;

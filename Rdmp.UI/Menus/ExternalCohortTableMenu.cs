@@ -38,7 +38,7 @@ namespace Rdmp.UI.Menus
             else
                 Add(new ExecuteCommandShowSummaryOfCohorts(_activator, externalCohortTable));
 
-            Add(new ExecuteCommandImportAlreadyExistingCohort(_activator, _externalCohortTable));
+            Add(new ExecuteCommandImportAlreadyExistingCohort(_activator, _externalCohortTable,(IProject)null));
         }
     }
 }
