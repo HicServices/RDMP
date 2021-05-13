@@ -27,7 +27,7 @@ build_script:
       Pop-Location
   
   # Run code coverage on non UI tests
-  - cmd: "OpenCover.Console.exe -returntargetcode -target:\"c:/program files/dotnet/dotnet.exe\" -targetargs:\"test ./scripts/run-all-tests.proj -f net5.0 -c Release -p:BuildInParallel=false\" -filter:\"+[*Rdmp.Core*]* +[*ReusableLibraryCode*]* +[*MapsDirectlyToDatabaseTable*]* -[*Tests*]*\"  -output:coverage.xml -register:path64 -hideskipped:File -skipautoprops"
+  - cmd: "OpenCover.Console.exe -returntargetcode -target:\"c:/program files/dotnet/dotnet.exe\" -targetargs:\"test ./scripts/run-all-tests.proj -f net5.0 -c Release -p:BuildInParallel=false\" -filter:\"+[*Rdmp.Core*]* +[*ReusableLibraryCode*]* +[*MapsDirectlyToDatabaseTable*]* -[*Tests*]*\"  -output:coverage.xml -register:appveyor -hideskipped:File -skipautoprops"
   - cmd: packages\coveralls.io\1.4.2\tools\coveralls.net.exe --opencover coverage.xml -r %COVERALLS_REPO_TOKEN%
 
 test: off
