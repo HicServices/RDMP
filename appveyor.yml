@@ -18,19 +18,16 @@ before_build:
 - choco install opencover.portable
 
 build_script:
-  - ps: Remove-Item "./Tests.Common/TestDatabases.txt"
-  - ps: Rename-Item -Path "./Tests.Common/TestDatabases.appveyor.txt" -NewName "TestDatabases.txt"
-  - ps: dotnet build HIC.DataManagementPlatform.sln /v:q
-  - ps: dotnet publish "./Tools/rdmp" -r win-x64
-  - ps: ./Tools/rdmp/bin/Debug/net5.0/win-x64/rdmp install localhost\SQL2017 TEST_ -D -u sa -p Password12!
-  
-  # Run the windows tests with a custom encryption key
-  - ps: Remove-Item "./Tools/rdmp/bin/Debug/net5.0/win-x64/Databases.yaml"
-  - ps: Move-Item -Path "./Tests.Common/Databases.appveyor.yaml" -Destination "./Tools/rdmp/bin/Debug/net5.0/win-x64/Databases.yaml"
-  - ps: ./Tools/rdmp/bin/Debug/net5.0/win-x64/rdmp cmd CreatePrivateKey ./MyKey.key
+  - ps: |
+      Copy-Item -Path "./Tests.Common/TestDatabases.appveyor.txt" -Destination "./Tests.Common/TestDatabases.txt" -Force
+      Copy-Item -Path "./Tests.Common/Databases.appveyor.yaml" -Destination "./Tools/rdmp/Databases.yaml" -Force
+      Push-Location -Path tools/rdmp
+      dotnet run --project rdmp.csproj install localhost\SQL2017 TEST_ -D -u sa -p Password12!
+      dotnet run --project rdmp.csproj cmd CreatePrivateKey ./MyKey.key
+      Pop-Location
   
   # Run code coverage on non UI tests
-  - cmd: "\"packages/opencover/4.7.1189/tools/OpenCover.Console.exe\" -returntargetcode -target:\"c:/program files/dotnet/dotnet.exe\" -targetargs:\"test ./scripts/run-all-tests.proj -f net5.0 -c Release -p:BuildInParallel=false\" -filter:\"+[*Rdmp.Core*]* +[*ReusableLibraryCode*]* +[*MapsDirectlyToDatabaseTable*]* -[*Tests*]*\"  -output:coverage.xml -register:appveyor -oldStyle -hideskipped:File"
+  - cmd: "OpenCover.Console.exe -returntargetcode -target:\"c:/program files/dotnet/dotnet.exe\" -targetargs:\"test ./scripts/run-all-tests.proj -f net5.0 -c Release -p:BuildInParallel=false\" -filter:\"+[*Rdmp.Core*]* +[*ReusableLibraryCode*]* +[*MapsDirectlyToDatabaseTable*]* -[*Tests*]*\"  -output:coverage.xml -register:appveyor -hideskipped:File -skipautoprops"
   - cmd: packages\coveralls.io\1.4.2\tools\coveralls.net.exe --opencover coverage.xml -r %COVERALLS_REPO_TOKEN%
 
 test: off
