@@ -19,8 +19,8 @@ before_build:
 
 build_script:
   - ps: |
-      [System.IO.File]::Move("./Tests.Common/TestDatabases.appveyor.txt","./Tests.Common/TestDatabases.txt",$true)
-      [System.IO.File]::Move("./Tests.Common/Databases.appveyor.yaml","./Tools/rdmp/Databases.yaml",$true)
+      Copy-Item -Path "./Tests.Common/TestDatabases.appveyor.txt" -Destination "./Tests.Common/TestDatabases.txt" -Force
+      Copy-Item -Path "./Tests.Common/Databases.appveyor.yaml" -Destination "./Tools/rdmp/Databases.yaml" -Force
       dotnet run --project tools\rdmp\rdmp.csproj install localhost\SQL2017 TEST_ -D -u sa -p Password12!
       dotnet run --project tools\rdmp\rdmp.csproj  cmd CreatePrivateKey ./MyKey.key
   
