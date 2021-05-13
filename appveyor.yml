@@ -21,8 +21,10 @@ build_script:
   - ps: |
       Copy-Item -Path "./Tests.Common/TestDatabases.appveyor.txt" -Destination "./Tests.Common/TestDatabases.txt" -Force
       Copy-Item -Path "./Tests.Common/Databases.appveyor.yaml" -Destination "./Tools/rdmp/Databases.yaml" -Force
-      dotnet run --project tools\rdmp\rdmp.csproj install localhost\SQL2017 TEST_ -D -u sa -p Password12!
-      dotnet run --project tools\rdmp\rdmp.csproj  cmd CreatePrivateKey ./MyKey.key
+      Push-Location -Path tools/rdmp
+      dotnet run --project rdmp.csproj install localhost\SQL2017 TEST_ -D -u sa -p Password12!
+      dotnet run --project rdmp.csproj cmd CreatePrivateKey ./MyKey.key
+      Pop-Location
   
   # Run code coverage on non UI tests
   - cmd: "OpenCover.Console.exe -returntargetcode -target:\"c:/program files/dotnet/dotnet.exe\" -targetargs:\"test ./scripts/run-all-tests.proj -f net5.0 -c Release -p:BuildInParallel=false\" -filter:\"+[*Rdmp.Core*]* +[*ReusableLibraryCode*]* +[*MapsDirectlyToDatabaseTable*]* -[*Tests*]*\"  -output:coverage.xml -register:path64 -hideskipped:File -skipautoprops"
