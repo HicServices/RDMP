@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Dependencies
+
+- Bump Terminal.Gui from 1.0.0 to 1.1.1
+
+
 ## [5.0.0]
 
 ### Changed
