@@ -17,7 +17,7 @@
             <dependency id="Newtonsoft.Json" version="13.0.1"/>
             <dependency id="CommandLineParser" version="2.8.0" />
             <dependency id="SSH.NET" version="2020.0.1" />
-            <dependency id="HIC.FAnsiSql" version="1.0.6" />
+            <dependency id="HIC.FAnsiSql" version="1.0.7" />
             <dependency id="NLog" version="4.7.10" />
             <dependency id="HIC.BadMedicine" version="0.1.6" />
             <dependency id="ExcelNumberFormat" version="1.1.0" />
