@@ -27,13 +27,6 @@ namespace Rdmp.UI.Menus
             Add(new ExecuteCommandAddJoinInfo(_activator, columnInfo.TableInfo));
 
             Add(new ExecuteCommandAnonymiseColumnInfo(_activator, columnInfo));
-            
-            Add(new ExecuteCommandAlterColumnType(_activator, columnInfo), Keys.None, Alter);
-
-            var miIgnore = AtomicCommandUIFactory.CreateMenuItem(new ExecuteCommandSet(_activator,columnInfo,typeof(ColumnInfo).GetProperty(nameof(ColumnInfo.IgnoreInLoads))));
-            miIgnore.Checked = columnInfo.IgnoreInLoads;
-            miIgnore.Text = "Ignore In Loads";
-            Items.Add(miIgnore);
         }
     }
 }

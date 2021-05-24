@@ -49,7 +49,10 @@ namespace Rdmp.Core.Reports
         /// </summary>
         public const string EndLoop = "$end";
 
-        private readonly IDetermineDatasetTimespan _timespanCalculator = new DatasetTimespanCalculator();
+        /// <summary>
+        /// How the range of data in each <see cref="Catalogue"/> is determined, defaults to <see cref="DatasetTimespanCalculator"/> (using the DQE results)
+        /// </summary>
+        public IDetermineDatasetTimespan TimespanCalculator { get; set; }  = new DatasetTimespanCalculator();
 
         /// <summary>
         /// Specify a replacement for newlines when found in fields e.g. with space.  Leave as null to leave newlines intact.
@@ -66,14 +69,39 @@ namespace Rdmp.Core.Reports
             foreach (var prop in typeof(CatalogueItem).GetProperties())
                 ReplacementsCatalogueItem.Add("$" + prop.Name, (s) => prop.GetValue(s));
 
-            Replacements.Add("$StartDate",
-                (c) => _timespanCalculator?.GetMachineReadableTimepsanIfKnownOf(c, true, out _)?.Item1?.ToString());
-            Replacements.Add("$EndDate",
-                (c) => _timespanCalculator?.GetMachineReadableTimepsanIfKnownOf(c, true, out _)?.Item2?.ToString());
-            Replacements.Add("$DateRange",
-                (c) => _timespanCalculator?.GetHumanReadableTimepsanIfKnownOf(c, true, out _));
+            Replacements.Add("$DQE_StartDate",
+                (c) => GetStartDate(c)?.ToString());
+            Replacements.Add("$DQE_EndDate",
+                (c) => GetEndDate(c)?.ToString());
+            Replacements.Add("$DQE_DateRange",
+                (c) => TimespanCalculator?.GetHumanReadableTimepsanIfKnownOf(c, true, out _));
+
+            Replacements.Add("$DQE_StartYear",
+                (c) => GetStartDate(c)?.ToString("yyyy"));
+            Replacements.Add("$DQE_StartMonth",
+                (c) => GetStartDate(c)?.ToString("MM"));
+            Replacements.Add("$DQE_StartDay",
+                (c) => GetStartDate(c)?.ToString("dd"));
+
+            Replacements.Add("$DQE_EndYear",
+                (c) => GetEndDate(c)?.ToString("yyyy"));
+            Replacements.Add("$DQE_EndMonth",
+                (c) => GetEndDate(c)?.ToString("MM"));
+            Replacements.Add("$DQE_EndDay",
+                (c) => GetEndDate(c)?.ToString("dd"));
+
         }
-        
+
+        private DateTime? GetStartDate(Catalogue c)
+        {
+            return TimespanCalculator?.GetMachineReadableTimepsanIfKnownOf(c, true, out _)?.Item1;
+        }
+
+        private DateTime? GetEndDate(Catalogue c)
+        {
+            return TimespanCalculator?.GetMachineReadableTimepsanIfKnownOf(c, true, out _)?.Item2;
+        }
+
         /// <summary>
         /// Reads the contents of <paramref name="template"/> and generates one or more files (see <paramref name="oneFile"/>) by substituting tokens (e.g. $Name) for the values in the provided <paramref name="catalogues"/>
         /// </summary>
