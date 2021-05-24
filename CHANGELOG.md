@@ -6,11 +6,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Dependencies
-
-- Bump Terminal.Gui from 1.0.0 to 1.1.1
-- Bump HIC.FAnsiSql from 1.0.6 to 1.0.7
-
 ### Changed
 
 - Changed `ExtractMetadata` template syntax to require `DQE_` and added year/month/day sub components:
@@ -20,6 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed arguments not showing up under Pipeline components of 'Other' (unknown) pipelines node
+- Fixed refresh speed of console gui causing problems with Guacamole
+- Fixed Keyboard shortcuts of pipeline engine execution window sharing the same letters
+
+### Dependencies
+
+- Bump Terminal.Gui from 1.0.0 to 1.1.1
+- Bump HIC.FAnsiSql from 1.0.6 to 1.0.7
+
 
 ## [5.0.0]
 

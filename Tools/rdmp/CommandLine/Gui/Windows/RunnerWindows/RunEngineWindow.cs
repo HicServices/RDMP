@@ -11,6 +11,7 @@ using Rdmp.Core.Startup;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using Terminal.Gui;
 
@@ -25,27 +26,29 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
         private readonly Func<T> commandGetter;
         private object timer;
 
+        StringBuilder sb = new StringBuilder();
+
         public RunEngineWindow(IBasicActivateItems activator, Func<T> commandGetter)
         {
             Modal = true;
 
-            var check = new Button("Check") { X = 0 };
+            var check = new Button("_Check") { X = 0 };
             check.Clicked += () => Check();
             Add(check);
 
-            var execute = new Button("Execute") { X = Pos.Right(check) };
+            var execute = new Button("_Execute") { X = Pos.Right(check) };
             execute.Clicked += () => Execute();
             Add(execute);
 
-            var clear = new Button("Clear Output") { X = Pos.Right(execute) };
+            var clear = new Button("C_lear Output") { X = Pos.Right(execute) };
             clear.Clicked += () => ClearOutput();
             Add(clear);
 
-            var abort = new Button("Abort") { X = Pos.Right(clear) };
+            var abort = new Button("A_bort") { X = Pos.Right(clear) };
             abort.Clicked += () => Abort();
             Add(abort);
 
-            var close = new Button("Close") { X = Pos.Right(abort) };
+            var close = new Button("Cl_ose") { X = Pos.Right(abort) };
             close.Clicked += () =>
             {
                 Application.MainLoop.RemoveTimeout(timer);
@@ -60,17 +63,26 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
             BasicActivator = activator;
             this.commandGetter = commandGetter;
 
-            timer = Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds(300), Tick);
+            // every 3 seconds run the method 'Tick'
+            timer = Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds(3000), Tick);
         }
 
         private bool Tick(MainLoop arg)
         {
-            textView.SetNeedsDisplay();
+            string content = sb.ToString();
+
+            if(!Equals(textView.Text,content))
+            {
+                textView.Text = content;
+                textView.SetNeedsDisplay();
+            }
+
             return true;
         }
 
         private void ClearOutput()
         {
+            sb.Clear();
             textView.Text = "";
         }
 
@@ -163,7 +175,8 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
                 while (!process.StandardOutput.EndOfStream)
                 {
                     var line = process.StandardOutput.ReadLine().Trim();
-                    textView.Text = line + "\n" + textView.Text?.Replace("\r\n", "\n");
+                    // prepend the line so the latest output appears at the top
+                    sb.Insert(0,line + '\n');
                 }
             });
         }

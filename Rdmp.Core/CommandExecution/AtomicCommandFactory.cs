@@ -346,6 +346,10 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandViewData(_activator, ViewType.TOP_100, colInfo),"View Data");
                 yield return new CommandPresentation(new ExecuteCommandViewData(_activator, ViewType.Aggregate, colInfo),"View Data");
                 yield return new CommandPresentation(new ExecuteCommandViewData(_activator, ViewType.Distribution, colInfo),"View Data");
+
+                yield return new CommandPresentation(new ExecuteCommandAlterColumnType(_activator, colInfo),Alter);
+
+                yield return new CommandPresentation(new ExecuteCommandSet(_activator, colInfo, typeof(ColumnInfo).GetProperty(nameof(ColumnInfo.IgnoreInLoads))) { OverrideCommandName = $"Ignore In Loads ({colInfo.IgnoreInLoads})" });
             }
 
             if(Is(o, out AllStandardRegexesNode _))
