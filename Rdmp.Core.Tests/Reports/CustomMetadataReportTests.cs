@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Moq;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
@@ -100,7 +101,7 @@ namespace Rdmp.Core.Tests.Reports
 
             File.WriteAllText(template.FullName,
                 @"| Name | Desc| Range |
-| $Name | $Description | $StartDate$EndDate$DateRange |");
+| $Name | $Description | $DQE_StartDate$DQE_EndDate$DQE_DateRange |");
 
             var cmd = new ExecuteCommandExtractMetadata(null, new[] {cata}, outDir, template, "$Name.md", false,null);
             cmd.Execute();
@@ -114,7 +115,51 @@ namespace Rdmp.Core.Tests.Reports
 | ffff |  | Unknown |",resultText.TrimEnd());
         }
 
-        
+        [Test]
+        public void TestCustomMetadataReport_SingleCatalogue_DQEMetrics()
+        {
+            var cata = WhenIHaveA<Catalogue>();
+            cata.Name = "ffff";
+            cata.Description = null;
+            cata.SaveToDatabase();
+
+            var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
+            var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
+
+            if (outDir.Exists)
+                outDir.Delete(true);
+
+            outDir.Create();
+
+            File.WriteAllText(template.FullName,
+                @"| Name | Desc| StartYear | EndYear | StartMonth | EndMonth | StartDay | EndDay | Range
+| $Name | $Description | $DQE_StartYear | $DQE_EndYear | $DQE_StartMonth | $DQE_EndMonth | $DQE_StartDay | $DQE_EndDay | $DQE_StartYear-$DQE_EndYear |");
+
+
+            var reporter = new CustomMetadataReport()
+            {
+                NewlineSubstitution = null
+            };
+            
+            DateTime? ignore;
+
+            var moqDqe = new Mock<IDetermineDatasetTimespan>();
+            moqDqe.Setup((f) => f.GetMachineReadableTimepsanIfKnownOf(cata, true, out ignore))
+                .Returns(new Tuple<DateTime?, DateTime?>(new DateTime(2001,02,01 ), new DateTime(2002, 04,03)));
+
+            reporter.TimespanCalculator = moqDqe.Object;
+
+            reporter.GenerateReport(new[] { cata }, outDir, template, "$Name.md", false);
+
+            var outFile = Path.Combine(outDir.FullName, "ffff.md");
+
+            FileAssert.Exists(outFile);
+            var resultText = File.ReadAllText(outFile);
+
+            StringAssert.AreEqualIgnoringCase(@"| Name | Desc| StartYear | EndYear | StartMonth | EndMonth | StartDay | EndDay | Range
+| ffff |  | 2001 | 2002 | 02 | 04 | 01 | 03 | 2001-2002 |", resultText.TrimEnd());
+        }
+
         [TestCase(true)]
         [TestCase(false)]
         public void TestCustomMetadataReport_TwoCatalogues(bool oneFile)
