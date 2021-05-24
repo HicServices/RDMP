@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump HIC.FAnsiSql from 1.0.6 to 1.0.7
 
 
+### Fixed
+
+- Fixed arguments not showing up under Pipeline components of 'Other' (unknown) pipelines node
+
 ## [5.0.0]
 
 ### Changed
