@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump Terminal.Gui from 1.0.0 to 1.1.1
 - Bump HIC.FAnsiSql from 1.0.6 to 1.0.7
 
+### Fixed
+
+- Fixed refresh speed of console gui causing problems with Guacamole
+- Fixed Keyboard shortcuts of pipeline engine execution window sharing the same letters
+
 
 ## [5.0.0]
 
