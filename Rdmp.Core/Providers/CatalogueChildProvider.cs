@@ -1356,7 +1356,12 @@ namespace Rdmp.Core.Providers
                     {
                         return p.PipelineComponents.ToArray();
                     }
-                
+                    //if they want the children of a PipelineComponent (which we don't track) just serve the arguments
+                    if (model is PipelineComponent pc)
+                    {
+                        return pc.PipelineComponentArguments.ToArray();
+                    }
+
                     return new object[0];//return none
                 }
                 
