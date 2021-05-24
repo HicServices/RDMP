@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump Terminal.Gui from 1.0.0 to 1.1.1
 - Bump HIC.FAnsiSql from 1.0.6 to 1.0.7
 
+### Fixed
+
+- Fixed bug running rdmp gui (console) with a remote current directory
 
 ## [5.0.0]
 
