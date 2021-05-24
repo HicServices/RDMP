@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Commit cohort from CohortIdentificationConfiguration now shows crash message Exception on failure
+
 ### Changed
 
 - Changed `ExtractMetadata` template syntax to require `DQE_` and added year/month/day sub components:
@@ -17,15 +21,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed arguments not showing up under Pipeline components of 'Other' (unknown) pipelines node
 - Fixed refresh speed of console gui causing problems with Guacamole
 - Fixed Keyboard shortcuts of pipeline engine execution window sharing the same letters
+- Fixed bug running rdmp gui (console) with a remote current directory
 
 ### Dependencies
 
 - Bump Terminal.Gui from 1.0.0 to 1.1.1
 - Bump HIC.FAnsiSql from 1.0.6 to 1.0.7
 
-### Fixed
-
-- Fixed bug running rdmp gui (console) with a remote current directory
 
 ## [5.0.0]
 
