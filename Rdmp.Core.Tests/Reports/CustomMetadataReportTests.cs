@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using Moq;
@@ -21,6 +22,12 @@ namespace Rdmp.Core.Tests.Reports
 {
     class CustomMetadataReportTests : UnitTests
     {
+        [OneTimeSetUp]
+        public void Init()
+        {
+            CultureInfo.CurrentCulture = new CultureInfo("en-GB");
+        }
+
         private void Setup2Catalogues(out Catalogue c1, out Catalogue c2)
         {
             c1 = WhenIHaveA<Catalogue>();
