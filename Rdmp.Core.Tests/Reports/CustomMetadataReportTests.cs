@@ -699,7 +699,7 @@ $Description
 Price: $30
 | Column | Description | Nullability |
 $foreach CatalogueItem
-| $Name | $Description | $DQE_PercentNull% |
+| $Name | $Description | $DQE_PercentNull |
 $end
 $end");
 
@@ -719,12 +719,12 @@ We love data here, see our datasets:
 
 Price: $30
 | Column | Description | Nullability |
-| Cata1Col1 |  | % |
+| Cata1Col1 |  |  |
 ## Catalogue 'Cata2'
 
 Price: $30
 | Column | Description | Nullability |
-| Cata2Col1 |  | % |", resultText.TrimEnd());
+| Cata2Col1 |  |  |", resultText.TrimEnd());
         }
 
 
@@ -759,8 +759,9 @@ $Description
 Price: $30
 | Column | Description | Nullability |
 $foreach CatalogueItem
-| $Name | $Description | $DQE_PercentNull% |
+| $Name | $Description | $DQE_PercentNull |
 $end
+Accurate as of : $DQE_DateOfEvaluation
 $end");
             var cata1 = ei1.CatalogueItem.Catalogue;
             var cata2 = ei2.CatalogueItem.Catalogue;
@@ -769,6 +770,7 @@ $end");
            var reporter = new CustomMetadataReport(RepositoryLocator);
 
             var eval1 = Mock.Of<Evaluation>();
+
             var eval1_col1 = Mock.Of<ColumnState>();
             eval1_col1.TargetProperty = "Cata1Col1";
             eval1_col1.CountCorrect = 9;
@@ -804,11 +806,13 @@ We love data here, see our datasets:
 Price: $30
 | Column | Description | Nullability |
 | Cata1Col1 |  | 33% |
+Accurate as of : 01/01/0001 00:00:00
 ## Catalogue 'Cata2'
 
 Price: $30
 | Column | Description | Nullability |
-| Cata2Col1 |  | 50% |", resultText.TrimEnd());
+| Cata2Col1 |  | 50% |
+Accurate as of : 01/01/0001 00:00:00", resultText.TrimEnd());
         }
 
 

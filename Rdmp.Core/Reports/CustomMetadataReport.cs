@@ -141,27 +141,47 @@ namespace Rdmp.Core.Reports
             Replacements.Add("$DQE_EndDay",
                 (c) => GetEndDate(c)?.ToString("dd"));
 
+            Replacements.Add("$DQE_DateOfEvaluation",
+                (c) => GetFromEvaluation(c, (e) => e.DateOfEvaluation));
+
             ReplacementsCatalogueItem.Add("$DQE_PercentNull",
                 (ci) => GetPercentNull(ci));
+
+            ReplacementsCatalogueItem.Add("$DQE_CountCorrect",
+                (ci) => GetFromColumnState(ci, (s) => s.CountCorrect));
+            ReplacementsCatalogueItem.Add("$DQE_CountInvalidatesRow",
+                (ci) => GetFromColumnState(ci, (s) => s.CountInvalidatesRow));
+            ReplacementsCatalogueItem.Add("$DQE_CountMissing",
+                (ci) => GetFromColumnState(ci, (s) => s.CountMissing));
+            ReplacementsCatalogueItem.Add("$DQE_CountWrong",
+                (ci) => GetFromColumnState(ci, (s) => s.CountWrong));
+            ReplacementsCatalogueItem.Add("$DQE_CountTotal",
+                (ci) => GetFromColumnState(ci, (s) => s.CountCorrect + s.CountMissing + s.CountWrong + s.CountInvalidatesRow));
+
+            ReplacementsCatalogueItem.Add("$DQE_CountDBNull",
+                (ci) => GetFromColumnState(ci, (s) => s.CountDBNull));
         }
 
-        private double? GetPercentNull(CatalogueItem ci)
+        private object GetFromEvaluation(Catalogue c, Func<Evaluation, object> func)
         {
-            var cata = ci.Catalogue;
-            Evaluation evaluation = null;
+            var eval = GetEvaluation(c);
+            return eval != null ? func(eval) : null;
+        }
 
-            if(!EvaluationCache.TryGetValue(cata, out evaluation))
-            {
-                evaluation = DQERepository?.GetMostRecentEvaluationFor(cata);
-                EvaluationCache.Add(cata, evaluation);
-            }
-            
-            if (evaluation == null)
-            {
-                return null;
-            }
+        private object GetFromColumnState(CatalogueItem ci, Func<ColumnState, object> func)
+        {
+            var state = GetColumnState(ci);
+            return state != null ? func(state) : null;
+        }
 
-            var columnStats = evaluation.ColumnStates.FirstOrDefault(c => string.Equals(c.TargetProperty, ci.Name));
+        private ColumnState GetColumnState(CatalogueItem ci)
+        {
+            return GetEvaluation(ci)?.ColumnStates.FirstOrDefault(c => string.Equals(c.TargetProperty, ci.Name));
+        }
+
+        private string GetPercentNull(CatalogueItem ci)
+        {
+            var columnStats = GetColumnState(ci);
 
             if (columnStats == null)
             {
@@ -175,7 +195,22 @@ namespace Rdmp.Core.Reports
                 return null;
             }
 
-            return (int)(columnStats.CountDBNull / (double)total * 100);
+            return ((int)(columnStats.CountDBNull / (double)total * 100)) + "%";
+        }
+
+        private Evaluation GetEvaluation(CatalogueItem ci)
+        {
+            return GetEvaluation(ci.Catalogue);
+        }
+        private Evaluation GetEvaluation(Catalogue c)
+        {
+            if (!EvaluationCache.TryGetValue(c, out Evaluation evaluation))
+            {
+                evaluation = DQERepository?.GetMostRecentEvaluationFor(c);
+                EvaluationCache.Add(c, evaluation);
+            }
+
+            return evaluation;
         }
 
         private DateTime? GetStartDate(Catalogue c)
@@ -369,7 +404,7 @@ namespace Rdmp.Core.Reports
 
                 if (str.Trim().Equals(LoopCatalogueItems, StringComparison.CurrentCultureIgnoreCase))
                 {
-                    index = DoReplacements(strs, index, out copy,catalogue.CatalogueItems,section) + 1;
+                    index = DoReplacements(strs, index, out copy,catalogue.CatalogueItems,section);
                 }
                 else
                 {
