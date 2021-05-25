@@ -81,6 +81,14 @@ namespace Rdmp.Core.DataQualityEngine.Data
                 });
         }
         
+        /// <summary>
+        /// Constructor for mocks and testing
+        /// </summary>
+        protected Evaluation()
+        {
+
+        }
+
         internal void AddRowState( int dataLoadRunID, int correct, int missing, int wrong, int invalid, string validatorXml,string pivotCategory,DbConnection con, DbTransaction transaction)
         {
             new RowState(this, dataLoadRunID, correct, missing, wrong, invalid, validatorXml, pivotCategory, con, transaction);

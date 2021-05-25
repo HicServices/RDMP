@@ -65,7 +65,10 @@ namespace Rdmp.Core.Reports
         /// </summary>
         public DQERepository DQERepository { get; set; }
 
-        Dictionary<ICatalogue, Evaluation> evaluationCache = new Dictionary<ICatalogue, Evaluation>();
+        /// <summary>
+        /// Cache of latest run DQE <see cref="Evaluation"/> by <see cref="Catalogue"/> (populated from <see cref="DQERepository"/>)
+        /// </summary>
+        public Dictionary<ICatalogue, Evaluation> EvaluationCache { get; set; }  = new Dictionary<ICatalogue, Evaluation>();
 
         public CustomMetadataReport(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
@@ -147,13 +150,13 @@ namespace Rdmp.Core.Reports
             var cata = ci.Catalogue;
             Evaluation evaluation = null;
 
-            if(!evaluationCache.ContainsKey(cata))
+            if(!EvaluationCache.TryGetValue(cata, out evaluation))
             {
                 evaluation = DQERepository?.GetMostRecentEvaluationFor(cata);
-                evaluationCache.Add(cata, evaluation);
+                EvaluationCache.Add(cata, evaluation);
             }
-
-            if(evaluation == null)
+            
+            if (evaluation == null)
             {
                 return null;
             }
