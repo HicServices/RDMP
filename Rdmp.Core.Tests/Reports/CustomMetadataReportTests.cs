@@ -697,6 +697,7 @@ $foreach Catalogue
 ## Catalogue '$Name'
 $Description
 Price: $30
+Number of Records: $DQE_CountTotal
 | Column | Description | Nullability |
 $foreach CatalogueItem
 | $Name | $Description | $DQE_PercentNull |
@@ -718,11 +719,13 @@ We love data here, see our datasets:
 ## Catalogue 'Cata1'
 
 Price: $30
+Number of Records:
 | Column | Description | Nullability |
 | Cata1Col1 |  |  |
 ## Catalogue 'Cata2'
 
 Price: $30
+Number of Records:
 | Column | Description | Nullability |
 | Cata2Col1 |  |  |", resultText.TrimEnd());
         }
@@ -757,9 +760,10 @@ $foreach Catalogue
 ## Catalogue '$Name'
 $Description
 Price: $30
-| Column | Description | Nullability |
+Number of Records: $DQE_CountTotal
+| Column | Description | Nullability | Correct | Missing | Wrong | Invalid | Null (inclusive) | Total |
 $foreach CatalogueItem
-| $Name | $Description | $DQE_PercentNull |
+| $Name | $Description | $DQE_PercentNull | $DQE_CountCorrect | $DQE_CountMissing | $DQE_CountWrong | $DQE_CountInvalidatesRow | $DQE_CountDBNull | $DQE_CountTotal |
 $end
 Accurate as of : $DQE_DateOfEvaluation
 $end");
@@ -767,24 +771,24 @@ $end");
             var cata2 = ei2.CatalogueItem.Catalogue;
 
 
-           var reporter = new CustomMetadataReport(RepositoryLocator);
+            var reporter = new CustomMetadataReport(RepositoryLocator);
 
             var eval1 = Mock.Of<Evaluation>();
 
             var eval1_col1 = Mock.Of<ColumnState>();
             eval1_col1.TargetProperty = "Cata1Col1";
             eval1_col1.CountCorrect = 9;
-            eval1_col1.CountDBNull = 3;
+            eval1_col1.CountDBNull = 3; // note that this is seperate from the other counts.  A value can be both null and correct.
             eval1.ColumnStates = new ColumnState[] { eval1_col1 };
 
             var eval2 = Mock.Of<Evaluation>();
             var eval2_col1 = Mock.Of<ColumnState>();
             eval2_col1.TargetProperty = "Cata2Col1";
-            eval2_col1.CountCorrect = 2;
+            eval2_col1.CountCorrect = 1;
             eval2_col1.CountMissing= 2;
-            eval2_col1.CountWrong = 2;
-            eval2_col1.CountInvalidatesRow = 2;
-            eval2_col1.CountDBNull = 4;
+            eval2_col1.CountWrong = 3;
+            eval2_col1.CountInvalidatesRow = 4;
+            eval2_col1.CountDBNull = 5;
             eval2.ColumnStates = new ColumnState[] { eval2_col1 };
 
             reporter.EvaluationCache.Add(cata1, eval1);
@@ -804,14 +808,16 @@ We love data here, see our datasets:
 ## Catalogue 'Cata1'
 
 Price: $30
-| Column | Description | Nullability |
-| Cata1Col1 |  | 33% |
+Number of Records: 9
+| Column | Description | Nullability | Correct | Missing | Wrong | Invalid | Null (inclusive) | Total |
+| Cata1Col1 |  | 33% | 9 | 0 | 0 | 0 | 3 | 9 |
 Accurate as of : 01/01/0001 00:00:00
 ## Catalogue 'Cata2'
 
 Price: $30
-| Column | Description | Nullability |
-| Cata2Col1 |  | 50% |
+Number of Records: 10
+| Column | Description | Nullability | Correct | Missing | Wrong | Invalid | Null (inclusive) | Total |
+| Cata2Col1 |  | 50% | 1 | 2 | 3 | 4 | 5 | 10 |
 Accurate as of : 01/01/0001 00:00:00", resultText.TrimEnd());
         }
 

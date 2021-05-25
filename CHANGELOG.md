@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added `$DQE_StartYear`,`$DQE_EndYear`,`$DQE_StartMonth`,`$DQE_EndMonth`,`$DQE_StartDay`,`$DQE_EndDay`
   - Added `$DQE_PercentNull` (must be used with a `$foreach CatalogueItem` block)
   - Added TableInfo and ColumnInfo properties (e.g. `$Server`)
+  - Added $DQE_CountTotal
 
 ### Fixed
 

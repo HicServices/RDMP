@@ -143,6 +143,8 @@ namespace Rdmp.Core.Reports
 
             Replacements.Add("$DQE_DateOfEvaluation",
                 (c) => GetFromEvaluation(c, (e) => e.DateOfEvaluation));
+            Replacements.Add("$DQE_CountTotal",
+                (c) => GetFromEvaluation(c, (e) => e.GetRecordCount()));
 
             ReplacementsCatalogueItem.Add("$DQE_PercentNull",
                 (ci) => GetPercentNull(ci));
