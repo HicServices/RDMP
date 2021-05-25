@@ -10,6 +10,7 @@ using System.IO;
 using System.Text;
 using Moq;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Reports;
@@ -71,7 +72,7 @@ namespace Rdmp.Core.Tests.Reports
                 @"| Name | Desc|
 | $Name | $Description |");
 
-            var cmd = new ExecuteCommandExtractMetadata(null, new[] {cata}, outDir, template, "$Name.md", oneFile,null);
+            var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] {cata}, outDir, template, "$Name.md", oneFile,null);
             cmd.Execute();
 
             var outFile = Path.Combine(outDir.FullName, "ffff.md");
@@ -103,7 +104,7 @@ namespace Rdmp.Core.Tests.Reports
                 @"| Name | Desc| Range |
 | $Name | $Description | $DQE_StartDate$DQE_EndDate$DQE_DateRange |");
 
-            var cmd = new ExecuteCommandExtractMetadata(null, new[] {cata}, outDir, template, "$Name.md", false,null);
+            var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] {cata}, outDir, template, "$Name.md", false,null);
             cmd.Execute();
 
             var outFile = Path.Combine(outDir.FullName, "ffff.md");
@@ -136,7 +137,7 @@ namespace Rdmp.Core.Tests.Reports
 | $Name | $Description | $DQE_StartYear | $DQE_EndYear | $DQE_StartMonth | $DQE_EndMonth | $DQE_StartDay | $DQE_EndDay | $DQE_StartYear-$DQE_EndYear |");
 
 
-            var reporter = new CustomMetadataReport()
+            var reporter = new CustomMetadataReport(RepositoryLocator)
             {
                 NewlineSubstitution = null
             };
@@ -190,7 +191,7 @@ namespace Rdmp.Core.Tests.Reports
 </DataSet>");
 
 
-            var cmd = new ExecuteCommandExtractMetadata(null, new[] {cata,cata2}, outDir, template, 
+            var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] {cata,cata2}, outDir, template, 
                 oneFile ? "results.xml" : "$Name.xml", oneFile,null);
             cmd.Execute();
 
@@ -275,7 +276,9 @@ $foreach CatalogueItem
 | $Name | $Description |
 $end");
 
-            var cmd = new ExecuteCommandExtractMetadata(null, new[] {cata}, outDir, template, "$Name.md", oneFile,null);
+            
+
+            var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] {cata}, outDir, template, "$Name.md", oneFile,null);
             cmd.Execute();
 
             var outFile = Path.Combine(outDir.FullName, "ffff.md");
@@ -313,7 +316,7 @@ $foreach CatalogueItem
 | $Name | $Description |
 $end");
 
-            var cmd = new ExecuteCommandExtractMetadata(null, new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
+            var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
             cmd.Execute();
 
             var outFile = Path.Combine(outDir.FullName, "Datasets.md");
@@ -359,7 +362,7 @@ $Description
 $foreach CatalogueItem
 | $Name | $Description |");
 
-            var cmd = new ExecuteCommandExtractMetadata(null, new[] {cata}, outDir, template, "$Name.md", false,null);
+            var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] {cata}, outDir, template, "$Name.md", false,null);
             var ex = Assert.Throws<CustomMetadataReportException>(cmd.Execute);
 
             Assert.AreEqual(4,ex.LineNumber);
@@ -393,7 +396,7 @@ $foreach CatalogueItem
 $end
 $end");
 
-            var cmd = new ExecuteCommandExtractMetadata(null, new[] {cata}, outDir, template, "$Name.md", false,null);
+            var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] {cata}, outDir, template, "$Name.md", false,null);
             var ex = Assert.Throws<CustomMetadataReportException>(cmd.Execute);
 
             Assert.AreEqual(6,ex.LineNumber);
@@ -403,7 +406,7 @@ $end");
         [Test]
         public void TestNewlineSubstitution()
         {
-            var report = new CustomMetadataReport();
+            var report = new CustomMetadataReport(RepositoryLocator);
 
             //default is no substitution
             Assert.IsNull(report.NewlineSubstitution);
@@ -454,7 +457,7 @@ $foreach CatalogueItem
 | $Name | $Description |
 $end");
 
-            var cmd = new ExecuteCommandExtractMetadata(null, new[] {cata}, outDir, template, "$Name.md", false,"<br/>");
+            var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] {cata}, outDir, template, "$Name.md", false,"<br/>");
             cmd.Execute();
 
             var outFile = Path.Combine(outDir.FullName, "ffff.md");
@@ -498,7 +501,7 @@ $foreach CatalogueItem
 $end
 $end");
 
-            var cmd = new ExecuteCommandExtractMetadata(null, new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
+            var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
             cmd.Execute();
 
             var outFile = Path.Combine(outDir.FullName, "Datasets.md");
@@ -551,7 +554,7 @@ $end
 
 Get in touch with us at noreply@nobody.com");
 
-            var cmd = new ExecuteCommandExtractMetadata(null, new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
+            var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
             cmd.Execute();
 
             var outFile = Path.Combine(outDir.FullName, "Datasets.md");
@@ -605,7 +608,7 @@ $end
 
 Get in touch with us at noreply@nobody.com");
 
-            var cmd = new ExecuteCommandExtractMetadata(null, new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
+            var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
             cmd.Execute();
 
             var outFile = Path.Combine(outDir.FullName, "Datasets.md");
@@ -674,7 +677,7 @@ $end
 
 Get in touch with us at noreply@nobody.com");
 
-            var cmd = new ExecuteCommandExtractMetadata(null, new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
+            var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
             cmd.Execute();
 
             var outFile = Path.Combine(outDir.FullName, "Datasets.md");
@@ -733,7 +736,7 @@ $foreach Catalogue
 some more text
 ");
 
-            var cmd = new ExecuteCommandExtractMetadata(null, new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
+            var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
             var ex = Assert.Throws<CustomMetadataReportException>(()=>cmd.Execute());
 
             Assert.AreEqual("Unexpected '$foreach Catalogue' before the end of the last one on line 4",ex.Message);
@@ -761,7 +764,7 @@ $foreach Catalogue
 some more text
 ");
 
-            var cmd = new ExecuteCommandExtractMetadata(null, new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
+            var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
             var ex = Assert.Throws<CustomMetadataReportException>(()=>cmd.Execute());
 
             Assert.AreEqual("Error, encountered '$end' on line 3 while not in a $foreach Catalogue block",ex.Message);
@@ -792,7 +795,7 @@ $end
 some more text
 ");
 
-            var cmd = new ExecuteCommandExtractMetadata(null, new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
+            var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
             var ex = Assert.Throws<CustomMetadataReportException>(()=>cmd.Execute());
 
             Assert.AreEqual("Error, encountered '$end' on line 5 while not in a $foreach Catalogue block",ex.Message);
@@ -822,7 +825,7 @@ $end
 some more text
 ");
 
-            var cmd = new ExecuteCommandExtractMetadata(null, new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
+            var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] {c1,c2}, outDir, template, "Datasets.md", true,null);
             var ex = Assert.Throws<CustomMetadataReportException>(()=>cmd.Execute());
             
             Assert.AreEqual("Error, Unexpected '$foreach CatalogueItem' on line 3.  Current section is plain text, '$foreach CatalogueItem' can only appear within a '$foreach Catalogue' block (you cannot mix and match top level loop elements)",ex.Message);

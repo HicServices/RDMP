@@ -46,7 +46,7 @@ namespace Rdmp.Core.Repositories
              _connectionStringBuilder = DiscoveredServer.Builder;
         }
 
-        public Evaluation GetMostRecentEvaluationFor(ICatalogue c)
+        public virtual Evaluation GetMostRecentEvaluationFor(ICatalogue c)
         {
             return GetEvaluationsWhere("where DateOfEvaluation = (select MAX(DateOfEvaluation) from Evaluation where CatalogueID = " + c.ID + ")").SingleOrDefault();
         }

@@ -85,7 +85,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if (string.IsNullOrWhiteSpace(fileNaming))
                 return;
 
-            var reporter = new CustomMetadataReport()
+            var reporter = new CustomMetadataReport(BasicActivator.RepositoryLocator)
             {
                 NewlineSubstitution = _newlineSub
             };

@@ -12,6 +12,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataQualityEngine;
+using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Reports
@@ -58,17 +59,64 @@ namespace Rdmp.Core.Reports
         /// Specify a replacement for newlines when found in fields e.g. with space.  Leave as null to leave newlines intact.
         /// </summary>
         public string NewlineSubstitution { get; internal set; }
+        
+        /// <summary>
+        /// The repository where column completeness metrics will come from.  Note this is usually the same source as <see cref="TimespanCalculator"/> 
+        /// </summary>
+        public DQERepository DQERepository { get; set; }
 
-        public CustomMetadataReport()
+        Dictionary<ICatalogue, Evaluation> evaluationCache = new Dictionary<ICatalogue, Evaluation>();
+
+        public CustomMetadataReport(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
+            // Catalogue level properties  (works in root or $foreach Catalogue block)
+
             //add basic properties
             foreach (var prop in typeof(Catalogue).GetProperties())
-                Replacements.Add("$" + prop.Name, (s) => prop.GetValue(s));
-            
+                Replacements.Add("$" + prop.Name, (c) => prop.GetValue(c));
+
+            //add basic properties TableInfo
+            foreach (var prop in typeof(TableInfo).GetProperties())
+            {
+                // if it's not already a property of Catalogue
+                Replacements.TryAdd("$" + prop.Name, (c) => GetTable(c) == null ? null : prop.GetValue(GetTable(c)));
+            }
+
+            AddDQEReplacements();
+
+            // Catalogue Item level properties (only work in a $foreach CatalogueItem block)
+
             //add basic properties CatalogueItem
             foreach (var prop in typeof(CatalogueItem).GetProperties())
                 ReplacementsCatalogueItem.Add("$" + prop.Name, (s) => prop.GetValue(s));
 
+            //add basic properties ColumnInfo
+            foreach (var prop in typeof(ColumnInfo).GetProperties())
+            {
+                // if it's not already a property of CatalogueItem
+                ReplacementsCatalogueItem.TryAdd("$" + prop.Name, (s) => s.ColumnInfo_ID == null ? null : prop.GetValue(s.ColumnInfo));
+            }
+
+            try
+            {
+                DQERepository = new DQERepository(repositoryLocator.CatalogueRepository);
+            }
+            catch (NotSupportedException)
+            {
+                DQERepository = null;
+            }
+
+            
+        }
+
+        private ITableInfo GetTable(Catalogue c)
+        {
+            return c.GetTableInfosIdeallyJustFromMainTables().OrderBy(t => t.IsPrimaryExtractionTable).FirstOrDefault();
+        }
+
+        private void AddDQEReplacements()
+        {
+            // Catalogue level shortcuts
             Replacements.Add("$DQE_StartDate",
                 (c) => GetStartDate(c)?.ToString());
             Replacements.Add("$DQE_EndDate",
@@ -90,6 +138,41 @@ namespace Rdmp.Core.Reports
             Replacements.Add("$DQE_EndDay",
                 (c) => GetEndDate(c)?.ToString("dd"));
 
+            ReplacementsCatalogueItem.Add("$DQE_PercentNull",
+                (ci) => GetPercentNull(ci));
+        }
+
+        private double? GetPercentNull(CatalogueItem ci)
+        {
+            var cata = ci.Catalogue;
+            Evaluation evaluation = null;
+
+            if(!evaluationCache.ContainsKey(cata))
+            {
+                evaluation = DQERepository?.GetMostRecentEvaluationFor(cata);
+                evaluationCache.Add(cata, evaluation);
+            }
+
+            if(evaluation == null)
+            {
+                return null;
+            }
+
+            var columnStats = evaluation.ColumnStates.FirstOrDefault(c => string.Equals(c.TargetProperty, ci.Name));
+
+            if (columnStats == null)
+            {
+                return null;
+            }
+
+            var total = columnStats.CountCorrect + columnStats.CountInvalidatesRow + columnStats.CountMissing + columnStats.CountWrong;
+
+            if (total == 0)
+            {
+                return null;
+            }
+
+            return (int)(columnStats.CountDBNull / (double)total * 100);
         }
 
         private DateTime? GetStartDate(Catalogue c)
