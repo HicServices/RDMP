@@ -81,6 +81,14 @@ namespace Rdmp.Core.DataQualityEngine.Data
                 });
         }
         
+        /// <summary>
+        /// Constructor for mocks and testing
+        /// </summary>
+        protected Evaluation()
+        {
+
+        }
+
         internal void AddRowState( int dataLoadRunID, int correct, int missing, int wrong, int invalid, string validatorXml,string pivotCategory,DbConnection con, DbTransaction transaction)
         {
             new RowState(this, dataLoadRunID, correct, missing, wrong, invalid, validatorXml, pivotCategory, con, transaction);
@@ -111,6 +119,22 @@ namespace Rdmp.Core.DataQualityEngine.Data
 
             if(affectedRows == 0)
                 throw new Exception("Delete statement resulted in " + affectedRows + " affected rows");
+        }
+
+        /// <summary>
+        /// Returns the count of records in the dataset when this DQE evaluation was made.  This is done by summing the first <see cref="ColumnStates"/>
+        /// </summary>
+        /// <returns></returns>
+        public int? GetRecordCount()
+        {
+            var state = ColumnStates?.FirstOrDefault();
+
+            if (state == null)
+            {
+                return null;
+            }
+
+            return state.CountCorrect + state.CountMissing + state.CountWrong + state.CountInvalidatesRow;
         }
     }
 }
