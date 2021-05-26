@@ -253,7 +253,8 @@ namespace Rdmp.Core.CommandExecution
                     cic = pcic.CohortIdentificationConfiguration;
                 }
 
-               // Items.Add("View SQL", _activator.CoreIconProvider.GetImage(RDMPConcept.SQL), (s, e) => _activator.Activate<ViewCohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(cic));
+                yield return new CommandPresentation(new ExecuteCommandViewCohortIdentificationConfiguration(_activator, cic, true) { OverrideCommandName = "View SQL" });
+                yield return new CommandPresentation(new ExecuteCommandViewCohortIdentificationConfiguration(_activator, cic, false) { OverrideCommandName = "View SQL (No Cache)" });
 
                 var commit = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, null).SetTarget(cic);
                 if (pcic != null)
