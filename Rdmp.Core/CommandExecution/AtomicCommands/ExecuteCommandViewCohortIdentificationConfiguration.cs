@@ -6,6 +6,9 @@
 
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.Icons.IconProvision;
+using ReusableLibraryCode.Icons.IconProvision;
+using System.Drawing;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -20,6 +23,17 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             this._useCache = useCache;
         }
 
+        public override string GetCommandName()
+        {
+            if (_useCache)
+                return "View SQL";
+
+            return "View SQL (No Cache)";
+        }
+        public override Image GetImage(IIconProvider iconProvider)
+        {
+            return iconProvider.GetImage(RDMPConcept.SQL);
+        }
         public override void Execute()
         {
             base.Execute();
