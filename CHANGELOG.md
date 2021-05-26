@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Bump Terminal.Gui from 1.0.0 to 1.1.1
 - Bump HIC.FAnsiSql from 1.0.6 to 1.0.7
+- Bump Microsoft.NET.Test.Sdk from 16.9.4 to 16.10.0
 
 
 ## [5.0.0]
