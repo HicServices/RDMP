@@ -320,9 +320,6 @@
     <Compile Update="Validation\ValidationSetupUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="SubComponents\ViewCohortIdentificationConfigurationUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Update="SimpleDialogs\WaitUI.cs">
       <SubType>Form</SubType>
     </Compile>

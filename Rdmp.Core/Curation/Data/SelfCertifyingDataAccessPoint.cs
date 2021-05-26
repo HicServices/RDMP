@@ -30,6 +30,16 @@ namespace Rdmp.Core.Curation.Data
             DatabaseType = databaseType;
         }
 
+        public SelfCertifyingDataAccessPoint(DiscoveredServer server)
+        {
+            Server = server.Name;
+            Database = server.GetCurrentDatabase()?.GetRuntimeName();
+            DatabaseType = server.DatabaseType;
+
+            Username = server.ExplicitUsernameIfAny;
+            Password = server.ExplicitPasswordIfAny;
+        }
+
         /// <inheritdoc/>
         public string Server { get; set; }
         /// <inheritdoc/>
