@@ -111,7 +111,7 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
         #endregion
 
         
-        [Test]
+        [Test,Order(1)]
         public void PKsAreCorrect()
         {
             Assert.IsTrue(_columnInfos.Single(c=>c.GetRuntimeName().Equals("AdmissionDate")).IsPrimaryKey);
@@ -119,7 +119,7 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
             Assert.IsTrue(_columnInfos.Single(c => c.GetRuntimeName().Equals("CHI")).IsPrimaryKey);
         }
 
-        [Test]
+        [Test,Order(2)]
         public void ConvertPrimaryKeyColumn()
         {
             //The table we created above should have a column called Condition2 in it, we will migrate this data to ANO land
@@ -131,7 +131,7 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
         }
 
 
-        [Test]
+        [Test,Order(3)]
         [TestCase("Condition2")]
         [TestCase("Condition3")]
         [TestCase("Condition4")]
