@@ -36,7 +36,7 @@ jobs:
       - name: Initialise RDMP
         run: dotnet Tools/rdmp/bin/Release/net5.0/rdmp.dll install localhost TEST_
       - name: Clean coverage output directory
-        run: rd /s/q coverage
+        run: Remove-Item coverage -Recurse -ErrorAction Ignore
       - name: Test Reusable code
         run: dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
       - name: Rename Reusable lcov
