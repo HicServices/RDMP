@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Commit cohort from CohortIdentificationConfiguration now shows crash message Exception on failure
 - Added `--usc` flag to `rdmp gui`.  This allows you to specify using the `NetDriver` for Terminal.Gui (an alternative display driver)
+- Added optional file argument to `ExecuteAggregateGraph` command (outputs graph data table to the file specified)
+
 ### Changed
 
 - Changed `ExtractMetadata` template syntax to require `DQE_` and added year/month/day sub components:
@@ -30,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Bump Terminal.Gui from 1.0.0 to 1.1.1
 - Bump HIC.FAnsiSql from 1.0.6 to 1.0.7
+- Bump Microsoft.NET.Test.Sdk from 16.9.4 to 16.10.0
 
 
 ## [5.0.0]

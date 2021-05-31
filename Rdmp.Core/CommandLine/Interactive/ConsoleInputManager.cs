@@ -385,7 +385,7 @@ namespace Rdmp.Core.CommandLine.Interactive
 
         public override void ShowGraph(AggregateConfiguration aggregate)
         {
-            throw new NotSupportedException();
+            ShowData(new ViewAggregateExtractUICollection(aggregate));
         }
     }
 }
