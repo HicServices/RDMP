@@ -24,7 +24,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1.8.0
         with:
-          dotnet-version: 5.0.200
+          dotnet-version: 5.0.x
       - name: Install MS SQL 2019
         run: Choco-Install -PackageName sql-server-2019
       - name: Build
@@ -36,9 +36,13 @@ jobs:
       - name: Initialise RDMP
         run: dotnet Tools/rdmp/bin/Release/net5.0/rdmp.dll install localhost TEST_
       - name: Test Reusable code
-        run: dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --no-build --verbosity minimal -c Release
+        run: dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --no-build --verbosity minimal -c Release  /p:CollectCoverage=true  /p:CoverletOutput=../CoverageResults/
       - name: Test Core code
-        run: dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --no-build --verbosity minimal -c Release
+        run: dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --no-build --verbosity minimal -c Release /p:CollectCoverage=true  /p:CoverletOutput=../CoverageResults/ /p:MergeWith="../CoverageResults/coverage.json"
+      - name: Test UI code
+        run: dotnet test "./Rdmp.UI.Tests/Rdmp.UI.Tests.csproj" /p:CollectCoverage=true  /p:CoverletOutput=../CoverageResults/ /p:MergeWith="../CoverageResults/coverage.json" /p:CoverletOutputFormat="lcov"
+      - name: Show coverage output files
+        run: dir ..\CoverageResults
       - name: Package
         run: |
           dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 -c Release -o PublishWinForms --verbosity minimal --nologo

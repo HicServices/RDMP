@@ -1,17 +1,12 @@
 version: 1.0.{build}
 init:
-  - cmd: if defined APPVEYOR_PULL_REQUEST_NUMBER appveyor exit
+  - cmd: appveyor exit
   - git config --global core.autocrlf true
 image: Visual Studio 2019
 services:
   - mssql2017
   - mysql
   - postgresql101
-
-cache:
-  - '%USERPROFILE%\.nuget\packages -> **\*.csproj'
-  - C:\ProgramData\chocolatey\bin -> appveyor.yml
-  - C:\ProgramData\chocolatey\lib -> appveyor.yml
 
 before_build:
 - dotnet restore --packages ./packages
