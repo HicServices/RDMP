@@ -9,6 +9,7 @@
 
 | Package | Source Code | Version | License | Purpose | Additional Risk Assessment |
 | ------- | ------------| --------| ------- | ------- | -------------------------- |
+| coverlet.collector | [GitHub](https://github.com/coverlet-coverage/coverlet) | [3.0.3](https://www.nuget.org/packages/coverlet.collector/3.0.3) | [MIT](https://opensource.org/licenses/MIT) | Collects code coverage information | |
 | [DockPanelSuite](http://dockpanelsuite.com/) | [GitHub](https://github.com/dockpanelsuite/dockpanelsuite) | [3.1.0-beta2](https://www.nuget.org/packages/DockPanelSuite/3.1.0-beta2) | [MIT](https://opensource.org/licenses/MIT)  | Provides Window layout and docking for RDMP. | There are no powershell initialization files in the package which can be run by the NuGet installer.|
 | [ObjectListView.Official](http://objectlistview.sourceforge.net/cs/index.html) | [Svn](http://objectlistview.sourceforge.net/cs/download.html#bleeding-edge-source) | [2.9.1](https://www.nuget.org/packages/ObjectListView.Official/2.9.1) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | Provides tree layout for user interfaces in main client application |
 | fernandreu.ScintillaNET | [GitHub](https://github.com/fernandreu/ScintillaNET) | [4.0.4](https://www.nuget.org/packages/fernandreu.ScintillaNET/4.0.4) | [MIT](https://opensource.org/licenses/MIT) | Provides text editor component with highlighting etc |
