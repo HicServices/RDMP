@@ -280,6 +280,7 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator));
 
                 yield return new CommandPresentation(new ExecuteCommandSetQueryCachingDatabase(_activator, cic));
+                yield return new CommandPresentation(new ExecuteCommandCreateNewExternalDatabaseServer(_activator, new QueryCachingPatcher(), PermissableDefaults.WebServiceQueryCachingServer_ID));
             }
 
             if(Is(o,out AllGovernanceNode _))

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Commit cohort from CohortIdentificationConfiguration now shows crash message Exception on failure
+- Added `--usc` flag to `rdmp gui`.  This allows you to specify using the `NetDriver` for Terminal.Gui (an alternative display driver)
 - Added optional file argument to `ExecuteAggregateGraph` command (outputs graph data table to the file specified)
 
 ### Changed

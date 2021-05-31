@@ -23,11 +23,12 @@ namespace Rdmp.Core.CommandLine.Gui
 {
     class ConsoleGuiRunner : IRunner
     {
+        private readonly ConsoleGuiOptions options;
         private ConsoleGuiActivator _activator;
 
         public ConsoleGuiRunner(ConsoleGuiOptions options)
         {
-            
+            this.options = options;
         }
         public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
         {
@@ -35,6 +36,11 @@ namespace Rdmp.Core.CommandLine.Gui
 
             
             LogManager.DisableLogging();
+
+            if (options.UseSystemConsole)
+            {
+                Application.UseSystemConsole = true;
+            }            
 
             Application.Init ();
             var top = Application.Top;
