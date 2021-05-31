@@ -40,15 +40,18 @@ jobs:
       - name: Test Reusable code
         run: dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
       - name: Rename Reusable lcov
-        run: bash -c "mv `find coverage -type f` recode.lcov"
+        shell: bash
+        run: mv `find coverage -type f` recode.lcov
       - name: Test Core code
         run: dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --no-build --verbosity minimal -c Release /p:CollectCoverage=true  /p:CoverletOutput=../CoverageResults/ /p:MergeWith="../CoverageResults/coverage.json"
       - name: Rename core lcov
-        run: bash -c "mv `find coverage -type f` core.lcov"
+        shell: bash
+        run: mv `find coverage -type f` core.lcov
       - name: Test UI code
         run: dotnet test "./Rdmp.UI.Tests/Rdmp.UI.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
       - name: Rename UI lcov
-        run: bash -c "mv `find coverage -type f` ui.lcov"
+        shell: bash
+        run: mv `find coverage -type f` ui.lcov
       - name: Coveralls Reusable
         uses: coverallsapp/github-action@master
         with:
