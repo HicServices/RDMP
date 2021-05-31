@@ -62,7 +62,10 @@
     <EmbeddedResource Include="DataLoad\Engine\Unit\TestFile\OddFormats.xls" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="coveralls.io" Version="1.4.2" />
+    <PackageReference Include="coverlet.collector" Version="3.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
     <PackageReference Include="NUnit" Version="3.13.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0">
