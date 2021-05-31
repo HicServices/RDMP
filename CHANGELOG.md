@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed refresh speed of console gui causing problems with Guacamole
 - Fixed Keyboard shortcuts of pipeline engine execution window sharing the same letters
 - Fixed bug running rdmp gui (console) with a remote current directory
+- Fixed 'View Catalogue Data' command when run on ProjectSpecific Catalogues
 
 ### Dependencies
 
