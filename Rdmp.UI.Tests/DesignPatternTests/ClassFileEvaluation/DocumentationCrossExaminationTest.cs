@@ -29,6 +29,10 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
         #region Whitelist Terms
         private string[] _whitelist = new []
         {
+		"ExecuteAggregateGraph",
+ "ExtractMetadata",
+ "DateRange",
+ "AlterTableMakeDistinct",
             "NormalCohorts",
             "FreakyCohorts",
             "PublicKeyToken",

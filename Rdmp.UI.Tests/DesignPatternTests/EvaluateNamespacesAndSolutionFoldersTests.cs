@@ -223,11 +223,12 @@ namespace Rdmp.UI.Tests.DesignPatternTests
 
                 var text = File.ReadAllLines(file);
 
-                if (text[0] != @"// Copyright (c) The University of Dundee 2018-2019"
+                if (text[0] != @"// Copyright (c) The University of Dundee 2018-2021"
+                    && text[0] != @"// Copyright (c) The University of Dundee 2018-2019"
                     && text[0] != @"// This code is adapted from https://www.codeproject.com/Articles/1182358/Using-Autocomplete-in-Windows-Console-Applications")
                 {
                     changes = true;
-                    sbSuggestedText.AppendLine(@"// Copyright (c) The University of Dundee 2018-2019");
+                    sbSuggestedText.AppendLine(@"// Copyright (c) The University of Dundee 2018-2021");
                     sbSuggestedText.AppendLine(@"// This file is part of the Research Data Management Platform (RDMP).");
                     sbSuggestedText.AppendLine(
                         @"// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.");
@@ -235,7 +236,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                         @"// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.");
                     sbSuggestedText.AppendLine(@"// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.");
                     sbSuggestedText.AppendLine();
-                    sbSuggestedText.Append(File.ReadAllText(file));
+                    sbSuggestedText.AppendJoin(Environment.NewLine,text);
                 }
 
                 if (changes)
