@@ -70,7 +70,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="NunitXml.TestLogger" Version="3.0.107" />
-    <PackageReference Include="OpenCover" Version="4.7.1189" />
+    <PackageReference Include="OpenCover" Version="4.7.1204" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
