@@ -6,9 +6,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.Curation.Data;
 using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui
@@ -37,6 +39,8 @@ namespace Rdmp.Core.CommandLine.Gui
 
         private CheckBox CbIsView;
         private CheckBox CbIsTableValuedFunc;
+        private TextField tbuser;
+        private TextField tbPassword;
 
         public ConsoleGuiServerDatabaseTableSelector(IBasicActivateItems activator,string prompt, string okText, bool showTableComponents)
         {
@@ -66,25 +70,28 @@ namespace Rdmp.Core.CommandLine.Gui
                 Y = 0,
                 Height = 1,
             };
+            win.Add(lbluser);
 
-            var tbuser = new TextField(string.Empty)
+            tbuser = new TextField(string.Empty)
             {
                 X = Pos.Right(lbluser),
                 Y = 0,
                 Width = 15,
             };
             tbuser.TextChanged += (s) => Username = tbuser.Text.ToString();
-            
+            win.Add(tbuser);
+
             //////////////////////////////////////////////// Password  //////////////////////
-            
+
             var lblPassword = new Label("Password:")
             {
                 X = 0,
                 Y = Pos.Bottom(lbluser),
                 Height = 1,
             };
+            win.Add(lblPassword);
 
-            var tbPassword = new TextField(string.Empty){
+            tbPassword = new TextField(string.Empty){
                 X = Pos.Right(lblPassword),
                 Y = Pos.Bottom(lbluser),
                 Width = 15,
@@ -92,6 +99,18 @@ namespace Rdmp.Core.CommandLine.Gui
             };
 
             tbPassword.TextChanged += (s) => Password = tbPassword.Text.ToString();
+            win.Add(tbPassword);
+
+            var btnPickCredentials = new Button("Use Credentials")
+            {
+                X = Pos.Right(tbPassword),
+                Y = Pos.Bottom(lbluser),
+            };
+
+            btnPickCredentials.Clicked += BtnPickCredentials_Clicked;
+            win.Add(btnPickCredentials);
+
+
 
             //////////////////////// Database Type /////////////
 
@@ -101,6 +120,8 @@ namespace Rdmp.Core.CommandLine.Gui
                 Y = Pos.Bottom(lblPassword),
                 Height = 1
             };
+            win.Add(btnDatabaseType);
+
             btnDatabaseType.Clicked += () =>
             {
                 if (_activator.SelectEnum("Database Type", typeof(DatabaseType), out Enum chosen))
@@ -119,14 +140,16 @@ namespace Rdmp.Core.CommandLine.Gui
                 Y = Pos.Bottom(btnDatabaseType),
                 Height = 1,
             };
-            
+            win.Add(lblServer);
+
             var tbServer = new TextField(string.Empty){
                 X = Pos.Right(lblServer),
                 Y = Pos.Bottom(btnDatabaseType),
                 Width = 17
             };
             tbServer.TextChanged += (s) => Server = tbServer.Text.ToString();
-            
+
+            win.Add(tbServer);
 
             //////////////////////////////////////////////// Database  //////////////////////
 
@@ -136,20 +159,23 @@ namespace Rdmp.Core.CommandLine.Gui
                 Y = Pos.Bottom(lblServer),
                 Height = 1,
             };
+            win.Add(lblDatabase);
 
             var tbDatabase = new TextField(string.Empty){
                 X = Pos.Right(lblDatabase),
                 Y = Pos.Bottom(lblServer),
                 Width = 15
             };
+            win.Add(tbDatabase);
             tbDatabase.TextChanged += (s) => Database = tbDatabase.Text.ToString();
 
-            var btnCreateDatabase = new Button("Create Database")
+            var btnCreateDatabase = new Button("Create Da_tabase")
             {
                 X = Pos.Right(tbDatabase) + 1,
                 Y = Pos.Bottom(lblServer)
             };
             btnCreateDatabase.Clicked += CreateDatabase;
+            win.Add(btnCreateDatabase);
 
             //////////////////////////////////////////////// Schema  //////////////////////
 
@@ -198,20 +224,9 @@ namespace Rdmp.Core.CommandLine.Gui
                 Y = Pos.Bottom(CbIsView),
                 Width = Dim.Fill()
             };
-
-
+            
             tbTable.TextChanged += (s) => Table = tbTable.Text.ToString();
             
-            win.Add(lbluser);
-            win.Add(tbuser);
-            win.Add(lblPassword);
-            win.Add(tbPassword);
-            win.Add(btnDatabaseType);
-            win.Add(lblServer);
-            win.Add(tbServer);
-            win.Add(lblDatabase);
-            win.Add(tbDatabase);
-            win.Add(btnCreateDatabase);
 
             if (_showTableComponents)
             {
@@ -222,8 +237,6 @@ namespace Rdmp.Core.CommandLine.Gui
                 win.Add(lblTable);
                 win.Add(tbTable);
             }
-            
-
 
             var btnOk = new Button(_okText,true)
             {
@@ -307,6 +320,37 @@ namespace Rdmp.Core.CommandLine.Gui
                 return new DiscoveredServer(Server,Database,DatabaseType,Username,Password).ExpectDatabase(Database).ExpectTableValuedFunction(Table,Schema);
 
             return new DiscoveredServer(Server,Database,DatabaseType,Username,Password).ExpectDatabase(Database).ExpectTable(Table,Schema,TableType);
-        }       
+        }
+
+
+        private void BtnPickCredentials_Clicked()
+        {
+            if (_activator == null)
+            {
+                return;
+            }
+
+            var creds = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<DataAccessCredentials>();
+
+            if (!creds.Any())
+            {
+                _activator.Show("You do not have any DataAccessCredentials configured");
+                return;
+            }
+
+            var cred = (DataAccessCredentials)_activator.SelectOne("Select Credentials", creds);
+            if (cred != null)
+            {
+                try
+                {
+                    tbuser.Text = cred.Username;
+                    tbPassword.Text = cred.GetDecryptedPassword();
+                }
+                catch (Exception ex)
+                {
+                    _activator.ShowException("Error decrypting password", ex);
+                }
+            }
+        }
     }
 }

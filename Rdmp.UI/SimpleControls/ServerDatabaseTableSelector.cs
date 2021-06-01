@@ -13,7 +13,11 @@ using System.Threading;
 using System.Windows.Forms;
 using FAnsi;
 using FAnsi.Discovery;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode;
 
 namespace Rdmp.UI.SimpleControls
@@ -94,6 +98,9 @@ namespace Rdmp.UI.SimpleControls
             r2.AddHistoryAsItemsToComboBox(cbxDatabase);
 
             _helper = DatabaseCommandHelper.For(DatabaseType);
+
+            btnPickCredentials.Image = CatalogueIcons.DataAccessCredentials;
+            btnPickCredentials.Enabled = false;
         }
 
         
@@ -332,6 +339,11 @@ namespace Rdmp.UI.SimpleControls
                     });
         }
 
+        public void SetItemActivator(IBasicActivateItems activator)
+        {
+            _activator = activator;
+            btnPickCredentials.Enabled = _activator != null;
+        }
 
         private void UpdateDatabaseList()
         {
@@ -371,6 +383,7 @@ namespace Rdmp.UI.SimpleControls
         public event IntegratedSecurityUseChangedHandler IntegratedSecurityUseChanged;
 
         private string oldUsername = null;
+        private IBasicActivateItems _activator;
 
         private void tbUsername_TextChanged(object sender, EventArgs e)
         {
@@ -490,5 +503,34 @@ namespace Rdmp.UI.SimpleControls
             databaseTypeUI1.LockDatabaseType(databaseType);
         }
 
+        private void btnPickCredentials_Click(object sender, EventArgs e)
+        {
+            if(_activator == null)
+            {
+                return;
+            }
+
+            var creds = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<DataAccessCredentials>();
+
+            if(!creds.Any())
+            {
+                _activator.Show("You do not have any DataAccessCredentials configured");
+                return;
+            }
+
+            var cred = (DataAccessCredentials)_activator.SelectOne("Select Credentials", creds);
+            if(cred != null)
+            {
+                try
+                {
+                    tbUsername.Text = cred.Username;
+                    tbPassword.Text = cred.GetDecryptedPassword();
+                }
+                catch (Exception ex)
+                {
+                    _activator.ShowException("Error decrypting password", ex);
+                }
+            }
+        }
     }
 }

@@ -51,6 +51,7 @@ namespace Rdmp.UI.SimpleControls
             this.btnRefreshTables = new System.Windows.Forms.Button();
             this.databaseTypeUI1 = new Rdmp.UI.SimpleControls.DatabaseTypeUI();
             this.ragSmiley1 = new Rdmp.UI.ChecksUI.RAGSmiley();
+            this.btnPickCredentials = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
             this.SuspendLayout();
             // 
@@ -265,10 +266,20 @@ namespace Rdmp.UI.SimpleControls
             this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
             this.ragSmiley1.TabIndex = 5;
             // 
+            // btnPickCredentials
+            // 
+            this.btnPickCredentials.Location = new System.Drawing.Point(460, 27);
+            this.btnPickCredentials.Name = "btnPickCredentials";
+            this.btnPickCredentials.Size = new System.Drawing.Size(23, 23);
+            this.btnPickCredentials.TabIndex = 169;
+            this.btnPickCredentials.UseVisualStyleBackColor = true;
+            this.btnPickCredentials.Click += new System.EventHandler(this.btnPickCredentials_Click);
+            // 
             // ServerDatabaseTableSelector
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
             this.AutoSize = true;
+            this.Controls.Add(this.btnPickCredentials);
             this.Controls.Add(this.databaseTypeUI1);
             this.Controls.Add(this.ragSmiley1);
             this.Controls.Add(this.btnRefreshTables);
@@ -317,5 +328,6 @@ namespace Rdmp.UI.SimpleControls
         private System.Windows.Forms.Button btnRefreshTables;
         private RAGSmiley ragSmiley1;
         private DatabaseTypeUI databaseTypeUI1;
+        private System.Windows.Forms.Button btnPickCredentials;
     }
 }

@@ -370,7 +370,7 @@ namespace Rdmp.UI.LocationsMenu
 
         private void btnBrowseForCatalogue_Click(object sender, EventArgs e)
         {
-            var dialog = new ServerDatabaseTableSelectorDialog("Catalogue Database",false,false);
+            var dialog = new ServerDatabaseTableSelectorDialog("Catalogue Database",false,false,null);
             dialog.LockDatabaseType(DatabaseType.MicrosoftSQLServer);
             if (dialog.ShowDialog() == DialogResult.OK)
                 tbCatalogueConnectionString.Text = dialog.SelectedDatabase.Server.Builder.ConnectionString;
@@ -378,7 +378,7 @@ namespace Rdmp.UI.LocationsMenu
 
         private void btnBrowseForDataExport_Click(object sender, EventArgs e)
         {
-            var dialog = new ServerDatabaseTableSelectorDialog("Data Export Database", false, false);
+            var dialog = new ServerDatabaseTableSelectorDialog("Data Export Database", false, false, null);
             dialog.LockDatabaseType(DatabaseType.MicrosoftSQLServer);
             if (dialog.ShowDialog() == DialogResult.OK)
                 tbDataExportManagerConnectionString.Text = dialog.SelectedDatabase.Server.Builder.ConnectionString;
