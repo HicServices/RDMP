@@ -8,6 +8,7 @@ using System;
 using System.Windows.Forms;
 using FAnsi;
 using FAnsi.Discovery;
+using Rdmp.Core.CommandExecution;
 using Rdmp.UI.SimpleControls;
 
 namespace Rdmp.UI.SimpleDialogs
@@ -17,7 +18,7 @@ namespace Rdmp.UI.SimpleDialogs
     /// </summary>
     public partial class ServerDatabaseTableSelectorDialog : Form
     {
-        public ServerDatabaseTableSelectorDialog(string taskDescription, bool includeTable, bool tableShouldBeNovel)
+        public ServerDatabaseTableSelectorDialog(string taskDescription, bool includeTable, bool tableShouldBeNovel, IBasicActivateItems activator)
         {
             //start at cancel so if they hit the X nothing is selected
             DialogResult = DialogResult.Cancel;
@@ -32,6 +33,7 @@ namespace Rdmp.UI.SimpleDialogs
             serverDatabaseTableSelector1.TableShouldBeNovel = tableShouldBeNovel;
 
             serverDatabaseTableSelector1.SelectionChanged += serverDatabaseTableSelector1_SelectionChanged;
+            serverDatabaseTableSelector1.SetItemActivator(activator);
         }
 
         void serverDatabaseTableSelector1_SelectionChanged()

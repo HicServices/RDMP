@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
@@ -32,7 +33,7 @@ namespace Rdmp.UI.CohortUI.CohortSourceManagement
     /// </summary>
     partial class CreateNewCohortDatabaseWizardUI : RDMPUserControl
     {
-        public CreateNewCohortDatabaseWizardUI()
+        public CreateNewCohortDatabaseWizardUI(IActivateItems activator)
         {
             InitializeComponent();
             helpIcon1.SetHelpText("Null Release Identifiers",
@@ -40,6 +41,8 @@ namespace Rdmp.UI.CohortUI.CohortSourceManagement
             
             helpIcon2.SetHelpText("Cohort Databases","Click to view a diagram of what a cohort store is");
             helpIcon2.SuppressClick = true;
+
+            serverDatabaseTableSelector1.SetItemActivator(activator);
         }
 
         protected override void OnLoad(EventArgs e)

@@ -553,7 +553,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
         {
-            var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,false,true);
+            var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,false,true,this);
             dialog.ShowDialog();
             
             if (dialog.DialogResult != DialogResult.OK)
@@ -564,7 +564,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
         {
-            var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,true,true);
+            var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,true,true,this);
             dialog.AllowTableValuedFunctionSelection = true;
             
             dialog.ShowDialog();

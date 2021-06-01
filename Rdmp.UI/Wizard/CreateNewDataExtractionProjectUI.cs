@@ -424,7 +424,7 @@ namespace Rdmp.UI.Wizard
 
         private void btnCreateNewCohortSource_Click(object sender, EventArgs e)
         {
-            var wizard = new CreateNewCohortDatabaseWizardUI();
+            var wizard = new CreateNewCohortDatabaseWizardUI(Activator);
             wizard.SetItemActivator(Activator);
             SingleControlForm.ShowDialog(wizard);
             IdentifyCompatibleCohortSources();

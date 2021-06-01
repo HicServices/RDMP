@@ -49,6 +49,7 @@ namespace Rdmp.UI.ANOEngineeringUIs
             InitializeComponent();
             serverDatabaseTableSelector1.HideTableComponents();
 
+
             olvSuffix.AspectGetter = (o) => o is ANOTable ? ((ANOTable) o).Suffix : null;
             olvNumberOfCharacters.AspectGetter = (o) => o is ANOTable ? (object) ((ANOTable)o).NumberOfCharactersToUseInAnonymousRepresentation: null;
             olvNumberOfDigits.AspectGetter = (o) => o is ANOTable ? (object) ((ANOTable)o).NumberOfIntegersToUseInAnonymousRepresentation : null;
@@ -325,6 +326,8 @@ namespace Rdmp.UI.ANOEngineeringUIs
         public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
+
+            serverDatabaseTableSelector1.SetItemActivator(activator);
             try
             {
                 _planManager = new ForwardEngineerANOCataloguePlanManager(activator.RepositoryLocator, databaseObject);
