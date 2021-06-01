@@ -236,7 +236,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                         @"// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.");
                     sbSuggestedText.AppendLine(@"// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.");
                     sbSuggestedText.AppendLine();
-                    sbSuggestedText.Append(text);
+                    sbSuggestedText.AppendJoin(Environment.NewLine,text);
                 }
 
                 if (changes)
