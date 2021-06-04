@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `--usc` flag to `rdmp gui`.  This allows you to specify using the `NetDriver` for Terminal.Gui (an alternative display driver)
 - Added optional file argument to `ExecuteAggregateGraph` command (outputs graph data table to the file specified)
 - Added ability to select a [DataAccessCredentials] in table/database selector control
+- Added TopX and Filter (text) to console view logs
 
 ### Changed
 
@@ -21,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added `$DQE_PercentNull` (must be used with a `$foreach CatalogueItem` block)
   - Added TableInfo and ColumnInfo properties (e.g. `$Server`)
   - Added $DQE_CountTotal
+- Improved performance of checks user interface (especially when there are a large number of check messages)
 
 ### Fixed
 
@@ -29,7 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Keyboard shortcuts of pipeline engine execution window sharing the same letters
 - Fixed bug running rdmp gui (console) with a remote current directory
 - Fixed 'View Catalogue Data' command when run on ProjectSpecific Catalogues
-- Improved performance of checks user interface (especially when there are a large number of check messages)
+- Fixed 'Import ProjectSpecific Catalogue' command not preserving Project choice in configure extractability dialog
 
 ### Dependencies
 

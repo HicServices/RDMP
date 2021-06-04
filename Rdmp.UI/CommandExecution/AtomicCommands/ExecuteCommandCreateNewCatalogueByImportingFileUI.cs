@@ -31,6 +31,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 throw new ImpossibleCommandException(this, ReasonCommandImpossible);
 
             var ui = new CreateNewCatalogueByImportingFileUI(_activator,this);
+            ui.SetProjectSpecific(ProjectSpecific);
             ui.ShowDialog();
         }
     }

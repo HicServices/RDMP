@@ -19,32 +19,64 @@ namespace Rdmp.Core.CommandLine.Gui
     internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
     {
         private IBasicActivateItems _activator;
-        private readonly ArchivalDataLoadInfo[] _archivalDataLoadInfos;
+        private ArchivalDataLoadInfo[] _archivalDataLoadInfos = new ArchivalDataLoadInfo[0];
         private TreeView<object> _treeView;
+        private TextField _tbToFetch;
+        private ILoggedActivityRootObject _rootObject;
+        private TextField _tbcontains;
 
-        public ConsoleGuiViewLogs(IBasicActivateItems activator, ILoggedActivityRootObject rootObject, ArchivalDataLoadInfo[] archivalDataLoadInfos)
+        public ConsoleGuiViewLogs(IBasicActivateItems activator, ILoggedActivityRootObject rootObject)
         {
             this._activator = activator;
-            this._archivalDataLoadInfos = archivalDataLoadInfos;
             Modal = true;
+            this._rootObject = rootObject;
 
-            var lbl = new Label($"Logs for '{rootObject}' ({archivalDataLoadInfos.Length:N0} entries)");
+            var lbl = new Label($"Logs for '{rootObject}'");
             Add(lbl);
 
-            var lblFilter = new Label("Filter:"){
+            var lblToFetch = new Label("Max:")
+            {
+                X = Pos.Right(lbl) + 1,
+            };
+
+            Add(lblToFetch);
+
+            _tbToFetch = new TextField()
+            {
+                X = Pos.Right(lblToFetch),
+                Text = "1000",
+                Width = 10
+            };
+
+            Add(_tbToFetch);
+
+            var btnFetch = new Button()
+            {
+                X = Pos.Right(_tbToFetch),
+                Text = "Go"
+            };
+
+            btnFetch.Clicked += FetchLogs;
+
+            Add(btnFetch);
+
+            var lblFilter = new Label("Filter:")
+            {
                 Y = Pos.Bottom(lbl)
             };
 
             Add(lblFilter);
 
-            var btnAll = new Button("All"){
+            var btnAll = new Button("All")
+            {
                 Y = Pos.Bottom(lbl),
                 X = Pos.Right(lblFilter)
             };
             btnAll.Clicked += BtnAll_Clicked;
             Add(btnAll);
 
-            var btnFailing = new Button("Failing"){
+            var btnFailing = new Button("Failing")
+            {
                 Y = Pos.Bottom(lbl),
                 X = Pos.Right(btnAll)
             };
@@ -60,36 +92,102 @@ namespace Rdmp.Core.CommandLine.Gui
             Add(btnPassing);
 
 
+            var lblcontains = new Label("Contains:")
+            {
+                Y = Pos.Bottom(lbl),
+                X = Pos.Right(btnPassing) + 1
+            };
+
+            Add(lblcontains);
+
+            _tbcontains = new TextField()
+            {
+                Y = Pos.Bottom(lbl),
+                X = Pos.Right(lblcontains),
+                Width = 10
+            };
+            _tbcontains.TextChanged += Tbcontains_TextChanged;
+            Add(_tbcontains);
+
             _treeView = new TreeView<object>()
             {
-                X= 0,
-                Y= Pos.Bottom(lblFilter),
+                X = 0,
+                Y = Pos.Bottom(lblFilter),
                 Width = Dim.Fill(),
                 Height = Dim.Fill(1),
             };
             _treeView.TreeBuilder = this;
-            _treeView.AddObjects(archivalDataLoadInfos);
             _treeView.ObjectActivated += _treeView_ObjectActivated; ;
             Add(_treeView);
 
-			var close = new Button("Quit"){
+            var close = new Button("Quit")
+            {
                 Y = Pos.Bottom(_treeView),
                 X = 0
             };
             close.Clicked += Quit;
 
-			Add(close);
+            Add(close);
+
+            FetchLogs();
+        }
+
+        private void Tbcontains_TextChanged(NStack.ustring obj)
+        {
+            _treeView.ClearObjects();
+
+            if (string.IsNullOrWhiteSpace(_tbcontains.Text?.ToString()))
+            {
+                _treeView.AddObjects(_archivalDataLoadInfos);
+            }
+            else
+            {
+                _treeView.AddObjects(_archivalDataLoadInfos.Where(a => a.Description?.Contains(_tbcontains.Text.ToString()) ?? false));
+            }
+            
+            _treeView.RebuildTree();
+            _treeView.SetNeedsDisplay();
+        }
+
+        private void FetchLogs()
+        {
+            int fetch;
+
+            if (!int.TryParse(_tbToFetch.Text.ToString(), out fetch))
+            {
+                fetch = 1000;
+            }
+
+            // no negative sized batches!
+            fetch = Math.Max(0, fetch);
+
+            try
+            {
+
+                var db = _rootObject.GetDistinctLoggingDatabase();
+                var task = _rootObject.GetDistinctLoggingTask();
+
+                var lm = new LogManager(db);
+                _archivalDataLoadInfos = _rootObject.FilterRuns(lm.GetArchivalDataLoadInfos(task, null, null, fetch)).ToArray();
+
+                _treeView.ClearObjects();
+                _treeView.AddObjects(_archivalDataLoadInfos);
+            }
+            catch (Exception ex)
+            {
+                _activator.ShowException("Failed to fetch logs",ex);
+            }
         }
 
         private void _treeView_ObjectActivated(ObjectActivatedEventArgs<object> obj)
         {
-			_activator.Show(_treeView.AspectGetter(_treeView.SelectedObject));
+            _activator.Show(_treeView.AspectGetter(_treeView.SelectedObject));
         }
 
         private void BtnFailing_Clicked()
         {
             _treeView.ClearObjects();
-            _treeView.AddObjects(_archivalDataLoadInfos.Where(a=>a.HasErrors || !a.EndTime.HasValue));
+            _treeView.AddObjects(_archivalDataLoadInfos.Where(a => a.HasErrors || !a.EndTime.HasValue));
         }
 
         private void BtnPassing_Clicked()
@@ -97,7 +195,7 @@ namespace Rdmp.Core.CommandLine.Gui
             _treeView.ClearObjects();
             _treeView.AddObjects(_archivalDataLoadInfos.Where(a => !a.HasErrors && a.EndTime.HasValue));
         }
-        
+
         private void BtnAll_Clicked()
         {
             _treeView.ClearObjects();
@@ -108,26 +206,26 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public bool CanExpand(object model)
         {
-            return model is ArchivalDataLoadInfo || (model is Category c && c.GetChildren().Any())|| model is ArchivalTableLoadInfo;
+            return model is ArchivalDataLoadInfo || (model is Category c && c.GetChildren().Any()) || model is ArchivalTableLoadInfo;
         }
 
         public IEnumerable<object> GetChildren(object model)
         {
-            if(model is ArchivalDataLoadInfo dli)
+            if (model is ArchivalDataLoadInfo dli)
             {
-                yield return new Category(dli,LoggingTables.TableLoadRun);
-                yield return new Category(dli,LoggingTables.FatalError);
-                yield return new Category(dli,LoggingTables.ProgressLog);
+                yield return new Category(dli, LoggingTables.TableLoadRun);
+                yield return new Category(dli, LoggingTables.FatalError);
+                yield return new Category(dli, LoggingTables.ProgressLog);
             }
 
-            if(model is Category c)
+            if (model is Category c)
             {
-                foreach(var child in c.GetChildren())
+                foreach (var child in c.GetChildren())
                     yield return child;
             }
 
-            if(model is ArchivalTableLoadInfo ti)
-                foreach(var source in ti.DataSources)
+            if (model is ArchivalTableLoadInfo ti)
+                foreach (var source in ti.DataSources)
                     yield return source;
         }
 
@@ -148,23 +246,23 @@ namespace Rdmp.Core.CommandLine.Gui
             }
             public override string ToString()
             {
-                switch(_type)
+                switch (_type)
                 {
-                    case LoggingTables.FatalError : return $"Errors ({_dli.Errors.Count:N0})";
-                    case LoggingTables.TableLoadRun : return $"Tables Loaded ({_dli.TableLoadInfos.Count:N0})";
-                    case LoggingTables.ProgressLog : return $"Progress Log ({_dli.Progress.Count:N0})";
+                    case LoggingTables.FatalError: return $"Errors ({_dli.Errors.Count:N0})";
+                    case LoggingTables.TableLoadRun: return $"Tables Loaded ({_dli.TableLoadInfos.Count:N0})";
+                    case LoggingTables.ProgressLog: return $"Progress Log ({_dli.Progress.Count:N0})";
                 }
 
                 return base.ToString();
             }
 
             internal IEnumerable<object> GetChildren()
-            {  
-                switch(_type)
+            {
+                switch (_type)
                 {
-                    case LoggingTables.FatalError : return _dli.Errors;
-                    case LoggingTables.TableLoadRun : return _dli.TableLoadInfos;
-                    case LoggingTables.ProgressLog : return _dli.Progress;
+                    case LoggingTables.FatalError: return _dli.Errors;
+                    case LoggingTables.TableLoadRun: return _dli.TableLoadInfos;
+                    case LoggingTables.ProgressLog: return _dli.Progress;
                 }
 
                 return Enumerable.Empty<object>();
