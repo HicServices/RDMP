@@ -327,7 +327,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public override void ShowLogs(ILoggedActivityRootObject rootObject)
         {
-            var view = new ConsoleGuiViewLogs(this,rootObject,GetLogs(rootObject).ToArray());
+            var view = new ConsoleGuiViewLogs(this,rootObject);
             Application.Run(view);
         }
 
