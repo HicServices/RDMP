@@ -73,9 +73,7 @@ namespace Rdmp.UI
             if (_events.Messages.Any())
             {
                 var popup = new PopupChecksUI("Exceptions", false);
-                popup.BeginUpdate();
                 popup.Check(new ReplayCheckable(_events));
-                popup.EndUpdate();
 
                 popup.FormClosed += (s, ea) =>
                 {

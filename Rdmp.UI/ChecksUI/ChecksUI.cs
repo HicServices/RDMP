@@ -5,6 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
@@ -12,7 +14,7 @@ using BrightIdeasSoftware;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Checks;
-
+using Timer = System.Windows.Forms.Timer;
 
 namespace Rdmp.UI.ChecksUI
 {
@@ -39,6 +41,9 @@ namespace Rdmp.UI.ChecksUI
         private Bitmap _fail;
         private Bitmap _failEx;
 
+        ConcurrentBag<CheckEventArgs> _results = new ConcurrentBag<CheckEventArgs>();
+        bool outOfDate = false;
+
         public ChecksUI()
         {
             InitializeComponent();
@@ -56,6 +61,28 @@ namespace Rdmp.UI.ChecksUI
 
             olvChecks.UseFiltering = true;
             AllowsYesNoToAll = true;
+
+            _timer = new Timer();
+            _timer.Interval = 500;
+            _timer.Tick += _timer_Tick;
+            _timer.Start();
+        }
+
+        private void _timer_Tick(object sender, EventArgs e)
+        {
+            if (IsDisposed)
+            {
+                _timer.Stop();
+                _timer.Dispose();
+                return;
+            }
+
+            if(outOfDate)
+            {
+                olvChecks.ClearObjects();
+                olvChecks.AddObjects(_results);
+                outOfDate = false;
+            }
         }
 
         private object ImageGetter(object rowObject)
@@ -81,26 +108,13 @@ namespace Rdmp.UI.ChecksUI
         public bool CheckingInProgress { get; private set; }
         public bool AllowsYesNoToAll { get; set; }
 
+        private Timer _timer;
+
         public event EventHandler<AllChecksCompleteHandlerArgs> AllChecksComplete;
         
         Thread _checkingThread; 
         private YesNoYesToAllDialog yesNoYesToAllDialog;
         
-        /// <summary>
-        /// Pauses drawing the list view while you make changes to it
-        /// </summary>
-        public void BeginUpdate()
-        {
-            olvChecks.BeginUpdate();
-        }
-
-        /// <summary>
-        /// Resumes drawing the list view
-        /// </summary>
-        public void EndUpdate()
-        {
-            olvChecks.EndUpdate();
-        }
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -149,14 +163,8 @@ namespace Rdmp.UI.ChecksUI
 
         void checker_AllChecksFinished(ToMemoryCheckNotifier listener)
         {
-
-            if (InvokeRequired && !IsDisposed)
-            {
-                Invoke(new MethodInvoker(() => checker_AllChecksFinished(listener)));
-                return;
-            }
-            
-            olvChecks.AddObject(new CheckEventArgs("All Checks Complete",CheckResult.Success));
+            _results.Add(new CheckEventArgs("All Checks Complete",CheckResult.Success));
+            outOfDate = true;
             
             CheckingInProgress = false;
 
@@ -205,16 +213,9 @@ namespace Rdmp.UI.ChecksUI
 
         private void AddToListbox(CheckEventArgs args)
         {
-            if (InvokeRequired && !IsDisposed)
-            {
-                BeginInvoke(new MethodInvoker(() => AddToListbox(args)));
-                return;
-            }
-
-            olvChecks.AddObject(args);
+            _results.Add(args);
+            outOfDate = true; 
         }
-
-
         
         private void tbFilter_TextChanged(object sender, EventArgs e)
         {
@@ -223,6 +224,7 @@ namespace Rdmp.UI.ChecksUI
 
         public void Clear()
         {
+            _results.Clear();
             olvChecks.ClearObjects();
             yesNoYesToAllDialog = new YesNoYesToAllDialog();
         }

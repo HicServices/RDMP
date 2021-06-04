@@ -52,11 +52,11 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         /// <summary>
         /// This is the button with 3 horizontal lines which exposes all menu options which are seldom pressed or navigate you somewhere
         /// </summary>
-        private ToolStripMenuItem _menuDropDown;
+        private readonly ToolStripMenuItem _menuDropDown;
 
         private AtomicCommandUIFactory atomicCommandUIFactory;
         
-        private RAGSmileyToolStrip _ragSmileyToolStrip;
+        private readonly RAGSmileyToolStrip _ragSmileyToolStrip;
         private readonly ToolStripButton _runChecksToolStripButton = new ToolStripButton("Run Checks", FamFamFamIcons.arrow_refresh);
         private ICheckable _checkable;
         private IActivateItems _activator;
@@ -77,8 +77,15 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             _menuDropDown.Image = CatalogueIcons.Menu;
             _menuDropDown.Enabled = false;
             ToolStrip.Items.Add(_menuDropDown);
+                        
+            _ragSmileyToolStrip = new RAGSmileyToolStrip((Control)_hostControl);
+            ToolStrip.Items.Add(_ragSmileyToolStrip);
 
             _runChecksToolStripButton.Click += (s, e) => StartChecking();
+            ToolStrip.Items.Add(_runChecksToolStripButton);
+
+            _ragSmileyToolStrip.Enabled = false;
+            _runChecksToolStripButton.Enabled = false;
         }
 
         public void SetItemActivator(IActivateItems activator)
@@ -153,11 +160,8 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         /// <param name="checkable"></param>
         public void AddChecks(ICheckable checkable)
         {
-            if (_ragSmileyToolStrip == null)
-                _ragSmileyToolStrip = new RAGSmileyToolStrip((Control) _hostControl);
-
-            Add(_ragSmileyToolStrip);
-            Add(_runChecksToolStripButton);
+            _ragSmileyToolStrip.Enabled = true;
+            _runChecksToolStripButton.Enabled = true;
             _checkable = checkable;
         }
 
@@ -170,11 +174,8 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         /// <param name="checkableFunc"></param>
         public void AddChecks(Func<ICheckable> checkableFunc)
         {
-            if (_ragSmileyToolStrip == null)
-                _ragSmileyToolStrip = new RAGSmileyToolStrip((Control)_hostControl);
-
-            Add(_ragSmileyToolStrip);
-            Add(_runChecksToolStripButton);
+            _ragSmileyToolStrip.Enabled = true;
+            _runChecksToolStripButton.Enabled = true;
 
             try
             {
@@ -197,7 +198,9 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             if (_checkable == null)
                 return;
 
-            if(BeforeChecking != null)
+            _ragSmileyToolStrip.Enabled = true;
+
+            if (BeforeChecking != null)
             {
                 var e = new BeforeCheckingEventArgs(_ragSmileyToolStrip, _checkable);
                 BeforeChecking(this,e);
@@ -221,12 +224,6 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 
             if (OnFatal != null)
                 OnFatal(this, args);
-
-            if (_ragSmileyToolStrip == null)
-                _ragSmileyToolStrip = new RAGSmileyToolStrip((Control) _hostControl);
-
-            if (_ragSmileyToolStrip.GetCurrentParent() == null)
-                Add(_ragSmileyToolStrip);
 
             _ragSmileyToolStrip.OnCheckPerformed(args);
         }
@@ -316,17 +313,14 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             if (p != _hostControl)
                 return;
 
-            if (ToolStrip != null)
-                ToolStrip.Items.Clear();
+            ToolStrip.Items.Clear();
 
-            if (_menuDropDown != null)
-            {
-                _menuDropDown.DropDownItems.Clear();
-                _menuDropDown.Enabled = false;
+            _menuDropDown.DropDownItems.Clear();
+            _menuDropDown.Enabled = false;
 
-                if (ToolStrip != null)
-                    ToolStrip.Items.Add(_menuDropDown);
-            }
+            ToolStrip.Items.Add(_menuDropDown);
+            ToolStrip.Items.Add(_ragSmileyToolStrip);
+            ToolStrip.Items.Add(_runChecksToolStripButton);
 
             _dropDownButtons.Clear();
         }
@@ -417,7 +411,6 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         /// </summary>
         public void ResetChecks()
         {
-            if (_ragSmileyToolStrip != null)
                 _ragSmileyToolStrip.Reset();
         }
 
