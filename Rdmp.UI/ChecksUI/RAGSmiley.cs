@@ -200,12 +200,10 @@ namespace Rdmp.UI.ChecksUI
             if (memoryCheckNotifier.Messages.Any())
             {
                 var popup = new PopupChecksUI("Record of events", false);
-                popup.checksUI1.BeginUpdate();
                 new ReplayCheckable(memoryCheckNotifier).Check(popup);
 
                 if(tag != null)
                     popup.OnCheckPerformed(new CheckEventArgs(tag.Message, CheckResult.Fail, tag));
-                popup.checksUI1.EndUpdate();
                 return true;
             }
 

@@ -93,21 +93,5 @@ namespace Rdmp.UI.ChecksUI
         {
             return _worstSeen;
         }
-
-        /// <summary>
-        /// Suspends painting of the checks listview while you make changes, ensure you call <see cref="EndUpdate"/> after updates
-        /// </summary>
-        public void BeginUpdate()
-        {
-            checksUI1.BeginUpdate();
-        }
-
-        /// <summary>
-        /// Resumes painting of the checks listview after changes
-        /// </summary>
-        public void EndUpdate()
-        {
-            checksUI1.EndUpdate();
-        }
     }
 }

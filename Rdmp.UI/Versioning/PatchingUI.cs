@@ -69,7 +69,6 @@ namespace Rdmp.UI.Versioning
         {
             try
             {
-                checksUI1.BeginUpdate();
                 var toMem = new ToMemoryCheckNotifier(checksUI1);
 
                 var mds = new MasterDatabaseScriptExecutor(_database);
@@ -103,10 +102,6 @@ namespace Rdmp.UI.Versioning
             catch (Exception exception)
             {
                 checksUI1.OnCheckPerformed(new CheckEventArgs("Patching failed", CheckResult.Fail, exception));
-            }
-            finally
-            {
-                checksUI1.EndUpdate();
             }
         }
 
