@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Keyboard shortcuts of pipeline engine execution window sharing the same letters
 - Fixed bug running rdmp gui (console) with a remote current directory
 - Fixed 'View Catalogue Data' command when run on ProjectSpecific Catalogues
+- Fixed 'Import ProjectSpecific Catalogue' command not preserving Project choice in configure extractability dialog
 
 ### Dependencies
 

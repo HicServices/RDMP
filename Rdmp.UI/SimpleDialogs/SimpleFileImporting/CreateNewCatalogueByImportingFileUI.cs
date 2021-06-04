@@ -297,7 +297,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             }
         }
         
-        private Project _projectSpecific;
+        private IProject _projectSpecific;
         
         private void btnConfirmDatabase_Click(object sender, EventArgs e)
         {
@@ -467,7 +467,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             HelpWorkflow.Start(force: true);
         }
 
-        public void SetProjectSpecific(Project project)
+        public void SetProjectSpecific(IProject project)
         {
             _projectSpecific = project;
         }
