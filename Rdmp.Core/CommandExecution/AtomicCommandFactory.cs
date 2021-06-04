@@ -52,6 +52,7 @@ namespace Rdmp.Core.CommandExecution
         public const string SetUsageContext = "Set Context";
         public const string SetContainerOperation = "Set Operation";
         public const string Dimensions = "Dimensions";
+        public const string Advanced = "Advanced";
 
         public AtomicCommandFactory(IBasicActivateItems activator)
         {
@@ -290,6 +291,26 @@ namespace Rdmp.Core.CommandExecution
             {
                 yield return new CommandPresentation(new ExecuteCommandCreateNewLoadMetadata(_activator));
                 yield return new CommandPresentation(new ExecuteCommandImportShareDefinitionList(_activator){OverrideCommandName = "Import Load"});
+            }
+
+            if(Is(o,out LoadMetadata lmd))
+            {
+
+
+                yield return new CommandPresentation(new ExecuteCommandExportObjectsToFile(_activator, new IMapsDirectlyToDatabaseTable[] { lmd }));
+
+                yield return new CommandPresentation(new ExecuteCommandOverrideRawServer(_activator, lmd));
+                yield return new CommandPresentation(new ExecuteCommandCreateNewLoadMetadata(_activator));
+
+
+                yield return new CommandPresentation(new ExecuteCommandSetGlobalDleIgnorePattern(_activator), Advanced);
+                yield return new CommandPresentation(new ExecuteCommandSetIgnoredColumns(_activator, lmd), Advanced);
+                yield return new CommandPresentation(new ExecuteCommandSetIgnoredColumns(_activator, lmd, null) { OverrideCommandName = "Clear Ignored Columns" }, Advanced);
+
+                yield return new CommandPresentation(new ExecuteCommandSet(_activator, lmd, typeof(LoadMetadata).GetProperty(nameof(LoadMetadata.IgnoreTrigger)))
+                {
+                    OverrideCommandName = $"Ignore Trigger (Current value:{lmd.IgnoreTrigger})"
+                }, Advanced);
             }
 
 
