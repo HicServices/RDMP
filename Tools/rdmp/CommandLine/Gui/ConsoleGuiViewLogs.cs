@@ -134,13 +134,17 @@ namespace Rdmp.Core.CommandLine.Gui
 
         private void Tbcontains_TextChanged(NStack.ustring obj)
         {
+            _treeView.ClearObjects();
+
             if (string.IsNullOrWhiteSpace(_tbcontains.Text?.ToString()))
             {
-                return;
+                _treeView.AddObjects(_archivalDataLoadInfos);
             }
-
-            _treeView.ClearObjects();
-            _treeView.AddObjects(_archivalDataLoadInfos.Where(a => a.Description?.Contains(_tbcontains.Text.ToString()) ?? false));
+            else
+            {
+                _treeView.AddObjects(_archivalDataLoadInfos.Where(a => a.Description?.Contains(_tbcontains.Text.ToString()) ?? false));
+            }
+            
             _treeView.RebuildTree();
             _treeView.SetNeedsDisplay();
         }
