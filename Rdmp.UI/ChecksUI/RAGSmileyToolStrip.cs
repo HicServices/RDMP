@@ -20,7 +20,7 @@ namespace Rdmp.UI.ChecksUI
     {
         private readonly Control _host;
         private CheckResult _worst;
-
+        private Exception _exception;
         YesNoYesToAllDialog dialog;
 
         public RAGSmileyToolStrip(Control host)
@@ -32,6 +32,45 @@ namespace Rdmp.UI.ChecksUI
             Enabled = false;
             Text = "Checks";
             Image = _green;
+
+            timer = new Timer();
+            timer.Interval = 500;
+            timer.Tick += T_Tick;
+            timer.Start();
+        }
+
+        private void T_Tick(object sender, EventArgs e)
+        {
+            if(IsDisposed)
+            {
+                timer.Stop();
+                timer.Dispose();
+            }
+            else
+            {
+                switch (_worst)
+                {
+                    case CheckResult.Success:
+
+                        Image = _green;
+                        Tag = null;
+                        break;
+
+                    case CheckResult.Warning:
+
+                        Image = _yellow;
+                        Tag = _exception;
+                        Enabled = true;
+                        break;
+
+                    case CheckResult.Fail:
+
+                        Image = _red;
+                        Tag = _exception;
+                        Enabled = true;
+                        break;
+                }
+            }
         }
 
         public bool IsGreen()
@@ -56,6 +95,7 @@ namespace Rdmp.UI.ChecksUI
         private ToMemoryCheckNotifier memoryCheckNotifier = new ToMemoryCheckNotifier();
         private Task _checkTask;
         private object oTaskLock = new object();
+        private Timer timer;
 
         protected override void OnClick(EventArgs e)
         {
@@ -71,66 +111,34 @@ namespace Rdmp.UI.ChecksUI
         }
 
         public void Warning(Exception ex)
-        {
-            if (_host.InvokeRequired)
-            {
-                _host.Invoke(new MethodInvoker(() => Warning(ex)));
-                return;
-            }
-            
+        {            
             if (IsFatal())
                 return;
 
             _worst = CheckResult.Warning;
-            Image = _yellow;
-
-            Tag = ex;
-            Enabled = true;
+            _exception = ex;
         }
 
 
         public void Fatal(Exception ex)
         {
-            if (_host.InvokeRequired)
-            {
-                _host.Invoke(new MethodInvoker(() => Fatal(ex)));
-                return;
-            }
-
             _worst = CheckResult.Fail;
-            Image = _red;
-            Tag = ex;
-            Enabled = true;
+            _exception = ex;
         }
 
-
-
         public void Reset()
-        {
-            if (_host.InvokeRequired)
-            {
-                _host.Invoke(new MethodInvoker(Reset));
-                return;
-            }
-            
+        {            
             //reset the checks too so as not to leave old check results kicking about
             memoryCheckNotifier = new ToMemoryCheckNotifier();
-            Tag = null;
             _worst = CheckResult.Success;
-            Image = _green;
-            Enabled = false;
+            _exception = null;
         }
 
         public bool OnCheckPerformed(CheckEventArgs args)
-        {
-            if (_host.InvokeRequired)
-                return (bool)_host.Invoke((Func<bool>) (() => OnCheckPerformed(args)));
-            
-            
+        {            
             //record in memory
             memoryCheckNotifier.OnCheckPerformed(args);
             
-            Enabled = true;
 
             if (dialog != null)
             {
@@ -146,7 +154,7 @@ namespace Rdmp.UI.ChecksUI
             ElevateState(args.Result);
 
             if (args.Ex != null)
-                Tag = args.Ex;
+                _exception = args.Ex;
 
             return false;
         }
@@ -183,18 +191,6 @@ namespace Rdmp.UI.ChecksUI
             }
 
             return false;
-        }
-
-
-        public void SetVisible(bool visible)
-        {
-            if (_host.InvokeRequired)
-            {
-                _host.Invoke(new MethodInvoker(() => SetVisible(visible)));
-                return;
-            }
-            
-            Visible = visible;
         }
 
         public void StartChecking(ICheckable checkable)

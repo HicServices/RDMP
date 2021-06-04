@@ -59,6 +59,59 @@ namespace Rdmp.UI.ChecksUI
             pbGreen.Visible = true;
             pbYellow.Visible = false;
             pbRed.Visible = false;
+
+            _timer = new Timer();
+            _timer.Interval = 500;
+            _timer.Tick += Timer_Tick;
+            _timer.Start();
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+
+            if(IsDisposed)
+            {
+                _timer.Stop();
+                _timer.Dispose();
+                return;
+            }
+
+            switch(_state)
+            {
+                case CheckResult.Success:
+                    pbGreen.Visible = true;
+                    pbYellow.Visible = false;
+                    pbYellow.Tag = null;
+                    pbRed.Visible = false;
+                    pbRed.Tag = null;
+                    SetCorrectCursor();
+                    break;
+
+                case CheckResult.Warning:
+
+                    if (pbRed.Visible)
+                        return;
+
+                    //only change for novel values to prevent flickering
+                    if (!pbYellow.Visible)
+                    {
+                        pbGreen.Visible = false;
+                        pbYellow.Visible = true;
+                    }
+
+                    pbYellow.Tag = _exception;
+                    SetCorrectCursor();
+                    break;
+
+                case CheckResult.Fail:
+
+                    pbGreen.Visible = false;
+                    pbYellow.Visible = false;
+                    pbRed.Visible = true;
+                    pbRed.Tag = _exception;
+                    SetCorrectCursor();
+                    break;
+            }
         }
 
         protected override void OnEnabledChanged(EventArgs e)
@@ -81,72 +134,37 @@ namespace Rdmp.UI.ChecksUI
 
         public void Warning(Exception ex)
         {
-            if (InvokeRequired)
+            if(_state == CheckResult.Fail)
             {
-                Invoke(new MethodInvoker(()=>Warning(ex)));
                 return;
-            }
+            }    
 
-            if(pbRed.Visible)
-                return;
-
-            //only change for novel values to prevent flickering
-            if(!pbYellow.Visible)
-            {
-                pbGreen.Visible = false;
-                pbYellow.Visible = true;
-            }
-
-            pbYellow.Tag = ex;
-            SetCorrectCursor();
+            _state = CheckResult.Warning;
+            _exception = ex;
         }
         public void Fatal(Exception ex)
         {
-            if (InvokeRequired)
-            {
-                Invoke(new MethodInvoker(() => Fatal(ex)));
-                return;
-            }
-            pbGreen.Visible = false;
-            pbYellow.Visible = false;
-            pbRed.Visible = true;
-            pbRed.Tag = ex;
-            SetCorrectCursor();
+            _state = CheckResult.Fail;
+            _exception = ex;
         }
         
         public void Reset()
         {
-            if (InvokeRequired)
-            {
-                Invoke(new MethodInvoker(Reset));
-                return;
-            }
-
             //reset the checks too so as not to leave old check results kicking about
             memoryCheckNotifier = new ToMemoryCheckNotifier();
-
-            pbGreen.Visible = true;
-            pbYellow.Visible = false;
-            pbYellow.Tag = null;
-            pbRed.Visible = false;
-            pbRed.Tag = null;
-            SetCorrectCursor();
-
+            _state = CheckResult.Success;
+            _exception = null;
         }
 
         private ToMemoryCheckNotifier memoryCheckNotifier = new ToMemoryCheckNotifier();
         private Task _checkTask;
         private object oTaskLock = new object();
+        private Timer _timer;
+        private CheckResult _state;
+        private Exception _exception;
 
         public bool OnCheckPerformed(CheckEventArgs args)
-        {
-            if (InvokeRequired)
-            {
-                Invoke(new MethodInvoker(()=>OnCheckPerformed(args)));
-                return false;
-            }
-
-            
+        {            
             //record in memory
             memoryCheckNotifier.OnCheckPerformed(args);
 
@@ -154,14 +172,9 @@ namespace Rdmp.UI.ChecksUI
 
             if(args.Ex!= null)
             {
-
-                if (args.Result == CheckResult.Fail)
-                    pbRed.Tag = args.Ex;
-                else
-                    pbYellow.Tag = args.Ex;
+                _exception = args.Ex;
             }
 
-            SetCorrectCursor();
             return false;
         }
 
