@@ -54,6 +54,8 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
 
             ddContext.DataSource = Enum.GetValues(typeof (DataAccessContext));
             ddContext.SelectedItem = DataAccessContext.Any;//default to any!
+
+            serverDatabaseTableSelector1.SetItemActivator(activator);
         }
 
         void serverDatabaseTableSelector1_SelectionChanged()

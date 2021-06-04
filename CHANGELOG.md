@@ -7,18 +7,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-
 - Added CLI console gui context menu for [LoadMetadata]
+
+### Dependencies
+
+- Commit cohort from CohortIdentificationConfiguration now shows crash message Exception on failure
+- Added `--usc` flag to `rdmp gui`.  This allows you to specify using the `NetDriver` for Terminal.Gui (an alternative display driver)
+- Added optional file argument to `ExecuteAggregateGraph` command (outputs graph data table to the file specified)
+- Added ability to select a [DataAccessCredentials] in table/database selector control
+
+### Changed
+
+- Changed `ExtractMetadata` template syntax to require `DQE_` and added year/month/day sub components:
+  - `$StartDate`, `$EndDate` and `$DateRange` are now `$DQE_StartDate`, $DQE_EndDate and $DQE_DateRange.
+  - Added `$DQE_StartYear`,`$DQE_EndYear`,`$DQE_StartMonth`,`$DQE_EndMonth`,`$DQE_StartDay`,`$DQE_EndDay`
+  - Added `$DQE_PercentNull` (must be used with a `$foreach CatalogueItem` block)
+  - Added TableInfo and ColumnInfo properties (e.g. `$Server`)
+  - Added $DQE_CountTotal
+
+### Fixed
+
+- Fixed arguments not showing up under Pipeline components of 'Other' (unknown) pipelines node
+- Fixed refresh speed of console gui causing problems with Guacamole
+- Fixed Keyboard shortcuts of pipeline engine execution window sharing the same letters
+- Fixed bug running rdmp gui (console) with a remote current directory
+- Fixed 'View Catalogue Data' command when run on ProjectSpecific Catalogues
 
 ### Dependencies
 
 - Bump Terminal.Gui from 1.0.0 to 1.1.1
 - Bump HIC.FAnsiSql from 1.0.6 to 1.0.7
-
-### Fixed
-
-- Fixed refresh speed of console gui causing problems with Guacamole
-- Fixed Keyboard shortcuts of pipeline engine execution window sharing the same letters
+- Bump Microsoft.NET.Test.Sdk from 16.9.4 to 16.10.0
 
 
 ## [5.0.0]
@@ -766,7 +785,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [INTERSECT]: ./Documentation/CodeTutorials/Glossary.md#INTERSECT
 [EXCEPT]: ./Documentation/CodeTutorials/Glossary.md#EXCEPT
 [IsExtractionIdentifier]: ./Documentation/CodeTutorials/Glossary.md#IsExtractionIdentifier
-
+[DataAccessCredentials]: ./Documentation/CodeTutorials/Glossary.md#DataAccessCredentials
 [Catalogue]: ./Documentation/CodeTutorials/Glossary.md#Catalogue
 [SupportingDocument]: ./Documentation/CodeTutorials/Glossary.md#SupportingDocument
 [TableInfo]: ./Documentation/CodeTutorials/Glossary.md#TableInfo

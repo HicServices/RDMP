@@ -245,6 +245,45 @@ namespace Rdmp.Core.CommandExecution
             if(Is(o,out AllFreeCohortIdentificationConfigurationsNode _) || Is(o,out AllProjectCohortIdentificationConfigurationsNode _))
                 yield return new CommandPresentation(new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator));
 
+
+            CohortIdentificationConfiguration cic = null;
+            if (Is(o, out ProjectCohortIdentificationConfigurationAssociation pcic) || Is(o,out cic))
+            {
+                if (pcic != null)
+                {
+                    cic = pcic.CohortIdentificationConfiguration;
+                }
+
+                yield return new CommandPresentation(new ExecuteCommandViewCohortIdentificationConfiguration(_activator, cic, true));
+                yield return new CommandPresentation(new ExecuteCommandViewCohortIdentificationConfiguration(_activator, cic, false));
+
+                var commit = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, null).SetTarget(cic);
+                if (pcic != null)
+                {
+                    commit.SetTarget((DatabaseEntity)pcic.Project);
+                }
+
+                yield return new CommandPresentation(commit);
+
+                //associate with project
+                yield return new CommandPresentation(new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator).SetTarget(cic));
+                
+                var clone = new ExecuteCommandCloneCohortIdentificationConfiguration(_activator).SetTarget(cic);
+                if(pcic != null)
+                {
+                    clone.SetTarget((DatabaseEntity) pcic.Project);
+                }
+
+                yield return new CommandPresentation(clone);
+
+                yield return new CommandPresentation(new ExecuteCommandFreezeCohortIdentificationConfiguration(_activator, cic, !cic.Frozen));
+
+                yield return new CommandPresentation(new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator));
+
+                yield return new CommandPresentation(new ExecuteCommandSetQueryCachingDatabase(_activator, cic));
+                yield return new CommandPresentation(new ExecuteCommandCreateNewExternalDatabaseServer(_activator, new QueryCachingPatcher(), PermissableDefaults.WebServiceQueryCachingServer_ID));
+            }
+
             if(Is(o,out AllGovernanceNode _))
                 yield return new CommandPresentation(new ExecuteCommandCreateNewGovernancePeriod(_activator));
 

@@ -8,6 +8,7 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands.Automation;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Startup;
+using ReusableLibraryCode;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -146,7 +147,16 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
         {
             ClearOutput();
 
-            var binary = "./rdmp" + (EnvironmentInfo.IsLinux ? "" : ".exe");
+            string expectedFileName = "rdmp" + (EnvironmentInfo.IsLinux ? "" : ".exe");
+
+            // try in the location we ran from 
+            var binary = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, expectedFileName);
+
+            if (!File.Exists(binary))
+            {
+                // the program that launched this code isn't rdmp.exe.  Maybe rdmp is in the current directory though
+                binary = "./" + expectedFileName;
+            }
 
             if (!File.Exists(binary))
             {

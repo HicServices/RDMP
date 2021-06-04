@@ -9,6 +9,7 @@
 
 | Package | Source Code | Version | License | Purpose | Additional Risk Assessment |
 | ------- | ------------| --------| ------- | ------- | -------------------------- |
+| coverlet.collector | [GitHub](https://github.com/coverlet-coverage/coverlet) | [3.0.3](https://www.nuget.org/packages/coverlet.collector/3.0.3) | [MIT](https://opensource.org/licenses/MIT) | Collects code coverage information | |
 | [DockPanelSuite](http://dockpanelsuite.com/) | [GitHub](https://github.com/dockpanelsuite/dockpanelsuite) | [3.1.0-beta2](https://www.nuget.org/packages/DockPanelSuite/3.1.0-beta2) | [MIT](https://opensource.org/licenses/MIT)  | Provides Window layout and docking for RDMP. | There are no powershell initialization files in the package which can be run by the NuGet installer.|
 | [ObjectListView.Official](http://objectlistview.sourceforge.net/cs/index.html) | [Svn](http://objectlistview.sourceforge.net/cs/download.html#bleeding-edge-source) | [2.9.1](https://www.nuget.org/packages/ObjectListView.Official/2.9.1) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | Provides tree layout for user interfaces in main client application |
 | fernandreu.ScintillaNET | [GitHub](https://github.com/fernandreu/ScintillaNET) | [4.0.4](https://www.nuget.org/packages/fernandreu.ScintillaNET/4.0.4) | [MIT](https://opensource.org/licenses/MIT) | Provides text editor component with highlighting etc |
@@ -25,7 +26,7 @@
 | SSH.NET  | [GitHub](https://github.com/sshnet/SSH.NET)  | [2020.0.1](https://www.nuget.org/packages/SSH.NET/2020.0.1) | [MIT](https://github.com/sshnet/SSH.NET/blob/develop/LICENSE) | Enables fetching files from SFTP servers |
 | Moq 4 | [GitHub](https://github.com/moq/moq4) | [4.16.1](https://www.nuget.org/packages/Moq/4.16.1) |[BSD 3](https://github.com/moq/moq4/blob/master/License.txt)  | Mock objects during unit testing |
 | [Nunit](https://nunit.org/) |[GitHub](https://github.com/nunit/nunit) | [3.13.2](https://www.nuget.org/packages/NUnit/3.13.2) | [MIT](https://opensource.org/licenses/MIT) | Unit testing |
-| Microsoft.NET.Test.Sdk | [GitHub](https://github.com/microsoft/vstest/) | [16.9.4](https://www.nuget.org/packages/Microsoft.NET.Test.Sdk/16.9.4) | [MIT](https://opensource.org/licenses/MIT) | Required for running tests| |
+| Microsoft.NET.Test.Sdk | [GitHub](https://github.com/microsoft/vstest/) | [16.10.0](https://www.nuget.org/packages/Microsoft.NET.Test.Sdk/16.10.0) | [MIT](https://opensource.org/licenses/MIT) | Required for running tests| |
 | NUnit3TestAdapter | [GitHub](https://github.com/nunit/nunit3-vs-adapter)| [3.13.2](https://www.nuget.org/packages/NUnit3TestAdapter/3.13.2) | [MIT](https://opensource.org/licenses/MIT) | Run unit tests from within Visual Studio |
 | [Newtonsoft.Json](https://www.newtonsoft.com/json) | [GitHub](https://github.com/JamesNK/Newtonsoft.Json) | [13.0.1](https://www.nuget.org/packages/Newtonsoft.Json/13.0.1) | [MIT](https://opensource.org/licenses/MIT) | Serialization of objects for sharing/transmission |
 | YamlDotNet | [GitHub](https://github.com/aaubry/YamlDotNet)  | [11.1.1](https://www.nuget.org/packages/YamlDotNet/11.1.1) | [MIT](https://opensource.org/licenses/MIT) |Loading configuration files|

@@ -119,7 +119,13 @@ namespace Rdmp.Core.DataQualityEngine.Data
 
         }
 
-        
+        /// <summary>
+        /// Constructor for mocks and tests
+        /// </summary>
+        protected ColumnState()
+        {
+
+        }
 
         public void Commit(Evaluation evaluation,string pivotCategory, DbConnection con, DbTransaction transaction)
         {

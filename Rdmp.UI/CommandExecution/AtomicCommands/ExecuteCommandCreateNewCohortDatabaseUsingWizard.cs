@@ -29,7 +29,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute(); 
 
-            var wizard = new CreateNewCohortDatabaseWizardUI();
+            var wizard = new CreateNewCohortDatabaseWizardUI(Activator);
             wizard.SetItemActivator(Activator);
             var f = Activator.ShowWindow(wizard,true);
             f.FormClosed += (s, e) =>

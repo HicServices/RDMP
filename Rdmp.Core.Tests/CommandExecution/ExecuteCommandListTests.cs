@@ -21,7 +21,7 @@ namespace Rdmp.Core.Tests.CommandExecution
             foreach(var cat in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
                 cat.DeleteInDatabase();
 
-            Assert.IsEmpty(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>());
+            Assert.IsEmpty(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(),"Failed to clear CatalogueRepository");
 
             GetInvoker().ExecuteCommand(typeof(ExecuteCommandList),
                 new CommandLineObjectPicker(new string[]{ "Catalogue"}, RepositoryLocator));
