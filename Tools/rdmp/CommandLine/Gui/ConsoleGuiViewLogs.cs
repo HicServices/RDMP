@@ -158,14 +158,25 @@ namespace Rdmp.Core.CommandLine.Gui
                 fetch = 1000;
             }
 
-            var db = _rootObject.GetDistinctLoggingDatabase();
-            var task = _rootObject.GetDistinctLoggingTask();
+            // no negative sized batches!
+            fetch = Math.Max(0, fetch);
 
-            var lm = new LogManager(db);
-            _archivalDataLoadInfos = _rootObject.FilterRuns(lm.GetArchivalDataLoadInfos(task, null, null, fetch)).ToArray();
+            try
+            {
 
-            _treeView.ClearObjects();
-            _treeView.AddObjects(_archivalDataLoadInfos);
+                var db = _rootObject.GetDistinctLoggingDatabase();
+                var task = _rootObject.GetDistinctLoggingTask();
+
+                var lm = new LogManager(db);
+                _archivalDataLoadInfos = _rootObject.FilterRuns(lm.GetArchivalDataLoadInfos(task, null, null, fetch)).ToArray();
+
+                _treeView.ClearObjects();
+                _treeView.AddObjects(_archivalDataLoadInfos);
+            }
+            catch (Exception ex)
+            {
+                _activator.ShowException("Failed to fetch logs",ex);
+            }
         }
 
         private void _treeView_ObjectActivated(ObjectActivatedEventArgs<object> obj)
