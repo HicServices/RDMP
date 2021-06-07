@@ -55,6 +55,7 @@ namespace Rdmp.Core.CommandLine.Gui
             this.Activator = activator;
             this._collection = collection;
             Modal = true;
+            ColorScheme = ConsoleMainWindow.ColorScheme;
 
             // Tabs (query and results)
             TabView = new TabView() { Width = Dim.Fill(), Height = Dim.Fill(), Y = 1 };

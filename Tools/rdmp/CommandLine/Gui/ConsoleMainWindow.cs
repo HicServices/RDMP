@@ -33,7 +33,12 @@ namespace Rdmp.Core.CommandLine.Gui
         private TreeView<object> _treeView;
         private IBasicActivateItems _activator;
 
-		const string Catalogues = "Catalogues";
+        private MenuItem mi_default;
+		private ColorScheme _defaultColorScheme;
+		private MenuItem mi_green;
+		private ColorScheme _greenColorScheme;
+
+        const string Catalogues = "Catalogues";
 		const string Projects = "Projects";
 		const string Loads = "Data Loads";
 		const string CohortConfigs = "Cohort Configurations";
@@ -41,6 +46,11 @@ namespace Rdmp.Core.CommandLine.Gui
 		const string Other = "Other";
 
 		public View CurrentWindow {get;set;}
+
+		/// <summary>
+		/// Global scheme to apply to all windows
+		/// </summary>
+        public static ColorScheme ColorScheme { get; private set; }
 
         public ConsoleMainWindow(ConsoleGuiActivator activator)
         {
@@ -69,6 +79,10 @@ namespace Rdmp.Core.CommandLine.Gui
 					new MenuItem ("_Refresh...", "", () => Publish()),
 					new MenuItem ("_Quit", "", () => Quit()),
 				}),
+				new MenuBarItem ("_Color Scheme", new MenuItem [] {
+					mi_default = new MenuItem (){Title = "Default", Checked = true, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_default)},
+					mi_green = new MenuItem (){Title = "Green", Checked = false, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_green)},
+				}),
 			});
 			top.Add (menu);
 				
@@ -77,6 +91,16 @@ namespace Rdmp.Core.CommandLine.Gui
 				Y = 1, // menu
 				Width =  Dim.Fill(1),
 				Height = Dim.Fill(1) // status bar
+			};
+
+			_defaultColorScheme = ColorScheme = _win.ColorScheme;
+			_greenColorScheme = new ColorScheme()
+			{
+				Disabled = Application.Driver.MakeAttribute(Color.Black, Color.Black),
+				Focus = Application.Driver.MakeAttribute(Color.Black, Color.Gray),
+				HotFocus = Application.Driver.MakeAttribute(Color.BrightGreen, Color.Gray),
+				HotNormal = Application.Driver.MakeAttribute(Color.BrightYellow, Color.Black),
+				Normal = Application.Driver.MakeAttribute(Color.Green, Color.Black),
 			};
 
 			_treeView = new TreeView<object> () {
@@ -116,6 +140,26 @@ namespace Rdmp.Core.CommandLine.Gui
 
 			top.Add (statusBar);
         }
+
+        private void SetColorScheme(MenuItem sender)
+        {
+			if(sender == mi_default)
+            {
+				_win.ColorScheme = ColorScheme = _defaultColorScheme;
+			}
+
+			if (sender == mi_green)
+			{
+				_win.ColorScheme = ColorScheme = _greenColorScheme;
+			}
+
+			foreach(var mi in new[] {mi_default , mi_green })
+            {
+				mi.Checked = mi == sender;
+            }
+
+			_win.SetNeedsDisplay();
+		}
 
         private void _treeView_ObjectActivated(ObjectActivatedEventArgs<object> obj)
         {

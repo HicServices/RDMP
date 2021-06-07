@@ -34,7 +34,8 @@ namespace Rdmp.Core.CommandLine.Gui
                 // By using Dim.Fill(), it will automatically resize without manual intervention
                 Width = Dim.Fill (),
                 Height = Dim.Fill (),
-                Modal = true
+                Modal = true,
+                ColorScheme = ConsoleMainWindow.ColorScheme
             };
 
             var textField = new TextField(_initialText ?? "")

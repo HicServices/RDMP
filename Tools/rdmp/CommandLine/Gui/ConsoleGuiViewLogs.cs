@@ -31,6 +31,8 @@ namespace Rdmp.Core.CommandLine.Gui
             Modal = true;
             this._rootObject = rootObject;
 
+            ColorScheme = ConsoleMainWindow.ColorScheme;
+
             var lbl = new Label($"Logs for '{rootObject}'");
             Add(lbl);
 

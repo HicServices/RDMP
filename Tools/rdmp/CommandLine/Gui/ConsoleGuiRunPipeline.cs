@@ -56,6 +56,7 @@ namespace Rdmp.Core.CommandLine.Gui
             this._useCase = useCase;
             this._pipeline = pipeline;
 
+            ColorScheme = ConsoleMainWindow.ColorScheme;
             _compatiblePipelines = useCase.FilterCompatiblePipelines(activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>()).ToArray();
 
             Width = Dim.Fill();
