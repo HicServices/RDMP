@@ -53,7 +53,17 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
             var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, tbl);
             importer.DoImport(out var ti,out _);
 
-            BasicActivator.CreateAndConfigureCatalogue(ti,null,"Existing table",ProjectSpecific,TargetFolder);
+            var c = BasicActivator.CreateAndConfigureCatalogue(ti,null,"Existing table",ProjectSpecific,TargetFolder);
+
+            if(c == null || !c.Exists())
+            {
+                if(BasicActivator.IsInteractive 
+                    && BasicActivator.YesNo("You have cancelled Catalogue creation.  Do you want to delete the TableInfo metadata reference (this will not affect any database tables)?", "Delete TableInfo", out bool chosen)
+                    && chosen)
+                {
+                    ti.DeleteInDatabase();
+                }
+            }
         }
 
         public override Image GetImage(IIconProvider iconProvider)
