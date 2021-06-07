@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added optional file argument to `ExecuteAggregateGraph` command (outputs graph data table to the file specified)
 - Added ability to select a [DataAccessCredentials] in table/database selector control
 - Added TopX and Filter (text) to console view logs
+- Added alternative colour scheme to console gui
 
 ### Changed
 

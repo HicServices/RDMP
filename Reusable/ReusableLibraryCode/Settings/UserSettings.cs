@@ -229,6 +229,12 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("WarnOnTimeoutOnExtractionChecks", value); }
         }
 
+        public static string ConsoleColorScheme
+        {
+            get { return AppSettings.GetValueOrDefault("ConsoleColorScheme", "default"); }
+            set { AppSettings.AddOrUpdateValue("ConsoleColorScheme", value); }
+        }
+
         #endregion
 
         public static bool GetTutorialDone(Guid tutorialGuid)

@@ -19,6 +19,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
+using ReusableLibraryCode.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -97,11 +98,12 @@ namespace Rdmp.Core.CommandLine.Gui
 			_greenColorScheme = new ColorScheme()
 			{
 				Disabled = Application.Driver.MakeAttribute(Color.Black, Color.Black),
-				Focus = Application.Driver.MakeAttribute(Color.Black, Color.Gray),
-				HotFocus = Application.Driver.MakeAttribute(Color.BrightGreen, Color.Gray),
+				Focus = Application.Driver.MakeAttribute(Color.Black, Color.Green),
+				HotFocus = Application.Driver.MakeAttribute(Color.Black, Color.Green),
 				HotNormal = Application.Driver.MakeAttribute(Color.BrightYellow, Color.Black),
 				Normal = Application.Driver.MakeAttribute(Color.Green, Color.Black),
 			};
+
 
 			_treeView = new TreeView<object> () {
 				X = 0,
@@ -139,18 +141,27 @@ namespace Rdmp.Core.CommandLine.Gui
 			});
 
 			top.Add (statusBar);
-        }
+
+			string scheme = UserSettings.ConsoleColorScheme;
+
+			if (scheme == "green")
+			{
+				SetColorScheme(mi_green);
+			}
+		}
 
         private void SetColorScheme(MenuItem sender)
         {
 			if(sender == mi_default)
             {
 				_win.ColorScheme = ColorScheme = _defaultColorScheme;
+				UserSettings.ConsoleColorScheme = "default";
 			}
 
 			if (sender == mi_green)
 			{
 				_win.ColorScheme = ColorScheme = _greenColorScheme;
+				UserSettings.ConsoleColorScheme = "green";
 			}
 
 			foreach(var mi in new[] {mi_default , mi_green })
