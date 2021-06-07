@@ -36,6 +36,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 Width = Dim.Fill(),
                 Height = Dim.Fill()
             };
+            ColorScheme = ConsoleMainWindow.ColorScheme;
             TabView.AddTab(graphTab = new Tab("Graph",graphView), false);
             this.aggregate = aggregate;
         }

@@ -24,6 +24,7 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
             _activator = activator;
             DatabaseObject = databaseObject;
 
+            ColorScheme = ConsoleMainWindow.ColorScheme;
             var collection =
 
                 TableRepository.GetPropertyInfos(DatabaseObject.GetType())

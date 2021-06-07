@@ -32,6 +32,7 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
         public RunEngineWindow(IBasicActivateItems activator, Func<T> commandGetter)
         {
             Modal = true;
+            ColorScheme = ConsoleMainWindow.ColorScheme;
 
             var check = new Button("_Check") { X = 0 };
             check.Clicked += () => Check();
