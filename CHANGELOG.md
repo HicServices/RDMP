@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+...
+
+## [5.0.1] - 2021-06-08
+
 ### Added
 - Added CLI console gui context menu for [LoadMetadata]
 - Commit cohort from CohortIdentificationConfiguration now shows crash message Exception on failure
@@ -42,7 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump Microsoft.NET.Test.Sdk from 16.9.4 to 16.10.0
 
 
-## [5.0.0]
+## [5.0.0] - 2021-05-05
 
 ### Changed
 
@@ -746,7 +750,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v5.0.0...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v5.0.1...develop
+[5.0.1]: https://github.com/HicServices/RDMP/compare/v5.0.0...v5.0.1
 [5.0.0]: https://github.com/HicServices/RDMP/compare/v4.2.4...v5.0.0
 [4.2.4]: https://github.com/HicServices/RDMP/compare/v4.2.3...v4.2.4
 [4.2.3]: https://github.com/HicServices/RDMP/compare/v4.2.2...v4.2.3
