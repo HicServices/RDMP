@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Fixed
+
+- Fixed layout of windows client engine progress controls not filling all available screen space
+
 ## [5.0.1] - 2021-06-08
 
 ### Added
