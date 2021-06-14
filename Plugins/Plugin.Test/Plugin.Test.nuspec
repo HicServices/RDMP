@@ -22,7 +22,7 @@
             <dependency id="NUnit" version="3.13.2" />
             <dependency id="Moq" version="4.16.1" />
             <dependency id="NLog" version="4.7.10" />
-            <dependency id="YamlDotNet" version="11.1.1" />
+            <dependency id="YamlDotNet" version="11.2.0" />
             <dependency id="Microsoft.NET.Test.Sdk" version="16.10.0" />
             <dependency id="ExcelNumberFormat" version="1.1.0" />
             <dependency id="NPOI" version="2.4.1" />

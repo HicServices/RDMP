@@ -6,11 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-...
+### Changed
+
+- Bump YamlDotNet from 11.1.1 to 11.2.0
+
 
 ## [5.0.1] - 2021-06-08
 
 ### Added
+
 - Added CLI console gui context menu for [LoadMetadata]
 - Commit cohort from CohortIdentificationConfiguration now shows crash message Exception on failure
 - Added `--usc` flag to `rdmp gui`.  This allows you to specify using the `NetDriver` for Terminal.Gui (an alternative display driver)
