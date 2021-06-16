@@ -283,6 +283,7 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 //flip between stack / no stack
                 textView.Text = GetExceptionText(errorText, exception, toggleStack);
+                textView.SetNeedsDisplay();
                 toggleStack = !toggleStack;
             };
 
