@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.0.2] - 2021-06-16
+
 ### Changed
 
 - Bump YamlDotNet from 11.1.1 to 11.2.0
@@ -758,7 +760,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v5.0.1...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v5.0.2...develop
+[5.0.2]: https://github.com/HicServices/RDMP/compare/v5.0.1...v5.0.2
 [5.0.1]: https://github.com/HicServices/RDMP/compare/v5.0.0...v5.0.1
 [5.0.0]: https://github.com/HicServices/RDMP/compare/v4.2.4...v5.0.0
 [4.2.4]: https://github.com/HicServices/RDMP/compare/v4.2.3...v4.2.4
