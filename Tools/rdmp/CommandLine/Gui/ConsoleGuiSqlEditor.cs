@@ -135,15 +135,8 @@ namespace Rdmp.Core.CommandLine.Gui
                 };
 
 
-            var timeout = Application.MainLoop.AddTimeout(TimeSpan.FromSeconds(1),(s)=>
-            {
-                this.SetNeedsDisplay();
-                return true;
-            });
-
             btnClose.Clicked += ()=>{
                 Application.RequestStop();
-                Application.MainLoop.RemoveTimeout(timeout);
                 };
                 
             Add(btnClose);
