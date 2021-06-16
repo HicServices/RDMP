@@ -102,7 +102,7 @@ namespace Rdmp.Core.CommandLine.Gui
             resetSql.Clicked += ()=>ResetSql();
             Add(resetSql);
 
-            var clearSql = new Button("Clear Sql"){
+            var clearSql = new Button("Clear S_ql"){
                 X= Pos.Right(resetSql)+1,
                 };
 
@@ -236,7 +236,24 @@ namespace Rdmp.Core.CommandLine.Gui
             }
             else
             {
-                _runSqlTask = Task.Run(()=>RunSql());
+                Exception ex=null;
+                _runSqlTask = Task.Run(()=>
+                {
+                    try
+                    {
+                        RunSql();
+                    }
+                    catch (Exception e)
+                    {
+                        ex = e;
+                    }
+                }).ContinueWith((s,e)=> {
+                        if(ex != null)
+                        {
+                            Activator.ShowException("Failed to run query", ex);
+                        }
+                    },TaskScheduler.FromCurrentSynchronizationContext());
+
                 _btnRunOrCancel.Text = "Cancel";
                 _btnRunOrCancel.SetNeedsDisplay();
             }
@@ -285,10 +302,6 @@ namespace Rdmp.Core.CommandLine.Gui
                         OnQueryCompleted(dt);
                     }   
                 }
-            }
-            catch (Exception ex)
-            {
-                Activator.ShowException("Failed to run query",ex);
             }
             finally
             {
