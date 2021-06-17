@@ -767,7 +767,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
 [Unreleased]: https://github.com/HicServices/RDMP/compare/v5.0.3...develop
-[5.0.2]: https://github.com/HicServices/RDMP/compare/v5.0.2...v5.0.3
+[5.0.3]: https://github.com/HicServices/RDMP/compare/v5.0.2...v5.0.3
 [5.0.2]: https://github.com/HicServices/RDMP/compare/v5.0.1...v5.0.2
 [5.0.1]: https://github.com/HicServices/RDMP/compare/v5.0.0...v5.0.1
 [5.0.0]: https://github.com/HicServices/RDMP/compare/v4.2.4...v5.0.0
