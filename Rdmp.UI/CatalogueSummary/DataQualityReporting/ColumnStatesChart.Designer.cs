@@ -31,50 +31,52 @@ namespace Rdmp.UI.CatalogueSummary.DataQualityReporting
         private void InitializeComponent()
         {
             this.gbKey = new System.Windows.Forms.GroupBox();
+            this.consequenceKey1 = new Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents.ConsequenceKey();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.consequenceKey1 = new ConsequenceKey();
             this.gbKey.SuspendLayout();
             this.SuspendLayout();
             // 
             // gbKey
             // 
-            this.gbKey.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.gbKey.Controls.Add(this.consequenceKey1);
-            this.gbKey.Location = new System.Drawing.Point(604, 0);
+            this.gbKey.Dock = System.Windows.Forms.DockStyle.Right;
+            this.gbKey.Location = new System.Drawing.Point(714, 0);
+            this.gbKey.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.gbKey.Name = "gbKey";
-            this.gbKey.Size = new System.Drawing.Size(107, 496);
+            this.gbKey.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.gbKey.Size = new System.Drawing.Size(119, 576);
             this.gbKey.TabIndex = 2;
             this.gbKey.TabStop = false;
             this.gbKey.Text = "Key";
             // 
-            // panel1
-            // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.AutoScroll = true;
-            this.panel1.Location = new System.Drawing.Point(3, 3);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(595, 493);
-            this.panel1.TabIndex = 3;
-            // 
             // consequenceKey1
             // 
-            this.consequenceKey1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.consequenceKey1.Location = new System.Drawing.Point(6, 19);
+            this.consequenceKey1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.consequenceKey1.Location = new System.Drawing.Point(4, 19);
+            this.consequenceKey1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.consequenceKey1.Name = "consequenceKey1";
-            this.consequenceKey1.Size = new System.Drawing.Size(107, 103);
+            this.consequenceKey1.Size = new System.Drawing.Size(111, 119);
             this.consequenceKey1.TabIndex = 1;
+            // 
+            // panel1
+            // 
+            this.panel1.AutoScroll = true;
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(714, 576);
+            this.panel1.TabIndex = 3;
             // 
             // ColumnStatesChart
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.gbKey);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "ColumnStatesChart";
-            this.Size = new System.Drawing.Size(714, 499);
+            this.Size = new System.Drawing.Size(833, 576);
             this.gbKey.ResumeLayout(false);
             this.ResumeLayout(false);
 
