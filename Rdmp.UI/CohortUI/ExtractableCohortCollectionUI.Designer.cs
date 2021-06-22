@@ -31,21 +31,22 @@ namespace Rdmp.UI.CohortUI
         private void InitializeComponent()
         {
             this.lbCohortDatabaseTable = new BrightIdeasSoftware.ObjectListView();
-            this.olvDescription = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvSource = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvOriginID = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvCount = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvCountDistinct = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvPrivateIdentifier = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvReleaseIdentifier = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvProjectNumber = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvVersion = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvCreationDate = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvViewLog = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.label2 = new System.Windows.Forms.Label();
+            this.olvDescription = new BrightIdeasSoftware.OLVColumn();
+            this.olvSource = new BrightIdeasSoftware.OLVColumn();
+            this.olvOriginID = new BrightIdeasSoftware.OLVColumn();
+            this.olvCount = new BrightIdeasSoftware.OLVColumn();
+            this.olvCountDistinct = new BrightIdeasSoftware.OLVColumn();
+            this.olvPrivateIdentifier = new BrightIdeasSoftware.OLVColumn();
+            this.olvReleaseIdentifier = new BrightIdeasSoftware.OLVColumn();
+            this.olvProjectNumber = new BrightIdeasSoftware.OLVColumn();
+            this.olvVersion = new BrightIdeasSoftware.OLVColumn();
+            this.olvCreationDate = new BrightIdeasSoftware.OLVColumn();
+            this.olvViewLog = new BrightIdeasSoftware.OLVColumn();
+            this.olvID = new BrightIdeasSoftware.OLVColumn();
             this.tbFilter = new System.Windows.Forms.TextBox();
-            this.olvID = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.lbCohortDatabaseTable)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // lbCohortDatabaseTable
@@ -62,9 +63,6 @@ namespace Rdmp.UI.CohortUI
             this.lbCohortDatabaseTable.AllColumns.Add(this.olvCreationDate);
             this.lbCohortDatabaseTable.AllColumns.Add(this.olvViewLog);
             this.lbCohortDatabaseTable.AllColumns.Add(this.olvID);
-            this.lbCohortDatabaseTable.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.lbCohortDatabaseTable.CellEditUseWholeCell = false;
             this.lbCohortDatabaseTable.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvDescription,
@@ -79,11 +77,13 @@ namespace Rdmp.UI.CohortUI
             this.olvViewLog,
             this.olvID});
             this.lbCohortDatabaseTable.Cursor = System.Windows.Forms.Cursors.Default;
+            this.lbCohortDatabaseTable.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lbCohortDatabaseTable.FullRowSelect = true;
             this.lbCohortDatabaseTable.HideSelection = false;
-            this.lbCohortDatabaseTable.Location = new System.Drawing.Point(3, 0);
+            this.lbCohortDatabaseTable.Location = new System.Drawing.Point(0, 0);
+            this.lbCohortDatabaseTable.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.lbCohortDatabaseTable.Name = "lbCohortDatabaseTable";
-            this.lbCohortDatabaseTable.Size = new System.Drawing.Size(568, 709);
+            this.lbCohortDatabaseTable.Size = new System.Drawing.Size(666, 803);
             this.lbCohortDatabaseTable.TabIndex = 2;
             this.lbCohortDatabaseTable.UseCompatibleStateImageBehavior = false;
             this.lbCohortDatabaseTable.View = System.Windows.Forms.View.Details;
@@ -155,42 +155,44 @@ namespace Rdmp.UI.CohortUI
             this.olvViewLog.IsButton = true;
             this.olvViewLog.Text = "Audit Log";
             // 
-            // label2
-            // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 718);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(32, 13);
-            this.label2.TabIndex = 10;
-            this.label2.Text = "Filter:";
-            // 
-            // tbFilter
-            // 
-            this.tbFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbFilter.Location = new System.Drawing.Point(44, 715);
-            this.tbFilter.Name = "tbFilter";
-            this.tbFilter.Size = new System.Drawing.Size(524, 20);
-            this.tbFilter.TabIndex = 9;
-            this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
-            // 
             // olvID
             // 
             this.olvID.Text = "ID";
             // 
-            // ExtractableCohortCollection
+            // tbFilter
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.tbFilter.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tbFilter.Location = new System.Drawing.Point(3, 19);
+            this.tbFilter.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tbFilter.Name = "tbFilter";
+            this.tbFilter.Size = new System.Drawing.Size(660, 23);
+            this.tbFilter.TabIndex = 9;
+            this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.tbFilter);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.groupBox1.Location = new System.Drawing.Point(0, 803);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(666, 49);
+            this.groupBox1.TabIndex = 11;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Filter:";
+            // 
+            // ExtractableCohortCollectionUI
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.tbFilter);
             this.Controls.Add(this.lbCohortDatabaseTable);
-            this.Name = "ExtractableCohortCollection";
-            this.Size = new System.Drawing.Size(571, 738);
+            this.Controls.Add(this.groupBox1);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.Name = "ExtractableCohortCollectionUI";
+            this.Size = new System.Drawing.Size(666, 852);
             ((System.ComponentModel.ISupportInitialize)(this.lbCohortDatabaseTable)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -206,10 +208,10 @@ namespace Rdmp.UI.CohortUI
         private BrightIdeasSoftware.OLVColumn olvProjectNumber;
         private BrightIdeasSoftware.OLVColumn olvVersion;
         private BrightIdeasSoftware.OLVColumn olvCreationDate;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox tbFilter;
         private BrightIdeasSoftware.OLVColumn olvSource;
         private BrightIdeasSoftware.OLVColumn olvViewLog;
         private BrightIdeasSoftware.OLVColumn olvID;
+        private System.Windows.Forms.GroupBox groupBox1;
     }
 }
