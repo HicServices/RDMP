@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FAnsi.Discovery;
+using Newtonsoft.Json;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Attachers;
@@ -12,7 +13,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
     public class JsonLAttacher : Attacher
     {
         [DemandsInitialization("The root table in RAW that will be loaded by this Attacher", Mandatory = true)]
-        public TableInfo RootTable { get; set; }
+        public ITableInfo RootTable { get; set; }
 
         [DemandsInitialization("Pattern to match files in forLoading in.  Defaults to *.json", DefaultValue = "*.json", Mandatory = true)]
         public string FilePattern { get; set; } = "*.json";
@@ -39,6 +40,8 @@ If not specified then properties must exactly match table names")]
 
                     while (jsonReader.Read())
                     {
+                        DiscoveredTable t;
+                        t.Insert()
                         // load tables
                     }
                 }
