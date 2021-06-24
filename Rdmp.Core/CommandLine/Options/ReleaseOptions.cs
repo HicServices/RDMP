@@ -26,6 +26,6 @@ namespace Rdmp.Core.CommandLine.Options
         public IEnumerable<int> SelectedDataSets { get; set; }
 
         [Option('g', "Globals", HelpText = "True to release extracted globals (default) or false to skip them", Default = true)]
-        public bool ReleaseGlobals { get; set; }
+        public bool? ReleaseGlobals { get; set; }
     }
 }
