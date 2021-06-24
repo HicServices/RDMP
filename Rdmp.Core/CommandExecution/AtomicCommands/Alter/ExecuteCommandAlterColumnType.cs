@@ -16,10 +16,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
     public class ExecuteCommandAlterColumnType : BasicCommandExecution
     {
         private ColumnInfo columnInfo;
+        private string _datatype;
 
-        public ExecuteCommandAlterColumnType(IBasicActivateItems activator, ColumnInfo columnInfo) : base(activator)
+        public ExecuteCommandAlterColumnType(IBasicActivateItems activator, ColumnInfo columnInfo, string datatype = null) : base(activator)
         {
             this.columnInfo = columnInfo;
+            _datatype = datatype;
         }
 
         public override void Execute()
@@ -29,51 +31,61 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
             var col = columnInfo.Discover(DataAccessContext.InternalDataProcessing);
             var fansiType = col.DataType;
             string oldSqlType = fansiType.SQLType;
+            string newSqlType = _datatype;
 
-            
-            if (TypeText("New Data Type", "Type", 50, oldSqlType, out string newSqlType, false))
+            if(newSqlType == null)
+            {
+                if (!TypeText("New Data Type", "Type", 50, oldSqlType, out newSqlType, false))
+                {
+                    return;
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(newSqlType))
+            {
+                return;
+            }
+
+            try
+            {
+                fansiType.AlterTypeTo(newSqlType);
+            }
+            catch (Exception ex)
+            {
+                ShowException($"Failed to Alter Type of column '{col.GetFullyQualifiedName()}'", ex);
+                return;
+            }
+
+            columnInfo.Data_type = newSqlType;
+            columnInfo.SaveToDatabase();
+
+            var archive = col.Table.Database.ExpectTable(col.Table + "_Archive");
+
+            if (archive.Exists())
             {
                 try
                 {
-                    fansiType.AlterTypeTo(newSqlType);
-                }
-                catch (Exception ex)
-                {
-                    ShowException("Failed to Alter Type", ex);
-                    return;
-                }
-
-                columnInfo.Data_type = newSqlType;
-                columnInfo.SaveToDatabase();
-
-                var archive = col.Table.Database.ExpectTable(col.Table + "_Archive");
-
-                if (archive.Exists())
-                {
-                    try
+                    var archiveCol = archive.DiscoverColumn(col.GetRuntimeName());
+                    if (archiveCol.DataType.SQLType.Equals(oldSqlType))
                     {
-                        var archiveCol = archive.DiscoverColumn(col.GetRuntimeName());
-                        if (archiveCol.DataType.SQLType.Equals(oldSqlType))
+                        try
                         {
-                            if (YesNo($"Alter Type in Archive '{ archive.GetFullyQualifiedName()}'?", "Alter Archive"))
-                                try
-                                {
-                                    archiveCol.DataType.AlterTypeTo(newSqlType);
-                                }
-                                catch (Exception ex)
-                                {
-                                    ShowException("Failed to Alter Archive Column", ex);
-                                    return;
-                                }
+                            archiveCol.DataType.AlterTypeTo(newSqlType);
+                        }
+                        catch (Exception ex)
+                        {
+                            ShowException($"Failed to Alter Archive Column '{archiveCol.GetFullyQualifiedName()}'", ex);
+                            return;
                         }
                     }
-                    catch (Exception)
-                    {
-                        //maybe the archive is broken? corrupt or someone just happens to have a Table called that?
-                        return;
-                    }
+                }
+                catch (Exception)
+                {
+                    //maybe the archive is broken? corrupt or someone just happens to have a Table called that?
+                    return;
                 }
             }
+            
 
             Publish(columnInfo.TableInfo);
         }

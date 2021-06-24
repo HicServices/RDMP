@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Added support for specifying datatype when calling `ExecuteCommandAlterColumnType`
+
+### Changed
+
+- `ExecuteCommandAlterColumnType` now automatically alters _Archive table too without asking for confirmation
+
 ## [5.0.3] - 2021-06-17
 
 - Hotfix extraction/DLE progress UI layout on some Windows configurations
