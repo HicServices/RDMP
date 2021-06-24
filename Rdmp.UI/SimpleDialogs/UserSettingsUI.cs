@@ -42,6 +42,7 @@ namespace Rdmp.UI.SimpleDialogs
             cbDebugPerformance.Checked = UserSettings.DebugPerformance;
             cbAllowIdentifiableExtractions.Checked = UserSettings.AllowIdentifiableExtractions;
             cbShowPipelineCompletedPopup.Checked = UserSettings.ShowPipelineCompletedPopup;
+            cbHideEmptyTableLoadRunAudits.Checked = UserSettings.HideEmptyTableLoadRunAudits;
 
             clbWarnings.Items.Add(WarnOnTimeoutOnExtractionChecks, UserSettings.WarnOnTimeoutOnExtractionChecks);
 
@@ -122,6 +123,9 @@ namespace Rdmp.UI.SimpleDialogs
             
             if(cb == cbShowPipelineCompletedPopup)
                 UserSettings.ShowPipelineCompletedPopup = cb.Checked;
+
+            if (cb == cbHideEmptyTableLoadRunAudits)
+                UserSettings.HideEmptyTableLoadRunAudits = cb.Checked;
         }
 
         private void ddTheme_SelectedIndexChanged(object sender, EventArgs e)

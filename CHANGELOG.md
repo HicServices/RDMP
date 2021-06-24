@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Added user setting for filtering table load logs where there are 0 inserts,updates and deletes
+
 ## [5.0.3] - 2021-06-17
 
 - Hotfix extraction/DLE progress UI layout on some Windows configurations
