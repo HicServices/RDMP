@@ -54,6 +54,7 @@
             this.cbShowPipelineCompletedPopup = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.clbWarnings = new System.Windows.Forms.CheckedListBox();
+            this.cbHideEmptyTableLoadRunAudits = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -339,12 +340,25 @@
             this.clbWarnings.Size = new System.Drawing.Size(401, 363);
             this.clbWarnings.TabIndex = 1;
             // 
+            // cbHideEmptyTableLoadRunAudits
+            // 
+            this.cbHideEmptyTableLoadRunAudits.AutoSize = true;
+            this.cbHideEmptyTableLoadRunAudits.Location = new System.Drawing.Point(348, 163);
+            this.cbHideEmptyTableLoadRunAudits.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.cbHideEmptyTableLoadRunAudits.Name = "cbHideEmptyTableLoadRunAudits";
+            this.cbHideEmptyTableLoadRunAudits.Size = new System.Drawing.Size(208, 19);
+            this.cbHideEmptyTableLoadRunAudits.TabIndex = 15;
+            this.cbHideEmptyTableLoadRunAudits.Text = "Hide Empty Table Load Run Audits";
+            this.cbHideEmptyTableLoadRunAudits.UseVisualStyleBackColor = true;
+            this.cbHideEmptyTableLoadRunAudits.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
+            // 
             // UserSettingsFileUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(866, 652);
             this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.cbHideEmptyTableLoadRunAudits);
             this.Controls.Add(this.cbShowPipelineCompletedPopup);
             this.Controls.Add(this.hlpIdentifiableExtractions);
             this.Controls.Add(this.cbAllowIdentifiableExtractions);
@@ -404,5 +418,6 @@
         private System.Windows.Forms.CheckBox cbShowPipelineCompletedPopup;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.CheckedListBox clbWarnings;
+        private System.Windows.Forms.CheckBox cbHideEmptyTableLoadRunAudits;
     }
 }
