@@ -57,14 +57,11 @@ namespace Rdmp.UI.Tests.CommandExecution.Alter
         }
 
 
-        [TestCase(DatabaseType.MicrosoftSQLServer,true)]
-        [TestCase(DatabaseType.MicrosoftSQLServer, false)]
-        [TestCase(DatabaseType.MySql,true)]
-        [TestCase(DatabaseType.MySql,false)]
-        [TestCase(DatabaseType.Oracle,true)]
-        [TestCase(DatabaseType.Oracle,false)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MySql)]
+        [TestCase(DatabaseType.Oracle)]
         [UITimeout(10000)]
-        public void AlterColumnType_WithArchive(DatabaseType dbType,bool changeArchive)
+        public void AlterColumnType_WithArchive(DatabaseType dbType)
         {
 
             var db = GetCleanedServer(dbType);
@@ -85,7 +82,6 @@ namespace Rdmp.UI.Tests.CommandExecution.Alter
             //we want the new type to be 50 long
             var newType = oldType.Replace("10", "50");
             activator.TypeTextResponse = newType;
-            activator.YesNoResponse = changeArchive;
 
             var cmd = new ExecuteCommandAlterColumnType(activator, ti.ColumnInfos.Single());
             cmd.Execute();
@@ -98,7 +94,7 @@ namespace Rdmp.UI.Tests.CommandExecution.Alter
             Assert.AreEqual(newType, ti.ColumnInfos[0].Data_type);
 
             //if they changed the archive then the archive column should also match on Type otherwise it should have stayed the old Type
-            Assert.AreEqual(changeArchive ? newType : oldType, myColArchive.DataType.SQLType);
+            Assert.AreEqual(newType, myColArchive.DataType.SQLType);
 
             tbl.Drop();
             tblArchive.Drop();

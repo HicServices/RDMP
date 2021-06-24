@@ -235,6 +235,13 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("ConsoleColorScheme", value); }
         }
 
+        public static bool HideEmptyTableLoadRunAudits
+        {
+            get { return AppSettings.GetValueOrDefault("HideEmptyTableLoadRunAudits", false); }
+            set { AppSettings.AddOrUpdateValue("HideEmptyTableLoadRunAudits", value); }
+        }
+
+
         #endregion
 
         public static bool GetTutorialDone(Guid tutorialGuid)
