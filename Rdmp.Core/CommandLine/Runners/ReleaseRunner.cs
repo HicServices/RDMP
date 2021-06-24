@@ -85,7 +85,7 @@ namespace Rdmp.Core.CommandLine.Runners
 
             List<ICheckable> toReturn = new List<ICheckable>();
 
-            if (_options.ReleaseGlobals)
+            if (_options.ReleaseGlobals ?? true)
             {
                 toReturn.Add(new GlobalsReleaseChecker(RepositoryLocator, _configurations));
                 toReturn.AddRange(_configurations.First()
@@ -208,7 +208,7 @@ namespace Rdmp.Core.CommandLine.Runners
                 data.SelectedDatasets.Add(configuration, GetSelectedDataSets(configuration));
             }
 
-            data.ReleaseGlobals = _options.ReleaseGlobals;
+            data.ReleaseGlobals = _options.ReleaseGlobals ?? true;
 
             var allDdatasets = _configurations.SelectMany(ec => ec.GetAllExtractableDataSets()).ToList();
             var selectedDatasets = data.SelectedDatasets.Values.SelectMany(sd => sd.ToList()).ToList();
