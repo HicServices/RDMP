@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using FAnsi.Discovery;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Logging.PastEvents
 {
@@ -115,7 +116,18 @@ namespace Rdmp.Core.Logging.PastEvents
                 using(var cmd =  _loggingDatabase.Server.GetCommand("SELECT * FROM TableLoadRun WHERE dataLoadRunID=" +ID , con))
                     using(var r = cmd.ExecuteReader())
                         while(r.Read())
-                            toReturn.Add(new ArchivalTableLoadInfo(this,r,_loggingDatabase));
+                        {
+                            var audit = new ArchivalTableLoadInfo(this, r, _loggingDatabase);
+                        
+                            if((audit.Inserts??0) <= 0 && (audit.Updates??0) <= 0 && (audit.Deletes??0) <= 0 && UserSettings.HideEmptyTableLoadRunAudits)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                toReturn.Add(audit);
+                            }
+                        }   
             }
 
             return toReturn;
