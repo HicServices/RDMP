@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Changed
+
+- `ExecuteCommandAlterColumnType` now automatically alters \_Archive table too without asking for confirmation
+
 ## Fixed
 
 - Fixed release engine not respecting `-g false` (do not release Globals)
@@ -15,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added user setting for filtering table load logs where there are 0 inserts,updates and deletes
+- Added support for specifying datatype when calling `ExecuteCommandAlterColumnType`
 
 
 ## [5.0.3] - 2021-06-17
