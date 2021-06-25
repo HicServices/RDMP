@@ -89,9 +89,6 @@ namespace Rdmp.UI.ChecksUI
 
                 case CheckResult.Warning:
 
-                    if (pbRed.Visible)
-                        return;
-
                     //only change for novel values to prevent flickering
                     if (!pbYellow.Visible)
                     {
