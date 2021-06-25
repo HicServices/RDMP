@@ -188,6 +188,12 @@ namespace Rdmp.UI.SimpleDialogs
 
         public HashSet<IMapsDirectlyToDatabaseTable> MultiSelected { get; private set; }
 
+        public void SetInitialSelection(IEnumerable<IMapsDirectlyToDatabaseTable> toSelect)
+        {
+            MultiSelected = new HashSet<IMapsDirectlyToDatabaseTable>(toSelect);
+            ApplyFilter();
+        }
+
         public bool AllowMultiSelect
         {
             get { return olvObjects.MultiSelect; }
