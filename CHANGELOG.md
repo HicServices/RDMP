@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Fixed
 
 - Fixed release engine not respecting `-g false` (do not release Globals)
+- Fixed column order in DQE results graph sometimes resulting in shifted colors (e.g. Correct appearing in red instead of green)
 - Fixed Prediction rules never being run when value being considered is null (DQE).
 
 ### Added
