@@ -129,6 +129,14 @@ namespace Rdmp.Core.DataQualityEngine.Data
                         DataTable dt = new DataTable();
                         da.Fill(dt);
 
+                        if(pivot)
+                        {
+                            dt.Columns["Correct"].SetOrdinal(3);
+                            dt.Columns["Wrong"].SetOrdinal(4);
+                            dt.Columns["Missing"].SetOrdinal(5);
+                            dt.Columns["InvalidatesRow"].SetOrdinal(6);
+                        }
+
                         return dt;
                     }
             }
