@@ -11,10 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - `ExecuteCommandAlterColumnType` now automatically alters \_Archive table too without asking for confirmation
+- When foreign key values are missing from lookups, the 'Missing' status is now attributed to the `_Desc` field (previously to the foreign key field)
 
 ## Fixed
 
 - Fixed release engine not respecting `-g false` (do not release Globals)
+- Fixed Prediction rules never being run when value being considered is null (DQE).
 
 ### Added
 

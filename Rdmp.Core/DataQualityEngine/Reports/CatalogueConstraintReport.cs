@@ -474,12 +474,12 @@ namespace Rdmp.Core.DataQualityEngine.Reports
                         var descriptionFieldName = descQtc.IColumn.GetRuntimeName();
                         var foreignKeyFieldName = foreignQtc.IColumn.GetRuntimeName();
 
-                        ItemValidator itemValidator = _validator.GetItemValidator(foreignKeyFieldName);
+                        ItemValidator itemValidator = _validator.GetItemValidator(descriptionFieldName);
 
                         //there is not yet one for this field
                         if (itemValidator == null)
                         {
-                            itemValidator = new ItemValidator(foreignKeyFieldName);
+                            itemValidator = new ItemValidator(descriptionFieldName);
                             _validator.ItemValidators.Add(itemValidator);
                         }
 
@@ -487,7 +487,7 @@ namespace Rdmp.Core.DataQualityEngine.Reports
                         if (itemValidator.SecondaryConstraints.All(constraint => constraint.GetType() != typeof(Prediction)))
                         {
                             //Add an item validator onto the fk column that targets the description column with a nullness prediction
-                            var newRule = new Prediction(new ValuePredictsOtherValueNullness(), descriptionFieldName);
+                            var newRule = new Prediction(new ValuePredictsOtherValueNullness(), foreignKeyFieldName);
                             newRule.Consequence = Consequence.Missing;
                         
                             //add one that says 'if I am null my fk should also be null'
