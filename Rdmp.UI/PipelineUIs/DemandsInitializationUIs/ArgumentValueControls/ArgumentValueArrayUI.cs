@@ -5,9 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 
@@ -24,6 +26,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
     {
         private readonly IActivateItems _activator;
         private ArgumentValueUIArgs _args;
+        private Array _value;
 
         public ArgumentValueArrayUI(IActivateItems activator)
         {
@@ -42,6 +45,8 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 
         private void SetUp(Array value)
         {
+            _value = value;
+
             if (value == null)
                 tbArray.Text = "";
             else
@@ -75,6 +80,11 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
             var objects = _args.CatalogueRepository.GetAllObjects(elementType);
             var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, objects, true, false);
             dialog.AllowMultiSelect = true;
+            
+            if(_value is IEnumerable<IMapsDirectlyToDatabaseTable> v)
+            {
+                dialog.SetInitialSelection(v);
+            }
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {

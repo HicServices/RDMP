@@ -39,7 +39,7 @@ namespace Rdmp.Core.Tests.Validation.Constraints.Secondary
             var p = new Prediction(new ValuePredictsOtherValueNullness(), "someColumn");
             var otherCols = new object[] { "not null" };
             var otherColsNames = new string[] { "someColumn" };
-            Assert.IsNull(p.Validate(null, otherCols, otherColsNames));
+            StringAssert.StartsWith("Nullness did not match, when one value is null, the other mus", p.Validate(null, otherCols, otherColsNames)?.Message);
         }
 
         [Test]
