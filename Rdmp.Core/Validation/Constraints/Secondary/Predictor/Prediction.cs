@@ -40,9 +40,6 @@ namespace Rdmp.Core.Validation.Constraints.Secondary.Predictor
 
         public override ValidationFailure Validate(object value, object[] otherColumns, string[] otherColumnNames)
         {
-            if (value == null)
-                return null;
-
             if(Rule == null )
                 throw new InvalidOperationException("PredictionRule has not been set yet");
 
