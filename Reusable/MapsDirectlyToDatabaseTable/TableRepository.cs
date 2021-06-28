@@ -718,6 +718,7 @@ namespace MapsDirectlyToDatabaseTable
 
             toCreate.Repository = actual.Repository;
 
+            NewObjectPool.Add(toCreate);
         }
 
         private object ongoingConnectionsLock = new object();
