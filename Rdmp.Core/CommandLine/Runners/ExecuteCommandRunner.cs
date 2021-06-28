@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
@@ -149,18 +150,22 @@ namespace Rdmp.Core.CommandLine.Runners
             if((script.Commands?.Length ?? 0) == 0)
                 throw new ArgumentException("script was empty",nameof(script));
 
-            foreach(string s in script.Commands)
+            using (script.UseScope ? NewObjectPool.StartSession() : null)
             {
-                try
+                foreach (string s in script.Commands)
                 {
-                    var cmd = GetCommandAndPickerFromLine(s,out _picker,repositoryLocator);
-                    RunCommand(cmd);
-                }
-                catch(Exception ex)
-                {
-                    throw new Exception($"Error executing script.  Problem line was '{s}':{ex.Message}",ex);
+                    try
+                    {
+                        var cmd = GetCommandAndPickerFromLine(s, out _picker, repositoryLocator);
+                        RunCommand(cmd);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception($"Error executing script.  Problem line was '{s}':{ex.Message}", ex);
+                    }
                 }
             }
+                
         }
 
         public static IEnumerable<string> SplitCommandLine(string commandLine)
