@@ -173,8 +173,14 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
 
             if(DatabaseEntities.Count != 1)
             {
-                _logger.Warn($"Pattern matched {DatabaseEntities.Count} objects '{RawValue}':{Environment.NewLine} {string.Join(Environment.NewLine,DatabaseEntities)}");
-                return null;
+                var latest = NewObjectPool.Latest(DatabaseEntities.Where(d => d is T));
+
+                if (latest == null)
+                {
+                    _logger.Warn($"Pattern matched {DatabaseEntities.Count} objects '{RawValue}':{Environment.NewLine} {string.Join(Environment.NewLine, DatabaseEntities)}");
+                }
+                    
+                return latest;
             }   
 
             //return the single object as the type you want e.g. ICheckable
