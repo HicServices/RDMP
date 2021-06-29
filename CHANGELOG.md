@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `ExecuteCommandAlterColumnType` now automatically alters \_Archive table too without asking for confirmation
 - When foreign key values are missing from lookups, the 'Missing' status is now attributed to the `_Desc` field (previously to the foreign key field)
+- Changed Console gui DLE / DQE (etc) execution to use ListView instead of TextView
 
 ## Fixed
 

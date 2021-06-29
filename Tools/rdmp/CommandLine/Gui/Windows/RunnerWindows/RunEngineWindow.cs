@@ -90,8 +90,8 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
             lock (lockList)
             {
                 consoleOutput.Clear();
+                _results.SetNeedsDisplay();
             }
-            _results.SetNeedsDisplay();
         }
 
         private void Abort()
@@ -196,9 +196,9 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
                     lock(lockList)
                     {
                         consoleOutput.Add(line);
+                        _results.SetNeedsDisplay();
                     }
                     
-                    _results.SetNeedsDisplay();
                 }
             });
         }
