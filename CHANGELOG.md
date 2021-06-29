@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `ExecuteCommandAlterColumnType` now automatically alters \_Archive table too without asking for confirmation
 - When foreign key values are missing from lookups, the 'Missing' status is now attributed to the `_Desc` field (previously to the foreign key field)
 - Referencing an object by name in a script file now returns the latest when there are collisions e.g. "[ExtractableCohort]" would return the latest one (created during the script execution session)
+- Bump YamlDotNet from 11.2.0 to 11.2.1
 
 ## Fixed
 
