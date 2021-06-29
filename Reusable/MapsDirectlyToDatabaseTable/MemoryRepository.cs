@@ -50,6 +50,8 @@ namespace MapsDirectlyToDatabaseTable
             Objects.Add(toCreate);
 
             toCreate.PropertyChanged += toCreate_PropertyChanged;
+
+            NewObjectPool.Add(toCreate);
         }
 
         protected virtual void SetValue<T>(T toCreate, PropertyInfo prop, string strVal, object val) where T : IMapsDirectlyToDatabaseTable
