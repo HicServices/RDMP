@@ -210,7 +210,7 @@ namespace Rdmp.Core.CommandLine.Gui
         {
             lock(notifyEventArgs)
             {
-                notifyEventArgs.Add(e);
+                notifyEventArgs.Insert(0,e);
                 _results.SetNeedsDisplay();
             }
         }
