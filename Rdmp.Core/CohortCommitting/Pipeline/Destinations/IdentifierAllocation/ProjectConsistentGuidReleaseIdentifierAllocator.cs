@@ -115,7 +115,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation
             }
             
             _request = request;
-            _projectNumber = request.Project?.ProjectNumber.Value ?? request?.NewCohortDefinition?.ProjectNumber ?? 0;
+            _projectNumber = request.Project?.ProjectNumber.Value ?? request.NewCohortDefinition?.ProjectNumber ?? 0;
         }
     }
 }
