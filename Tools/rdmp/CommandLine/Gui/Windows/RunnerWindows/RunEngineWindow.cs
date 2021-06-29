@@ -10,6 +10,8 @@ using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Startup;
 using ReusableLibraryCode;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -19,16 +21,17 @@ using Terminal.Gui;
 namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
 {
 
-    class RunEngineWindow<T> : Window where T : RDMPCommandLineOptions
+    class RunEngineWindow<T> : Window, IListDataSource where T : RDMPCommandLineOptions
     {
         private Process process;
-        private TextView textView;
+        private ListView _results;
         protected readonly IBasicActivateItems BasicActivator;
         private readonly Func<T> commandGetter;
-        private object timer;
 
-        StringBuilder sb = new StringBuilder();
-
+        private object lockList = new object();
+        private List<string> consoleOutput = new List<string>();
+        public int Count => consoleOutput.Count;
+        public int Length => consoleOutput.Count;
         public RunEngineWindow(IBasicActivateItems activator, Func<T> commandGetter)
         {
             Modal = true;
@@ -53,39 +56,42 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
             var close = new Button("Cl_ose") { X = Pos.Right(abort) };
             close.Clicked += () =>
             {
-                Application.MainLoop.RemoveTimeout(timer);
                 Application.RequestStop();
             };
 
             Add(close);
 
-            textView = new TextView() { ReadOnly = true, Y = 1, Width = Dim.Fill(), Height = Dim.Fill() };
-            Add(textView);
+            _results = new ListView(this) { Y = 1, Width = Dim.Fill(), Height = Dim.Fill() };
+            Add(_results);
+            _results.KeyPress += Results_KeyPress;
 
             BasicActivator = activator;
             this.commandGetter = commandGetter;
-
-            // every 3 seconds run the method 'Tick'
-            timer = Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds(3000), Tick);
         }
 
-        private bool Tick(MainLoop arg)
+        private void Results_KeyPress(KeyEventEventArgs obj)
         {
-            string content = sb.ToString();
-
-            if(!Equals(textView.Text,content))
+            if (obj.KeyEvent.Key == Key.Enter && _results.HasFocus)
             {
-                textView.Text = content;
-                textView.SetNeedsDisplay();
+                var listIdx = _results.SelectedItem;
+                var list = _results.Source.ToList();
+
+                if (listIdx < list.Count)
+                {
+                    var selected = list[listIdx];
+                    BasicActivator.Show(selected.ToString());
+                }
+
+                obj.Handled = true;
             }
-
-            return true;
         }
-
         private void ClearOutput()
         {
-            sb.Clear();
-            textView.Text = "";
+            lock (lockList)
+            {
+                consoleOutput.Clear();
+                _results.SetNeedsDisplay();
+            }
         }
 
         private void Abort()
@@ -186,11 +192,55 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
                 while (!process.StandardOutput.EndOfStream)
                 {
                     var line = process.StandardOutput.ReadLine().Trim();
-                    // prepend the line so the latest output appears at the top
-                    sb.Insert(0,line + '\n');
+
+                    lock(lockList)
+                    {
+                        consoleOutput.Insert(0,line);
+                        _results.SetNeedsDisplay();
+                    }
+                    
                 }
             });
         }
 
+        public void Render(ListView container, ConsoleDriver driver, bool selected, int item, int col, int line, int width, int start = 0)
+        {
+
+            lock (lockList)
+            {
+                if (item >= consoleOutput.Count)
+                {
+                    return;
+                }
+
+                var str = consoleOutput[item];
+
+                if (str.Length > width)
+                {
+                    str = str.Substring(0, width);
+                }
+                else
+                {
+                    str = str.PadRight(width,' ');
+                }
+
+                _results.Move(col, line);
+                driver.AddStr(str);
+            }                
+        }
+
+        public bool IsMarked(int item)
+        {
+            return false;
+        }
+
+        public void SetMark(int item, bool value)
+        {
+        }
+
+        public IList ToList()
+        {
+            return consoleOutput;
+        }
     }
 }

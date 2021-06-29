@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `ExecuteCommandAlterColumnType` now automatically alters \_Archive table too without asking for confirmation
 - When foreign key values are missing from lookups, the 'Missing' status is now attributed to the `_Desc` field (previously to the foreign key field)
+- Changed Console gui DLE / DQE (etc) execution to use ListView instead of TextView
 - Referencing an object by name in a script file now returns the latest when there are collisions e.g. "[ExtractableCohort]" would return the latest one (created during the script execution session)
 - Bump YamlDotNet from 11.2.0 to 11.2.1
 
@@ -20,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed release engine not respecting `-g false` (do not release Globals)
 - Fixed column order in DQE results graph sometimes resulting in shifted colors (e.g. Correct appearing in red instead of green)
 - Fixed Prediction rules never being run when value being considered is null (DQE).
+- Fixed a bug creating a cohort without specifying a Project from the console
 
 ### Added
 

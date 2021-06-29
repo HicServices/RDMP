@@ -210,7 +210,7 @@ namespace Rdmp.Core.CommandLine.Gui
         {
             lock(notifyEventArgs)
             {
-                notifyEventArgs.Add(e);
+                notifyEventArgs.Insert(0,e);
                 _results.SetNeedsDisplay();
             }
         }
@@ -273,6 +273,10 @@ namespace Rdmp.Core.CommandLine.Gui
             if(str.Length > width)
             {
                 str = str.Substring(0, width);
+            }
+            else
+            {
+                str = str.PadRight(width, ' ');
             }
 
             _results.Move(col, line);
