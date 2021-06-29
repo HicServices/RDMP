@@ -84,7 +84,8 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
         }
         private void ClearOutput()
         {
-            _results.Clear();
+            _results.Source.ToList().Clear();
+            _results.SetNeedsDisplay();
         }
 
         private void Abort()

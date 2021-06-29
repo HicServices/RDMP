@@ -27,7 +27,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
         private CohortIdentificationConfiguration[] _allConfigurations;
 
         public ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(IBasicActivateItems activator, ExternalCohortTable externalCohortTable) :
-            this(activator, null, null, null, null, null)
+            this(activator, null, externalCohortTable, null, null, null)
         {
             _allConfigurations = activator.CoreChildProvider.AllCohortIdentificationConfigurations;
 
@@ -68,7 +68,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
 
             if (_cic == null)
                 return;
-
+            
             var request = GetCohortCreationRequest("Patients in CohortIdentificationConfiguration '" + _cic + "' (ID=" + _cic.ID + ")");
 
             //user choose to cancel the cohort creation request dialogue

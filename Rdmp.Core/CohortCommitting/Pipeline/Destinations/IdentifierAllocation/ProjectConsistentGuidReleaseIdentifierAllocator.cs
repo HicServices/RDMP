@@ -101,11 +101,21 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation
         /// <inheritdoc/>
         public void Initialize(ICohortCreationRequest request)
         {
-            if(!request.Project.ProjectNumber.HasValue)
-                throw new ProjectNumberException("Project " + request.Project + " must have a ProjectNumber");
-
+            if(request.Project != null)
+            {
+                if (!request.Project.ProjectNumber.HasValue)
+                    throw new ProjectNumberException("Project " + request.Project + " must have a ProjectNumber");
+            }
+            else
+            {
+                if((request?.NewCohortDefinition?.ProjectNumber ?? 0) == 0)
+                {
+                    throw new ProjectNumberException("No Project was specified and NewCohortDefinition had no explicit project number");
+                }
+            }
+            
             _request = request;
-            _projectNumber = request.Project.ProjectNumber.Value;
+            _projectNumber = request.Project?.ProjectNumber.Value ?? request?.NewCohortDefinition?.ProjectNumber ?? 0;
         }
     }
 }
