@@ -21,13 +21,17 @@ using Terminal.Gui;
 namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
 {
 
-    class RunEngineWindow<T> : Window where T : RDMPCommandLineOptions
+    class RunEngineWindow<T> : Window, IListDataSource where T : RDMPCommandLineOptions
     {
         private Process process;
         private ListView _results;
         protected readonly IBasicActivateItems BasicActivator;
         private readonly Func<T> commandGetter;
 
+        private object lockList = new object();
+        private List<string> consoleOutput = new List<string>();
+        public int Count => consoleOutput.Count;
+        public int Length => consoleOutput.Count;
         public RunEngineWindow(IBasicActivateItems activator, Func<T> commandGetter)
         {
             Modal = true;
@@ -57,8 +61,7 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
 
             Add(close);
 
-            _results = new ListView() { Y = 1, Width = Dim.Fill(), Height = Dim.Fill() };
-            _results.SetSource(new List<string>());
+            _results = new ListView(this) { Y = 1, Width = Dim.Fill(), Height = Dim.Fill() };
             Add(_results);
             _results.KeyPress += Results_KeyPress;
 
@@ -84,7 +87,10 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
         }
         private void ClearOutput()
         {
-            _results.Source.ToList().Clear();
+            lock (lockList)
+            {
+                consoleOutput.Clear();
+            }
             _results.SetNeedsDisplay();
         }
 
@@ -187,11 +193,54 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
                 {
                     var line = process.StandardOutput.ReadLine().Trim();
 
-                    ((ListWrapper)_results.Source).ToList().Insert(0,line);
+                    lock(lockList)
+                    {
+                        consoleOutput.Add(line);
+                    }
+                    
                     _results.SetNeedsDisplay();
                 }
             });
         }
 
+        public void Render(ListView container, ConsoleDriver driver, bool selected, int item, int col, int line, int width, int start = 0)
+        {
+
+            lock (lockList)
+            {
+                if (item >= consoleOutput.Count)
+                {
+                    return;
+                }
+
+                var str = consoleOutput[item];
+
+                if (str.Length > width)
+                {
+                    str = str.Substring(0, width);
+                }
+                else
+                {
+                    str = str.PadRight(width,' ');
+                }
+
+                _results.Move(col, line);
+                driver.AddStr(str);
+            }                
+        }
+
+        public bool IsMarked(int item)
+        {
+            return false;
+        }
+
+        public void SetMark(int item, bool value)
+        {
+        }
+
+        public IList ToList()
+        {
+            return consoleOutput;
+        }
     }
 }

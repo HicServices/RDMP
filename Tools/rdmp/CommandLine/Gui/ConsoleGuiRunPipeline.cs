@@ -274,6 +274,10 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 str = str.Substring(0, width);
             }
+            else
+            {
+                str = str.PadRight(width, ' ');
+            }
 
             _results.Move(col, line);
             driver.AddStr(str);
