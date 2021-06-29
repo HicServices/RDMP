@@ -37,7 +37,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             if (toCleanup != null)
                 toCleanup.Delete(true);
 
-            LoadDirectory = LoadDirectory.CreateDirectoryStructure(parentDir, "JsonLAttacherTests");
+            LoadDirectory = LoadDirectory.CreateDirectoryStructure(parentDir, "JsonLAttacherTests",true);
 
             // create a separate builder for setting an initial catalog on (need to figure out how best to stop child classes changing ServerICan... as this then causes TearDown to fail)
             _database = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
@@ -52,7 +52,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         }
 
         [Test]
-        public void SimpleJsonl_TwoTables()
+        public void SimpleJsonl_OneTable()
         {
             string json = @"
         {""name"": ""Gilbert"", ""wins"": [[""straight"", ""7♣""], [""one pair"", ""10♥""]]}
@@ -69,50 +69,32 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             attacher.FilePattern = "some.jsonl";
 
             var player = _database.CreateTable("Player", new[] { 
-                new DatabaseColumnRequest("name", new DatabaseTypeRequest(typeof(string), 10)){IsPrimaryKey = true}
-            });
-
-            // TODO: this is not really what the JSON above shows! its an array, maybe instead load this as an array JSON type in the single table?
-            var wins = _database.CreateTable("Wins", new[] {
-                new DatabaseColumnRequest("name", new DatabaseTypeRequest(typeof(string), 10)),
-                new DatabaseColumnRequest("winType", new DatabaseTypeRequest(typeof(string), 10)),
-                new DatabaseColumnRequest("card", new DatabaseTypeRequest(typeof(string), 2))
+                new DatabaseColumnRequest("name", new DatabaseTypeRequest(typeof(string), 10)){IsPrimaryKey = true},
+                new DatabaseColumnRequest("wins", new DatabaseTypeRequest(typeof(string), int.MaxValue))
             });
 
             Import(player, out ITableInfo playerTi,out _);
-            Import(wins);
 
             attacher.RootTable = playerTi;
-
+                        
             //other cases (i.e. correct separator)
             attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
 
             Assert.AreEqual(4, player.GetRowCount());
-            Assert.AreEqual(5, wins.GetRowCount());
 
             using (var con = _database.Server.GetConnection())
             {
                 con.Open();
-                using (var r = _database.Server.GetCommand("Select * from Player", con).ExecuteReader())
+                using (var r = _database.Server.GetCommand("Select * from Player order by name", con).ExecuteReader())
                 {
-                    Assert.IsTrue(r.Read());
-                    Assert.AreEqual("Gilbert", r["name"]);
                     Assert.IsTrue(r.Read());
                     Assert.AreEqual("Alexa", r["name"]);
                     Assert.IsTrue(r.Read());
-                    Assert.AreEqual("May", r["name"]);
-                    Assert.IsTrue(r.Read());
                     Assert.AreEqual("Deloise", r["name"]);
-                }
-
-                using (var r = _database.Server.GetCommand("Select * from Wins", con).ExecuteReader())
-                {
                     Assert.IsTrue(r.Read());
                     Assert.AreEqual("Gilbert", r["name"]);
-                    Assert.AreEqual("straight", r["winType"]);
-                    Assert.AreEqual("7♣", r["card"]);
-
-                    // todo the other values
+                    Assert.IsTrue(r.Read());
+                    Assert.AreEqual("May", r["name"]);
                 }
             }
 

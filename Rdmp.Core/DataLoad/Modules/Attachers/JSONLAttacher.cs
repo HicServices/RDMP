@@ -1,11 +1,14 @@
 ﻿using FAnsi.Discovery;
 using Newtonsoft.Json;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Engine.Job;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
+using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Rdmp.Core.DataLoad.Modules.Attachers
@@ -38,11 +41,34 @@ If not specified then properties must exactly match table names")]
                         SupportMultipleContent = true // This is important!
                     };
 
+                    Dictionary<string, object> vals = new Dictionary<string, object>();
+
+                    var tblName = RootTable.GetRuntimeName(LoadStage.AdjustRaw, job?.Configuration?.DatabaseNamer);
+                    var tbl = _dbInfo.ExpectTable(tblName);
+
+                    if(!tbl.Exists())
+                    {
+                        throw new Exception($"Expected table {tbl.GetFullyQualifiedName()} was not found in RAW databse");
+                    }
+
                     while (jsonReader.Read())
                     {
-                        DiscoveredTable t;
-                        t.Insert()
-                        // load tables
+                        if(jsonReader.TokenType == JsonToken.PropertyName)
+                        {
+                            vals.Add(jsonReader.Value.ToString(), null);
+
+                        }
+                        if(jsonReader.TokenType == JsonToken.String)
+                        {
+                            if(vals.ContainsKey(jsonReader.Path))
+                                vals[jsonReader.Path] = jsonReader.Value;
+                        }
+                        if (jsonReader.TokenType == JsonToken.EndObject)
+                        {
+                            // load tables
+                            tbl.Insert(vals);
+                            vals.Clear();
+                        }
                     }
                 }
             }
