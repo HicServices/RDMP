@@ -108,7 +108,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation
             }
             else
             {
-                if((request?.NewCohortDefinition?.ProjectNumber ?? 0) == 0)
+                if((request.NewCohortDefinition?.ProjectNumber ?? 0) == 0)
                 {
                     throw new ProjectNumberException("No Project was specified and NewCohortDefinition had no explicit project number");
                 }
