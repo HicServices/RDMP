@@ -46,6 +46,7 @@ namespace Rdmp.Core.CommandLine.Gui
         private ListView _listView;
         private bool _changes;
         private TextField mainInput;
+        private DateTime _lastKeypress = DateTime.Now;
 
         /// <summary>
         /// Protected constructor for derived classes that want to do funky filtering and hot swap out lists as search
@@ -191,6 +192,8 @@ namespace Rdmp.Core.CommandLine.Gui
                 
                 mainInput.TextChanged += (s) =>
                 {
+                    // Don't update the UI while user is hammering away on the keyboard
+                    _lastKeypress = DateTime.Now;
                     RestartFiltering(); 
                 };
             }
@@ -227,7 +230,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
         bool Timer (MainLoop caller)
         {
-            if(_changes)
+            if(_changes && DateTime.Now.Subtract(_lastKeypress) > TimeSpan.FromSeconds(1))
             {
                 lock(_taskCancellationLock)
                 {

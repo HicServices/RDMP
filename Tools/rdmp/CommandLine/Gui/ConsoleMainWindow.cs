@@ -258,9 +258,23 @@ namespace Rdmp.Core.CommandLine.Gui
         private void Show(IMapsDirectlyToDatabaseTable selected)
         {
             var desc = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(selected);
+			
+			// In main RDMP, Projects are root level items so have no descendancy.  But in the console
+			// gui we have a root category so give it a descendancy now so that expansion works properly
+			if(selected is IProject)
+            {
+				desc = new DescendancyList(Projects);
+			}
 
 			if(desc == null)
 				return;
+
+			// In the main RDMP, we have a specific node for these but in console gui we have a text 
+			// category, fix the descendency for these objects
+			if(desc.Parents.Length  > 0 && desc.Parents[0] is AllCohortsNode)
+            {
+				desc.Parents[0] = BuiltCohorts;
+			}
 
 			if(desc.Parents.Any())
             {
