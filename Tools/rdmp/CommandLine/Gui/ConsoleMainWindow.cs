@@ -358,7 +358,16 @@ namespace Rdmp.Core.CommandLine.Gui
         }
 
         private IEnumerable<IAtomicCommand> GetCommands()
-        {
+		{
+			var factory = new AtomicCommandFactory(_activator);
+
+			var many = _treeView.GetAllSelectedObjects().ToArray();
+
+			if(many.Length > 1)
+            {
+				return factory.GetManyObjectCommandsWithPresentation(many).Select(p=>p.Command).ToArray();
+			}
+
 			var o = _treeView.SelectedObject;
 
 			if(ReferenceEquals(o,  Catalogues))
@@ -390,7 +399,6 @@ namespace Rdmp.Core.CommandLine.Gui
 			if (o == null)
 				return new IAtomicCommand[0];
 
-			var factory = new AtomicCommandFactory(_activator);
 			return
 				GetExtraCommands(o).Union(factory.CreateCommands(o));
         }
@@ -446,10 +454,31 @@ namespace Rdmp.Core.CommandLine.Gui
             {
 				switch(obj.KeyEvent.Key)
 				{
-					case Key.DeleteChar : 
+					case Key.DeleteChar :
+						var many = _treeView.GetAllSelectedObjects().ToArray();
 
+						//delete many at once?
+						if(many.Length > 1)
+                        {
+							if (many.Cast<object>().All(d => d is IDeleteable))
+							{
+								var cmd = new ExecuteCommandDelete(_activator, many.Cast<IDeleteable>().ToArray());
+								if(!cmd.IsImpossible)
+                                {
+									cmd.Execute();
+                                }
+								else
+                                {
+									_activator.Show("Cannot Delete", cmd.ReasonCommandImpossible);
+                                }
+							}
+						}
+						else
 						if(_treeView.SelectedObject is IDeleteable d)
+                        {
+							// it is a single object selection
 							_activator.DeleteWithConfirmation(d);
+						}							
 
 						obj.Handled = true;
 						break;

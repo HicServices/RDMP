@@ -202,19 +202,24 @@ namespace Rdmp.UI.Menus
                         
             foreach (var toPresent in factory.GetCommandsWithPresentation(_args.Masquerader ?? _o))
             {
-                if(_args.ShouldSkipCommand(toPresent.Command))
-                    continue;
-
-                var key = Keys.None;
-
-                if(!string.IsNullOrWhiteSpace(toPresent.SuggestedShortcut))
-                    Enum.TryParse<Keys>(toPresent.SuggestedShortcut,out key);
-
-                if(toPresent.SuggestedCategory == null)
-                    Add(toPresent.Command,toPresent.Ctrl ? Keys.Control | key : key);
-                else
-                    Add(toPresent.Command,toPresent.Ctrl ? Keys.Control | key : key,toPresent.SuggestedCategory);
+                Add(toPresent);
             }
+        }
+
+        public void Add(CommandPresentation toPresent)
+        {
+            if (_args.ShouldSkipCommand(toPresent.Command))
+                return;
+
+            var key = Keys.None;
+
+            if (!string.IsNullOrWhiteSpace(toPresent.SuggestedShortcut))
+                Enum.TryParse<Keys>(toPresent.SuggestedShortcut, out key);
+
+            if (toPresent.SuggestedCategory == null)
+                Add(toPresent.Command, toPresent.Ctrl ? Keys.Control | key : key);
+            else
+                Add(toPresent.Command, toPresent.Ctrl ? Keys.Control | key : key, toPresent.SuggestedCategory);
         }
 
         private void PopulateTreeMenu(RDMPCollectionCommonFunctionality commonFunctionality, ToolStripMenuItem treeMenuItem)
