@@ -31,6 +31,7 @@ using Rdmp.Core.Providers.Nodes.SharingNodes;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -499,6 +500,19 @@ namespace Rdmp.Core.CommandExecution
 
             if(Is(o, out INamed n))
                 yield return new CommandPresentation(new ExecuteCommandRename(_activator, n)){SuggestedShortcut = "F2" };
+        }
+
+        public IEnumerable<CommandPresentation> GetManyObjectCommandsWithPresentation(ICollection many)
+        {
+            if (many.Cast<object>().All(d => d is IDisableable))
+            {
+                yield return new CommandPresentation(new ExecuteCommandDisableOrEnable(_activator, many.Cast<IDisableable>().ToArray()));
+            }
+
+            if (many.Cast<object>().All(d => d is IDeleteable))
+            {
+                yield return new CommandPresentation(new ExecuteCommandDelete(_activator, many.Cast<IDeleteable>().ToArray())) { SuggestedShortcut = "Delete" };
+            }
         }
     }
 }

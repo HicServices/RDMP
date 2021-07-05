@@ -504,11 +504,9 @@ namespace Rdmp.UI.Collections
         {
             try
             {
-                var many = o as ICollection;
-
-                if (many != null)
+                if (o is ICollection many)
                 {
-                    var menu = new ContextMenuStrip();
+                    var menu = new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(_activator,Tree,many),many);
 
                     var factory = new AtomicCommandUIFactory(_activator);
 
@@ -518,18 +516,12 @@ namespace Rdmp.UI.Collections
                         menu.Items.Add(factory.CreateMenuItem(new ExecuteCommandAddToSession(_activator, many.Cast<IMapsDirectlyToDatabaseTable>().ToArray(),null)));
                     }
 
-                    if (many.Cast<object>().All(d => d is IDisableable))
+                    var cmdFactory = new AtomicCommandFactory(_activator);
+                    foreach(var p in cmdFactory.GetManyObjectCommandsWithPresentation(many))
                     {
-                        var mi = factory.CreateMenuItem(new ExecuteCommandDisableOrEnable(_activator, many.Cast<IDisableable>().ToArray()));
-                        menu.Items.Add(mi);
+                        menu.Add(p);
                     }
 
-                    if (many.Cast<object>().All(d => d is IDeleteable))
-                    {
-                        var mi = factory.CreateMenuItem(new ExecuteCommandDelete(_activator, many.Cast<IDeleteable>().ToArray()));
-                        mi.ShortcutKeys = Keys.Delete;
-                        menu.Items.Add(mi);
-                    }
                     MenuBuilt?.Invoke(this,new MenuBuiltEventArgs(menu,o));
                     return menu;
                 }
