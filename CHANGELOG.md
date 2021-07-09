@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changed Console gui DLE / DQE (etc) execution to use ListView instead of TextView
 - Referencing an object by name in a script file now returns the latest when there are collisions e.g. "[ExtractableCohort]" would return the latest one (created during the script execution session)
 - Bump YamlDotNet from 11.2.0 to 11.2.1
+- Bump SecurityCodeScan.VS2019 from 5.1.0 to 5.2.1
 
 ## Fixed
 
