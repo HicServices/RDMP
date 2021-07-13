@@ -86,6 +86,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _setOn = setOn;
             _property = property;
             _getValueAtExecuteTime = true;
+
+            if(string.Equals("ID",property?.Name))
+            {
+                SetImpossible("ID property cannot be changed");
+            }
+
         }
         
         public override void Execute()
