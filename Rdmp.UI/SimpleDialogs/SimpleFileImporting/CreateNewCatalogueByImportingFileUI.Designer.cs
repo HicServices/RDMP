@@ -189,24 +189,25 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             // 
             this.gbPickPipeline.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gbPickPipeline.Controls.Add(this.cbOther);
             this.gbPickPipeline.Controls.Add(this.ddPipeline);
+            this.gbPickPipeline.Controls.Add(this.cbOther);
             this.gbPickPipeline.Location = new System.Drawing.Point(14, 351);
             this.gbPickPipeline.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.gbPickPipeline.Name = "gbPickPipeline";
             this.gbPickPipeline.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.gbPickPipeline.Size = new System.Drawing.Size(705, 60);
+            this.gbPickPipeline.Size = new System.Drawing.Size(705, 48);
             this.gbPickPipeline.TabIndex = 3;
             this.gbPickPipeline.TabStop = false;
             this.gbPickPipeline.Text = "4. Pick Pipeline";
             // 
             // cbOther
             // 
-            this.cbOther.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbOther.AutoSize = true;
-            this.cbOther.Location = new System.Drawing.Point(648, 23);
+            this.cbOther.Dock = System.Windows.Forms.DockStyle.Right;
+            this.cbOther.Location = new System.Drawing.Point(642, 19);
             this.cbOther.Name = "cbOther";
-            this.cbOther.Size = new System.Drawing.Size(56, 19);
+            this.cbOther.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.cbOther.Size = new System.Drawing.Size(59, 26);
             this.cbOther.TabIndex = 1;
             this.cbOther.Text = "Other";
             this.cbOther.UseVisualStyleBackColor = true;
@@ -214,14 +215,13 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             // 
             // ddPipeline
             // 
-            this.ddPipeline.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ddPipeline.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ddPipeline.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddPipeline.FormattingEnabled = true;
-            this.ddPipeline.Location = new System.Drawing.Point(24, 22);
+            this.ddPipeline.Location = new System.Drawing.Point(4, 19);
             this.ddPipeline.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ddPipeline.Name = "ddPipeline";
-            this.ddPipeline.Size = new System.Drawing.Size(616, 23);
+            this.ddPipeline.Size = new System.Drawing.Size(638, 23);
             this.ddPipeline.TabIndex = 0;
             this.ddPipeline.SelectedIndexChanged += new System.EventHandler(this.ddPipeline_SelectedIndexChanged);
             // 
