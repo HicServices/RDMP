@@ -57,7 +57,7 @@ namespace Rdmp.Core.CohortCreation.Execution
 
 
         public override string ToString()
-		{
+        {
             string name = Aggregate.ToString();
 
             string expectedTrimStart = _cohortIdentificationConfiguration.GetNamingConventionPrefixForConfigurations();

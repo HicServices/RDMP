@@ -59,8 +59,8 @@ namespace Rdmp.Core.DataQualityEngine.Data
                @"SELECT 
       [Year]
       ,[Month]
-	  ,RowEvaluation
-	  ,CountOfRecords
+      ,RowEvaluation
+      ,CountOfRecords
   FROM [PeriodicityState]
     where
   Evaluation_ID = " + evaluation.ID + " and PivotCategory = 'ALL' ORDER BY [Year],[Month]";
@@ -217,8 +217,8 @@ CAST([Year] as varchar(4)) + ''-'' +  datename(month,dateadd(month, [Month] - 1,
 
 PIVOT
 (
-	sum(MyCount)
-	for RowEvaluation in ('+@Columns+') --The dynamic Column list we just fetched at top of query
+    sum(MyCount)
+    for RowEvaluation in ('+@Columns+') --The dynamic Column list we just fetched at top of query
 ) piv
 order by 
 [Year],

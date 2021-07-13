@@ -178,8 +178,8 @@ CROSS APPLY
         SELECT  TOP 1 {2}.*
         FROM    {2}
         WHERE  
-		 {3}
-		 order by " + syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom) + @" desc
+         {3}
+         order by " + syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom) + @" desc
         ) {8}
 where
 {1}.{4} = {5}";

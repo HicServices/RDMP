@@ -35,30 +35,30 @@ namespace Rdmp.Core.CommandLine.Gui
         private IBasicActivateItems _activator;
 
         private MenuItem mi_default;
-		private ColorScheme _defaultColorScheme;
-		private MenuItem mi_green;
-		private ColorScheme _greenColorScheme;
+        private ColorScheme _defaultColorScheme;
+        private MenuItem mi_green;
+        private ColorScheme _greenColorScheme;
 
         const string Catalogues = "Catalogues";
-		const string Projects = "Projects";
-		const string Loads = "Data Loads";
-		const string CohortConfigs = "Cohort Configurations";
-		const string BuiltCohorts = "Built Cohorts";
-		const string Other = "Other";
+        const string Projects = "Projects";
+        const string Loads = "Data Loads";
+        const string CohortConfigs = "Cohort Configurations";
+        const string BuiltCohorts = "Built Cohorts";
+        const string Other = "Other";
 
-		public View CurrentWindow {get;set;}
+        public View CurrentWindow {get;set;}
 
-		/// <summary>
-		/// Global scheme to apply to all windows
-		/// </summary>
+        /// <summary>
+        /// Global scheme to apply to all windows
+        /// </summary>
         public static ColorScheme ColorScheme { get; private set; }
 
         public ConsoleMainWindow(ConsoleGuiActivator activator)
         {
-			_activator = activator;
+            _activator = activator;
             activator.Published += Activator_Published;
-			activator.Emphasise += (s,e)=>Show(e.Request.ObjectToEmphasise);
-		}
+            activator.Emphasise += (s,e)=>Show(e.Request.ObjectToEmphasise);
+        }
 
         private void Activator_Published(IMapsDirectlyToDatabaseTable obj)
         {
@@ -67,175 +67,175 @@ namespace Rdmp.Core.CommandLine.Gui
 
         private void Quit()
         {
-			Application.RequestStop ();
+            Application.RequestStop ();
         }
 
         internal void SetUp(Toplevel top)
         {
-			var menu = new MenuBar (new MenuBarItem [] {
-				new MenuBarItem ("_File (F9)", new MenuItem [] {
-					new MenuItem ("_New...", "", () => New()),
-					new MenuItem ("_Find...", "", () => Find()),
-					new MenuItem ("_Run...", "", () => Run()),
-					new MenuItem ("_Refresh...", "", () => Publish()),
-					new MenuItem ("_Quit", "", () => Quit()),
-				}),
-				new MenuBarItem ("_Color Scheme", new MenuItem [] {
-					mi_default = new MenuItem (){Title = "Default", Checked = true, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_default)},
-					mi_green = new MenuItem (){Title = "Green", Checked = false, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_green)},
-				}),
-			});
-			top.Add (menu);
-				
-			_win = new Window(){
-				X = 0,
-				Y = 1, // menu
-				Width =  Dim.Fill(1),
-				Height = Dim.Fill(1) // status bar
-			};
+            var menu = new MenuBar (new MenuBarItem [] {
+                new MenuBarItem ("_File (F9)", new MenuItem [] {
+                    new MenuItem ("_New...", "", () => New()),
+                    new MenuItem ("_Find...", "", () => Find()),
+                    new MenuItem ("_Run...", "", () => Run()),
+                    new MenuItem ("_Refresh...", "", () => Publish()),
+                    new MenuItem ("_Quit", "", () => Quit()),
+                }),
+                new MenuBarItem ("_Color Scheme", new MenuItem [] {
+                    mi_default = new MenuItem (){Title = "Default", Checked = true, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_default)},
+                    mi_green = new MenuItem (){Title = "Green", Checked = false, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_green)},
+                }),
+            });
+            top.Add (menu);
+                
+            _win = new Window(){
+                X = 0,
+                Y = 1, // menu
+                Width =  Dim.Fill(1),
+                Height = Dim.Fill(1) // status bar
+            };
 
-			_defaultColorScheme = ColorScheme = _win.ColorScheme;
-			_greenColorScheme = new ColorScheme()
-			{
-				Disabled = Application.Driver.MakeAttribute(Color.Black, Color.Black),
-				Focus = Application.Driver.MakeAttribute(Color.Black, Color.Green),
-				HotFocus = Application.Driver.MakeAttribute(Color.Black, Color.Green),
-				HotNormal = Application.Driver.MakeAttribute(Color.BrightYellow, Color.Black),
-				Normal = Application.Driver.MakeAttribute(Color.Green, Color.Black),
-			};
-
-
-			_treeView = new TreeView<object> () {
-				X = 0,
-				Y = 0,
-				Width = Dim.Fill(),
-				Height = Dim.Fill()
-			};
+            _defaultColorScheme = ColorScheme = _win.ColorScheme;
+            _greenColorScheme = new ColorScheme()
+            {
+                Disabled = Application.Driver.MakeAttribute(Color.Black, Color.Black),
+                Focus = Application.Driver.MakeAttribute(Color.Black, Color.Green),
+                HotFocus = Application.Driver.MakeAttribute(Color.Black, Color.Green),
+                HotNormal = Application.Driver.MakeAttribute(Color.BrightYellow, Color.Black),
+                Normal = Application.Driver.MakeAttribute(Color.Green, Color.Black),
+            };
 
 
-			// Determines how to compute children of any given branch
-			_treeView.TreeBuilder = new DelegateTreeBuilder<object>(ChildGetter);
-			_treeView.AddObjects(
-				new string[]{ 
-					Catalogues,
-					Projects,
-					Loads,
-					CohortConfigs,
-					BuiltCohorts,
-					Other});
+            _treeView = new TreeView<object> () {
+                X = 0,
+                Y = 0,
+                Width = Dim.Fill(),
+                Height = Dim.Fill()
+            };
 
-			_win.Add(_treeView);
-			top.Add(_win);
+
+            // Determines how to compute children of any given branch
+            _treeView.TreeBuilder = new DelegateTreeBuilder<object>(ChildGetter);
+            _treeView.AddObjects(
+                new string[]{ 
+                    Catalogues,
+                    Projects,
+                    Loads,
+                    CohortConfigs,
+                    BuiltCohorts,
+                    Other});
+
+            _win.Add(_treeView);
+            top.Add(_win);
 
             _treeView.ObjectActivated += _treeView_ObjectActivated;
             _treeView.KeyPress += treeView_KeyPress;
             _treeView.SelectionChanged += _treeView_SelectionChanged;
-			_treeView.AspectGetter = AspectGetter;
+            _treeView.AspectGetter = AspectGetter;
 
-			var statusBar = new StatusBar (new StatusItem [] {
-				new StatusItem(Key.Q | Key.CtrlMask, "~^Q~ Quit", () => Quit()),
-				new StatusItem(Key.R | Key.CtrlMask, "~^R~ Run", () => Run()),
-				new StatusItem(Key.F | Key.CtrlMask, "~^F~ Find", () => Find()),
-				new StatusItem(Key.N | Key.CtrlMask, "~^N~ New", () => New()),
-				new StatusItem(Key.F5, "~F5~ Refresh", () => Publish()),
-			});
+            var statusBar = new StatusBar (new StatusItem [] {
+                new StatusItem(Key.Q | Key.CtrlMask, "~^Q~ Quit", () => Quit()),
+                new StatusItem(Key.R | Key.CtrlMask, "~^R~ Run", () => Run()),
+                new StatusItem(Key.F | Key.CtrlMask, "~^F~ Find", () => Find()),
+                new StatusItem(Key.N | Key.CtrlMask, "~^N~ New", () => New()),
+                new StatusItem(Key.F5, "~F5~ Refresh", () => Publish()),
+            });
 
-			top.Add (statusBar);
+            top.Add (statusBar);
 
-			string scheme = UserSettings.ConsoleColorScheme;
+            string scheme = UserSettings.ConsoleColorScheme;
 
-			if (scheme == "green")
-			{
-				SetColorScheme(mi_green);
-			}
-		}
+            if (scheme == "green")
+            {
+                SetColorScheme(mi_green);
+            }
+        }
 
         private void SetColorScheme(MenuItem sender)
         {
-			if(sender == mi_default)
+            if(sender == mi_default)
             {
-				_win.ColorScheme = ColorScheme = _defaultColorScheme;
-				UserSettings.ConsoleColorScheme = "default";
-			}
-
-			if (sender == mi_green)
-			{
-				_win.ColorScheme = ColorScheme = _greenColorScheme;
-				UserSettings.ConsoleColorScheme = "green";
-			}
-
-			foreach(var mi in new[] {mi_default , mi_green })
-            {
-				mi.Checked = mi == sender;
+                _win.ColorScheme = ColorScheme = _defaultColorScheme;
+                UserSettings.ConsoleColorScheme = "default";
             }
 
-			_win.SetNeedsDisplay();
-		}
+            if (sender == mi_green)
+            {
+                _win.ColorScheme = ColorScheme = _greenColorScheme;
+                UserSettings.ConsoleColorScheme = "green";
+            }
+
+            foreach(var mi in new[] {mi_default , mi_green })
+            {
+                mi.Checked = mi == sender;
+            }
+
+            _win.SetNeedsDisplay();
+        }
 
         private void _treeView_ObjectActivated(ObjectActivatedEventArgs<object> obj)
         {
-			Menu();
-		}
+            Menu();
+        }
 
         private string AspectGetter(object model)
-		{
-			if (model is IContainer container)
+        {
+            if (model is IContainer container)
             {
-				return $"{container} ({container.Operation})"; 
-			}
-
-			if (model is CohortAggregateContainer setContainer)
-			{
-				return $"{setContainer} ({setContainer.Operation})";
-			}
-
-			if (model is ExtractionInformation ei)
-			{
-				return $"{ei} ({ei.ExtractionCategory})";
-			}
-
-			if ( model is CatalogueItemsNode cin)
-            {
-				return $"{cin} ({cin.CatalogueItems.Length})";
+                return $"{container} ({container.Operation})"; 
             }
 
-			if (model is TableInfoServerNode server)
-			{
-				return $"{server.ServerName} ({server.DatabaseType})";
-			}
-
-			if (model is IDisableable d)
+            if (model is CohortAggregateContainer setContainer)
             {
-				return d.IsDisabled ? d.ToString() + " (Disabled)" : d.ToString();
+                return $"{setContainer} ({setContainer.Operation})";
             }
 
-			if (model is IArgument arg)
-			{
-				return $"{arg} ({(string.IsNullOrWhiteSpace(arg.Value) ? "Null" : arg.Value)})";
-			}
-			return model?.ToString() ?? "Null Object";
+            if (model is ExtractionInformation ei)
+            {
+                return $"{ei} ({ei.ExtractionCategory})";
+            }
+
+            if ( model is CatalogueItemsNode cin)
+            {
+                return $"{cin} ({cin.CatalogueItems.Length})";
+            }
+
+            if (model is TableInfoServerNode server)
+            {
+                return $"{server.ServerName} ({server.DatabaseType})";
+            }
+
+            if (model is IDisableable d)
+            {
+                return d.IsDisabled ? d.ToString() + " (Disabled)" : d.ToString();
+            }
+
+            if (model is IArgument arg)
+            {
+                return $"{arg} ({(string.IsNullOrWhiteSpace(arg.Value) ? "Null" : arg.Value)})";
+            }
+            return model?.ToString() ?? "Null Object";
         }
 
         private void Publish()
         {
-			var obj = GetObjectIfAnyBehind(_treeView.SelectedObject);
+            var obj = GetObjectIfAnyBehind(_treeView.SelectedObject);
 
-			if(obj != null)
-	            _activator.Publish(obj);
-			else
+            if(obj != null)
+                _activator.Publish(obj);
+            else
             {
-				// Selected node is not refreshable
+                // Selected node is not refreshable
 
-				//refresh any object (to update core child provider)
-				var anyObject = _activator.CoreChildProvider.GetAllSearchables().Keys.FirstOrDefault();
+                //refresh any object (to update core child provider)
+                var anyObject = _activator.CoreChildProvider.GetAllSearchables().Keys.FirstOrDefault();
 
-				if(anyObject != null)
-					_activator.Publish(anyObject);
+                if(anyObject != null)
+                    _activator.Publish(anyObject);
 
-				//and refresh the selected tree node
-				_treeView.RefreshObject(_treeView.SelectedObject,true);
+                //and refresh the selected tree node
+                _treeView.RefreshObject(_treeView.SelectedObject,true);
             }
-				
+                
         }
 
         private void Find()
@@ -243,7 +243,7 @@ namespace Rdmp.Core.CommandLine.Gui
             try
             {
                 var dlg = new ConsoleGuiSelectOne(_activator.CoreChildProvider);
-				
+                
                 if (dlg.ShowDialog())
                 {
                     Show(dlg.Selected);
@@ -258,301 +258,301 @@ namespace Rdmp.Core.CommandLine.Gui
         private void Show(IMapsDirectlyToDatabaseTable selected)
         {
             var desc = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(selected);
-			
-			// In main RDMP, Projects are root level items so have no descendancy.  But in the console
-			// gui we have a root category so give it a descendancy now so that expansion works properly
-			if(selected is IProject)
+            
+            // In main RDMP, Projects are root level items so have no descendancy.  But in the console
+            // gui we have a root category so give it a descendancy now so that expansion works properly
+            if(selected is IProject)
             {
-				desc = new DescendancyList(Projects);
-			}
-
-			if(desc == null)
-				return;
-
-			// In the main RDMP, we have a specific node for these but in console gui we have a text 
-			// category, fix the descendency for these objects
-			if(desc.Parents.Length  > 0 && desc.Parents[0] is AllCohortsNode)
-            {
-				desc.Parents[0] = BuiltCohorts;
-			}
-
-			if(desc.Parents.Any())
-            {
-				var topLevelCategory = GetRootCategoryOf(desc.Parents[0]);
-
-				if(topLevelCategory != null)
-					_treeView.Expand(topLevelCategory);
+                desc = new DescendancyList(Projects);
             }
 
-			foreach(var p in desc.Parents)
-				_treeView.Expand(p);
+            if(desc == null)
+                return;
 
-			_treeView.SelectedObject = selected;
-			_treeView.ScrollOffsetVertical = _treeView.GetScrollOffsetOf(selected)-1;
-			_treeView.SetNeedsDisplay();
+            // In the main RDMP, we have a specific node for these but in console gui we have a text 
+            // category, fix the descendency for these objects
+            if(desc.Parents.Length  > 0 && desc.Parents[0] is AllCohortsNode)
+            {
+                desc.Parents[0] = BuiltCohorts;
+            }
+
+            if(desc.Parents.Any())
+            {
+                var topLevelCategory = GetRootCategoryOf(desc.Parents[0]);
+
+                if(topLevelCategory != null)
+                    _treeView.Expand(topLevelCategory);
+            }
+
+            foreach(var p in desc.Parents)
+                _treeView.Expand(p);
+
+            _treeView.SelectedObject = selected;
+            _treeView.ScrollOffsetVertical = _treeView.GetScrollOffsetOf(selected)-1;
+            _treeView.SetNeedsDisplay();
         }
 
         private void _treeView_SelectionChanged(object sender, SelectionChangedEventArgs<object> e)
         {
-			if(e.NewValue != null)
-	            _treeView.RefreshObject(e.NewValue);
+            if(e.NewValue != null)
+                _treeView.RefreshObject(e.NewValue);
         }
 
         private void Menu()
         {
-			var commands = GetCommands().ToArray();
+            var commands = GetCommands().ToArray();
 
-			foreach(var gotoCommands in commands.OfType<ExecuteCommandShow>())
+            foreach(var gotoCommands in commands.OfType<ExecuteCommandShow>())
             {
-				gotoCommands.FetchDestinationObjects();
-				gotoCommands.OverrideCommandName = "Go To:" + gotoCommands.OverrideCommandName;
+                gotoCommands.FetchDestinationObjects();
+                gotoCommands.OverrideCommandName = "Go To:" + gotoCommands.OverrideCommandName;
             }
-			
-			// only show viable commands
-			commands = commands.Where(c=>!c.IsImpossible).ToArray();
+            
+            // only show viable commands
+            commands = commands.Where(c=>!c.IsImpossible).ToArray();
 
-			if(!commands.Any())
-				return;
-			
-			var maxWidth = commands.Max(c=>c.GetCommandName().Length + 4);
-			var windowWidth = maxWidth + 8;
-			var windowHeight = commands.Length + 5;
+            if(!commands.Any())
+                return;
+            
+            var maxWidth = commands.Max(c=>c.GetCommandName().Length + 4);
+            var windowWidth = maxWidth + 8;
+            var windowHeight = commands.Length + 5;
 
-			var btnCancel = new Button("Cancel");
-			btnCancel.Clicked += ()=>Application.RequestStop();
+            var btnCancel = new Button("Cancel");
+            btnCancel.Clicked += ()=>Application.RequestStop();
 
             var dlg = new Dialog("Menu",windowWidth,windowHeight,btnCancel);
-					
-			for(int i=0 ; i < commands.Length;i++)
+                    
+            for(int i=0 ; i < commands.Length;i++)
             {
-				var cmd = commands[i];
-				var btn = new Button(cmd.GetCommandName());
-				
-				btn.Clicked += ()=>{
-					Application.RequestStop();
+                var cmd = commands[i];
+                var btn = new Button(cmd.GetCommandName());
+                
+                btn.Clicked += ()=>{
+                    Application.RequestStop();
                     try
                     {
-						if(cmd.IsImpossible)
-							_activator.Show("Cannot run command because:" + Environment.NewLine + cmd.ReasonCommandImpossible);
-						else
-							cmd.Execute();
+                        if(cmd.IsImpossible)
+                            _activator.Show("Cannot run command because:" + Environment.NewLine + cmd.ReasonCommandImpossible);
+                        else
+                            cmd.Execute();
                     }
                     catch (Exception ex)
                     {
-						_activator.ShowException("Command Failed",ex);
+                        _activator.ShowException("Command Failed",ex);
                     }
-					
-					};
+                    
+                    };
 
-				var buttonWidth = maxWidth + 4;
+                var buttonWidth = maxWidth + 4;
 
-				btn.X = (windowWidth/2) - (buttonWidth/2) - 1 /*window border*/;
-				btn.Y = i;
-				btn.Width = buttonWidth;
-				btn.TextAlignment = TextAlignment.Centered;
-				
-				dlg.Add(btn);
+                btn.X = (windowWidth/2) - (buttonWidth/2) - 1 /*window border*/;
+                btn.Y = i;
+                btn.Width = buttonWidth;
+                btn.TextAlignment = TextAlignment.Centered;
+                
+                dlg.Add(btn);
             }
 
-			Application.Run(dlg);
+            Application.Run(dlg);
         }
 
         private IEnumerable<IAtomicCommand> GetCommands()
-		{
-			var factory = new AtomicCommandFactory(_activator);
+        {
+            var factory = new AtomicCommandFactory(_activator);
 
-			var many = _treeView.GetAllSelectedObjects().ToArray();
+            var many = _treeView.GetAllSelectedObjects().ToArray();
 
-			if(many.Length > 1)
+            if(many.Length > 1)
             {
-				return factory.GetManyObjectCommandsWithPresentation(many).Select(p=>p.Command).ToArray();
-			}
+                return factory.GetManyObjectCommandsWithPresentation(many).Select(p=>p.Command).ToArray();
+            }
 
-			var o = _treeView.SelectedObject;
+            var o = _treeView.SelectedObject;
 
-			if(ReferenceEquals(o,  Catalogues))
+            if(ReferenceEquals(o,  Catalogues))
             {
-				return new IAtomicCommand[] {
-					new ExecuteCommandCreateNewCatalogueByImportingFile(_activator),
-					new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator),
-				};
-			}
-			if (ReferenceEquals(o, Loads))
-			{
-				return new IAtomicCommand[] {
-					new ExecuteCommandCreateNewLoadMetadata(_activator),
-				};
-			}
-			if (ReferenceEquals(o, Projects))
-			{
-				return new IAtomicCommand[] {
-					new ExecuteCommandNewObject(_activator,typeof(Project)){OverrideCommandName = "New Project" }
-				};
-			}
-			if (ReferenceEquals(o, CohortConfigs))
-			{
-				return new IAtomicCommand[] {
-					new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator)
-				};
-			}
+                return new IAtomicCommand[] {
+                    new ExecuteCommandCreateNewCatalogueByImportingFile(_activator),
+                    new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator),
+                };
+            }
+            if (ReferenceEquals(o, Loads))
+            {
+                return new IAtomicCommand[] {
+                    new ExecuteCommandCreateNewLoadMetadata(_activator),
+                };
+            }
+            if (ReferenceEquals(o, Projects))
+            {
+                return new IAtomicCommand[] {
+                    new ExecuteCommandNewObject(_activator,typeof(Project)){OverrideCommandName = "New Project" }
+                };
+            }
+            if (ReferenceEquals(o, CohortConfigs))
+            {
+                return new IAtomicCommand[] {
+                    new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator)
+                };
+            }
 
-			if (o == null)
-				return new IAtomicCommand[0];
+            if (o == null)
+                return new IAtomicCommand[0];
 
-			return
-				GetExtraCommands(o).Union(factory.CreateCommands(o));
+            return
+                GetExtraCommands(o).Union(factory.CreateCommands(o));
         }
 
         private IEnumerable<IAtomicCommand> GetExtraCommands(object o)
         {
             if(CommandFactoryBase.Is(o, out LoadMetadata lmd))
             {
-				yield return new ExecuteCommandRunConsoleGuiView(_activator, 
-					() => new RunDleWindow(_activator, lmd)){ OverrideCommandName = "Execute Load..." };
-			}
+                yield return new ExecuteCommandRunConsoleGuiView(_activator, 
+                    () => new RunDleWindow(_activator, lmd)){ OverrideCommandName = "Execute Load..." };
+            }
 
-			if (CommandFactoryBase.Is(o, out Project p))
-			{
-				yield return new ExecuteCommandRunConsoleGuiView(_activator,
-					() => new RunReleaseWindow(_activator,p))
-				{ OverrideCommandName = "Release..." };
-			}
-			if (CommandFactoryBase.Is(o, out ExtractionConfiguration ec))
-			{
-				yield return new ExecuteCommandRunConsoleGuiView(_activator,
-					() => new RunReleaseWindow(_activator, ec))
-				{ OverrideCommandName = "Release..." };
-
-				yield return new ExecuteCommandRunConsoleGuiView(_activator,
-					() => new RunExtractionWindow(_activator, ec))
-				{ OverrideCommandName = "Extract..." };
-			}
-
-			if(CommandFactoryBase.Is(o, out CacheProgress cp))
-			{
-				yield return new ExecuteCommandRunConsoleGuiView(_activator,
-					() => new RunCacheWindow(_activator, cp))
-				{ OverrideCommandName = "Run Cache..." };
-			}
-
-			if(CommandFactoryBase.Is(o, out Catalogue c))
+            if (CommandFactoryBase.Is(o, out Project p))
             {
-				yield return new ExecuteCommandRunConsoleGuiView(_activator,
-					() => new RunDataQualityEngineWindow(_activator, c))
-				{ OverrideCommandName = "Run DQE..." };
-			}
-		}
+                yield return new ExecuteCommandRunConsoleGuiView(_activator,
+                    () => new RunReleaseWindow(_activator,p))
+                { OverrideCommandName = "Release..." };
+            }
+            if (CommandFactoryBase.Is(o, out ExtractionConfiguration ec))
+            {
+                yield return new ExecuteCommandRunConsoleGuiView(_activator,
+                    () => new RunReleaseWindow(_activator, ec))
+                { OverrideCommandName = "Release..." };
+
+                yield return new ExecuteCommandRunConsoleGuiView(_activator,
+                    () => new RunExtractionWindow(_activator, ec))
+                { OverrideCommandName = "Extract..." };
+            }
+
+            if(CommandFactoryBase.Is(o, out CacheProgress cp))
+            {
+                yield return new ExecuteCommandRunConsoleGuiView(_activator,
+                    () => new RunCacheWindow(_activator, cp))
+                { OverrideCommandName = "Run Cache..." };
+            }
+
+            if(CommandFactoryBase.Is(o, out Catalogue c))
+            {
+                yield return new ExecuteCommandRunConsoleGuiView(_activator,
+                    () => new RunDataQualityEngineWindow(_activator, c))
+                { OverrideCommandName = "Run DQE..." };
+            }
+        }
 
         private void treeView_KeyPress(View.KeyEventEventArgs obj)
         {
-			if(!_treeView.CanFocus || !_treeView.HasFocus)
+            if(!_treeView.CanFocus || !_treeView.HasFocus)
             {
-				return;
+                return;
             }
 
             try
             {
-				switch(obj.KeyEvent.Key)
-				{
-					case Key.DeleteChar :
-						var many = _treeView.GetAllSelectedObjects().ToArray();
+                switch(obj.KeyEvent.Key)
+                {
+                    case Key.DeleteChar :
+                        var many = _treeView.GetAllSelectedObjects().ToArray();
 
-						//delete many at once?
-						if(many.Length > 1)
+                        //delete many at once?
+                        if(many.Length > 1)
                         {
-							if (many.Cast<object>().All(d => d is IDeleteable))
-							{
-								var cmd = new ExecuteCommandDelete(_activator, many.Cast<IDeleteable>().ToArray());
-								if(!cmd.IsImpossible)
+                            if (many.Cast<object>().All(d => d is IDeleteable))
+                            {
+                                var cmd = new ExecuteCommandDelete(_activator, many.Cast<IDeleteable>().ToArray());
+                                if(!cmd.IsImpossible)
                                 {
-									cmd.Execute();
+                                    cmd.Execute();
                                 }
-								else
+                                else
                                 {
-									_activator.Show("Cannot Delete", cmd.ReasonCommandImpossible);
+                                    _activator.Show("Cannot Delete", cmd.ReasonCommandImpossible);
                                 }
-							}
-						}
-						else
-						if(_treeView.SelectedObject is IDeleteable d)
+                            }
+                        }
+                        else
+                        if(_treeView.SelectedObject is IDeleteable d)
                         {
-							// it is a single object selection
-							_activator.DeleteWithConfirmation(d);
-						}							
+                            // it is a single object selection
+                            _activator.DeleteWithConfirmation(d);
+                        }							
 
-						obj.Handled = true;
-						break;
-				}
+                        obj.Handled = true;
+                        break;
+                }
             }
             catch (Exception ex)
             {
-				_activator.ShowException("Error",ex);
+                _activator.ShowException("Error",ex);
             }
         }
 
         private IMapsDirectlyToDatabaseTable GetObjectIfAnyBehind(object o)
         {
-			if(o is IMasqueradeAs masquerade)
-				return masquerade.MasqueradingAs() as IMapsDirectlyToDatabaseTable;
-			
-			return o as IMapsDirectlyToDatabaseTable;
+            if(o is IMasqueradeAs masquerade)
+                return masquerade.MasqueradingAs() as IMapsDirectlyToDatabaseTable;
+            
+            return o as IMapsDirectlyToDatabaseTable;
         }
 
 
         private IEnumerable<object> ChildGetter(object model)
         {
-			return ChildGetterUnordered(model).OrderBy(o=>o,new OrderableComparer(null));
+            return ChildGetterUnordered(model).OrderBy(o=>o,new OrderableComparer(null));
         }
 
 
         private IEnumerable<object> ChildGetterUnordered(object model)
         {
-			
-			var dx = _activator.CoreChildProvider as DataExportChildProvider;
+            
+            var dx = _activator.CoreChildProvider as DataExportChildProvider;
 
             try
             {
-				// Top level brackets for the tree view
-				if (ReferenceEquals(model , Catalogues))
-					return new []{CatalogueFolder.Root };
-				
-				if (ReferenceEquals(model , Projects)  && dx != null)
-					return dx.Projects;
-				
-				if (ReferenceEquals(model , Loads))
-					return _activator.CoreChildProvider.AllLoadMetadatas;
-				
-				if (ReferenceEquals(model , CohortConfigs))
-					if(dx != null)
+                // Top level brackets for the tree view
+                if (ReferenceEquals(model , Catalogues))
+                    return new []{CatalogueFolder.Root };
+                
+                if (ReferenceEquals(model , Projects)  && dx != null)
+                    return dx.Projects;
+                
+                if (ReferenceEquals(model , Loads))
+                    return _activator.CoreChildProvider.AllLoadMetadatas;
+                
+                if (ReferenceEquals(model , CohortConfigs))
+                    if(dx != null)
                     {
-						return new object[]{
-							dx.AllProjectCohortIdentificationConfigurationsNode,
-							dx.AllFreeCohortIdentificationConfigurationsNode 
-							};
+                        return new object[]{
+                            dx.AllProjectCohortIdentificationConfigurationsNode,
+                            dx.AllFreeCohortIdentificationConfigurationsNode 
+                            };
                     }
-					else
-						return _activator.CoreChildProvider.AllCohortIdentificationConfigurations;
-				
-				if (ReferenceEquals(model , BuiltCohorts) && dx != null)
-					return dx.CohortSources;
+                    else
+                        return _activator.CoreChildProvider.AllCohortIdentificationConfigurations;
+                
+                if (ReferenceEquals(model , BuiltCohorts) && dx != null)
+                    return dx.CohortSources;
 
-				if(ReferenceEquals(model,Other))
-					return GetOtherCategoryChildren();
+                if(ReferenceEquals(model,Other))
+                    return GetOtherCategoryChildren();
 
-				//sub brackets
-			    return _activator.CoreChildProvider.GetChildren(model) ?? new object[0];
+                //sub brackets
+                return _activator.CoreChildProvider.GetChildren(model) ?? new object[0];
             }
             catch (Exception ex)
             {
-				_activator.ShowException("Error getting node children",ex);
-				return new object[0];
+                _activator.ShowException("Error getting node children",ex);
+                return new object[0];
             }
         }
 
         private IEnumerable<object> GetOtherCategoryChildren()
         {
             yield return _activator.CoreChildProvider.AllDashboardsNode;
-			yield return _activator.CoreChildProvider.AllGovernanceNode;
+            yield return _activator.CoreChildProvider.AllGovernanceNode;
             yield return _activator.CoreChildProvider.AllRDMPRemotesNode;
             yield return _activator.CoreChildProvider.AllObjectSharingNode;
             yield return _activator.CoreChildProvider.AllPipelinesNode;
@@ -572,26 +572,26 @@ namespace Rdmp.Core.CommandLine.Gui
         /// <returns></returns>
         private string GetRootCategoryOf(object o)
         {
-			var type = o.GetType();
+            var type = o.GetType();
 
-			if(type == typeof(CatalogueFolder))
-				return Catalogues;
-			if(type == typeof(Project))
-				return Projects;
-			if(type == typeof(LoadMetadata))	
-				return Loads;
-			if (type == typeof(AllLoadMetadatasNode))
-				return Loads;
-			if (type == typeof(CohortIdentificationConfiguration))	
-				return CohortConfigs;
-			if(type == typeof(ExtractableCohort))
-				return BuiltCohorts;
-			if (GetOtherCategoryChildren().Any(a=>a.Equals(o)))
-				return Other;
+            if(type == typeof(CatalogueFolder))
+                return Catalogues;
+            if(type == typeof(Project))
+                return Projects;
+            if(type == typeof(LoadMetadata))	
+                return Loads;
+            if (type == typeof(AllLoadMetadatasNode))
+                return Loads;
+            if (type == typeof(CohortIdentificationConfiguration))	
+                return CohortConfigs;
+            if(type == typeof(ExtractableCohort))
+                return BuiltCohorts;
+            if (GetOtherCategoryChildren().Any(a=>a.Equals(o)))
+                return Other;
 
-			return null;
+            return null;
         }
-		private void Run()
+        private void Run()
         {
             var commandInvoker = new CommandInvoker(_activator);
             commandInvoker.CommandImpossible += (o, e) => { _activator.Show("Command Impossible because:" + e.Command.ReasonCommandImpossible);};
@@ -611,7 +611,7 @@ namespace Rdmp.Core.CommandLine.Gui
         }
         private void New()
         {
-			var commandInvoker = new CommandInvoker(_activator);
+            var commandInvoker = new CommandInvoker(_activator);
             commandInvoker.CommandImpossible += (o, e) => { _activator.Show("Command Impossible because:" + e.Command.ReasonCommandImpossible);};
             
             try
