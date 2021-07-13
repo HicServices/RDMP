@@ -56,6 +56,12 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
 
 
                         var cmd = new ExecuteCommandSet(_activator, DatabaseObject, p.PropertyInfo);
+                        if(cmd.IsImpossible)
+                        {
+                            _activator.Show("Error",cmd.ReasonCommandImpossible);
+                            return;
+                        }
+
                         cmd.Execute();
 
                         if (cmd.Success)
