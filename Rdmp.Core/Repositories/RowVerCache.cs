@@ -66,7 +66,7 @@ namespace Rdmp.Core.Repositories
         CT.ID
     FROM  
         CHANGETABLE(CHANGES Catalogue, @last_synchronization_version) AS CT  
-	    WHERE SYS_CHANGE_OPERATION = 'D'
+        WHERE SYS_CHANGE_OPERATION = 'D'
 
         */
 
@@ -76,7 +76,7 @@ namespace Rdmp.Core.Repositories
                         CT.ID
                             FROM  
         CHANGETABLE(CHANGES {typeof(T).Name}, {_changeTracking}) AS CT  
-	    WHERE SYS_CHANGE_OPERATION = 'D'";
+        WHERE SYS_CHANGE_OPERATION = 'D'";
 
                         using (var cmd = _repository.DiscoveredServer.GetCommand(sql, con))
                         using (var r = cmd.ExecuteReader())

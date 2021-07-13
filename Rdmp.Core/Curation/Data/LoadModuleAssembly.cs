@@ -38,8 +38,8 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         public Byte[] Bin
         {
-	        get { return _bin;}
-	        set { SetField(ref _bin,value);}
+            get { return _bin;}
+            set { SetField(ref _bin,value);}
         }
         
         /// <summary>
@@ -47,8 +47,8 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         public string Committer
         {
-	        get { return _committer;}
-	        set { SetField(ref _committer,value);}
+            get { return _committer;}
+            set { SetField(ref _committer,value);}
         }
 
         /// <summary>
@@ -56,8 +56,8 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         public DateTime UploadDate
         {
-	        get { return _uploadDate;}
-	        set { SetField(ref _uploadDate,value);}
+            get { return _uploadDate;}
+            set { SetField(ref _uploadDate,value);}
         }
         
         /// <summary>
@@ -66,8 +66,8 @@ namespace Rdmp.Core.Curation.Data
         [Relationship(typeof(Plugin), RelationshipType.SharedObject)]
         public int Plugin_ID
         {
-	        get { return _plugin_ID;}
-	        set { SetField(ref _plugin_ID,value);}
+            get { return _plugin_ID;}
+            set { SetField(ref _plugin_ID,value);}
         }
 
         #endregion

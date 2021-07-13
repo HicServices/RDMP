@@ -317,7 +317,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             sql += @",
 CONSTRAINT PK_" + TableName+ @" PRIMARY KEY CLUSTERED 
 (
-	    "+identifiableColumnName+@" ASC
+        "+identifiableColumnName+@" ASC
 ),
 CONSTRAINT AK_" + TableName + @" UNIQUE(" + anonymousColumnName + @")
 )";

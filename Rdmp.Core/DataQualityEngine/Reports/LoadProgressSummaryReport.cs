@@ -372,7 +372,7 @@ BEGIN
     set @value = SUBSTRING(@Columns +',', @pos, @len)
         
     --We are constructing a version that turns: '[fish],[lama]' into 'ISNULL([fish],0) as [fish], ISNULL([lama],0) as [lama]'
-	SET @FinalSelectList = @FinalSelectList + ', ISNULL(' + @value  + ',0) as ' + @value 
+    SET @FinalSelectList = @FinalSelectList + ', ISNULL(' + @value  + ',0) as ' + @value 
 
     set @pos = CHARINDEX(',', @Columns +',', @pos+@len) +1
 END
@@ -413,8 +413,8 @@ CONVERT(varchar(4),Year) + ''-'' + CONVERT(varchar(2),Month),
 [PeriodicityState].[Month]) s
 PIVOT
 (
-	sum(MyCount)
-	for CatalogueID in ('+@Columns+') --The dynamic Column list we just fetched at top of query
+    sum(MyCount)
+    for CatalogueID in ('+@Columns+') --The dynamic Column list we just fetched at top of query
 ) piv
 ORDER BY
 Year,

@@ -324,11 +324,11 @@ namespace Rdmp.Core
                 try
                 {
                     // Setup the input
-			        using(var input = new StreamReader(yaml))
+                    using(var input = new StreamReader(yaml))
                     {
                         // Load the stream
-			            var yamlStream = new YamlStream();
-			            yamlStream.Load(input);
+                        var yamlStream = new YamlStream();
+                        yamlStream.Load(input);
                     
                         // Examine the stream
                         var mapping = (YamlMappingNode)yamlStream.Documents[0].RootNode;

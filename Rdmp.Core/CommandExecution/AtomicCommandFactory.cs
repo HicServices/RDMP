@@ -492,8 +492,8 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandDisableOrEnable(_activator, disable));
 
             // If the root object is deletable offer deleting
-			if(Is(o,out IDeleteable deletable))
-				yield return new CommandPresentation(new ExecuteCommandDelete(_activator,deletable)){SuggestedShortcut="Delete" };
+            if(Is(o,out IDeleteable deletable))
+                yield return new CommandPresentation(new ExecuteCommandDelete(_activator,deletable)){SuggestedShortcut="Delete" };
                       
             if(Is(o, out ReferenceOtherObjectDatabaseEntity reference))
                 yield return new CommandPresentation(new ExecuteCommandShowRelatedObject(_activator,reference));

@@ -20,8 +20,8 @@ namespace Rdmp.Core.Repositories
 {
     /// <summary>
     /// Pointer to the Data Qualilty Engine Repository database in which all DatabaseEntities related to Data Quality Engine runs are stored (e.g. Evaluation).  Every 
-	/// DatabaseEntity class must exist in a Microsoft Sql Server Database (See DatabaseEntity) and each object is compatible only with a specific type of TableRepository
-	///	(i.e. the database that contains the table matching their name).
+    /// DatabaseEntity class must exist in a Microsoft Sql Server Database (See DatabaseEntity) and each object is compatible only with a specific type of TableRepository
+    ///	(i.e. the database that contains the table matching their name).
     /// 
     /// <para>This class allows you to fetch objects and should be passed into constructors of classes you want to construct in the Data Quality database.</para>
     /// 

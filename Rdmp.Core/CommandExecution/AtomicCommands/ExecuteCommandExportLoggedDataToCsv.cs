@@ -56,7 +56,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
                     string sql = String.Format(@"SELECT * FROM (
 SELECT [dataLoadRunID]
-	  ,eventType
+      ,eventType
       ,[description]
       ,[source]
       ,[time]
@@ -65,7 +65,7 @@ SELECT [dataLoadRunID]
   {2}
 UNION
 SELECT [dataLoadRunID]
-	  ,'OnError'
+      ,'OnError'
       ,[description]
       ,[source]
       ,[time]

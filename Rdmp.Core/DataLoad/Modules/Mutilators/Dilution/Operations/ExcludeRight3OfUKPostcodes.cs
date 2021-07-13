@@ -60,8 +60,8 @@ GO
 
 CREATE FUNCTION Left4OfPostcodes
 (
-	-- Add the parameters for the function here
-	@str varchar(max)
+    -- Add the parameters for the function here
+    @str varchar(max)
 )
 RETURNS varchar(4)
 AS

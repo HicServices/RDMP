@@ -19,29 +19,29 @@ namespace Rdmp.Core.Curation.Data
     /// </summary>
     public class WindowLayout: DatabaseEntity,INamed
     {
-	    #region Database Properties
+        #region Database Properties
 
-	    private string _name;
-	    private string _layoutData;
-	    #endregion
+        private string _name;
+        private string _layoutData;
+        #endregion
 
         /// <inheritdoc/>
         [NotNull]
         [Unique]
         public string Name
-	    {
-		    get { return _name;}
-		    set { SetField(ref _name, value);}
-	    }
+        {
+            get { return _name;}
+            set { SetField(ref _name, value);}
+        }
 
         /// <summary>
         /// The Xml representation of the window layout being (e.g. what tabs are open, objects pinned etc)
         /// </summary>
-	    public string LayoutData
-	    {
-		    get { return _layoutData;}
-		    set { SetField(ref _layoutData, value);}
-	    }
+        public string LayoutData
+        {
+            get { return _layoutData;}
+            set { SetField(ref _layoutData, value);}
+        }
 
         /// <summary>
         /// Record the new layout in the database
@@ -62,11 +62,11 @@ namespace Rdmp.Core.Curation.Data
         }
 
         /// <inheritdoc/>
-	    public WindowLayout(ICatalogueRepository repository, DbDataReader r): base(repository, r)
-	    {
-		    Name = r["Name"].ToString();
-		    LayoutData = r["LayoutData"].ToString();
-	    }
+        public WindowLayout(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+        {
+            Name = r["Name"].ToString();
+            LayoutData = r["LayoutData"].ToString();
+        }
 
         /// <inheritdoc/>
         public override string ToString()

@@ -14,7 +14,7 @@ namespace Rdmp.Core.Tests.DataExport.DataAccess
 {
     public class SelectedColumnsTests:DatabaseTests
     {
-		//Simple test SelectedColumns in which an extraction configuration is built for a test dataset with a single column configured for extraction
+        //Simple test SelectedColumns in which an extraction configuration is built for a test dataset with a single column configured for extraction
         [Test]
         public void CreateAndAssociateColumns()
         {

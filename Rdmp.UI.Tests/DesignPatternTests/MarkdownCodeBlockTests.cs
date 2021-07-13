@@ -269,7 +269,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                 public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target, InsertOption insertOption = InsertOption.Default)
                 {
                     var sourceCatalogueCombineable = cmd as CatalogueCombineable;
-	    
+        
                     if(sourceCatalogueCombineable != null)
                         return new ExecuteCommandDelete(ItemActivator,sourceCatalogueCombineable.Catalogue);
 

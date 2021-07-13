@@ -11,14 +11,14 @@ using Rdmp.UI.Logging;
 namespace Rdmp.UI.Tests.LogViewer
 {
     public class LoggingTabUITests :UITests
-	{
-		[Test,UITimeout(20000)]
-		public void Test_LoggingTabUI_Constructor()
-		{
-			var o = WhenIHaveA<ExternalDatabaseServer>();
-			var ui = AndLaunch<LoggingTabUI>(o);
-			Assert.IsNotNull(ui);
-		    AssertErrorWasShown(ExpectedErrorType.KilledForm,"Database My Server did not exist");
-		}
-	}
+    {
+        [Test,UITimeout(20000)]
+        public void Test_LoggingTabUI_Constructor()
+        {
+            var o = WhenIHaveA<ExternalDatabaseServer>();
+            var ui = AndLaunch<LoggingTabUI>(o);
+            Assert.IsNotNull(ui);
+            AssertErrorWasShown(ExpectedErrorType.KilledForm,"Database My Server did not exist");
+        }
+    }
 }
