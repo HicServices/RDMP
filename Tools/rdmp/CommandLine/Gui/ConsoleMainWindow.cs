@@ -456,9 +456,10 @@ namespace Rdmp.Core.CommandLine.Gui
                 {
                     case Key.DeleteChar :
                         var many = _treeView.GetAllSelectedObjects().ToArray();
+                        obj.Handled = true;
 
                         //delete many at once?
-                        if(many.Length > 1)
+                        if (many.Length > 1)
                         {
                             if (many.Cast<object>().All(d => d is IDeleteable))
                             {
@@ -480,7 +481,6 @@ namespace Rdmp.Core.CommandLine.Gui
                             _activator.DeleteWithConfirmation(d);
                         }							
 
-                        obj.Handled = true;
                         break;
                 }
             }

@@ -416,7 +416,7 @@ namespace Rdmp.Core.Curation.Data
         }
 
         /// <inheritdoc/>
-        [Relationship(typeof(ExtractionInformation), RelationshipType.IgnoreableLocalReference)] //todo do we want to share this?
+        [Relationship(typeof(ExtractionInformation), RelationshipType.IgnoreableLocalReference, ValueGetter = nameof(GetAllExtractionInformation))] //todo do we want to share this?
         [DoNotExtractProperty]
         public int? TimeCoverage_ExtractionInformation_ID
         {
@@ -426,7 +426,7 @@ namespace Rdmp.Core.Curation.Data
 
         /// <inheritdoc/>
         [DoNotExtractProperty]
-        [Relationship(typeof(ExtractionInformation), RelationshipType.IgnoreableLocalReference)] 
+        [Relationship(typeof(ExtractionInformation), RelationshipType.IgnoreableLocalReference, ValueGetter=nameof(GetAllExtractionInformation))] 
         public int? PivotCategory_ExtractionInformation_ID
         {
             get { return _pivotCategoryExtractionInformationID; }
@@ -1170,6 +1170,12 @@ namespace Rdmp.Core.Curation.Data
                 default:
                     throw new ArgumentOutOfRangeException("fetch");
             }
+        }
+
+        /// <inheritdoc/>
+        public ExtractionInformation[] GetAllExtractionInformation()
+        {
+            return GetAllExtractionInformation(ExtractionCategory.Any);
         }
 
         /// <inheritdoc/>

@@ -26,13 +26,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed a bug creating a cohort without specifying a Project from the console
 - Fixed bug where searching in console gui could be slow or miss keystrokes
 - Fixed bug in console gui where GoTo Project or Cohort would not highlight the correct item
+- Fixed bug in console gui where delete key was not handled resulting in a loop if errors occurred trying to delete the object
 
 ### Added
 
 - Added user setting for filtering table load logs where there are 0 inserts,updates and deletes
 - Added support for specifying datatype when calling `ExecuteCommandAlterColumnType`
 - Pipeline and DLE components with object list arguments now show the previously selected items in the 'Select Object(s)' popup
-
+- Pressing 'delete' key in console gui edit window now offers to set value of property to null
+- Editing a foreign key property (e.g. `PivotCategory_ExtractionInformation_ID`) now shows objects rather than asking for an `int` value directly
+- Fatal errrors in console gui now get logged by NLog (e.g. to console/file)
 
 ## [5.0.3] - 2021-06-17
 
