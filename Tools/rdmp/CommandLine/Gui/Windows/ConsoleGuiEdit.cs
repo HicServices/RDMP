@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using MapsDirectlyToDatabaseTable;
@@ -17,6 +18,9 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
     class ConsoleGuiEdit : Window
     {
         private readonly IBasicActivateItems _activator;
+        private List<PropertyInListView> collection;
+        private ListView list;
+
         public IMapsDirectlyToDatabaseTable DatabaseObject { get; }
 
         public ConsoleGuiEdit(IBasicActivateItems activator, IMapsDirectlyToDatabaseTable databaseObject)
@@ -25,18 +29,19 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
             DatabaseObject = databaseObject;
 
             ColorScheme = ConsoleMainWindow.ColorScheme;
-            var collection =
+            collection =
 
                 TableRepository.GetPropertyInfos(DatabaseObject.GetType())
                     .Select(p => new PropertyInListView(p, DatabaseObject)).ToList();
 
-            var list = new ListView(collection)
+            list = new ListView(collection)
             {
                 X = 0,
                 Y = 0,
                 Width = Dim.Fill(2),
                 Height = Dim.Fill(2)
             };
+            list.KeyPress += List_KeyPress;
 
             var btnSet = new Button("Set")
             {
@@ -48,40 +53,7 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
 
             btnSet.Clicked += () =>
             {
-                if (list.SelectedItem != -1)
-                {
-                    try
-                    {
-                        var p = collection[list.SelectedItem];
-
-
-                        var cmd = new ExecuteCommandSet(_activator, DatabaseObject, p.PropertyInfo);
-                        if(cmd.IsImpossible)
-                        {
-                            _activator.Show("Error",cmd.ReasonCommandImpossible);
-                            return;
-                        }
-
-                        cmd.Execute();
-
-                        if (cmd.Success)
-                        {
-                            
-                            //redraws the list and re selects the current item
-
-                            p.UpdateValue(cmd.NewValue ?? string.Empty);
-                            
-                            var oldSelected = list.SelectedItem;
-                            list.SetSource(collection = collection.ToList());
-                            list.SelectedItem = oldSelected;
-                        }
-                        
-                    }
-                    catch (Exception e)
-                    {
-                        _activator.ShowException("Failed to set Property",e);
-                    }
-                }
+                SetProperty(false);
             };
 
             var btnClose = new Button("Close")
@@ -94,6 +66,59 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
             this.Add(list);
             this.Add(btnSet);
             this.Add(btnClose);
+        }
+
+        private void SetProperty(bool setNull)
+        {
+            if (list.SelectedItem != -1)
+            {
+                try
+                {
+                    var p = collection[list.SelectedItem];
+
+                    var cmd = setNull ? new ExecuteCommandSet(_activator, DatabaseObject, p.PropertyInfo.Name, "null")
+                                      : new ExecuteCommandSet(_activator, DatabaseObject, p.PropertyInfo);
+
+                    if (cmd.IsImpossible)
+                    {
+                        _activator.Show("Error", cmd.ReasonCommandImpossible);
+                        return;
+                    }
+
+                    cmd.Execute();
+
+                    if (cmd.Success)
+                    {
+
+                        //redraws the list and re selects the current item
+
+                        p.UpdateValue(cmd.NewValue ?? string.Empty);
+
+                        var oldSelected = list.SelectedItem;
+                        list.SetSource(collection = collection.ToList());
+                        list.SelectedItem = oldSelected;
+                        list.EnsureSelectedItemVisible();
+                    }
+
+                }
+                catch (Exception e)
+                {
+                    _activator.ShowException("Failed to set Property", e);
+                }
+            }
+        }
+
+        private void List_KeyPress(KeyEventEventArgs obj)
+        {
+            if(obj.KeyEvent.Key == Key.DeleteChar)
+            {
+                int rly = MessageBox.Query("Clear", "Clear Property Value?", "Yes", "Cancel");
+                if(rly == 0)
+                {
+                    obj.Handled = true;
+                    SetProperty(true);
+                }
+            }
         }
 
         /// <summary>
@@ -123,6 +148,21 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
             public void UpdateValue(object newValue)
             {
                 DisplayMember = PropertyInfo.Name + ":" + newValue;
+            }
+        }
+    }
+
+    public static class ListViewExtensions
+    {
+        public static void EnsureSelectedItemVisible(this ListView list)
+        {
+            if (list.SelectedItem < list.TopItem)
+            {
+                list.TopItem = list.SelectedItem;
+            }
+            else if (list.Frame.Height > 0 && list.SelectedItem >= list.TopItem + list.Frame.Height)
+            {
+                list.TopItem = Math.Max(list.SelectedItem - list.Frame.Height + 2, 0);
             }
         }
     }

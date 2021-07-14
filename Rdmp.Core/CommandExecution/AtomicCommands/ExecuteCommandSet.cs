@@ -5,11 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.ImportExport;
@@ -103,12 +105,57 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             
             if(_getValueAtExecuteTime)
             {
-                if(BasicActivator.SelectValueType(_property.Name, _property.PropertyType, _property.GetValue(_setOn), out object chosen))
-                    NewValue = chosen;
-                else
+                bool populatedNewValueWithRelationship = false;
+
+                // If the property we are getting a value for is a foreign key ID field then we should show the user the compatible objects
+                var rel = _property.GetCustomAttribute(typeof(RelationshipAttribute)) as RelationshipAttribute;
+                if(rel != null && (_property.PropertyType == typeof(int) || _property.PropertyType == typeof(int?)))
                 {
-                    Success = false;
-                    return;
+                    if(typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(rel.Cref))
+                    {
+                        IMapsDirectlyToDatabaseTable[] available;
+
+                        // is there a method that can be called to find compatible children for populating this property?
+                        if (!string.IsNullOrWhiteSpace(rel.ValueGetter))
+                        {
+                            //get available from that method
+                            var method = _setOn.GetType().GetMethod(rel.ValueGetter,new Type[0]);
+
+                            if(method == null)
+                            {
+                                throw new Exception($"Could not find a method called '{rel.ValueGetter}' on Type '{_setOn.GetType()}'.  This was specified as a ValueGetter on Property {_property.Name}");
+                            }
+
+                            try
+                            {
+                                available = ((IEnumerable<IMapsDirectlyToDatabaseTable>)method.Invoke(_setOn, null)).ToArray();
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new Exception($"Error running method '{rel.ValueGetter}' on Type '{_setOn.GetType()}'.  This was specified as a ValueGetter on Property {_property.Name}",ex);
+                            }
+                        }
+                        else
+                        {
+                            available = BasicActivator.GetAll(rel.Cref).ToArray();
+                        }
+
+                        NewValue = BasicActivator.SelectOne(_property.Name, available)?.ID;
+                        populatedNewValueWithRelationship = true;
+                    }
+                }
+                
+                if(!populatedNewValueWithRelationship)
+                {
+                    if (BasicActivator.SelectValueType(_property.Name, _property.PropertyType, _property.GetValue(_setOn), out object chosen))
+                    {
+                        NewValue = chosen;
+                    }
+                    else
+                    {
+                        Success = false;
+                        return;
+                    }
                 }
             }
             

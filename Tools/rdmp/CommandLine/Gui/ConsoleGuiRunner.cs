@@ -55,7 +55,8 @@ namespace Rdmp.Core.CommandLine.Gui
             }
             catch (Exception e)
             {
-                _activator.ShowException("Application Crashed",e);
+                LogManager.EnableLogging();
+                LogManager.GetCurrentClassLogger().Error(e, "Application Crashed");
                 top.Running = false;
                 return -1;
             }

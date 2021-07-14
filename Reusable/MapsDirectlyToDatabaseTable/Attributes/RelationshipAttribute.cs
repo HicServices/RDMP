@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace MapsDirectlyToDatabaseTable.Attributes
@@ -27,6 +28,12 @@ namespace MapsDirectlyToDatabaseTable.Attributes
         public string PropertyName { get; set; }
         
         public RelationshipType Type { get; set; }
+
+        /// <summary>
+        /// Optional function name for finding compatible objects to populate this relationship.  When null all objects are considered viable
+        /// Must be a paramaterless method
+        /// </summary>
+        public string ValueGetter { get; set; }
 
         /// <summary>
         /// Declares that the decorated property contains the ID of the specified Type of object

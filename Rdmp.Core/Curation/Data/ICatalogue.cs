@@ -203,6 +203,12 @@ namespace Rdmp.Core.Curation.Data
         /// <returns></returns>
         ExtractionInformation[] GetAllExtractionInformation(ExtractionCategory category);
 
+        /// <summary>
+        /// Overload for <see cref="GetAllExtractionInformation(ExtractionCategory)"/> using <see cref="ExtractionCategory.Any"/>
+        /// </summary>
+        /// <returns></returns>
+        ExtractionInformation[] GetAllExtractionInformation();
+
         /// <inheritdoc cref="SupportingDocument"/>
         SupportingDocument[] GetAllSupportingDocuments(FetchOptions fetch);
 
