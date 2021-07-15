@@ -37,6 +37,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Editing a foreign key property (e.g. `PivotCategory_ExtractionInformation_ID`) now shows objects rather than asking for an `int` value directly
 - Fatal errrors in console gui now get logged by NLog (e.g. to console/file)
 
+### Removed
+
+- Removed check for DataLoadProgress being before OriginDate of a `LoadProgress`
+
 ## [5.0.3] - 2021-06-17
 
 - Hotfix extraction/DLE progress UI layout on some Windows configurations
