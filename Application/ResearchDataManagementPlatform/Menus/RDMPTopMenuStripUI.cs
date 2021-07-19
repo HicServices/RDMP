@@ -18,7 +18,6 @@ using Rdmp.Core.DataQualityEngine;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Reports;
 using Rdmp.UI.ChecksUI;
-using Rdmp.UI.CohortUI.ImportCustomData;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.LocationsMenu.Ticketing;
@@ -28,11 +27,9 @@ using Rdmp.UI.PluginManagement.CodeGeneration;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SimpleDialogs.NavigateTo;
-using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Tutorials;
 using ResearchDataManagementPlatform.Menus.MenuItems;
-using ResearchDataManagementPlatform.Updates;
 using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
@@ -345,6 +342,10 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // AutoUpdater.NET is Windows-only for now:
+            if (!OperatingSystem.IsWindowsVersionAtLeast(7))
+                return;
+
             var url = "https://raw.githubusercontent.com/HicServices/RDMP/master/rdmp-client.xml";
 
             // Give user a chance to change the URL that is updating from
