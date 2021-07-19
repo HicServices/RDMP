@@ -78,7 +78,8 @@ namespace Rdmp.UI.Tests
                         threadException = ex;
                     }
                 });
-                thread.SetApartmentState(ApartmentState.STA);
+                if (RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)) 
+                    thread.SetApartmentState(ApartmentState.STA);
                 thread.Start();
                 
                 try
