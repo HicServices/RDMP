@@ -22,7 +22,7 @@ using System.Diagnostics;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using ReusableLibraryCode.DataAccess;
 using Rdmp.Core.Curation;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using FAnsi.Discovery;
 using ReusableLibraryCode.Checks;
 
