@@ -85,7 +85,7 @@ namespace ReusableLibraryCode.DataAccess
                 if(first.Server == null)
                     throw new Exception($"Server is null for {first}");
 
-                if (!first.Server.Equals(accessPoint.Server))
+                if (!first.Server.Equals(accessPoint.Server, StringComparison.CurrentCultureIgnoreCase))
                     throw new ExpectedIdenticalStringsException("There was a mismatch in server names for data access points " + first + " and " + accessPoint + " server names must match exactly", first.Server, accessPoint.Server);
                 
                 if(first.DatabaseType != accessPoint.DatabaseType)

@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump YamlDotNet from 11.2.0 to 11.2.1
 - Bump SecurityCodeScan.VS2019 from 5.1.0 to 5.2.1
 - Command 'Set' now shows as Impossible for property 'ID'
+- RDMP no longer complains about mixed capitalisation in server names and will connect using the capitalisation of the first encountered.
 
 ## Fixed
 

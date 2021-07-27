@@ -18,6 +18,7 @@ using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Managers;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Exceptions;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
@@ -70,6 +71,30 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
 
         }
 
+
+        [Test]
+        public void TestDistinctCredentials_ServerMixedCapitalization_Allowed()
+        {
+            List<TestAccessPoint> testPoints = new List<TestAccessPoint>();
+
+            testPoints.Add(new TestAccessPoint("frank", "bob", null,null));
+            testPoints.Add(new TestAccessPoint("FRANK", "bob", null, null));
+
+            var server = DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
+            Assert.AreEqual("frank", server.Name);
+        }
+
+        [Test]
+        public void TestDistinctCredentials_DatabaseMixedCapitalization_NotAllowed()
+        {
+            List<TestAccessPoint> testPoints = new List<TestAccessPoint>();
+
+            testPoints.Add(new TestAccessPoint("frank", "bob", null, null));
+            testPoints.Add(new TestAccessPoint("frank", "BOB", null, null));
+
+            var ex = Assert.Throws<ExpectedIdenticalStringsException>(() => DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true));
+            StringAssert.Contains("All data access points must be into the same database, access points 'frankbob' and 'frankBOB' are into different databases", ex.Message);
+        }
         #endregion
 
         #region Distinct Connection String (from Collection tests - Passing)
