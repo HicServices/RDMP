@@ -6,7 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using Moq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;

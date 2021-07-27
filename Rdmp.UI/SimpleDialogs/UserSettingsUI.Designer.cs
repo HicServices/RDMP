@@ -55,6 +55,8 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.clbWarnings = new System.Windows.Forms.CheckedListBox();
             this.cbHideEmptyTableLoadRunAudits = new System.Windows.Forms.CheckBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.tbCreateDatabaseTimeout = new System.Windows.Forms.TextBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -236,7 +238,7 @@
             // 
             // btnClearFavourites
             // 
-            this.btnClearFavourites.Location = new System.Drawing.Point(121, 418);
+            this.btnClearFavourites.Location = new System.Drawing.Point(121, 456);
             this.btnClearFavourites.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnClearFavourites.Name = "btnClearFavourites";
             this.btnClearFavourites.Size = new System.Drawing.Size(112, 27);
@@ -352,11 +354,31 @@
             this.cbHideEmptyTableLoadRunAudits.UseVisualStyleBackColor = true;
             this.cbHideEmptyTableLoadRunAudits.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(12, 405);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(142, 15);
+            this.label7.TabIndex = 17;
+            this.label7.Text = "Create Database Timeout:";
+            // 
+            // tbCreateDatabaseTimeout
+            // 
+            this.tbCreateDatabaseTimeout.Location = new System.Drawing.Point(158, 402);
+            this.tbCreateDatabaseTimeout.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tbCreateDatabaseTimeout.Name = "tbCreateDatabaseTimeout";
+            this.tbCreateDatabaseTimeout.Size = new System.Drawing.Size(240, 23);
+            this.tbCreateDatabaseTimeout.TabIndex = 18;
+            this.tbCreateDatabaseTimeout.TextChanged += new System.EventHandler(this.tbCreateDatabaseTimeout_TextChanged);
+            // 
             // UserSettingsFileUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(866, 652);
+            this.Controls.Add(this.tbCreateDatabaseTimeout);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.cbHideEmptyTableLoadRunAudits);
             this.Controls.Add(this.cbShowPipelineCompletedPopup);
@@ -419,5 +441,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.CheckedListBox clbWarnings;
         private System.Windows.Forms.CheckBox cbHideEmptyTableLoadRunAudits;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox tbCreateDatabaseTimeout;
     }
 }

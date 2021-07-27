@@ -43,6 +43,7 @@ namespace Rdmp.UI.SimpleDialogs
             cbAllowIdentifiableExtractions.Checked = UserSettings.AllowIdentifiableExtractions;
             cbShowPipelineCompletedPopup.Checked = UserSettings.ShowPipelineCompletedPopup;
             cbHideEmptyTableLoadRunAudits.Checked = UserSettings.HideEmptyTableLoadRunAudits;
+            tbCreateDatabaseTimeout.Text = UserSettings.CreateDatabaseTimeout.ToString();
 
             clbWarnings.Items.Add(WarnOnTimeoutOnExtractionChecks, UserSettings.WarnOnTimeoutOnExtractionChecks);
 
@@ -151,6 +152,14 @@ namespace Rdmp.UI.SimpleDialogs
         private void TbHeatmapColours_TextChanged(object sender, EventArgs e)
         {
             UserSettings.HeatMapColours = tbHeatmapColours.Text;
+        }
+
+        private void tbCreateDatabaseTimeout_TextChanged(object sender, EventArgs e)
+        {
+            if(int.TryParse(tbCreateDatabaseTimeout.Text,out int result))
+            {
+                UserSettings.CreateDatabaseTimeout = result;
+            }
         }
     }
 }
