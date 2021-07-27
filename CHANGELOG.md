@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+
+- Upgraded Sql Server library from `System.Data.SqlClient` to `Microsoft.Data.SqlClient`
 - `ExecuteCommandAlterColumnType` now automatically alters \_Archive table too without asking for confirmation
 - When foreign key values are missing from lookups, the 'Missing' status is now attributed to the `_Desc` field (previously to the foreign key field)
 - Changed Console gui DLE / DQE (etc) execution to use ListView instead of TextView
@@ -36,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pressing 'delete' key in console gui edit window now offers to set value of property to null
 - Editing a foreign key property (e.g. `PivotCategory_ExtractionInformation_ID`) now shows objects rather than asking for an `int` value directly
 - Fatal errrors in console gui now get logged by NLog (e.g. to console/file)
+- Added user setting `CreateDatabaseTimeout`
 
 ### Removed
 
