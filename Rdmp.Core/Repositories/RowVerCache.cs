@@ -126,7 +126,11 @@ namespace Rdmp.Core.Repositories
             using (var con = _repository.GetConnection())
             {
                 using (var cmd = _repository.DiscoveredServer.GetCommand("select max(RowVer) from " + typeof(T).Name, con))
-                    _maxRowVer = (byte[])cmd.ExecuteScalar();
+                {
+                    var result = cmd.ExecuteScalar();
+                    _maxRowVer = result == DBNull.Value ? null : (byte[])result;
+                }
+                    
 
                 using (var cmd =
                     _repository.DiscoveredServer.GetCommand("select CHANGE_TRACKING_CURRENT_VERSION()", con))
