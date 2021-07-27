@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug where searching in console gui could be slow or miss keystrokes
 - Fixed bug in console gui where GoTo Project or Cohort would not highlight the correct item
 - Fixed bug in console gui where delete key was not handled resulting in a loop if errors occurred trying to delete the object
+- Removed limit of 500 characters on extraction SQL of columns
 
 ### Added
 
