@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+
+- Upgraded Sql Server library from `System.Data.SqlClient` to `Microsoft.Data.SqlClient`
 - `ExecuteCommandAlterColumnType` now automatically alters \_Archive table too without asking for confirmation
 - When foreign key values are missing from lookups, the 'Missing' status is now attributed to the `_Desc` field (previously to the foreign key field)
 - Changed Console gui DLE / DQE (etc) execution to use ListView instead of TextView
@@ -19,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump YamlDotNet from 11.2.0 to 11.2.1
 - Bump SecurityCodeScan.VS2019 from 5.1.0 to 5.2.1
 - Command 'Set' now shows as Impossible for property 'ID'
+- RDMP no longer complains about mixed capitalisation in server names and will connect using the capitalisation of the first encountered.
 
 ## Fixed
 
@@ -29,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug where searching in console gui could be slow or miss keystrokes
 - Fixed bug in console gui where GoTo Project or Cohort would not highlight the correct item
 - Fixed bug in console gui where delete key was not handled resulting in a loop if errors occurred trying to delete the object
+- Removed limit of 500 characters on extraction SQL of columns
 
 ### Added
 
@@ -38,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pressing 'delete' key in console gui edit window now offers to set value of property to null
 - Editing a foreign key property (e.g. `PivotCategory_ExtractionInformation_ID`) now shows objects rather than asking for an `int` value directly
 - Fatal errrors in console gui now get logged by NLog (e.g. to console/file)
+- Added user setting `CreateDatabaseTimeout`
 
 ### Removed
 

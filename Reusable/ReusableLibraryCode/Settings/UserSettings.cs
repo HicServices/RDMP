@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using FAnsi.Discovery;
 using Plugin.Settings.Abstractions;
 
 namespace ReusableLibraryCode.Settings
@@ -95,6 +96,11 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("FindShouldPin", value); }
         }
 
+        public static int CreateDatabaseTimeout
+        {
+            get { return AppSettings.GetValueOrDefault("CreateDatabaseTimeout", 30); }
+            set { AppSettings.AddOrUpdateValue("CreateDatabaseTimeout", DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = Math.Max(value,30)); }
+        }
         #region Catalogue flag visibility settings
         public static bool ShowInternalCatalogues
         {

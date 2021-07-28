@@ -14,7 +14,7 @@
         <copyright>Copyright 2018-2019</copyright>
         <dependencies>
 			<dependency id="HIC.BadMedicine" version="0.1.6" />
-            <dependency id="HIC.FAnsiSql" version="1.0.7" />
+            <dependency id="HIC.FAnsiSql" version="2.0.1" />
             <dependency id="DockPanelSuite.ThemeVS2015" version="2.13.0" />
             <dependency id="CsvHelper" version="19.0.0" />
 			<dependency id="NHunspell" version="1.2.5554.16953" />
@@ -29,7 +29,7 @@
             <dependency id="System.Runtime.Loader" version="4.3.0" />
             <dependency id="System.Drawing.Common" version="5.0.2" />
             <dependency id="Xam.Plugins.Settings" version="3.1.1" />
-            <dependency id="System.Data.SqlClient" version="4.8.2" />
+            <dependency id="Microsoft.Data.SqlClient" version="3.0.0" />
             <dependency id="System.Diagnostics.Debug" version="4.3.0" />
             <dependency id="System.IO.FileSystem.Primitives" version="4.3.0" />
             <dependency id="System.IO.FileSystem" version="4.3.0" />
