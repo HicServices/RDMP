@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [6.0.0] - 2021-07-28
+
 ### Changed
 
 - `ExecuteCommandAlterColumnType` now automatically alters \_Archive table too without asking for confirmation
@@ -799,7 +801,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v5.0.3...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v6.0.0...develop
+[6.0.0]: https://github.com/HicServices/RDMP/compare/v5.0.3...v6.0.0
 [5.0.3]: https://github.com/HicServices/RDMP/compare/v5.0.2...v5.0.3
 [5.0.2]: https://github.com/HicServices/RDMP/compare/v5.0.1...v5.0.2
 [5.0.1]: https://github.com/HicServices/RDMP/compare/v5.0.0...v5.0.1
