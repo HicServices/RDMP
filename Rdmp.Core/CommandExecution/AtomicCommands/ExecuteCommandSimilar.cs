@@ -91,6 +91,18 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
         }
 
+        public override string GetCommandHelp()
+        {
+            if (_butDifferent)
+            {
+                return "Find objects with the same name but different implementation (e.g. different column data type)";
+            }
+            else
+            {
+                return "Find other objects with the same or similar name to this";
+            }
+        }
+
         private string Describe(IMapsDirectlyToDatabaseTable obj)
         {
             return obj.ID + " " + obj.GetType().Name + " " + obj.ToString();
