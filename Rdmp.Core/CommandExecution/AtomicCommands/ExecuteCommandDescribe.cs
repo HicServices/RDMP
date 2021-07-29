@@ -50,8 +50,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     continue;
                 }
 
-
-                sb.AppendLine(p.Name + ":" + (p.GetValue(o)?.ToString() ?? "NULL"));
+                sb.Append(p.Name);
+                sb.Append(":");
+                sb.AppendLine(p.GetValue(o)?.ToString() ?? "NULL");
             }
 
             sb.AppendLine("-----------------------------------------");
