@@ -34,13 +34,13 @@ namespace Rdmp.Core.CommandExecution
             _activator = activator;
         }
         
-        public IEnumerable<ExecuteCommandShow> GetCommands(object forObject)
+        public IEnumerable<IAtomicCommand> GetCommands(object forObject)
         {
             //forget old values, get them up to the minute
             if (Is(forObject , out IInjectKnown ii))
                 ii.ClearAllInjections();
 
-            if(Is(forObject, out IMapsDirectlyToDatabaseTable mt))
+            if (Is(forObject, out IMapsDirectlyToDatabaseTable mt))
             {
                 // Go to import / export definitions
                 var export = _activator.RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectExport>(mt).FirstOrDefault();
@@ -51,6 +51,8 @@ namespace Rdmp.Core.CommandExecution
                 var import = _activator.RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectImport>(mt).FirstOrDefault();
                 if (import != null)
                     yield return new ExecuteCommandShow(_activator, import, 0) { OverrideCommandName = "Show Import Definition" };
+
+                yield return new ExecuteCommandSimilar(_activator, mt, false) { GoTo = true };
             }
 
             // cic => associated projects
@@ -68,6 +70,11 @@ namespace Rdmp.Core.CommandExecution
 
             if (forObject is ColumnInfo columnInfo)
             {
+                yield return new ExecuteCommandSimilar(_activator, columnInfo, true) { 
+                    OverrideCommandName = "Different",
+                    GoTo = true,
+                };
+
                 yield return new ExecuteCommandShow(_activator, columnInfo.TableInfo_ID, typeof(TableInfo));
                 yield return new ExecuteCommandShow(_activator,() => _activator.CoreChildProvider.AllCatalogueItems.Where(catItem => catItem.ColumnInfo_ID == columnInfo.ID)){
                     OverrideCommandName = "Catalogue Item(s)" };

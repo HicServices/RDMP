@@ -26,6 +26,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// <see cref="Include(IMapsDirectlyToDatabaseTable)"/>
         /// </summary>
         private readonly Type[] _diffSupportedTypes = new Type[]{ typeof(ColumnInfo) };
+        private IMapsDirectlyToDatabaseTable[] _similar;
 
         /// <summary>
         /// Set to true to make command show similar objects in interactive 
@@ -45,6 +46,28 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 SetImpossible($"Differencing is not supported on {_to.GetType().Name}");
             }
+
+            try
+            {
+                var others = BasicActivator.GetAll(_to.GetType());
+                _similar = others.Where(IsSimilar).Where(Include).ToArray();
+
+                if (_similar.Length == 0)
+                {
+                    if (_butDifferent)
+                    {
+                        SetImpossible("There are no alternate column specifications of this column");
+                    }
+                    else
+                    {
+                        SetImpossible("There are no Similar objects");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                SetImpossible("Error finding Similar:" + ex.Message);
+            }
         }
 
         public override void Execute()
@@ -54,12 +77,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 throw new Exception($"GoTo property is true on {nameof(ExecuteCommandSimilar)} but activator is not interactive");
             }
 
-            var others = BasicActivator.GetAll(_to.GetType());
-            var similar = others.Where(IsSimilar).Where(Include).ToArray();
-            
             if(GoTo)
             {
-                var selected = BasicActivator.SelectOne("Similar Objects", similar, null, true);
+                var selected = BasicActivator.SelectOne("Similar Objects", _similar, null, true);
                 if(selected != null)
                 {
                     Emphasise(selected);
@@ -67,8 +87,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
             else
             {
-
-                BasicActivator.Show(string.Join(Environment.NewLine, similar.Select(Describe)));
+                BasicActivator.Show(string.Join(Environment.NewLine, _similar.Select(Describe)));
             }
         }
 
