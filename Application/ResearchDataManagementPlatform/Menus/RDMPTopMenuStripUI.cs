@@ -399,33 +399,26 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void queryDataExport_Click(object sender, EventArgs e)
         {
-            var tableRepo = Activator.RepositoryLocator.DataExportRepository as TableRepository;
-
-            if(tableRepo != null)
-            {
-                var t = tableRepo.DiscoveredServer.GetCurrentDatabase().ExpectTable("Project");
-                Activator.ShowData(new ArbitraryTableExtractionUICollection(t));
-            }
-            else
+            if (!(Activator.RepositoryLocator.DataExportRepository is TableRepository tableRepo))
             {
                 Activator.Show("Repository was not a database repo");
-            }            
+                return;
+            }
+
+            var t = tableRepo.DiscoveredServer.GetCurrentDatabase().ExpectTable("Project");
+            Activator.ShowData(new ArbitraryTableExtractionUICollection(t));
         }
 
         private void queryCatalogue_Click(object sender, EventArgs e)
         {
-            var tableRepo = Activator.RepositoryLocator.CatalogueRepository as TableRepository;
-
-            if (tableRepo != null)
-            {
-                var t = tableRepo.DiscoveredServer.GetCurrentDatabase().ExpectTable("Catalogue");
-                Activator.ShowData(new ArbitraryTableExtractionUICollection(t));
-            }
-            else
+            if (!(Activator.RepositoryLocator.CatalogueRepository is TableRepository tableRepo))
             {
                 Activator.Show("Repository was not a database repo");
+                return;
             }
 
+            var t = tableRepo.DiscoveredServer.GetCurrentDatabase().ExpectTable("Catalogue");
+            Activator.ShowData(new ArbitraryTableExtractionUICollection(t));
         }
     }
 }
