@@ -128,10 +128,6 @@ namespace Rdmp.Core.Curation.Data
 
         public void Check(ICheckNotifier notifier)
         {
-            if(OriginDate != null && DataLoadProgress != null)
-                if(OriginDate > DataLoadProgress)
-                    notifier.OnCheckPerformed(new CheckEventArgs($"OriginDate of '{Name}' is set after DataLoadProgress date.  LoadProgress cannot have negative progress",CheckResult.Fail));
-
             if(OriginDate != null && OriginDate > DateTime.Now)
                 notifier.OnCheckPerformed(new CheckEventArgs($"OriginDate cannot be in the future ({Name})",CheckResult.Fail));
 

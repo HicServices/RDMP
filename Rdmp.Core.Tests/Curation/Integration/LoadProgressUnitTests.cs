@@ -41,12 +41,6 @@ namespace Rdmp.Core.Tests.Curation.Integration
             //Back to normal
             lp.RevertToDatabaseState();
             lp.Check(new ThrowImmediatelyCheckNotifier());
-            
-
-            //negative progress
-            lp.OriginDate = new DateTime(2001,1,1);
-            lp.DataLoadProgress = new DateTime(2000,1,1);
-            Assert.Throws<Exception>(()=>lp.Check(new ThrowImmediatelyCheckNotifier()));
 
             // valid progress (1 year)
             lp.OriginDate = new DateTime(2001,1,1);

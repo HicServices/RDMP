@@ -27,6 +27,7 @@ using Rdmp.Core.Validation;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Startup
 {
@@ -71,13 +72,8 @@ namespace Rdmp.Core.Startup
 
             notifier.OnCheckPerformed(new CheckEventArgs("Loading core assemblies",CheckResult.Success));
 
-            Assembly.Load(typeof(Catalogue).Assembly.FullName);
-            Assembly.Load(typeof(ExtractableDataSet).Assembly.FullName);
+            DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = UserSettings.CreateDatabaseTimeout;
 
-            Assembly.Load(typeof(Evaluation).Assembly.FullName);
-
-            Assembly.Load(typeof(LogManager).Assembly.FullName);
-            
             var cataloguePatcher = new CataloguePatcher();
 
             try

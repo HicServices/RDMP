@@ -6,7 +6,7 @@
 
 using System;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using FAnsi.Discovery;
 
 namespace Rdmp.Core.Logging

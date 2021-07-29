@@ -118,6 +118,7 @@
     <None Remove="Databases\DataExportDatabase\up\020_AddReleaseLogIDColumn.sql" />
     <None Remove="Databases\DataExportDatabase\up\021_UnicodeSupport.sql" />
     <None Remove="Databases\DataExportDatabase\up\022_RowVer.sql" />
+    <None Remove="Databases\DataExportDatabase\up\023_ExtractableColumnMaxSize.sql" />
     <None Remove="Databases\DataQualityEngineDatabase\runAfterCreateDatabase\CreateTables.sql" />
     <None Remove="Databases\DataQualityEngineDatabase\up\001_AnnotationsAndDiagram.sql" />
     <None Remove="Databases\DataQualityEngineDatabase\up\002_AddPivotCategoryLogic.sql" />
@@ -238,6 +239,7 @@
     <EmbeddedResource Include="Databases\DataExportDatabase\up\019_FAnsiSupport.sql" />
     <EmbeddedResource Include="Databases\DataExportDatabase\up\019_NamesMustNotBeNull.sql" />
     <EmbeddedResource Include="Databases\DataExportDatabase\up\021_UnicodeSupport.sql" />
+    <EmbeddedResource Include="Databases\DataExportDatabase\up\023_ExtractableColumnMaxSize.sql" />
     <EmbeddedResource Include="Databases\DataExportDatabase\up\020_AddReleaseLogIDColumn.sql" />
     <EmbeddedResource Include="Databases\DataExportDatabase\up\022_RowVer.sql" />
     <EmbeddedResource Include="Databases\DataQualityEngineDatabase\runAfterCreateDatabase\CreateTables.sql" />
