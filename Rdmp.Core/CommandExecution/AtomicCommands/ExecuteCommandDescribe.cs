@@ -28,16 +28,19 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             foreach (IMapsDirectlyToDatabaseTable o in _toDescribe)
             {
-                sb.Append(Describe(o));
+                Describe(o,sb);
             }
 
             if(sb.Length > 0)
                 Show(sb.ToString());
         }
 
-        public static string Describe( IMapsDirectlyToDatabaseTable o)
+        // If the caller already has a StringBuilder, append to that instead of creating
+        // a new one then turning that to a String, only to have it put back into another
+        // StringBuilder anyway
+        public static string Describe(IMapsDirectlyToDatabaseTable o,StringBuilder accumulator=null)
         {
-            var sb = new StringBuilder();
+            var sb = accumulator ?? new StringBuilder();
 
             foreach (PropertyInfo p in o.GetType().GetProperties())
             {
@@ -53,7 +56,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             sb.AppendLine("-----------------------------------------");
 
-            return sb.ToString();
+            return (accumulator==null)?sb.ToString():null;
         }
     }
 }
