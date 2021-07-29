@@ -56,7 +56,7 @@ namespace Rdmp.Core.CommandExecution
             }
 
             // cic => associated projects
-            if (forObject is CohortIdentificationConfiguration cic)
+            if (Is(forObject,out CohortIdentificationConfiguration cic))
             {
                 yield return new ExecuteCommandShow(_activator,() =>
                 {
@@ -68,7 +68,7 @@ namespace Rdmp.Core.CommandExecution
                 }){OverrideCommandName="Project(s)" };
             }
 
-            if (forObject is ColumnInfo columnInfo)
+            if (Is(forObject,out ColumnInfo columnInfo))
             {
                 yield return new ExecuteCommandSimilar(_activator, columnInfo, true) { 
                     OverrideCommandName = "Different",
@@ -82,21 +82,21 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandShow(_activator,columnInfo.ANOTable_ID, typeof(ANOTable));
             }
 
-            if (forObject is ExtractionInformation ei)
+            if (Is(forObject, out ExtractionInformation ei))
             {
                 yield return new ExecuteCommandShow(_activator, ei.CatalogueItem?.Catalogue_ID, typeof(Catalogue));
                 yield return new ExecuteCommandShow(_activator, ei.CatalogueItem_ID, typeof(CatalogueItem));
                 yield return new ExecuteCommandShow(_activator, ei.ColumnInfo,0,true);
             }
 
-            if (forObject is CatalogueItem ci)
+            if (Is(forObject, out CatalogueItem ci))
             {
                 yield return new ExecuteCommandShow(_activator, ci.Catalogue_ID, typeof(Catalogue));
                 yield return new ExecuteCommandShow(_activator, ci.ExtractionInformation,0,true);
                 yield return new ExecuteCommandShow(_activator, ci.ColumnInfo, 0,true);
             }
 
-            if (forObject is ExtractableDataSet eds)
+            if (Is(forObject, out ExtractableDataSet eds))
             {
                 yield return new ExecuteCommandShow(_activator, eds.Catalogue_ID, typeof(Catalogue));
 
@@ -109,19 +109,19 @@ namespace Rdmp.Core.CommandExecution
                  }){ OverrideCommandName = "Extraction Configuration(s)"};
             }
 
-            if (forObject is GovernancePeriod period)
+            if (Is(forObject, out GovernancePeriod period))
                 yield return new ExecuteCommandShow(_activator, () => period.GovernedCatalogues){OverrideCommandName = "Catalogue(s)" };
 
-            if (forObject is JoinInfo j)
+            if (Is(forObject, out JoinInfo j))
                 yield return new ExecuteCommandShow(_activator, j.ForeignKey_ID, typeof(ColumnInfo)){OverrideCommandName="Foreign Key" };
 
-            if (forObject is Lookup lookup)
+            if (Is(forObject, out Lookup lookup))
             {
                 yield return new ExecuteCommandShow(_activator, lookup.Description.TableInfo_ID, typeof(TableInfo));
                 yield return new ExecuteCommandShow(_activator, lookup.ForeignKey_ID, typeof(ColumnInfo)){OverrideCommandName = "Foreign Key" };
             }
 
-            if (forObject is ExtractionFilter masterFilter)
+            if (Is(forObject, out ExtractionFilter masterFilter))
             {
                 yield return new ExecuteCommandShow(_activator, () =>
                  _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<AggregateFilter>("ClonedFromExtractionFilter_ID", masterFilter.ID).Select(f => f.GetAggregate()).Distinct()
@@ -132,7 +132,7 @@ namespace Rdmp.Core.CommandExecution
                 ){OverrideCommandName = "Usages (in Extractions)" };
             }
 
-            if (forObject is IFilter filter && filter.ClonedFromExtractionFilter_ID.HasValue)
+            if (Is(forObject, out IFilter filter) && filter.ClonedFromExtractionFilter_ID.HasValue)
             {
                 ExtractionFilter parent = null;
 
@@ -149,19 +149,19 @@ namespace Rdmp.Core.CommandExecution
                     yield return new ExecuteCommandShow(_activator, parent,0){OverrideCommandName = "Parent Filter" };
             }
 
-            if (forObject is SelectedDataSets selectedDataSet)
+            if (Is(forObject, out SelectedDataSets selectedDataSet))
                 yield return new ExecuteCommandShow(_activator, selectedDataSet.ExtractableDataSet.Catalogue_ID,typeof(Catalogue));
 
-            if (forObject is TableInfo tableInfo)
+            if (Is(forObject, out TableInfo tableInfo))
                 yield return new ExecuteCommandShow(_activator, () => tableInfo.ColumnInfos.SelectMany(c => _activator.CoreChildProvider.AllCatalogueItems.Where(catItem => catItem.ColumnInfo_ID == c.ID).Select(catItem => catItem.Catalogue)).Distinct()){OverrideCommandName="Catalogue(s)" };
 
-            if (forObject is AggregateConfiguration aggregate)
+            if (Is(forObject, out AggregateConfiguration aggregate))
             {
                 yield return new ExecuteCommandShow(_activator, aggregate.GetCohortIdentificationConfigurationIfAny()?.ID,typeof(CohortIdentificationConfiguration));
                 yield return new ExecuteCommandShow(_activator, aggregate.Catalogue_ID,typeof(Catalogue));
             }
 
-            if (forObject is Catalogue catalogue)
+            if (Is(forObject, out Catalogue catalogue))
             {
                 yield return new ExecuteCommandShow(_activator, catalogue.LoadMetadata_ID,typeof(LoadMetadata)){OverrideCommandName = "Data Load" };
 
@@ -192,7 +192,7 @@ namespace Rdmp.Core.CommandExecution
 
             }
 
-            if (forObject is ExtractableCohort cohort)
+            if (Is(forObject, out ExtractableCohort cohort))
                 yield return new ExecuteCommandShow(_activator, () =>
                      {
                          if (_activator.CoreChildProvider is DataExportChildProvider dx)
