@@ -87,7 +87,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
             else
             {
-                BasicActivator.Show(string.Join(Environment.NewLine, _similar.Select(Describe)));
+                BasicActivator.Show(string.Join(Environment.NewLine, _similar.Select(ExecuteCommandDescribe.Describe)));
             }
         }
 
@@ -101,11 +101,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 return "Find other objects with the same or similar name to this";
             }
-        }
-
-        private string Describe(IMapsDirectlyToDatabaseTable obj)
-        {
-            return obj.ID + " " + obj.GetType().Name + " " + obj.ToString();
         }
 
         private bool IsSimilar(IMapsDirectlyToDatabaseTable other)

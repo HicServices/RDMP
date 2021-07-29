@@ -27,16 +27,25 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             foreach (IMapsDirectlyToDatabaseTable o in _toDescribe)
             {
-                foreach (PropertyInfo p in o.GetType().GetProperties())
-                {
-                    sb.AppendLine(p.Name + ":" + (p.GetValue(o)?.ToString() ?? "NULL"));
-                }
-
-                sb.AppendLine("-----------------------------------------");
+                sb.Append(Describe(o));
             }
 
             if(sb.Length > 0)
                 Show(sb.ToString());
+        }
+
+        public static string Describe( IMapsDirectlyToDatabaseTable o)
+        {
+            var sb = new StringBuilder();
+
+            foreach (PropertyInfo p in o.GetType().GetProperties())
+            {
+                sb.AppendLine(p.Name + ":" + (p.GetValue(o)?.ToString() ?? "NULL"));
+            }
+
+            sb.AppendLine("-----------------------------------------");
+
+            return sb.ToString();
         }
     }
 }
