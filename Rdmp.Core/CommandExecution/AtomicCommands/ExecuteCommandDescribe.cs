@@ -28,20 +28,22 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             foreach (IMapsDirectlyToDatabaseTable o in _toDescribe)
             {
-                Describe(o,sb);
+                BuildDescribe(o,sb);
             }
 
             if(sb.Length > 0)
                 Show(sb.ToString());
         }
 
-        // If the caller already has a StringBuilder, append to that instead of creating
-        // a new one then turning that to a String, only to have it put back into another
-        // StringBuilder anyway
-        public static string Describe(IMapsDirectlyToDatabaseTable o,StringBuilder accumulator=null)
+        public static string Describe(IMapsDirectlyToDatabaseTable o)
         {
-            var sb = accumulator ?? new StringBuilder();
+            var sb = new StringBuilder();
+            BuildDescribe(o,sb);
+            return sb.ToString();
+        }
 
+        private static void BuildDescribe(IMapsDirectlyToDatabaseTable o,StringBuilder sb)
+        {
             foreach (PropertyInfo p in o.GetType().GetProperties())
             {
                 // don't describe helper properties
@@ -56,8 +58,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
 
             sb.AppendLine("-----------------------------------------");
-
-            return (accumulator==null)?sb.ToString():null;
         }
     }
 }
