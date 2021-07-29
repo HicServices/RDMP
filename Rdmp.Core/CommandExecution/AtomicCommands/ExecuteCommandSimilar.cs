@@ -8,6 +8,7 @@ using FAnsi.Naming;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
@@ -26,7 +27,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// <see cref="Include(IMapsDirectlyToDatabaseTable)"/>
         /// </summary>
         private readonly Type[] _diffSupportedTypes = new Type[]{ typeof(ColumnInfo) };
-        private IMapsDirectlyToDatabaseTable[] _similar;
+
+        /// <summary>
+        /// The objects matched by the command (similar or different objects)
+        /// </summary>
+        public readonly ReadOnlyCollection<IMapsDirectlyToDatabaseTable> Matched;
 
         /// <summary>
         /// Set to true to make command show similar objects in interactive 
@@ -50,9 +55,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             try
             {
                 var others = BasicActivator.GetAll(_to.GetType());
-                _similar = others.Where(IsSimilar).Where(Include).ToArray();
+                Matched = others.Where(IsSimilar).Where(Include).ToList().AsReadOnly();
 
-                if (_similar.Length == 0)
+                if (Matched.Count == 0)
                 {
                     if (_butDifferent)
                     {
@@ -79,7 +84,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if(GoTo)
             {
-                var selected = BasicActivator.SelectOne("Similar Objects", _similar, null, true);
+                var selected = BasicActivator.SelectOne("Similar Objects", Matched.ToArray(), null, true);
                 if(selected != null)
                 {
                     Emphasise(selected);
@@ -87,7 +92,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
             else
             {
-                BasicActivator.Show(string.Join(Environment.NewLine, _similar.Select(ExecuteCommandDescribe.Describe)));
+                BasicActivator.Show(string.Join(Environment.NewLine, Matched.ToArray().Select(ExecuteCommandDescribe.Describe)));
             }
         }
 
@@ -135,7 +140,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             // or they are different
             if(_to is ColumnInfo col && arg is ColumnInfo otherCol)
             {
-                return !string.Equals(col.Data_type, otherCol.Data_type);
+                return 
+                    !string.Equals(col.Data_type, otherCol.Data_type) || !string.Equals(col.Collation, otherCol.Collation);
             }
 
             // WHEN ADDING NEW TYPES add the Type to _diffSupportedTypes
