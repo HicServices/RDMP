@@ -22,6 +22,15 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
         {
             this.columnInfo = columnInfo;
             _datatype = datatype;
+
+            if (columnInfo.TableInfo.IsView)
+            {
+                SetImpossible("Column is part of a view so cannot be altered");
+            }
+            if (columnInfo.TableInfo.IsTableValuedFunction)
+            {
+                SetImpossible("Column is part of a table valued function so cannot be altered");
+            }
         }
 
         public override void Execute()

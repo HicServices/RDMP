@@ -1,4 +1,6 @@
-﻿namespace ResearchDataManagementPlatform.Menus
+﻿using System;
+
+namespace ResearchDataManagementPlatform.Menus
 {
     partial class RDMPTopMenuStripUI
     {
@@ -56,6 +58,9 @@
             this.pluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.codeGenerationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.listAllTypesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.queryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.queryCatalogue = new System.Windows.Forms.ToolStripMenuItem();
+            this.queryDataExport = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.showPerformanceCounterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openExeDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -272,7 +277,8 @@
             this.pluginsToolStripMenuItem,
             this.toolStripSeparator1,
             this.showPerformanceCounterToolStripMenuItem,
-            this.openExeDirectoryToolStripMenuItem});
+            this.openExeDirectoryToolStripMenuItem,
+            this.queryToolStripMenuItem});
             this.testsToolStripMenuItem.Name = "testsToolStripMenuItem";
             this.testsToolStripMenuItem.Size = new System.Drawing.Size(80, 20);
             this.testsToolStripMenuItem.Text = "Diagnostics";
@@ -294,12 +300,38 @@
             this.pluginsToolStripMenuItem.Size = new System.Drawing.Size(229, 22);
             this.pluginsToolStripMenuItem.Text = "Plugins";
             // 
+            // queryToolStripMenuItem
+            // 
+            this.queryToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+               this.queryCatalogue,
+               this.queryDataExport
+            });
+            this.queryToolStripMenuItem.Name = "queryToolStripMenuItem";
+            this.queryToolStripMenuItem.Size = new System.Drawing.Size(229, 22);
+            this.queryToolStripMenuItem.Text = "Query";
+            // 
             // codeGenerationToolStripMenuItem
             // 
             this.codeGenerationToolStripMenuItem.Name = "codeGenerationToolStripMenuItem";
             this.codeGenerationToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.codeGenerationToolStripMenuItem.Text = "Code Generation...";
             this.codeGenerationToolStripMenuItem.Click += new System.EventHandler(this.codeGenerationToolStripMenuItem_Click);
+
+
+            // 
+            // queryCatalogue
+            // 
+            this.queryCatalogue.Name = "queryCatalogue";
+            this.queryCatalogue.Size = new System.Drawing.Size(172, 22);
+            this.queryCatalogue.Text = "Catalogue...";
+            this.queryCatalogue.Click += new System.EventHandler(this.queryCatalogue_Click);
+            // 
+            // queryDataExport
+            // 
+            this.queryDataExport.Name = "queryDataExport";
+            this.queryDataExport.Size = new System.Drawing.Size(172, 22);
+            this.queryDataExport.Text = "Data Export...";
+            this.queryDataExport.Click += new System.EventHandler(this.queryDataExport_Click);
             // 
             // listAllTypesToolStripMenuItem
             // 
@@ -437,6 +469,9 @@
         private System.Windows.Forms.ToolStripMenuItem showHelpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pluginsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem queryToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem queryCatalogue;
+        private System.Windows.Forms.ToolStripMenuItem queryDataExport;
         private System.Windows.Forms.ToolStripMenuItem codeGenerationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tutorialsToolStripMenuItem;
