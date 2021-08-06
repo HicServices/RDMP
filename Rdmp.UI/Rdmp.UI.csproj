@@ -8,7 +8,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 	<NoWarn>1701;1702;CS1591;NU1701</NoWarn>
-    <LangVersion>7.1</LangVersion>
+    
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
