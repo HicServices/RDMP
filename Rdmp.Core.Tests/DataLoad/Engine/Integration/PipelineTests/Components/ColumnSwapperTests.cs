@@ -82,6 +82,126 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
             }
         }
 
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TestColumnSwapper_AlternateColumnNames(bool keepInputColumnToo)
+        {
+            using var dtMap = new DataTable();
+            dtMap.Columns.Add("In");
+            dtMap.Columns.Add("Out");
+
+            dtMap.Rows.Add("A", 1);
+            dtMap.Rows.Add("B", 2);
+            dtMap.Rows.Add("C", 3);
+            dtMap.Rows.Add("D", 4);
+            dtMap.Rows.Add("D", 5); //oh dear D maps to 2 out values that's a violation! but if we don't see a D it doesn't matter
+
+            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+
+            Import(db.CreateTable("Map", dtMap), out var map, out var mapCols);
+
+            var swapper = new ColumnSwapper();
+            swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
+            swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
+            swapper.KeepInputColumnToo = keepInputColumnToo;
+
+            swapper.Check(new ThrowImmediatelyCheckNotifier());
+
+            using var dtToSwap = new DataTable();
+
+            dtToSwap.Columns.Add("In2");
+            dtToSwap.Columns.Add("Name");
+            dtToSwap.Columns.Add("Age");
+
+            dtToSwap.Rows.Add("A", "Dave", 30);
+            dtToSwap.Rows.Add("A", "Dave", 30);
+            dtToSwap.Rows.Add("B", "Frank", 50);
+
+            // Our pipeline data does not have a column called In but instead it is called In2
+            var ex = Assert.Throws<Exception>(() => swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+            Assert.AreEqual("DataTable did not contain a field called 'In'", ex.Message);
+            
+            // Tell the swapper about the new name
+            swapper.InputFromColumn = "In2";
+            swapper.OutputToColumn = "Out2";
+
+            var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+
+            //in should be there or not depending on the setting KeepInputColumnToo
+            Assert.AreEqual(keepInputColumnToo, resultDt.Columns.Contains("In2"));
+
+            AreBasicallyEquals(1, resultDt.Rows[0]["Out2"]);
+            Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+
+            AreBasicallyEquals(1, resultDt.Rows[1]["Out2"]);
+            Assert.AreEqual("Dave", resultDt.Rows[1]["Name"]);
+
+            AreBasicallyEquals(2, resultDt.Rows[2]["Out2"]);
+            Assert.AreEqual("Frank", resultDt.Rows[2]["Name"]);
+
+            if (keepInputColumnToo)
+            {
+                Assert.AreEqual("A", resultDt.Rows[0]["In2"]);
+                Assert.AreEqual("A", resultDt.Rows[1]["In2"]);
+                Assert.AreEqual("B", resultDt.Rows[2]["In2"]);
+            }
+        }
+
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TestColumnSwapper_InPlaceSwapNoNewCols(bool keepInputColumnToo)
+        {
+            using var dtMap = new DataTable();
+            dtMap.Columns.Add("In");
+            dtMap.Columns.Add("Out");
+
+            dtMap.Rows.Add("A", 1);
+            dtMap.Rows.Add("B", 2);
+            dtMap.Rows.Add("C", 3);
+            dtMap.Rows.Add("D", 4);
+            dtMap.Rows.Add("D", 5); //oh dear D maps to 2 out values that's a violation! but if we don't see a D it doesn't matter
+
+            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+
+            Import(db.CreateTable("Map", dtMap), out var map, out var mapCols);
+
+            var swapper = new ColumnSwapper();
+            swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
+            swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
+            swapper.KeepInputColumnToo = keepInputColumnToo;
+
+            swapper.Check(new ThrowImmediatelyCheckNotifier());
+
+            using var dtToSwap = new DataTable();
+
+            dtToSwap.Columns.Add("In2");
+            dtToSwap.Columns.Add("Name");
+            dtToSwap.Columns.Add("Age");
+
+            dtToSwap.Rows.Add("A", "Dave", 30);
+            dtToSwap.Rows.Add("A", "Dave", 30);
+            dtToSwap.Rows.Add("B", "Frank", 50);
+
+            // Tell the swapper about the new name
+            swapper.InputFromColumn = "In2";
+            swapper.OutputToColumn = "In2";
+
+            var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+
+            // in ALWAYS be there, because it is an in place update - ignore KeepInputColumnToo
+            Assert.True(resultDt.Columns.Contains("In2"));
+
+            AreBasicallyEquals(1, resultDt.Rows[0]["In2"]);
+            Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+
+            AreBasicallyEquals(1, resultDt.Rows[1]["In2"]);
+            Assert.AreEqual("Dave", resultDt.Rows[1]["Name"]);
+
+            AreBasicallyEquals(2, resultDt.Rows[2]["In2"]);
+            Assert.AreEqual("Frank", resultDt.Rows[2]["Name"]);
+        }
+
         [TestCase(AliasResolutionStrategy.CrashIfAliasesFound)]
         [TestCase(AliasResolutionStrategy.MultiplyInputDataRowsByAliases)]
         public void TestColumnSwapper_Aliases(AliasResolutionStrategy strategy)

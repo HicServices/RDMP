@@ -30,6 +30,12 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations.Swapping
     /// </summary>
     class ColumnSwapper:IPluginDataFlowComponent<DataTable>
     {
+        [DemandsInitialization("The column in your pipeline containing input values you want swapped.  Leave null to use the same name as the MappingFromColumn")]
+        public string InputFromColumn { get; set; }
+
+        [DemandsInitialization("Name for the column you want to create in the output stream of this component containing the mapped values.  Leave null to use the same name as the MappingToColumn")]
+        public string OutputToColumn { get; set; }
+
         [DemandsInitialization("The column in your database which stores the input values you want mapped", Mandatory = true)]
         public ColumnInfo MappingFromColumn { get; set; }
 
@@ -70,15 +76,17 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
         {
-            var fromColumnName = MappingFromColumn.GetRuntimeName();
-            var toColumnName = MappingToColumn.GetRuntimeName();
+            string fromColumnName = string.IsNullOrWhiteSpace(InputFromColumn) ? MappingFromColumn.GetRuntimeName() : InputFromColumn;
+            string toColumnName = string.IsNullOrWhiteSpace(OutputToColumn) ? MappingToColumn.GetRuntimeName() : OutputToColumn;
+
+            bool inPlace = string.Equals(fromColumnName, toColumnName);
 
             listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "About to build mapping table"));
 
             if(!toProcess.Columns.Contains(fromColumnName))
                 throw new Exception("DataTable did not contain a field called '" + fromColumnName +"'");
 
-            if (toProcess.Columns.Contains(toColumnName))
+            if (!inPlace && toProcess.Columns.Contains(toColumnName))
                 throw new Exception("DataTable already contained a field '" + toColumnName +"'");
 
             if(_mappingTable == null)
@@ -94,8 +102,12 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Mapping table resulted in " + _mappingTable.Sum(kvp=>kvp.Value.Count) + " unique possible output values"));
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Mapping table Key is of Type " + _keyType));
 
-            //add the new column (the output column)
-            toProcess.Columns.Add(toColumnName);
+            //add the new column (the output column).  Unless we are just updating the same input column
+            if (!inPlace)
+            {
+                toProcess.Columns.Add(toColumnName);
+            }
+            
 
             int idxFrom = toProcess.Columns.IndexOf(fromColumnName);
             int idxTo = toProcess.Columns.IndexOf(toColumnName);
@@ -212,7 +224,8 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
             foreach (DataRow dropRow in toDrop)
                 toProcess.Rows.Remove(dropRow);
 
-            if(!KeepInputColumnToo)
+            // drop column unless it is an inplace (no new columns) update or user wants to keep both
+            if(!inPlace && !KeepInputColumnToo)
                 toProcess.Columns.Remove(fromColumnName);
             
             return toProcess;

@@ -9,7 +9,7 @@
     <Product>rdmp</Product>
     <Copyright>Copyright ©  2019</Copyright>
     <StartupObject></StartupObject>
-    <LangVersion>7.1</LangVersion>
+    
     <RootNamespace>Rdmp.Core</RootNamespace>
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
