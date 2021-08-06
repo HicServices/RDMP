@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added new command 'Similar' for finding columns that have the same name in other datasets
 - Added the ability to Query Catalogue/DataExport databases directly through RDMP
+- Support for custom column names in ColumnSwapper that do not match the names of the lookup columns
 
 ### Fixed
 

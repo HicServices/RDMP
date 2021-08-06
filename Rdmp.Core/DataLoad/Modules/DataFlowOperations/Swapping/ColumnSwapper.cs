@@ -30,6 +30,12 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations.Swapping
     /// </summary>
     class ColumnSwapper:IPluginDataFlowComponent<DataTable>
     {
+        [DemandsInitialization("The column in your pipeline containing input values you want swapped.  Leave null to use the same name as the MappingFromColumn")]
+        public string InputFromColumn { get; set; }
+
+        [DemandsInitialization("Name for the column you want to create in the output stream of this component containing the mapped values.  Leave null to use the same name as the MappingToColumn")]
+        public string OutputToColumn { get; set; }
+
         [DemandsInitialization("The column in your database which stores the input values you want mapped", Mandatory = true)]
         public ColumnInfo MappingFromColumn { get; set; }
 
@@ -70,8 +76,8 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
         {
-            var fromColumnName = MappingFromColumn.GetRuntimeName();
-            var toColumnName = MappingToColumn.GetRuntimeName();
+            string fromColumnName = string.IsNullOrWhiteSpace(InputFromColumn) ? MappingFromColumn.GetRuntimeName() : InputFromColumn;
+            string toColumnName = string.IsNullOrWhiteSpace(OutputToColumn) ? MappingToColumn.GetRuntimeName() : OutputToColumn;
 
             listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "About to build mapping table"));
 
