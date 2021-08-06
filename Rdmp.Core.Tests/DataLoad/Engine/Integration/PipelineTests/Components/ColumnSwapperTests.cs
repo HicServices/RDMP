@@ -86,7 +86,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         [TestCase(false)]
         public void TestColumnSwapper_AlternateColumnNames(bool keepInputColumnToo)
         {
-            var dtMap = new DataTable();
+            using var dtMap = new DataTable();
             dtMap.Columns.Add("In");
             dtMap.Columns.Add("Out");
 
@@ -107,7 +107,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 
             swapper.Check(new ThrowImmediatelyCheckNotifier());
 
-            var dtToSwap = new DataTable();
+            using var dtToSwap = new DataTable();
 
             dtToSwap.Columns.Add("In2");
             dtToSwap.Columns.Add("Name");
@@ -152,7 +152,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         [TestCase(false)]
         public void TestColumnSwapper_InPlaceSwapNoNewCols(bool keepInputColumnToo)
         {
-            var dtMap = new DataTable();
+            using var dtMap = new DataTable();
             dtMap.Columns.Add("In");
             dtMap.Columns.Add("Out");
 
@@ -173,7 +173,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 
             swapper.Check(new ThrowImmediatelyCheckNotifier());
 
-            var dtToSwap = new DataTable();
+            using var dtToSwap = new DataTable();
 
             dtToSwap.Columns.Add("In2");
             dtToSwap.Columns.Add("Name");
