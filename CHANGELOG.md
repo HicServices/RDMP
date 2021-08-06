@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## Fixed
+
+- Fixed layout of Bulk Process Catalogue Items in dotnet 5
+
 ## [6.0.0] - 2021-07-28
 
 ### Changed
