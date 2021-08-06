@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using MapsDirectlyToDatabaseTable;
@@ -27,16 +28,36 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             foreach (IMapsDirectlyToDatabaseTable o in _toDescribe)
             {
-                foreach (PropertyInfo p in o.GetType().GetProperties())
-                {
-                    sb.AppendLine(p.Name + ":" + (p.GetValue(o)?.ToString() ?? "NULL"));
-                }
-
-                sb.AppendLine("-----------------------------------------");
+                BuildDescribe(o,sb);
             }
 
             if(sb.Length > 0)
                 Show(sb.ToString());
+        }
+
+        public static string Describe(IMapsDirectlyToDatabaseTable o)
+        {
+            var sb = new StringBuilder();
+            BuildDescribe(o,sb);
+            return sb.ToString();
+        }
+
+        private static void BuildDescribe(IMapsDirectlyToDatabaseTable o,StringBuilder sb)
+        {
+            foreach (PropertyInfo p in o.GetType().GetProperties())
+            {
+                // don't describe helper properties
+                if(p.GetCustomAttributes(typeof(NoMappingToDatabase)).Any())
+                {
+                    continue;
+                }
+
+                sb.Append(p.Name);
+                sb.Append(":");
+                sb.AppendLine(p.GetValue(o)?.ToString() ?? "NULL");
+            }
+
+            sb.AppendLine("-----------------------------------------");
         }
     }
 }

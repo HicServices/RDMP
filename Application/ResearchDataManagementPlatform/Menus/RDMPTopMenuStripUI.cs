@@ -9,12 +9,14 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using AutoUpdaterDotNET;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataQualityEngine;
+using Rdmp.Core.DataViewing;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Reports;
 using Rdmp.UI.ChecksUI;
@@ -392,6 +394,31 @@ namespace ResearchDataManagementPlatform.Menus
         {
             var cmd = new ExecuteCommandStartSession(Activator,null);
             cmd.Execute();
+        }
+
+
+        private void queryDataExport_Click(object sender, EventArgs e)
+        {
+            if (!(Activator.RepositoryLocator.DataExportRepository is TableRepository tableRepo))
+            {
+                Activator.Show("Repository was not a database repo");
+                return;
+            }
+
+            var t = tableRepo.DiscoveredServer.GetCurrentDatabase().ExpectTable("Project");
+            Activator.ShowData(new ArbitraryTableExtractionUICollection(t));
+        }
+
+        private void queryCatalogue_Click(object sender, EventArgs e)
+        {
+            if (!(Activator.RepositoryLocator.CatalogueRepository is TableRepository tableRepo))
+            {
+                Activator.Show("Repository was not a database repo");
+                return;
+            }
+
+            var t = tableRepo.DiscoveredServer.GetCurrentDatabase().ExpectTable("Catalogue");
+            Activator.ShowData(new ArbitraryTableExtractionUICollection(t));
         }
     }
 }

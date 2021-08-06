@@ -8,8 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
-## Fixed
+### Added
 
+- Added new command 'Similar' for finding columns that have the same name in other datasets
+- Added the ability to Query Catalogue/DataExport databases directly through RDMP
+
+### Fixed
+
+- AlterColumnType command now shows as IsImpossible when column is part of a view or table valued function
+- Describe command no longer shows relationship properties
 - Fixed layout of Bulk Process Catalogue Items in dotnet 5
 
 ## [6.0.0] - 2021-07-28
