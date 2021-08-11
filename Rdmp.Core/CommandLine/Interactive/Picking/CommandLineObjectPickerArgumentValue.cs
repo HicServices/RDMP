@@ -121,8 +121,11 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
             
             var element = paramType.GetElementType();
 
+            // If paramType is nullable e.g. 'int?' then this is the underlying time i.e. 'int' otherwise null
+            var nullableType = Nullable.GetUnderlyingType(paramType);
+
             //it's an array of DatabaseEntities
-            if(paramType.IsArray && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(paramType.GetElementType()))
+            if (paramType.IsArray && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(paramType.GetElementType()))
             {
                 if(DatabaseEntities.Count == 0)
                     _logger.Warn($"Pattern matched no objects '{RawValue}'");
@@ -155,12 +158,15 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
             
             if (typeof(ICheckable) == paramType)
                 return GetOneDatabaseEntity<ICheckable>();
+
+            // is it a basic Type (value type or Enum)?
+            var basicType = nullableType ?? paramType;
+
+            if (basicType.IsValueType && !typeof(Enum).IsAssignableFrom(basicType))
+                return UsefulStuff.ChangeType(RawValue, basicType);
             
-            if (paramType.IsValueType && !typeof(Enum).IsAssignableFrom(paramType))
-                return UsefulStuff.ChangeType(RawValue, paramType);
-            
-            if(paramType.IsEnum)
-                return Enum.Parse(paramType,RawValue,true);
+            if (basicType.IsEnum)
+                return Enum.Parse(basicType, RawValue,true);
             
             return null;
         }
