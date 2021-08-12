@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [6.0.1] - 2021-08-12
+
 ### Added
 
 - Added new command 'Similar' for finding columns that have the same name in other datasets
@@ -821,7 +823,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v6.0.0...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v6.0.1...develop
+[6.0.1]: https://github.com/HicServices/RDMP/compare/v6.0.0...v6.0.1
 [6.0.0]: https://github.com/HicServices/RDMP/compare/v5.0.3...v6.0.0
 [5.0.3]: https://github.com/HicServices/RDMP/compare/v5.0.2...v5.0.3
 [5.0.2]: https://github.com/HicServices/RDMP/compare/v5.0.1...v5.0.2
