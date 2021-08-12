@@ -13,6 +13,7 @@ using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.CohortCommitting.Pipeline;
+using Rdmp.Core.CohortCreation;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -108,6 +109,13 @@ namespace Rdmp.Core.CommandExecution
         /// Component for telling you whether a given DatabaseEntity is one of the current users favourite objects and for toggling it
         /// </summary>
         FavouritesProvider FavouritesProvider { get;}
+
+        
+        /// <summary>
+        /// Plugin custom cohort compilers e.g. API calls that return identifier lists
+        /// </summary>
+        IReadOnlyCollection<IPluginCohortCompiler> PluginCohortCompilers { get; }
+
 
         /// <summary>
         /// Returns a dictionary of methods to call for each type of constructor parameter needed.  If no Type

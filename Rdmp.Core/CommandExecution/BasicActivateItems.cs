@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -14,6 +15,7 @@ using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.CohortCommitting.Pipeline;
+using Rdmp.Core.CohortCreation;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.CommandLine.Runners;
@@ -45,6 +47,10 @@ namespace Rdmp.Core.CommandExecution
 
         /// <inheritdoc/>
         public ICoreChildProvider CoreChildProvider { get; protected set;}
+
+        /// <inheritdoc/>
+        public IReadOnlyCollection<IPluginCohortCompiler> PluginCohortCompilers { get; protected set; }
+            = new ReadOnlyCollection<IPluginCohortCompiler>(new List<IPluginCohortCompiler>());
 
         /// <inheritdoc/>
         public IServerDefaults ServerDefaults { get; }
@@ -82,6 +88,18 @@ namespace Rdmp.Core.CommandExecution
 
             // Note that this is virtual so can return null e.g. if other stuff has to happen with the activator before a valid child provider can be built (e.g. loading plugin user interfaces)
             CoreChildProvider = GetChildProvider();
+
+            try
+            {
+                PluginCohortCompilers =
+                    RepositoryLocator.CatalogueRepository.MEF.GetTypes<IPluginCohortCompiler>()
+                    .Select(Activator.CreateInstance)
+                    .Cast<IPluginCohortCompiler>().ToList().AsReadOnly();
+            }
+            catch (Exception ex)
+            {
+                globalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to build list of IPluginCohortCompilers", CheckResult.Fail, ex));
+            }
         }
 
         protected virtual ICoreChildProvider GetChildProvider()

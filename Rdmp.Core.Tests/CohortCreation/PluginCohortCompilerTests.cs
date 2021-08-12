@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
 using Rdmp.Core.CohortCreation;
+using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -9,8 +10,10 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 using Rdmp.Core.Tests.CohortCreation.QueryTests;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using System.Data;
+using System.Linq;
 using Tests.Common;
 using TypeGuesser;
 
@@ -21,6 +24,11 @@ namespace Rdmp.Core.Tests.CohortCreation
         [Test]
         public void TestIPluginCohortCompiler_PopulatesCacheCorrectly()
         {
+            var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier()) { DisallowInput = true };
+
+            Assert.AreEqual(1, activator.PluginCohortCompilers.Count);
+            Assert.AreEqual(typeof(GenRandom), activator.PluginCohortCompilers.Single().GetType());
+
             // create a cohort config
             var cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic");
             cic.QueryCachingServer_ID = externalDatabaseServer.ID;
@@ -50,7 +58,7 @@ namespace Rdmp.Core.Tests.CohortCreation
             Assert.Contains("0202020202", results);
         }
 
-        class GenRandom : IPluginCohortCompiler
+        public class GenRandom : IPluginCohortCompiler
         {
             public void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache)
             {
