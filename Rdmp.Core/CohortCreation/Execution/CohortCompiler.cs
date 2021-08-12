@@ -38,6 +38,12 @@ namespace Rdmp.Core.CohortCreation.Execution
         public CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
         public bool IncludeCumulativeTotals { get; set; }
 
+
+        /// <summary>
+        /// Plugin custom cohort compilers e.g. API calls that return identifier lists
+        /// </summary>
+        public IReadOnlyCollection<IPluginCohortCompiler> PluginCohortCompilers { get; private set; }
+
         /// <summary>
         /// Returns the current child provider (creating it if none has been injected yet).
         /// </summary>
@@ -55,6 +61,18 @@ namespace Rdmp.Core.CohortCreation.Execution
         public CohortCompiler(CohortIdentificationConfiguration cohortIdentificationConfiguration)
         {
             CohortIdentificationConfiguration = cohortIdentificationConfiguration;
+
+            try
+            {
+                PluginCohortCompilers =
+                    cohortIdentificationConfiguration.CatalogueRepository.MEF.GetTypes<IPluginCohortCompiler>()
+                    .Select(Activator.CreateInstance)
+                    .Cast<IPluginCohortCompiler>().ToList().AsReadOnly();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to build list of IPluginCohortCompilers", ex);
+            }
         }
 
         private void DoTaskAsync(ICompileable task, CohortIdentificationTaskExecution execution, int timeout,bool cacheOnCompletion = false)
@@ -170,10 +188,18 @@ namespace Rdmp.Core.CohortCreation.Execution
             //if it is an aggregate
             if (aggregate != null)
             {
-                //which has a parent
-                task = new AggregationTask(aggregate, this);
+                // is this a custom aggregate type that gets handled differently e.g. by queriying an API?
+                var plugin = PluginCohortCompilers.FirstOrDefault(c => c.ShouldRun(aggregate));
+                
+                task = plugin != null ?
+                         // yes
+                          new PluginCohortCompilerTask(aggregate,this,plugin)
+                        // no
+                        : new AggregationTask(aggregate, this);
+
                 queryBuilder = new CohortQueryBuilder(aggregate, globals,CoreChildProvider);
 
+                //which has a parent
                 parent = aggregate.GetCohortAggregateContainerIfAny();
             }
             else if (joinable != null)
