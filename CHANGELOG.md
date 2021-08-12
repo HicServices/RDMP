@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - AlterColumnType command now shows as IsImpossible when column is part of a view or table valued function
 - Describe command no longer shows relationship properties
 - Fixed layout of Bulk Process Catalogue Items in dotnet 5
+- Fixed missing dependency in new installations when rendering Charts
 
 ## [6.0.0] - 2021-07-28
 

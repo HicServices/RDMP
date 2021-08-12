@@ -47,6 +47,6 @@
 | [AutoComplete Console](https://www.codeproject.com/Articles/1182358/Using-Autocomplete-in-Windows-Console-Applications) by Jasper Lammers | Embedded | 4.0 | [CPOL](https://www.codeproject.com/info/cpol10.aspx) | Provides interactive autocomplete in console input | |
 | System.Resources.Extensions | [GitHub](https://github.com/dotnet/corefx) | [4.6.0](https://www.nuget.org/packages/System.Resources.Extensions/4.6.0) | [MIT](https://opensource.org/licenses/MIT) | Allows [publishing with dotnet publish on machines with netcoreapp3.0 SDK installed](https://github.com/microsoft/msbuild/issues/4704#issuecomment-530034240) | |
 | ReadLine | [GitHub](https://github.com/tonerdo/readline) | [2.0.1](https://www.nuget.org/packages/ReadLine/2.0.1) | [MIT](https://opensource.org/licenses/MIT) | Allows autocomplete on command line | |
-| System.Windows.Forms.DataVisualization | [GitHub]() | [1.0.0-prerelease.20110.1](https://www.nuget.org/packages/System.Windows.Forms.DataVisualization/1.0.0-prerelease.20110.1) |[MIT](https://opensource.org/licenses/MIT) | Dotnet core support for DQE charts |  |
+| HIC.System.Windows.Forms.DataVisualization | [GitHub](https://github.com/HicServices/winforms-datavisualization) | [1.0.0](https://www.nuget.org/packages/HIC.System.Windows.Forms.DataVisualization/1.0.0) |[MIT](https://opensource.org/licenses/MIT) | Dotnet core support for DQE charts |  |
 
 [DBMS]: ./Glossary.md#DBMS
