@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added new command 'Similar' for finding columns that have the same name in other datasets
 - Added the ability to Query Catalogue/DataExport databases directly through RDMP
 - Support for custom column names in ColumnSwapper that do not match the names of the lookup columns
+- Added ScriptTables command for scripting multiple [TableInfo] at once (optionally porting schema to alternate DBMS types).
+- Support for nullable value/Enum types in command constructors
 
 ### Fixed
 

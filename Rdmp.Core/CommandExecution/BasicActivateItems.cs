@@ -301,10 +301,10 @@ namespace Rdmp.Core.CommandExecution
         /// <inheritdoc/>
         public bool SelectValueType(string prompt, Type paramType, object initialValue, out object chosen)
         {
-
-            if ((Nullable.GetUnderlyingType(paramType) ?? paramType).IsEnum)
+            var underlying = Nullable.GetUnderlyingType(paramType);
+            if ((underlying ?? paramType).IsEnum)
             {
-                bool ok = SelectEnum(prompt, paramType, out Enum enumChosen);
+                bool ok = SelectEnum(prompt, underlying?? paramType, out Enum enumChosen);
                 chosen = enumChosen;
                 return ok;
             }
