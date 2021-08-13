@@ -15,7 +15,7 @@ using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.CohortCommitting.Pipeline;
-using Rdmp.Core.CohortCreation;
+using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.CommandLine.Runners;
@@ -91,10 +91,7 @@ namespace Rdmp.Core.CommandExecution
 
             try
             {
-                PluginCohortCompilers =
-                    RepositoryLocator.CatalogueRepository.MEF.GetTypes<IPluginCohortCompiler>()
-                    .Select(Activator.CreateInstance)
-                    .Cast<IPluginCohortCompiler>().ToList().AsReadOnly();
+                PluginCohortCompilers = new PluginCohortCompilerFactory(RepositoryLocator.CatalogueRepository.MEF).CreateAll();
             }
             catch (Exception ex)
             {

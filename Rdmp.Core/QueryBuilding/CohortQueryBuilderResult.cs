@@ -12,6 +12,7 @@ using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -75,6 +76,7 @@ namespace Rdmp.Core.QueryBuilding
         public IOrderable StopContainerWhenYouReach { get;set; }
         public int CountOfSubQueries => Dependencies.Count;
         public int CountOfCachedSubQueries { get; private set; }
+        public IReadOnlyCollection<IPluginCohortCompiler> PluginCohortCompilers { get; }
 
         /// <summary>
         /// Creates a new result for a single <see cref="AggregateConfiguration"/> or <see cref="CohortAggregateContainer"/>
@@ -92,6 +94,15 @@ namespace Rdmp.Core.QueryBuilding
 
             if(cacheServer != null)
                 CacheManager = new CachedAggregateConfigurationResultsManager(CacheServer);
+
+            try
+            {
+                PluginCohortCompilers = new PluginCohortCompilerFactory(cacheServer.CatalogueRepository.MEF).CreateAll();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to build list of IPluginCohortCompilers", ex);
+            }
         }
 
 
@@ -342,7 +353,7 @@ namespace Rdmp.Core.QueryBuilding
             if(join.Length > 1)
                 throw new NotSupportedException($"There are {join.Length} joins configured to AggregateConfiguration {cohortSet}");
 
-            var d = new CohortQueryBuilderDependency(cohortSet, join.SingleOrDefault(), ChildProvider);
+            var d = new CohortQueryBuilderDependency(cohortSet, join.SingleOrDefault(), ChildProvider, PluginCohortCompilers);
             _dependencies.Add(d);
 
             return d;

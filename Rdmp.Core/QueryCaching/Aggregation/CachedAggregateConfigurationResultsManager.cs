@@ -82,7 +82,18 @@ AND {syntax.EnsureWrapped("Operation")} = '{operation}'", con))
             return null;
         }
 
-        public IHasFullyQualifiedNameToo GetLatestResultsTable(AggregateConfiguration configuration, AggregateOperation operation, string currentSql)
+        /// <summary>
+        /// Returns the name of the query cache results table for <paramref name="configuration"/> if the <paramref name="currentSql"/> matches
+        /// the SQL run when the cache result was generated.  Returns null if no cache result is found or there are changes in the <paramref name="currentSql"/>
+        /// since the cache result was generated.
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <param name="operation"></param>
+        /// <param name="currentSql"></param>
+        /// <param name="ignoreSql">True to return the cache table name regardless of whether <paramref name="currentSql"/> matches the sql run when the
+        /// cache was populated</param>
+        /// <returns></returns>
+        public IHasFullyQualifiedNameToo GetLatestResultsTable(AggregateConfiguration configuration, AggregateOperation operation, string currentSql, bool ignoreSql = false)
         {
             var syntax = _database.Server.GetQuerySyntaxHelper();
             var mgrTable = _database.ExpectTable(ResultsManagerTable);
@@ -103,7 +114,7 @@ WHERE
                     using(var r = cmd.ExecuteReader())
                         if (r.Read())
                         {
-                            if (IsMatchOnSqlExecuted(r, currentSql))
+                            if (ignoreSql || IsMatchOnSqlExecuted(r, currentSql))
                             {
                                 string tableName = r["TableName"].ToString();
                                 return _database.ExpectTable(tableName);

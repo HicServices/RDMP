@@ -1,7 +1,7 @@
 ﻿using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
-using Rdmp.Core.CohortCreation;
+using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -50,7 +50,7 @@ namespace Rdmp.Core.Tests.CohortCreation
 
             var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
 
-            Assert.AreEqual(2, dt);
+            Assert.AreEqual(2, dt.Rows.Count);
 
             var results = new []{ (string)dt.Rows[0][0],(string)dt.Rows[1][0] };
 

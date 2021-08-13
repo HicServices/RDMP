@@ -1,12 +1,7 @@
 ﻿using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Rdmp.Core.CohortCreation
+namespace Rdmp.Core.CohortCreation.Execution
 {
     /// <summary>
     /// Interface for plugins that want to perform custom tasks when part of a cohort builder query is run

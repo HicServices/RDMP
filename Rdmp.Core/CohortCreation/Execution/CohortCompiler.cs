@@ -64,10 +64,7 @@ namespace Rdmp.Core.CohortCreation.Execution
 
             try
             {
-                PluginCohortCompilers =
-                    cohortIdentificationConfiguration.CatalogueRepository.MEF.GetTypes<IPluginCohortCompiler>()
-                    .Select(Activator.CreateInstance)
-                    .Cast<IPluginCohortCompiler>().ToList().AsReadOnly();
+                PluginCohortCompilers = new PluginCohortCompilerFactory(cohortIdentificationConfiguration.CatalogueRepository.MEF).CreateAll();
             }
             catch (Exception ex)
             {
