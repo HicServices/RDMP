@@ -35,7 +35,14 @@ namespace Rdmp.Core.CohortCreation.Execution
     /// </summary>
     public class CohortCompiler
     {
-        public CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
+        private CohortIdentificationConfiguration _cic;
+        public CohortIdentificationConfiguration CohortIdentificationConfiguration {
+            get { return _cic;}
+            set {
+                _cic = value;
+                BuildPluginCohortCompilerList();
+            } 
+        }
         public bool IncludeCumulativeTotals { get; set; }
 
 
@@ -61,10 +68,26 @@ namespace Rdmp.Core.CohortCreation.Execution
         public CohortCompiler(CohortIdentificationConfiguration cohortIdentificationConfiguration)
         {
             CohortIdentificationConfiguration = cohortIdentificationConfiguration;
+        }
+
+        private void BuildPluginCohortCompilerList()
+        {
+            // we already have them (or crashed out trying to create them
+            if(PluginCohortCompilers != null)
+            {
+                return;
+            }
+
+            // we don't know what we are building yet!
+            if(CohortIdentificationConfiguration == null)
+            {
+                return;
+            }
 
             try
             {
-                PluginCohortCompilers = new PluginCohortCompilerFactory(cohortIdentificationConfiguration.CatalogueRepository.MEF).CreateAll();
+                PluginCohortCompilers =
+                    new PluginCohortCompilerFactory(CohortIdentificationConfiguration.CatalogueRepository.MEF).CreateAll();
             }
             catch (Exception ex)
             {
