@@ -6,7 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-...
+
+### Changed
+
+- Bump Microsoft.NET.Test.Sdk from 16.10.0 to 16.11.0
 
 ## [6.0.1] - 2021-08-12
 
@@ -28,7 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [6.0.0] - 2021-07-28
 
 ### Changed
-
 
 - Upgraded Sql Server library from `System.Data.SqlClient` to `Microsoft.Data.SqlClient`
 - `ExecuteCommandAlterColumnType` now automatically alters \_Archive table too without asking for confirmation
