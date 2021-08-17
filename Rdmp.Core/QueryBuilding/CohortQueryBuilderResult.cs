@@ -350,6 +350,19 @@ namespace Rdmp.Core.QueryBuilding
 
         private CohortQueryBuilderDependency AddDependency(AggregateConfiguration cohortSet)
         {
+            if(cohortSet.Catalogue.IsApiCall())
+            {
+                if(CacheManager == null)
+                {
+                    throw new Exception($"Caching must be enabled to execute API call '{cohortSet}'");
+                }
+
+                if (!PluginCohortCompilers.Any(c=>c.ShouldRun(cohortSet)))
+                {
+                    throw new Exception($"No PluginCohortCompilers claimed to support '{cohortSet}' in their ShouldRun method");
+                }
+            }    
+
             var join = ChildProvider.AllJoinUses.Where(j => j.AggregateConfiguration_ID == cohortSet.ID).ToArray();
 
             if(join.Length > 1)
