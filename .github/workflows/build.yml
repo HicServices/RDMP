@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Install Node for coverage reporting
         uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
       - name: LCov merger tool
         run: |
           npm install lcov-result-merger
@@ -65,8 +67,7 @@ jobs:
         shell: bash
         run: mv `find coverage -type f` ui.lcov
       - name: Merge LCovs
-        shell: bash
-        run: node node_modules/lcov-result-merger/bin/lcov-result-merger.js ui.lcov core.lcov recode.lcov > all.lcov
+        run: node node_modules/lcov-result-merger/bin/lcov-result-merger.js "{ui,core,recode}.lcov" all.lcov
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
