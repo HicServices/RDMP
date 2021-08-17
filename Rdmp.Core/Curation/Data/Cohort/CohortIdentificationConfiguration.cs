@@ -519,15 +519,17 @@ namespace Rdmp.Core.Curation.Data.Cohort
         /// <returns></returns>
         public AggregateConfiguration CreateNewEmptyConfigurationForCatalogue(ICatalogue catalogue, ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers, bool importMandatoryFilters = true)
         {
-            var extractionIdentifier = (ExtractionInformation)GetExtractionIdentifierFrom(catalogue, resolveMultipleExtractionIdentifiers);
-
             var cataRepo = (ICatalogueRepository) Repository;
             
             AggregateConfiguration configuration = new AggregateConfiguration(cataRepo,catalogue, "People in " + catalogue);
             EnsureNamingConvention(configuration);
 
-            //make the extraction identifier column into the sole dimension on the new configuration
-            new AggregateDimension(cataRepo, extractionIdentifier, configuration);
+            if(!catalogue.IsApiCall())
+            {
+                var extractionIdentifier = (ExtractionInformation)GetExtractionIdentifierFrom(catalogue, resolveMultipleExtractionIdentifiers);
+                //make the extraction identifier column into the sole dimension on the new configuration
+                new AggregateDimension(cataRepo, extractionIdentifier, configuration);
+            }
 
             //no count sql
             configuration.CountSQL = null;

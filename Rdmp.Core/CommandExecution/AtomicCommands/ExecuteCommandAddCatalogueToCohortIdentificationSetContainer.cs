@@ -54,7 +54,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         private void UpdateIsImpossibleFor(CatalogueCombineable catalogueCombineable)
         {
-            // TODO : Allow adding if it is an API!
+            if(catalogueCombineable.Catalogue.IsApiCall())
+            {
+                return;
+            }
 
             if (!catalogueCombineable.ContainsAtLeastOneExtractionIdentifier)
                 SetImpossible("Catalogue " + catalogueCombineable.Catalogue + " does not contain any IsExtractionIdentifier columns");

@@ -2,6 +2,8 @@
 using NUnit.Framework;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
 using Rdmp.Core.CohortCreation.Execution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -26,8 +28,8 @@ namespace Rdmp.Core.Tests.CohortCreation
         {
             var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier()) { DisallowInput = true };
 
-            Assert.AreEqual(1, activator.PluginCohortCompilers.Count);
-            Assert.AreEqual(typeof(GenRandom), activator.PluginCohortCompilers.Single().GetType());
+            Assert.GreaterOrEqual(activator.PluginCohortCompilers.Count,1);
+            Assert.Contains(typeof(GenRandom), activator.PluginCohortCompilers.Select(t=>t.GetType()).ToArray());
 
             // create a cohort config
             var cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic");
@@ -35,14 +37,17 @@ namespace Rdmp.Core.Tests.CohortCreation
             cic.SaveToDatabase();
 
             // this special Catalogue will be detected by GenRandom and interpreted as an API call
-            var myApi = new Catalogue(CatalogueRepository,"myapi");
+            var myApi = new Catalogue(CatalogueRepository,"API_myapi");
 
-            // create a use of the API as an AggregateConfiguration
-            var ac = new AggregateConfiguration(CatalogueRepository, myApi,"myac");
 
             // add it to the cohort config
             cic.CreateRootContainerIfNotExists();
-            cic.RootCohortAggregateContainer.AddChild(ac,0);
+
+            // create a use of the API as an AggregateConfiguration
+            var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(activator, new CatalogueCombineable(myApi),cic.RootCohortAggregateContainer);
+
+            Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+            cmd.Execute();
 
             // run the cic
             var source = new CohortIdentificationConfigurationSource();
@@ -58,9 +63,9 @@ namespace Rdmp.Core.Tests.CohortCreation
             Assert.Contains("0202020202", results);
         }
 
-        public class GenRandom : IPluginCohortCompiler
+        public class GenRandom : PluginCohortCompiler
         {
-            public void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache)
+            public override void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache)
             {
                 // simulate going to an API and getting 2 results
                 using var dt = new DataTable();
@@ -76,10 +81,9 @@ namespace Rdmp.Core.Tests.CohortCreation
 
                 cache.CommitResults(args);
             }
-
-            public bool ShouldRun(AggregateConfiguration ac)
+            public override bool ShouldRun(ICatalogue catalogue)
             {
-                return ac.Catalogue.Name.Equals("myapi");
+                return catalogue.Name.Equals(ApiPrefix+"myapi");
             }
         }
     }

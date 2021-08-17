@@ -193,7 +193,8 @@ namespace Rdmp.Core.QueryBuilding
             var existingTable = parent.CacheManager.GetLatestResultsTable(aggregate, isPatientIndexTable
                 ?AggregateOperation.JoinableInceptionQuery:AggregateOperation.IndexedExtractionIdentifierList , hitTestSql, pluginCohortCompiler != null);
             
-            if(existingTable == null)
+            // if there are no cached results in the destination (and it's a plugin cohort) then we need to run the plugin API call
+            if(existingTable == null && pluginCohortCompiler != null)
             {
                 // no cached results were there so run the plugin
                 pluginCohortCompiler.Run(CohortSet, parent.CacheManager);

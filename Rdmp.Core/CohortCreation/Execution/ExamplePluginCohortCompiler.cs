@@ -1,5 +1,6 @@
 ﻿using BadMedicine;
 using FAnsi.Discovery;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
@@ -10,11 +11,11 @@ using TypeGuesser;
 
 namespace Rdmp.Core.CohortCreation.Execution
 {
-    class ExamplePluginCohortCompiler : IPluginCohortCompiler
+    class ExamplePluginCohortCompiler : PluginCohortCompiler
     {
-        public const string ExampleAPIName = "API:GenerateRandomChisExample";
+        public const string ExampleAPIName = ApiPrefix + "GenerateRandomChisExample";
 
-        public void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache)
+        public override void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache)
         {
             // generate random chi numbers
             using var dt = new DataTable();
@@ -41,9 +42,9 @@ namespace Rdmp.Core.CohortCreation.Execution
             cache.CommitResults(args);
         }
 
-        public bool ShouldRun(AggregateConfiguration ac)
+        public override bool ShouldRun(ICatalogue cata)
         {
-            return ac.Catalogue.Name.Equals(ExampleAPIName);
+            return cata.Name.Equals(ExampleAPIName);
         }
         
     }

@@ -246,5 +246,12 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         /// <returns></returns>
         ICatalogue ShallowClone();
+
+        /// <summary>
+        /// Returns true if the <see cref="Catalogue"/> reflects a call to an external API and not a 
+        /// database query.
+        /// </summary>
+        /// <returns></returns>
+        bool IsApiCall();
     }
 }

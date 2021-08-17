@@ -1,4 +1,5 @@
-﻿using Rdmp.Core.Curation.Data.Aggregation;
+﻿using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation;
 
 namespace Rdmp.Core.CohortCreation.Execution
@@ -16,6 +17,14 @@ namespace Rdmp.Core.CohortCreation.Execution
         /// <param name="ac"></param>
         /// <returns></returns>
         bool ShouldRun(AggregateConfiguration ac);
+        
+        /// <summary>
+        /// Return true if the <paramref name="catalogue"/> is of a type that should be handled by your class
+        /// by calling your API.
+        /// </summary>
+        /// <param name="catalogue"></param>
+        /// <returns></returns>
+        bool ShouldRun(ICatalogue catalogue);
 
 
         /// <summary>

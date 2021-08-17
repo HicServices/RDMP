@@ -15,6 +15,7 @@ using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
+using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -62,6 +63,8 @@ namespace Rdmp.Core.Curation.Data
         private Uri _queryToolUrl;
         private Uri _sourceUrl;
         private string _countryOfOrigin;
+
+
         private string _dataStandards;
         private string _administrativeContactName;
         private string _administrativeContactEmail;
@@ -1297,6 +1300,12 @@ namespace Rdmp.Core.Curation.Data
             var clone = new Catalogue(CatalogueRepository, Name + " Clone");
             CopyShallowValuesTo(clone);
             return clone;
+        }
+
+
+        public bool IsApiCall()
+        {
+            return Name.StartsWith(PluginCohortCompiler.ApiPrefix);
         }
     }
 }
