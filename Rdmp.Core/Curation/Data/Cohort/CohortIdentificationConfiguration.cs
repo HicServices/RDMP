@@ -436,11 +436,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
         private AggregateConfiguration CreateCloneOfAggregateConfigurationPrivate(AggregateConfiguration toClone, ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers)
         {
             var cataRepo = CatalogueRepository;
-
-            //two cases here either the import has a custom freaky CHI column (dimension) or it doesn't reference CHI at all if it is freaky we want to preserve it's freakyness
-            ExtractionInformation underlyingExtractionInformation;
-            IColumn extractionIdentifier = GetExtractionIdentifierFrom(toClone, out underlyingExtractionInformation, resolveMultipleExtractionIdentifiers);
-            
+                        
             //clone will not have axis or pivot or dimensions other than extraction identifier
             var newConfiguration = toClone.ShallowClone();
 
@@ -451,6 +447,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
             newConfiguration.PivotOnDimensionID = null;
             newConfiguration.IsExtractable = false;
             newConfiguration.CountSQL = null;//clear the count sql
+            newConfiguration.Description = toClone.Description;
 
             //clone parameters
             foreach (AnyTableSqlParameter toCloneParameter in toClone.Parameters)
@@ -466,18 +463,23 @@ namespace Rdmp.Core.Curation.Data.Cohort
             foreach (var t in cataRepo.AggregateForcedJoinManager.GetAllForcedJoinsFor(toClone))
                 cataRepo.AggregateForcedJoinManager.CreateLinkBetween(newConfiguration, t);
 
-
-            //now give it 1 dimension which is the only IsExtractionIdentifier column 
-            var newDimension = new AggregateDimension(cataRepo, underlyingExtractionInformation, newConfiguration);
-
-            //the thing we were cloning had a freaky CHI column (probably had a collate or something involved in it or a masterchi) 
-            if (extractionIdentifier is AggregateDimension)
+            if (!toClone.Catalogue.IsApiCall())
             {
-                //preserve it's freakyness
-                newDimension.Alias = extractionIdentifier.Alias;
-                newDimension.SelectSQL = extractionIdentifier.SelectSQL;
-                newDimension.Order = extractionIdentifier.Order;
-                newDimension.SaveToDatabase();
+                //two cases here either the import has a custom freaky CHI column (dimension) or it doesn't reference CHI at all if it is freaky we want to preserve it's freakyness
+                var extractionIdentifier = GetExtractionIdentifierFrom(toClone, out ExtractionInformation underlyingExtractionInformation, resolveMultipleExtractionIdentifiers);
+
+                //now give it 1 dimension which is the only IsExtractionIdentifier column 
+                var newDimension = new AggregateDimension(cataRepo, underlyingExtractionInformation, newConfiguration);
+
+                //the thing we were cloning had a freaky CHI column (probably had a collate or something involved in it or a masterchi) 
+                if (extractionIdentifier is AggregateDimension)
+                {
+                    //preserve it's freakyness
+                    newDimension.Alias = extractionIdentifier.Alias;
+                    newDimension.SelectSQL = extractionIdentifier.SelectSQL;
+                    newDimension.Order = extractionIdentifier.Order;
+                    newDimension.SaveToDatabase();
+                }
             }
 
             //now rewire all it's filters

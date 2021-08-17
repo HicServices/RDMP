@@ -11,15 +11,11 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataFlowPipeline;
-using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.Tests.CohortCreation.QueryTests;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
-using System.Data;
-using System.Linq;
 
 namespace Rdmp.Core.Tests.CohortCreation
 {
@@ -35,9 +31,8 @@ namespace Rdmp.Core.Tests.CohortCreation
             cic.QueryCachingServer_ID = externalDatabaseServer.ID;
             cic.SaveToDatabase();
 
-            // this special Catalogue will be detected by GenRandom and interpreted as an API call
-            var myApi = new Catalogue(CatalogueRepository,"API_myapi");
-
+            // this special Catalogue will be detected by ExamplePluginCohortCompiler and interpreted as an API call
+            var myApi = new Catalogue(CatalogueRepository, ExamplePluginCohortCompiler.ExampleAPIName);
 
             // add it to the cohort config
             cic.CreateRootContainerIfNotExists();
@@ -51,28 +46,70 @@ namespace Rdmp.Core.Tests.CohortCreation
             // run the cic
             var source = new CohortIdentificationConfigurationSource();
             source.PreInitialize(cic, new ThrowImmediatelyDataLoadEventListener());
-
             var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
 
+            // 5 random chi numbers
+            Assert.AreEqual(5, dt.Rows.Count);
+
+            // test stale
+            cmd.AggregateCreatedIfAny.Description = "2";
+            cmd.AggregateCreatedIfAny.SaveToDatabase();
+
+            // run the cic again
+            source = new CohortIdentificationConfigurationSource();
+            source.PreInitialize(cic, new ThrowImmediatelyDataLoadEventListener());
+            dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+
+            // because the rules changed to generate 2 chis only there should be a new result
             Assert.AreEqual(2, dt.Rows.Count);
 
-            var results = new []{ (string)dt.Rows[0][0],(string)dt.Rows[1][0] };
+            var results = new[] { (string)dt.Rows[0][0], (string)dt.Rows[1][0] };
 
-            Assert.Contains("0101010101", results);
-            Assert.Contains("0202020202", results);
+            // run the cic again with no changes, the results should be unchanged since there is no config changed
+            // I.e. no new chis should be generated and the cached values returned
+            source = new CohortIdentificationConfigurationSource();
+            source.PreInitialize(cic, new ThrowImmediatelyDataLoadEventListener());
+            dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+
+            Assert.AreEqual(2, dt.Rows.Count);
+            var results2 = new[] { (string)dt.Rows[0][0], (string)dt.Rows[1][0] };
+
+            Assert.AreEqual(results[0], results2[0]);
+            Assert.AreEqual(results[1], results2[1]);
+
         }
-
-        public class GenRandom : PluginCohortCompiler
+        [Test]
+        public void TestIPluginCohortCompiler_TestCloneCic()
         {
-            public override void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache)
-            {
-                // simulate going to an API and getting 2 results
-                SubmitIdentifierList("identifiers",new[] { "0101010101", "0202020202" }, ac, cache );
-            }
-            public override bool ShouldRun(ICatalogue catalogue)
-            {
-                return catalogue.Name.Equals(ApiPrefix+"myapi");
-            }
+            var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier()) { DisallowInput = true };
+
+            // create a cohort config
+            var cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic");
+            cic.QueryCachingServer_ID = externalDatabaseServer.ID;
+            cic.SaveToDatabase();
+
+            // this special Catalogue will be detected by ExamplePluginCohortCompiler and interpreted as an API call
+            var myApi = new Catalogue(CatalogueRepository, ExamplePluginCohortCompiler.ExampleAPIName);
+
+            // add it to the cohort config
+            cic.CreateRootContainerIfNotExists();
+
+            // create a use of the API as an AggregateConfiguration
+            var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(activator, new CatalogueCombineable(myApi), cic.RootCohortAggregateContainer);
+            Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+            cmd.Execute();
+            cmd.AggregateCreatedIfAny.Description = "33";
+            cmd.AggregateCreatedIfAny.SaveToDatabase();
+
+            // clone the cic
+            var cmd2 = new ExecuteCommandCloneCohortIdentificationConfiguration(activator, cic);
+            Assert.IsFalse(cmd2.IsImpossible, cmd2.ReasonCommandImpossible);
+            cmd2.Execute();
+
+            var cloneAc = cmd2.CloneCreatedIfAny.RootCohortAggregateContainer.GetAggregateConfigurations()[0];
+            Assert.AreEqual("33", cloneAc.Description);
+
+
         }
     }
 }
