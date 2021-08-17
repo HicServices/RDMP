@@ -23,7 +23,7 @@ using System.Linq;
 
 namespace Rdmp.Core.Tests.CohortCreation
 {
-    class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
+    public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
     {
         [Test]
         public void TestIPluginCohortCompiler_PopulatesCacheCorrectly()

@@ -14,6 +14,10 @@ using System.Linq;
 
 namespace Rdmp.Core.CohortCreation.Execution
 {
+    /// <summary>
+    /// Demonstration class for how to implement a plugin cohort e.g. to a REST API.
+    /// This class generates a number of random chis when prompted to query the 'api'
+    /// </summary>
     public class ExamplePluginCohortCompiler : PluginCohortCompiler
     {
         public const string ExampleAPIName = ApiPrefix + "GenerateRandomChisExample";
