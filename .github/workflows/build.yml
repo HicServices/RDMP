@@ -25,9 +25,7 @@ jobs:
           node-version: '16.x'
       - name: LCov merger tool
         run: |
-          npm install lcov-result-merger
-          cmd /r dir /s node_modules\\lcov-result-merger
-          node -v
+          npm install -g lcov-result-merger
       - name: Checkout code
         uses: actions/checkout@v2.3.4
       - name: Setup .NET Core
@@ -67,7 +65,7 @@ jobs:
         shell: bash
         run: mv `find coverage -type f` ui.lcov
       - name: Merge LCovs
-        run: node node_modules/lcov-result-merger/bin/lcov-result-merger.js "{ui,core,recode}.lcov" all.lcov
+        run: lcov-result-merger "{ui,core,recode}.lcov" all.lcov
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
