@@ -19,6 +19,10 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      - name: Install Node for coverage reporting
+        uses: actions/setup-node@v2
+      - name: LCov merger tool
+        run: npm install lcov-result-merger
       - name: Checkout code
         uses: actions/checkout@v2.3.4
       - name: Setup .NET Core
@@ -57,32 +61,14 @@ jobs:
       - name: Rename UI lcov
         shell: bash
         run: mv `find coverage -type f` ui.lcov
-      - name: Coveralls Reusable
+      - name: Merge LCovs
+        shell: bash
+        run: node ./node_modules/.bin/lcov-result-merger ui.lcov core.lcov recode.lcov > all.lcov
+      - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.github_token }}
-          flag-name: dummyflag
-          path-to-lcov: recode.lcov
-          parallel: true
-      - name: Coveralls Core
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.github_token }}
-          flag-name: dummyflag
-          path-to-lcov: core.lcov
-          parallel: true
-      - name: Coveralls UI
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.github_token }}
-          flag-name: dummyflag
-          path-to-lcov: ui.lcov
-          parallel: true
-      - name: Coveralls Finished
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.github_token }}
-          parallel-finished: true
+          path-to-lcov: all.lcov
       - name: Package
         run: |
           dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 -c Release -o PublishWinForms --verbosity minimal --nologo
