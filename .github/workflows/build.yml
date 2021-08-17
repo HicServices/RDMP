@@ -71,6 +71,7 @@ jobs:
         with:
           github-token: ${{ secrets.github_token }}
           path-to-lcov: all.lcov
+          flag-name: unit tests
       - name: Package
         run: |
           dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 -c Release -o PublishWinForms --verbosity minimal --nologo
