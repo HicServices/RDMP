@@ -61,18 +61,21 @@ jobs:
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.github_token }}
+          flag-name: dummyflag
           path-to-lcov: recode.lcov
           parallel: true
       - name: Coveralls Core
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.github_token }}
+          flag-name: dummyflag
           path-to-lcov: core.lcov
           parallel: true
       - name: Coveralls UI
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.github_token }}
+          flag-name: dummyflag
           path-to-lcov: ui.lcov
           parallel: true
       - name: Coveralls Finished
