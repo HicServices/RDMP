@@ -24,7 +24,7 @@ jobs:
       - name: LCov merger tool
         run: |
           npm install lcov-result-merger
-          dir node_modules
+          dir node_modules/lcov-result-merger
       - name: Checkout code
         uses: actions/checkout@v2.3.4
       - name: Setup .NET Core
