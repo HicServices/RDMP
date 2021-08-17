@@ -63,7 +63,7 @@ jobs:
         run: mv `find coverage -type f` ui.lcov
       - name: Merge LCovs
         shell: bash
-        run: node ./node_modules/.bin/lcov-result-merger ui.lcov core.lcov recode.lcov > all.lcov
+        run: node node_modules/lcov-result-merger/bin/lcov-result-merger.js ui.lcov core.lcov recode.lcov > all.lcov
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
