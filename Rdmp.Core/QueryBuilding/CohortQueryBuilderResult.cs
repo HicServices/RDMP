@@ -76,7 +76,7 @@ namespace Rdmp.Core.QueryBuilding
         public IOrderable StopContainerWhenYouReach { get;set; }
         public int CountOfSubQueries => Dependencies.Count;
         public int CountOfCachedSubQueries { get; private set; }
-        public IReadOnlyCollection<IPluginCohortCompiler> PluginCohortCompilers { get; }
+        public IReadOnlyCollection<IPluginCohortCompiler> PluginCohortCompilers { get; } = new PluginCohortCompiler[0].ToList().AsReadOnly();
 
         /// <summary>
         /// Creates a new result for a single <see cref="AggregateConfiguration"/> or <see cref="CohortAggregateContainer"/>
@@ -93,15 +93,17 @@ namespace Rdmp.Core.QueryBuilding
             Customise = customise;
 
             if(cacheServer != null)
+            {
                 CacheManager = new CachedAggregateConfigurationResultsManager(CacheServer);
-
-            try
-            {
-                PluginCohortCompilers = new PluginCohortCompilerFactory(cacheServer.CatalogueRepository.MEF).CreateAll();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Failed to build list of IPluginCohortCompilers", ex);
+                
+                try
+                {
+                    PluginCohortCompilers = new PluginCohortCompilerFactory(cacheServer.CatalogueRepository.MEF).CreateAll();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Failed to build list of IPluginCohortCompilers", ex);
+                }
             }
         }
 
