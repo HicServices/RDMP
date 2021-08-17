@@ -40,5 +40,14 @@ namespace Rdmp.Core.CohortCreation.Execution
         /// <param name="ac"></param>
         /// <param name="cache"></param>
         void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache);
+
+        /// <summary>
+        /// Return true if the <paramref name="oldDescription"/> does not match the logic currently 
+        /// stored in <paramref name="aggregate"/>
+        /// </summary>
+        /// <param name="aggregate"></param>
+        /// <param name="oldDescription"></param>
+        /// <returns></returns>
+        bool IsStale(AggregateConfiguration aggregate, string oldDescription);
     }
 }

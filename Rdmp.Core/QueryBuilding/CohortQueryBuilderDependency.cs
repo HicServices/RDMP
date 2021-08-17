@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FAnsi.Naming;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -181,17 +182,26 @@ namespace Rdmp.Core.QueryBuilding
             if (parent.CacheManager == null)
                 return null;
 
+            var aggregateType = isPatientIndexTable ? AggregateOperation.JoinableInceptionQuery:AggregateOperation.IndexedExtractionIdentifierList;
             string hitTestSql = null;
+            IHasFullyQualifiedNameToo existingTable;
 
             // unless it is a plugin driven aggregate we need to assemble the SQL to check if the cache is stale
             if(pluginCohortCompiler == null)
             {
                 string parameterSql = QueryBuilder.GetParameterDeclarationSQL(sql.ParametersUsed.Clone().GetFinalResolvedParametersList());
                 hitTestSql = parameterSql + sql.Sql;
+                existingTable = parent.CacheManager.GetLatestResultsTable(aggregate,aggregateType, hitTestSql);
             }
-
-            var existingTable = parent.CacheManager.GetLatestResultsTable(aggregate, isPatientIndexTable
-                ?AggregateOperation.JoinableInceptionQuery:AggregateOperation.IndexedExtractionIdentifierList , hitTestSql, pluginCohortCompiler != null);
+            else
+            {
+                existingTable = parent.CacheManager.GetLatestResultsTableUnsafe(aggregate, aggregateType, out string oldDescription);
+              
+                if (pluginCohortCompiler.IsStale(aggregate, oldDescription))
+                {
+                    existingTable = null;
+                }
+            }
             
             // if there are no cached results in the destination (and it's a plugin cohort) then we need to run the plugin API call
             if(existingTable == null && pluginCohortCompiler != null)
@@ -200,8 +210,7 @@ namespace Rdmp.Core.QueryBuilding
                 pluginCohortCompiler.Run(CohortSet, parent.CacheManager);
 
                 // try again now
-                existingTable = parent.CacheManager.GetLatestResultsTable(aggregate, isPatientIndexTable
-                ? AggregateOperation.JoinableInceptionQuery : AggregateOperation.IndexedExtractionIdentifierList, hitTestSql, pluginCohortCompiler != null);
+                existingTable = parent.CacheManager.GetLatestResultsTableUnsafe(aggregate, aggregateType);
 
                 if(existingTable == null)
                 {

@@ -9,8 +9,10 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
+using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using TypeGuesser;
 
 namespace Rdmp.Core.CohortCreation.Execution
@@ -23,6 +25,11 @@ namespace Rdmp.Core.CohortCreation.Execution
         /// responsibilities (e.g. if you have 2+ Types of API available)
         /// </summary>
         public const string ApiPrefix = "API_";
+
+        /// <summary>
+        /// The string to put into the database when no <see cref="AggregateConfiguration.Description"/> exists
+        /// </summary>
+        protected const string None = "None";
 
         public abstract void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache);
         
@@ -42,7 +49,7 @@ namespace Rdmp.Core.CohortCreation.Execution
         /// <param name="enumerable"></param>
         /// <param name="aggregate"></param>
         /// <param name="cache"></param>
-        protected static void SubmitIdentifierList<T>(string identifierName, IEnumerable<T> enumerable, AggregateConfiguration aggregate, CachedAggregateConfigurationResultsManager cache)
+        protected void SubmitIdentifierList<T>(string identifierName, IEnumerable<T> enumerable, AggregateConfiguration aggregate, CachedAggregateConfigurationResultsManager cache)
         {
             var g = new Guesser(new DatabaseTypeRequest(typeof(T)));
             
@@ -56,10 +63,27 @@ namespace Rdmp.Core.CohortCreation.Execution
             }
 
             // this is how you commit the results to the cache
-            var args = new CacheCommitIdentifierList(aggregate, aggregate.Description ?? "none", dt,
+            var args = new CacheCommitIdentifierList(aggregate, GetDescription(aggregate), dt,
                 new DatabaseColumnRequest(identifierName, g.Guess, false), 5000);
 
             cache.CommitResults(args);
+        }
+
+        /// <summary>
+        /// Returns a description of the <paramref name="aggregate"/>.  This will be persisted along
+        /// with the results in the cache to detect when changes are made to the config (and therefore
+        /// the cached result list should be discarded).
+        /// </summary>
+        /// <param name="aggregate"></param>
+        /// <returns></returns>
+        protected virtual string GetDescription(AggregateConfiguration aggregate)
+        {
+            return aggregate.Description ?? "none";
+        }
+
+        public virtual bool IsStale(AggregateConfiguration aggregate, string oldDescription)
+        {
+            return !string.Equals(GetDescription(aggregate), oldDescription, StringComparison.CurrentCultureIgnoreCase);
         }
     }
 }

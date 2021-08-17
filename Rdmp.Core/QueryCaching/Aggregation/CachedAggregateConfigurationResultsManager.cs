@@ -56,7 +56,11 @@ namespace Rdmp.Core.QueryCaching.Aggregation
 
         public const string CachingPrefix = "/*Cached:";
 
-        public IHasFullyQualifiedNameToo GetLatestResultsTableUnsafe(AggregateConfiguration configuration,AggregateOperation operation)
+        public IHasFullyQualifiedNameToo GetLatestResultsTableUnsafe(AggregateConfiguration configuration, AggregateOperation operation)
+        {
+            return GetLatestResultsTableUnsafe(configuration, operation, out _);
+        }
+        public IHasFullyQualifiedNameToo GetLatestResultsTableUnsafe(AggregateConfiguration configuration,AggregateOperation operation, out string sql)
         {
             var syntax = _database.Server.GetQuerySyntaxHelper();
             var mgrTable = _database.ExpectTable(ResultsManagerTable);
@@ -65,7 +69,9 @@ namespace Rdmp.Core.QueryCaching.Aggregation
             {
                 con.Open();
                 using (var cmd = DatabaseCommandHelper.GetCommand(
-                    $@"Select {syntax.EnsureWrapped("TableName")} from {mgrTable.GetFullyQualifiedName()}
+                    $@"Select 
+{syntax.EnsureWrapped("TableName")},
+{syntax.EnsureWrapped("SqlExecuted")} from {mgrTable.GetFullyQualifiedName()}
 WHERE {syntax.EnsureWrapped("AggregateConfiguration_ID")} = {configuration.ID}
 AND {syntax.EnsureWrapped("Operation")} = '{operation}'", con))
                 {
@@ -73,12 +79,14 @@ AND {syntax.EnsureWrapped("Operation")} = '{operation}'", con))
                         if (r.Read())
                         {
                             string tableName =  r["TableName"].ToString();
+                            sql = r["SqlExecuted"] as string;
                             return _database.ExpectTable(tableName);
                         }
                 }
                 
             }
 
+            sql = null;
             return null;
         }
 
@@ -90,10 +98,8 @@ AND {syntax.EnsureWrapped("Operation")} = '{operation}'", con))
         /// <param name="configuration"></param>
         /// <param name="operation"></param>
         /// <param name="currentSql"></param>
-        /// <param name="ignoreSql">True to return the cache table name regardless of whether <paramref name="currentSql"/> matches the sql run when the
-        /// cache was populated</param>
         /// <returns></returns>
-        public IHasFullyQualifiedNameToo GetLatestResultsTable(AggregateConfiguration configuration, AggregateOperation operation, string currentSql, bool ignoreSql = false)
+        public IHasFullyQualifiedNameToo GetLatestResultsTable(AggregateConfiguration configuration, AggregateOperation operation, string currentSql)
         {
             var syntax = _database.Server.GetQuerySyntaxHelper();
             var mgrTable = _database.ExpectTable(ResultsManagerTable);
@@ -114,7 +120,7 @@ WHERE
                     using(var r = cmd.ExecuteReader())
                         if (r.Read())
                         {
-                            if (ignoreSql || IsMatchOnSqlExecuted(r, currentSql))
+                            if (IsMatchOnSqlExecuted(r, currentSql))
                             {
                                 string tableName = r["TableName"].ToString();
                                 return _database.ExpectTable(tableName);
