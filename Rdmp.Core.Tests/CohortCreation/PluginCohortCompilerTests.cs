@@ -1,4 +1,9 @@
-﻿using FAnsi.Discovery;
+﻿// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using NUnit.Framework;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
 using Rdmp.Core.CohortCreation.Execution;
@@ -10,14 +15,11 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.QueryCaching.Aggregation;
-using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 using Rdmp.Core.Tests.CohortCreation.QueryTests;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using System.Data;
 using System.Linq;
-using Tests.Common;
-using TypeGuesser;
 
 namespace Rdmp.Core.Tests.CohortCreation
 {
@@ -68,18 +70,7 @@ namespace Rdmp.Core.Tests.CohortCreation
             public override void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache)
             {
                 // simulate going to an API and getting 2 results
-                using var dt = new DataTable();
-                dt.Columns.Add("identifiers");
-
-                dt.Rows.Add("0101010101");
-                dt.Rows.Add("0202020202");
-
-
-                // this is how you commit the results to the cache
-                var args = new CacheCommitIdentifierList(ac,ac.Description??"none",dt,
-                    new DatabaseColumnRequest("identifiers",new DatabaseTypeRequest(typeof(string),10),false),5000);
-
-                cache.CommitResults(args);
+                SubmitIdentifierList("identifiers",new[] { "0101010101", "0202020202" }, ac, cache );
             }
             public override bool ShouldRun(ICatalogue catalogue)
             {
