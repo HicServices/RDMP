@@ -30,9 +30,6 @@ namespace Rdmp.Core.Tests.CohortCreation
         {
             var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier()) { DisallowInput = true };
 
-            Assert.GreaterOrEqual(activator.PluginCohortCompilers.Count,1);
-            Assert.Contains(typeof(GenRandom), activator.PluginCohortCompilers.Select(t=>t.GetType()).ToArray());
-
             // create a cohort config
             var cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic");
             cic.QueryCachingServer_ID = externalDatabaseServer.ID;

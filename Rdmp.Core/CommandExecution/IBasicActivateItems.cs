@@ -110,13 +110,6 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         FavouritesProvider FavouritesProvider { get;}
 
-        
-        /// <summary>
-        /// Plugin custom cohort compilers e.g. API calls that return identifier lists
-        /// </summary>
-        IReadOnlyCollection<IPluginCohortCompiler> PluginCohortCompilers { get; }
-
-
         /// <summary>
         /// Returns a dictionary of methods to call for each type of constructor parameter needed.  If no Type
         /// exists for the parameter Type then the constructor will not be supported by the <see cref="IBasicActivateItems"/>

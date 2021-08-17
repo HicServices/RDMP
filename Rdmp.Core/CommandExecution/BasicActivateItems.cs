@@ -49,10 +49,6 @@ namespace Rdmp.Core.CommandExecution
         public ICoreChildProvider CoreChildProvider { get; protected set;}
 
         /// <inheritdoc/>
-        public IReadOnlyCollection<IPluginCohortCompiler> PluginCohortCompilers { get; protected set; }
-            = new ReadOnlyCollection<IPluginCohortCompiler>(new List<IPluginCohortCompiler>());
-
-        /// <inheritdoc/>
         public IServerDefaults ServerDefaults { get; }
 
         /// <inheritdoc/>
@@ -88,15 +84,6 @@ namespace Rdmp.Core.CommandExecution
 
             // Note that this is virtual so can return null e.g. if other stuff has to happen with the activator before a valid child provider can be built (e.g. loading plugin user interfaces)
             CoreChildProvider = GetChildProvider();
-
-            try
-            {
-                PluginCohortCompilers = new PluginCohortCompilerFactory(RepositoryLocator.CatalogueRepository.MEF).CreateAll();
-            }
-            catch (Exception ex)
-            {
-                globalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to build list of IPluginCohortCompilers", CheckResult.Fail, ex));
-            }
         }
 
         protected virtual ICoreChildProvider GetChildProvider()
