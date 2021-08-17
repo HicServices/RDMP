@@ -46,6 +46,6 @@ namespace Rdmp.UI.PluginChildProvision
         /// </summary>
         /// <param name="ac"></param>
         /// <returns></returns>
-        bool ShowPluginAggregateConfigurationEditWindow(AggregateConfiguration ac);
+        bool CustomActivate(AggregateConfiguration ac);
     }
 }

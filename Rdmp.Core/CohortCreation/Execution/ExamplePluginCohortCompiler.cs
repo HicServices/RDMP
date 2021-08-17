@@ -14,7 +14,7 @@ using System.Linq;
 
 namespace Rdmp.Core.CohortCreation.Execution
 {
-    class ExamplePluginCohortCompiler : PluginCohortCompiler
+    public class ExamplePluginCohortCompiler : PluginCohortCompiler
     {
         public const string ExampleAPIName = ApiPrefix + "GenerateRandomChisExample";
 

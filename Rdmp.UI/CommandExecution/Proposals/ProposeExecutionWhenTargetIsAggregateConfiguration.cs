@@ -32,7 +32,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             // normal UI e.g. for configuring a REST API call
             foreach (var pluginInterface in ItemActivator.PluginUserInterfaces)
             {
-                if(pluginInterface.ShowPluginAggregateConfigurationEditWindow(target))
+                if(pluginInterface.CustomActivate(target))
                 {
                     return;
                 }
