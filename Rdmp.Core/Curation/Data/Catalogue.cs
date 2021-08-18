@@ -205,6 +205,7 @@ namespace Rdmp.Core.Curation.Data
             set { SetField(ref  _updateSched, value); }
         }
 
+
         ///<inheritdoc/>
         public string Time_coverage
         {
@@ -1306,6 +1307,25 @@ namespace Rdmp.Core.Curation.Data
         public bool IsApiCall()
         {
             return Name.StartsWith(PluginCohortCompiler.ApiPrefix);
+        }
+
+        public bool IsApiCall(out IPluginCohortCompiler plugin)
+        {
+            if(!IsApiCall())
+            {
+                plugin = null;
+                return false;
+            }
+
+            if(CatalogueRepository.MEF == null)
+            {
+                throw new Exception("MEF has not been loaded yet so cannot find compatible IPluginCohortCompilers");
+            }
+
+            plugin = new PluginCohortCompilerFactory(CatalogueRepository.MEF)
+                .CreateAll().FirstOrDefault(p => p.ShouldRun(this));
+
+            return true;
         }
     }
 }

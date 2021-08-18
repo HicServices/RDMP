@@ -7,7 +7,9 @@
 using System;
 using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
+using FAnsi.Naming;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Spontaneous;
@@ -126,8 +128,22 @@ namespace Rdmp.Core.QueryBuilding
         {
             var joinableTableAlias = args.JoinIfAny.GetJoinTableAlias();
             string joinDirection = args.JoinIfAny.GetJoinDirectionSQL();
-                
-            var joinOn = args.JoinedTo.AggregateDimensions.SingleOrDefault(d => d.IsExtractionIdentifier);
+
+            IHasRuntimeName joinOn = null;
+
+            if (args.JoinedTo.Catalogue.IsApiCall(out IPluginCohortCompiler plugin))
+            {
+                if(plugin == null)
+                {
+                    throw new Exception($"No IPluginCohortCompiler was found that supports API cohort set '{args.JoinedTo}'");
+                }
+
+                joinOn = plugin.GetJoinColumnForPatientIndexTable(args.JoinedTo);
+            }
+            else
+            {
+                args.JoinedTo.AggregateDimensions.SingleOrDefault(d => d.IsExtractionIdentifier);
+            }
 
             if (joinOn == null)
                 throw new QueryBuildingException("AggregateConfiguration " + user + " uses a join aggregate (patient index aggregate) of " + args.JoinedTo + " but that AggregateConfiguration does not have an IsExtractionIdentifier dimension so how are we supposed to join these tables on the patient identifier?");

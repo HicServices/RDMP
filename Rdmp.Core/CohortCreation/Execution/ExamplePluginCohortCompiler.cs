@@ -73,6 +73,10 @@ namespace Rdmp.Core.CohortCreation.Execution
         {
             return cata.Name.Equals(ExampleAPIName);
         }
-        
+
+        protected override string GetJoinColumnNameFor(AggregateConfiguration joinedTo)
+        {
+            return "chi";
+        }
     }
 }

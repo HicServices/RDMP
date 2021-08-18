@@ -5,8 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Discovery;
+using FAnsi.Naming;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 using System;
@@ -119,5 +122,13 @@ namespace Rdmp.Core.CohortCreation.Execution
         {
             return !string.Equals(GetDescription(aggregate), oldDescription, StringComparison.CurrentCultureIgnoreCase);
         }
+
+        public IHasRuntimeName GetJoinColumnForPatientIndexTable(AggregateConfiguration joinedTo)
+        {
+            var colName = GetJoinColumnNameFor(joinedTo);
+            return new SpontaneouslyInventedColumn(new MemoryRepository(), colName, colName);
+        }
+
+        protected abstract string GetJoinColumnNameFor(AggregateConfiguration joinedTo);
     }
 }

@@ -4,8 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using FAnsi.Naming;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.QueryCaching.Aggregation;
 
 namespace Rdmp.Core.CohortCreation.Execution
@@ -49,5 +51,14 @@ namespace Rdmp.Core.CohortCreation.Execution
         /// <param name="oldDescription"></param>
         /// <returns></returns>
         bool IsStale(AggregateConfiguration aggregate, string oldDescription);
+
+        /// <summary>
+        /// When the API is used as described in <paramref name="joinedTo"/> as a patient index table
+        /// and its results are cached, which column should be pulled from the results for joining to
+        /// other datasets
+        /// </summary>
+        /// <param name="joinedTo"></param>
+        /// <returns></returns>
+        IHasRuntimeName GetJoinColumnForPatientIndexTable(AggregateConfiguration joinedTo);
     }
 }
