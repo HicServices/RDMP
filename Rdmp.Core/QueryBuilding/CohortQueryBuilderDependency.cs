@@ -116,8 +116,14 @@ namespace Rdmp.Core.QueryBuilding
             
             // if it is a plugin aggregate we only want to ever serve up the cached SQL
             var pluginCohortCompiler = _pluginCohortCompilers.FirstOrDefault(c => c.ShouldRun(CohortSet));
+            var joinedToPluginCohortCompiler = JoinedTo == null ? null : _pluginCohortCompilers.FirstOrDefault(c => c.ShouldRun(JoinedTo)); 
 
-            if(pluginCohortCompiler != null)
+            if(pluginCohortCompiler != null && joinedToPluginCohortCompiler != null)
+            {
+                throw new Exception($"APIs cannot be joined together ('{CohortSet}' and '{JoinedTo}')");
+            }
+
+            if (pluginCohortCompiler != null)
             {
                 if(parent.CacheManager == null)
                 {
@@ -139,10 +145,28 @@ namespace Rdmp.Core.QueryBuilding
             //Includes the parameter declaration and no rename operations (i.e. couldn't be used for building the tree but can be used for cache hit testing).
             if (JoinedTo != null)
             {
-                SqlJoinableCacheless = parent.Helper.GetSQLForAggregate(JoinedTo,
+                if(joinedToPluginCohortCompiler == null)
+                {
+                    SqlJoinableCacheless = parent.Helper.GetSQLForAggregate(JoinedTo,
                     new QueryBuilderArgs(new QueryBuilderCustomArgs(), //don't respect customizations in the inception bit!
                         globals));
-                SqlJoinableCached = GetCacheFetchSqlIfPossible(parent,JoinedTo,SqlJoinableCacheless,true, pluginCohortCompiler);
+                    SqlJoinableCached = GetCacheFetchSqlIfPossible(parent, JoinedTo, SqlJoinableCacheless, true, null);
+                }
+                else
+                {
+                    // It is not possible to do a cacheless query because an API is involved
+                    SqlJoinableCached = GetCacheFetchSqlIfPossible(parent, JoinedTo, SqlJoinableCacheless, true, joinedToPluginCohortCompiler);
+
+                    if(SqlJoinableCached == null)
+                    {
+                        throw new Exception($"Unable to build query for '{CohortSet}' because it joins to API cohort '{JoinedTo}' that did not exist in the cache");
+                    }
+
+                    // Since the only way to query the dataset is using the cache we can pretend that it is the cacheless way
+                    // of querying it too.
+                    SqlJoinableCacheless = SqlJoinableCached;
+                }
+                
             }
             
             if (isSolitaryPatientIndexTable)
