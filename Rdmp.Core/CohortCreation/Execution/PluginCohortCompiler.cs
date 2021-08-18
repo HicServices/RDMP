@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
+using System.Linq;
 using TypeGuesser;
 
 namespace Rdmp.Core.CohortCreation.Execution
@@ -65,7 +66,40 @@ namespace Rdmp.Core.CohortCreation.Execution
             // this is how you commit the results to the cache
             var args = new CacheCommitIdentifierList(aggregate, GetDescription(aggregate), dt,
                 new DatabaseColumnRequest(identifierName, g.Guess, false), 5000);
+            
+            cache.CommitResults(args);
+        }
 
+        /// <summary>
+        /// Submits the <paramref name="results"/> of calling your API to the cache ready for joining
+        /// against other datasets as a patient index table.  Only use this method if you must return
+        /// multiple columns.
+        /// </summary>
+        /// <param name="results"></param>
+        /// <param name="aggregate"></param>
+        /// <param name="cache"></param>
+        /// <param name="knownTypes">If your DataTable is properly Typed (i.e. columns in <paramref name="results"/> have assigned Types) 
+        /// then pass true.  If everything is a string and you want types to be assigned for these for querying later pass false.</param>
+        protected void SubmitPatientIndexTable(DataTable results, AggregateConfiguration aggregate, CachedAggregateConfigurationResultsManager cache, bool knownTypes)
+        {
+            // The data table has to go into the database so we need to know max length of strings, decimal precision etc
+            Dictionary<string, Guesser> guessers = new Dictionary<string, Guesser>();
+
+            foreach(DataColumn col in results.Columns)
+            {
+                // if the user told us the datatypes were right then assume they are honest otherwise make it up as you go along
+                var g = knownTypes ? new Guesser(new DatabaseTypeRequest(col.DataType)) : new Guesser();
+
+                // measure data being submitted
+                g.AdjustToCompensateForValues(col);
+
+                guessers.Add(col.ColumnName, g);
+            }
+
+            // this is how you commit the results to the cache
+            var args = new CacheCommitJoinableInceptionQuery(aggregate, GetDescription(aggregate), results, 
+                guessers.Select(k=>new DatabaseColumnRequest(k.Key,k.Value.Guess)).ToArray()
+                , 5000);
             cache.CommitResults(args);
         }
 

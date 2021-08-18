@@ -26,7 +26,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(IBasicActivateItems activator,CatalogueCombineable catalogue, CohortIdentificationConfiguration configuration):this(activator,configuration)
         {
             _catalogue = catalogue;
-            if(!_catalogue.ContainsAtLeastOneExtractionIdentifier)
+            if(!_catalogue.Catalogue.IsApiCall() && !_catalogue.ContainsAtLeastOneExtractionIdentifier)
                 SetImpossible("Catalogue " + _catalogue.Catalogue + " does not contain any IsExtractionIdentifier columns");
         }
 

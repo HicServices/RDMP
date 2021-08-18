@@ -16,7 +16,10 @@ namespace Rdmp.Core.CohortCreation.Execution
 {
     /// <summary>
     /// Demonstration class for how to implement a plugin cohort e.g. to a REST API.
-    /// This class generates a number of random chis when prompted to query the 'api'
+    /// This class generates a number of random chis when prompted to query the 'api'.
+    /// 
+    /// <para>If deployed as a patient index table, also returns random dates of birth and death</para>
+    /// 
     /// </summary>
     public class ExamplePluginCohortCompiler : PluginCohortCompiler
     {
@@ -24,19 +27,47 @@ namespace Rdmp.Core.CohortCreation.Execution
 
         public override void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache)
         {
-            int toGenerate = 5;
-            if (int.TryParse(ac.Description, out int result))
+            if(ac.IsJoinablePatientIndexTable())
             {
-                toGenerate = result;
+                RunAsPatientIndexTable(ac, cache);
             }
-
-            var pc = new PersonCollection();
-            pc.GeneratePeople(toGenerate, new Random());
-
-            SubmitIdentifierList("chi",pc.People.Select(p => p.CHI),ac,cache);
+            else
+            {
+                RunAsIdentifierList(ac, cache);
+            }
         }
 
+        private void RunAsPatientIndexTable(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache)
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("chi", typeof(string));
+            dt.Columns.Add("dateOfBirth", typeof(DateTime));
+            dt.Columns.Add("dateOfDeath", typeof(DateTime));
 
+            // generate a list of random chis + date of birth/death
+            var pc = new PersonCollection();
+            pc.GeneratePeople(GetNumberToGenerate(ac), new Random());
+
+            foreach (var p in pc.People)
+            {
+                dt.Rows.Add(p.CHI, p.DateOfBirth,p.DateOfDeath ?? (object)DBNull.Value);
+            }
+
+            SubmitPatientIndexTable(dt, ac, cache);
+        }
+        private void RunAsIdentifierList(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache)
+        {
+            var pc = new PersonCollection();
+            pc.GeneratePeople(GetNumberToGenerate(ac), new Random());
+
+            // generate a list of random chis
+            SubmitIdentifierList("chi", pc.People.Select(p => p.CHI), ac, cache);
+        }
+
+        private int GetNumberToGenerate(AggregateConfiguration ac)
+        {
+            return int.TryParse(ac.Description, out int result) ? result: 5;
+        }
 
         public override bool ShouldRun(ICatalogue cata)
         {

@@ -8,6 +8,7 @@ using NUnit.Framework;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Curation.Data;
@@ -108,7 +109,45 @@ namespace Rdmp.Core.Tests.CohortCreation
 
             var cloneAc = cmd2.CloneCreatedIfAny.RootCohortAggregateContainer.GetAggregateConfigurations()[0];
             Assert.AreEqual("33", cloneAc.Description);
+        }
 
+        
+        [Test]
+        public void TestIPluginCohortCompiler_AsPatientIndexTable()
+        {
+            var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier()) { DisallowInput = true };
+
+            // create a cohort config
+            var cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic");
+            cic.QueryCachingServer_ID = externalDatabaseServer.ID;
+            cic.SaveToDatabase();
+
+            // this special Catalogue will be detected by ExamplePluginCohortCompiler and interpreted as an API call
+            var myApi = new Catalogue(CatalogueRepository, ExamplePluginCohortCompiler.ExampleAPIName);
+
+            // add it to the cohort config
+            cic.CreateRootContainerIfNotExists();
+
+            // We need something in the root container otherwise the cic won't build
+            IAtomicCommand cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(activator, new CatalogueCombineable(myApi), cic.RootCohortAggregateContainer);
+            Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+            cmd.Execute();
+
+            // The thing we are wanting to test - creating a use of the API as a patient index table
+            cmd = new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(
+                activator, new CatalogueCombineable(myApi), cic);
+
+            Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+            cmd.Execute();
+
+            var joinables = cic.GetAllJoinables();
+
+            Assert.AreEqual(1, joinables.Length);
+
+            // run the cic again
+            var source = new CohortIdentificationConfigurationSource();
+            source.PreInitialize(cic, new ThrowImmediatelyDataLoadEventListener());
+            source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
         }
     }

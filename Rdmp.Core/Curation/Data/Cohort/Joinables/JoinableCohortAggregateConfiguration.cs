@@ -94,7 +94,7 @@ namespace Rdmp.Core.Curation.Data.Cohort.Joinables
         {
             int extractionIdentifiers = aggregate.AggregateDimensions.Count(d => d.IsExtractionIdentifier);
 
-            if( extractionIdentifiers != 1)
+            if( !aggregate.Catalogue.IsApiCall() && extractionIdentifiers != 1)
                 throw new NotSupportedException("Cannot make aggregate " + aggregate + " into a Joinable aggregate because it has " + extractionIdentifiers + " columns marked IsExtractionIdentifier");
 
             if(aggregate.GetCohortAggregateContainerIfAny() != null)
