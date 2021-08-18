@@ -123,12 +123,19 @@ namespace Rdmp.Core.CohortCreation.Execution
             return !string.Equals(GetDescription(aggregate), oldDescription, StringComparison.CurrentCultureIgnoreCase);
         }
 
-        public IHasRuntimeName GetJoinColumnForPatientIndexTable(AggregateConfiguration joinedTo)
+        public virtual IHasRuntimeName GetJoinColumnForPatientIndexTable(AggregateConfiguration joinedTo)
         {
             var colName = GetJoinColumnNameFor(joinedTo);
             return new SpontaneouslyInventedColumn(new MemoryRepository(), colName, colName);
         }
 
+        /// <summary>
+        /// If your API supports returning multiple columns (it can be a patient index table)
+        /// then you must return (for <paramref name="joinedTo"/>) the name of the column
+        /// that will be joined to other cohorts in the cohort builder.
+        /// </summary>
+        /// <param name="joinedTo"></param>
+        /// <returns></returns>
         protected abstract string GetJoinColumnNameFor(AggregateConfiguration joinedTo);
     }
 }
