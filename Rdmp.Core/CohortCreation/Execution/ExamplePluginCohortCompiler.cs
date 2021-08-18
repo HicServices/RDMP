@@ -19,7 +19,6 @@ namespace Rdmp.Core.CohortCreation.Execution
     /// This class generates a number of random chis when prompted to query the 'api'.
     /// 
     /// <para>If deployed as a patient index table, also returns random dates of birth and death</para>
-    /// 
     /// </summary>
     public class ExamplePluginCohortCompiler : PluginCohortCompiler
     {
@@ -27,12 +26,15 @@ namespace Rdmp.Core.CohortCreation.Execution
 
         public override void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache)
         {
+            // The user of RDMP will have configured ac as either patient index table or normal cohort aggregate
             if(ac.IsJoinablePatientIndexTable())
             {
+                // user expects multiple columns from the API
                 RunAsPatientIndexTable(ac, cache);
             }
             else
             {
+                // user expects only a single linkage identifier to be returned by the API
                 RunAsIdentifierList(ac, cache);
             }
         }
@@ -66,16 +68,22 @@ namespace Rdmp.Core.CohortCreation.Execution
 
         private int GetNumberToGenerate(AggregateConfiguration ac)
         {
+            // You can persist configuration info about how to query the API any way
+            // you want.  Here we just use the Description field
             return int.TryParse(ac.Description, out int result) ? result: 5;
         }
 
         public override bool ShouldRun(ICatalogue cata)
         {
+            // we will handle any dataset where the associated Catalogue has this name
+            // you can customise how to spot your API calls however you want
             return cata.Name.Equals(ExampleAPIName);
         }
 
         protected override string GetJoinColumnNameFor(AggregateConfiguration joinedTo)
         {
+            // when RunAsPatientIndexTable is being used the column that can be linked
+            // to other datasets is called "chi"
             return "chi";
         }
     }
