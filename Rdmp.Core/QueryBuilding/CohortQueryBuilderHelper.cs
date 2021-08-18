@@ -142,7 +142,7 @@ namespace Rdmp.Core.QueryBuilding
             }
             else
             {
-                args.JoinedTo.AggregateDimensions.SingleOrDefault(d => d.IsExtractionIdentifier);
+                joinOn = args.JoinedTo.AggregateDimensions.SingleOrDefault(d => d.IsExtractionIdentifier);
             }
 
             if (joinOn == null)
