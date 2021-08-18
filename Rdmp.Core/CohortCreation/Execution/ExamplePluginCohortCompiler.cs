@@ -53,7 +53,7 @@ namespace Rdmp.Core.CohortCreation.Execution
                 dt.Rows.Add(p.CHI, p.DateOfBirth,p.DateOfDeath ?? (object)DBNull.Value);
             }
 
-            SubmitPatientIndexTable(dt, ac, cache);
+            SubmitPatientIndexTable(dt, ac, cache,true);
         }
         private void RunAsIdentifierList(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache)
         {
