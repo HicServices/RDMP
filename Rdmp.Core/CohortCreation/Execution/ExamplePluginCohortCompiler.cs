@@ -39,7 +39,7 @@ namespace Rdmp.Core.CohortCreation.Execution
 
         private void RunAsPatientIndexTable(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache)
         {
-            DataTable dt = new DataTable();
+            using DataTable dt = new DataTable();
             dt.Columns.Add("chi", typeof(string));
             dt.Columns.Add("dateOfBirth", typeof(DateTime));
             dt.Columns.Add("dateOfDeath", typeof(DateTime));

@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
 using Rdmp.Core.CohortCreation.Execution;
@@ -13,10 +14,13 @@ using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Tests.CohortCreation.QueryTests;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
+using System;
+using System.Data;
 
 namespace Rdmp.Core.Tests.CohortCreation
 {
@@ -111,9 +115,8 @@ namespace Rdmp.Core.Tests.CohortCreation
             Assert.AreEqual("33", cloneAc.Description);
         }
 
-        
         [Test]
-        public void TestIPluginCohortCompiler_AsPatientIndexTable()
+        public void TestIPluginCohortCompiler_APIsCantHavePatientIndexTables()
         {
             var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier()) { DisallowInput = true };
 
@@ -129,26 +132,82 @@ namespace Rdmp.Core.Tests.CohortCreation
             cic.CreateRootContainerIfNotExists();
 
             // We need something in the root container otherwise the cic won't build
-            IAtomicCommand cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(activator, new CatalogueCombineable(myApi), cic.RootCohortAggregateContainer);
+            var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(activator, new CatalogueCombineable(myApi), cic.RootCohortAggregateContainer);
             Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
             cmd.Execute();
+            var regularAggregate = cmd.AggregateCreatedIfAny;
 
             // The thing we are wanting to test - creating a use of the API as a patient index table
-            cmd = new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(
+            var cmd2 = new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(
                 activator, new CatalogueCombineable(myApi), cic);
 
+            Assert.IsFalse(cmd2.IsImpossible, cmd2.ReasonCommandImpossible);
+            cmd2.Execute();
+
+            var joinables = cic.GetAllJoinables();
+
+            // make them join one another
+            var ex = Assert.Throws<NotSupportedException>(()=>
+            new JoinableCohortAggregateConfigurationUse(CatalogueRepository, regularAggregate, joinables[0]));
+
+            Assert.AreEqual("API calls cannot join with PatientIndexTables (The API call must be self contained)", ex.Message);
+        }
+
+
+        [Test]
+        public void TestIPluginCohortCompiler_AsPatientIndexTable()
+        {
+            var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier()) { DisallowInput = true };
+
+            // Create a regular normal boring old table that will join into the results of the API call
+            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+            using DataTable dt = new DataTable();
+            dt.Columns.Add("chi");
+            dt.Rows.Add("0101010101");
+
+            var tbl = db.CreateTable("RegularBoringOldTable",dt);
+            var cata = (Catalogue)Import(tbl);
+            var eiChi = cata.GetAllExtractionInformation()[0];
+
+            eiChi.IsExtractionIdentifier = true;
+            eiChi.SaveToDatabase();
+
+            // create a cohort config
+            var cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic");
+            cic.QueryCachingServer_ID = externalDatabaseServer.ID;
+            cic.SaveToDatabase();
+
+            // this special Catalogue will be detected by ExamplePluginCohortCompiler and interpreted as an API call
+            var myApi = new Catalogue(CatalogueRepository, ExamplePluginCohortCompiler.ExampleAPIName);
+
+            // add it to the cohort config
+            cic.CreateRootContainerIfNotExists();
+
+            // Add the regular table 
+            var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(activator, new CatalogueCombineable(cata), cic.RootCohortAggregateContainer);
             Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
             cmd.Execute();
+            var regularAggregate = cmd.AggregateCreatedIfAny;
+
+            // The thing we are wanting to test - creating a use of the API as a patient index table
+            var cmd2 = new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(
+                activator, new CatalogueCombineable(myApi), cic);
+
+            Assert.IsFalse(cmd2.IsImpossible, cmd2.ReasonCommandImpossible);
+            cmd2.Execute();
 
             var joinables = cic.GetAllJoinables();
 
             Assert.AreEqual(1, joinables.Length);
 
+            // make them join one another
+            new JoinableCohortAggregateConfigurationUse(CatalogueRepository, regularAggregate, joinables[0]);
+
             // run the cic again
             var source = new CohortIdentificationConfigurationSource();
             source.PreInitialize(cic, new ThrowImmediatelyDataLoadEventListener());
-            source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
-
+            var result = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+            Assert.AreEqual(1, result.Rows.Count);
         }
     }
 }
