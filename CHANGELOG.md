@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Bump Microsoft.NET.Test.Sdk from 16.10.0 to 16.11.0
+- Bump NLog from 4.7.10 to 4.7.11
 
 ## [6.0.1] - 2021-08-12
 
