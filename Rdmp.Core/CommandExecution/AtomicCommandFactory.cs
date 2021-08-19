@@ -87,18 +87,33 @@ namespace Rdmp.Core.CommandExecution
 
             if(Is(o,out Catalogue c))
             {
-                yield return new CommandPresentation(new ExecuteCommandViewCatalogueData(_activator,c,-1));
+                bool isApiCall = c.IsApiCall();
+
+                if (!isApiCall)
+                {
+                    yield return new CommandPresentation(new ExecuteCommandViewCatalogueData(_activator, c, -1));
+                }
+                
 
                 yield return new CommandPresentation(new ExecuteCommandAddNewSupportingSqlTable(_activator, c),Add);
                 yield return new CommandPresentation(new ExecuteCommandAddNewSupportingDocument(_activator, c),Add);
-                yield return new CommandPresentation(new ExecuteCommandAddNewAggregateGraph(_activator, c),Add);
+
+                if (!isApiCall)
+                {
+                    yield return new CommandPresentation(new ExecuteCommandAddNewAggregateGraph(_activator, c), Add);
+                }
+
                 yield return new CommandPresentation(new ExecuteCommandAddNewCatalogueItem(_activator, c),Add);
-                                        
-                yield return new CommandPresentation(new ExecuteCommandChangeExtractability(_activator, c),Extraction);
-                yield return new CommandPresentation(new ExecuteCommandMakeCatalogueProjectSpecific(_activator,c,null),Extraction);
-                yield return new CommandPresentation(new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c),Extraction);
-                yield return new CommandPresentation(new ExecuteCommandSetExtractionIdentifier(_activator,c,null,null),Extraction);
-                                        
+
+
+                if (!isApiCall)
+                {
+                    yield return new CommandPresentation(new ExecuteCommandChangeExtractability(_activator, c), Extraction);
+                    yield return new CommandPresentation(new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, null), Extraction);
+                    yield return new CommandPresentation(new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c), Extraction);
+                    yield return new CommandPresentation(new ExecuteCommandSetExtractionIdentifier(_activator, c, null, null), Extraction);
+                }
+
                 yield return new CommandPresentation(new ExecuteCommandExportObjectsToFile(_activator, new[] {c}),Metadata);
                 yield return new CommandPresentation(new ExecuteCommandExtractMetadata(_activator, new []{ c},null,null,null,false,null),Metadata);
             }
@@ -127,7 +142,7 @@ namespace Rdmp.Core.CommandExecution
                 yield return new CommandPresentation(new ExecuteCommandRunSupportingSql(_activator,sqlTable));
             }
 
-            if(Is(o,out  AggregateConfiguration ac))
+            if(Is(o,out  AggregateConfiguration ac) && !ac.Catalogue.IsApiCall())
             {
                 yield return new CommandPresentation(new ExecuteCommandViewSample(_activator, ac));
                 yield return new CommandPresentation(new ExecuteCommandAddNewFilterContainer(_activator,ac));
