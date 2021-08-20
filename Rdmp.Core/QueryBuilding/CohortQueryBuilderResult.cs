@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
@@ -38,6 +39,7 @@ namespace Rdmp.Core.QueryBuilding
         public ICoreChildProvider ChildProvider { get; }
         public CohortQueryBuilderHelper Helper { get; }
         public QueryBuilderCustomArgs Customise { get; }
+        public CancellationToken CancellationToken { get; }
 
         private readonly StringBuilder _log = new StringBuilder();
 
@@ -85,14 +87,16 @@ namespace Rdmp.Core.QueryBuilding
         /// <param name="childProvider"></param>
         /// <param name="helper"></param>
         /// <param name="customise"></param>
-        public CohortQueryBuilderResult(ExternalDatabaseServer cacheServer, ICoreChildProvider childProvider, CohortQueryBuilderHelper helper,QueryBuilderCustomArgs customise)
+        /// <param name="cancellationToken"></param>
+        public CohortQueryBuilderResult(ExternalDatabaseServer cacheServer, ICoreChildProvider childProvider, CohortQueryBuilderHelper helper,QueryBuilderCustomArgs customise,CancellationToken cancellationToken)
         {
             CacheServer = cacheServer;
             ChildProvider = childProvider;
             Helper = helper;
             Customise = customise;
+            CancellationToken = cancellationToken;
 
-            if(cacheServer != null)
+            if (cacheServer != null)
             {
                 CacheManager = new CachedAggregateConfigurationResultsManager(CacheServer);
                 
@@ -344,7 +348,7 @@ namespace Rdmp.Core.QueryBuilding
         private void BuildDependenciesSql(ISqlParameter[] globals)
         {
             foreach (var d in Dependencies)
-                d.Build(this,globals);
+                d.Build(this,globals, CancellationToken);
         }
 
 

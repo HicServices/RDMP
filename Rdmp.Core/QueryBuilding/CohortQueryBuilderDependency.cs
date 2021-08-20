@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using FAnsi.Naming;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data;
@@ -109,9 +110,10 @@ namespace Rdmp.Core.QueryBuilding
             return CohortSet.Name + (JoinedTo != null ? PatientIndexTableIfAny.JoinType + " JOIN " + JoinedTo.Name : "");
         }
 
-        public void Build(CohortQueryBuilderResult parent,ISqlParameter[] globals)
+        public void Build(CohortQueryBuilderResult parent,ISqlParameter[] globals,CancellationToken cancellationToken)
         {
-            
+            cancellationToken.ThrowIfCancellationRequested();
+
             bool isSolitaryPatientIndexTable = CohortSet.IsJoinablePatientIndexTable();
             
             // if it is a plugin aggregate we only want to ever serve up the cached SQL
@@ -132,7 +134,7 @@ namespace Rdmp.Core.QueryBuilding
                 else
                 {
                     // Its a plugin aggregate so only ever run the cached SQL
-                    SqlFullyCached = GetCacheFetchSqlIfPossible(parent, CohortSet, SqlCacheless, isSolitaryPatientIndexTable, pluginCohortCompiler);
+                    SqlFullyCached = GetCacheFetchSqlIfPossible(parent, CohortSet, SqlCacheless, isSolitaryPatientIndexTable, pluginCohortCompiler,cancellationToken);
                     
                     if(SqlFullyCached == null)
                     {
@@ -150,12 +152,12 @@ namespace Rdmp.Core.QueryBuilding
                     SqlJoinableCacheless = parent.Helper.GetSQLForAggregate(JoinedTo,
                     new QueryBuilderArgs(new QueryBuilderCustomArgs(), //don't respect customizations in the inception bit!
                         globals));
-                    SqlJoinableCached = GetCacheFetchSqlIfPossible(parent, JoinedTo, SqlJoinableCacheless, true, null);
+                    SqlJoinableCached = GetCacheFetchSqlIfPossible(parent, JoinedTo, SqlJoinableCacheless, true, null, cancellationToken);
                 }
                 else
                 {
                     // It is not possible to do a cacheless query because an API is involved
-                    SqlJoinableCached = GetCacheFetchSqlIfPossible(parent, JoinedTo, SqlJoinableCacheless, true, joinedToPluginCohortCompiler);
+                    SqlJoinableCached = GetCacheFetchSqlIfPossible(parent, JoinedTo, SqlJoinableCacheless, true, joinedToPluginCohortCompiler, cancellationToken);
 
                     if(SqlJoinableCached == null)
                     {
@@ -194,27 +196,27 @@ namespace Rdmp.Core.QueryBuilding
             }
             
             //We would prefer a cache hit on the exact uncached SQL
-            SqlFullyCached = GetCacheFetchSqlIfPossible(parent, CohortSet, SqlCacheless, isSolitaryPatientIndexTable, pluginCohortCompiler);
+            SqlFullyCached = GetCacheFetchSqlIfPossible(parent, CohortSet, SqlCacheless, isSolitaryPatientIndexTable, pluginCohortCompiler,cancellationToken);
 
             //but if that misses we would take a cache hit of an execution of the SqlPartiallyCached
             if(SqlFullyCached == null && SqlPartiallyCached != null)
-                SqlFullyCached = GetCacheFetchSqlIfPossible(parent,CohortSet,SqlPartiallyCached,isSolitaryPatientIndexTable, pluginCohortCompiler);
+                SqlFullyCached = GetCacheFetchSqlIfPossible(parent,CohortSet,SqlPartiallyCached,isSolitaryPatientIndexTable, pluginCohortCompiler, cancellationToken);
         }
 
-        private CohortQueryBuilderDependencySql GetCacheFetchSqlIfPossible(CohortQueryBuilderResult parent,AggregateConfiguration aggregate, CohortQueryBuilderDependencySql sql, bool isPatientIndexTable, IPluginCohortCompiler pluginCohortCompiler)
+        private CohortQueryBuilderDependencySql GetCacheFetchSqlIfPossible(CohortQueryBuilderResult parent,AggregateConfiguration aggregate,
+            CohortQueryBuilderDependencySql sql, bool isPatientIndexTable, IPluginCohortCompiler pluginCohortCompiler, CancellationToken cancellationToken)
         {
             if (parent.CacheManager == null)
                 return null;
 
             var aggregateType = isPatientIndexTable ? AggregateOperation.JoinableInceptionQuery:AggregateOperation.IndexedExtractionIdentifierList;
-            string hitTestSql = null;
             IHasFullyQualifiedNameToo existingTable;
 
             // unless it is a plugin driven aggregate we need to assemble the SQL to check if the cache is stale
             if(pluginCohortCompiler == null)
             {
                 string parameterSql = QueryBuilder.GetParameterDeclarationSQL(sql.ParametersUsed.Clone().GetFinalResolvedParametersList());
-                hitTestSql = parameterSql + sql.Sql;
+                string hitTestSql = parameterSql + sql.Sql;
                 existingTable = parent.CacheManager.GetLatestResultsTable(aggregate,aggregateType, hitTestSql);
             }
             else
@@ -231,7 +233,7 @@ namespace Rdmp.Core.QueryBuilding
             if(existingTable == null && pluginCohortCompiler != null)
             {
                 // no cached results were there so run the plugin
-                pluginCohortCompiler.Run(CohortSet, parent.CacheManager);
+                pluginCohortCompiler.Run(CohortSet, parent.CacheManager, cancellationToken);
 
                 // try again now
                 existingTable = parent.CacheManager.GetLatestResultsTableUnsafe(aggregate, aggregateType);

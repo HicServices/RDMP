@@ -270,6 +270,9 @@ namespace Rdmp.Core.CohortCreation.Execution
 
             try
             {
+                // build the SQL but respect the cancellation token
+                queryBuilder.RegenerateSQL(source.Token);
+
                 //get the count(*) SQL
                 newsql = queryBuilder.SQL;
 

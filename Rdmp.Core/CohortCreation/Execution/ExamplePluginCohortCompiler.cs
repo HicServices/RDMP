@@ -11,6 +11,7 @@ using Rdmp.Core.QueryCaching.Aggregation;
 using System;
 using System.Data;
 using System.Linq;
+using System.Threading;
 
 namespace Rdmp.Core.CohortCreation.Execution
 {
@@ -24,10 +25,12 @@ namespace Rdmp.Core.CohortCreation.Execution
     {
         public const string ExampleAPIName = ApiPrefix + "GenerateRandomChisExample";
 
-        public override void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache)
+        public override void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,CancellationToken token)
         {
+            token.ThrowIfCancellationRequested();
+
             // The user of RDMP will have configured ac as either patient index table or normal cohort aggregate
-            if(ac.IsJoinablePatientIndexTable())
+            if (ac.IsJoinablePatientIndexTable())
             {
                 // user expects multiple columns from the API
                 RunAsPatientIndexTable(ac, cache);

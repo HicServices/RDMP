@@ -9,6 +9,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.QueryCaching.Aggregation;
+using System.Threading;
 
 namespace Rdmp.Core.CohortCreation.Execution
 {
@@ -41,7 +42,8 @@ namespace Rdmp.Core.CohortCreation.Execution
         /// </summary>
         /// <param name="ac"></param>
         /// <param name="cache"></param>
-        void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache);
+        /// <param name="cancellationToken"></param>
+        void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache, CancellationToken cancellationToken);
 
         /// <summary>
         /// Return true if the <paramref name="oldDescription"/> does not match the logic currently 

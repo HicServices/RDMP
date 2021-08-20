@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -138,7 +139,7 @@ namespace Rdmp.Core.QueryBuilding
             string selectList = 
                 string.IsNullOrWhiteSpace(configuration.HavingSQL) && !configuration.IsJoinablePatientIndexTable() ? "*" : null;
 
-            RecreateHelpers(new QueryBuilderCustomArgs(selectList, "" /*removes distinct*/, topX));
+            RecreateHelpers(new QueryBuilderCustomArgs(selectList, "" /*removes distinct*/, topX),CancellationToken.None);
 
             Results.BuildFor(configuration,ParameterManager);
             
@@ -158,10 +159,15 @@ namespace Rdmp.Core.QueryBuilding
             
             return sampleSQL;
         }
-        
+
         public void RegenerateSQL()
         {
-            RecreateHelpers(null);
+            RegenerateSQL(CancellationToken.None);
+        }
+
+        public void RegenerateSQL(CancellationToken cancellationToken)
+        {
+            RecreateHelpers(null,cancellationToken);
 
             ParameterManager.ClearNonGlobals();
 
@@ -190,10 +196,10 @@ namespace Rdmp.Core.QueryBuilding
             SQLOutOfDate = false;
         }
 
-        private void RecreateHelpers(QueryBuilderCustomArgs customizations)
+        private void RecreateHelpers(QueryBuilderCustomArgs customizations, CancellationToken cancellationToken)
         {
             helper = new CohortQueryBuilderHelper();
-            Results = new CohortQueryBuilderResult(CacheServer,_childProvider, helper,customizations);
+            Results = new CohortQueryBuilderResult(CacheServer,_childProvider, helper,customizations,cancellationToken);
         }
 
         /// <summary>
