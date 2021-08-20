@@ -4,6 +4,8 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.Curation.Data;
+
 namespace Rdmp.Core.CohortCreation.Execution
 {
     /// <summary>
@@ -15,6 +17,11 @@ namespace Rdmp.Core.CohortCreation.Execution
         /// The set / container has been built but not executed yet
         /// </summary>
         NotScheduled,
+
+        /// <summary>
+        /// The set / container SQL is being built (this is also the stage at which external APIs e.g. are running - see <see cref="Catalogue.IsApiCall()"/>)
+        /// </summary>
+        Building,
 
         /// <summary>
         /// The set / container has been queued for execution but has not been sent to the server yet

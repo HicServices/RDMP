@@ -26,8 +26,14 @@ namespace Rdmp.Core.CohortCreation.Execution
         {
             if (!_compiler.Tasks.ContainsKey(this))
                 return false;
+            
+            var execution = _compiler.Tasks[this];
+            if(execution == null)
+            {
+                return false;
+            }
 
-            return _compiler.Tasks[this].SubQueries > _compiler.Tasks[this].SubqueriesCached;
+            return execution.SubQueries > execution.SubqueriesCached;
         }
 
         public bool CanDeleteCache()

@@ -42,6 +42,7 @@ namespace Rdmp.Core.CohortCreation
         public abstract string GetCatalogueName();
 
         public CancellationToken CancellationToken { set; get; }
+        public CancellationTokenSource CancellationTokenSource { get; set; }
 
         public CompilationState State
         {

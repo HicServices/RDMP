@@ -33,16 +33,16 @@ namespace Rdmp.Core.CohortCreation.Execution
             if (ac.IsJoinablePatientIndexTable())
             {
                 // user expects multiple columns from the API
-                RunAsPatientIndexTable(ac, cache);
+                RunAsPatientIndexTable(ac, cache,token);
             }
             else
             {
                 // user expects only a single linkage identifier to be returned by the API
-                RunAsIdentifierList(ac, cache);
+                RunAsIdentifierList(ac, cache,token);
             }
         }
 
-        private void RunAsPatientIndexTable(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache)
+        private void RunAsPatientIndexTable(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache, CancellationToken token)
         {
             using DataTable dt = new DataTable();
             dt.Columns.Add("chi", typeof(string));
@@ -60,7 +60,7 @@ namespace Rdmp.Core.CohortCreation.Execution
 
             SubmitPatientIndexTable(dt, ac, cache,true);
         }
-        private void RunAsIdentifierList(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache)
+        private void RunAsIdentifierList(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache, CancellationToken token)
         {
             var pc = new PersonCollection();
             pc.GeneratePeople(GetNumberToGenerate(ac), new Random());
