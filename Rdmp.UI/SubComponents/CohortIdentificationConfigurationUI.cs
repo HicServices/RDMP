@@ -214,8 +214,8 @@ namespace Rdmp.UI.SubComponents
             base.SetDatabaseObject(activator,databaseObject);
             _configuration = databaseObject;
             
-            tbName.Text = _configuration.Name;
-            tbDescription.Text = _configuration.Description;
+            lblName.Text = "Name:" + _configuration.Name;
+            lblDescription.Text = "Description:" + _configuration.Description;
             ticket.TicketText = _configuration.Ticket;
 
             if (_commonFunctionality == null)
