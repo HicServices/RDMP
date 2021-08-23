@@ -259,7 +259,7 @@ SELECT patientId from Imaging WHERE Modality = 'MR' and StudyDescription like '%
 
 Since each section is runnable independently it is trivially easy for RDMP to produce totals for each seperate set.  The set results can even be cached to prevent having to re-run the entire query if you are only making a small change to one bit.
 
-![Cohort Builder Tree](./CohortBuilderUI.png)
+![Cohort Builder Tree](./Images/CohortBuilderUI.png)
 
 For full details on technical implementation see [Cohort Creation](../../Rdmp.Core/CohortCreation/Readme.md).
 
@@ -274,7 +274,7 @@ If you need to combine data in the file (or multiple files) with data in your da
 - Querying is faster and more flexible
 - The data in the file can be anonymised and released by the RDMP extraction engine if required for project extractions.
 
-![Right click context menu for creating a new catalogue from a file](./CreateCatalogueFromFile.png)
+![Right click context menu for creating a new catalogue from a file](./Images/CreateCatalogueFromFile.png)
 
 ## Cohort Builder isn't working or is slow
 
