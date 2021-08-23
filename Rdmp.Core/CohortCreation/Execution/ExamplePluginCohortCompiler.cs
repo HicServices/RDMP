@@ -9,6 +9,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading;
@@ -63,10 +64,21 @@ namespace Rdmp.Core.CohortCreation.Execution
         private void RunAsIdentifierList(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache, CancellationToken token)
         {
             var pc = new PersonCollection();
-            pc.GeneratePeople(GetNumberToGenerate(ac), new Random());
+            var requiredNumber = GetNumberToGenerate(ac);
+            var rand = new Random();
+            pc.GeneratePeople(requiredNumber, rand);
 
+            var set = new HashSet<string>(pc.People.Select(p => p.CHI));
+
+            // there may be duplicates, if so we need to bump up the number to match the required count
+            while(set.Count < requiredNumber)
+            {
+                pc.GeneratePeople(1, rand);
+                set.Add(pc.People[0].CHI);
+            }
+                
             // generate a list of random chis
-            SubmitIdentifierList("chi", pc.People.Select(p => p.CHI), ac, cache);
+            SubmitIdentifierList("chi", set, ac, cache);
         }
 
         private int GetNumberToGenerate(AggregateConfiguration ac)
