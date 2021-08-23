@@ -337,7 +337,10 @@ namespace Rdmp.Core.CohortCreation.Execution
                 queryBuilder?.Results?.TargetServer);
 
             // task is now built but not yet 
-            task.State = CompilationState.NotScheduled;
+            if(task.State != CompilationState.Crashed)
+            {
+                task.State = CompilationState.NotScheduled;
+            }
 
             lock (Tasks)
             {
