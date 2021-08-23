@@ -17,9 +17,11 @@
    1. [Does RDMP Support Views?](#views)
    1. [Does RDMP Support Table Valued Functions?](#tvf)
 1. Cohort Creation
-   1. [Cohort Builder isn't working or is slow](#cicslow)
-   2. [Does RDMP support ontologies e.g. SNOMED CT?](#ontologies)
-   3. [Does RDMP support multiple identifier formats?](#identifiers)
+   1. [How does the RDMP Cohort Builder work?](#cohort-builder-overview)
+   2. [Cohort Builder isn't working or is slow](#cicslow)
+   3. [Does RDMP support ontologies e.g. SNOMED CT?](#ontologies)
+   4. [Does RDMP support multiple identifier formats?](#identifiers)
+   5. [Does the cohort builder support querying other services e.g. REST APIs?](#apis)
 1. Data Load Engine
    1. [How does RDMP differ from classic tools e.g. SSIS?](#vsssis)
    1. [Can RDMP Load UnTyped Data?](#untyped)
@@ -223,6 +225,41 @@ When importing a table from a Microsoft Sql Server database to create a [Catalog
 
 ![A Table Valued Function TableInfo](Images/FAQ/TableValuedFunctionExample.png)
 
+## How does the RDMP Cohort Builder work?
+
+<a name="cohort-builder-overview"/>
+
+So you've decided to do a research study using Electronic Health Records and/or imaging and you've written a document outlining the requirements.  How do we turn this list of inclusion / exclusion criteria into runnable code?  With RDMP's Cohort Compiler of course!
+
+The first task is to split up the criteria into bite sized chunks, each run on a single dataset:
+
+- 3+ prescriptions for Drug A
+- Biochemistry result for TestCode B > 500
+- Alive at the time of study
+- Has had a head MR in the past 5 years
+
+How does RDMP compile this into SQL? To answer that question lets look at the end goal.  Since the datasets share a common identifier we can JOIN the tables.  But that can get complex fast and gives us a single gigantic query that's likely to bring the server to it's knees.  Instead, since we are dealing with lists of patients, we can use SET operations (UNION, INTERSECT, EXCEPT).  This means we only need to pull a single column (e.g. patientId) from each dataset and we can then smash all the resulting lists together using the super fast operations that Relational Database Engines excel at.  As an added bonus, if the datasets are on seperate database servers or engines (MySql, Sql Server, Oracle) we can run the queries seperately and store the results in a temporary common server and apply the SET operations there.
+
+```sql
+SELECT patientId From Prescribing WHERE Drug = 'Drug A' Group by CHI HAVING COUNT(*) > 3
+
+UNION
+
+SELECT patientId From Biochemistry WHERE TestCode = 'TestCode B' AND Result > 500
+
+EXCEPT
+
+Select patientId from Demography WHERE DateOfDeath is not null
+
+INTERSECT
+
+SELECT patientId from Imaging WHERE Modality = 'MR' and StudyDescription like '%head%'
+```
+
+Since each section is runnable independently it is trivially easy for RDMP to produce totals for each seperate set.  The set results can even be cached to prevent having to re-run the entire query if you are only making a small change to one bit.
+
+![Cohort Builder Tree](./CohortBuilderUI.png)
+
 ## Cohort Builder isn't working or is slow
 
 <a name="cicslow"></a>
@@ -247,6 +284,11 @@ RDMP supports lookup tables which can form part of an ontology mapping solution.
 <a name="identifiers"></a>
 
 Yes, RDMP supports both multiple identifier formats (text, numerical, guids etc) and [multiple identifiers per dataset](./MultipleExtractionIdentifiers.md)
+
+### Does the cohort builder support querying other services e.g. REST APIs?
+<a name="apis"></a>
+
+Yes, RDMP supports querying any data provider service through the [Cohort Building API Plugin](./CohortBuildingApiPlugins.md) system.
 
 ## Data Load Engine
 
