@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Rdmp.Core.CohortCreation.Execution.Joinables;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -80,8 +81,7 @@ namespace Rdmp.Core.CohortCreation.Execution
 
                 SetPhase(Phase.RunningJoinableTasks);
 
-                foreach (var j in _cic.GetAllJoinables())
-                    Compiler.AddTask(j, globals);
+                Parallel.ForEach(_cic.GetAllJoinables(), (j) => Compiler.AddTask(j, globals));
 
                 Compiler.CancelAllTasks(false);
 
@@ -108,8 +108,12 @@ namespace Rdmp.Core.CohortCreation.Execution
                 var toReturn = Compiler.AddTask(_cic.RootCohortAggregateContainer, globals);
 
                 if(RunSubcontainers)
-                    foreach (var a in _cic.RootCohortAggregateContainer.GetAllSubContainersRecursively().Where(c=>!c.IsDisabled))
-                        Compiler.AddTask(a, globals);
+                {
+                    Parallel.ForEach(
+                        _cic.RootCohortAggregateContainer.GetAllSubContainersRecursively().Where(c => !c.IsDisabled),
+                        (a)=>Compiler.AddTask(a, globals));
+                }
+                        
 
                 Compiler.CancelAllTasks(false);
 

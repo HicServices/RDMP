@@ -22,6 +22,7 @@ using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using System.Threading.Tasks;
 
 namespace Rdmp.Core.CohortCreation.Execution
 {
@@ -149,6 +150,15 @@ namespace Rdmp.Core.CohortCreation.Execution
             return toReturn;
         }
 
+        public List<ICompileable> AddTasksRecursively(ISqlParameter[] globals, CohortAggregateContainer container, bool addSubcontainerTasks = true)
+        {
+            var tasks = AddTasksRecursivelyAsync(globals, container, addSubcontainerTasks);
+
+            Task.WaitAll(tasks.ToArray());
+
+            return tasks.Select(t => t.Result).ToList();
+        }
+
         /// <summary>
         /// Adds all AggregateConfigurations and CohortAggregateContainers in the specified container or subcontainers. Passing addSubcontainerTasks false will still process the subcontainers
         /// but will only add AggregateConfigurations to the task list.
@@ -160,9 +170,9 @@ namespace Rdmp.Core.CohortCreation.Execution
         /// <param name="addSubcontainerTasks">The root container is always added to the task list but you could skip subcontainer totals if all you care about is the final total for the cohort
         /// and you don't have a dependant UI etc.  Passing false will add all joinables, subqueries etc and the root container (final answer for who is in cohort) only.</param>
         /// <returns></returns>
-        public List<ICompileable> AddTasksRecursively(ISqlParameter[] globals, CohortAggregateContainer container, bool addSubcontainerTasks = true)
+        public List<Task<ICompileable>> AddTasksRecursivelyAsync(ISqlParameter[] globals, CohortAggregateContainer container, bool addSubcontainerTasks = true)
         {
-            var toReturn = new List<ICompileable>();
+            var toReturn = new List<Task<ICompileable>>();
 
             if(CohortIdentificationConfiguration.RootCohortAggregateContainer_ID == null)
                 throw new QueryBuildingException($"CohortIdentificationConfiguration '{CohortIdentificationConfiguration}' had not root SET container (UNION / INERSECT / EXCEPT)");
@@ -172,21 +182,21 @@ namespace Rdmp.Core.CohortCreation.Execution
             {
                 if (!container.IsDisabled)
                 {
-                    toReturn.Add(AddTask(container, globals));
+                    toReturn.Add(Task.Run(()=> { return AddTask(container, globals); }));
                 }
             }
                 
 
             foreach (IOrderable c in container.GetOrderedContents())
             {
-                var aggregateContainer = c as CohortAggregateContainer;
-                var aggregate = c as AggregateConfiguration;
-                
-                if (aggregateContainer != null && !aggregateContainer.IsDisabled)
-                    toReturn.AddRange(AddTasksRecursively(globals, aggregateContainer, addSubcontainerTasks));
-
-                if(aggregate != null && !aggregate.IsDisabled)
-                    toReturn.Add(AddTask(aggregate, globals));
+                if(c is CohortAggregateContainer aggregateContainer && !aggregateContainer.IsDisabled)
+                {
+                    toReturn.AddRange(AddTasksRecursivelyAsync(globals, aggregateContainer, addSubcontainerTasks));
+                }
+                if(c is AggregateConfiguration aggregate && !aggregate.IsDisabled)
+                {
+                    toReturn.Add(Task.Run(() => { return AddTask(aggregate, globals); }));
+                }
             }
 
             return toReturn;
