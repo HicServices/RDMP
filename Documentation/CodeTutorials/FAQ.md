@@ -18,10 +18,11 @@
    1. [Does RDMP Support Table Valued Functions?](#tvf)
 1. Cohort Creation
    1. [How does the RDMP Cohort Builder work?](#cohort-builder-overview)
-   2. [Cohort Builder isn't working or is slow](#cicslow)
-   3. [Does RDMP support ontologies e.g. SNOMED CT?](#ontologies)
-   4. [Does RDMP support multiple identifier formats?](#identifiers)
-   5. [Does the cohort builder support querying other services e.g. REST APIs?](#apis)
+   2. [Does the Cohort Builder support Excel, CSV files etc?](#cohort-build-with-file)
+   3. [Cohort Builder isn't working or is slow](#cicslow)
+   4. [Does RDMP support ontologies e.g. SNOMED CT?](#ontologies)
+   5. [Does RDMP support multiple identifier formats?](#identifiers)
+   6. [Does the cohort builder support querying other services e.g. REST APIs?](#apis)
 1. Data Load Engine
    1. [How does RDMP differ from classic tools e.g. SSIS?](#vsssis)
    1. [Can RDMP Load UnTyped Data?](#untyped)
@@ -259,6 +260,21 @@ SELECT patientId from Imaging WHERE Modality = 'MR' and StudyDescription like '%
 Since each section is runnable independently it is trivially easy for RDMP to produce totals for each seperate set.  The set results can even be cached to prevent having to re-run the entire query if you are only making a small change to one bit.
 
 ![Cohort Builder Tree](./CohortBuilderUI.png)
+
+For full details on technical implementation see [Cohort Creation](../../Rdmp.Core/CohortCreation/Readme.md).
+
+## Does the Cohort Builder support Excel, CSV files etc?
+<a name="cohort-build-with-file"/>
+
+Yes.  If a cohort is solely defined by the contents of such a file it can be [committed directly to the cohort store](../../Rdmp.Core/CohortCommitting/Readme.md).
+
+If you need to combine data in the file (or multiple files) with data in your database then the first step is to create a new Catalogue by uploading the data into your database.  This has a number of advantages:
+
+- It provides a permenant record in RDMP of the data used to generate the cohort
+- Querying is faster and more flexible
+- The data in the file can be anonymised and released by the RDMP extraction engine if required for project extractions.
+
+![Right click context menu for creating a new catalogue from a file](./CreateCatalogueFromFile.png)
 
 ## Cohort Builder isn't working or is slow
 
