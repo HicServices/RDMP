@@ -519,7 +519,9 @@ namespace Rdmp.Core.CohortCreation.Execution
                     }
 
                     // cancel the source
-                    if(compileable.State == CompilationState.Building ||
+                    if(
+                        compileable.State == CompilationState.NotScheduled ||
+                        compileable.State == CompilationState.Building ||
                         compileable.State == CompilationState.Executing)
                     {
                         compileable.CancellationTokenSource.Cancel();
