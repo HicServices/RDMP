@@ -375,7 +375,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             window.FormClosed += (s, e) =>
             {
                 var tabs = Navigation.GetHistory(10).OfType<TabNavigation>();
-                tabs.First(t=>t.Tab != s)?.Activate(ActivateItems);
+                tabs.FirstOrDefault(t=>t.Tab != s)?.Activate(ActivateItems);
             };
         }
 
