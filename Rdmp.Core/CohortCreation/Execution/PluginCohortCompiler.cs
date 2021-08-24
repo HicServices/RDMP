@@ -26,7 +26,7 @@ namespace Rdmp.Core.CohortCreation.Execution
     {
         /// <summary>
         /// The prefix that should be on <see cref="Catalogue"/> names if they reflect API calls.
-        /// Each <see cref="IPluginCohortCompiler"/> should expand upon this to identify it's specific
+        /// Each <see cref="IPluginCohortCompiler"/> should expand upon this to identify its specific
         /// responsibilities (e.g. if you have 2+ Types of API available)
         /// </summary>
         public const string ApiPrefix = "API_";
