@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -186,13 +187,11 @@ namespace Rdmp.Core.Repositories
             return _constructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);
         }
 
-        private readonly Dictionary<Type, IRowVerCache> _caches = new Dictionary<Type, IRowVerCache>();
+        private readonly ConcurrentDictionary<Type, IRowVerCache> _caches = new ConcurrentDictionary<Type, IRowVerCache>();
         public override T[] GetAllObjects<T>()
         {
-            if (!_caches.ContainsKey(typeof(T))) 
-                _caches.Add(typeof(T), new RowVerCache<T>(this));
-
-            return _caches[typeof(T)].GetAllObjects<T>();
+            return _caches.GetOrAdd(typeof(T),(t)=> new RowVerCache<T>(this))
+                .GetAllObjects<T>();
         }
 
         public override T[] GetAllObjectsNoCache<T>()
