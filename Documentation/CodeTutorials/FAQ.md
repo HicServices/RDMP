@@ -118,7 +118,7 @@ CatalogueConnectionString: Server=localhost;Database=TEST_Catalogue;User Id=sa;P
 DataExportConnectionString: Server=localhost;Database=TEST_DataExport;User Id=sa;Password=YourStrong!Passw0rd
 ```
 
-Each rdmp engine (e.g. dle) has it's own verb e.g.
+Each rdmp engine (e.g. dle) has its own verb e.g.
 
 ```
 ./rdmp dle --help
@@ -132,7 +132,7 @@ In addition core and plugin commands can be accessed through the cmd verb e.g.
 
 <a name="api"></a>
 ### Does RDMP have an API?
-Yes, RDMP can be controlled programmatically through it's API which is available as 3 NuGet packages 
+Yes, RDMP can be controlled programmatically through its API which is available as 3 NuGet packages 
 - [HIC.RDMP.Plugin](https://www.nuget.org/packages/HIC.RDMP.Plugin): All core objects, engines etc
 - [HIC.RDMP.Plugin.UI](https://www.nuget.org/packages/HIC.RDMP.Plugin.UI): All definitions for writing user interface plugins that run in the main RDMP client application.
 - [HIC.RDMP.Plugin.Test](https://www.nuget.org/packages/HIC.RDMP.Plugin.Test/): Classes to simplify writing Unit/Integration Tests for RDMP plugins
@@ -239,7 +239,7 @@ The first task is to split up the criteria into bite sized chunks, each run on a
 - Alive at the time of study
 - Has had a head MR in the past 5 years
 
-How does RDMP compile this into SQL? To answer that question let's look at the end goal.  Since the datasets share a common identifier we can JOIN the tables.  But that can get complex fast and gives us a single gigantic query that's likely to bring the server to it's knees.  Instead, since we are dealing with lists of patients, we can use SET operations (UNION, INTERSECT, EXCEPT).  This means we only need to pull a single column (e.g. patientId) from each dataset and we can then smash all the resulting lists together using the super fast operations that Relational Database Engines excel at.  As an added bonus, if the datasets are on seperate database servers or engines (MySql, Sql Server, Oracle) we can run the queries seperately and store the results in a temporary common server and apply the SET operations there.
+How does RDMP compile this into SQL? To answer that question let's look at the end goal.  Since the datasets share a common identifier we can JOIN the tables.  But that can get complex fast and gives us a single gigantic query that's likely to bring the server to its knees.  Instead, since we are dealing with lists of patients, we can use SET operations (UNION, INTERSECT, EXCEPT).  This means we only need to pull a single column (e.g. patientId) from each dataset and we can then smash all the resulting lists together using the super fast operations that Relational Database Engines excel at.  As an added bonus, if the datasets are on seperate database servers or engines (MySql, Sql Server, Oracle) we can run the queries seperately and store the results in a temporary common server and apply the SET operations there.
 
 ```sql
 SELECT patientId From Prescribing WHERE Drug = 'Drug A' Group by CHI HAVING COUNT(*) > 3
@@ -414,8 +414,8 @@ In order to allow other people to run the data load it is advised to store all S
 
 RDMP can create references to tables and views from any database to which you have sufficient privelleges.  If you can see other tables in the database listed check the following:
 
-- The table does not have brackets in it's name e.g. `[MyDb]..[MyTbl (fff)]`
-- The table does not have dots in it's name e.g. `[MyDb]..[MyTbl.lol]`
+- The table does not have brackets in its name e.g. `[MyDb]..[MyTbl (fff)]`
+- The table does not have dots in its name e.g. `[MyDb]..[MyTbl.lol]`
 - The table is visible through other tools e.g. sql management studio
 
 If you cannot see any tables listed in the database
@@ -609,7 +609,7 @@ User interfaces in RDMP follow a standard testable design which is described in 
 
 <a name="abstractDesignerPattern"></a>
 ### Whats with the _Design user interface classes?
-Any user interface class which includes an abstract base class in it's hierarchy (e.g. `CatalogueUI`) has an accompanying class `CatalogueUI_Design`.  This class exists solely facilitate using the visual studio forms designer (which [doesn't support abstract base classes](https://stackoverflow.com/a/6817281/4824531)).  Even with this workaround visual studio will sometimes fail to show the designer for these controls, restarting visual studio usually solves this problem.
+Any user interface class which includes an abstract base class in its hierarchy (e.g. `CatalogueUI`) has an accompanying class `CatalogueUI_Design`.  This class exists solely facilitate using the visual studio forms designer (which [doesn't support abstract base classes](https://stackoverflow.com/a/6817281/4824531)).  Even with this workaround visual studio will sometimes fail to show the designer for these controls, restarting visual studio usually solves this problem.
 
 <a name="reorder"></a>
 ### How do I stop some nodes being reordered in RDMPCollectionUIs?
@@ -630,7 +630,7 @@ If you are unsure what Type a given node is you can right click it and select 'W
 
 <a name="addNewNodes"></a>
 ### How do I add new nodes to RDMPCollectionUIs?
-This requires a tutorial all of it's own 
+This requires a tutorial all of its own 
 
 [CreatingANewCollectionTreeNode](./CreatingANewCollectionTreeNode.md)
 
