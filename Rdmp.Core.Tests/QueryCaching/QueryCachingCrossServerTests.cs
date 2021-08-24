@@ -305,11 +305,11 @@ namespace Rdmp.Core.Tests.QueryCaching
             
             AssertNoErrors(compiler);
 
-            Assert.AreEqual(compiler.Tasks.First().Key.FinalRowCount,0);
-            Assert.Greater(compiler.Tasks.Skip(1).First().Key.FinalRowCount, 0); //both ac should have the same total
-            Assert.Greater(compiler.Tasks.Skip(2).First().Key.FinalRowCount, 0); // that is not 0
-            Assert.AreEqual(compiler.Tasks.Skip(1).First().Key.FinalRowCount,compiler.Tasks.Skip(2).First().Key.FinalRowCount);
 
+            Assert.AreEqual(compiler.Tasks.Single(t=> t.Value!=null && t.Value.IsResultsForRootContainer).Key.FinalRowCount,0);
+            Assert.Greater(compiler.Tasks.Single(t=>t.Key is AggregationTask at && at.Aggregate.Equals(ac1)).Key.FinalRowCount, 0); //both ac should have the same total
+            Assert.Greater(compiler.Tasks.Single(t => t.Key is AggregationTask at && at.Aggregate.Equals(ac2)).Key.FinalRowCount, 0); // that is not 0
+            
             Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("2/2")), "Expected EXCEPT container to use the cache");
         }
 

@@ -5,7 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using FAnsi.Naming;
+using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -13,6 +17,7 @@ using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.QueryCaching.Aggregation;
+using System.Collections.Concurrent;
 
 namespace Rdmp.Core.QueryBuilding
 {
@@ -25,7 +30,8 @@ namespace Rdmp.Core.QueryBuilding
     public class CohortQueryBuilderDependency
     {
         private readonly ICoreChildProvider _childProvider;
-        
+        private readonly IReadOnlyCollection<IPluginCohortCompiler> _pluginCohortCompilers;
+
         /// <summary>
         /// The primary table being queried
         /// </summary>
@@ -69,10 +75,17 @@ namespace Rdmp.Core.QueryBuilding
         
         public CohortQueryBuilderDependencySql SqlJoinableCached { get; private set; }
 
+        /// <summary>
+        /// Locks on aggregate by ID
+        /// </summary>
+        private static readonly ConcurrentDictionary<int,object> AggregateLocks = new();
+
+
         public CohortQueryBuilderDependency(AggregateConfiguration cohortSet,
-            JoinableCohortAggregateConfigurationUse patientIndexTableIfAny, ICoreChildProvider childProvider)
+            JoinableCohortAggregateConfigurationUse patientIndexTableIfAny, ICoreChildProvider childProvider, IReadOnlyCollection<IPluginCohortCompiler> pluginCohortCompilers)
         {
             _childProvider = childProvider;
+            _pluginCohortCompilers = pluginCohortCompilers;
             CohortSet = cohortSet;
             PatientIndexTableIfAny = patientIndexTableIfAny;
 
@@ -101,20 +114,68 @@ namespace Rdmp.Core.QueryBuilding
 
         public override string ToString()
         {
-            return CohortSet.Name + (JoinedTo != null ? PatientIndexTableIfAny.JoinType + " JOIN " + JoinedTo.Name : "");
+            return (JoinedTo != null
+                ? $"{CohortSet.Name}{PatientIndexTableIfAny.JoinType} JOIN {JoinedTo.Name}"
+                : CohortSet.Name);
         }
 
-        public void Build(CohortQueryBuilderResult parent,ISqlParameter[] globals)
+        public void Build(CohortQueryBuilderResult parent,ISqlParameter[] globals,CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             bool isSolitaryPatientIndexTable = CohortSet.IsJoinablePatientIndexTable();
             
+            // if it is a plugin aggregate we only want to ever serve up the cached SQL
+            var pluginCohortCompiler = _pluginCohortCompilers.FirstOrDefault(c => c.ShouldRun(CohortSet));
+            var joinedToPluginCohortCompiler = JoinedTo == null ? null : _pluginCohortCompilers.FirstOrDefault(c => c.ShouldRun(JoinedTo)); 
+
+            if (pluginCohortCompiler != null)
+            {
+                if (joinedToPluginCohortCompiler != null)
+                {
+                    throw new Exception($"APIs cannot be joined together ('{CohortSet}' and '{JoinedTo}')");
+                }
+
+                if (parent.CacheManager == null)
+                {
+                    throw new Exception($"Aggregate '{CohortSet}' is a plugin aggregate (According to '{pluginCohortCompiler}') but no cache is configured on {CohortSet.GetCohortIdentificationConfigurationIfAny()}.  You must enable result caching to use plugin aggregates.");
+                }
+
+                // It's a plugin aggregate so only ever run the cached SQL
+                SqlFullyCached = GetCacheFetchSqlIfPossible(parent, CohortSet, SqlCacheless, isSolitaryPatientIndexTable, pluginCohortCompiler,cancellationToken);
+                    
+                if(SqlFullyCached == null)
+                {
+                    throw new Exception($"Aggregate '{CohortSet}' is a plugin aggregate (According to '{pluginCohortCompiler}') but no cached results were found after running.");
+                }
+                return;
+            }
+
             //Includes the parameter declaration and no rename operations (i.e. couldn't be used for building the tree but can be used for cache hit testing).
             if (JoinedTo != null)
             {
-                SqlJoinableCacheless = parent.Helper.GetSQLForAggregate(JoinedTo,
+                if(joinedToPluginCohortCompiler == null)
+                {
+                    SqlJoinableCacheless = parent.Helper.GetSQLForAggregate(JoinedTo,
                     new QueryBuilderArgs(new QueryBuilderCustomArgs(), //don't respect customizations in the inception bit!
                         globals));
-                SqlJoinableCached = GetCachFetchSqlIfPossible(parent,JoinedTo,SqlJoinableCacheless,true);
+                    SqlJoinableCached = GetCacheFetchSqlIfPossible(parent, JoinedTo, SqlJoinableCacheless, true, null, cancellationToken);
+                }
+                else
+                {
+                    // It is not possible to do a cacheless query because an API is involved
+                    SqlJoinableCached = GetCacheFetchSqlIfPossible(parent, JoinedTo, SqlJoinableCacheless, true, joinedToPluginCohortCompiler, cancellationToken);
+
+                    if(SqlJoinableCached == null)
+                    {
+                        throw new Exception($"Unable to build query for '{CohortSet}' because it joins to API cohort '{JoinedTo}' that did not exist in the cache");
+                    }
+
+                    // Since the only way to query the dataset is using the cache we can pretend that it is the cacheless way
+                    // of querying it too.
+                    SqlJoinableCacheless = SqlJoinableCached;
+                }
+                
             }
             
             if (isSolitaryPatientIndexTable)
@@ -142,25 +203,59 @@ namespace Rdmp.Core.QueryBuilding
             }
             
             //We would prefer a cache hit on the exact uncached SQL
-            SqlFullyCached = GetCachFetchSqlIfPossible(parent, CohortSet, SqlCacheless, isSolitaryPatientIndexTable);
+            SqlFullyCached = GetCacheFetchSqlIfPossible(parent, CohortSet, SqlCacheless, isSolitaryPatientIndexTable, pluginCohortCompiler,cancellationToken);
 
             //but if that misses we would take a cache hit of an execution of the SqlPartiallyCached
             if(SqlFullyCached == null && SqlPartiallyCached != null)
-                SqlFullyCached = GetCachFetchSqlIfPossible(parent,CohortSet,SqlPartiallyCached,isSolitaryPatientIndexTable);
+                SqlFullyCached = GetCacheFetchSqlIfPossible(parent,CohortSet,SqlPartiallyCached,isSolitaryPatientIndexTable, pluginCohortCompiler, cancellationToken);
         }
 
-        private CohortQueryBuilderDependencySql GetCachFetchSqlIfPossible(CohortQueryBuilderResult parent,AggregateConfiguration aggregate, CohortQueryBuilderDependencySql sql, bool isPatientIndexTable)
+        private CohortQueryBuilderDependencySql GetCacheFetchSqlIfPossible(CohortQueryBuilderResult parent, AggregateConfiguration aggregate,
+            CohortQueryBuilderDependencySql sql, bool isPatientIndexTable, IPluginCohortCompiler pluginCohortCompiler, CancellationToken cancellationToken)
         {
             if (parent.CacheManager == null)
                 return null;
 
-            string parameterSql = QueryBuilder.GetParameterDeclarationSQL(sql.ParametersUsed.Clone().GetFinalResolvedParametersList());
+            var aggregateType = isPatientIndexTable ? AggregateOperation.JoinableInceptionQuery : AggregateOperation.IndexedExtractionIdentifierList;
+            IHasFullyQualifiedNameToo existingTable;
 
-            string hitTestSql = parameterSql + sql.Sql;
+            // since we might make a plugin API run call we had better lock this to
+            var oLock = AggregateLocks.GetOrAdd(aggregate.ID, (i) => new object());
+            lock (oLock)
+            {
+                // unless it is a plugin driven aggregate we need to assemble the SQL to check if the cache is stale
+                if (pluginCohortCompiler == null)
+                {
+                    string parameterSql = QueryBuilder.GetParameterDeclarationSQL(sql.ParametersUsed.Clone().GetFinalResolvedParametersList());
+                    string hitTestSql = parameterSql + sql.Sql;
+                    existingTable = parent.CacheManager.GetLatestResultsTable(aggregate, aggregateType, hitTestSql);
+                }
+                else
+                {
+                    existingTable = parent.CacheManager.GetLatestResultsTableUnsafe(aggregate, aggregateType, out string oldDescription);
 
-            var existingTable = parent.CacheManager.GetLatestResultsTable(aggregate, isPatientIndexTable
-                ?AggregateOperation.JoinableInceptionQuery:AggregateOperation.IndexedExtractionIdentifierList , hitTestSql);
-                
+                    if (pluginCohortCompiler.IsStale(aggregate, oldDescription))
+                    {
+                        existingTable = null;
+                    }
+                }
+
+                // if there are no cached results in the destination (and it's a plugin cohort) then we need to run the plugin API call
+                if (existingTable == null && pluginCohortCompiler != null)
+                {
+                    // no cached results were there so run the plugin
+                    pluginCohortCompiler.Run(CohortSet, parent.CacheManager, cancellationToken);
+
+                    // try again now
+                    existingTable = parent.CacheManager.GetLatestResultsTableUnsafe(aggregate, aggregateType);
+
+                    if (existingTable == null)
+                    {
+                        throw new Exception($"Run method on {pluginCohortCompiler} failed to populate the Query Result Cache for {CohortSet}");
+                    }
+                }
+            }
+
             //if there is a cached entry matching the cacheless SQL then we can just do a select from it (in theory)
             if (existingTable != null)
             {

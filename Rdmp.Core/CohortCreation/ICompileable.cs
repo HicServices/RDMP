@@ -24,6 +24,7 @@ namespace Rdmp.Core.CohortCreation
         int Timeout { get; set; }
 
         CancellationToken CancellationToken { get; set; }
+        CancellationTokenSource CancellationTokenSource { get; set; }
         CompilationState State { set; get; }
         
         event EventHandler StateChanged;

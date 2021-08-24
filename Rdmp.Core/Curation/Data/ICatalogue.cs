@@ -11,6 +11,7 @@ using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
+using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Logging;
@@ -246,5 +247,23 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         /// <returns></returns>
         ICatalogue ShallowClone();
+
+        /// <summary>
+        /// Returns true if the <see cref="Catalogue"/> reflects a call to an external API and not a 
+        /// database query.
+        /// </summary>
+        /// <returns></returns>
+        bool IsApiCall();
+
+        /// <summary>
+        /// Returns true if the <see cref="Catalogue"/> reflects a call to an external API and not a 
+        /// database query.  If it is an API then <paramref name="plugin"/> will be populated with the
+        /// plugin that can service the API or null if none are loaded that are compatible with
+        /// the <see cref="Catalogue"/>
+        /// </summary>
+        /// <param name="plugin"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception">Thrown if Startup/MEF have not been loaded by the environment yet</exception>
+        bool IsApiCall(out IPluginCohortCompiler plugin);
     }
 }

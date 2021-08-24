@@ -20,9 +20,9 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests
 {
     public class CohortQueryBuilderWithCacheTests : CohortIdentificationTests
     {
-        private DiscoveredDatabase queryCacheDatabase;
-        private ExternalDatabaseServer externalDatabaseServer;
-        private DatabaseColumnRequest _chiColumnSpecification = new DatabaseColumnRequest("chi","varchar(10)");
+        protected DiscoveredDatabase queryCacheDatabase;
+        protected ExternalDatabaseServer externalDatabaseServer;
+        protected DatabaseColumnRequest _chiColumnSpecification = new DatabaseColumnRequest("chi","varchar(10)");
 
         [OneTimeSetUp]
         protected override void OneTimeSetUp()

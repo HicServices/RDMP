@@ -49,6 +49,9 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             if (ac.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
                 img =_overlayProvider.GetOverlay(img, OverlayKind.Shortcut);
 
+            if (ac.Catalogue.IsApiCall())
+                img = _overlayProvider.GetOverlay(img, OverlayKind.Cloud);
+
             return img;
         }
     }

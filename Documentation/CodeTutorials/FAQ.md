@@ -17,9 +17,12 @@
    1. [Does RDMP Support Views?](#views)
    1. [Does RDMP Support Table Valued Functions?](#tvf)
 1. Cohort Creation
-   1. [Cohort Builder isn't working or is slow](#cicslow)
-   2. [Does RDMP support ontologies e.g. SNOMED CT?](#ontologies)
-   3. [Does RDMP support multiple identifier formats?](#identifiers)
+   1. [How does the RDMP Cohort Builder work?](#cohort-builder-overview)
+   2. [Does the Cohort Builder support Excel, CSV files etc?](#cohort-build-with-file)
+   3. [Cohort Builder isn't working or is slow](#cicslow)
+   4. [Does RDMP support ontologies e.g. SNOMED CT?](#ontologies)
+   5. [Does RDMP support multiple identifier formats?](#identifiers)
+   6. [Does the cohort builder support querying other services e.g. REST APIs?](#apis)
 1. Data Load Engine
    1. [How does RDMP differ from classic tools e.g. SSIS?](#vsssis)
    1. [Can RDMP Load UnTyped Data?](#untyped)
@@ -115,7 +118,7 @@ CatalogueConnectionString: Server=localhost;Database=TEST_Catalogue;User Id=sa;P
 DataExportConnectionString: Server=localhost;Database=TEST_DataExport;User Id=sa;Password=YourStrong!Passw0rd
 ```
 
-Each rdmp engine (e.g. dle) has it's own verb e.g.
+Each rdmp engine (e.g. dle) has its own verb e.g.
 
 ```
 ./rdmp dle --help
@@ -129,7 +132,7 @@ In addition core and plugin commands can be accessed through the cmd verb e.g.
 
 <a name="api"></a>
 ### Does RDMP have an API?
-Yes, RDMP can be controlled programmatically through it's API which is available as 3 NuGet packages 
+Yes, RDMP can be controlled programmatically through its API which is available as 3 NuGet packages 
 - [HIC.RDMP.Plugin](https://www.nuget.org/packages/HIC.RDMP.Plugin): All core objects, engines etc
 - [HIC.RDMP.Plugin.UI](https://www.nuget.org/packages/HIC.RDMP.Plugin.UI): All definitions for writing user interface plugins that run in the main RDMP client application.
 - [HIC.RDMP.Plugin.Test](https://www.nuget.org/packages/HIC.RDMP.Plugin.Test/): Classes to simplify writing Unit/Integration Tests for RDMP plugins
@@ -223,6 +226,56 @@ When importing a table from a Microsoft Sql Server database to create a [Catalog
 
 ![A Table Valued Function TableInfo](Images/FAQ/TableValuedFunctionExample.png)
 
+## How does the RDMP Cohort Builder work?
+
+<a name="cohort-builder-overview"/>
+
+So you've decided to do a research study using Electronic Health Records and/or imaging and you've written a document outlining the requirements.  How do we turn this list of inclusion / exclusion criteria into runnable code?  With RDMP's Cohort Compiler of course!
+
+The first task is to split up the criteria into bite sized chunks, each run on a single dataset:
+
+- 3+ prescriptions for Drug A
+- Biochemistry result for TestCode B > 500
+- Alive at the time of study
+- Has had a head MR in the past 5 years
+
+How does RDMP compile this into SQL? To answer that question let's look at the end goal.  Since the datasets share a common identifier we can JOIN the tables.  But that can get complex fast and gives us a single gigantic query that's likely to bring the server to its knees.  Instead, since we are dealing with lists of patients, we can use SET operations (UNION, INTERSECT, EXCEPT).  This means we only need to pull a single column (e.g. patientId) from each dataset and we can then smash all the resulting lists together using the super fast operations that Relational Database Engines excel at.  As an added bonus, if the datasets are on seperate database servers or engines (MySql, Sql Server, Oracle) we can run the queries seperately and store the results in a temporary common server and apply the SET operations there.
+
+```sql
+SELECT patientId From Prescribing WHERE Drug = 'Drug A' Group by CHI HAVING COUNT(*) > 3
+
+UNION
+
+SELECT patientId From Biochemistry WHERE TestCode = 'TestCode B' AND Result > 500
+
+EXCEPT
+
+Select patientId from Demography WHERE DateOfDeath is not null
+
+INTERSECT
+
+SELECT patientId from Imaging WHERE Modality = 'MR' and StudyDescription like '%head%'
+```
+
+Since each section is runnable independently it is trivially easy for RDMP to produce totals for each seperate set.  The set results can even be cached to prevent having to re-run the entire query if you are only making a small change to one bit.
+
+![Cohort Builder Tree](./Images/CohortBuilderUI.png)
+
+For full details on technical implementation see [Cohort Creation](../../Rdmp.Core/CohortCreation/Readme.md).
+
+## Does the Cohort Builder support Excel, CSV files etc?
+<a name="cohort-build-with-file"/>
+
+Yes.  If a cohort is solely defined by the contents of such a file it can be [committed directly to the cohort store](../../Rdmp.Core/CohortCommitting/Readme.md).
+
+If you need to combine data in the file (or multiple files) with data in your database then the first step is to create a new Catalogue by uploading the data into your database.  This has a number of advantages:
+
+- It provides a permenant record in RDMP of the data used to generate the cohort
+- Querying is faster and more flexible
+- The data in the file can be anonymised and released by the RDMP extraction engine if required for project extractions.
+
+![Right click context menu for creating a new catalogue from a file](./Images/CreateCatalogueFromFile.png)
+
 ## Cohort Builder isn't working or is slow
 
 <a name="cicslow"></a>
@@ -247,6 +300,11 @@ RDMP supports lookup tables which can form part of an ontology mapping solution.
 <a name="identifiers"></a>
 
 Yes, RDMP supports both multiple identifier formats (text, numerical, guids etc) and [multiple identifiers per dataset](./MultipleExtractionIdentifiers.md)
+
+### Does the cohort builder support querying other services e.g. REST APIs?
+<a name="apis"></a>
+
+Yes, RDMP supports querying any data provider service through the [Cohort Building API Plugin](./CohortBuildingApiPlugins.md) system.
 
 ## Data Load Engine
 
@@ -356,8 +414,8 @@ In order to allow other people to run the data load it is advised to store all S
 
 RDMP can create references to tables and views from any database to which you have sufficient privelleges.  If you can see other tables in the database listed check the following:
 
-- The table does not have brackets in it's name e.g. `[MyDb]..[MyTbl (fff)]`
-- The table does not have dots in it's name e.g. `[MyDb]..[MyTbl.lol]`
+- The table does not have brackets in its name e.g. `[MyDb]..[MyTbl (fff)]`
+- The table does not have dots in its name e.g. `[MyDb]..[MyTbl.lol]`
 - The table is visible through other tools e.g. sql management studio
 
 If you cannot see any tables listed in the database
@@ -551,7 +609,7 @@ User interfaces in RDMP follow a standard testable design which is described in 
 
 <a name="abstractDesignerPattern"></a>
 ### Whats with the _Design user interface classes?
-Any user interface class which includes an abstract base class in it's hierarchy (e.g. `CatalogueUI`) has an accompanying class `CatalogueUI_Design`.  This class exists solely facilitate using the visual studio forms designer (which [doesn't support abstract base classes](https://stackoverflow.com/a/6817281/4824531)).  Even with this workaround visual studio will sometimes fail to show the designer for these controls, restarting visual studio usually solves this problem.
+Any user interface class which includes an abstract base class in its hierarchy (e.g. `CatalogueUI`) has an accompanying class `CatalogueUI_Design`.  This class exists solely facilitate using the visual studio forms designer (which [doesn't support abstract base classes](https://stackoverflow.com/a/6817281/4824531)).  Even with this workaround visual studio will sometimes fail to show the designer for these controls, restarting visual studio usually solves this problem.
 
 <a name="reorder"></a>
 ### How do I stop some nodes being reordered in RDMPCollectionUIs?
@@ -572,7 +630,7 @@ If you are unsure what Type a given node is you can right click it and select 'W
 
 <a name="addNewNodes"></a>
 ### How do I add new nodes to RDMPCollectionUIs?
-This requires a tutorial all of it's own 
+This requires a tutorial all of its own 
 
 [CreatingANewCollectionTreeNode](./CreatingANewCollectionTreeNode.md)
 

@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump Microsoft.NET.Test.Sdk from 16.10.0 to 16.11.0
 - Bump NLog from 4.7.10 to 4.7.11
 
+### Added
+
+- Support for plugin Catalogues in cohort builder.  These allow you to write plugins that call out to arbitrary APIs (e.g. REST etc) from the RDMP cohort builder
+
+### Fixed
+
+- Fixed ExecuteCommandCloneCohortIdentificationConfiguration asking for confirmation when activation layer is non interactive
+
 ## [6.0.1] - 2021-08-12
 
 ### Added

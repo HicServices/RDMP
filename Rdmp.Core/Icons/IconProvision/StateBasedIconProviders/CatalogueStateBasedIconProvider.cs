@@ -47,6 +47,9 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             else
                 img = _basic;
 
+            if (c.IsApiCall())
+                img = _overlayProvider.GetOverlay(img, OverlayKind.Cloud);
+
             if (c.IsDeprecated)
                 img = _overlayProvider.GetOverlay(img, OverlayKind.Deprecated);
             

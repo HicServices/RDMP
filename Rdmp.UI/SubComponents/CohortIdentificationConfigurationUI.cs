@@ -148,12 +148,15 @@ namespace Rdmp.UI.SubComponents
 
         private ICompileable GetKey(object rowobject)
         {
-            return
-                Compiler?.Tasks?.Keys.FirstOrDefault(k => 
-                    
-                    (rowobject is AggregateConfiguration ac && k.Child is JoinableCohortAggregateConfiguration j 
-                                                            && j.AggregateConfiguration_ID == ac.ID)
-                    || k.Child.Equals(rowobject));
+            lock(Compiler.Tasks)
+            {
+                return
+                    Compiler?.Tasks?.Keys.FirstOrDefault(k =>
+
+                        (rowobject is AggregateConfiguration ac && k.Child is JoinableCohortAggregateConfiguration j
+                                                                && j.AggregateConfiguration_ID == ac.ID)
+                        || k.Child.Equals(rowobject));
+            }
         }
 
         private object Cached_AspectGetter(object rowobject)
@@ -214,8 +217,8 @@ namespace Rdmp.UI.SubComponents
             base.SetDatabaseObject(activator,databaseObject);
             _configuration = databaseObject;
             
-            tbName.Text = _configuration.Name;
-            tbDescription.Text = _configuration.Description;
+            lblName.Text = $"Name:{_configuration.Name}";
+            lblDescription.Text = $"Description:{_configuration.Description}";
             ticket.TicketText = _configuration.Ticket;
 
             if (_commonFunctionality == null)
@@ -341,21 +344,16 @@ namespace Rdmp.UI.SubComponents
         }
         private Operation GetNextOperation(CompilationState currentState)
         {
-            switch (currentState)
+            return currentState switch
             {
-                case CompilationState.NotScheduled:
-                    return Operation.Execute;
-                case CompilationState.Scheduled:
-                    return Operation.None;
-                case CompilationState.Executing:
-                    return Operation.Cancel;
-                case CompilationState.Finished:
-                    return Operation.Execute;
-                case CompilationState.Crashed:
-                    return Operation.Execute;
-                default:
-                    throw new ArgumentOutOfRangeException("currentState");
-            }
+                CompilationState.NotScheduled => Operation.Execute,
+                CompilationState.Building => Operation.Cancel,
+                CompilationState.Scheduled => Operation.None,
+                CompilationState.Executing => Operation.Cancel,
+                CompilationState.Finished => Operation.Execute,
+                CompilationState.Crashed => Operation.Execute,
+                _ => throw new ArgumentOutOfRangeException("currentState")
+            };
         }
 
         #region Job control
@@ -387,16 +385,37 @@ namespace Rdmp.UI.SubComponents
 
         private CompilationState GetState(IMapsDirectlyToDatabaseTable o)
         {
-            var task = GetTaskIfExists(o);
+            lock(Compiler.Tasks)
+            {
+                var task = GetTaskIfExists(o);
 
-            if (task == null)
-                return CompilationState.NotScheduled;
+                if (task == null)
+                    return CompilationState.NotScheduled;
 
-            return task.State;
+                return task.State;
+            }
         }
+
         public ICompileable GetTaskIfExists(IMapsDirectlyToDatabaseTable o)
         {
-            return Compiler.Tasks.Keys.SingleOrDefault(t => t.Child.Equals(o));
+            lock (Compiler.Tasks)
+            {
+                var kvps = Compiler.Tasks.Where(t => t.Key.Child.Equals(o)).ToArray();
+
+                if(kvps.Length == 0)
+                {
+                    return null;
+                }
+                
+                if(kvps.Length == 1)
+                {
+                    return kvps[0].Key;
+                }
+
+                var running = kvps.FirstOrDefault(k => k.Value != null).Key;
+
+                return running ?? kvps[0].Key;
+            }
         }
 
 
@@ -406,19 +425,22 @@ namespace Rdmp.UI.SubComponents
             var aggregate = o as AggregateConfiguration;
             var container = o as CohortAggregateContainer;
 
-            if (aggregate != null)
+            Task.Run(() =>
             {
-                var joinable = aggregate.JoinableCohortAggregateConfiguration;
-                                    
-                if(joinable != null)
-                    OrderActivity(GetNextOperation(GetState(joinable)), joinable);
-                else
-                    OrderActivity(GetNextOperation(GetState(aggregate)), aggregate);
-            }
-            if (container != null)
-            {
-                OrderActivity(GetNextOperation(GetState(container)),container);
-            }
+                if (aggregate != null)
+                {
+                    var joinable = aggregate.JoinableCohortAggregateConfiguration;
+
+                    if (joinable != null)
+                        OrderActivity(GetNextOperation(GetState(joinable)), joinable);
+                    else
+                        OrderActivity(GetNextOperation(GetState(aggregate)), aggregate);
+                }
+                if (container != null)
+                {
+                    OrderActivity(GetNextOperation(GetState(container)), container);
+                }
+            });
         }
 
         private void OrderActivity(Operation operation, IMapsDirectlyToDatabaseTable o)
@@ -478,16 +500,19 @@ namespace Rdmp.UI.SubComponents
         
         public void Clear(IMapsDirectlyToDatabaseTable o)
         {
-            var task = GetTaskIfExists(o);
+            lock(Compiler.Tasks)
+            {
+                var task = GetTaskIfExists(o);
 
-            if(task == null)
-                return;
+                if (task == null)
+                    return;
 
-            var c = task as CacheableTask;
-            if(c != null)
-                ClearCacheFor(new ICacheableTask[] { c });
+                var c = task as CacheableTask;
+                if (c != null)
+                    ClearCacheFor(new ICacheableTask[] { c });
 
-            Compiler.CancelTask(task,true);
+                Compiler.CancelTask(task, true);
+            }
         }
         
         public void ClearAllCaches()
@@ -572,7 +597,10 @@ namespace Rdmp.UI.SubComponents
         }
         public bool AnyCachedTasks()
         {
-            return Compiler.Tasks.Keys.OfType<ICacheableTask>().Any(t => !t.IsCacheableWhenFinished());
+            lock(Compiler.Tasks)
+            {
+                return Compiler.Tasks.Keys.OfType<ICacheableTask>().Any(t => !t.IsCacheableWhenFinished());
+            }
         }
 
         private Operation PlanGlobalOperation()
@@ -580,7 +608,7 @@ namespace Rdmp.UI.SubComponents
             var allTasks = GetAllTasks();
 
             //if any are still executing or scheduled for execution
-            if (allTasks.Any(t => t.State == CompilationState.Executing || t.State == CompilationState.Scheduled))
+            if (allTasks.Any(t => t.State == CompilationState.Executing || t.State == CompilationState.Building || t.State == CompilationState.Scheduled))
                 return Operation.Cancel;
 
             //if all are complete
@@ -653,7 +681,7 @@ namespace Rdmp.UI.SubComponents
             if (Compiler.Tasks.ContainsKey(c))
             {
                 var exe = Compiler.Tasks[c];
-                if (enabledFunc(exe))
+                if (exe != null && enabledFunc(exe))
                     menuItem.Click += (s, e) => action(exe);
                 else
                     menuItem.Enabled = false;

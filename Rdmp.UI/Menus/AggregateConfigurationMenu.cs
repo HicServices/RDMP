@@ -20,8 +20,13 @@ namespace Rdmp.UI.Menus
     {
         public AggregateConfigurationMenu(RDMPContextMenuStripArgs args, AggregateConfiguration aggregate): base(args, aggregate)
         {
+            var isApi = aggregate.Catalogue.IsApiCall();
+
+            if (!isApi)
+            {
+                Add(new ExecuteCommandViewSqlParameters(_activator,aggregate));
+            }
             
-            Add(new ExecuteCommandViewSqlParameters(_activator,aggregate));
 
                                                 
             //if it is a cohort aggregate (but not joinables since they don't match patients they match records and select many columns)

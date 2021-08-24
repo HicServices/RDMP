@@ -20,6 +20,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private CohortIdentificationConfiguration _cic;
         private Project _project;
 
+        /// <summary>
+        /// The clone that was created this command or null if it has not been executed/failed
+        /// </summary>
+        public CohortIdentificationConfiguration CloneCreatedIfAny { get; private set; }
+
         [UseWithObjectConstructor]
         public ExecuteCommandCloneCohortIdentificationConfiguration(IBasicActivateItems activator,CohortIdentificationConfiguration cic)
             : base(activator)
@@ -62,25 +67,26 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if(_cic == null)
                 return;
 
-            if (YesNo("This will create a 100% copy of the entire CohortIdentificationConfiguration including all datasets, " +
+            // Confirm creating yes/no (assuming activator is interactive)
+            if (!BasicActivator.IsInteractive || YesNo("This will create a 100% copy of the entire CohortIdentificationConfiguration including all datasets, " +
                     "filters, parameters and set operations. Are you sure this is what you want?",
                     "Confirm Cloning"))
             {
                 
-                var clone = _cic.CreateClone(new ThrowImmediatelyCheckNotifier());
+                CloneCreatedIfAny = _cic.CreateClone(new ThrowImmediatelyCheckNotifier());
 
                 if (_project != null) // clone the association
                     new ProjectCohortIdentificationConfigurationAssociation(
                                     BasicActivator.RepositoryLocator.DataExportRepository,
                                     _project,
-                                    clone);
+                                    CloneCreatedIfAny);
 
                 //Load the clone up
-                Publish(clone);
+                Publish(CloneCreatedIfAny);
                 if (_project != null)
                     Emphasise(_project);
                 else
-                    Emphasise(clone);
+                    Emphasise(CloneCreatedIfAny);
             }
         }
     }

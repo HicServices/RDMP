@@ -11,6 +11,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.UI.AggregationUIs.Advanced;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
+using System.Linq;
 
 namespace Rdmp.UI.CommandExecution.Proposals
 {
@@ -27,6 +28,16 @@ namespace Rdmp.UI.CommandExecution.Proposals
 
         public override void Activate(AggregateConfiguration target)
         {
+            // if a plugin user interface exists to handle editing this aggregate let them handle it instead of launching the 
+            // normal UI e.g. for configuring a REST API call
+            foreach (var pluginInterface in ItemActivator.PluginUserInterfaces)
+            {
+                if(pluginInterface.CustomActivate(target))
+                {
+                    return;
+                }
+            }
+
             ItemActivator.Activate<AggregateEditorUI, AggregateConfiguration>(target);
         }
 

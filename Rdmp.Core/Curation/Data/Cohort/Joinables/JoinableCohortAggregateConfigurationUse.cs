@@ -95,6 +95,11 @@ namespace Rdmp.Core.Curation.Data.Cohort.Joinables
             if (repository.GetAllObjectsWhere<JoinableCohortAggregateConfiguration>("AggregateConfiguration_ID", user.ID).Any())
                 throw new NotSupportedException("Cannot add user " + user + " because that AggregateConfiguration is itself a JoinableCohortAggregateConfiguration");
          
+            if(user.Catalogue.IsApiCall())
+            {
+                throw new NotSupportedException("API calls cannot join with PatientIndexTables (The API call must be self contained)");
+            }
+
             if(user.AggregateDimensions.Count(u=>u.IsExtractionIdentifier) != 1)
                 throw new NotSupportedException("Cannot configure AggregateConfiguration " + user + " as join user because it does not contain exactly 1 IsExtractionIdentifier dimension");
 

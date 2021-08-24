@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Providers;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -38,5 +39,13 @@ namespace Rdmp.UI.PluginChildProvision
         /// <param name="databaseEntity"></param>
         /// <returns></returns>
         IEnumerable<IAtomicCommand> GetAdditionalCommandsForControl(IRDMPSingleDatabaseObjectControl control, DatabaseEntity databaseEntity);
+
+        /// <summary>
+        /// Implement to provide a custom user interface that should be shown when a given type of 
+        /// <see cref="AggregateConfiguration"/> is edited
+        /// </summary>
+        /// <param name="ac"></param>
+        /// <returns></returns>
+        bool CustomActivate(AggregateConfiguration ac);
     }
 }

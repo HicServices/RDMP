@@ -110,6 +110,8 @@ namespace Rdmp.Core.Tests.CohortCreation
             cic = new CohortIdentificationConfiguration(CatalogueRepository, "MyCic");
             cic.CreateRootContainerIfNotExists();
             cic.RootCohortAggregateContainer.AddChild(agg, 0);
+
+            cic.EnsureNamingConvention(agg);
         }
     }
 }

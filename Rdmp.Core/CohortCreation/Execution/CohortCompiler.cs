@@ -22,6 +22,7 @@ using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using System.Threading.Tasks;
 
 namespace Rdmp.Core.CohortCreation.Execution
 {
@@ -35,8 +36,21 @@ namespace Rdmp.Core.CohortCreation.Execution
     /// </summary>
     public class CohortCompiler
     {
-        public CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
+        private CohortIdentificationConfiguration _cic;
+        public CohortIdentificationConfiguration CohortIdentificationConfiguration {
+            get { return _cic;}
+            set {
+                _cic = value;
+                BuildPluginCohortCompilerList();
+            } 
+        }
         public bool IncludeCumulativeTotals { get; set; }
+
+
+        /// <summary>
+        /// Plugin custom cohort compilers e.g. API calls that return identifier lists
+        /// </summary>
+        public IReadOnlyCollection<IPluginCohortCompiler> PluginCohortCompilers { get; private set; }
 
         /// <summary>
         /// Returns the current child provider (creating it if none has been injected yet).
@@ -47,6 +61,10 @@ namespace Rdmp.Core.CohortCreation.Execution
             set => _coreChildProvider = value;
         }
 
+        /// <summary>
+        /// Tasks currently running in the compiler, Value can be null if the <see cref="ICompileable"/> is still building
+        /// and not running yet.
+        /// </summary>
         public Dictionary<ICompileable, CohortIdentificationTaskExecution> Tasks = new Dictionary<ICompileable, CohortIdentificationTaskExecution>();
         
         public List<Thread> Threads = new List<Thread>();
@@ -57,10 +75,37 @@ namespace Rdmp.Core.CohortCreation.Execution
             CohortIdentificationConfiguration = cohortIdentificationConfiguration;
         }
 
+        private void BuildPluginCohortCompilerList()
+        {
+            // we already have them (or crashed out trying to create them
+            if(PluginCohortCompilers != null)
+            {
+                return;
+            }
+
+            // we don't know what we are building yet!
+            if(CohortIdentificationConfiguration == null)
+            {
+                return;
+            }
+
+            try
+            {
+                PluginCohortCompilers =
+                    new PluginCohortCompilerFactory(CohortIdentificationConfiguration.CatalogueRepository.MEF).CreateAll();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Failed to build list of IPluginCohortCompilers", ex);
+            }
+        }
+
         private void DoTaskAsync(ICompileable task, CohortIdentificationTaskExecution execution, int timeout,bool cacheOnCompletion = false)
         {
             try
             {
+                task.CancellationToken.ThrowIfCancellationRequested();
+
                 task.Timeout = timeout;
                 task.State = CompilationState.Executing;
                 
@@ -105,36 +150,53 @@ namespace Rdmp.Core.CohortCreation.Execution
             return toReturn;
         }
 
+        public List<ICompileable> AddTasksRecursively(ISqlParameter[] globals, CohortAggregateContainer container, bool addSubcontainerTasks = true)
+        {
+            var tasks = AddTasksRecursivelyAsync(globals, container, addSubcontainerTasks);
+
+            Task.WaitAll(tasks.ToArray());
+
+            return tasks.Select(t => t.Result).ToList();
+        }
+
         /// <summary>
         /// Adds all AggregateConfigurations and CohortAggregateContainers in the specified container or subcontainers. Passing addSubcontainerTasks false will still process the subcontainers
-        /// but will only add AggregateConfigurations to the task list
+        /// but will only add AggregateConfigurations to the task list.
+        /// 
+        /// <para>Does not add disabled objects</para>
         /// </summary>
         /// <param name="globals"></param>
         /// <param name="container"></param>
         /// <param name="addSubcontainerTasks">The root container is always added to the task list but you could skip subcontainer totals if all you care about is the final total for the cohort
         /// and you don't have a dependant UI etc.  Passing false will add all joinables, subqueries etc and the root container (final answer for who is in cohort) only.</param>
         /// <returns></returns>
-        public List<ICompileable> AddTasksRecursively(ISqlParameter[] globals, CohortAggregateContainer container, bool addSubcontainerTasks = true)
+        public List<Task<ICompileable>> AddTasksRecursivelyAsync(ISqlParameter[] globals, CohortAggregateContainer container, bool addSubcontainerTasks = true)
         {
-            var toReturn = new List<ICompileable>();
+            var toReturn = new List<Task<ICompileable>>();
 
             if(CohortIdentificationConfiguration.RootCohortAggregateContainer_ID == null)
                 throw new QueryBuildingException($"CohortIdentificationConfiguration '{CohortIdentificationConfiguration}' had not root SET container (UNION / INERSECT / EXCEPT)");
 
             //if it is the root container or we are adding tasks for all containers including subcontainers
             if (CohortIdentificationConfiguration.RootCohortAggregateContainer_ID == container.ID || addSubcontainerTasks)
-                toReturn.Add(AddTask(container,globals));
+            {
+                if (!container.IsDisabled)
+                {
+                    toReturn.Add(Task.Run(()=> { return AddTask(container, globals); }));
+                }
+            }
+                
 
             foreach (IOrderable c in container.GetOrderedContents())
             {
-                var aggregateContainer = c as CohortAggregateContainer;
-                var aggregate = c as AggregateConfiguration;
-                
-                if (aggregateContainer != null)
-                    toReturn.AddRange(AddTasksRecursively(globals, aggregateContainer, addSubcontainerTasks));
-
-                if(aggregate != null)
-                    toReturn.Add(AddTask(aggregate, globals));
+                if(c is CohortAggregateContainer aggregateContainer && !aggregateContainer.IsDisabled)
+                {
+                    toReturn.AddRange(AddTasksRecursivelyAsync(globals, aggregateContainer, addSubcontainerTasks));
+                }
+                if(c is AggregateConfiguration aggregate && !aggregate.IsDisabled)
+                {
+                    toReturn.Add(Task.Run(() => { return AddTask(aggregate, globals); }));
+                }
             }
 
             return toReturn;
@@ -152,9 +214,10 @@ namespace Rdmp.Core.CohortCreation.Execution
             var aggregate = runnable as AggregateConfiguration;
             var container = runnable as CohortAggregateContainer;
             var joinable = runnable as JoinableCohortAggregateConfiguration;
+            IMapsDirectlyToDatabaseTable obj = aggregate ?? container ?? (IMapsDirectlyToDatabaseTable)joinable;
 
 
-            if (aggregate == null && container == null && joinable == null)
+            if (obj == null)
                 throw new NotSupportedException(
                     "Expected c to be either AggregateConfiguration or CohortAggregateContainer but it was " +
                     runnable.GetType().Name);
@@ -170,10 +233,18 @@ namespace Rdmp.Core.CohortCreation.Execution
             //if it is an aggregate
             if (aggregate != null)
             {
-                //which has a parent
-                task = new AggregationTask(aggregate, this);
+                // is this a custom aggregate type that gets handled differently e.g. by queriying an API?
+                var plugin = PluginCohortCompilers.FirstOrDefault(c => c.ShouldRun(aggregate));
+                
+                task = plugin != null ?
+                         // yes
+                          new PluginCohortCompilerTask(aggregate,this,plugin)
+                        // no
+                        : new AggregationTask(aggregate, this);
+
                 queryBuilder = new CohortQueryBuilder(aggregate, globals,CoreChildProvider);
 
+                //which has a parent
                 parent = aggregate.GetCohortAggregateContainerIfAny();
             }
             else if (joinable != null)
@@ -219,11 +290,37 @@ namespace Rdmp.Core.CohortCreation.Execution
 
             //setup cancellation 
             task.CancellationToken = source.Token;
+            task.CancellationTokenSource = source;
+            task.State = CompilationState.Building;
+
+            lock (Tasks)
+            {
+                //we have seen this entity before (by ID & entity type)
+                foreach (ICompileable c in Tasks.Keys.Where(k =>k.Child.Equals(obj) && k != task).ToArray())
+                {
+                    // the task is already setup ready to go somehow
+                    if(c.CancellationTokenSource == source)
+                    {
+                        // it's already added, no worries just return the already existing one
+                        return c;
+                    }
+                    else
+                    {
+                        CancelTask(c, true);
+                    }
+                }
+
+                Tasks.Add(task, null);
+            }
+
             string newsql = "";
             string cumulativeSql = "";
 
             try
             {
+                // build the SQL but respect the cancellation token
+                queryBuilder.RegenerateSQL(source.Token);
+
                 //get the count(*) SQL
                 newsql = queryBuilder.SQL;
 
@@ -238,41 +335,7 @@ namespace Rdmp.Core.CohortCreation.Execution
             }
 
             task.Log = queryBuilder?.Results?.Log;
-
-            //we have seen this entity before (by ID & entity type)
-            KeyValuePair<ICompileable, CohortIdentificationTaskExecution> existingTask;
-
-            if (joinable != null)
-                existingTask = Tasks.SingleOrDefault((kvp => kvp.Key.Child.Equals(joinable)));
-            else
-            if (aggregate != null)
-                existingTask = Tasks.SingleOrDefault(kvp => kvp.Key.Child.Equals(aggregate));
-            else
-                existingTask = Tasks.SingleOrDefault(kvp => kvp.Key.Child.Equals(container));
-
-
-            //job already exists (this is the same as saying existingTask!=null)
-            if (!existingTask.Equals(default(KeyValuePair<ICompileable, CohortIdentificationTaskExecution>)))
-                if (existingTask.Value.CountSQL.Equals(newsql))
-                {
-                    //The SQl is the same but the order or cached 
-                    if (existingTask.Key.Order != task.Order)//do not delete this if statement, it prevents rewrites to the database where Order asignment has side affects
-                        existingTask.Key.Order = task.Order;
-
-                    return existingTask.Key; //existing task has the same SQL
-                }
-                else
-                {
-                    //it is different so cancel the old one
-                    existingTask.Value.Cancel();
-
-                    //throw away the old task
-                    Tasks.Remove(existingTask.Key);
-
-                    //dispose of any resources it's holding onto
-                    existingTask.Value.Dispose();
-                }
-            
+                        
       
             var isResultsForRootContainer = container != null && container.ID == CohortIdentificationConfiguration.RootCohortAggregateContainer_ID;
 
@@ -283,8 +346,17 @@ namespace Rdmp.Core.CohortCreation.Execution
                 isResultsForRootContainer,
                 queryBuilder?.Results?.TargetServer);
 
-            //create a new task 
-            Tasks.Add(task, taskExecution);
+            // task is now built but not yet 
+            if(task.State != CompilationState.Crashed)
+            {
+                task.State = CompilationState.NotScheduled;
+            }
+
+            lock (Tasks)
+            {
+                //assign the execution
+                Tasks[task] = taskExecution;
+            }
 
             return task;
         }
@@ -422,17 +494,19 @@ namespace Rdmp.Core.CohortCreation.Execution
         /// <param name="alsoClearTaskList">True to also remove all ICompileables, False to leave the Tasks intact (allows you to rerun them or clear etc)</param>
         public void CancelAllTasks(bool alsoClearTaskList)
         {
-            foreach (var v in Tasks.Values)
-                if (v.IsExecuting)
-                    v.Cancel();
-
-            if(alsoClearTaskList)
+            lock(Tasks)
             {
-                foreach (var v in Tasks.Values)
-                    v.Dispose();
+                foreach (var k in Tasks.Keys)
+                {
+                    CancelTask(k, alsoClearTaskList);
+                }
 
-                Tasks.Clear();
+                if (alsoClearTaskList)
+                {
+                    Tasks.Clear();
+                }
             }
+
         }
 
         /// <summary>
@@ -443,18 +517,34 @@ namespace Rdmp.Core.CohortCreation.Execution
         /// <param name="alsoClearFromTaskList">True to remove the ICompileable from the tasks list, False to leave the Tasks intact (allows you to rerun it or clear etc) </param>
         public void CancelTask(ICompileable compileable, bool alsoClearFromTaskList)
         {
-            if (Tasks.ContainsKey(compileable))
+            lock(Tasks)
             {
-
-                if (Tasks[compileable].IsExecuting)
-                    Tasks[compileable].Cancel();
-
-                if(alsoClearFromTaskList)
+                if (Tasks.ContainsKey(compileable))
                 {
-                    Tasks[compileable].Dispose();
-                    Tasks.Remove(compileable);
+                    var execution = Tasks[compileable];
+
+                    if (execution != null && execution.IsExecuting)
+                    {
+                        execution.Cancel();
+                    }
+
+                    // cancel the source
+                    if(
+                        compileable.State == CompilationState.Building ||
+                        compileable.State == CompilationState.Executing)
+                    {
+                        compileable.CancellationTokenSource.Cancel();
+                    }
+                    
+
+                    if (alsoClearFromTaskList)
+                    {
+                        execution?.Dispose();
+                        Tasks.Remove(compileable);
+                    }
                 }
             }
+            
         }
 
         public int GetAliveThreadCount()
@@ -464,7 +554,7 @@ namespace Rdmp.Core.CohortCreation.Execution
 
         public string GetCachedQueryUseCount(ICompileable task)
         {
-            if (!Tasks.ContainsKey(task))
+            if (!Tasks.ContainsKey(task) || Tasks[task] == null)
                 return "Unknown";
 
             var execution = Tasks[task];
@@ -473,7 +563,7 @@ namespace Rdmp.Core.CohortCreation.Execution
 
         public bool AreaAllQueriesCached(ICompileable task )
         {
-            if (!Tasks.ContainsKey(task))
+            if (!Tasks.ContainsKey(task) || Tasks[task] == null)
                 return false;
 
             var execution = Tasks[task];

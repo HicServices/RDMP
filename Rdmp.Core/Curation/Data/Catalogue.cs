@@ -15,6 +15,7 @@ using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
+using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -62,6 +63,8 @@ namespace Rdmp.Core.Curation.Data
         private Uri _queryToolUrl;
         private Uri _sourceUrl;
         private string _countryOfOrigin;
+
+
         private string _dataStandards;
         private string _administrativeContactName;
         private string _administrativeContactEmail;
@@ -201,6 +204,7 @@ namespace Rdmp.Core.Curation.Data
             get { return _updateSched; }
             set { SetField(ref  _updateSched, value); }
         }
+
 
         ///<inheritdoc/>
         public string Time_coverage
@@ -1297,6 +1301,31 @@ namespace Rdmp.Core.Curation.Data
             var clone = new Catalogue(CatalogueRepository, Name + " Clone");
             CopyShallowValuesTo(clone);
             return clone;
+        }
+
+
+        public bool IsApiCall()
+        {
+            return Name.StartsWith(PluginCohortCompiler.ApiPrefix);
+        }
+
+        public bool IsApiCall(out IPluginCohortCompiler plugin)
+        {
+            if(!IsApiCall())
+            {
+                plugin = null;
+                return false;
+            }
+
+            if(CatalogueRepository.MEF == null)
+            {
+                throw new Exception("MEF has not been loaded yet so cannot find compatible IPluginCohortCompilers");
+            }
+
+            plugin = new PluginCohortCompilerFactory(CatalogueRepository.MEF)
+                .CreateAll().FirstOrDefault(p => p.ShouldRun(this));
+
+            return true;
         }
     }
 }

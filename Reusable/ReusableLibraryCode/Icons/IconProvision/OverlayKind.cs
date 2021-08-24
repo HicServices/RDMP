@@ -31,6 +31,7 @@ namespace ReusableLibraryCode.Icons.IconProvision
         Edit,
         Locked,
         Help,
-        Hashed
+        Hashed,
+        Cloud
     }
 }

@@ -8,10 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -37,6 +39,7 @@ namespace Rdmp.Core.QueryBuilding
         public ICoreChildProvider ChildProvider { get; }
         public CohortQueryBuilderHelper Helper { get; }
         public QueryBuilderCustomArgs Customise { get; }
+        public CancellationToken CancellationToken { get; }
 
         private readonly StringBuilder _log = new StringBuilder();
 
@@ -75,6 +78,7 @@ namespace Rdmp.Core.QueryBuilding
         public IOrderable StopContainerWhenYouReach { get;set; }
         public int CountOfSubQueries => Dependencies.Count;
         public int CountOfCachedSubQueries { get; private set; }
+        public IReadOnlyCollection<IPluginCohortCompiler> PluginCohortCompilers { get; } = new PluginCohortCompiler[0].ToList().AsReadOnly();
 
         /// <summary>
         /// Creates a new result for a single <see cref="AggregateConfiguration"/> or <see cref="CohortAggregateContainer"/>
@@ -83,15 +87,28 @@ namespace Rdmp.Core.QueryBuilding
         /// <param name="childProvider"></param>
         /// <param name="helper"></param>
         /// <param name="customise"></param>
-        public CohortQueryBuilderResult(ExternalDatabaseServer cacheServer, ICoreChildProvider childProvider, CohortQueryBuilderHelper helper,QueryBuilderCustomArgs customise)
+        /// <param name="cancellationToken"></param>
+        public CohortQueryBuilderResult(ExternalDatabaseServer cacheServer, ICoreChildProvider childProvider, CohortQueryBuilderHelper helper,QueryBuilderCustomArgs customise,CancellationToken cancellationToken)
         {
             CacheServer = cacheServer;
             ChildProvider = childProvider;
             Helper = helper;
             Customise = customise;
+            CancellationToken = cancellationToken;
 
-            if(cacheServer != null)
+            if (cacheServer != null)
+            {
                 CacheManager = new CachedAggregateConfigurationResultsManager(CacheServer);
+                
+                try
+                {
+                    PluginCohortCompilers = new PluginCohortCompilerFactory(cacheServer.CatalogueRepository.MEF).CreateAll();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Failed to build list of IPluginCohortCompilers", ex);
+                }
+            }
         }
 
 
@@ -331,18 +348,31 @@ namespace Rdmp.Core.QueryBuilding
         private void BuildDependenciesSql(ISqlParameter[] globals)
         {
             foreach (var d in Dependencies)
-                d.Build(this,globals);
+                d.Build(this,globals, CancellationToken);
         }
 
 
         private CohortQueryBuilderDependency AddDependency(AggregateConfiguration cohortSet)
         {
+            if(cohortSet.Catalogue.IsApiCall())
+            {
+                if(CacheManager == null)
+                {
+                    throw new Exception($"Caching must be enabled to execute API call '{cohortSet}'");
+                }
+
+                if (!PluginCohortCompilers.Any(c=>c.ShouldRun(cohortSet)))
+                {
+                    throw new Exception($"No PluginCohortCompilers claimed to support '{cohortSet}' in their ShouldRun method");
+                }
+            }    
+
             var join = ChildProvider.AllJoinUses.Where(j => j.AggregateConfiguration_ID == cohortSet.ID).ToArray();
 
             if(join.Length > 1)
                 throw new NotSupportedException($"There are {join.Length} joins configured to AggregateConfiguration {cohortSet}");
 
-            var d = new CohortQueryBuilderDependency(cohortSet, join.SingleOrDefault(), ChildProvider);
+            var d = new CohortQueryBuilderDependency(cohortSet, join.SingleOrDefault(), ChildProvider, PluginCohortCompilers);
             _dependencies.Add(d);
 
             return d;

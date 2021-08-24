@@ -7,7 +7,9 @@
 using System;
 using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
+using FAnsi.Naming;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Spontaneous;
@@ -126,16 +128,32 @@ namespace Rdmp.Core.QueryBuilding
         {
             var joinableTableAlias = args.JoinIfAny.GetJoinTableAlias();
             string joinDirection = args.JoinIfAny.GetJoinDirectionSQL();
-                
-            var joinOn = args.JoinedTo.AggregateDimensions.SingleOrDefault(d => d.IsExtractionIdentifier);
+
+            IHasRuntimeName joinOn = null;
+
+            if (args.JoinedTo.Catalogue.IsApiCall(out IPluginCohortCompiler plugin))
+            {
+                if(plugin == null)
+                {
+                    throw new Exception($"No IPluginCohortCompiler was found that supports API cohort set '{args.JoinedTo}'");
+                }
+
+                joinOn = plugin.GetJoinColumnForPatientIndexTable(args.JoinedTo);
+            }
+            else
+            {
+                joinOn = args.JoinedTo.AggregateDimensions.SingleOrDefault(d => d.IsExtractionIdentifier);
+            }
 
             if (joinOn == null)
-                throw new QueryBuildingException("AggregateConfiguration " + user + " uses a join aggregate (patient index aggregate) of " + args.JoinedTo + " but that AggregateConfiguration does not have an IsExtractionIdentifier dimension so how are we supposed to join these tables on the patient identifier?");
+                throw new QueryBuildingException(
+                    $"AggregateConfiguration {user} uses a join aggregate (patient index aggregate) of {args.JoinedTo} but that AggregateConfiguration does not have an IsExtractionIdentifier dimension so how are we supposed to join these tables on the patient identifier?");
 
             // will end up with something like this where 51 is the ID of the joinTable:
             // LEFT Join (***INCEPTION QUERY***)ix51 on ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[patientIdentifier] = ix51.patientIdentifier
 
-            builder.AddCustomLine(" " + joinDirection + " Join (" + Environment.NewLine + TabIn(args.JoinSql.Sql,1) + Environment.NewLine + ")" + joinableTableAlias + Environment.NewLine + "on " + usersExtractionIdentifier.SelectSQL + " = " + joinableTableAlias + "." + joinOn.GetRuntimeName(),QueryComponent.JoinInfoJoin);
+            builder.AddCustomLine(
+                $" {joinDirection} Join ({Environment.NewLine}{TabIn(args.JoinSql.Sql, 1)}{Environment.NewLine}){joinableTableAlias}{Environment.NewLine}on {usersExtractionIdentifier.SelectSQL} = {joinableTableAlias}.{joinOn.GetRuntimeName()}",QueryComponent.JoinInfoJoin);
         }
         
         public string TabIn(string str, int numberOfTabs)
@@ -143,7 +161,7 @@ namespace Rdmp.Core.QueryBuilding
             if (string.IsNullOrWhiteSpace(str))
                 return str;
 
-            var tabs = new String('\t', numberOfTabs);
+            var tabs = new string('\t', numberOfTabs);
             return tabs + str.Replace(Environment.NewLine, Environment.NewLine + tabs);
         }
 
