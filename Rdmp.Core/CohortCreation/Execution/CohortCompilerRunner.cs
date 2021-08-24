@@ -93,7 +93,8 @@ namespace Rdmp.Core.CohortCreation.Execution
 
                 SetPhase(Phase.RunningAggregateTasks);
 
-                Compiler.AddTasksRecursively(globals, _cic.RootCohortAggregateContainer, false);
+                // Add all aggregates
+                Parallel.ForEach(_cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively(), (c) => Compiler.AddTask(c, globals)); 
 
                 Compiler.CancelAllTasks(false);
 

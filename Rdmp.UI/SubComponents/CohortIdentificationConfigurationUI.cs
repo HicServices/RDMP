@@ -148,12 +148,15 @@ namespace Rdmp.UI.SubComponents
 
         private ICompileable GetKey(object rowobject)
         {
-            return
-                Compiler?.Tasks?.Keys.FirstOrDefault(k => 
-                    
-                    (rowobject is AggregateConfiguration ac && k.Child is JoinableCohortAggregateConfiguration j 
-                                                            && j.AggregateConfiguration_ID == ac.ID)
-                    || k.Child.Equals(rowobject));
+            lock(Compiler.Tasks)
+            {
+                return
+                    Compiler?.Tasks?.Keys.FirstOrDefault(k =>
+
+                        (rowobject is AggregateConfiguration ac && k.Child is JoinableCohortAggregateConfiguration j
+                                                                && j.AggregateConfiguration_ID == ac.ID)
+                        || k.Child.Equals(rowobject));
+            }
         }
 
         private object Cached_AspectGetter(object rowobject)
