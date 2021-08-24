@@ -372,6 +372,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
             _trackedWindows.Add(window);
 
             window.FormClosed += (s,e)=>Remove(window);
+            window.FormClosed += (s, e) =>
+            {
+                var tabs = Navigation.GetHistory(10).OfType<TabNavigation>();
+                tabs.First(t=>t.Tab != s)?.Activate(ActivateItems);
+            };
         }
 
         /// <summary>
