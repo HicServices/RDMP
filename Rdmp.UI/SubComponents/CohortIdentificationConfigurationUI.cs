@@ -402,10 +402,27 @@ namespace Rdmp.UI.SubComponents
                 return task.State;
             }
         }
+
         public ICompileable GetTaskIfExists(IMapsDirectlyToDatabaseTable o)
         {
-            // TODO : Feels like theres a race condition here with the fact that we now add tasks before we clean old versions
-            return Compiler.Tasks.Keys.SingleOrDefault(t => t.Child.Equals(o));
+            lock (Compiler.Tasks)
+            {
+                var kvps = Compiler.Tasks.Where(t => t.Key.Child.Equals(o)).ToArray();
+
+                if(kvps.Length == 0)
+                {
+                    return null;
+                }
+                
+                if(kvps.Length == 1)
+                {
+                    return kvps[0].Key;
+                }
+
+                var running = kvps.FirstOrDefault(k => k.Value != null).Key;
+
+                return running ?? kvps[0].Key;
+            }
         }
 
 
