@@ -217,8 +217,8 @@ namespace Rdmp.UI.SubComponents
             base.SetDatabaseObject(activator,databaseObject);
             _configuration = databaseObject;
             
-            lblName.Text = "Name:" + _configuration.Name;
-            lblDescription.Text = "Description:" + _configuration.Description;
+            lblName.Text = $"Name:{_configuration.Name}";
+            lblDescription.Text = $"Description:{_configuration.Description}";
             ticket.TicketText = _configuration.Ticket;
 
             if (_commonFunctionality == null)
@@ -344,23 +344,16 @@ namespace Rdmp.UI.SubComponents
         }
         private Operation GetNextOperation(CompilationState currentState)
         {
-            switch (currentState)
+            return currentState switch
             {
-                case CompilationState.NotScheduled:
-                    return Operation.Execute;
-                case CompilationState.Building:
-                    return Operation.Cancel;
-                case CompilationState.Scheduled:
-                    return Operation.None;
-                case CompilationState.Executing:
-                    return Operation.Cancel;
-                case CompilationState.Finished:
-                    return Operation.Execute;
-                case CompilationState.Crashed:
-                    return Operation.Execute;
-                default:
-                    throw new ArgumentOutOfRangeException("currentState");
-            }
+                CompilationState.NotScheduled => Operation.Execute,
+                CompilationState.Building => Operation.Cancel,
+                CompilationState.Scheduled => Operation.None,
+                CompilationState.Executing => Operation.Cancel,
+                CompilationState.Finished => Operation.Execute,
+                CompilationState.Crashed => Operation.Execute,
+                _ => throw new ArgumentOutOfRangeException("currentState")
+            };
         }
 
         #region Job control

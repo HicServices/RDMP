@@ -146,12 +146,14 @@ namespace Rdmp.Core.QueryBuilding
             }
 
             if (joinOn == null)
-                throw new QueryBuildingException("AggregateConfiguration " + user + " uses a join aggregate (patient index aggregate) of " + args.JoinedTo + " but that AggregateConfiguration does not have an IsExtractionIdentifier dimension so how are we supposed to join these tables on the patient identifier?");
+                throw new QueryBuildingException(
+                    $"AggregateConfiguration {user} uses a join aggregate (patient index aggregate) of {args.JoinedTo} but that AggregateConfiguration does not have an IsExtractionIdentifier dimension so how are we supposed to join these tables on the patient identifier?");
 
             // will end up with something like this where 51 is the ID of the joinTable:
             // LEFT Join (***INCEPTION QUERY***)ix51 on ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[patientIdentifier] = ix51.patientIdentifier
 
-            builder.AddCustomLine(" " + joinDirection + " Join (" + Environment.NewLine + TabIn(args.JoinSql.Sql,1) + Environment.NewLine + ")" + joinableTableAlias + Environment.NewLine + "on " + usersExtractionIdentifier.SelectSQL + " = " + joinableTableAlias + "." + joinOn.GetRuntimeName(),QueryComponent.JoinInfoJoin);
+            builder.AddCustomLine(
+                $" {joinDirection} Join ({Environment.NewLine}{TabIn(args.JoinSql.Sql, 1)}{Environment.NewLine}){joinableTableAlias}{Environment.NewLine}on {usersExtractionIdentifier.SelectSQL} = {joinableTableAlias}.{joinOn.GetRuntimeName()}",QueryComponent.JoinInfoJoin);
         }
         
         public string TabIn(string str, int numberOfTabs)
@@ -159,7 +161,7 @@ namespace Rdmp.Core.QueryBuilding
             if (string.IsNullOrWhiteSpace(str))
                 return str;
 
-            var tabs = new String('\t', numberOfTabs);
+            var tabs = new string('\t', numberOfTabs);
             return tabs + str.Replace(Environment.NewLine, Environment.NewLine + tabs);
         }
 

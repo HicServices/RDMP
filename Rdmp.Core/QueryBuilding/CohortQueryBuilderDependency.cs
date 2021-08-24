@@ -78,7 +78,7 @@ namespace Rdmp.Core.QueryBuilding
         /// <summary>
         /// Locks on aggregate by ID
         /// </summary>
-        private static ConcurrentDictionary<int,object> AggregateLocks = new ConcurrentDictionary<int, object>();
+        private static readonly ConcurrentDictionary<int,object> AggregateLocks = new();
 
 
         public CohortQueryBuilderDependency(AggregateConfiguration cohortSet,
@@ -114,7 +114,9 @@ namespace Rdmp.Core.QueryBuilding
 
         public override string ToString()
         {
-            return CohortSet.Name + (JoinedTo != null ? PatientIndexTableIfAny.JoinType + " JOIN " + JoinedTo.Name : "");
+            return (JoinedTo != null
+                ? $"{CohortSet.Name}{PatientIndexTableIfAny.JoinType} JOIN {JoinedTo.Name}"
+                : CohortSet.Name);
         }
 
         public void Build(CohortQueryBuilderResult parent,ISqlParameter[] globals,CancellationToken cancellationToken)
@@ -127,28 +129,26 @@ namespace Rdmp.Core.QueryBuilding
             var pluginCohortCompiler = _pluginCohortCompilers.FirstOrDefault(c => c.ShouldRun(CohortSet));
             var joinedToPluginCohortCompiler = JoinedTo == null ? null : _pluginCohortCompilers.FirstOrDefault(c => c.ShouldRun(JoinedTo)); 
 
-            if(pluginCohortCompiler != null && joinedToPluginCohortCompiler != null)
-            {
-                throw new Exception($"APIs cannot be joined together ('{CohortSet}' and '{JoinedTo}')");
-            }
-
             if (pluginCohortCompiler != null)
             {
-                if(parent.CacheManager == null)
+                if (joinedToPluginCohortCompiler != null)
+                {
+                    throw new Exception($"APIs cannot be joined together ('{CohortSet}' and '{JoinedTo}')");
+                }
+
+                if (parent.CacheManager == null)
                 {
                     throw new Exception($"Aggregate '{CohortSet}' is a plugin aggregate (According to '{pluginCohortCompiler}') but no cache is configured on {CohortSet.GetCohortIdentificationConfigurationIfAny()}.  You must enable result caching to use plugin aggregates.");
                 }
-                else
-                {
-                    // Its a plugin aggregate so only ever run the cached SQL
-                    SqlFullyCached = GetCacheFetchSqlIfPossible(parent, CohortSet, SqlCacheless, isSolitaryPatientIndexTable, pluginCohortCompiler,cancellationToken);
+
+                // It's a plugin aggregate so only ever run the cached SQL
+                SqlFullyCached = GetCacheFetchSqlIfPossible(parent, CohortSet, SqlCacheless, isSolitaryPatientIndexTable, pluginCohortCompiler,cancellationToken);
                     
-                    if(SqlFullyCached == null)
-                    {
-                        throw new Exception($"Aggregate '{CohortSet}' is a plugin aggregate (According to '{pluginCohortCompiler}') but no cached results were found after running.");
-                    }
-                    return;
+                if(SqlFullyCached == null)
+                {
+                    throw new Exception($"Aggregate '{CohortSet}' is a plugin aggregate (According to '{pluginCohortCompiler}') but no cached results were found after running.");
                 }
+                return;
             }
 
             //Includes the parameter declaration and no rename operations (i.e. couldn't be used for building the tree but can be used for cache hit testing).
