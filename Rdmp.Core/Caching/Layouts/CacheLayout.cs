@@ -99,7 +99,7 @@ namespace Rdmp.Core.Caching.Layouts
 
             if (downloadDirectory.Exists)
                 listener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Information,
+                    new NotifyEventArgs(ProgressEventType.Trace,
                         "Download Directory Is:" + downloadDirectory.FullName));
             else
             {
