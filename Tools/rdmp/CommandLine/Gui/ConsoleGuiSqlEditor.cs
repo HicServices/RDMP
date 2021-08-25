@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using CsvHelper;
+using Rdmp.Core.Autocomplete;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataViewing;
@@ -15,6 +16,7 @@ using System.Data;
 using System.Data.Common;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Terminal.Gui;
@@ -140,6 +142,11 @@ namespace Rdmp.Core.CommandLine.Gui
                 };
                 
             Add(btnClose);
+
+            var auto = new AutoCompleteProvider(collection.GetQuerySyntaxHelper());
+            collection.AdjustAutocomplete(auto);
+            var bits = auto.Items.SelectMany(auto.GetBits).OrderBy(a => a).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
+            textView.Autocomplete.AllSuggestions = bits;
         }
 
         private void TableView_CellActivated(TableView.CellActivatedEventArgs obj)

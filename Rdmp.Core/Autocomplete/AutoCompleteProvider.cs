@@ -23,7 +23,7 @@ namespace Rdmp.Core.Autocomplete
     /// </summary>
     public class AutoCompleteProvider : IAutoCompleteProvider
     {
-        protected HashSet<string> Items = new HashSet<string>();
+        public HashSet<string> Items { get; set; }  = new ();
 
         public AutoCompleteProvider()
         {
@@ -37,7 +37,12 @@ namespace Rdmp.Core.Autocomplete
             }
         }
 
-        protected IEnumerable<string> GetBits(string arg)
+        /// <summary>
+        /// Splits <paramref name="arg"/> into individual autocomplete words for suggestions
+        /// </summary>
+        /// <param name="arg"></param>
+        /// <returns></returns>
+        public IEnumerable<string> GetBits(string arg)
         {
             //     yield return arg;
 
