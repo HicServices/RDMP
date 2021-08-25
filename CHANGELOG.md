@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Bump Microsoft.NET.Test.Sdk from 16.10.0 to 16.11.0
 - Bump NLog from 4.7.10 to 4.7.11
+- Bump Terminal.Gui from 1.1.1 to 1.2.1
 
 ### Added
 
