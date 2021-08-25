@@ -11,6 +11,9 @@ using ScintillaNET;
 
 namespace Rdmp.UI.AutoComplete
 {
+    /// <summary>
+    /// Provides autocomplete handling and event hooking for <see cref="Scintilla"/> control
+    /// </summary>
     public class AutoCompleteProviderWin : AutoCompleteProvider
     {
         public AutoCompleteProviderWin()
