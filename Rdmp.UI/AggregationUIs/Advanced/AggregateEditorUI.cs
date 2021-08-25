@@ -285,7 +285,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
 
         private void PopulateHavingText()
         {
-            var autoComplete = new AutoCompleteProviderFactory(Activator).Create(_aggregate.GetQuerySyntaxHelper());
+            var autoComplete = new AutoCompleteProviderWin(_aggregate.GetQuerySyntaxHelper());
             autoComplete.RegisterForEvents(QueryHaving);
             autoComplete.Add(_aggregate);
 

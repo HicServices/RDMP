@@ -197,7 +197,7 @@ namespace Rdmp.UI.ExtractionUIs
                 if (ExtractionInformation.CatalogueItem.Name.Equals(ExtractionInformation.ToString()))
                     _namesMatchedWhenDialogWasLaunched = true;
 
-                var autoComplete = new AutoCompleteProviderFactory(Activator).Create(ExtractionInformation.GetQuerySyntaxHelper());
+                var autoComplete = new AutoCompleteProviderWin(ExtractionInformation.GetQuerySyntaxHelper());
                 autoComplete.Add(ExtractionInformation.CatalogueItem.Catalogue);
                 
                 autoComplete.RegisterForEvents(QueryEditor);

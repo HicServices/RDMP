@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
 using Rdmp.Core;
+using Rdmp.Core.Autocomplete;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.UI.AutoComplete;
@@ -36,7 +37,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks
     {
         private Scintilla _scintilla;
         private ProcessTask _processTask;
-        private AutoCompleteProvider _autoComplete;
+        private AutoCompleteProviderWin _autoComplete;
 
         public SqlProcessTaskUI()
         {
@@ -105,7 +106,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks
         {
             //if there's an old one dispose it
             if (_autoComplete == null)
-                _autoComplete = new AutoCompleteProviderFactory(Activator).Create(_processTask.LoadMetadata.GetQuerySyntaxHelper());
+                _autoComplete = new AutoCompleteProviderWin(_processTask.LoadMetadata.GetQuerySyntaxHelper());
             else
                 _autoComplete.Clear();
 

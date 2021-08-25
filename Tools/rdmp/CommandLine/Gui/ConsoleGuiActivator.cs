@@ -277,7 +277,7 @@ namespace Rdmp.Core.CommandLine.Gui
             bool toggleStack = true;
 
             var btnOk = new Button("Ok", true);
-            btnOk.Clicked += Application.RequestStop;
+            btnOk.Clicked += ()=>Application.RequestStop();
             var btnStack = new Button("Stack");
             btnStack.Clicked += () =>
             {

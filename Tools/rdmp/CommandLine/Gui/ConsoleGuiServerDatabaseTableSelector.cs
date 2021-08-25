@@ -257,7 +257,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 Y = _showTableComponents ? Pos.Bottom(lblTable) : Pos.Bottom(lblDatabase),
                 Height = 1
             };
-            btnCancel.Clicked += Application.RequestStop;
+            btnCancel.Clicked += ()=>Application.RequestStop();
 
             win.Add(btnOk);
             win.Add(btnCancel);

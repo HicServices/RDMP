@@ -8,61 +8,38 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataViewing;
-using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryBuilding;
-using Rdmp.UI.ItemActivation;
-using ScintillaNET;
 
-namespace Rdmp.UI.AutoComplete
+namespace Rdmp.Core.Autocomplete
 {
     /// <summary>
     /// Creates autocomplete strings based on RDMP objects (e.g. <see cref="TableInfo"/>)
     /// </summary>
     public class AutoCompleteProvider : IAutoCompleteProvider
     {
-        HashSet<string> items = new HashSet<string>();
+        protected HashSet<string> Items = new HashSet<string>();
 
-        public AutoCompleteProvider(IActivateItems activator)
+        public AutoCompleteProvider()
         {
+
         }
-
-        public void RegisterForEvents(Scintilla queryEditor)
+        public AutoCompleteProvider(IQuerySyntaxHelper helper)
         {
-            queryEditor.CharAdded += scintilla_CharAdded;
-            queryEditor.AutoCIgnoreCase = true;
-        }
-
-
-        private void scintilla_CharAdded(object sender, CharAddedEventArgs e)
-        {
-            var scintilla = (Scintilla)sender;
-
-            // Find the word start
-            var currentPos = scintilla.CurrentPosition;
-            var wordStartPos = scintilla.WordStartPosition(currentPos, false);
-
-            var list = items.SelectMany(GetBits).OrderBy(a => a).Where(s=>!string.IsNullOrWhiteSpace(s)).Distinct().ToList();
-
-            // Display the autocompletion list
-            var lenEntered = currentPos - wordStartPos;
-            if (lenEntered > 0)
+            if(helper != null)
             {
-                    scintilla.AutoCShow(lenEntered, string.Join(' ', list));                    
+                AddSQLKeywords(helper);
             }
         }
 
-        private IEnumerable<string> GetBits(string arg)
+        protected IEnumerable<string> GetBits(string arg)
         {
-       //     yield return arg;
+            //     yield return arg;
 
             foreach (Match m in Regex.Matches(arg, @"\b\w*\b"))
                 yield return m.Value;
@@ -70,7 +47,7 @@ namespace Rdmp.UI.AutoComplete
 
         public void Add(ITableInfo tableInfo)
         {
-            Add(tableInfo,LoadStage.PostLoad);
+            Add(tableInfo, LoadStage.PostLoad);
         }
 
 
@@ -81,7 +58,7 @@ namespace Rdmp.UI.AutoComplete
             var dbName = tableInfo.GetDatabaseRuntimeName(stage);
 
             var fullySpecified = syntaxHelper.EnsureFullyQualified(dbName, tableInfo.Schema, table, col);
-           
+
             AddUnlessDuplicate(fullySpecified);
         }
 
@@ -93,8 +70,8 @@ namespace Rdmp.UI.AutoComplete
         private void Add(PreLoadDiscardedColumn discardedColumn, ITableInfo tableInfo, string rawDbName)
         {
             var colName = discardedColumn.GetRuntimeName();
-            
-            AddUnlessDuplicate(tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(rawDbName,null, tableInfo.GetRuntimeName(), colName));
+
+            AddUnlessDuplicate(tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(rawDbName, null, tableInfo.GetRuntimeName(), colName));
         }
 
         public void Add(IColumn column)
@@ -114,9 +91,9 @@ namespace Rdmp.UI.AutoComplete
 
         private void AddUnlessDuplicate(string text)
         {
-            items.Add(text);
+            Items.Add(text);
         }
-        
+
         public void AddSQLKeywords(IQuerySyntaxHelper syntaxHelper)
         {
             if (syntaxHelper == null)
@@ -132,38 +109,38 @@ namespace Rdmp.UI.AutoComplete
         {
             AddUnlessDuplicate(parameter.ParameterName);
         }
-        
+
         public void Add(ITableInfo tableInfo, LoadStage loadStage)
         {
             //we already have it or it is not setup properly
-            if(string.IsNullOrWhiteSpace(tableInfo.Database) || string.IsNullOrWhiteSpace(tableInfo.Server))
+            if (string.IsNullOrWhiteSpace(tableInfo.Database) || string.IsNullOrWhiteSpace(tableInfo.Server))
                 return;
-            
+
             var runtimeName = tableInfo.GetRuntimeName(loadStage);
             var dbName = tableInfo.GetDatabaseRuntimeName(loadStage);
 
             var syntaxHelper = tableInfo.GetQuerySyntaxHelper();
-            var fullSql = syntaxHelper.EnsureFullyQualified(dbName,null, runtimeName);
-                        
+            var fullSql = syntaxHelper.EnsureFullyQualified(dbName, null, runtimeName);
+
 
             foreach (IHasStageSpecificRuntimeName o in tableInfo.GetColumnsAtStage(loadStage))
             {
                 var preDiscarded = o as PreLoadDiscardedColumn;
                 var columnInfo = o as ColumnInfo;
 
-                if(preDiscarded != null)
+                if (preDiscarded != null)
                     Add(preDiscarded, tableInfo, dbName);
                 else
-                if(columnInfo != null)
+                if (columnInfo != null)
                     Add(columnInfo, tableInfo, dbName, loadStage, syntaxHelper);
-                else throw new Exception("Expected IHasStageSpecificRuntimeName returned by TableInfo.GetColumnsAtStage to return only ColumnInfos and PreLoadDiscardedColumns.  It returned a '" + o.GetType().Name +"'");
+                else throw new Exception("Expected IHasStageSpecificRuntimeName returned by TableInfo.GetColumnsAtStage to return only ColumnInfos and PreLoadDiscardedColumns.  It returned a '" + o.GetType().Name + "'");
             }
 
             AddUnlessDuplicate(fullSql);
         }
 
         public void Add(DiscoveredTable discoveredTable)
-        {            
+        {
             AddUnlessDuplicate(discoveredTable.GetFullyQualifiedName());
 
             DiscoveredColumn[] columns = null;
@@ -177,7 +154,7 @@ namespace Rdmp.UI.AutoComplete
                 //couldn't load nevermind
             }
 
-            if(columns != null)
+            if (columns != null)
                 foreach (var col in columns)
                     Add(col);
         }
@@ -189,12 +166,12 @@ namespace Rdmp.UI.AutoComplete
 
         public void Clear()
         {
-            items.Clear();
+            Items.Clear();
         }
 
         public void Add(Type type)
         {
-            items.Add(type.Name);
+            Items.Add(type.Name);
         }
 
         public void Add(AggregateConfiguration aggregateConfiguration)
