@@ -76,6 +76,13 @@ namespace Rdmp.Core.CommandLine.Gui
 
             textView.AllowsTab = false;
 
+            // HACK: to avoid https://github.com/migueldeicaza/gui.cs/issues/1438 .  Remove this event handler once Terminal.Gui 1.2.2 (or later) is released 
+            textView.KeyPress += (e) =>
+            {
+                if (e.KeyEvent.Key == Key.Backspace)
+                    textView.SetNeedsDisplay();
+            };
+
             TabView.AddTab(queryTab = new Tab("Query", textView),true);
 
             tableView = new TableView()
@@ -415,7 +422,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 keywords.Add("union");
                 keywords.Add("exists");
 
-                // HACK to workaround https://github.com/migueldeicaza/gui.cs/pull/1437
+                // HACK: to workaround https://github.com/migueldeicaza/gui.cs/pull/1437
                 var prev = Colors.Menu;
                 Colors.Menu = new ColorScheme()
                 {
