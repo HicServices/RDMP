@@ -144,8 +144,22 @@ namespace Rdmp.UI.AggregationUIs.Advanced
                     _forcedJoins.Add(ti);
                 }
 
+                // user is trying to join to a Patient Index table
                 if (patientIndexTable != null)
                 {
+                    if(_aggregate.Catalogue.IsApiCall())
+                    {
+                        Activator.Show("API calls cannot join to patient index tables");
+                        return CheckState.Unchecked;
+                    }
+
+                    // if other check boxes are ticked
+                    if(olvJoin.CheckedObjects.OfType<JoinableCohortAggregateConfigurationUse>().Any())
+                    {
+                        Activator.Show("You cannot join to more than 1 patient index table at once");
+                        return CheckState.Unchecked;
+                    }
+
                     var joinUse = patientIndexTable.AddUser(_aggregate);
                     olvJoin.RemoveObject(patientIndexTable);
                     olvJoin.AddObject(joinUse);
