@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Autocomplete;
@@ -16,9 +17,6 @@ namespace Rdmp.UI.AutoComplete
     /// </summary>
     public class AutoCompleteProviderWin : AutoCompleteProvider
     {
-        public AutoCompleteProviderWin()
-        {
-        }
         public AutoCompleteProviderWin(IQuerySyntaxHelper helper) : base(helper)
         {
         }
@@ -32,20 +30,19 @@ namespace Rdmp.UI.AutoComplete
 
         private void scintilla_CharAdded(object sender, CharAddedEventArgs e)
         {
-            var scintilla = (Scintilla)sender;
+            if (sender is not Scintilla scintilla)
+                return;
 
             // Find the word start
             var currentPos = scintilla.CurrentPosition;
             var wordStartPos = scintilla.WordStartPosition(currentPos, false);
+            var lenEntered = currentPos - wordStartPos;
+            if (lenEntered <= 0) return;
 
-            var list = Items.SelectMany(GetBits).OrderBy(a => a).Where(s=>!string.IsNullOrWhiteSpace(s)).Distinct().ToList();
+            var list = Items.SelectMany(GetBits).Distinct().Where(s => !string.IsNullOrWhiteSpace(s)).OrderBy(a => a);
 
             // Display the autocompletion list
-            var lenEntered = currentPos - wordStartPos;
-            if (lenEntered > 0)
-            {
-                    scintilla.AutoCShow(lenEntered, string.Join(' ', list));                    
-            }
+            scintilla.AutoCShow(lenEntered, string.Join(' ', list));
         }
     }
 }

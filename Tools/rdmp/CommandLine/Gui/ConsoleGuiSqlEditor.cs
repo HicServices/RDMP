@@ -24,6 +24,7 @@ using System.Threading.Tasks;
 using Terminal.Gui;
 using static Terminal.Gui.TabView;
 using Attribute = Terminal.Gui.Attribute;
+using Rune = System.Rune;
 
 namespace Rdmp.Core.CommandLine.Gui
 {
@@ -348,79 +349,23 @@ namespace Rdmp.Core.CommandLine.Gui
         private class SqlTextView : TextView
         {
 
-            private HashSet<string> keywords = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
-            private Attribute blue;
-            private Attribute white;
+            private readonly HashSet<string> _keywords = new(new[]
+            {
+                "select", "distinct", "top", "from", "create", "CIPHER", "CLASS_ORIGIN", "CLIENT", "CLOSE", "COALESCE",
+                "CODE", "COLUMNS", "COLUMN_FORMAT", "COLUMN_NAME", "COMMENT", "COMMIT", "COMPACT", "COMPLETION",
+                "COMPRESSED", "COMPRESSION", "CONCURRENT", "CONNECT", "CONNECTION", "CONSISTENT", "CONSTRAINT_CATALOG",
+                "CONSTRAINT_SCHEMA", "CONSTRAINT_NAME", "CONTAINS", "CONTEXT", "CONTRIBUTORS", "COPY", "CPU",
+                "CURSOR_NAME", "primary", "key", "insert", "alter", "add", "update", "set", "delete", "truncate", "as",
+                "order", "by", "asc", "desc", "between", "where", "and", "or", "not", "limit", "null", "is", "drop",
+                "database", "table", "having", "in", "join", "on", "union", "exists",
+            }, StringComparer.CurrentCultureIgnoreCase);
+            private readonly Attribute _blue;
+            private readonly Attribute _white;
 
 
             public SqlTextView()
             {
                 Autocomplete = new SqlAutocomplete();
-
-                keywords.Add("select");
-                keywords.Add("distinct");
-                keywords.Add("top");
-                keywords.Add("from");
-                keywords.Add("create");
-                keywords.Add("CIPHER");
-                keywords.Add("CLASS_ORIGIN");
-                keywords.Add("CLIENT");
-                keywords.Add("CLOSE");
-                keywords.Add("COALESCE");
-                keywords.Add("CODE");
-                keywords.Add("COLUMNS");
-                keywords.Add("COLUMN_FORMAT");
-                keywords.Add("COLUMN_NAME");
-                keywords.Add("COMMENT");
-                keywords.Add("COMMIT");
-                keywords.Add("COMPACT");
-                keywords.Add("COMPLETION");
-                keywords.Add("COMPRESSED");
-                keywords.Add("COMPRESSION");
-                keywords.Add("CONCURRENT");
-                keywords.Add("CONNECT");
-                keywords.Add("CONNECTION");
-                keywords.Add("CONSISTENT");
-                keywords.Add("CONSTRAINT_CATALOG");
-                keywords.Add("CONSTRAINT_SCHEMA");
-                keywords.Add("CONSTRAINT_NAME");
-                keywords.Add("CONTAINS");
-                keywords.Add("CONTEXT");
-                keywords.Add("CONTRIBUTORS");
-                keywords.Add("COPY");
-                keywords.Add("CPU");
-                keywords.Add("CURSOR_NAME");
-                keywords.Add("primary");
-                keywords.Add("key");
-                keywords.Add("insert");
-                keywords.Add("alter");
-                keywords.Add("add");
-                keywords.Add("update");
-                keywords.Add("set");
-                keywords.Add("delete");
-                keywords.Add("truncate");
-                keywords.Add("as");
-                keywords.Add("order");
-                keywords.Add("by");
-                keywords.Add("asc");
-                keywords.Add("desc");
-                keywords.Add("between");
-                keywords.Add("where");
-                keywords.Add("and");
-                keywords.Add("or");
-                keywords.Add("not");
-                keywords.Add("limit");
-                keywords.Add("null");
-                keywords.Add("is");
-                keywords.Add("drop");
-                keywords.Add("database");
-                keywords.Add("table");
-                keywords.Add("having");
-                keywords.Add("in");
-                keywords.Add("join");
-                keywords.Add("on");
-                keywords.Add("union");
-                keywords.Add("exists");
 
                 // HACK: to workaround https://github.com/migueldeicaza/gui.cs/pull/1437
                 var prev = Colors.Menu;
@@ -438,29 +383,22 @@ namespace Rdmp.Core.CommandLine.Gui
                 Colors.Menu = prev;
                 // ENDHACK
 
-                blue = Driver.MakeAttribute(Color.Cyan, Color.Black);
-                white = Driver.MakeAttribute(Color.White, Color.Black);
+                _blue = Driver.MakeAttribute(Color.Cyan, Color.Black);
+                _white = Driver.MakeAttribute(Color.White, Color.Black);
                 
             }
 
             protected override void ColorNormal()
             {
-                Driver.SetAttribute(white);
+                Driver.SetAttribute(_white);
             }
 
             protected override void ColorNormal(List<System.Rune> line, int idx)
             {
-                if (IsKeyword(line, idx))
-                {
-                    Driver.SetAttribute(blue);
-                }
-                else
-                {
-                    Driver.SetAttribute(white);
-                }
+                Driver.SetAttribute(IsKeyword(line, idx) ? _blue : _white);
             }
 
-            private bool IsKeyword(List<System.Rune> line, int idx)
+            private bool IsKeyword(IEnumerable<Rune> line, int idx)
             {
                 var word = IdxToWord(line, idx);
 
@@ -469,15 +407,14 @@ namespace Rdmp.Core.CommandLine.Gui
                     return false;
                 }
 
-                return keywords.Contains(word, StringComparer.CurrentCultureIgnoreCase);
+                return _keywords.Contains(word);
             }
 
-            private string IdxToWord(List<System.Rune> line, int idx)
+            private string IdxToWord(IEnumerable<Rune> line, int idx)
             {
                 var words = Regex.Split(
-                    new string(line.Select(r => (char)r).ToArray()),
+                    string.Join("", line),
                     "\\b");
-
 
                 int count = 0;
                 string current = null;
