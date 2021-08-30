@@ -555,8 +555,6 @@ Server: myserver
 Description: A cool dataset with interesting stuff", resultText);
         }
 
-        #region Loop Catalogues tests
-
         [Test]
         public void TestCustomMetadataReport_LoopCataloguesPrefix()
         {
@@ -1132,8 +1130,162 @@ some more text
             Assert.AreEqual("Error, Unexpected '$foreach CatalogueItem' on line 3.  Current section is plain text, '$foreach CatalogueItem' can only appear within a '$foreach Catalogue' block (you cannot mix and match top level loop elements)", ex.Message);
             Assert.AreEqual(3, ex.LineNumber);
         }
+        [Test]
+        public void Test_CustomMetadataElementSeperator_ThrowsWhenNotInForEach()
+        {
+            var templateCode = @"
+$Name
+$Comma";
+            Setup2Catalogues(out Catalogue c1, out Catalogue c2);
 
-        #endregion
+            var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
+            var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
+
+            if (outDir.Exists)
+                outDir.Delete(true);
+
+            outDir.Create();
+
+            File.WriteAllText(template.FullName, templateCode);
+
+            var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 }, outDir, template, "Datasets.md", true, null);
+            var ex = Assert.Throws<CustomMetadataReportException>(() => cmd.Execute());
+
+            Assert.AreEqual("Unexpected use of $Comma outside of an iteration ($foreach) block", ex.Message);
+        }
+
+        [Test]
+        public void Test_CustomMetadataElementSeperator_JsonExample()
+        {
+            var templateCode = @"[
+$foreach Catalogue
+  {
+    ""Name"": ""$Name"",
+    ""Columns"": [
+$foreach CatalogueItem
+      {
+                ""Name"": ""$Name""
+      }$Comma
+$end
+    ]
+  }$Comma
+$end
+]";
+
+            Setup2Catalogues(out Catalogue c1, out Catalogue c2);
+
+            var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
+            var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
+
+            if (outDir.Exists)
+                outDir.Delete(true);
+
+            outDir.Create();
+
+            File.WriteAllText(template.FullName, templateCode);
+
+            var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 }, outDir, template, "Datasets.md", true, null);
+            cmd.Execute();
+
+            var outFile = Path.Combine(outDir.FullName, "Datasets.md");
+
+            FileAssert.Exists(outFile);
+            var resultText = File.ReadAllText(outFile);
+
+            StringAssert.AreEqualIgnoringCase(@"[
+  {
+    ""Name"": ""Demog"",
+    ""Columns"": [
+{
+                ""Name"": ""Name""
+      },
+{
+                ""Name"": ""Address""
+      },
+{
+                ""Name"": ""Postcode""
+      }
+    ]
+  },
+  {
+    ""Name"": ""ffff"",
+    ""Columns"": [
+{
+                ""Name"": ""Col1""
+      },
+{
+                ""Name"": ""Col2""
+      }
+    ]
+  }
+]", resultText.TrimEnd());
+        }
+
+        [Test]
+        public void Test_CustomMetadataElementSeperator_JsonExample_SemicolonSub()
+        {
+            var templateCode = @"[
+$foreach Catalogue
+  {
+    ""Name"": ""$Name"",
+    ""Columns"": [
+$foreach CatalogueItem
+      {
+                ""Name"": ""$Name""
+      }$Comma
+$end
+    ]
+  }$Comma
+$end
+]";
+
+            Setup2Catalogues(out Catalogue c1, out Catalogue c2);
+
+            var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
+            var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
+
+            if (outDir.Exists)
+                outDir.Delete(true);
+
+            outDir.Create();
+
+            File.WriteAllText(template.FullName, templateCode);
+
+            var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 }, outDir, template, "Datasets.md", true, null,";");
+            cmd.Execute();
+
+            var outFile = Path.Combine(outDir.FullName, "Datasets.md");
+
+            FileAssert.Exists(outFile);
+            var resultText = File.ReadAllText(outFile);
+
+            StringAssert.AreEqualIgnoringCase(@"[
+  {
+    ""Name"": ""Demog"",
+    ""Columns"": [
+{
+                ""Name"": ""Name""
+      };
+{
+                ""Name"": ""Address""
+      };
+{
+                ""Name"": ""Postcode""
+      }
+    ]
+  };
+  {
+    ""Name"": ""ffff"",
+    ""Columns"": [
+{
+                ""Name"": ""Col1""
+      };
+{
+                ""Name"": ""Col2""
+      }
+    ]
+  }
+]", resultText.TrimEnd());
+        }
     }
-
 }

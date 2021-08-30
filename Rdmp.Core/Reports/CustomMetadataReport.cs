@@ -45,6 +45,8 @@ namespace Rdmp.Core.Reports
         /// </summary>
         public const string LoopCatalogueItems = "$foreach CatalogueItem";
 
+        public const string Comma = "$Comma";
+
         /// <summary>
         /// Ends looping
         /// </summary>
@@ -58,8 +60,15 @@ namespace Rdmp.Core.Reports
         /// <summary>
         /// Specify a replacement for newlines when found in fields e.g. with space.  Leave as null to leave newlines intact.
         /// </summary>
-        public string NewlineSubstitution { get; internal set; }
-        
+        public string NewlineSubstitution { get; set; }
+
+
+        /// <summary>
+        /// Specify a replacement for the token element seperator replacement <see cref="Comma"/> (note that this option
+        /// only affects the token not regular commas in the template).
+        /// </summary>
+        public string CommaSubstitution { get; set; } = ",";
+
         /// <summary>
         /// The repository where column completeness metrics will come from.  Note this is usually the same source as <see cref="TimespanCalculator"/> 
         /// </summary>
@@ -69,6 +78,17 @@ namespace Rdmp.Core.Reports
         /// Cache of latest run DQE <see cref="Evaluation"/> by <see cref="Catalogue"/> (populated from <see cref="DQERepository"/>)
         /// </summary>
         public Dictionary<ICatalogue, Evaluation> EvaluationCache { get; set; }  = new Dictionary<ICatalogue, Evaluation>();
+
+        /// <summary>
+        /// Describes whether a $foreach is iterating and which element type is
+        /// currently being processed for replacement
+        /// </summary>
+        private enum ElementIteration
+        {
+            NotIterating,
+            RegularElement,
+            LastElement
+        }
 
         public CustomMetadataReport(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
@@ -240,7 +260,7 @@ namespace Rdmp.Core.Reports
             
             var templateBody = File.ReadAllLines(template.FullName);
 
-            string outname = DoReplacements(new []{fileNaming},catalogues.First(),null).Trim();
+            string outname = DoReplacements(new []{fileNaming},catalogues.First(),null,ElementIteration.NotIterating).Trim();
 
             StreamWriter outFile = null;
             
@@ -261,9 +281,12 @@ namespace Rdmp.Core.Reports
                             }
                             else
                             {
-                                foreach (Catalogue catalogue in catalogues)
+                                for (int i=0;i<catalogues.Length;i++)
                                 {
-                                    var newContents = DoReplacements(section.Body.ToArray(), catalogue,section);
+                                    var element = 
+                                        i == catalogues.Length - 1 ? ElementIteration.LastElement : ElementIteration.RegularElement;
+
+                                    var newContents = DoReplacements(section.Body.ToArray(), catalogues[i],section, element);
                                     outFile.WriteLine(newContents);
                                 }
                             }
@@ -276,13 +299,13 @@ namespace Rdmp.Core.Reports
                 {
                     foreach (Catalogue catalogue in catalogues)
                     {
-                        var newContents = DoReplacements(templateBody, catalogue,null);
+                        var newContents = DoReplacements(templateBody, catalogue,null,ElementIteration.NotIterating);
 
                         if (oneFile) 
                             outFile.WriteLine(newContents);
                         else
                         {
-                            string filename = DoReplacements(new[] {fileNaming}, catalogue,null).Trim();
+                            string filename = DoReplacements(new[] {fileNaming}, catalogue,null, ElementIteration.NotIterating).Trim();
 
                             using (var sw = new StreamWriter(Path.Combine(outputDirectory.FullName,filename)))
                             {
@@ -395,7 +418,15 @@ namespace Rdmp.Core.Reports
             }
         }
 
-        private string DoReplacements(string[] strs, Catalogue catalogue, CatalogueSection section)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="strs"></param>
+        /// <param name="catalogue"></param>
+        /// <param name="section"></param>
+        /// <param name="iteration">Indicates if looping through Catalogues and we are not at the last element in the collection yet.</param>
+        /// <returns></returns>
+        private string DoReplacements(string[] strs, Catalogue catalogue, CatalogueSection section, ElementIteration iteration)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -411,8 +442,20 @@ namespace Rdmp.Core.Reports
                 else
                 {
                     foreach (var r in Replacements)
+                    {
                         if (copy.Contains(r.Key))
                             copy = copy.Replace(r.Key, ValueToString(r.Value(catalogue)));
+                    }
+                    
+                    // when iterating we need to respect iteration symbols (e.g. $Comma).
+                    if(iteration == ElementIteration.NotIterating)
+                    {
+                        ThrowIfContainsIterationElements(copy);
+                    }
+                    else
+                    {
+                        copy = copy.Replace(Comma, iteration == ElementIteration.RegularElement ? CommaSubstitution : "");
+                    }
                 }
 
                 sb.AppendLine(copy.TrimEnd());
@@ -464,8 +507,13 @@ namespace Rdmp.Core.Reports
             if(!blockTerminated)
                 throw new CustomMetadataReportException($"Expected {EndLoop} to match $foreach which started on line {index+1+sectionOffset}",index+1+sectionOffset);
 
-            foreach (CatalogueItem ci in catalogueItems) 
-                sbResult.AppendLine(DoReplacements(block.ToString(), ci));
+            for(int j=0;j< catalogueItems.Length; j++)
+            {
+                sbResult.AppendLine(DoReplacements(block.ToString(), catalogueItems[j],
+                    j < catalogueItems.Length -1 ? 
+                        ElementIteration.RegularElement : ElementIteration.LastElement));
+            }
+                
 
             result = sbResult.ToString();
 
@@ -495,14 +543,34 @@ namespace Rdmp.Core.Reports
         /// </summary>
         /// <param name="template"></param>
         /// <param name="catalogueItem"></param>
+        /// <param name="iteration">Indicates if looping through CatalogueItems and we are not at the last element in the collection yet.</param>
         /// <returns></returns>
-        private string DoReplacements(string template, CatalogueItem catalogueItem)
+        private string DoReplacements(string template, CatalogueItem catalogueItem, ElementIteration iteration)
         {
             foreach (var r in ReplacementsCatalogueItem)
                 if (template.Contains(r.Key))
                     template = template.Replace(r.Key, ValueToString(r.Value(catalogueItem)));
 
+            if(iteration == ElementIteration.NotIterating)
+            {
+                ThrowIfContainsIterationElements(template);
+            }
+            else
+            {
+                template = template.Replace(Comma, iteration == ElementIteration.RegularElement ? CommaSubstitution : "");
+            }
+            
+
             return template.Trim();
+        }
+
+        private void ThrowIfContainsIterationElements(string template)
+        {
+            if(template.Contains(Comma))
+            {
+                throw new CustomMetadataReportException($"Unexpected use of {Comma} outside of an iteration ($foreach) block",-1);
+            }
         }
     }
 }
+ 
