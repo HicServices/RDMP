@@ -527,6 +527,11 @@ namespace Rdmp.Core.Reports
         /// <returns></returns>
         private string ValueToString(object v)
         {
+            if(v is ExtractionInformation ei)
+            {
+                return ei.GetRuntimeName();
+            }
+
             return ReplaceNewlines(v?.ToString() ?? "");
         }
 

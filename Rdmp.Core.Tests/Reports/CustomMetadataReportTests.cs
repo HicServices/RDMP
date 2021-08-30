@@ -132,6 +132,13 @@ namespace Rdmp.Core.Tests.Reports
             cata.Description = null;
             cata.SaveToDatabase();
 
+            var ei = WhenIHaveA<ExtractionInformation>();
+            ei.SelectSQL = "[blah]..[mydate]";
+            ei.SaveToDatabase();
+
+            cata.TimeCoverage_ExtractionInformation_ID = ei.ID;
+            cata.SaveToDatabase();
+
             var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
             var outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "outDir"));
 
@@ -141,8 +148,8 @@ namespace Rdmp.Core.Tests.Reports
             outDir.Create();
 
             File.WriteAllText(template.FullName,
-                @"| Name | Desc| StartYear | EndYear | StartMonth | EndMonth | StartDay | EndDay | Range
-| $Name | $Description | $DQE_StartYear | $DQE_EndYear | $DQE_StartMonth | $DQE_EndMonth | $DQE_StartDay | $DQE_EndDay | $DQE_StartYear-$DQE_EndYear |");
+                @"| Name | Desc| StartYear | EndYear | StartMonth | EndMonth | StartDay | EndDay | Range | TimeField |
+| $Name | $Description | $DQE_StartYear | $DQE_EndYear | $DQE_StartMonth | $DQE_EndMonth | $DQE_StartDay | $DQE_EndDay | $DQE_StartYear-$DQE_EndYear | $TimeCoverage_ExtractionInformation |");
 
 
             var reporter = new CustomMetadataReport(RepositoryLocator)
@@ -165,8 +172,8 @@ namespace Rdmp.Core.Tests.Reports
             FileAssert.Exists(outFile);
             var resultText = File.ReadAllText(outFile);
 
-            StringAssert.AreEqualIgnoringCase(@"| Name | Desc| StartYear | EndYear | StartMonth | EndMonth | StartDay | EndDay | Range
-| ffff |  | 2001 | 2002 | 02 | 04 | 01 | 03 | 2001-2002 |", resultText.TrimEnd());
+            StringAssert.AreEqualIgnoringCase(@"| Name | Desc| StartYear | EndYear | StartMonth | EndMonth | StartDay | EndDay | Range | TimeField |
+| ffff |  | 2001 | 2002 | 02 | 04 | 01 | 03 | 2001-2002 | mydate |", resultText.TrimEnd());
         }
 
         [TestCase(true)]
