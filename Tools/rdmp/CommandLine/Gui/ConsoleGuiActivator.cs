@@ -80,8 +80,9 @@ namespace Rdmp.Core.CommandLine.Gui
                     Width = Dim.Fill(),
                     Height = Dim.Fill(1),
                     Text = message.Replace("\r\n", "\n"),
-                    ReadOnly = true
-                });
+                    ReadOnly = true,
+                    AllowsTab = false
+            });
                 Application.Run(dlg);
             }
         }
@@ -271,13 +272,14 @@ namespace Rdmp.Core.CommandLine.Gui
                 Y = 0,
                 Width = Dim.Fill(),
                 Height = Dim.Fill() - 2,
-                ReadOnly = true
+                ReadOnly = true,
+                AllowsTab = false
             };
 
             bool toggleStack = true;
 
             var btnOk = new Button("Ok", true);
-            btnOk.Clicked += Application.RequestStop;
+            btnOk.Clicked += ()=>Application.RequestStop();
             var btnStack = new Button("Stack");
             btnStack.Clicked += () =>
             {

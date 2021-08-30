@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core.Autocomplete;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
@@ -50,7 +51,7 @@ namespace Rdmp.UI.DataViewing
         private DbCommand _cmd;
         private string _originalSql;
         private DiscoveredServer _server;
-        private AutoCompleteProvider _autoComplete;
+        private AutoCompleteProviderWin _autoComplete;
         
         ToolStripButton btnExecuteSql = new ToolStripButton("Run");
         ToolStripButton btnResetSql = new ToolStripButton("Restore Original SQL");
@@ -107,7 +108,7 @@ namespace Rdmp.UI.DataViewing
 
             if(_autoComplete == null)
             {
-                _autoComplete = new AutoCompleteProviderFactory(activator).Create( _collection.GetQuerySyntaxHelper());
+                _autoComplete = new AutoCompleteProviderWin( _collection.GetQuerySyntaxHelper());
 
                 _collection.AdjustAutocomplete(_autoComplete);
 

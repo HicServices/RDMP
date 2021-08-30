@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using CsvHelper;
+using Rdmp.Core.Autocomplete;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataViewing;
@@ -13,12 +14,17 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Terminal.Gui;
 using static Terminal.Gui.TabView;
+using Attribute = Terminal.Gui.Attribute;
+using Rune = System.Rune;
 
 namespace Rdmp.Core.CommandLine.Gui
 {
@@ -28,7 +34,7 @@ namespace Rdmp.Core.CommandLine.Gui
         private readonly IViewSQLAndResultsCollection _collection;
         private TableView tableView;
         protected TabView TabView;
-        private TextView textView;
+        private SqlTextView textView;
         private Button _btnRunOrCancel;
         private Task _runSqlTask;
         private DbCommand _runSqlCmd;
@@ -60,13 +66,22 @@ namespace Rdmp.Core.CommandLine.Gui
             // Tabs (query and results)
             TabView = new TabView() { Width = Dim.Fill(), Height = Dim.Fill(), Y = 1 };
 
-            textView = new TextView()
+            textView = new SqlTextView()
             {
                 X = 0,
                 Y = 0,
                 Width = Dim.Fill(),
                 Height = Dim.Fill(),
-                Text = _orignalSql = collection.GetSql().Replace("\r\n", "\n")
+                Text = _orignalSql = collection.GetSql().Replace("\r\n", "\n").Replace("\t", "....")
+            };
+
+            textView.AllowsTab = false;
+
+            // HACK: to avoid https://github.com/migueldeicaza/gui.cs/issues/1438 .  Remove this event handler once Terminal.Gui 1.2.2 (or later) is released 
+            textView.KeyPress += (e) =>
+            {
+                if (e.KeyEvent.Key == Key.Backspace)
+                    textView.SetNeedsDisplay();
             };
 
             TabView.AddTab(queryTab = new Tab("Query", textView),true);
@@ -140,6 +155,12 @@ namespace Rdmp.Core.CommandLine.Gui
                 };
                 
             Add(btnClose);
+
+            var auto = new AutoCompleteProvider(collection.GetQuerySyntaxHelper());
+            collection.AdjustAutocomplete(auto);
+            var bits = auto.Items.SelectMany(auto.GetBits).OrderBy(a => a).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
+            textView.Autocomplete.AllSuggestions = bits;
+            textView.Autocomplete.MaxWidth = 40;
         }
 
         private void TableView_CellActivated(TableView.CellActivatedEventArgs obj)
@@ -312,6 +333,104 @@ namespace Rdmp.Core.CommandLine.Gui
         protected virtual void OnQueryCompleted(DataTable dt)
         {
             
+        }
+
+        private class SqlAutocomplete : Terminal.Gui.Autocomplete
+        {
+            public override bool IsWordChar(System.Rune rune)
+            {
+                if ((char)rune == '_')
+                    return true;
+
+                return base.IsWordChar(rune);
+            }
+        }
+
+        private class SqlTextView : TextView
+        {
+
+            private readonly HashSet<string> _keywords = new(new[]
+            {
+                "select", "distinct", "top", "from", "create", "CIPHER", "CLASS_ORIGIN", "CLIENT", "CLOSE", "COALESCE",
+                "CODE", "COLUMNS", "COLUMN_FORMAT", "COLUMN_NAME", "COMMENT", "COMMIT", "COMPACT", "COMPLETION",
+                "COMPRESSED", "COMPRESSION", "CONCURRENT", "CONNECT", "CONNECTION", "CONSISTENT", "CONSTRAINT_CATALOG",
+                "CONSTRAINT_SCHEMA", "CONSTRAINT_NAME", "CONTAINS", "CONTEXT", "CONTRIBUTORS", "COPY", "CPU",
+                "CURSOR_NAME", "primary", "key", "insert", "alter", "add", "update", "set", "delete", "truncate", "as",
+                "order", "by", "asc", "desc", "between", "where", "and", "or", "not", "limit", "null", "is", "drop",
+                "database", "table", "having", "in", "join", "on", "union", "exists",
+            }, StringComparer.CurrentCultureIgnoreCase);
+            private readonly Attribute _blue;
+            private readonly Attribute _white;
+
+
+            public SqlTextView()
+            {
+                Autocomplete = new SqlAutocomplete();
+
+                // HACK: to workaround https://github.com/migueldeicaza/gui.cs/pull/1437
+                var prev = Colors.Menu;
+                Colors.Menu = new ColorScheme()
+                {
+                    Normal = Driver.MakeAttribute(Color.Black, Color.Blue),
+                    Focus = Driver.MakeAttribute(Color.Black, Color.Cyan),
+                };
+
+                // this is a hack
+                var cs = Autocomplete.ColorScheme;
+                Debug.Assert(cs == Colors.Menu);
+
+                // restore menu so not to break all menus in app
+                Colors.Menu = prev;
+                // ENDHACK
+
+                _blue = Driver.MakeAttribute(Color.Cyan, Color.Black);
+                _white = Driver.MakeAttribute(Color.White, Color.Black);
+                
+            }
+
+            protected override void ColorNormal()
+            {
+                Driver.SetAttribute(_white);
+            }
+
+            protected override void ColorNormal(List<System.Rune> line, int idx)
+            {
+                Driver.SetAttribute(IsKeyword(line, idx) ? _blue : _white);
+            }
+
+            private bool IsKeyword(IEnumerable<Rune> line, int idx)
+            {
+                var word = IdxToWord(line, idx);
+
+                if (string.IsNullOrWhiteSpace(word))
+                {
+                    return false;
+                }
+
+                return _keywords.Contains(word);
+            }
+
+            private string IdxToWord(IEnumerable<Rune> line, int idx)
+            {
+                var words = Regex.Split(
+                    string.Join("", line),
+                    "\\b");
+
+                int count = 0;
+                string current = null;
+
+                foreach (var word in words)
+                {
+                    current = word;
+                    count += word.Length;
+                    if (count > idx)
+                    {
+                        break;
+                    }
+                }
+
+                return current?.Trim();
+            }
         }
     }
 }

@@ -245,7 +245,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
 
                     var querySyntaxSource = col as IHasQuerySyntaxHelper ?? _aggregate;
 
-                    var autoComplete = new AutoCompleteProviderFactory(Activator).Create(querySyntaxSource.GetQuerySyntaxHelper());
+                    var autoComplete = new AutoCompleteProviderWin(querySyntaxSource.GetQuerySyntaxHelper());
                     autoComplete.Add(col);
                     autoComplete.Add(_aggregate);
 

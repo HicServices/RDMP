@@ -166,7 +166,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 Width = 10,
                 Height = 1
             };
-            btnCancel.Clicked += Application.RequestStop;
+            btnCancel.Clicked += ()=>Application.RequestStop();
 
             if (_addSearch)
             {
