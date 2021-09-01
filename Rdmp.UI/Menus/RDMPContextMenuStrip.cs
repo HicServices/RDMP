@@ -156,10 +156,8 @@ namespace Rdmp.UI.Menus
             {
                 try
                 {
-                    ToolStripMenuItem[] toAdd = plugin.GetAdditionalRightClickMenuItems(_o);
-
-                    if (toAdd != null && toAdd.Any())
-                        Items.AddRange(toAdd);
+                    foreach (var cmd in plugin.GetAdditionalRightClickMenuItems(_o))
+                        Add(cmd);
                 }
                 catch (Exception ex)
                 {

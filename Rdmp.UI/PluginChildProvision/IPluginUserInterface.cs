@@ -28,7 +28,7 @@ namespace Rdmp.UI.PluginChildProvision
         /// </summary>
         /// <param name="treeObject"></param>
         /// <returns></returns>
-        ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object treeObject);
+        IEnumerable<IAtomicCommand> GetAdditionalRightClickMenuItems(object treeObject);
         
         /// <summary>
         /// Return a list of commands that should be exposed on the given user interface tab control (<paramref name="control"/>) when displaying the

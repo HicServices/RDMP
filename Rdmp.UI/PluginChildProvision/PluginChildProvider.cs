@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -32,14 +33,20 @@ namespace Rdmp.UI.PluginChildProvision
             return null;
         }
 
-        public virtual ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object o)
+        /// <summary>
+        /// Override to return a custom set of commands for some objects
+        /// </summary>
+        /// <param name="o">An object that was right clicked or a member of the enum <see cref="RDMPCollection"/> if a right
+        /// click occurs in whitespace</param>
+        /// <returns></returns>
+        public virtual IEnumerable<IAtomicCommand> GetAdditionalRightClickMenuItems(object o)
         {
-            return null;
+            yield break;
         }
 
         public virtual IEnumerable<IAtomicCommand> GetAdditionalCommandsForControl(IRDMPSingleDatabaseObjectControl control, DatabaseEntity databaseEntity)
         {
-            return null;
+            yield break;
         }
 
         private AtomicCommandUIFactory _atomicCommandUIFactory  = null;
