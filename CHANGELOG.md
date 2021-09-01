@@ -16,6 +16,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - IPluginUserInterface can no longer add items to tab menu bars (only context menus)
 
+### Added
+
+- Added custom metadata report tokens:
+  - $Comma (for use with formats that require seperation e.g. JSON when using the `$foreach` operation)
+  - $TimeCoverage_ExtractionInformation (the column that provides the time element of a dataset to the DQE e.g. StudyDate)
+
+
 ## [6.0.2] - 2021-08-26
 
 ### Changed
