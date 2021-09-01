@@ -6,8 +6,8 @@
 
 using Rdmp.Core;
 using Rdmp.Core.CohortCreation.Execution;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Aggregation;
-using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.PluginChildProvision
 {
@@ -15,7 +15,7 @@ namespace Rdmp.UI.PluginChildProvision
     {
         private ExamplePluginCohortCompiler compiler;
 
-        public ExamplePluginCohortCompilerUI(IActivateItems activator) :base(activator)
+        public ExamplePluginCohortCompilerUI(IBasicActivateItems activator) :base(activator)
         {
             compiler = new ExamplePluginCohortCompiler();
         }

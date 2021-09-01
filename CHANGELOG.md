@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Changed
+
+- IPluginUserInterface is now in `Rdmp.Core` and therefore you can write console gui or dual mode (console and winforms) plugin UIs
+
+### Removed
+
+- IPluginUserInterface can no longer add items to tab menu bars (only context menus)
+
 ## [6.0.2] - 2021-08-26
 
 ### Changed

@@ -89,7 +89,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public RefreshBus RefreshBus { get; private set; }
         
-        public List<IPluginUserInterface> PluginUserInterfaces { get; private set; }
         readonly UIObjectConstructor _constructor = new UIObjectConstructor();
 
         public IArrangeWindows WindowArranger { get; private set; }
@@ -121,7 +120,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             _windowManager = windowManager;
             RefreshBus = refreshBus;
 
-            ConstructPluginChildProviders();
             CoreChildProvider = GetChildProvider();
             
             HistoryProvider = new HistoryProvider(repositoryLocator);
@@ -144,22 +142,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             RefreshBus.Subscribe(this);
         }
 
-        private void ConstructPluginChildProviders()
-        {
-            PluginUserInterfaces = new List<IPluginUserInterface>();
-
-            foreach (Type pluginType in RepositoryLocator.CatalogueRepository.MEF.GetTypes<IPluginUserInterface>())
-            {
-                try
-                {
-                    PluginUserInterfaces.Add((IPluginUserInterface) _constructor.Construct(pluginType,this,false));
-                }
-                catch (Exception e)
-                {
-                    GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Problem occured trying to load Plugin '" + pluginType.Name +"'", CheckResult.Fail, e));
-                }
-            }
-        }
 
         protected override ICoreChildProvider GetChildProvider()
         {

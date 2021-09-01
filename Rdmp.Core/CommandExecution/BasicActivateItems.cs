@@ -33,6 +33,7 @@ using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CommandExecution
@@ -72,6 +73,8 @@ namespace Rdmp.Core.CommandExecution
         /// <inheritdoc/>
         public event EmphasiseItemHandler Emphasise;
 
+        public List<IPluginUserInterface> PluginUserInterfaces { get; private set; }
+
         public BasicActivateItems(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
         {
             RepositoryLocator = repositoryLocator;
@@ -84,6 +87,8 @@ namespace Rdmp.Core.CommandExecution
 
             // Note that this is virtual so can return null e.g. if other stuff has to happen with the activator before a valid child provider can be built (e.g. loading plugin user interfaces)
             CoreChildProvider = GetChildProvider();
+
+            ConstructPluginChildProviders();
         }
 
         protected virtual ICoreChildProvider GetChildProvider()
@@ -93,6 +98,24 @@ namespace Rdmp.Core.CommandExecution
                             new CatalogueChildProvider(RepositoryLocator.CatalogueRepository,null,GlobalErrorCheckNotifier,CoreChildProvider as CatalogueChildProvider);
         }
 
+        private void ConstructPluginChildProviders()
+        {
+            PluginUserInterfaces = new List<IPluginUserInterface>();
+
+            var constructor = new ObjectConstructor();
+
+            foreach (Type pluginType in RepositoryLocator.CatalogueRepository.MEF.GetTypes<IPluginUserInterface>())
+            {
+                try
+                {
+                    PluginUserInterfaces.Add((IPluginUserInterface)constructor.Construct(pluginType, this, false));
+                }
+                catch (Exception e)
+                {
+                    GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Problem occured trying to load Plugin '" + pluginType.Name + "'", CheckResult.Fail, e));
+                }
+            }
+        }
 
         protected void OnEmphasise(object sender, EmphasiseEventArgs args)
         {
