@@ -26,6 +26,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private readonly string _fileNaming;
         private readonly bool _oneFile;
         private readonly string _newlineSub;
+        private readonly string _commaSub;
 
         public ExecuteCommandExtractMetadata(IBasicActivateItems basicActivator, 
             Catalogue[] catalogues, 
@@ -39,7 +40,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             [DemandsInitialization("True to append all ouputs into a single file.  False to output a new file for every Catalogue")]
             bool oneFile, 
             [DemandsInitialization("Optional, specify a replacement for newlines when found in fields e.g. <br/>.  Leave as null to leave newlines intact.")]
-            string newlineSub):base(basicActivator)
+            string newlineSub,
+            [DemandsInitialization("Optional, specify a replacement for the token $Comma (defaults to ',')",DefaultValue = ",")]
+            string commaSub = ","):base(basicActivator)
         {
             _catalogues = catalogues;
             _outputDirectory = outputDirectory;
@@ -47,6 +50,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _fileNaming = fileNaming;
             _oneFile = oneFile;
             _newlineSub = newlineSub;
+            _commaSub = commaSub;
         }
 
         public override void Execute()
@@ -87,7 +91,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             var reporter = new CustomMetadataReport(BasicActivator.RepositoryLocator)
             {
-                NewlineSubstitution = _newlineSub
+                NewlineSubstitution = _newlineSub,
+                CommaSubstitution = _commaSub
             };
             reporter.GenerateReport(catas.Cast<Catalogue>().OrderBy(c=>c.Name).ToArray(),outputDir,template, fileNaming, _oneFile);
         }
