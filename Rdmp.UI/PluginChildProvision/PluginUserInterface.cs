@@ -44,30 +44,6 @@ namespace Rdmp.UI.PluginChildProvision
             yield break;
         }
 
-        public virtual IEnumerable<IAtomicCommand> GetAdditionalCommandsForControl(IRDMPSingleDatabaseObjectControl control, DatabaseEntity databaseEntity)
-        {
-            yield break;
-        }
-
-        private AtomicCommandUIFactory _atomicCommandUIFactory  = null;
-        protected ToolStripMenuItem GetMenuItem(IAtomicCommand cmd)
-        {
-            if(_atomicCommandUIFactory == null)
-                _atomicCommandUIFactory = new AtomicCommandUIFactory(ItemActivator);
-
-            return _atomicCommandUIFactory.CreateMenuItem(cmd);
-        }
-
-        protected ToolStripMenuItem[] GetMenuArray(params IAtomicCommand[] commands)
-        {
-            List<ToolStripMenuItem> items = new List<ToolStripMenuItem>();
-
-            foreach (IAtomicCommand command in commands)
-                items.Add(GetMenuItem(command));
-
-            return items.ToArray();
-        }
-
         public virtual Bitmap GetImage(object concept, OverlayKind kind = OverlayKind.None)
         {
             return null;

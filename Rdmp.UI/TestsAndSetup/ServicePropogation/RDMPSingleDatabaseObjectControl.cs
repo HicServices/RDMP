@@ -252,41 +252,6 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         }
         public virtual void ConsultAboutClosing(object sender, FormClosingEventArgs e) {}
 
-
-        /// <summary>
-        /// Adds the all <see cref="IAtomicCommand"/> specified by <see cref="IActivateItems.PluginUserInterfaces"/> for the current control.  Commands
-        /// will appear in the menu bar at the top of the control
-        /// </summary>
-        protected void AddPluginCommands()
-        {
-            foreach (IAtomicCommand cmd in GetPluginCommands())
-                CommonFunctionality.Add(cmd);
-        }
-        /// <summary>
-        /// Adds the all <see cref="IAtomicCommand"/> specified by <see cref="IActivateItems.PluginUserInterfaces"/> for the current control.  Commands
-        /// will appear in the menu drop down options at the top of the control
-        /// </summary>
-        protected void AddPluginCommandsToMenu()
-        {
-            foreach (IAtomicCommand cmd in GetPluginCommands())
-                CommonFunctionality.AddToMenu(cmd);
-        }
-
-        protected IEnumerable<IAtomicCommand> GetPluginCommands()
-        {
-            foreach (var p in Activator.PluginUserInterfaces)
-            {
-                var cmds = p.GetAdditionalCommandsForControl(this, DatabaseObject);
-
-                if (cmds == null)
-                    continue;
-
-                foreach (var c in cmds)
-                    yield return c;
-            }
-        }
-           
-
         public virtual ObjectSaverButton GetObjectSaverButton()
         {
             return ObjectSaverButton1;

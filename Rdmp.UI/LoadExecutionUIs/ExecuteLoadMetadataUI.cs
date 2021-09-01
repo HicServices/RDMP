@@ -84,8 +84,6 @@ namespace Rdmp.UI.LoadExecutionUIs
             CommonFunctionality.Add(new ExecuteCommandViewLogs(activator, (LoadMetadata) databaseObject));
             
             CommonFunctionality.Add(dd_DebugOptions);
-
-            AddPluginCommands();
         }
         
         private void SetLoadProgressGroupBoxState()

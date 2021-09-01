@@ -90,9 +90,7 @@ namespace Rdmp.UI.Validation
             CommonFunctionality.AddToMenu(new ExecuteCommandRunDQEOnCatalogue(activator).SetTarget(databaseObject));
             CommonFunctionality.AddToMenu(new ExecuteCommandViewDQEResultsForCatalogue(activator)
                 {OverrideCommandName = "View Results..."}.SetTarget(databaseObject));
-
-            AddPluginCommandsToMenu();
-                
+            
             _catalogue = databaseObject;
             
             SetupComboBoxes(databaseObject);

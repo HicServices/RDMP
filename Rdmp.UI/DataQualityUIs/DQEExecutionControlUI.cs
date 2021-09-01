@@ -57,8 +57,6 @@ namespace Rdmp.UI.DataQualityUIs
 
             CommonFunctionality.Add(new ExecuteCommandConfigureCatalogueValidationRules(Activator).SetTarget(_catalogue), "Validation Rules...");
             CommonFunctionality.Add(new ExecuteCommandViewDQEResultsForCatalogue(Activator){OverrideCommandName = "View Results..."}.SetTarget(databaseObject));
-
-            AddPluginCommands();
         }
         
         public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
