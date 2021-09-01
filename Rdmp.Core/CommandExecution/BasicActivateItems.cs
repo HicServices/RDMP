@@ -100,6 +100,10 @@ namespace Rdmp.Core.CommandExecution
 
         private void ConstructPluginChildProviders()
         {
+            // if startup has not taken place then we won't have any plugins
+            if (RepositoryLocator.CatalogueRepository.MEF == null)
+                return;
+
             PluginUserInterfaces = new List<IPluginUserInterface>();
 
             var constructor = new ObjectConstructor();
