@@ -10,7 +10,7 @@
 - [Changelog](./CHANGELOG.md)
 - [Libraries](./Documentation/CodeTutorials/Packages.md)
 
-RDMP is a free, open source software application for the loading, linking, anonymisation and extraction of datasets stored in SQL databases (Sql Server, MySql and Oracle).  It is designed to assist with data provenance, preserving domain knowledge and configuration management of linkage/cohort generation workflows.
+RDMP is a free, open source software application for cohort building, loading, linking, anonymisation and extraction of datasets stored in relational databases (Sql Server, MySql, Postgres and Oracle). It was designed from the bottom up to support with data provenance, preserving domain knowledge and configuration management workflows.
 
 RDMP does not require your data be moved or transformed prior to processing and is integrates into existing SQL based extraction practices.
 
@@ -22,7 +22,7 @@ Signed release binaries for the RDMP client and Command Line Interface (CLI) are
 
 ## Build
 
-You can build directly through Visual Studio (**2017 or later**) by opening HIC.DataManagementPlatform.sln.  You will also need to install the DotNetCore 2.2 SDK.  The startup project for the main RDMP user interface is ResearchDataManagementPlatform.csproj.
+You can build directly through Visual Studio (**2017 or later**) by opening HIC.DataManagementPlatform.sln.  You will also need to install the dotnet5 SDK.  The startup project for the main RDMP user interface is ResearchDataManagementPlatform.csproj.
 
 You can build from the command line with:
 
@@ -33,7 +33,7 @@ dotnet build
 Run tests with:
 
 ```
-dotnet test ./scripts/run-all-tests.proj -f netcoreapp2.2 -c Release -p:BuildInParallel=false
+dotnet test ./scripts/run-all-tests.proj -c Release -p:BuildInParallel=false
 ```
 
 The first time you run tests you will likely see many inconclusive tests e.g.
