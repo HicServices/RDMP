@@ -517,7 +517,7 @@ namespace Rdmp.UI.Collections
                     }
 
                     var cmdFactory = new AtomicCommandFactory(_activator);
-                    foreach(var p in cmdFactory.GetManyObjectCommandsWithPresentation(many))
+                    foreach(var p in cmdFactory.CreateManyObjectCommands(many))
                     {
                         menu.Add(p);
                     }

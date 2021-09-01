@@ -58,6 +58,23 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         protected bool UseTripleDotSuffix { get; set; }
 
+
+        /// <summary>
+        /// When presenting the command in a hierarchical presentation should it be under a subheading
+        /// (e.g. in a context menu).  Null if not
+        /// </summary>
+        public string SuggestedCategory { get; set; }
+
+        /// <summary>
+        /// Key which should result in this command being fired e.g. "F2"
+        /// </summary>
+        public string SuggestedShortcut { get; set; }
+
+        /// <summary>
+        /// True to require Ctrl key to be pressed when <see cref="SuggestedShortcut"/> is entered
+        /// </summary>
+        public bool Ctrl { get; set; }
+
         public BasicCommandExecution()
         {
 

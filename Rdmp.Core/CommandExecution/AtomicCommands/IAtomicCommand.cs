@@ -16,5 +16,22 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     public interface IAtomicCommand : ICommandExecution
     {
         Image GetImage(IIconProvider iconProvider);
+
+
+        /// <summary>
+        /// When presenting the command in a hierarchical presentation should it be under a subheading
+        /// (e.g. in a context menu).  Null if not
+        /// </summary>
+        string SuggestedCategory { get; set; }
+
+        /// <summary>
+        /// Key which should result in this command being fired e.g. "F2"
+        /// </summary>
+        string SuggestedShortcut { get; set; }
+
+        /// <summary>
+        /// True to require Ctrl key to be pressed when <see cref="SuggestedShortcut"/> is entered
+        /// </summary>
+        bool Ctrl { get; set; }
     }
 }
