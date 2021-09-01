@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.UI.ItemActivation;
@@ -35,7 +36,7 @@ namespace Rdmp.UI.PluginChildProvision
                 }
 
                 // Launch a UI that prompts a new value to be entered
-                if(ItemActivator.TypeText("Generate random CHIs","Number of Chis:", 100, number.ToString(),out string result,false))
+                if(BasicActivator.TypeText("Generate random CHIs","Number of Chis:", 100, number.ToString(),out string result,false))
                 {
                     if(int.TryParse(result, out int newCount))
                     {

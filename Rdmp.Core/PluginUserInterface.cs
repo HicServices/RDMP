@@ -7,25 +7,25 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Windows.Forms;
-using Rdmp.Core;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
-using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.PluginChildProvision
+namespace Rdmp.Core
 {
-    public abstract class PluginUserInterface:IPluginUserInterface
+    public abstract class PluginUserInterface : IPluginUserInterface
     {
-        protected readonly IActivateItems ItemActivator;
-        
-        protected PluginUserInterface(IActivateItems itemActivator)
+        protected readonly IBasicActivateItems BasicActivator;
+
+        /// <summary>
+        /// Creates a new instance of your plugin UI.  See notes on <paramref name="itemActivator"/>
+        /// </summary>
+        /// <param name="itemActivator">The UI layer of the client.  May be a console UI activator or a winforms activator.  Use GetType to 
+        /// determine if the currently running UI layer is one you support in your plugin.</param>
+        protected PluginUserInterface(IBasicActivateItems itemActivator)
         {
-            ItemActivator = itemActivator;
+            BasicActivator = itemActivator;
         }
 
         public virtual object[] GetChildren(object model)

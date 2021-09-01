@@ -10,7 +10,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Providers;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.PluginChildProvision
+namespace Rdmp.Core
 {
     /// <summary>
     /// Interface for declaring plugins which interact with the RDMP user interface.  Supports injecting custom objects into RDMPCollectionUI trees and inject new
@@ -18,7 +18,7 @@ namespace Rdmp.UI.PluginChildProvision
     /// </summary>
 
 
-    public interface IPluginUserInterface:IChildProvider,IIconProvider
+    public interface IPluginUserInterface : IChildProvider, IIconProvider
     {
         /// <summary>
         /// Return a list of new menu items that should appear under the given treeObject (that was right clicked in a RDMPCollectionUI)
@@ -26,7 +26,7 @@ namespace Rdmp.UI.PluginChildProvision
         /// <param name="treeObject"></param>
         /// <returns></returns>
         IEnumerable<IAtomicCommand> GetAdditionalRightClickMenuItems(object treeObject);
-        
+
         /// <summary>
         /// Implement to provide a custom user interface that should be shown when a given type of 
         /// <see cref="AggregateConfiguration"/> is edited
