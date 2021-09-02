@@ -47,7 +47,7 @@ namespace Rdmp.UI.Tests
 
         public ITheme Theme { get {return this;}}
         public RefreshBus RefreshBus { get; private set; }
-        public List<IPluginUserInterface> PluginUserInterfaces { get; private set; }
+        public new List<IPluginUserInterface> PluginUserInterfaces { get; private set; }
         public IArrangeWindows WindowArranger { get; private set; }
 
         public Func<bool> ShouldReloadFreshCopyDelegate;
