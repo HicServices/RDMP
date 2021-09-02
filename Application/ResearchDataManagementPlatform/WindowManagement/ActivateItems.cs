@@ -273,7 +273,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             return CommandExecutionFactory.CanActivate(target);
         }
-        public override void Activate(object o)
+        protected override void ActivateImpl(object o)
         {
             if(CommandExecutionFactory.CanActivate(o))
                 CommandExecutionFactory.Activate(o);

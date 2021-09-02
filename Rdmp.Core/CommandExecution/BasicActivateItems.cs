@@ -171,11 +171,33 @@ namespace Rdmp.Core.CommandExecution
             return false;
         }
 
-        public virtual void Activate(object o)
+        public void Activate(object o)
+        {
+            if(o is IMapsDirectlyToDatabaseTable m)
+            {
+                // if a plugin user interface exists to handle editing this then let them handle it instead of launching the 
+                // normal UI
+                foreach (var pluginInterface in PluginUserInterfaces)
+                {
+                    if (pluginInterface.CustomActivate(m))
+                    {
+                        return;
+                    }
+                }
+            }
+
+            ActivateImpl(o);
+        }
+
+        /// <summary>
+        /// override to provide custom activation logic.  Note that this will be called after
+        /// first consulting plugins about new behaviours
+        /// </summary>
+        /// <param name="o"></param>
+        protected virtual void ActivateImpl(object o)
         {
             
         }
-
         /// <inheritdoc/>
         public virtual IEnumerable<T> GetAll<T>()
         {

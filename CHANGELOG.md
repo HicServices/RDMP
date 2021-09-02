@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - IPluginUserInterface is now in `Rdmp.Core` and therefore you can write console gui or dual mode (console and winforms) plugin UIs
+- IPluginUserInterface CustomActivate now takes IMapsDirectlyToDatabaseTable allowing custom plugin behaviour for activating any object
 
 ### Removed
 

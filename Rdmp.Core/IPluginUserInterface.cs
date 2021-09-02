@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Providers;
@@ -28,11 +29,12 @@ namespace Rdmp.Core
         IEnumerable<IAtomicCommand> GetAdditionalRightClickMenuItems(object treeObject);
 
         /// <summary>
-        /// Implement to provide a custom user interface that should be shown when a given type of 
-        /// <see cref="AggregateConfiguration"/> is edited
+        /// Implement to provide a custom user interface that should be shown when a given object 
+        /// <paramref name="o"/> is activated.  Return false if you do not want to respond to the object
+        ///  or it's Type.
         /// </summary>
-        /// <param name="ac"></param>
+        /// <param name="o">The object being activated</param>
         /// <returns></returns>
-        bool CustomActivate(AggregateConfiguration ac);
+        bool CustomActivate(IMapsDirectlyToDatabaseTable o);
     }
 }

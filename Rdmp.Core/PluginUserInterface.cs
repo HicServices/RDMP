@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -49,7 +50,7 @@ namespace Rdmp.Core
             return null;
         }
         /// <inheritdoc/>
-        public virtual bool CustomActivate(AggregateConfiguration ac)
+        public virtual bool CustomActivate(IMapsDirectlyToDatabaseTable o)
         {
             return false;
         }
