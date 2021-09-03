@@ -318,7 +318,7 @@ namespace Rdmp.Core.CommandLine.Gui
             return o is IMapsDirectlyToDatabaseTable || o is IMasqueradeAs;
         }
 
-        public override void Activate(object o)
+        protected override void ActivateImpl(object o)
         {
             var m = o as IMapsDirectlyToDatabaseTable ?? (o as IMasqueradeAs)?.MasqueradingAs() as IMapsDirectlyToDatabaseTable;
             if(m != null)

@@ -67,7 +67,7 @@ namespace Rdmp.UI.Menus
             RepositoryLocator = _activator.RepositoryLocator;
                     
             if(o != null && !(o is RDMPCollection))
-                ActivateCommandMenuItem = Add(new ExecuteCommandActivate(_activator,args.Masquerader?? o));
+                ActivateCommandMenuItem = Add(new ExecuteCommandActivate(_activator,args.Masquerader?? o),Keys.None);
         }
 
         /// <summary>
@@ -156,10 +156,8 @@ namespace Rdmp.UI.Menus
             {
                 try
                 {
-                    ToolStripMenuItem[] toAdd = plugin.GetAdditionalRightClickMenuItems(_o);
-
-                    if (toAdd != null && toAdd.Any())
-                        Items.AddRange(toAdd);
+                    foreach (var cmd in plugin.GetAdditionalRightClickMenuItems(_o))
+                        Add(cmd);
                 }
                 catch (Exception ex)
                 {
@@ -200,15 +198,15 @@ namespace Rdmp.UI.Menus
         {
             var factory = new AtomicCommandFactory(_activator);
                         
-            foreach (var toPresent in factory.GetCommandsWithPresentation(_args.Masquerader ?? _o))
+            foreach (var toPresent in factory.CreateCommands(_args.Masquerader ?? _o))
             {
                 Add(toPresent);
             }
         }
 
-        public void Add(CommandPresentation toPresent)
+        public void Add(IAtomicCommand toPresent)
         {
-            if (_args.ShouldSkipCommand(toPresent.Command))
+            if (_args.ShouldSkipCommand(toPresent))
                 return;
 
             var key = Keys.None;
@@ -217,9 +215,9 @@ namespace Rdmp.UI.Menus
                 Enum.TryParse<Keys>(toPresent.SuggestedShortcut, out key);
 
             if (toPresent.SuggestedCategory == null)
-                Add(toPresent.Command, toPresent.Ctrl ? Keys.Control | key : key);
+                Add(toPresent, toPresent.Ctrl ? Keys.Control | key : key);
             else
-                Add(toPresent.Command, toPresent.Ctrl ? Keys.Control | key : key, toPresent.SuggestedCategory);
+                Add(toPresent, toPresent.Ctrl ? Keys.Control | key : key, toPresent.SuggestedCategory);
         }
 
         private void PopulateTreeMenu(RDMPCollectionCommonFunctionality commonFunctionality, ToolStripMenuItem treeMenuItem)

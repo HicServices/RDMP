@@ -462,4 +462,7 @@
       <DependentUpon>TypeTextOrCancelDialog.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="PluginChildProvision\" />
+  </ItemGroup>
 </Project>

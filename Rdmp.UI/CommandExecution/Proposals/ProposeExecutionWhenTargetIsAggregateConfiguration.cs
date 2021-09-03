@@ -28,16 +28,6 @@ namespace Rdmp.UI.CommandExecution.Proposals
 
         public override void Activate(AggregateConfiguration target)
         {
-            // if a plugin user interface exists to handle editing this aggregate let them handle it instead of launching the 
-            // normal UI e.g. for configuring a REST API call
-            foreach (var pluginInterface in ItemActivator.PluginUserInterfaces)
-            {
-                if(pluginInterface.CustomActivate(target))
-                {
-                    return;
-                }
-            }
-
             ItemActivator.Activate<AggregateEditorUI, AggregateConfiguration>(target);
         }
 

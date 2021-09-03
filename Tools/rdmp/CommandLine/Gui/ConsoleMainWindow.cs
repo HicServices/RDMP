@@ -365,7 +365,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
             if(many.Length > 1)
             {
-                return factory.GetManyObjectCommandsWithPresentation(many).Select(p=>p.Command).ToArray();
+                return factory.CreateManyObjectCommands(many).ToArray();
             }
 
             var o = _treeView.SelectedObject;
