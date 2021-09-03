@@ -54,7 +54,7 @@ namespace Rdmp.Core.DataQualityEngine.Data
            var toReturn = new Dictionary<DateTime, ArchivalPeriodicityCount>();
 
            var calc = new DatasetTimespanCalculator();
-           var result = calc.GetMachineReadableTimepsanIfKnownOf(evaluation, discardOutliers);
+           var result = calc.GetMachineReadableTimespanIfKnownOf(evaluation, discardOutliers);
 
            using (var con = evaluation.DQERepository.GetConnection())
            {

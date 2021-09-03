@@ -24,10 +24,10 @@ namespace Rdmp.Core.DataQualityEngine
     public class DatasetTimespanCalculator : IDetermineDatasetTimespan
     {
         /// <inheritdoc/>
-        public string GetHumanReadableTimepsanIfKnownOf(Catalogue catalogue,bool discardOutliers, out DateTime? accurateAsOf)
+        public string GetHumanReadableTimespanIfKnownOf(Catalogue catalogue,bool discardOutliers, out DateTime? accurateAsOf)
         {
 
-            var result = GetMachineReadableTimepsanIfKnownOf(catalogue, discardOutliers, out accurateAsOf);
+            var result = GetMachineReadableTimespanIfKnownOf(catalogue, discardOutliers, out accurateAsOf);
 
             if (result.Item1 == null || result.Item2 == null)
                 return "Unknown";
@@ -35,7 +35,7 @@ namespace Rdmp.Core.DataQualityEngine
             return $"{result.Item1.Value:yyyy-MMM} To {result.Item2.Value:yyyy-MMM}";
         }
 
-        public Tuple<DateTime?, DateTime?> GetMachineReadableTimepsanIfKnownOf(Evaluation evaluation, bool discardOutliers)
+        public Tuple<DateTime?, DateTime?> GetMachineReadableTimespanIfKnownOf(Evaluation evaluation, bool discardOutliers)
         {
             var dt = PeriodicityState.GetPeriodicityForDataTableForEvaluation(evaluation, "ALL", false);
 
@@ -67,13 +67,10 @@ namespace Rdmp.Core.DataQualityEngine
             if (maxMonth == null || minMonth == null)
                 return Unknown();
 
-            if (maxMonth == minMonth)
-                return Tuple.Create(minMonth, minMonth);
-
             return Tuple.Create(minMonth, maxMonth);
         }
 
-        public Tuple<DateTime?, DateTime?> GetMachineReadableTimepsanIfKnownOf(Catalogue catalogue, bool discardOutliers, out DateTime? accurateAsOf)
+        public Tuple<DateTime?, DateTime?> GetMachineReadableTimespanIfKnownOf(Catalogue catalogue, bool discardOutliers, out DateTime? accurateAsOf)
         {
             accurateAsOf = null;
             Evaluation mostRecentEvaluation;
@@ -93,7 +90,7 @@ namespace Rdmp.Core.DataQualityEngine
 
             accurateAsOf = mostRecentEvaluation.DateOfEvaluation;
 
-            return GetMachineReadableTimepsanIfKnownOf(mostRecentEvaluation, discardOutliers);
+            return GetMachineReadableTimespanIfKnownOf(mostRecentEvaluation, discardOutliers);
         }
 
         private Tuple<DateTime?, DateTime?> Unknown()
