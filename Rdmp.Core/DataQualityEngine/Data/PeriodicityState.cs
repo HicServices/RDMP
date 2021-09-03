@@ -49,9 +49,12 @@ namespace Rdmp.Core.DataQualityEngine.Data
 
         }
 
-       public static Dictionary<DateTime, ArchivalPeriodicityCount> GetPeriodicityCountsForEvaluation(Evaluation evaluation)
+       public static Dictionary<DateTime, ArchivalPeriodicityCount> GetPeriodicityCountsForEvaluation(Evaluation evaluation,bool discardOutliers)
        {
            var toReturn = new Dictionary<DateTime, ArchivalPeriodicityCount>();
+
+           var calc = new DatasetTimespanCalculator();
+           var result = calc.GetMachineReadableTimepsanIfKnownOf(evaluation, discardOutliers);
 
            using (var con = evaluation.DQERepository.GetConnection())
            {
@@ -72,8 +75,20 @@ namespace Rdmp.Core.DataQualityEngine.Data
                        while (r.Read())
                        {
                            var date = new DateTime((int) r["Year"], (int) r["Month"], 1);
-                       
-                           if(!toReturn.ContainsKey(date))
+
+                           //discard outliers before start
+                           if(discardOutliers && result.Item1.HasValue && date < result.Item1.Value)
+                           {
+                                continue;
+                           }
+
+                            //discard outliers after end
+                            if (discardOutliers && result.Item2.HasValue && date > result.Item2.Value)
+                            {
+                                continue;
+                            }
+
+                            if (!toReturn.ContainsKey(date))
                                toReturn.Add(date,new ArchivalPeriodicityCount());
 
                            var toIncrement = toReturn[date];
