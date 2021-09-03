@@ -56,9 +56,7 @@ cd ./bin/Debug/net5.0/
 
 ### Tests
 
-To run tests you will need an instance of Sql Server.
-
-These instructions use localdb (included in [visual studio](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb?view=sql-server-ver15)).
+To run tests you will need an instance of Sql Server.  These instructions use localdb which is included in [visual studio](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb?view=sql-server-ver15).
 
 If using a docker container or alternate sql server instance then substitute your host name in place of `(localdb)\MSSQLLocalDB`
 
