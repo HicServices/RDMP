@@ -33,6 +33,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
  "ExtractMetadata",
  "DateRange",
  "AlterTableMakeDistinct",
+            "MSSQLLocalDB",
             "NormalCohorts",
             "FreakyCohorts",
             "PublicKeyToken",
