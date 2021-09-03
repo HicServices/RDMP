@@ -435,7 +435,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 { OverrideCommandName = "Run Cache..." };
             }
 
-            if(CommandFactoryBase.Is(o, out Catalogue c))
+            if(CommandFactoryBase.Is(o, out Catalogue c) && !c.IsApiCall())
             {
                 yield return new ExecuteCommandRunConsoleGuiView(_activator,
                     () => new RunDataQualityEngineWindow(_activator, c))

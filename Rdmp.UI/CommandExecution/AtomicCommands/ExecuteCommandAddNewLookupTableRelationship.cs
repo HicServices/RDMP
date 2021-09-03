@@ -27,6 +27,12 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             _catalogueIfKnown = catalogueIfKnown;
             _lookupTableInfoIfKnown = lookupTableInfoIfKnown;
 
+            if(catalogueIfKnown.IsApiCall())
+            {
+                SetImpossible("Lookups cannot be configured on API Catalogues");
+            }
+                
+
             if(catalogueIfKnown == null && lookupTableInfoIfKnown == null)
                 throw new NotSupportedException("You must know either the lookup table or the Catalogue you want to configure it on");
         }
