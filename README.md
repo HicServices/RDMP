@@ -10,7 +10,7 @@
 - [Changelog](./CHANGELOG.md)
 - [Libraries](./Documentation/CodeTutorials/Packages.md)
 
-RDMP is a free, open source software application for cohort building, loading, linking, anonymisation and extraction of datasets stored in relational databases (Sql Server, MySql, Postgres and Oracle). It was designed from the bottom up to support with data provenance, preserving domain knowledge and configuration management workflows.
+RDMP is a free, open source software application for cohort building, loading, linking, anonymisation and extraction of datasets stored in relational databases (SQL Server, MySQL, Postgres and Oracle). It was designed from the bottom up to support with data provenance, preserving domain knowledge and configuration management workflows.
 
 RDMP does not require your data be moved or transformed prior to processing and is integrates into existing SQL based extraction practices.
 
@@ -27,7 +27,7 @@ Signed release binaries for the RDMP client and Command Line Interface (CLI) are
 
 You can build RDMP from the command line using `dotnet build` or through an IDE e.g. Visual Studio or Visual Studio Code (Requires [dotnet5 SDK](https://dotnet.microsoft.com/download/dotnet/5.0)).
 
-The windows client:
+The Windows client:
 
 ```
 dotnet build
@@ -45,18 +45,18 @@ cd Tools\rdmp\bin\Debug\net5.0\
 
 ### Building on Linux
 
-Only the console client can be built/run in linux
+Only the console client can be built/run in Linux
 
 ```
-cd ./Tools\rdmp\
+cd Tools/rdmp
 dotnet build
-cd ./bin/Debug/net5.0/
+cd bin/Debug/net5.0
 ./rdmp --help
 ```
 
 ### Tests
 
-To run tests you will need an instance of Sql Server.  These instructions use localdb which is included in [visual studio](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb?view=sql-server-ver15).
+To run tests you will need an instance of SQL Server.  These instructions use localdb which is included in [visual studio](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb?view=sql-server-ver15).
 
 If using a docker container or alternate sql server instance then substitute your host name in place of `(localdb)\MSSQLLocalDB`
 
