@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - IPluginUserInterface can no longer add items to tab menu bars (only context menus)
+- Removed some Catalogue context menu items when the Catalogue is an API call
 - Adding a Filter from Catalogue no longer opens it up in edit mode after adding
 
 ### Added
