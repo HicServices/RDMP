@@ -111,7 +111,7 @@ namespace Rdmp.Core.Reports
                             //get the age of the dataset if known and output it
                             if (_args.TimespanCalculator != null)
                             {
-                                string timespan = _args.TimespanCalculator.GetHumanReadableTimepsanIfKnownOf(c, true,out accurateAsOf);
+                                string timespan = _args.TimespanCalculator.GetHumanReadableTimespanIfKnownOf(c, true,out accurateAsOf);
                                 if (!string.IsNullOrWhiteSpace(timespan) && !timespan.Equals("Unknown"))
                                     InsertParagraph(document,timespan + (accurateAsOf.HasValue ? "*" :""), TextFontSize);
                             }

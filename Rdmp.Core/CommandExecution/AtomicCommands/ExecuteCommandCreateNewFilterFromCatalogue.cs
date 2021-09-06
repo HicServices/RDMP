@@ -70,7 +70,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 _container.AddChild(import);
                 Publish((DatabaseEntity)import);
                 Emphasise((DatabaseEntity)import);
-                Activate((DatabaseEntity)import);
             }
         }
     }

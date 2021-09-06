@@ -12,11 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - IPluginUserInterface is now in `Rdmp.Core` and therefore you can write console gui or dual mode (console and winforms) plugin UIs
 - IPluginUserInterface CustomActivate now takes IMapsDirectlyToDatabaseTable allowing custom plugin behaviour for activating any object
+- DatasetRaceway chart (depicts multiple datasets along a shared timeline) now ignores outlier values (months with count less than 1000th as many records as the average month)
 
 ### Removed
 
 - IPluginUserInterface can no longer add items to tab menu bars (only context menus)
 - Removed some Catalogue context menu items when the Catalogue is an API call
+- Adding a Filter from Catalogue no longer opens it up in edit mode after adding
 
 ### Added
 

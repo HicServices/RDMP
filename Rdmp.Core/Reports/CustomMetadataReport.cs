@@ -145,7 +145,7 @@ namespace Rdmp.Core.Reports
             Replacements.Add("$DQE_EndDate",
                 (c) => GetEndDate(c)?.ToString());
             Replacements.Add("$DQE_DateRange",
-                (c) => TimespanCalculator?.GetHumanReadableTimepsanIfKnownOf(c, true, out _));
+                (c) => TimespanCalculator?.GetHumanReadableTimespanIfKnownOf(c, true, out _));
 
             Replacements.Add("$DQE_StartYear",
                 (c) => GetStartDate(c)?.ToString("yyyy"));
@@ -237,12 +237,12 @@ namespace Rdmp.Core.Reports
 
         private DateTime? GetStartDate(Catalogue c)
         {
-            return TimespanCalculator?.GetMachineReadableTimepsanIfKnownOf(c, true, out _)?.Item1;
+            return TimespanCalculator?.GetMachineReadableTimespanIfKnownOf(c, true, out _)?.Item1;
         }
 
         private DateTime? GetEndDate(Catalogue c)
         {
-            return TimespanCalculator?.GetMachineReadableTimepsanIfKnownOf(c, true, out _)?.Item2;
+            return TimespanCalculator?.GetMachineReadableTimespanIfKnownOf(c, true, out _)?.Item2;
         }
 
         /// <summary>

@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataQualityEngine;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
@@ -101,7 +102,7 @@ namespace Rdmp.UI.Raceway
                 Dictionary<DateTime, ArchivalPeriodicityCount> dictionary = null;
 
                 if (eval != null)
-                    dictionary = PeriodicityState.GetPeriodicityCountsForEvaluation(eval);
+                    dictionary = PeriodicityState.GetPeriodicityCountsForEvaluation(eval,true);
 
                 cataloguesToAdd.Add(cata, dictionary);
             }
