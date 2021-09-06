@@ -93,10 +93,6 @@ namespace Rdmp.Core.CommandExecution
 
         protected virtual ICoreChildProvider GetChildProvider()
         {
-            //constructor call in base class
-            if (PluginUserInterfaces == null)
-                return null;
-
             //Dispose the old one
             ICoreChildProvider temp = null;
 
