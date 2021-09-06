@@ -93,7 +93,7 @@ namespace Rdmp.Core.CommandExecution
 
         protected virtual ICoreChildProvider GetChildProvider()
         {
-            //Dispose the old one
+            // Build new CoreChildProvider in a temp then update to it to avoid stale references
             ICoreChildProvider temp = null;
 
             //prefer a linked repository with both
