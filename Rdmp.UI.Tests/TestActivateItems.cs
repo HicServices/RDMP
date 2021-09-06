@@ -47,7 +47,6 @@ namespace Rdmp.UI.Tests
 
         public ITheme Theme { get {return this;}}
         public RefreshBus RefreshBus { get; private set; }
-        public new List<IPluginUserInterface> PluginUserInterfaces { get; private set; }
         public IArrangeWindows WindowArranger { get; private set; }
 
         public Func<bool> ShouldReloadFreshCopyDelegate;
@@ -80,8 +79,6 @@ namespace Rdmp.UI.Tests
                 new CatalogueProblemProvider(),
                 new DataExportProblemProvider()
             });
-
-            PluginUserInterfaces = new List<IPluginUserInterface>();
         }
 
         public Form ShowWindow(Control singleControlForm, bool asDocument = false)

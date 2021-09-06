@@ -73,7 +73,7 @@ namespace Rdmp.Core.CommandExecution
         /// <inheritdoc/>
         public event EmphasiseItemHandler Emphasise;
 
-        public List<IPluginUserInterface> PluginUserInterfaces { get; private set; }
+        public List<IPluginUserInterface> PluginUserInterfaces { get; private set; } = new List<IPluginUserInterface>();
 
         public BasicActivateItems(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
         {
@@ -93,9 +93,37 @@ namespace Rdmp.Core.CommandExecution
 
         protected virtual ICoreChildProvider GetChildProvider()
         {
-            return RepositoryLocator.DataExportRepository != null?
-                            new DataExportChildProvider(RepositoryLocator,null,GlobalErrorCheckNotifier, CoreChildProvider as DataExportChildProvider):
-                            new CatalogueChildProvider(RepositoryLocator.CatalogueRepository,null,GlobalErrorCheckNotifier,CoreChildProvider as CatalogueChildProvider);
+            //constructor call in base class
+            if (PluginUserInterfaces == null)
+                return null;
+
+            //Dispose the old one
+            ICoreChildProvider temp = null;
+
+            //prefer a linked repository with both
+            if (RepositoryLocator.DataExportRepository != null)
+                try
+                {
+                    temp = new DataExportChildProvider(RepositoryLocator, PluginUserInterfaces.ToArray(), GlobalErrorCheckNotifier, CoreChildProvider as DataExportChildProvider);
+                }
+                catch (Exception e)
+                {
+                    ShowException("Error constructing DataExportChildProvider",e);
+                }
+
+            //there was an error generating a data export repository or there was no repository specified
+
+            //so just create a catalogue one
+            if (temp == null)
+                temp = new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(), GlobalErrorCheckNotifier, CoreChildProvider as CatalogueChildProvider);
+
+            // first time
+            if (CoreChildProvider == null)
+                CoreChildProvider = temp;
+            else
+                CoreChildProvider.UpdateTo(temp);
+
+            return CoreChildProvider;
         }
 
         private void ConstructPluginChildProviders()
