@@ -120,7 +120,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             _windowManager = windowManager;
             RefreshBus = refreshBus;
 
-            CoreChildProvider = GetChildProvider();
+            RefreshBus.ChildProvider = CoreChildProvider;
             
             HistoryProvider = new HistoryProvider(repositoryLocator);
 
@@ -142,42 +142,16 @@ namespace ResearchDataManagementPlatform.WindowManagement
             RefreshBus.Subscribe(this);
         }
 
-
         protected override ICoreChildProvider GetChildProvider()
         {
-            //constructor call in base class
-            if(PluginUserInterfaces == null)
-                return null;
+            var provider = base.GetChildProvider();
 
-            //Dispose the old one
-            ICoreChildProvider temp = null;
+            if (RefreshBus != null)
+            {
+                RefreshBus.ChildProvider = provider;
+            }
 
-            //prefer a linked repository with both
-            if(RepositoryLocator.DataExportRepository != null)
-                try
-                {
-                    temp = new DataExportChildProvider(RepositoryLocator,PluginUserInterfaces.ToArray(),GlobalErrorCheckNotifier,CoreChildProvider as DataExportChildProvider);
-                }
-                catch (Exception e)
-                {
-                    ExceptionViewer.Show(e);
-                }
-            
-            //there was an error generating a data export repository or there was no repository specified
-
-            //so just create a catalogue one
-            if (temp == null)
-                temp = new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(),GlobalErrorCheckNotifier, CoreChildProvider as CatalogueChildProvider);
-
-            // first time
-            if(CoreChildProvider == null)
-                CoreChildProvider = temp;
-            else
-                CoreChildProvider.UpdateTo(temp);
-
-            RefreshBus.ChildProvider = CoreChildProvider;
-
-            return CoreChildProvider;
+            return provider;
         }
         
 
