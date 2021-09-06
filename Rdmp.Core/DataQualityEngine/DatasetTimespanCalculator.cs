@@ -24,10 +24,10 @@ namespace Rdmp.Core.DataQualityEngine
     public class DatasetTimespanCalculator : IDetermineDatasetTimespan
     {
         /// <inheritdoc/>
-        public string GetHumanReadableTimepsanIfKnownOf(Catalogue catalogue,bool discardOutliers, out DateTime? accurateAsOf)
+        public string GetHumanReadableTimespanIfKnownOf(Catalogue catalogue,bool discardOutliers, out DateTime? accurateAsOf)
         {
 
-            var result = GetMachineReadableTimepsanIfKnownOf(catalogue, discardOutliers, out accurateAsOf);
+            var result = GetMachineReadableTimespanIfKnownOf(catalogue, discardOutliers, out accurateAsOf);
 
             if (result.Item1 == null || result.Item2 == null)
                 return "Unknown";
@@ -35,33 +35,14 @@ namespace Rdmp.Core.DataQualityEngine
             return $"{result.Item1.Value:yyyy-MMM} To {result.Item2.Value:yyyy-MMM}";
         }
 
-        public Tuple<DateTime?, DateTime?> GetMachineReadableTimepsanIfKnownOf(Catalogue catalogue, bool discardOutliers, out DateTime? accurateAsOf)
+        public Tuple<DateTime?, DateTime?> GetMachineReadableTimespanIfKnownOf(Evaluation evaluation, bool discardOutliers)
         {
-            DataTable dt;
-            accurateAsOf = null;
-            
-            Evaluation mostRecentEvaluation = null;
-
-            try
-            {
-                var repo = new DQERepository(catalogue.CatalogueRepository);
-                mostRecentEvaluation = repo.GetMostRecentEvaluationFor(catalogue);
-            }
-            catch (Exception)
-            {
-                return Unknown();
-            }
-            
-            if (mostRecentEvaluation == null)
-                return Unknown();
-
-            accurateAsOf = mostRecentEvaluation.DateOfEvaluation;
-            dt = PeriodicityState.GetPeriodicityForDataTableForEvaluation(mostRecentEvaluation, "ALL", false);
+            var dt = PeriodicityState.GetPeriodicityForDataTableForEvaluation(evaluation, "ALL", false);
 
             if (dt == null || dt.Rows.Count < 2)
                 return Unknown();
 
-            int discardThreshold = discardOutliers? GetDiscardThreshold(dt):-1;
+            int discardThreshold = discardOutliers ? GetDiscardThreshold(dt) : -1;
 
             DateTime? minMonth = null;
             for (int i = 0; i < dt.Rows.Count; i++)
@@ -74,7 +55,7 @@ namespace Rdmp.Core.DataQualityEngine
             }
 
             DateTime? maxMonth = null;
-            for (int i = dt.Rows.Count-1; i >=0; i--)
+            for (int i = dt.Rows.Count - 1; i >= 0; i--)
             {
                 if (Convert.ToInt32(dt.Rows[i]["CountOfRecords"]) > discardThreshold)
                 {
@@ -86,10 +67,30 @@ namespace Rdmp.Core.DataQualityEngine
             if (maxMonth == null || minMonth == null)
                 return Unknown();
 
-            if (maxMonth == minMonth)
-                return Tuple.Create(minMonth,minMonth);
+            return Tuple.Create(minMonth, maxMonth);
+        }
 
-            return Tuple.Create(minMonth,maxMonth);
+        public Tuple<DateTime?, DateTime?> GetMachineReadableTimespanIfKnownOf(Catalogue catalogue, bool discardOutliers, out DateTime? accurateAsOf)
+        {
+            accurateAsOf = null;
+            Evaluation mostRecentEvaluation;
+
+            try
+            {
+                var repo = new DQERepository(catalogue.CatalogueRepository);
+                mostRecentEvaluation = repo.GetMostRecentEvaluationFor(catalogue);
+            }
+            catch (Exception)
+            {
+                return Unknown();
+            }
+
+            if (mostRecentEvaluation == null)
+                return Unknown();
+
+            accurateAsOf = mostRecentEvaluation.DateOfEvaluation;
+
+            return GetMachineReadableTimespanIfKnownOf(mostRecentEvaluation, discardOutliers);
         }
 
         private Tuple<DateTime?, DateTime?> Unknown()
