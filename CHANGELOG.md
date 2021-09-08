@@ -26,6 +26,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - $Comma (for use with formats that require seperation e.g. JSON when using the `$foreach` operation)
   - $TimeCoverage_ExtractionInformation (the column that provides the time element of a dataset to the DQE e.g. StudyDate)
 
+### Fixed
+
+- Fixed a bug where changing the server/database name could disable the Create button when selecting a database
 
 ## [6.0.2] - 2021-08-26
 

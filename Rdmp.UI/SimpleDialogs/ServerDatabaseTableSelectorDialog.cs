@@ -31,23 +31,7 @@ namespace Rdmp.UI.SimpleDialogs
                 serverDatabaseTableSelector1.HideTableComponents();
 
             serverDatabaseTableSelector1.TableShouldBeNovel = tableShouldBeNovel;
-
-            serverDatabaseTableSelector1.SelectionChanged += serverDatabaseTableSelector1_SelectionChanged;
             serverDatabaseTableSelector1.SetItemActivator(activator);
-        }
-
-        void serverDatabaseTableSelector1_SelectionChanged()
-        {
-            var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
-
-            if (db != null && !db.Server.Exists())
-            {
-                btnCreate.Enabled = false;
-                return;
-            }
-
-            //novel db name
-            btnCreate.Enabled = db != null && !db.Exists();
         }
 
         public DiscoveredDatabase SelectedDatabase { get { return serverDatabaseTableSelector1.GetDiscoveredDatabase(); } }
@@ -69,14 +53,30 @@ namespace Rdmp.UI.SimpleDialogs
 
         private void btnCreate_Click(object sender, EventArgs e)
         {
-            var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
-
-            if(!db.Exists())
+            try
             {
-                db.Create();
-                MessageBox.Show("Database Created");
-            }
+                var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
 
+                if(db == null)
+                {
+                    MessageBox.Show("You must specify a database name");
+                    return;
+                }
+
+                if (!db.Exists())
+                {
+                    db.Create();
+                    MessageBox.Show("Database Created");
+                }
+                else
+                {
+                    MessageBox.Show("Database already exists");
+                }
+            }
+            catch (Exception ex)
+            {
+                ExceptionViewer.Show(ex);
+            }
         }
 
         public void LockDatabaseType(DatabaseType databaseType)
