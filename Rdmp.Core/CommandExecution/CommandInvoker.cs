@@ -82,6 +82,7 @@ namespace Rdmp.Core.CommandExecution
             AddDelegate(typeof(IMightBeDeprecated),false, SelectOne<IMightBeDeprecated>);
             AddDelegate(typeof(IDisableable),false, SelectOne<IDisableable>);
             AddDelegate(typeof(INamed),false, SelectOne<INamed>);
+            AddDelegate(typeof(IDeleteable[]), false, SelectMany<IDeleteable>);
             AddDelegate(typeof(IDeleteable),false, SelectOne<IDeleteable>);
             AddDelegate(typeof(ILoggedActivityRootObject),false, SelectOne<ILoggedActivityRootObject>);
             AddDelegate(typeof(IRootFilterContainerHost),false, SelectOne<IRootFilterContainerHost>);            
@@ -212,6 +213,15 @@ namespace Rdmp.Core.CommandExecution
                         idx++;
                         continue;
                     }
+                    else
+                    // if user has not typed anything in for this parameter and it has a default value
+                    if(picker.Length <= idx && parameterInfo.HasDefaultValue)
+                    {
+                        // then we should use the default value
+                        parameterValues.Add(parameterInfo.DefaultValue);
+                        idx++;
+                        continue;
+                    }
                     
                     throw new Exception($"Expected parameter at index {idx} to be a {parameterInfo.ParameterType} (for parameter '{parameterInfo.Name}') but it was {(idx >= picker.Length ? "Missing":picker[idx].RawValue)}");
                 }
@@ -254,6 +264,12 @@ namespace Rdmp.Core.CommandExecution
         private T SelectOne<T>(RequiredArgument parameterInfo)
         {
             return (T)_basicActivator.SelectOne(parameterInfo.Name,_basicActivator.GetAll<T>().Cast<IMapsDirectlyToDatabaseTable>().ToArray());
+        }
+        private T[] SelectMany<T>(RequiredArgument parameterInfo) 
+        {
+            return
+                _basicActivator.SelectMany(parameterInfo.Name, typeof(T), _basicActivator.GetAll<T>().Cast<IMapsDirectlyToDatabaseTable>().ToArray())
+                .Cast<T>().ToArray();
         }
 
         public bool IsSupported(ConstructorInfo c)

@@ -39,6 +39,8 @@ namespace Rdmp.Core.CommandLine.Runners
             ICheckNotifier checkNotifier, GracefulCancellationToken token)
         {
             _input = new ConsoleInputManager(repositoryLocator,checkNotifier);
+            _input.DisallowInput = true;
+
             _listener = listener;
             _invoker = new CommandInvoker(_input);
             _invoker.CommandImpossible += (s,c)=>Console.WriteLine($"Command Impossible:{c.Command.ReasonCommandImpossible}");
