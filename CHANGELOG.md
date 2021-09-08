@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Command line execution (e.g. `rdmp cmd ...`) no longer supports user interactive calls (e.g. YesNo questions)
 
 ### Added
-
+- Added CatalogueFolder column to Select Catalogue dialog
 - Added custom metadata report tokens:
   - $Comma (for use with formats that require seperation e.g. JSON when using the `$foreach` operation)
   - $TimeCoverage_ExtractionInformation (the column that provides the time element of a dataset to the DQE e.g. StudyDate)
@@ -30,6 +30,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added support for deleting mutliple objects at once with the delete command (e.g. `rdmp cmd Delete Plugin true` to delete all plugins)
   - Boolean flag at the end is optional and defaults to false (expect to delete only 1 object)
   - Use `rdmp cmd DescribeCommand Delete` for more information
+
+### Fixed
+
+- Fixed a bug where changing the server/database name could disable the Create button when selecting a database
+- Added the ability to drop onto the Core/Project folders in the 'execute extraction' window
+
+
 
 ## [6.0.2] - 2021-08-26
 
