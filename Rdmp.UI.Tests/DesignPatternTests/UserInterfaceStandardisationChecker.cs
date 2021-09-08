@@ -91,6 +91,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                 //if it's an ObjectUsedByOtherObjectNode then it will already have GetHashCode implemented
                 if (typeof (IObjectUsedByOtherObjectNode).IsAssignableFrom(nodeClass))
                     continue;
+                
+                if (typeof(ExtractionArbitraryFolderNode).IsAssignableFrom(nodeClass))
+                    continue;
 
                 //these are all supported at base class level
                 if (typeof (SingletonNode).IsAssignableFrom(nodeClass))

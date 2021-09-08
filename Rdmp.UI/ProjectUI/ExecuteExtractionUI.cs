@@ -62,8 +62,8 @@ namespace Rdmp.UI.ProjectUI
         private const string CoreDatasets = "Core";
         private const string ProjectSpecificDatasets = "Project Specific";
 
-        private ArbitraryFolderNode _coreDatasetsFolder = new ArbitraryFolderNode(CoreDatasets,1);
-        private ArbitraryFolderNode _projectSpecificDatasetsFolder = new ArbitraryFolderNode(ProjectSpecificDatasets,2);
+        private ExtractionArbitraryFolderNode _coreDatasetsFolder = new ExtractionArbitraryFolderNode(CoreDatasets,1);
+        private ExtractionArbitraryFolderNode _projectSpecificDatasetsFolder = new ExtractionArbitraryFolderNode(ProjectSpecificDatasets,2);
         private ArbitraryFolderNode _globalsFolder = new ArbitraryFolderNode(ExtractionDirectory.GLOBALS_DATA_NAME,0);
         
         private ToolStripControlHost _pipelinePanel;
@@ -248,8 +248,12 @@ namespace Rdmp.UI.ProjectUI
             base.SetDatabaseObject(activator, databaseObject);
             
             _extractionConfiguration = databaseObject;
-            
-            if(!_commonFunctionality.IsSetup)
+
+            _coreDatasetsFolder.Configuration = databaseObject;
+            _projectSpecificDatasetsFolder.Configuration = databaseObject;
+
+
+            if (!_commonFunctionality.IsSetup)
                 _commonFunctionality.SetUp(RDMPCollection.None, tlvDatasets,activator,olvName,null,new RDMPCollectionCommonFunctionalitySettings()
                 {
                     AddFavouriteColumn = false,
