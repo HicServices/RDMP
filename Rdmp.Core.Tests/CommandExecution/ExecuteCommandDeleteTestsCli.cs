@@ -86,8 +86,10 @@ namespace Rdmp.Core.Tests.CommandExecution
             // delete all catalogues
            var ex = Assert.Throws<Exception>(()=> Run("delete", "Catalogue", "FLIBBLE!"));
 
-            Assert.AreEqual("Expected parameter at index 1 to be a System.Boolean (for parameter 'deleteMany') but it was 'FLIBBLE!'",
+            Assert.AreEqual("Expected parameter at index 1 to be a System.Boolean (for parameter 'deleteMany') but it was FLIBBLE!",
                 ex.Message);
+
+            c1.DeleteInDatabase();
         }
     }
 }
