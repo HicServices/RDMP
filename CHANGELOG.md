@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - $Comma (for use with formats that require seperation e.g. JSON when using the `$foreach` operation)
   - $TimeCoverage_ExtractionInformation (the column that provides the time element of a dataset to the DQE e.g. StudyDate)
 - Added support for default values in constructors invoked from the command line (previously command line had to specify all arguments.  Now you can skip default ones at the end of the line)
-- Added support for deleting mutliple objects at once with the delete command (e.g. `rdmp cmd Delete Plugin true` to delete all plugins)
+- Added support for deleting multiple objects at once with the delete command (e.g. `rdmp cmd Delete Plugin true` to delete all plugins)
   - Boolean flag at the end is optional and defaults to false (expect to delete only 1 object)
   - Use `rdmp cmd DescribeCommand Delete` for more information
 

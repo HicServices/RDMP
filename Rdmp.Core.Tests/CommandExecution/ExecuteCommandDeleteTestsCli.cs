@@ -59,7 +59,7 @@ namespace Rdmp.Core.Tests.CommandExecution
             var ex = Assert.Throws<Exception>(()=>Run("delete", "Catalogue"));
 
             Assert.AreEqual(ex.Message,
-            "Allow delete many is false but mutliple objects were matched for deletion (Mycata,Mycata)");
+            "Allow delete many is false but multiple objects were matched for deletion (Mycata,Mycata)");
 
             c1.DeleteInDatabase();
             c2.DeleteInDatabase();

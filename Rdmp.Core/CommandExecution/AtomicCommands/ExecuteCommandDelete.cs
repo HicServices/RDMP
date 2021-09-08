@@ -63,7 +63,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 // we shouldn't just blindly delete them all
                 if (!BasicActivator.IsInteractive && !_allowDeleteMany)
                 {
-                    throw new Exception($"Allow delete many is false but mutliple objects were matched for deletion ({string.Join(",",_deletables)})");
+                    throw new Exception($"Allow delete many is false but multiple objects were matched for deletion ({string.Join(",",_deletables)})");
                 }
 
                 // if it is not interactive or user confirms behaviour
