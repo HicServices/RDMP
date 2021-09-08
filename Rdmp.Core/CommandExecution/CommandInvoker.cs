@@ -223,7 +223,7 @@ namespace Rdmp.Core.CommandExecution
                         continue;
                     }
                     
-                    throw new Exception($"Expected parameter at index {idx} to be a {parameterInfo.ParameterType} (for parameter '{parameterInfo.Name}') but it was {(idx >= picker.Length ? "Missing":picker[idx].RawValue)}");
+                    throw new Exception($"Expected parameter at index {idx} to be a {parameterInfo.ParameterType} (for parameter '{parameterInfo.Name}') but it was '{(idx >= picker.Length ? "Missing":picker[idx].RawValue)}'");
                 }
                 else
                 {

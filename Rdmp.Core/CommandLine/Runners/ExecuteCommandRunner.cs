@@ -39,7 +39,9 @@ namespace Rdmp.Core.CommandLine.Runners
             ICheckNotifier checkNotifier, GracefulCancellationToken token)
         {
             _input = new ConsoleInputManager(repositoryLocator,checkNotifier);
-            _input.DisallowInput = true;
+            // if there is a single command we are running then disable user input
+            // but allow it if the input is ./rdmp cmd (i.e. run in a loop prompting for commands)
+            _input.DisallowInput = !string.IsNullOrWhiteSpace(_options.CommandName);
 
             _listener = listener;
             _invoker = new CommandInvoker(_input);
