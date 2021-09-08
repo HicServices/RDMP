@@ -25,7 +25,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added custom metadata report tokens:
   - $Comma (for use with formats that require seperation e.g. JSON when using the `$foreach` operation)
   - $TimeCoverage_ExtractionInformation (the column that provides the time element of a dataset to the DQE e.g. StudyDate)
+
+### Fixed
+
+- Fixed a bug where changing the server/database name could disable the Create button when selecting a database
 - Added the ability to drop onto the Core/Project folders in the 'execute extraction' window
+
 
 ## [6.0.2] - 2021-08-26
 
