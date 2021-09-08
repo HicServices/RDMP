@@ -35,7 +35,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         [UseWithObjectConstructor]
         public ExecuteCommandDelete(IBasicActivateItems activator,
-            [DemandsInitialization("The object you want to delete",Mandatory = true)]
+            [DemandsInitialization("The object(s) you want to delete.  If multiple you must set deleteMany to true",Mandatory = true)]
             IDeleteable[] deletables,
             [DemandsInitialization("Optional.  Pass \"true\" to allow deleting many objects at once e.g. Catalogue:*bob* (deletes all catalogues with the word bob in)")]
             bool deleteMany = false) : base(activator)

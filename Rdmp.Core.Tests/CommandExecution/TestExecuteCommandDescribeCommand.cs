@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Moq;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Tests.Common;
@@ -25,26 +26,21 @@ namespace Rdmp.Core.Tests.CommandExecution
         /// <param name="forCommand"></param>
         private void AssertHelpIs(string expectedHelp, Type forCommand)
         {
-            var mock = GetMockActivator();
-
-            var cmd = new ExecuteCommandDescribeCommand(mock.Object, forCommand);
+            var cmd = new ExecuteCommandDescribeCommand(GetMockActivator().Object, forCommand);
             Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
 
             cmd.Execute();
-
-            string contents = Regex.Escape(expectedHelp);
-
-            // Called once
-            mock.Verify(m => m.Show(It.IsRegex(contents)), Times.Once());
+            StringAssert.Contains(expectedHelp, cmd.HelpShown);
         }
 
         [Test]
         public void Test_DescribeDeleteCommand()
         {
-            AssertHelpIs( @"cmd Delete <deletable> 
+            AssertHelpIs(@"USAGE: 
+./rdmp.exe cmd Delete <deletables> <deleteMany> 
 
 PARAMETERS:
-deletable	IDeleteable	The object you want to delete",typeof(ExecuteCommandDelete));
+deletables	IDeleteable[]	The object(s) you want to delete.  If multiple you must set deleteMany to true", typeof(ExecuteCommandDelete));
         }
 
 
