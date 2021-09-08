@@ -134,7 +134,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
                 {
                     var typedArray = Array.CreateInstance(element, DatabaseEntities.Count);
                     for (int i = 0; i < DatabaseEntities.Count; i++)
-                        typedArray.SetValue(Convert.ChangeType(DatabaseEntities[i], element),i);
+                        typedArray.SetValue(DatabaseEntities[i],i);
 
                     return typedArray;
                 }
