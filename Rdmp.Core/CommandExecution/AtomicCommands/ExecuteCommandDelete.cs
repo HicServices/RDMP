@@ -53,39 +53,45 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-            
-            if(_deletables.Count == 1)
-                BasicActivator.DeleteWithConfirmation(_deletables[0]);
-            else
-            if(_deletables.Count>1)
-            {
-                // if the command did not ask to delete many and it is not interactive (e.g. CLI) then 
-                // we shouldn't just blindly delete them all
-                if (!BasicActivator.IsInteractive && !_allowDeleteMany)
-                {
-                    throw new Exception($"Allow delete many is false but multiple objects were matched for deletion ({string.Join(",",_deletables)})");
-                }
 
-                // if it is not interactive or user confirms behaviour
-                if(!BasicActivator.IsInteractive || YesNo("Delete " + _deletables.Count + " Items?","Delete Items"))
+            switch (_deletables.Count)
+            {
+                case 1:
+                    BasicActivator.DeleteWithConfirmation(_deletables[0]);
+                    return;
+                case <=0:
+                    return;
+                // Fall through if deleting multiple:
+            }
+
+            // if the command did not ask to delete many and it is not interactive (e.g. CLI) then 
+            // we shouldn't just blindly delete them all
+            if (!BasicActivator.IsInteractive && !_allowDeleteMany)
+            {
+                throw new Exception(
+                    $"Allow delete many is false but multiple objects were matched for deletion ({string.Join(",", _deletables)})");
+            }
+                
+            // if it is interactive, only proceed if the user confirms behaviour
+            if (BasicActivator.IsInteractive &&
+                !YesNo($"Delete {_deletables.Count} Items?", "Delete Items")) return;
+
+            try
+            {
+                foreach (IDeleteable d in _deletables)
+                    if (!(d is DatabaseEntity exists) ||
+                        exists.Exists()) //don't delete stuff that doesn't exist!
+                        d.DeleteInDatabase();
+            }
+            finally
+            {
+                try
                 {
-                    try
-                    {
-                        foreach (IDeleteable d in _deletables)
-                            if (!(d is DatabaseEntity exists) || exists.Exists()) //don't delete stuff that doesn't exist!
-                                d.DeleteInDatabase();
-                    }
-                    finally
-                    {
-                        try
-                        {
-                            BasicActivator.PublishNearest(_deletables.FirstOrDefault());
-                        }
-                        catch(Exception ex)
-                        {
-                            GlobalError("Failed to publish after delete", ex);
-                        }
-                    }
+                    BasicActivator.PublishNearest(_deletables.FirstOrDefault());
+                }
+                catch (Exception ex)
+                {
+                    GlobalError("Failed to publish after delete", ex);
                 }
             }
         }
