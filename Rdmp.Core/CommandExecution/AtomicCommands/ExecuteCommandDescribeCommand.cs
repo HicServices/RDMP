@@ -21,6 +21,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     public class ExecuteCommandDescribeCommand : BasicCommandExecution
     {
         private readonly Type _commandType;
+        
+        /// <summary>
+        /// The help that the command will/did show
+        /// </summary>
+        public string HelpShown { get; private set; }
 
         public ExecuteCommandDescribeCommand(IBasicActivateItems activator, 
             [DemandsInitialization("Command to describe",TypeOf = typeof(IAtomicCommand))]
@@ -95,7 +100,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             sb.AppendLine();
             sb.AppendLine(sbParameters.ToString());
                 
-            BasicActivator.Show(sb.ToString());
+            BasicActivator.Show(HelpShown = sb.ToString());
 
         }
 

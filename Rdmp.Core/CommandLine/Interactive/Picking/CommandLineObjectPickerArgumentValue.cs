@@ -124,17 +124,17 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
             // If paramType is nullable e.g. 'int?' then this is the underlying time i.e. 'int' otherwise null
             var nullableType = Nullable.GetUnderlyingType(paramType);
 
-            //it's an array of DatabaseEntities
-            if (paramType.IsArray && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(paramType.GetElementType()))
+            //it's an array of DatabaseEntities (IMapsDirectlyToDatabaseTable implements IDeleteable)
+            if (paramType.IsArray && typeof(IDeleteable).IsAssignableFrom(paramType.GetElementType()))
             {
                 if(DatabaseEntities.Count == 0)
                     _logger.Warn($"Pattern matched no objects '{RawValue}'");
 
-                if (element != typeof(IMapsDirectlyToDatabaseTable))
+                if (element != typeof(IDeleteable))
                 {
                     var typedArray = Array.CreateInstance(element, DatabaseEntities.Count);
                     for (int i = 0; i < DatabaseEntities.Count; i++)
-                        typedArray.SetValue(Convert.ChangeType(DatabaseEntities[i], element),i);
+                        typedArray.SetValue(DatabaseEntities[i],i);
 
                     return typedArray;
                 }

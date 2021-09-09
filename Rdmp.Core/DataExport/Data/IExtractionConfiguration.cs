@@ -55,7 +55,7 @@ namespace Rdmp.Core.DataExport.Data
 
         /// <summary>
         /// The <see cref="IProject"/> to which this configuration belongs.  A project can have multiple configurations (e.g. "Cases" and "Controls").  You can also
-        /// have mutliple configurations over time in the project (e.g. quarterly data refreshes).
+        /// have multiple configurations over time in the project (e.g. quarterly data refreshes).
         /// </summary>
         int Project_ID { get; }
 
