@@ -680,7 +680,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 for(int i = 0;i<ms.Count;i++)
                     toReturn.SetValue(ms[i],i);
                 
-                return (IMapsDirectlyToDatabaseTable[]) toReturn;
+                return toReturn.Cast<IMapsDirectlyToDatabaseTable>().ToArray();
             }
 
             return null;

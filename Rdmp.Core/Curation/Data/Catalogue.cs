@@ -111,6 +111,7 @@ namespace Rdmp.Core.Curation.Data
 
         /// <inheritdoc/>
         [DoNotImportDescriptions]
+        [UsefulProperty]
         public CatalogueFolder Folder
         {
             get { return _folder; }

@@ -20,20 +20,29 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     public class ExecuteCommandDelete : BasicCommandExecution
     {
         private readonly IList<IDeleteable> _deletables;
+        
+        /// <summary>
+        /// Flag applies only for deletion where the UI layer is non-interactive.  True to allow
+        /// multiple deletes to go ahead without asking.  False to throw exception
+        /// </summary>
+        private readonly bool _allowDeleteMany;
 
-        [UseWithObjectConstructor]
         public ExecuteCommandDelete(IBasicActivateItems activator, 
-            [DemandsInitialization("The object you want to delete",Mandatory = true)]
             IDeleteable deletable) : this(activator,new []{ deletable})
         {
         }
 
-        
-        public ExecuteCommandDelete(IBasicActivateItems activator, IDeleteable[] deletables) : base(activator)
+
+        [UseWithObjectConstructor]
+        public ExecuteCommandDelete(IBasicActivateItems activator,
+            [DemandsInitialization("The object(s) you want to delete.  If multiple you must set deleteMany to true",Mandatory = true)]
+            IDeleteable[] deletables,
+            [DemandsInitialization("Optional.  Pass \"true\" to allow deleting many objects at once e.g. Catalogue:*bob* (deletes all catalogues with the word bob in)")]
+            bool deleteMany = false) : base(activator)
         {
             _deletables = deletables;
-
-            if(_deletables.Any( d => d is CohortAggregateContainer c && c.IsRootContainer()))
+            this._allowDeleteMany = deleteMany;
+            if (_deletables.Any( d => d is CohortAggregateContainer c && c.IsRootContainer()))
                 SetImpossible("Cannot delete root containers");
             
             string reason = "";
@@ -44,31 +53,45 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-            
-            if(_deletables.Count == 1)
-                BasicActivator.DeleteWithConfirmation(_deletables[0]);
-            else
-            if(_deletables.Count>1)
+
+            switch (_deletables.Count)
             {
-                if(YesNo("Delete " + _deletables.Count + " Items?","Delete Items"))
+                case 1:
+                    BasicActivator.DeleteWithConfirmation(_deletables[0]);
+                    return;
+                case <=0:
+                    return;
+                // Fall through if deleting multiple:
+            }
+
+            // if the command did not ask to delete many and it is not interactive (e.g. CLI) then 
+            // we shouldn't just blindly delete them all
+            if (!BasicActivator.IsInteractive && !_allowDeleteMany)
+            {
+                throw new Exception(
+                    $"Allow delete many is false but multiple objects were matched for deletion ({string.Join(",", _deletables)})");
+            }
+                
+            // if it is interactive, only proceed if the user confirms behaviour
+            if (BasicActivator.IsInteractive &&
+                !YesNo($"Delete {_deletables.Count} Items?", "Delete Items")) return;
+
+            try
+            {
+                foreach (IDeleteable d in _deletables)
+                    if (!(d is DatabaseEntity exists) ||
+                        exists.Exists()) //don't delete stuff that doesn't exist!
+                        d.DeleteInDatabase();
+            }
+            finally
+            {
+                try
                 {
-                    try
-                    {
-                        foreach (IDeleteable d in _deletables)
-                            if (!(d is DatabaseEntity exists) || exists.Exists()) //don't delete stuff that doesn't exist!
-                                d.DeleteInDatabase();
-                    }
-                    finally
-                    {
-                        try
-                        {
-                            BasicActivator.PublishNearest(_deletables.FirstOrDefault());
-                        }
-                        catch(Exception ex)
-                        {
-                            GlobalError("Failed to publish after delete", ex);
-                        }
-                    }
+                    BasicActivator.PublishNearest(_deletables.FirstOrDefault());
+                }
+                catch (Exception ex)
+                {
+                    GlobalError("Failed to publish after delete", ex);
                 }
             }
         }

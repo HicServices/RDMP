@@ -9,7 +9,7 @@
   <Comment CommentText="Created in memory, takes an IQuerySyntaxHelper as constructor argument">
     <Position X="10.531" Y="3.375" Height="0.292" Width="4.419" />
   </Comment>
-  <Comment CommentText="DatabaseType depends on the DatabaseType of the SelectedDataSets, it can have mutliple! e.g. in CrossServerExtraction">
+  <Comment CommentText="DatabaseType depends on the DatabaseType of the SelectedDataSets, it can have multiple! e.g. in CrossServerExtraction">
     <Position X="5.51" Y="1.781" Height="0.458" Width="4.419" />
   </Comment>
   <Comment CommentText="More Global type parameters.  Probably has same problem around DatabaseType depending on what the parent is (e.g. a CIC with no AggregateConfigurations yet)">

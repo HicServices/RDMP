@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -17,6 +18,14 @@ namespace Rdmp.UI.Tests.CommandExecution
 {
     class ExecuteCommandDeleteTests : UITests
     {
+
+        [Test]
+        public void Delete_IsSupportedCommand()
+        {
+            SetupMEF();
+            var invoker = new CommandInvoker(ItemActivator);
+            Assert.IsTrue(invoker.IsSupported(typeof(ExecuteCommandDelete)));
+        }
 
         /// <summary>
         /// RDMPDEV-1551 Tests system behaviour when user selects a <see cref="CatalogueItem"/> and the <see cref="ExtractionInformation"/>
