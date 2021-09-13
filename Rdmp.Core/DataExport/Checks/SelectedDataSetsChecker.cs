@@ -70,11 +70,6 @@ namespace Rdmp.Core.DataExport.Checks
 
             notifier.OnCheckPerformed(new CheckEventArgs("Inspecting dataset " + ds, CheckResult.Success));
 
-            if(ds.Catalogue.IsInternalDataset)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs($"Dataset '{ds}' is marked {nameof(ICatalogue.IsInternalDataset)} so should not be extracted",CheckResult.Fail));
-            }
-
             var selectedcols = new List<IColumn>(config.GetAllExtractableColumnsFor(ds));
 
             if (!selectedcols.Any())
@@ -96,6 +91,11 @@ namespace Rdmp.Core.DataExport.Checks
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("Unable to find Catalogue for ExtractableDataSet", CheckResult.Fail, e));
                 return;
+            }
+
+            if (cata.IsInternalDataset)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Dataset '{ds}' is marked {nameof(ICatalogue.IsInternalDataset)} so should not be extracted", CheckResult.Fail));
             }
 
             var request = new ExtractDatasetCommand( config, cohort, new ExtractableDatasetBundle(ds),
