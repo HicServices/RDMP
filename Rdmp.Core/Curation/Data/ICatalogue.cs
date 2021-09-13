@@ -78,7 +78,7 @@ namespace Rdmp.Core.Curation.Data
         int? PivotCategory_ExtractionInformation_ID { get; set; }
 
         /// <summary>
-        /// Bit flag indicating whether the dataset should NEVER be extracted and ONLY EVER used internally by data analysts.
+        /// Bit flag indicating whether the dataset should never be extracted and instead used internally by data analysts.
         /// </summary>
         bool IsInternalDataset { get; set; }
 
