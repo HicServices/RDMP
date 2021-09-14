@@ -93,6 +93,11 @@ namespace Rdmp.Core.DataExport.Checks
                 return;
             }
 
+            if (cata.IsInternalDataset)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Dataset '{ds}' is marked {nameof(ICatalogue.IsInternalDataset)} so should not be extracted", CheckResult.Fail));
+            }
+
             var request = new ExtractDatasetCommand( config, cohort, new ExtractableDatasetBundle(ds),
                 selectedcols, new HICProjectSalt(project), new ExtractionDirectory(project.ExtractionDirectory, config)) { TopX = 1 };
 
