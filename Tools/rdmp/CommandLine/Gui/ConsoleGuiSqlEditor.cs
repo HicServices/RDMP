@@ -72,7 +72,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 Y = 0,
                 Width = Dim.Fill(),
                 Height = Dim.Fill(),
-                Text = _orignalSql = collection.GetSql().Replace("\r\n", "\n").Replace("\t", "....")
+                Text = _orignalSql = collection.GetSql().Replace("\r\n", "\n").Replace("\t", "    ")
             };
 
             textView.AllowsTab = false;
