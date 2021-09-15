@@ -34,11 +34,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             [DemandsInitialization("Database type e.g. DataExport, Catalogue, QueryCaching, LoggingDatabase etc (See all IPatcher implementations)")]
             string databaseType,
             
-            [DemandsInitialization("The SQL query to execute on the database")]
-            string query,
+            [DemandsInitialization("Optional SQL query to execute on the database.  Or null to query the first table in the db.")]
+            string query = null,
 
             [DemandsInitialization("Optional file to output the results of the query to.  Or null")]
-            FileInfo toFile):base(activator)
+            FileInfo toFile = null):base(activator)
         {
             _query = query;
             _toFile = toFile;
