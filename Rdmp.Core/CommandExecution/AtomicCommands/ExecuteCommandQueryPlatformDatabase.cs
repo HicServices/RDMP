@@ -22,7 +22,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     /// </summary>
     public class ExecuteCommandQueryPlatformDatabase : BasicCommandExecution
     {
-        private readonly string _query;
+        private string _query;
         private DiscoveredTable _table;
 
         [UseWithObjectConstructor]
@@ -50,10 +50,16 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if(patcherType == typeof(DataExportPatcher))
             {
                 db = SetDatabase(BasicActivator.RepositoryLocator.DataExportRepository);
+                _query = _query ?? "Select * from Project";
+                _table = db.ExpectTable("Project");
+                return;
             }
             else if (patcherType == typeof(CataloguePatcher))
             {
                 db = SetDatabase(BasicActivator.RepositoryLocator.CatalogueRepository);
+                _query = _query ?? "Select * from Catalogue";
+                _table = db.ExpectTable("Catalogue");
+                return;
             }
             else
             {

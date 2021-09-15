@@ -16,6 +16,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Databases;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
@@ -79,6 +80,10 @@ namespace Rdmp.Core.CommandLine.Gui
                     new MenuItem ("_Run...", "", () => Run()),
                     new MenuItem ("_Refresh...", "", () => Publish()),
                     new MenuItem ("_Quit", "", () => Quit()),
+                }),
+                new MenuBarItem ("_Diagnostics", new MenuItem [] {
+                    mi_default = new MenuItem (){Title = "Query Catalogue", Action = ()=>Query(nameof(CataloguePatcher))},
+                    mi_default = new MenuItem (){Title = "Query Data Export", Action = ()=>Query(nameof(DataExportPatcher))},
                 }),
                 new MenuBarItem ("_Color Scheme", new MenuItem [] {
                     mi_default = new MenuItem (){Title = "Default", Checked = true, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_default)},
@@ -150,6 +155,19 @@ namespace Rdmp.Core.CommandLine.Gui
             }
         }
 
+        private void Query(string toQuery)
+        {
+            try
+            {
+                var cmd = new ExecuteCommandQueryPlatformDatabase(_activator, toQuery, null);
+                cmd.Execute();
+            }
+            catch (Exception ex)
+            {
+                _activator.ShowException("Failed to build query",ex);
+            }
+            
+        }
         private void SetColorScheme(MenuItem sender)
         {
             if(sender == mi_default)

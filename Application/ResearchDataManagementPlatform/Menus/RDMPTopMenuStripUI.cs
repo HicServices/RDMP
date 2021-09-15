@@ -400,13 +400,13 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void queryDataExport_Click(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandQueryPlatformDatabase(Activator, nameof(DataExportPatcher), "select * from Project");
+            var cmd = new ExecuteCommandQueryPlatformDatabase(Activator, nameof(DataExportPatcher), null);
             cmd.Execute();
         }
 
         private void queryCatalogue_Click(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandQueryPlatformDatabase(Activator, nameof(CataloguePatcher), "select * from Catalogue");
+            var cmd = new ExecuteCommandQueryPlatformDatabase(Activator, nameof(CataloguePatcher), null);
             cmd.Execute();
         }
     }

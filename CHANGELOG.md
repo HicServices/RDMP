@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added support for deleting multiple objects at once with the delete command (e.g. `rdmp cmd Delete Plugin true` to delete all plugins)
   - Boolean flag at the end is optional and defaults to false (expect to delete only 1 object)
   - Use `rdmp cmd DescribeCommand Delete` for more information
+- Added ability to directly query Catalogue/DataExport to Console Gui
 
 ### Fixed
 
