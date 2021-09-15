@@ -129,5 +129,15 @@ namespace Rdmp.Core.Curation.Data
 
             return toReturn.ToArray();
         }
+
+        public override void DeleteInDatabase()
+        {
+            foreach(var v in this.Values)
+            {
+                v.DeleteInDatabase();
+            }
+
+            base.DeleteInDatabase();
+        }
     }
 }

@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Use `rdmp cmd DescribeCommand Delete` for more information
 
 ### Fixed
-
+- Fixed deleting a parameter value set failing due to a database constraint
 - Fixed a bug where changing the server/database name could disable the Create button when selecting a database
 - Added the ability to drop onto the Core/Project folders in the 'execute extraction' window
 
