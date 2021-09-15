@@ -34,6 +34,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 var p = new ExtractableDataSetPackage(BasicActivator.RepositoryLocator.DataExportRepository, name);
                 Publish(p);
+                Emphasise(p);
             }
         }
 
