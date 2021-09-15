@@ -15,6 +15,7 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Databases;
 using Rdmp.Core.DataQualityEngine;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Logging;
@@ -399,26 +400,14 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void queryDataExport_Click(object sender, EventArgs e)
         {
-            if (!(Activator.RepositoryLocator.DataExportRepository is TableRepository tableRepo))
-            {
-                Activator.Show("Repository was not a database repo");
-                return;
-            }
-
-            var t = tableRepo.DiscoveredServer.GetCurrentDatabase().ExpectTable("Project");
-            Activator.ShowData(new ArbitraryTableExtractionUICollection(t));
+            var cmd = new ExecuteCommandQueryPlatformDatabase(Activator, nameof(DataExportPatcher), "select * from Project");
+            cmd.Execute();
         }
 
         private void queryCatalogue_Click(object sender, EventArgs e)
         {
-            if (!(Activator.RepositoryLocator.CatalogueRepository is TableRepository tableRepo))
-            {
-                Activator.Show("Repository was not a database repo");
-                return;
-            }
-
-            var t = tableRepo.DiscoveredServer.GetCurrentDatabase().ExpectTable("Catalogue");
-            Activator.ShowData(new ArbitraryTableExtractionUICollection(t));
+            var cmd = new ExecuteCommandQueryPlatformDatabase(Activator, nameof(CataloguePatcher), "select * from Catalogue");
+            cmd.Execute();
         }
     }
 }
