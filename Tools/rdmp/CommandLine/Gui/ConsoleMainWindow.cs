@@ -159,7 +159,7 @@ namespace Rdmp.Core.CommandLine.Gui
         {
             try
             {
-                var cmd = new ExecuteCommandQueryPlatformDatabase(_activator, toQuery, null);
+                var cmd = new ExecuteCommandQueryPlatformDatabase(_activator, toQuery, null,null);
                 cmd.Execute();
             }
             catch (Exception ex)

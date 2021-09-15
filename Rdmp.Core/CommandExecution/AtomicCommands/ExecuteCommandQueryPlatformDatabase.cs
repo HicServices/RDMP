@@ -9,10 +9,12 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
+using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.DataAccess;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
@@ -23,6 +25,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     public class ExecuteCommandQueryPlatformDatabase : BasicCommandExecution
     {
         private string _query;
+        private readonly FileInfo _toFile;
         private DiscoveredTable _table;
 
         [UseWithObjectConstructor]
@@ -32,9 +35,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             string databaseType,
             
             [DemandsInitialization("The SQL query to execute on the database")]
-            string query):base(activator)
+            string query,
+
+            [DemandsInitialization("Optional file to output the results of the query to.  Or null")]
+            FileInfo toFile):base(activator)
         {
             _query = query;
+            _toFile = toFile;
+
             var patcherType = activator.RepositoryLocator.CatalogueRepository.MEF.
             // find the database type the user wants to query (the Patcher suffix is optional)
                 GetTypes<IPatcher>().FirstOrDefault(t=>t.Name.Equals(databaseType) || t.Name.Equals(databaseType + "Patcher"));
@@ -118,7 +126,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 OverrideSql = _query 
             };
 
-            BasicActivator.ShowData(collection);
+            if (_toFile != null)
+            {
+                ExtractTableVerbatim.ExtractDataToFile(collection, _toFile);
+            }
+            else
+            {
+                BasicActivator.ShowData(collection);
+            }
         }
     }
 }
