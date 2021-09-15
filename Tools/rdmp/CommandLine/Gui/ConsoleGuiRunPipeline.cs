@@ -189,14 +189,13 @@ namespace Rdmp.Core.CommandLine.Gui
             successArgs = args;
             if (UserSettings.ShowPipelineCompletedPopup)
             {
-                if(MessageBox.Query("Pipeline completed successfully", "Close Window?","Yes","No") == 0)
+                Application.MainLoop.Invoke(() =>
                 {
-                    Application.RequestStop();
-                }
-                else
-                {
-                    return;
-                }
+                    if (MessageBox.Query("Pipeline completed successfully", "Close Window?", "Yes", "No") == 0)
+                    {
+                        Application.RequestStop();
+                    }
+                });
             }
             else
             {
