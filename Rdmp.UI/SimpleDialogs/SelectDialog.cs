@@ -50,7 +50,12 @@ namespace Rdmp.UI.SimpleDialogs
             DialogResult = DialogResult.Cancel;
 
             olvID.AspectGetter = (m) => (m as IMapsDirectlyToDatabaseTable)?.ID??null;
-            olvID.IsVisible = olvID.IsVisible && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(typeof(T));
+
+            // don't add the ID column if we aren't talking about database objects
+            if(!typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(typeof(T)))
+            {
+                olvObjects.AllColumns.Remove(olvID);
+            }
 
             olvName.AspectGetter = (m) => m.ToString();
             
@@ -100,10 +105,11 @@ namespace Rdmp.UI.SimpleDialogs
 
             AddUsefulPropertiesIfHomogeneousTypes(o);
 
+            // Setup olvSelected but leave it removed for now (IsVisible is problematic - especially for first columns)
             olvSelected.CheckBoxes = true;
             olvSelected.AspectGetter += Selected_AspectGetter;
             olvSelected.AspectPutter += Selected_AspectPutter;
-            olvSelected.IsVisible = false;
+            olvObjects.AllColumns.Remove(olvSelected);
 
             olvObjects.RebuildColumns();
             
@@ -173,9 +179,15 @@ namespace Rdmp.UI.SimpleDialogs
             else
             {
                 //they are all different types!
-                var newCol = new OLVColumn( "Type",null);
-                newCol.AspectGetter += TypeAspectGetter;
-                olvObjects.AllColumns.Add(newCol);
+
+                // are they all database objects (e.g. Catalogue, Project etc)
+                if(typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(typeof(T)))
+                {
+                    //yes, then tell the user what they are with this exciting new column
+                    var newCol = new OLVColumn("Type", null);
+                    newCol.AspectGetter += TypeAspectGetter;
+                    olvObjects.AllColumns.Add(newCol);
+                }
             }
         }
 
@@ -198,7 +210,17 @@ namespace Rdmp.UI.SimpleDialogs
             set
             {
                 olvObjects.MultiSelect = value;
-                olvSelected.IsVisible = value;
+                if(value)
+                {
+                    if(!olvObjects.AllColumns.Contains(olvSelected))
+                    {
+                        olvObjects.AllColumns.Add(olvSelected);
+                    }
+                }
+                else
+                {
+                    olvObjects.AllColumns.Remove(olvSelected);
+                }
 
                 if (value)
                 {
