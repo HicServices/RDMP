@@ -523,6 +523,11 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandDisableOrEnable(_activator, many.Cast<IDisableable>().ToArray());
             }
 
+            if(many.Cast<object>().All(t=>t is TableInfo))
+            {
+                yield return new ExecuteCommandScriptTables(_activator, many.Cast<TableInfo>().ToArray(), null, null, null);
+            }
+
             if (many.Cast<object>().All(d => d is IDeleteable))
             {
                 yield return new ExecuteCommandDelete(_activator, many.Cast<IDeleteable>().ToArray()){ SuggestedShortcut = "Delete" };

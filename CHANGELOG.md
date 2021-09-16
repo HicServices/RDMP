@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Boolean flag at the end is optional and defaults to false (expect to delete only 1 object)
   - Use `rdmp cmd DescribeCommand Delete` for more information
 - Added extraction check that datasets are not marked `IsInternalDataset`
+- Added ability to script multiple tables at once via right click context menu in windows client
 
 ### Fixed
 
