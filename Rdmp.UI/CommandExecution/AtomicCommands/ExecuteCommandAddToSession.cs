@@ -41,9 +41,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                     ses = sessions[0];
                 else
                 {
-                    var dlg = new PickOneOrCancelDialog<SessionCollectionUI>(sessions, "Session");
+                    var dlg = new SelectDialog<SessionCollectionUI>(BasicActivator,sessions,false,false);
                     if (dlg.ShowDialog() == DialogResult.OK)
-                        ses = dlg.Picked;
+                        ses = dlg.Selected;
                 }
             }
 

@@ -23,6 +23,7 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
@@ -111,6 +112,11 @@ namespace Rdmp.Core.CommandExecution
         FavouritesProvider FavouritesProvider { get;}
 
         /// <summary>
+        /// Provides consistent icon representations of objects
+        /// </summary>
+        ICoreIconProvider CoreIconProvider { get;}
+
+        /// <summary>
         /// Returns a dictionary of methods to call for each type of constructor parameter needed.  If no Type
         /// exists for the parameter Type then the constructor will not be supported by the <see cref="IBasicActivateItems"/>
         /// </summary>
@@ -185,7 +191,7 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="initialSearchText"></param>
         /// <param name="allowAutoSelect">Determines behaviour when <paramref name="available"/> has only one element.  True to auto select the only object available</param>
         /// <returns>True if a selection was made</returns>
-        bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null, bool allowAutoSelect = false);
+        bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null, bool allowAutoSelect = false) where T : class;
 
         /// <summary>
         /// Prompts user to select a directory on disk

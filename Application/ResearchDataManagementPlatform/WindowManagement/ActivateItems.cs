@@ -83,7 +83,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public WindowFactory WindowFactory { get; private set; }
 
-        public ICoreIconProvider CoreIconProvider { get; private set; }
 
         public ITheme Theme { get; private set; }
 
@@ -123,12 +122,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             RefreshBus.ChildProvider = CoreChildProvider;
             
             HistoryProvider = new HistoryProvider(repositoryLocator);
-
-            //handle custom icons from plugin user interfaces in which
-            CoreIconProvider = new DataExportIconProvider(repositoryLocator,PluginUserInterfaces.ToArray());
             
-            SelectDialog<IMapsDirectlyToDatabaseTable>.ImageGetter = (model)=> CoreIconProvider.GetImage(model);
-
             WindowArranger = new WindowArranger(this,_windowManager,_mainDockPanel);
             
             CommandFactory = new RDMPCombineableFactory();
@@ -215,12 +209,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override bool SelectEnum(string prompt, Type enumType, out Enum chosen)
         {
-            var selector = new PickOneOrCancelDialog<Enum>(Enum.GetValues(enumType).Cast<Enum>().ToArray(), prompt,
-                (o) => CoreIconProvider.GetImage(o),
-                null);
+            var selector = new SelectDialog<Enum>(this,Enum.GetValues(enumType).Cast<Enum>().ToArray(), false,false);
+            selector.Text = prompt;
+
             if (selector.ShowDialog() == DialogResult.OK)
             {
-                chosen = selector.Picked;
+                chosen = selector.Selected;
                 return true;
             }
             
@@ -230,11 +224,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override bool SelectType(string prompt, Type[] available,out Type chosen)
         {
-            var dlg =  new PickOneOrCancelDialog<Type>(available, prompt);
+            var dlg =  new SelectDialog<Type>(this,available, false,false);
+            dlg.Text = prompt;
 
             if (dlg.ShowDialog() == DialogResult.OK)
             {
-                chosen = dlg.Picked;
+                chosen = dlg.Selected;
                 return true;
             }
 
@@ -586,11 +581,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null, bool allowAutoSelect = false)
         {
-            var pick = new PickOneOrCancelDialog<T>(available, prompt);
+            var pick = new SelectDialog<T>(this,available,false,false);
+            pick.Text = prompt;
 
-            if(pick.ShowDialog() == DialogResult.OK)
+            if (pick.ShowDialog() == DialogResult.OK)
             {
-                selected = pick.Picked;
+                selected = pick.Selected;
                 return true;
             }
 

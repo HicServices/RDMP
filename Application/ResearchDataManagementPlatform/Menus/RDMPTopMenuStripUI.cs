@@ -376,11 +376,12 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void NewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var dlg = new PickOneOrCancelDialog<IAtomicCommand>(GetNewCommands(),"Create New:",c=>c.GetImage(Activator.CoreIconProvider),c=>c.GetCommandName());
+            var dlg = new SelectDialog<IAtomicCommand>(Activator,GetNewCommands(),false,false);
+            dlg.Text = "Create New:";
 
-            if(dlg.ShowDialog() == DialogResult.OK)
+            if (dlg.ShowDialog() == DialogResult.OK)
             {
-                var picked = dlg.Picked;
+                var picked = dlg.Selected;
                 picked.Execute();
             }
         }

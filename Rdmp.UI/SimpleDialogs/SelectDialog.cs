@@ -35,9 +35,7 @@ namespace Rdmp.UI.SimpleDialogs
         private readonly IBasicActivateItems _activator;
         private readonly bool _allowDeleting;
         public T Selected;
-
-        public static Func<object, Image> ImageGetter;
-        
+                
         public const int MaxObjectsToShow = 1000;
 
         private bool _useCatalogueFilter = false;
@@ -52,15 +50,15 @@ namespace Rdmp.UI.SimpleDialogs
             DialogResult = DialogResult.Cancel;
 
             olvID.AspectGetter = (m) => (m as IMapsDirectlyToDatabaseTable)?.ID??null;
+            olvID.IsVisible = olvID.IsVisible && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(typeof(T));
+
             olvName.AspectGetter = (m) => m.ToString();
             
             olvObjects.ListFilter = new TailFilter(MaxObjectsToShow);
 
-            if (ImageGetter != null)
-            {
-                olvName.ImageGetter = (model) => ImageGetter(model);
-                olvObjects.RowHeight = 19;
-            }
+            olvName.ImageGetter = (model) => activator.CoreIconProvider.GetImage(model);
+            olvObjects.RowHeight = 19;
+            
 
             if (toSelectFrom == null)
                 return;

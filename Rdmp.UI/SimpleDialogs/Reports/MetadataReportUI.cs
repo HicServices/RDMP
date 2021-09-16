@@ -256,12 +256,11 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             var folders = Activator.CoreChildProvider.GetAllChildrenRecursively(CatalogueFolder.Root).OfType<CatalogueFolder>().ToList();
             folders.Add(CatalogueFolder.Root);
 
-            var dlg = new PickOneOrCancelDialog<CatalogueFolder>(folders.ToArray(),"Generate For Folder",(o)=>Activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueFolder),null);
-
-            dlg.AllowNull = false;
+            var dlg = new SelectDialog<CatalogueFolder>(Activator,folders.ToArray(),false,false);
+            dlg.Text = "Generate For Folder";
 
             if (dlg.ShowDialog() == DialogResult.OK)
-                SetCatalogueSelection(Activator.CoreChildProvider.GetAllChildrenRecursively(dlg.Picked)
+                SetCatalogueSelection(Activator.CoreChildProvider.GetAllChildrenRecursively(dlg.Selected)
                     .OfType<ICatalogue>().ToArray());
         }
     }

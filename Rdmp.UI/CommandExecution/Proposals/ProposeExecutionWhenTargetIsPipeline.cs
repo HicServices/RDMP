@@ -12,6 +12,7 @@ using Rdmp.UI.ItemActivation;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
+using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.CommandExecution.Proposals
 {
@@ -25,15 +26,15 @@ namespace Rdmp.UI.CommandExecution.Proposals
 
         public override void Activate(Pipeline target)
         {
-            var dialog = new SimpleDialogs.PickOneOrCancelDialog<StandardPipelineUseCaseNode>(
-                ItemActivator.CoreChildProvider.PipelineUseCases.ToArray(),
-                "What is this Pipeline supposed to be used for?",
-                o=>ItemActivator.CoreIconProvider.GetImage(o),
-                null);
+            var dialog = new SelectDialog<StandardPipelineUseCaseNode>(
+                ItemActivator,
+                ItemActivator.CoreChildProvider.PipelineUseCases.ToArray(),false,false);
 
-            if(dialog.ShowDialog() == DialogResult.OK)
+            dialog.Text = "What is this Pipeline supposed to be used for?";
+
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
-                var useCase = dialog.Picked;
+                var useCase = dialog.Selected;
                 if(useCase != null)
                 {
                     var cmd = new ExecuteCommandEditPipelineWithUseCase(ItemActivator,target, useCase.UseCase);
