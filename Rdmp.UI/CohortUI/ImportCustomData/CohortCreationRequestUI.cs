@@ -8,6 +8,7 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
@@ -288,7 +289,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
 
         private void btnExisting_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>(), false, false);
+            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>(), false, false);
             if(dialog.ShowDialog()== DialogResult.OK)
                 SetProject((Project)dialog.Selected);
         }

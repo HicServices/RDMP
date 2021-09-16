@@ -29,6 +29,7 @@ using Rdmp.UI.SimpleDialogs;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.UI.ANOEngineeringUIs
 {
@@ -223,7 +224,7 @@ namespace Rdmp.UI.ANOEngineeringUIs
                         return;
                     }
 
-                    var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, Activator.CoreChildProvider.AllANOTables, true, false);
+                    var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, Activator.CoreChildProvider.AllANOTables, true, false);
                     try
                     {
                         if (dialog.ShowDialog() == DialogResult.OK)

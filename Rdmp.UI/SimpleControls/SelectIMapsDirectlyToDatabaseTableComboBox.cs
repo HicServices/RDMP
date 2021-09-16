@@ -89,7 +89,7 @@ namespace Rdmp.UI.SimpleControls
 
         private void lPick_Click(object sender, System.EventArgs e)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, _available.Cast<IMapsDirectlyToDatabaseTable>(), false, false);
+            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(_activator, _available.Cast<IMapsDirectlyToDatabaseTable>(), false, false);
             if (dialog.ShowDialog() == DialogResult.OK)
                 suggestComboBox1.SelectedItem = dialog.Selected;
         }

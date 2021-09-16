@@ -78,7 +78,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
                 throw new NotSupportedException("CatalogueRepository does not support element "+elementType+" for DemandsInitialization Type " + type);
 
             var objects = _args.CatalogueRepository.GetAllObjects(elementType);
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, objects, true, false);
+            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(_activator, objects, true, false);
             dialog.AllowMultiSelect = true;
             
             if(_value is IEnumerable<IMapsDirectlyToDatabaseTable> v)

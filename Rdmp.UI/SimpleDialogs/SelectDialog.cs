@@ -30,11 +30,11 @@ namespace Rdmp.UI.SimpleDialogs
     /// 
     /// <para>If the dialog was launched in read/write mode then pressing Del will delete the currently selected entity (if possible... don't do this unless you really do want to delete it).</para>
     /// </summary>
-    public partial class SelectIMapsDirectlyToDatabaseTableDialog : Form
+    public partial class SelectDialog<T> : Form where T : class
     {
         private readonly IBasicActivateItems _activator;
         private readonly bool _allowDeleting;
-        public IMapsDirectlyToDatabaseTable Selected;
+        public T Selected;
 
         public static Func<object, Image> ImageGetter;
         
@@ -42,7 +42,7 @@ namespace Rdmp.UI.SimpleDialogs
 
         private bool _useCatalogueFilter = false;
 
-        public SelectIMapsDirectlyToDatabaseTableDialog(IBasicActivateItems activator,IEnumerable<IMapsDirectlyToDatabaseTable> toSelectFrom, bool allowSelectingNULL,bool allowDeleting)
+        public SelectDialog(IBasicActivateItems activator,IEnumerable<T> toSelectFrom, bool allowSelectingNULL,bool allowDeleting)
         {
             _activator = activator;
             _allowDeleting = allowDeleting;
@@ -51,7 +51,7 @@ namespace Rdmp.UI.SimpleDialogs
             //start at cancel so if they hit the X nothing is selected
             DialogResult = DialogResult.Cancel;
 
-            olvID.AspectGetter = (m) => ((IMapsDirectlyToDatabaseTable) m).ID;
+            olvID.AspectGetter = (m) => (m as IMapsDirectlyToDatabaseTable)?.ID??null;
             olvName.AspectGetter = (m) => m.ToString();
             
             olvObjects.ListFilter = new TailFilter(MaxObjectsToShow);
@@ -109,7 +109,7 @@ namespace Rdmp.UI.SimpleDialogs
 
             olvObjects.RebuildColumns();
             
-            MultiSelected = new HashSet<IMapsDirectlyToDatabaseTable>();
+            MultiSelected = new HashSet<T>();
 
             olvSelected.GroupWithItemCountFormat = "{0} ({1} objects)";
             olvSelected.GroupWithItemCountSingularFormat = "{0} (1 objects)";
@@ -124,7 +124,7 @@ namespace Rdmp.UI.SimpleDialogs
             if (MultiSelected == null)
                 return false;
 
-            return MultiSelected.Contains(rowObject)? "Selected": "Not Selected";
+            return MultiSelected.Contains((T)rowObject)? "Selected": "Not Selected";
         }
 
         private bool buildGroupsRequired = false;
@@ -133,9 +133,9 @@ namespace Rdmp.UI.SimpleDialogs
         {
             var b = (bool) newvalue;
             if (b)
-                MultiSelected.Add((IMapsDirectlyToDatabaseTable) rowobject);
+                MultiSelected.Add((T) rowobject);
             else
-                MultiSelected.Remove((IMapsDirectlyToDatabaseTable) rowobject);
+                MultiSelected.Remove((T) rowobject);
             
             //olvObjects.BuildGroups();
             buildGroupsRequired = true;
@@ -149,10 +149,10 @@ namespace Rdmp.UI.SimpleDialogs
             if (!AllowMultiSelect)
                 return null;
 
-            return MultiSelected.Contains(rowObject);
+            return MultiSelected.Contains((T)rowObject);
         }
 
-        private void AddUsefulPropertiesIfHomogeneousTypes(IMapsDirectlyToDatabaseTable[] mapsDirectlyToDatabaseTables)
+        private void AddUsefulPropertiesIfHomogeneousTypes(T[] mapsDirectlyToDatabaseTables)
         {
             var types = mapsDirectlyToDatabaseTables.Select(m => m.GetType()).Distinct().ToArray();
 
@@ -186,11 +186,11 @@ namespace Rdmp.UI.SimpleDialogs
             return rowObject.GetType().Name;
         }
 
-        public HashSet<IMapsDirectlyToDatabaseTable> MultiSelected { get; private set; }
+        public HashSet<T> MultiSelected { get; private set; }
 
-        public void SetInitialSelection(IEnumerable<IMapsDirectlyToDatabaseTable> toSelect)
+        public void SetInitialSelection(IEnumerable<T> toSelect)
         {
-            MultiSelected = new HashSet<IMapsDirectlyToDatabaseTable>(toSelect);
+            MultiSelected = new HashSet<T>(toSelect);
             ApplyFilter();
         }
 
@@ -223,7 +223,7 @@ namespace Rdmp.UI.SimpleDialogs
         private void btnSelect_Click(object sender, EventArgs e)
         {
             if (!AllowMultiSelect)
-                Selected = (IMapsDirectlyToDatabaseTable) olvObjects.SelectedObject;
+                Selected = (T) olvObjects.SelectedObject;
 
             DialogResult = DialogResult.OK;
             this.Close();
@@ -231,7 +231,7 @@ namespace Rdmp.UI.SimpleDialogs
 
         private void btnSelectNULL_Click(object sender, EventArgs e)
         {
-            Selected = null;
+            Selected = default(T);
             MultiSelected = null;
             DialogResult = DialogResult.OK;
             this.Close();
@@ -239,7 +239,7 @@ namespace Rdmp.UI.SimpleDialogs
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            Selected = null;
+            Selected = default(T);
             MultiSelected = null;
             DialogResult = DialogResult.Cancel;
             this.Close();
@@ -289,19 +289,19 @@ namespace Rdmp.UI.SimpleDialogs
             if (e.KeyCode == Keys.Enter && olvObjects.SelectedObject != null)
             {
                 DialogResult = DialogResult.OK;
-                Selected =  olvObjects.SelectedObject as IMapsDirectlyToDatabaseTable;
+                Selected =  olvObjects.SelectedObject is T s ? s : default(T);
 
                 if (Selected == null)
                     return;
 
-                MultiSelected = new HashSet<IMapsDirectlyToDatabaseTable>(new []{ Selected });
+                MultiSelected = new HashSet<T>(new []{ Selected });
                 this.Close();
             }
 
             //space flips the selectedness of the objects that are selected
             if (e.KeyCode == Keys.Space && AllowMultiSelect && olvObjects.SelectedObjects != null)
             {
-                foreach (IMapsDirectlyToDatabaseTable o in olvObjects.SelectedObjects)
+                foreach (T o in olvObjects.SelectedObjects)
                 {
                     if (MultiSelected.Contains(o))
                         MultiSelected.Remove(o);
@@ -325,8 +325,7 @@ namespace Rdmp.UI.SimpleDialogs
         }
 
         private void ApplyFilter()
-        {
-            
+        {            
             var modelFilter = new TextMatchFilterWithWhiteList(MultiSelected,olvObjects,tbFilter.Text,StringComparison.InvariantCultureIgnoreCase);
             olvObjects.ListFilter = new CherryPickingTailFilter(MaxObjectsToShow,modelFilter);
 
@@ -357,7 +356,7 @@ namespace Rdmp.UI.SimpleDialogs
         {
             if (e.ClickCount >= 2)
             {
-                Selected = olvObjects.SelectedObject as IMapsDirectlyToDatabaseTable;
+                Selected = olvObjects.SelectedObject as T;
 
                 if (Selected == null)
                     return;
@@ -373,7 +372,7 @@ namespace Rdmp.UI.SimpleDialogs
                     return;
                 }
 
-                MultiSelected = new HashSet<IMapsDirectlyToDatabaseTable>(new[] { Selected });
+                MultiSelected = new HashSet<T>(new[] { Selected });
                 DialogResult = DialogResult.OK;
                 this.Close();
             }

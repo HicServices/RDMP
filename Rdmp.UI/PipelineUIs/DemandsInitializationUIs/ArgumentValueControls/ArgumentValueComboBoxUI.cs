@@ -116,7 +116,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 
         private void btnPick_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, _objectsForComboBox.Cast<IMapsDirectlyToDatabaseTable>(), true,false);
+            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(_activator, _objectsForComboBox.Cast<IMapsDirectlyToDatabaseTable>(), true,false);
 
             if (dialog.ShowDialog() == DialogResult.OK)
                 if (dialog.Selected == null)

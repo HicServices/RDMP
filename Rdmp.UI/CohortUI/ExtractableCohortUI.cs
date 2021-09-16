@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using FAnsi.Discovery;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Data;
@@ -222,7 +223,7 @@ namespace Rdmp.UI.CohortUI
                 Activator.RequestItemEmphasis(this, new EmphasiseRequest(projects.Single(), 1));
             else
             {
-                SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, projects,false,false);
+                var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, projects,false,false);
                 if(dialog.ShowDialog() == DialogResult.OK)
                     Activator.RequestItemEmphasis(this, new EmphasiseRequest(dialog.Selected, 1));
             }

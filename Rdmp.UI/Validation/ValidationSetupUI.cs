@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Validation;
@@ -385,7 +386,7 @@ namespace Rdmp.UI.Validation
 
         private void lblPickTimePeriodColumn_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any), true, false);
+            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any), true, false);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 var ei = dialog.Selected as ExtractionInformation;
@@ -396,7 +397,7 @@ namespace Rdmp.UI.Validation
 
         private void lblPickPivotColumn_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any), true, false);
+            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any), true, false);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 var ei = dialog.Selected as ExtractionInformation;

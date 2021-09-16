@@ -127,7 +127,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             //handle custom icons from plugin user interfaces in which
             CoreIconProvider = new DataExportIconProvider(repositoryLocator,PluginUserInterfaces.ToArray());
             
-            SelectIMapsDirectlyToDatabaseTableDialog.ImageGetter = (model)=> CoreIconProvider.GetImage(model);
+            SelectDialog<IMapsDirectlyToDatabaseTable>.ImageGetter = (model)=> CoreIconProvider.GetImage(model);
 
             WindowArranger = new WindowArranger(this,_windowManager,_mainDockPanel);
             
@@ -573,7 +573,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                     return null;
                 }
 
-            SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(this, availableObjects, false, false);
+            var selectDialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(this, availableObjects, false, false);
             selectDialog.Text = prompt;
             selectDialog.SetInitialFilter(initialSearchText);
 
@@ -667,7 +667,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 return null;
             }
 
-            SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(this, availableObjects, false, false);
+            var selectDialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(this, availableObjects, false, false);
             selectDialog.Text = prompt;
             selectDialog.SetInitialFilter(initialSearchText);
             selectDialog.AllowMultiSelect = true;

@@ -11,6 +11,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
@@ -627,7 +628,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
                     else
                     {
                         //otherwise show all the columns and let them pick which one they want to navigate to (emphasise)
-                        var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, cols, false,false);
+                        var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, cols, false,false);
 
                         if (dialog.ShowDialog() == DialogResult.OK)
                             toEmphasise = (ColumnInfo) dialog.Selected;
@@ -652,7 +653,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
                     otherTable = otherTables[0];
                 else
                 {
-                    var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, otherTables, false, false);
+                    var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, otherTables, false, false);
                     if (dialog.ShowDialog() == DialogResult.OK)
                         otherTable = (TableInfo) dialog.Selected;
                 }

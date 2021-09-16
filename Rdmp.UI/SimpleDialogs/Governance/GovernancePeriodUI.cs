@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -129,7 +130,7 @@ namespace Rdmp.UI.SimpleDialogs.Governance
             var availableToSelect =
                 allCatalogues.Where(c => !alreadyMappedCatalogues.Contains(c)).ToArray();
 
-            SelectIMapsDirectlyToDatabaseTableDialog selector = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, availableToSelect, false, false);
+            var selector = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, availableToSelect, false, false);
             selector.AllowMultiSelect = true;
 
             if (selector.ShowDialog() == DialogResult.OK)
@@ -180,7 +181,7 @@ namespace Rdmp.UI.SimpleDialogs.Governance
                 return;
             }
             
-            SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, toImportFrom,false,false);
+            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, toImportFrom,false,false);
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
