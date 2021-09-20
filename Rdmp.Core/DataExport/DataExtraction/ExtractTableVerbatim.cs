@@ -10,6 +10,8 @@ using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.DataExport.DataExtraction.FileOutputFormats;
+using Rdmp.Core.DataViewing;
+using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataExport.DataExtraction
 {
@@ -200,6 +202,23 @@ namespace Rdmp.Core.DataExport.DataExtraction
             }
 
             return linesWritten;
+        }
+
+        /// <summary>
+        /// Runs the query described in <paramref name="collection"/> and extracts the data into <paramref name="toFile"/>
+        /// </summary>
+        /// <param name="collection"></param>
+        /// <param name="toFile"></param>
+        /// <param name="context">Determines which access credentials (if any) are used to run the query</param>
+        public static void ExtractDataToFile(IViewSQLAndResultsCollection collection, FileInfo toFile, DataAccessContext context = DataAccessContext.InternalDataProcessing)
+        {
+            var point = collection.GetDataAccessPoint();
+            var db = DataAccessPortal.GetInstance().ExpectDatabase(point,context);
+            using (var fs = File.OpenWrite(toFile.FullName))
+            {
+                var toRun = new ExtractTableVerbatim(db.Server, collection.GetSql(), fs, ",", null);
+                toRun.DoExtraction();
+            }
         }
     }
 }

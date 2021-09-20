@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -17,9 +18,11 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Modules.Mutilators;
+using Rdmp.Core.DataViewing;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution

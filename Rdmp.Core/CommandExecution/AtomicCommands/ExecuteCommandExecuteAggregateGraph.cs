@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Drawing;
 using System.IO;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -44,19 +45,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if(_toFile != null)
             {
                 var collection = new ViewAggregateExtractUICollection(_aggregate);
-                var point = collection.GetDataAccessPoint();
-                var db = DataAccessPortal.GetInstance().ExpectDatabase(point, DataAccessContext.InternalDataProcessing);
-                using (var fs = File.OpenWrite(_toFile.FullName))
-                {
-                    var toRun = new ExtractTableVerbatim(db.Server, collection.GetSql(),fs, ",", null);
-                    toRun.DoExtraction();
-                }   
+                ExtractTableVerbatim.ExtractDataToFile(collection,_toFile);
             }
             else
             {
                 BasicActivator.ShowGraph(_aggregate);
             }
-        }
+        }        
 
         public override Image GetImage(IIconProvider iconProvider)
         {
