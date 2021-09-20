@@ -165,12 +165,6 @@
     <Compile Update="Performance\PerformanceCounterResultsUI.Designer.cs">
       <DependentUpon>PerformanceCounterResultsUI.cs</DependentUpon>
     </Compile>
-    <Compile Update="SimpleDialogs\PickOneOrCancelDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="SimpleDialogs\PickOneOrCancelDialog.Designer.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Update="Progress\ProgressBarsUI.cs">
       <SubType>UserControl</SubType>
     </Compile>

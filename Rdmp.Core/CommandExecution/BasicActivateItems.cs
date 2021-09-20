@@ -29,6 +29,7 @@ using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.Providers;
@@ -54,6 +55,7 @@ namespace Rdmp.Core.CommandExecution
 
         /// <inheritdoc/>
         public FavouritesProvider FavouritesProvider { get; private set; }
+        public ICoreIconProvider CoreIconProvider { get; private set; }
 
         /// <inheritdoc/>
         public abstract bool YesNo(string text, string caption, out bool chosen);
@@ -89,6 +91,9 @@ namespace Rdmp.Core.CommandExecution
             CoreChildProvider = GetChildProvider();
 
             ConstructPluginChildProviders();
+
+            //handle custom icons from plugin user interfaces in which
+            CoreIconProvider = new DataExportIconProvider(repositoryLocator, PluginUserInterfaces.ToArray());
         }
 
         protected virtual ICoreChildProvider GetChildProvider()
@@ -439,7 +444,7 @@ namespace Rdmp.Core.CommandExecution
             string initialSearchText = null, bool allowAutoSelect = false);
         
         /// <inheritdoc/>
-        public abstract bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null, bool allowAutoSelect = false);
+        public abstract bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null, bool allowAutoSelect = false) where T : class;
 
         /// <inheritdoc/>
         public abstract DirectoryInfo SelectDirectory(string prompt);

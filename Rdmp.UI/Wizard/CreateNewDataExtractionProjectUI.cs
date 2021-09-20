@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
 using Rdmp.Core.CommandExecution;
@@ -446,7 +447,7 @@ namespace Rdmp.UI.Wizard
 
         private void btnPick_Click(object sender, EventArgs e)
         {
-            var dlg = new SelectIMapsDirectlyToDatabaseTableDialog(Activator,
+            var dlg = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator,
                 cbxDatasets.Items.Cast<ExtractableDataSet>().ToArray(), false, false);
             
             foreach (var eds in this._selectedDatasets)
@@ -463,7 +464,7 @@ namespace Rdmp.UI.Wizard
 
         private void btnPackage_Click(object sender, EventArgs e)
         {
-            var dlg = new SelectIMapsDirectlyToDatabaseTableDialog(Activator,
+            var dlg = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator,
                 Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSetPackage>(), false, false);
             dlg.AllowMultiSelect = true;
 

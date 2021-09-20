@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.DataQualityEngine;
@@ -205,7 +206,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
         private void btnPick_Click(object sender, EventArgs e)
         {
             var available = cbxCatalogues.Items.OfType<Catalogue>();
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, available, false, false);
+            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, available, false, false);
             dialog.AllowMultiSelect = true;
 
             if (dialog.ShowDialog() == DialogResult.OK)
@@ -255,12 +256,11 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             var folders = Activator.CoreChildProvider.GetAllChildrenRecursively(CatalogueFolder.Root).OfType<CatalogueFolder>().ToList();
             folders.Add(CatalogueFolder.Root);
 
-            var dlg = new PickOneOrCancelDialog<CatalogueFolder>(folders.ToArray(),"Generate For Folder",(o)=>Activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueFolder),null);
-
-            dlg.AllowNull = false;
+            var dlg = new SelectDialog<CatalogueFolder>(Activator,folders.ToArray(),false,false);
+            dlg.Text = "Generate For Folder";
 
             if (dlg.ShowDialog() == DialogResult.OK)
-                SetCatalogueSelection(Activator.CoreChildProvider.GetAllChildrenRecursively(dlg.Picked)
+                SetCatalogueSelection(Activator.CoreChildProvider.GetAllChildrenRecursively(dlg.Selected)
                     .OfType<ICatalogue>().ToArray());
         }
     }

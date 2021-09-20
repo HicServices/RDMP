@@ -54,12 +54,6 @@ namespace Rdmp.UI.ItemActivation
         IArrangeWindows WindowArranger { get;}
 
         Form ShowWindow(Control singleControlForm, bool asDocument = false);
-
-        /// <summary>
-        /// Component for providing access to RDMPConcept icon images, these are 19x19 pixel icons representing specific objects/concepts in RDMP
-        /// </summary>
-        ICoreIconProvider CoreIconProvider { get; }
-
         
         /// <summary>
         /// Component for starting drag or copy operations

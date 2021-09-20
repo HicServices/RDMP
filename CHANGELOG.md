@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - IPluginUserInterface is now in `Rdmp.Core` and therefore you can write console gui or dual mode (console and winforms) plugin UIs
 - IPluginUserInterface CustomActivate now takes IMapsDirectlyToDatabaseTable allowing custom plugin behaviour for activating any object
 - DatasetRaceway chart (depicts multiple datasets along a shared timeline) now ignores outlier values (months with count less than 1000th as many records as the average month)
+- Renamed `SelectIMapsDirectlyToDatabaseTableDialog` to `SelectDialog<T>` (now supports any object Type)
 
 ### Removed
 
@@ -20,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed some Catalogue context menu items when the Catalogue is an API call
 - Adding a Filter from Catalogue no longer opens it up in edit mode after adding
 - Command line execution (e.g. `rdmp cmd ...`) no longer supports user interactive calls (e.g. YesNo questions)
+- Removed PickOneOrCancelDialog
 
 ### Added
 - Added CatalogueFolder column to Select Catalogue dialog

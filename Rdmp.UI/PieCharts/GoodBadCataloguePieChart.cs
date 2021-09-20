@@ -10,6 +10,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
@@ -242,7 +243,7 @@ namespace Rdmp.UI.PieCharts
 
         private void btnSingleCatalogue_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), false,false);
+            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), false,false);
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
@@ -280,7 +281,7 @@ namespace Rdmp.UI.PieCharts
 
         private void btnViewDataTable_Click(object sender, EventArgs e)
         {
-            var navigateTo = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, GetCatalogueItems().Where(ci => string.IsNullOrWhiteSpace(ci.Description)), false, false);
+            var navigateTo = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, GetCatalogueItems().Where(ci => string.IsNullOrWhiteSpace(ci.Description)), false, false);
 
             navigateTo.Show();
 

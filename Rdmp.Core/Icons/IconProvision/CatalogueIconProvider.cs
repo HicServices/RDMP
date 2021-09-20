@@ -23,6 +23,7 @@ using Rdmp.Core.Repositories;
 using Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 using ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.Core;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 
 namespace Rdmp.Core.Icons.IconProvision
 {
@@ -193,6 +194,12 @@ namespace Rdmp.Core.Icons.IconProvision
                 if (!(masqueradingAs is IMasqueradeAs))
                     return GetImageImpl(masqueradingAs, kind); //get an image for what your pretending to be
             }
+
+            if(concept is IAtomicCommand cmd)
+            {
+                return (Bitmap)cmd.GetImage(this);
+            }
+
 
             return ImagesCollection[RDMPConcept.NoIconAvailable];
 

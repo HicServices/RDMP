@@ -421,5 +421,10 @@ namespace Rdmp.Core.CommandExecution
                 SetImpossible(ExceptionHelper.ExceptionToListOfInnerMessages(e));
             }
         }
+
+        public override string ToString()
+        {
+            return GetCommandName();
+        }
     }
 }

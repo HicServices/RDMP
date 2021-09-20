@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.DataExport.Data;
@@ -230,7 +231,7 @@ namespace Rdmp.UI.Raceway
         
         private void btnAddCatalogue_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Except(_collection.GetCatalogues()), false, false);
+            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(_activator, _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Except(_collection.GetCatalogues()), false, false);
             dialog.AllowMultiSelect = true;
 
             if (dialog.ShowDialog() == DialogResult.OK)
@@ -264,7 +265,7 @@ namespace Rdmp.UI.Raceway
             if(dataExportChildProvider == null)
                 return;
             
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator, dataExportChildProvider.AllPackages, false, false);
+            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, dataExportChildProvider.AllPackages, false, false);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 var packageToAdd = (ExtractableDataSetPackage) dialog.Selected;

@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
@@ -34,7 +35,7 @@ namespace Rdmp.UI.Menus
             var packageManager = _activator.RepositoryLocator.DataExportRepository.PackageManager;
             var notInPackage = _childProvider.ExtractableDataSets.Except(packageManager.GetAllDataSets(_package, _childProvider.ExtractableDataSets));
 
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator, notInPackage, false, false);
+            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(_activator, notInPackage, false, false);
             dialog.AllowMultiSelect = true;
 
             if (dialog.ShowDialog() == DialogResult.OK)

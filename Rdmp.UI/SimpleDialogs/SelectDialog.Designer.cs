@@ -2,7 +2,7 @@
 
 namespace Rdmp.UI.SimpleDialogs
 {
-    partial class SelectIMapsDirectlyToDatabaseTableDialog
+    partial class SelectDialog<T>
     {
         /// <summary>
         /// Required designer variable.
