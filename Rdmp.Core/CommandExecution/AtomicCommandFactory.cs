@@ -18,6 +18,7 @@ using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.Data.Referencing;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataExport.Data;
@@ -26,6 +27,7 @@ using Rdmp.Core.Logging;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
+using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 using Rdmp.Core.Providers.Nodes.SharingNodes;
 using ReusableLibraryCode.Checks;
@@ -514,6 +516,25 @@ namespace Rdmp.Core.CommandExecution
 
             if(Is(o, out INamed n))
                 yield return new ExecuteCommandRename(_activator, n){SuggestedShortcut = "F2" };
+
+            if(Is(o, out PipelineCompatibleWithUseCaseNode pcu))
+            {
+                yield return new ExecuteCommandNewObject(_activator,typeof(Pipeline)) { OverrideCommandName = "New Pipeline" };
+                yield return new ExecuteCommandClonePipeline(_activator, pcu.Pipeline);
+                yield return new ExecuteCommandAddPipelineComponent(_activator, pcu.Pipeline, pcu.UseCase);
+            }
+            else
+            if (Is(o, out Pipeline pipeline))
+            {
+                yield return new ExecuteCommandNewObject(_activator, typeof(Pipeline)) { OverrideCommandName = "New Pipeline" };
+                yield return new ExecuteCommandClonePipeline(_activator, pipeline);
+                yield return new ExecuteCommandAddPipelineComponent(_activator, pipeline, null);
+            }
+
+            if (Is(o, out StandardPipelineUseCaseNode psu))
+            {
+                yield return new ExecuteCommandNewObject(_activator, typeof(Pipeline)) { OverrideCommandName = "New Pipeline" };
+            }
         }
 
         public IEnumerable<IAtomicCommand> CreateManyObjectCommands(ICollection many)
