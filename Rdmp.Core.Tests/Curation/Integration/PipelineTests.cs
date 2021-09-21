@@ -190,5 +190,42 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
 
         }
+        [Test]
+        public void DeletePipelineSource_ClearsReference()
+        {
+            Pipeline p = new Pipeline(CatalogueRepository);
+
+            //Setup a pipeline with a source component
+            var source = new PipelineComponent(CatalogueRepository, p, typeof(DelimitedFlatFileAttacher), 0);
+            source.Class = "Trollololol";
+            p.SourcePipelineComponent_ID = source.ID;
+            p.SaveToDatabase();
+
+            // delete the source
+            source.DeleteInDatabase();
+            p.RevertToDatabaseState();
+
+            // should also clear the reference
+            Assert.IsNull(p.SourcePipelineComponent_ID);
+        }
+
+        [Test]
+        public void DeletePipelineDestination_ClearsReference()
+        {
+            Pipeline p = new Pipeline(CatalogueRepository);
+
+            //Setup a pipeline with a source component
+            var dest = new PipelineComponent(CatalogueRepository, p, typeof(DelimitedFlatFileAttacher), 0);
+            dest.Class = "Trollololol";
+            p.DestinationPipelineComponent_ID = dest.ID;
+            p.SaveToDatabase();
+
+            // delete the dest
+            dest.DeleteInDatabase();
+            p.RevertToDatabaseState();
+
+            // should also clear the reference
+            Assert.IsNull(p.DestinationPipelineComponent_ID);
+        }
     }
 }

@@ -35,13 +35,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ability to directly query Catalogue/DataExport to Console Gui
 - Added extraction check that datasets are not marked `IsInternalDataset`
 - Added ability to script multiple tables at once via right click context menu in windows client
+- Added new command 'AddPipelineComponent' for use with RDMP command line
 
 ### Fixed
 
 - Fixed a bug where changing the server/database name could disable the Create button when selecting a database
 - Added the ability to drop onto the Core/Project folders in the 'execute extraction' window
 - Fixed a big where Yes/No close popup after running a pipeline in console gui could crash on 'No'
-
+- Fixed deleting source/destination pipeline components directly from tree UI
 
 ## [6.0.2] - 2021-08-26
 

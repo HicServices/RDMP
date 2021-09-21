@@ -186,5 +186,24 @@ namespace Rdmp.Core.Curation.Data.Pipelines
         {
             return PipelineComponentArguments.Cast<IHasDependencies>().ToArray();
         }
+
+        public override void DeleteInDatabase()
+        {
+            var parent = Pipeline as Pipeline;
+            if(parent != null)
+            {
+                if(parent.SourcePipelineComponent_ID == ID)
+                {
+                    CatalogueRepository.SaveSpecificPropertyOnlyToDatabase(parent, "SourcePipelineComponent_ID", null);
+                }
+
+                if (parent.DestinationPipelineComponent_ID == ID)
+                {
+                    CatalogueRepository.SaveSpecificPropertyOnlyToDatabase(parent, "DestinationPipelineComponent_ID", null);
+                }
+            }
+
+            base.DeleteInDatabase();
+        }
     }
 }
