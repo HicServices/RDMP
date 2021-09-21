@@ -15,6 +15,9 @@ using System.Reflection;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
+    /// <summary>
+    /// Adds new <see cref="PipelineComponent"/> to an existing <see cref="Pipeline"/>
+    /// </summary>
     public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
     {
         private readonly IPipeline _pipeline;
@@ -29,7 +32,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             [DemandsInitialization("The Type of component to add")]
             Type toAdd,
             [DemandsInitialization("The position in the pipeline to place the component relative to other components.")]
-            int order) : base(activator)
+            int? order = null) : base(activator)
         {
             _pipeline = pipeline;
             _toAdd = toAdd;
@@ -71,37 +74,48 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     return;
             }
 
-            if(!order.HasValue)
+            // if we have a component type to add to the pipe
+            if(add != null)
             {
-                if(BasicActivator.SelectValueType("Order",typeof(int),0,out object chosen))
-                {
-                    order = (int)chosen;
-                }
-                else
-                {
-                    return;
-                }
-            }
-
-            if(add != null && order.HasValue)
-            {
+                // check if it is a source or destination (or if both are false it is a middle component)
                 TypeFilter sourceFilter = (t, o) => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>);
                 TypeFilter destFilter = (t, o) => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowDestination<>);
 
                 var isSource = add.FindInterfaces(sourceFilter, null).Any();
                 var isDest = add.FindInterfaces(destFilter, null).Any();
                 
-                if (isSource && _pipeline.SourcePipelineComponent_ID.HasValue)
+                if (isSource)
                 {
-                    throw new Exception("Pipeline already has a source");
+                    order = int.MinValue;
+                    if(_pipeline.SourcePipelineComponent_ID.HasValue)
+                    {
+                        throw new Exception($"Pipeline '{_pipeline}' already has a source");
+                    }
                 }
 
-                if (isDest && _pipeline.DestinationPipelineComponent_ID.HasValue)
+                if (isDest)
                 {
-                    throw new Exception("Pipeline already has a destination");
+                    order = int.MaxValue;
+                    if(_pipeline.DestinationPipelineComponent_ID.HasValue)
+                    {
+                        throw new Exception($"Pipeline '{_pipeline}' already has a destination");
+                    }
                 }
 
-                var newComponent = new PipelineComponent(BasicActivator.RepositoryLocator.CatalogueRepository, _pipeline, add, order.Value);
+                // if we don't know the order yet and it's important
+                if (!order.HasValue && !isDest && !isSource)
+                {
+                    if (BasicActivator.SelectValueType("Order", typeof(int), 0, out object chosen))
+                    {
+                        order = (int)chosen;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+
+                var newComponent = new PipelineComponent(BasicActivator.RepositoryLocator.CatalogueRepository, _pipeline, add, order ?? 0);
                 newComponent.CreateArgumentsForClassIfNotExists(add);
 
                 if(isSource)
