@@ -7,9 +7,12 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
+using ReusableLibraryCode.Icons.IconProvision;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 
@@ -43,6 +46,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             _pipeline = pipeline;
             _useCaseIfAny = useCaseIfAny;
+        }
+
+        public override Image GetImage(IIconProvider iconProvider)
+        {
+            return iconProvider.GetImage(RDMPConcept.PipelineComponent,OverlayKind.Add);
         }
 
         public override void Execute()
