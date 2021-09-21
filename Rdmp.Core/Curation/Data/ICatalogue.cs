@@ -265,5 +265,13 @@ namespace Rdmp.Core.Curation.Data
         /// <returns></returns>
         /// <exception cref="Exception">Thrown if Startup/MEF have not been loaded by the environment yet</exception>
         bool IsApiCall(out IPluginCohortCompiler plugin);
+
+        /// <summary>
+        /// Returns true if the Catalogue is extractable but only with a specific Project.  You can pass null if you are addressing a Catalouge for whom you know 
+        /// IInjectKnown&lt;CatalogueExtractabilityStatus> has been called already.
+        /// </summary>
+        /// <param name="dataExportRepository"></param>
+        /// <returns></returns>
+        bool IsProjectSpecific(IDataExportRepository dataExportRepository);
     }
 }
