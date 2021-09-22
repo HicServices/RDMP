@@ -35,7 +35,7 @@ namespace Rdmp.Core.Icons.IconProvision
         protected List<IObjectStateBasedIconProvider> StateBasedIconProviders = new List<IObjectStateBasedIconProvider>();
 
         protected readonly EnumImageCollection<RDMPConcept> ImagesCollection;
-
+        protected readonly CatalogueStateBasedIconProvider CatalogueStateBasedIconProvider;
         private DatabaseTypeIconProvider _databaseTypeIconProvider = new DatabaseTypeIconProvider();
 
         public CatalogueIconProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
@@ -45,7 +45,7 @@ namespace Rdmp.Core.Icons.IconProvision
             OverlayProvider = new IconOverlayProvider();
             ImagesCollection = new EnumImageCollection<RDMPConcept>(CatalogueIcons.ResourceManager);
 
-            StateBasedIconProviders.Add(new CatalogueStateBasedIconProvider(repositoryLocator.DataExportRepository, OverlayProvider));
+            StateBasedIconProviders.Add(CatalogueStateBasedIconProvider = new CatalogueStateBasedIconProvider(repositoryLocator.DataExportRepository, OverlayProvider));
             StateBasedIconProviders.Add(new ExtractionInformationStateBasedIconProvider());
             StateBasedIconProviders.Add(new ExtractableColumnStateBasedIconProvider(OverlayProvider));
             StateBasedIconProviders.Add(new CheckResultStateBasedIconProvider());
