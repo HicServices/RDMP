@@ -31,6 +31,10 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
                 return null;
 
             var cataOne = _catalogueIconProvider.GetImageIfSupportedObject(ds.Catalogue);
+
+            if (cataOne == null)
+                return null;
+
             var withE = _overlayProvider.GetOverlay(cataOne, OverlayKind.BigE);
 
             return ds.IsCatalogueDeprecated || ds.DisableExtraction ? _disabled : withE;

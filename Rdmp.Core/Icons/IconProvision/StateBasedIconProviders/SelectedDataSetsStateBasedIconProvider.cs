@@ -29,6 +29,10 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
                 return null;
 
             var edsIcon = _edsIconProvider.GetImageIfSupportedObject(sds.ExtractableDataSet);
+
+            if (edsIcon == null)
+                return null;
+
             var withLink = _overlayProvider.GetOverlay(edsIcon, OverlayKind.Link);
 
             return withLink;
