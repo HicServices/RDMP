@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ability to directly query Catalogue/DataExport to Console Gui
 - Added extraction check that datasets are not marked `IsInternalDataset`
 - Added ability to script multiple tables at once via right click context menu in windows client
+- Support for shortcodes in arguments to commands on CLI e.g. `rdmp cmd describe c:11`
 - Added new command 'AddPipelineComponent' for use with RDMP command line
 - Added ability to filter datasets and selected datasets by Catalogue criteria (e.g. Deprecated, Internal)
 

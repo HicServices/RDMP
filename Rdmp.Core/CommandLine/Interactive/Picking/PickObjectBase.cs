@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.CommandLine.Interactive.Picking
@@ -54,9 +55,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
 
         protected Type ParseDatabaseEntityType(string objectType, string arg, int idx)
         {
-            //todo "c" = "Catalogue" etc
-            
-            Type t = RepositoryLocator.CatalogueRepository.MEF.GetType(objectType);
+            Type t = GetTypeFromShortCodeIfAny(objectType) ?? RepositoryLocator.CatalogueRepository.MEF.GetType(objectType);
 
             if(t == null)
                 throw new CommandLineObjectPickerParseException("Could not recognize Type name",idx,arg);
@@ -65,6 +64,35 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
                 throw new CommandLineObjectPickerParseException("Type specified must be a DatabaseEntity",idx,arg);
 
             return t;
+        }
+
+        /// <summary>
+        /// Returns true if <paramref name="possibleTypeName"/> is a Type name or shortcode for an <see cref="IMapsDirectlyToDatabaseTable"/>
+        /// object.  The <see cref="Type"/> is also out via <paramref name="t"/> (or null)
+        /// </summary>
+        /// <param name="possibleTypeName"></param>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        protected bool IsDatabaseObjectType(string possibleTypeName, out Type t)
+        {
+            try
+            {
+                t = GetTypeFromShortCodeIfAny(possibleTypeName) ?? RepositoryLocator.CatalogueRepository.MEF.GetType(possibleTypeName);
+            }
+            catch (Exception)
+            {
+                t = null;
+                return false;
+            }
+
+            return t != null
+                && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t);
+        }
+        protected Type GetTypeFromShortCodeIfAny(string possibleShortCode)
+        {
+            return SearchablesMatchScorer.ShortCodes.ContainsKey(possibleShortCode) ?
+                SearchablesMatchScorer.ShortCodes[possibleShortCode] :
+                null;
         }
         protected IMapsDirectlyToDatabaseTable GetObjectByID(Type type, int id)
         {

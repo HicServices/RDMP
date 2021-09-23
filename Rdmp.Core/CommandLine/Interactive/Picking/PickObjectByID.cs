@@ -38,11 +38,9 @@ ID2+: (optional) only allowed if you are being prompted for multiple objects, al
         public override bool IsMatch(string arg, int idx)
         {
             var baseMatch = base.IsMatch(arg, idx);
-            
+
             //only considered  match if the first letter is an Rdmp Type e.g. "Catalogue:12" but not "C:\fish"
-            return baseMatch && 
-                   RepositoryLocator.CatalogueRepository.MEF.GetType(Regex.Match(arg).Groups[1].Value) is Type t 
-                   && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t);
+            return baseMatch && IsDatabaseObjectType(Regex.Match(arg).Groups[1].Value, out _);
         }
 
         public PickObjectByID(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
