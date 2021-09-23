@@ -267,8 +267,8 @@ namespace Rdmp.Core.Curation.Data
         bool IsApiCall(out IPluginCohortCompiler plugin);
 
         /// <summary>
-        /// Returns true if the Catalogue is extractable but only with a specific Project.  You can pass null if you are addressing a Catalouge for whom you know 
-        /// IInjectKnown<CatalogueExtractabilityStatus> has been called already.
+        /// Returns true if the Catalogue is extractable but only with a specific Project.  You can pass null if you are addressing a Catalogue for whom you know 
+        /// IInjectKnown&lt;CatalogueExtractabilityStatus&gt; has been called already.
         /// </summary>
         /// <param name="dataExportRepository"></param>
         /// <returns></returns>
