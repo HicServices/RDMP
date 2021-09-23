@@ -123,6 +123,15 @@ namespace Rdmp.Core.DataQualityEngine.Data
            return toReturn;
        }
        
+        /// <summary>
+        /// Returns a table describing the number of records over time optionally only those where the pivot column in the rows
+        /// had the value of <paramref name="pivotCategoryValue"/>.  Returns null if no rows were present in the table at the
+        /// time the <paramref name="evaluation"/> was run.
+        /// </summary>
+        /// <param name="evaluation"></param>
+        /// <param name="pivotCategoryValue"></param>
+        /// <param name="pivot"></param>
+        /// <returns></returns>
         public static DataTable GetPeriodicityForDataTableForEvaluation(Evaluation evaluation, string pivotCategoryValue, bool pivot)
         {
             using (var con = evaluation.DQERepository.GetConnection())
@@ -143,6 +152,12 @@ namespace Rdmp.Core.DataQualityEngine.Data
                     {
                         DataTable dt = new DataTable();
                         da.Fill(dt);
+
+                        // if there are no rows (table is empty) return null instead
+                        if(dt.Columns.Count == 0 || dt.Rows.Count == 0)
+                        {
+                            return null;
+                        }
 
                         if(pivot)
                         {

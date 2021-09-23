@@ -42,6 +42,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed a bug where changing the server/database name could disable the Create button when selecting a database
 - Added the ability to drop onto the Core/Project folders in the 'execute extraction' window
 - Fixed a big where Yes/No close popup after running a pipeline in console gui could crash on 'No'
+- Fixed various issues when viewing the DQE results of a run on an empty table
+- DatasetRaceway in dashboards now shows 'Table(s) were empty for...' instead of `No DQE Evaluation for...` when the DQE was run but there was no result set
 - Added better error message when trying to create a new RDMP platform database into an existing database that already has one set up
 
 ## [6.0.2] - 2021-08-26
