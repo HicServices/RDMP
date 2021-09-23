@@ -82,65 +82,67 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     return;
             }
 
-            // if we have a component type to add to the pipe
-            if(add != null)
+            // Only proceed if we have a component type to add to the pipe
+            if (add == null) return;
+
+            // check if it is a source or destination (or if both are false it is a middle component)
+            TypeFilter sourceFilter = (t, o) =>
+                t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>);
+            TypeFilter destFilter = (t, o) =>
+                t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowDestination<>);
+
+            var isSource = add.FindInterfaces(sourceFilter, null).Any();
+            var isDest = add.FindInterfaces(destFilter, null).Any();
+
+            if (isSource)
             {
-                // check if it is a source or destination (or if both are false it is a middle component)
-                TypeFilter sourceFilter = (t, o) => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>);
-                TypeFilter destFilter = (t, o) => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowDestination<>);
-
-                var isSource = add.FindInterfaces(sourceFilter, null).Any();
-                var isDest = add.FindInterfaces(destFilter, null).Any();
-                
-                if (isSource)
+                order = int.MinValue;
+                if (_pipeline.SourcePipelineComponent_ID.HasValue)
                 {
-                    order = int.MinValue;
-                    if(_pipeline.SourcePipelineComponent_ID.HasValue)
-                    {
-                        throw new Exception($"Pipeline '{_pipeline}' already has a source");
-                    }
+                    throw new Exception($"Pipeline '{_pipeline}' already has a source");
                 }
-
-                if (isDest)
-                {
-                    order = int.MaxValue;
-                    if(_pipeline.DestinationPipelineComponent_ID.HasValue)
-                    {
-                        throw new Exception($"Pipeline '{_pipeline}' already has a destination");
-                    }
-                }
-
-                // if we don't know the order yet and it's important
-                if (!order.HasValue && !isDest && !isSource)
-                {
-                    if (BasicActivator.SelectValueType("Order", typeof(int), 0, out object chosen))
-                    {
-                        order = (int)chosen;
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-
-                var newComponent = new PipelineComponent(BasicActivator.RepositoryLocator.CatalogueRepository, _pipeline, add, order ?? 0);
-                newComponent.CreateArgumentsForClassIfNotExists(add);
-
-                if(isSource)
-                {
-                    _pipeline.SourcePipelineComponent_ID = newComponent.ID;
-                    _pipeline.SaveToDatabase();
-                }
-
-                if (isDest)
-                {
-                    _pipeline.DestinationPipelineComponent_ID = newComponent.ID;
-                    _pipeline.SaveToDatabase();
-                }
-
-                Publish(newComponent);
-                Emphasise(newComponent);
             }
+
+            if (isDest)
+            {
+                order = int.MaxValue;
+                if (_pipeline.DestinationPipelineComponent_ID.HasValue)
+                {
+                    throw new Exception($"Pipeline '{_pipeline}' already has a destination");
+                }
+            }
+
+            // if we don't know the order yet and it's important
+            if (!order.HasValue && !isDest && !isSource)
+            {
+                if (BasicActivator.SelectValueType("Order", typeof(int), 0, out object chosen))
+                {
+                    order = (int)chosen;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            var newComponent = new PipelineComponent(BasicActivator.RepositoryLocator.CatalogueRepository, _pipeline,
+                add, order ?? 0);
+            newComponent.CreateArgumentsForClassIfNotExists(add);
+
+            if (isSource)
+            {
+                _pipeline.SourcePipelineComponent_ID = newComponent.ID;
+                _pipeline.SaveToDatabase();
+            }
+
+            if (isDest)
+            {
+                _pipeline.DestinationPipelineComponent_ID = newComponent.ID;
+                _pipeline.SaveToDatabase();
+            }
+
+            Publish(newComponent);
+            Emphasise(newComponent);
         }
     }
 }
