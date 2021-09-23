@@ -15,6 +15,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers.Filtering;
 
@@ -84,7 +85,7 @@ namespace Rdmp.UI.SimpleDialogs
             //Add them to the tree view
             olvObjects.AddObjects(o);
 
-            if (o.Length>0 && o.All(c => c is ICatalogue))
+            if (o.Length>0 && IsBasicallyAllCatalogues(o))
             {
                 splitContainer1.Panel2Collapsed = false;
                 _useCatalogueFilter = true;
@@ -122,6 +123,10 @@ namespace Rdmp.UI.SimpleDialogs
             ApplyFilter();
         }
 
+        private bool IsBasicallyAllCatalogues(T[] o)
+        {
+            return o.All(c => c is ICatalogue || c is ExtractableDataSet || c is SelectedDataSets);
+        }
 
         private object GroupKeyGetter(object rowObject)
         {

@@ -32,6 +32,7 @@ namespace ReusableLibraryCode.Icons.IconProvision
         Locked,
         Help,
         Hashed,
-        Cloud
+        Cloud,
+        BigE
     }
 }
