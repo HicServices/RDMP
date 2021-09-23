@@ -44,22 +44,13 @@ namespace Rdmp.UI.Collections.Providers.Filtering
             if (cata == null)
             {
                 // or are we one of these things that can be tied to a catalogue
-                if (modelObject is ExtractableDataSet eds)
+                cata = modelObject switch
                 {
-                    cata = eds.Catalogue;
-                }
-                else
-                if (modelObject is SelectedDataSets sds)
-                {
-                    cata = sds.GetCatalogue();
-                }
-                else
-                {
-                    // but maybe we are descended from a Catalogue?
-                    var descendancy = ChildProvider.GetDescendancyListIfAnyFor(modelObject);
-                    if (descendancy != null)
-                        cata = descendancy.Parents.OfType<Catalogue>().SingleOrDefault();
-                }
+                    ExtractableDataSet  eds => eds.Catalogue,
+                    SelectedDataSets    sds => sds.GetCatalogue(),
+                    _ => ChildProvider.GetDescendancyListIfAnyFor(modelObject)?
+                        .Parents.OfType<Catalogue>().SingleOrDefault()
+                };
 
                 if (cata == null)
                     return true;
