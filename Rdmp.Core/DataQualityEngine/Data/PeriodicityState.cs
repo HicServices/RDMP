@@ -144,6 +144,12 @@ namespace Rdmp.Core.DataQualityEngine.Data
                         DataTable dt = new DataTable();
                         da.Fill(dt);
 
+                        // if there are no rows (table is empty) return null instead
+                        if(dt.Columns.Count == 0)
+                        {
+                            return null;
+                        }
+
                         if(pivot)
                         {
                             dt.Columns["Correct"].SetOrdinal(3);

@@ -64,6 +64,14 @@ namespace Rdmp.UI.CatalogueSummary.DataQualityReporting
 
             chart1.Visible = false;
             var dt = PeriodicityState.GetPeriodicityForDataTableForEvaluation(evaluation, pivotCategoryValue, true);
+
+            if(dt == null)
+            {
+                ClearGraph();
+                chart1.Visible = true;
+                return;
+            }
+
             chart1.DataSource = dt;
             dataGridView1.DataSource = dt;
 
@@ -175,8 +183,13 @@ namespace Rdmp.UI.CatalogueSummary.DataQualityReporting
             var pointEndX = chart1.ChartAreas[0].AxisX.PixelPositionToValue(e.X);
             var pointEndY = chart1.ChartAreas[0].AxisY.PixelPositionToValue(e.Y);
 
-          
-            TypeTextOrCancelDialog inputBox = new TypeTextOrCancelDialog("Enter Annotation Text", "Type some annotation text (will be saved to the database for other data analysts to see)",500);
+            // don't let them annotate emptiness!
+            if(double.IsNaN(pointEndX) || double.IsNaN(pointEndY))
+            {
+                return;
+            }
+
+                TypeTextOrCancelDialog inputBox = new TypeTextOrCancelDialog("Enter Annotation Text", "Type some annotation text (will be saved to the database for other data analysts to see)",500);
             if (DialogResult.OK == inputBox.ShowDialog())
             {
                 //create new annotation in the database
@@ -222,7 +235,10 @@ namespace Rdmp.UI.CatalogueSummary.DataQualityReporting
 
         private void cbShowGaps_CheckedChanged(object sender, EventArgs e)
         {
-            ReGenerateAnnotations();
+            if(chart1.DataSource != null)
+            {
+                ReGenerateAnnotations();
+            }
         }
     }
 }
