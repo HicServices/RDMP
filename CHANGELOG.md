@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - DatasetRaceway chart (depicts multiple datasets along a shared timeline) now ignores outlier values (months with count less than 1000th as many records as the average month)
 - Renamed `SelectIMapsDirectlyToDatabaseTableDialog` to `SelectDialog<T>` (now supports any object Type)
 - Selected datasets icon now includes all symbols of the Catalogue they represent (e.g. ProjectSpecific, Internal)
+- Changed how RDMP treats cohorts where the data has been deleted from the cohort table.  'Broken Cohort' renamed 'Orphan Cohort' and made more stable
 
 ### Removed
 
@@ -39,11 +40,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ability to filter datasets and selected datasets by Catalogue criteria (e.g. Deprecated, Internal)
 
 ### Fixed
-
+- Fixed deleting a parameter value set failing due to a database constraint
 - Fixed a bug where changing the server/database name could disable the Create button when selecting a database
 - Added the ability to drop onto the Core/Project folders in the 'execute extraction' window
 - Fixed a big where Yes/No close popup after running a pipeline in console gui could crash on 'No'
-
+- Fixed various issues when viewing the DQE results of a run on an empty table
+- DatasetRaceway in dashboards now shows 'Table(s) were empty for...' instead of `No DQE Evaluation for...` when the DQE was run but there was no result set
+- Added better error message when trying to create a new RDMP platform database into an existing database that already has one set up
 
 ## [6.0.2] - 2021-08-26
 

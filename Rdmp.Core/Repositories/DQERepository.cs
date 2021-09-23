@@ -18,6 +18,7 @@ using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.Repositories
 {
+
     /// <summary>
     /// Pointer to the Data Qualilty Engine Repository database in which all DatabaseEntities related to Data Quality Engine runs are stored (e.g. Evaluation).  Every 
     /// DatabaseEntity class must exist in a Microsoft Sql Server Database (See DatabaseEntity) and each object is compatible only with a specific type of TableRepository
@@ -29,8 +30,9 @@ namespace Rdmp.Core.Repositories
     /// there are IDs in the dqe database that specifically map to objects in the Catalogue database).  You can use the CatalogueRepository property to fetch/create objects
     /// in the paired Catalogue database.</para>
     /// </summary>
-    public class DQERepository : TableRepository
+    public class DQERepository : TableRepository, IDQERepository
     {
+        /// <inheritdoc/>
         public ICatalogueRepository CatalogueRepository { get; private set; }
 
         public DQERepository(ICatalogueRepository catalogueRepository)
@@ -46,16 +48,19 @@ namespace Rdmp.Core.Repositories
              _connectionStringBuilder = DiscoveredServer.Builder;
         }
 
+        /// <inheritdoc/>
         public Evaluation GetMostRecentEvaluationFor(ICatalogue c)
         {
             return GetEvaluationsWhere("where DateOfEvaluation = (select MAX(DateOfEvaluation) from Evaluation where CatalogueID = " + c.ID + ")").SingleOrDefault();
         }
 
+        /// <inheritdoc/>
         public IEnumerable<Evaluation> GetAllEvaluationsFor(ICatalogue catalogue)
         {
             return GetEvaluationsWhere("where CatalogueID = " + catalogue.ID + " order by DateOfEvaluation asc");
         }
 
+        /// <inheritdoc/>
         public bool HasEvaluations(ICatalogue catalogue)
         {
             using (var con = GetConnection())
@@ -66,7 +71,7 @@ namespace Rdmp.Core.Repositories
             }
         }
 
-        public IEnumerable<Evaluation> GetEvaluationsWhere(string whereSQL)
+        private IEnumerable<Evaluation> GetEvaluationsWhere(string whereSQL)
         {
             
             List<Evaluation> toReturn = new List<Evaluation>();
@@ -124,15 +129,6 @@ namespace Rdmp.Core.Repositories
         protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
         {
             return _constructor.ConstructIMapsDirectlyToDatabaseObject(t,this, reader);
-        }
-
-
-        public bool HasAnyEvaluations(Catalogue catalogue)
-        {
-            using (var con = GetConnection())
-            {
-                return Convert.ToBoolean(DiscoveredServer.GetCommand("SELECT case when exists (select 1 from Evaluation where CatalogueID = "+catalogue.ID+") then 1 else 0 end", con).ExecuteScalar());
-            }
         }
     }
 }
