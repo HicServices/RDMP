@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - IPluginUserInterface CustomActivate now takes IMapsDirectlyToDatabaseTable allowing custom plugin behaviour for activating any object
 - DatasetRaceway chart (depicts multiple datasets along a shared timeline) now ignores outlier values (months with count less than 1000th as many records as the average month)
 - Renamed `SelectIMapsDirectlyToDatabaseTableDialog` to `SelectDialog<T>` (now supports any object Type)
+- Changed how RDMP treats cohorts where the data has been deleted from the cohort table.  'Broken Cohort' renamed 'Orphan Cohort' and made more stable
 
 ### Removed
 

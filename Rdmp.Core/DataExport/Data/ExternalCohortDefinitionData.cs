@@ -26,6 +26,11 @@ namespace Rdmp.Core.DataExport.Data
             ExternalCohortCreationDate = ObjectToNullableDateTime(r["dtCreated"]);
         }
 
+        private ExternalCohortDefinitionData()
+        {
+
+        }
+
         /// <inheritdoc/>
         public int ExternalProjectNumber { get; set; }
 
@@ -53,5 +58,18 @@ namespace Rdmp.Core.DataExport.Data
 
             return (DateTime)o;
         }
+
+        /// <summary>
+        /// Describes the lack of available external data for an <see cref="ExtractableCohort"/> because the data has
+        /// been deleted from the cohort database
+        /// </summary>
+        public static IExternalCohortDefinitionData Orphan { get; } = new ExternalCohortDefinitionData()
+        {
+            ExternalProjectNumber = -1,
+            ExternalDescription = "Orphan Cohort",
+            ExternalVersion = -1,
+            ExternalCohortTableName = null,
+            ExternalCohortCreationDate = null,
+        };
     }
 }
