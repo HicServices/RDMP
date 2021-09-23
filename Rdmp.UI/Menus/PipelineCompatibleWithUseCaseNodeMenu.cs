@@ -15,17 +15,21 @@ namespace Rdmp.UI.Menus
     {
         public PipelineMenu(RDMPContextMenuStripArgs args, PipelineCompatibleWithUseCaseNode node): base(args,node)
         {
+            // alternate create new that uses a windows UI form
+            args.SkipCommand<ExecuteCommandNewObject>();
             Add(new ExecuteCommandCreateNewPipeline(_activator, node.UseCase));
-            Add(new ExecuteCommandClonePipeline(_activator, node.Pipeline));
         }
         public PipelineMenu(RDMPContextMenuStripArgs args, StandardPipelineUseCaseNode node): base(args, node)
         {
+            // alternate create new that uses a windows UI form
+            args.SkipCommand<ExecuteCommandNewObject>();
             Add(new ExecuteCommandCreateNewPipeline(_activator, node.UseCase));
         }
         public PipelineMenu(RDMPContextMenuStripArgs args, Pipeline pipeline): base(args, pipeline)
         {
+            // alternate create new that uses a windows UI form
+            args.SkipCommand<ExecuteCommandNewObject>();
             Add(new ExecuteCommandCreateNewPipeline(_activator, null));
-            Add(new ExecuteCommandClonePipeline(_activator, pipeline));
         }
     }
 }

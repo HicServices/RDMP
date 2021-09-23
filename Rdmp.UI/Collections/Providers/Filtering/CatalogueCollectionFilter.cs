@@ -7,6 +7,7 @@
 using System.Linq;
 using BrightIdeasSoftware;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using ReusableLibraryCode.Settings;
 
@@ -37,16 +38,21 @@ namespace Rdmp.UI.Collections.Providers.Filtering
 
         public bool Filter(object modelObject)
         {
-            var cata = modelObject as Catalogue;
+            var cata = modelObject as ICatalogue;
             
-            //doesn't relate to us... but maybe we are descended from a Catalogue?
+            //doesn't relate to us... 
             if (cata == null)
             {
-                var descendancy = ChildProvider.GetDescendancyListIfAnyFor(modelObject);
-                if (descendancy != null)
-                    cata = descendancy.Parents.OfType<Catalogue>().SingleOrDefault();
+                // or are we one of these things that can be tied to a catalogue
+                cata = modelObject switch
+                {
+                    ExtractableDataSet  eds => eds.Catalogue,
+                    SelectedDataSets    sds => sds.GetCatalogue(),
+                    _ => ChildProvider.GetDescendancyListIfAnyFor(modelObject)?
+                        .Parents.OfType<Catalogue>().SingleOrDefault()
+                };
 
-                if(cata == null)
+                if (cata == null)
                     return true;
             }
 

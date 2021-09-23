@@ -214,7 +214,7 @@ where
                     using (var r = getDescription.ExecuteReader())
                     {
                         if (!r.Read())
-                            throw new Exception("No records returned for Cohort OriginID " + OriginID);
+                            return ExternalCohortDefinitionData.Orphan;
 
                         return new ExternalCohortDefinitionData(r, ExternalCohortTable.Name);
                     }

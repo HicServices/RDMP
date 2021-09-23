@@ -13,6 +13,8 @@ namespace ReusableLibraryCode.Icons.IconProvision
     /// </summary>
     public interface IIconProvider
     {
+        Bitmap ImageUnknown { get; }
+
         Bitmap GetImage(object concept, OverlayKind kind = OverlayKind.None);
     }
 }

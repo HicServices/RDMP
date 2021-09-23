@@ -19,6 +19,8 @@ namespace Rdmp.Core
     {
         protected readonly IBasicActivateItems BasicActivator;
 
+        public Bitmap ImageUnknown => BasicActivator.CoreIconProvider.ImageUnknown;
+
         /// <summary>
         /// Creates a new instance of your plugin UI.  See notes on <paramref name="itemActivator"/>
         /// </summary>

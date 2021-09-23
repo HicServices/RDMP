@@ -320,7 +320,16 @@ namespace Rdmp.Core.CommandLine.Gui
 
         protected override void ActivateImpl(object o)
         {
-            var m = o as IMapsDirectlyToDatabaseTable ?? (o as IMasqueradeAs)?.MasqueradingAs() as IMapsDirectlyToDatabaseTable;
+            IMapsDirectlyToDatabaseTable m = o as IMapsDirectlyToDatabaseTable;
+
+            if (o is IMasqueradeAs masq)
+            {
+                if(masq.MasqueradingAs() is IMapsDirectlyToDatabaseTable underlyingObject)
+                {
+                    m = underlyingObject;
+                }
+            }
+
             if(m != null)
             {
                 var view = new ConsoleGuiEdit(this,m){Modal = true };
