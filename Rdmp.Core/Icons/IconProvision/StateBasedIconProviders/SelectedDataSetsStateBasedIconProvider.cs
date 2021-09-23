@@ -24,8 +24,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
 
         public Bitmap GetImageIfSupportedObject(object o)
         {
-            var sds = o as SelectedDataSets;
-            if (sds == null)
+            if (o is not SelectedDataSets sds)
                 return null;
 
             var edsIcon = _edsIconProvider.GetImageIfSupportedObject(sds.ExtractableDataSet);
