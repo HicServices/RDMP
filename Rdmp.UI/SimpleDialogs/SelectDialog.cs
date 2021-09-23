@@ -62,7 +62,7 @@ namespace Rdmp.UI.SimpleDialogs
             
             olvObjects.ListFilter = new TailFilter(MaxObjectsToShow);
 
-            olvName.ImageGetter = (model) => activator.CoreIconProvider.GetImage(model);
+            olvName.ImageGetter = GetImage;
             olvObjects.RowHeight = 19;
             
 
@@ -243,6 +243,12 @@ namespace Rdmp.UI.SimpleDialogs
 
                 olvObjects.RebuildColumns();
             }
+        }
+
+        public Bitmap GetImage(object model)
+        {
+            var bmp = _activator.CoreIconProvider.GetImage(model);
+            return bmp == _activator.CoreIconProvider.ImageUnknown ? null : bmp;
         }
 
         private void btnSelect_Click(object sender, EventArgs e)

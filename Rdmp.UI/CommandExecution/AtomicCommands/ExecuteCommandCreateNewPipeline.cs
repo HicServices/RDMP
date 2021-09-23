@@ -13,7 +13,7 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandCreateNewPipeline : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandCreateNewPipeline : BasicUICommandExecution,IAtomicCommand
     {
         private readonly PipelineUseCase _useCase;
 

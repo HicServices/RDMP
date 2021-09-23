@@ -38,6 +38,8 @@ namespace Rdmp.Core.Icons.IconProvision
         protected readonly CatalogueStateBasedIconProvider CatalogueStateBasedIconProvider;
         private DatabaseTypeIconProvider _databaseTypeIconProvider = new DatabaseTypeIconProvider();
 
+        public Bitmap ImageUnknown => ImagesCollection[RDMPConcept.NoIconAvailable];
+
         public CatalogueIconProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
             IIconProvider[] pluginIconProviders)
         {
@@ -201,7 +203,7 @@ namespace Rdmp.Core.Icons.IconProvision
             }
 
 
-            return ImagesCollection[RDMPConcept.NoIconAvailable];
+            return ImageUnknown;
 
         }
 
