@@ -42,6 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added the ability to drop onto the Core/Project folders in the 'execute extraction' window
 - Fixed a big where Yes/No close popup after running a pipeline in console gui could crash on 'No'
 - Fixed various issues when viewing the DQE results of a run on an empty table
+- DatasetRaceway in dashboards now shows 'Table(s) where empty for...' instead of `No DQE Evaluation for...` when the DQE was run but there was no result set
 
 ## [6.0.2] - 2021-08-26
 
