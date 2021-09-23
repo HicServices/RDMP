@@ -39,10 +39,6 @@ ID2+: (optional) only allowed if you are being prompted for multiple objects, al
         {
             var baseMatch = base.IsMatch(arg, idx);
 
-            if (!string.IsNullOrWhiteSpace(arg))
-                if (IsDatabaseObjectType(arg, out _))
-                    return true;
-
             //only considered  match if the first letter is an Rdmp Type e.g. "Catalogue:12" but not "C:\fish"
             return baseMatch && IsDatabaseObjectType(Regex.Match(arg).Groups[1].Value, out _);
         }

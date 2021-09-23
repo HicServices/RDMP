@@ -5,19 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Castle.Components.DictionaryAdapter;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
-using Rdmp.Core.CommandLine;
-using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
-using Rdmp.Core.Startup;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandLine
@@ -31,6 +25,17 @@ namespace Rdmp.Core.Tests.CommandLine
             base.OneTimeSetUp();
 
             SetupMEF();
+        }
+
+        [SetUp]
+        protected override void SetUp()
+        {
+            base.SetUp();
+
+            foreach(var c in Repository.GetAllObjects<Catalogue>())
+            {
+                c.DeleteInDatabase();
+            }
         }
 
 
@@ -93,9 +98,9 @@ namespace Rdmp.Core.Tests.CommandLine
 
             var picker = new CommandLineObjectPicker(new []{$"Catalogue:{cata1.ID},{cata2.ID}"}, RepositoryLocator);
 
-            Assert.AreEqual(cata1,picker[0].DatabaseEntities[0]);
-            Assert.AreEqual(cata2,picker[0].DatabaseEntities[1]);
-            Assert.AreEqual(2,picker[0].DatabaseEntities.Count);
+            Assert.AreEqual(2, picker[0].DatabaseEntities.Count);
+            Assert.Contains(cata1,picker[0].DatabaseEntities);
+            Assert.Contains(cata2,picker[0].DatabaseEntities);
         }
         
         [Test]
@@ -115,9 +120,9 @@ namespace Rdmp.Core.Tests.CommandLine
 
            var picker = new CommandLineObjectPicker(new []{$"Catalogue:lol*"}, RepositoryLocator);
 
-           Assert.AreEqual(cata1, picker[0].DatabaseEntities[0]);
-           Assert.AreEqual(cata2, picker[0].DatabaseEntities[1]);
-           Assert.AreEqual(2,picker[0].DatabaseEntities.Count);
+           Assert.AreEqual(2, picker[0].DatabaseEntities.Count);
+           Assert.Contains(cata1, picker[0].DatabaseEntities);
+           Assert.Contains(cata2, picker[0].DatabaseEntities);
         }
 
         [Test]
@@ -222,9 +227,24 @@ namespace Rdmp.Core.Tests.CommandLine
 
             var picker = new CommandLineObjectPicker(new[] { $"c:{cata1.ID},{cata2.ID}" }, RepositoryLocator);
 
-            Assert.AreEqual(cata1, picker[0].DatabaseEntities[0]);
-            Assert.AreEqual(cata2, picker[0].DatabaseEntities[1]);
             Assert.AreEqual(2, picker[0].DatabaseEntities.Count);
+            Assert.Contains(cata1, picker[0].DatabaseEntities);
+            Assert.Contains(cata2, picker[0].DatabaseEntities);
+        }
+
+        [Test]
+        public void Test_PickCatalogueByTypeOnly_WithShortCode()
+        {
+            var cata1 = WhenIHaveA<Catalogue>();
+            var cata2 = WhenIHaveA<Catalogue>();
+
+            // c is short for Catalogue 
+            // so this would be the use case 'rdmp cmd list Catalogue' where user can instead write 'rdmp cmd list c'
+            var picker = new CommandLineObjectPicker(new[] { $"c" }, RepositoryLocator);
+
+            Assert.AreEqual(2, picker[0].DatabaseEntities.Count);
+            Assert.Contains(cata1, picker[0].DatabaseEntities);
+            Assert.Contains(cata2, picker[0].DatabaseEntities);
         }
     }
 }
