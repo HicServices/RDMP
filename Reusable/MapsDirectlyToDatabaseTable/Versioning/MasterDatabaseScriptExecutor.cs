@@ -57,6 +57,13 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             {
                 if (Database.Exists())//make sure database does not already exist
                 {
+                    if (Database.DiscoverTables(false).Any(t => t.GetRuntimeName().Equals(RoundhouseScriptsRunTable)))
+                    {
+                        throw new Exception($"The database '{Database}' is already set up as a platform database for another schema (it has the '{RoundhouseScriptsRunTable}' table)");
+                    }
+
+                    // it doesn't look like this database already contains RDMP curated schemas (hopefully it is blank but if not - meh).
+                    // ask the user if they want to create it in this db even though it already exists and might not be empty
                     bool createAnyway = notifier.OnCheckPerformed(new CheckEventArgs($"Database {Database.GetRuntimeName()} already exists", CheckResult.Warning, null,"Attempt to create database inside existing database (will cause problems if the database is not empty)?"));
 
                     if(!createAnyway)
