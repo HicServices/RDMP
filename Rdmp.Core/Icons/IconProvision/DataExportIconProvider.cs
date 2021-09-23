@@ -16,10 +16,13 @@ namespace Rdmp.Core.Icons.IconProvision
 {
     public class DataExportIconProvider : CatalogueIconProvider
     {
+        private ExtractableDataSetStateBasedIconProvider _extractableDataSetStateBasedIconProvider;
+
         public DataExportIconProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IIconProvider[] pluginIconProviders) : base(repositoryLocator, pluginIconProviders)
         {
             //Calls to the Resource manager cause file I/O (I think or at the least CPU use anyway) so cache them all at once  
-            StateBasedIconProviders.Add(new ExtractableDataSetStateBasedIconProvider());
+            StateBasedIconProviders.Add(_extractableDataSetStateBasedIconProvider = new ExtractableDataSetStateBasedIconProvider(OverlayProvider,CatalogueStateBasedIconProvider));
+            StateBasedIconProviders.Add(new SelectedDataSetsStateBasedIconProvider(OverlayProvider, _extractableDataSetStateBasedIconProvider));
             StateBasedIconProviders.Add(new ExtractionConfigurationStateBasedIconProvider(this));
         }
 
@@ -30,9 +33,6 @@ namespace Rdmp.Core.Icons.IconProvision
 
             if (concept as Type == typeof(SelectedDataSets))
                 return base.GetImageImpl(RDMPConcept.Catalogue, OverlayKind.Link);
-
-            if (concept is SelectedDataSets)
-                return base.GetImageImpl(((SelectedDataSets)concept).ExtractableDataSet.Catalogue, OverlayKind.Link);
 
             if (concept is PackageContentNode)
                 return base.GetImageImpl(RDMPConcept.ExtractableDataSet, OverlayKind.Link);

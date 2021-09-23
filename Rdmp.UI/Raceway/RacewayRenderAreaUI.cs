@@ -318,10 +318,16 @@ namespace Rdmp.UI.Raceway
                         DrawErrorText("No DQE data exists for 'Show Period'",false, e, startDrawingLaneAtY, eachRaceLaneHasThisMuchYSpace, middleLineOfCatalogueLabelY);
                     }
                     else
-                        if (dictionary == null || !dictionary.Any())
+                        if (dictionary == null)
                     {
                         var textWidth = DrawErrorText("No DQE Evaluation for " + catalogue,true,e, startDrawingLaneAtY, eachRaceLaneHasThisMuchYSpace, middleLineOfCatalogueLabelY);
                         rectNoDQE.Add(new Rectangle(0, (int)startDrawingLaneAtY, (int)textWidth, (int)eachRaceLaneHasThisMuchYSpace),kvp.Key);
+                    }
+                    else
+                       if (!dictionary.Any())
+                    {
+                        var textWidth = DrawErrorText("Table(s) were empty for " + catalogue, true, e, startDrawingLaneAtY, eachRaceLaneHasThisMuchYSpace, middleLineOfCatalogueLabelY);
+                        rectNoDQE.Add(new Rectangle(0, (int)startDrawingLaneAtY, (int)textWidth, (int)eachRaceLaneHasThisMuchYSpace), kvp.Key);
                     }
                     else
                     {
