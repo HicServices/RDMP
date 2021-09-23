@@ -30,7 +30,7 @@ namespace Rdmp.Core.Tests.DataQualityEngine
         }
 
         [Test]
-        public void GetPeriodicityCountsForEvaluation_EmptyEvaluation(bool pivot)
+        public void GetPeriodicityCountsForEvaluation_EmptyEvaluation()
         {
             var cata = new Catalogue(CatalogueRepository, "MyCata");
 
