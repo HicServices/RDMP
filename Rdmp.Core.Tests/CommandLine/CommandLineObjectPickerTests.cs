@@ -199,5 +199,32 @@ namespace Rdmp.Core.Tests.CommandLine
             var picker = new CommandLineObjectPicker(new []{nullString},RepositoryLocator);
             Assert.IsTrue(picker[0].ExplicitNull);
         }
+        [Test]
+        public void Test_PickCatalogueByName_WithShortCode()
+        {
+            var cata1 = WhenIHaveA<Catalogue>();
+            var cata2 = WhenIHaveA<Catalogue>();
+
+            cata1.Name = "Biochem";
+            cata2.Name = "Haematology";
+
+            var picker = new CommandLineObjectPicker(new[] { $"c:*io*" }, RepositoryLocator);
+
+            Assert.AreEqual(cata1, picker[0].DatabaseEntities[0]);
+            Assert.AreEqual(1, picker[0].DatabaseEntities.Count);
+        }
+
+        [Test]
+        public void Test_PickCatalogueByID_WithShortCode()
+        {
+            var cata1 = WhenIHaveA<Catalogue>();
+            var cata2 = WhenIHaveA<Catalogue>();
+
+            var picker = new CommandLineObjectPicker(new[] { $"c:{cata1.ID},{cata2.ID}" }, RepositoryLocator);
+
+            Assert.AreEqual(cata1, picker[0].DatabaseEntities[0]);
+            Assert.AreEqual(cata2, picker[0].DatabaseEntities[1]);
+            Assert.AreEqual(2, picker[0].DatabaseEntities.Count);
+        }
     }
 }

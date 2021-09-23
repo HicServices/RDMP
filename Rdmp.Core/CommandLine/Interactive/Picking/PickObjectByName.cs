@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.CommandLine.Interactive.Picking
@@ -41,32 +42,16 @@ NamePattern2+: (optional) only allowed if you are being prompted for multiple ob
             var baseMatch = base.IsMatch(arg, idx);
 
             if (!string.IsNullOrWhiteSpace(arg))
-                if (IsLegitType(arg, out _))
+                if (IsDatabaseObjectType(arg, out _))
                     return true;
 
-            //only considered  match if the first letter is an Rdmp Type e.g. "Catalogue:12" but not "C:\fish"
-            return baseMatch && IsLegitType(Regex.Match(arg).Groups[1].Value,out _);        
-        }
-
-        private bool IsLegitType(string possibleTypeName, out Type t)
-        {
-            try
-            {
-                t = RepositoryLocator.CatalogueRepository.MEF.GetType(possibleTypeName);
-            }
-            catch (Exception )
-            {
-                t = null;
-                return false;
-            }
-            
-            return  t != null 
-                && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t);
+            //only considered  match if the first letter is an Rdmp Type e.g. "Catalogue:fish" but not "C:\fish"
+            return baseMatch && IsDatabaseObjectType(Regex.Match(arg).Groups[1].Value,out _);        
         }
 
         public override CommandLineObjectPickerArgumentValue Parse(string arg, int idx)
         {
-            if (IsLegitType(arg, out Type t))
+            if (IsDatabaseObjectType(arg, out Type t))
             {
                 return new CommandLineObjectPickerArgumentValue(arg,idx,GetAllObjects(t).ToArray());
             }

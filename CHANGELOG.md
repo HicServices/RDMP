@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ability to directly query Catalogue/DataExport to Console Gui
 - Added extraction check that datasets are not marked `IsInternalDataset`
 - Added ability to script multiple tables at once via right click context menu in windows client
+- Support for shortcodes in arguments to commands on CLI e.g. `rdmp cmd describe c:11`
 
 ### Fixed
 - Fixed deleting a parameter value set failing due to a database constraint
