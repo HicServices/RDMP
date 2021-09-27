@@ -316,18 +316,18 @@ namespace Rdmp.Core.CommandExecution
 
                 if (children.Any())
                 {
-                    if (YesNo($"Filter has {children.Length} value sets defined.  Deleting filter will also delete these.  Confirm?", "Delete"))
-                    {
-                        foreach (var child in children)
-                        {
-                            child.DeleteInDatabase();
-                        }
-
-                        f.DeleteInDatabase();
-                        return true;
-                    }
-                    else
+                    if (!YesNo(
+                        $"Filter has {children.Length} value sets defined.  Deleting filter will also delete these.  Confirm?",
+                        "Delete"))
                         return false;
+                    
+                    foreach (var child in children)
+                    {
+                        child.DeleteInDatabase();
+                    }
+
+                    f.DeleteInDatabase();
+                    return true;
                 }
             }
 
