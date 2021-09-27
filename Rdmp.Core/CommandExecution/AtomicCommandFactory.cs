@@ -450,6 +450,30 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandSetExtractionIdentifier(_activator, sds.GetCatalogue(), sds.ExtractionConfiguration,null);
             }
             
+            if(Is(o, out ExtractionConfiguration ec))
+            {
+
+                ///////////////////Change Cohorts//////////////
+
+                yield return new ExecuteCommandChooseCohort(_activator, ec);
+
+                yield return new ExecuteCommandViewLogs(_activator, ec);
+
+                /////////////////Add Datasets/////////////
+                yield return new ExecuteCommandAddDatasetsToConfiguration(_activator, ec);
+
+                yield return new ExecuteCommandAddPackageToConfiguration(_activator, ec);
+
+                yield return new ExecuteCommandGenerateReleaseDocument(_activator, ec);
+
+                if (ec.IsReleased)
+                    yield return new ExecuteCommandUnfreezeExtractionConfiguration(_activator, ec);
+                else
+                    yield return new ExecuteCommandFreezeExtractionConfiguration(_activator, ec);
+
+                yield return new ExecuteCommandCloneExtractionConfiguration(_activator, ec);
+            }
+
             if(Is(o, out ProjectCataloguesNode pcn))
             {
                 yield return new ExecuteCommandMakeCatalogueProjectSpecific(_activator).SetTarget(pcn.Project);
