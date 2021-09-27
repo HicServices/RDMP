@@ -40,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for shortcodes in arguments to commands on CLI e.g. `rdmp cmd describe c:11`
 - Added new command 'AddPipelineComponent' for use with RDMP command line
 - Added ability to filter datasets and selected datasets by Catalogue criteria (e.g. Deprecated, Internal)
+- Added Clone, Freeze, Unfreeze and add dataset(s) ExtractionConfiguration commands to command line
 
 ### Fixed
 - Fixed deleting a parameter value set failing due to a database constraint
