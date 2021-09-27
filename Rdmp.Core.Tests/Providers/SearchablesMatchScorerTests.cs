@@ -98,7 +98,7 @@ namespace Rdmp.Core.Tests.Providers
 
             if(userSetting)
             {
-                // although the text appears in the search they are not doing it by exact type name and there settings
+                // although the text appears in the search they are not doing it by exact type name and their settings
                 // mean they don't want to see these objects by default.
                 Assert.AreEqual(0, score.Value);
             }
