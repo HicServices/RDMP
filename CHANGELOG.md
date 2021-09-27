@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Selected datasets icon now includes all symbols of the Catalogue they represent (e.g. ProjectSpecific, Internal)
 - Changed how RDMP treats cohorts where the data has been deleted from the cohort table.  'Broken Cohort' renamed 'Orphan Cohort' and made more stable
 - [CohortAggregateContainer] now show up in the find dialog (you can disable this in UserSettings)
+- Bump Microsoft.Data.SqlClient from 3.0.0 to 3.0.1
 
 ### Removed
 
@@ -53,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - DatasetRaceway in dashboards now shows 'Table(s) were empty for...' instead of `No DQE Evaluation for...` when the DQE was run but there was no result set
 - Added better error message when trying to create a new RDMP platform database into an existing database that already has one set up
 - Fixed [CohortAggregateContainer] and filter containers not showing up in Find when explicitly requested
+- Fixed deleting an [ExtractionFilter] with many parameter values configured.  Now confirmation message is shown and all objects are deleted together
 - Fixed bug saving an [ExtractionInformation] when it is an extraction transform without an alias
 
 ## [6.0.2] - 2021-08-26
@@ -953,3 +955,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [LoadMetadata]: ./Documentation/CodeTutorials/Glossary.md#LoadMetadata
 [ExtractableCohort]: ./Documentation/CodeTutorials/Glossary.md#ExtractableCohort
 [CohortAggregateContainer]: ./Documentation/CodeTutorials/Glossary.md#CohortAggregateContainer
+[ExtractionFilter]: ./Documentation/CodeTutorials/Glossary.md#ExtractionFilter

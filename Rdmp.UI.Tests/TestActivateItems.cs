@@ -125,7 +125,8 @@ namespace Rdmp.UI.Tests
             if(deleteable is DatabaseEntity d && !d.Exists())
                 throw new Exception("Attempt made to delete an object which didn't exist");
 
-            deleteable.DeleteInDatabase();
+            base.DeleteWithConfirmation(deleteable);
+
             RefreshBus.Publish(this, new RefreshObjectEventArgs((DatabaseEntity)deleteable));
             return true;
         }
