@@ -35,7 +35,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             new ExtractionFilterParameter(CatalogueRepository, "DECLARE @age int", filter);
 
             var paramSet = new ExtractionFilterParameterSet(CatalogueRepository, filter, "Old");
-            var vals = paramSet.CreateNewValueEntries();
+            paramSet.CreateNewValueEntries();
             
             return filter;
         }
