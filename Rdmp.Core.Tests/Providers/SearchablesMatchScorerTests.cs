@@ -10,6 +10,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,10 +48,18 @@ namespace Rdmp.Core.Tests.Providers
         }
 
 
-        [Test]
-        public void Find_CohortAggregateContainer()
+        /// <summary>
+        /// Verifies that regardless of the user settings when the user types in the exact Type they want
+        /// then they get it scored high
+        /// </summary>
+        /// <param name="userSetting"></param>
+        [TestCase(true)]
+        [TestCase(false)]
+        public void Find_CohortAggregateContainer_ByTypeName(bool userSetting)
         {
             var container = WhenIHaveA<CohortAggregateContainer>();
+
+            UserSettings.ScoreZeroForCohortAggregateContainers = userSetting;
 
             var scorer = new SearchablesMatchScorer();
             scorer.TypeNames.Add("CohortAggregateContainer");
@@ -61,6 +70,43 @@ namespace Rdmp.Core.Tests.Providers
 
             var score = scores.Single(d => Equals(d.Key.Key, container));
             Assert.Greater(score.Value, 0);
+        }
+
+        /// <summary>
+        /// Verifies that <see cref="UserSettings.ScoreZeroForCohortAggregateContainers"/> is respected when the user
+        /// is typing for some text that appears in the name of the object
+        /// </summary>
+        /// <param name="userSetting"></param>
+        [TestCase(true)]
+        [TestCase(false)]
+        public void Find_CohortAggregateContainer_ByFreeText(bool userSetting)
+        {
+            var container = WhenIHaveA<CohortAggregateContainer>();
+            container.Name = "All the trolls in the troll kingdom";
+
+            UserSettings.ScoreZeroForCohortAggregateContainers = userSetting;
+
+            var scorer = new SearchablesMatchScorer();
+            scorer.TypeNames.Add("CohortAggregateContainer");
+
+            var childProvider = new DataExportChildProvider(RepositoryLocator, null, new ThrowImmediatelyCheckNotifier(), null);
+
+            // user is searching for the text 'troll'
+            var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(), "troll", CancellationToken.None, new List<Type>());
+
+            var score = scores.Single(d => Equals(d.Key.Key, container));
+
+            if(userSetting)
+            {
+                // although the text appears in the search they are not doing it by exact type name and there settings
+                // mean they don't want to see these objects by default.
+                Assert.AreEqual(0, score.Value);
+            }
+            else
+            {
+                Assert.Greater(score.Value, 0);
+            }
+            
         }
     }
 }
