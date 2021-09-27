@@ -29,7 +29,7 @@
             <dependency id="Xam.Plugins.Settings" version="3.1.1" />
             <dependency id="System.Runtime.Loader" version="4.3.0" />
             <dependency id="System.Drawing.Common" version="5.0.2" />
-            <dependency id="Microsoft.Data.SqlClient" version="3.0.0" />
+            <dependency id="Microsoft.Data.SqlClient" version="3.0.1" />
             <dependency id="System.Diagnostics.Debug" version="4.3.0" />
             <dependency id="System.IO.FileSystem.Primitives" version="4.3.0" />
             <dependency id="System.IO.FileSystem" version="4.3.0" />
