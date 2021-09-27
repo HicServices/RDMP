@@ -23,31 +23,9 @@ namespace Rdmp.UI.Menus
             : base( args,extractionConfiguration)
         {
             Items.Add("Edit", null, (s, e) => _activator.Activate<ExtractionConfigurationUI, ExtractionConfiguration>(extractionConfiguration));
-                                    
-            ///////////////////Change Cohorts//////////////
-            
+
             Add(new ExecuteCommandRelease(_activator).SetTarget(extractionConfiguration));
-
-            Add(new ExecuteCommandChooseCohort(_activator, extractionConfiguration));
-
-            Add(new ExecuteCommandViewLogs(_activator,extractionConfiguration));
-            
-            /////////////////Add Datasets/////////////
-            Add(new ExecuteCommandAddDatasetsToConfiguration(_activator,extractionConfiguration));
-
-            Add(new ExecuteCommandAddPackageToConfiguration(_activator, extractionConfiguration));
-            
-            Add(new ExecuteCommandGenerateReleaseDocument(_activator, extractionConfiguration));          
-            
-            Add(new ExecuteCommandViewSqlParameters(_activator,extractionConfiguration));
-
-            if (extractionConfiguration.IsReleased)
-                Add(new ExecuteCommandUnfreezeExtractionConfiguration(_activator, extractionConfiguration));
-            else
-                Add(new ExecuteCommandFreezeExtractionConfiguration(_activator, extractionConfiguration));
-
-            Add(new ExecuteCommandCloneExtractionConfiguration(_activator, extractionConfiguration));
-
+            Add(new ExecuteCommandViewSqlParameters(_activator, extractionConfiguration));
             Add(new ExecuteCommandRefreshExtractionConfigurationsCohort(_activator, extractionConfiguration));
 
             ReBrandActivateAs("Extract...", RDMPConcept.ExtractionConfiguration, OverlayKind.Execute);

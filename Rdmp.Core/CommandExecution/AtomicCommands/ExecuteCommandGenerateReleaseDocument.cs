@@ -7,29 +7,26 @@
 using System;
 using System.Drawing;
 using System.Linq;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Reports.ExtractionTime;
-using Rdmp.UI.ChecksUI;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
 
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandGenerateReleaseDocument : BasicUICommandExecution,IAtomicCommand
+    internal class ExecuteCommandGenerateReleaseDocument : BasicCommandExecution, IAtomicCommand
     {
         private readonly ExtractionConfiguration _extractionConfiguration;
 
-        public ExecuteCommandGenerateReleaseDocument(IActivateItems activator, ExtractionConfiguration extractionConfiguration) : base(activator)
+        public ExecuteCommandGenerateReleaseDocument(IBasicActivateItems activator, ExtractionConfiguration extractionConfiguration) : base(activator)
         {
             _extractionConfiguration = extractionConfiguration;
             /////////////////Other stuff///////////
-            if(!extractionConfiguration.CumulativeExtractionResults.Any())
+            if (!extractionConfiguration.CumulativeExtractionResults.Any())
                 SetImpossible("No datasets have been extracted");
         }
 
@@ -44,24 +41,23 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             try
             {
-                ReleaseRunner.IdentifyAndRemoveOldExtractionResults(Activator.RepositoryLocator,new PopupChecksUI("Checking Release Logs",true),_extractionConfiguration );
-
+                ReleaseRunner.IdentifyAndRemoveOldExtractionResults(BasicActivator.RepositoryLocator, new AcceptAllCheckNotifier(), _extractionConfiguration);
             }
             catch (Exception e)
             {
-                ShowException("Error checking for stale extraction logs",e);
+                ShowException("Error checking for stale extraction logs", e);
             }
 
             try
             {
-                WordDataReleaseFileGenerator generator = new WordDataReleaseFileGenerator(_extractionConfiguration, Activator.RepositoryLocator.DataExportRepository);
-                
+                WordDataReleaseFileGenerator generator = new WordDataReleaseFileGenerator(_extractionConfiguration, BasicActivator.RepositoryLocator.DataExportRepository);
+
                 //null means leave word file on screen and dont save
                 generator.GenerateWordFile(null);
             }
             catch (Exception e)
             {
-                ExceptionViewer.Show(e);
+                BasicActivator.ShowException("Failed to generate release document",e);
             }
         }
 
