@@ -41,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for shortcodes in arguments to commands on CLI e.g. `rdmp cmd describe c:11`
 - Added new command 'AddPipelineComponent' for use with RDMP command line
 - Added ability to filter datasets and selected datasets by Catalogue criteria (e.g. Deprecated, Internal)
+- Added Clone, Freeze, Unfreeze and add dataset(s) ExtractionConfiguration commands to command line
 
 ### Fixed
 - Fixed deleting a parameter value set failing due to a database constraint
@@ -52,6 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - DatasetRaceway in dashboards now shows 'Table(s) were empty for...' instead of `No DQE Evaluation for...` when the DQE was run but there was no result set
 - Added better error message when trying to create a new RDMP platform database into an existing database that already has one set up
 - Fixed [CohortAggregateContainer] and filter containers not showing up in Find when explicitly requested
+- Fixed bug saving an [ExtractionInformation] when it is an extraction transform without an alias
 
 ## [6.0.2] - 2021-08-26
 
