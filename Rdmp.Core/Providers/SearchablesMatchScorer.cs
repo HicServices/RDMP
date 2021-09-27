@@ -17,6 +17,7 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Providers
 {
@@ -28,6 +29,8 @@ namespace Rdmp.Core.Providers
         private static readonly int[] Weights = new int[] { 64, 32, 16, 8, 4, 2, 1 };
 
         public HashSet<string> TypeNames { get; set; }
+
+        private readonly bool _scoreZeroForCohortAggregateContainers;
 
         /// <summary>
         /// List of objects which should be favoured slightly above others of equal match potential
@@ -77,9 +80,13 @@ namespace Rdmp.Core.Providers
             };
 
 
+
         public SearchablesMatchScorer()
         {
             TypeNames = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+
+            _scoreZeroForCohortAggregateContainers = UserSettings.ScoreZeroForCohortAggregateContainers;
+                
         }
 
         /// <summary>
@@ -157,16 +164,17 @@ namespace Rdmp.Core.Providers
             else 
                 score += 10;
 
+            // if user is searching for a specific Type of object and we ain't it
             if (explicitTypeNames.Any())
                 if (!explicitTypeNames.Contains(kvp.Key.GetType().Name))
                     return 0;
 
-           //don't suggest AND/OR containers it's not helpful to navigate to these
-            if (kvp.Key is IContainer)
+           //don't suggest AND/OR containers it's not helpful to navigate to these (unless user is searching by Type explicitly)
+            if (explicitTypeNames.Length == 0 && kvp.Key is IContainer)
                 return 0;
 
-            //don't suggest AND/OR containers it's not helpful to navigate to these
-            if (kvp.Key is CohortAggregateContainer)
+            //don't suggest AND/OR containers it's not helpful to navigate to these (unless user is searching by Type explicitly)
+            if ( _scoreZeroForCohortAggregateContainers && explicitTypeNames.Length == 0 && kvp.Key is CohortAggregateContainer)
                 return 0;
 
             //if there are no tokens

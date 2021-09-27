@@ -101,6 +101,15 @@ namespace ReusableLibraryCode.Settings
             get { return AppSettings.GetValueOrDefault("CreateDatabaseTimeout", 30); }
             set { AppSettings.AddOrUpdateValue("CreateDatabaseTimeout", DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = Math.Max(value,30)); }
         }
+
+        public static bool ScoreZeroForCohortAggregateContainers
+        {
+            get { return AppSettings.GetValueOrDefault("ScoreZeroForCohortAggregateContainers", false); }
+            set { AppSettings.AddOrUpdateValue("ScoreZeroForCohortAggregateContainers", value); }
+        }
+
+        
+
         #region Catalogue flag visibility settings
         public static bool ShowInternalCatalogues
         {

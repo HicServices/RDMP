@@ -57,6 +57,7 @@
             this.cbHideEmptyTableLoadRunAudits = new System.Windows.Forms.CheckBox();
             this.label7 = new System.Windows.Forms.Label();
             this.tbCreateDatabaseTimeout = new System.Windows.Forms.TextBox();
+            this.cbScoreZeroForCohortAggregateContainers = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -372,6 +373,18 @@
             this.tbCreateDatabaseTimeout.TabIndex = 18;
             this.tbCreateDatabaseTimeout.TextChanged += new System.EventHandler(this.tbCreateDatabaseTimeout_TextChanged);
             // 
+            // cbScoreZeroForCohortAggregateContainers
+            // 
+            this.cbScoreZeroForCohortAggregateContainers.AutoSize = true;
+            this.cbScoreZeroForCohortAggregateContainers.Location = new System.Drawing.Point(348, 188);
+            this.cbScoreZeroForCohortAggregateContainers.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.cbScoreZeroForCohortAggregateContainers.Name = "cbScoreZeroForCohortAggregateContainers";
+            this.cbScoreZeroForCohortAggregateContainers.Size = new System.Drawing.Size(230, 19);
+            this.cbScoreZeroForCohortAggregateContainers.TabIndex = 15;
+            this.cbScoreZeroForCohortAggregateContainers.Text = "Hide Cohort Builder Containers in Find";
+            this.cbScoreZeroForCohortAggregateContainers.UseVisualStyleBackColor = true;
+            this.cbScoreZeroForCohortAggregateContainers.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
+            // 
             // UserSettingsFileUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -380,6 +393,7 @@
             this.Controls.Add(this.tbCreateDatabaseTimeout);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.cbScoreZeroForCohortAggregateContainers);
             this.Controls.Add(this.cbHideEmptyTableLoadRunAudits);
             this.Controls.Add(this.cbShowPipelineCompletedPopup);
             this.Controls.Add(this.hlpIdentifiableExtractions);
@@ -443,5 +457,6 @@
         private System.Windows.Forms.CheckBox cbHideEmptyTableLoadRunAudits;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox tbCreateDatabaseTimeout;
+        private System.Windows.Forms.CheckBox cbScoreZeroForCohortAggregateContainers;
     }
 }

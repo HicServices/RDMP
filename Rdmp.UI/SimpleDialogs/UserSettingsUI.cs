@@ -43,6 +43,7 @@ namespace Rdmp.UI.SimpleDialogs
             cbAllowIdentifiableExtractions.Checked = UserSettings.AllowIdentifiableExtractions;
             cbShowPipelineCompletedPopup.Checked = UserSettings.ShowPipelineCompletedPopup;
             cbHideEmptyTableLoadRunAudits.Checked = UserSettings.HideEmptyTableLoadRunAudits;
+            cbScoreZeroForCohortAggregateContainers.Checked = UserSettings.ScoreZeroForCohortAggregateContainers;
             tbCreateDatabaseTimeout.Text = UserSettings.CreateDatabaseTimeout.ToString();
 
             clbWarnings.Items.Add(WarnOnTimeoutOnExtractionChecks, UserSettings.WarnOnTimeoutOnExtractionChecks);
@@ -127,6 +128,9 @@ namespace Rdmp.UI.SimpleDialogs
 
             if (cb == cbHideEmptyTableLoadRunAudits)
                 UserSettings.HideEmptyTableLoadRunAudits = cb.Checked;
+
+            if (cb == cbScoreZeroForCohortAggregateContainers)
+                UserSettings.ScoreZeroForCohortAggregateContainers = cb.Checked;
         }
 
         private void ddTheme_SelectedIndexChanged(object sender, EventArgs e)
