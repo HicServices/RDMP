@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed `SelectIMapsDirectlyToDatabaseTableDialog` to `SelectDialog<T>` (now supports any object Type)
 - Selected datasets icon now includes all symbols of the Catalogue they represent (e.g. ProjectSpecific, Internal)
 - Changed how RDMP treats cohorts where the data has been deleted from the cohort table.  'Broken Cohort' renamed 'Orphan Cohort' and made more stable
+- [CohortAggregateContainer] now show up in the find dialog (you can disable this in UserSettings)
 
 ### Removed
 
@@ -50,6 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed various issues when viewing the DQE results of a run on an empty table
 - DatasetRaceway in dashboards now shows 'Table(s) were empty for...' instead of `No DQE Evaluation for...` when the DQE was run but there was no result set
 - Added better error message when trying to create a new RDMP platform database into an existing database that already has one set up
+- Fixed [CohortAggregateContainer] and filter containers not showing up in Find when explicitly requested
 
 ## [6.0.2] - 2021-08-26
 
@@ -948,3 +950,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [CohortIdentificationConfiguration]: ./Documentation/CodeTutorials/Glossary.md#CohortIdentificationConfiguration
 [LoadMetadata]: ./Documentation/CodeTutorials/Glossary.md#LoadMetadata
 [ExtractableCohort]: ./Documentation/CodeTutorials/Glossary.md#ExtractableCohort
+[CohortAggregateContainer]: ./Documentation/CodeTutorials/Glossary.md#CohortAggregateContainer
