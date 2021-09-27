@@ -164,8 +164,8 @@ namespace Rdmp.UI.ExtractionUIs
                         //which now has a different name (usually alias)
                         if (
                             Activator.YesNo(
-                                "Rename CatalogueItem " + cataItem.Name + " to match the new Alias? (" +
-                                ExtractionInformation.GetRuntimeName() + ")", "Update CatalogueItem name?"))
+                                $"Rename CatalogueItem {cataItem.Name} to match the new Alias? ({ExtractionInformation.GetRuntimeName()})",
+                                "Update CatalogueItem name?"))
                         {
                             cataItem.Name = ExtractionInformation.GetRuntimeName();
                             cataItem.SaveToDatabase();
@@ -290,7 +290,7 @@ namespace Rdmp.UI.ExtractionUIs
                 name = "unknown";
             }
 
-            return name + " (" + ExtractionInformation.CatalogueItem.Catalogue.Name +" Extraction Logic)";
+            return $"{name} ({ ExtractionInformation.CatalogueItem.Catalogue.Name } Extraction Logic)";
         }
     }
     
