@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Renamed `SelectIMapsDirectlyToDatabaseTableDialog` to `SelectDialog<T>` (now supports any object Type)
 - Selected datasets icon now includes all symbols of the Catalogue they represent (e.g. ProjectSpecific, Internal)
 - Changed how RDMP treats cohorts where the data has been deleted from the cohort table.  'Broken Cohort' renamed 'Orphan Cohort' and made more stable
+- Bump Microsoft.Data.SqlClient from 3.0.0 to 3.0.1
 
 ### Removed
 
