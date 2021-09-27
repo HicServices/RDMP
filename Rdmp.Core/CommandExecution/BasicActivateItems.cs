@@ -309,6 +309,27 @@ namespace Rdmp.Core.CommandExecution
                         return false;
                 }
             }
+            
+            if(databaseObject is ExtractionFilter f)
+            {
+                var children = f.ExtractionFilterParameterSets;
+
+                if (children.Any())
+                {
+                    if (YesNo($"Filter has {children.Length} value sets defined.  Deleting filter will also delete these.  Confirm?", "Delete"))
+                    {
+                        foreach (var child in children)
+                        {
+                            child.DeleteInDatabase();
+                        }
+
+                        f.DeleteInDatabase();
+                        return true;
+                    }
+                    else
+                        return false;
+                }
+            }
 
             if( databaseObject is AggregateConfiguration ac && ac.IsJoinablePatientIndexTable())
             {
