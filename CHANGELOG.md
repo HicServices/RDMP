@@ -52,6 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed various issues when viewing the DQE results of a run on an empty table
 - DatasetRaceway in dashboards now shows 'Table(s) were empty for...' instead of `No DQE Evaluation for...` when the DQE was run but there was no result set
 - Added better error message when trying to create a new RDMP platform database into an existing database that already has one set up
+- Fixed deleting an [ExtractionFilter] with many parameter values configured.  Now confirmation message is shown and all objects are deleted together
 - Fixed bug saving an [ExtractionInformation] when it is an extraction transform without an alias
 
 ## [6.0.2] - 2021-08-26
@@ -951,3 +952,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [CohortIdentificationConfiguration]: ./Documentation/CodeTutorials/Glossary.md#CohortIdentificationConfiguration
 [LoadMetadata]: ./Documentation/CodeTutorials/Glossary.md#LoadMetadata
 [ExtractableCohort]: ./Documentation/CodeTutorials/Glossary.md#ExtractableCohort
+[ExtractionFilter]: ./Documentation/CodeTutorials/Glossary.md#ExtractionFilter

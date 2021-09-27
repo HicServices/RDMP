@@ -67,6 +67,13 @@ namespace Rdmp.Core.Curation.Data
             get { throw new NotSupportedException(); }
             set { throw new NotSupportedException(); }
         }
+
+        [NoMappingToDatabase]
+        public ExtractionFilterParameterSet[] ExtractionFilterParameterSets
+        {
+            get { return CatalogueRepository.GetAllObjectsWithParent<ExtractionFilterParameterSet>(this); }
+        }
+
         /// <inheritdoc/>
         public override ColumnInfo GetColumnInfoIfExists()
         {
