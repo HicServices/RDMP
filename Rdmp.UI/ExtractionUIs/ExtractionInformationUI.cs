@@ -157,16 +157,26 @@ namespace Rdmp.UI.ExtractionUIs
             if (_namesMatchedWhenDialogWasLaunched)
             {
                 var cataItem = ExtractionInformation.CatalogueItem;
-                if (!cataItem.Name.Equals(ExtractionInformation.GetRuntimeName()))
-                    //which now has a different name (usually alias)
-                    if (
-                        Activator.YesNo(
-                            "Rename CatalogueItem " + cataItem.Name + " to match the new Alias? (" +
-                            ExtractionInformation.GetRuntimeName() + ")", "Update CatalogueItem name?"))
-                    {
-                        cataItem.Name = ExtractionInformation.GetRuntimeName();
-                        cataItem.SaveToDatabase();
-                    }
+
+                try
+                {
+                    if (!cataItem.Name.Equals(ExtractionInformation.GetRuntimeName()))
+                        //which now has a different name (usually alias)
+                        if (
+                            Activator.YesNo(
+                                "Rename CatalogueItem " + cataItem.Name + " to match the new Alias? (" +
+                                ExtractionInformation.GetRuntimeName() + ")", "Update CatalogueItem name?"))
+                        {
+                            cataItem.Name = ExtractionInformation.GetRuntimeName();
+                            cataItem.SaveToDatabase();
+                        }
+                }
+                catch (RuntimeNameException)
+                {
+                    // there was a problem working out the runtime name.  Maybe it is missing an alias or whatever
+                    // so we can't do this rename - no big deal
+                }
+                
             }
 
             return true;
@@ -269,7 +279,18 @@ namespace Rdmp.UI.ExtractionUIs
             if(ExtractionInformation == null)
                 return "Loading...";
 
-            return ExtractionInformation.GetRuntimeName() + " (" + ExtractionInformation.CatalogueItem.Catalogue.Name +" Extraction Logic)";
+            string name;
+
+            try
+            {
+                name = ExtractionInformation.GetRuntimeName();
+            }
+            catch (RuntimeNameException)
+            {
+                name = "unknown";
+            }
+
+            return name + " (" + ExtractionInformation.CatalogueItem.Catalogue.Name +" Extraction Logic)";
         }
     }
     
