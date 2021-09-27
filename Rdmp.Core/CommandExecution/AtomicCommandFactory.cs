@@ -457,6 +457,8 @@ namespace Rdmp.Core.CommandExecution
 
                 yield return new ExecuteCommandChooseCohort(_activator, ec);
 
+                yield return new ExecuteCommandViewLogs(_activator, ec);
+
                 /////////////////Add Datasets/////////////
                 yield return new ExecuteCommandAddDatasetsToConfiguration(_activator, ec);
 
