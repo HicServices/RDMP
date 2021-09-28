@@ -24,7 +24,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         public override string Format => "{Type}?{Property}:{PropertyValue}";
         public override string Help =>
             @"Type: must be an RDMP object type e.g. Catalogue, Project etc.
-Propety: must be a property of the Type class.
+Property: must be a property of the Type class.
 NamePattern: must be a value that could appear for the given Property.  Comparison will be via ToString on property value.";
         
         public override IEnumerable<string> Examples => new []
