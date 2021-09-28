@@ -36,6 +36,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         {
             _pickers.Add(new PickObjectByID(repositoryLocator));
             _pickers.Add(new PickObjectByName(repositoryLocator));
+            _pickers.Add(new PickObjectByQuery(repositoryLocator));
             _pickers.Add(new PickDatabase());
             _pickers.Add(new PickTable());
             _pickers.Add(new PickType(repositoryLocator));

@@ -246,5 +246,64 @@ namespace Rdmp.Core.Tests.CommandLine
             Assert.Contains(cata1, picker[0].DatabaseEntities);
             Assert.Contains(cata2, picker[0].DatabaseEntities);
         }
+
+        [Test]
+        public void Test_PickWithPropertyQuery_CatalogueItemsByCatalogue()
+        {
+            // these two belong to the same catalogue
+            var ci = WhenIHaveA<CatalogueItem>();
+            var ci2 = new CatalogueItem(ci.CatalogueRepository, ci.Catalogue, "My item 2");
+            
+            // this one belongs to a different catalogue
+            var ci3 = WhenIHaveA<CatalogueItem>();
+
+            var cataId = ci.Catalogue.ID;
+            var picker = new CommandLineObjectPicker(new[] { $"CatalogueItem?Catalogue_ID:{cataId}" }, RepositoryLocator);
+
+            Assert.AreEqual(2, picker[0].DatabaseEntities.Count);
+            Assert.Contains(ci, picker[0].DatabaseEntities);
+            Assert.Contains(ci2, picker[0].DatabaseEntities);
+            Assert.IsFalse(picker[0].DatabaseEntities.Contains(ci3));
+        }
+        [Test]
+        public void Test_PickWithPropertyQuery_CatalogueByFolder()
+        {
+            // Catalogues
+            var c1 = WhenIHaveA<Catalogue>();
+            var c2 = WhenIHaveA<Catalogue>();
+            var c3 = WhenIHaveA<Catalogue>();
+
+            c1.Folder = new CatalogueFolder("\\datasets\\hi\\");
+            c2.Folder = new CatalogueFolder("\\datasets\\no\\");
+            c3.Folder = new CatalogueFolder("\\datasets\\hi\\");
+
+            var picker = new CommandLineObjectPicker(new[] { $"Catalogue?Folder:*hi*" }, RepositoryLocator);
+
+            Assert.AreEqual(2, picker[0].DatabaseEntities.Count);
+            Assert.Contains(c1, picker[0].DatabaseEntities);
+            Assert.Contains(c3, picker[0].DatabaseEntities);
+            Assert.IsFalse(picker[0].DatabaseEntities.Contains(c2));
+        }
+        [Test]
+        public void Test_PickWithPropertyQuery_PeriodicityNull()
+        {
+            // Catalogues
+            var c1 = WhenIHaveA<Catalogue>();
+            var c2 = WhenIHaveA<Catalogue>();
+
+            c1.PivotCategory_ExtractionInformation_ID = 10;
+            c2.PivotCategory_ExtractionInformation_ID = null;
+
+            var picker = new CommandLineObjectPicker(new[] { $"Catalogue?PivotCategory_ExtractionInformation_ID:null" }, RepositoryLocator);
+
+            Assert.AreEqual(1, picker[0].DatabaseEntities.Count);
+            Assert.Contains(c2, picker[0].DatabaseEntities);
+        }
+        [Test]
+        public void Test_PickWithPropertyQuery_UnknownProperty()
+        {
+            var ex = Assert.Throws<Exception>(()=>new CommandLineObjectPicker(new[] { $"Catalogue?Blarg:null" }, RepositoryLocator));
+            Assert.AreEqual("Unknown property 'Blarg'.  Did not exist on Type 'Catalogue'", ex.Message);
+        }
     }
 }
