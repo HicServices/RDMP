@@ -17,7 +17,7 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.CommandLine.Interactive.Picking
 {
     /// <summary>
-    /// Determines if a command line argument provided was a reference to one or more <see cref="DatabaseEntity"/> matching based on property (e.g. "Catalogue?CatalogueFolder:*edris*")
+    /// Determines if a command line argument provided was a reference to one or more <see cref="DatabaseEntity"/> matching based on property (e.g. "Catalogue?Folder:*edris*")
     /// </summary>
     public class PickObjectByQuery: PickObjectBase
     {
@@ -65,7 +65,7 @@ NamePattern: must be a value that could appear for the given Property.  Comparis
 
             if(property == null)
             {
-                throw new Exception($"Unknown property '{propertyName}'.  Did not exist on Type '{dbObjectType}'");
+                throw new Exception($"Unknown property '{propertyName}'.  Did not exist on Type '{dbObjectType.Name}'");
             }
 
             var objs = GetObjectByToString(dbObjectType,property,objectToString);

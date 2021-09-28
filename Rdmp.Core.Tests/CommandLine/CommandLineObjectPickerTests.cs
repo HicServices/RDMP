@@ -299,5 +299,11 @@ namespace Rdmp.Core.Tests.CommandLine
             Assert.AreEqual(1, picker[0].DatabaseEntities.Count);
             Assert.Contains(c2, picker[0].DatabaseEntities);
         }
+        [Test]
+        public void Test_PickWithPropertyQuery_UnknownProperty()
+        {
+            var ex = Assert.Throws<Exception>(()=>new CommandLineObjectPicker(new[] { $"Catalogue?Blarg:null" }, RepositoryLocator));
+            Assert.AreEqual("Unknown property 'Blarg'.  Did not exist on Type 'Catalogue'", ex.Message);
+        }
     }
 }
