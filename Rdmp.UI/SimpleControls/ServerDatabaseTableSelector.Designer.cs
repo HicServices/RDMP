@@ -50,7 +50,6 @@ namespace Rdmp.UI.SimpleControls
             this.btnRefreshDatabases = new System.Windows.Forms.Button();
             this.btnRefreshTables = new System.Windows.Forms.Button();
             this.databaseTypeUI1 = new Rdmp.UI.SimpleControls.DatabaseTypeUI();
-            this.ragSmiley1 = new Rdmp.UI.ChecksUI.RAGSmiley();
             this.btnPickCredentials = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
             this.SuspendLayout();
@@ -255,17 +254,6 @@ namespace Rdmp.UI.SimpleControls
             this.databaseTypeUI1.TabIndex = 168;
             this.databaseTypeUI1.DatabaseTypeChanged += new System.EventHandler(this.databaseTypeUI1_DatabaseTypeChanged);
             // 
-            // ragSmiley1
-            // 
-            this.ragSmiley1.AlwaysShowHandCursor = false;
-            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
-            this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(3, 97);
-            this.ragSmiley1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.ragSmiley1.Name = "ragSmiley1";
-            this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
-            this.ragSmiley1.TabIndex = 5;
-            // 
             // btnPickCredentials
             // 
             this.btnPickCredentials.Location = new System.Drawing.Point(460, 27);
@@ -281,7 +269,6 @@ namespace Rdmp.UI.SimpleControls
             this.AutoSize = true;
             this.Controls.Add(this.btnPickCredentials);
             this.Controls.Add(this.databaseTypeUI1);
-            this.Controls.Add(this.ragSmiley1);
             this.Controls.Add(this.btnRefreshTables);
             this.Controls.Add(this.btnRefreshDatabases);
             this.Controls.Add(this.pbLoading);
@@ -326,7 +313,6 @@ namespace Rdmp.UI.SimpleControls
         private System.Windows.Forms.PictureBox pbLoading;
         private System.Windows.Forms.Button btnRefreshDatabases;
         private System.Windows.Forms.Button btnRefreshTables;
-        private RAGSmiley ragSmiley1;
         private DatabaseTypeUI databaseTypeUI1;
         private System.Windows.Forms.Button btnPickCredentials;
     }
