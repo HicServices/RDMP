@@ -372,8 +372,10 @@ namespace Rdmp.UI.LocationsMenu
         {
             var dialog = new ServerDatabaseTableSelectorDialog("Catalogue Database",false,false,null);
             dialog.LockDatabaseType(DatabaseType.MicrosoftSQLServer);
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if (dialog.ShowDialog() == DialogResult.OK && dialog.SelectedDatabase != null)
+            {
                 tbCatalogueConnectionString.Text = dialog.SelectedDatabase.Server.Builder.ConnectionString;
+            }
         }
 
         private void btnBrowseForDataExport_Click(object sender, EventArgs e)

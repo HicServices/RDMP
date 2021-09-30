@@ -16,8 +16,7 @@ using FAnsi.Discovery;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI;
-using Rdmp.UI.ItemActivation;
+using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode;
 
 namespace Rdmp.UI.SimpleControls
@@ -74,7 +73,10 @@ namespace Rdmp.UI.SimpleControls
         private BackgroundWorker _workerRefreshTables = new BackgroundWorker();
         CancellationTokenSource _workerRefreshTablesToken;
         private List<DiscoveredTable> _listTablesAsyncResult;
-        
+
+        private const string CancelConnection = "Cancel Connection";
+        private const string ConnectionFailed = "Connection Failed";
+
         //constructor
         public ServerDatabaseTableSelector()
         {
@@ -142,18 +144,18 @@ namespace Rdmp.UI.SimpleControls
         {
 
             //success?
-            ragSmiley1.Reset();
+            ResetState();
 
             if (e.Error != null)
-                ragSmiley1.Fatal(e.Error);
+            {
+                SetState(e.Error);
+            }
             else
                 if (!e.Cancelled)
                 {
                     cbxTable.Items.AddRange(_listTablesAsyncResult.Where(t => ! (t is DiscoveredTableValuedFunction)).ToArray());
                     cbxTableValueFunctions.Items.AddRange(_listTablesAsyncResult.Where(t => t is DiscoveredTableValuedFunction).ToArray());
                 }
-                else
-                    ragSmiley1.Warning(new Exception("User Cancelled"));
                 
 
             SetLoading(false);
@@ -169,7 +171,7 @@ namespace Rdmp.UI.SimpleControls
         {
             var builder = (DbConnectionStringBuilder)((object[])e.Argument)[0];
 
-            ragSmiley1.Reset();
+            ResetState();
 
             _workerRefreshDatabasesToken = new CancellationTokenSource();
             try
@@ -186,9 +188,33 @@ namespace Rdmp.UI.SimpleControls
                     _listDatabasesAsyncResult = new string[0];
                 else
                 {
-                    ragSmiley1.Fatal(ex);
+                    SetState(ex);
                     _listDatabasesAsyncResult = new string[0];
                 }   
+            }
+        }
+
+        private void ResetState()
+        {
+            _exception = null;
+            SetText(CancelConnection);
+        }
+        private void SetState(Exception ex)
+        {
+            _exception = ex;
+            SetText(ConnectionFailed);
+        }
+
+        private void SetText(string v)
+        {
+
+            if (llLoading.InvokeRequired)
+            {
+                llLoading.Invoke(new MethodInvoker(() => llLoading.Text = v));
+            }
+            else
+            {
+                llLoading.Text = v;
             }
         }
 
@@ -196,11 +222,16 @@ namespace Rdmp.UI.SimpleControls
         private void UpdateDatabaseAsyncCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Error != null)
-                ragSmiley1.Fatal(e.Error);
+            {
+                SetState(e.Error);
+            }
             else if (!e.Cancelled)
                 cbxDatabase.Items.AddRange(_listDatabasesAsyncResult);
             else
-                ragSmiley1.Warning(new Exception("User Cancelled"));
+            {
+                // user cancelled
+                ResetState();
+            }
 
             SetLoading(false);
             cbxDatabase.Focus();
@@ -368,8 +399,7 @@ namespace Rdmp.UI.SimpleControls
 
         private void SetLoading(bool isLoading)
         {
-
-            llLoading.Visible = isLoading;
+            llLoading.Visible = isLoading || _exception != null;
             pbLoading.Visible = isLoading;
 
             cbxServer.Enabled = !isLoading;
@@ -384,6 +414,7 @@ namespace Rdmp.UI.SimpleControls
 
         private string oldUsername = null;
         private IBasicActivateItems _activator;
+        private Exception _exception;
 
         private void tbUsername_TextChanged(object sender, EventArgs e)
         {
@@ -451,7 +482,19 @@ namespace Rdmp.UI.SimpleControls
         
         private void llLoading_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            AbortWorkers();
+            if(llLoading.Text == CancelConnection)
+            {
+                AbortWorkers();
+            }
+            else
+            {
+                if(_exception != null)
+                {
+                    ExceptionViewer.Show(_exception);
+                }
+                
+            }
+            
         }
 
         private void btnRefreshDatabases_Click(object sender, EventArgs e)

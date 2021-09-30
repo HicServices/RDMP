@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adding a Filter from Catalogue no longer opens it up in edit mode after adding
 - Command line execution (e.g. `rdmp cmd ...`) no longer supports user interactive calls (e.g. YesNo questions)
 - Removed PickOneOrCancelDialog
+- Removed RAG smiley from server connection UI.  Now errors are reported 'Connection Failed' text label
 
 ### Added
 - Added CatalogueFolder column to Select Catalogue dialog
