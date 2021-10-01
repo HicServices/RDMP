@@ -85,7 +85,9 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             ToolStrip.Items.Add(_runChecksToolStripButton);
 
             _ragSmileyToolStrip.Enabled = false;
+            _ragSmileyToolStrip.Visible = false;
             _runChecksToolStripButton.Enabled = false;
+            _runChecksToolStripButton.Visible = false;
         }
 
         public void SetItemActivator(IActivateItems activator)
@@ -160,8 +162,10 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         /// <param name="checkable"></param>
         public void AddChecks(ICheckable checkable)
         {
-            _ragSmileyToolStrip.Enabled = true;
+            _ragSmileyToolStrip.Enabled = false;
             _runChecksToolStripButton.Enabled = true;
+            _ragSmileyToolStrip.Visible = true;
+            _runChecksToolStripButton.Visible = true;
             _checkable = checkable;
         }
 
@@ -174,7 +178,6 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         /// <param name="checkableFunc"></param>
         public void AddChecks(Func<ICheckable> checkableFunc)
         {
-            _ragSmileyToolStrip.Enabled = true;
             _runChecksToolStripButton.Enabled = true;
 
             try
@@ -198,10 +201,10 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             if (_checkable == null)
                 return;
 
-            _ragSmileyToolStrip.Enabled = true;
-
             if (BeforeChecking != null)
             {
+                _ragSmileyToolStrip.Enabled = true;
+
                 var e = new BeforeCheckingEventArgs(_ragSmileyToolStrip, _checkable);
                 BeforeChecking(this,e);
 
@@ -412,6 +415,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         public void ResetChecks()
         {
                 _ragSmileyToolStrip.Reset();
+                _ragSmileyToolStrip.Enabled = false;
         }
 
         /// <summary>
