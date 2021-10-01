@@ -28,14 +28,13 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
     [TechnicalUI]
     public class PersistableSingleDatabaseObjectDockContent : RDMPSingleControlTab
     {
-        private readonly Control _control;
         public IMapsDirectlyToDatabaseTable DatabaseObject { get; private set; }
 
         public const string Prefix = "RDMPSingleDatabaseObjectControl";
 
         public PersistableSingleDatabaseObjectDockContent(IRDMPSingleDatabaseObjectControl control, IMapsDirectlyToDatabaseTable databaseObject,RefreshBus refreshBus):base(refreshBus)
         {
-            _control = (Control)control;
+            Control = (Control)control;
             
             DatabaseObject = databaseObject;
             TabText = "Loading...";
@@ -55,17 +54,12 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
         protected override string GetPersistString()
         {
             const char s = PersistStringHelper.Separator;
-            return Prefix + s + _control.GetType().FullName + s + DatabaseObject.Repository.GetType().FullName + s + DatabaseObject.GetType().FullName + s + DatabaseObject.ID;
-        }
-
-        public override Control GetControl()
-        {
-            return _control;
+            return Prefix + s + Control.GetType().FullName + s + DatabaseObject.Repository.GetType().FullName + s + DatabaseObject.GetType().FullName + s + DatabaseObject.ID;
         }
 
         public override void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
-            var newTabName = ((IRDMPSingleDatabaseObjectControl) _control).GetTabName();
+            var newTabName = ((IRDMPSingleDatabaseObjectControl) Control).GetTabName();
             var floatWindow = ParentForm as CustomFloatWindow;
 
             if (floatWindow != null)
