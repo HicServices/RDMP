@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changed how RDMP treats cohorts where the data has been deleted from the cohort table.  'Broken Cohort' renamed 'Orphan Cohort' and made more stable
 - [CohortAggregateContainer] now show up in the find dialog (you can disable this in UserSettings)
 - Bump Microsoft.Data.SqlClient from 3.0.0 to 3.0.1
+- Checks buttons on the toolbars are now hidden instead of disabled when inapplicable
 
 ### Removed
 
