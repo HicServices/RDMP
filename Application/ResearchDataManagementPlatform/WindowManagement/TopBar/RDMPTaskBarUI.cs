@@ -90,8 +90,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         {
             try
             {
-                var store = _manager.ActivateItems.RepositoryLocator.CatalogueRepository.CommentStore;
-
                 btnHome.ToolTipText = "Home screen, shows recent objects etc";
                 btnCatalogues.ToolTipText = "All datasets configured for access by RDMP";
                 btnCohorts.ToolTipText = "Built queries for creating cohorts";
