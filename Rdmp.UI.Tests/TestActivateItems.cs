@@ -71,7 +71,6 @@ namespace Rdmp.UI.Tests
 
             CommentStore = _commentStore;
 
-            CoreIconProvider = new DataExportIconProvider(RepositoryLocator,null);
             HistoryProvider = new HistoryProvider(RepositoryLocator);
 
             _problemProviders = new List<IProblemProvider>(new IProblemProvider[]
