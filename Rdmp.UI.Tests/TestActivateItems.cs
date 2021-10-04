@@ -87,8 +87,6 @@ namespace Rdmp.UI.Tests
             return singleControlForm.FindForm();
         }
         
-        public ICoreIconProvider CoreIconProvider { get; private set; }
-
         public override void Publish(IMapsDirectlyToDatabaseTable o)
         {
             base.Publish(o);
