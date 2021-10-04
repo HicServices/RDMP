@@ -503,6 +503,12 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandImportAlreadyExistingCohort(_activator, ect, null);
             }
 
+            if(Is(o,out ExtractableCohort cohort))
+            {
+                yield return new ExecuteCommandViewCohortSample(_activator, cohort, 100);
+                yield return new ExecuteCommandDeprecate(_activator, cohort, !cohort.IsDeprecated);
+            }
+
             if (Is(o, out CohortAggregateContainer cohortAggregateContainer))
             {
                 yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer, SetOperation.EXCEPT) { SuggestedCategory = SetContainerOperation };
