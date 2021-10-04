@@ -84,6 +84,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             ITableInfo anyNewTable = null;
 
+            List<DiscoveredTable> novel = new List<DiscoveredTable>();
+
             foreach (DiscoveredTable discoveredTable in db.DiscoverTables(includeViews: false))
             {
                 var collide = existing.FirstOrDefault(t => t.Is(discoveredTable));
@@ -92,7 +94,19 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     ignoredTables.Add(collide);
                     continue;
                 }
+                else
+                {
+                    novel.Add(discoveredTable);
+                }
+            }
 
+            if(!BasicActivator.SelectObjects("Import", novel.ToArray(), out DiscoveredTable[] selected))
+            {
+                return;
+            }
+
+            foreach (DiscoveredTable discoveredTable in selected) 
+            { 
                 var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, discoveredTable);
                 
                 //import the table

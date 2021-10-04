@@ -331,6 +331,11 @@ namespace Rdmp.UI.Tests
         {
             throw new NotImplementedException();
         }
+
+        public override bool SelectObjects<T>(string prompt, T[] available, out T[] selected, string initialSearchText = null)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class TestActivateItemsResults:ICheckNotifier
