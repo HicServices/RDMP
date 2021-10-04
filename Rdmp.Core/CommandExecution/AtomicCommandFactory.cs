@@ -351,6 +351,7 @@ namespace Rdmp.Core.CommandExecution
             if(Is(o, out LoadDirectoryNode ldn))
             {
                 yield return new ExecuteCommandSet(_activator,ldn.LoadMetadata,typeof(LoadMetadata).GetProperty(nameof(LoadMetadata.LocationOfFlatFiles)));
+                yield return new ExecuteCommandCreateNewDataLoadDirectory(_activator, ldn.LoadMetadata, null);
             }
 
             if(Is(o,out AllObjectImportsNode _))
