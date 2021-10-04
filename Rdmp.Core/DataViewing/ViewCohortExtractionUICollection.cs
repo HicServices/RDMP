@@ -20,6 +20,17 @@ namespace Rdmp.Core.DataViewing
     /// </summary>
     public class ViewCohortExtractionUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
     {
+        public int Top
+        {
+            get => _arguments.ContainsKey(TopKey) ? int.Parse(_arguments[TopKey]) : 100;
+            set => _arguments[TopKey] = value.ToString();
+        }
+
+        Dictionary<string, string> _arguments = new Dictionary<string, string>();
+        private const string TopKey = "Top";
+
+        public string Username { get; set; }
+
         public ViewCohortExtractionUICollection()
         {
         }
@@ -27,6 +38,15 @@ namespace Rdmp.Core.DataViewing
         public ViewCohortExtractionUICollection(ExtractableCohort cohort) : this()
         {
             DatabaseObjects.Add(cohort);
+        }
+
+        public override string SaveExtraText()
+        {
+            return Helper.SaveDictionaryToString(_arguments);
+        }
+        public override void LoadExtraText(string s)
+        {
+            _arguments = Helper.LoadDictionaryFromString(s);
         }
 
         public ExtractableCohort Cohort { get { return DatabaseObjects.OfType<ExtractableCohort>().SingleOrDefault(); } }
@@ -48,24 +68,20 @@ namespace Rdmp.Core.DataViewing
 
             var tableName = Cohort.ExternalCohortTable.TableName;
 
-            var response = GetQuerySyntaxHelper().HowDoWeAchieveTopX(100);
+            var response = GetQuerySyntaxHelper().HowDoWeAchieveTopX(Top);
 
-            switch (response.Location)
+            return response.Location switch
             {
-                case QueryComponent.SELECT:
-                    return "Select " + response.SQL + " * from " + tableName + " WHERE " + Cohort.WhereSQL();
-                case QueryComponent.WHERE:
-                    return "Select * from " + tableName + " WHERE " + response.SQL + " AND " + Cohort.WhereSQL();
-                case QueryComponent.Postfix:
-                    return "Select * from " + tableName + " WHERE " + Cohort.WhereSQL() + " " + response.SQL;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                QueryComponent.SELECT  => $"Select {response.SQL} * from {tableName} WHERE {Cohort.WhereSQL()}",
+                QueryComponent.WHERE   => $"Select * from {tableName} WHERE {response.SQL} AND {Cohort.WhereSQL()}",
+                QueryComponent.Postfix => $"Select * from {tableName} WHERE {Cohort.WhereSQL()} {response.SQL}",
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
 
         public string GetTabName()
         {
-            return "Top 100 " + Cohort + "(V" + Cohort.ExternalVersion + ")";
+            return $"View {Cohort}(V{Cohort.ExternalVersion})";
         }
 
         public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
@@ -80,8 +96,7 @@ namespace Rdmp.Core.DataViewing
 
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
-            var c = Cohort;
-            return c != null ? c.GetQuerySyntaxHelper() : null;
+            return Cohort?.GetQuerySyntaxHelper();
         }
     }
 }

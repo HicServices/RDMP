@@ -48,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Clone, Freeze, Unfreeze and add dataset(s) ExtractionConfiguration commands to command line
 - Added support for identifying items by properties on CLI (e.g. list all Catalogues with Folder name containing 'edris')
 - Cloning a [CohortIdentificationConfiguration] now opens the clone
+- Added new command ViewCohortSample for viewing a sample or extracting all cohort identifiers (and anonymous mapping) to console/file
 - Added the ability to pick which tables to import during Bulk Import TableInfos
 - Added CLI command to create DLE load directory hierarchy ('CreateNewLoadDirectory')
 
@@ -63,6 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed [CohortAggregateContainer] and filter containers not showing up in Find when explicitly requested
 - Fixed deleting an [ExtractionFilter] with many parameter values configured.  Now confirmation message is shown and all objects are deleted together
 - Fixed bug saving an [ExtractionInformation] when it is an extraction transform without an alias
+- Fixed bug refreshing Data Export tree collection when deleting multiple Projects/Packages at once (deleted objects were still shown)
 
 ## [6.0.2] - 2021-08-26
 
