@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ability to filter datasets and selected datasets by Catalogue criteria (e.g. Deprecated, Internal)
 - Added Clone, Freeze, Unfreeze and add dataset(s) ExtractionConfiguration commands to command line
 - Added support for identifying items by properties on CLI (e.g. list all Catalogues with Folder name containing 'edris')
+- Cloning a [CohortIdentificationConfiguration] now opens the clone
 
 ### Fixed
 - Fixed deleting a parameter value set failing due to a database constraint
