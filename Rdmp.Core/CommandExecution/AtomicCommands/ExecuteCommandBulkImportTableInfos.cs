@@ -55,7 +55,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             //don't do any double importing!
             var existing = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>();
-            var ignoredTables = new List<TableInfo>();
 
             if (YesNo("Would you also like to import ShareDefinitions (metadata)?", "Import Metadata From File(s)"))
             {
@@ -89,12 +88,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             foreach (DiscoveredTable discoveredTable in db.DiscoverTables(includeViews: false))
             {
                 var collide = existing.FirstOrDefault(t => t.Is(discoveredTable));
-                if (collide != null)
-                {
-                    ignoredTables.Add(collide);
-                    continue;
-                }
-                else
+                if (collide == null)
                 {
                     novel.Add(discoveredTable);
                 }
