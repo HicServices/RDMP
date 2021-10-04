@@ -88,21 +88,18 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 
         private void SetupToolTipText()
         {
-            int maxCharactersForButtonTooltips = 200;
-
             try
             {
                 var store = _manager.ActivateItems.RepositoryLocator.CatalogueRepository.CommentStore;
 
-                btnHome.ToolTipText = store.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(HomeUI));
-                btnCatalogues.ToolTipText = store.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(CatalogueCollectionUI));
-                btnCohorts.ToolTipText = store.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(CohortIdentificationCollectionUI));
-                btnSavedCohorts.ToolTipText =  store.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(SavedCohortsCollectionUI));
-                btnDataExport.ToolTipText = store.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(DataExportCollectionUI));
-                btnTables.ToolTipText = store.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(TableInfoCollectionUI));
-                btnLoad.ToolTipText = store.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(LoadMetadataCollectionUI));
-                btnFavourites.ToolTipText = store.GetTypeDocumentationIfExists(maxCharactersForButtonTooltips, typeof(FavouritesCollectionUI)); 
-
+                btnHome.ToolTipText = "Home screen, shows recent objects etc";
+                btnCatalogues.ToolTipText = "All datasets configured for access by RDMP";
+                btnCohorts.ToolTipText = "Built queries for creating cohorts";
+                btnSavedCohorts.ToolTipText = "Finalised identifier lists, ready for linkage and extraction";
+                btnDataExport.ToolTipText = "Data extraction projects";
+                btnTables.ToolTipText = "Advanced features e.g. logging, credentials, dashboards etc";
+                btnLoad.ToolTipText = "Load configurations for reading data into your databases";
+                btnFavourites.ToolTipText = "Collection of all objects that you have favourited";
             }
             catch (Exception e)
             {
