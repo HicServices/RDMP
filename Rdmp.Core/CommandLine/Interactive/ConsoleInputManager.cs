@@ -387,5 +387,33 @@ namespace Rdmp.Core.CommandLine.Interactive
         {
             ShowData(new ViewAggregateExtractUICollection(aggregate));
         }
+
+        public override bool SelectObjects<T>(string prompt, T[] available, out T[] selected, string initialSearchText = null)
+        {
+            if(available.Length == 0)
+            {
+                selected = new T[0];
+                return true;
+            }
+
+            for(int i=0;i < available.Length; i++)
+            {
+                Console.WriteLine($"{i}:{available[i]}");
+            }
+
+            var result = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(result))
+            {
+                // selecting none is a valid user selection
+                selected = new T[0];
+                return true;
+            }
+
+            var selectIdx = result.Split(",",StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
+
+            selected = available.Where((e, idx) => selectIdx.Contains(idx)).ToArray();
+            return true;
+        }
     }
 }

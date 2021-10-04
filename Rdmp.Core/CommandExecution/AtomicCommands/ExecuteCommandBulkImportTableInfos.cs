@@ -43,7 +43,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var db = SelectDatabase(false, "Import all Tables form Database...");
+            var db = SelectDatabase(false, "Import all Tables from Database...");
 
             if (db == null)
                 return;
@@ -55,7 +55,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             //don't do any double importing!
             var existing = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>();
-            var ignoredTables = new List<TableInfo>();
 
             if (YesNo("Would you also like to import ShareDefinitions (metadata)?", "Import Metadata From File(s)"))
             {
@@ -84,15 +83,24 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             ITableInfo anyNewTable = null;
 
+            List<DiscoveredTable> novel = new List<DiscoveredTable>();
+
             foreach (DiscoveredTable discoveredTable in db.DiscoverTables(includeViews: false))
             {
                 var collide = existing.FirstOrDefault(t => t.Is(discoveredTable));
-                if (collide != null)
+                if (collide == null)
                 {
-                    ignoredTables.Add(collide);
-                    continue;
+                    novel.Add(discoveredTable);
                 }
+            }
 
+            if(!BasicActivator.SelectObjects("Import", novel.ToArray(), out DiscoveredTable[] selected))
+            {
+                return;
+            }
+
+            foreach (DiscoveredTable discoveredTable in selected) 
+            { 
                 var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, discoveredTable);
                 
                 //import the table
@@ -142,9 +150,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     //yup thats how we roll, the database is main memory!
                     new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueRepository, kvp.Key, kvp.Value, kvp.Value.Name);
                 }
-
-            if (ignoredTables.Any())
-                BasicActivator.Show("Ignored " + ignoredTables.Count + " tables because they already existed as TableInfos:" + string.Join(Environment.NewLine, ignoredTables.Select(ti => ti.GetRuntimeName())));
 
             if (anyNewTable != null)
             {
