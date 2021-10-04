@@ -363,11 +363,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
         /// <param name="window"></param>
         public void AddWindow(RDMPSingleControlTab window)
         {
-            var singleObjectUI = window as PersistableSingleDatabaseObjectDockContent;
-
-            if(singleObjectUI != null)
+            if(window is PersistableSingleDatabaseObjectDockContent singleObjectUI)
                 if(AlreadyActive(singleObjectUI.Control.GetType(),singleObjectUI.DatabaseObject))
-                    throw new ArgumentOutOfRangeException("Cannot create another window for object " + singleObjectUI.DatabaseObject + " of type " + singleObjectUI.Control.GetType() + " because there is already a window active for that object/window type");
+                    throw new ArgumentOutOfRangeException($"Cannot create another window for object {singleObjectUI.DatabaseObject} of type {singleObjectUI.Control.GetType()} because there is already a window active for that object/window type");
             
             _trackedWindows.Add(window);
 
