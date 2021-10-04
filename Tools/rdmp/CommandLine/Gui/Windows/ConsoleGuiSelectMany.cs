@@ -14,7 +14,7 @@ using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui.Windows
 {
-    class ConsoleGuiSelectMany : Window
+    public class ConsoleGuiSelectMany : Window
     {
         private ListView lv;
         private readonly IBasicActivateItems _activator;
@@ -23,26 +23,40 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
         /// The final object selection made.  Note that you should
         /// also check <see cref="ResultOk"/> in case of user cancellation
         /// </summary>
-        public object[] Result { get; internal set; }
+        public object[] Result { get { return _available.Where((e, idx) => lv.Source.IsMarked(idx)).ToArray(); } }
 
         /// <summary>
         /// True if the user made a final selection or False if they exited without
         /// making a choice e.g. Hit Ctrl+Q
         /// </summary>
         public bool ResultOk { get; internal set; }
+        private object[] _available;
 
         public ConsoleGuiSelectMany(IBasicActivateItems activator,string prompt, object[] available)
         {
+            _available = available;
+
             lv = new ListView(available);
+            lv.AllowsMarking = true;
             lv.AllowsMultipleSelection = true;
 
             lv.Width = Dim.Fill();
             lv.Height = Dim.Fill();
+            lv.KeyPress += Lv_KeyPress;
 
             Text = prompt;
             Add(lv);
             this._activator = activator;
         }
 
+        private void Lv_KeyPress(KeyEventEventArgs obj)
+        {
+            if(obj.KeyEvent.Key == Key.Enter)
+            {
+                obj.Handled = true;
+                ResultOk = true;
+                Application.RequestStop();
+            }
+        }
     }
 }
