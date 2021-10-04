@@ -68,10 +68,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
         }
 
         
-        public override Control GetControl()
-        {
-            return (Control) _control;
-        }
 
         public override void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {

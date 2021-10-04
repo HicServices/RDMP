@@ -21,6 +21,11 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
         public IMapsDirectlyToDatabaseTable DatabaseObject;
         public IPersistableObjectCollection ObjectCollection;
 
+        public DeserializeInstruction(Type uiControlType)
+        {
+            UIControlType = uiControlType;
+        }
+
         public DeserializeInstruction(Type uiControlType, IMapsDirectlyToDatabaseTable databaseObject)
         {
             UIControlType = uiControlType;

@@ -368,7 +368,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             if (existing != null)
             {
-                existingHostedControlInstance = existing.GetControl();
+                existingHostedControlInstance = existing.Control;
                 existing.Activate();
 
                 // only refresh if there are changes to the underlying object
@@ -386,7 +386,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             if (existing != null)
             {
-                existingHostedControlInstance = existing.GetControl();
+                existingHostedControlInstance = existing.Control;
                 existing.Activate();
                 
                 // only refresh if there are changes to some of the underlying objects
@@ -396,12 +396,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             return existing != null;
         }
-        public DockContent Activate(DeserializeInstruction instruction)
+        public DockContent Activate(DeserializeInstruction instruction, IActivateItems activator)
         {
             if (instruction.DatabaseObject != null && instruction.ObjectCollection != null)
                 throw new ArgumentException("DeserializeInstruction cannot have both a DatabaseObject and an ObjectCollection");
 
-            var c = _constructor.Construct(instruction.UIControlType);
+            var c = (Control)_constructor.Construct(instruction.UIControlType,activator,true);
 
             var uiInstance = c as IRDMPSingleDatabaseObjectControl;
             var uiCollection = c as IObjectCollectionControl;
@@ -436,7 +436,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 return floatable;
             }
             else
-                throw new PersistenceException("DeserializeInstruction must have either a DatabaseObject or an ObjectCollection");
+            {
+                return (DockContent)activator.ShowWindow(c, true);
+            }
         }
 
         private void SetTabText(DockContent floatable, INamedTab tab)

@@ -363,11 +363,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
         /// <param name="window"></param>
         public void AddWindow(RDMPSingleControlTab window)
         {
-            var singleObjectUI = window as PersistableSingleDatabaseObjectDockContent;
-
-            if(singleObjectUI != null)
-                if(AlreadyActive(singleObjectUI.GetControl().GetType(),singleObjectUI.DatabaseObject))
-                    throw new ArgumentOutOfRangeException("Cannot create another window for object " + singleObjectUI.DatabaseObject + " of type " + singleObjectUI.GetControl().GetType() + " because there is already a window active for that object/window type");
+            if(window is PersistableSingleDatabaseObjectDockContent singleObjectUI)
+                if(AlreadyActive(singleObjectUI.Control.GetType(),singleObjectUI.DatabaseObject))
+                    throw new ArgumentOutOfRangeException($"Cannot create another window for object {singleObjectUI.DatabaseObject} of type {singleObjectUI.Control.GetType()} because there is already a window active for that object/window type");
             
             _trackedWindows.Add(window);
 
@@ -391,12 +389,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public PersistableSingleDatabaseObjectDockContent GetActiveWindowIfAnyFor(Type windowType, IMapsDirectlyToDatabaseTable databaseObject)
         {
-            return _trackedWindows.OfType<PersistableSingleDatabaseObjectDockContent>().SingleOrDefault(t => t.GetControl().GetType() == windowType && t.DatabaseObject.Equals(databaseObject));
+            return _trackedWindows.OfType<PersistableSingleDatabaseObjectDockContent>().SingleOrDefault(t => t.Control.GetType() == windowType && t.DatabaseObject.Equals(databaseObject));
         }
 
         public PersistableObjectCollectionDockContent GetActiveWindowIfAnyFor(Type windowType, IPersistableObjectCollection collection)
         {
-            return _trackedWindows.OfType<PersistableObjectCollectionDockContent>().SingleOrDefault(t => t.GetControl().GetType() == windowType && t.Collection.Equals(collection));
+            return _trackedWindows.OfType<PersistableObjectCollectionDockContent>().SingleOrDefault(t => t.Control.GetType() == windowType && t.Collection.Equals(collection));
         }
         /// <summary>
         /// Check whether a given RDMPSingleControlTab is already showing with the given DatabaseObject (e.g. is user currently editing Catalogue bob in CatalogueUI)
@@ -410,7 +408,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             if (!typeof(IRDMPSingleDatabaseObjectControl).IsAssignableFrom(windowType))
                 throw new ArgumentException("windowType must be a Type derrived from RDMPSingleControlTab");
 
-            return _trackedWindows.OfType<PersistableSingleDatabaseObjectDockContent>().Any(t => t.GetControl().GetType() == windowType && t.DatabaseObject.Equals(databaseObject));
+            return _trackedWindows.OfType<PersistableSingleDatabaseObjectDockContent>().Any(t => t.Control.GetType() == windowType && t.DatabaseObject.Equals(databaseObject));
         }
         
         /// <summary>
@@ -464,7 +462,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         /// <returns></returns>
         public IEnumerable<T> GetAllWindows<T>()
         {
-            return _trackedWindows.OfType<RDMPSingleControlTab>().Select(t => t.GetControl()).OfType<T>();
+            return _trackedWindows.OfType<RDMPSingleControlTab>().Select(t => t.Control).OfType<T>();
         }
     }
 }

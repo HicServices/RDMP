@@ -283,11 +283,12 @@ namespace ResearchDataManagementPlatform
                     return toolboxInstance;
                 }
 
-                var instruction = _persistenceFactory.ShouldCreateSingleObjectControl(persiststring,RepositoryLocator) ??
+                var instruction = _persistenceFactory.ShouldCreateBasicControl(persiststring,RepositoryLocator) ??
+                                  _persistenceFactory.ShouldCreateSingleObjectControl(persiststring,RepositoryLocator) ??
                                   _persistenceFactory.ShouldCreateObjectCollection(persiststring, RepositoryLocator);
 
                 if (instruction != null)
-                    return _windowManager.ActivateItems.Activate(instruction);
+                    return _windowManager.ActivateItems.Activate(instruction,_windowManager.ActivateItems);
             }
             catch (Exception e)
             {
