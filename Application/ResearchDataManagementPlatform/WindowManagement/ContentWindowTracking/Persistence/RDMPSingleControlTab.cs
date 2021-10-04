@@ -7,6 +7,7 @@
 using System;
 using System.Text;
 using System.Windows.Forms;
+using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.UI;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
@@ -22,24 +23,54 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
     /// </summary>
     [System.ComponentModel.DesignerCategory("")]
     [TechnicalUI]
-    public abstract class RDMPSingleControlTab:DockContent,IRefreshBusSubscriber
+    public class RDMPSingleControlTab:DockContent,IRefreshBusSubscriber
     {
+        /// <summary>
+        /// The control hosted on this tab
+        /// </summary>
+        public Control Control { get; protected set; }
+        public const string BasicPrefix = "BASIC";
+
         protected RDMPSingleControlTab(RefreshBus refreshBus)
         {
             refreshBus.Subscribe(this);
             FormClosed += (s, e) => refreshBus.Unsubscribe(this);
         }
 
-        public abstract Control GetControl();
-        public abstract void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e);
-        public abstract void HandleUserRequestingTabRefresh(IActivateItems activator);
+        /// <summary>
+        /// Creates instance and sets <see cref="Control"/> to <paramref name="c"/>.  You
+        /// will still need to add and Dock the control etc yourself
+        /// </summary>
+        /// <param name="refreshBus"></param>
+        /// <param name="c"></param>
+        public RDMPSingleControlTab(RefreshBus refreshBus, Control c)
+        {
+            refreshBus.Subscribe(this);
+            FormClosed += (s, e) => refreshBus.Unsubscribe(this);
+            Control = c;
+        }
 
-        public abstract void HandleUserRequestingEmphasis(IActivateItems activator);
+        public virtual void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+        {
+
+        }
+        public virtual void HandleUserRequestingTabRefresh(IActivateItems activator)
+        {
+
+        }
+
+        public virtual void HandleUserRequestingEmphasis(IActivateItems activator)
+        {
+
+        }
+        protected override string GetPersistString()
+        {
+            const char s = PersistStringHelper.Separator;
+            return BasicPrefix + s + Control.GetType().FullName;
+        }
 
         public void ShowHelp(IActivateItems activator)
         {
-
-
             var typeDocs = activator.RepositoryLocator.CatalogueRepository.CommentStore;
 
             StringBuilder sb = new StringBuilder();

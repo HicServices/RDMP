@@ -100,7 +100,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public DockContent Create(IActivateItems activator, Control control, string label, Bitmap image)
         {
-            DockContent content = new DockContent();
+            DockContent content = new RDMPSingleControlTab(activator.RefreshBus,control);
             
             AddControlToDockContent(activator, control, content,label, image);
 

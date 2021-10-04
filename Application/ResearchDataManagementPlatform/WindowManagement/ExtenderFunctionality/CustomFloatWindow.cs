@@ -46,7 +46,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality
                 return;
             }
 
-            var saveable = singleObjectControlTab.GetControl() as ISaveableUI;
+            var saveable = singleObjectControlTab.Control as ISaveableUI;
             saveToolStripMenuItem.Saveable = saveable;
         }
     }

@@ -35,6 +35,31 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
             Assembly.Load(typeof(ExecuteLoadMetadataUI).Assembly.FullName);
         }
 
+        /// <summary>
+        /// If <paramref name="persistString"/> describes the persisted control state
+        /// as described by the basic <see cref="RDMPSingleControlTab"/> class (rather
+        /// than a more specialised class like <see cref="RDMPSingleControlTab"/>) then
+        /// we return a new instruction of what Type of control to create
+        /// </summary>
+        /// <param name="persistString"></param>
+        /// <param name="repositoryLocator"></param>
+        /// <returns></returns>
+        public DeserializeInstruction ShouldCreateBasicControl(string persistString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        {
+            if (!persistString.StartsWith(RDMPSingleControlTab.BasicPrefix))
+                return null;
+
+            //return BasicPrefix + s + Control.GetType().Name
+            var tokens = persistString.Split(PersistStringHelper.Separator);
+
+            if (tokens.Length != 2)
+                throw new PersistenceException("Unexpected number of tokens (" + tokens.Length + ") for Persistence of Type " + RDMPSingleControlTab.BasicPrefix);
+
+            Type controlType = GetTypeByName(tokens[1], typeof(Control), repositoryLocator);
+
+            return new DeserializeInstruction(controlType);
+        }
+
         public RDMPCollection? ShouldCreateCollection(string persistString)
         {
             if (!persistString.StartsWith(PersistableToolboxDockContent.Prefix))
