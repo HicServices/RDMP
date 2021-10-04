@@ -20,6 +20,17 @@ namespace Rdmp.Core.DataViewing
     /// </summary>
     public class ViewCohortExtractionUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
     {
+        public int Top
+        {
+            get { return _arguments.ContainsKey(TopKey) ? int.Parse(_arguments[TopKey]) : 100; }
+            set { _arguments[TopKey] = value.ToString(); }
+        }
+
+        Dictionary<string, string> _arguments = new Dictionary<string, string>();
+        private const string TopKey = "Top";
+
+        public string Username { get; set; }
+
         public ViewCohortExtractionUICollection()
         {
         }
@@ -27,6 +38,15 @@ namespace Rdmp.Core.DataViewing
         public ViewCohortExtractionUICollection(ExtractableCohort cohort) : this()
         {
             DatabaseObjects.Add(cohort);
+        }
+
+        public override string SaveExtraText()
+        {
+            return Helper.SaveDictionaryToString(_arguments);
+        }
+        public override void LoadExtraText(string s)
+        {
+            _arguments = Helper.LoadDictionaryFromString(s);
         }
 
         public ExtractableCohort Cohort { get { return DatabaseObjects.OfType<ExtractableCohort>().SingleOrDefault(); } }
@@ -48,7 +68,7 @@ namespace Rdmp.Core.DataViewing
 
             var tableName = Cohort.ExternalCohortTable.TableName;
 
-            var response = GetQuerySyntaxHelper().HowDoWeAchieveTopX(100);
+            var response = GetQuerySyntaxHelper().HowDoWeAchieveTopX(Top);
 
             switch (response.Location)
             {
@@ -65,7 +85,7 @@ namespace Rdmp.Core.DataViewing
 
         public string GetTabName()
         {
-            return "Top 100 " + Cohort + "(V" + Cohort.ExternalVersion + ")";
+            return "View " + Cohort + "(V" + Cohort.ExternalVersion + ")";
         }
 
         public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
