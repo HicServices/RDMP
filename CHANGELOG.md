@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [CohortAggregateContainer] now show up in the find dialog (you can disable this in UserSettings)
 - Bump Microsoft.Data.SqlClient from 3.0.0 to 3.0.1
 - Checks buttons on the toolbars are now hidden instead of disabled when inapplicable
+- Shortened tool tips in top menu bar
 
 ### Removed
 
@@ -47,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added Clone, Freeze, Unfreeze and add dataset(s) ExtractionConfiguration commands to command line
 - Added support for identifying items by properties on CLI (e.g. list all Catalogues with Folder name containing 'edris')
 - Added new command ViewCohortSample for viewing a sample or extracting all cohort identifiers (and anonymous mapping) to console/file
+- Added CLI command to create DLE load directory hierarchy ('CreateNewLoadDirectory')
 
 ### Fixed
 - Fixed deleting a parameter value set failing due to a database constraint
