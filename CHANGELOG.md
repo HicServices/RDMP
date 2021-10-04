@@ -63,6 +63,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed [CohortAggregateContainer] and filter containers not showing up in Find when explicitly requested
 - Fixed deleting an [ExtractionFilter] with many parameter values configured.  Now confirmation message is shown and all objects are deleted together
 - Fixed bug saving an [ExtractionInformation] when it is an extraction transform without an alias
+- Fixed bug refreshing Data Export tree collection when deleting multiple Projects/Packages at once (deleted objects were still shown)
 
 ## [6.0.2] - 2021-08-26
 
