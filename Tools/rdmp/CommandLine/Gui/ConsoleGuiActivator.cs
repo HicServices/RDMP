@@ -194,11 +194,16 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public override DirectoryInfo SelectDirectory(string prompt)
         {
-            var openDir = new OpenDialog(prompt,"Directory"){AllowsMultipleSelection = false};
+            var openDir = new OpenDialog(prompt,"Directory"){
+                AllowsMultipleSelection = false,
+                CanCreateDirectories = true,
+                CanChooseDirectories = true,
+                CanChooseFiles = false,
+            };
             
             Application.Run(openDir);
 
-            var selected = openDir.DirectoryPath?.ToString();
+            var selected = openDir.FilePath?.ToString();
             
             return selected == null ? null : new DirectoryInfo(selected);
 
