@@ -468,6 +468,9 @@ namespace Rdmp.Core.CommandExecution
         public abstract bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null, bool allowAutoSelect = false) where T : class;
 
         /// <inheritdoc/>
+        public abstract bool SelectObjects<T>(string prompt, T[] available, out T[] selected, string initialSearchText = null) where T : class;
+
+        /// <inheritdoc/>
         public abstract DirectoryInfo SelectDirectory(string prompt);
 
         /// <inheritdoc/>

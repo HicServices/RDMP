@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -14,6 +15,8 @@ namespace Rdmp.UI.Menus
     {
         public LoadDirectoryNodeMenu(RDMPContextMenuStripArgs args,LoadDirectoryNode node) : base(args, node)
         {
+            args.SkipCommand<ExecuteCommandCreateNewDataLoadDirectory>();
+
             ReBrandActivateAs("Open In Explorer",RDMPConcept.CatalogueFolder);
             Add(new ExecuteCommandChooseLoadDirectory(_activator, node.LoadMetadata));
         }

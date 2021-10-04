@@ -142,10 +142,10 @@ namespace Rdmp.Core.CommandLine.Gui
         public override IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
             IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null)
         {
-            //todo make this handle multi selection
-            var chosen = SelectOne(prompt, availableObjects, initialSearchText);
+            var dlg = new ConsoleGuiSelectMany(this, prompt, availableObjects);
+            Application.Run(dlg);
 
-            return chosen == null ? null : new IMapsDirectlyToDatabaseTable[] { chosen };
+            return dlg.ResultOk ? dlg.Result.Cast<IMapsDirectlyToDatabaseTable>().ToArray() : new IMapsDirectlyToDatabaseTable[0];
         }
 
         public override IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
@@ -183,13 +183,27 @@ namespace Rdmp.Core.CommandLine.Gui
             return false;
         }
 
+        public override bool SelectObjects<T>(string prompt, T[] available, out T[] selected, string initialSearchText = null)
+        {  
+            var dlg = new ConsoleGuiSelectMany(this, prompt, available);
+            Application.Run(dlg);
+
+            selected = dlg.Result.Cast<T>().ToArray();
+            return dlg.ResultOk;
+        }
+
         public override DirectoryInfo SelectDirectory(string prompt)
         {
-            var openDir = new OpenDialog(prompt,"Directory"){AllowsMultipleSelection = false};
+            var openDir = new OpenDialog(prompt,"Directory"){
+                AllowsMultipleSelection = false,
+                CanCreateDirectories = true,
+                CanChooseDirectories = true,
+                CanChooseFiles = false,
+            };
             
             Application.Run(openDir);
 
-            var selected = openDir.DirectoryPath?.ToString();
+            var selected = openDir.FilePath?.ToString();
             
             return selected == null ? null : new DirectoryInfo(selected);
 
