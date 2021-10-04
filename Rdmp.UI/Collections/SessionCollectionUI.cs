@@ -73,8 +73,19 @@ namespace Rdmp.UI.Collections
             RefreshSessionObjects();
 
             CommonFunctionality.ClearToolStrip();
-            CommonFunctionality.Add(new ToolStripButton("Add",null,AddObjectToSession));
+            CommonFunctionality.Add(new ToolStripButton("Add...",null,AddObjectToSession));
+            CommonFunctionality.Add(new ToolStripButton("Remove...", null, RemoveObjectsFromSession));
 
+        }
+
+        private void RemoveObjectsFromSession(object sender, EventArgs e)
+        {
+            var toRemove = Activator.SelectMany("Remove From Session", typeof(IMapsDirectlyToDatabaseTable), Collection.DatabaseObjects.ToArray());
+
+            if(toRemove != null && toRemove.Length > 0)
+            {
+                Remove(toRemove);
+            }
         }
 
         /// <summary>
@@ -99,7 +110,20 @@ namespace Rdmp.UI.Collections
             Collection.DatabaseObjects = toAdd.Union(Collection.DatabaseObjects).ToList();
             RefreshSessionObjects();
         }
-
+        /// <summary>
+        /// Removes <paramref name="toRemove"/> from the list of objects tracked in the session
+        /// </summary>
+        /// <param name="toRemove"></param>
+        public void Remove(params IMapsDirectlyToDatabaseTable[] toRemove)
+        {
+            foreach(var r in toRemove)
+            {
+                Collection.DatabaseObjects.Remove(r);
+                olvTree.RemoveObject(r);
+            }
+            
+            RefreshSessionObjects();
+        }
         private void AddObjectToSession(object sender, EventArgs e)
         {
             var ui = new NavigateToObjectUI(Activator);
