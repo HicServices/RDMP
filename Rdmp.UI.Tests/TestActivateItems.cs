@@ -71,7 +71,6 @@ namespace Rdmp.UI.Tests
 
             CommentStore = _commentStore;
 
-            CoreIconProvider = new DataExportIconProvider(RepositoryLocator,null);
             HistoryProvider = new HistoryProvider(RepositoryLocator);
 
             _problemProviders = new List<IProblemProvider>(new IProblemProvider[]
@@ -87,8 +86,6 @@ namespace Rdmp.UI.Tests
             return singleControlForm.FindForm();
         }
         
-        public ICoreIconProvider CoreIconProvider { get; private set; }
-
         public override void Publish(IMapsDirectlyToDatabaseTable o)
         {
             base.Publish(o);
@@ -328,6 +325,11 @@ namespace Rdmp.UI.Tests
         }
 
         public override bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null, bool allowAutoSelect = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool SelectObjects<T>(string prompt, T[] available, out T[] selected, string initialSearchText = null)
         {
             throw new NotImplementedException();
         }

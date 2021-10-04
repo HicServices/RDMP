@@ -193,6 +193,17 @@ namespace Rdmp.Core.CommandExecution
         /// <returns>True if a selection was made</returns>
         bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null, bool allowAutoSelect = false) where T : class;
 
+
+        /// <summary>
+        /// Prompts user to pick several of <paramref name="available"/> objects
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="prompt"></param>
+        /// <param name="available"></param>
+        /// <param name="selected"></param>
+        /// <param name="initialSearchText"></param>
+        bool SelectObjects<T>(string prompt, T[] available, out T[] selected, string initialSearchText = null) where T : class;
+
         /// <summary>
         /// Prompts user to select a directory on disk
         /// </summary>

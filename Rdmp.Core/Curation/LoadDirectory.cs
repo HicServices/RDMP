@@ -91,7 +91,7 @@ namespace Rdmp.Core.Curation
         public static LoadDirectory CreateDirectoryStructure(DirectoryInfo parentDir, string dirName, bool overrideExistsCheck = false)
         {
             if (!parentDir.Exists)
-                throw new Exception("Cannot create directory structure in " + parentDir.FullName + " (it doesn't exist)");
+                parentDir.Create();
 
             var projectDir = new DirectoryInfo(Path.Combine(parentDir.FullName, dirName));
 
