@@ -53,6 +53,13 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
         {
             if(obj.KeyEvent.Key == Key.Enter)
             {
+                // if there are no selected objects (user hits space to select many)
+                // then they probably want a single object selection
+                if(Result.Length == 0)
+                {
+                    lv.MarkUnmarkRow();
+                }
+
                 obj.Handled = true;
                 ResultOk = true;
                 Application.RequestStop();

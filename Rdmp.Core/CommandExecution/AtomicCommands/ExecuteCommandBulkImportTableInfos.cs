@@ -157,9 +157,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueRepository, kvp.Key, kvp.Value, kvp.Value.Name);
                 }
 
-            if (ignoredTables.Any())
-                BasicActivator.Show("Ignored " + ignoredTables.Count + " tables because they already existed as TableInfos:" + string.Join(Environment.NewLine, ignoredTables.Select(ti => ti.GetRuntimeName())));
-
             if (anyNewTable != null)
             {
                 Publish(anyNewTable);
