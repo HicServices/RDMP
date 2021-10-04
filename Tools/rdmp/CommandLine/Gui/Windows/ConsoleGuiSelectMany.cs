@@ -14,6 +14,9 @@ using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui.Windows
 {
+    /// <summary>
+    /// Allows the user to select one or more objects in a modal console dialog
+    /// </summary>
     public class ConsoleGuiSelectMany : Window
     {
         private ListView lv;
