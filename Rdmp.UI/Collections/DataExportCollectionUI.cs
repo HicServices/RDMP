@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core;
@@ -138,6 +139,16 @@ namespace Rdmp.UI.Collections
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
+
+            var dataExportChildProvider = Activator.CoreChildProvider as DataExportChildProvider;
+
+            if (dataExportChildProvider != null)
+            {
+                // remove packages and projects which don't exist any more according to child provider
+                tlvDataExport.RemoveObjects(tlvDataExport.Objects.OfType<ExtractableDataSetPackage>().Except(dataExportChildProvider.AllPackages).ToArray());
+                tlvDataExport.RemoveObjects(tlvDataExport.Objects.OfType<Project>().Except(dataExportChildProvider.Projects).ToArray());
+            }
+
             SetupToolStrip();
         }
 
