@@ -87,6 +87,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     Emphasise(_project);
                 else
                     Emphasise(CloneCreatedIfAny);
+
+                Activate(CloneCreatedIfAny);
             }
         }
     }
