@@ -22,8 +22,8 @@ namespace Rdmp.Core.DataViewing
     {
         public int Top
         {
-            get { return _arguments.ContainsKey(TopKey) ? int.Parse(_arguments[TopKey]) : 100; }
-            set { _arguments[TopKey] = value.ToString(); }
+            get => _arguments.ContainsKey(TopKey) ? int.Parse(_arguments[TopKey]) : 100;
+            set => _arguments[TopKey] = value.ToString();
         }
 
         Dictionary<string, string> _arguments = new Dictionary<string, string>();
@@ -70,22 +70,18 @@ namespace Rdmp.Core.DataViewing
 
             var response = GetQuerySyntaxHelper().HowDoWeAchieveTopX(Top);
 
-            switch (response.Location)
+            return response.Location switch
             {
-                case QueryComponent.SELECT:
-                    return "Select " + response.SQL + " * from " + tableName + " WHERE " + Cohort.WhereSQL();
-                case QueryComponent.WHERE:
-                    return "Select * from " + tableName + " WHERE " + response.SQL + " AND " + Cohort.WhereSQL();
-                case QueryComponent.Postfix:
-                    return "Select * from " + tableName + " WHERE " + Cohort.WhereSQL() + " " + response.SQL;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                QueryComponent.SELECT  => $"Select {response.SQL} * from {tableName} WHERE {Cohort.WhereSQL()}",
+                QueryComponent.WHERE   => $"Select * from {tableName} WHERE {response.SQL} AND {Cohort.WhereSQL()}",
+                QueryComponent.Postfix => $"Select * from {tableName} WHERE {Cohort.WhereSQL()} {response.SQL}",
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
 
         public string GetTabName()
         {
-            return "View " + Cohort + "(V" + Cohort.ExternalVersion + ")";
+            return $"View {Cohort}(V{Cohort.ExternalVersion})";
         }
 
         public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
@@ -100,8 +96,7 @@ namespace Rdmp.Core.DataViewing
 
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
-            var c = Cohort;
-            return c != null ? c.GetQuerySyntaxHelper() : null;
+            return Cohort?.GetQuerySyntaxHelper();
         }
     }
 }
