@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ability to filter datasets and selected datasets by Catalogue criteria (e.g. Deprecated, Internal)
 - Added Clone, Freeze, Unfreeze and add dataset(s) ExtractionConfiguration commands to command line
 - Added support for identifying items by properties on CLI (e.g. list all Catalogues with Folder name containing 'edris')
+- Added the ability to pick which tables to import during Bulk Import TableInfos
 - Added CLI command to create DLE load directory hierarchy ('CreateNewLoadDirectory')
 
 ### Fixed

@@ -594,6 +594,21 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return false;
         }
 
+        public override bool SelectObjects<T>(string prompt, T[] available, out T[] selected, string initialSearchText = null)
+        {
+            var pick = new SelectDialog<T>(this, available, false, false);
+            pick.Text = prompt;
+            pick.AllowMultiSelect = true;
+
+            if (pick.ShowDialog() == DialogResult.OK)
+            {
+                selected = pick.MultiSelected.ToArray();
+                return true;
+            }
+
+            selected = default(T[]);
+            return false;
+        }
         public override DirectoryInfo SelectDirectory(string prompt)
         {
             using(var fb = new FolderBrowserDialog())
