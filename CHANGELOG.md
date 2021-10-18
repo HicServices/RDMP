@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [7.0.0] - 2021-10-18
+
 ### Changed
 
 - IPluginUserInterface is now in `Rdmp.Core` and therefore you can write console gui or dual mode (console and winforms) plugin UIs
@@ -897,7 +899,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v6.0.2...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.0...develop
+[7.0.0]: https://github.com/HicServices/RDMP/compare/v6.0.2...v7.0.0
 [6.0.2]: https://github.com/HicServices/RDMP/compare/v6.0.1...v6.0.2
 [6.0.1]: https://github.com/HicServices/RDMP/compare/v6.0.0...v6.0.1
 [6.0.0]: https://github.com/HicServices/RDMP/compare/v5.0.3...v6.0.0
