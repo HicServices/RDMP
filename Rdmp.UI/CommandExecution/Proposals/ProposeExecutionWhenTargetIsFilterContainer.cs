@@ -38,7 +38,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             if (sourceFilterCommand != null)
             {
                 //if filter is already in the target container
-                if (sourceFilterCommand.ImmediateContainerIfAny.Equals(targetContainer))
+                if (sourceFilterCommand.ImmediateContainerIfAny?.Equals(targetContainer) ?? false)
                     return null;
 
                 //if the target container is one that is part of the filters tree then it's a move
