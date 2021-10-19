@@ -46,53 +46,56 @@ https://github.com/HicServices/RDMPExamplePlugins
 
 Rdmp plugins must be packaged as [NuGet packages](https://en.wikipedia.org/wiki/NuGet) (e.g. MyPlugin.0.0.1.nupkg).
 
-It is recommended to write all your plugin code in a single csproj targetting [Dot Net Standard](https://docs.microsoft.com/en-us/dotnet/standard/net-standard) and produce the runtime binaries by writting two empty projects that reference it.  You can see an example of this in the [Rdmp.Dicom plugin](https://github.com/HicServices/RdmpDicom)
-
-To begin with we can create a UI only plugin (`net5.0-windows`).  Create the following in Visual Studio Solution:
+Create a new project and add a reference to the nuget package [HIC.RDMP.Plugin](https://www.nuget.org/packages/HIC.RDMP.Plugin/)
 
 ```
-\MyPlugin\MyPlugin.csproj (Targetting `net5.0-windows`)
-\MyPlugin.nuspec
-\MyPlugin.sln
+dotnet new classlib -n MyPlugin -o ./MyPlugin
+cd ./MyPlugin
+dotnet add package HIC.RDMP.Plugin
 ```
 
-In `MyPlugin.csproj` add a reference to the nuget packages `HIC.RDMP.Plugin` and `HIC.RDMP.Plugin.UI`.  
-
- ![Class Documentation](Images/NugetPackages.png)
- 
-  Make sure that the major and minor version number (first two numbers) of the Nuget Package match your installed version of RDMP (Visible in the task bar of the main RDMP application)
-
- ![Versions must match](Images/NugetVersionMustMatchLive.png)
-
- Add the following class:
+Add the following classes:
 
 ```csharp
+using Rdmp.Core;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.ItemActivation;
-using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace MyPlugin
 {
-    public class MyPluginUserInterface:Rdmp.UI.PluginChildProvision.PluginUserInterface
+    class MyPluginUI : PluginUserInterface
     {
-        public MyPluginUserInterface(IActivateItems activator):base(activator)
+        public MyPluginUI(IBasicActivateItems itemActivator) : base(itemActivator)
+        {
+        }
+
+        public override IEnumerable<IAtomicCommand> GetAdditionalRightClickMenuItems(object o)
+        {
+            if(o is Catalogue)
+            {
+                yield return new ExecuteCommandHelloWorld(BasicActivator);
+            }
+        }
+    }
+
+
+    internal class ExecuteCommandHelloWorld : BasicCommandExecution
+    {
+        public ExecuteCommandHelloWorld(IBasicActivateItems activator) : base(activator)
         {
 
         }
-
-        public override ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object o)
+        public override void Execute()
         {
-            if (o is Catalogue)
-                return new[] { new ToolStripMenuItem("Hello World", null, (s, e) => MessageBox.Show("Hello World")) };
-
-            return null;
+            BasicActivator.Show("Hello World!");
         }
     }
 }
-
 ```
 
-In `MyPlugin.nuspec` write the following:
+Create a nuspec file called `MyPlugin.nuspec` that describes your plugin:
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -103,34 +106,53 @@ In `MyPlugin.nuspec` write the following:
         <authors>Me</authors>
         <description>My RDMP Plugin</description>
         <dependencies>
-            <dependency id="HIC.RDMP.Plugin" version="5.0" />
+            <!-- Make sure this matches your running RDMP major/minor versions-->
+            <dependency id="HIC.RDMP.Plugin" version="7.0" />
         </dependencies>
     </metadata>
     <files>
-    <file src="MyPlugin\bin\Debug\net461\*" target="lib\windows" />	
+    <file src="bin\net5.0\*" target="lib\main" />	
     </files>
 </package>
 ```
 
-Build the solution and then run:
-`nuget pack MyPlugin.nuspec`
+Build the solution and package it with the [nuget cli app](https://www.nuget.org/downloads):
+```
+dotnet build
+nuget pack MyPlugin.nuspec
+```
 
 This should produce a file called `MyPlugin.0.0.1.nupkg`.  Open RDMP and click the `Tables(Advanced)` collection and right click `Plugins`.  Navigate to your plugin package.
 
  ![Adding a plugin via the RDMP user interface](Images/AddPluginContextMenu.png)
 
-You can remove plugins at any time directly from your platform database by running
-```sql
-delete from Plugin where ID = 20 --Example ID
+Make sure that you have listed the correct RDMP Major/Minor version in the nuspec file (7.0 in the xml example above).  Otherwise when you add it you will get an error:
+
+```
+Plugin version 0.0.1 is incompatible with current running version of RDMP (7.0.0).
 ```
 
-Restart RDMP and create a empty Catalogue
-
- ![Add empty Catalogue](Images/AddEmptyCatalogue.png)
-
- Now right click it.  You should see your message appearing.
+Restart RDMP and right click a Catalogue
 
  ![What it should look like](Images/HelloWorldSuccess.png)
+
+If you have the RDMP command line you can also call your command from there:
+
+```
+./rdmp cmd HelloWorld
+```
+
+For example on windows running in powershell the following output would appear:
+```
+PS Z:\Repos\RDMP\Tools\rdmp\bin\Debug\net5.0> ./rdmp cmd HelloWorld
+2021-10-19 10:42:00.7839 INFO Dotnet Version:5.0.10 .
+2021-10-19 10:42:00.8063 INFO RDMP Version:7.0.0.0 .
+2021-10-19 10:42:01.6559 INFO Setting yaml config value for CatalogueConnectionString .
+2021-10-19 10:42:01.6568 INFO Setting yaml config value for DataExportConnectionString .
+Hello World!
+Command Completed
+2021-10-19 10:42:05.9123 INFO Exiting with code 0 .
+```
 
  <a name="debugging"></a>
  # Attaching the Debugger
