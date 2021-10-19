@@ -1263,85 +1263,146 @@ Going from `ICheckNotifier` to `IDataLoadEventListener` will result in a listene
 
 <a name="guis"></a>
 # Graphical User Interfaces In Plugins
-In RDMP commands are usually parcelled into [`IAtomicCommand`](./UserInterfaceOverview.md#commands) objects rather using `ToolStripMenuItem` directly.  You can implement this system as follows:
 
-Create a new class `ExecuteCommandRenameCatalogueToBunnies` inherit from base class `BasicUICommandExecution` and implement `IAtomicCommand`.
+All the plugins described in this tutorial have been written to work without any explicit gui elements (e.g. forms).  This enables them to work in automated workflows (i.e. from the RDMP command line).
 
-Create a new Resources file called `Resources.resx` and add a 19x19 pixel image of a bunny e.g. this one: ![an icon of a bunny](Images/Bunny.png)
+RDMP does support graphical plugins for the RDMP windows client application.  These must be packaged into the `libs\windows` subdirectory of the plugins `.nupkg`.
 
-(You might need to add a reference to `System.Drawing.Common` nuget package)
+```
+dotnet new winformslib -n MyPluginUI -o ./MyPluginUI
+cd ./MyPluginUI
+dotnet add package HIC.RDMP.Plugin.UI
+```
+
+Add a new user control using the Visual Studio Forms Designer
+
+![A simple user control in Visual Studio Forms Designer](Images/UserControl1.png)
+
+Add an implementation of `IPluginUserInterface` that detects when the windows client is being used and shows this alternative UI for editing `Catalogue` objects.
 
 ```csharp
+using MapsDirectlyToDatabaseTable;
+using Rdmp.Core;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
-using ReusableLibraryCode.Icons.IconProvision;
-using System.Drawing;
 
-namespace MyPlugin
+namespace MyPluginUI
 {
-    public class ExecuteCommandRenameCatalogueToBunnies:BasicUICommandExecution, IAtomicCommand
+    public class MyPluginUIExample: PluginUserInterface
     {
-        private readonly Catalogue _catalogue;
-
-        public ExecuteCommandRenameCatalogueToBunnies(IActivateItems activator,Catalogue catalogue) : base(activator)
+        public MyPluginUIExample(IBasicActivateItems activator):base(activator)
         {
-            _catalogue = catalogue;
 
-            if(catalogue.Name == "Bunny")
-                SetImpossible("Catalogue is already called Bunny");
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override bool CustomActivate(IMapsDirectlyToDatabaseTable o)
         {
-            //icon to use for the right click menu (return null if you don't want one)
-            return Resources.Bunny;
-        }
+            // if this is the windows client
+            if(BasicActivator is IActivateItems a)
+            {
+                if(o is Catalogue c)
+                {
+                    var control = new UserControl1(c);
+                    a.ShowWindow(control,true);
+                    return true;
+                }
+            }
 
-        public override void Execute()
-        {
-            base.Execute();
-
-            //change the name
-            _catalogue.Name = "Bunny";
-            
-            //save the change
-            _catalogue.SaveToDatabase();
-
-            //Lets the rest of the application know that a change has happened
-            Publish(_catalogue);
+            return base.CustomActivate(o);
         }
     }
 }
 ```
 
-Adjust the plugin user interface class `GetAdditionalRightClickMenuItems` method to return an instance of this new command:
+Update the `UserControl1` constructor to take a `Catalogue`
 
 ```csharp
-
-public override ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object o)
+public UserControl1(Rdmp.Core.Curation.Data.Catalogue c)
 {
-    if (o is Catalogue)
-        return new[]
-        {
-            new ToolStripMenuItem("Hello World", null, (s, e) => MessageBox.Show("Hello World")),
-
-            GetMenuItem(new ExecuteCommandRenameCatalogueToBunnies(ItemActivator,(Catalogue)o))
-        };
-
-    return null;
+    InitializeComponent();
+    textBox1.Text = c.Description;
 }
 ```
 
-Increase the version number of your plugin to 0.1.2 in the nuspec file and commit the new nupkg to rdmp.
+Build to the RDMP bin directory
 
-Now when you right click a [Catalogue] you should see your command offered to the user:
+```
+dotnet build -o Z:\rdmp-client\
+cd Z:\rdmp-client\
+./ResearchDataManagementPlatform.exe
+```
 
-![What it should look like](Images/RightClickBunnyMenuItem.png)
+Now double clicking a Catalogue should launch your custom user interface.
 
-Your command will also be available under the `File=>Run...` dialog.
+![UserControl1 running in RDMP showing data from the Catalogue](Images/ExamplePluginGui.png)
 
+If you want the control to use the same look and feel as the rest of RDMP then change `UserControl` to inherit from `RDMPSingleDatabaseObjectControl<T>`:
+
+```csharp
+using Rdmp.Core.Curation.Data;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using System.Windows.Forms;
+
+namespace MyPluginUI
+{
+    public partial class UserControl1 : RDMPSingleDatabaseObjectControl<Catalogue>
+    {
+        public UserControl1()
+        {
+            InitializeComponent();
+        }
+        public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
+        {
+            // make sure to do this first
+            base.SetDatabaseObject(activator, databaseObject);
+
+            // now bind the text box to Catalogue Description field
+            Bind(textBox1, "Text", "Description", c => c.Description);
+
+            // add Save button
+            var s = GetObjectSaverButton();
+            s.SetupFor(this, databaseObject, activator);
+        }
+    }
+}
+```
+
+Update how you call your control:
+
+```csharp
+// if this is the windows client
+if(BasicActivator is IActivateItems a)
+{
+    if(o is Catalogue c)
+    {
+        var control = new UserControl1();
+        a.ShowWindow(control,true);
+        control.SetDatabaseObject(a, c);
+        return true;
+    }
+}
+```
+
+![UserControl1 running in RDMP showing data from the Catalogue with consistent look and feel](Images/SameLookAndFeel.png)
+
+To package your plugin as a nupkg that is usable by others.  Update `MyPlugin.nuspec` include both `MyPluginUI` and `MyPlugin` binaries in the appropriate subdirectory:
+
+```
+    <files>
+    <file src="MyPlugin\bin\net5.0\*" target="lib\main" />
+    <file src="MyPluginUI\bin\net5.0-windows\*" target="lib\windows" />
+    </files>
+```
+
+Delete all `MyPlugin...` files that you built into the RDMP directory
+
+Package the plugin with nuget:
+
+```
+nuget pack ./MyPlugin.nuspec
+```
 
 <a name="troubleshooting"></a>
 # Troubleshooting Plugins
