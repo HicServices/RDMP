@@ -1,9 +1,7 @@
 # Table of contents
 1. [RDMP Binary and Documentation](#binary)
 1. [Hello World Plugin](#helloWorldPlugin)
-2. [Attaching the Debugger](#debugging)
-3. [Streamlining Build](#betterBuilding)
-4. [Hello World UI Command Execution](#commandExecution)
+2. [Debugging](#debugging)
 5. [A basic anonymisation plugin](#basicAnoPlugin)
   * [Version 1](#anoPluginVersion1)
   * [Version 2](#anoPluginVersion2)
@@ -18,6 +16,8 @@
   * [Version 5](#anoPluginVersion5)
   * [What is wrong with NLog etc?](#NLog)
   * [What other funky things can I do with IDataLoadEventListener?](#funkyIDataLoadEventListener)
+7. [Graphical User Interfaces In Plugins](#guis)
+
 
 <a name="binary"></a>
 # RDMP Binary and Documentation
@@ -155,98 +155,14 @@ Command Completed
 ```
 
  <a name="debugging"></a>
- # Attaching the Debugger
- Sometimes you want to debug your plugin as it is running hosted by RDMP.  To do this simply launch `ResearchDataManagementPlatform.exe` manually (if you need to see where the exe is you can select Diagnostics=>Open exe directory at any time).  Next go into visual studio and select Debug=>Attach to Process
+ # Debugging
+If you want to debug your plugin, first delete it in RDMP.  Then set the output build directory to the location of the RDMP binary e.g.:
 
-## Adding a debug target of RDMP (To your plugin project)
-Right click your Solution and select 'Add Existing Project...' and navigate to the ResearchDataManagementPlatform.exe file.
-
-This should add a new root level item in your Solution called 'ResearchDataManagementPlatform'
-
-Right click it and set it as the startup project
-
-Now when you start your plugin project the RDMP application will launch with the debugger attached.
-
-<a name="commandExecution"></a>
-# Hello World UI Command Execution
-In RDMP commands are usually parcelled into [`IAtomicCommand`](./UserInterfaceOverview.md#commands) objects rather using `ToolStripMenuItem` directly.  You can implement this system as follows:
-
-Create a new class `ExecuteCommandRenameCatalogueToBunnies` inherit from base class `BasicUICommandExecution` and implement `IAtomicCommand`.
-
-Create a new Resources file called `Resources.resx` and add a 19x19 pixel image of a bunny e.g. this one: ![an icon of a bunny](Images/Bunny.png)
-
-(You might need to add a reference to `System.Drawing.Common` nuget package)
-
-```csharp
-using Rdmp.Core.Curation.Data;
-using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
-using ReusableLibraryCode.Icons.IconProvision;
-using System.Drawing;
-
-namespace MyPlugin
-{
-    public class ExecuteCommandRenameCatalogueToBunnies:BasicUICommandExecution, IAtomicCommand
-    {
-        private readonly Catalogue _catalogue;
-
-        public ExecuteCommandRenameCatalogueToBunnies(IActivateItems activator,Catalogue catalogue) : base(activator)
-        {
-            _catalogue = catalogue;
-
-            if(catalogue.Name == "Bunny")
-                SetImpossible("Catalogue is already called Bunny");
-        }
-
-        public Image GetImage(IIconProvider iconProvider)
-        {
-		    //icon to use for the right click menu (return null if you don't want one)
-            return Resources.Bunny;
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-		    //change the name
-            _catalogue.Name = "Bunny";
-			
-		    //save the change
-            _catalogue.SaveToDatabase();
-
-		    //Lets the rest of the application know that a change has happened
-            Publish(_catalogue);
-        }
-    }
-}
+```
+dotnet build -o Z:\rdmp-client
 ```
 
-Adjust the plugin user interface class `GetAdditionalRightClickMenuItems` method to return an instance of this new command:
-
-```csharp
-
-public override ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object o)
-{
-    if (o is Catalogue)
-        return new[]
-        {
-            new ToolStripMenuItem("Hello World", null, (s, e) => MessageBox.Show("Hello World")),
-
-            GetMenuItem(new ExecuteCommandRenameCatalogueToBunnies(ItemActivator,(Catalogue)o))
-        };
-
-    return null;
-}
-```
-
-Increase the version number of your plugin to 0.1.2 in the nuspec file and commit the new nupkg to rdmp.
-
-Now when you right click a [Catalogue] you should see your command offered to the user:
-
-![What it should look like](Images/RightClickBunnyMenuItem.png)
-
-Your command will also be available under the `File=>Run...` dialog.
+Launch the RDMP binary and then attach the visual studio debugger (Debug=>Attach to Process)
 
 <a name="basicAnoPlugin"></a>
 # A (very) basic Anonymisation Plugin
@@ -1409,6 +1325,88 @@ IDataLoadEventListener listener = new ThrowImmediatelyDataLoadEventListener();
 ICheckNotifier checker = new FromDataLoadEventListenerToCheckNotifier(listener);
 IDataLoadEventListener listener2 = new FromCheckNotifierToDataLoadEventListener(checker);	
 ```
+
+<a name="guis"></a>
+# Graphical User Interfaces In Plugins
+In RDMP commands are usually parcelled into [`IAtomicCommand`](./UserInterfaceOverview.md#commands) objects rather using `ToolStripMenuItem` directly.  You can implement this system as follows:
+
+Create a new class `ExecuteCommandRenameCatalogueToBunnies` inherit from base class `BasicUICommandExecution` and implement `IAtomicCommand`.
+
+Create a new Resources file called `Resources.resx` and add a 19x19 pixel image of a bunny e.g. this one: ![an icon of a bunny](Images/Bunny.png)
+
+(You might need to add a reference to `System.Drawing.Common` nuget package)
+
+```csharp
+using Rdmp.Core.Curation.Data;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.ItemActivation;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Icons.IconProvision;
+using System.Drawing;
+
+namespace MyPlugin
+{
+    public class ExecuteCommandRenameCatalogueToBunnies:BasicUICommandExecution, IAtomicCommand
+    {
+        private readonly Catalogue _catalogue;
+
+        public ExecuteCommandRenameCatalogueToBunnies(IActivateItems activator,Catalogue catalogue) : base(activator)
+        {
+            _catalogue = catalogue;
+
+            if(catalogue.Name == "Bunny")
+                SetImpossible("Catalogue is already called Bunny");
+        }
+
+        public Image GetImage(IIconProvider iconProvider)
+        {
+		    //icon to use for the right click menu (return null if you don't want one)
+            return Resources.Bunny;
+        }
+
+        public override void Execute()
+        {
+            base.Execute();
+
+		    //change the name
+            _catalogue.Name = "Bunny";
+			
+		    //save the change
+            _catalogue.SaveToDatabase();
+
+		    //Lets the rest of the application know that a change has happened
+            Publish(_catalogue);
+        }
+    }
+}
+```
+
+Adjust the plugin user interface class `GetAdditionalRightClickMenuItems` method to return an instance of this new command:
+
+```csharp
+
+public override ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object o)
+{
+    if (o is Catalogue)
+        return new[]
+        {
+            new ToolStripMenuItem("Hello World", null, (s, e) => MessageBox.Show("Hello World")),
+
+            GetMenuItem(new ExecuteCommandRenameCatalogueToBunnies(ItemActivator,(Catalogue)o))
+        };
+
+    return null;
+}
+```
+
+Increase the version number of your plugin to 0.1.2 in the nuspec file and commit the new nupkg to rdmp.
+
+Now when you right click a [Catalogue] you should see your command offered to the user:
+
+![What it should look like](Images/RightClickBunnyMenuItem.png)
+
+Your command will also be available under the `File=>Run...` dialog.
+
 
 Keep in mind the differences though: 
 Going from `IDataLoadEventListener` to `ICheckNotifier` will result in rejecting any ProposedFix automatically
