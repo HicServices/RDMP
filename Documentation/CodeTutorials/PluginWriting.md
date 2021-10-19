@@ -345,7 +345,7 @@ namespace MyPipelinePlugin
 
 ```
 
-Recompile and upload the plugin (making sure to update the nuspec to 0.0.3).  If you want to skip this version change you can delete the Plugin from RDMP and from the plugin directory on disk (double click the Plugin folder to open this directory - it should be %appdata%/MEF).
+Rebuild the new version (into the RDMP bin directory) and restart RDMP.
 
 Drop the demography table from your database (and delete any associated Catalogues / TableInfos in RDMP).  Import demography.csv again but edit the pipeline to include the new component BasicDataTableAnonymiser2.  Now when you select it you should be able to type in some values.
 
