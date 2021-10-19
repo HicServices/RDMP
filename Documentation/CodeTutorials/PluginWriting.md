@@ -17,7 +17,7 @@
   * [What is wrong with NLog etc?](#NLog)
   * [What other funky things can I do with IDataLoadEventListener?](#funkyIDataLoadEventListener)
 7. [Graphical User Interfaces In Plugins](#guis)
-
+7. [Troubleshooting Plugins](#troubleshooting)
 
 <a name="binary"></a>
 # RDMP Binary and Documentation
@@ -167,90 +167,18 @@ Launch the RDMP binary and then attach the visual studio debugger (Debug=>Attach
 <a name="basicAnoPlugin"></a>
 # A (very) basic Anonymisation Plugin
 
-We have seen how UI plugins work, now we will write a plugin which functions both through the UI and from the CLI running under the cross platform `net5.0` runtime.
+We have seen how UI plugins work, now we will write a plugin which transforms data.
 
-Create a new solution with the following projects.
-
-```
-\MyPipelinePlugin\MyPipelinePlugin.csproj                     (TargetFramework net5.0)
-\Plugin\net5.0\net5.0.csproj                                  (TargetFramework net5.0)
-\Plugin\net5.0-windows\net5.0-windows.csproj                  (TargetFramework net5.0-windows)
-\MyPipelinePlugin.nuspec
-\MyPipelinePlugin.sln
-```
-
-In MyPipelinePlugin.nuspec add the following:
-
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
-    <metadata>
-        <id>MyPipelinePlugin</id>
-        <version>0.0.1</version>
-		<authors>Health Informatics Service, University of Dundee</authors>
-		<description>Example Pipeline Plugin Component </description>
-		<dependencies>
-            <dependency id="HIC.RDMP.Plugin" version="5.0" />
-		</dependencies>
-    </metadata>
-  <files>
-    <file src="Plugin\net5.0\bin\Debug\net5.0\publish\*" target="lib\main" />
-	<file src="Plugin\net5.0-windows\bin\Debug\net5.0-windows\win-x64\publish\*" target="lib\windows" />
-  </files>
-</package>
-```
-
-Add a Project reference to `MyPipelinePlugin.csproj` from both net5.0.csproj and net5.0-windows.csproj:
-
-![What it should look like](Images/PipelinePluginSolution.png)
-
-To build the plugin run the following in the net5.0 project directory:
-
-```
-cd \ExamplePipelinePlugin\MyPipelinePlugin\Plugin\net5.0\
-dotnet publish --self-contained false
-cd \ExamplePipelinePlugin\MyPipelinePlugin\Plugin\net5.0-windows\
-dotnet publish -r win-x64 --self-contained false
-```
-
-Next run the nuspec file:
-
-```
-nuget pack .\MyPipelinePlugin.nuspec
-```
-
-This should produce a file `MyPipelinePlugin.0.0.1.nupkg` containing the following directories:
-
-```
-lib\main\
-lib\windows\
-```
-
-When uploaded into RDMP as a plugin, the appropriate platform/runtime will be selected.  
-
-You can test that the plugin is loaded correctly by compiling and running the cli:
-
-```
-cd Tools\rdmp
-dotnet publish -r win-x64
-
-cd .\bin\Debug\net5.0\win-x64\publish\
-
-.\rdmp.exe list -t Catalogue --servername localhost\sqlexpress --cataloguedatabasename RDMP_Catalogue --logstartup --command run
-```
-
-Now lets write some components for our plugin!
+These instructions will expand on the [Hello World Plugin](#helloWorldPlugin) above and will assume the files are already there from that tutorial.
 
 <a name="anoPluginVersion1"></a>
 ## Version 1
 
-Most of the processes in RDMP use the [Pipeline] system.  This involves a series of components performing operations on a flow of objects of type T (often a `System.Data.DataTable`).  The pipeline is setup/tailored by RDMP users and then reused every time the task needs to be executed.  For example importing a csv file into the database and generating a [Catalogue] from the resulting table (the first thing you do when playing with the RDMP test data) happens through a pipeline called 'BULK INSERT:CSV Import File'.
-
-![What it should look like](Images/ImportCatalogue.png)
+Most of the processes in RDMP use the [Pipeline] system.  This involves a series of components performing operations on a flow of objects of type T (often a `System.Data.DataTable`).  The pipeline is setup/tailored by RDMP users and then reused every time the task needs to be executed.  For example importing a csv file into the database and generating a [Catalogue] from the resulting table (the first thing you do when playing with the RDMP test data) happens through a pipeline called `BULK INSERT: CSV Import File (automated column-type detection)`.
 
 We will write a reusable component which lets the user identify problem strings (names) in data they are importing.
 
-Declare a new class `BasicDataTableAnonymiser1` in `MyPipelinePlugin.csproj` and implement IPluginDataFlowComponent<DataTable>:
+Declare a new class `BasicDataTableAnonymiser1` and implement IPluginDataFlowComponent<DataTable>:
 
 
 ```csharp
@@ -267,46 +195,46 @@ namespace MyPipelinePlugin
     {
         public void Abort(IDataLoadEventListener listener)
         {
-            
+
         }
 
         public void Check(ICheckNotifier notifier)
         {
-            
+
         }
 
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
-            
+
         }
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             //Go through each row in the table
-		    foreach (DataRow row in toProcess.Rows)
-		    {
-			    //for each cell in current row
-			    for (int i = 0; i < row.ItemArray.Length; i++)
-			    {
-				    //if it is a string
-				    var stringValue = row[i] as string;
+            foreach (DataRow row in toProcess.Rows)
+            {
+                //for each cell in current row
+                for (int i = 0; i < row.ItemArray.Length; i++)
+                {
+                    //if it is a string
+                    var stringValue = row[i] as string;
 
-				    if(stringValue != null)
-				    {
-					    //replace any common names with REDACTED
-					    foreach (var name in CommonNames)
-						    stringValue =  Regex.Replace(stringValue, name, "REDACTED",RegexOptions.IgnoreCase);
+                    if (stringValue != null)
+                    {
+                        //replace any common names with REDACTED
+                        foreach (var name in CommonNames)
+                            stringValue = Regex.Replace(stringValue, name, "REDACTED", RegexOptions.IgnoreCase);
 
-					    row[i] = stringValue;
-				    }
-			    }
+                        row[i] = stringValue;
+                    }
+                }
             }
 
-		    return toProcess;
+            return toProcess;
         }
 
         string[] CommonNames = new string[]
-        { 
+        {
             "Dave","Frank","Bob","Pete","Daisy","Marley","Lucy","Tabitha","Thomas","Wallace"
         };
 
@@ -314,17 +242,23 @@ namespace MyPipelinePlugin
 }
 ```
 
-Increase the plugin version number to 0.0.2 in `MyPipelinePlugin.nuspec` and compile the project (don't forget to also run the `dotnet publish` commands above).  Run `nuget pack MyPipelinePlugin.nuspec` and upload the new version of the plugin: `MyPipelinePlugin.0.0.2.nupkg`
+Rebuild the plugin into the RDMP bin folder and run it:
 
-Restart RDMP client and select `New Catalogue From File` from the home screen.
+```
+dotnet build -o Z:\rdmp-client
+cd Z:\rdmp-client\
+.\ResearchDataManagementPlatform.exe
+```
 
-Select 'demography.csv' for import (See UserManual.docx for generating test data - Help=>Show User Manual).  Choose a database as the destination and select 'Advanced'.  Select the `BULK INSERT:CSV Import File` pipeline and click Edit.
-
-Drag and drop BasicDataTableAnonymiser1 into the middle of the pipeline.
-
-If your plugin doesn't appear you can select `Diagnostics->Plugins->List All Types` to view all the loaded Types.  You can also click the smiley face during startup to see messages about plugin loading.
+In the RDMP Client edit the file import Pipeline called `BULK INSERT: CSV Import File (automated column-type detection)` by adding your plugin class:
 
 ![Editting a pipeline - Version 1](Images/EditPipelineComponentVersion1.png)
+
+If your plugin doesn't appear see [Troubleshooting Plugins](#troubleshooting).
+
+Create a new demography csv file using `Diagnostics->Generate Test Data...`.  Import this file into RDMP using your modified pipeline
+
+![What it should look like](Images/ImportCatalogue.png)
 
 Execute the import and do a select out of the final table to confirm that it has worked:
 
@@ -879,8 +813,8 @@ Go to your unit tests and write a test for it passing it a `ThrowImmediatelyChec
 [Test]
 public void TestBasicDataTableAnonymiser4_FailConditions()
 {
-	var a = new BasicDataTableAnonymiser4();
-	a.Check(new ThrowImmediatelyCheckNotifier());
+    var a = new BasicDataTableAnonymiser4();
+    a.Check(new ThrowImmediatelyCheckNotifier());
 }
 ```
 
@@ -1018,9 +952,9 @@ Now we can run our test and see an error that makes sense
 [Test]
 public void TestBasicDataTableAnonymiser4_FailConditions()
 {
-	var a = new BasicDataTableAnonymiser4();
-	var ex = Assert.Throws<Exception>(()=>a.Check(new ThrowImmediatelyCheckNotifier()));
-	Assert.IsTrue(ex.Message.Contains("No NamesTable has been set"));
+    var a = new BasicDataTableAnonymiser4();
+    var ex = Assert.Throws<Exception>(()=>a.Check(new ThrowImmediatelyCheckNotifier()));
+    Assert.IsTrue(ex.Message.Contains("No NamesTable has been set"));
 }
 ```
 
@@ -1113,48 +1047,48 @@ This will let us record how long is specifically spent on the anonymisation of t
 ```csharp
 public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
 {
-	GetCommonNamesTable(new ThrowImmediatelyCheckNotifier());
+    GetCommonNamesTable(new ThrowImmediatelyCheckNotifier());
 
-	listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Ready to process batch with row count " + toProcess.Rows.Count));
+    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Ready to process batch with row count " + toProcess.Rows.Count));
 
-	_timeProcessing.Start();
+    _timeProcessing.Start();
 
-	//Go through each row in the table
-	foreach (DataRow row in toProcess.Rows)
-	{
-		//for each cell in current row
-		foreach (DataColumn col in toProcess.Columns)
-		{
-			//if it's not a column we are skipping
-			if (ColumnsNotToEvaluate != null && ColumnsNotToEvaluate.IsMatch(col.ColumnName))
-				continue;
+    //Go through each row in the table
+    foreach (DataRow row in toProcess.Rows)
+    {
+        //for each cell in current row
+        foreach (DataColumn col in toProcess.Columns)
+        {
+            //if it's not a column we are skipping
+            if (ColumnsNotToEvaluate != null && ColumnsNotToEvaluate.IsMatch(col.ColumnName))
+                continue;
 
-			//if it is a string
-			var stringValue = row[col] as string;
+            //if it is a string
+            var stringValue = row[col] as string;
 
-			if (stringValue != null)
-			{
-				//replace any common names with REDACTED
-				foreach (var name in _commonNames)
-					stringValue = Regex.Replace(stringValue, name, "REDACTED", RegexOptions.IgnoreCase);
+            if (stringValue != null)
+            {
+                //replace any common names with REDACTED
+                foreach (var name in _commonNames)
+                    stringValue = Regex.Replace(stringValue, name, "REDACTED", RegexOptions.IgnoreCase);
 
-				//if string value changed
-				if (!row[col].Equals(stringValue))
-				{
-					//increment the counter of redactions made
-					_redactionsMade++;
+                //if string value changed
+                if (!row[col].Equals(stringValue))
+                {
+                    //increment the counter of redactions made
+                    _redactionsMade++;
 
-					//update the cell to the new value
-					row[col] = stringValue;
-				}
-			}
-		}
-	}
+                    //update the cell to the new value
+                    row[col] = stringValue;
+                }
+            }
+        }
+    }
 
-	_timeProcessing.Stop();
-	listener.OnProgress(this, new ProgressEventArgs("REDACTING Names",new ProgressMeasurement(_redactionsMade,ProgressType.Records),_timeProcessing.Elapsed));
+    _timeProcessing.Stop();
+    listener.OnProgress(this, new ProgressEventArgs("REDACTING Names",new ProgressMeasurement(_redactionsMade,ProgressType.Records),_timeProcessing.Elapsed));
 
-	return toProcess;
+    return toProcess;
 }
 ```
 
@@ -1165,9 +1099,9 @@ Add the following to `TestAnonymisationPluginsDatabaseTests`
 ```csharp
 public enum LoggerTestCase
 {
-	ToConsole,
-	ToMemory,
-	ToDatabase
+    ToConsole,
+    ToMemory,
+    ToDatabase
 }
 
 [Test]
@@ -1176,94 +1110,94 @@ public enum LoggerTestCase
 [TestCase(LoggerTestCase.ToDatabase)]
 public void TestBasicDataTableAnonymiser5(LoggerTestCase testCase)
 {
-	//Create a names table that will go into the database
-	var dt = new DataTable();
-	dt.Columns.Add("Name");
-	dt.Rows.Add(new[] { "Thomas" });
-	dt.Rows.Add(new[] { "Wallace" });
-	dt.Rows.Add(new[] { "Frank" });
+    //Create a names table that will go into the database
+    var dt = new DataTable();
+    dt.Columns.Add("Name");
+    dt.Rows.Add(new[] { "Thomas" });
+    dt.Rows.Add(new[] { "Wallace" });
+    dt.Rows.Add(new[] { "Frank" });
 
-	//upload the DataTable from memory into the database
-	var discoveredTable = GetCleanedServer(DatabaseType.MicrosoftSQLServer).CreateTable("ForbiddenNames", dt);
-	try
-	{
+    //upload the DataTable from memory into the database
+    var discoveredTable = GetCleanedServer(DatabaseType.MicrosoftSQLServer).CreateTable("ForbiddenNames", dt);
+    try
+    {
         TableInfo tableInfo;
 
-		//import the persistent TableInfo reference
-		var importer = Import(discoveredTable,out tableInfo ,out _);
+        //import the persistent TableInfo reference
+        var importer = Import(discoveredTable,out tableInfo ,out _);
                 
-		//Create the test dataset chunks that will be anonymised
-		var dtStories1 = new DataTable();
-		dtStories1.Columns.Add("Story");
-		dtStories1.Rows.Add(new[] { "Thomas went to school regularly" }); //1st redact
-		dtStories1.Rows.Add(new[] { "It seems like Wallace went less regularly" }); //2nd redact
-		dtStories1.Rows.Add(new[] { "Mr Smitty was the teacher" });
+        //Create the test dataset chunks that will be anonymised
+        var dtStories1 = new DataTable();
+        dtStories1.Columns.Add("Story");
+        dtStories1.Rows.Add(new[] { "Thomas went to school regularly" }); //1st redact
+        dtStories1.Rows.Add(new[] { "It seems like Wallace went less regularly" }); //2nd redact
+        dtStories1.Rows.Add(new[] { "Mr Smitty was the teacher" });
 
-		var dtStories2 = new DataTable();
-		dtStories2.Columns.Add("Story");
-		dtStories2.Rows.Add(new[] { "Things were going so well" });
-		dtStories2.Rows.Add(new[] { "And then it all turned bad for Wallace" }); //3rd redact
-	
-		var dtStories3 = new DataTable();
-		dtStories3.Columns.Add("Story");
-		dtStories3.Rows.Add(new[] { "There were things creeping in the dark" });
-		dtStories3.Rows.Add(new[] { "Surely Frank would know what to do.  Frank was a genius" }); //4th redact
-		dtStories3.Rows.Add(new[] { "Mr Smitty was the teacher" });
-	
-		//Create the anonymiser
-		var a = new BasicDataTableAnonymiser5();
+        var dtStories2 = new DataTable();
+        dtStories2.Columns.Add("Story");
+        dtStories2.Rows.Add(new[] { "Things were going so well" });
+        dtStories2.Rows.Add(new[] { "And then it all turned bad for Wallace" }); //3rd redact
+    
+        var dtStories3 = new DataTable();
+        dtStories3.Columns.Add("Story");
+        dtStories3.Rows.Add(new[] { "There were things creeping in the dark" });
+        dtStories3.Rows.Add(new[] { "Surely Frank would know what to do.  Frank was a genius" }); //4th redact
+        dtStories3.Rows.Add(new[] { "Mr Smitty was the teacher" });
+    
+        //Create the anonymiser
+        var a = new BasicDataTableAnonymiser5();
 
-		//Tell it about the database table
-		a.NamesTable = tableInfo;
+        //Tell it about the database table
+        a.NamesTable = tableInfo;
 
-		//Create a listener according to the test case
-		IDataLoadEventListener listener = null;
+        //Create a listener according to the test case
+        IDataLoadEventListener listener = null;
 
-		switch (testCase)
-		{
-			case LoggerTestCase.ToConsole:
-				listener = new ThrowImmediatelyDataLoadEventListener();
-				break;
-			case LoggerTestCase.ToMemory:
-				listener = new ToMemoryDataLoadEventListener(true);
-				break;
-			case LoggerTestCase.ToDatabase:
-			
-				//get the default logging server
-				var logManager = CatalogueRepository.GetDefaultLogManager();
+        switch (testCase)
+        {
+            case LoggerTestCase.ToConsole:
+                listener = new ThrowImmediatelyDataLoadEventListener();
+                break;
+            case LoggerTestCase.ToMemory:
+                listener = new ToMemoryDataLoadEventListener(true);
+                break;
+            case LoggerTestCase.ToDatabase:
+            
+                //get the default logging server
+                var logManager = CatalogueRepository.GetDefaultLogManager();
 
-				//create a new super task Anonymising Data Tables
-				logManager.CreateNewLoggingTaskIfNotExists("Anonymising Data Tables");
+                //create a new super task Anonymising Data Tables
+                logManager.CreateNewLoggingTaskIfNotExists("Anonymising Data Tables");
 
-				//setup a listener that goes to this logging database 
-				listener = new ToLoggingDatabaseDataLoadEventListener(this,logManager ,"Anonymising Data Tables","Run on " + DateTime.Now);
-				break;
-			default:
-				throw new ArgumentOutOfRangeException("testCase");
-		}
+                //setup a listener that goes to this logging database 
+                listener = new ToLoggingDatabaseDataLoadEventListener(this,logManager ,"Anonymising Data Tables","Run on " + DateTime.Now);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException("testCase");
+        }
 
-		//run the anonymisation
-		//process all 3 batches
-		a.ProcessPipelineData(dtStories1, listener, new GracefulCancellationToken());
-		a.ProcessPipelineData(dtStories2, listener, new GracefulCancellationToken());
-		a.ProcessPipelineData(dtStories3, listener, new GracefulCancellationToken());
+        //run the anonymisation
+        //process all 3 batches
+        a.ProcessPipelineData(dtStories1, listener, new GracefulCancellationToken());
+        a.ProcessPipelineData(dtStories2, listener, new GracefulCancellationToken());
+        a.ProcessPipelineData(dtStories3, listener, new GracefulCancellationToken());
 
-		//check the results
-		switch (testCase)
-		{
-			case LoggerTestCase.ToMemory:
-				Assert.AreEqual(4, ((ToMemoryDataLoadEventListener)listener).LastProgressRecieivedByTaskName["REDACTING Names"].Progress.Value);
-				break;
-			case LoggerTestCase.ToDatabase:
-				((ToLoggingDatabaseDataLoadEventListener)listener).FinalizeTableLoadInfos();
-				break;
-		}
-	}
-	finally
-	{
-		//finally drop the database table
-		discoveredTable.Drop();
-	}
+        //check the results
+        switch (testCase)
+        {
+            case LoggerTestCase.ToMemory:
+                Assert.AreEqual(4, ((ToMemoryDataLoadEventListener)listener).LastProgressRecieivedByTaskName["REDACTING Names"].Progress.Value);
+                break;
+            case LoggerTestCase.ToDatabase:
+                ((ToLoggingDatabaseDataLoadEventListener)listener).FinalizeTableLoadInfos();
+                break;
+        }
+    }
+    finally
+    {
+        //finally drop the database table
+        discoveredTable.Drop();
+    }
 }
 ```
 
@@ -1326,6 +1260,10 @@ ICheckNotifier checker = new FromDataLoadEventListenerToCheckNotifier(listener);
 IDataLoadEventListener listener2 = new FromCheckNotifierToDataLoadEventListener(checker);	
 ```
 
+Keep in mind the differences though: 
+Going from `IDataLoadEventListener` to `ICheckNotifier` will result in rejecting any ProposedFix automatically
+Going from `ICheckNotifier` to `IDataLoadEventListener` will result in a listener which basically ignores OnProgress counts
+
 <a name="guis"></a>
 # Graphical User Interfaces In Plugins
 In RDMP commands are usually parcelled into [`IAtomicCommand`](./UserInterfaceOverview.md#commands) objects rather using `ToolStripMenuItem` directly.  You can implement this system as follows:
@@ -1360,7 +1298,7 @@ namespace MyPlugin
 
         public Image GetImage(IIconProvider iconProvider)
         {
-		    //icon to use for the right click menu (return null if you don't want one)
+            //icon to use for the right click menu (return null if you don't want one)
             return Resources.Bunny;
         }
 
@@ -1368,13 +1306,13 @@ namespace MyPlugin
         {
             base.Execute();
 
-		    //change the name
+            //change the name
             _catalogue.Name = "Bunny";
-			
-		    //save the change
+            
+            //save the change
             _catalogue.SaveToDatabase();
 
-		    //Lets the rest of the application know that a change has happened
+            //Lets the rest of the application know that a change has happened
             Publish(_catalogue);
         }
     }
@@ -1408,9 +1346,30 @@ Now when you right click a [Catalogue] you should see your command offered to th
 Your command will also be available under the `File=>Run...` dialog.
 
 
-Keep in mind the differences though: 
-Going from `IDataLoadEventListener` to `ICheckNotifier` will result in rejecting any ProposedFix automatically
-Going from `ICheckNotifier` to `IDataLoadEventListener` will result in a listener which basically ignores OnProgress counts
+<a name="troubleshooting"></a>
+# Troubleshooting Plugins
+
+If you do not see code changes taking effect or are unable to see an expected plugin module etc that you have written then the following may help:
+
+## If building into the RDMP bin directory
+
+If you are building your plugin directly into the RDMP bin directory.  First make sure that you have not packaged and uploaded it into the RDMP database.  
+
+Next check that the Modified timestamp on `MyPlugin.dll` in the RDMP directory matches when you built your project.
+
+## If packaging and uploading your plugin
+
+Make sure that you have either bumped the version of your `nupkg` or deleted stale versions of your plugin.
+
+This is done by deleting the plugin from the RDMP client and then deleting the contents of `%appdata%/MEF` e.g. `C:\Users\thomas\AppData\Roaming\MEF`.  **This directory will be locked when RDMP is running so you will need to first close RDMP**
+
+## Other Steps you can take
+
+You can see all the currently loaded class Types by selecting `Diagnostics->Plugins->List All Types` to view all the loaded Types.
+
+During startup you can click the status icon to see what plugins are loaded and if any had issues (bear in mind not all errors/warnings will be about your plugin or relevant):
+
+![Messages logged by RDMP during startup](Images/StartupLog.png)
 
 [Catalogue]: ./Glossary.md#Catalogue
 [TableInfo]: ./Glossary.md#TableInfo
