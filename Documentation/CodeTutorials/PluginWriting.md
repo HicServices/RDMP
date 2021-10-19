@@ -369,7 +369,7 @@ Having a text file isn't that great, it would be much better to power it with a 
 Create a new plugin component BasicDataTableAnonymiser3 (or modify your existing one).  Get rid of the property NameList and add a [TableInfo] one instead:
 
 ```csharp
- using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -492,16 +492,21 @@ Test the plugin by importing demography.csv again through the pipeline with the 
 ## Unit Tests 
 We definetly want to write some unit/integration tests for this component.  Create a new project called MyPipelinePluginTests.  
 
-Set the TargetFramework to `net5.0`
+```
+dotnet new classlib -n MyPipelinePluginTests -o MyPipelinePluginTests
+cd MyPipelinePluginTests
+dotnet add reference ../MyPlugin/MyPlugin.csproj
+```
 
-Add a reference MyPipelinePlugin.csproj and reference the following NuGet packages:
+
+References to the following NuGet packages:
 
 ```
-HIC.RDMP.Plugin.Test
-Microsoft.NET.Test.Sdk
-NUnit (version 3)
-NUnit3TestAdapter
-NunitXml.TestLogger (optional)
+dotnet add package HIC.RDMP.Plugin.Test
+dotnet add package Microsoft.NET.Test.Sdk
+dotnet add package NUnit
+dotnet add package NUnit3TestAdapter
+dotnet add package NunitXml.TestLogger
 ```
 
 Add the following test:
@@ -573,8 +578,8 @@ namespace MyPipelinePluginTests
 Run the unit test again.  It should fail at test fixture setup with something like
 
 ```
-Message: OneTimeSetUp: System.TypeInitializationException : The type initializer for 'Tests.Common.DatabaseTests' threw an exception.
-  ----> System.IO.FileNotFoundException : Could not find file 'E:\RDMPExamplePlugins\ExamplePipelinePlugin\MyPipelinePlugin\MyPipelinePluginTests\bin\Debug\net5.0\TestDatabases.txt'
+OneTimeSetUp: System.TypeInitializationException : The type initializer for 'Tests.Common.DatabaseTests' threw an exception.
+      ----> System.IO.FileNotFoundException : Could not find file 'Z:\Repos\SmiServices\MyPipelinePluginTests\bin\x64\Debug\net5.0\TestDatabases.txt'
 
 ```
 
@@ -585,24 +590,17 @@ ServerName: localhost\sqlexpress
 Prefix: TEST_
 ```
 
+Note if you do not have a test instance of SqlServer you can set this to `(localdb)\MSSQLLocalDB` which is [Visual Studios internal automatic test instance](https://docs.microsoft.com/en-us/sql/database-engine/configure-windows/sql-server-express-localdb?view=sql-server-ver15).
+
+Now running the test should result in:
+
 ```
 Message: OneTimeSetUp:   Catalogue database does not exist, run 'rdmp.exe install' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to 'rdmp.exe install' e.g. 'rdmp.exe install localhost\sqlexpress TEST_')
 ```
 
-To create these databases you can use the main RDMP UI:
+Create these databases you can use the main RDMP UI:
 
 ![Create platform database in rdmp main ui](Images/CreatePlatformDatabases.png)
-
-Or you can compile the RMDP CLI yourself and run it from the bin directory.
-
-Or you can use rdmp.dll with the dotnet command from the packages directory (helpful for continuous integration builds) e.g.
-
-```
-cd C:\Users\tznind\.nuget\packages\hic.rdmp.plugin\3.0.13-rc\tools\net5.0\publish\
-dotnet rdmp.dll install localhost\sqlexpress TEST_
-```
-
-If you had to change the location of your server or specified a custom prefix (i.e. not `TEST_`) then you will need to change `TestDatabases.txt` (this file should be in the root of your Tests project).  Also ensure that `TestDatabases.txt` is marked `Copy always` under `Copy to Output Directory` in the file Properties (F4).
 
 Clean and Rebuild your project and run the unit test again. It should pass this time.
 
@@ -645,8 +643,7 @@ namespace MyPipelinePluginTests
 
             DiscoveredTable table = database.CreateTable("ForbiddenNames",dt);
             
-            TableInfo tableInfo;
-            Import(table,out tableInfo,out _);
+            Import(table,out ITableInfo tableInfo,out _);
 
             //Create the test dataset chunk that will be anonymised
             var dtStories = new DataTable();
@@ -659,7 +656,7 @@ namespace MyPipelinePluginTests
             var a = new BasicDataTableAnonymiser3();
 
             //Tell it about the database table
-            a.NamesTable = tableInfo;
+            a.NamesTable = (TableInfo)tableInfo;
 
             //run the anonymisation
             var resultTable = a.ProcessPipelineData(dtStories, new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
