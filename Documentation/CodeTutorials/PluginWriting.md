@@ -17,6 +17,7 @@
   * [What is wrong with NLog etc?](#NLog)
   * [What other funky things can I do with IDataLoadEventListener?](#funkyIDataLoadEventListener)
 7. [Graphical User Interfaces In Plugins](#guis)
+8. [Dependencies](#dependencies)
 7. [Troubleshooting Plugins](#troubleshooting)
 
 <a name="binary"></a>
@@ -1420,6 +1421,28 @@ Next check that the Modified timestamp on `MyPlugin.dll` in the RDMP directory m
 Make sure that you have either bumped the version of your `nupkg` or deleted stale versions of your plugin.
 
 This is done by deleting the plugin from the RDMP client and then deleting the contents of `%appdata%/MEF` e.g. `C:\Users\thomas\AppData\Roaming\MEF`.  **This directory will be locked when RDMP is running so you will need to first close RDMP**
+
+
+<a name="dependencies"></a>
+# Dependencies
+
+If your plugin has many dependencies that are not already included in RDMP then you will need to ensure the dlls also appear in the relevant lib directory of the plugin.
+
+For example instead of using `dotnet build` and packaging `bin\net5.0\*` in your `MyPlugin.nuspec` you should use `dotnet publish`
+
+```
+dotnet publish --runtime win-x64 -c Release --self-contained false
+```
+
+When packaging `dotnet publish` results you can exclude dlls that already come with RDMP by using the `exclude` keyword in `MyPlugin.nuspec`:
+
+```
+<files>
+    <file src="Plugin\windows\bin\$configuration$\net5.0-windows\win-x64\publish\*"
+          exclude="**\BadMedicine.Core.dll;**\FAnsi.*;**\MapsDirectlyToDatabaseTable.dll;**\MySql.Data.dll;**\Oracle.ManagedDataAccess.dll;**\Rdmp.Core.dll;**\NPOI.*;**\Renci.*;**\MathNet.Numerics.dll*;**\Rdmp.UI.dll;**\ScintillaNET.dll;**\ReusableUIComponents.dll;**\ObjectListView.dll;**\WeifenLuo.WinFormsUI.Docking*"
+          target="lib\windows" />
+</files>
+```
 
 ## Other Steps you can take
 
