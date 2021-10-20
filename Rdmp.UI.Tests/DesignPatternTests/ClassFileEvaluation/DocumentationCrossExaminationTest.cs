@@ -256,6 +256,8 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             "MySqlConnector",
             "DoSomething",
             "MyTest",
+            "UserControl1",
+            "MyPluginUI",
         };
         #endregion
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)
