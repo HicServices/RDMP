@@ -103,7 +103,6 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
             // 
             this.olvValue.AspectName = "Value";
             this.olvValue.CellEditUseWholeCell = true;
-            this.olvValue.FillsFreeSpace = true;
             this.olvValue.Groupable = false;
             this.olvValue.Text = "Value";
             this.olvValue.Width = 238;

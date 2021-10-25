@@ -79,6 +79,9 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
             _btnApplyFilter.Click += (s, e) => ApplyFilter(_tbFilterBox.Text);
             _tbToFetch.TextChanged += TbToFetchTextChanged;
             _btnFetch.Click += (s,e)=>PopulateLoadHistory();
+
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(treeView1, olvDescription, new Guid("6b09f39c-2b88-41ed-a396-42a2d2288952"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(treeView1, olvDate, new Guid("d0caf588-cff8-4e49-b755-ed9aaf320f1a"));
         }
         
         void TbToFetchTextChanged(object sender, EventArgs e)

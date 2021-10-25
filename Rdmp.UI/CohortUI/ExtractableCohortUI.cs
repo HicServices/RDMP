@@ -109,6 +109,11 @@ namespace Rdmp.UI.CohortUI
             AssociatedCollection = RDMPCollection.SavedCohorts;
 
             helpIcon1.SetHelpText("Override Release Identifier","Not Recommended.  Setting this lets you change which release identifier column is extracted (for this cohort only).");
+
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCohortUsage, olvUsedIn, new Guid("0c402777-2c70-486a-adb3-32b6f2fbfe80"));
+
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvPreviousVersions,olvOtherVersions, new Guid("4e753b4a-9989-4bf0-b2d4-7462e68b2fa3"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvPreviousVersions, olvVersion, new Guid("a5b4573f-5aad-456d-a431-d63d69e46e47"));
         }
 
         private void AuditLogEditorOnTextChanged(object sender, EventArgs eventArgs)

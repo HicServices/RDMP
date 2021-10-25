@@ -107,17 +107,22 @@ namespace Rdmp.UI.Collections
         /// <param name="g"></param>
         public void SetupColumnTracking(OLVColumn col, Guid g)
         {
+            SetupColumnTracking(Tree, col, g);
+        }
+
+        /// <inheritdoc cref="SetupColumnTracking(OLVColumn, Guid)"/>
+        public static void SetupColumnTracking(ObjectListView view, OLVColumn col, Guid g)
+        {
             DateTime dt = DateTime.Now;
 
             col.Width = UserSettings.GetColumnWidth(g);
-            Tree.ColumnWidthChanged += (s, e) => UserSettings.SetColumnWidth(g, col.Width);
+            view.ColumnWidthChanged += (s, e) => UserSettings.SetColumnWidth(g, col.Width);
 
             col.IsVisible = UserSettings.GetColumnVisible(g);
             col.VisibilityChanged += (s, e) => UserSettings.SetColumnVisible(g, ((OLVColumn)s).IsVisible);
 
-            Tree.RebuildColumns();
+            view.RebuildColumns();
         }
-
         /// <summary>
         /// Sets up common functionality for an RDMPCollectionUI with the default settings
         /// </summary>

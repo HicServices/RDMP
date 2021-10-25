@@ -13,6 +13,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding.Parameters;
+using Rdmp.UI.Collections;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
@@ -74,6 +75,11 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
             miAddNewParameter.Click += miAddParameter_Click;
             miOverrideParameter.Click += miOverride_Click;
 
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvComment, new Guid("8058e9c5-236e-443a-8586-6a21bf1a4562"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvOwner, new Guid("e2097029-e35f-4d56-a000-e8cca717b9ad"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvValue, new Guid("cfbab41b-8af1-480c-a7a0-0bbf42ee8cb9"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvParameterName, new Guid("eadfd8e8-db88-4632-badc-0c6dbec2f877"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvParameterSQL, new Guid("a9216170-621d-45c6-9d32-9046a054fc0f"));
         }
 
         private object ParameterName_AspectGetter(object rowObject)
