@@ -243,7 +243,6 @@ namespace Rdmp.UI.Progress
             // olvMessage
             // 
             this.olvMessage.AspectName = "Message";
-            this.olvMessage.FillsFreeSpace = true;
             this.olvMessage.Groupable = false;
             this.olvMessage.MinimumWidth = 100;
             this.olvMessage.Text = "Message";

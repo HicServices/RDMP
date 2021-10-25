@@ -43,7 +43,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
             this.olvAvailable = new BrightIdeasSoftware.ObjectListView();
             this.olvAvailableColumnName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvAvailableColumnCategory = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvSelectedIsExtractionIdentifier = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvAvailableIsExtractionIdentifier = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.btnSelectCore = new System.Windows.Forms.Button();
             this.flpCouldNotJoinTables = new System.Windows.Forms.FlowLayoutPanel();
             this.label8 = new System.Windows.Forms.Label();
@@ -180,14 +180,14 @@ namespace Rdmp.UI.ProjectUI.Datasets
             // 
             this.olvAvailable.AllColumns.Add(this.olvAvailableColumnName);
             this.olvAvailable.AllColumns.Add(this.olvAvailableColumnCategory);
-            this.olvAvailable.AllColumns.Add(this.olvSelectedIsExtractionIdentifier);
+            this.olvAvailable.AllColumns.Add(this.olvAvailableIsExtractionIdentifier);
             this.olvAvailable.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.olvAvailable.CellEditUseWholeCell = false;
             this.olvAvailable.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvAvailableColumnName,
-            this.olvSelectedIsExtractionIdentifier});
+            this.olvAvailableIsExtractionIdentifier});
             this.olvAvailable.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvAvailable.FullRowSelect = true;
             this.olvAvailable.HideSelection = false;
@@ -205,7 +205,6 @@ namespace Rdmp.UI.ProjectUI.Datasets
             // olvAvailableColumnName
             // 
             this.olvAvailableColumnName.AspectName = "ToString";
-            this.olvAvailableColumnName.FillsFreeSpace = true;
             this.olvAvailableColumnName.MinimumWidth = 100;
             this.olvAvailableColumnName.Text = "Name";
             this.olvAvailableColumnName.Width = 200;
@@ -218,9 +217,9 @@ namespace Rdmp.UI.ProjectUI.Datasets
             // 
             // olvSelectedIsExtractionIdentifier
             // 
-            this.olvSelectedIsExtractionIdentifier.AspectName = "IsExtractionIdentifier";
-            this.olvSelectedIsExtractionIdentifier.Text = "IsExtractionIdentifier";
-            this.olvSelectedIsExtractionIdentifier.Width = 120;
+            this.olvAvailableIsExtractionIdentifier.AspectName = "IsExtractionIdentifier";
+            this.olvAvailableIsExtractionIdentifier.Text = "IsExtractionIdentifier";
+            this.olvAvailableIsExtractionIdentifier.Width = 120;
             // 
             // btnSelectCore
             // 
@@ -314,7 +313,6 @@ namespace Rdmp.UI.ProjectUI.Datasets
             // olvJoinTableName
             // 
             this.olvJoinTableName.AspectName = "ToString";
-            this.olvJoinTableName.FillsFreeSpace = true;
             this.olvJoinTableName.Groupable = false;
             this.olvJoinTableName.IsEditable = false;
             this.olvJoinTableName.MinimumWidth = 100;
@@ -386,7 +384,6 @@ namespace Rdmp.UI.ProjectUI.Datasets
             // olvSelectedColumnName
             // 
             this.olvSelectedColumnName.AspectName = "ToString";
-            this.olvSelectedColumnName.FillsFreeSpace = true;
             this.olvSelectedColumnName.MinimumWidth = 100;
             this.olvSelectedColumnName.Sortable = false;
             this.olvSelectedColumnName.Text = "Name";
@@ -469,7 +466,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
         private OLVColumn olvSelectedColumnOrder;
         private System.Windows.Forms.TextBox tbSearchAvailable;
         private System.Windows.Forms.Label label3;
-        private OLVColumn olvSelectedIsExtractionIdentifier;
+        private OLVColumn olvAvailableIsExtractionIdentifier;
         private System.Windows.Forms.TextBox tbSearchSelected;
         private System.Windows.Forms.Label label4;
         private OLVColumn olvSelectedCatalogue;

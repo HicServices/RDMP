@@ -12,6 +12,7 @@ using BrightIdeasSoftware;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
+using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.PipelineUIs.DemandsInitializationUIs;
 using Rdmp.UI.PipelineUIs.Pipelines.Models;
@@ -80,6 +81,11 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             }
 
             gbArguments.Enabled = false;
+
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvComponents, olvCompatible, new Guid("1b8737cb-75d6-401b-b8a2-441e3e4322ac"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvComponents, olvNamespace, new Guid("35c0497e-3c04-46be-a6d6-eb02111aadb3"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvComponents, olvRole, new Guid("fb1205f3-049e-4fe3-89c5-d07b55fa2e17"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvComponents, olvName, new Guid("b7e797e8-ef6a-45d9-b51d-c2f12dbacead"));
         }
 
         void _pipelineDiagram_SelectedComponentChanged(object sender, IPipelineComponent selected)

@@ -12,6 +12,7 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.UI.Collections;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.Theme;
 using ReusableLibraryCode.Progress;
@@ -84,6 +85,10 @@ namespace Rdmp.UI.Progress
 
             ddGroupBy.Items.Add("None");
             ddGroupBy.Items.Add(olvSender.Text);
+
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvProgressEvents, olvSender, new Guid("2731d3cb-703c-4743-96d9-f16abff1dbbf"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvProgressEvents, olvEventDate, new Guid("f3580392-e5b5-41d0-a1da-2751172d5517"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvProgressEvents, olvMessage, new Guid("d698faf6-2ff1-4f71-96e2-9a889c2e3f13"));
         }
 
         public void ApplyTheme(ITheme theme)

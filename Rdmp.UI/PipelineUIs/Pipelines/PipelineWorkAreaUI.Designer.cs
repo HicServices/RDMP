@@ -117,7 +117,6 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             // olvName
             // 
             this.olvName.AspectName = "ToString";
-            this.olvName.FillsFreeSpace = true;
             this.olvName.Groupable = false;
             this.olvName.Text = "Name";
             this.olvName.MinimumWidth = 100;
