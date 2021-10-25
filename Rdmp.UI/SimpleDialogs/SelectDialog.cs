@@ -121,6 +121,9 @@ namespace Rdmp.UI.SimpleDialogs
             olvSelected.GroupKeyGetter += GroupKeyGetter;
             
             ApplyFilter();
+
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvObjects, olvName, new Guid("298cda00-5ec8-423c-9230-71d78bec6bc4"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvObjects, olvID, new Guid("bb0fe2f0-1e73-4b00-a5b7-4b6ce3510bab"));
         }
 
         private bool IsBasicallyAllCatalogues(T[] o)

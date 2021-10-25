@@ -90,7 +90,6 @@ namespace Rdmp.UI.SimpleDialogs
             // olvName
             // 
             this.olvName.AspectName = "";
-            this.olvName.FillsFreeSpace = true;
             this.olvName.MinimumWidth = 100;
             this.olvName.Text = "Name";
             this.olvName.Width = 100;

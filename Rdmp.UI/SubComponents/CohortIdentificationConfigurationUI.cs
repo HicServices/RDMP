@@ -129,6 +129,16 @@ namespace Rdmp.UI.SubComponents
             //doesn't get called unless the column has a sorting on it
             olvNameCol.Sortable = true;
             tlvCic.Sort(olvNameCol);
+
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvCached, new Guid("59c6eda9-dcf3-4a24-801f-4c5467c76f94"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvCatalogue, new Guid("59c6f9a6-4a93-4167-a268-9ea755d0ad94"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvCount, new Guid("4ca6588f-2511-4082-addd-ec42e9d75b39"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvCumulativeTotal, new Guid("a3e901e2-c6b8-4365-bea8-5666b9b74821"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvExecute, new Guid("f8ad1751-b273-42d7-a6d1-0c580099ceee"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvNameCol, new Guid("63db1af5-061c-42b9-873c-7d3d3ac21cd8"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvOrder, new Guid("5be4e6e7-bad6-4bd5-821c-a235bc056053"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvTime, new Guid("88f88d4a-6204-4f83-b9a7-5421186808b7"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvWorking, new Guid("cfe55a4f-9e17-4205-9016-ae506667f22d"));
         }
 
         private object Working_AspectGetter(object rowobject)

@@ -112,7 +112,6 @@ namespace Rdmp.UI.ProjectUI
             // olvName
             // 
             this.olvName.AspectName = "ToString";
-            this.olvName.FillsFreeSpace = true;
             this.olvName.Groupable = false;
             this.olvName.MinimumWidth = 100;
             this.olvName.Text = "Name";
