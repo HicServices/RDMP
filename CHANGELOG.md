@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Fixed
+
+- Fixed Null Reference exception when collection tabs are opened twice
+
 ## [7.0.0] - 2021-10-18
 
 ### Changed
