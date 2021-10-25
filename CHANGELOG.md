@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump NLog from 4.7.11 to 4.7.12
 
 
+### Fixed
+
+- Fixed Null Reference exception when collection tabs are opened twice
+
 ## [7.0.0] - 2021-10-18
 
 ### Changed

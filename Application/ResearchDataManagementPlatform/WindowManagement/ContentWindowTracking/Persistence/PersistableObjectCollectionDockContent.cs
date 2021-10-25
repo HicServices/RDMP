@@ -37,7 +37,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
         public PersistableObjectCollectionDockContent(IActivateItems activator, IObjectCollectionControl control, IPersistableObjectCollection collection):base(activator.RefreshBus)
         {
             _control = control;
-            
+            Control = (Control)control;
+
             //tell the control what it's collection is
             control.SetCollection(activator, collection);
             
