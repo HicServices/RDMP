@@ -67,7 +67,6 @@ namespace Rdmp.UI.Performance
             // olvStackFrame
             // 
             this.olvStackFrame.AspectName = "ToString";
-            this.olvStackFrame.FillsFreeSpace = true;
             this.olvStackFrame.Text = "CurrentFrame";
             this.olvStackFrame.MinimumWidth = 100;
             // 

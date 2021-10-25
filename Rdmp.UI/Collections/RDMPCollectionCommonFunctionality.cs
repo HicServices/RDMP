@@ -113,8 +113,6 @@ namespace Rdmp.UI.Collections
         /// <inheritdoc cref="SetupColumnTracking(OLVColumn, Guid)"/>
         public static void SetupColumnTracking(ObjectListView view, OLVColumn col, Guid g)
         {
-            DateTime dt = DateTime.Now;
-
             col.Width = UserSettings.GetColumnWidth(g);
             view.ColumnWidthChanged += (s, e) => UserSettings.SetColumnWidth(g, col.Width);
 

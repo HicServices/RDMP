@@ -18,6 +18,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.PastEvents;
+using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.DashboardTabs.Construction;
 using Rdmp.UI.ItemActivation;
@@ -45,6 +46,12 @@ namespace Rdmp.UI.Overview
             olvDataLoads.FormatCell += olvDataLoads_FormatCell;
 
             olvViewLog.AspectGetter += (s) => "View Log";
+
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvName, new Guid("4a651e11-62f5-4d8f-8fe5-4db488ee7f3a"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvLastRun, new Guid("1aadf2e8-798d-4e85-8abc-7f45edb839b7"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvCategory, new Guid("406173bc-44a0-40b7-8bd1-d01a214c277d"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvStatus, new Guid("8c5cbcd2-9f06-4e24-9521-c3be7ea22eca"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvViewLog, new Guid("e9c04da0-0e91-442e-90a4-119a1b67ea06"));
         }
 
         private void SetupOlvDelegates()
@@ -149,8 +156,6 @@ namespace Rdmp.UI.Overview
                                     loadSummary.Status = DataLoadsGraphResultStatus.NeverBeenRun;
                                     loadSummary.LastRun = "Never";
                                     olvDataLoads.AddObject(loadSummary);
-
-                                    ResizeColumns();
                                 }));
                                 continue; //has never been run (or has had test runs only)
                             }
@@ -172,8 +177,6 @@ namespace Rdmp.UI.Overview
                                 loadSummary.LastRun = archivalDataLoadInfo.EndTime.ToString();
                                 
                                 olvDataLoads.AddObject(loadSummary);
-
-                                ResizeColumns();
                             }));
                         }
                         catch (Exception e)
@@ -255,12 +258,6 @@ namespace Rdmp.UI.Overview
             });
             //t.SetApartmentState(ApartmentState.STA);
             t.Start();
-        }
-
-        private void ResizeColumns()
-        {
-            foreach (ColumnHeader column in olvDataLoads.Columns)
-                column.Width = -2; //magical (apparently it resizes to max width of content or header)
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
