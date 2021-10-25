@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Column visibility and size are now persisted in UserSettings
+
+### Removed
+
+- Removed FillsFreeSpace on columns.  User must now manually resize columns as desired
+
 ## [7.0.0] - 2021-10-18
 
 ### Changed
