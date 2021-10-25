@@ -126,7 +126,6 @@ namespace Rdmp.UI.SubComponents
             // olvNameCol
             // 
             this.olvNameCol.AspectName = "ToString";
-            this.olvNameCol.FillsFreeSpace = true;
             this.olvNameCol.MinimumWidth = 100;
             this.olvNameCol.Text = "Name";
             this.olvNameCol.Width = 100;

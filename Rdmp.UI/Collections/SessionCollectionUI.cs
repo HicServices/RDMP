@@ -30,6 +30,7 @@ namespace Rdmp.UI.Collections
     {
         private BrightIdeasSoftware.TreeListView olvTree;
         private BrightIdeasSoftware.OLVColumn olvName;
+        private bool _firstTime = true;
 
         public SessionCollection Collection {get; private set;}
         public RDMPCollectionCommonFunctionality CommonTreeFunctionality {get;} = new RDMPCollectionCommonFunctionality();
@@ -75,6 +76,12 @@ namespace Rdmp.UI.Collections
             CommonFunctionality.ClearToolStrip();
             CommonFunctionality.Add(new ToolStripButton("Add...",null,AddObjectToSession));
             CommonFunctionality.Add(new ToolStripButton("Remove...", null, RemoveObjectsFromSession));
+
+            if(_firstTime)
+            {
+                CommonTreeFunctionality.SetupColumnTracking(olvName, new Guid("a6abe085-f5cc-4ce0-85ef-0d42e7dbfced"));
+                _firstTime = false;
+            }
 
         }
 
@@ -188,7 +195,6 @@ namespace Rdmp.UI.Collections
             // 
             // olvName
             // 
-            this.olvName.FillsFreeSpace = true;
             this.olvName.Groupable = false;
             this.olvName.Text = "Name";
             // 

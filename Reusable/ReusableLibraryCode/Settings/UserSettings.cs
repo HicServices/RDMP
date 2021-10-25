@@ -137,58 +137,6 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("ShowNonExtractableCatalogues", value); }
         }
 
-        public static bool ShowColumnProjectNumber
-        {
-            get { return AppSettings.GetValueOrDefault("ShowColumnProjectNumber", true); }
-            set { AppSettings.AddOrUpdateValue("ShowColumnProjectNumber", value); }
-        }
-
-        public static bool ShowColumnCohortSource
-        {
-            get { return AppSettings.GetValueOrDefault("ShowColumnCohortSource", false); }
-            set { AppSettings.AddOrUpdateValue("ShowColumnCohortSource", value); }
-        }
-
-        public static bool ShowColumnCohortVersion
-        {
-            get { return AppSettings.GetValueOrDefault("ShowColumnCohortVersion", true); }
-            set { AppSettings.AddOrUpdateValue("ShowColumnCohortVersion", value); }
-        }
-
-        public static bool ShowColumnFavourite
-        {
-            get { return AppSettings.GetValueOrDefault("ShowColumnFavourite", true); }
-            set { AppSettings.AddOrUpdateValue("ShowColumnFavourite", value); }
-        }
-
-        public static bool ShowColumnCheck
-        {
-            get { return AppSettings.GetValueOrDefault("ShowColumnCheck", true); }
-            set { AppSettings.AddOrUpdateValue("ShowColumnCheck", value); }
-        }
-
-        public static bool ShowColumnFilters
-        {
-            get { return AppSettings.GetValueOrDefault("ShowColumnFilters", true); }
-            set { AppSettings.AddOrUpdateValue("ShowColumnFilters", value); }
-        }
-        public static bool ShowColumnValue
-        {
-            get { return AppSettings.GetValueOrDefault("ShowColumnValue", true); }
-            set { AppSettings.AddOrUpdateValue("ShowColumnValue", value); }
-        }
-        public static bool ShowOrderColumn
-        {
-            get { return AppSettings.GetValueOrDefault("ShowOrderColumn", true); }
-            set { AppSettings.AddOrUpdateValue("ShowOrderColumn", value); }
-        }
-
-        public static bool ShowColumnDataType
-        {
-            get { return AppSettings.GetValueOrDefault("ShowColumnDataType", true); }
-            set { AppSettings.AddOrUpdateValue("ShowColumnDataType", value); }
-        }
-
         public static bool ApplyThemeToMenus
         {
             get { return AppSettings.GetValueOrDefault("ApplyThemeToMenus", true); }
@@ -275,6 +223,35 @@ namespace ReusableLibraryCode.Settings
             AppSettings.AddOrUpdateValue("T_" + tutorialGuid.ToString("N"), value);
         }
 
+        public static void SetColumnWidth(Guid columnGuid, int width)
+        {
+            if (columnGuid == Guid.Empty)
+                return;
+
+            AppSettings.AddOrUpdateValue("ColW_" + columnGuid.ToString("N"), width);
+        }
+
+        public static void SetColumnVisible(Guid columnGuid, bool visible)
+        {
+            if (columnGuid == Guid.Empty)
+                return;
+
+            AppSettings.AddOrUpdateValue("ColV_" + columnGuid.ToString("N"), visible);
+        }
+        public static int GetColumnWidth(Guid columnGuid)
+        {
+            if (columnGuid == Guid.Empty)
+                return 100;
+
+            return AppSettings.GetValueOrDefault("ColW_" + columnGuid.ToString("N"), 100);
+        }
+        public static bool GetColumnVisible(Guid columnGuid)
+        {
+            if (columnGuid == Guid.Empty)
+                return true;
+
+            return AppSettings.GetValueOrDefault("ColV_" + columnGuid.ToString("N"), true);
+        }
         public static string[] GetHistoryForControl(Guid controlGuid)
         {
             return AppSettings.GetValueOrDefault("A_" +controlGuid.ToString("N"), "").Split(new []{"#!#"},StringSplitOptions.RemoveEmptyEntries);

@@ -57,7 +57,6 @@
             // 
             this.olvName.AspectName = "ToString";
             this.olvName.CellEditUseWholeCell = true;
-            this.olvName.FillsFreeSpace = true;
             this.olvName.Text = "Favourites";
             this.olvName.MinimumWidth = 100;
             // 

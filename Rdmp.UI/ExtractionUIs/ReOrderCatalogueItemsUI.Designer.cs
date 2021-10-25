@@ -91,7 +91,6 @@ namespace Rdmp.UI.ExtractionUIs
             // olvColumns
             // 
             this.olvColumns.AspectName = "ToString";
-            this.olvColumns.FillsFreeSpace = true;
             this.olvColumns.Groupable = false;
             this.olvColumns.MinimumWidth = 100;
             this.olvColumns.Sortable = false;

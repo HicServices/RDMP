@@ -186,6 +186,7 @@ namespace Rdmp.UI.DataRelease
             base.SetDatabaseObject(activator, databaseObject);
             
             if(!_commonFunctionality.IsSetup)
+            {
                 _commonFunctionality.SetUp(RDMPCollection.None, tlvReleasePotentials, Activator, olvName, null, new RDMPCollectionCommonFunctionalitySettings
                 {
                     AddFavouriteColumn = false,
@@ -193,6 +194,10 @@ namespace Rdmp.UI.DataRelease
                     SuppressChildrenAdder = true,
                     AddCheckColumn = false
                 });
+
+                _commonFunctionality.SetupColumnTracking(olvName, new Guid("2d09c1d2-b4a7-400f-9003-d23e43cd3d75"));
+                _commonFunctionality.SetupColumnTracking(olvReleaseability, new Guid("2f0ca398-a0d5-4e13-bb40-a2c817d4179a"));
+            }
 
             _childProvider = (DataExportChildProvider)Activator.CoreChildProvider;
             _project = databaseObject;

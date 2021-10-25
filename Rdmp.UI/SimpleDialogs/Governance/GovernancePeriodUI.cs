@@ -15,6 +15,7 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Governance;
+using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;
@@ -48,6 +49,8 @@ namespace Rdmp.UI.SimpleDialogs.Governance
             AssociatedCollection = RDMPCollection.Catalogue;
 
             olvName.ImageGetter = s => Activator.CoreIconProvider.GetImage(s);
+
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvCatalogues, olvName, new Guid("6702de5f-490f-4235-bce4-dea0cbd23f06"));
         }
 
         public override void SetDatabaseObject(IActivateItems activator, GovernancePeriod databaseObject)

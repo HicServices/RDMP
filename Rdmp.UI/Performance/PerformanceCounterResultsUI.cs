@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using Rdmp.UI.Collections;
 using Rdmp.UI.Performance.StackTraceProcessing;
 using ReusableLibraryCode.Performance;
 
@@ -35,6 +36,10 @@ namespace Rdmp.UI.Performance
             tlvLocations.CanExpandGetter += CanExpandGetter;
             tlvLocations.ChildrenGetter += ChildrenGetter;
             tlvLocations.RowFormatter += RowFormatter;
+
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvLocations, olvQueryCount, new Guid("576c87c7-a324-45bb-a4bc-4757044f7c43"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvLocations, olvQueryCount, new Guid("905e5565-0428-4734-8582-9734546d55a3"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvLocations, olvStackFrame, new Guid("865f84a1-f0c4-48d9-8983-10d35cf4a513"));
         }
 
         private void RowFormatter(OLVListItem olvItem)

@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Linq;
 using BrightIdeasSoftware;
 using Rdmp.Core;
@@ -58,12 +59,15 @@ namespace Rdmp.UI.Collections
     /// </summary>
     public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {
+        private bool _isFirstTime = true;
+
         public LoadMetadata SelectedLoadMetadata { get { return tlvLoadMetadata.SelectedObject as LoadMetadata; } }
         
         public LoadMetadataCollectionUI()
         {
             InitializeComponent();
             tlvLoadMetadata.RowHeight = 19;
+            olvValue.AspectGetter = (s) => (s as IArgument)?.Value;
         }
         
         public override void SetItemActivator(IActivateItems activator) 
@@ -86,11 +90,13 @@ namespace Rdmp.UI.Collections
             
             CommonFunctionality.Add(new ExecuteCommandCreateNewLoadMetadata(Activator),"New");
 
+            if(_isFirstTime)
+            {
+                CommonTreeFunctionality.SetupColumnTracking(olvName,new Guid("f84e8217-6b3c-4eb4-a314-fbd95b51c422"));
+                CommonTreeFunctionality.SetupColumnTracking(olvValue,new Guid("facab93a-6950-4815-9f5f-5f076277adb5"));
 
-            olvValue.IsVisible = UserSettings.ShowColumnValue;
-            olvValue.VisibilityChanged += (s, e) => UserSettings.ShowColumnValue = ((OLVColumn)s).IsVisible;
-            olvValue.AspectGetter = (s) => (s as IArgument)?.Value;
-
+                _isFirstTime = false;
+            }
         }
 
 

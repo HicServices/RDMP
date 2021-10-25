@@ -62,7 +62,7 @@ namespace Rdmp.UI.Collections
             // olvColumn1
             // 
             this.olvColumn1.AspectName = "ToString";
-            this.olvColumn1.FillsFreeSpace = true;
+            this.olvColumn1.FillsFreeSpace = false;
             this.olvColumn1.HeaderTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.olvColumn1.MinimumWidth = 100;
             this.olvColumn1.Text = "Catalogues";

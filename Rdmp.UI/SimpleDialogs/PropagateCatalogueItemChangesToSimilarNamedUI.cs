@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.Curation.Data;
+using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus;
 using Rdmp.UI.ScintillaHelper;
@@ -99,6 +100,11 @@ namespace Rdmp.UI.SimpleDialogs
             }
             
             olvCatalogues.CellRightClick += olvCatalogues_CellRightClick;
+
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvCatalogues, olvCatalogueItemName, new Guid("c5741da2-07d9-4bfb-952d-8b6df77271bf"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvCatalogues, olvCatalogueItemState, new Guid("fd7ad4a8-7448-4fff-8059-3759fe0c4d87"));
+
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvProperties, olvPropertyName, new Guid("b56adceb-2cd5-4f77-9be7-07fb38baad18"));
         }
 
 

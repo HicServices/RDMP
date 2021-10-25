@@ -15,6 +15,7 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
+using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
@@ -60,6 +61,8 @@ namespace Rdmp.UI.ExtractionUIs
                 "Instructions: In simple mode you can view your columns and drag and drop them to reorder them.  In Advanced mode you can also Paste (Ctrl + V)  a list of column names into Desired Order (dont worry about trimming commas or table prefixes etc).  The first item in the list should be the point at which you want to start reordering at e.g. CHI or the last record if you want to move columns to the end then paste in the rest of the columns that you want to move after this first item."
                 );
 
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvExtractionInformations,olvColumns, new Guid("35946a6e-ebe4-496a-a944-1ddb10b5f8c5"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvExtractionInformations, olvOrder, new Guid("d11d4b84-2464-4254-a3cb-b656c55dd0fc"));
         }
 
         public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)

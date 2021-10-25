@@ -12,6 +12,7 @@ using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CohortUI.ImportCustomData;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using System;
 
 namespace Rdmp.UI.Collections
 {
@@ -62,6 +63,9 @@ namespace Rdmp.UI.Collections
 
             Activator.RefreshBus.EstablishLifetimeSubscription(this);
 
+            CommonTreeFunctionality.SetupColumnTracking( olvName, new Guid("6857032b-4b28-4f92-8b38-f532f11c7a44"));
+            CommonTreeFunctionality.SetupColumnTracking( olvVersion, new Guid("637fcb62-8395-4b36-a5ce-76ed3194b4e0"));
+            CommonTreeFunctionality.SetupColumnTracking( olvProjectNumber, new Guid("8378f8cf-b08d-4656-a16e-760eed71fe3a"));
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)

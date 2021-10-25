@@ -159,7 +159,6 @@ namespace Rdmp.UI.Overview
             // olvName
             // 
             this.olvName.AspectName = "Name";
-            this.olvName.FillsFreeSpace = true;
             this.olvName.Groupable = false;
             this.olvName.Text = "Name";
             this.olvName.MinimumWidth = 100;

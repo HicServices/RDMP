@@ -22,6 +22,7 @@ using Rdmp.Core.DataExport.Checks;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryBuilding;
+using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ProjectUI.Datasets.Node;
@@ -88,8 +89,22 @@ namespace Rdmp.UI.ProjectUI.Datasets
             olvSelected.CellRightClick += olvSelected_CellRightClick;
 
             helpIconJoin.SetHelpText("Configure JoinInfos","Your query involves more than 1 table and RDMP does not yet know which columns to use to join the tables on.  Click the 'Configure' button below on any ticked tables for which no joins are shown");
-        }
 
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvAvailable, olvAvailableColumnCategory, new Guid("e515dd51-6ab4-4e62-8d58-0081dde77646"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvAvailable, olvAvailableColumnName, new Guid("f40a31b5-4a64-44b5-9d21-54595f8671b1"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvAvailable, olvAvailableIsExtractionIdentifier, new Guid("6741ea5c-5a1e-482a-943e-5d9bcfde4a1f"));
+
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvJoin, olvJoinColumn, new Guid("7e034241-9d7a-48a6-869c-a0831303839a"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvJoin, olvJoinTableName, new Guid("7b0b0c8f-b648-47cc-a14f-6dce54333d0b"));
+
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvSelected, olvSelectedCatalogue, new Guid("7ec2a0b8-cc84-4759-8f78-0f2c492ae408"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvSelected, olvSelectedCategory, new Guid("e0cc6915-15ad-4148-adf1-978489e36940"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvSelected, olvSelectedColumnName, new Guid("061b5ef1-d0bd-4be6-9e9a-1a6a9c13a01c"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvSelected, olvSelectedColumnOrder, new Guid("2b4db0ee-3768-4e0e-a62b-e5a9b19e91a7"));
+            
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvSelected, olvIssues, new Guid("741f0cff-1d2e-46a7-a5da-9ce13e0960cf"));
+            
+        }
 
         void olvSelected_CellRightClick(object sender, CellRightClickEventArgs e)
         {

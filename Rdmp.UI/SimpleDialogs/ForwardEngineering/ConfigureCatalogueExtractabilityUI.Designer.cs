@@ -99,7 +99,6 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             // olvColumnInfoName
             // 
             this.olvColumnInfoName.AspectName = "ToString";
-            this.olvColumnInfoName.FillsFreeSpace = true;
             this.olvColumnInfoName.Groupable = false;
             this.olvColumnInfoName.Text = "Name";
             this.olvColumnInfoName.MinimumWidth = 100;

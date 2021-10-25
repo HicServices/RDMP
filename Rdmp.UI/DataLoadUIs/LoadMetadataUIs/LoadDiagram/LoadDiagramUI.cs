@@ -80,6 +80,10 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             AssociatedCollection = RDMPCollection.DataLoad;
 
             _btnFetchData.Click += btnFetch_Click;
+
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvLoadedTables, olvName, new Guid("d9fa87d8-537b-4d5c-8135-203b5790d8e5"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvLoadedTables, olvState, new Guid("9bc71a44-5a59-4a6c-8a97-efc512dc23bf"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvLoadedTables, olvDataType, new Guid("4cd3b1c5-c705-433c-a6b4-5ffd3a9b3ede"));
         }
 
         void tlvLoadedTables_ItemActivate(object sender, EventArgs e)

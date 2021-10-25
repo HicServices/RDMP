@@ -141,7 +141,6 @@ namespace Rdmp.UI.SimpleDialogs
             // 
             // olvCatalogueItemName
             // 
-            this.olvCatalogueItemName.FillsFreeSpace = true;
             this.olvCatalogueItemName.Text = "Name";
             this.olvCatalogueItemName.MinimumWidth = 100;
             // 
@@ -209,7 +208,6 @@ namespace Rdmp.UI.SimpleDialogs
             // olvPropertyName
             // 
             this.olvPropertyName.AspectName = "Name";
-            this.olvPropertyName.FillsFreeSpace = true;
             this.olvPropertyName.Text = "Property";
             this.olvPropertyName.MinimumWidth = 100;
             // 
