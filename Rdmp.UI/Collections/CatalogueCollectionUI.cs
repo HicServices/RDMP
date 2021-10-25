@@ -54,15 +54,10 @@ namespace Rdmp.UI.Collections
         public CatalogueCollectionUI()
         {
             InitializeComponent();
-            
 
             olvFilters.AspectGetter += FilterAspectGetter;
-            olvFilters.IsVisible = UserSettings.ShowColumnFilters;
-            olvFilters.VisibilityChanged += (s, e) => UserSettings.ShowColumnFilters = ((OLVColumn)s).IsVisible;
-
             olvOrder.AspectGetter += OrderAspectGetter;
-            olvOrder.VisibilityChanged += (s,e)=>UserSettings.ShowOrderColumn = ((OLVColumn)s).IsVisible;
-            olvOrder.IsVisible = UserSettings.ShowOrderColumn;
+
             bLoading = false;
 
             catalogueCollectionFilterUI1.FiltersChanged += (s, e) => ApplyFilters();
@@ -117,6 +112,10 @@ namespace Rdmp.UI.Collections
             
             if (isFirstTime)
             {
+                CommonTreeFunctionality.SetupColumnTracking(olvColumn1, new Guid("1d912137-22ab-4536-b40b-bd984e27dc7a"));
+                CommonTreeFunctionality.SetupColumnTracking(olvOrder, new Guid("0d8e6e49-03ae-48f2-9bf8-acc5107f65f8"));
+                CommonTreeFunctionality.SetupColumnTracking(olvFilters, new Guid("c4c9b2ac-c9b5-4d23-b06d-d1f55013b4e9"));
+
                 CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator),GlobalStrings.FromFile,null,"New...");
                 CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator),GlobalStrings.FromDatabase,null,"New...");
             }

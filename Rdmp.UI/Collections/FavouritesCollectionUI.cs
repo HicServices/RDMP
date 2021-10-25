@@ -24,7 +24,7 @@ namespace Rdmp.UI.Collections
     public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {
         List<IMapsDirectlyToDatabaseTable> favourites = new List<IMapsDirectlyToDatabaseTable>();
-
+        bool _firstTime = true;
         public FavouritesCollectionUI()
         {
             InitializeComponent();
@@ -45,6 +45,13 @@ namespace Rdmp.UI.Collections
             Activator.RefreshBus.EstablishLifetimeSubscription(this);
             
             RefreshFavourites();
+
+            if(_firstTime)
+            {
+                CommonTreeFunctionality.SetupColumnTracking(olvName, new Guid("f8b0481e-378c-4996-9400-cb039c2efc5c"));
+                _firstTime = false;
+            }
+
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)

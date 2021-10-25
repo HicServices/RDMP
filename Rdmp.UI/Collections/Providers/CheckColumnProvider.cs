@@ -38,8 +38,6 @@ namespace Rdmp.UI.Collections.Providers
             toReturn.Text = ChecksColumnName;
             toReturn.ImageGetter = CheckImageGetter;
             toReturn.IsEditable = false;
-            toReturn.IsVisible = UserSettings.ShowColumnCheck;
-            toReturn.VisibilityChanged += (s, e) => UserSettings.ShowColumnCheck = ((OLVColumn)s).IsVisible;
 
             return toReturn;
         }

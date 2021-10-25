@@ -34,6 +34,8 @@ namespace Rdmp.UI.Collections
     /// </summary>
     public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {
+        private bool _isFirstTime;
+
         public DataExportCollectionUI()
         {
             InitializeComponent();
@@ -41,18 +43,12 @@ namespace Rdmp.UI.Collections
 
             olvProjectNumber.IsEditable = false;
             olvProjectNumber.AspectGetter = ProjectNumberAspectGetter;
-            olvProjectNumber.IsVisible = UserSettings.ShowColumnProjectNumber;
-            olvProjectNumber.VisibilityChanged += (s, e) => UserSettings.ShowColumnProjectNumber = ((OLVColumn) s).IsVisible;
 
             olvCohortSource.IsEditable = false;
             olvCohortSource.AspectGetter = CohortSourceAspectGetter;
-            olvCohortSource.IsVisible = UserSettings.ShowColumnCohortSource;
-            olvCohortSource.VisibilityChanged += (s, e) => UserSettings.ShowColumnCohortSource = ((OLVColumn)s).IsVisible;
 
             olvCohortVersion.IsEditable = false;
             olvCohortVersion.AspectGetter = CohortVersionAspectGetter;
-            olvCohortVersion.IsVisible = UserSettings.ShowColumnCohortVersion;
-            olvCohortVersion.VisibilityChanged += (s, e) => UserSettings.ShowColumnCohortVersion = ((OLVColumn)s).IsVisible;
         }
 
         private object CohortSourceAspectGetter(object rowObject)
@@ -129,6 +125,14 @@ namespace Rdmp.UI.Collections
             {
                 tlvDataExport.AddObjects(dataExportChildProvider.AllPackages);
                 tlvDataExport.AddObjects(dataExportChildProvider.Projects);
+            }
+            
+            if (_isFirstTime)
+            {
+                CommonTreeFunctionality.SetupColumnTracking(olvProjectNumber, new Guid("2a1764d4-8871-4488-b068-8940b777f90e"));
+                CommonTreeFunctionality.SetupColumnTracking(olvCohortSource, new Guid("c4dabcc3-ccc9-4c9b-906b-e8106e8b616c"));
+                CommonTreeFunctionality.SetupColumnTracking(olvCohortVersion, new Guid("2d0f8d32-090d-4d2b-8cfe-b6d16f5cc419"));
+                _isFirstTime = false;
             }
 
             SetupToolStrip();

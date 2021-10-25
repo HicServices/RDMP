@@ -65,7 +65,6 @@ namespace Rdmp.UI.Collections
             // olvColumn1
             // 
             this.olvColumn1.AspectName = "ToString";
-            this.olvColumn1.FillsFreeSpace = true;
             this.olvColumn1.Text = "Name";
             this.olvColumn1.MinimumWidth = 100;
             // 

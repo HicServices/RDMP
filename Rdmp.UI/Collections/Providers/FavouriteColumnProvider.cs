@@ -49,9 +49,6 @@ namespace Rdmp.UI.Collections.Providers
             
             _tlv.AllColumns.Add(_olvFavourite);
             _tlv.RebuildColumns();
-
-            _olvFavourite.IsVisible = UserSettings.ShowColumnFavourite;
-            _olvFavourite.VisibilityChanged += (s, e) => UserSettings.ShowColumnFavourite = ((OLVColumn)s).IsVisible;
             
             return _olvFavourite;
         }

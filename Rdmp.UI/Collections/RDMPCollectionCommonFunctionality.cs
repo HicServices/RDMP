@@ -8,7 +8,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
@@ -97,6 +99,26 @@ namespace Rdmp.UI.Collections
         };
 
         /// <summary>
+        /// Sets up width and visibility tracking on the given <paramref name="col"/>.  Each logically different
+        /// column should have it's own unique Guid.  But it is ok for the same column (e.g. ID) in two different
+        /// collection windows to share the same Guid in order to persist user preference of visibility of the concept.
+        /// </summary>
+        /// <param name="col"></param>
+        /// <param name="g"></param>
+        public void SetupColumnTracking(OLVColumn col, Guid g)
+        {
+            DateTime dt = DateTime.Now;
+
+            col.Width = UserSettings.GetColumnWidth(g);
+            Tree.ColumnWidthChanged += (s, e) => UserSettings.SetColumnWidth(g, col.Width);
+
+            col.IsVisible = UserSettings.GetColumnVisible(g);
+            col.VisibilityChanged += (s, e) => UserSettings.SetColumnVisible(g, ((OLVColumn)s).IsVisible);
+
+            Tree.RebuildColumns();
+        }
+
+        /// <summary>
         /// Sets up common functionality for an RDMPCollectionUI with the default settings
         /// </summary>
         /// <param name="collection"></param>
@@ -179,6 +201,8 @@ namespace Rdmp.UI.Collections
             {
                 FavouriteColumnProvider = new FavouriteColumnProvider(_activator, tree);
                 FavouriteColumn = FavouriteColumnProvider.CreateColumn();
+
+                SetupColumnTracking(FavouriteColumn, new Guid("ab25aa56-957c-4d1b-b395-48299be8e467"));
             }
 
             if (settings.AddIDColumn)
@@ -187,6 +211,7 @@ namespace Rdmp.UI.Collections
                 IDColumn = IDColumnProvider.CreateColumn();
 
                 Tree.AllColumns.Add(IDColumn);
+                SetupColumnTracking(IDColumn, new Guid("9d567d9c-06f5-41b6-9f0d-e630a0e23f3a"));
                 Tree.RebuildColumns();
             }
 
@@ -194,7 +219,9 @@ namespace Rdmp.UI.Collections
             {
                 CheckColumnProvider = new CheckColumnProvider(tree, _activator.CoreIconProvider);
                 CheckColumn = CheckColumnProvider.CreateColumn();
-                
+
+                SetupColumnTracking(CheckColumn, new Guid("8d9c6a0f-82a8-4f4e-b058-e3017d8d60e0"));
+
                 Tree.AllColumns.Add(CheckColumn);
                 Tree.RebuildColumns();
             }

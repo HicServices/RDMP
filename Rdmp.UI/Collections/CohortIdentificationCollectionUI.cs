@@ -25,6 +25,8 @@ namespace Rdmp.UI.Collections
     /// </summary>
     public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {
+        bool _firstTime = true;
+
         //for expand all/ collapse all
         public CohortIdentificationCollectionUI()
         {
@@ -70,9 +72,14 @@ namespace Rdmp.UI.Collections
 
             var factory = new AtomicCommandUIFactory(activator);
             
-            
             CommonFunctionality.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator)),"New...");
             CommonFunctionality.Add(factory.CreateMenuItem(new ExecuteCommandMergeCohortIdentificationConfigurations(Activator,null){OverrideCommandName = "By Merging Existing..."}),"New...");
+
+            if(_firstTime)
+            {
+                CommonTreeFunctionality.SetupColumnTracking(olvName,new Guid("f8a42259-ce5a-4006-8ab8-e0305fce05aa"));
+                _firstTime = false;
+            }
         }
         
         public static bool IsRootObject(object root)
