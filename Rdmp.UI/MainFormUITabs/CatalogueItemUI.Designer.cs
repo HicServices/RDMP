@@ -289,7 +289,6 @@
             this.splitContainer1.Panel1.Controls.Add(this.panel4);
             this.splitContainer1.Panel1.Controls.Add(this.panel3);
             this.splitContainer1.Panel1.Controls.Add(this.panel2);
-            this.splitContainer1.Panel1MinSize = 220;
             // 
             // splitContainer1.Panel2
             // 
