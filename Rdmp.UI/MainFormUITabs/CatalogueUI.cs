@@ -37,8 +37,6 @@ namespace Rdmp.UI.MainFormUITabs
     /// </summary>
     public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
     {
-
-        private bool _expand = true;
         internal Scintilla _scintillaDescription;
 
         private Catalogue _catalogue;
@@ -125,13 +123,6 @@ namespace Rdmp.UI.MainFormUITabs
             base.SetDatabaseObject(activator,databaseObject);
             
             _catalogue = databaseObject;
-
-            CommonFunctionality.AddHelp(tbFolder, "CatalogueFolder");
-
-            CommonFunctionality.AddHelp(cbDeprecated, "IMightBeDeprecated.IsDeprecated");
-            CommonFunctionality.AddHelp(cbColdStorage, "ICatalogue.IsColdStorageDataset");
-            CommonFunctionality.AddHelp(cbInternal, "ICatalogue.IsInternalDataset");
-
 
             RefreshUIFromDatabase();
         }
@@ -220,12 +211,6 @@ namespace Rdmp.UI.MainFormUITabs
         }
 
 
-        private void btnExpandOrCollapse_Click(object sender, EventArgs e)
-        {
-            splitContainer1.Panel2Collapsed = !_expand;
-            _expand = !_expand;
-            btnExpandOrCollapse.Text = _expand ? "+" : "-";
-        }
 
         private void c_tbLastRevisionDate_TextChanged(object sender, EventArgs e)
         {
