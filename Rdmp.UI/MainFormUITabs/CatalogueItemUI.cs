@@ -32,7 +32,6 @@ namespace Rdmp.UI.MainFormUITabs
     /// </summary>
     public partial class CatalogueItemUI : CatalogueItemUI_Design, ISaveableUI
     {
-        private bool _expand = true;
         internal Scintilla _scintillaDescription;
         private CatalogueItem _catalogueItem;
 
@@ -95,17 +94,6 @@ namespace Rdmp.UI.MainFormUITabs
             Bind(ci_tbLimitations, "Text", "Limitations", ci => ci.Limitations);
             Bind(ci_tbComments,"Text", "Comments",ci=>ci.Comments);
         }
-
-
-        
-
-        private void btnExpandOrCollapse_Click(object sender, EventArgs e)
-        {
-            splitContainer1.Panel2Collapsed = !_expand;
-            _expand = !_expand;
-            btnExpandOrCollapse.Text = _expand ? "+" : "-";
-        }
-
 
         public override string GetTabName()
         {
