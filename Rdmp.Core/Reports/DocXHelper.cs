@@ -39,12 +39,21 @@ namespace Rdmp.Core.Reports
 
         protected void InsertParagraph(XWPFDocument document, string ptext, int textFontSize = -1)
         {
-            var h = document.CreateParagraph();
-            XWPFRun r0 = h.CreateRun();
-            //file data
-            r0.SetText(ptext??"");
+            if(string.IsNullOrWhiteSpace(ptext))
+            {
+                return;
+            }
 
-            r0.FontSize = textFontSize != -1 ? textFontSize : 10;
+            foreach(var para in ptext.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
+            {
+                var h = document.CreateParagraph();
+                XWPFRun r0 = h.CreateRun();
+                //file data
+                r0.SetText(para);
+
+                r0.FontSize = textFontSize != -1 ? textFontSize : 10;
+            }
+
         }
 
         protected void InsertHeader(XWPFDocument document, string htext, int headSize = 1)
