@@ -80,15 +80,25 @@ namespace Rdmp.Core.Reports
 
         protected void SetTableCell(XWPFTable table, int row, int col, string value, int fontSize = -1)
         {
+            if(string.IsNullOrEmpty(value))
+            {
+                return;
+            }
+
             var cell = table.GetRow(row).GetCell(col);
 
-            var para = cell.Paragraphs[0];
-            var run = para.CreateRun();
-            
-            run.SetText(value??"");
+            var first = true;
 
-            if (fontSize != -1)
-                run.FontSize = fontSize;
+            foreach(var bit in value.Split(Environment.NewLine,StringSplitOptions.RemoveEmptyEntries))
+            {
+                var para = first ? cell.Paragraphs[0] : cell.AddParagraph();
+                var run = para.CreateRun();
+
+                run.SetText(bit);
+
+                if (fontSize != -1)
+                    run.FontSize = fontSize;
+            }
         }
          public const int PICTURE_TYPE_PNG =	6;
 
