@@ -18,7 +18,7 @@
 | Xam.Plugins.Settings | [GitHub](https://github.com/jamesmontemagno/SettingsPlugin)| [3.1.1](https://www.nuget.org/packages/Xam.Plugins.Settings/3.1.1) | [MIT](https://opensource.org/licenses/MIT)| Read/Write user settings for main client application |
 | CommandLineParser | [GitHub](https://github.com/commandlineparser/commandline) | [2.8.0](https://www.nuget.org/packages/CommandLineParser/2.8.0) | [MIT](https://opensource.org/licenses/MIT) | Allows command line arguments for main client application and CLI executables |
 | CsvHelper | [GitHub](https://github.com/JoshClose/CsvHelper) | [19.0.0](https://www.nuget.org/packages/CsvHelper/19.0.0) | MS-PL / Apache 2.0 | Enables reading/writing CSV files |
-| NPOI | [GitHub](https://github.com/tonyqus/npoi) | [2.4.1](https://www.nuget.org/packages/NPOI/2.4.1) | Apache 2.0 | Enables reading/writing Microsoft Excel files |
+| NPOI | [GitHub](https://github.com/tonyqus/npoi) | [2.5.5](https://www.nuget.org/packages/NPOI/2.5.5) | Apache 2.0 | Enables reading/writing Microsoft Excel files |
 | ExcelNumberFormat | [GitHub](https://github.com/andersnm/ExcelNumberFormat) | [1.1.0](https://www.nuget.org/packages/ExcelNumberFormat/1.1.0) |[MIT](https://opensource.org/licenses/MIT)  | Handles translating number formats from Excel formats into usable values | |
 | [NLog](https://nlog-project.org/) | [GitHub](https://github.com/NLog/NLog) | [4.7.12](https://www.nuget.org/packages/NLog/4.7.12) | [BSD 3-Clause](https://github.com/NLog/NLog/blob/dev/LICENSE.txt) | Flexible user configurable logging | |
 | HIC.FAnsiSql |[GitHub](https://github.com/HicServices/FAnsiSql) | [2.0.1](https://www.nuget.org/packages/HIC.FansiSql/2.0.1) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | [DBMS] abstraction layer |
