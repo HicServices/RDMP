@@ -13,6 +13,7 @@ using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using NLog;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
@@ -158,6 +159,9 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
             
             if (typeof(ICheckable) == paramType)
                 return GetOneDatabaseEntity<ICheckable>();
+
+            if (typeof(ILoggedActivityRootObject) == paramType)
+                return GetOneDatabaseEntity<ILoggedActivityRootObject>();
 
             // is it a basic Type (value type or Enum)?
             var basicType = nullableType ?? paramType;
