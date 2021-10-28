@@ -228,7 +228,7 @@ namespace Rdmp.Core.Curation
                 //deal with mismatch in type
                 if (!liveState.DataType.SQLType.Equals(columnInfo.Data_type))
                     if (notifier.OnCheckPerformed(new CheckEventArgs(
-                        "ColumnInfo " + columnInfo.GetRuntimeName() + " is type " + liveState.DataType.SQLType +
+                        "ColumnInfo {" + columnInfo.Name + "} is type " + liveState.DataType.SQLType +
                         " in the live database but in the Catalogue appears as " + columnInfo.Data_type,CheckResult.Fail,null,
                         "Update type in Catalogue?")))
                     {

@@ -10,6 +10,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Console gui context menu now shows compatible commands from plugins
 
+### Changed
+
+- When syncing table columns with the database, the full column (including table name) is displayed in the proposed fix (previously only the column name was displayed).
+- Bump Terminal.Gui from 1.2.1 to 1.3.1
+
 ## [7.0.1] - 2021-10-27
 
 ### Changed
