@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added the `ConfirmLogs` command for verifying if a task is failing (e.g. a DLE run)
 
+### Changed
+
+- Bump Terminal.Gui from 1.2.1 to 1.3.1
+
 ## [7.0.1] - 2021-10-27
 
 ### Changed
