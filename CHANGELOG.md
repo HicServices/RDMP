@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed 'package downgrade' dependencies issue with `HIC.RDMP.Plugin.UI`
+
 ## [7.0.1] - 2021-10-27
 
 ### Changed
