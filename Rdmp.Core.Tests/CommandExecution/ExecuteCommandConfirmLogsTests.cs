@@ -4,6 +4,7 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Logging;
+using System.Threading;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandExecution
@@ -28,8 +29,9 @@ namespace Rdmp.Core.Tests.CommandExecution
             Assert.AreEqual("There are no log entries for MyLmd", ex.Message);
 
         }
-        [Test]
-        public void ConfirmLogs_HappyEntries_Passes()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void ConfirmLogs_HappyEntries_Passes(bool withinTime)
         {
             var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
             var cata = new Catalogue(CatalogueRepository, "myCata");
@@ -44,7 +46,10 @@ namespace Rdmp.Core.Tests.CommandExecution
             // we mark it as completed successfully - this is a good, happy log entry
             logEntry.CloseAndMarkComplete();
 
-            var cmd = new ExecuteCommandConfirmLogs(new ThrowImmediatelyActivator(RepositoryLocator), lmd);
+            
+            var cmd = new ExecuteCommandConfirmLogs(new ThrowImmediatelyActivator(RepositoryLocator),
+                //within last 10 hours
+                lmd, withinTime ? "10:00:00":null);
             Assert.DoesNotThrow(() => cmd.Execute());
         }
 
@@ -87,6 +92,33 @@ namespace Rdmp.Core.Tests.CommandExecution
 
             StringAssert.IsMatch("Latest logs for MyLmd .* indicate that it failed", ex.Message);
 
+        }
+
+
+        [Test]
+        public void ConfirmLogs_NotWithinTime_Throws()
+        {
+
+            var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
+            var cata = new Catalogue(CatalogueRepository, "myCata");
+            cata.LoadMetadata_ID = lmd.ID;
+            cata.LoggingDataTask = "FFF";
+            cata.SaveToDatabase();
+
+            var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
+            lm.CreateNewLoggingTaskIfNotExists("FFF");
+            var logEntry = lm.CreateDataLoadInfo("FFF", "pack o' cards", "going down gambling", null, true);
+
+            // we mark it as completed successfully - this is a good, happy log entry
+            logEntry.CloseAndMarkComplete();
+
+            Thread.Sleep(5000);
+
+            // but we want this to have finished in the last second
+            var cmd = new ExecuteCommandConfirmLogs(new ThrowImmediatelyActivator(RepositoryLocator), lmd,"00:00:01");
+            var ex = Assert.Throws<ExecuteCommandConfirmLogs.LogsNotConfirmedException>(() => cmd.Execute());
+
+            StringAssert.IsMatch("Latest logged activity for MyLmd is .*.  This is older than the requested date threshold:.*", ex.Message);
         }
     }
 }
