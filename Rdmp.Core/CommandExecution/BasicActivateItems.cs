@@ -74,7 +74,8 @@ namespace Rdmp.Core.CommandExecution
 
         /// <inheritdoc/>
         public event EmphasiseItemHandler Emphasise;
-
+        
+        /// <inheritdoc/>
         public List<IPluginUserInterface> PluginUserInterfaces { get; private set; } = new List<IPluginUserInterface>();
 
         public BasicActivateItems(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
