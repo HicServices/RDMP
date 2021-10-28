@@ -25,7 +25,7 @@
             <dependency id="YamlDotNet" version="11.2.1" />
             <dependency id="Microsoft.NET.Test.Sdk" version="16.11.0" />
             <dependency id="ExcelNumberFormat" version="1.1.0" />
-            <dependency id="NPOI" version="2.4.1" />
+            <dependency id="NPOI" version="2.5.5" />
             <dependency id="Xam.Plugins.Settings" version="3.1.1" />
             <dependency id="System.Runtime.Loader" version="4.3.0" />
             <dependency id="System.Drawing.Common" version="5.0.2" />
