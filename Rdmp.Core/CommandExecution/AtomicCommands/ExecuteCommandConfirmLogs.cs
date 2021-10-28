@@ -8,12 +8,8 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Logging;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 using TypeGuesser.Deciders;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
@@ -23,7 +19,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     /// Checks the RDMP logs for the latest log entry of a given object.  Throws (returns exit code non zero) if
     /// the top log entry is failing or if there are no log entries within the expected time span.
     /// </summary>
-    public class ExecuteCommandConfirmLogs : BasicCommandExecution {
+    public partial class ExecuteCommandConfirmLogs : BasicCommandExecution {
 
         /// <summary>
         /// Optional time period in which to expect successful logs
@@ -98,29 +94,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 throw new LogsNotConfirmedException($"Latest logs for {LogRootObject} ({latest.StartTime}) indicate that it did not complete");
             }
             // latest log entry is passing yay!
-        }
-
-        /// <summary>
-        /// Thrown when <see cref="ExecuteCommandConfirmLogs"/> identifies that the expected logged activities are not present or indicate failure
-        /// </summary>
-        [Serializable]
-        public class LogsNotConfirmedException : Exception
-        {
-            public LogsNotConfirmedException()
-            {
-            }
-
-            public LogsNotConfirmedException(string message) : base(message)
-            {
-            }
-
-            public LogsNotConfirmedException(string message, Exception innerException) : base(message, innerException)
-            {
-            }
-
-            protected LogsNotConfirmedException(SerializationInfo info, StreamingContext context) : base(info, context)
-            {
-            }
         }
     }
 }
