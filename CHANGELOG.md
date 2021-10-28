@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Bump NLog from 4.7.11 to 4.7.12
+- Bump Microsoft.NET.Test.Sdk from 16.11.0 to 17.0.0
 - [Catalogue] and [CatalogueItem] edit tab now expands to fill free space and allows resizing
 
 ### Fixed
