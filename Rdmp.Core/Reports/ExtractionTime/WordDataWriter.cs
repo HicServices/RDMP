@@ -43,9 +43,6 @@ namespace Rdmp.Core.Reports.ExtractionTime
             Executer = executer;
 
             _destination = Executer.Destination;
-
-            if(_destination == null)
-                throw new NotSupportedException(GetType().FullName + " only supports destinations which are " + typeof(ExecuteDatasetExtractionFlatFileDestination).FullName);
         }
         
         private static object oLockOnWordUsage = new object();
@@ -60,7 +57,9 @@ namespace Rdmp.Core.Reports.ExtractionTime
         {
             lock (oLockOnWordUsage)
             {
-                using (var document = GetNewDocFile(new FileInfo(Path.Combine(_destination.DirectoryPopulated.FullName, _destination.GetFilename() + ".docx"))))
+                var destDir = _destination.GetDirectoryFor(Executer.ExtractCommand);
+
+                using (var document = GetNewDocFile(new FileInfo(Path.Combine(destDir.FullName, _destination.GetFilename() + ".docx"))))
                 {
                     InsertHeader(document,Executer.Source.Request.DatasetBundle.DataSet + " Meta Data");
 
