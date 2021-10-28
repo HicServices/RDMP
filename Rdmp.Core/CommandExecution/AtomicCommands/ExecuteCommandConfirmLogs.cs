@@ -85,14 +85,22 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             // we have an acceptably recent log entry
             if(latest.HasErrors)
             {
-                throw new LogsNotConfirmedException($"Latest logs for {LogRootObject} ({latest.StartTime}) indicate failure");
+                throw new LogsNotConfirmedException($"Latest logs for {LogRootObject} ({latest.StartTime}) indicate that it failed");
             }
 
+            // most recent log entry did not complete
+            if (!latest.EndTime.HasValue)
+            {
+                throw new LogsNotConfirmedException($"Latest logs for {LogRootObject} ({latest.StartTime}) indicate that it did not complete");
+            }
             // latest log entry is passing yay!
         }
 
+        /// <summary>
+        /// Thrown when <see cref="ExecuteCommandConfirmLogs"/> identifies that the expected logged activities are not present or indicate failure
+        /// </summary>
         [Serializable]
-        private class LogsNotConfirmedException : Exception
+        public class LogsNotConfirmedException : Exception
         {
             public LogsNotConfirmedException()
             {
