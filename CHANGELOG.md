@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Fixed
+
+- Fixed log viewer total time display in logs view when task ran for > 24 hours.
+
 ### Added
 
 - Console gui context menu now shows compatible commands from plugins
