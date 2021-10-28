@@ -77,13 +77,6 @@ namespace Rdmp.Core.CommandLine.Gui
 
             textView.AllowsTab = false;
 
-            // HACK: to avoid https://github.com/migueldeicaza/gui.cs/issues/1438 .  Remove this event handler once Terminal.Gui 1.2.2 (or later) is released 
-            textView.KeyPress += (e) =>
-            {
-                if (e.KeyEvent.Key == Key.Backspace)
-                    textView.SetNeedsDisplay();
-            };
-
             TabView.AddTab(queryTab = new Tab("Query", textView),true);
 
             tableView = new TableView()
@@ -367,21 +360,11 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 Autocomplete = new SqlAutocomplete();
 
-                // HACK: to workaround https://github.com/migueldeicaza/gui.cs/pull/1437
-                var prev = Colors.Menu;
-                Colors.Menu = new ColorScheme()
+                Autocomplete.ColorScheme = new ColorScheme()
                 {
                     Normal = Driver.MakeAttribute(Color.Black, Color.Blue),
                     Focus = Driver.MakeAttribute(Color.Black, Color.Cyan),
                 };
-
-                // this is a hack
-                var cs = Autocomplete.ColorScheme;
-                Debug.Assert(cs == Colors.Menu);
-
-                // restore menu so not to break all menus in app
-                Colors.Menu = prev;
-                // ENDHACK
 
                 _blue = Driver.MakeAttribute(Color.Cyan, Color.Black);
                 _white = Driver.MakeAttribute(Color.White, Color.Black);

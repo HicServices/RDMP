@@ -25,8 +25,8 @@ namespace Rdmp.Core.Logging.PastEvents
         public int DataLoadTaskID { get; set; }
         public const int MaxDescriptionLength = 300;
 
-        public DateTime StartTime { get; private set; }
-        public DateTime? EndTime { get; private set; }
+        public DateTime StartTime { get; internal set; }
+        public DateTime? EndTime { get; internal set; }
 
         public bool HasErrors { get; private set; }
 
@@ -44,7 +44,7 @@ namespace Rdmp.Core.Logging.PastEvents
             if (EndTime != null)
             {
                 var ts = EndTime.Value.Subtract(StartTime);
-                elapsed = " (" + ts.ToString(@"hh\:mm\:ss")+ ")";
+                elapsed = $" ({ts.TotalHours:N0}:{ts.Minutes}:{ts.Seconds})";
             }
 
             return Description + "(ID="+ID +") - " + StartTime + " - " + (EndTime != null ? EndTime.ToString() : "<DidNotFinish>") + elapsed;
@@ -69,6 +69,15 @@ namespace Rdmp.Core.Logging.PastEvents
         readonly Lazy<List<ArchivalProgressLog>> _knownProgress;
         
         public string Description { get; set; }
+
+        /// <summary>
+        /// Creates a blank unknown instance not associated with a logging database
+        /// Use this constructor for testing only.
+        /// </summary>
+        internal ArchivalDataLoadInfo()
+        {
+
+        }
         
         internal ArchivalDataLoadInfo(DbDataReader r,DiscoveredDatabase loggingDatabase)
         {

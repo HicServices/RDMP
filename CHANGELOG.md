@@ -9,12 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed 'package downgrade' dependencies issue with `HIC.RDMP.Plugin.UI`
+- Fixed log viewer total time display in logs view when task ran for > 24 hours.
+
+### Added
+
+- Console gui context menu now shows compatible commands from plugins
+
+### Changed
+
+- When syncing table columns with the database, the full column (including table name) is displayed in the proposed fix (previously only the column name was displayed).
+- Bump Terminal.Gui from 1.2.1 to 1.3.1
 
 ## [7.0.1] - 2021-10-27
 
 ### Changed
 
 - Bump NLog from 4.7.11 to 4.7.12
+- Bump Microsoft.NET.Test.Sdk from 16.11.0 to 17.0.0
 - [Catalogue] and [CatalogueItem] edit tab now expands to fill free space and allows resizing
 
 ### Fixed
