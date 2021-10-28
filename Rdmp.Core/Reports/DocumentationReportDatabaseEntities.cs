@@ -56,7 +56,8 @@ namespace Rdmp.Core.Reports
 
                         if (bmp != null)
                         {
-                            var run = t.Rows[(i*2) + 1].GetCell(0).Paragraphs.First().Runs.First();
+                            var para = t.Rows[(i * 2) + 1].GetCell(0).Paragraphs.First();
+                            var run = para.Runs.FirstOrDefault() ?? para.CreateRun();
                             GetPicture(run,bmp);
                         }
                         SetTableCell(t, (i * 2) + 1, 0," "+ keys[i].Name);

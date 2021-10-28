@@ -39,12 +39,21 @@ namespace Rdmp.Core.Reports
 
         protected void InsertParagraph(XWPFDocument document, string ptext, int textFontSize = -1)
         {
-            var h = document.CreateParagraph();
-            XWPFRun r0 = h.CreateRun();
-            //file data
-            r0.SetText(ptext??"");
+            if(string.IsNullOrWhiteSpace(ptext))
+            {
+                return;
+            }
 
-            r0.FontSize = textFontSize != -1 ? textFontSize : 10;
+            foreach(var para in ptext.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
+            {
+                var h = document.CreateParagraph();
+                XWPFRun r0 = h.CreateRun();
+                //file data
+                r0.SetText(para);
+
+                r0.FontSize = textFontSize != -1 ? textFontSize : 10;
+            }
+
         }
 
         protected void InsertHeader(XWPFDocument document, string htext, int headSize = 1)
@@ -71,15 +80,25 @@ namespace Rdmp.Core.Reports
 
         protected void SetTableCell(XWPFTable table, int row, int col, string value, int fontSize = -1)
         {
+            if(string.IsNullOrEmpty(value))
+            {
+                return;
+            }
+
             var cell = table.GetRow(row).GetCell(col);
 
-            var para = cell.Paragraphs[0];
-            var run = para.CreateRun();
-            
-            run.SetText(value??"");
+            var first = true;
 
-            if (fontSize != -1)
-                run.FontSize = fontSize;
+            foreach(var bit in value.Split(Environment.NewLine,StringSplitOptions.RemoveEmptyEntries))
+            {
+                var para = first ? cell.Paragraphs[0] : cell.AddParagraph();
+                var run = para.CreateRun();
+
+                run.SetText(bit);
+
+                if (fontSize != -1)
+                    run.FontSize = fontSize;
+            }
         }
          public const int PICTURE_TYPE_PNG =	6;
 
@@ -106,9 +125,20 @@ namespace Rdmp.Core.Reports
             }
         }
 
-        protected XWPFTable InsertTable(XWPFDocument document, int rowCount, int colCount,bool autoFit = true)
+        protected XWPFTable InsertTable(XWPFDocument document, int rowCount, int colCount)
         {
-            return document.CreateTable(rowCount, colCount);
+            XWPFTable table1 = document.CreateTable(rowCount, colCount);
+            var tblLayout1 = table1.GetCTTbl().tblPr.AddNewTblLayout();
+            tblLayout1.type = ST_TblLayoutType.@fixed;
+
+            const int width = 10000;
+
+            for (int i = 0; i < colCount; i++)
+            {
+                table1.SetColumnWidth(i, (ulong)(width / colCount));
+            }
+
+            return table1;
         }
 
         protected FileInfo GetUniqueFilenameInWorkArea(string desiredName, string extension = ".docx")
@@ -164,6 +194,7 @@ namespace Rdmp.Core.Reports
             FileInfo fi = GetUniqueFilenameInWorkArea(filename);
             return new XWPFDocumentFile(fi,new FileStream(fi.FullName,FileMode.Create));
         }
+
         protected void AddFooter(XWPFDocument document,string text,int textFontSize)
         {
             CT_SectPr secPr = document.Document.body.sectPr;
@@ -176,7 +207,9 @@ namespace Rdmp.Core.Reports
             myFooter.SetHeaderFooter(footer);
             CT_HdrFtrRef myFooterRef = secPr.AddNewFooterReference();
             myFooterRef.type = ST_HdrFtr.@default;
+#pragma warning disable CS0618 // Type or member is obsolete
             myFooterRef.id = myFooter.GetPackageRelationship().Id;
+#pragma warning restore CS0618 // Type or member is obsolete
             myFooter.Paragraphs[0].Runs[0].FontSize = textFontSize != -1 ? textFontSize : 10;
         }
         /// <summary>
@@ -237,7 +270,7 @@ namespace Rdmp.Core.Reports
             document.MarginBottom = marginSize;*/
         }
 
-        protected float GetPageWidth(XWPFDocumentFile document)
+        protected float GetPageWidth()
         {
             return 500;
             //return document.PageWidth;
