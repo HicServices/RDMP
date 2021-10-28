@@ -20,6 +20,7 @@ using Rdmp.Core.Databases;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
+using Rdmp.Core.Providers.Nodes.CohortNodes;
 using ReusableLibraryCode.Settings;
 using System;
 using System.Collections.Generic;
@@ -418,7 +419,9 @@ namespace Rdmp.Core.CommandLine.Gui
                 return new IAtomicCommand[0];
 
             return
-                GetExtraCommands(o).Union(factory.CreateCommands(o));
+                GetExtraCommands(o)
+                .Union(factory.CreateCommands(o))
+                .Union(_activator.PluginUserInterfaces.SelectMany(p=>p.GetAdditionalRightClickMenuItems(o)));
         }
 
         private IEnumerable<IAtomicCommand> GetExtraCommands(object o)
@@ -600,8 +603,12 @@ namespace Rdmp.Core.CommandLine.Gui
                 return Loads;
             if (type == typeof(AllLoadMetadatasNode))
                 return Loads;
-            if (type == typeof(CohortIdentificationConfiguration))	
+
+            if (type == typeof(AllFreeCohortIdentificationConfigurationsNode) || 
+                type == typeof(AllProjectCohortIdentificationConfigurationsNode) ||
+                type == typeof(CohortIdentificationConfiguration))
                 return CohortConfigs;
+
             if(type == typeof(ExtractableCohort))
                 return BuiltCohorts;
             if (GetOtherCategoryChildren().Any(a=>a.Equals(o)))

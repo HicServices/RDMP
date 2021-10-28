@@ -39,6 +39,11 @@ namespace Rdmp.Core.CommandExecution
         bool IsInteractive {get;}
 
         /// <summary>
+        /// APIs that supply additional commands or alter user interface logic (either CLI or windows client)
+        /// </summary>
+         List<IPluginUserInterface> PluginUserInterfaces { get; }
+
+        /// <summary>
         /// When implemented should display a graph of the data in <paramref name="aggregate"/>
         /// </summary>
         /// <param name="aggregate"></param>

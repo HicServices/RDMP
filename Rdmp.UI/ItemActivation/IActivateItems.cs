@@ -40,13 +40,6 @@ namespace Rdmp.UI.ItemActivation
         /// Component for publishing the fact that an object has recently been put out of date by you.
         /// </summary>
         RefreshBus RefreshBus { get; }
-        
-
-        /// <summary>
-        /// List of the currently loaded IPluginUserInterface classes (these allow injection of additional tree items, tailoring context menus etc).  This list will
-        /// include some intrinsic RDMP IPluginUserInterfaces as part of its own internal design but most of these will be third party plugins.
-        /// </summary>
-        List<IPluginUserInterface> PluginUserInterfaces { get; }
 
         /// <summary>
         /// Component for closing and opening multiple windows at once for optimal user experience for achieving a given task (e.g. running a data load)
