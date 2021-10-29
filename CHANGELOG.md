@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Console gui context menu now shows compatible commands from plugins
+- Added the 'ConfirmLogs' command for verifying if a task is failing (e.g. a DLE run)
 
 ### Changed
 
