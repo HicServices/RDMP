@@ -6,8 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## Fixed
+### Fixed
 
+- Fixed 'package downgrade' dependencies issue with `HIC.RDMP.Plugin.UI`
 - Fixed log viewer total time display in logs view when task ran for > 24 hours.
 
 ### Added
