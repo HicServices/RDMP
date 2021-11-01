@@ -66,7 +66,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 
                 if(BasicActivator.SelectType("Process Type",GetProcessTaskTypes(),out Type chosen))
-                    _type = chosen;
+                {
+                    SetType(chosen);
+                }
                 else
                     return;
             }
