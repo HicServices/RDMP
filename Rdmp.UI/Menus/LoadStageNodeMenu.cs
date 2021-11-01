@@ -30,16 +30,12 @@ namespace Rdmp.UI.Menus
             _mef = _activator.RepositoryLocator.CatalogueRepository.MEF;
 
             args.SkipCommand<ExecuteCommandCreateNewClassBasedProcessTask>();
-            args.SkipCommand<ExecuteCommandCreateNewFileBasedProcessTask>();
             
            AddMenu<IDataProvider>("Add Cached Data Provider",t=>typeof(ICachedDataProvider).IsAssignableFrom(t));
            AddMenu<IDataProvider>("Add Data Provider", t=> !typeof(ICachedDataProvider).IsAssignableFrom(t));
 
            AddMenu<IAttacher>("Add Attacher");
            AddMenu<IMutilateDataTables>("Add Mutilator");
-
-           Add(new ExecuteCommandCreateNewFileBasedProcessTask(_activator, ProcessTaskType.SQLFile,loadStageNode.LoadMetadata, loadStageNode.LoadStage));
-           Add(new ExecuteCommandCreateNewFileBasedProcessTask(_activator, ProcessTaskType.Executable, loadStageNode.LoadMetadata, loadStageNode.LoadStage));
         }
 
         private void AddMenu<T>(string menuName, Func<Type, bool> filterTypes)
