@@ -97,8 +97,11 @@ namespace Rdmp.Core.CommandLine.Gui
 
         private void GetDialogDimensions(out int w, out int h)
         {
-            w = Math.Min(80, Application.Top.Frame.Width - 4);
-            h = Math.Min(20, Application.Top.Frame.Height - 2);
+            w = Application.Top?.Frame.Width??0;
+            h = Application.Top?.Frame.Height??0;
+
+            w = Math.Max(64,Math.Min(80,  w - 4));
+            h = Math.Max(10,Math.Min(20,  h - 2));
         }
 
         public override bool TypeText(string header, string prompt, int maxLength, string initialText, out string text,
