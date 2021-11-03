@@ -57,7 +57,7 @@ Check this works in the application by double clicking a tree node of the approp
 ![ExampleMenu](Images/DoubleClickAndDragDrop/TestMessage.png)
 
 # Tab Documents
-Most tabs in RDMP are designed for editing/executing a single `Type` of object held in one of the RDMP platform database tables (e.g. Catalogue, CatalogueItem, [Project] etc).  By convention these controls should be named `<MyClass>UI` unless there is a good reason not to.  These user interfaces all inherit from abstract base class `RDMPSingleDatabaseObjectControl<T>`.  There can be multiple tabs for a given `Type` e.g. `CacheProgress` has both `CacheProgressUI` (for changing cache dates etc) and `ExecuteCacheProgressUI` (for executing the cache).
+Most tabs in RDMP are designed for editing/executing a single `Type` of object held in one of the RDMP platform database tables (e.g. Catalogue, CatalogueItem, [Project] etc).  By convention these controls should be named `<MyClass>UI` unless there is a good reason not to.  These user interfaces all inherit from abstract base class `RDMPSingleDatabaseObjectControl<T>`.  There can be multiple tabs for a given `Type` e.g. [CacheProgress] has both `CacheProgressUI` (for changing cache dates etc) and `ExecuteCacheProgressUI` (for executing the cache).
 
 To show a new tab control for editing your object you should create a normal WinForms control as you normally would but inherit from `RDMPSingleDatabaseObjectControl<T>` instead of `UserControl`.
 
@@ -167,3 +167,4 @@ To provide drop targets for the new `ICombineToMakeCommand` go to the `RDMPComma
 [CatalogueItem]: ./Glossary.md#CatalogueItem
 
 [Pipeline]: ./Glossary.md#Pipeline
+[CacheProgress]: ./Glossary.md#CacheProgress
