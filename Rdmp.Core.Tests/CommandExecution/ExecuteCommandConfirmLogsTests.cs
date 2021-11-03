@@ -8,6 +8,7 @@ using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Logging;
 using System.Threading;
@@ -125,6 +126,49 @@ namespace Rdmp.Core.Tests.CommandExecution
             var ex = Assert.Throws<LogsNotConfirmedException>(() => cmd.Execute());
 
             StringAssert.IsMatch("Latest logged activity for MyLmd is .*.  This is older than the requested date threshold:.*", ex.Message);
+        }
+
+        [Test]
+        public void ConfirmLogs_With2CacheProgress_Throws()
+        {
+            var lmd1 = new LoadMetadata(CatalogueRepository, "MyLmd");
+            var cata = new Catalogue(CatalogueRepository, "myCata");
+            cata.LoadMetadata_ID = lmd1.ID;
+            cata.LoggingDataTask = "B";
+            cata.SaveToDatabase();
+
+            var lmd2 = new LoadMetadata(CatalogueRepository, "MyLmd");
+            var cata2 = new Catalogue(CatalogueRepository, "myCata");
+            cata2.LoadMetadata_ID = lmd2.ID;
+            cata2.LoggingDataTask = "A";
+            cata2.SaveToDatabase();
+
+            var lp1 = new LoadProgress(CatalogueRepository, lmd1);
+            var lp2 = new LoadProgress(CatalogueRepository, lmd2);
+
+            var cp1 = new CacheProgress(CatalogueRepository, lp1);
+            var cp2 = new CacheProgress(CatalogueRepository, lp2);
+            cp2.Name = "MyCoolCache";
+            cp2.SaveToDatabase();
+
+            var lm = new LogManager(cp1.GetDistinctLoggingDatabase());
+            lm.CreateNewLoggingTaskIfNotExists(cp1.GetDistinctLoggingTask());
+
+            // create a log entry for cp1 only
+            var logEntry = lm.CreateDataLoadInfo(cp1.GetDistinctLoggingTask(), "pack o' cards", cp1.GetLoggingRunName(), null, true);
+
+            // we mark it as completed successfully - this is a good, happy log entry
+            logEntry.CloseAndMarkComplete();
+
+            // The first cache has logged success so should be happy
+            var cmd1 = new ExecuteCommandConfirmLogs(new ThrowImmediatelyActivator(RepositoryLocator), cp1, null);
+            Assert.DoesNotThrow(() => cmd1.Execute());
+
+            // The second cache has not logged any successes so should be unhappy
+            var cmd2 = new ExecuteCommandConfirmLogs(new ThrowImmediatelyActivator(RepositoryLocator), cp2,null);
+            var ex = Assert.Throws<LogsNotConfirmedException>(() => cmd2.Execute());
+
+            Assert.AreEqual("There are no log entries for MyCoolCache", ex.Message);
         }
     }
 }
