@@ -27,12 +27,12 @@ namespace Rdmp.Core.Curation.Data
             public string Value { get; set; }
             public string GetDecryptedValue()
             {
-                throw new System.NotImplementedException();
+                return Value;
             }
 
             public bool IsStringEncrypted(string value)
             {
-                throw new System.NotImplementedException();
+                return false;
             }
         }
 
