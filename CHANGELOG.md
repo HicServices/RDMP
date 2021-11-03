@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+...
+
+## [7.0.2] - 2021-11-03
+
 ### Fixed
 
 - Fixed 'package downgrade' dependencies issue with `HIC.RDMP.Plugin.UI`
@@ -936,7 +940,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.1...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.2...develop
+[7.0.2]: https://github.com/HicServices/RDMP/compare/v7.0.1...v7.0.2
 [7.0.1]: https://github.com/HicServices/RDMP/compare/v7.0.0...v7.0.1
 [7.0.0]: https://github.com/HicServices/RDMP/compare/v6.0.2...v7.0.0
 [6.0.2]: https://github.com/HicServices/RDMP/compare/v6.0.1...v6.0.2
