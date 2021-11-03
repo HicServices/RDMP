@@ -8,6 +8,12 @@ For example 'ANOGPCode' could be transform input varchar(5) values into anonymou
 
 Anonymisation occurs at [ColumnInfo] level during data load.  Each ANOTable points to a corresponding table on an ANO server in which mappings are persisted.  This server should be part of your normal backup strategy.
 
+## CacheProgress![CacheProgress Icon](../../Rdmp.Core/Icons/CacheProgress.png)
+
+Records the progress of fetching data that will later be fed into ETL in a [LoadMetadata].  For example this could be fetching imaging data from a PACS or XML data from a webservice.
+
+A CacheProgress has a [Pipeline] which gets run to fetch the data and fields for tracking progress.
+
 ## Catalogue![Catalogue Icon](../../Rdmp.Core/Icons/Catalogue.png)
 
 The central class for the RDMP, a Catalogue is a virtual dataset e.g. 'Hospital Admissions'. 

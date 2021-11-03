@@ -153,10 +153,9 @@ namespace Rdmp.Core.Tests.CommandExecution
 
             var lm = new LogManager(cp1.GetDistinctLoggingDatabase());
             lm.CreateNewLoggingTaskIfNotExists(cp1.GetDistinctLoggingTask());
-            lm.CreateNewLoggingTaskIfNotExists(cp2.GetDistinctLoggingTask());
 
             // create a log entry for cp1 only
-            var logEntry = lm.CreateDataLoadInfo(cp1.GetDistinctLoggingTask(), "pack o' cards", "going down gambling", null, true);
+            var logEntry = lm.CreateDataLoadInfo(cp1.GetDistinctLoggingTask(), "pack o' cards", cp1.GetLoggingRunName(), null, true);
 
             // we mark it as completed successfully - this is a good, happy log entry
             logEntry.CloseAndMarkComplete();

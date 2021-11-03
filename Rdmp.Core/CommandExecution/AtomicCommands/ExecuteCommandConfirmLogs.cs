@@ -61,10 +61,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             var logManager = new LogManager(LogRootObject.GetDistinctLoggingDatabase());
 
             // get the latest log entry
-            var latest = logManager.GetArchivalDataLoadInfos(LogRootObject.GetDistinctLoggingTask(), null, null, 1).SingleOrDefault();
+
+            var unfilteredResults = logManager.GetArchivalDataLoadInfos(LogRootObject.GetDistinctLoggingTask(),null, null);
+            var latest = LogRootObject.FilterRuns(unfilteredResults).FirstOrDefault();
 
             // if no logs
-            if(latest == null)
+            if (latest == null)
             {
                 throw new LogsNotConfirmedException($"There are no log entries for {LogRootObject}");
             }

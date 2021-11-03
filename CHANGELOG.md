@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Fixed
+
+- Fixed bug with ConfirmLogs when running with multiple [CacheProgress]
+
 ## [7.0.2] - 2021-11-03
 
 ### Fixed
@@ -1001,6 +1005,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [CatalogueItem]: ./Documentation/CodeTutorials/Glossary.md#CatalogueItem
 [ExtractionInformation]: ./Documentation/CodeTutorials/Glossary.md#ExtractionInformation
 [ColumnInfo]: ./Documentation/CodeTutorials/Glossary.md#ColumnInfo
+[CacheProgress]: ./Documentation/CodeTutorials/Glossary.md#CacheProgress
 
 [JoinInfo]: ./Documentation/CodeTutorials/Glossary.md#JoinInfo
 
