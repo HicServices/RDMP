@@ -108,5 +108,132 @@ namespace Rdmp.Core.Tests.Providers
             }
             
         }
+
+        [TestCase(true,true,true)]
+        [TestCase(true, false, false)]
+        [TestCase(false, true, true)]
+        [TestCase(false, false, true)]
+        public void TestScoringCatalogueFlag_IsDeprecated(bool hasFlag, bool shouldShow, bool expectedResult)
+        {
+            TestScoringFlag((c)=>
+            {
+                c.IsDeprecated = hasFlag;
+                UserSettings.ShowDeprecatedCatalogues = shouldShow;
+            },expectedResult);
+        }
+
+        [TestCase(true, true, true)]
+        [TestCase(true, false, false)]
+        [TestCase(false, true, true)]
+        [TestCase(false, false, true)]
+        public void TestScoringCatalogueFlag_IsColdStorage(bool hasFlag, bool shouldShow, bool expectedResult)
+        {
+            TestScoringFlag((c) =>
+            {
+                c.IsColdStorageDataset = hasFlag;
+                UserSettings.ShowColdStorageCatalogues = shouldShow;
+            }, expectedResult);
+        }
+
+        [TestCase(true, true, true)]
+        [TestCase(true, false, false)]
+        [TestCase(false, true, true)]
+        [TestCase(false, false, true)]
+        public void TestScoringCatalogueFlag_IsInternalDataset(bool hasFlag, bool shouldShow, bool expectedResult)
+        {
+            TestScoringFlag((c) =>
+            {
+                c.IsInternalDataset = hasFlag;
+                UserSettings.ShowInternalCatalogues = shouldShow;
+            }, expectedResult);
+        }
+
+        [TestCase(true, true, true)]
+        [TestCase(true, false, false)]
+        [TestCase(false, true, true)]
+        [TestCase(false, false, true)]
+        public void TestScoringCatalogueFlag_IsExtractable(bool notExtractable, bool shouldShow, bool expectedResult)
+        {
+            TestScoringFlag((c) =>
+            {
+                if(!notExtractable)
+                {
+                    // this makes c extractable
+                    var eds = new ExtractableDataSet(Repository, c);
+                    eds.SaveToDatabase();
+                }
+                UserSettings.ShowNonExtractableCatalogues = shouldShow;
+            }, expectedResult);
+        }
+
+        [TestCase(true, true, true)]
+        [TestCase(true, false, false)]
+        [TestCase(false, true, true)]
+        [TestCase(false, false, true)]
+        public void TestScoringCatalogueFlag_IsProjectSpecific(bool projectSpecific, bool shouldShow, bool expectedResult)
+        {
+            TestScoringFlag((c) =>
+            {
+                if (projectSpecific)
+                {
+                    // this makes c extractable
+                    var eds = new ExtractableDataSet(Repository, c);
+                    eds.Project_ID = 5135;
+                    eds.SaveToDatabase();
+                }
+                UserSettings.ShowNonExtractableCatalogues = shouldShow;
+            }, expectedResult);
+        }
+        private void TestScoringFlag(Action<Catalogue> setter, bool expectedResult)
+        {
+            // Filter is hungry and eager to please.  If you want to see ProjectSpecific Catalogues then
+            // that it will show you them regardless of other settings.  Likewise clicking Deprecated shows
+            // all deprecated catalogues regardless of other settings.
+            //
+            // So set all to false to except the condition we are testing
+            UserSettings.ShowDeprecatedCatalogues = false;
+            UserSettings.ShowNonExtractableCatalogues = false;
+            UserSettings.ShowProjectSpecificCatalogues = false;
+            UserSettings.ShowInternalCatalogues = false;
+            UserSettings.ShowColdStorageCatalogues = false;
+
+            var c = WhenIHaveA<Catalogue>();
+            c.Name = "Bunny";
+            setter(c);
+            c.SaveToDatabase();
+
+
+            var scorer = new SearchablesMatchScorer()
+            {
+                RespectUserSettings = true
+            };
+
+            var childProvider = new DataExportChildProvider(RepositoryLocator, null, new ThrowImmediatelyCheckNotifier(), null);
+
+            // user is searching for the text 'troll'
+            var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(), "Bunny", CancellationToken.None, new List<Type>());
+
+            var score = scores.Single(d => Equals(d.Key.Key, c));
+
+            if (expectedResult)
+            {
+                Assert.GreaterOrEqual(score.Value,0);
+            }
+            else
+            {
+                // score 0 and don't be included in results
+                Assert.AreEqual(0,score.Value);
+            }
+
+            // Cleanup test
+            foreach(var d in Repository.GetAllObjects<ExtractableDataSet>())
+            {
+                d.DeleteInDatabase();
+            }
+            foreach (var cat in Repository.GetAllObjects<Catalogue>())
+            {
+                cat.DeleteInDatabase();
+            }
+        }
     }
 }
