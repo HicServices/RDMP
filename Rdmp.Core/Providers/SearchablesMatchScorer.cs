@@ -31,12 +31,18 @@ namespace Rdmp.Core.Providers
         public HashSet<string> TypeNames { get; set; }
 
         private readonly bool _scoreZeroForCohortAggregateContainers;
+        private bool _showInternalCatalogues = true;
+        private bool _showDeprecatedCatalogues = true;
+        private bool _showColdStorageCatalogues = true;
+        private bool _showProjectSpecificCatalogues = true;
+        private bool _showNonExtractableCatalogues = true;
+
 
         /// <summary>
         /// List of objects which should be favoured slightly above others of equal match potential
         /// </summary>
         public List<IMapsDirectlyToDatabaseTable> BumpMatches { get; set; } = new List<IMapsDirectlyToDatabaseTable>();
-        
+
         /// <summary>
         /// Only show objects with the given ID
         /// </summary>
@@ -46,6 +52,11 @@ namespace Rdmp.Core.Providers
         /// How much to bump matches when they are in <see cref="BumpMatches"/>
         /// </summary>
         public int BumpWeight = 1;
+
+        /// <summary>
+        /// True to respect <see cref="UserSettings.ShowProjectSpecificCatalogues"/> etc settings.  Defaults to false
+        /// </summary>
+        public bool RespectUserSettings { get; set; } = false;
 
         /// <summary>
         /// When the user types one of these they get a filter on the full Type
@@ -79,8 +90,6 @@ namespace Rdmp.Core.Providers
 
             };
 
-
-
         public SearchablesMatchScorer()
         {
             TypeNames = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
@@ -100,8 +109,10 @@ namespace Rdmp.Core.Providers
         /// <returns></returns>
         public Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> ScoreMatches(Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> searchables, string searchText, CancellationToken cancellationToken, List<Type> showOnlyTypes)
         {
-           //do short code substitutions e.g. ti for TableInfo
-            if(!string.IsNullOrWhiteSpace(searchText))
+            SetupRespectUserSettings();
+
+            //do short code substitutions e.g. ti for TableInfo
+            if (!string.IsNullOrWhiteSpace(searchText))
                 foreach(var kvp in ShortCodes)
                     searchText = Regex.Replace(searchText,$@"\b{kvp.Key}\b",kvp.Value.Name);
             
@@ -151,6 +162,15 @@ namespace Rdmp.Core.Providers
            );
         }
 
+        private void SetupRespectUserSettings()
+        {
+            _showInternalCatalogues = RespectUserSettings ? UserSettings.ShowInternalCatalogues : true;
+            _showDeprecatedCatalogues = RespectUserSettings ? UserSettings.ShowDeprecatedCatalogues : true;
+            _showColdStorageCatalogues = RespectUserSettings ? UserSettings.ShowColdStorageCatalogues : true;
+            _showProjectSpecificCatalogues = RespectUserSettings ? UserSettings.ShowProjectSpecificCatalogues : true;
+            _showNonExtractableCatalogues = RespectUserSettings ? UserSettings.ShowNonExtractableCatalogues : true;
+        }
+
         private int ScoreMatches(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp, List<Regex> regexes, string[] explicitTypeNames, CancellationToken cancellationToken)
         {
             int score = 0;
@@ -173,6 +193,11 @@ namespace Rdmp.Core.Providers
                     return 0;
                 else
                     score += 10;
+            }
+
+            if(ScoreZeroBecauseOfUserSettings(kvp))
+            {
+                return 0;
             }
 
             // if user is searching for a specific Type of object and we ain't it
@@ -245,6 +270,16 @@ namespace Rdmp.Core.Providers
             return score;
         }
 
+        /// <summary>
+        /// Returns true if the given <paramref name="kvp"/> object isnot one the user wants to ever see based on the values e.g. <see cref="UserSettings.ShowDeprecatedCatalogues"/>
+        /// </summary>
+        /// <param name="kvp"></param>
+        /// <returns></returns>
+        private bool ScoreZeroBecauseOfUserSettings(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp)
+        {
+            return !Filter(kvp.Key, kvp.Value, _showInternalCatalogues, _showDeprecatedCatalogues, _showColdStorageCatalogues, _showProjectSpecificCatalogues, _showNonExtractableCatalogues);
+        }
+
         private Catalogue GetCatalogueIfAnyInDescendancy(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp)
         {
             if (kvp.Key is Catalogue)
@@ -287,6 +322,49 @@ namespace Rdmp.Core.Providers
             }
 
             return matches;
+        }
+
+        /// <summary>
+        /// Returns true if the given <paramref name="modelObject"/> survives filtering based on the supplied inclusion
+        /// criteria.  Anything that isn't in some way related to a <see cref="Catalogue"/> automatically survives filtering
+        /// </summary>
+        /// <param name="modelObject"></param>
+        /// <param name="descendancy"></param>
+        /// <param name="includeInternal"></param>
+        /// <param name="includeDeprecated"></param>
+        /// <param name="includeColdStorage"></param>
+        /// <param name="includeProjectSpecific"></param>
+        /// <param name="includeNonExtractable"></param>
+        /// <returns>True if the item should be shown to the user based on filters</returns>
+        public static bool Filter(object modelObject, DescendancyList descendancy, bool includeInternal, bool includeDeprecated, bool includeColdStorage, bool includeProjectSpecific, bool includeNonExtractable)
+        {
+            var cata = modelObject as ICatalogue;
+
+            //doesn't relate to us... 
+            if (cata == null)
+            {
+                // or are we one of these things that can be tied to a catalogue
+                cata = modelObject switch
+                {
+                    ExtractableDataSet eds => eds.Catalogue,
+                    SelectedDataSets sds => sds.GetCatalogue(),
+                    _ => descendancy?.Parents.OfType<Catalogue>().SingleOrDefault()
+                };
+
+                if (cata == null)
+                    return true;
+            }
+
+            bool isProjectSpecific = cata.IsProjectSpecific(null);
+            bool isExtractable = cata.GetExtractabilityStatus(null) != null && cata.GetExtractabilityStatus(null).IsExtractable;
+
+            return (isExtractable && !cata.IsColdStorageDataset && !cata.IsDeprecated && !cata.IsInternalDataset && !isProjectSpecific) ||
+                    ((includeColdStorage && cata.IsColdStorageDataset) ||
+                    (includeDeprecated && cata.IsDeprecated) ||
+                    (includeInternal && cata.IsInternalDataset) ||
+                    (includeProjectSpecific && isProjectSpecific) ||
+                    (includeNonExtractable && !isExtractable));
+
         }
     }
 }

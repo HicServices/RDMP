@@ -45,7 +45,7 @@ namespace Rdmp.Core.DataExport
             if (cata != null)
             {
                 //they are deleting a catalogue! see if it has an ExtractableDataSet associated with it
-                ExtractableDataSet[] dependencies = _serviceLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID " , cata.ID).ToArray();
+                ExtractableDataSet[] dependencies = _serviceLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID" , cata.ID).ToArray();
             
                 //we have any dependant catalogues?
                 if(dependencies.Any())
