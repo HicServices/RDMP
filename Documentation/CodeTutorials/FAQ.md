@@ -184,7 +184,7 @@ Ensure all your plugins are uptodate, you can check compatiblity with:
 
 <a name="databases"></a>
 ### What databases does RDMP support
-RDMP uses [FAnsiSql](https://github.com/HicServices/FAnsiSql) to discover, query and connect to databases.  Currently this includes support for Sql Server, MySql and Oracle.
+RDMP uses [FAnsiSql](https://github.com/HicServices/FAnsiSql) to discover, query and connect to databases.  Currently this includes support for Sql Server, MySql, PostgreSQL and Oracle.
 
 <a name="connectionStringKeywords"></a>
 ### How do I set a custom port / SSL certificate / connection string option?
@@ -239,7 +239,7 @@ The first task is to split up the criteria into bite sized chunks, each run on a
 - Alive at the time of study
 - Has had a head MR in the past 5 years
 
-How does RDMP compile this into SQL? To answer that question let's look at the end goal.  Since the datasets share a common identifier we can JOIN the tables.  But that can get complex fast and gives us a single gigantic query that's likely to bring the server to its knees.  Instead, since we are dealing with lists of patients, we can use SET operations (UNION, INTERSECT, EXCEPT).  This means we only need to pull a single column (e.g. patientId) from each dataset and we can then smash all the resulting lists together using the super fast operations that Relational Database Engines excel at.  As an added bonus, if the datasets are on seperate database servers or engines (MySql, Sql Server, Oracle) we can run the queries seperately and store the results in a temporary common server and apply the SET operations there.
+How does RDMP compile this into SQL? To answer that question let's look at the end goal.  Since the datasets share a common identifier we can JOIN the tables.  But that can get complex fast and gives us a single gigantic query that's likely to bring the server to its knees.  Instead, since we are dealing with lists of patients, we can use SET operations (UNION, INTERSECT, EXCEPT).  This means we only need to pull a single column (e.g. patientId) from each dataset and we can then smash all the resulting lists together using the super fast operations that Relational Database Engines excel at.  As an added bonus, if the datasets are on seperate database servers or engines (MySql, Sql Server, Oracle and PostgreSQL) we can run the queries seperately and store the results in a temporary common server and apply the SET operations there.
 
 ```sql
 SELECT patientId From Prescribing WHERE Drug = 'Drug A' Group by CHI HAVING COUNT(*) > 3
