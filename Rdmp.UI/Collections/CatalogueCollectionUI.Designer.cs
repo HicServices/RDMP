@@ -74,6 +74,7 @@ namespace Rdmp.UI.Collections
             this.olvFilters.DisplayIndex = 1;
             this.olvFilters.IsVisible = false;
             this.olvFilters.Text = "Filters";
+            this.olvFilters.IsEditable = false;
             // 
             // olvOrder
             // 
