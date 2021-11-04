@@ -58,6 +58,7 @@
             this.label7 = new System.Windows.Forms.Label();
             this.tbCreateDatabaseTimeout = new System.Windows.Forms.TextBox();
             this.cbScoreZeroForCohortAggregateContainers = new System.Windows.Forms.CheckBox();
+            this.cbAdvancedFindFilters = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -385,11 +386,24 @@
             this.cbScoreZeroForCohortAggregateContainers.UseVisualStyleBackColor = true;
             this.cbScoreZeroForCohortAggregateContainers.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
+            // cbAdvancedFindFilters
+            // 
+            this.cbAdvancedFindFilters.AutoSize = true;
+            this.cbAdvancedFindFilters.Location = new System.Drawing.Point(715, 59);
+            this.cbAdvancedFindFilters.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.cbAdvancedFindFilters.Name = "cbAdvancedFindFilters";
+            this.cbAdvancedFindFilters.Size = new System.Drawing.Size(139, 19);
+            this.cbAdvancedFindFilters.TabIndex = 19;
+            this.cbAdvancedFindFilters.Text = "Advanced Find Filters";
+            this.cbAdvancedFindFilters.UseVisualStyleBackColor = true;
+            this.cbAdvancedFindFilters.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
+            // 
             // UserSettingsFileUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(866, 652);
+            this.Controls.Add(this.cbAdvancedFindFilters);
             this.Controls.Add(this.tbCreateDatabaseTimeout);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.groupBox1);
@@ -458,5 +472,6 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox tbCreateDatabaseTimeout;
         private System.Windows.Forms.CheckBox cbScoreZeroForCohortAggregateContainers;
+        private System.Windows.Forms.CheckBox cbAdvancedFindFilters;
     }
 }

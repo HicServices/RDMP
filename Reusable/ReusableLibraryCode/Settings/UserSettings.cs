@@ -204,6 +204,11 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("HideEmptyTableLoadRunAudits", value); }
         }
 
+        public static bool AdvancedFindFilters
+        {
+            get { return AppSettings.GetValueOrDefault("AdvancedFindFilters", false); }
+            set { AppSettings.AddOrUpdateValue("AdvancedFindFilters", value); }
+        }
 
         #endregion
 
