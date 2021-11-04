@@ -115,7 +115,7 @@ namespace Rdmp.Core.Tests.Providers
         [TestCase(false, false, true)]
         public void TestScoringCatalogueFlag_IsDeprecated(bool hasFlag, bool shouldShow, bool expectedResult)
         {
-            TestScoringFlag((c)=>
+            TestScoringFlag((c,eds)=>
             {
                 c.IsDeprecated = hasFlag;
                 UserSettings.ShowDeprecatedCatalogues = shouldShow;
@@ -128,7 +128,7 @@ namespace Rdmp.Core.Tests.Providers
         [TestCase(false, false, true)]
         public void TestScoringCatalogueFlag_IsColdStorage(bool hasFlag, bool shouldShow, bool expectedResult)
         {
-            TestScoringFlag((c) =>
+            TestScoringFlag((c, eds) =>
             {
                 c.IsColdStorageDataset = hasFlag;
                 UserSettings.ShowColdStorageCatalogues = shouldShow;
@@ -141,7 +141,7 @@ namespace Rdmp.Core.Tests.Providers
         [TestCase(false, false, true)]
         public void TestScoringCatalogueFlag_IsInternalDataset(bool hasFlag, bool shouldShow, bool expectedResult)
         {
-            TestScoringFlag((c) =>
+            TestScoringFlag((c,eds) =>
             {
                 c.IsInternalDataset = hasFlag;
                 UserSettings.ShowInternalCatalogues = shouldShow;
@@ -154,14 +154,13 @@ namespace Rdmp.Core.Tests.Providers
         [TestCase(false, false, true)]
         public void TestScoringCatalogueFlag_IsExtractable(bool notExtractable, bool shouldShow, bool expectedResult)
         {
-            TestScoringFlag((c) =>
+            TestScoringFlag((c,eds) =>
             {
-                if(!notExtractable)
+                if(notExtractable)
                 {
-                    // this makes c extractable
-                    var eds = new ExtractableDataSet(Repository, c);
-                    eds.SaveToDatabase();
+                    eds.DeleteInDatabase();
                 }
+
                 UserSettings.ShowNonExtractableCatalogues = shouldShow;
             }, expectedResult);
         }
@@ -172,19 +171,18 @@ namespace Rdmp.Core.Tests.Providers
         [TestCase(false, false, true)]
         public void TestScoringCatalogueFlag_IsProjectSpecific(bool projectSpecific, bool shouldShow, bool expectedResult)
         {
-            TestScoringFlag((c) =>
+            TestScoringFlag((c,eds) =>
             {
                 if (projectSpecific)
                 {
-                    // this makes c extractable
-                    var eds = new ExtractableDataSet(Repository, c);
+                    // this makes it project specific
                     eds.Project_ID = 5135;
                     eds.SaveToDatabase();
                 }
-                UserSettings.ShowNonExtractableCatalogues = shouldShow;
+                UserSettings.ShowProjectSpecificCatalogues = shouldShow;
             }, expectedResult);
         }
-        private void TestScoringFlag(Action<Catalogue> setter, bool expectedResult)
+        private void TestScoringFlag(Action<Catalogue, ExtractableDataSet> setter, bool expectedResult)
         {
             // Filter is hungry and eager to please.  If you want to see ProjectSpecific Catalogues then
             // that it will show you them regardless of other settings.  Likewise clicking Deprecated shows
@@ -199,7 +197,13 @@ namespace Rdmp.Core.Tests.Providers
 
             var c = WhenIHaveA<Catalogue>();
             c.Name = "Bunny";
-            setter(c);
+            c.SaveToDatabase();
+
+            // this makes c extractable (the usual case for Catalogues)
+            var eds = new ExtractableDataSet(Repository, c);
+            eds.SaveToDatabase();
+
+            setter(c,eds);
             c.SaveToDatabase();
 
 
@@ -217,7 +221,7 @@ namespace Rdmp.Core.Tests.Providers
 
             if (expectedResult)
             {
-                Assert.GreaterOrEqual(score.Value,0);
+                Assert.Greater(score.Value,0);
             }
             else
             {
