@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.UI.ItemActivation;
@@ -195,8 +197,32 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
             toolStrip1.Items.Add(new ToolStripLabel("ID:"));
             toolStrip1.Items.Add(_lblId = new ToolStripTextBox());
             _lblId.TextChanged += tbFind_TextChanged;
+
+            AddUserSettingCheckbox(() => UserSettings.ShowInternalCatalogues, (v) => UserSettings.ShowInternalCatalogues = v,"I", "Include Internal");
+            AddUserSettingCheckbox(() => UserSettings.ShowDeprecatedCatalogues, (v) => UserSettings.ShowDeprecatedCatalogues = v,"D", "Include Deprecated");
+            AddUserSettingCheckbox(() => UserSettings.ShowColdStorageCatalogues, (v) => UserSettings.ShowColdStorageCatalogues = v,"C", "Include Cold Storage");
+            AddUserSettingCheckbox(() => UserSettings.ShowProjectSpecificCatalogues, (v) => UserSettings.ShowProjectSpecificCatalogues = v, "P", "Include Project Specific");
+            AddUserSettingCheckbox(() => UserSettings.ShowNonExtractableCatalogues, (v) => UserSettings.ShowNonExtractableCatalogues = v,"E", "Include Extractable");
+
         }
 
+        private void AddUserSettingCheckbox(Func<bool> getter, Action<bool> setter, string name,string toolTip)
+        {
+            var b = new ToolStripButton(name);
+            b.CheckOnClick = true;
+            b.ToolTipText = toolTip;
+            b.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            b.Checked = getter();
+            b.CheckedChanged += (s, e) =>
+            {
+                setter(b.Checked);
+
+                //refresh the objects showing
+                tbFind_TextChanged(null, null);
+            };
+
+            toolStrip1.Items.Add(b);
+        }
 
         private void CollectionCheckedChanged(object sender, EventArgs e)
         {
@@ -376,6 +402,7 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
         private void FetchMatches(string text, CancellationToken cancellationToken)
         {
             var scorer = new SearchablesMatchScorer();
+            scorer.RespectUserSettings = true;
             scorer.TypeNames = _typeNames;
             scorer.BumpMatches = Activator.HistoryProvider.History.Select(h=>h.Object).ToList();
             

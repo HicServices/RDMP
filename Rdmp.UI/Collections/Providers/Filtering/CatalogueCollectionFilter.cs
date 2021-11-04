@@ -38,33 +38,7 @@ namespace Rdmp.UI.Collections.Providers.Filtering
 
         public bool Filter(object modelObject)
         {
-            var cata = modelObject as ICatalogue;
-            
-            //doesn't relate to us... 
-            if (cata == null)
-            {
-                // or are we one of these things that can be tied to a catalogue
-                cata = modelObject switch
-                {
-                    ExtractableDataSet  eds => eds.Catalogue,
-                    SelectedDataSets    sds => sds.GetCatalogue(),
-                    _ => ChildProvider.GetDescendancyListIfAnyFor(modelObject)?
-                        .Parents.OfType<Catalogue>().SingleOrDefault()
-                };
-
-                if (cata == null)
-                    return true;
-            }
-
-            bool isProjectSpecific = cata.IsProjectSpecific(null); 
-            bool isExtractable = cata.GetExtractabilityStatus(null) != null && cata.GetExtractabilityStatus(null).IsExtractable;
-            
-            return ( isExtractable && !cata.IsColdStorageDataset && !cata.IsDeprecated && !cata.IsInternalDataset && !isProjectSpecific) ||
-                    ((_isColdStorage && cata.IsColdStorageDataset) ||
-                    (_isDeprecated && cata.IsDeprecated) ||
-                    (_isInternal && cata.IsInternalDataset) ||
-                    (_isProjectSpecific && isProjectSpecific) ||
-                    (_isNonExtractable && !isExtractable));
+            return SearchablesMatchScorer.Filter(modelObject, ChildProvider.GetDescendancyListIfAnyFor(modelObject), _isInternal, _isDeprecated, _isColdStorage, _isProjectSpecific, _isNonExtractable);
         }
     }
 }

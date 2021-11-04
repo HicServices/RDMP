@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Added ability to filter [Catalogue] in the Find dialog by Internal/Deprecated etc
+
 ## [7.0.3] - 2021-11-04
 
 ### Fixed
