@@ -6,6 +6,7 @@
 
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.UI.Collections.Providers
 {
@@ -24,12 +25,18 @@ namespace Rdmp.UI.Collections.Providers
 
         private object IDColumnAspectGetter(object rowObject)
         {
-            var imaps = rowObject as IMapsDirectlyToDatabaseTable;
+            // unwrap masqueraders to see if underlying object has an ID
+            if(rowObject is IMasqueradeAs m)
+            {
+                return IDColumnAspectGetter(m.MasqueradingAs());
+            }
 
-            if (imaps == null)
-                return null;
+            if (rowObject is IMapsDirectlyToDatabaseTable imaps)
+            {
+                return imaps.ID;
+            }
 
-            return imaps.ID;
+            return null;
         }
 
         public OLVColumn CreateColumn()

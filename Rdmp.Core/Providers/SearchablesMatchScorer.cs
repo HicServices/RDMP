@@ -179,10 +179,21 @@ namespace Rdmp.Core.Providers
                 return 0;
 
             //if we are searching for a specific ID
-            if(ID.HasValue && kvp.Key.ID != ID.Value)
-                return 0;
-            else 
-                score += 10;
+            if (ID.HasValue)
+            {
+                var obj = kvp.Key;
+
+                //If the object is masquerading as something else, better to check that
+                if (kvp.Key is IMasqueradeAs m)
+                {
+                    obj = m.MasqueradingAs() as IMapsDirectlyToDatabaseTable ?? obj;
+                }
+
+                if (obj.ID != ID.Value)
+                    return 0;
+                else
+                    score += 10;
+            }
 
             if(ScoreZeroBecauseOfUserSettings(kvp))
             {
