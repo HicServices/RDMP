@@ -184,7 +184,7 @@ namespace Rdmp.Core.Providers
             else 
                 score += 10;
 
-            if(ScoreZeroBecauseOfUserSettings(kvp))
+            if(RespectUserSettings && ScoreZeroBecauseOfUserSettings(kvp))
             {
                 return 0;
             }
