@@ -39,7 +39,7 @@
             <dependency id="System.Globalization" version="4.3.0" />
             <dependency id="System.Net.NameResolution" version="4.3.0" />
             <dependency id="System.Net.Primitives" version="4.3.1" />
-            <dependency id="System.Security.Permissions" version="5.0.0" />
+            <dependency id="System.Security.Permissions" version="6.0.0" />
             <dependency id="System.Resources.Extensions" version="4.6.0" />
             <dependency id="HIC.System.Windows.Forms.DataVisualization" version="1.0.1" />
             <dependency id="ReadLine" version="2.0.1" />
