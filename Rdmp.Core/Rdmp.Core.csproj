@@ -261,7 +261,7 @@
     <PackageReference Include="NPOI" Version="2.5.5" />
     <PackageReference Include="ReadLine" Version="2.0.1" />
     <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
-    <PackageReference Include="System.Drawing.Common" Version="5.0.3" />
+    <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
     <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
     <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
     <PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
