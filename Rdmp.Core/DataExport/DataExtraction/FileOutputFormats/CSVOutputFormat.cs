@@ -84,7 +84,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.FileOutputFormats
         {
             int numberOfSeparatorsStrippedOutThisPass = 0;
 
-            string toReturn = CleanString(o, Separator, out numberOfSeparatorsStrippedOutThisPass, DateFormat);
+            string toReturn = CleanString(o, Separator, out numberOfSeparatorsStrippedOutThisPass, DateFormat,RoundFloatsTo);
 
             SeparatorsStrippedOut += numberOfSeparatorsStrippedOutThisPass;
 
@@ -92,13 +92,29 @@ namespace Rdmp.Core.DataExport.DataExtraction.FileOutputFormats
         }
 
 
-        public static string CleanString(object o, string separator, out int separatorsStrippedOut, string dateFormat)
+        public static string CleanString(object o, string separator, out int separatorsStrippedOut, string dateFormat, int? roundFloatsTo)
         {
             if (o is DateTime)
             {
                 DateTime dt = (DateTime)o;
                 separatorsStrippedOut = 0;
                 return dt.ToString(dateFormat);
+            }
+
+            if(o is float f && roundFloatsTo.HasValue)
+            {
+                separatorsStrippedOut = 0;
+                return f.ToString("N" + roundFloatsTo.Value);
+            }
+            if (o is decimal dec && roundFloatsTo.HasValue)
+            {
+                separatorsStrippedOut = 0;
+                return dec.ToString("N" + roundFloatsTo.Value);
+            }
+            if (o is double d && roundFloatsTo.HasValue)
+            {
+                separatorsStrippedOut = 0;
+                return d.ToString("N" + roundFloatsTo.Value);
             }
 
             //in order to kep a count 

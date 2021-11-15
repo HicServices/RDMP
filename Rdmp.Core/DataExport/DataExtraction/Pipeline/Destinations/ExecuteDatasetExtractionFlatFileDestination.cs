@@ -40,6 +40,9 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         [DemandsInitialization("The kind of flat file to generate for the extraction", DemandType.Unspecified, ExecuteExtractionToFlatFileType.CSV)]
         public ExecuteExtractionToFlatFileType FlatFileType { get; set; }
 
+        [DemandsInitialization("The number of decimal places to round floating point numbers to.  This only applies to data in the pipeline which is hard typed Float and not to string values", DemandType.Unspecified)]
+        public int? RoundFloatsTo { get; internal set; }
+
         public ExecuteDatasetExtractionFlatFileDestination():base(true)
         {
 
@@ -62,6 +65,8 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                         _output = new CSVOutputFormat(OutputFile, request.Configuration.Separator, DateFormat);
                     else
                         _output = new CSVOutputFormat(OutputFile, ",", DateFormat);
+
+                    _output.RoundFloatsTo = RoundFloatsTo;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

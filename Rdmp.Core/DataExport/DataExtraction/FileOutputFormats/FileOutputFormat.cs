@@ -13,6 +13,12 @@ namespace Rdmp.Core.DataExport.DataExtraction.FileOutputFormats
         public abstract string GetFileExtension();
 
         public string OutputFilename { get; private set; }
+
+        /// <summary>
+        /// The number of decimal places to round floating point numbers to.  This only applies to data in the pipeline which is hard typed Float and not to string values
+        /// </summary>
+        public int? RoundFloatsTo { get; internal set; }
+
         public abstract void Open();
         public abstract void WriteHeaders(DataTable t);
         public abstract void Append(DataRow r);
