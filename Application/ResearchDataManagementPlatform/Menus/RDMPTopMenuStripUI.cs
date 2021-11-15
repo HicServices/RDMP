@@ -20,6 +20,7 @@ using Rdmp.Core.DataQualityEngine;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Reports;
+using Rdmp.UI;
 using Rdmp.UI.ChecksUI;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
@@ -409,6 +410,11 @@ namespace ResearchDataManagementPlatform.Menus
         {
             var cmd = new ExecuteCommandQueryPlatformDatabase(Activator, nameof(CataloguePatcher));
             cmd.Execute();
+        }
+
+        private void restartApplicationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ApplicationRestarter.Restart();
         }
     }
 }
