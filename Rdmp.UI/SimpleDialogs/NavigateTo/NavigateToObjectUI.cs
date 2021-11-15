@@ -198,12 +198,14 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
             toolStrip1.Items.Add(_lblId = new ToolStripTextBox());
             _lblId.TextChanged += tbFind_TextChanged;
 
-            AddUserSettingCheckbox(() => UserSettings.ShowInternalCatalogues, (v) => UserSettings.ShowInternalCatalogues = v,"I", "Include Internal");
-            AddUserSettingCheckbox(() => UserSettings.ShowDeprecatedCatalogues, (v) => UserSettings.ShowDeprecatedCatalogues = v,"D", "Include Deprecated");
-            AddUserSettingCheckbox(() => UserSettings.ShowColdStorageCatalogues, (v) => UserSettings.ShowColdStorageCatalogues = v,"C", "Include Cold Storage");
-            AddUserSettingCheckbox(() => UserSettings.ShowProjectSpecificCatalogues, (v) => UserSettings.ShowProjectSpecificCatalogues = v, "P", "Include Project Specific");
-            AddUserSettingCheckbox(() => UserSettings.ShowNonExtractableCatalogues, (v) => UserSettings.ShowNonExtractableCatalogues = v,"E", "Include Extractable");
-
+            if(UserSettings.AdvancedFindFilters)
+            {
+                AddUserSettingCheckbox(() => UserSettings.ShowInternalCatalogues, (v) => UserSettings.ShowInternalCatalogues = v, "I", "Include Internal");
+                AddUserSettingCheckbox(() => UserSettings.ShowDeprecatedCatalogues, (v) => UserSettings.ShowDeprecatedCatalogues = v, "D", "Include Deprecated");
+                AddUserSettingCheckbox(() => UserSettings.ShowColdStorageCatalogues, (v) => UserSettings.ShowColdStorageCatalogues = v, "C", "Include Cold Storage");
+                AddUserSettingCheckbox(() => UserSettings.ShowProjectSpecificCatalogues, (v) => UserSettings.ShowProjectSpecificCatalogues = v, "P", "Include Project Specific");
+                AddUserSettingCheckbox(() => UserSettings.ShowNonExtractableCatalogues, (v) => UserSettings.ShowNonExtractableCatalogues = v, "E", "Include Extractable");
+            }
         }
 
         private void AddUserSettingCheckbox(Func<bool> getter, Action<bool> setter, string name,string toolTip)
@@ -402,7 +404,7 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
         private void FetchMatches(string text, CancellationToken cancellationToken)
         {
             var scorer = new SearchablesMatchScorer();
-            scorer.RespectUserSettings = true;
+            scorer.RespectUserSettings = UserSettings.AdvancedFindFilters;
             scorer.TypeNames = _typeNames;
             scorer.BumpMatches = Activator.HistoryProvider.History.Select(h=>h.Object).ToList();
             

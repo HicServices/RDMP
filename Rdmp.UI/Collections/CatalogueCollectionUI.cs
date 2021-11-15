@@ -74,9 +74,16 @@ namespace Rdmp.UI.Collections
             return null;
         }
 
+        protected override void OnEnter(EventArgs e)
+        {
+            base.OnEnter(e);
+
+            catalogueCollectionFilterUI1.CheckForChanges();
+        }
+
         //The color to highlight each Catalogue based on its extractability status
-        
-        
+
+
         /// <summary> 
         /// Clean up any resources being used.
         /// </summary>

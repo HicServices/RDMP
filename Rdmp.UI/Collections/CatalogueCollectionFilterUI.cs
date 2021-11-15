@@ -58,5 +58,27 @@ namespace Rdmp.UI.Collections
             cbShowNonExtractable.Checked = cbShowNonExtractable.Checked || isExtractable == null || isExtractable.IsExtractable == false;
 
         }
+
+        /// <summary>
+        /// Checks the current values in <see cref="UserSettings"/> and updates the UI state to match.
+        /// This will trigger checked change events if any are out of sync
+        /// </summary>
+        public void CheckForChanges()
+        {
+            if(cbShowInternal.Checked != UserSettings.ShowInternalCatalogues)
+                cbShowInternal.Checked = UserSettings.ShowInternalCatalogues;
+
+            if (cbShowDeprecated.Checked != UserSettings.ShowDeprecatedCatalogues)
+                cbShowDeprecated.Checked = UserSettings.ShowDeprecatedCatalogues;
+
+            if (cbShowColdStorage.Checked != UserSettings.ShowColdStorageCatalogues)
+                cbShowColdStorage.Checked = UserSettings.ShowColdStorageCatalogues;
+
+            if (cbProjectSpecific.Checked != UserSettings.ShowProjectSpecificCatalogues)
+                cbProjectSpecific.Checked = UserSettings.ShowProjectSpecificCatalogues;
+
+            if (cbShowNonExtractable.Checked != UserSettings.ShowNonExtractableCatalogues)
+                cbShowNonExtractable.Checked = UserSettings.ShowNonExtractableCatalogues;
+        }
     }
 }
