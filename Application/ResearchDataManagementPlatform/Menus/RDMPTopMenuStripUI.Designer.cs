@@ -34,6 +34,7 @@ namespace ResearchDataManagementPlatform.Menus
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,12 +59,12 @@ namespace ResearchDataManagementPlatform.Menus
             this.pluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.codeGenerationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.listAllTypesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.queryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.queryCatalogue = new System.Windows.Forms.ToolStripMenuItem();
-            this.queryDataExport = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.showPerformanceCounterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openExeDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.queryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.queryCatalogue = new System.Windows.Forms.ToolStripMenuItem();
+            this.queryDataExport = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.userManualToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateClassTableSummaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -72,7 +73,7 @@ namespace ResearchDataManagementPlatform.Menus
             this.licenseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rdmpTaskBar1 = new ResearchDataManagementPlatform.WindowManagement.TopBar.RDMPTaskBarUI();
-            this.newSessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.restartApplicationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -87,7 +88,8 @@ namespace ResearchDataManagementPlatform.Menus
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1160, 24);
+            this.menuStrip1.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
+            this.menuStrip1.Size = new System.Drawing.Size(1353, 24);
             this.menuStrip1.TabIndex = 56;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -113,6 +115,13 @@ namespace ResearchDataManagementPlatform.Menus
             this.newToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
             this.newToolStripMenuItem.Text = "New...";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.NewToolStripMenuItem_Click);
+            // 
+            // newSessionToolStripMenuItem
+            // 
+            this.newSessionToolStripMenuItem.Name = "newSessionToolStripMenuItem";
+            this.newSessionToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
+            this.newSessionToolStripMenuItem.Text = "New Session";
+            this.newSessionToolStripMenuItem.Click += new System.EventHandler(this.newSessionToolStripMenuItem_Click);
             // 
             // runToolStripMenuItem
             // 
@@ -278,7 +287,8 @@ namespace ResearchDataManagementPlatform.Menus
             this.toolStripSeparator1,
             this.showPerformanceCounterToolStripMenuItem,
             this.openExeDirectoryToolStripMenuItem,
-            this.queryToolStripMenuItem});
+            this.queryToolStripMenuItem,
+            this.restartApplicationToolStripMenuItem});
             this.testsToolStripMenuItem.Name = "testsToolStripMenuItem";
             this.testsToolStripMenuItem.Size = new System.Drawing.Size(80, 20);
             this.testsToolStripMenuItem.Text = "Diagnostics";
@@ -300,38 +310,12 @@ namespace ResearchDataManagementPlatform.Menus
             this.pluginsToolStripMenuItem.Size = new System.Drawing.Size(229, 22);
             this.pluginsToolStripMenuItem.Text = "Plugins";
             // 
-            // queryToolStripMenuItem
-            // 
-            this.queryToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-               this.queryCatalogue,
-               this.queryDataExport
-            });
-            this.queryToolStripMenuItem.Name = "queryToolStripMenuItem";
-            this.queryToolStripMenuItem.Size = new System.Drawing.Size(229, 22);
-            this.queryToolStripMenuItem.Text = "Query";
-            // 
             // codeGenerationToolStripMenuItem
             // 
             this.codeGenerationToolStripMenuItem.Name = "codeGenerationToolStripMenuItem";
             this.codeGenerationToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.codeGenerationToolStripMenuItem.Text = "Code Generation...";
             this.codeGenerationToolStripMenuItem.Click += new System.EventHandler(this.codeGenerationToolStripMenuItem_Click);
-
-
-            // 
-            // queryCatalogue
-            // 
-            this.queryCatalogue.Name = "queryCatalogue";
-            this.queryCatalogue.Size = new System.Drawing.Size(172, 22);
-            this.queryCatalogue.Text = "Catalogue...";
-            this.queryCatalogue.Click += new System.EventHandler(this.queryCatalogue_Click);
-            // 
-            // queryDataExport
-            // 
-            this.queryDataExport.Name = "queryDataExport";
-            this.queryDataExport.Size = new System.Drawing.Size(172, 22);
-            this.queryDataExport.Text = "Data Export...";
-            this.queryDataExport.Click += new System.EventHandler(this.queryDataExport_Click);
             // 
             // listAllTypesToolStripMenuItem
             // 
@@ -358,6 +342,29 @@ namespace ResearchDataManagementPlatform.Menus
             this.openExeDirectoryToolStripMenuItem.Size = new System.Drawing.Size(229, 22);
             this.openExeDirectoryToolStripMenuItem.Text = "Open exe Directory";
             this.openExeDirectoryToolStripMenuItem.Click += new System.EventHandler(this.openExeDirectoryToolStripMenuItem_Click);
+            // 
+            // queryToolStripMenuItem
+            // 
+            this.queryToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.queryCatalogue,
+            this.queryDataExport});
+            this.queryToolStripMenuItem.Name = "queryToolStripMenuItem";
+            this.queryToolStripMenuItem.Size = new System.Drawing.Size(229, 22);
+            this.queryToolStripMenuItem.Text = "Query";
+            // 
+            // queryCatalogue
+            // 
+            this.queryCatalogue.Name = "queryCatalogue";
+            this.queryCatalogue.Size = new System.Drawing.Size(144, 22);
+            this.queryCatalogue.Text = "Catalogue...";
+            this.queryCatalogue.Click += new System.EventHandler(this.queryCatalogue_Click);
+            // 
+            // queryDataExport
+            // 
+            this.queryDataExport.Name = "queryDataExport";
+            this.queryDataExport.Size = new System.Drawing.Size(144, 22);
+            this.queryDataExport.Text = "Data Export...";
+            this.queryDataExport.Click += new System.EventHandler(this.queryDataExport_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -419,25 +426,27 @@ namespace ResearchDataManagementPlatform.Menus
             // 
             this.rdmpTaskBar1.Dock = System.Windows.Forms.DockStyle.Top;
             this.rdmpTaskBar1.Location = new System.Drawing.Point(0, 24);
+            this.rdmpTaskBar1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.rdmpTaskBar1.Name = "rdmpTaskBar1";
-            this.rdmpTaskBar1.Size = new System.Drawing.Size(1160, 25);
+            this.rdmpTaskBar1.Size = new System.Drawing.Size(1353, 29);
             this.rdmpTaskBar1.TabIndex = 57;
             // 
-            // newSessionToolStripMenuItem
+            // restartApplicationToolStripMenuItem
             // 
-            this.newSessionToolStripMenuItem.Name = "newSessionToolStripMenuItem";
-            this.newSessionToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
-            this.newSessionToolStripMenuItem.Text = "New Session";
-            this.newSessionToolStripMenuItem.Click += new System.EventHandler(this.newSessionToolStripMenuItem_Click);
+            this.restartApplicationToolStripMenuItem.Name = "restartApplicationToolStripMenuItem";
+            this.restartApplicationToolStripMenuItem.Size = new System.Drawing.Size(229, 22);
+            this.restartApplicationToolStripMenuItem.Text = "Restart Application";
+            this.restartApplicationToolStripMenuItem.Click += new System.EventHandler(this.restartApplicationToolStripMenuItem_Click);
             // 
             // RDMPTopMenuStripUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.rdmpTaskBar1);
             this.Controls.Add(this.menuStrip1);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "RDMPTopMenuStripUI";
-            this.Size = new System.Drawing.Size(1160, 48);
+            this.Size = new System.Drawing.Size(1353, 55);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -489,5 +498,6 @@ namespace ResearchDataManagementPlatform.Menus
         private System.Windows.Forms.ToolStripMenuItem listAllTypesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem quitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newSessionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem restartApplicationToolStripMenuItem;
     }
 }
