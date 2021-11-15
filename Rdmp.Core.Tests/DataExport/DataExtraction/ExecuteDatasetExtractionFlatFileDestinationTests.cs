@@ -66,7 +66,8 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             {
                 Assert.AreEqual($"Floats{Environment.NewLine}3.14{Environment.NewLine}", File.ReadAllText(dest.OutputFile));
             }
-            
+
+            dt.Dispose();
         }
     }
 }
