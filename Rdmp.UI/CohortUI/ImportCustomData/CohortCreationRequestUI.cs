@@ -158,7 +158,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             gbRevisedCohort.Enabled = true;
 
             
-            RefreshCohortsDropdown();
+            RefreshCohortsDropdown(true);
         }
 
         private void CohortCreationRequestUI_Load(object sender, EventArgs e)
@@ -193,13 +193,17 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             }
         }
 
-        private void RefreshCohortsDropdown()
+        private void RefreshCohortsDropdown(bool interactive)
         {
             ddExistingCohort.Items.Clear();
 
             if (Project == null)
             {
-                MessageBox.Show("You must select a Project");
+                if(interactive)
+                {
+                    MessageBox.Show("You must select a Project");
+                }
+                    
                 return;
             }
 
@@ -267,7 +271,14 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             Project = project;
 
             lblProject.Text = Project != null ? Project.Name : "????";
-            
+
+            // Clear any old selected cohort because they have changed the Project
+            ddExistingCohort.SelectedItem = null;
+            RefreshCohortsDropdown(false);
+
+            // Delay the cohort Type (new or update existing) until they have picked a Project
+            gbChooseCohortType.Enabled = project != null;
+
             btnNewProject.Left = lblProject.Right;
             btnExisting.Left = btnNewProject.Right;
 
