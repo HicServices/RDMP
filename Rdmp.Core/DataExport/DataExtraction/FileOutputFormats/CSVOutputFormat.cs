@@ -101,20 +101,15 @@ namespace Rdmp.Core.DataExport.DataExtraction.FileOutputFormats
                 return dt.ToString(dateFormat);
             }
 
-            if(o is float f && roundFloatsTo.HasValue)
+            if(roundFloatsTo.HasValue)
             {
                 separatorsStrippedOut = 0;
-                return f.ToString("N" + roundFloatsTo.Value);
-            }
-            if (o is decimal dec && roundFloatsTo.HasValue)
-            {
-                separatorsStrippedOut = 0;
-                return dec.ToString("N" + roundFloatsTo.Value);
-            }
-            if (o is double d && roundFloatsTo.HasValue)
-            {
-                separatorsStrippedOut = 0;
-                return d.ToString("N" + roundFloatsTo.Value);
+                switch(o)
+                {
+                    case float f : return f.ToString("N" + roundFloatsTo.Value);
+                    case decimal dec : return dec.ToString("N" + roundFloatsTo.Value);
+                    case double d: return d.ToString("N" + roundFloatsTo.Value);
+                }
             }
 
             //in order to kep a count 
