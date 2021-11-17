@@ -100,8 +100,19 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
             var headerLabel = GetLabelHeader("Arguments");
             pArguments.Controls.Add(headerLabel);
 
+            float maxArgNameWidth = 0;
+            
+            if(DemandDictionary.Any())
+            {
+                var g = this.CreateGraphics();
+                maxArgNameWidth = DemandDictionary.Select(a =>
+                    g.MeasureString(UsefulStuff.PascalCaseStringToHumanReadable(a.Value.Name), Label.DefaultFont).Width)
+                    .Max();
+            }
+
+
             foreach (var kvp in DemandDictionary)
-                CreateLine(_parent, kvp.Key, kvp.Value);
+                CreateLine(_parent, kvp.Key, kvp.Value, maxArgNameWidth);
 
             headerLabel.SendToBack();
             pArguments.ResumeLayout(true);
@@ -120,7 +131,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
             return label;
         }
 
-        private void CreateLine(IArgumentHost parent, IArgument argument, RequiredPropertyInfo required)
+        private void CreateLine(IArgumentHost parent, IArgument argument, RequiredPropertyInfo required, float maxArgNameWidth)
         {
 
             Label name = new Label();
@@ -134,6 +145,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
             name.Text = spaceSeparatedArgumentName;
             name.TextAlign = ContentAlignment.MiddleLeft;
             name.Dock = DockStyle.Left;
+            name.Width = (int)maxArgNameWidth+3 /*padding*/;
 
             RAGSmiley ragSmiley = new RAGSmiley();
 
