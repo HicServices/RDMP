@@ -27,7 +27,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
     
     /// <summary>
     /// Used to visualise an IPipeline (See ConfigurePipelineUI and ConfigureAndExecutePipeline for what these are).  This control has a readonly/editable setting on it.  In dialogs where
-    /// you are selecting an IPipeline you will see the diagram rendered readonly.  If you are editting  (See PipelineWorkArea and ConfigurePipelineUI) then you will be able to select
+    /// you are selecting an IPipeline you will see the diagram rendered readonly.  If you are editting  (See PipelineWorkAreaUI and ConfigurePipelineUI) then you will be able to select
     /// and drag and drop in new components to make an IPipeline configuration.  On such a dialog you can also select a component to change the components arguments (See ArgumentCollection).
     /// </summary>
     public partial class PipelineDiagramUI : UserControl
