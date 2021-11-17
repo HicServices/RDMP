@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Bump System.Drawing.Common from 5.0.2 to 5.0.3
 - Bump System.Security.Permissions from 5.0.0 to 6.0.0
+- Changed to Dock layout for Pipeline editing control (may improve performance on older machines)
 
 ### Added
 
