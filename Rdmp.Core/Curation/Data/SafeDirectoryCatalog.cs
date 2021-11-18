@@ -150,7 +150,7 @@ namespace Rdmp.Core.Curation.Data
         }
 
         /// <summary>
-        /// Returns true if the two versions have the same Major, Minor and BuildPart version numbers
+        /// Returns true if the two versions have the same FileMajorPart, FileMinorPart and FileBuildPart version numbers
         /// </summary>
         /// <param name="newOneVersion"></param>
         /// <param name="existingOneVersion"></param>

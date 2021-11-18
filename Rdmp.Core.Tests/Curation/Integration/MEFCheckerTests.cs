@@ -90,7 +90,6 @@ namespace Rdmp.Core.Tests.Curation.Integration
             var tomem = new ToMemoryCheckNotifier();
 
             var sdc = new SafeDirectoryCatalog(tomem, badDir1.FullName,badDir2.FullName);
-            var warnings  = tomem.Messages.Where(m => m.Result == CheckResult.Success).ToArray();
 
             Assert.AreEqual(sdc .DuplicateDllsIgnored, 1);
             
