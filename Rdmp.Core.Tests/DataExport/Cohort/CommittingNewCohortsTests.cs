@@ -86,7 +86,6 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
             CohortCreationRequest request = new CohortCreationRequest(proj, new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), (DataExportRepository)DataExportRepository, "fish");
             request.Check(new ThrowImmediatelyCheckNotifier());
 
-
             DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
             BasicCohortDestination destination = new BasicCohortDestination();
             
@@ -104,6 +103,48 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
 
             //with the data in it from the test file
             Assert.AreEqual(ec.Count,3);
+
+        }
+
+
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void DeprecateOldCohort(bool deprecate)
+        {
+            var proj = new Project(DataExportRepository, projName);
+            proj.ProjectNumber = 999;
+            proj.SaveToDatabase();
+
+            // we are replacing this imaginary cohort
+            var definition998 = new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable);
+            // with this one (v2)
+            var definition999 = new CohortDefinition(null, "CommittingNewCohorts", 2, 999, _externalCohortTable);
+            
+            // Create a basic cohort first
+            CohortCreationRequest request1 = new CohortCreationRequest(proj, definition998, (DataExportRepository)DataExportRepository, "fish");
+            request1.Check(new ThrowImmediatelyCheckNotifier());
+
+            using var con = _cohortDatabase.Server.GetManagedConnection();
+            request1.PushToServer(con);
+            request1.ImportAsExtractableCohort(deprecate, false);
+
+            // the definition was imported and should now be a saved ExtractableCohort
+            var cohort998 = request1.CohortCreatedIfAny;
+            Assert.IsNotNull(cohort998);
+            Assert.IsFalse(cohort998.IsDeprecated);
+
+            // define that the new defition attempts to replace the old one
+            definition999.CohortReplacedIfAny = cohort998;
+
+            CohortCreationRequest request2 = new CohortCreationRequest(proj, definition999, (DataExportRepository)DataExportRepository, "fish");
+            request2.Check(new ThrowImmediatelyCheckNotifier());
+            request2.PushToServer(con);
+            request2.ImportAsExtractableCohort(deprecate, false);
+
+            // after committing the new cohort the old one should be deprecated?
+            cohort998.RevertToDatabaseState();
+            Assert.AreEqual(deprecate, cohort998.IsDeprecated);
 
         }
     }
