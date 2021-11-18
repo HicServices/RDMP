@@ -236,7 +236,7 @@ GO
         }
 
         
-        private void EmptyCohortTables()
+        protected void EmptyCohortTables()
         {
 
             using (var con = _cohortDatabase.Server.GetConnection())
