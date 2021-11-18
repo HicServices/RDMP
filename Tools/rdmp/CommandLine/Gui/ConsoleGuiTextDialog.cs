@@ -38,12 +38,14 @@ namespace Rdmp.Core.CommandLine.Gui
                 ColorScheme = ConsoleMainWindow.ColorScheme
             };
 
-            var textField = new TextField(_initialText ?? "")
+            var textField = new TextView()
             {
                 X = 1,
                 Y = 1,
                 Height = Dim.Fill(2),
-                Width = Dim.Fill(2)
+                Width = Dim.Fill(2),
+                Text = _initialText ?? "",
+                AllowsTab = false
             };
             
             var btnOk = new Button("Ok",true)
@@ -65,7 +67,7 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 X = Pos.Right(btnOk),
                 Y = Pos.Bottom(textField),
-                Width = 10,
+                Width = 13,
                 Height = 1
             };
             btnCancel.Clicked += () =>
@@ -74,9 +76,22 @@ namespace Rdmp.Core.CommandLine.Gui
                 Application.RequestStop();
             };
 
+            var btnClear = new Button("Clear",true)
+            {
+                X = Pos.Right(btnCancel),
+                Y = Pos.Bottom(textField),
+                Width = 13,
+                Height = 1,
+            };
+            btnClear.Clicked += () =>
+            {
+                textField.Text = "";
+            };
+
             win.Add(textField);
             win.Add(btnOk);
             win.Add(btnCancel);
+            win.Add(btnClear);
 
             Application.Run(win);
 
