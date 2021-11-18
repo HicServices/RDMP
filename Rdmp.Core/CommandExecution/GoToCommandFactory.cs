@@ -168,8 +168,13 @@ namespace Rdmp.Core.CommandExecution
                 if (_activator.CoreChildProvider is DataExportChildProvider exp)
                 {
                     var cataEds = exp.ExtractableDataSets.SingleOrDefault(d => d.Catalogue_ID == catalogue.ID);
+
                     if (cataEds != null)
+                    {
+                        yield return new ExecuteCommandShow(_activator, () => cataEds.ExtractionConfigurations.Select(c=>c.Project).Distinct()){OverrideCommandName = "Project(s)" };
                         yield return new ExecuteCommandShow(_activator, () => cataEds.ExtractionConfigurations){OverrideCommandName = "Extraction Configuration(s)" };
+                    }
+                        
                 }
 
                 yield return new ExecuteCommandShow(_activator, () => catalogue.GetTableInfoList(true)){OverrideCommandName="Table(s)" };
