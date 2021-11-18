@@ -212,7 +212,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline
                 NewCohortDefinition.CohortReplacedIfAny.SaveToDatabase();
             }
 
-            if(migrateUsages)
+            if(migrateUsages && NewCohortDefinition.CohortReplacedIfAny != null)
             {
                 var oldId = NewCohortDefinition.CohortReplacedIfAny.ID;
                 var newId = cohort.ID;
