@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added new menu item Diagnostics->Restart Application
 - Trying to extract an [ExtractionConfiguration] with a cohort that is marked IsDeprecated now fails checks
+- Added [MigrateUsages] setting to cohort creation destination pipeline components.  When enabled and creating a new version of an existing cohort then all unreleased [ExtractionConfiguration] using the old (replaced) cohort switch to the new version
 
 ### Fixed
 
@@ -1043,3 +1044,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [ExtractableCohort]: ./Documentation/CodeTutorials/Glossary.md#ExtractableCohort
 [CohortAggregateContainer]: ./Documentation/CodeTutorials/Glossary.md#CohortAggregateContainer
 [ExtractionFilter]: ./Documentation/CodeTutorials/Glossary.md#ExtractionFilter
+[MigrateUsages]: https://github.com/HicServices/RDMP/pull/666
