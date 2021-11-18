@@ -383,13 +383,26 @@ namespace Rdmp.Core.CommandExecution
         bool SelectEnum(string prompt, Type enumType, out Enum chosen);
 
         /// <summary>
-        /// Requests user select a <see cref="Type"/>
+        /// Requests user select a <see cref="Type"/> (optional one that is assignable to <paramref name="baseTypeIfAny"/>).
+        /// This will only offer concrete classes and not abstract classes or interfaces.  To allow picking those use the overload.
         /// </summary>
         /// <param name="prompt"></param>
         /// <param name="baseTypeIfAny">Pass a base class or interface if the Type must be an inheritor / assignable to a specific Type otherwise pass null</param>
         /// <param name="chosen"></param>
         /// <returns></returns>
         bool SelectType(string prompt, Type baseTypeIfAny, out Type chosen);
+
+
+        /// <summary>
+        /// Requests user select a <see cref="Type"/> (optional one that is assignable to <paramref name="baseTypeIfAny"/>).
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <param name="baseTypeIfAny">Pass a base class or interface if the Type must be an inheritor / assignable to a specific Type otherwise pass null</param>
+        /// <param name="allowAbstract">True to offer abstract class Types as well</param>
+        /// <param name="allowInterfaces">True to offer interface Types as well</param>
+        /// <param name="chosen"></param>
+        /// <returns></returns>
+        bool SelectType(string prompt, Type baseTypeIfAny, bool allowAbstract, bool allowInterfaces, out Type chosen);
 
         /// <summary>
         /// Requests user select one of the <paramref name="available"/> <see cref="Type"/>

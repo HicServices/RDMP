@@ -55,9 +55,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             return BasicActivator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().
                 Where(t=>
-                typeof(IAttacher).IsAssignableFrom(t) ||
-                typeof(IDataProvider).IsAssignableFrom(t) ||
-                typeof(IMutilateDataTables).IsAssignableFrom(t)).ToArray();
+                // must not be interface or abstract
+                (!(t.IsInterface || t.IsAbstract)) &&
+                (
+                    // must implement one of these interfaces
+                    typeof(IAttacher).IsAssignableFrom(t) ||
+                    typeof(IDataProvider).IsAssignableFrom(t) ||
+                    typeof(IMutilateDataTables).IsAssignableFrom(t)
+                )).ToArray();
         }
 
         public override void Execute()
