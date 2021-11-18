@@ -31,6 +31,11 @@ namespace Rdmp.Core.DataExport.DataExtraction
         private DiscoveredServer _server;
         private Stream _stream;
 
+        /// <summary>
+        /// The number of decimal places to round floating point numbers to.  This only applies to data which is hard typed Float and not to string values
+        /// </summary>
+        int? RoundFloatsTo { get; set; }
+
         public string OutputFilename { get; private set; }
 
         public ExtractTableVerbatim(DiscoveredServer server, string[] tableNames, DirectoryInfo outputDirectory, string separator, string dateTimeFormat)
@@ -156,7 +161,7 @@ namespace Rdmp.Core.DataExport.DataExtraction
                 using(DbDataReader r = cmdExtract.ExecuteReader())
                 {
                     WriteHeader(sw, r, _separator, _dateTimeFormat);
-                    linesWritten = WriteBody(sw, r, _separator, _dateTimeFormat);
+                    linesWritten = WriteBody(sw, r, _separator, _dateTimeFormat,RoundFloatsTo);
 
                     r.Close();
                 }
@@ -173,14 +178,14 @@ namespace Rdmp.Core.DataExport.DataExtraction
             //write headers
             for (int i = 0; i < r.FieldCount; i++)
             {
-                sw.Write(CSVOutputFormat.CleanString(r.GetName(i), separator, out _, dateTimeFormat));
+                sw.Write(CSVOutputFormat.CleanString(r.GetName(i), separator, out _, dateTimeFormat,null));
                 if (i < r.FieldCount - 1)
                     sw.Write(separator);
                 else
                     sw.WriteLine();
             }
         }
-        public static int WriteBody(StreamWriter sw, DbDataReader r, string separator, string dateTimeFormat)
+        public static int WriteBody(StreamWriter sw, DbDataReader r, string separator, string dateTimeFormat, int? roundFloatsTo)
         {
             int linesWritten = 0;
 
@@ -190,7 +195,7 @@ namespace Rdmp.Core.DataExport.DataExtraction
                 for (int i = 0; i < r.FieldCount; i++)
                 {
                     //clean string
-                    sw.Write(CSVOutputFormat.CleanString(r[i], separator, out _, dateTimeFormat));
+                    sw.Write(CSVOutputFormat.CleanString(r[i], separator, out _, dateTimeFormat, roundFloatsTo));
                     if (i < r.FieldCount - 1)
                         sw.Write(separator); //if not the last element add a ','
                     else
