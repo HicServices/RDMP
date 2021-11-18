@@ -36,10 +36,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
         private Type _argumentsAreFor;
         private IArgumentHost _parent;
         private ArgumentValueUIFactory _valueUisFactory;
-        
-        private int _currentY;
-        private int _maxValueUILeft;
-        private List<Control> _valueUIs = new List<Control>();
+
         private IActivateItems _activator;
 
         public ArgumentCollectionUI()
@@ -103,20 +100,21 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
             var headerLabel = GetLabelHeader("Arguments");
             pArguments.Controls.Add(headerLabel);
 
-            _currentY = headerLabel.Height;
-            _maxValueUILeft = 0;
-            _valueUIs.Clear();
-
-            foreach (var kvp in DemandDictionary)
-                CreateLine(_parent, kvp.Key, kvp.Value);
-
-            foreach (Control control in _valueUIs)
+            float maxArgNameWidth = 0;
+            
+            if(DemandDictionary.Any())
             {
-                control.Left = _maxValueUILeft;
-                control.Width = pArguments.Width - (_maxValueUILeft + 25);
-                control.Parent.MinimumSize = new Size(_maxValueUILeft + control.MinimumSize.Width, control.Parent.Height);
+                var g = this.CreateGraphics();
+                maxArgNameWidth = DemandDictionary.Select(a =>
+                    g.MeasureString(UsefulStuff.PascalCaseStringToHumanReadable(a.Value.Name), Label.DefaultFont).Width)
+                    .Max();
             }
 
+
+            foreach (var kvp in DemandDictionary)
+                CreateLine(_parent, kvp.Key, kvp.Value, maxArgNameWidth);
+
+            headerLabel.SendToBack();
             pArguments.ResumeLayout(true);
         }
 
@@ -126,29 +124,28 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
             Label label = new Label();
             label.Text = caption;
             label.BackColor = Color.DarkGray;
-            label.Width = pArguments.ClientRectangle.Width;
-            label.Anchor = AnchorStyles.Top|AnchorStyles.Left|AnchorStyles.Right;
+            label.Dock = DockStyle.Top;
 
             label.TextAlign = ContentAlignment.MiddleCenter;
             
             return label;
         }
 
-        private void CreateLine(IArgumentHost parent, IArgument argument, RequiredPropertyInfo required)
+        private void CreateLine(IArgumentHost parent, IArgument argument, RequiredPropertyInfo required, float maxArgNameWidth)
         {
 
             Label name = new Label();
 
             HelpIcon helpIcon = new HelpIcon();
             helpIcon.SetHelpText(GetSystemTypeName(argument.GetSystemType())??"Unrecognised Type:" + argument.Type, required.Demand.Description);
-            helpIcon.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            helpIcon.Dock = DockStyle.Right;
 
             string spaceSeparatedArgumentName = UsefulStuff.PascalCaseStringToHumanReadable(argument.Name);
             name.Height = helpIcon.Height;
             name.Text = spaceSeparatedArgumentName;
             name.TextAlign = ContentAlignment.MiddleLeft;
-            name.AutoSize = true;
-            name.Anchor = AnchorStyles.Top | AnchorStyles.Left;
+            name.Dock = DockStyle.Left;
+            name.Width = (int)maxArgNameWidth+3 /*padding*/;
 
             RAGSmiley ragSmiley = new RAGSmiley();
 
@@ -201,17 +198,12 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
             args.Fatal = ragSmiley.Fatal;
 
             var valueui = (Control)_valueUisFactory.Create(_activator, args);
-            
-            valueui.Anchor = name.Anchor = AnchorStyles.Top |  AnchorStyles.Left | AnchorStyles.Right;
-            _valueUIs.Add(valueui);
+            valueui.Dock = DockStyle.Fill;
 
             Panel p = new Panel();
             p.Height = Math.Max(Math.Max(lblClassName.Height,helpIcon.Height),valueui.Height);
-            p.Width = pArguments.ClientRectangle.Width;
-            p.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            p.Dock = DockStyle.Top;
             p.BorderStyle = BorderStyle.FixedSingle;
-            p.Location = new Point(0, _currentY);
-            _currentY += p.Height;
 
             name.Location = new Point(0,0);
             p.Controls.Add(name);
@@ -219,18 +211,13 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
             helpIcon.Left = name.Right;
             p.Controls.Add(helpIcon);
 
-            ragSmiley.Left = p.Width - ragSmiley.Width;
-            ragSmiley.Anchor = AnchorStyles.Right | AnchorStyles.Top;
+            ragSmiley.Dock = DockStyle.Right;
             p.Controls.Add(ragSmiley);
-
-            valueui.Left = helpIcon.Right;
-            valueui.Width = p.Width - (helpIcon.Right + ragSmiley.Left);
-            _maxValueUILeft = Math.Max(_maxValueUILeft, valueui.Left);
             p.Controls.Add(valueui);
-            p.MinimumSize = new Size(ragSmiley.Right,p.Height);
 
             name.Height = p.Height;
 
+            valueui.BringToFront();
             pArguments.Controls.Add(p);
         }
 
