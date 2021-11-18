@@ -6,6 +6,7 @@
 
 using System;
 using System.Data;
+using System.Linq;
 using FAnsi.Connections;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -195,7 +196,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline
             NewCohortDefinition.LocationOfCohort.PushToServer(NewCohortDefinition, connection);
         }
 
-        public int ImportAsExtractableCohort(bool deprecateOldCohortOnSuccess)
+        public int ImportAsExtractableCohort(bool deprecateOldCohortOnSuccess, bool migrateUsages)
         {
             if(NewCohortDefinition.ID == null)
                 throw new NotSupportedException("CohortCreationRequest cannot be imported because it's ID is null, it is likely that it has not been pushed to the server yet");
@@ -209,6 +210,22 @@ namespace Rdmp.Core.CohortCommitting.Pipeline
             {
                 NewCohortDefinition.CohortReplacedIfAny.IsDeprecated = true;
                 NewCohortDefinition.CohortReplacedIfAny.SaveToDatabase();
+            }
+
+            if(migrateUsages && NewCohortDefinition.CohortReplacedIfAny != null)
+            {
+                var oldId = NewCohortDefinition.CohortReplacedIfAny.ID;
+                var newId = cohort.ID;
+
+                // ExtractionConfigurations that use the old (replaced) cohort
+                var liveUsers = _repository.GetAllObjects<ExtractionConfiguration>()
+                    .Where(ec=>ec.Cohort_ID == oldId && ec.IsReleased == false);
+
+                foreach(var ec in liveUsers)
+                {
+                    ec.Cohort_ID = newId;
+                    ec.SaveToDatabase();
+                }
             }
 
             return cohort.ID;

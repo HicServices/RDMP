@@ -88,7 +88,6 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
             CohortCreationRequest request = new CohortCreationRequest(proj, new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), (DataExportRepository)DataExportRepository, "fish");
             request.Check(new ThrowImmediatelyCheckNotifier());
 
-
             DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
             BasicCohortDestination destination = new BasicCohortDestination();
             
@@ -106,6 +105,128 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
 
             //with the data in it from the test file
             Assert.AreEqual(ec.Count,3);
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void DeprecateOldCohort(bool deprecate)
+        {
+            var proj = new Project(DataExportRepository, projName);
+            proj.ProjectNumber = 999;
+            proj.SaveToDatabase();
+
+            // we are replacing this imaginary cohort
+            var definition998 = new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable);
+            // with this one (v2)
+            var definition999 = new CohortDefinition(null, "CommittingNewCohorts", 2, 999, _externalCohortTable);
+            
+            // Create a basic cohort first
+            CohortCreationRequest request1 = new CohortCreationRequest(proj, definition998, (DataExportRepository)DataExportRepository, "fish");
+            request1.Check(new ThrowImmediatelyCheckNotifier());
+
+            using var con = _cohortDatabase.Server.GetManagedConnection();
+            request1.PushToServer(con);
+            request1.ImportAsExtractableCohort(deprecate, false);
+
+            // the definition was imported and should now be a saved ExtractableCohort
+            var cohort998 = request1.CohortCreatedIfAny;
+            Assert.IsNotNull(cohort998);
+            Assert.IsFalse(cohort998.IsDeprecated);
+
+            // define that the new definition attempts to replace the old one
+            definition999.CohortReplacedIfAny = cohort998;
+
+            CohortCreationRequest request2 = new CohortCreationRequest(proj, definition999, (DataExportRepository)DataExportRepository, "fish");
+            request2.Check(new ThrowImmediatelyCheckNotifier());
+            request2.PushToServer(con);
+            request2.ImportAsExtractableCohort(deprecate, false);
+
+            // after committing the new cohort the old one should be deprecated?
+            cohort998.RevertToDatabaseState();
+            Assert.AreEqual(deprecate, cohort998.IsDeprecated);
+        }
+
+
+        [TestCase(true)]
+        [TestCase(false)]
+        public void MigrateUsages(bool migrate)
+        {
+            var proj = new Project(DataExportRepository, projName);
+            proj.ProjectNumber = 999;
+            proj.SaveToDatabase();
+
+            // we are replacing this imaginary cohort
+            var definition998 = new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable);
+            // with this one (v2)
+            var definition999 = new CohortDefinition(null, "CommittingNewCohorts", 2, 999, _externalCohortTable);
+
+            // Create a basic cohort first
+            CohortCreationRequest request1 = new CohortCreationRequest(proj, definition998, (DataExportRepository)DataExportRepository, "fish");
+            request1.Check(new ThrowImmediatelyCheckNotifier());
+
+            using var con = _cohortDatabase.Server.GetManagedConnection();
+            request1.PushToServer(con);
+            request1.ImportAsExtractableCohort(true, migrate);
+
+            // the definition was imported and should now be a saved ExtractableCohort
+            var cohort998 = request1.CohortCreatedIfAny;
+            Assert.IsNotNull(cohort998);
+            Assert.IsFalse(cohort998.IsDeprecated);
+
+            // legit user 1
+            var ec1 = new ExtractionConfiguration(DataExportRepository, proj)
+            {
+                IsReleased = false,
+                Cohort_ID = cohort998.ID
+            };
+            ec1.SaveToDatabase();
+
+            // legit user 2
+            var ec2 = new ExtractionConfiguration(DataExportRepository,proj)
+            {
+                IsReleased = false,
+                Cohort_ID = cohort998.ID
+            };
+            ec2.SaveToDatabase();
+
+            // has no cohort yet defined so should not be migrated
+            var ec3 = new ExtractionConfiguration(DataExportRepository,proj);
+
+            // is frozen so should not be migrated
+            var ec4 = new ExtractionConfiguration(DataExportRepository,proj)
+            {
+                IsReleased = true,
+                Cohort_ID = cohort998.ID
+            };
+            ec4.SaveToDatabase();
+
+            // define that the new definition attempts to replace the old one
+            definition999.CohortReplacedIfAny = cohort998;
+
+            CohortCreationRequest request2 = new CohortCreationRequest(proj, definition999, (DataExportRepository)DataExportRepository, "fish");
+            request2.Check(new ThrowImmediatelyCheckNotifier());
+            request2.PushToServer(con);
+            request2.ImportAsExtractableCohort(true, migrate);
+
+            // the definition was imported and should now be a saved ExtractableCohort
+            var cohort999 = request2.CohortCreatedIfAny;
+            Assert.IsNotNull(cohort999);
+
+            // after committing the new cohort who should be migrated?
+            ec1.RevertToDatabaseState();
+            ec2.RevertToDatabaseState();
+            ec3.RevertToDatabaseState();
+            ec4.RevertToDatabaseState();
+
+            // should have been updated to use the new cohort
+            Assert.AreEqual(ec1.Cohort_ID, migrate ? cohort999.ID : cohort998.ID);
+            Assert.AreEqual(ec2.Cohort_ID, migrate ? cohort999.ID: cohort998.ID);
+
+            // should not have magically gotten a cohort
+            Assert.IsNull(ec3.Cohort_ID);
+
+            // is frozen so should not have been changed to the new cohort (and therefore still use cohort998)
+            Assert.AreEqual(ec4.Cohort_ID, cohort998.ID);
         }
     }
 }
