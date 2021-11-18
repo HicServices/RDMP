@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed the 'filters' count column in [Catalogue] tree collection showing edit control when clicked
 - Fixed Find not working when searching by ID for [Pipeline] objects
 - Prevented showing out dated cohorts when changing Project half way through defining a cohort
+- Fixed Command Line UI showing abstract and interfaces when prompting user to pick a Type
 
 ### Changed
 
