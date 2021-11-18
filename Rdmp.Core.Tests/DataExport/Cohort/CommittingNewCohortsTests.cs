@@ -32,6 +32,8 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
         {
             base.SetUp();
 
+            EmptyCohortTables();
+
             filename = Path.Combine(TestContext.CurrentContext.TestDirectory, "CommittingNewCohorts.csv");
 
             StreamWriter sw = new StreamWriter(filename);    
@@ -103,7 +105,6 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
 
             //with the data in it from the test file
             Assert.AreEqual(ec.Count,3);
-
         }
 
         [TestCase(true)]
