@@ -132,7 +132,7 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
             Assert.IsNotNull(cohort998);
             Assert.IsFalse(cohort998.IsDeprecated);
 
-            // define that the new defition attempts to replace the old one
+            // define that the new definition attempts to replace the old one
             definition999.CohortReplacedIfAny = cohort998;
 
             CohortCreationRequest request2 = new CohortCreationRequest(proj, definition999, (DataExportRepository)DataExportRepository, "fish");
@@ -199,7 +199,7 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
             };
             ec4.SaveToDatabase();
 
-            // define that the new defition attempts to replace the old one
+            // define that the new definition attempts to replace the old one
             definition999.CohortReplacedIfAny = cohort998;
 
             CohortCreationRequest request2 = new CohortCreationRequest(proj, definition999, (DataExportRepository)DataExportRepository, "fish");
