@@ -65,28 +65,37 @@ namespace Rdmp.Core.Tests.Curation.Integration
         }
 
         [Test]
-        public void FileDuplication()
+        public void DllFileDuplication_Ignored()
         {
-            var badDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Bad"));
-
-            if(badDir.Exists)
-                badDir.Delete(true);
+            // Setup 2 directories that will contain duplicate copies of the same dll
+            var badDir1 = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Bad1"));
+            var badDir2 = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Bad2"));
             
-            badDir.Create();
+            if (badDir1.Exists)
+                badDir1.Delete(true);
+            
+            badDir1.Create();
+
+            if (badDir2.Exists)
+                badDir2.Delete(true);
+
+            badDir2.Create();
 
             var dllToCopy = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Rdmp.Core.dll"));
 
-            File.Copy(dllToCopy.FullName, Path.Combine(badDir.FullName,"Rdmp.Core.dll"));
+            // copy the dll to both folders
+            File.Copy(dllToCopy.FullName, Path.Combine(badDir1.FullName,"Rdmp.Core.dll"));
+            File.Copy(dllToCopy.FullName, Path.Combine(badDir2.FullName, "Rdmp.Core.dll"));
 
             var tomem = new ToMemoryCheckNotifier();
 
-            new SafeDirectoryCatalog(tomem, TestContext.CurrentContext.TestDirectory);
+            var sdc = new SafeDirectoryCatalog(tomem, badDir1.FullName,badDir2.FullName);
             var warnings  = tomem.Messages.Where(m => m.Result == CheckResult.Success).ToArray();
 
-            Assert.GreaterOrEqual(warnings.Count(m => m.Message.StartsWith("Found 2 copies of Rdmp.Core.dll")), 1);
+            Assert.AreEqual(sdc .DuplicateDllsIgnored, 1);
             
-
-            badDir.Delete(true);
+            badDir1.Delete(true);
+            badDir2.Delete(true);
 
         }
 
