@@ -210,6 +210,12 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("AdvancedFindFilters", value); }
         }
 
+        public static bool AsyncRefresh
+        {
+            get { return AppSettings.GetValueOrDefault("AsyncRefresh", false); }
+            set { AppSettings.AddOrUpdateValue("AsyncRefresh", value); }
+        }
+
         #endregion
 
         public static bool GetTutorialDone(Guid tutorialGuid)

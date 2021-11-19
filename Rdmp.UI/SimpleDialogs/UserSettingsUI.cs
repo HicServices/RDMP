@@ -45,6 +45,7 @@ namespace Rdmp.UI.SimpleDialogs
             cbHideEmptyTableLoadRunAudits.Checked = UserSettings.HideEmptyTableLoadRunAudits;
             cbScoreZeroForCohortAggregateContainers.Checked = UserSettings.ScoreZeroForCohortAggregateContainers;
             cbAdvancedFindFilters.Checked = UserSettings.AdvancedFindFilters;
+            cbAsyncRefresh.Checked = UserSettings.AsyncRefresh;
             tbCreateDatabaseTimeout.Text = UserSettings.CreateDatabaseTimeout.ToString();
 
             clbWarnings.Items.Add(WarnOnTimeoutOnExtractionChecks, UserSettings.WarnOnTimeoutOnExtractionChecks);
@@ -135,6 +136,9 @@ namespace Rdmp.UI.SimpleDialogs
 
             if (cb == cbAdvancedFindFilters)
                 UserSettings.AdvancedFindFilters = cb.Checked;
+
+            if (cb == cbAsyncRefresh)
+                UserSettings.AsyncRefresh = cb.Checked;
         }
 
         private void ddTheme_SelectedIndexChanged(object sender, EventArgs e)

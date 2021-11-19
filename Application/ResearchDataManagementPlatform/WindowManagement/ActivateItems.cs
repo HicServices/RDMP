@@ -66,8 +66,7 @@ using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
-
-
+using ReusableLibraryCode.Settings;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement
@@ -76,7 +75,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
     /// Central class for RDMP main application, this class provides acceess to all the main systems in RDMP user interface such as Emphasis, the RefreshBus, Child 
     /// provision etc.  See IActivateItems for full details
     /// </summary>
-    public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubscriber
+    public class ActivateItems : BasicActivateItems, IActivateItems
     {
         private readonly DockPanel _mainDockPanel;
         private readonly WindowManager _windowManager;
@@ -94,8 +93,45 @@ namespace ResearchDataManagementPlatform.WindowManagement
         
         public override void Publish(IMapsDirectlyToDatabaseTable databaseEntity)
         {
-            if(databaseEntity is DatabaseEntity de)
-                RefreshBus.Publish(this,new RefreshObjectEventArgs(de));
+            if(UserSettings.AsyncRefresh)
+            {
+                Task.Run(() =>
+                {
+                    OnPublishUpdateState();
+                })
+                    .ContinueWith((t, o) =>
+                    {
+                        OnPublishTriggerRefreshBus(databaseEntity);
+                    }, SynchronizationContext.Current);
+            }
+            else
+            {
+                OnPublishUpdateState();
+                OnPublishTriggerRefreshBus(databaseEntity);
+            }
+        }
+
+        /// <summary>
+        /// Part 1 of <see cref="Publish(IMapsDirectlyToDatabaseTable)"/>.  This updates the systems data model
+        /// to match the database changes
+        /// </summary>
+        private void OnPublishUpdateState()
+        {
+            //update the child provider
+            GetChildProvider();
+            RefreshProblemProviders();
+        }
+
+        /// <summary>
+        /// Part 2 of the <see cref="Publish(IMapsDirectlyToDatabaseTable)"/>.  This fires events to tabs
+        /// that care that the data model has changed and notifies them to update.  This must happen on the
+        /// main UI thread.
+        /// </summary>
+        /// <param name="databaseEntity"></param>
+        private void OnPublishTriggerRefreshBus(IMapsDirectlyToDatabaseTable databaseEntity)
+        {
+            if (databaseEntity is DatabaseEntity de)
+                RefreshBus.Publish(this, new RefreshObjectEventArgs(de));
         }
 
         public override void Show(string title, string message)
@@ -132,8 +168,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             ProblemProviders.Add(new DataExportProblemProvider());
             ProblemProviders.Add(new CatalogueProblemProvider());
             RefreshProblemProviders();
-
-            RefreshBus.Subscribe(this);
         }
 
         protected override ICoreChildProvider GetChildProvider()
@@ -456,13 +490,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             var floatable = WindowFactory.Create(this,collectionControl,objectCollection, null);
             floatable.Show(_mainDockPanel, DockState.Document);
             return floatable;
-        }
-
-        public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
-        {
-            //update the child provider
-            GetChildProvider();
-            RefreshProblemProviders();
         }
 
         private void RefreshProblemProviders()
