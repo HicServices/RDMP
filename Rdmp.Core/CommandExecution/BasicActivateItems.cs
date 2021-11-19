@@ -36,6 +36,7 @@ using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.CommandExecution
 {
@@ -77,6 +78,12 @@ namespace Rdmp.Core.CommandExecution
         
         /// <inheritdoc/>
         public List<IPluginUserInterface> PluginUserInterfaces { get; private set; } = new List<IPluginUserInterface>();
+        
+        /// <summary>
+        /// Lock object for updating <see cref="CoreChildProvider"/>. Prevents a race between two UI publish events when
+        /// <see cref="UserSettings.AsyncRefresh"/> is enabled
+        /// </summary>
+        object _oLockUpdateChildProvider = new object();
 
         public BasicActivateItems(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
         {
@@ -97,6 +104,7 @@ namespace Rdmp.Core.CommandExecution
             CoreIconProvider = new DataExportIconProvider(repositoryLocator, PluginUserInterfaces.ToArray());
         }
 
+        
         protected virtual ICoreChildProvider GetChildProvider(CancellationToken token)
         {
             // Build new CoreChildProvider in a temp then update to it to avoid stale references
@@ -124,11 +132,13 @@ namespace Rdmp.Core.CommandExecution
             if (temp == null)
                 temp = new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(), GlobalErrorCheckNotifier, CoreChildProvider as CatalogueChildProvider, token);
 
-            // first time
-            if (CoreChildProvider == null)
-                CoreChildProvider = temp;
-            else
-                CoreChildProvider.UpdateTo(temp);
+            lock(_oLockUpdateChildProvider){
+                // first time
+                if (CoreChildProvider == null)
+                    CoreChildProvider = temp;
+                else
+                    CoreChildProvider.UpdateTo(temp);
+            }
 
             return CoreChildProvider;
         }
