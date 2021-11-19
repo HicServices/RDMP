@@ -135,7 +135,14 @@ namespace Rdmp.Core.DataExport.Checks
             }
 
             //make sure that it's cohort is retrievable
-            repo.GetObjectByID<ExtractableCohort>((int)_config.Cohort_ID);
+            var cohort = repo.GetObjectByID<ExtractableCohort>((int)_config.Cohort_ID);
+            if(cohort.IsDeprecated)
+            {
+                notifier.OnCheckPerformed(
+                    new CheckEventArgs(
+                        "Cohort '" + cohort + "' is marked IsDeprecated",
+                        CheckResult.Fail));
+            }
 
             if (CheckDatasets)
                 foreach (ISelectedDataSets s in _config.SelectedDataSets)

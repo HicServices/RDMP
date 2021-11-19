@@ -39,6 +39,9 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations
         [DemandsInitialization(@"Determines behaviour when you are creating a new version of an existing cohort.  If true then the old (replaced) cohort will be marked IsDeprecated",DefaultValue=true)]
         public bool DeprecateOldCohortOnSuccess { get; set; }
 
+        [DemandsInitialization(@"Determines behaviour when you are creating a new version of an existing cohort.  If true then any ExtractionConfiguration that are not frozen are moved to the new version of the cohort", DefaultValue = false)]
+        public bool MigrateUsages { get; set; }
+
         private IAllocateReleaseIdentifiers _allocator = null;
         
         readonly Dictionary<object, object> _cohortDictionary = new Dictionary<object, object>();
@@ -198,7 +201,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations
 
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Succesfully uploaded " + _cohortDictionary.Count + " records"));
 
-            int id = Request.ImportAsExtractableCohort(DeprecateOldCohortOnSuccess);
+            int id = Request.ImportAsExtractableCohort(DeprecateOldCohortOnSuccess, MigrateUsages);
 
             listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Cohort successfully comitted to destination and imported as an RDMP ExtractableCohort (ID="+id+" <- this is the ID of the reference pointer, the cohortDefinitionID of the actual cohort remains as you specified:"+Request.NewCohortDefinition.ID+")"));
         }

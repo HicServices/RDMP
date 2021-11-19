@@ -26,7 +26,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline
         ExtractableCohort CohortCreatedIfAny { get; }
         FlatFileToLoad FileToLoad { get; set; }
 
-        int ImportAsExtractableCohort(bool deprecateOldCohortOnSuccess);
+        int ImportAsExtractableCohort(bool deprecateOldCohortOnSuccess, bool migrateUsages);
         void PushToServer(IManagedConnection transaction);
     }
 }

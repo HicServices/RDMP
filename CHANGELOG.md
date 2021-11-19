@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added `RoundFloatsTo` to ExecuteDatasetExtractionFlatFileDestination
 - Added new menu item Diagnostics->Restart Application
+- Trying to extract an [ExtractionConfiguration] with a cohort that is marked IsDeprecated now fails checks
+- Added [MigrateUsages] setting to cohort creation destination pipeline components.  When enabled and creating a new version of an existing cohort then all unreleased [ExtractionConfiguration] using the old (replaced) cohort switch to the new version
 
 ### Fixed
 
@@ -20,16 +22,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Find not working when searching by ID for [Pipeline] objects
 - Prevented showing out dated cohorts when changing Project half way through defining a cohort
 - When plugins contain dlls with differing version numbers then the latest dll version is loaded (previously the first encountered was used)
+- Fixed bug in Console Gui where edit window showed value set directly instead of passing through Property Setters
+- Fixed bug in Console Gui where password properties showed (encrypted) HEX binary value instead of ****
+- Fixed Command Line UI showing abstract and interfaces when prompting user to pick a Type
 
 ### Changed
 
 - Bump System.Drawing.Common from 5.0.2 to 5.0.3
 - Bump System.Security.Permissions from 5.0.0 to 6.0.0
+- Changed to Dock layout for Pipeline editing control (may improve performance on older machines)
+- Removed dependency on `System.Drawing.Common` by updating usages to `System.Drawing`
 
 ### Added
 
 - Added ability to filter [Catalogue] in the Find dialog by Internal/Deprecated etc
-
 
 ## [7.0.3] - 2021-11-04
 
@@ -1044,3 +1050,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [ExtractableCohort]: ./Documentation/CodeTutorials/Glossary.md#ExtractableCohort
 [CohortAggregateContainer]: ./Documentation/CodeTutorials/Glossary.md#CohortAggregateContainer
 [ExtractionFilter]: ./Documentation/CodeTutorials/Glossary.md#ExtractionFilter
+[MigrateUsages]: https://github.com/HicServices/RDMP/pull/666

@@ -44,7 +44,7 @@ namespace Rdmp.Core.Logging.PastEvents
             if (EndTime != null)
             {
                 var ts = EndTime.Value.Subtract(StartTime);
-                elapsed = $" ({ts.TotalHours:N0}:{ts.Minutes}:{ts.Seconds})";
+                elapsed = $" ({ts.TotalHours:N0}:{ts.Minutes:D2}:{ts.Seconds:D2})";
             }
 
             return Description + "(ID="+ID +") - " + StartTime + " - " + (EndTime != null ? EndTime.ToString() : "<DidNotFinish>") + elapsed;

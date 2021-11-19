@@ -196,7 +196,7 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
                     lock(lockList)
                     {
                         consoleOutput.Insert(0,line);
-                        _results.SetNeedsDisplay();
+                        Application.MainLoop.Invoke(()=>_results.SetNeedsDisplay());   
                     }
                     
                 }

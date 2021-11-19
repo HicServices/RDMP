@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Terminal.Gui;
@@ -21,9 +22,9 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
         private List<PropertyInListView> collection;
         private ListView list;
 
-        public IMapsDirectlyToDatabaseTable DatabaseObject { get; }
+        public IRevertable DatabaseObject { get; }
 
-        public ConsoleGuiEdit(IBasicActivateItems activator, IMapsDirectlyToDatabaseTable databaseObject)
+        public ConsoleGuiEdit(IBasicActivateItems activator, IRevertable databaseObject)
         {
             _activator = activator;
             DatabaseObject = databaseObject;
@@ -48,8 +49,7 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
                 X = 0,
                 Y = Pos.Bottom(list),
                 IsDefault = true
-            };
-            
+            };            
 
             btnSet.Clicked += () =>
             {
@@ -91,8 +91,8 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
                     {
 
                         //redraws the list and re selects the current item
-
-                        p.UpdateValue(cmd.NewValue ?? string.Empty);
+                        DatabaseObject.RevertToDatabaseState();
+                        p.UpdateValue();
 
                         var oldSelected = list.SelectedItem;
                         list.SetSource(collection = collection.ToList());
@@ -128,11 +128,14 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
         {
             public PropertyInfo PropertyInfo;
             public string DisplayMember;
+            
+            public IMapsDirectlyToDatabaseTable Object;
 
             public PropertyInListView(PropertyInfo p, IMapsDirectlyToDatabaseTable o)
             {
                 PropertyInfo = p;
-                UpdateValue(p.GetValue(o));
+                Object = o;
+                UpdateValue();
 
             }
 
@@ -145,9 +148,21 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
             /// Updates the <see cref="DisplayMember"/> to indicate the new value
             /// </summary>
             /// <param name="newValue"></param>
-            public void UpdateValue(object newValue)
+            public void UpdateValue()
             {
-                DisplayMember = PropertyInfo.Name + ":" + newValue;
+                var val = PropertyInfo.GetValue(Object) ?? string.Empty;
+
+                // If it is a password property
+                if(PropertyInfo.Name.Contains("Password",StringComparison.InvariantCultureIgnoreCase))
+                {
+                    // With a non null value
+                    if(!string.IsNullOrWhiteSpace(val.ToString()))
+                    {
+                            val = "****";
+                    }
+                }
+                
+                DisplayMember = PropertyInfo.Name + ":" + val;
             }
         }
     }

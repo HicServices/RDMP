@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Revertable;
 using NStack;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Gui.Windows;
@@ -103,6 +104,8 @@ namespace Rdmp.Core.CommandLine.Gui
             w = Math.Max(64,Math.Min(80,  w - 4));
             h = Math.Max(10,Math.Min(20,  h - 2));
         }
+
+        
 
         public override bool TypeText(string header, string prompt, int maxLength, string initialText, out string text,
             bool requireSaneHeaderText)
@@ -337,11 +340,11 @@ namespace Rdmp.Core.CommandLine.Gui
 
         protected override void ActivateImpl(object o)
         {
-            IMapsDirectlyToDatabaseTable m = o as IMapsDirectlyToDatabaseTable;
+            IRevertable m = o as IRevertable;
 
             if (o is IMasqueradeAs masq)
             {
-                if(masq.MasqueradingAs() is IMapsDirectlyToDatabaseTable underlyingObject)
+                if(masq.MasqueradingAs() is IRevertable underlyingObject)
                 {
                     m = underlyingObject;
                 }
