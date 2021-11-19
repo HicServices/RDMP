@@ -90,23 +90,35 @@ namespace ResearchDataManagementPlatform.WindowManagement
         readonly UIObjectConstructor _constructor = new UIObjectConstructor();
 
         public IArrangeWindows WindowArranger { get; private set; }
-        
+
+        public CancellationTokenSource lastPublish;
+
         public override void Publish(IMapsDirectlyToDatabaseTable databaseEntity)
         {
             if(UserSettings.AsyncRefresh)
             {
+                lastPublish?.Cancel();
+                lastPublish = new CancellationTokenSource();
+
                 Task.Run(() =>
                 {
-                    OnPublishUpdateState();
+                    OnPublishUpdateState(lastPublish.Token);
                 })
                     .ContinueWith((t, o) =>
                     {
-                        OnPublishTriggerRefreshBus(databaseEntity);
+                        if(t.Exception?.GetBaseException() is OperationCanceledException)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            OnPublishTriggerRefreshBus(databaseEntity);
+                        }
                     }, SynchronizationContext.Current);
             }
             else
             {
-                OnPublishUpdateState();
+                OnPublishUpdateState(CancellationToken.None);
                 OnPublishTriggerRefreshBus(databaseEntity);
             }
         }
@@ -115,10 +127,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
         /// Part 1 of <see cref="Publish(IMapsDirectlyToDatabaseTable)"/>.  This updates the systems data model
         /// to match the database changes
         /// </summary>
-        private void OnPublishUpdateState()
+        private void OnPublishUpdateState(CancellationToken token)
         {
             //update the child provider
-            GetChildProvider();
+            GetChildProvider(token);
             RefreshProblemProviders();
         }
 
@@ -170,9 +182,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
             RefreshProblemProviders();
         }
 
-        protected override ICoreChildProvider GetChildProvider()
+        protected override ICoreChildProvider GetChildProvider(CancellationToken token)
         {
-            var provider = base.GetChildProvider();
+            var provider = base.GetChildProvider(token);
 
             if (RefreshBus != null)
             {

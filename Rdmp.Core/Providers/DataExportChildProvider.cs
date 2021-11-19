@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
@@ -96,7 +97,7 @@ namespace Rdmp.Core.Providers
         
         private IDataExportRepository dataExportRepository;
 
-        public DataExportChildProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders,ICheckNotifier errorsCheckNotifier, DataExportChildProvider previousStateIfKnown) : base(repositoryLocator.CatalogueRepository, pluginChildProviders,errorsCheckNotifier,previousStateIfKnown)
+        public DataExportChildProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders,ICheckNotifier errorsCheckNotifier, DataExportChildProvider previousStateIfKnown, CancellationToken? token = null) : base(repositoryLocator.CatalogueRepository, pluginChildProviders,errorsCheckNotifier,previousStateIfKnown,token)
         {
             BlackListedSources = previousStateIfKnown?.BlackListedSources ?? new List<ExternalCohortTable>();
             _errorsCheckNotifier = errorsCheckNotifier;

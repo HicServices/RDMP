@@ -9,6 +9,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
@@ -183,7 +184,8 @@ namespace Rdmp.Core.Providers
         public GovernancePeriod[] AllGovernancePeriods { get; private set; }
         public GovernanceDocument[] AllGovernanceDocuments { get; private set; }
         public Dictionary<int, HashSet<int>> GovernanceCoverage { get; private set; }
-        
+
+        private CancellationToken _token;
         private CommentStore _commentStore;
 
         public JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; private set; }
@@ -212,8 +214,11 @@ namespace Rdmp.Core.Providers
         /// <param name="pluginChildProviders"></param>
         /// <param name="errorsCheckNotifier">Where to report errors building the hierarchy e.g. when <paramref name="pluginChildProviders"/> crash.  Set to null for <see cref="IgnoreAllErrorsCheckNotifier"/></param>
         /// <param name="previousStateIfKnown">Previous child provider state if you know it otherwise null</param>
-        public CatalogueChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier, CatalogueChildProvider previousStateIfKnown)
+        /// <param name="token">Token for cancelling building the provider</param>
+        /// <exception cref="OperationCanceledException">If <paramref name="token"/> is cancelled during this constructors execution</exception>
+        public CatalogueChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier, CatalogueChildProvider previousStateIfKnown,CancellationToken? token = null)
         {
+            _token = token ?? CancellationToken.None;
             _commentStore = repository.CommentStore;
             _catalogueRepository = repository;
             _catalogueRepository?.EncryptionManager?.ClearAllInjections();
@@ -269,9 +274,9 @@ namespace Rdmp.Core.Providers
                 Task.Factory.StartNew(() => { AllDataAccessCredentialUsages = repository.TableInfoCredentialsManager.GetAllCredentialUsagesBy(AllDataAccessCredentials,AllTableInfos);}),
                 Task.Factory.StartNew(() => { AllColumnInfos = GetAllObjects<ColumnInfo>(repository); })
                 );
-            
-            ;
-            
+
+            _token.ThrowIfCancellationRequested();
+
             ReportProgress("After credentials");
 
             _tableInfosToColumnInfos = AllColumnInfos.GroupBy(c => c.TableInfo_ID).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
@@ -486,7 +491,9 @@ namespace Rdmp.Core.Providers
 
         protected void ReportProgress(string desc)
         {
-            if(UserSettings.DebugPerformance)
+            _token.ThrowIfCancellationRequested();
+
+            if (UserSettings.DebugPerformance)
             {
                 _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs($"ChildProvider Stage {_progress++} ({desc}):{  _progressStopwatch.ElapsedMilliseconds }ms",CheckResult.Success));
                 _progressStopwatch.Restart();

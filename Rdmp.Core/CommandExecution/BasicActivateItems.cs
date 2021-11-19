@@ -89,7 +89,7 @@ namespace Rdmp.Core.CommandExecution
             FavouritesProvider = new FavouritesProvider(this);
 
             // Note that this is virtual so can return null e.g. if other stuff has to happen with the activator before a valid child provider can be built (e.g. loading plugin user interfaces)
-            CoreChildProvider = GetChildProvider();
+            CoreChildProvider = GetChildProvider(CancellationToken.None);
 
             ConstructPluginChildProviders();
 
@@ -97,7 +97,7 @@ namespace Rdmp.Core.CommandExecution
             CoreIconProvider = new DataExportIconProvider(repositoryLocator, PluginUserInterfaces.ToArray());
         }
 
-        protected virtual ICoreChildProvider GetChildProvider()
+        protected virtual ICoreChildProvider GetChildProvider(CancellationToken token)
         {
             // Build new CoreChildProvider in a temp then update to it to avoid stale references
             ICoreChildProvider temp = null;
@@ -106,10 +106,15 @@ namespace Rdmp.Core.CommandExecution
             if (RepositoryLocator.DataExportRepository != null)
                 try
                 {
-                    temp = new DataExportChildProvider(RepositoryLocator, PluginUserInterfaces.ToArray(), GlobalErrorCheckNotifier, CoreChildProvider as DataExportChildProvider);
+                    temp = new DataExportChildProvider(RepositoryLocator, PluginUserInterfaces.ToArray(), GlobalErrorCheckNotifier, CoreChildProvider as DataExportChildProvider, token);
+                }
+                catch(OperationCanceledException)
+                {
+                    throw;
                 }
                 catch (Exception e)
                 {
+                    // TODO: this will be on non UI thread now
                     ShowException("Error constructing DataExportChildProvider",e);
                 }
 
@@ -117,7 +122,7 @@ namespace Rdmp.Core.CommandExecution
 
             //so just create a catalogue one
             if (temp == null)
-                temp = new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(), GlobalErrorCheckNotifier, CoreChildProvider as CatalogueChildProvider);
+                temp = new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(), GlobalErrorCheckNotifier, CoreChildProvider as CatalogueChildProvider, token);
 
             // first time
             if (CoreChildProvider == null)
@@ -444,7 +449,7 @@ namespace Rdmp.Core.CommandExecution
         /// <inheritdoc/>
         public virtual void Publish(IMapsDirectlyToDatabaseTable databaseEntity)
         {
-            var fresh = GetChildProvider();
+            var fresh = GetChildProvider(CancellationToken.None);
             CoreChildProvider.UpdateTo(fresh);
         }
 
