@@ -92,7 +92,7 @@ namespace Rdmp.Core.Curation.Data
                         FileInfo winner = null;
 
                         // if we already have a copy of this exactl dll we don't care bout loading it
-                        if(AreEqual(newOneVersion, existingOneVersion))
+                        if(FileVersionsAreEqual(newOneVersion, existingOneVersion))
                         {
                             // no need to spam user with warnings about duplicated dlls
                             DuplicateDllsIgnored++;
@@ -100,7 +100,7 @@ namespace Rdmp.Core.Curation.Data
                         }
                         else
                         // pick the newer one
-                        if (GreaterThan(newOneVersion, existingOneVersion)) 
+                        if (FileVersionGreaterThan(newOneVersion, existingOneVersion)) 
                         {
                             files.Remove(existing);
                             files.Add(newOne);
@@ -155,7 +155,7 @@ namespace Rdmp.Core.Curation.Data
         /// <param name="newOneVersion"></param>
         /// <param name="existingOneVersion"></param>
         /// <returns></returns>
-        private bool AreEqual(FileVersionInfo newOneVersion, FileVersionInfo existingOneVersion)
+        private static bool FileVersionsAreEqual(FileVersionInfo newOneVersion, FileVersionInfo existingOneVersion)
         {
             return newOneVersion.FileMajorPart == existingOneVersion.FileMajorPart &&
                 newOneVersion.FileMinorPart == existingOneVersion.FileMinorPart &&
@@ -169,13 +169,19 @@ namespace Rdmp.Core.Curation.Data
         /// <param name="newOneVersion"></param>
         /// <param name="existingOneVersion"></param>
         /// <returns></returns>
-        private bool GreaterThan(FileVersionInfo newOneVersion, FileVersionInfo existingOneVersion)
+        private static bool FileVersionGreaterThan(FileVersionInfo newOneVersion, FileVersionInfo existingOneVersion)
         {
             if (newOneVersion.FileMajorPart > existingOneVersion.FileMajorPart)
                 return true;
+            // This is needed to ensure that 1.2.0 is seen as older than 2.0.0
+            if (newOneVersion.FileMajorPart < existingOneVersion.FileMajorPart)
+                return false;
 
+            // First part equal, so use second as tie-breaker:
             if (newOneVersion.FileMinorPart > existingOneVersion.FileMinorPart)
                 return true;
+            if (newOneVersion.FileMinorPart < existingOneVersion.FileMinorPart)
+                return false;
 
             if (newOneVersion.FileBuildPart > existingOneVersion.FileBuildPart)
                 return true;
