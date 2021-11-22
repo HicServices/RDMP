@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed the 'filters' count column in [Catalogue] tree collection showing edit control when clicked
 - Fixed Find not working when searching by ID for [Pipeline] objects
 - Prevented showing out dated cohorts when changing Project half way through defining a cohort
+- When plugins contain dlls with differing version numbers then the latest dll version is loaded (previously the first encountered was used)
 - Fixed bug in Console Gui where edit window showed value set directly instead of passing through Property Setters
 - Fixed bug in Console Gui where password properties showed (encrypted) HEX binary value instead of ****
 - Fixed Command Line UI showing abstract and interfaces when prompting user to pick a Type
