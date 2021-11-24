@@ -6,10 +6,14 @@
 
 using System;
 using System.Windows.Forms;
+using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
 using ScintillaNET;
+using static BrightIdeasSoftware.ObjectListView;
+using static ReusableLibraryCode.Checks.CheckEventArgs;
 
 namespace Rdmp.UI.SimpleDialogs
 {
@@ -31,6 +35,29 @@ namespace Rdmp.UI.SimpleDialogs
             hlpDebugPerformance.SetHelpText("Debug Performance","When enabled RDMP will record certain performance related metrics (how long refresh takes etc).  These figures are completely internal to the application and are not transmitted anywhere.  You can view the results in the toolbar.");
             hlpIdentifiableExtractions.SetHelpText("Allow Identifiable Extractions","Controls whether RDMP permits cohorts to be created where the release ID and private ID are the same (i.e. the linkage ids are not anonymised).  Changing this setting will not affect how cohorts are currently configured or extracted.  It only supresses a specific error message that is generated when a cohort source is configured where the private and release identifiers reference the same column ");
 
+            olvErrorCodes.CellEditActivation = CellEditActivateMode.SingleClick;
+            olvErrorCodes.ShowGroups = false;
+
+            olvCode.AspectName = nameof(ErrorCode.Code);
+            olvCode.Text = "Code";
+            olvCode.IsEditable = false;
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvErrorCodes, olvCode, new Guid("bba20a20-ffa2-4db6-b4fe-a5dcc5a03727"));
+
+            olvMessage.AspectName = nameof(ErrorCode.Message);
+            olvMessage.Text = "Error Message";
+            olvMessage.IsEditable = false;
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvErrorCodes, olvMessage, new Guid("21a785e9-52f4-494b-89d0-6ccc68689ce9"));
+
+            olvTreatment.Text = "Treatment";
+            olvTreatment.Width = 20;
+            olvTreatment.AspectGetter += Treatment_Getter;
+            olvTreatment.AspectPutter += Treatment_Putter;
+            olvTreatment.CellEditUseWholeCell = true;
+            olvTreatment.IsEditable = true;
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvErrorCodes, olvTreatment, new Guid("75d54469-f870-4870-86cf-2dd782a27f57"));
+
+            olvErrorCodes.RebuildColumns();
+
             cbShowHomeOnStartup.Checked = UserSettings.ShowHomeOnStartup;
             cbEmphasiseOnTabChanged.Checked = UserSettings.EmphasiseOnTabChanged;
             cbConfirmExit.Checked = UserSettings.ConfirmApplicationExiting;
@@ -47,9 +74,7 @@ namespace Rdmp.UI.SimpleDialogs
             cbAdvancedFindFilters.Checked = UserSettings.AdvancedFindFilters;
             tbCreateDatabaseTimeout.Text = UserSettings.CreateDatabaseTimeout.ToString();
 
-            clbWarnings.Items.Add(WarnOnTimeoutOnExtractionChecks, UserSettings.WarnOnTimeoutOnExtractionChecks);
-
-            clbWarnings.ItemCheck += ClbWarnings_ItemCheck;
+            olvErrorCodes.AddObjects(ErrorCodes.KnownCodes);
 
             ddTheme.DataSource = new []
             {
@@ -77,14 +102,14 @@ namespace Rdmp.UI.SimpleDialogs
             };
         }
 
-        private void ClbWarnings_ItemCheck(object sender, ItemCheckEventArgs e)
+        private void Treatment_Putter(object rowObject, object newValue)
         {
-            var item = clbWarnings.Items[e.Index];
+            UserSettings.SetErrorReportingLevelFor((ErrorCode)rowObject, (CheckResult)newValue);
+        }
 
-            if(Equals(item , WarnOnTimeoutOnExtractionChecks))
-            {
-                UserSettings.WarnOnTimeoutOnExtractionChecks = e.NewValue == CheckState.Checked;
-            }
+        private object Treatment_Getter(object rowObject)
+        {
+            return UserSettings.GetErrorReportingLevelFor((ErrorCode)rowObject);
         }
 
         private void cb_CheckedChanged(object sender, EventArgs e)
