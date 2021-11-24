@@ -23,6 +23,7 @@ using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 using Rdmp.Core.CommandExecution;
 using ReusableLibraryCode.Settings;
+using static ReusableLibraryCode.Checks.CheckEventArgs;
 
 namespace Rdmp.Core.DataExport.Checks
 {
@@ -203,8 +204,7 @@ namespace Rdmp.Core.DataExport.Checks
                         {
                             if (server.GetQuerySyntaxHelper().IsTimeout(e))
                             {
-                                if (UserSettings.WarnOnTimeoutOnExtractionChecks)
-                                    notifier.OnCheckPerformed(new CheckEventArgs("Failed to read rows after " + timeout + "s", CheckResult.Warning, e));
+                                notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractTimeoutChecking,e,timeout));
                             }
                             else
                                 notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute the query (See below for query)", CheckResult.Fail, e));

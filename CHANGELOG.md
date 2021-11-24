@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added [MigrateUsages] setting to cohort creation destination pipeline components.  When enabled and creating a new version of an existing cohort then all unreleased [ExtractionConfiguration] using the old (replaced) cohort switch to the new version
 - Added ability to filter [Catalogue] in the Find dialog by Internal/Deprecated etc
 - Added search and filter compatible controls to [Pipeline] editting dialog
-
+- Added ability to ignore/elevate specific errors in UserSettings
 
 ### Fixed
 
@@ -28,6 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug in Console Gui where edit window showed value set directly instead of passing through Property Setters
 - Fixed bug in Console Gui where password properties showed (encrypted) HEX binary value instead of ****
 - Fixed Command Line UI showing abstract and interfaces when prompting user to pick a Type
+- Generate Release Document now shows as impossible when Cohort is not defined or unreachable (e.g. if user does not have access to cohort database)
+- Fixed bug where selecting a [PipelineComponent] for which help is unavailable would leave the previously selected component's help visible
 
 ### Changed
 
@@ -36,6 +38,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changed to Dock layout for Pipeline editing control (may improve performance on older machines)
 - Removed dependency on `System.Drawing.Common` by updating usages to `System.Drawing`
 - Increased size of all text fields in [Catalogue] and [CatalogueItem] to `nvarchar(max)` to support long urls etc
+- Updated icons to a more modern look
+- Extract to database now checks for explicit table names amongst pre-existing tables on the destination
 
 ## [7.0.3] - 2021-11-04
 
