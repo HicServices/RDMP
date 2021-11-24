@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added new menu item Diagnostics->Restart Application
 - Trying to extract an [ExtractionConfiguration] with a cohort that is marked IsDeprecated now fails checks
 - Added [MigrateUsages] setting to cohort creation destination pipeline components.  When enabled and creating a new version of an existing cohort then all unreleased [ExtractionConfiguration] using the old (replaced) cohort switch to the new version
+- Added ability to filter [Catalogue] in the Find dialog by Internal/Deprecated etc
+- Added search and filter compatible controls to [Pipeline] editing dialog
 - Added ability to ignore/elevate specific errors in UserSettings
 
 ### Fixed
@@ -36,10 +38,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed dependency on `System.Drawing.Common` by updating usages to `System.Drawing`
 - Updated icons to a more modern look
 - Extract to database now checks for explicit table names amongst pre-existing tables on the destination
-
-### Added
-
-- Added ability to filter [Catalogue] in the Find dialog by Internal/Deprecated etc
 
 ## [7.0.3] - 2021-11-04
 

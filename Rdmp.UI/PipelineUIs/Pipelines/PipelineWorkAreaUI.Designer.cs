@@ -32,18 +32,22 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
         private void InitializeComponent()
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.label3 = new System.Windows.Forms.Label();
             this.olvComponents = new BrightIdeasSoftware.ObjectListView();
             this.olvName = new BrightIdeasSoftware.OLVColumn();
             this.olvNamespace = new BrightIdeasSoftware.OLVColumn();
             this.olvRole = new BrightIdeasSoftware.OLVColumn();
             this.olvCompatible = new BrightIdeasSoftware.OLVColumn();
+            this.label3 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.diagramPanel = new System.Windows.Forms.Panel();
             this.btnReRunChecks = new System.Windows.Forms.Button();
             this.gbArguments = new System.Windows.Forms.GroupBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.label4 = new System.Windows.Forms.Label();
+            this.tbSearchComponents = new System.Windows.Forms.TextBox();
+            this.cbShowIncompatible = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -54,6 +58,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             this.diagramPanel.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -66,6 +71,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.panel1);
             this.splitContainer1.Panel1.Controls.Add(this.olvComponents);
             this.splitContainer1.Panel1.Controls.Add(this.label3);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
@@ -78,18 +84,6 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             this.splitContainer1.SplitterDistance = 436;
             this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 0;
-            // 
-            // label3
-            // 
-            this.label3.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.label3.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label3.ForeColor = System.Drawing.Color.Brown;
-            this.label3.Location = new System.Drawing.Point(0, 18);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(432, 18);
-            this.label3.TabIndex = 2;
-            this.label3.Text = "(Add Components from below with Drag and Drop)";
             // 
             // olvComponents
             // 
@@ -142,6 +136,18 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             this.olvCompatible.Groupable = false;
             this.olvCompatible.Text = "Compatible?";
             this.olvCompatible.Width = 70;
+            // 
+            // label3
+            // 
+            this.label3.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            this.label3.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label3.ForeColor = System.Drawing.Color.Brown;
+            this.label3.Location = new System.Drawing.Point(0, 18);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(432, 18);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "(Add Components from below with Drag and Drop)";
             // 
             // label1
             // 
@@ -224,6 +230,49 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             this.label2.Text = "Current Pipeline Configuration";
             this.label2.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.tbSearchComponents);
+            this.panel1.Controls.Add(this.cbShowIncompatible);
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel1.Location = new System.Drawing.Point(0, 592);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(432, 26);
+            this.panel1.TabIndex = 3;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Dock = System.Windows.Forms.DockStyle.Left;
+            this.label4.Location = new System.Drawing.Point(0, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(45, 15);
+            this.label4.TabIndex = 0;
+            this.label4.Text = "Search:";
+            // 
+            // tbSearchComponents
+            // 
+            this.tbSearchComponents.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tbSearchComponents.Location = new System.Drawing.Point(45, 0);
+            this.tbSearchComponents.Name = "tbSearchComponents";
+            this.tbSearchComponents.Size = new System.Drawing.Size(256, 23);
+            this.tbSearchComponents.TabIndex = 1;
+            this.tbSearchComponents.TextChanged += new System.EventHandler(this.tbSearchComponents_TextChanged);
+            // 
+            // cbShowIncompatible
+            // 
+            this.cbShowIncompatible.AutoSize = true;
+            this.cbShowIncompatible.Dock = System.Windows.Forms.DockStyle.Right;
+            this.cbShowIncompatible.Location = new System.Drawing.Point(301, 0);
+            this.cbShowIncompatible.Name = "cbShowIncompatible";
+            this.cbShowIncompatible.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.cbShowIncompatible.Size = new System.Drawing.Size(131, 26);
+            this.cbShowIncompatible.TabIndex = 4;
+            this.cbShowIncompatible.Text = "Show Incompatible";
+            this.cbShowIncompatible.UseVisualStyleBackColor = true;
+            this.cbShowIncompatible.CheckedChanged += new System.EventHandler(this.cbShowIncompatible_CheckedChanged);
+            // 
             // PipelineWorkAreaUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -243,6 +292,8 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.diagramPanel.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -262,5 +313,9 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
         private Button btnReRunChecks;
         private Label label3;
         private SplitContainer splitContainer2;
+        private Panel panel1;
+        private TextBox tbSearchComponents;
+        private Label label4;
+        private CheckBox cbShowIncompatible;
     }
 }

@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -34,6 +35,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
         private ArgumentCollectionUI _arumentsCollection1;
         private readonly IActivateItems _activator;
         private IPipeline _pipeline;
+        private List<AdvertisedPipelineComponentTypeUnderContext> _allComponents;
         private readonly IPipelineUseCase _useCase;
         private readonly ICatalogueRepository _catalogueRepository;
 
@@ -49,6 +51,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             
             olvComponents.BuildGroups(olvRole, SortOrder.Ascending);
             olvComponents.AlwaysGroupByColumn = olvRole;
+            olvComponents.FullRowSelect = true;
 
             _pipelineDiagram = new PipelineDiagramUI();
             _pipelineDiagram.AllowSelection = true;
@@ -72,8 +75,12 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
                 //source components (list of all types with MEF exports of )
                 var allSourceTypes = _catalogueRepository.MEF.GetGenericTypes(typeof(IDataFlowSource<>), context.GetFlowType());
 
-                olvComponents.AddObjects(allComponentTypes.Select(t => new AdvertisedPipelineComponentTypeUnderContext(t, _useCase)).ToArray());
-                olvComponents.AddObjects(allSourceTypes.Select(t => new AdvertisedPipelineComponentTypeUnderContext(t, useCase)).ToArray());
+                _allComponents = new List<AdvertisedPipelineComponentTypeUnderContext>();
+
+                _allComponents.AddRange(allComponentTypes.Select(t => new AdvertisedPipelineComponentTypeUnderContext(t, _useCase)).ToArray());
+                _allComponents.AddRange(allSourceTypes.Select(t => new AdvertisedPipelineComponentTypeUnderContext(t, useCase)).ToArray());
+
+                RefreshComponentList();
             }
             catch (Exception exception)
             {
@@ -86,6 +93,16 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             RDMPCollectionCommonFunctionality.SetupColumnTracking(olvComponents, olvNamespace, new Guid("35c0497e-3c04-46be-a6d6-eb02111aadb3"));
             RDMPCollectionCommonFunctionality.SetupColumnTracking(olvComponents, olvRole, new Guid("fb1205f3-049e-4fe3-89c5-d07b55fa2e17"));
             RDMPCollectionCommonFunctionality.SetupColumnTracking(olvComponents, olvName, new Guid("b7e797e8-ef6a-45d9-b51d-c2f12dbacead"));
+        }
+
+        /// <summary>
+        /// Refreshes the list of components visible in <see cref="olvComponents"/> list view to only those
+        /// that are compatible (unless <see cref="cbShowIncompatible"/> is ticked)
+        /// </summary>
+        private void RefreshComponentList()
+        {
+            olvComponents.ClearObjects();
+            olvComponents.AddObjects(_allComponents.Where(a => a.IsCompatible() || cbShowIncompatible.Checked).ToArray());
         }
 
         void _pipelineDiagram_SelectedComponentChanged(object sender, IPipelineComponent selected)
@@ -133,6 +150,17 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
         private void btnReRunChecks_Click(object sender, EventArgs e)
         {
             _pipelineDiagram.RefreshUIFromDatabase();
+        }
+
+        private void tbSearchComponents_TextChanged(object sender, EventArgs e)
+        {
+            olvComponents.ModelFilter = new TextMatchFilter(olvComponents, tbSearchComponents.Text, StringComparison.CurrentCultureIgnoreCase);
+            olvComponents.UseFiltering = !string.IsNullOrWhiteSpace(tbSearchComponents.Text);
+        }
+
+        private void cbShowIncompatible_CheckedChanged(object sender, EventArgs e)
+        {
+            RefreshComponentList();
         }
     }
 }
