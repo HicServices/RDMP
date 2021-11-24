@@ -55,7 +55,7 @@ namespace Rdmp.UI
                 var darkRed = new SolidBrush(Color.FromArgb(206, 10, 26));
 
                 e.Graphics.FillEllipse(darkRed, xStart, yStart+1, NotifyWidth-2, NotifyWidth-2);
-                e.Graphics.DrawString(msg,f,Brushes.White,new RectangleF(xStart + 3,yStart,NotifyWidth,NotifyWidth));
+                e.Graphics.DrawString(msg,f,Brushes.White,new RectangleF(xStart + 2,yStart,NotifyWidth,NotifyWidth));
             }
         }
 
