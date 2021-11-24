@@ -53,13 +53,17 @@
             this.hlpIdentifiableExtractions = new Rdmp.UI.SimpleControls.HelpIcon();
             this.cbShowPipelineCompletedPopup = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.clbWarnings = new System.Windows.Forms.CheckedListBox();
+            this.olvErrorCodes = new BrightIdeasSoftware.ObjectListView();
+            this.olvCode = new BrightIdeasSoftware.OLVColumn();
+            this.olvTreatment = new BrightIdeasSoftware.OLVColumn();
+            this.olvMessage = new BrightIdeasSoftware.OLVColumn();
             this.cbHideEmptyTableLoadRunAudits = new System.Windows.Forms.CheckBox();
             this.label7 = new System.Windows.Forms.Label();
             this.tbCreateDatabaseTimeout = new System.Windows.Forms.TextBox();
             this.cbScoreZeroForCohortAggregateContainers = new System.Windows.Forms.CheckBox();
             this.cbAdvancedFindFilters = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.olvErrorCodes)).BeginInit();
             this.SuspendLayout();
             // 
             // cbShowHomeOnStartup
@@ -326,8 +330,10 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.clbWarnings);
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.olvErrorCodes);
             this.groupBox1.Location = new System.Drawing.Point(447, 255);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(407, 385);
@@ -335,14 +341,20 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Warnings Settings";
             // 
-            // clbWarnings
+            // olvErrorCodes
             // 
-            this.clbWarnings.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.clbWarnings.FormattingEnabled = true;
-            this.clbWarnings.Location = new System.Drawing.Point(3, 19);
-            this.clbWarnings.Name = "clbWarnings";
-            this.clbWarnings.Size = new System.Drawing.Size(401, 363);
-            this.clbWarnings.TabIndex = 1;
+            this.olvErrorCodes.AllColumns.Add(this.olvCode);
+            this.olvErrorCodes.AllColumns.Add(this.olvTreatment);
+            this.olvErrorCodes.AllColumns.Add(this.olvMessage);
+            this.olvErrorCodes.CellEditUseWholeCell = false;
+            this.olvErrorCodes.Cursor = System.Windows.Forms.Cursors.Default;
+            this.olvErrorCodes.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.olvErrorCodes.HideSelection = false;
+            this.olvErrorCodes.Location = new System.Drawing.Point(3, 19);
+            this.olvErrorCodes.Name = "olvErrorCodes";
+            this.olvErrorCodes.Size = new System.Drawing.Size(401, 363);
+            this.olvErrorCodes.TabIndex = 0;
+            this.olvErrorCodes.View = System.Windows.Forms.View.Details;
             // 
             // cbHideEmptyTableLoadRunAudits
             // 
@@ -436,6 +448,7 @@
             this.Name = "UserSettingsFileUI";
             this.Text = "User Settings";
             this.groupBox1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.olvErrorCodes)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -467,11 +480,14 @@
         private SimpleControls.HelpIcon hlpIdentifiableExtractions;
         private System.Windows.Forms.CheckBox cbShowPipelineCompletedPopup;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.CheckedListBox clbWarnings;
         private System.Windows.Forms.CheckBox cbHideEmptyTableLoadRunAudits;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox tbCreateDatabaseTimeout;
         private System.Windows.Forms.CheckBox cbScoreZeroForCohortAggregateContainers;
         private System.Windows.Forms.CheckBox cbAdvancedFindFilters;
+        private BrightIdeasSoftware.ObjectListView olvErrorCodes;
+        private BrightIdeasSoftware.OLVColumn olvCode;
+        private BrightIdeasSoftware.OLVColumn olvTreatment;
+        private BrightIdeasSoftware.OLVColumn olvMessage;
     }
 }
