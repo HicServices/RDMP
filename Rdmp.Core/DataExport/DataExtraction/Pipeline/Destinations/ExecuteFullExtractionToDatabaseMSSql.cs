@@ -548,7 +548,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             try
             {
                 var server = DataAccessPortal.GetInstance().ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, setInitialDatabase: false);
-                var database = server.ExpectDatabase(GetDatabaseName());
+                var database = _destinationDatabase = server.ExpectDatabase(GetDatabaseName());
 
                 if (database.Exists())
                     notifier.OnCheckPerformed(
@@ -568,7 +568,24 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
                 if (tables.Any())
                 {
-                    notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExistingExtractTables, string.Join(",",tables.Select(t => t.ToString()))));
+
+                    string tableName;
+
+                    try
+                    {
+                        tableName = GetTableName();
+                    }
+                    catch (Exception ex)
+                    {
+                        notifier.OnCheckPerformed(new CheckEventArgs("Could not determine table name", CheckResult.Fail,ex));
+                        return;
+                    }
+                    
+                    if(tables.Any(t=>t.GetRuntimeName().Equals(tableName)))
+                    {
+                        notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExistingExtractionTableInDatabase, tableName,database));
+                    }
+                    
                 }
                 else
                     notifier.OnCheckPerformed(new CheckEventArgs("Confirmed that database " + database + " is empty of tables", CheckResult.Success));

@@ -15,7 +15,7 @@ namespace ReusableLibraryCode.Checks
     /// </summary>
     public static class ErrorCodes
     {
-        public static ErrorCode ExistingExtractTables = new ErrorCode("R001", "The following preexisting tables were found in the database {0}", CheckResult.Fail);
+        public static ErrorCode ExistingExtractionTableInDatabase = new ErrorCode("R001", "Table {0} already exists in the extraction database {1}", CheckResult.Fail);
         public static ErrorCode ExtractTimeoutChecking = new ErrorCode("R002", "Failed to read rows after {0}s", CheckResult.Warning);
 
         static ErrorCodes()
