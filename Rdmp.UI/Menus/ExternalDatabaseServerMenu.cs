@@ -25,6 +25,8 @@ namespace Rdmp.UI.Menus
         public ExternalDatabaseServerMenu(RDMPContextMenuStripArgs args, ExternalDatabaseServer server) : base(args, server)
         {
             _server = server;
+            args.SkipCommand<ExecuteCommandViewLogs>();
+
             if (server.WasCreatedBy(new LoggingDatabasePatcher()))
             {
                 var viewLogs = new ToolStripMenuItem("View Logs",CatalogueIcons.Logging);

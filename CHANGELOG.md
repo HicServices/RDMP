@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added new menu item Diagnostics->Restart Application
 - Trying to extract an [ExtractionConfiguration] with a cohort that is marked IsDeprecated now fails checks
 - Added [MigrateUsages] setting to cohort creation destination pipeline components.  When enabled and creating a new version of an existing cohort then all unreleased [ExtractionConfiguration] using the old (replaced) cohort switch to the new version
+- Added an 'All Tasks', 'All Runs' etc commands to View Logs tab menu
 
 ### Fixed
 
@@ -24,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug in Console Gui where edit window showed value set directly instead of passing through Property Setters
 - Fixed bug in Console Gui where password properties showed (encrypted) HEX binary value instead of ****
 - Fixed Command Line UI showing abstract and interfaces when prompting user to pick a Type
+- Fixed `OverrideCommandName` not working for `ExecuteCommandViewLogs` command
+- Fixed `View Logs` commands appearing twice in right click context menu for logging servers objects (once on root and once under 'View Logs' submenu)
 
 ### Changed
 
