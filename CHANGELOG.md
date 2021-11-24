@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump System.Security.Permissions from 5.0.0 to 6.0.0
 - Changed to Dock layout for Pipeline editing control (may improve performance on older machines)
 - Removed dependency on `System.Drawing.Common` by updating usages to `System.Drawing`
+- Increased size of all text fields in [Catalogue] and [CatalogueItem] to `nvarchar(max)` to support long urls etc
 - Updated icons to a more modern look
 - Extract to database now checks for explicit table names amongst pre-existing tables on the destination
 
