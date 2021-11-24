@@ -351,7 +351,14 @@ namespace Rdmp.UI.Logging
 
             CommonFunctionality.Add(cbPreferNewer);
 
-            
+            CommonFunctionality.AddToMenu(new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.DataLoadTask)) { OverrideCommandName = "All Tasks" });
+            CommonFunctionality.AddToMenu(new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.DataLoadRun)) { OverrideCommandName = "All Runs" });
+            CommonFunctionality.AddToMenu(new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.FatalError)) { OverrideCommandName = "All Errors" });
+            CommonFunctionality.AddToMenu(new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.TableLoadRun)) { OverrideCommandName = "All Tables Loaded" });
+            CommonFunctionality.AddToMenu(new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.DataSource)) { OverrideCommandName = "All Data Sources" });
+            CommonFunctionality.AddToMenu(new ExecuteCommandViewLogs(activator, new LogViewerFilter(LoggingTables.ProgressLog)) { OverrideCommandName = "All Progress Logs" });
+
+
             if (!databaseObject.DiscoverExistence(DataAccessContext.Logging, out string reason))
             {
                 activator.KillForm(ParentForm, "Database " + databaseObject + " did not exist:" + reason);
