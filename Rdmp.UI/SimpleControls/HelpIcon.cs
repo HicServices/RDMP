@@ -57,6 +57,10 @@ namespace Rdmp.UI.SimpleControls
             tt.SetToolTip(this, _hoverText);
             Cursor = Cursors.Hand;
         }
+        public void ClearHelpText()
+        {
+            SetHelpText(null, null);
+        }
 
         private string GetShortText(string hoverText)
         {

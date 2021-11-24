@@ -74,9 +74,11 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
                 btnViewSourceCode.Left = helpIcon1.Right;
 
                 var summary = catalogueRepository.CommentStore.GetTypeDocumentationIfExists(argumentsAreForUnderlyingType);
-                
-                if(summary != null)
+
+                if (summary != null)
                     helpIcon1.SetHelpText(_argumentsAreFor.Name, summary);
+                else
+                    helpIcon1.ClearHelpText();
 
                 RefreshArgumentList();
             }
