@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added new menu item Diagnostics->Restart Application
 - Trying to extract an [ExtractionConfiguration] with a cohort that is marked IsDeprecated now fails checks
 - Added [MigrateUsages] setting to cohort creation destination pipeline components.  When enabled and creating a new version of an existing cohort then all unreleased [ExtractionConfiguration] using the old (replaced) cohort switch to the new version
+- Added ability to ignore/elevate specific errors in UserSettings
 
 ### Fixed
 
@@ -21,10 +22,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed the 'filters' count column in [Catalogue] tree collection showing edit control when clicked
 - Fixed Find not working when searching by ID for [Pipeline] objects
 - Prevented showing out dated cohorts when changing Project half way through defining a cohort
+- When plugins contain dlls with differing version numbers then the latest dll version is loaded (previously the first encountered was used)
 - Fixed bug in Console Gui where edit window showed value set directly instead of passing through Property Setters
 - Fixed bug in Console Gui where password properties showed (encrypted) HEX binary value instead of ****
 - Fixed Command Line UI showing abstract and interfaces when prompting user to pick a Type
 - Generate Release Document now shows as impossible when Cohort is not defined or unreachable (e.g. if user does not have access to cohort database)
+- Fixed bug where selecting a [PipelineComponent] for which help is unavailable would leave the previously selected component's help visible
 
 ### Changed
 
@@ -32,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump System.Security.Permissions from 5.0.0 to 6.0.0
 - Changed to Dock layout for Pipeline editing control (may improve performance on older machines)
 - Removed dependency on `System.Drawing.Common` by updating usages to `System.Drawing`
+- Extract to database now checks for explicit table names amongst pre-existing tables on the destination
 
 ### Added
 

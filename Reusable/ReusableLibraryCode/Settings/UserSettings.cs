@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using FAnsi.Discovery;
 using Plugin.Settings.Abstractions;
+using ReusableLibraryCode.Checks;
+using static ReusableLibraryCode.Checks.CheckEventArgs;
 
 namespace ReusableLibraryCode.Settings
 {
@@ -187,11 +189,6 @@ namespace ReusableLibraryCode.Settings
             get { return AppSettings.GetValueOrDefault("ShowPipelineCompletedPopup", false); }
             set { AppSettings.AddOrUpdateValue("ShowPipelineCompletedPopup", value); } }
 
-        public static bool WarnOnTimeoutOnExtractionChecks {
-            get { return AppSettings.GetValueOrDefault("WarnOnTimeoutOnExtractionChecks", true); }
-            set { AppSettings.AddOrUpdateValue("WarnOnTimeoutOnExtractionChecks", value); }
-        }
-
         public static string ConsoleColorScheme
         {
             get { return AppSettings.GetValueOrDefault("ConsoleColorScheme", "default"); }
@@ -211,6 +208,29 @@ namespace ReusableLibraryCode.Settings
         }
 
         #endregion
+
+        /// <summary>
+        /// Returns the error level the user wants for <paramref name="errorCode"/> or <see cref="ErrorCode.DefaultTreatment"/> (if no custom
+        /// reporting level has been set up for this error code).
+        /// </summary>
+        /// <param name="errorCode"></param>
+        /// <returns></returns>
+        public static CheckResult GetErrorReportingLevelFor(ErrorCode errorCode)
+        {
+            var result = AppSettings.GetValueOrDefault("EC_" + errorCode.Code, errorCode.DefaultTreatment.ToString());
+
+            return Enum.Parse<CheckResult>(result);
+        }
+
+        /// <summary>
+        /// Changes the reporting level of the given error to <paramref name="value"/> instead of it's <see cref="ErrorCode.DefaultTreatment"/>
+        /// </summary>
+        /// <param name="errorCode"></param>
+        /// <param name="value"></param>
+        public static void SetErrorReportingLevelFor(ErrorCode errorCode,CheckResult value)
+        {
+            AppSettings.AddOrUpdateValue("EC_" + errorCode.Code, value.ToString());
+        }
 
         public static bool GetTutorialDone(Guid tutorialGuid)
         {
