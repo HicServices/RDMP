@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -46,6 +47,12 @@ namespace Rdmp.Core.Curation.Data
         private object typesByNameLock = new object();
 
         /// <summary>
+        /// The number of ignored dlls that were skipped because another copy was already seen
+        /// with the same major/minor/build version
+        /// </summary>
+        public int DuplicateDllsIgnored { get; set; } = 0;
+
+        /// <summary>
         /// Assemblies which could not be loaded
         /// </summary>
         public Dictionary<string,Exception> BadAssembliesDictionary { get; set; }
@@ -76,9 +83,36 @@ namespace Rdmp.Core.Curation.Data
                 {
                     var newOne = new FileInfo(f);
                     var existing = files.SingleOrDefault(d => d.Name.Equals(newOne.Name));
-                    
-                    if(existing != null)
-                        listener?.OnCheckPerformed(new CheckEventArgs("Found 2 copies of " + newOne.Name +".  Loaded will be '" + existing.FullName +"'.  Rejected one will be '" + newOne.FullName +"'",CheckResult.Success));
+
+                    if (existing != null)
+                    {
+                        var existingOneVersion = FileVersionInfo.GetVersionInfo(existing.FullName);
+                        var newOneVersion = FileVersionInfo.GetVersionInfo(newOne.FullName);
+
+                        FileInfo winner = null;
+
+                        // if we already have a copy of this exactl dll we don't care bout loading it
+                        if(FileVersionsAreEqual(newOneVersion, existingOneVersion))
+                        {
+                            // no need to spam user with warnings about duplicated dlls
+                            DuplicateDllsIgnored++;
+                            continue;
+                        }
+                        else
+                        // pick the newer one
+                        if (FileVersionGreaterThan(newOneVersion, existingOneVersion)) 
+                        {
+                            files.Remove(existing);
+                            files.Add(newOne);
+                            winner = newOne;
+                        }
+                        else
+                        {
+                            winner = existing;
+                        }
+
+                        listener?.OnCheckPerformed(new CheckEventArgs($"Found 2 copies of {newOne.Name }.  They were {existing.FullName} ({existingOneVersion.FileVersion}) and {newOne.FullName} ({newOneVersion.FileVersion}).  Only {winner.FullName} will be loaded", CheckResult.Success));
+                    }
                     else
                         files.Add(newOne);
                 }
@@ -113,6 +147,46 @@ namespace Rdmp.Core.Curation.Data
                     AddBadAssembly(f,ex,listener);
                 }
             }
+        }
+
+        /// <summary>
+        /// Returns true if the two versions have the same FileMajorPart, FileMinorPart and FileBuildPart version numbers
+        /// </summary>
+        /// <param name="newOneVersion"></param>
+        /// <param name="existingOneVersion"></param>
+        /// <returns></returns>
+        private static bool FileVersionsAreEqual(FileVersionInfo newOneVersion, FileVersionInfo existingOneVersion)
+        {
+            return newOneVersion.FileMajorPart == existingOneVersion.FileMajorPart &&
+                newOneVersion.FileMinorPart == existingOneVersion.FileMinorPart &&
+                newOneVersion.FileBuildPart == existingOneVersion.FileBuildPart;
+        }
+
+        /// <summary>
+        /// Returns true if the <paramref name="newOneVersion"/> is a later version than <paramref name="existingOneVersion"/>.
+        /// Does not consider private build part e.g. 1.0.0-alpha1 and 1.0.0-alpha2 are not considered different
+        /// </summary>
+        /// <param name="newOneVersion"></param>
+        /// <param name="existingOneVersion"></param>
+        /// <returns></returns>
+        private static bool FileVersionGreaterThan(FileVersionInfo newOneVersion, FileVersionInfo existingOneVersion)
+        {
+            if (newOneVersion.FileMajorPart > existingOneVersion.FileMajorPart)
+                return true;
+            // This is needed to ensure that 1.2.0 is seen as older than 2.0.0
+            if (newOneVersion.FileMajorPart < existingOneVersion.FileMajorPart)
+                return false;
+
+            // First part equal, so use second as tie-breaker:
+            if (newOneVersion.FileMinorPart > existingOneVersion.FileMinorPart)
+                return true;
+            if (newOneVersion.FileMinorPart < existingOneVersion.FileMinorPart)
+                return false;
+
+            if (newOneVersion.FileBuildPart > existingOneVersion.FileBuildPart)
+                return true;
+
+            return false;
         }
 
         private void AddBadAssembly(FileInfo f, Exception ex,ICheckNotifier listener)
