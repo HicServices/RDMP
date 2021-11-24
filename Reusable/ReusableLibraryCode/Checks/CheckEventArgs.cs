@@ -6,6 +6,7 @@
 
 using System;
 using ReusableLibraryCode.Progress;
+using ReusableLibraryCode.Settings;
 
 namespace ReusableLibraryCode.Checks
 {
@@ -21,7 +22,7 @@ namespace ReusableLibraryCode.Checks
     /// 5. If OnCheckPerformed compeltes without Exception evaluate the bool return if there was a ProposedFix and apply the fix if it is true</para>
     /// 
     /// </summary>
-    public class CheckEventArgs : IHasSummary
+    public partial class CheckEventArgs : IHasSummary
     {
         public string Message { get; set; }
         public CheckResult Result { get; set; }
@@ -48,6 +49,44 @@ namespace ReusableLibraryCode.Checks
             {
                 //Stack trace not available ah well
             }
+        }
+
+        public CheckEventArgs(ErrorCode code, params object[] formatStringArgs) : this(code,null,null,formatStringArgs)
+        {
+
+        }
+
+        public CheckEventArgs(ErrorCode code, Exception ex, params object[] formatStringArgs) : this(code, ex, null, formatStringArgs)
+        {
+
+        }
+
+        /// <summary>
+        /// Reports an event from the standard list in <see cref="ErrorCodes"/> at the <see cref="ErrorCode.DefaultTreatment"/> check
+        /// level (or the customised reporting level in <see cref="UserSettings"/>).
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="ex"></param>
+        /// <param name="proposedFix"></param>
+        /// <param name="formatStringArgs"></param>
+        public CheckEventArgs(ErrorCode code, Exception ex, string proposedFix, params object[] formatStringArgs)
+        {
+            Message = string.Format(code.Message,formatStringArgs);
+            Result = UserSettings.GetErrorReportingLevelFor(code);
+            Ex = ex;
+            ProposedFix = proposedFix;
+
+            EventDate = DateTime.Now;
+
+            try
+            {
+                StackTrace = Environment.StackTrace;
+            }
+            catch (Exception)
+            {
+                //Stack trace not available ah well
+            }
+
         }
 
         public override string ToString()

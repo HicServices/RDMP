@@ -27,6 +27,7 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 using TypeGuesser;
+using static ReusableLibraryCode.Checks.CheckEventArgs;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 {
@@ -566,7 +567,9 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 var tables = database.DiscoverTables(false);
 
                 if (tables.Any())
-                    notifier.OnCheckPerformed(new CheckEventArgs("The following preexisting tables were found in the database " + string.Join(",",tables.Select(t=>t.ToString())),CheckResult.Warning));
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExistingExtractTables, string.Join(",",tables.Select(t => t.ToString()))));
+                }
                 else
                     notifier.OnCheckPerformed(new CheckEventArgs("Confirmed that database " + database + " is empty of tables", CheckResult.Success));
             }
