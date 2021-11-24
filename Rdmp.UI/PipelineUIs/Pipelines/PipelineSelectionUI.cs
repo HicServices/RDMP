@@ -199,7 +199,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             this.Controls.Remove(gbPrompt);
 
             this.Controls.Add(ddPipelines);
-            ddPipelines.Location = new Point(0, 3);
+            ddPipelines.Location = new Point(2, 2);
             ddPipelines.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 
             foreach (var button in new Control[] { btnEditPipeline, btnCreateNewPipeline, btnClonePipeline, btnDeletePipeline, cbOnlyShowCompatiblePipelines })
@@ -211,7 +211,6 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
             cbOnlyShowCompatiblePipelines.Text = "";
             cbOnlyShowCompatiblePipelines.Left = Width - cbOnlyShowCompatiblePipelines.Width;
-            cbOnlyShowCompatiblePipelines.Top = 8;
 
             btnDeletePipeline.Left = cbOnlyShowCompatiblePipelines.Left- btnDeletePipeline.Width;
             btnClonePipeline.Left = btnDeletePipeline.Left - btnClonePipeline.Width;
