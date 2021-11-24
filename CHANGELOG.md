@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added new menu item Diagnostics->Restart Application
 - Trying to extract an [ExtractionConfiguration] with a cohort that is marked IsDeprecated now fails checks
 - Added [MigrateUsages] setting to cohort creation destination pipeline components.  When enabled and creating a new version of an existing cohort then all unreleased [ExtractionConfiguration] using the old (replaced) cohort switch to the new version
+- Added ability to filter [Catalogue] in the Find dialog by Internal/Deprecated etc
+- Added search and filter compatible controls to [Pipeline] editting dialog
+
 
 ### Fixed
 
@@ -32,10 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump System.Security.Permissions from 5.0.0 to 6.0.0
 - Changed to Dock layout for Pipeline editing control (may improve performance on older machines)
 - Removed dependency on `System.Drawing.Common` by updating usages to `System.Drawing`
-
-### Added
-
-- Added ability to filter [Catalogue] in the Find dialog by Internal/Deprecated etc
 
 ## [7.0.3] - 2021-11-04
 
