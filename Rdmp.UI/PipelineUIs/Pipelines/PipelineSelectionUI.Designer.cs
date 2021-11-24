@@ -98,7 +98,7 @@
             this.btnClonePipeline.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClonePipeline.Location = new System.Drawing.Point(571, 19);
             this.btnClonePipeline.Name = "btnClonePipeline";
-            this.btnClonePipeline.Size = new System.Drawing.Size(48, 23);
+            this.btnClonePipeline.Size = new System.Drawing.Size(48, 22);
             this.btnClonePipeline.TabIndex = 31;
             this.btnClonePipeline.Text = "Clone";
             this.btnClonePipeline.UseVisualStyleBackColor = true;
