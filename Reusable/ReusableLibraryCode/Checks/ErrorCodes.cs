@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace ReusableLibraryCode.Checks
 {
@@ -19,7 +20,7 @@ namespace ReusableLibraryCode.Checks
 
         static ErrorCodes()
         {
-            var fields = typeof(ErrorCodes).GetFields(System.Reflection.BindingFlags.Static).Where(p => p.FieldType == typeof(ErrorCode));
+            var fields = typeof(ErrorCodes).GetFields(BindingFlags.Public | BindingFlags.Static).Where(p => p.FieldType == typeof(ErrorCode));
 
             foreach(var field in fields)
             {

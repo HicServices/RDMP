@@ -53,15 +53,15 @@
             this.hlpIdentifiableExtractions = new Rdmp.UI.SimpleControls.HelpIcon();
             this.cbShowPipelineCompletedPopup = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.olvErrorCodes = new BrightIdeasSoftware.ObjectListView();
+            this.olvCode = new BrightIdeasSoftware.OLVColumn();
+            this.olvTreatment = new BrightIdeasSoftware.OLVColumn();
+            this.olvMessage = new BrightIdeasSoftware.OLVColumn();
             this.cbHideEmptyTableLoadRunAudits = new System.Windows.Forms.CheckBox();
             this.label7 = new System.Windows.Forms.Label();
             this.tbCreateDatabaseTimeout = new System.Windows.Forms.TextBox();
             this.cbScoreZeroForCohortAggregateContainers = new System.Windows.Forms.CheckBox();
             this.cbAdvancedFindFilters = new System.Windows.Forms.CheckBox();
-            this.olvErrorCodes = new BrightIdeasSoftware.ObjectListView();
-            this.olvCode = new BrightIdeasSoftware.OLVColumn();
-            this.olvTreatment = new BrightIdeasSoftware.OLVColumn();
-            this.olvMessage = new BrightIdeasSoftware.OLVColumn();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvErrorCodes)).BeginInit();
             this.SuspendLayout();
@@ -330,7 +330,9 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.olvErrorCodes);
             this.groupBox1.Location = new System.Drawing.Point(447, 255);
             this.groupBox1.Name = "groupBox1";
@@ -338,6 +340,21 @@
             this.groupBox1.TabIndex = 16;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Warnings Settings";
+            // 
+            // olvErrorCodes
+            // 
+            this.olvErrorCodes.AllColumns.Add(this.olvCode);
+            this.olvErrorCodes.AllColumns.Add(this.olvTreatment);
+            this.olvErrorCodes.AllColumns.Add(this.olvMessage);
+            this.olvErrorCodes.CellEditUseWholeCell = false;
+            this.olvErrorCodes.Cursor = System.Windows.Forms.Cursors.Default;
+            this.olvErrorCodes.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.olvErrorCodes.HideSelection = false;
+            this.olvErrorCodes.Location = new System.Drawing.Point(3, 19);
+            this.olvErrorCodes.Name = "olvErrorCodes";
+            this.olvErrorCodes.Size = new System.Drawing.Size(401, 363);
+            this.olvErrorCodes.TabIndex = 0;
+            this.olvErrorCodes.View = System.Windows.Forms.View.Details;
             // 
             // cbHideEmptyTableLoadRunAudits
             // 
@@ -392,20 +409,6 @@
             this.cbAdvancedFindFilters.Text = "Advanced Find Filters";
             this.cbAdvancedFindFilters.UseVisualStyleBackColor = true;
             this.cbAdvancedFindFilters.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
-            // 
-            // olvErrorCodes
-            // 
-            this.olvErrorCodes.CellEditUseWholeCell = false;
-            this.olvErrorCodes.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.olvErrorCodes.HideSelection = false;
-            this.olvErrorCodes.Location = new System.Drawing.Point(3, 19);
-            this.olvErrorCodes.Name = "olvErrorCodes";
-            this.olvErrorCodes.Size = new System.Drawing.Size(401, 363);
-            this.olvErrorCodes.TabIndex = 0;
-            this.olvErrorCodes.View = System.Windows.Forms.View.Details;
-            this.olvErrorCodes.AllColumns.Add(olvCode);
-            this.olvErrorCodes.AllColumns.Add(olvTreatment);
-            this.olvErrorCodes.AllColumns.Add(olvMessage);
             // 
             // UserSettingsFileUI
             // 
