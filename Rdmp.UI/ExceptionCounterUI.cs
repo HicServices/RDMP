@@ -51,20 +51,11 @@ namespace Rdmp.UI
 
                 var xStart = (Width - NotifyWidth)/2;
                 var yStart = (Height - NotifyWidth) / 2;
+                
+                var darkRed = new SolidBrush(Color.FromArgb(206, 10, 26));
 
-                GraphicsPath gp = new GraphicsPath();
-                gp.AddEllipse(xStart,yStart,Width,Height);
-
-                PathGradientBrush pgb = new PathGradientBrush(gp);
-
-                pgb.CenterPoint = new PointF(Width / 2f,Height / 2f);
-                pgb.CenterColor = Color.FromArgb(255,218,188);
-                pgb.SurroundColors = new Color[] { Color.FromArgb(255, 55, 0) };
-
-
-                e.Graphics.FillEllipse(pgb, xStart, yStart, NotifyWidth, NotifyWidth);
-                e.Graphics.DrawString(msg,f,Brushes.White,new RectangleF(xStart + 3,yStart,NotifyWidth,NotifyWidth));
-                e.Graphics.DrawEllipse(new Pen(Brushes.White,2f), xStart, yStart, NotifyWidth, NotifyWidth);
+                e.Graphics.FillEllipse(darkRed, xStart, yStart+1, NotifyWidth-2, NotifyWidth-2);
+                e.Graphics.DrawString(msg,f,Brushes.White,new RectangleF(xStart + 2,yStart,NotifyWidth,NotifyWidth));
             }
         }
 
