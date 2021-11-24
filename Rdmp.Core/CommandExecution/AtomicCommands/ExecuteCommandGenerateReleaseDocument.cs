@@ -48,7 +48,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 }
                 catch (Exception)
                 {
-                    SetImpossible("Cohort Was unreachable");
+                    SetImpossible("Cohort was unreachable");
                 }
             }
                 
