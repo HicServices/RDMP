@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug in Console Gui where edit window showed value set directly instead of passing through Property Setters
 - Fixed bug in Console Gui where password properties showed (encrypted) HEX binary value instead of ****
 - Fixed Command Line UI showing abstract and interfaces when prompting user to pick a Type
+- Generate Release Document now shows as impossible when Cohort is not defined or unreachable (e.g. if user does not have access to cohort database)
 - Fixed bug where selecting a [PipelineComponent] for which help is unavailable would leave the previously selected component's help visible
 
 ### Changed
