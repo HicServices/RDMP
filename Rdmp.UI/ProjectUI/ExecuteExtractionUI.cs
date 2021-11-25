@@ -391,6 +391,16 @@ namespace Rdmp.UI.ProjectUI
         {
             checkAndExecuteUI1.Enabled = tlvDatasets.CheckedObjects.Cast<object>().OfType<SelectedDataSets>().Any();
         }
+
+        public override string GetTabName()
+        {
+            return $"{_extractionConfiguration.Project.ProjectNumber} - {base.GetTabName()}";
+        }
+
+        public override string GetTabToolTip()
+        {
+            return $"'{base.GetTabName()}' - '{_extractionConfiguration.Project.Name}' - ProjectNumber: {_extractionConfiguration.Project.ProjectNumber}";
+        }
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExecuteExtractionUI_Design, UserControl>))]

@@ -444,8 +444,15 @@ namespace ResearchDataManagementPlatform.WindowManagement
         private void SetTabText(DockContent floatable, INamedTab tab)
         {
             string tabText = tab.GetTabName();
+            string tabToolTipText = tab.GetTabToolTip();
 
             floatable.TabText = tabText;
+
+            //Only needs set if it's defined, otherwise default behaviour is that there is no tooltip if the tab is long enough, or already uses the TabText value if longer than the tab can display
+            if (!string.IsNullOrEmpty(tabToolTipText))
+            {
+                floatable.ToolTipText = tabToolTipText;
+            }
 
             if (floatable != null && floatable.ParentForm != null)
                 floatable.ParentForm.Text = tabText + " - RDMP";

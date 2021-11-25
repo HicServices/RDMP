@@ -213,6 +213,11 @@ namespace Rdmp.UI.Raceway
             return Text;
         }
 
+        public string GetTabToolTip()
+        {
+            return null;
+        }
+
         public IPersistableObjectCollection ConstructEmptyCollection(DashboardControl databaseRecord)
         {
             _dashboardControlDatabaseRecord = databaseRecord;

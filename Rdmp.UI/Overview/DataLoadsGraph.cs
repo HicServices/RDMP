@@ -270,6 +270,11 @@ namespace Rdmp.UI.Overview
             return Text;
         }
 
+        public string GetTabToolTip()
+        {
+            return null;
+        }
+
         public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
         {
             SetItemActivator(activator);
