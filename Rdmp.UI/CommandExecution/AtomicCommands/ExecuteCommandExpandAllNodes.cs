@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
+using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.Collections;
@@ -18,15 +19,30 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         private readonly RDMPCollectionCommonFunctionality _commonFunctionality;
         private object _rootToExpandFrom;
 
-        public ExecuteCommandExpandAllNodes(IActivateItems activator,RDMPCollectionCommonFunctionality commonFunctionality, object rootToCollapseTo) : base(activator)
+        public ExecuteCommandExpandAllNodes(IActivateItems activator,RDMPCollectionCommonFunctionality commonFunctionality, object toExpand) : base(activator)
         {
             _commonFunctionality = commonFunctionality;
-            _rootToExpandFrom = rootToCollapseTo;
-            
-            if(!commonFunctionality.Tree.CanExpand(rootToCollapseTo))
+            _rootToExpandFrom = toExpand;
+
+            // if we are expanding everything in the tree that is ok
+            if (_rootToExpandFrom is RDMPCollection)
+            {
+                return;
+            }
+
+            if(!commonFunctionality.Tree.CanExpand(toExpand))
                 SetImpossible("Node cannot be expanded");
         }
 
+        public override string GetCommandName()
+        {
+            if (_rootToExpandFrom is RDMPCollection && string.IsNullOrWhiteSpace(OverrideCommandName))
+            {
+                return "Expand All";
+            }
+
+            return base.GetCommandName();
+        }
         public override void Execute()
         {
             base.Execute();
@@ -34,6 +50,12 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             _commonFunctionality.Tree.Visible = false;
             try
             {
+                if(_rootToExpandFrom is RDMPCollection)
+                {
+                    _commonFunctionality.Tree.ExpandAll();
+                    return;
+                }
+
                 _commonFunctionality.ExpandToDepth(int.MaxValue,_rootToExpandFrom);
 
                 var index = _commonFunctionality.Tree.IndexOf(_rootToExpandFrom);
