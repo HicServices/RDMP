@@ -345,6 +345,9 @@ namespace Rdmp.UI.AggregationUIs
             if(chart1.Legends.Count == 0) 
                 chart1.Legends.Add(new Legend());
 
+            chart1.Titles.Clear();
+            chart1.Titles.Add(_aggregateConfiguration.Name);
+
             //last column is always the X axis, then for each column before it add a series with Y values coming from that column
             for (int i = 0; i < _dt.Columns.Count - 1; i++)
             {

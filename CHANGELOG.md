@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ability to filter [Catalogue] in the Find dialog by Internal/Deprecated etc
 - Added search and filter compatible controls to [Pipeline] editing dialog
 - Added ability to ignore/elevate specific errors in UserSettings
+- Added title to graph charts
 
 ### Fixed
 
