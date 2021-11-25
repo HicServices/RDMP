@@ -90,7 +90,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.btnDataExport.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnDataExport.Name = "btnDataExport";
             this.btnDataExport.Size = new System.Drawing.Size(87, 22);
-            this.btnDataExport.Text = "Data Export";
+            this.btnDataExport.Text = "Projects";
             this.btnDataExport.Click += new System.EventHandler(this.ToolboxButtonClicked);
             // 
             // btnTables

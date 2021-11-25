@@ -62,6 +62,7 @@
             this.tbCreateDatabaseTimeout = new System.Windows.Forms.TextBox();
             this.cbScoreZeroForCohortAggregateContainers = new System.Windows.Forms.CheckBox();
             this.cbAdvancedFindFilters = new System.Windows.Forms.CheckBox();
+            this.cbIncludeZeroSeriesInGraphs = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvErrorCodes)).BeginInit();
             this.SuspendLayout();
@@ -401,7 +402,7 @@
             // cbAdvancedFindFilters
             // 
             this.cbAdvancedFindFilters.AutoSize = true;
-            this.cbAdvancedFindFilters.Location = new System.Drawing.Point(715, 59);
+            this.cbAdvancedFindFilters.Location = new System.Drawing.Point(681, 112);
             this.cbAdvancedFindFilters.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbAdvancedFindFilters.Name = "cbAdvancedFindFilters";
             this.cbAdvancedFindFilters.Size = new System.Drawing.Size(139, 19);
@@ -410,11 +411,24 @@
             this.cbAdvancedFindFilters.UseVisualStyleBackColor = true;
             this.cbAdvancedFindFilters.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
+            // cbIncludeZeroSeriesInGraphs
+            // 
+            this.cbIncludeZeroSeriesInGraphs.AutoSize = true;
+            this.cbIncludeZeroSeriesInGraphs.Location = new System.Drawing.Point(681, 138);
+            this.cbIncludeZeroSeriesInGraphs.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.cbIncludeZeroSeriesInGraphs.Name = "cbIncludeZeroSeriesInGraphs";
+            this.cbIncludeZeroSeriesInGraphs.Size = new System.Drawing.Size(178, 19);
+            this.cbIncludeZeroSeriesInGraphs.TabIndex = 19;
+            this.cbIncludeZeroSeriesInGraphs.Text = "Include Zero Series In Graphs";
+            this.cbIncludeZeroSeriesInGraphs.UseVisualStyleBackColor = true;
+            this.cbIncludeZeroSeriesInGraphs.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
+            // 
             // UserSettingsFileUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(866, 652);
+            this.Controls.Add(this.cbIncludeZeroSeriesInGraphs);
             this.Controls.Add(this.cbAdvancedFindFilters);
             this.Controls.Add(this.tbCreateDatabaseTimeout);
             this.Controls.Add(this.label7);
@@ -489,5 +503,6 @@
         private BrightIdeasSoftware.OLVColumn olvCode;
         private BrightIdeasSoftware.OLVColumn olvTreatment;
         private BrightIdeasSoftware.OLVColumn olvMessage;
+        private System.Windows.Forms.CheckBox cbIncludeZeroSeriesInGraphs;
     }
 }

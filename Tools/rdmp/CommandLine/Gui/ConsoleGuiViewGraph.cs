@@ -61,6 +61,8 @@ namespace Rdmp.Core.CommandLine.Gui
                 valueColumnName = "Count";
             }
 
+            AggregateConfiguration.AdjustGraphDataTable(dt);
+
             PopulateGraphResults(dt, valueColumnName, aggregate.GetAxisIfAny());
         }
 
