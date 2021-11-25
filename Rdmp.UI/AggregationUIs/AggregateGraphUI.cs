@@ -36,8 +36,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Extensions;
-
-
+using ReusableLibraryCode.Settings;
 using ScintillaNET;
 
 namespace Rdmp.UI.AggregationUIs
@@ -293,6 +292,7 @@ namespace Rdmp.UI.AggregationUIs
                     if (_dt.Rows.Count == 0)
                         throw new Exception("Query Returned No Rows");
 
+                    AggregateConfiguration.AdjustGraphDataTable(_dt);
 
                     //setup the heatmap if there is a pivot
                     if (_dt.Columns.Count > 2 && AggregateConfiguration.PivotOnDimensionID != null)

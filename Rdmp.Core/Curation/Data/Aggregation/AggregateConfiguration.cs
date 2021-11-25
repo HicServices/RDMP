@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -20,6 +21,7 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Curation.Data.Aggregation
 {
@@ -214,6 +216,36 @@ namespace Rdmp.Core.Curation.Data.Aggregation
                     ? null
                     : Repository.GetObjectByID<AggregateFilterContainer>((int) RootFilterContainer_ID);
             }
+        }
+
+
+        /// <summary>
+        /// Called right before displaying an aggregate graph.  Adjust the source for that graph (<paramref name="dt"/>) e.g.
+        /// discarding empty columns (based on user settings).
+        /// </summary>
+        /// <param name="dt"></param>
+        public static void AdjustGraphDataTable(DataTable dt)
+        {
+            if(dt.Rows.Count ==0)
+            {
+                return;
+            }
+
+            if (!UserSettings.IncludeZeroSeriesInGraphs)
+            {
+                foreach (DataColumn col in dt.Columns.Cast<DataColumn>().ToArray())
+                {
+                    if (dt.Rows.Cast<DataRow>().All(r => IsBasicallyZero(r[col.ColumnName])))
+                    {
+                        dt.Columns.Remove(col);
+                    }
+                }
+            }
+        }
+
+        private static bool IsBasicallyZero(object v)
+        {
+            return v == null || v == DBNull.Value || string.IsNullOrWhiteSpace(v.ToString()) || string.Equals(v.ToString(), "0");
         }
 
         /// <summary>
