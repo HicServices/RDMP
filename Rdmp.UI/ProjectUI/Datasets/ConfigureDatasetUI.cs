@@ -386,7 +386,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
 
         public override string GetTabName()
         {
-            return "Edit" + base.GetTabName();
+            return "Edit:" + base.GetTabName();
         }
 
         private void olvAvailable_ItemActivate(object sender, EventArgs e)
