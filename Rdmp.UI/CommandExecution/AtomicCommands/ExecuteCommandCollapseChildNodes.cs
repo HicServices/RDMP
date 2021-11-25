@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
+using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.Collections;
@@ -23,8 +24,24 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             _commonFunctionality = commonFunctionality;
             _rootToCollapseTo = rootToCollapseTo;
 
+            // collapse all with no node selected collapses whole tree
+            if (_rootToCollapseTo is RDMPCollection)
+            {
+                return;
+            }
+
             if (!_commonFunctionality.Tree.IsExpanded(rootToCollapseTo))
                 SetImpossible("Node is not expanded");
+        }
+
+        public override string GetCommandName()
+        {
+            if (_rootToCollapseTo is RDMPCollection && string.IsNullOrWhiteSpace(OverrideCommandName))
+            {
+                return "Collapse All";
+            }
+
+            return base.GetCommandName();
         }
 
         public override void Execute()
@@ -34,6 +51,12 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             _commonFunctionality.Tree.BeginUpdate();
             try
             {
+
+                if (_rootToCollapseTo is RDMPCollection)
+                {
+                    _commonFunctionality.Tree.CollapseAll();
+                    return;
+                }
 
                 //collapse all children
                 foreach (object o in _commonFunctionality.CoreChildProvider.GetAllChildrenRecursively(_rootToCollapseTo))
