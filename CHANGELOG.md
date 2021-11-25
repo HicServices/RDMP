@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added search and filter compatible controls to [Pipeline] editing dialog
 - Added ability to ignore/elevate specific errors in UserSettings
 - Enabled Expand/Collapse all when right clicking whitespace in a tree collection
+- Added title to graph charts
 - Added a user setting for hiding Series in which all cells are 0/null
 
 ### Fixed

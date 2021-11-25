@@ -18,6 +18,7 @@ using Terminal.Gui.Graphs;
 using static Terminal.Gui.TabView;
 using Attribute = Terminal.Gui.Attribute;
 using Color = Terminal.Gui.Color;
+using Point = Terminal.Gui.Point;
 using PointF = Terminal.Gui.PointF;
 
 namespace Rdmp.Core.CommandLine.Gui
@@ -36,6 +37,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 Width = Dim.Fill(),
                 Height = Dim.Fill()
             };
+
             ColorScheme = ConsoleMainWindow.ColorScheme;
             TabView.AddTab(graphTab = new Tab("Graph",graphView), false);
             this.aggregate = aggregate;
@@ -84,6 +86,18 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 boundsHeight = TabView.Bounds.Height - 4;
             }
+
+            var titleWidth = aggregate.Name.Sum(c => Rune.ColumnWidth(c));
+            var titleStartX = (boundsWidth / 2) - (titleWidth / 2);
+
+            var title = new TextAnnotation()
+            {
+                ScreenPosition = new Point(titleStartX, 0),
+                Text = aggregate.Name,
+                BeforeSeries = false
+            };
+
+            graphView.Annotations.Add(title);
 
             // if no time axis then we have a regular bar chart
             if (axis == null)
