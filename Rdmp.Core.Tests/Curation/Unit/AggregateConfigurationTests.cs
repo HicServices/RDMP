@@ -26,6 +26,8 @@ namespace Rdmp.Core.Tests.Curation.Unit
             // empty tables should not get nuked
             AggregateConfiguration.AdjustGraphDataTable(dt);
             Assert.AreEqual(2, dt.Columns.Count);
+
+            dt.Dispose();
         }
 
         [TestCase(true)]
@@ -55,7 +57,8 @@ namespace Rdmp.Core.Tests.Curation.Unit
                 dt.Columns.Contains("date");
                 dt.Columns.Contains("col2");
             }
-            
+
+            dt.Dispose();
         }
     }
 }
