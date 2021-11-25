@@ -94,7 +94,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
                 btnCatalogues.ToolTipText = "All datasets configured for access by RDMP";
                 btnCohorts.ToolTipText = "Built queries for creating cohorts";
                 btnSavedCohorts.ToolTipText = "Finalised identifier lists, ready for linkage and extraction";
-                btnDataExport.ToolTipText = "Data extraction projects";
+                btnDataExport.ToolTipText = "Show Projects and Extractable Dataset Packages allowing data extraction";
                 btnTables.ToolTipText = "Advanced features e.g. logging, credentials, dashboards etc";
                 btnLoad.ToolTipText = "Load configurations for reading data into your databases";
                 btnFavourites.ToolTipText = "Collection of all objects that you have favourited";
