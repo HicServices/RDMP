@@ -244,26 +244,40 @@ namespace Rdmp.Core.Providers
                 }
             }
 
-            //if it's a root container don't check
+            //count children that are not disabled
+            var children = _childProvider.GetChildren(container);
+            var enabledChildren = children.Where(o => !(o is IDisableable d) || !d.IsDisabled).ToArray();
+
+            //check if we're looking at a root container
             if (_childProvider.AllCohortIdentificationConfigurations.Any(c =>
                 c.RootCohortAggregateContainer_ID == container.ID))
-                return null;
+            {
+                //if it's a root container
+                //then UNION should have at least 1
+                if (enabledChildren.Length < 1 && container.Operation == SetOperation.UNION)
+                    return "You must have at least one element in the root container";
 
-            //count children that are not disabled, there should be at least 2
-            var children = _childProvider.GetChildren(container);
-            var enabledChildren = children.Where(o=>!(o is IDisableable d) || !d.IsDisabled).ToArray();
-            
-            if (enabledChildren.Length == 0)
-                return "Empty SET containers have no effect (and will be ignored)";
+                //Excepts and Intersects must have at least 2
+                if (enabledChildren.Length < 2 && (container.Operation == SetOperation.EXCEPT || container.Operation == SetOperation.INTERSECT))
+                    return "EXCEPT and INTERSECT container operations must have at least two elements within";
 
-            if (enabledChildren.Length == 1)
-                return "SET container operations have no effect if there is only one child within";
+                //are there any children with the same order in this container?
+                if (children.OfType<IOrderable>().GroupBy(o => o.Order).Any(g => g.Count() > 1))
+                    return "Child order is ambiguous, show the Order column and reorder contents";
+            }
+            else
+            {
+                //if it's not a root, then there should be at least 2
+                if (enabledChildren.Length == 0)
+                    return "Empty SET containers have no effect (and will be ignored)";
 
-            //are there any children with the same order in this container?
-            if (children.OfType<IOrderable>().GroupBy(o => o.Order).Any(g => g.Count() > 1))
-                return "Child order is ambiguous, show the Order column and reorder contents";
+                if (enabledChildren.Length == 1)
+                    return "SET container operations have no effect if there is only one child within";
 
-
+                //are there any children with the same order in this container?
+                if (children.OfType<IOrderable>().GroupBy(o => o.Order).Any(g => g.Count() > 1))
+                    return "Child order is ambiguous, show the Order column and reorder contents";
+            }
 
             return null;
         }
