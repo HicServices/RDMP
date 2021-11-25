@@ -118,7 +118,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                     }
 
                     collection = new DataExportCollectionUI();
-                    toReturn = Show(RDMPCollection.DataExport,collection, "Data Export", CatalogueIcons.Project);
+                    toReturn = Show(RDMPCollection.DataExport,collection, "Projects", CatalogueIcons.Project);
                 break;
 
                 case RDMPCollection.Cohort:

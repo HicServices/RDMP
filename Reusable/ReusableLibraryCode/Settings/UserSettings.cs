@@ -53,6 +53,15 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("ShowHomeOnStartup", value); }
         }
 
+        /// <summary>
+        /// True to include in data table/graphs series in which all values are 0.  Defaults to true
+        /// </summary>
+        public static bool IncludeZeroSeriesInGraphs
+        {
+            get { return AppSettings.GetValueOrDefault("IncludeZeroSeriesInGraphs", true); }
+            set { AppSettings.AddOrUpdateValue("IncludeZeroSeriesInGraphs", value); }
+        }
+
         public static bool EmphasiseOnTabChanged
         {
             get { return AppSettings.GetValueOrDefault("EmphasiseOnTabChanged", false); }

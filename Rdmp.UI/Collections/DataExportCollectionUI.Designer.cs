@@ -67,7 +67,7 @@ namespace Rdmp.UI.Collections
             // 
             this.olvName.AspectName = "ToString";
             this.olvName.CellEditUseWholeCell = true;
-            this.olvName.Text = "Data Export";
+            this.olvName.Text = "Projects";
             this.olvName.MinimumWidth = 100;
             // 
             // olvProjectNumber
