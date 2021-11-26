@@ -39,9 +39,10 @@
             // 
             this.pbDividerLine.Image = ((System.Drawing.Image)(resources.GetObject("pbDividerLine.Image")));
             this.pbDividerLine.InitialImage = null;
-            this.pbDividerLine.Location = new System.Drawing.Point(4, 0);
+            this.pbDividerLine.Location = new System.Drawing.Point(6, 5);
+            this.pbDividerLine.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbDividerLine.Name = "pbDividerLine";
-            this.pbDividerLine.Size = new System.Drawing.Size(10, 50);
+            this.pbDividerLine.Size = new System.Drawing.Size(12, 56);
             this.pbDividerLine.TabIndex = 0;
             this.pbDividerLine.TabStop = false;
             // 
@@ -49,21 +50,23 @@
             // 
             this.pbDropPrompt.Image = ((System.Drawing.Image)(resources.GetObject("pbDropPrompt.Image")));
             this.pbDropPrompt.InitialImage = null;
-            this.pbDropPrompt.Location = new System.Drawing.Point(4, 0);
+            this.pbDropPrompt.Location = new System.Drawing.Point(5, 4);
+            this.pbDropPrompt.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbDropPrompt.Name = "pbDropPrompt";
-            this.pbDropPrompt.Size = new System.Drawing.Size(10, 50);
+            this.pbDropPrompt.Size = new System.Drawing.Size(12, 52);
             this.pbDropPrompt.TabIndex = 1;
             this.pbDropPrompt.TabStop = false;
             // 
             // DividerLineControl
             // 
             this.AllowDrop = true;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.pbDropPrompt);
             this.Controls.Add(this.pbDividerLine);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "DividerLineControl";
-            this.Size = new System.Drawing.Size(19, 50);
+            this.Size = new System.Drawing.Size(22, 58);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.DividerLineControl_DragEnter);
             this.DragOver += new System.Windows.Forms.DragEventHandler(this.DividerLineControl_DragOver);
             this.DragLeave += new System.EventHandler(this.DividerLineControl_DragLeave);
