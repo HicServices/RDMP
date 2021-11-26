@@ -24,7 +24,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
     public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration : CohortCreationCommandExecution
     {
         private CohortIdentificationConfiguration _cic;
-        private CohortIdentificationConfiguration[] _allConfigurations;
+        private readonly CohortIdentificationConfiguration[] _allConfigurations;
 
         public ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(IBasicActivateItems activator, ExternalCohortTable externalCohortTable) :
             this(activator, null, externalCohortTable, null, null, null)
@@ -63,31 +63,33 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
         {
             base.Execute();
 
-            if (_cic == null)
-                _cic = (CohortIdentificationConfiguration)BasicActivator.SelectOne("Select Cohort Builder Query", BasicActivator.GetAll<CohortIdentificationConfiguration>().ToArray());
+            var cic = _cic;
 
-            if (_cic == null)
+            if (cic == null)
+                cic = (CohortIdentificationConfiguration)BasicActivator.SelectOne("Select Cohort Builder Query", BasicActivator.GetAll<CohortIdentificationConfiguration>().ToArray());
+
+            if (cic == null)
                 return;
             
-            var request = GetCohortCreationRequest("Patients in CohortIdentificationConfiguration '" + _cic + "' (ID=" + _cic.ID + ")");
+            var request = GetCohortCreationRequest("Patients in CohortIdentificationConfiguration '" + cic + "' (ID=" + cic.ID + ")");
 
             //user choose to cancel the cohort creation request dialogue
             if (request == null)
                 return;
 
-            request.CohortIdentificationConfiguration = _cic;
+            request.CohortIdentificationConfiguration = cic;
 
-            var configureAndExecute = GetConfigureAndExecuteControl(request, "Execute CIC " + _cic + " and commmit results");
+            var configureAndExecute = GetConfigureAndExecuteControl(request, "Execute CIC " + cic + " and commmit results");
 
-            configureAndExecute.PipelineExecutionFinishedsuccessfully += OnImportCompletedSuccessfully;
+            configureAndExecute.PipelineExecutionFinishedsuccessfully += (s,u)=>OnImportCompletedSuccessfully(s,u,cic);
 
             configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
         }
 
-        void OnImportCompletedSuccessfully(object sender, PipelineEngineEventArgs u)
+        void OnImportCompletedSuccessfully(object sender, PipelineEngineEventArgs u, CohortIdentificationConfiguration cic)
         {
             //see if we can associate the cic with the project
-            var cmd = new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(BasicActivator).SetTarget((Project)Project).SetTarget(_cic);
+            var cmd = new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(BasicActivator).SetTarget((Project)Project).SetTarget(cic);
 
             //we can!
             if (!cmd.IsImpossible)
