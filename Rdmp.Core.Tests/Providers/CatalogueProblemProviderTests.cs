@@ -20,17 +20,169 @@ namespace Rdmp.Core.Tests.Providers
     class CatalogueProblemProviderTests : UnitTests
     {
         [Test]
-        public void TestEmptyCohortContainer_IsProblem()
+        public void TestRootOrderCohortContainer_IsProblem()
+        {
+            var container = WhenIHaveA<CohortAggregateContainer>();
+            var childContainer = WhenIHaveA<Core.Curation.Data.Aggregation.AggregateConfiguration>();
+            var childContainer2 = WhenIHaveA<Core.Curation.Data.Aggregation.AggregateConfiguration>();
+            
+            container.Operation = SetOperation.UNION;
+            container.AddChild(childContainer, 1);
+            container.AddChild(childContainer2, 1);
+
+            var pp = new CatalogueProblemProvider();
+            pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+            var problem = pp.DescribeProblem(container);
+
+            Assert.IsNotNull(problem);
+            Assert.AreEqual("Child order is ambiguous, show the Order column and reorder contents", problem);
+        }
+
+        [Test]
+        public void TestEmptyRootUNIONCohortContainer_IsProblem()
         {
             var container = WhenIHaveA<CohortAggregateContainer>();
 
-            var pp = new CatalogueProblemProvider();
+            container.Operation = SetOperation.UNION;
 
+            var pp = new CatalogueProblemProvider();
             pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
             var problem = pp.DescribeProblem(container);
 
             Assert.IsNotNull(problem);
             Assert.AreEqual("You must have at least one element in the root container", problem);
+        }
+
+        [Test]
+        public void TestEmptyRootEXCEPTCohortContainer_IsProblem()
+        {
+            var container = WhenIHaveA<CohortAggregateContainer>();
+
+            container.Operation = SetOperation.EXCEPT;
+
+            var pp = new CatalogueProblemProvider();
+            pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+            var problem = pp.DescribeProblem(container);
+
+            Assert.IsNotNull(problem);
+            Assert.AreEqual("EXCEPT and INTERSECT container operations must have at least two elements within", problem);
+        }
+
+        [Test]
+        public void TestEmptyRootINTERSECTCohortContainer_IsProblem()
+        {
+            var container = WhenIHaveA<CohortAggregateContainer>();
+
+            container.Operation = SetOperation.INTERSECT;
+
+            var pp = new CatalogueProblemProvider();
+            pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+            var problem = pp.DescribeProblem(container);
+
+            Assert.IsNotNull(problem);
+            Assert.AreEqual("EXCEPT and INTERSECT container operations must have at least two elements within", problem);
+        }
+
+        [Test]
+        public void Test1ChildRootUNIONCohortContainer_IsOk()
+        {
+            var container = WhenIHaveA<CohortAggregateContainer>();
+            var childContainer = WhenIHaveA<Core.Curation.Data.Aggregation.AggregateConfiguration>();
+
+            container.Operation = SetOperation.UNION;
+            container.AddChild(childContainer, 0);
+
+            var pp = new CatalogueProblemProvider();
+            pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+            var problem = pp.DescribeProblem(container);
+
+            Assert.IsNull(problem);
+        }
+
+        [Test]
+        public void Test2ChildRootUNIONCohortContainer_IsOk()
+        {
+            var container = WhenIHaveA<CohortAggregateContainer>();
+            var childContainer = WhenIHaveA<Core.Curation.Data.Aggregation.AggregateConfiguration>();
+            var childContainer2 = WhenIHaveA<Core.Curation.Data.Aggregation.AggregateConfiguration>();
+
+            container.Operation = SetOperation.UNION;
+            container.AddChild(childContainer, 1);
+            container.AddChild(childContainer2, 2);
+
+            var pp = new CatalogueProblemProvider();
+            pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+            var problem = pp.DescribeProblem(container);
+
+            Assert.IsNull(problem);
+        }
+
+        [Test]
+        public void Test1ChildRootEXCEPTCohortContainer_IsProblem()
+        {
+            var container = WhenIHaveA<CohortAggregateContainer>();
+            var childContainer = WhenIHaveA<Core.Curation.Data.Aggregation.AggregateConfiguration>();
+
+            container.Operation = SetOperation.EXCEPT;
+            container.AddChild(childContainer, 0);
+
+            var pp = new CatalogueProblemProvider();
+            pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+            var problem = pp.DescribeProblem(container);
+
+            Assert.IsNotNull(problem);
+            Assert.AreEqual("EXCEPT and INTERSECT container operations must have at least two elements within", problem);
+        }
+
+        public void Test2ChildRootEXCEPTCohortContainer_IsOk()
+        {
+            var container = WhenIHaveA<CohortAggregateContainer>();
+            var childContainer = WhenIHaveA<Core.Curation.Data.Aggregation.AggregateConfiguration>();
+            var childContainer2 = WhenIHaveA<Core.Curation.Data.Aggregation.AggregateConfiguration>();
+
+            container.Operation = SetOperation.EXCEPT;
+            container.AddChild(childContainer, 1);
+            container.AddChild(childContainer2, 2);
+
+            var pp = new CatalogueProblemProvider();
+            pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+            var problem = pp.DescribeProblem(container);
+
+            Assert.IsNull(problem);
+        }
+
+        [Test]
+        public void Test1ChildRootINTERSECTCohortContainer_IsProblem()
+        {
+            var container = WhenIHaveA<CohortAggregateContainer>();
+            var childContainer = WhenIHaveA<Core.Curation.Data.Aggregation.AggregateConfiguration>();
+
+            container.Operation = SetOperation.EXCEPT;
+            container.AddChild(childContainer, 0);
+
+            var pp = new CatalogueProblemProvider();
+            pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+            var problem = pp.DescribeProblem(container);
+
+            Assert.IsNotNull(problem);
+            Assert.AreEqual("EXCEPT and INTERSECT container operations must have at least two elements within", problem);
+        }
+
+        public void Test2ChildRootINTERSECTCohortContainer_IsOk()
+        {
+            var container = WhenIHaveA<CohortAggregateContainer>();
+            var childContainer = WhenIHaveA<Core.Curation.Data.Aggregation.AggregateConfiguration>();
+            var childContainer2 = WhenIHaveA<Core.Curation.Data.Aggregation.AggregateConfiguration>();
+
+            container.Operation = SetOperation.INTERSECT;
+            container.AddChild(childContainer, 1);
+            container.AddChild(childContainer2, 2);
+
+            var pp = new CatalogueProblemProvider();
+            pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+            var problem = pp.DescribeProblem(container);
+
+            Assert.IsNull(problem);
         }
     }
 }
