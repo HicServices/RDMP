@@ -328,8 +328,8 @@ namespace Rdmp.Core.DataExport.Data
         public string GetProjectHint(bool shortString)
         {
             return 
-                shortString ? $"(P { Project.ProjectNumber})" :
-                $"'{Project.Name}'(P { Project.ProjectNumber})";
+                shortString ? $"({ Project.ProjectNumber})" :
+                $"'{Project.Name}' (PNo. { Project.ProjectNumber})";
         }
 
         /// <summary>
