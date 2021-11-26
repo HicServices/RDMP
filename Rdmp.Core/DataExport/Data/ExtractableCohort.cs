@@ -202,7 +202,7 @@ from {ExternalCohortTable.DefinitionTableName}
 where 
     {syntax.EnsureWrapped("id")} = {OriginID}";
 
-            if(timeoutInSeconds > -1)
+            if(timeoutInSeconds != -1)
             {
                 db.Server.TestConnection(timeoutInSeconds * 1000);
             }
