@@ -8,27 +8,24 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Providers;
 using ReusableLibraryCode.Checks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tests.Common;
+using Rdmp.Core.Curation.Data.Aggregation;
 
 namespace Rdmp.Core.Tests.Providers
 {
     class CatalogueProblemProviderTests : UnitTests
     {
+        #region ROOT CONTAINERS
         [Test]
         public void TestRootOrderCohortContainer_IsProblem()
         {
             var container = WhenIHaveA<CohortAggregateContainer>();
-            var childContainer = WhenIHaveA<Core.Curation.Data.Aggregation.AggregateConfiguration>();
-            var childContainer2 = WhenIHaveA<Core.Curation.Data.Aggregation.AggregateConfiguration>();
+            var childAggregateConfiguration = WhenIHaveA<AggregateConfiguration>();
+            var childAggregateConfiguration2 = WhenIHaveA<AggregateConfiguration>();
             
             container.Operation = SetOperation.UNION;
-            container.AddChild(childContainer, 1);
-            container.AddChild(childContainer2, 1);
+            container.AddChild(childAggregateConfiguration, 1);
+            container.AddChild(childAggregateConfiguration2, 1);
 
             var pp = new CatalogueProblemProvider();
             pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
@@ -87,10 +84,10 @@ namespace Rdmp.Core.Tests.Providers
         public void Test1ChildRootUNIONCohortContainer_IsOk()
         {
             var container = WhenIHaveA<CohortAggregateContainer>();
-            var childContainer = WhenIHaveA<Core.Curation.Data.Aggregation.AggregateConfiguration>();
+            var childAggregateConfiguration = WhenIHaveA<AggregateConfiguration>();
 
             container.Operation = SetOperation.UNION;
-            container.AddChild(childContainer, 0);
+            container.AddChild(childAggregateConfiguration, 0);
 
             var pp = new CatalogueProblemProvider();
             pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
@@ -103,12 +100,12 @@ namespace Rdmp.Core.Tests.Providers
         public void Test2ChildRootUNIONCohortContainer_IsOk()
         {
             var container = WhenIHaveA<CohortAggregateContainer>();
-            var childContainer = WhenIHaveA<Core.Curation.Data.Aggregation.AggregateConfiguration>();
-            var childContainer2 = WhenIHaveA<Core.Curation.Data.Aggregation.AggregateConfiguration>();
+            var childAggregateConfiguration = WhenIHaveA<AggregateConfiguration>();
+            var childAggregateConfiguration2 = WhenIHaveA<AggregateConfiguration>();
 
             container.Operation = SetOperation.UNION;
-            container.AddChild(childContainer, 1);
-            container.AddChild(childContainer2, 2);
+            container.AddChild(childAggregateConfiguration, 1);
+            container.AddChild(childAggregateConfiguration2, 2);
 
             var pp = new CatalogueProblemProvider();
             pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
@@ -121,10 +118,10 @@ namespace Rdmp.Core.Tests.Providers
         public void Test1ChildRootEXCEPTCohortContainer_IsProblem()
         {
             var container = WhenIHaveA<CohortAggregateContainer>();
-            var childContainer = WhenIHaveA<Core.Curation.Data.Aggregation.AggregateConfiguration>();
+            var childAggregateConfiguration = WhenIHaveA<AggregateConfiguration>();
 
             container.Operation = SetOperation.EXCEPT;
-            container.AddChild(childContainer, 0);
+            container.AddChild(childAggregateConfiguration, 0);
 
             var pp = new CatalogueProblemProvider();
             pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
@@ -138,12 +135,12 @@ namespace Rdmp.Core.Tests.Providers
         public void Test2ChildRootEXCEPTCohortContainer_IsOk()
         {
             var container = WhenIHaveA<CohortAggregateContainer>();
-            var childContainer = WhenIHaveA<Core.Curation.Data.Aggregation.AggregateConfiguration>();
-            var childContainer2 = WhenIHaveA<Core.Curation.Data.Aggregation.AggregateConfiguration>();
+            var childAggregateConfiguration = WhenIHaveA<AggregateConfiguration>();
+            var childAggregateConfiguration2 = WhenIHaveA<AggregateConfiguration>();
 
             container.Operation = SetOperation.EXCEPT;
-            container.AddChild(childContainer, 1);
-            container.AddChild(childContainer2, 2);
+            container.AddChild(childAggregateConfiguration, 1);
+            container.AddChild(childAggregateConfiguration2, 2);
 
             var pp = new CatalogueProblemProvider();
             pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
@@ -156,10 +153,10 @@ namespace Rdmp.Core.Tests.Providers
         public void Test1ChildRootINTERSECTCohortContainer_IsProblem()
         {
             var container = WhenIHaveA<CohortAggregateContainer>();
-            var childContainer = WhenIHaveA<Core.Curation.Data.Aggregation.AggregateConfiguration>();
+            var childAggregateConfiguration = WhenIHaveA<AggregateConfiguration>();
 
             container.Operation = SetOperation.EXCEPT;
-            container.AddChild(childContainer, 0);
+            container.AddChild(childAggregateConfiguration, 0);
 
             var pp = new CatalogueProblemProvider();
             pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
@@ -173,12 +170,12 @@ namespace Rdmp.Core.Tests.Providers
         public void Test2ChildRootINTERSECTCohortContainer_IsOk()
         {
             var container = WhenIHaveA<CohortAggregateContainer>();
-            var childContainer = WhenIHaveA<Core.Curation.Data.Aggregation.AggregateConfiguration>();
-            var childContainer2 = WhenIHaveA<Core.Curation.Data.Aggregation.AggregateConfiguration>();
+            var childAggregateConfiguration = WhenIHaveA<AggregateConfiguration>();
+            var childAggregateConfiguration2 = WhenIHaveA<AggregateConfiguration>();
 
             container.Operation = SetOperation.INTERSECT;
-            container.AddChild(childContainer, 1);
-            container.AddChild(childContainer2, 2);
+            container.AddChild(childAggregateConfiguration, 1);
+            container.AddChild(childAggregateConfiguration2, 2);
 
             var pp = new CatalogueProblemProvider();
             pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
@@ -186,5 +183,170 @@ namespace Rdmp.Core.Tests.Providers
 
             Assert.IsNull(problem);
         }
+        #endregion
+
+        #region SET containers
+        [Test]
+        public void TestSetContainerUNION_IsProblem()
+        {
+            var container = WhenIHaveA<CohortAggregateContainer>();
+            var childContainer = new CohortAggregateContainer(Repository, SetOperation.UNION);
+
+            container.AddChild(childContainer);
+
+            var pp = new CatalogueProblemProvider();
+            pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+            var problem = pp.DescribeProblem(childContainer);
+
+            Assert.IsNotNull(problem);
+            Assert.AreEqual("SET containers cannot be empty", problem);
+        }
+
+        [Test]
+        public void TestSetContainer1ChildUNION_IsProblem()
+        {
+            var container = WhenIHaveA<CohortAggregateContainer>();
+            var childContainer = new CohortAggregateContainer(Repository, SetOperation.UNION);
+            var childAggregateConfiguration = WhenIHaveA<AggregateConfiguration>();
+
+            childContainer.AddChild(childAggregateConfiguration, 0);
+            container.AddChild(childContainer);
+
+            var pp = new CatalogueProblemProvider();
+            pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+            var problem = pp.DescribeProblem(childContainer);
+
+            Assert.IsNotNull(problem);
+            Assert.AreEqual("SET container operations have no effect if there is only one child within", problem);
+        }
+
+        [Test]
+        public void TestSetContainer2ChildUNION_IsOk()
+        {
+            var container = WhenIHaveA<CohortAggregateContainer>();
+            var childContainer = new CohortAggregateContainer(Repository, SetOperation.UNION);
+            var childAggregateConfiguration = WhenIHaveA<AggregateConfiguration>();
+            var childAggregateConfiguration2 = WhenIHaveA<AggregateConfiguration>();
+
+            childContainer.AddChild(childAggregateConfiguration, 0);
+            childContainer.AddChild(childAggregateConfiguration2, 0);
+            container.AddChild(childContainer);
+
+            var pp = new CatalogueProblemProvider();
+            pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+            var problem = pp.DescribeProblem(childContainer);
+
+            Assert.IsNull(problem);
+        }
+
+        [Test]
+        public void TestSetContainerEXCEPT_IsProblem()
+        {
+            var container = WhenIHaveA<CohortAggregateContainer>();
+            var childContainer = new CohortAggregateContainer(Repository, SetOperation.EXCEPT);
+
+            container.AddChild(childContainer);
+
+            var pp = new CatalogueProblemProvider();
+            pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+            var problem = pp.DescribeProblem(childContainer);
+
+            Assert.IsNotNull(problem);
+            Assert.AreEqual("SET containers cannot be empty", problem);
+        }
+
+        [Test]
+        public void TestSetContainer1ChildEXCEPT_IsProblem()
+        {
+            var container = WhenIHaveA<CohortAggregateContainer>();
+            var childContainer = new CohortAggregateContainer(Repository, SetOperation.EXCEPT);
+            var childAggregateConfiguration = WhenIHaveA<AggregateConfiguration>();
+
+            childContainer.AddChild(childAggregateConfiguration, 0);
+            container.AddChild(childContainer);
+
+            var pp = new CatalogueProblemProvider();
+            pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+            var problem = pp.DescribeProblem(childContainer);
+
+            Assert.IsNotNull(problem);
+            Assert.AreEqual("SET container operations have no effect if there is only one child within", problem);
+        }
+
+        [Test]
+        public void TestSetContainer2ChildEXCEPT_IsOk()
+        {
+            var container = WhenIHaveA<CohortAggregateContainer>();
+            var childContainer = new CohortAggregateContainer(Repository, SetOperation.EXCEPT);
+            var childAggregateConfiguration = WhenIHaveA<AggregateConfiguration>();
+            var childAggregateConfiguration2 = WhenIHaveA<AggregateConfiguration>();
+
+            childContainer.AddChild(childAggregateConfiguration, 0);
+            childContainer.AddChild(childAggregateConfiguration2, 0);
+            container.AddChild(childContainer);
+
+            var pp = new CatalogueProblemProvider();
+            pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+            var problem = pp.DescribeProblem(childContainer);
+
+            Assert.IsNull(problem);
+        }
+
+        [Test]
+        public void TestSetContainerINTERSECT_IsProblem()
+        {
+            var container = WhenIHaveA<CohortAggregateContainer>();
+            var childContainer = new CohortAggregateContainer(Repository, SetOperation.INTERSECT);
+
+            container.AddChild(childContainer);
+
+            var pp = new CatalogueProblemProvider();
+            pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+            var problem = pp.DescribeProblem(childContainer);
+
+            Assert.IsNotNull(problem);
+            Assert.AreEqual("SET containers cannot be empty", problem);
+        }
+
+        [Test]
+        public void TestSetContainer1ChildINTERSECT_IsProblem()
+        {
+            var container = WhenIHaveA<CohortAggregateContainer>();
+            var childContainer = new CohortAggregateContainer(Repository, SetOperation.INTERSECT);
+            var childAggregateConfiguration = WhenIHaveA<AggregateConfiguration>();
+
+            childContainer.AddChild(childAggregateConfiguration, 0);
+            container.AddChild(childContainer);
+
+            var pp = new CatalogueProblemProvider();
+            pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+            var problem = pp.DescribeProblem(childContainer);
+
+            Assert.IsNotNull(problem);
+            Assert.AreEqual("SET container operations have no effect if there is only one child within", problem);
+        }
+
+        [Test]
+        public void TestSetContainer2ChildINTERSECT_IsOk()
+        {
+            var container = WhenIHaveA<CohortAggregateContainer>();
+            var childContainer = new CohortAggregateContainer(Repository, SetOperation.INTERSECT);
+            var childAggregateConfiguration = WhenIHaveA<AggregateConfiguration>();
+            var childAggregateConfiguration2 = WhenIHaveA<AggregateConfiguration>();
+
+            childContainer.AddChild(childAggregateConfiguration, 0);
+            childContainer.AddChild(childAggregateConfiguration2, 0);
+            container.AddChild(childContainer);
+
+            var pp = new CatalogueProblemProvider();
+            pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+            var problem = pp.DescribeProblem(childContainer);
+
+            Assert.IsNull(problem);
+        }
+
+
+        #endregion
+
     }
 }
