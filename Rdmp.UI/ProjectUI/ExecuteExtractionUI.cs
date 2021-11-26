@@ -394,7 +394,6 @@ namespace Rdmp.UI.ProjectUI
 
         public override string GetTabName()
         {
-            ;
             return $"{base.GetTabName()} {_extractionConfiguration.GetProjectHint(true)}";
         }
         public override string GetTabToolTip()

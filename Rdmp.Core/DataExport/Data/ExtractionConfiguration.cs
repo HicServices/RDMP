@@ -323,7 +323,7 @@ namespace Rdmp.Core.DataExport.Data
         /// Provides a short human readable representation of the <see cref="Project"/> to which this 
         /// <see cref="ExtractionConfiguration"/> is associated with
         /// </summary>
-        /// <param name="shortString"></param>
+        /// <param name="shortString">True for a short representation.  False for a longer representation.</param>
         /// <returns></returns>
         public string GetProjectHint(bool shortString)
         {

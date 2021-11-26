@@ -448,11 +448,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             floatable.TabText = tabText;
 
-            //Only needs set if it's defined, otherwise default behaviour is that there is no tooltip if the tab is long enough, or already uses the TabText value if longer than the tab can display
-            if (!string.IsNullOrEmpty(tabToolTipText))
-            {
-                floatable.ToolTipText = tabToolTipText;
-            }
+            // set tool tip to the full tab name or custom representation
+            floatable.ToolTipText = string.IsNullOrEmpty(tabToolTipText) ? tabText : tabToolTipText;
 
             if (floatable != null && floatable.ParentForm != null)
                 floatable.ParentForm.Text = tabText + " - RDMP";
