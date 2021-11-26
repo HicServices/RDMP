@@ -134,6 +134,7 @@ namespace Rdmp.Core.Tests.Providers
             Assert.AreEqual("EXCEPT and INTERSECT container operations must have at least two elements within", problem);
         }
 
+        [Test]
         public void Test2ChildRootEXCEPTCohortContainer_IsOk()
         {
             var container = WhenIHaveA<CohortAggregateContainer>();
@@ -168,6 +169,7 @@ namespace Rdmp.Core.Tests.Providers
             Assert.AreEqual("EXCEPT and INTERSECT container operations must have at least two elements within", problem);
         }
 
+        [Test]
         public void Test2ChildRootINTERSECTCohortContainer_IsOk()
         {
             var container = WhenIHaveA<CohortAggregateContainer>();
