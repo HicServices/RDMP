@@ -14,7 +14,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         string GetTabName();
 
         /// <summary>
-        /// Provide an optional format for the tab tool tip on a tab control. Return NULL to use default tab tooltip behaviour and display the TabName if too long for the tab box.
+        /// Provide an optional format for the tab tool tip on a tab control. Return NULL to use default tab tooltip behaviour and display the ToolTipText if too long for the tab box.
         /// </summary>
         string GetTabToolTip();
     }
