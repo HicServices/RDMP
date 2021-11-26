@@ -186,7 +186,7 @@ namespace Rdmp.Core.DataExport.Data
         }
 
         /// <inheritdoc/>
-        public IExternalCohortDefinitionData GetExternalData(int timeout = -1)
+        public IExternalCohortDefinitionData GetExternalData(int timeoutInSeconds = -1)
         {
             var db = ExternalCohortTable.Discover();
 
@@ -202,14 +202,18 @@ from {ExternalCohortTable.DefinitionTableName}
 where 
     {syntax.EnsureWrapped("id")} = {OriginID}";
 
-            
+            if(timeoutInSeconds > -1)
+            {
+                db.Server.TestConnection(timeoutInSeconds * 1000);
+            }
+
             using (var con = db.Server.GetConnection())
             {
                 con.Open();
                 using (var getDescription = db.Server.GetCommand(sql, con))
                 {
-                    if(timeout != -1)
-                        getDescription.CommandTimeout = timeout;
+                    if(timeoutInSeconds != -1)
+                        getDescription.CommandTimeout = timeoutInSeconds;
 
                     using (var r = getDescription.ExecuteReader())
                     {

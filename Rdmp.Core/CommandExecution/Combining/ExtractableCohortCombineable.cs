@@ -29,7 +29,7 @@ namespace Rdmp.Core.CommandExecution.Combining
 
             try
             {
-                ExternalProjectNumber = Cohort.GetExternalData().ExternalProjectNumber;
+                ExternalProjectNumber = Cohort.GetExternalData(2).ExternalProjectNumber;
             }
             catch (Exception e)
             {

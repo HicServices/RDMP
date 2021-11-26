@@ -37,9 +37,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 try
                 {
-                    // try to fetch the cohort (give it 3 seconds maximum). 
+                    // try to fetch the cohort (give it 2 seconds maximum). 
                     // we don't want to freeze waiting for context menu to pop up on this
-                    var eds = _extractionConfiguration.Cohort.GetExternalData(3);
+                    var eds = _extractionConfiguration.Cohort.GetExternalData(2);
 
                     if (eds == ExternalCohortDefinitionData.Orphan)
                     {
