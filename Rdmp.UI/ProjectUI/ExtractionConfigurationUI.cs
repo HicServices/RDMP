@@ -209,6 +209,15 @@ namespace Rdmp.UI.ProjectUI
         {
             cbxCohortIdentificationConfiguration.SelectedItem = null;
         }
+
+        public override string GetTabName()
+        {
+            return $"{base.GetTabName()} {_extractionConfiguration.GetProjectHint(true)}";
+        }
+        public override string GetTabToolTip()
+        {
+            return $"'{base.GetTabName()}' - {_extractionConfiguration.GetProjectHint(false)}";
+        }
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExtractionConfigurationUI_Design, UserControl>))]

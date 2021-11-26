@@ -319,6 +319,18 @@ namespace Rdmp.Core.DataExport.Data
                 {"Name","New ExtractionConfiguration" + Guid.NewGuid() }
             });
         }
+        /// <summary>
+        /// Provides a short human readable representation of the <see cref="Project"/> to which this 
+        /// <see cref="ExtractionConfiguration"/> is associated with
+        /// </summary>
+        /// <param name="shortString">True for a short representation.  False for a longer representation.</param>
+        /// <returns></returns>
+        public string GetProjectHint(bool shortString)
+        {
+            return 
+                shortString ? $"(P { Project.ProjectNumber})" :
+                $"'{Project.Name}'(P { Project.ProjectNumber})";
+        }
 
         /// <summary>
         /// Reads an existing <see cref="IExtractionConfiguration"/> out of the  <paramref name="repository"/> database.

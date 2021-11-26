@@ -205,6 +205,10 @@ namespace Rdmp.UI.PieCharts
             return Text;
         }
 
+        public string GetTabToolTip()
+        {
+            return null;
+        }
 
         public IPersistableObjectCollection ConstructEmptyCollection(DashboardControl databaseRecord)
         {

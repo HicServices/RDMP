@@ -444,8 +444,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
         private void SetTabText(DockContent floatable, INamedTab tab)
         {
             string tabText = tab.GetTabName();
+            string tabToolTipText = tab.GetTabToolTip();
 
             floatable.TabText = tabText;
+
+            // set tool tip to the full tab name or custom representation
+            floatable.ToolTipText = string.IsNullOrEmpty(tabToolTipText) ? tabText : tabToolTipText;
 
             if (floatable != null && floatable.ParentForm != null)
                 floatable.ParentForm.Text = tabText + " - RDMP";
