@@ -54,8 +54,8 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
             this.Controls.Add(pipelineSmiley);
             pipelineSmiley.Anchor = AnchorStyles.Top|AnchorStyles.Right;
-            pipelineSmiley.Left = this.Width - pipelineSmiley.Width;
-            pipelineSmiley.Top = 0;
+            pipelineSmiley.Left = this.Width - pipelineSmiley.Width - 1;
+            pipelineSmiley.Top = 1;
             pipelineSmiley.BringToFront();
 
             _deleteSelectedMenuItem = new ToolStripMenuItem("Delete selected component",null, DeleteSelectedComponent)
