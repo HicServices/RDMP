@@ -70,23 +70,24 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
         protected ICohortCreationRequest GetCohortCreationRequest(string auditLogDescription)
         {
             //user wants to create a new cohort
+            var ect = ExternalCohortTable;
 
             //do we know where it's going to end up?
-            if (ExternalCohortTable == null)
-                if (!SelectOne(BasicActivator.RepositoryLocator.DataExportRepository, out ExternalCohortTable, null, true)) //not yet, get user to pick one
+            if (ect == null)
+                if (!SelectOne(BasicActivator.RepositoryLocator.DataExportRepository, out ect, null, true)) //not yet, get user to pick one
                     return null;//user didn't select one and cancelled dialog
 
             //and document the request
 
             // if we have everything we need to create the cohort right here
             if (!string.IsNullOrWhiteSpace(_explicitCohortName) && Project?.ProjectNumber != null)
-                return GenerateCohortCreationRequestFromNameAndProject(_explicitCohortName, auditLogDescription);
+                return GenerateCohortCreationRequestFromNameAndProject(_explicitCohortName, auditLogDescription,ect);
             else
             {
                 // otherwise we are going to have to ask the user for it
 
                 //Get a new request for the source they are trying to populate
-                var req = BasicActivator.GetCohortCreationRequest(ExternalCohortTable, Project, auditLogDescription);
+                var req = BasicActivator.GetCohortCreationRequest(ect, Project, auditLogDescription);
 
                 if (Project == null)
                     Project = req?.Project;
@@ -95,9 +96,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
             }
         }
 
-        private ICohortCreationRequest GenerateCohortCreationRequestFromNameAndProject(string name, string auditLogDescription)
+        private ICohortCreationRequest GenerateCohortCreationRequestFromNameAndProject(string name, string auditLogDescription,ExternalCohortTable ect)
         {
-            var existing = ExtractableCohort.GetImportableCohortDefinitions(ExternalCohortTable).Where(d => d.Description.Equals(_explicitCohortName)).ToArray();
+            var existing = ExtractableCohort.GetImportableCohortDefinitions(ect).Where(d => d.Description.Equals(_explicitCohortName)).ToArray();
             var version = 1;
 
             // If the user has used this description before then we can just bump the version by 1
@@ -106,7 +107,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
                 version = existing.Max(v => v.Version) + 1;
             }
 
-            return new CohortCreationRequest(Project, new CohortDefinition(null, name, version, Project.ProjectNumber.Value, ExternalCohortTable), BasicActivator.RepositoryLocator.DataExportRepository, auditLogDescription);
+            return new CohortCreationRequest(Project, new CohortDefinition(null, name, version, Project.ProjectNumber.Value, ect), BasicActivator.RepositoryLocator.DataExportRepository, auditLogDescription);
         }
 
         public virtual IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
