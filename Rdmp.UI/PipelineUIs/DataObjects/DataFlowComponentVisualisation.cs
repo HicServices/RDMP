@@ -121,6 +121,7 @@ namespace Rdmp.UI.PipelineUIs.DataObjects
 
             if(!string.IsNullOrWhiteSpace(result))
                 _toolTip.SetToolTip(lblText,
+                    lblText.Text + Environment.NewLine +
                     "Arguments:" + Environment.NewLine + 
                     result);
         }
