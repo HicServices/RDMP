@@ -142,7 +142,11 @@ namespace Rdmp.Core.Curation.Data
                     else
                         AddBadAssembly(f,ex,listener); //the assembly could not be loaded properly
                 }
-                catch(Exception ex)
+                catch (BadImageFormatException)
+                {
+                    listener?.OnCheckPerformed(new CheckEventArgs($"Did not load '{f}' because it is not a dotnet assembly", CheckResult.Success));
+                }
+                catch (Exception ex)
                 { 
                     AddBadAssembly(f,ex,listener);
                 }
