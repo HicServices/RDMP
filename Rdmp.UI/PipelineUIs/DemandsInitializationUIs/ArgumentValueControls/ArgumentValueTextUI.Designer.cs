@@ -35,19 +35,21 @@
             // 
             this.tbText.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbText.Location = new System.Drawing.Point(3, 5);
+            this.tbText.Location = new System.Drawing.Point(4, 4);
+            this.tbText.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbText.Name = "tbText";
-            this.tbText.Size = new System.Drawing.Size(541, 20);
+            this.tbText.Size = new System.Drawing.Size(630, 23);
             this.tbText.TabIndex = 0;
             this.tbText.TextChanged += new System.EventHandler(this.tbText_TextChanged);
             // 
             // ArgumentValueTextUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tbText);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "ArgumentValueTextUI";
-            this.Size = new System.Drawing.Size(547, 28);
+            this.Size = new System.Drawing.Size(638, 32);
             this.ResumeLayout(false);
             this.PerformLayout();
 
