@@ -205,7 +205,6 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
             Panel p = new Panel();
             p.Height = Math.Max(Math.Max(lblClassName.Height,helpIcon.Height),valueui.Height);
             p.Dock = DockStyle.Top;
-            p.BorderStyle = BorderStyle.FixedSingle;
 
             name.Location = new Point(0,0);
             p.Controls.Add(name);
@@ -218,6 +217,13 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
             p.Controls.Add(valueui);
 
             name.Height = p.Height;
+
+            Label hr = new Label();
+            hr.AutoSize = false;
+            hr.BorderStyle = BorderStyle.FixedSingle;
+            hr.Height = 1;
+            hr.Dock = DockStyle.Bottom;
+            p.Controls.Add(hr);
 
             valueui.BringToFront();
             pArguments.Controls.Add(p);
