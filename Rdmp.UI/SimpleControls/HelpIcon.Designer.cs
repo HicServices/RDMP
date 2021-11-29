@@ -28,21 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Rdmp.UI.SimpleControls.HelpIcon));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HelpIcon));
             this.SuspendLayout();
             // 
             // HelpIcon
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Transparent;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.DoubleBuffered = true;
-            this.MaximumSize = new System.Drawing.Size(19, 19);
-            this.MinimumSize = new System.Drawing.Size(19, 19);
+            this.Margin = new System.Windows.Forms.Padding(0);
+            this.MinimumSize = new System.Drawing.Size(22, 22);
             this.Name = "HelpIcon";
-            this.Size = new System.Drawing.Size(19, 19);
+            this.Size = new System.Drawing.Size(22, 22);
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.HelpIcon_MouseClick);
             this.ResumeLayout(false);
 
