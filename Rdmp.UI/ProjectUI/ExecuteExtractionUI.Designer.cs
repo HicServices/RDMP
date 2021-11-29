@@ -36,13 +36,13 @@ namespace Rdmp.UI.ProjectUI
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ExecuteExtractionUI));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.tbFilter = new System.Windows.Forms.TextBox();
             this.tlvDatasets = new BrightIdeasSoftware.TreeListView();
             this.olvName = new BrightIdeasSoftware.OLVColumn();
             this.olvState = new BrightIdeasSoftware.OLVColumn();
+            this.gbFilter = new System.Windows.Forms.GroupBox();
+            this.tbFilter = new System.Windows.Forms.TextBox();
             this.helpIcon1 = new Rdmp.UI.SimpleControls.HelpIcon();
             this.checkAndExecuteUI1 = new Rdmp.UI.SimpleControls.CheckAndExecuteUI();
-            this.gbFilter = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -72,16 +72,6 @@ namespace Rdmp.UI.ProjectUI
             this.splitContainer1.SplitterDistance = 373;
             this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 29;
-            // 
-            // tbFilter
-            // 
-            this.tbFilter.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbFilter.Location = new System.Drawing.Point(3, 19);
-            this.tbFilter.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tbFilter.Name = "tbFilter";
-            this.tbFilter.Size = new System.Drawing.Size(363, 23);
-            this.tbFilter.TabIndex = 29;
-            this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
             // 
             // tlvDatasets
             // 
@@ -123,13 +113,34 @@ namespace Rdmp.UI.ProjectUI
             this.olvState.Text = "Extraction State";
             this.olvState.Width = 160;
             // 
+            // gbFilter
+            // 
+            this.gbFilter.Controls.Add(this.tbFilter);
+            this.gbFilter.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.gbFilter.Location = new System.Drawing.Point(0, 698);
+            this.gbFilter.Name = "gbFilter";
+            this.gbFilter.Size = new System.Drawing.Size(369, 48);
+            this.gbFilter.TabIndex = 31;
+            this.gbFilter.TabStop = false;
+            this.gbFilter.Text = "Filter";
+            // 
+            // tbFilter
+            // 
+            this.tbFilter.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tbFilter.Location = new System.Drawing.Point(3, 19);
+            this.tbFilter.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tbFilter.Name = "tbFilter";
+            this.tbFilter.Size = new System.Drawing.Size(363, 23);
+            this.tbFilter.TabIndex = 29;
+            this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
+            // 
             // helpIcon1
             // 
             this.helpIcon1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.helpIcon1.BackColor = System.Drawing.Color.Transparent;
             this.helpIcon1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIcon1.BackgroundImage")));
             this.helpIcon1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.helpIcon1.Location = new System.Drawing.Point(787, 3);
+            this.helpIcon1.Location = new System.Drawing.Point(788, 9);
             this.helpIcon1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.helpIcon1.MaximumSize = new System.Drawing.Size(26, 25);
             this.helpIcon1.MinimumSize = new System.Drawing.Size(26, 25);
@@ -147,19 +158,8 @@ namespace Rdmp.UI.ProjectUI
             this.checkAndExecuteUI1.Location = new System.Drawing.Point(0, 0);
             this.checkAndExecuteUI1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.checkAndExecuteUI1.Name = "checkAndExecuteUI1";
-            this.checkAndExecuteUI1.Size = new System.Drawing.Size(817, 745);
+            this.checkAndExecuteUI1.Size = new System.Drawing.Size(815, 745);
             this.checkAndExecuteUI1.TabIndex = 28;
-            // 
-            // gbFilter
-            // 
-            this.gbFilter.Controls.Add(this.tbFilter);
-            this.gbFilter.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.gbFilter.Location = new System.Drawing.Point(0, 698);
-            this.gbFilter.Name = "gbFilter";
-            this.gbFilter.Size = new System.Drawing.Size(369, 48);
-            this.gbFilter.TabIndex = 31;
-            this.gbFilter.TabStop = false;
-            this.gbFilter.Text = "Filter";
             // 
             // ExecuteExtractionUI
             // 
