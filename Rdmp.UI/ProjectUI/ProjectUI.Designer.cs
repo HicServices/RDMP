@@ -209,6 +209,7 @@ namespace Rdmp.UI.ProjectUI
             // 
             // tcMasterTicket
             // 
+            this.tcMasterTicket.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.tcMasterTicket.AutoSize = true;
             this.tcMasterTicket.Location = new System.Drawing.Point(735, 92);
             this.tcMasterTicket.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
