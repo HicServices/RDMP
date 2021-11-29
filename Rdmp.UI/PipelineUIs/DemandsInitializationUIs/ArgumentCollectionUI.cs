@@ -59,7 +59,15 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
             _parent = parent;
             _argumentsAreFor = argumentsAreForUnderlyingType;
             _activator = activator;
-            lblTypeUnloadable.Visible = _argumentsAreFor == null;
+            
+            bool typeLoadable = !(_argumentsAreFor == null);
+
+            lblTypeUnloadable.Visible = !typeLoadable;
+
+            pbCs.Visible = typeLoadable;
+            lblClassName.Visible = typeLoadable;
+            helpIcon1.Visible = typeLoadable;
+            lblArgumentsTitle.Visible = typeLoadable;
 
             _valueUisFactory = new ArgumentValueUIFactory();
 
@@ -89,7 +97,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
         {
             var argumentFactory = new ArgumentFactory();
             DemandDictionary = argumentFactory.GetDemandDictionary(_parent, _argumentsAreFor);
-            
+
             lblNoArguments.Visible = !DemandDictionary.Any();
             pArguments.Visible = DemandDictionary.Any();
 
@@ -98,9 +106,6 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
 
             pArguments.Controls.Clear();
             pArguments.SuspendLayout();
-
-            var headerLabel = GetLabelHeader("Arguments");
-            pArguments.Controls.Add(headerLabel);
 
             float maxArgNameWidth = 0;
             
@@ -116,7 +121,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
             foreach (var kvp in DemandDictionary)
                 CreateLine(_parent, kvp.Key, kvp.Value, maxArgNameWidth);
 
-            headerLabel.SendToBack();
+            //headerLabel.SendToBack();
             pArguments.ResumeLayout(true);
         }
 
@@ -205,7 +210,6 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
             Panel p = new Panel();
             p.Height = Math.Max(Math.Max(lblClassName.Height,helpIcon.Height),valueui.Height);
             p.Dock = DockStyle.Top;
-            p.BorderStyle = BorderStyle.FixedSingle;
 
             name.Location = new Point(0,0);
             p.Controls.Add(name);
@@ -218,6 +222,13 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
             p.Controls.Add(valueui);
 
             name.Height = p.Height;
+
+            Label hr = new Label();
+            hr.AutoSize = false;
+            hr.BorderStyle = BorderStyle.FixedSingle;
+            hr.Height = 1;
+            hr.Dock = DockStyle.Bottom;
+            p.Controls.Add(hr);
 
             valueui.BringToFront();
             pArguments.Controls.Add(p);

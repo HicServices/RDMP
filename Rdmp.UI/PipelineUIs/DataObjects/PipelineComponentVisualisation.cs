@@ -41,7 +41,7 @@ namespace Rdmp.UI.PipelineUIs.DataObjects
             set
             {
                 _isSelected = value;
-                _fullPen = value ? new Pen(new SolidBrush(Color.Blue), 3.0f) : _origFullPen;
+                _fullPen = value ? new Pen(new SolidBrush(Color.FromArgb(0,99,177)), 7.0f) : _origFullPen;
                 Invalidate(true);
             }
         }
