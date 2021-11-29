@@ -20,6 +20,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.FileOutputFormats
         public int? RoundFloatsTo { get; internal set; }
 
         public abstract void Open();
+        public abstract void Open(bool append);
         public abstract void WriteHeaders(DataTable t);
         public abstract void Append(DataRow r);
         public abstract void Flush();

@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -150,6 +151,32 @@ namespace Rdmp.Core.Curation.Data
         public void ClearAllInjections()
         {
             _knownReferenceTo = null;
+        }
+
+        /// <summary>
+        /// Returns all <see cref="ExtendedProperty"/> defined <paramref name="forObject"/> in the <paramref name="repository"/>
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="forObject"></param>
+        /// <returns></returns>
+        internal static IEnumerable<ExtendedProperty> GetProperties(ICatalogueRepository repository, IMapsDirectlyToDatabaseTable forObject)
+        {
+            return repository.GetAllObjectsWhere<ExtendedProperty>(
+                    "ReferencedObjectID", forObject.ID ,
+                    System.Linq.Expressions.ExpressionType.And,
+                    "ReferencedObjectType", forObject.GetType().Name)
+                .Where(p=>p.IsReferenceTo(forObject));
+        }
+
+        /// <summary>
+        /// Returns the <see cref="ExtendedProperty"/> <paramref name="named"/> or null if not defined <paramref name="forObject"/>
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="named"></param>
+        /// <param name="forObject"></param>
+        internal static ExtendedProperty GetProperty(ICatalogueRepository repository, string named, IMapsDirectlyToDatabaseTable forObject)
+        {
+            return GetProperties(repository, forObject).Where(e => e.Name.Equals(named)).SingleOrDefault();
         }
     }
 }

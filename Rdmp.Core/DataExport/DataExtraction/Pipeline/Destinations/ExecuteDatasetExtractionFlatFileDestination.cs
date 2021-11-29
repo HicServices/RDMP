@@ -77,8 +77,13 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
     
         protected override void Open(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
         {
-            _output.Open();
-            _output.WriteHeaders(toProcess);
+            _output.Open(_request.IsBatchResume);
+
+            // write the headers for the file unless we are resuming
+            if(!_request.IsBatchResume)
+            {
+                _output.WriteHeaders(toProcess);
+            }
         }
 
         protected override void WriteRows(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
