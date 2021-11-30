@@ -124,105 +124,113 @@ namespace ReusableLibraryCode.Settings
             object value = null;
             lock (locker)
             {
-                string str = null;
-
-                // If the key exists, retrieve the value.
-                if (store.FileExists(key))
+                try
                 {
-                    using (var stream = store.OpenFile(key, FileMode.Open))
+                    string str = null;
+
+                    // If the key exists, retrieve the value.
+                    if (store.FileExists(key))
                     {
-                        using (var sr = new StreamReader(stream))
+                        using (var stream = store.OpenFile(key, FileMode.Open))
                         {
-                            str = sr.ReadToEnd();
+                            using (var sr = new StreamReader(stream))
+                            {
+                                str = sr.ReadToEnd();
+                            }
                         }
                     }
-                }
 
-                if (str == null)
-                    return defaultValue;
+                    if (str == null)
+                        return defaultValue;
 
-                var type = typeof (T);
+                    var type = typeof(T);
 
-                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof (Nullable<>))
-                {
-                    type = type.GenericTypeArguments.FirstOrDefault();
-                }
-
-                if (type == typeof (string))
-                    value = str;
-
-                else if (type == typeof (decimal))
-                {
-
-                    string savedDecimal = Convert.ToString(str);
-
-
-                    value = Convert.ToDecimal(savedDecimal, System.Globalization.CultureInfo.InvariantCulture);
-
-                    return null != value ? (T) value : defaultValue;
-
-                }
-
-                else if (type == typeof (double))
-                {
-                    value = Convert.ToDouble(str, System.Globalization.CultureInfo.InvariantCulture);
-                }
-
-                else if (type == typeof (Single))
-                {
-                    value = Convert.ToSingle(str, System.Globalization.CultureInfo.InvariantCulture);
-                }
-
-                else if (type == typeof (DateTime))
-                {
-
-                    var ticks = Convert.ToInt64(str, System.Globalization.CultureInfo.InvariantCulture);
-                    if (ticks >= 0)
+                    if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
                     {
-                        //Old value, stored before update to UTC values
-                        value = new DateTime(ticks);
+                        type = type.GenericTypeArguments.FirstOrDefault();
                     }
+
+                    if (type == typeof(string))
+                        value = str;
+
+                    else if (type == typeof(decimal))
+                    {
+
+                        string savedDecimal = Convert.ToString(str);
+
+
+                        value = Convert.ToDecimal(savedDecimal, System.Globalization.CultureInfo.InvariantCulture);
+
+                        return null != value ? (T)value : defaultValue;
+
+                    }
+
+                    else if (type == typeof(double))
+                    {
+                        value = Convert.ToDouble(str, System.Globalization.CultureInfo.InvariantCulture);
+                    }
+
+                    else if (type == typeof(Single))
+                    {
+                        value = Convert.ToSingle(str, System.Globalization.CultureInfo.InvariantCulture);
+                    }
+
+                    else if (type == typeof(DateTime))
+                    {
+
+                        var ticks = Convert.ToInt64(str, System.Globalization.CultureInfo.InvariantCulture);
+                        if (ticks >= 0)
+                        {
+                            //Old value, stored before update to UTC values
+                            value = new DateTime(ticks);
+                        }
+                        else
+                        {
+                            //New value, UTC
+                            value = new DateTime(-ticks, DateTimeKind.Utc);
+                        }
+
+
+                        return (T)value;
+                    }
+
+                    else if (type == typeof(Guid))
+                    {
+                        Guid guid;
+                        if (Guid.TryParse(str, out guid))
+                            value = guid;
+                    }
+
+                    else if (type == typeof(bool))
+                    {
+                        value = Convert.ToBoolean(str, System.Globalization.CultureInfo.InvariantCulture);
+                    }
+
+                    else if (type == typeof(Int32))
+                    {
+                        value = Convert.ToInt32(str, System.Globalization.CultureInfo.InvariantCulture);
+                    }
+
+                    else if (type == typeof(Int64))
+                    {
+                        value = Convert.ToInt64(str, System.Globalization.CultureInfo.InvariantCulture);
+                    }
+
+                    else if (type == typeof(byte))
+                    {
+                        value = Convert.ToByte(str, System.Globalization.CultureInfo.InvariantCulture);
+                    }
+
                     else
                     {
-                        //New value, UTC
-                        value = new DateTime(-ticks, DateTimeKind.Utc);
+                        throw new ArgumentException("Value of type " + type + " is not supported.");
                     }
-
-
-                    return (T) value;
                 }
-
-                else if (type == typeof (Guid))
+                catch (FormatException)
                 {
-                    Guid guid;
-                    if (Guid.TryParse(str, out guid))
-                        value = guid;
+                    return defaultValue;
                 }
-
-                else if (type == typeof (bool))
-                {
-                    value = Convert.ToBoolean(str, System.Globalization.CultureInfo.InvariantCulture);
-                }
-
-                else if (type == typeof (Int32))
-                {
-                    value = Convert.ToInt32(str, System.Globalization.CultureInfo.InvariantCulture);
-                }
-
-                else if (type == typeof (Int64))
-                {
-                    value = Convert.ToInt64(str, System.Globalization.CultureInfo.InvariantCulture);
-                }
-
-                else if (type == typeof (byte))
-                {
-                    value = Convert.ToByte(str, System.Globalization.CultureInfo.InvariantCulture);
-                }
-
-                else
-                {
-                    throw new ArgumentException("Value of type " + type + " is not supported.");
-                }
+                
             }
 
             return null != value ? (T) value : defaultValue;
