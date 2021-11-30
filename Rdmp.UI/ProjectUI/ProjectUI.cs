@@ -358,7 +358,7 @@ namespace Rdmp.UI.ProjectUI
         {
             dataGridView1.Visible = false;
             lblExtractions.Visible = false;
-            this.Height = 160;
+            this.Height = 190;
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)
