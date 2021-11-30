@@ -64,7 +64,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             // 
             // btnExecute
             // 
-            this.btnExecute.Location = new System.Drawing.Point(103, 199);
+            this.btnExecute.Location = new System.Drawing.Point(102, 199);
             this.btnExecute.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnExecute.Name = "btnExecute";
             this.btnExecute.Size = new System.Drawing.Size(88, 27);
@@ -75,7 +75,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             // 
             // btnPreviewSource
             // 
-            this.btnPreviewSource.Location = new System.Drawing.Point(7, 199);
+            this.btnPreviewSource.Location = new System.Drawing.Point(6, 199);
             this.btnPreviewSource.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnPreviewSource.Name = "btnPreviewSource";
             this.btnPreviewSource.Size = new System.Drawing.Size(88, 27);

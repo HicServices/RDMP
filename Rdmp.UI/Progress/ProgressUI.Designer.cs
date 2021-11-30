@@ -65,8 +65,9 @@ namespace Rdmp.UI.Progress
             // 
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Location = new System.Drawing.Point(0, 18);
@@ -166,14 +167,14 @@ namespace Rdmp.UI.Progress
             // 
             this.olvSender.AspectName = "Sender";
             this.olvSender.Text = "Sender";
-            this.olvSender.Width = 177;
+            this.olvSender.Width = 170;
             // 
             // olvEventDate
             // 
             this.olvEventDate.AspectName = "EventDate";
             this.olvEventDate.Groupable = false;
             this.olvEventDate.Text = "Event Date";
-            this.olvEventDate.Width = 138;
+            this.olvEventDate.Width = 140;
             // 
             // olvMessage
             // 
@@ -181,7 +182,7 @@ namespace Rdmp.UI.Progress
             this.olvMessage.Groupable = false;
             this.olvMessage.MinimumWidth = 100;
             this.olvMessage.Text = "Message";
-            this.olvMessage.Width = 100;
+            this.olvMessage.Width = 300;
             // 
             // toolStrip1
             // 
