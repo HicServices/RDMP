@@ -186,7 +186,7 @@ namespace Rdmp.Core
             ImplementationManager.Load<OracleImplementation>();
             ImplementationManager.Load<PostgreSqlImplementation>();
 
-            PopulateConnectionStringsFromYamlIfMissing(opts);
+            opts.PopulateConnectionStringsFromYamlIfMissing();
 
             // where RDMP objects are stored
             var repositoryLocator = opts.GetRepositoryLocator();
@@ -242,7 +242,7 @@ namespace Rdmp.Core
             ImplementationManager.Load<OracleImplementation>();
             ImplementationManager.Load<PostgreSqlImplementation>();
 
-            PopulateConnectionStringsFromYamlIfMissing(opts);
+            opts.PopulateConnectionStringsFromYamlIfMissing();
 
             var repo = opts.GetRepositoryLocator();
 
@@ -303,62 +303,6 @@ namespace Rdmp.Core
             }
 
             return true;
-        }
-
-        private static void PopulateConnectionStringsFromYamlIfMissing(RDMPCommandLineOptions opts)
-        {
-            var logger = LogManager.GetCurrentClassLogger();
-
-                        
-            if(!opts.NoConnectionStringsSpecified())
-            {
-                logger.Info("Connection string options have been specified on command line, yaml config values will be ignored");
-                return;
-            }
-
-            string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var yaml = Path.Combine(assemblyFolder,"Databases.yaml");
-
-            if(File.Exists(yaml))
-            {
-                try
-                {
-                    // Setup the input
-                    using(var input = new StreamReader(yaml))
-                    {
-                        // Load the stream
-                        var yamlStream = new YamlStream();
-                        yamlStream.Load(input);
-                    
-                        // Examine the stream
-                        var mapping = (YamlMappingNode)yamlStream.Documents[0].RootNode;
-
-                    
-                        foreach (var entry in mapping.Children)
-                        {
-                            string key = ((YamlScalarNode)entry.Key).Value;
-                            string value = ((YamlScalarNode)entry.Value).Value;
-
-
-                            try
-                            {
-                                var prop = typeof(RDMPCommandLineOptions).GetProperty(key);
-                                prop.SetValue(opts,value);
-                                logger.Info("Setting yaml config value for " + key);
-                            }
-                            catch (Exception)
-                            {
-                                logger.Error("Could not set property called " + key);
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex, "Failed to read yaml file '" + yaml +"'");
-                }
-                
-            }
         }
     }
 }
