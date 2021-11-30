@@ -158,6 +158,19 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             if (!_pipelineOptionsSet)
                 return;
 
+            if(_pipelineSelectionUI.Pipeline != null)
+            {
+                btnPreviewSource.Enabled = true;
+                btnExecute.Enabled = true;
+                progressUI1.Enabled = true;
+            }
+            else
+            {
+                btnPreviewSource.Enabled = false;
+                btnExecute.Enabled = false;
+                progressUI1.Enabled = false;
+            }
+
             pipelineDiagram1.SetTo(_pipelineSelectionUI.Pipeline, _useCase);
         }
 
