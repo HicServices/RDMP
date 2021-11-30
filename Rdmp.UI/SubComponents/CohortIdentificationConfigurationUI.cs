@@ -32,6 +32,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
 using Timer = System.Windows.Forms.Timer;
 
@@ -583,8 +584,8 @@ namespace Rdmp.UI.SubComponents
                 Invoke(new MethodInvoker(() => RunnerOnPhaseChanged(sender, eventArgs)));
                 return;
             }
-            
-            lblExecuteAllPhase.Text = _runner.ExecutionPhase.ToString();
+
+            lblExecuteAllPhase.Text = UsefulStuff.PascalCaseStringToHumanReadable(_runner.ExecutionPhase.ToString());
             RecreateAllTasks(false);
         }
 
