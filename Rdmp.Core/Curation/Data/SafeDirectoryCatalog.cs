@@ -253,7 +253,7 @@ namespace Rdmp.Core.Curation.Data
 
 
             using Stream fs = new FileStream(peFile, FileMode.Open, FileAccess.Read);
-            BinaryReader reader = new BinaryReader(fs);
+            using BinaryReader reader = new BinaryReader(fs);
 
             //PE Header starts @ 0x3C (60). It's a 4 byte header.
             fs.Position = 0x3C;

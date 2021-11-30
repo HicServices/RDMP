@@ -438,6 +438,11 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
             return "Logs:" + Collection?.RootObject?.ToString();
         }
 
+        public string GetTabToolTip()
+        {
+            return null;
+        }
+
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
         }

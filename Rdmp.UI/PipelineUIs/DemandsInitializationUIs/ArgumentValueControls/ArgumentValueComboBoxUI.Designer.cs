@@ -37,31 +37,34 @@
             this.cbxValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbxValue.FormattingEnabled = true;
-            this.cbxValue.Location = new System.Drawing.Point(3, 3);
+            this.cbxValue.Location = new System.Drawing.Point(4, 3);
+            this.cbxValue.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbxValue.Name = "cbxValue";
-            this.cbxValue.Size = new System.Drawing.Size(490, 21);
+            this.cbxValue.Size = new System.Drawing.Size(571, 23);
             this.cbxValue.TabIndex = 18;
             this.cbxValue.TextChanged += new System.EventHandler(this.cbxValue_TextChanged);
             // 
             // btnPick
             // 
             this.btnPick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPick.Location = new System.Drawing.Point(499, 4);
+            this.btnPick.Location = new System.Drawing.Point(582, 2);
+            this.btnPick.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnPick.Name = "btnPick";
-            this.btnPick.Size = new System.Drawing.Size(45, 21);
+            this.btnPick.Size = new System.Drawing.Size(52, 25);
             this.btnPick.TabIndex = 20;
-            this.btnPick.Text = "Pick";
+            this.btnPick.Text = "Pick...";
             this.btnPick.UseVisualStyleBackColor = true;
             this.btnPick.Click += new System.EventHandler(this.btnPick_Click);
             // 
             // ArgumentValueComboBoxUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.btnPick);
             this.Controls.Add(this.cbxValue);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "ArgumentValueComboBoxUI";
-            this.Size = new System.Drawing.Size(547, 28);
+            this.Size = new System.Drawing.Size(638, 32);
             this.ResumeLayout(false);
 
         }

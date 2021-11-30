@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enabled Expand/Collapse all when right clicking whitespace in a tree collection
 - Added title to graph charts
 - Added a user setting for hiding Series in which all cells are 0/null
+- Support for specifying `--ConnectionStringsFile somefile.yaml` when starting RDMP (gui client or CLI)
 
 ### Fixed
 
@@ -36,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed `View Logs` commands appearing twice in right click context menu for logging servers objects (once on root and once under 'View Logs' submenu)
 - Generate Release Document now shows as impossible when Cohort is not defined or unreachable (e.g. if user does not have access to cohort database)
 - Fixed bug where selecting a [PipelineComponent] for which help is unavailable would leave the previously selected component's help visible
+- Fixed bug with 'Commit Cohort' storing the target cohort database for future clicks
 
 ### Changed
 

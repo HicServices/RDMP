@@ -290,6 +290,11 @@ namespace Rdmp.UI.DataViewing
             return _collection.GetTabName();
         }
 
+        public string GetTabToolTip()
+        {
+            return null;
+        }
+
         private void llCancel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             if(_cmd != null)

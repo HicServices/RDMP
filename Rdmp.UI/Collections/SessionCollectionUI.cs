@@ -52,6 +52,11 @@ namespace Rdmp.UI.Collections
             return Collection?.SessionName ?? "Unamed Session";
         }
 
+        public string GetTabToolTip()
+        {
+            return null;
+        }
+
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
             

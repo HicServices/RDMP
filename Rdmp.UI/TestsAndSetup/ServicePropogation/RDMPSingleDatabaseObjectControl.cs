@@ -227,6 +227,11 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             return "Unamed Tab";
         }
 
+        public virtual string GetTabToolTip()
+        {
+            return null;
+        }
+
         /// <summary>
         /// Triggers an application refresh because a change has been made to <paramref name="e"/>
         /// </summary>

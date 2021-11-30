@@ -35,9 +35,10 @@
             // btnPickDatabaseEntities
             // 
             this.btnPickDatabaseEntities.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPickDatabaseEntities.Location = new System.Drawing.Point(479, 2);
+            this.btnPickDatabaseEntities.Location = new System.Drawing.Point(582, 2);
+            this.btnPickDatabaseEntities.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnPickDatabaseEntities.Name = "btnPickDatabaseEntities";
-            this.btnPickDatabaseEntities.Size = new System.Drawing.Size(65, 23);
+            this.btnPickDatabaseEntities.Size = new System.Drawing.Size(52, 25);
             this.btnPickDatabaseEntities.TabIndex = 0;
             this.btnPickDatabaseEntities.Text = "Pick...";
             this.btnPickDatabaseEntities.UseVisualStyleBackColor = true;
@@ -47,19 +48,21 @@
             // 
             this.tbArray.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbArray.Location = new System.Drawing.Point(3, 5);
+            this.tbArray.Location = new System.Drawing.Point(4, 3);
+            this.tbArray.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbArray.Name = "tbArray";
-            this.tbArray.Size = new System.Drawing.Size(470, 20);
+            this.tbArray.Size = new System.Drawing.Size(571, 23);
             this.tbArray.TabIndex = 2;
             // 
             // ArgumentValueArrayUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tbArray);
             this.Controls.Add(this.btnPickDatabaseEntities);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "ArgumentValueArrayUI";
-            this.Size = new System.Drawing.Size(547, 28);
+            this.Size = new System.Drawing.Size(638, 32);
             this.ResumeLayout(false);
             this.PerformLayout();
 
