@@ -99,10 +99,5 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
         {
             base.Dispose(job, pipelineFailureExceptionIfAny);
         }
-
-        public override string HackExtractionSQL(string sql, IDataLoadEventListener listener)
-        {
-            return base.HackExtractionSQL(sql, listener);
-        }
     }
 }
