@@ -227,8 +227,8 @@ namespace Rdmp.UI.SubComponents
             base.SetDatabaseObject(activator,databaseObject);
             _configuration = databaseObject;
             
-            lblName.Text = $"Name:{_configuration.Name}";
-            lblDescription.Text = $"Description:{_configuration.Description}";
+            gbCicInfo.Text = $"Name: {_configuration.Name}";
+            lblDescription.Text = $"Description: {_configuration.Description}";
             ticket.TicketText = _configuration.Ticket;
 
             if (_commonFunctionality == null)
@@ -552,6 +552,8 @@ namespace Rdmp.UI.SubComponents
 
         public void StartAll()
         {
+            lblExecuteAllPhase.Enabled = true;
+
             //only allow starting all if we are not mid execution already
             if (IsExecutingGlobalOperations())
                 return;
