@@ -34,17 +34,17 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ParameterCollectionUI));
             this.olvParameters = new BrightIdeasSoftware.ObjectListView();
-            this.olvParameterName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvParameterSQL = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvValue = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvComment = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvOwner = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvParameterName = new BrightIdeasSoftware.OLVColumn();
+            this.olvParameterSQL = new BrightIdeasSoftware.OLVColumn();
+            this.olvValue = new BrightIdeasSoftware.OLVColumn();
+            this.olvComment = new BrightIdeasSoftware.OLVColumn();
+            this.olvOwner = new BrightIdeasSoftware.OLVColumn();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpDesign = new System.Windows.Forms.TabPage();
             this.tpSql = new System.Windows.Forms.TabPage();
-            this.hiParameters = new HelpIcon();
-            this.parameterEditorScintillaControl1 = new ParameterEditorScintillaControlUI();
+            this.parameterEditorScintillaControl1 = new Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.ParameterEditorScintillaControlUI();
+            this.hiParameters = new Rdmp.UI.SimpleControls.HelpIcon();
             ((System.ComponentModel.ISupportInitialize)(this.olvParameters)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tpDesign.SuspendLayout();
@@ -72,9 +72,10 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
             this.olvParameters.FullRowSelect = true;
             this.olvParameters.GroupImageList = this.imageList1;
             this.olvParameters.HideSelection = false;
-            this.olvParameters.Location = new System.Drawing.Point(3, 3);
+            this.olvParameters.Location = new System.Drawing.Point(4, 3);
+            this.olvParameters.Margin = new System.Windows.Forms.Padding(4, 3, 0, 3);
             this.olvParameters.Name = "olvParameters";
-            this.olvParameters.Size = new System.Drawing.Size(1236, 572);
+            this.olvParameters.Size = new System.Drawing.Size(1028, 725);
             this.olvParameters.SmallImageList = this.imageList1;
             this.olvParameters.TabIndex = 11;
             this.olvParameters.UseCompatibleStateImageBehavior = false;
@@ -104,9 +105,9 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
             this.olvValue.AspectName = "Value";
             this.olvValue.CellEditUseWholeCell = true;
             this.olvValue.Groupable = false;
+            this.olvValue.MinimumWidth = 100;
             this.olvValue.Text = "Value";
             this.olvValue.Width = 238;
-            this.olvValue.MinimumWidth = 100;
             // 
             // olvComment
             // 
@@ -124,6 +125,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
             // 
             // imageList1
             // 
+            this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
             this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
             this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             this.imageList1.Images.SetKeyName(0, "Locked.png");
@@ -132,24 +134,24 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tpDesign);
             this.tabControl1.Controls.Add(this.tpSql);
-            this.tabControl1.Location = new System.Drawing.Point(1, 3);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(4, 3, 0, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1250, 604);
+            this.tabControl1.Size = new System.Drawing.Size(1044, 759);
             this.tabControl1.TabIndex = 1;
             // 
             // tpDesign
             // 
             this.tpDesign.Controls.Add(this.olvParameters);
-            this.tpDesign.Location = new System.Drawing.Point(4, 22);
+            this.tpDesign.Location = new System.Drawing.Point(4, 24);
+            this.tpDesign.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tpDesign.Name = "tpDesign";
-            this.tpDesign.Padding = new System.Windows.Forms.Padding(3);
-            this.tpDesign.Size = new System.Drawing.Size(1242, 578);
+            this.tpDesign.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tpDesign.Size = new System.Drawing.Size(1036, 731);
             this.tpDesign.TabIndex = 1;
             this.tpDesign.Text = "Designer";
             this.tpDesign.UseVisualStyleBackColor = true;
@@ -157,40 +159,48 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
             // tpSql
             // 
             this.tpSql.Controls.Add(this.parameterEditorScintillaControl1);
-            this.tpSql.Location = new System.Drawing.Point(4, 22);
+            this.tpSql.Location = new System.Drawing.Point(4, 24);
+            this.tpSql.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tpSql.Name = "tpSql";
-            this.tpSql.Padding = new System.Windows.Forms.Padding(3);
-            this.tpSql.Size = new System.Drawing.Size(1242, 578);
+            this.tpSql.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tpSql.Size = new System.Drawing.Size(1036, 731);
             this.tpSql.TabIndex = 0;
             this.tpSql.Text = "SQL";
             this.tpSql.UseVisualStyleBackColor = true;
             // 
-            // hiParameters
-            // 
-            this.hiParameters.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.hiParameters.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("hiParameters.BackgroundImage")));
-            this.hiParameters.Location = new System.Drawing.Point(1251, 23);
-            this.hiParameters.Name = "hiParameters";
-            this.hiParameters.Size = new System.Drawing.Size(19, 19);
-            this.hiParameters.TabIndex = 2;
-            // 
             // parameterEditorScintillaControl1
             // 
             this.parameterEditorScintillaControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.parameterEditorScintillaControl1.Location = new System.Drawing.Point(3, 3);
+            this.parameterEditorScintillaControl1.Location = new System.Drawing.Point(4, 3);
+            this.parameterEditorScintillaControl1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.parameterEditorScintillaControl1.Name = "parameterEditorScintillaControl1";
             this.parameterEditorScintillaControl1.Options = null;
-            this.parameterEditorScintillaControl1.Size = new System.Drawing.Size(1236, 572);
+            this.parameterEditorScintillaControl1.Size = new System.Drawing.Size(1028, 725);
             this.parameterEditorScintillaControl1.TabIndex = 0;
+            // 
+            // hiParameters
+            // 
+            this.hiParameters.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.hiParameters.BackColor = System.Drawing.Color.Transparent;
+            this.hiParameters.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("hiParameters.BackgroundImage")));
+            this.hiParameters.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.hiParameters.Location = new System.Drawing.Point(1016, -1);
+            this.hiParameters.Margin = new System.Windows.Forms.Padding(0);
+            this.hiParameters.MinimumSize = new System.Drawing.Size(26, 25);
+            this.hiParameters.Name = "hiParameters";
+            this.hiParameters.Size = new System.Drawing.Size(26, 25);
+            this.hiParameters.SuppressClick = false;
+            this.hiParameters.TabIndex = 2;
             // 
             // ParameterCollectionUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.hiParameters);
             this.Controls.Add(this.tabControl1);
+            this.Margin = new System.Windows.Forms.Padding(0);
             this.Name = "ParameterCollectionUI";
-            this.Size = new System.Drawing.Size(1271, 610);
+            this.Size = new System.Drawing.Size(1044, 759);
             ((System.ComponentModel.ISupportInitialize)(this.olvParameters)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tpDesign.ResumeLayout(false);
