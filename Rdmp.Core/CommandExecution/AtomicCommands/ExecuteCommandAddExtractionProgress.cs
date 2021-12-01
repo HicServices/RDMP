@@ -11,6 +11,9 @@ using System.Drawing;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
+    /// <summary>
+    /// Adds a new <see cref="ExtractionProgress"/> for windowed date based extractions of a dataset.
+    /// </summary>
     public class ExecuteCommandAddExtractionProgress : BasicCommandExecution
     {
         private readonly ISelectedDataSets _sds;
