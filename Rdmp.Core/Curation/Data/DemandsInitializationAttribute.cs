@@ -36,6 +36,12 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         public object DefaultValue { get; set; }
 
+
+        /// <summary>
+        /// A optional text value that some controls use to add more context to the input. I.e. DemandType.SQL uses this to display the clause text next to the input
+        /// </summary>
+        public string ContextText { get; set; }
+
         /// <summary>
         /// True if the public property must have a value supplied by the user.  This is compatible with <see cref="DefaultValue"/>.
         /// </summary>
