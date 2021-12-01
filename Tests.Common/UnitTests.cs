@@ -550,6 +550,25 @@ namespace Tests.Common
                 filter.WhereSQL = "@had = 'enough'";
                 return (T)(object)filter.GetFilterFactory().CreateNewParameter(filter, "DECLARE @had as varchar(100)");
             }
+
+            if(typeof(T)== typeof(ExtractionProgress))
+            {
+                var cata = new Catalogue(Repository, "MyCata");
+                var cataItem = new CatalogueItem(Repository, cata, "MyCol");
+                var table = new TableInfo(Repository, "MyTable");
+                var col = new ColumnInfo(Repository, "mycol", "datetime", table);
+
+                var ei = new ExtractionInformation(Repository, cataItem, col, "mycol");
+                cata.TimeCoverage_ExtractionInformation_ID = ei.ID;
+                cata.SaveToDatabase();
+
+                var eds = new ExtractableDataSet(Repository, cata);
+                var project = new Project(Repository, "My Proj");
+                var config = new ExtractionConfiguration(Repository, project);
+                var sds = new SelectedDataSets(Repository, config, eds, null);
+
+                return (T)(object)new ExtractionProgress(Repository, sds);
+            }
             
             throw new TestCaseNotWrittenYetException(typeof(T));
         }
