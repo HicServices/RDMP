@@ -28,5 +28,7 @@ CREATE TABLE ExtractionProgress(
 CREATE UNIQUE INDEX ix_OneExtractionProgressPerDataset 
 ON ExtractionProgress(SelectedDataSets_ID);
 
+IF NOT EXISTS (SELECT 1 FROM sys.change_tracking_tables WHERE object_id = OBJECT_ID('ExtractionProgress')) 
+    ALTER TABLE ExtractionProgress							ENABLE CHANGE_TRACKING 
 
 END
