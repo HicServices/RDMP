@@ -2,6 +2,8 @@
 using ReusableLibraryCode.Progress;
 using System;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
+using Rdmp.Core.DataExport.Data;
+using System.Linq;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
 {
@@ -24,23 +26,26 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
         private DateTime _start;
         private DateTime _end;
 
-        public const string BatchProgress = "BatchExtractionProgress";
 
         public override string HackExtractionSQL(string sql, IDataLoadEventListener listener)
         {
             if (Request is ExtractDatasetCommand edc)
             {
                 // have we made any progress so far?
-                var progress = ExtendedProperty.GetProperty(edc.Catalogue.CatalogueRepository, "BatchProgress", edc.Catalogue);
+                var progress = Request.DataExportRepository.GetAllObjectsWithParent<ExtractionProgress>(edc.SelectedDataSets).SingleOrDefault();
                 Request.IsBatchResume = progress == null;
+
 
                 if(progress != null)
                 {
-                    var startTime = (DateTime)progress.GetValueAsSystemType();
-                    _usedBatching = GetBatchPeriod(_start = startTime, out _end);
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Found existing ExtractionProgress with progress of:{progress.Progress ?? (object)"Null"}"));
+                //    var startTime = (DateTime)progress.GetValueAsSystemType();
+                  //  _usedBatching = GetBatchPeriod(_start = startTime, out _end);
                 }
                 else
                 {
+                    GetMinDate(listener);
+
                     _usedBatching = GetBatchPeriod(out _start, out _end);
                 }
 
@@ -54,6 +59,11 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
             }
 
             return base.HackExtractionSQL(sql, listener);
+        }
+
+        private void GetMinDate(IDataLoadEventListener listener)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
