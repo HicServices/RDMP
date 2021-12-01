@@ -22,6 +22,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using ReusableLibraryCode.Settings;
@@ -101,7 +102,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
             SetPipelineOptions( activator.RepositoryLocator.CatalogueRepository);
 
-           lblTask.Text = "Task:" + useCase.GetType().Name;
+            lblTask.Text = "Task: " + UsefulStuff.PascalCaseStringToHumanReadable(useCase.GetType().Name);
         }
 
         private bool _pipelineOptionsSet = false;
@@ -156,6 +157,19 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             //not ready to refresh diagram yet
             if (!_pipelineOptionsSet)
                 return;
+
+            if(_pipelineSelectionUI.Pipeline != null)
+            {
+                btnPreviewSource.Enabled = true;
+                btnExecute.Enabled = true;
+                progressUI1.Enabled = true;
+            }
+            else
+            {
+                btnPreviewSource.Enabled = false;
+                btnExecute.Enabled = false;
+                progressUI1.Enabled = false;
+            }
 
             pipelineDiagram1.SetTo(_pipelineSelectionUI.Pipeline, _useCase);
         }

@@ -46,5 +46,6 @@
 | System.Resources.Extensions | [GitHub](https://github.com/dotnet/corefx) | [4.6.0](https://www.nuget.org/packages/System.Resources.Extensions/4.6.0) | [MIT](https://opensource.org/licenses/MIT) | Allows [publishing with dotnet publish on machines with netcoreapp3.0 SDK installed](https://github.com/microsoft/msbuild/issues/4704#issuecomment-530034240) | |
 | ReadLine | [GitHub](https://github.com/tonerdo/readline) | [2.0.1](https://www.nuget.org/packages/ReadLine/2.0.1) | [MIT](https://opensource.org/licenses/MIT) | Allows autocomplete on command line | |
 | HIC.System.Windows.Forms.DataVisualization | [GitHub](https://github.com/HicServices/winforms-datavisualization) | [1.0.1](https://www.nuget.org/packages/HIC.System.Windows.Forms.DataVisualization/1.0.1) |[MIT](https://opensource.org/licenses/MIT) | Dotnet core support for DQE charts |  |
+| System.DirectoryServices.Protocols | [GitHub](https://github.com/dotnet/runtime) | [6.0.0](https://www.nuget.org/packages/System.DirectoryServices.Protocols/6.0.0) | MIT | Required dependency of Oracle when using LDAP auth |
 
 [DBMS]: ./Glossary.md#DBMS

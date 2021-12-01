@@ -58,7 +58,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(34, 7);
+            this.label1.Location = new System.Drawing.Point(13, 7);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(71, 15);
@@ -67,9 +67,8 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             // 
             // cbIsMandatory
             // 
-            this.cbIsMandatory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbIsMandatory.AutoSize = true;
-            this.cbIsMandatory.Location = new System.Drawing.Point(956, 6);
+            this.cbIsMandatory.Location = new System.Drawing.Point(550, 5);
             this.cbIsMandatory.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbIsMandatory.Name = "cbIsMandatory";
             this.cbIsMandatory.Size = new System.Drawing.Size(92, 19);
@@ -81,18 +80,16 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             // 
             // tbFilterName
             // 
-            this.tbFilterName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbFilterName.Location = new System.Drawing.Point(114, 3);
+            this.tbFilterName.Location = new System.Drawing.Point(92, 3);
             this.tbFilterName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbFilterName.Name = "tbFilterName";
-            this.tbFilterName.Size = new System.Drawing.Size(829, 23);
+            this.tbFilterName.Size = new System.Drawing.Size(450, 23);
             this.tbFilterName.TabIndex = 1;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(34, 32);
+            this.label2.Location = new System.Drawing.Point(14, 35);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(70, 15);
@@ -104,20 +101,19 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             this.tbFilterDescription.AcceptsReturn = true;
             this.tbFilterDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbFilterDescription.Location = new System.Drawing.Point(114, 29);
+            this.tbFilterDescription.Location = new System.Drawing.Point(92, 32);
             this.tbFilterDescription.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbFilterDescription.Multiline = true;
             this.tbFilterDescription.Name = "tbFilterDescription";
-            this.tbFilterDescription.Size = new System.Drawing.Size(1386, 102);
+            this.tbFilterDescription.Size = new System.Drawing.Size(1405, 102);
             this.tbFilterDescription.TabIndex = 3;
             // 
             // lblWhere
             // 
             this.lblWhere.AutoSize = true;
-            this.lblWhere.Dock = System.Windows.Forms.DockStyle.Left;
             this.lblWhere.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.lblWhere.ForeColor = System.Drawing.Color.Blue;
-            this.lblWhere.Location = new System.Drawing.Point(0, 0);
+            this.lblWhere.Location = new System.Drawing.Point(22, 5);
             this.lblWhere.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblWhere.Name = "lblWhere";
             this.lblWhere.Size = new System.Drawing.Size(53, 13);
@@ -126,11 +122,13 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             // 
             // pQueryEditor
             // 
-            this.pQueryEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pQueryEditor.Location = new System.Drawing.Point(53, 0);
+            this.pQueryEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pQueryEditor.Location = new System.Drawing.Point(83, 3);
             this.pQueryEditor.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pQueryEditor.Name = "pQueryEditor";
-            this.pQueryEditor.Size = new System.Drawing.Size(1439, 333);
+            this.pQueryEditor.Size = new System.Drawing.Size(1405, 330);
             this.pQueryEditor.TabIndex = 0;
             // 
             // panel1
@@ -178,28 +176,29 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pParameters.Controls.Add(this.parameterCollectionUI1);
-            this.pParameters.Location = new System.Drawing.Point(78, 3);
+            this.pParameters.Location = new System.Drawing.Point(83, 3);
             this.pParameters.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pParameters.Name = "pParameters";
-            this.pParameters.Size = new System.Drawing.Size(1410, 219);
+            this.pParameters.Size = new System.Drawing.Size(1409, 219);
             this.pParameters.TabIndex = 6;
             // 
             // parameterCollectionUI1
             // 
-            this.parameterCollectionUI1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.parameterCollectionUI1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.parameterCollectionUI1.Location = new System.Drawing.Point(0, 0);
             this.parameterCollectionUI1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.parameterCollectionUI1.Name = "parameterCollectionUI1";
-            this.parameterCollectionUI1.Size = new System.Drawing.Size(1410, 219);
+            this.parameterCollectionUI1.Size = new System.Drawing.Size(1409, 219);
             this.parameterCollectionUI1.TabIndex = 0;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Dock = System.Windows.Forms.DockStyle.Left;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.label3.ForeColor = System.Drawing.Color.Blue;
-            this.label3.Location = new System.Drawing.Point(0, 0);
+            this.label3.Location = new System.Drawing.Point(27, 8);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(48, 13);

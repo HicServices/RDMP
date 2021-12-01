@@ -58,7 +58,7 @@ namespace Rdmp.UI.SimpleControls
             // 
             this.lblTable.AutoSize = true;
             this.lblTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblTable.Location = new System.Drawing.Point(5, 122);
+            this.lblTable.Location = new System.Drawing.Point(81, 124);
             this.lblTable.Name = "lblTable";
             this.lblTable.Size = new System.Drawing.Size(37, 13);
             this.lblTable.TabIndex = 7;
@@ -72,9 +72,9 @@ namespace Rdmp.UI.SimpleControls
             this.cbxTable.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.cbxTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.cbxTable.FormattingEnabled = true;
-            this.cbxTable.Location = new System.Drawing.Point(64, 119);
+            this.cbxTable.Location = new System.Drawing.Point(125, 121);
             this.cbxTable.Name = "cbxTable";
-            this.cbxTable.Size = new System.Drawing.Size(450, 21);
+            this.cbxTable.Size = new System.Drawing.Size(667, 21);
             this.cbxTable.TabIndex = 6;
             this.cbxTable.SelectedIndexChanged += new System.EventHandler(this.cbxTable_SelectedIndexChanged);
             // 
@@ -82,7 +82,7 @@ namespace Rdmp.UI.SimpleControls
             // 
             this.label43.AutoSize = true;
             this.label43.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label43.Location = new System.Drawing.Point(5, 84);
+            this.label43.Location = new System.Drawing.Point(62, 86);
             this.label43.Name = "label43";
             this.label43.Size = new System.Drawing.Size(56, 13);
             this.label43.TabIndex = 160;
@@ -96,9 +96,9 @@ namespace Rdmp.UI.SimpleControls
             this.cbxDatabase.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.cbxDatabase.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.cbxDatabase.FormattingEnabled = true;
-            this.cbxDatabase.Location = new System.Drawing.Point(64, 81);
+            this.cbxDatabase.Location = new System.Drawing.Point(125, 83);
             this.cbxDatabase.Name = "cbxDatabase";
-            this.cbxDatabase.Size = new System.Drawing.Size(450, 21);
+            this.cbxDatabase.Size = new System.Drawing.Size(667, 21);
             this.cbxDatabase.Sorted = true;
             this.cbxDatabase.TabIndex = 4;
             this.cbxDatabase.SelectedIndexChanged += new System.EventHandler(this.cbxDatabase_SelectedIndexChanged);
@@ -108,7 +108,7 @@ namespace Rdmp.UI.SimpleControls
             // 
             this.label50.AutoSize = true;
             this.label50.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label50.Location = new System.Drawing.Point(5, 57);
+            this.label50.Location = new System.Drawing.Point(77, 59);
             this.label50.Name = "label50";
             this.label50.Size = new System.Drawing.Size(41, 13);
             this.label50.TabIndex = 159;
@@ -122,9 +122,9 @@ namespace Rdmp.UI.SimpleControls
             this.cbxServer.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.cbxServer.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.cbxServer.FormattingEnabled = true;
-            this.cbxServer.Location = new System.Drawing.Point(64, 54);
+            this.cbxServer.Location = new System.Drawing.Point(125, 56);
             this.cbxServer.Name = "cbxServer";
-            this.cbxServer.Size = new System.Drawing.Size(372, 21);
+            this.cbxServer.Size = new System.Drawing.Size(589, 21);
             this.cbxServer.TabIndex = 2;
             this.cbxServer.SelectedIndexChanged += new System.EventHandler(this.cbxServer_SelectedIndexChanged);
             this.cbxServer.Leave += new System.EventHandler(this.cbxServer_Leave);
@@ -133,7 +133,7 @@ namespace Rdmp.UI.SimpleControls
             // 
             this.lblOr.AutoSize = true;
             this.lblOr.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblOr.Location = new System.Drawing.Point(214, 142);
+            this.lblOr.Location = new System.Drawing.Point(214, 144);
             this.lblOr.Name = "lblOr";
             this.lblOr.Size = new System.Drawing.Size(23, 13);
             this.lblOr.TabIndex = 164;
@@ -142,9 +142,9 @@ namespace Rdmp.UI.SimpleControls
             // lblTableValuedFunction
             // 
             this.lblTableValuedFunction.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblTableValuedFunction.Location = new System.Drawing.Point(5, 138);
+            this.lblTableValuedFunction.Location = new System.Drawing.Point(2, 160);
             this.lblTableValuedFunction.Name = "lblTableValuedFunction";
-            this.lblTableValuedFunction.Size = new System.Drawing.Size(56, 40);
+            this.lblTableValuedFunction.Size = new System.Drawing.Size(123, 40);
             this.lblTableValuedFunction.TabIndex = 10;
             this.lblTableValuedFunction.Text = "Table Valued Function:";
             // 
@@ -156,9 +156,9 @@ namespace Rdmp.UI.SimpleControls
             this.cbxTableValueFunctions.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.cbxTableValueFunctions.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.cbxTableValueFunctions.FormattingEnabled = true;
-            this.cbxTableValueFunctions.Location = new System.Drawing.Point(64, 157);
+            this.cbxTableValueFunctions.Location = new System.Drawing.Point(125, 159);
             this.cbxTableValueFunctions.Name = "cbxTableValueFunctions";
-            this.cbxTableValueFunctions.Size = new System.Drawing.Size(450, 21);
+            this.cbxTableValueFunctions.Size = new System.Drawing.Size(667, 21);
             this.cbxTableValueFunctions.TabIndex = 8;
             this.cbxTableValueFunctions.SelectedIndexChanged += new System.EventHandler(this.cbxTableValueFunctions_SelectedIndexChanged);
             // 
@@ -166,7 +166,7 @@ namespace Rdmp.UI.SimpleControls
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(17, 6);
+            this.label1.Location = new System.Drawing.Point(29, 4);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(89, 13);
             this.label1.TabIndex = 161;
@@ -176,7 +176,7 @@ namespace Rdmp.UI.SimpleControls
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label2.Location = new System.Drawing.Point(17, 31);
+            this.label2.Location = new System.Drawing.Point(16, 31);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(102, 13);
             this.label2.TabIndex = 161;
@@ -184,7 +184,7 @@ namespace Rdmp.UI.SimpleControls
             // 
             // tbUsername
             // 
-            this.tbUsername.Location = new System.Drawing.Point(125, 3);
+            this.tbUsername.Location = new System.Drawing.Point(125, 0);
             this.tbUsername.Name = "tbUsername";
             this.tbUsername.Size = new System.Drawing.Size(329, 23);
             this.tbUsername.TabIndex = 0;
@@ -192,7 +192,7 @@ namespace Rdmp.UI.SimpleControls
             // 
             // tbPassword
             // 
-            this.tbPassword.Location = new System.Drawing.Point(125, 28);
+            this.tbPassword.Location = new System.Drawing.Point(125, 27);
             this.tbPassword.Name = "tbPassword";
             this.tbPassword.PasswordChar = '*';
             this.tbPassword.Size = new System.Drawing.Size(329, 23);
@@ -201,7 +201,7 @@ namespace Rdmp.UI.SimpleControls
             // llLoading
             // 
             this.llLoading.AutoSize = true;
-            this.llLoading.Location = new System.Drawing.Point(61, 103);
+            this.llLoading.Location = new System.Drawing.Point(125, 105);
             this.llLoading.Name = "llLoading";
             this.llLoading.Size = new System.Drawing.Size(108, 15);
             this.llLoading.TabIndex = 6;
@@ -213,7 +213,7 @@ namespace Rdmp.UI.SimpleControls
             // pbLoading
             // 
             this.pbLoading.Image = ((System.Drawing.Image)(resources.GetObject("pbLoading.Image")));
-            this.pbLoading.Location = new System.Drawing.Point(33, 100);
+            this.pbLoading.Location = new System.Drawing.Point(97, 102);
             this.pbLoading.Name = "pbLoading";
             this.pbLoading.Size = new System.Drawing.Size(22, 22);
             this.pbLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -225,7 +225,7 @@ namespace Rdmp.UI.SimpleControls
             // 
             this.btnRefreshDatabases.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefreshDatabases.Image = ((System.Drawing.Image)(resources.GetObject("btnRefreshDatabases.Image")));
-            this.btnRefreshDatabases.Location = new System.Drawing.Point(520, 81);
+            this.btnRefreshDatabases.Location = new System.Drawing.Point(798, 82);
             this.btnRefreshDatabases.Name = "btnRefreshDatabases";
             this.btnRefreshDatabases.Size = new System.Drawing.Size(22, 24);
             this.btnRefreshDatabases.TabIndex = 5;
@@ -236,7 +236,7 @@ namespace Rdmp.UI.SimpleControls
             // 
             this.btnRefreshTables.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefreshTables.Image = ((System.Drawing.Image)(resources.GetObject("btnRefreshTables.Image")));
-            this.btnRefreshTables.Location = new System.Drawing.Point(520, 116);
+            this.btnRefreshTables.Location = new System.Drawing.Point(798, 119);
             this.btnRefreshTables.Name = "btnRefreshTables";
             this.btnRefreshTables.Size = new System.Drawing.Size(22, 24);
             this.btnRefreshTables.TabIndex = 7;
@@ -247,7 +247,7 @@ namespace Rdmp.UI.SimpleControls
             // 
             this.databaseTypeUI1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.databaseTypeUI1.DatabaseType = FAnsi.DatabaseType.MicrosoftSQLServer;
-            this.databaseTypeUI1.Location = new System.Drawing.Point(443, 50);
+            this.databaseTypeUI1.Location = new System.Drawing.Point(721, 52);
             this.databaseTypeUI1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.databaseTypeUI1.Name = "databaseTypeUI1";
             this.databaseTypeUI1.Size = new System.Drawing.Size(177, 28);
@@ -287,7 +287,7 @@ namespace Rdmp.UI.SimpleControls
             this.Controls.Add(this.label50);
             this.Controls.Add(this.cbxServer);
             this.Name = "ServerDatabaseTableSelector";
-            this.Size = new System.Drawing.Size(623, 204);
+            this.Size = new System.Drawing.Size(901, 204);
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

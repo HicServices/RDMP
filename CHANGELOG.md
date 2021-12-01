@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enabled Expand/Collapse all when right clicking whitespace in a tree collection
 - Added title to graph charts
 - Added a user setting for hiding Series in which all cells are 0/null
+- Support for specifying `--ConnectionStringsFile somefile.yaml` when starting RDMP (gui client or CLI)
 
 ### Fixed
 
@@ -47,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Increased size of all text fields in [Catalogue] and [CatalogueItem] to `nvarchar(max)` to support long urls etc
 - Updated icons to a more modern look
 - Extract to database now checks for explicit table names amongst pre-existing tables on the destination
+- Startup no longer reports non dotnet dlls as 'unable to load' (warnings)
 
 ## [7.0.3] - 2021-11-04
 

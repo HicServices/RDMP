@@ -52,9 +52,10 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(2, 31);
+            this.label1.Location = new System.Drawing.Point(6, 42);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(52, 13);
+            this.label1.Size = new System.Drawing.Size(58, 15);
             this.label1.TabIndex = 3;
             this.label1.Text = "Category:";
             // 
@@ -62,51 +63,57 @@
             // 
             this.ddExtractionCategory.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddExtractionCategory.FormattingEnabled = true;
-            this.ddExtractionCategory.Location = new System.Drawing.Point(60, 28);
+            this.ddExtractionCategory.Location = new System.Drawing.Point(70, 39);
+            this.ddExtractionCategory.Margin = new System.Windows.Forms.Padding(0);
             this.ddExtractionCategory.Name = "ddExtractionCategory";
-            this.ddExtractionCategory.Size = new System.Drawing.Size(152, 21);
+            this.ddExtractionCategory.Size = new System.Drawing.Size(171, 23);
             this.ddExtractionCategory.TabIndex = 0;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(147, 6);
+            this.label2.Location = new System.Drawing.Point(251, 12);
+            this.label2.Margin = new System.Windows.Forms.Padding(12, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(73, 13);
+            this.label2.Size = new System.Drawing.Size(81, 15);
             this.label2.TabIndex = 1;
             this.label2.Text = "Default Order:";
             // 
             // tbDefaultOrder
             // 
-            this.tbDefaultOrder.Location = new System.Drawing.Point(226, 3);
+            this.tbDefaultOrder.Location = new System.Drawing.Point(336, 8);
+            this.tbDefaultOrder.Margin = new System.Windows.Forms.Padding(0);
             this.tbDefaultOrder.Name = "tbDefaultOrder";
             this.tbDefaultOrder.ReadOnly = true;
-            this.tbDefaultOrder.Size = new System.Drawing.Size(106, 20);
+            this.tbDefaultOrder.Size = new System.Drawing.Size(171, 23);
             this.tbDefaultOrder.TabIndex = 2;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(338, 6);
+            this.label3.Location = new System.Drawing.Point(519, 12);
+            this.label3.Margin = new System.Windows.Forms.Padding(12, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(32, 13);
+            this.label3.Size = new System.Drawing.Size(35, 15);
             this.label3.TabIndex = 3;
             this.label3.Text = "Alias:";
             // 
             // tbAlias
             // 
-            this.tbAlias.Location = new System.Drawing.Point(376, 3);
+            this.tbAlias.Location = new System.Drawing.Point(558, 8);
+            this.tbAlias.Margin = new System.Windows.Forms.Padding(0);
             this.tbAlias.Name = "tbAlias";
             this.tbAlias.ReadOnly = true;
-            this.tbAlias.Size = new System.Drawing.Size(147, 20);
+            this.tbAlias.Size = new System.Drawing.Size(171, 23);
             this.tbAlias.TabIndex = 4;
             // 
             // cbHashOnDataRelease
             // 
             this.cbHashOnDataRelease.AutoSize = true;
-            this.cbHashOnDataRelease.Location = new System.Drawing.Point(218, 32);
+            this.cbHashOnDataRelease.Location = new System.Drawing.Point(70, 71);
+            this.cbHashOnDataRelease.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbHashOnDataRelease.Name = "cbHashOnDataRelease";
-            this.cbHashOnDataRelease.Size = new System.Drawing.Size(134, 17);
+            this.cbHashOnDataRelease.Size = new System.Drawing.Size(139, 19);
             this.cbHashOnDataRelease.TabIndex = 5;
             this.cbHashOnDataRelease.Text = "Hash on Data Release";
             this.cbHashOnDataRelease.UseVisualStyleBackColor = true;
@@ -115,9 +122,10 @@
             // cbIsExtractionIdentifier
             // 
             this.cbIsExtractionIdentifier.AutoSize = true;
-            this.cbIsExtractionIdentifier.Location = new System.Drawing.Point(389, 32);
+            this.cbIsExtractionIdentifier.Location = new System.Drawing.Point(263, 71);
+            this.cbIsExtractionIdentifier.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbIsExtractionIdentifier.Name = "cbIsExtractionIdentifier";
-            this.cbIsExtractionIdentifier.Size = new System.Drawing.Size(127, 17);
+            this.cbIsExtractionIdentifier.Size = new System.Drawing.Size(140, 19);
             this.cbIsExtractionIdentifier.TabIndex = 6;
             this.cbIsExtractionIdentifier.Text = "Is Extraction Identifier";
             this.cbIsExtractionIdentifier.UseVisualStyleBackColor = true;
@@ -125,9 +133,10 @@
             // cbIsPrimaryKey
             // 
             this.cbIsPrimaryKey.AutoSize = true;
-            this.cbIsPrimaryKey.Location = new System.Drawing.Point(545, 32);
+            this.cbIsPrimaryKey.Location = new System.Drawing.Point(463, 71);
+            this.cbIsPrimaryKey.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbIsPrimaryKey.Name = "cbIsPrimaryKey";
-            this.cbIsPrimaryKey.Size = new System.Drawing.Size(92, 17);
+            this.cbIsPrimaryKey.Size = new System.Drawing.Size(100, 19);
             this.cbIsPrimaryKey.TabIndex = 7;
             this.cbIsPrimaryKey.Text = "Is Primary Key";
             this.cbIsPrimaryKey.UseVisualStyleBackColor = true;
@@ -135,62 +144,70 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.label4.ForeColor = System.Drawing.Color.Blue;
-            this.label4.Location = new System.Drawing.Point(3, 6);
+            this.label4.Location = new System.Drawing.Point(8, 6);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(54, 13);
             this.label4.TabIndex = 0;
             this.label4.Text = "SELECT";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // pSql
             // 
             this.pSql.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pSql.Location = new System.Drawing.Point(51, 22);
+            this.pSql.Location = new System.Drawing.Point(66, 6);
+            this.pSql.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pSql.Name = "pSql";
-            this.pSql.Size = new System.Drawing.Size(1073, 491);
+            this.pSql.Size = new System.Drawing.Size(1245, 564);
             this.pSql.TabIndex = 2;
             // 
             // label5
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.label5.ForeColor = System.Drawing.Color.Blue;
-            this.label5.Location = new System.Drawing.Point(4, 516);
+            this.label5.Location = new System.Drawing.Point(20, 573);
+            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(42, 13);
             this.label5.TabIndex = 5;
             this.label5.Text = "FROM";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // lblFromTable
             // 
             this.lblFromTable.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblFromTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblFromTable.Location = new System.Drawing.Point(52, 516);
+            this.lblFromTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblFromTable.Location = new System.Drawing.Point(61, 573);
+            this.lblFromTable.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblFromTable.Name = "lblFromTable";
-            this.lblFromTable.Size = new System.Drawing.Size(1072, 18);
+            this.lblFromTable.Size = new System.Drawing.Size(1251, 21);
             this.lblFromTable.TabIndex = 3;
             this.lblFromTable.Text = "Your Header Goes Here";
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(33, 7);
+            this.label6.Location = new System.Drawing.Point(41, 12);
+            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(21, 13);
+            this.label6.Size = new System.Drawing.Size(21, 15);
             this.label6.TabIndex = 3;
             this.label6.Text = "ID:";
             // 
             // tbId
             // 
-            this.tbId.Location = new System.Drawing.Point(60, 3);
+            this.tbId.Location = new System.Drawing.Point(70, 7);
+            this.tbId.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbId.Name = "tbId";
             this.tbId.ReadOnly = true;
-            this.tbId.Size = new System.Drawing.Size(81, 20);
+            this.tbId.Size = new System.Drawing.Size(171, 23);
             this.tbId.TabIndex = 13;
             // 
             // panel2
@@ -208,8 +225,9 @@
             this.panel2.Controls.Add(this.tbAlias);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(0, 0);
+            this.panel2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1127, 62);
+            this.panel2.Size = new System.Drawing.Size(1315, 94);
             this.panel2.TabIndex = 14;
             // 
             // panel3
@@ -219,19 +237,21 @@
             this.panel3.Controls.Add(this.lblFromTable);
             this.panel3.Controls.Add(this.pSql);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(0, 62);
+            this.panel3.Location = new System.Drawing.Point(0, 94);
+            this.panel3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1127, 536);
+            this.panel3.Size = new System.Drawing.Size(1315, 596);
             this.panel3.TabIndex = 15;
             // 
             // ExtractionInformationUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "ExtractionInformationUI";
-            this.Size = new System.Drawing.Size(1127, 598);
+            this.Size = new System.Drawing.Size(1315, 690);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.panel3.ResumeLayout(false);
