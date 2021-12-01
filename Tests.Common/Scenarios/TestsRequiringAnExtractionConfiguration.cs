@@ -67,6 +67,13 @@ namespace Tests.Common.Scenarios
         {
             base.OneTimeSetUp();
 
+            Reset();
+        }
+
+        protected void Reset()
+        {
+            _extractableColumns = new List<IColumn>();
+
             ProjectDirectory = Path.Combine(TestContext.CurrentContext.WorkDirectory, "TestProject");
 
             SetupCatalogueConfigurationEtc();
