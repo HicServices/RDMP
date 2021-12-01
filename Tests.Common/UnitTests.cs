@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using FAnsi;
 using FAnsi.Implementation;
 using FAnsi.Implementations.MicrosoftSQL;
@@ -85,6 +86,17 @@ namespace Tests.Common
         [SetUp]
         protected virtual void SetUp()
         {
+        }
+
+        ///
+        /// Sanity check the .Net assembly checker
+        ///
+        [Test]
+        public static void TestIsDotNetAssembly()
+        {
+            Assert.True(SafeDirectoryCatalog.IsDotNetAssembly(Path.Combine(
+                RuntimeEnvironment.GetRuntimeDirectory(),
+                "System.Net.dll")));
         }
 
         /// <summary>

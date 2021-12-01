@@ -48,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Increased size of all text fields in [Catalogue] and [CatalogueItem] to `nvarchar(max)` to support long urls etc
 - Updated icons to a more modern look
 - Extract to database now checks for explicit table names amongst pre-existing tables on the destination
+- Startup no longer reports non dotnet dlls as 'unable to load' (warnings)
 
 ## [7.0.3] - 2021-11-04
 
