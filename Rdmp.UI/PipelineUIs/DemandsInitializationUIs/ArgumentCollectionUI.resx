@@ -58,19 +58,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="pbCs.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vAAADrwBlbxySQAAABl0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMC4xMzQDW3oAAAF+SURBVDhPY1Dr
-        IQ2BcOBio7b9hQSR4SReqAYg5z8RwGGWHBYNHz58ePXq1e/fvyHce/fuHTx48MyZM7dv37abIYui4dq1
-        a9bW1rxg4OXl9fDhQ6Dg+vXrp0+f3t/ff/jwYfuZSDYAVaurq2dkZDx58uTly5fNzc1AIy9cuODo6Ojp
-        6Qk0qKSkxKRXCKGhsrIyICDg27dvYIdAwY8fP6Kiovbs2dPY2Hjo0CG7GTJQDQ07s4OCgiZNmgR3OgRs
-        2rRJV1e3rKzM19d31apV1lMkoRoqN6UAHT137lw0DUDnaWho7N27F2g/0HkIG5p25wYGBgLt/fXrF1Qt
-        GLx7987BweHmzZsTJ04EBh1KsALNMDAweP369Z8/f/7+/fv9+3cgA6gHyP4HBkA2iob79+97e3u7ubnN
-        mDFjzpw5ycnJJ06cAKoG2wQF6BH37Nmz+fPnAx1WW1u7cuXKjx8/QtTBAfaYBrrk58+fUA4qQGgApiog
-        hyDS7GOBaiAB9TAAABjOwMPKjX5/AAAAAElFTkSuQmCC
-</value>
-  </data>
   <data name="helpIcon1.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAABGdBTUEAAK/INwWK6QAAACBjSFJNAAB6
@@ -98,5 +85,12 @@
         ieC9PBGfgLL35Is5H+SLd5Pv0JEKBfXleQX1xTkF6/NyOftgaQfnsxIZl9Tg7i9q4+4rlHL2nmplf1Qg
         YREw9eFJyW7ytSjqX0I4f9SuCRVeAAAAAElFTkSuQmCC
 </value>
+  </data>
+  <data name="lblComponentNotFound.Text" xml:space="preserve">
+    <value>Component Type not found...
+
+The Pipeline Component you have selected could not be found.
+
+Please ensure that any plugins required for this Pipelineare loaded correctly or that this Pipeline does not need updated.</value>
   </data>
 </root>

@@ -104,7 +104,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(16, 32);
+            this.label3.Location = new System.Drawing.Point(28, 32);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(116, 15);
@@ -114,7 +114,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             // lblExternalCohortTable
             // 
             this.lblExternalCohortTable.AutoSize = true;
-            this.lblExternalCohortTable.Location = new System.Drawing.Point(182, 32);
+            this.lblExternalCohortTable.Location = new System.Drawing.Point(173, 32);
             this.lblExternalCohortTable.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblExternalCohortTable.Name = "lblExternalCohortTable";
             this.lblExternalCohortTable.Size = new System.Drawing.Size(30, 15);
@@ -309,7 +309,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             this.btnNewProject.Location = new System.Drawing.Point(383, 63);
             this.btnNewProject.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnNewProject.Name = "btnNewProject";
-            this.btnNewProject.Size = new System.Drawing.Size(54, 27);
+            this.btnNewProject.Size = new System.Drawing.Size(54, 25);
             this.btnNewProject.TabIndex = 5;
             this.btnNewProject.Text = "New...";
             this.btnNewProject.UseVisualStyleBackColor = true;
@@ -371,7 +371,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             // lblProject
             // 
             this.lblProject.AutoSize = true;
-            this.lblProject.Location = new System.Drawing.Point(182, 68);
+            this.lblProject.Location = new System.Drawing.Point(173, 68);
             this.lblProject.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblProject.Name = "lblProject";
             this.lblProject.Size = new System.Drawing.Size(30, 15);
@@ -381,7 +381,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(88, 68);
+            this.label11.Location = new System.Drawing.Point(97, 68);
             this.label11.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(47, 15);
@@ -441,7 +441,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             // 
             // pbProject
             // 
-            this.pbProject.Location = new System.Drawing.Point(145, 60);
+            this.pbProject.Location = new System.Drawing.Point(145, 64);
             this.pbProject.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbProject.Name = "pbProject";
             this.pbProject.Size = new System.Drawing.Size(30, 30);
@@ -462,7 +462,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             this.btnExisting.Location = new System.Drawing.Point(443, 63);
             this.btnExisting.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnExisting.Name = "btnExisting";
-            this.btnExisting.Size = new System.Drawing.Size(78, 27);
+            this.btnExisting.Size = new System.Drawing.Size(78, 25);
             this.btnExisting.TabIndex = 6;
             this.btnExisting.Text = "Existing...";
             this.btnExisting.UseVisualStyleBackColor = true;
@@ -473,7 +473,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             this.lblErrorNoProjectNumber.AutoSize = true;
             this.lblErrorNoProjectNumber.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point);
             this.lblErrorNoProjectNumber.ForeColor = System.Drawing.Color.Red;
-            this.lblErrorNoProjectNumber.Location = new System.Drawing.Point(173, 97);
+            this.lblErrorNoProjectNumber.Location = new System.Drawing.Point(145, 103);
             this.lblErrorNoProjectNumber.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblErrorNoProjectNumber.Name = "lblErrorNoProjectNumber";
             this.lblErrorNoProjectNumber.Size = new System.Drawing.Size(244, 13);
@@ -483,7 +483,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             // 
             // tbSetProjectNumber
             // 
-            this.tbSetProjectNumber.Location = new System.Drawing.Point(461, 93);
+            this.tbSetProjectNumber.Location = new System.Drawing.Point(397, 99);
             this.tbSetProjectNumber.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbSetProjectNumber.Name = "tbSetProjectNumber";
             this.tbSetProjectNumber.Size = new System.Drawing.Size(138, 23);
@@ -496,7 +496,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             this.btnClear.Location = new System.Drawing.Point(528, 63);
             this.btnClear.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(50, 27);
+            this.btnClear.Size = new System.Drawing.Size(50, 25);
             this.btnClear.TabIndex = 6;
             this.btnClear.Text = "Clear";
             this.btnClear.UseVisualStyleBackColor = true;

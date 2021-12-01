@@ -64,23 +64,21 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
 
             lblTypeUnloadable.Visible = !typeLoadable;
 
-            pbCs.Visible = typeLoadable;
             lblClassName.Visible = typeLoadable;
             helpIcon1.Visible = typeLoadable;
             lblArgumentsTitle.Visible = typeLoadable;
+            pArguments.Visible = typeLoadable;
+            lblComponentNotFound.Visible = !pArguments.Visible;
 
             _valueUisFactory = new ArgumentValueUIFactory();
 
             if (_argumentsAreFor != null)
-                lblClassName.Text = _argumentsAreFor.FullName;
+                lblClassName.Text = UsefulStuff.PascalCaseStringToHumanReadable(_argumentsAreFor.Name);
 
             helpIcon1.Left = lblClassName.Right;
             
             if (_argumentsAreFor != null)
             {
-                btnViewSourceCode.Enabled = ViewSourceCodeDialog.GetSourceForFile(_argumentsAreFor.Name + ".cs") != null;
-                btnViewSourceCode.Left = helpIcon1.Right;
-
                 var summary = catalogueRepository.CommentStore.GetTypeDocumentationIfExists(argumentsAreForUnderlyingType);
 
                 if (summary != null)

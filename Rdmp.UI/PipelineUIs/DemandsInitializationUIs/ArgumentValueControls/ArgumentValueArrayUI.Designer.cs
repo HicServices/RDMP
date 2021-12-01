@@ -35,8 +35,8 @@
             // btnPickDatabaseEntities
             // 
             this.btnPickDatabaseEntities.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPickDatabaseEntities.Location = new System.Drawing.Point(582, 2);
-            this.btnPickDatabaseEntities.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btnPickDatabaseEntities.Location = new System.Drawing.Point(582, 3);
+            this.btnPickDatabaseEntities.Margin = new System.Windows.Forms.Padding(2, 3, 4, 3);
             this.btnPickDatabaseEntities.Name = "btnPickDatabaseEntities";
             this.btnPickDatabaseEntities.Size = new System.Drawing.Size(52, 25);
             this.btnPickDatabaseEntities.TabIndex = 0;
@@ -48,10 +48,10 @@
             // 
             this.tbArray.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbArray.Location = new System.Drawing.Point(4, 3);
-            this.tbArray.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tbArray.Location = new System.Drawing.Point(4, 4);
+            this.tbArray.Margin = new System.Windows.Forms.Padding(4, 3, 0, 3);
             this.tbArray.Name = "tbArray";
-            this.tbArray.Size = new System.Drawing.Size(571, 23);
+            this.tbArray.Size = new System.Drawing.Size(576, 23);
             this.tbArray.TabIndex = 2;
             // 
             // ArgumentValueArrayUI

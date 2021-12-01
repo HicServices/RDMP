@@ -37,18 +37,18 @@
             this.cbxValue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbxValue.FormattingEnabled = true;
-            this.cbxValue.Location = new System.Drawing.Point(4, 3);
-            this.cbxValue.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.cbxValue.Location = new System.Drawing.Point(4, 4);
+            this.cbxValue.Margin = new System.Windows.Forms.Padding(4, 3, 0, 3);
             this.cbxValue.Name = "cbxValue";
-            this.cbxValue.Size = new System.Drawing.Size(571, 23);
+            this.cbxValue.Size = new System.Drawing.Size(576, 23);
             this.cbxValue.TabIndex = 18;
             this.cbxValue.TextChanged += new System.EventHandler(this.cbxValue_TextChanged);
             // 
             // btnPick
             // 
             this.btnPick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnPick.Location = new System.Drawing.Point(582, 2);
-            this.btnPick.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btnPick.Location = new System.Drawing.Point(582, 3);
+            this.btnPick.Margin = new System.Windows.Forms.Padding(2, 3, 4, 3);
             this.btnPick.Name = "btnPick";
             this.btnPick.Size = new System.Drawing.Size(52, 25);
             this.btnPick.TabIndex = 20;

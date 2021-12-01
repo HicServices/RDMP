@@ -33,13 +33,13 @@ namespace Rdmp.UI.AggregationUIs.Advanced
         private void InitializeComponent()
         {
             this.olvSelectColumns = new BrightIdeasSoftware.ObjectListView();
-            this.olvColumnSQL = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvEditInPopup = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvAlias = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvIncluded = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvAddRemove = new BrightIdeasSoftware.OLVColumn();
+            this.olvColumnSQL = new BrightIdeasSoftware.OLVColumn();
+            this.olvEditInPopup = new BrightIdeasSoftware.OLVColumn();
+            this.olvAlias = new BrightIdeasSoftware.OLVColumn();
+            this.olvIncluded = new BrightIdeasSoftware.OLVColumn();
             this.tbFilter = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.olvAddRemove = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             ((System.ComponentModel.ISupportInitialize)(this.olvSelectColumns)).BeginInit();
             this.SuspendLayout();
             // 
@@ -54,22 +54,31 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.olvSelectColumns.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.SingleClick;
+            this.olvSelectColumns.CellEditUseWholeCell = false;
             this.olvSelectColumns.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvAddRemove,
             this.olvColumnSQL,
             this.olvEditInPopup,
             this.olvAlias});
             this.olvSelectColumns.Cursor = System.Windows.Forms.Cursors.Default;
-            this.olvSelectColumns.Location = new System.Drawing.Point(3, 3);
+            this.olvSelectColumns.HideSelection = false;
+            this.olvSelectColumns.Location = new System.Drawing.Point(0, 3);
+            this.olvSelectColumns.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.olvSelectColumns.Name = "olvSelectColumns";
             this.olvSelectColumns.RenderNonEditableCheckboxesAsDisabled = true;
             this.olvSelectColumns.RowHeight = 19;
             this.olvSelectColumns.ShowImagesOnSubItems = true;
-            this.olvSelectColumns.Size = new System.Drawing.Size(793, 519);
+            this.olvSelectColumns.Size = new System.Drawing.Size(817, 598);
             this.olvSelectColumns.TabIndex = 0;
             this.olvSelectColumns.UseCompatibleStateImageBehavior = false;
             this.olvSelectColumns.UseSubItemCheckBoxes = true;
             this.olvSelectColumns.View = System.Windows.Forms.View.Details;
+            // 
+            // olvAddRemove
+            // 
+            this.olvAddRemove.Groupable = false;
+            this.olvAddRemove.Text = "+";
+            this.olvAddRemove.Width = 22;
             // 
             // olvColumnSQL
             // 
@@ -100,9 +109,10 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             // 
             this.tbFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbFilter.Location = new System.Drawing.Point(41, 528);
+            this.tbFilter.Location = new System.Drawing.Point(48, 609);
+            this.tbFilter.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbFilter.Name = "tbFilter";
-            this.tbFilter.Size = new System.Drawing.Size(755, 20);
+            this.tbFilter.Size = new System.Drawing.Size(769, 23);
             this.tbFilter.TabIndex = 1;
             this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
             // 
@@ -110,27 +120,23 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 531);
+            this.label1.Location = new System.Drawing.Point(4, 613);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(32, 13);
+            this.label1.Size = new System.Drawing.Size(36, 15);
             this.label1.TabIndex = 2;
             this.label1.Text = "Filter:";
             // 
-            // olvAddRemove
-            // 
-            this.olvAddRemove.Groupable = false;
-            this.olvAddRemove.Text = "+";
-            this.olvAddRemove.Width = 22;
-            // 
             // SelectColumnUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tbFilter);
             this.Controls.Add(this.olvSelectColumns);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "SelectColumnUI";
-            this.Size = new System.Drawing.Size(799, 551);
+            this.Size = new System.Drawing.Size(821, 636);
             ((System.ComponentModel.ISupportInitialize)(this.olvSelectColumns)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

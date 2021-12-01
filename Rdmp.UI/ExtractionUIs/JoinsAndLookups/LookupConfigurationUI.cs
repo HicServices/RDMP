@@ -202,7 +202,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
 
         private void LookupConfiguration_Paint(object sender, PaintEventArgs e)
         {
-            Point drawTaskListAt = new Point(500,10);
+            Point drawTaskListAt = new Point(580,10);
 
 
             string[] lines = new[]
