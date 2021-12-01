@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.DataExport;
@@ -127,12 +128,51 @@ namespace Rdmp.Core.QueryBuilding
                 queryBuilder.AddCustomLine(request.ExtractableCohort.WhereSQL(), QueryComponent.WHERE);
             }
 
+            HandleBatching(request,queryBuilder, syntaxHelper);
 
-            
             request.QueryBuilder = queryBuilder;
             return queryBuilder;
         }
-        
+
+        private void HandleBatching(ExtractDatasetCommand request, QueryBuilder queryBuilder, IQuerySyntaxHelper syntaxHelper)
+        {
+
+            var batch = request.SelectedDataSets.ExtractionProgressIfAny;
+            if (batch == null)
+            {
+                // there is no batching going on
+                return;
+            }
+
+            // this is a batch resume if we have made some progress already
+            request.IsBatchResume = batch.ProgressDate.HasValue;
+
+            DateTime start = batch.ProgressDate ?? batch.StartDate ?? throw new QueryBuildingException($"It was not possible to build a batch extraction query for '{request}' because there is no {nameof(ExtractionProgress.StartDate)} or {nameof(ExtractionProgress.ProgressDate)} set on the {nameof(ExtractionProgress)}");
+            
+            if(batch.NumberOfDaysPerBatch <= 0)
+            {
+                throw new QueryBuildingException($"{ nameof(ExtractionProgress.NumberOfDaysPerBatch)} was {batch.NumberOfDaysPerBatch } for '{request}'");
+            }
+
+            var ei = batch.ExtractionInformation;
+
+            
+            DateTime end = start.AddDays(batch.NumberOfDaysPerBatch);
+
+            string line = $"({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd)";
+
+            queryBuilder.AddCustomLine(line, QueryComponent.WHERE);
+
+            var batchStartDeclaration = syntaxHelper.GetParameterDeclaration("@batchStart", new DatabaseTypeRequest(typeof(DateTime)));
+            var batchStartParameter = new ConstantParameter(batchStartDeclaration, $"'{start}'", null, syntaxHelper);
+            queryBuilder.ParameterManager.AddGlobalParameter(batchStartParameter);
+
+            var batchEndDeclaration = syntaxHelper.GetParameterDeclaration("@batchEnd", new DatabaseTypeRequest(typeof(DateTime)));
+            var batchEndParameter = new ConstantParameter(batchEndDeclaration, $"'{end}'", null, syntaxHelper);
+            queryBuilder.ParameterManager.AddGlobalParameter(batchEndParameter);
+        }
+
+
         public static List<ConstantParameter> GetConstantParameters(IQuerySyntaxHelper syntaxHelper, IExtractionConfiguration configuration, IExtractableCohort extractableCohort)
         {
             //if the server doesn't support parameters then don't try to add them

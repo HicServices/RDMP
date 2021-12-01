@@ -9,15 +9,13 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tests.Common;
+using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataExport.Data
 {
-    class ExtractionProgressTests : DatabaseTests
+    class ExtractionProgressTests : TestsRequiringAnExtractionConfiguration
     {
 
         [Test]
@@ -65,6 +63,26 @@ namespace Rdmp.Core.Tests.DataExport.Data
             Assert.IsTrue(progress.Exists());
             progress.SelectedDataSets.DeleteInDatabase();
             Assert.IsFalse(progress.Exists());
+        }
+
+        [Test]
+        public void TestQueryGeneration_WithExtractionProgress()
+        {
+            _catalogue.TimeCoverage_ExtractionInformation_ID = _extractionInformations.Single(e => e.GetRuntimeName().Equals("DateOfBirth")).ID;
+            _catalogue.SaveToDatabase();
+
+            var progress = new ExtractionProgress(DataExportRepository, _request.SelectedDataSets);
+            progress.ProgressDate = new DateTime(2001, 01, 01);
+            progress.NumberOfDaysPerBatch = 10;
+            progress.SaveToDatabase();
+
+            _request.GenerateQueryBuilder();
+
+            StringAssert.Contains("SET @batchStart='01/01/2001 00:00:00'", _request.QueryBuilder.SQL);
+            StringAssert.Contains("SET @batchEnd='11/01/2001 00:00:00'", _request.QueryBuilder.SQL);
+            StringAssert.Contains("ScratchArea].[dbo].[TestTable].[DateOfBirth] >= @batchStart AND ", _request.QueryBuilder.SQL);
+            StringAssert.Contains("_ScratchArea].[dbo].[TestTable].[DateOfBirth] < @batchEnd)", _request.QueryBuilder.SQL);
+
         }
 
         private ExtractionProgress CreateAnExtractionProgress()

@@ -7,25 +7,12 @@ using System.Linq;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
 {
-    class BatchExtractionSource : ExecuteDatasetExtractionSource
+    class BatchExtractionSource : ExecuteDatasetExtractionSource 
     {
 
-        [DemandsInitialization("The period to execute extraction for on one go.  See also PeriodValue")]
-        public BatchPeriod PeriodUnit { get; set; }
-        [DemandsInitialization("The period to execute extraction for", DefaultValue = 1)]
-        public int PeriodValue { get; set; } = 1;
 
-        public enum BatchPeriod
-        {
-            Day,
-            Month,
-            Year
-        }
 
         private bool _usedBatching = false;
-        private DateTime _start;
-        private DateTime _end;
-
 
         public override string HackExtractionSQL(string sql, IDataLoadEventListener listener)
         {
@@ -46,7 +33,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
                 {
                     GetMinDate(listener);
 
-                    _usedBatching = GetBatchPeriod(out _start, out _end);
+                    _usedBatching = false;
                 }
 
                 // if we have decided batching won't work
@@ -66,45 +53,6 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Returns the first batch period that should be run based on system state.  If you have
-        /// already loaded some data and know where to restart from then use the overload
-        /// </summary>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        /// <returns></returns>
-        public bool GetBatchPeriod(out DateTime start, out DateTime end)
-        {
-            start = DateTime.MinValue;
-            return GetBatchPeriod(start, out end);
-        }
-
-        /// <summary>
-        /// Calculates based on an inclusive <paramref name="start"/> date what the exclusive end date
-        /// should be for the batch <paramref name="end"/>
-        /// </summary>
-        /// <param name="start"></param>
-        /// <param name="end"></param>
-        /// <returns></returns>
-        public bool GetBatchPeriod(DateTime start, out DateTime end)
-        {
-            switch (PeriodUnit)
-            {
-                case BatchPeriod.Day:
-                    end = start.AddDays(PeriodValue);
-                    break;
-                case BatchPeriod.Month:
-                    end = start.AddMonths(PeriodValue);
-                    break;
-                case BatchPeriod.Year:
-                    end = start.AddYears(PeriodValue);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            return true;
-        }
         public override void Dispose(IDataLoadEventListener job, Exception pipelineFailureExceptionIfAny)
         {
             base.Dispose(job, pipelineFailureExceptionIfAny);

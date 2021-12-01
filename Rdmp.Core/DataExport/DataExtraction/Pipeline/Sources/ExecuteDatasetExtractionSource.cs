@@ -43,7 +43,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
 
         private readonly List<string> _extractionIdentifiersidx = new List<string>();
         
-        private bool _cancel = false;
+        private bool _cancel = false;   
         
         ICatalogue _catalogue;
 

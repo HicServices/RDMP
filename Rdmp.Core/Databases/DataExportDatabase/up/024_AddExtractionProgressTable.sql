@@ -8,7 +8,11 @@ CREATE TABLE ExtractionProgress(
     [ID] [int] IDENTITY(1,1) NOT NULL,
     [SelectedDataSets_ID] [int] NOT NULL,
     [ProgressDate] [datetime] NULL,
-    [ExtractionInformation_ID] [int] NOT NULL,
+    [ExtractionInformation_ID] [int] NOT NULL,    
+    [StartDate] [datetime] NULL,
+    [EndDate] [datetime] NULL,
+    [NumberOfDaysPerBatch] [int] NOT NULL,
+
     CONSTRAINT FK_ExtractionProgress_SelectedDataSets FOREIGN KEY ([SelectedDataSets_ID])
       REFERENCES SelectedDataSets (ID)
       ON DELETE CASCADE

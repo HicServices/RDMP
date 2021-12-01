@@ -34,6 +34,12 @@ namespace Rdmp.Core.DataExport.Data
         IExtractableDataSet ExtractableDataSet { get; }
 
         /// <summary>
+        /// If date based batch extraction is being used for this dataset then this
+        /// describes what range should be retrieved and in what incremental amount
+        /// </summary>
+        IExtractionProgress ExtractionProgressIfAny { get; }
+
+        /// <summary>
         /// Returns all tables which should be force joined against when extracting the <see cref="ISelectedDataSets"/> (regardless of extracted columns).
         /// This does not include implicitly joined <see cref="ITableInfo"/> (i.e. if you are extracting a column from that table).
         /// </summary>
