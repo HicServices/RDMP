@@ -164,14 +164,18 @@ namespace Rdmp.Core.QueryBuilding
             queryBuilder.AddCustomLine(line, QueryComponent.WHERE);
 
             var batchStartDeclaration = syntaxHelper.GetParameterDeclaration("@batchStart", new DatabaseTypeRequest(typeof(DateTime)));
-            var batchStartParameter = new ConstantParameter(batchStartDeclaration, $"'{start}'", null, syntaxHelper);
+            var batchStartParameter = new ConstantParameter(batchStartDeclaration, FormatDateAsParameterValue(start), null, syntaxHelper);
             queryBuilder.ParameterManager.AddGlobalParameter(batchStartParameter);
 
             var batchEndDeclaration = syntaxHelper.GetParameterDeclaration("@batchEnd", new DatabaseTypeRequest(typeof(DateTime)));
-            var batchEndParameter = new ConstantParameter(batchEndDeclaration, $"'{end}'", null, syntaxHelper);
+            var batchEndParameter = new ConstantParameter(batchEndDeclaration, FormatDateAsParameterValue(end), null, syntaxHelper);
             queryBuilder.ParameterManager.AddGlobalParameter(batchEndParameter);
         }
 
+        private string FormatDateAsParameterValue(DateTime dt)
+        {
+            return $"'{dt.Year:D4}-{dt.Month:D2}-{dt.Day:D2}'";
+        }
 
         public static List<ConstantParameter> GetConstantParameters(IQuerySyntaxHelper syntaxHelper, IExtractionConfiguration configuration, IExtractableCohort extractableCohort)
         {

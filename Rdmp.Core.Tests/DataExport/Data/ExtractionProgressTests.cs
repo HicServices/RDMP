@@ -81,8 +81,8 @@ namespace Rdmp.Core.Tests.DataExport.Data
 
             _request.GenerateQueryBuilder();
 
-            StringAssert.Contains("SET @batchStart='01/01/2001 00:00:00'", _request.QueryBuilder.SQL);
-            StringAssert.Contains("SET @batchEnd='11/01/2001 00:00:00'", _request.QueryBuilder.SQL);
+            StringAssert.Contains("SET @batchStart='2001-01-01'", _request.QueryBuilder.SQL);
+            StringAssert.Contains("SET @batchEnd='2001-01-11'", _request.QueryBuilder.SQL);
             StringAssert.Contains("ScratchArea].[dbo].[TestTable].[DateOfBirth] >= @batchStart AND ", _request.QueryBuilder.SQL);
             StringAssert.Contains("_ScratchArea].[dbo].[TestTable].[DateOfBirth] < @batchEnd)", _request.QueryBuilder.SQL);
 
