@@ -14,6 +14,7 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
+
     /// <summary>
     /// Change which column is used to perform linkage against a cohort.  This command supports both changing the global setting on a <see cref="Catalogue"/>
     /// or changing it only for a specific <see cref="ExtractionConfiguration"/>

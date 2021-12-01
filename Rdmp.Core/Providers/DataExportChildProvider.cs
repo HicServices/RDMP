@@ -47,6 +47,7 @@ namespace Rdmp.Core.Providers
         public ExtractableDataSet[] ExtractableDataSets { get; private set; }
 
         public SelectedDataSets[] SelectedDataSets { get; private set; }
+        public Dictionary<int,ExtractionProgress> _extractionProgressesBySelectedDataSetID { get; private set; }
 
         public ExtractableDataSetPackage[] AllPackages { get; set; }
         
@@ -116,6 +117,8 @@ namespace Rdmp.Core.Providers
 
             SelectedDataSets = GetAllObjects<SelectedDataSets>(dataExportRepository);
             ReportProgress("Fetching data export objects");
+
+            _extractionProgressesBySelectedDataSetID = GetAllObjects<ExtractionProgress>(dataExportRepository).ToDictionary(ds => ds.SelectedDataSets_ID, d => d); ;
 
             var dsDictionary = ExtractableDataSets.ToDictionary(ds => ds.ID, d => d);
             foreach (SelectedDataSets s in SelectedDataSets)
@@ -409,12 +412,26 @@ namespace Rdmp.Core.Providers
 
         private void AddChildren(SelectedDataSets selectedDataSets, DescendancyList descendancy)
         {
+            HashSet<object> children = new HashSet<object>();
+
+            if (_extractionProgressesBySelectedDataSetID.ContainsKey(selectedDataSets.ID))
+            {
+                children.Add(_extractionProgressesBySelectedDataSetID[selectedDataSets.ID]);
+            }
+
             if (selectedDataSets.RootFilterContainer_ID != null)
             {
                 var rootContainer = AllContainers[selectedDataSets.RootFilterContainer_ID.Value];
+                children.Add(rootContainer);
+
                 AddChildren(rootContainer,descendancy.Add(rootContainer));
-                AddToDictionaries(new HashSet<object>(new object[]{rootContainer}),descendancy);
             }
+
+            if(children.Any())
+            {
+                AddToDictionaries(children, descendancy);
+            }
+
         }
         
 

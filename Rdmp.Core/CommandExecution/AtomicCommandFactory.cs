@@ -449,6 +449,7 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandCreateNewFilterFromCatalogue(_activator,sds);
                 yield return new ExecuteCommandViewExtractionSql(_activator,sds);
                 yield return new ExecuteCommandSetExtractionIdentifier(_activator, sds.GetCatalogue(), sds.ExtractionConfiguration,null);
+                yield return new ExecuteCommandAddExtractionProgress(_activator,sds);
             }
             
             if(Is(o, out ExtractionConfiguration ec))
