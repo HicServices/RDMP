@@ -38,7 +38,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
 
                 if(progress != null)
                 {
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Found existing ExtractionProgress with progress of:{progress.Progress ?? (object)"Null"}"));
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Found existing ExtractionProgress with progress of:{progress.ProgressDate ?? (object)"Null"}"));
                 //    var startTime = (DateTime)progress.GetValueAsSystemType();
                   //  _usedBatching = GetBatchPeriod(_start = startTime, out _end);
                 }

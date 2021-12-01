@@ -1,4 +1,5 @@
-﻿using Rdmp.Core.Curation.Data;
+﻿using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,11 @@ namespace Rdmp.Core.DataExport.Data
             get { return _extractionInformation_ID; }
             set { SetField(ref _extractionInformation_ID, value); }
         }
-        public ExtractionProgress(IDataExportRepository repository, SelectedDataSets sds)
+
+        [NoMappingToDatabase]
+        public ISelectedDataSets SelectedDataSets { get => DataExportRepository.GetObjectByID<SelectedDataSets>(SelectedDataSets_ID); }
+
+        public ExtractionProgress(IDataExportRepository repository, ISelectedDataSets sds)
         {
             var cata = sds.GetCatalogue();
             var coverageColId = cata?.TimeCoverage_ExtractionInformation_ID;

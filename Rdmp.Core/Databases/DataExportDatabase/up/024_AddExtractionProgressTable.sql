@@ -21,7 +21,7 @@ CREATE TABLE ExtractionProgress(
 ) ON [PRIMARY]
 
 
-CREATE INDEX ix_OneExtractionProgressPerDataset 
+CREATE UNIQUE INDEX ix_OneExtractionProgressPerDataset 
 ON ExtractionProgress(SelectedDataSets_ID);
 
 
