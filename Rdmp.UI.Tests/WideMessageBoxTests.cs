@@ -30,6 +30,10 @@ namespace Rdmp.UI.Tests
 
             var wmb = new WideMessageBox(args);
 
+            // simulate showing the control without actually blocking/firing
+            var onShow = typeof(WideMessageBox).GetMethod("OnShown", BindingFlags.NonPublic | BindingFlags.Instance);
+            onShow.Invoke(wmb, new[] { new EventArgs() });
+
             //pretend like we launched it
             LastUserInterfaceLaunched = wmb;
 
