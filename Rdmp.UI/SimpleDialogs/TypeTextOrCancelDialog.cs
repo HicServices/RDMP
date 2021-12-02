@@ -33,15 +33,7 @@ namespace Rdmp.UI.SimpleDialogs
             _multiline = multiLine;
 
             InitializeComponent();
-            if (_multiline)
-            {
-                lblNewLineInstructions.Visible = true;
-                this.textBox1.Anchor = (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right);
-                this.textBox1.ScrollBars = ScrollBars.Vertical;
-                this.Height = 290;
-                this.Width = 740;            
-            }
-
+            
             if(header.Length > WideMessageBox.MAX_LENGTH_TITLE)
                 header = header.Substring(0, WideMessageBox.MAX_LENGTH_TITLE);
 
@@ -53,10 +45,22 @@ namespace Rdmp.UI.SimpleDialogs
             this.textBox1.MaxLength = maxCharacters;
 
             textBox1.Text = startingTextForInputBox;
-            SetEnabledness();
-            
-            var desiredWidth = TextRenderer.MeasureText(label,label1.Font).Width;
-            Width = Math.Max(740, Math.Min(740, desiredWidth));         
+
+            if (_multiline)
+            {
+                lblNewLineInstructions.Visible = true;
+                this.textBox1.Anchor = (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right);
+                this.textBox1.ScrollBars = ScrollBars.Vertical;
+                this.Height = 290;
+                this.Width = 740;
+            }
+            else
+            {
+                var desiredWidth = TextRenderer.MeasureText(label, label1.Font).Width;
+                Width = Math.Max(540, Math.Min(740, desiredWidth));
+            }
+
+            SetEnabledness();          
         }
 
         private void btnOk_Click(object sender, EventArgs e)
