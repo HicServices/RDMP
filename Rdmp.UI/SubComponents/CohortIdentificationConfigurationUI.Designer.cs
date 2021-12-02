@@ -36,7 +36,6 @@ namespace Rdmp.UI.SubComponents
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CohortIdentificationConfigurationUI));
-            this.lblDescription = new System.Windows.Forms.Label();
             this.tlvCic = new BrightIdeasSoftware.TreeListView();
             this.olvNameCol = new BrightIdeasSoftware.OLVColumn();
             this.olvExecute = new BrightIdeasSoftware.OLVColumn();
@@ -53,6 +52,7 @@ namespace Rdmp.UI.SubComponents
             this.btnExecute = new System.Windows.Forms.Button();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.gbCicInfo = new System.Windows.Forms.GroupBox();
+            this.tbDescription = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.lblExecuteAllPhase = new System.Windows.Forms.Label();
@@ -65,16 +65,6 @@ namespace Rdmp.UI.SubComponents
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // lblDescription
-            // 
-            this.lblDescription.AutoSize = true;
-            this.lblDescription.Location = new System.Drawing.Point(7, 19);
-            this.lblDescription.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblDescription.Name = "lblDescription";
-            this.lblDescription.Size = new System.Drawing.Size(70, 15);
-            this.lblDescription.TabIndex = 53;
-            this.lblDescription.Text = "Description:";
             // 
             // tlvCic
             // 
@@ -234,13 +224,27 @@ namespace Rdmp.UI.SubComponents
             this.gbCicInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gbCicInfo.Controls.Add(this.lblDescription);
+            this.gbCicInfo.Controls.Add(this.tbDescription);
             this.gbCicInfo.Location = new System.Drawing.Point(230, 3);
             this.gbCicInfo.Name = "gbCicInfo";
             this.gbCicInfo.Size = new System.Drawing.Size(864, 76);
             this.gbCicInfo.TabIndex = 71;
             this.gbCicInfo.TabStop = false;
             this.gbCicInfo.Text = "Name:";
+            // 
+            // tbDescription
+            // 
+            this.tbDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbDescription.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.tbDescription.Location = new System.Drawing.Point(6, 16);
+            this.tbDescription.Margin = new System.Windows.Forms.Padding(3, 3, 1, 0);
+            this.tbDescription.Multiline = true;
+            this.tbDescription.Name = "tbDescription";
+            this.tbDescription.ReadOnly = true;
+            this.tbDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.tbDescription.Size = new System.Drawing.Size(855, 57);
+            this.tbDescription.TabIndex = 54;
             // 
             // groupBox1
             // 
@@ -301,7 +305,6 @@ namespace Rdmp.UI.SubComponents
 
         #endregion
         private TicketingControlUI ticket;
-        private System.Windows.Forms.Label lblDescription;
         private TreeListView tlvCic;
         private OLVColumn olvNameCol;
         private OLVColumn olvExecute;
@@ -320,5 +323,6 @@ namespace Rdmp.UI.SubComponents
         private OLVColumn olvCatalogue;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.GroupBox gbCicInfo;
+        private System.Windows.Forms.TextBox tbDescription;
     }
 }
