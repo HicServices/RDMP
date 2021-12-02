@@ -79,6 +79,7 @@ namespace Rdmp.Core.DataExport.Data
             if (ei == null)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("A date column on which to split batches must be selected", CheckResult.Fail));
+                return;
             }
 
             var col = ei.ColumnInfo;
@@ -86,6 +87,7 @@ namespace Rdmp.Core.DataExport.Data
             if (col == null)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs($"ExtractionInformation '{ei}' is an orphan with no associated ColumnInfo", CheckResult.Fail));
+                return;
             }
 
             try
