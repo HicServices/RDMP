@@ -1,6 +1,7 @@
 ﻿using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
+using ReusableLibraryCode.Checks;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -67,6 +68,35 @@ namespace Rdmp.Core.DataExport.Data
         [NoMappingToDatabase]
         public ISelectedDataSets SelectedDataSets { get => DataExportRepository.GetObjectByID<SelectedDataSets>(SelectedDataSets_ID); }
 
+        public void ValidateSelectedColumn(ICheckNotifier notifier,ExtractionInformation ei)
+        {
+            if (ei == null)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("A date column on which to split batches must be selected", CheckResult.Fail));
+            }
+
+            var col = ei.ColumnInfo;
+
+            if (col == null)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"ExtractionInformation '{ei}' is an orphan with no associated ColumnInfo", CheckResult.Fail));
+            }
+
+            try
+            {
+
+                if (col.GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(col.Data_type) != typeof(DateTime))
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractionProgressColumnProbablyNotADate, ei, col.Data_type));
+                }
+            }
+            catch (Exception ex)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Could not determine datatype of ColumnInfo {col} ('{col?.Data_type}')", CheckResult.Fail, ex));
+            }
+            
+        }
+
         /// <inheritdoc/>
         [NoMappingToDatabase]
         public ExtractionInformation ExtractionInformation { get => DataExportRepository.CatalogueRepository.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID); }
@@ -100,6 +130,11 @@ namespace Rdmp.Core.DataExport.Data
             EndDate = ObjectToNullableDateTime(r["EndDate"]);
             ExtractionInformation_ID = Convert.ToInt32(r["ExtractionInformation_ID"]);
             NumberOfDaysPerBatch = Convert.ToInt32(r["NumberOfDaysPerBatch"]);
+        }
+
+        public override string ToString()
+        {
+            return $"Extraction Progress {ID}";
         }
     }
 }
