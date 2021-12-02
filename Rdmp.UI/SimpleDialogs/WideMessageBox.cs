@@ -79,7 +79,10 @@ namespace Rdmp.UI.SimpleDialogs
 
             //if the text is too long vertically just maximise the message box
             if (this.Height > theScreen.Bounds.Height)
+            {
+                this.MaximizedBounds = theScreen.WorkingArea;
                 this.WindowState = FormWindowState.Maximized;
+            }
 
             richTextBox1.LinkClicked += richTextBox1_LinkClicked;
             btnViewSourceCode.Click += (s, e) => new ViewSourceCodeDialog((string)btnViewSourceCode.Tag).Show();
