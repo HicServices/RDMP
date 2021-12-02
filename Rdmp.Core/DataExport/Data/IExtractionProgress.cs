@@ -1,4 +1,5 @@
-﻿using Rdmp.Core.Curation.Data;
+﻿using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Curation.Data;
 using System;
 
 namespace Rdmp.Core.DataExport.Data
@@ -7,7 +8,7 @@ namespace Rdmp.Core.DataExport.Data
     /// Records how far through a batch extraction a <see cref="SelectedDataSets"/> is.  Also tracks which column is being
     /// used for the batch splitting.
     /// </summary>
-    public interface IExtractionProgress
+    public interface IExtractionProgress : IMapsDirectlyToDatabaseTable
     {
         /// <summary>
         /// The absolute origin date of the dataset being extracted.  This is the first day of the first batch
