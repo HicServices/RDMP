@@ -8,6 +8,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using FAnsi.Discovery;
+using Rdmp.UI.ScintillaHelper;
 
 namespace Rdmp.UI.SimpleDialogs
 {
@@ -18,6 +19,7 @@ namespace Rdmp.UI.SimpleDialogs
     public partial class TypeTextOrCancelDialog : Form
     {
         private readonly bool _allowBlankText;
+        private readonly bool _multiline;
         public string ResultText {get { return textBox1.Text.Trim(); }}
 
         /// <summary>
@@ -28,11 +30,16 @@ namespace Rdmp.UI.SimpleDialogs
         public TypeTextOrCancelDialog(string header, string label, int maxCharacters, string startingTextForInputBox = null, bool allowBlankText = false, bool multiLine = false)
         {
             _allowBlankText = allowBlankText;
+            _multiline = multiLine;
+
             InitializeComponent();
-            if (multiLine)
+            if (_multiline)
             {
-                this.Height += 40;
-                this.textBox1.Height += 40;
+                lblNewLineInstructions.Visible = true;
+                this.textBox1.Anchor = (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right);
+                this.textBox1.ScrollBars = ScrollBars.Vertical;
+                this.Height = 290;
+                this.Width = 740;            
             }
 
             if(header.Length > WideMessageBox.MAX_LENGTH_TITLE)
@@ -49,7 +56,7 @@ namespace Rdmp.UI.SimpleDialogs
             SetEnabledness();
             
             var desiredWidth = TextRenderer.MeasureText(label,label1.Font).Width;
-            Width = Math.Max(460,Math.Min(720, desiredWidth));            
+            Width = Math.Max(740, Math.Min(740, desiredWidth));         
         }
 
         private void btnOk_Click(object sender, EventArgs e)
@@ -66,17 +73,24 @@ namespace Rdmp.UI.SimpleDialogs
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
+            //If they've pressed enter...
             if (e.KeyCode == Keys.Enter)
             {
-                e.Handled = true;
-                e.SuppressKeyPress = true;
+                if(!(_multiline && e.Control))
+                {
+                    //Supress the enter key (so a new line isn't created) and press the OK button (if it's enabled) if we're NOT (in a multiline control while holding the control key)
+                    //i.e. in a multiline control hold CTRL+Enter to create a new line, else we treat enter as normal and "OK" the window
+                    e.Handled = true;
+                    e.SuppressKeyPress = true;
+
+                    if (btnOk.Enabled)
+                        btnOk_Click(null, null);
+                }
             }
 
+            //Escape should work for all controls
             if (e.KeyCode == Keys.Escape)
                 btnCancel_Click(null, null);
-
-            if (e.KeyCode == Keys.Enter && btnOk.Enabled)
-                btnOk_Click(null, null);
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
