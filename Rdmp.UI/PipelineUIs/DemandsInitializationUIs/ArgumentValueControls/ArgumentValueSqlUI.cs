@@ -44,7 +44,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
             _args = args;
 
             tbSql.Text = FormatSqlForTextbox(args.InitialValue);
-            lblSqlClause.Text = args.ContextText?.ToUpper();
+            lblSqlClause.Text = args.ContextText;
         }
 
         private void btnSetSQL_Click(object sender, System.EventArgs e)
