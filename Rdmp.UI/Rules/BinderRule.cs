@@ -20,13 +20,18 @@ namespace Rdmp.UI.Rules
         protected readonly Func<T, object> PropertyToCheck;
         protected readonly Control Control;
 
-        protected BinderRule(IActivateItems activator, T toTest, Func<T, object> propertyToCheck, Control control)
+        /// <summary>
+        /// The member on <see cref="ToTest"/> that 
+        /// </summary>
+        protected readonly string PropertyToCheckName;
+        protected BinderRule(IActivateItems activator, T toTest, Func<T, object> propertyToCheck, Control control, string propertyToCheckName)
         {
             ErrorProvider = new ErrorProvider();
             Activator = activator;
             ToTest = toTest;
             PropertyToCheck = propertyToCheck;
             Control = control;
+            PropertyToCheckName = propertyToCheckName;
 
             activator.OnRuleRegistered(this);
 
@@ -35,6 +40,12 @@ namespace Rdmp.UI.Rules
 
         private void ToTest_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            // the property being changed is not ours
+            if (!string.Equals(e.PropertyName, PropertyToCheckName))
+            {
+                return;
+            }
+
             var currentValue = PropertyToCheck(ToTest);
             var typeToTest = ToTest.GetType();
 
