@@ -38,6 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Generate Release Document now shows as impossible when Cohort is not defined or unreachable (e.g. if user does not have access to cohort database)
 - Fixed bug where selecting a [PipelineComponent] for which help is unavailable would leave the previously selected component's help visible
 - Fixed bug with 'Commit Cohort' storing the target cohort database for future clicks
+- Fixed a bug where editing a field like `Description` would fire validation on other properties e.g. `Name` which could slow controls down when validation is slow and change events are fired in rapid succession.
 
 ### Changed
 
