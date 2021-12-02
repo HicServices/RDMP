@@ -51,7 +51,7 @@ namespace Rdmp.UI.SimpleDialogs
             // btnOk
             // 
             this.btnOk.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.btnOk.Location = new System.Drawing.Point(116, 5);
+            this.btnOk.Location = new System.Drawing.Point(164, 5);
             this.btnOk.Margin = new System.Windows.Forms.Padding(4);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(88, 27);
@@ -63,7 +63,7 @@ namespace Rdmp.UI.SimpleDialogs
             // btnCopyToClipboard
             // 
             this.btnCopyToClipboard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCopyToClipboard.Location = new System.Drawing.Point(531, 5);
+            this.btnCopyToClipboard.Location = new System.Drawing.Point(626, 5);
             this.btnCopyToClipboard.Margin = new System.Windows.Forms.Padding(4);
             this.btnCopyToClipboard.Name = "btnCopyToClipboard";
             this.btnCopyToClipboard.Size = new System.Drawing.Size(124, 27);
@@ -75,7 +75,7 @@ namespace Rdmp.UI.SimpleDialogs
             // btnViewStackTrace
             // 
             this.btnViewStackTrace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnViewStackTrace.Location = new System.Drawing.Point(399, 5);
+            this.btnViewStackTrace.Location = new System.Drawing.Point(494, 5);
             this.btnViewStackTrace.Margin = new System.Windows.Forms.Padding(4);
             this.btnViewStackTrace.Name = "btnViewStackTrace";
             this.btnViewStackTrace.Size = new System.Drawing.Size(124, 27);
@@ -105,7 +105,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(659, 213);
+            this.panel1.Size = new System.Drawing.Size(754, 213);
             this.panel1.TabIndex = 6;
             // 
             // btnViewSourceCode
@@ -114,7 +114,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.btnViewSourceCode.Enabled = false;
             this.btnViewSourceCode.Image = ((System.Drawing.Image)(resources.GetObject("btnViewSourceCode.Image")));
             this.btnViewSourceCode.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnViewSourceCode.Location = new System.Drawing.Point(587, 4);
+            this.btnViewSourceCode.Location = new System.Drawing.Point(682, 4);
             this.btnViewSourceCode.Margin = new System.Windows.Forms.Padding(4);
             this.btnViewSourceCode.Name = "btnViewSourceCode";
             this.btnViewSourceCode.Size = new System.Drawing.Size(68, 27);
@@ -134,7 +134,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.richTextBox1.Margin = new System.Windows.Forms.Padding(10);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(578, 141);
+            this.richTextBox1.Size = new System.Drawing.Size(673, 141);
             this.richTextBox1.TabIndex = 3;
             this.richTextBox1.Text = "";
             this.richTextBox1.WordWrap = false;
@@ -162,7 +162,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.panel2.Location = new System.Drawing.Point(0, 213);
             this.panel2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(659, 36);
+            this.panel2.Size = new System.Drawing.Size(754, 36);
             this.panel2.TabIndex = 7;
             // 
             // ButtonsPanel
@@ -173,7 +173,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.ButtonsPanel.Location = new System.Drawing.Point(74, 0);
             this.ButtonsPanel.Margin = new System.Windows.Forms.Padding(0);
             this.ButtonsPanel.Name = "ButtonsPanel";
-            this.ButtonsPanel.Size = new System.Drawing.Size(321, 36);
+            this.ButtonsPanel.Size = new System.Drawing.Size(416, 36);
             this.ButtonsPanel.TabIndex = 4;
             // 
             // btnBack
@@ -195,14 +195,14 @@ namespace Rdmp.UI.SimpleDialogs
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(659, 249);
+            this.ClientSize = new System.Drawing.Size(754, 249);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panel2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.MinimumSize = new System.Drawing.Size(450, 200);
+            this.MinimumSize = new System.Drawing.Size(590, 200);
             this.Name = "WideMessageBox";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Message";
