@@ -160,6 +160,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
             var args = new ArgumentValueUIArgs();
             args.Parent = parent;
             args.Type = argument.GetSystemType();
+            args.ContextText = required.Demand.ContextText;
 
             try
             {
