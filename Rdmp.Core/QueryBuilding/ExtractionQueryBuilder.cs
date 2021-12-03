@@ -159,6 +159,15 @@ namespace Rdmp.Core.QueryBuilding
             
             DateTime end = start.AddDays(batch.NumberOfDaysPerBatch);
 
+            // Don't load into the future / past end of dataset
+            if(end > (batch.EndDate ?? DateTime.Now))
+            {
+                end = batch.EndDate ?? DateTime.Now;
+            }
+
+            request.BatchStart = start;
+            request.BatchEnd = end;
+
             string line = $"({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd)";
 
             queryBuilder.AddCustomLine(line, QueryComponent.WHERE);

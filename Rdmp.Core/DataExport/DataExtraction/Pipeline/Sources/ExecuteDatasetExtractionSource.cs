@@ -478,9 +478,23 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             return toReturn;
         }
         
+
+        /// <summary>
+        /// Performs any tidyup after the extraction including updating this such as <see cref="ExtractionProgress.ProgressDate"/>.
+        /// Ensure when overriding this method that you call this base implementation or things will go badly for you.
+        /// </summary>
+        /// <param name="job"></param>
+        /// <param name="pipelineFailureExceptionIfAny"></param>
         public virtual void Dispose(IDataLoadEventListener job, Exception pipelineFailureExceptionIfAny)
         {
-            
+            // if load ended successfully and it is a batch load
+            if(pipelineFailureExceptionIfAny == null && Request?.BatchEnd != null)
+            {
+                // update our progress
+                var progress = Request.SelectedDataSets.ExtractionProgressIfAny ?? throw new Exception($"Request {Request} had a BatchEnd set but {Request.SelectedDataSets} has no {nameof(ExtractionProgress)}");
+                progress.ProgressDate = Request.BatchEnd.Value;
+                progress.SaveToDatabase();
+            }
         }
 
         public void Abort(IDataLoadEventListener listener)

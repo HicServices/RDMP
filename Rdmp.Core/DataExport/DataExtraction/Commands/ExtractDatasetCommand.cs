@@ -60,6 +60,11 @@ namespace Rdmp.Core.DataExport.DataExtraction.Commands
         public List<IExtractionResults> ExtractionResults { get; private set; }
         public int TopX { get; set; }
 
+        /// <inheritdoc/>
+        public DateTime? BatchStart { get; set; }
+        /// <inheritdoc/>
+        public DateTime? BatchEnd { get; set; }
+
         public ExtractDatasetCommand( IExtractionConfiguration configuration, IExtractableCohort extractableCohort, IExtractableDatasetBundle datasetBundle, List<IColumn> columnsToExtract, IHICProjectSalt salt, IExtractionDirectory directory, bool includeValidation = false, bool includeLookups = false):this(configuration,datasetBundle.DataSet)
         {
             DataExportRepository = configuration.DataExportRepository;
