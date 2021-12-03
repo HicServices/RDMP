@@ -32,8 +32,6 @@ namespace Rdmp.UI.MainFormUITabs
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.label24 = new System.Windows.Forms.Label();
-            this.tbFolder = new System.Windows.Forms.TextBox();
             this.tbDatasetStartDate = new System.Windows.Forms.TextBox();
             this.label41 = new System.Windows.Forms.Label();
             this.label28 = new System.Windows.Forms.Label();
@@ -42,24 +40,17 @@ namespace Rdmp.UI.MainFormUITabs
             this.label26 = new System.Windows.Forms.Label();
             this.label27 = new System.Windows.Forms.Label();
             this.tbCountryOfOrigin = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.label23 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
-            this.tbAcronym = new System.Windows.Forms.TextBox();
             this.c_ddGranularity = new System.Windows.Forms.ComboBox();
             this.label21 = new System.Windows.Forms.Label();
             this.label64 = new System.Windows.Forms.Label();
-            this.c_tbID = new System.Windows.Forms.TextBox();
             this.label20 = new System.Windows.Forms.Label();
-            this.label25 = new System.Windows.Forms.Label();
             this.c_tbDetailPageURL = new System.Windows.Forms.TextBox();
             this.label19 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.c_tbGeographicalCoverage = new System.Windows.Forms.TextBox();
-            this.tbName = new System.Windows.Forms.TextBox();
             this.label18 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
             this.c_tbUpdateFrequency = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
@@ -89,16 +80,21 @@ namespace Rdmp.UI.MainFormUITabs
             this.label8 = new System.Windows.Forms.Label();
             this.c_tbNumberOfThese = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.panel6 = new System.Windows.Forms.Panel();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.cbDeprecated = new System.Windows.Forms.CheckBox();
             this.cbInternal = new System.Windows.Forms.CheckBox();
             this.cbColdStorage = new System.Windows.Forms.CheckBox();
-            this.panel5 = new System.Windows.Forms.Panel();
-            this.panel4 = new System.Windows.Forms.Panel();
-            this.panel3 = new System.Windows.Forms.Panel();
-            this.panel2 = new System.Windows.Forms.Panel();
+            this.tbFolder = new System.Windows.Forms.TextBox();
+            this.tbAcronym = new System.Windows.Forms.TextBox();
+            this.tbName = new System.Windows.Forms.TextBox();
+            this.c_tbID = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label24 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label25 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.panel36 = new System.Windows.Forms.Panel();
             this.tbSourceOfDataCollection = new System.Windows.Forms.TextBox();
             this.label33 = new System.Windows.Forms.Label();
@@ -149,12 +145,8 @@ namespace Rdmp.UI.MainFormUITabs
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.panel6.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
-            this.panel5.SuspendLayout();
-            this.panel4.SuspendLayout();
-            this.panel3.SuspendLayout();
-            this.panel2.SuspendLayout();
             this.panel36.SuspendLayout();
             this.panel35.SuspendLayout();
             this.panel34.SuspendLayout();
@@ -188,33 +180,13 @@ namespace Rdmp.UI.MainFormUITabs
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
             // 
-            // label24
-            // 
-            this.label24.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label24.Location = new System.Drawing.Point(0, 0);
-            this.label24.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label24.Name = "label24";
-            this.label24.Size = new System.Drawing.Size(120, 23);
-            this.label24.TabIndex = 152;
-            this.label24.Text = "Folder";
-            // 
-            // tbFolder
-            // 
-            this.tbFolder.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbFolder.Location = new System.Drawing.Point(120, 0);
-            this.tbFolder.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tbFolder.Name = "tbFolder";
-            this.tbFolder.Size = new System.Drawing.Size(712, 23);
-            this.tbFolder.TabIndex = 3;
-            this.tbFolder.TextChanged += new System.EventHandler(this.tbFolder_TextChanged);
-            // 
             // tbDatasetStartDate
             // 
             this.tbDatasetStartDate.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tbDatasetStartDate.Location = new System.Drawing.Point(120, 0);
             this.tbDatasetStartDate.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbDatasetStartDate.Name = "tbDatasetStartDate";
-            this.tbDatasetStartDate.Size = new System.Drawing.Size(695, 23);
+            this.tbDatasetStartDate.Size = new System.Drawing.Size(380, 23);
             this.tbDatasetStartDate.TabIndex = 14;
             this.tbDatasetStartDate.TextChanged += new System.EventHandler(this.tbDatasetStartDate_TextChanged);
             // 
@@ -246,7 +218,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.c_tbSubjectNumbers.Location = new System.Drawing.Point(120, 0);
             this.c_tbSubjectNumbers.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.c_tbSubjectNumbers.Name = "c_tbSubjectNumbers";
-            this.c_tbSubjectNumbers.Size = new System.Drawing.Size(695, 23);
+            this.c_tbSubjectNumbers.Size = new System.Drawing.Size(380, 23);
             this.c_tbSubjectNumbers.TabIndex = 12;
             // 
             // tbDataStandards
@@ -257,7 +229,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.tbDataStandards.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbDataStandards.Multiline = true;
             this.tbDataStandards.Name = "tbDataStandards";
-            this.tbDataStandards.Size = new System.Drawing.Size(695, 92);
+            this.tbDataStandards.Size = new System.Drawing.Size(380, 92);
             this.tbDataStandards.TabIndex = 23;
             // 
             // label26
@@ -286,19 +258,8 @@ namespace Rdmp.UI.MainFormUITabs
             this.tbCountryOfOrigin.Location = new System.Drawing.Point(120, 0);
             this.tbCountryOfOrigin.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbCountryOfOrigin.Name = "tbCountryOfOrigin";
-            this.tbCountryOfOrigin.Size = new System.Drawing.Size(695, 23);
+            this.tbCountryOfOrigin.Size = new System.Drawing.Size(380, 23);
             this.tbCountryOfOrigin.TabIndex = 22;
-            // 
-            // label1
-            // 
-            this.label1.AutoEllipsis = true;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label1.Location = new System.Drawing.Point(0, 0);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(120, 23);
-            this.label1.TabIndex = 56;
-            this.label1.Text = "Catalogue ID";
             // 
             // label23
             // 
@@ -320,15 +281,6 @@ namespace Rdmp.UI.MainFormUITabs
             this.label22.TabIndex = 103;
             this.label22.Text = "Query Tool URL";
             // 
-            // tbAcronym
-            // 
-            this.tbAcronym.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbAcronym.Location = new System.Drawing.Point(120, 0);
-            this.tbAcronym.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tbAcronym.Name = "tbAcronym";
-            this.tbAcronym.Size = new System.Drawing.Size(712, 23);
-            this.tbAcronym.TabIndex = 2;
-            // 
             // c_ddGranularity
             // 
             this.c_ddGranularity.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -337,7 +289,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.c_ddGranularity.Location = new System.Drawing.Point(120, 0);
             this.c_ddGranularity.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.c_ddGranularity.Name = "c_ddGranularity";
-            this.c_ddGranularity.Size = new System.Drawing.Size(695, 23);
+            this.c_ddGranularity.Size = new System.Drawing.Size(380, 23);
             this.c_ddGranularity.TabIndex = 3;
             // 
             // label21
@@ -360,16 +312,6 @@ namespace Rdmp.UI.MainFormUITabs
             this.label64.TabIndex = 108;
             this.label64.Text = "Granularity";
             // 
-            // c_tbID
-            // 
-            this.c_tbID.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.c_tbID.Location = new System.Drawing.Point(120, 0);
-            this.c_tbID.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.c_tbID.Name = "c_tbID";
-            this.c_tbID.ReadOnly = true;
-            this.c_tbID.Size = new System.Drawing.Size(712, 23);
-            this.c_tbID.TabIndex = 0;
-            // 
             // label20
             // 
             this.label20.Dock = System.Windows.Forms.DockStyle.Left;
@@ -380,23 +322,13 @@ namespace Rdmp.UI.MainFormUITabs
             this.label20.TabIndex = 101;
             this.label20.Text = "Browse URL";
             // 
-            // label25
-            // 
-            this.label25.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label25.Location = new System.Drawing.Point(0, 0);
-            this.label25.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(120, 23);
-            this.label25.TabIndex = 107;
-            this.label25.Text = "Resource Name/Title";
-            // 
             // c_tbDetailPageURL
             // 
             this.c_tbDetailPageURL.Dock = System.Windows.Forms.DockStyle.Fill;
             this.c_tbDetailPageURL.Location = new System.Drawing.Point(120, 0);
             this.c_tbDetailPageURL.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.c_tbDetailPageURL.Name = "c_tbDetailPageURL";
-            this.c_tbDetailPageURL.Size = new System.Drawing.Size(695, 23);
+            this.c_tbDetailPageURL.Size = new System.Drawing.Size(380, 23);
             this.c_tbDetailPageURL.TabIndex = 0;
             this.c_tbDetailPageURL.TextChanged += new System.EventHandler(this.c_tbDetailPageURL_TextChanged);
             // 
@@ -410,16 +342,6 @@ namespace Rdmp.UI.MainFormUITabs
             this.label19.TabIndex = 100;
             this.label19.Text = "API Access URL";
             // 
-            // label2
-            // 
-            this.label2.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label2.Location = new System.Drawing.Point(0, 0);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(120, 23);
-            this.label2.TabIndex = 58;
-            this.label2.Text = "Resource Acronym";
-            // 
             // c_tbGeographicalCoverage
             // 
             this.c_tbGeographicalCoverage.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -428,18 +350,8 @@ namespace Rdmp.UI.MainFormUITabs
             this.c_tbGeographicalCoverage.Multiline = true;
             this.c_tbGeographicalCoverage.Name = "c_tbGeographicalCoverage";
             this.c_tbGeographicalCoverage.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.c_tbGeographicalCoverage.Size = new System.Drawing.Size(695, 69);
+            this.c_tbGeographicalCoverage.Size = new System.Drawing.Size(380, 69);
             this.c_tbGeographicalCoverage.TabIndex = 2;
-            // 
-            // tbName
-            // 
-            this.tbName.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbName.Location = new System.Drawing.Point(120, 0);
-            this.tbName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tbName.Name = "tbName";
-            this.tbName.Size = new System.Drawing.Size(712, 23);
-            this.tbName.TabIndex = 1;
-            this.tbName.TextChanged += new System.EventHandler(this.tbName_TextChanged);
             // 
             // label18
             // 
@@ -461,24 +373,13 @@ namespace Rdmp.UI.MainFormUITabs
             this.label16.TabIndex = 98;
             this.label16.Text = "Resource Owner";
             // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label3.Location = new System.Drawing.Point(0, 0);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(118, 15);
-            this.label3.TabIndex = 61;
-            this.label3.Text = "Resource Description";
-            // 
             // c_tbUpdateFrequency
             // 
             this.c_tbUpdateFrequency.Dock = System.Windows.Forms.DockStyle.Fill;
             this.c_tbUpdateFrequency.Location = new System.Drawing.Point(120, 0);
             this.c_tbUpdateFrequency.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.c_tbUpdateFrequency.Name = "c_tbUpdateFrequency";
-            this.c_tbUpdateFrequency.Size = new System.Drawing.Size(695, 23);
+            this.c_tbUpdateFrequency.Size = new System.Drawing.Size(380, 23);
             this.c_tbUpdateFrequency.TabIndex = 7;
             // 
             // label4
@@ -489,7 +390,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(120, 23);
             this.label4.TabIndex = 65;
-            this.label4.Text = "Detail Page URL";
+            this.label4.Text = "Detail Page URL asdkjhaslkjdh alkjsh dlkajhs d";
             // 
             // label17
             // 
@@ -507,7 +408,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.c_tbSourceUrl.Location = new System.Drawing.Point(120, 0);
             this.c_tbSourceUrl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.c_tbSourceUrl.Name = "c_tbSourceUrl";
-            this.c_tbSourceUrl.Size = new System.Drawing.Size(695, 23);
+            this.c_tbSourceUrl.Size = new System.Drawing.Size(380, 23);
             this.c_tbSourceUrl.TabIndex = 21;
             this.c_tbSourceUrl.TextChanged += new System.EventHandler(this.c_tbSourceUrl_TextChanged);
             // 
@@ -519,7 +420,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.c_tbTopics.Multiline = true;
             this.c_tbTopics.Name = "c_tbTopics";
             this.c_tbTopics.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.c_tbTopics.Size = new System.Drawing.Size(695, 46);
+            this.c_tbTopics.Size = new System.Drawing.Size(380, 46);
             this.c_tbTopics.TabIndex = 6;
             // 
             // label5
@@ -549,7 +450,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.c_tbQueryToolUrl.Location = new System.Drawing.Point(120, 0);
             this.c_tbQueryToolUrl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.c_tbQueryToolUrl.Name = "c_tbQueryToolUrl";
-            this.c_tbQueryToolUrl.Size = new System.Drawing.Size(695, 23);
+            this.c_tbQueryToolUrl.Size = new System.Drawing.Size(380, 23);
             this.c_tbQueryToolUrl.TabIndex = 20;
             this.c_tbQueryToolUrl.TextChanged += new System.EventHandler(this.c_tbQueryToolUrl_TextChanged);
             // 
@@ -561,7 +462,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.c_tbBackgroundSummary.Multiline = true;
             this.c_tbBackgroundSummary.Name = "c_tbBackgroundSummary";
             this.c_tbBackgroundSummary.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.c_tbBackgroundSummary.Size = new System.Drawing.Size(695, 92);
+            this.c_tbBackgroundSummary.Size = new System.Drawing.Size(380, 92);
             this.c_tbBackgroundSummary.TabIndex = 4;
             // 
             // label6
@@ -580,7 +481,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.c_tbBulkDownloadUrl.Location = new System.Drawing.Point(120, 0);
             this.c_tbBulkDownloadUrl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.c_tbBulkDownloadUrl.Name = "c_tbBulkDownloadUrl";
-            this.c_tbBulkDownloadUrl.Size = new System.Drawing.Size(695, 23);
+            this.c_tbBulkDownloadUrl.Size = new System.Drawing.Size(380, 23);
             this.c_tbBulkDownloadUrl.TabIndex = 19;
             this.c_tbBulkDownloadUrl.TextChanged += new System.EventHandler(this.c_tbBulkDownloadUrl_TextChanged);
             // 
@@ -590,7 +491,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.c_tbTimeCoverage.Location = new System.Drawing.Point(120, 0);
             this.c_tbTimeCoverage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.c_tbTimeCoverage.Name = "c_tbTimeCoverage";
-            this.c_tbTimeCoverage.Size = new System.Drawing.Size(695, 23);
+            this.c_tbTimeCoverage.Size = new System.Drawing.Size(380, 23);
             this.c_tbTimeCoverage.TabIndex = 10;
             // 
             // label7
@@ -619,7 +520,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.c_tbBrowseUrl.Location = new System.Drawing.Point(120, 0);
             this.c_tbBrowseUrl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.c_tbBrowseUrl.Name = "c_tbBrowseUrl";
-            this.c_tbBrowseUrl.Size = new System.Drawing.Size(695, 23);
+            this.c_tbBrowseUrl.Size = new System.Drawing.Size(380, 23);
             this.c_tbBrowseUrl.TabIndex = 18;
             this.c_tbBrowseUrl.TextChanged += new System.EventHandler(this.c_tbBrowseUrl_TextChanged);
             // 
@@ -629,7 +530,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.c_tbUpdateSchedule.Location = new System.Drawing.Point(120, 0);
             this.c_tbUpdateSchedule.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.c_tbUpdateSchedule.Name = "c_tbUpdateSchedule";
-            this.c_tbUpdateSchedule.Size = new System.Drawing.Size(695, 23);
+            this.c_tbUpdateSchedule.Size = new System.Drawing.Size(380, 23);
             this.c_tbUpdateSchedule.TabIndex = 9;
             // 
             // label13
@@ -648,7 +549,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.c_tbAPIAccessURL.Location = new System.Drawing.Point(120, 0);
             this.c_tbAPIAccessURL.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.c_tbAPIAccessURL.Name = "c_tbAPIAccessURL";
-            this.c_tbAPIAccessURL.Size = new System.Drawing.Size(695, 23);
+            this.c_tbAPIAccessURL.Size = new System.Drawing.Size(380, 23);
             this.c_tbAPIAccessURL.TabIndex = 17;
             this.c_tbAPIAccessURL.TextChanged += new System.EventHandler(this.c_tbAPIAccessURL_TextChanged);
             // 
@@ -670,7 +571,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.c_ddPeriodicity.Location = new System.Drawing.Point(120, 0);
             this.c_ddPeriodicity.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.c_ddPeriodicity.Name = "c_ddPeriodicity";
-            this.c_ddPeriodicity.Size = new System.Drawing.Size(695, 23);
+            this.c_ddPeriodicity.Size = new System.Drawing.Size(380, 23);
             this.c_ddPeriodicity.TabIndex = 5;
             // 
             // c_tbAccessOptions
@@ -679,7 +580,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.c_tbAccessOptions.Location = new System.Drawing.Point(120, 0);
             this.c_tbAccessOptions.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.c_tbAccessOptions.Name = "c_tbAccessOptions";
-            this.c_tbAccessOptions.Size = new System.Drawing.Size(695, 23);
+            this.c_tbAccessOptions.Size = new System.Drawing.Size(380, 23);
             this.c_tbAccessOptions.TabIndex = 16;
             // 
             // c_tbLastRevisionDate
@@ -688,7 +589,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.c_tbLastRevisionDate.Location = new System.Drawing.Point(120, 0);
             this.c_tbLastRevisionDate.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.c_tbLastRevisionDate.Name = "c_tbLastRevisionDate";
-            this.c_tbLastRevisionDate.Size = new System.Drawing.Size(695, 23);
+            this.c_tbLastRevisionDate.Size = new System.Drawing.Size(380, 23);
             this.c_tbLastRevisionDate.TabIndex = 11;
             this.c_tbLastRevisionDate.TextChanged += new System.EventHandler(this.c_tbLastRevisionDate_TextChanged);
             // 
@@ -711,7 +612,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.c_ddType.Location = new System.Drawing.Point(120, 0);
             this.c_ddType.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.c_ddType.Name = "c_ddType";
-            this.c_ddType.Size = new System.Drawing.Size(695, 23);
+            this.c_ddType.Size = new System.Drawing.Size(380, 23);
             this.c_ddType.TabIndex = 1;
             // 
             // c_tbResourceOwner
@@ -720,7 +621,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.c_tbResourceOwner.Location = new System.Drawing.Point(120, 0);
             this.c_tbResourceOwner.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.c_tbResourceOwner.Name = "c_tbResourceOwner";
-            this.c_tbResourceOwner.Size = new System.Drawing.Size(695, 23);
+            this.c_tbResourceOwner.Size = new System.Drawing.Size(380, 23);
             this.c_tbResourceOwner.TabIndex = 13;
             // 
             // c_tbAttributionCitation
@@ -731,7 +632,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.c_tbAttributionCitation.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.c_tbAttributionCitation.Multiline = true;
             this.c_tbAttributionCitation.Name = "c_tbAttributionCitation";
-            this.c_tbAttributionCitation.Size = new System.Drawing.Size(695, 92);
+            this.c_tbAttributionCitation.Size = new System.Drawing.Size(380, 92);
             this.c_tbAttributionCitation.TabIndex = 15;
             // 
             // label8
@@ -757,6 +658,7 @@ namespace Rdmp.UI.MainFormUITabs
             // splitContainer1
             // 
             this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.splitContainer1.Cursor = System.Windows.Forms.Cursors.HSplit;
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
@@ -766,12 +668,7 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.panel6);
-            this.splitContainer1.Panel1.Controls.Add(this.flowLayoutPanel1);
-            this.splitContainer1.Panel1.Controls.Add(this.panel5);
-            this.splitContainer1.Panel1.Controls.Add(this.panel4);
-            this.splitContainer1.Panel1.Controls.Add(this.panel3);
-            this.splitContainer1.Panel1.Controls.Add(this.panel2);
+            this.splitContainer1.Panel1.Controls.Add(this.tableLayoutPanel1);
             // 
             // splitContainer1.Panel2
             // 
@@ -807,39 +704,56 @@ namespace Rdmp.UI.MainFormUITabs
             this.splitContainer1.Panel2.Controls.Add(this.panel9);
             this.splitContainer1.Panel2.Controls.Add(this.panel8);
             this.splitContainer1.Panel2.Controls.Add(this.panel7);
-            this.splitContainer1.Size = new System.Drawing.Size(836, 1085);
-            this.splitContainer1.SplitterDistance = 274;
+            this.splitContainer1.Size = new System.Drawing.Size(521, 1085);
+            this.splitContainer1.SplitterDistance = 297;
             this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 114;
             // 
-            // panel6
+            // tableLayoutPanel1
             // 
-            this.panel6.Controls.Add(this.panel1);
-            this.panel6.Controls.Add(this.label3);
-            this.panel6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel6.Location = new System.Drawing.Point(0, 115);
-            this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(832, 155);
-            this.panel6.TabIndex = 158;
-            // 
-            // panel1
-            // 
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(118, 0);
-            this.panel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(714, 155);
-            this.panel1.TabIndex = 153;
+            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 1, 6);
+            this.tableLayoutPanel1.Controls.Add(this.tbFolder, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this.tbAcronym, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.tbName, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.c_tbID, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.label24, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.label2, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.label25, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.label3, 0, 7);
+            this.tableLayoutPanel1.Controls.Add(this.panel1, 1, 7);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(0, 0, 5, 0);
+            this.tableLayoutPanel1.RowCount = 8;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(511, 293);
+            this.tableLayoutPanel1.TabIndex = 160;
             // 
             // flowLayoutPanel1
             // 
+            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.flowLayoutPanel1.Controls.Add(this.cbDeprecated);
             this.flowLayoutPanel1.Controls.Add(this.cbInternal);
             this.flowLayoutPanel1.Controls.Add(this.cbColdStorage);
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 92);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(132, 119);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(3, 3, 20, 3);
+            this.flowLayoutPanel1.MinimumSize = new System.Drawing.Size(350, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(832, 23);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(354, 23);
             this.flowLayoutPanel1.TabIndex = 159;
             // 
             // cbDeprecated
@@ -875,45 +789,121 @@ namespace Rdmp.UI.MainFormUITabs
             this.cbColdStorage.Text = "ColdStorage";
             this.cbColdStorage.UseVisualStyleBackColor = true;
             // 
-            // panel5
+            // tbFolder
             // 
-            this.panel5.Controls.Add(this.tbFolder);
-            this.panel5.Controls.Add(this.label24);
-            this.panel5.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel5.Location = new System.Drawing.Point(0, 69);
-            this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(832, 23);
-            this.panel5.TabIndex = 157;
+            this.tbFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbFolder.Location = new System.Drawing.Point(133, 90);
+            this.tbFolder.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
+            this.tbFolder.MinimumSize = new System.Drawing.Size(350, 4);
+            this.tbFolder.Name = "tbFolder";
+            this.tbFolder.Size = new System.Drawing.Size(353, 23);
+            this.tbFolder.TabIndex = 3;
+            this.tbFolder.TextChanged += new System.EventHandler(this.tbFolder_TextChanged);
             // 
-            // panel4
+            // tbAcronym
             // 
-            this.panel4.Controls.Add(this.tbAcronym);
-            this.panel4.Controls.Add(this.label2);
-            this.panel4.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel4.Location = new System.Drawing.Point(0, 46);
-            this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(832, 23);
-            this.panel4.TabIndex = 156;
+            this.tbAcronym.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbAcronym.Location = new System.Drawing.Point(133, 61);
+            this.tbAcronym.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
+            this.tbAcronym.MinimumSize = new System.Drawing.Size(350, 4);
+            this.tbAcronym.Name = "tbAcronym";
+            this.tbAcronym.Size = new System.Drawing.Size(353, 23);
+            this.tbAcronym.TabIndex = 2;
             // 
-            // panel3
+            // tbName
             // 
-            this.panel3.Controls.Add(this.tbName);
-            this.panel3.Controls.Add(this.label25);
-            this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel3.Location = new System.Drawing.Point(0, 23);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(832, 23);
-            this.panel3.TabIndex = 155;
+            this.tbName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbName.Location = new System.Drawing.Point(133, 32);
+            this.tbName.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
+            this.tbName.MinimumSize = new System.Drawing.Size(350, 4);
+            this.tbName.Name = "tbName";
+            this.tbName.Size = new System.Drawing.Size(353, 23);
+            this.tbName.TabIndex = 1;
+            this.tbName.TextChanged += new System.EventHandler(this.tbName_TextChanged);
             // 
-            // panel2
+            // c_tbID
             // 
-            this.panel2.Controls.Add(this.c_tbID);
-            this.panel2.Controls.Add(this.label1);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel2.Location = new System.Drawing.Point(0, 0);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(832, 23);
-            this.panel2.TabIndex = 154;
+            this.c_tbID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.c_tbID.Location = new System.Drawing.Point(133, 3);
+            this.c_tbID.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
+            this.c_tbID.MinimumSize = new System.Drawing.Size(350, 4);
+            this.c_tbID.Name = "c_tbID";
+            this.c_tbID.ReadOnly = true;
+            this.c_tbID.Size = new System.Drawing.Size(353, 23);
+            this.c_tbID.TabIndex = 0;
+            // 
+            // label1
+            // 
+            this.label1.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label1.AutoEllipsis = true;
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(47, 7);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(78, 15);
+            this.label1.TabIndex = 56;
+            this.label1.Text = "Catalogue ID:";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label24
+            // 
+            this.label24.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label24.AutoSize = true;
+            this.label24.Location = new System.Drawing.Point(82, 94);
+            this.label24.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(43, 15);
+            this.label24.TabIndex = 152;
+            this.label24.Text = "Folder:";
+            this.label24.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label2
+            // 
+            this.label2.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(15, 65);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(110, 15);
+            this.label2.TabIndex = 58;
+            this.label2.Text = "Resource Acronym:";
+            this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label25
+            // 
+            this.label25.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label25.AutoSize = true;
+            this.label25.Location = new System.Drawing.Point(5, 36);
+            this.label25.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(120, 15);
+            this.label25.TabIndex = 107;
+            this.label25.Text = "Resource Name/Title:";
+            this.label25.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(4, 145);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(121, 15);
+            this.label3.TabIndex = 61;
+            this.label3.Text = "Resource Description:";
+            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Location = new System.Drawing.Point(133, 148);
+            this.panel1.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
+            this.panel1.MinimumSize = new System.Drawing.Size(350, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(353, 142);
+            this.panel1.TabIndex = 153;
             // 
             // panel36
             // 
@@ -922,7 +912,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel36.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel36.Location = new System.Drawing.Point(0, 1074);
             this.panel36.Name = "panel36";
-            this.panel36.Size = new System.Drawing.Size(815, 92);
+            this.panel36.Size = new System.Drawing.Size(500, 92);
             this.panel36.TabIndex = 193;
             // 
             // tbSourceOfDataCollection
@@ -933,7 +923,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.tbSourceOfDataCollection.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbSourceOfDataCollection.Multiline = true;
             this.tbSourceOfDataCollection.Name = "tbSourceOfDataCollection";
-            this.tbSourceOfDataCollection.Size = new System.Drawing.Size(695, 92);
+            this.tbSourceOfDataCollection.Size = new System.Drawing.Size(380, 92);
             this.tbSourceOfDataCollection.TabIndex = 30;
             // 
             // label33
@@ -953,7 +943,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel35.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel35.Location = new System.Drawing.Point(0, 1051);
             this.panel35.Name = "panel35";
-            this.panel35.Size = new System.Drawing.Size(815, 23);
+            this.panel35.Size = new System.Drawing.Size(500, 23);
             this.panel35.TabIndex = 192;
             // 
             // tbEthicsApprover
@@ -962,7 +952,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.tbEthicsApprover.Location = new System.Drawing.Point(120, 0);
             this.tbEthicsApprover.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbEthicsApprover.Name = "tbEthicsApprover";
-            this.tbEthicsApprover.Size = new System.Drawing.Size(695, 23);
+            this.tbEthicsApprover.Size = new System.Drawing.Size(380, 23);
             this.tbEthicsApprover.TabIndex = 29;
             // 
             // label32
@@ -982,7 +972,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel34.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel34.Location = new System.Drawing.Point(0, 1028);
             this.panel34.Name = "panel34";
-            this.panel34.Size = new System.Drawing.Size(815, 23);
+            this.panel34.Size = new System.Drawing.Size(500, 23);
             this.panel34.TabIndex = 191;
             // 
             // ddExplicitConsent
@@ -997,7 +987,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.ddExplicitConsent.Location = new System.Drawing.Point(120, 0);
             this.ddExplicitConsent.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ddExplicitConsent.Name = "ddExplicitConsent";
-            this.ddExplicitConsent.Size = new System.Drawing.Size(695, 23);
+            this.ddExplicitConsent.Size = new System.Drawing.Size(380, 23);
             this.ddExplicitConsent.TabIndex = 28;
             this.ddExplicitConsent.SelectedIndexChanged += new System.EventHandler(this.ddExplicitConsent_SelectedIndexChanged);
             // 
@@ -1018,7 +1008,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel33.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel33.Location = new System.Drawing.Point(0, 936);
             this.panel33.Name = "panel33";
-            this.panel33.Size = new System.Drawing.Size(815, 92);
+            this.panel33.Size = new System.Drawing.Size(500, 92);
             this.panel33.TabIndex = 190;
             // 
             // tbAdministrativeContactAddress
@@ -1029,7 +1019,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.tbAdministrativeContactAddress.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbAdministrativeContactAddress.Multiline = true;
             this.tbAdministrativeContactAddress.Name = "tbAdministrativeContactAddress";
-            this.tbAdministrativeContactAddress.Size = new System.Drawing.Size(695, 92);
+            this.tbAdministrativeContactAddress.Size = new System.Drawing.Size(380, 92);
             this.tbAdministrativeContactAddress.TabIndex = 27;
             // 
             // label11
@@ -1049,7 +1039,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel32.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel32.Location = new System.Drawing.Point(0, 913);
             this.panel32.Name = "panel32";
-            this.panel32.Size = new System.Drawing.Size(815, 23);
+            this.panel32.Size = new System.Drawing.Size(500, 23);
             this.panel32.TabIndex = 189;
             // 
             // tbAdministrativeContactTelephone
@@ -1058,7 +1048,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.tbAdministrativeContactTelephone.Location = new System.Drawing.Point(120, 0);
             this.tbAdministrativeContactTelephone.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbAdministrativeContactTelephone.Name = "tbAdministrativeContactTelephone";
-            this.tbAdministrativeContactTelephone.Size = new System.Drawing.Size(695, 23);
+            this.tbAdministrativeContactTelephone.Size = new System.Drawing.Size(380, 23);
             this.tbAdministrativeContactTelephone.TabIndex = 26;
             // 
             // label30
@@ -1078,7 +1068,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel31.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel31.Location = new System.Drawing.Point(0, 890);
             this.panel31.Name = "panel31";
-            this.panel31.Size = new System.Drawing.Size(815, 23);
+            this.panel31.Size = new System.Drawing.Size(500, 23);
             this.panel31.TabIndex = 188;
             // 
             // tbAdministrativeContactEmail
@@ -1087,7 +1077,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.tbAdministrativeContactEmail.Location = new System.Drawing.Point(120, 0);
             this.tbAdministrativeContactEmail.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbAdministrativeContactEmail.Name = "tbAdministrativeContactEmail";
-            this.tbAdministrativeContactEmail.Size = new System.Drawing.Size(695, 23);
+            this.tbAdministrativeContactEmail.Size = new System.Drawing.Size(380, 23);
             this.tbAdministrativeContactEmail.TabIndex = 25;
             // 
             // label29
@@ -1107,7 +1097,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel30.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel30.Location = new System.Drawing.Point(0, 867);
             this.panel30.Name = "panel30";
-            this.panel30.Size = new System.Drawing.Size(815, 23);
+            this.panel30.Size = new System.Drawing.Size(500, 23);
             this.panel30.TabIndex = 187;
             // 
             // tbAdministrativeContactName
@@ -1116,7 +1106,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.tbAdministrativeContactName.Location = new System.Drawing.Point(120, 0);
             this.tbAdministrativeContactName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbAdministrativeContactName.Name = "tbAdministrativeContactName";
-            this.tbAdministrativeContactName.Size = new System.Drawing.Size(695, 23);
+            this.tbAdministrativeContactName.Size = new System.Drawing.Size(380, 23);
             this.tbAdministrativeContactName.TabIndex = 24;
             // 
             // label15
@@ -1136,7 +1126,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel29.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel29.Location = new System.Drawing.Point(0, 775);
             this.panel29.Name = "panel29";
-            this.panel29.Size = new System.Drawing.Size(815, 92);
+            this.panel29.Size = new System.Drawing.Size(500, 92);
             this.panel29.TabIndex = 186;
             // 
             // panel28
@@ -1146,7 +1136,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel28.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel28.Location = new System.Drawing.Point(0, 752);
             this.panel28.Name = "panel28";
-            this.panel28.Size = new System.Drawing.Size(815, 23);
+            this.panel28.Size = new System.Drawing.Size(500, 23);
             this.panel28.TabIndex = 185;
             // 
             // panel27
@@ -1156,7 +1146,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel27.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel27.Location = new System.Drawing.Point(0, 729);
             this.panel27.Name = "panel27";
-            this.panel27.Size = new System.Drawing.Size(815, 23);
+            this.panel27.Size = new System.Drawing.Size(500, 23);
             this.panel27.TabIndex = 184;
             // 
             // panel26
@@ -1166,7 +1156,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel26.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel26.Location = new System.Drawing.Point(0, 706);
             this.panel26.Name = "panel26";
-            this.panel26.Size = new System.Drawing.Size(815, 23);
+            this.panel26.Size = new System.Drawing.Size(500, 23);
             this.panel26.TabIndex = 183;
             // 
             // panel25
@@ -1176,7 +1166,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel25.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel25.Location = new System.Drawing.Point(0, 683);
             this.panel25.Name = "panel25";
-            this.panel25.Size = new System.Drawing.Size(815, 23);
+            this.panel25.Size = new System.Drawing.Size(500, 23);
             this.panel25.TabIndex = 182;
             // 
             // panel24
@@ -1186,7 +1176,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel24.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel24.Location = new System.Drawing.Point(0, 660);
             this.panel24.Name = "panel24";
-            this.panel24.Size = new System.Drawing.Size(815, 23);
+            this.panel24.Size = new System.Drawing.Size(500, 23);
             this.panel24.TabIndex = 181;
             // 
             // panel23
@@ -1196,7 +1186,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel23.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel23.Location = new System.Drawing.Point(0, 637);
             this.panel23.Name = "panel23";
-            this.panel23.Size = new System.Drawing.Size(815, 23);
+            this.panel23.Size = new System.Drawing.Size(500, 23);
             this.panel23.TabIndex = 180;
             // 
             // panel22
@@ -1206,7 +1196,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel22.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel22.Location = new System.Drawing.Point(0, 614);
             this.panel22.Name = "panel22";
-            this.panel22.Size = new System.Drawing.Size(815, 23);
+            this.panel22.Size = new System.Drawing.Size(500, 23);
             this.panel22.TabIndex = 179;
             // 
             // panel21
@@ -1216,7 +1206,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel21.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel21.Location = new System.Drawing.Point(0, 522);
             this.panel21.Name = "panel21";
-            this.panel21.Size = new System.Drawing.Size(815, 92);
+            this.panel21.Size = new System.Drawing.Size(500, 92);
             this.panel21.TabIndex = 178;
             // 
             // panel20
@@ -1226,7 +1216,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel20.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel20.Location = new System.Drawing.Point(0, 499);
             this.panel20.Name = "panel20";
-            this.panel20.Size = new System.Drawing.Size(815, 23);
+            this.panel20.Size = new System.Drawing.Size(500, 23);
             this.panel20.TabIndex = 177;
             // 
             // panel19
@@ -1236,7 +1226,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel19.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel19.Location = new System.Drawing.Point(0, 476);
             this.panel19.Name = "panel19";
-            this.panel19.Size = new System.Drawing.Size(815, 23);
+            this.panel19.Size = new System.Drawing.Size(500, 23);
             this.panel19.TabIndex = 176;
             // 
             // panel18
@@ -1246,7 +1236,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel18.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel18.Location = new System.Drawing.Point(0, 453);
             this.panel18.Name = "panel18";
-            this.panel18.Size = new System.Drawing.Size(815, 23);
+            this.panel18.Size = new System.Drawing.Size(500, 23);
             this.panel18.TabIndex = 175;
             // 
             // panel17
@@ -1256,7 +1246,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel17.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel17.Location = new System.Drawing.Point(0, 430);
             this.panel17.Name = "panel17";
-            this.panel17.Size = new System.Drawing.Size(815, 23);
+            this.panel17.Size = new System.Drawing.Size(500, 23);
             this.panel17.TabIndex = 174;
             // 
             // panel16
@@ -1266,7 +1256,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel16.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel16.Location = new System.Drawing.Point(0, 407);
             this.panel16.Name = "panel16";
-            this.panel16.Size = new System.Drawing.Size(815, 23);
+            this.panel16.Size = new System.Drawing.Size(500, 23);
             this.panel16.TabIndex = 173;
             // 
             // panel15
@@ -1276,7 +1266,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel15.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel15.Location = new System.Drawing.Point(0, 384);
             this.panel15.Name = "panel15";
-            this.panel15.Size = new System.Drawing.Size(815, 23);
+            this.panel15.Size = new System.Drawing.Size(500, 23);
             this.panel15.TabIndex = 172;
             // 
             // panel14
@@ -1286,7 +1276,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel14.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel14.Location = new System.Drawing.Point(0, 361);
             this.panel14.Name = "panel14";
-            this.panel14.Size = new System.Drawing.Size(815, 23);
+            this.panel14.Size = new System.Drawing.Size(500, 23);
             this.panel14.TabIndex = 171;
             // 
             // ticketingControl1
@@ -1295,7 +1285,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.ticketingControl1.Location = new System.Drawing.Point(0, 299);
             this.ticketingControl1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.ticketingControl1.Name = "ticketingControl1";
-            this.ticketingControl1.Size = new System.Drawing.Size(815, 62);
+            this.ticketingControl1.Size = new System.Drawing.Size(500, 62);
             this.ticketingControl1.TabIndex = 8;
             this.ticketingControl1.TicketText = "";
             // 
@@ -1306,7 +1296,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel13.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel13.Location = new System.Drawing.Point(0, 253);
             this.panel13.Name = "panel13";
-            this.panel13.Size = new System.Drawing.Size(815, 46);
+            this.panel13.Size = new System.Drawing.Size(500, 46);
             this.panel13.TabIndex = 170;
             // 
             // panel12
@@ -1316,7 +1306,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel12.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel12.Location = new System.Drawing.Point(0, 230);
             this.panel12.Name = "panel12";
-            this.panel12.Size = new System.Drawing.Size(815, 23);
+            this.panel12.Size = new System.Drawing.Size(500, 23);
             this.panel12.TabIndex = 169;
             // 
             // panel11
@@ -1326,7 +1316,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel11.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel11.Location = new System.Drawing.Point(0, 138);
             this.panel11.Name = "panel11";
-            this.panel11.Size = new System.Drawing.Size(815, 92);
+            this.panel11.Size = new System.Drawing.Size(500, 92);
             this.panel11.TabIndex = 168;
             // 
             // panel10
@@ -1336,7 +1326,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel10.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel10.Location = new System.Drawing.Point(0, 115);
             this.panel10.Name = "panel10";
-            this.panel10.Size = new System.Drawing.Size(815, 23);
+            this.panel10.Size = new System.Drawing.Size(500, 23);
             this.panel10.TabIndex = 167;
             // 
             // panel9
@@ -1346,7 +1336,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel9.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel9.Location = new System.Drawing.Point(0, 46);
             this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(815, 69);
+            this.panel9.Size = new System.Drawing.Size(500, 69);
             this.panel9.TabIndex = 166;
             // 
             // panel8
@@ -1356,7 +1346,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel8.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel8.Location = new System.Drawing.Point(0, 23);
             this.panel8.Name = "panel8";
-            this.panel8.Size = new System.Drawing.Size(815, 23);
+            this.panel8.Size = new System.Drawing.Size(500, 23);
             this.panel8.TabIndex = 165;
             // 
             // panel7
@@ -1366,7 +1356,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel7.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel7.Location = new System.Drawing.Point(0, 0);
             this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(815, 23);
+            this.panel7.Size = new System.Drawing.Size(500, 23);
             this.panel7.TabIndex = 164;
             // 
             // errorProvider1
@@ -1380,23 +1370,15 @@ namespace Rdmp.UI.MainFormUITabs
             this.Controls.Add(this.splitContainer1);
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "CatalogueUI";
-            this.Size = new System.Drawing.Size(836, 1085);
+            this.Size = new System.Drawing.Size(521, 1085);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.panel6.ResumeLayout(false);
-            this.panel6.PerformLayout();
+            this.tableLayoutPanel1.ResumeLayout(false);
+            this.tableLayoutPanel1.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
-            this.panel5.ResumeLayout(false);
-            this.panel5.PerformLayout();
-            this.panel4.ResumeLayout(false);
-            this.panel4.PerformLayout();
-            this.panel3.ResumeLayout(false);
-            this.panel3.PerformLayout();
-            this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
             this.panel36.ResumeLayout(false);
             this.panel36.PerformLayout();
             this.panel35.ResumeLayout(false);
@@ -1536,12 +1518,7 @@ namespace Rdmp.UI.MainFormUITabs
         private System.Windows.Forms.CheckBox cbDeprecated;
         private System.Windows.Forms.ErrorProvider errorProvider1;
         private Panel panel1;
-        private Panel panel3;
-        private Panel panel2;
-        private Panel panel4;
-        private Panel panel5;
         private FlowLayoutPanel flowLayoutPanel1;
-        private Panel panel6;
         private Panel panel7;
         private Panel panel8;
         private Panel panel9;
@@ -1572,5 +1549,6 @@ namespace Rdmp.UI.MainFormUITabs
         private Panel panel34;
         private Panel panel35;
         private Panel panel36;
+        private TableLayoutPanel tableLayoutPanel1;
     }
 }
