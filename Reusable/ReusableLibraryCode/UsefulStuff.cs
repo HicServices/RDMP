@@ -530,6 +530,26 @@ namespace ReusableLibraryCode
             return Regex.Replace(pascalCaseString, @"([A-Z][A-Z]*(?=[A-Z][a-z]|\b)|[A-Z](?=[a-z]))", " $1").Trim();
         }
 
+        /// <summary>
+        /// Returns the <paramref name="input"/> string split across multiple lines with the 
+        /// <paramref name="newline"/> (or <see cref="Environment.NewLine"/> if null) separator
+        /// such that no lines are longer than <paramref name="maxLen"/>
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="maxLen"></param>
+        /// <param name="newline"></param>
+        /// <returns></returns>
+        public static string SplitByLength(string input, int maxLen, string newline = null)
+        {
+
+            return
+                string.Join(newline ?? Environment.NewLine,
+                Regex.Split(input, @"(.{1," + maxLen + @"})(?:\s|$)")
+                        .Where(x => x.Length > 0)
+                        .Select(x => x.Trim()));
+        }
+        
+
         public void ConfirmContentsOfDirectoryAreTheSame(DirectoryInfo first, DirectoryInfo other)
         {
             if (first.EnumerateFiles().Count() != other.EnumerateFiles().Count())

@@ -205,9 +205,11 @@ namespace ReusableLibraryCode.Settings
         }
 
         /// <summary>
-        /// Base colours used for generating heatmaps in HEX format.  Colour intensity will vary
-        /// from the first color to the second.  First colour represents the lowest values and should
-        /// typically be darker than the second which represents high values.
+        /// <para>Base colours used for generating heatmaps in HEX format.  Colour intensity will vary
+        /// from the first color to the second.</para>
+        /// 
+        /// <para>The first colour represents the lowest values and should
+        /// typically be darker than the second which represents high values.</para>
         /// </summary>
         public static string HeatMapColours 
         {
@@ -260,7 +262,7 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("DebugPerformance", value); } }
 
         /// <summary>
-        /// "Show a popup confirmation dialog at the end of a pipeline completing execution"
+        /// Show a popup confirmation dialog at the end of a pipeline completing execution
         /// </summary>
         public static bool ShowPipelineCompletedPopup { 
             get { return AppSettings.GetValueOrDefault("ShowPipelineCompletedPopup", false); }

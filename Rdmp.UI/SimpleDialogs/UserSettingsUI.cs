@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
 using ScintillaNET;
@@ -28,6 +29,12 @@ namespace Rdmp.UI.SimpleDialogs
         private IActivateItems _activator;
 
         const string WarnOnTimeoutOnExtractionChecks = "Extraction checks timeout";
+
+        /// <summary>
+        /// The maximum number of characters to allow per line in a tooltip before
+        /// wrapping to next line
+        /// </summary>
+        const int MaxTooltipWidth = 100;
 
         public UserSettingsFileUI(IActivateItems activator)
         {
@@ -92,6 +99,8 @@ namespace Rdmp.UI.SimpleDialogs
             AddTooltip(cbIncludeZeroSeriesInGraphs,nameof(UserSettings.IncludeZeroSeriesInGraphs));
             AddTooltip(label7, nameof(UserSettings.CreateDatabaseTimeout));
             AddTooltip(ddWordWrap,nameof(UserSettings.WrapMode));
+            AddTooltip(ddTheme, nameof(UserSettings.Theme));
+            AddTooltip(label5, nameof(UserSettings.HeatMapColours));
 
 
             olvErrorCodes.AddObjects(ErrorCodes.KnownCodes);
@@ -130,7 +139,7 @@ namespace Rdmp.UI.SimpleDialogs
                 return;
             }
 
-            userSettingsToolTips.SetToolTip(c,helpText);
+            userSettingsToolTips.SetToolTip(c, UsefulStuff.SplitByLength(helpText, MaxTooltipWidth));
         }
 
         private void Treatment_Putter(object rowObject, object newValue)
