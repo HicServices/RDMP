@@ -49,9 +49,7 @@
             this.btnClearFavourites = new System.Windows.Forms.Button();
             this.cbDoubleClickToExpand = new System.Windows.Forms.CheckBox();
             this.cbDebugPerformance = new System.Windows.Forms.CheckBox();
-            this.hlpDebugPerformance = new Rdmp.UI.SimpleControls.HelpIcon();
             this.cbAllowIdentifiableExtractions = new System.Windows.Forms.CheckBox();
-            this.hlpIdentifiableExtractions = new Rdmp.UI.SimpleControls.HelpIcon();
             this.cbShowPipelineCompletedPopup = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.olvErrorCodes = new BrightIdeasSoftware.ObjectListView();
@@ -90,9 +88,9 @@
             this.cbShowHomeOnStartup.Location = new System.Drawing.Point(8, 22);
             this.cbShowHomeOnStartup.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbShowHomeOnStartup.Name = "cbShowHomeOnStartup";
-            this.cbShowHomeOnStartup.Size = new System.Drawing.Size(151, 19);
+            this.cbShowHomeOnStartup.Size = new System.Drawing.Size(149, 19);
             this.cbShowHomeOnStartup.TabIndex = 0;
-            this.cbShowHomeOnStartup.Text = "Show Home On Startup";
+            this.cbShowHomeOnStartup.Text = "Show Home on Startup";
             this.userSettingsToolTips.SetToolTip(this.cbShowHomeOnStartup, "Automatically launch the RDMP Home Screen on launch of the RDMP application, rega" +
         "rdless of the last window you viewed.");
             this.cbShowHomeOnStartup.UseVisualStyleBackColor = true;
@@ -201,12 +199,14 @@
             // cbFindShouldPin
             // 
             this.cbFindShouldPin.AutoSize = true;
-            this.cbFindShouldPin.Location = new System.Drawing.Point(7, 72);
+            this.cbFindShouldPin.Location = new System.Drawing.Point(7, 22);
             this.cbFindShouldPin.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbFindShouldPin.Name = "cbFindShouldPin";
-            this.cbFindShouldPin.Size = new System.Drawing.Size(152, 19);
+            this.cbFindShouldPin.Size = new System.Drawing.Size(108, 19);
             this.cbFindShouldPin.TabIndex = 2;
-            this.cbFindShouldPin.Text = "Find (Ctrl+F) should Pin";
+            this.cbFindShouldPin.Text = "Find should Pin";
+            this.userSettingsToolTips.SetToolTip(this.cbFindShouldPin, "When selecting a result from the Find dialog the selected item is pinned in the c" +
+        "orresponding view.");
             this.cbFindShouldPin.UseVisualStyleBackColor = true;
             this.cbFindShouldPin.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
@@ -219,6 +219,7 @@
             this.label5.Size = new System.Drawing.Size(103, 15);
             this.label5.TabIndex = 8;
             this.label5.Text = "Heatmap Colours:";
+            this.userSettingsToolTips.SetToolTip(this.label5, "Base colour used for generating heatmaps in HEX format");
             // 
             // tbHeatmapColours
             // 
@@ -227,6 +228,7 @@
             this.tbHeatmapColours.Name = "tbHeatmapColours";
             this.tbHeatmapColours.Size = new System.Drawing.Size(100, 23);
             this.tbHeatmapColours.TabIndex = 9;
+            this.userSettingsToolTips.SetToolTip(this.tbHeatmapColours, "Base colour used for generating heatmaps in HEX format");
             this.tbHeatmapColours.TextChanged += new System.EventHandler(this.TbHeatmapColours_TextChanged);
             // 
             // label6
@@ -267,10 +269,10 @@
             // 
             // btnClearFavourites
             // 
-            this.btnClearFavourites.Location = new System.Drawing.Point(71, 72);
+            this.btnClearFavourites.Location = new System.Drawing.Point(71, 73);
             this.btnClearFavourites.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnClearFavourites.Name = "btnClearFavourites";
-            this.btnClearFavourites.Size = new System.Drawing.Size(100, 27);
+            this.btnClearFavourites.Size = new System.Drawing.Size(100, 25);
             this.btnClearFavourites.TabIndex = 10;
             this.btnClearFavourites.Text = "Clear Favourites";
             this.btnClearFavourites.UseVisualStyleBackColor = true;
@@ -281,9 +283,9 @@
             this.cbDoubleClickToExpand.Location = new System.Drawing.Point(7, 22);
             this.cbDoubleClickToExpand.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbDoubleClickToExpand.Name = "cbDoubleClickToExpand";
-            this.cbDoubleClickToExpand.Size = new System.Drawing.Size(150, 19);
+            this.cbDoubleClickToExpand.Size = new System.Drawing.Size(149, 19);
             this.cbDoubleClickToExpand.TabIndex = 0;
-            this.cbDoubleClickToExpand.Text = "Double Click To Expand";
+            this.cbDoubleClickToExpand.Text = "Double Click to Expand";
             this.cbDoubleClickToExpand.UseVisualStyleBackColor = true;
             this.cbDoubleClickToExpand.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
@@ -296,23 +298,9 @@
             this.cbDebugPerformance.Size = new System.Drawing.Size(319, 19);
             this.cbDebugPerformance.TabIndex = 11;
             this.cbDebugPerformance.Text = "Record Performance Metrics (local data collection only)";
+            this.userSettingsToolTips.SetToolTip(this.cbDebugPerformance, resources.GetString("cbDebugPerformance.ToolTip"));
             this.cbDebugPerformance.UseVisualStyleBackColor = true;
             this.cbDebugPerformance.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
-            // 
-            // hlpDebugPerformance
-            // 
-            this.hlpDebugPerformance.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.hlpDebugPerformance.BackColor = System.Drawing.Color.Transparent;
-            this.hlpDebugPerformance.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("hlpDebugPerformance.BackgroundImage")));
-            this.hlpDebugPerformance.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.hlpDebugPerformance.Location = new System.Drawing.Point(326, 20);
-            this.hlpDebugPerformance.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
-            this.hlpDebugPerformance.MaximumSize = new System.Drawing.Size(22, 22);
-            this.hlpDebugPerformance.MinimumSize = new System.Drawing.Size(22, 22);
-            this.hlpDebugPerformance.Name = "hlpDebugPerformance";
-            this.hlpDebugPerformance.Size = new System.Drawing.Size(22, 22);
-            this.hlpDebugPerformance.SuppressClick = false;
-            this.hlpDebugPerformance.TabIndex = 12;
             // 
             // cbAllowIdentifiableExtractions
             // 
@@ -323,33 +311,20 @@
             this.cbAllowIdentifiableExtractions.Size = new System.Drawing.Size(179, 19);
             this.cbAllowIdentifiableExtractions.TabIndex = 13;
             this.cbAllowIdentifiableExtractions.Text = "Allow Identifiable Extractions";
+            this.userSettingsToolTips.SetToolTip(this.cbAllowIdentifiableExtractions, resources.GetString("cbAllowIdentifiableExtractions.ToolTip"));
             this.cbAllowIdentifiableExtractions.UseVisualStyleBackColor = true;
             this.cbAllowIdentifiableExtractions.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
-            // 
-            // hlpIdentifiableExtractions
-            // 
-            this.hlpIdentifiableExtractions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.hlpIdentifiableExtractions.BackColor = System.Drawing.Color.Transparent;
-            this.hlpIdentifiableExtractions.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("hlpIdentifiableExtractions.BackgroundImage")));
-            this.hlpIdentifiableExtractions.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.hlpIdentifiableExtractions.Location = new System.Drawing.Point(185, 18);
-            this.hlpIdentifiableExtractions.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
-            this.hlpIdentifiableExtractions.MaximumSize = new System.Drawing.Size(22, 22);
-            this.hlpIdentifiableExtractions.MinimumSize = new System.Drawing.Size(22, 22);
-            this.hlpIdentifiableExtractions.Name = "hlpIdentifiableExtractions";
-            this.hlpIdentifiableExtractions.Size = new System.Drawing.Size(22, 22);
-            this.hlpIdentifiableExtractions.SuppressClick = false;
-            this.hlpIdentifiableExtractions.TabIndex = 14;
             // 
             // cbShowPipelineCompletedPopup
             // 
             this.cbShowPipelineCompletedPopup.AutoSize = true;
-            this.cbShowPipelineCompletedPopup.Location = new System.Drawing.Point(7, 45);
+            this.cbShowPipelineCompletedPopup.Location = new System.Drawing.Point(7, 72);
             this.cbShowPipelineCompletedPopup.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbShowPipelineCompletedPopup.Name = "cbShowPipelineCompletedPopup";
             this.cbShowPipelineCompletedPopup.Size = new System.Drawing.Size(200, 19);
             this.cbShowPipelineCompletedPopup.TabIndex = 15;
             this.cbShowPipelineCompletedPopup.Text = "Show Pipeline Completed Popup";
+            this.userSettingsToolTips.SetToolTip(this.cbShowPipelineCompletedPopup, "Show a popup at the end of a pipeline completing.");
             this.cbShowPipelineCompletedPopup.UseVisualStyleBackColor = true;
             this.cbShowPipelineCompletedPopup.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
@@ -362,7 +337,9 @@
             this.groupBox1.Size = new System.Drawing.Size(376, 320);
             this.groupBox1.TabIndex = 16;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Warnings Settings";
+            this.groupBox1.Text = "Warnings";
+            this.userSettingsToolTips.SetToolTip(this.groupBox1, "Change the treatment of warnings in RDMP that result from Checks.\r\n\r\nSuccess and " +
+        "Warning will not block.\r\nFail will block the process from proceeding.");
             // 
             // olvErrorCodes
             // 
@@ -382,7 +359,7 @@
             // cbHideEmptyTableLoadRunAudits
             // 
             this.cbHideEmptyTableLoadRunAudits.AutoSize = true;
-            this.cbHideEmptyTableLoadRunAudits.Location = new System.Drawing.Point(7, 70);
+            this.cbHideEmptyTableLoadRunAudits.Location = new System.Drawing.Point(7, 47);
             this.cbHideEmptyTableLoadRunAudits.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbHideEmptyTableLoadRunAudits.Name = "cbHideEmptyTableLoadRunAudits";
             this.cbHideEmptyTableLoadRunAudits.Size = new System.Drawing.Size(208, 19);
@@ -399,6 +376,8 @@
             this.label7.Size = new System.Drawing.Size(142, 15);
             this.label7.TabIndex = 17;
             this.label7.Text = "Create Database Timeout:";
+            this.userSettingsToolTips.SetToolTip(this.label7, "Set the amount of time (in seconds) that the Create Database processes should wai" +
+        "t before timing out.");
             // 
             // tbCreateDatabaseTimeout
             // 
@@ -414,7 +393,7 @@
             // cbScoreZeroForCohortAggregateContainers
             // 
             this.cbScoreZeroForCohortAggregateContainers.AutoSize = true;
-            this.cbScoreZeroForCohortAggregateContainers.Location = new System.Drawing.Point(7, 47);
+            this.cbScoreZeroForCohortAggregateContainers.Location = new System.Drawing.Point(7, 72);
             this.cbScoreZeroForCohortAggregateContainers.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbScoreZeroForCohortAggregateContainers.Name = "cbScoreZeroForCohortAggregateContainers";
             this.cbScoreZeroForCohortAggregateContainers.Size = new System.Drawing.Size(230, 19);
@@ -426,12 +405,14 @@
             // cbAdvancedFindFilters
             // 
             this.cbAdvancedFindFilters.AutoSize = true;
-            this.cbAdvancedFindFilters.Location = new System.Drawing.Point(7, 22);
+            this.cbAdvancedFindFilters.Location = new System.Drawing.Point(7, 47);
             this.cbAdvancedFindFilters.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbAdvancedFindFilters.Name = "cbAdvancedFindFilters";
-            this.cbAdvancedFindFilters.Size = new System.Drawing.Size(139, 19);
+            this.cbAdvancedFindFilters.Size = new System.Drawing.Size(171, 19);
             this.cbAdvancedFindFilters.TabIndex = 19;
-            this.cbAdvancedFindFilters.Text = "Advanced Find Filters";
+            this.cbAdvancedFindFilters.Text = "Show Advanced Find Filters";
+            this.userSettingsToolTips.SetToolTip(this.cbAdvancedFindFilters, "Show Catalogue Filters for:\r\n\r\nCold Storage, Internal, Deprecated, Project Specif" +
+        "ic and Non Extractable");
             this.cbAdvancedFindFilters.UseVisualStyleBackColor = true;
             this.cbAdvancedFindFilters.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
@@ -443,7 +424,8 @@
             this.cbIncludeZeroSeriesInGraphs.Name = "cbIncludeZeroSeriesInGraphs";
             this.cbIncludeZeroSeriesInGraphs.Size = new System.Drawing.Size(178, 19);
             this.cbIncludeZeroSeriesInGraphs.TabIndex = 19;
-            this.cbIncludeZeroSeriesInGraphs.Text = "Include Zero Series In Graphs";
+            this.cbIncludeZeroSeriesInGraphs.Text = "Include Zero Series in Graphs";
+            this.userSettingsToolTips.SetToolTip(this.cbIncludeZeroSeriesInGraphs, "If checked series included in graphs that have no values will not be displayed");
             this.cbIncludeZeroSeriesInGraphs.UseVisualStyleBackColor = true;
             this.cbIncludeZeroSeriesInGraphs.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
@@ -492,7 +474,7 @@
             this.groupBox4.Size = new System.Drawing.Size(240, 165);
             this.groupBox4.TabIndex = 22;
             this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Find / Search Options";
+            this.groupBox4.Text = "Find (CTRL + F) Options";
             // 
             // groupBox5
             // 
@@ -528,7 +510,6 @@
             // groupBox6
             // 
             this.groupBox6.Controls.Add(this.cbAllowIdentifiableExtractions);
-            this.groupBox6.Controls.Add(this.hlpIdentifiableExtractions);
             this.groupBox6.Controls.Add(this.cbShowPipelineCompletedPopup);
             this.groupBox6.Controls.Add(this.cbHideEmptyTableLoadRunAudits);
             this.groupBox6.Location = new System.Drawing.Point(249, 174);
@@ -544,7 +525,6 @@
             this.groupBox7.Controls.Add(this.tbCreateDatabaseTimeout);
             this.groupBox7.Controls.Add(this.ddWordWrap);
             this.groupBox7.Controls.Add(this.label4);
-            this.groupBox7.Controls.Add(this.hlpDebugPerformance);
             this.groupBox7.Controls.Add(this.label7);
             this.groupBox7.Controls.Add(this.cbShowCohortWizard);
             this.groupBox7.Location = new System.Drawing.Point(3, 345);
@@ -552,7 +532,7 @@
             this.groupBox7.Size = new System.Drawing.Size(350, 165);
             this.groupBox7.TabIndex = 25;
             this.groupBox7.TabStop = false;
-            this.groupBox7.Text = "RDMP Metrics and Settings";
+            this.groupBox7.Text = "Miscellaneous";
             // 
             // userSettingsToolTips
             // 
@@ -617,9 +597,7 @@
         private System.Windows.Forms.Button btnClearFavourites;
         private System.Windows.Forms.CheckBox cbDoubleClickToExpand;
         private System.Windows.Forms.CheckBox cbDebugPerformance;
-        private SimpleControls.HelpIcon hlpDebugPerformance;
         private System.Windows.Forms.CheckBox cbAllowIdentifiableExtractions;
-        private SimpleControls.HelpIcon hlpIdentifiableExtractions;
         private System.Windows.Forms.CheckBox cbShowPipelineCompletedPopup;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.CheckBox cbHideEmptyTableLoadRunAudits;
