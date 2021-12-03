@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
 using ScintillaNET;
@@ -25,15 +26,21 @@ namespace Rdmp.UI.SimpleDialogs
     public partial class UserSettingsFileUI : Form
     {
         private bool _bLoaded;
+        private IActivateItems _activator;
 
         const string WarnOnTimeoutOnExtractionChecks = "Extraction checks timeout";
 
+        /// <summary>
+        /// The maximum number of characters to allow per line in a tooltip before
+        /// wrapping to next line
+        /// </summary>
+        const int MaxTooltipWidth = 100;
+
         public UserSettingsFileUI(IActivateItems activator)
         {
-            InitializeComponent();
+            _activator = activator;
 
-            hlpDebugPerformance.SetHelpText("Debug Performance","When enabled RDMP will record certain performance related metrics (how long refresh takes etc).  These figures are completely internal to the application and are not transmitted anywhere.  You can view the results in the toolbar.");
-            hlpIdentifiableExtractions.SetHelpText("Allow Identifiable Extractions","Controls whether RDMP permits cohorts to be created where the release ID and private ID are the same (i.e. the linkage ids are not anonymised).  Changing this setting will not affect how cohorts are currently configured or extracted.  It only supresses a specific error message that is generated when a cohort source is configured where the private and release identifiers reference the same column ");
+            InitializeComponent();
 
             olvErrorCodes.CellEditActivation = CellEditActivateMode.SingleClick;
             olvErrorCodes.ShowGroups = false;
@@ -75,6 +82,31 @@ namespace Rdmp.UI.SimpleDialogs
             cbIncludeZeroSeriesInGraphs.Checked = UserSettings.IncludeZeroSeriesInGraphs;
             tbCreateDatabaseTimeout.Text = UserSettings.CreateDatabaseTimeout.ToString();
 
+            AddTooltip(cbShowHomeOnStartup,nameof(UserSettings.ShowHomeOnStartup));
+            AddTooltip(cbEmphasiseOnTabChanged,nameof(UserSettings.EmphasiseOnTabChanged));
+            AddTooltip(cbConfirmExit,nameof(UserSettings.ConfirmApplicationExiting));
+            AddTooltip(cbFindShouldPin,nameof(UserSettings.FindShouldPin));
+            AddTooltip(cbThemeMenus,nameof(UserSettings.ApplyThemeToMenus));
+            AddTooltip(cbWait5Seconds,nameof(UserSettings.Wait5SecondsAfterStartupUI));
+            AddTooltip(cbShowCohortWizard,nameof(UserSettings.ShowCohortWizard));
+            AddTooltip(cbDoubleClickToExpand,nameof(UserSettings.DoubleClickToExpand));
+            AddTooltip(cbDebugPerformance,nameof(UserSettings.DebugPerformance));
+            AddTooltip(cbAllowIdentifiableExtractions,nameof(UserSettings.AllowIdentifiableExtractions));
+            AddTooltip(cbShowPipelineCompletedPopup,nameof(UserSettings.ShowPipelineCompletedPopup));
+            AddTooltip(cbHideEmptyTableLoadRunAudits,nameof(UserSettings.HideEmptyTableLoadRunAudits));
+            AddTooltip(cbScoreZeroForCohortAggregateContainers,nameof(UserSettings.ScoreZeroForCohortAggregateContainers));
+            AddTooltip(cbAdvancedFindFilters,nameof(UserSettings.AdvancedFindFilters));
+            AddTooltip(cbIncludeZeroSeriesInGraphs,nameof(UserSettings.IncludeZeroSeriesInGraphs));
+            AddTooltip(label7, nameof(UserSettings.CreateDatabaseTimeout));
+            AddTooltip(tbCreateDatabaseTimeout, nameof(UserSettings.CreateDatabaseTimeout));
+            AddTooltip(label4, nameof(UserSettings.WrapMode));
+            AddTooltip(ddWordWrap,nameof(UserSettings.WrapMode));
+            AddTooltip(ddTheme, nameof(UserSettings.Theme));
+            AddTooltip(label2, nameof(UserSettings.Theme));
+            AddTooltip(label5, nameof(UserSettings.HeatMapColours));
+            AddTooltip(tbHeatmapColours, nameof(UserSettings.HeatMapColours));
+
+
             olvErrorCodes.AddObjects(ErrorCodes.KnownCodes);
 
             ddTheme.DataSource = new []
@@ -101,6 +133,17 @@ namespace Rdmp.UI.SimpleDialogs
                 cmd.Execute();
                 btnClearFavourites.Enabled = !cmd.IsImpossible;
             };
+        }
+
+        private void AddTooltip(Control c, string propertyName)
+        {
+            string helpText = _activator.CommentStore.GetDocumentationIfExists($"{ nameof(UserSettings)}.{propertyName}", false);
+            if(string.IsNullOrWhiteSpace(helpText))
+            {
+                return;
+            }
+
+            userSettingsToolTips.SetToolTip(c, UsefulStuff.SplitByLength(helpText, MaxTooltipWidth));
         }
 
         private void Treatment_Putter(object rowObject, object newValue)
