@@ -86,7 +86,7 @@ namespace Rdmp.UI.SimpleDialogs
             // 
             // pbIcon
             // 
-            this.pbIcon.Location = new System.Drawing.Point(19, 18);
+            this.pbIcon.Location = new System.Drawing.Point(13, 19);
             this.pbIcon.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbIcon.Name = "pbIcon";
             this.pbIcon.Size = new System.Drawing.Size(33, 32);
@@ -114,10 +114,10 @@ namespace Rdmp.UI.SimpleDialogs
             this.btnViewSourceCode.Enabled = false;
             this.btnViewSourceCode.Image = ((System.Drawing.Image)(resources.GetObject("btnViewSourceCode.Image")));
             this.btnViewSourceCode.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnViewSourceCode.Location = new System.Drawing.Point(682, 4);
+            this.btnViewSourceCode.Location = new System.Drawing.Point(692, 0);
             this.btnViewSourceCode.Margin = new System.Windows.Forms.Padding(4);
             this.btnViewSourceCode.Name = "btnViewSourceCode";
-            this.btnViewSourceCode.Size = new System.Drawing.Size(68, 27);
+            this.btnViewSourceCode.Size = new System.Drawing.Size(62, 25);
             this.btnViewSourceCode.TabIndex = 7;
             this.btnViewSourceCode.Text = "Code";
             this.btnViewSourceCode.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -130,11 +130,11 @@ namespace Rdmp.UI.SimpleDialogs
             | System.Windows.Forms.AnchorStyles.Right)));
             this.richTextBox1.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.richTextBox1.Location = new System.Drawing.Point(62, 53);
+            this.richTextBox1.Location = new System.Drawing.Point(56, 53);
             this.richTextBox1.Margin = new System.Windows.Forms.Padding(10);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(673, 141);
+            this.richTextBox1.Size = new System.Drawing.Size(679, 141);
             this.richTextBox1.TabIndex = 3;
             this.richTextBox1.Text = "";
             this.richTextBox1.WordWrap = false;
@@ -145,7 +145,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.lblMainMessage.AutoSize = true;
             this.lblMainMessage.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblMainMessage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(100)))), ((int)(((byte)(200)))));
-            this.lblMainMessage.Location = new System.Drawing.Point(58, 24);
+            this.lblMainMessage.Location = new System.Drawing.Point(52, 25);
             this.lblMainMessage.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblMainMessage.Name = "lblMainMessage";
             this.lblMainMessage.Size = new System.Drawing.Size(106, 19);

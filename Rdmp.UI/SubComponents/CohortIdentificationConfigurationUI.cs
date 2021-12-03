@@ -229,7 +229,7 @@ namespace Rdmp.UI.SubComponents
             _configuration = databaseObject;
             
             gbCicInfo.Text = $"Name: {_configuration.Name}";
-            lblDescription.Text = $"Description: {_configuration.Description}";
+            tbDescription.Text = $"Description: {_configuration.Description}";
             ticket.TicketText = _configuration.Ticket;
 
             if (_commonFunctionality == null)
