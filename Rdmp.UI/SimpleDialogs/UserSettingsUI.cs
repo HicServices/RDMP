@@ -25,11 +25,14 @@ namespace Rdmp.UI.SimpleDialogs
     public partial class UserSettingsFileUI : Form
     {
         private bool _bLoaded;
+        private IActivateItems _activator;
 
         const string WarnOnTimeoutOnExtractionChecks = "Extraction checks timeout";
 
         public UserSettingsFileUI(IActivateItems activator)
         {
+            _activator = activator;
+
             InitializeComponent();
 
             olvErrorCodes.CellEditActivation = CellEditActivateMode.SingleClick;
@@ -72,6 +75,25 @@ namespace Rdmp.UI.SimpleDialogs
             cbIncludeZeroSeriesInGraphs.Checked = UserSettings.IncludeZeroSeriesInGraphs;
             tbCreateDatabaseTimeout.Text = UserSettings.CreateDatabaseTimeout.ToString();
 
+            AddTooltip(cbShowHomeOnStartup,nameof(UserSettings.ShowHomeOnStartup));
+            AddTooltip(cbEmphasiseOnTabChanged,nameof(UserSettings.EmphasiseOnTabChanged));
+            AddTooltip(cbConfirmExit,nameof(UserSettings.ConfirmApplicationExiting));
+            AddTooltip(cbFindShouldPin,nameof(UserSettings.FindShouldPin));
+            AddTooltip(cbThemeMenus,nameof(UserSettings.ApplyThemeToMenus));
+            AddTooltip(cbWait5Seconds,nameof(UserSettings.Wait5SecondsAfterStartupUI));
+            AddTooltip(cbShowCohortWizard,nameof(UserSettings.ShowCohortWizard));
+            AddTooltip(cbDoubleClickToExpand,nameof(UserSettings.DoubleClickToExpand));
+            AddTooltip(cbDebugPerformance,nameof(UserSettings.DebugPerformance));
+            AddTooltip(cbAllowIdentifiableExtractions,nameof(UserSettings.AllowIdentifiableExtractions));
+            AddTooltip(cbShowPipelineCompletedPopup,nameof(UserSettings.ShowPipelineCompletedPopup));
+            AddTooltip(cbHideEmptyTableLoadRunAudits,nameof(UserSettings.HideEmptyTableLoadRunAudits));
+            AddTooltip(cbScoreZeroForCohortAggregateContainers,nameof(UserSettings.ScoreZeroForCohortAggregateContainers));
+            AddTooltip(cbAdvancedFindFilters,nameof(UserSettings.AdvancedFindFilters));
+            AddTooltip(cbIncludeZeroSeriesInGraphs,nameof(UserSettings.IncludeZeroSeriesInGraphs));
+            AddTooltip(label7, nameof(UserSettings.CreateDatabaseTimeout));
+            AddTooltip(ddWordWrap,nameof(UserSettings.WrapMode));
+
+
             olvErrorCodes.AddObjects(ErrorCodes.KnownCodes);
 
             ddTheme.DataSource = new []
@@ -98,6 +120,17 @@ namespace Rdmp.UI.SimpleDialogs
                 cmd.Execute();
                 btnClearFavourites.Enabled = !cmd.IsImpossible;
             };
+        }
+
+        private void AddTooltip(Control c, string propertyName)
+        {
+            string helpText = _activator.CommentStore.GetDocumentationIfExists($"{ nameof(UserSettings)}.{propertyName}", false);
+            if(string.IsNullOrWhiteSpace(helpText))
+            {
+                return;
+            }
+
+            userSettingsToolTips.SetToolTip(c,helpText);
         }
 
         private void Treatment_Putter(object rowObject, object newValue)

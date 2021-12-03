@@ -91,8 +91,6 @@
             this.cbShowHomeOnStartup.Size = new System.Drawing.Size(149, 19);
             this.cbShowHomeOnStartup.TabIndex = 0;
             this.cbShowHomeOnStartup.Text = "Show Home on Startup";
-            this.userSettingsToolTips.SetToolTip(this.cbShowHomeOnStartup, "Automatically launch the RDMP Home Screen on launch of the RDMP application, rega" +
-        "rdless of the last window you viewed.");
             this.cbShowHomeOnStartup.UseVisualStyleBackColor = true;
             this.cbShowHomeOnStartup.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
@@ -127,7 +125,6 @@
             this.cbConfirmExit.Size = new System.Drawing.Size(156, 19);
             this.cbConfirmExit.TabIndex = 2;
             this.cbConfirmExit.Text = "Confirm Application Exit";
-            this.userSettingsToolTips.SetToolTip(this.cbConfirmExit, "Show a confirmation dialog box when closing RDMP");
             this.cbConfirmExit.UseVisualStyleBackColor = true;
             this.cbConfirmExit.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
@@ -205,8 +202,6 @@
             this.cbFindShouldPin.Size = new System.Drawing.Size(108, 19);
             this.cbFindShouldPin.TabIndex = 2;
             this.cbFindShouldPin.Text = "Find should Pin";
-            this.userSettingsToolTips.SetToolTip(this.cbFindShouldPin, "When selecting a result from the Find dialog the selected item is pinned in the c" +
-        "orresponding view.");
             this.cbFindShouldPin.UseVisualStyleBackColor = true;
             this.cbFindShouldPin.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
@@ -219,7 +214,6 @@
             this.label5.Size = new System.Drawing.Size(103, 15);
             this.label5.TabIndex = 8;
             this.label5.Text = "Heatmap Colours:";
-            this.userSettingsToolTips.SetToolTip(this.label5, "Base colour used for generating heatmaps in HEX format");
             // 
             // tbHeatmapColours
             // 
@@ -228,7 +222,6 @@
             this.tbHeatmapColours.Name = "tbHeatmapColours";
             this.tbHeatmapColours.Size = new System.Drawing.Size(100, 23);
             this.tbHeatmapColours.TabIndex = 9;
-            this.userSettingsToolTips.SetToolTip(this.tbHeatmapColours, "Base colour used for generating heatmaps in HEX format");
             this.tbHeatmapColours.TextChanged += new System.EventHandler(this.TbHeatmapColours_TextChanged);
             // 
             // label6
@@ -250,8 +243,6 @@
             this.cbWait5Seconds.Size = new System.Drawing.Size(173, 19);
             this.cbWait5Seconds.TabIndex = 2;
             this.cbWait5Seconds.Text = "Wait 5 seconds after Startup";
-            this.userSettingsToolTips.SetToolTip(this.cbWait5Seconds, "Add a 5 second delay after startup.\r\n\r\nUse this option to add a delay that can be" +
-        " helpful for troubleshooting issues on RDMP startup.");
             this.cbWait5Seconds.UseVisualStyleBackColor = true;
             this.cbWait5Seconds.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
@@ -298,7 +289,6 @@
             this.cbDebugPerformance.Size = new System.Drawing.Size(319, 19);
             this.cbDebugPerformance.TabIndex = 11;
             this.cbDebugPerformance.Text = "Record Performance Metrics (local data collection only)";
-            this.userSettingsToolTips.SetToolTip(this.cbDebugPerformance, resources.GetString("cbDebugPerformance.ToolTip"));
             this.cbDebugPerformance.UseVisualStyleBackColor = true;
             this.cbDebugPerformance.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
@@ -311,7 +301,6 @@
             this.cbAllowIdentifiableExtractions.Size = new System.Drawing.Size(179, 19);
             this.cbAllowIdentifiableExtractions.TabIndex = 13;
             this.cbAllowIdentifiableExtractions.Text = "Allow Identifiable Extractions";
-            this.userSettingsToolTips.SetToolTip(this.cbAllowIdentifiableExtractions, resources.GetString("cbAllowIdentifiableExtractions.ToolTip"));
             this.cbAllowIdentifiableExtractions.UseVisualStyleBackColor = true;
             this.cbAllowIdentifiableExtractions.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
@@ -324,7 +313,6 @@
             this.cbShowPipelineCompletedPopup.Size = new System.Drawing.Size(200, 19);
             this.cbShowPipelineCompletedPopup.TabIndex = 15;
             this.cbShowPipelineCompletedPopup.Text = "Show Pipeline Completed Popup";
-            this.userSettingsToolTips.SetToolTip(this.cbShowPipelineCompletedPopup, "Show a popup at the end of a pipeline completing.");
             this.cbShowPipelineCompletedPopup.UseVisualStyleBackColor = true;
             this.cbShowPipelineCompletedPopup.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
@@ -376,8 +364,6 @@
             this.label7.Size = new System.Drawing.Size(142, 15);
             this.label7.TabIndex = 17;
             this.label7.Text = "Create Database Timeout:";
-            this.userSettingsToolTips.SetToolTip(this.label7, "Set the amount of time (in seconds) that the Create Database processes should wai" +
-        "t before timing out.");
             // 
             // tbCreateDatabaseTimeout
             // 
@@ -411,8 +397,6 @@
             this.cbAdvancedFindFilters.Size = new System.Drawing.Size(171, 19);
             this.cbAdvancedFindFilters.TabIndex = 19;
             this.cbAdvancedFindFilters.Text = "Show Advanced Find Filters";
-            this.userSettingsToolTips.SetToolTip(this.cbAdvancedFindFilters, "Show Catalogue Filters for:\r\n\r\nCold Storage, Internal, Deprecated, Project Specif" +
-        "ic and Non Extractable");
             this.cbAdvancedFindFilters.UseVisualStyleBackColor = true;
             this.cbAdvancedFindFilters.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
@@ -425,7 +409,6 @@
             this.cbIncludeZeroSeriesInGraphs.Size = new System.Drawing.Size(178, 19);
             this.cbIncludeZeroSeriesInGraphs.TabIndex = 19;
             this.cbIncludeZeroSeriesInGraphs.Text = "Include Zero Series in Graphs";
-            this.userSettingsToolTips.SetToolTip(this.cbIncludeZeroSeriesInGraphs, "If checked series included in graphs that have no values will not be displayed");
             this.cbIncludeZeroSeriesInGraphs.UseVisualStyleBackColor = true;
             this.cbIncludeZeroSeriesInGraphs.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
