@@ -48,7 +48,6 @@ namespace Rdmp.UI.MainFormUITabs
             this.label20 = new System.Windows.Forms.Label();
             this.c_tbDetailPageURL = new System.Windows.Forms.TextBox();
             this.label19 = new System.Windows.Forms.Label();
-            this.c_tbGeographicalCoverage = new System.Windows.Forms.TextBox();
             this.label18 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.c_tbUpdateFrequency = new System.Windows.Forms.TextBox();
@@ -56,7 +55,6 @@ namespace Rdmp.UI.MainFormUITabs
             this.label17 = new System.Windows.Forms.Label();
             this.c_tbSourceUrl = new System.Windows.Forms.TextBox();
             this.c_tbTopics = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.c_tbQueryToolUrl = new System.Windows.Forms.TextBox();
             this.c_tbBackgroundSummary = new System.Windows.Forms.TextBox();
@@ -95,51 +93,24 @@ namespace Rdmp.UI.MainFormUITabs
             this.label25 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.panel36 = new System.Windows.Forms.Panel();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.tbSourceOfDataCollection = new System.Windows.Forms.TextBox();
-            this.label33 = new System.Windows.Forms.Label();
-            this.panel35 = new System.Windows.Forms.Panel();
             this.tbEthicsApprover = new System.Windows.Forms.TextBox();
-            this.label32 = new System.Windows.Forms.Label();
-            this.panel34 = new System.Windows.Forms.Panel();
+            this.label33 = new System.Windows.Forms.Label();
             this.ddExplicitConsent = new System.Windows.Forms.ComboBox();
-            this.label31 = new System.Windows.Forms.Label();
-            this.panel33 = new System.Windows.Forms.Panel();
+            this.label32 = new System.Windows.Forms.Label();
             this.tbAdministrativeContactAddress = new System.Windows.Forms.TextBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.panel32 = new System.Windows.Forms.Panel();
+            this.label31 = new System.Windows.Forms.Label();
             this.tbAdministrativeContactTelephone = new System.Windows.Forms.TextBox();
-            this.label30 = new System.Windows.Forms.Label();
-            this.panel31 = new System.Windows.Forms.Panel();
+            this.label11 = new System.Windows.Forms.Label();
             this.tbAdministrativeContactEmail = new System.Windows.Forms.TextBox();
-            this.label29 = new System.Windows.Forms.Label();
-            this.panel30 = new System.Windows.Forms.Panel();
+            this.label30 = new System.Windows.Forms.Label();
             this.tbAdministrativeContactName = new System.Windows.Forms.TextBox();
+            this.label29 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
-            this.panel29 = new System.Windows.Forms.Panel();
-            this.panel28 = new System.Windows.Forms.Panel();
-            this.panel27 = new System.Windows.Forms.Panel();
-            this.panel26 = new System.Windows.Forms.Panel();
-            this.panel25 = new System.Windows.Forms.Panel();
-            this.panel24 = new System.Windows.Forms.Panel();
-            this.panel23 = new System.Windows.Forms.Panel();
-            this.panel22 = new System.Windows.Forms.Panel();
-            this.panel21 = new System.Windows.Forms.Panel();
-            this.panel20 = new System.Windows.Forms.Panel();
-            this.panel19 = new System.Windows.Forms.Panel();
-            this.panel18 = new System.Windows.Forms.Panel();
-            this.panel17 = new System.Windows.Forms.Panel();
-            this.panel16 = new System.Windows.Forms.Panel();
-            this.panel15 = new System.Windows.Forms.Panel();
-            this.panel14 = new System.Windows.Forms.Panel();
+            this.label5 = new System.Windows.Forms.Label();
+            this.c_tbGeographicalCoverage = new System.Windows.Forms.TextBox();
             this.ticketingControl1 = new Rdmp.UI.LocationsMenu.Ticketing.TicketingControlUI();
-            this.panel13 = new System.Windows.Forms.Panel();
-            this.panel12 = new System.Windows.Forms.Panel();
-            this.panel11 = new System.Windows.Forms.Panel();
-            this.panel10 = new System.Windows.Forms.Panel();
-            this.panel9 = new System.Windows.Forms.Panel();
-            this.panel8 = new System.Windows.Forms.Panel();
-            this.panel7 = new System.Windows.Forms.Panel();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -147,503 +118,489 @@ namespace Rdmp.UI.MainFormUITabs
             this.splitContainer1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
-            this.panel36.SuspendLayout();
-            this.panel35.SuspendLayout();
-            this.panel34.SuspendLayout();
-            this.panel33.SuspendLayout();
-            this.panel32.SuspendLayout();
-            this.panel31.SuspendLayout();
-            this.panel30.SuspendLayout();
-            this.panel29.SuspendLayout();
-            this.panel28.SuspendLayout();
-            this.panel27.SuspendLayout();
-            this.panel26.SuspendLayout();
-            this.panel25.SuspendLayout();
-            this.panel24.SuspendLayout();
-            this.panel23.SuspendLayout();
-            this.panel22.SuspendLayout();
-            this.panel21.SuspendLayout();
-            this.panel20.SuspendLayout();
-            this.panel19.SuspendLayout();
-            this.panel18.SuspendLayout();
-            this.panel17.SuspendLayout();
-            this.panel16.SuspendLayout();
-            this.panel15.SuspendLayout();
-            this.panel14.SuspendLayout();
-            this.panel13.SuspendLayout();
-            this.panel12.SuspendLayout();
-            this.panel11.SuspendLayout();
-            this.panel10.SuspendLayout();
-            this.panel9.SuspendLayout();
-            this.panel8.SuspendLayout();
-            this.panel7.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).BeginInit();
             this.SuspendLayout();
             // 
             // tbDatasetStartDate
             // 
-            this.tbDatasetStartDate.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbDatasetStartDate.Location = new System.Drawing.Point(120, 0);
-            this.tbDatasetStartDate.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tbDatasetStartDate.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.tbDatasetStartDate.Location = new System.Drawing.Point(135, 674);
+            this.tbDatasetStartDate.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.tbDatasetStartDate.Name = "tbDatasetStartDate";
-            this.tbDatasetStartDate.Size = new System.Drawing.Size(380, 23);
+            this.tbDatasetStartDate.Size = new System.Drawing.Size(250, 23);
             this.tbDatasetStartDate.TabIndex = 14;
             this.tbDatasetStartDate.TextChanged += new System.EventHandler(this.tbDatasetStartDate_TextChanged);
             // 
             // label41
             // 
-            this.label41.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label41.Location = new System.Drawing.Point(0, 0);
+            this.label41.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label41.Location = new System.Drawing.Point(7, 675);
             this.label41.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label41.Name = "label41";
-            this.label41.Size = new System.Drawing.Size(120, 23);
+            this.label41.Size = new System.Drawing.Size(120, 20);
             this.label41.TabIndex = 147;
-            this.label41.Text = "DatasetStartDate";
+            this.label41.Text = "Dataset Start Date:";
+            this.label41.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label28
             // 
-            this.label28.Dock = System.Windows.Forms.DockStyle.Left;
+            this.label28.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label28.ForeColor = System.Drawing.Color.Black;
-            this.label28.Location = new System.Drawing.Point(0, 0);
+            this.label28.Location = new System.Drawing.Point(7, 616);
             this.label28.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label28.Name = "label28";
             this.label28.Size = new System.Drawing.Size(120, 23);
             this.label28.TabIndex = 134;
-            this.label28.Text = "Subject Numbers";
+            this.label28.Text = "Subject Numbers:";
+            this.label28.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // c_tbSubjectNumbers
             // 
+            this.c_tbSubjectNumbers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.c_tbSubjectNumbers.BackColor = System.Drawing.SystemColors.Window;
-            this.c_tbSubjectNumbers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.c_tbSubjectNumbers.Location = new System.Drawing.Point(120, 0);
-            this.c_tbSubjectNumbers.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.c_tbSubjectNumbers.Location = new System.Drawing.Point(135, 616);
+            this.c_tbSubjectNumbers.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.c_tbSubjectNumbers.Name = "c_tbSubjectNumbers";
-            this.c_tbSubjectNumbers.Size = new System.Drawing.Size(380, 23);
+            this.c_tbSubjectNumbers.Size = new System.Drawing.Size(369, 23);
             this.c_tbSubjectNumbers.TabIndex = 12;
             // 
             // tbDataStandards
             // 
             this.tbDataStandards.AcceptsReturn = true;
-            this.tbDataStandards.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbDataStandards.Location = new System.Drawing.Point(120, 0);
-            this.tbDataStandards.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tbDataStandards.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbDataStandards.Location = new System.Drawing.Point(135, 1012);
+            this.tbDataStandards.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.tbDataStandards.Multiline = true;
             this.tbDataStandards.Name = "tbDataStandards";
-            this.tbDataStandards.Size = new System.Drawing.Size(380, 92);
+            this.tbDataStandards.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.tbDataStandards.Size = new System.Drawing.Size(369, 100);
             this.tbDataStandards.TabIndex = 23;
             // 
             // label26
             // 
-            this.label26.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label26.Location = new System.Drawing.Point(0, 0);
+            this.label26.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label26.Location = new System.Drawing.Point(7, 1009);
             this.label26.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label26.Name = "label26";
-            this.label26.Size = new System.Drawing.Size(120, 92);
+            this.label26.Size = new System.Drawing.Size(120, 20);
             this.label26.TabIndex = 115;
-            this.label26.Text = "Data Standards";
+            this.label26.Text = "Data Standards:";
+            this.label26.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // label27
             // 
-            this.label27.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label27.Location = new System.Drawing.Point(0, 0);
+            this.label27.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label27.AutoSize = true;
+            this.label27.Location = new System.Drawing.Point(24, 987);
             this.label27.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label27.Name = "label27";
-            this.label27.Size = new System.Drawing.Size(120, 23);
+            this.label27.Size = new System.Drawing.Size(103, 15);
             this.label27.TabIndex = 114;
-            this.label27.Text = "Country of Origin";
+            this.label27.Text = "Country of Origin:";
+            this.label27.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // tbCountryOfOrigin
             // 
-            this.tbCountryOfOrigin.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbCountryOfOrigin.Location = new System.Drawing.Point(120, 0);
-            this.tbCountryOfOrigin.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tbCountryOfOrigin.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbCountryOfOrigin.Location = new System.Drawing.Point(135, 983);
+            this.tbCountryOfOrigin.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.tbCountryOfOrigin.Name = "tbCountryOfOrigin";
-            this.tbCountryOfOrigin.Size = new System.Drawing.Size(380, 23);
+            this.tbCountryOfOrigin.Size = new System.Drawing.Size(369, 23);
             this.tbCountryOfOrigin.TabIndex = 22;
             // 
             // label23
             // 
-            this.label23.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label23.Location = new System.Drawing.Point(0, 0);
+            this.label23.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label23.AutoSize = true;
+            this.label23.Location = new System.Drawing.Point(57, 958);
             this.label23.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(120, 23);
+            this.label23.Size = new System.Drawing.Size(70, 15);
             this.label23.TabIndex = 104;
-            this.label23.Text = "Source URL";
+            this.label23.Text = "Source URL:";
+            this.label23.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label22
             // 
-            this.label22.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label22.Location = new System.Drawing.Point(0, 0);
+            this.label22.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label22.AutoSize = true;
+            this.label22.Location = new System.Drawing.Point(36, 929);
             this.label22.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(120, 23);
+            this.label22.Size = new System.Drawing.Size(91, 15);
             this.label22.TabIndex = 103;
-            this.label22.Text = "Query Tool URL";
+            this.label22.Text = "Query Tool URL:";
+            this.label22.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // c_ddGranularity
             // 
-            this.c_ddGranularity.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.c_ddGranularity.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.c_ddGranularity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.c_ddGranularity.FormattingEnabled = true;
-            this.c_ddGranularity.Location = new System.Drawing.Point(120, 0);
-            this.c_ddGranularity.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.c_ddGranularity.Location = new System.Drawing.Point(135, 167);
+            this.c_ddGranularity.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.c_ddGranularity.Name = "c_ddGranularity";
-            this.c_ddGranularity.Size = new System.Drawing.Size(380, 23);
+            this.c_ddGranularity.Size = new System.Drawing.Size(250, 23);
             this.c_ddGranularity.TabIndex = 3;
             // 
             // label21
             // 
-            this.label21.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label21.Location = new System.Drawing.Point(0, 0);
+            this.label21.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label21.AutoSize = true;
+            this.label21.Location = new System.Drawing.Point(13, 900);
             this.label21.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(120, 23);
+            this.label21.Size = new System.Drawing.Size(114, 15);
             this.label21.TabIndex = 102;
-            this.label21.Text = "Bulk Download URL";
+            this.label21.Text = "Bulk Download URL:";
+            this.label21.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label64
             // 
-            this.label64.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label64.Location = new System.Drawing.Point(0, 0);
+            this.label64.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label64.AutoSize = true;
+            this.label64.Location = new System.Drawing.Point(59, 171);
             this.label64.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label64.Name = "label64";
-            this.label64.Size = new System.Drawing.Size(120, 23);
+            this.label64.Size = new System.Drawing.Size(68, 15);
             this.label64.TabIndex = 108;
-            this.label64.Text = "Granularity";
+            this.label64.Text = "Granularity:";
+            this.label64.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label20
             // 
-            this.label20.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label20.Location = new System.Drawing.Point(0, 0);
+            this.label20.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(55, 871);
             this.label20.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(120, 23);
+            this.label20.Size = new System.Drawing.Size(72, 15);
             this.label20.TabIndex = 101;
-            this.label20.Text = "Browse URL";
+            this.label20.Text = "Browse URL:";
+            this.label20.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // c_tbDetailPageURL
             // 
-            this.c_tbDetailPageURL.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.c_tbDetailPageURL.Location = new System.Drawing.Point(120, 0);
-            this.c_tbDetailPageURL.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.c_tbDetailPageURL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.c_tbDetailPageURL.Location = new System.Drawing.Point(135, 3);
+            this.c_tbDetailPageURL.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.c_tbDetailPageURL.Name = "c_tbDetailPageURL";
-            this.c_tbDetailPageURL.Size = new System.Drawing.Size(380, 23);
+            this.c_tbDetailPageURL.Size = new System.Drawing.Size(369, 23);
             this.c_tbDetailPageURL.TabIndex = 0;
             this.c_tbDetailPageURL.TextChanged += new System.EventHandler(this.c_tbDetailPageURL_TextChanged);
             // 
             // label19
             // 
-            this.label19.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label19.Location = new System.Drawing.Point(0, 0);
+            this.label19.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(36, 842);
             this.label19.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(120, 23);
+            this.label19.Size = new System.Drawing.Size(91, 15);
             this.label19.TabIndex = 100;
-            this.label19.Text = "API Access URL";
-            // 
-            // c_tbGeographicalCoverage
-            // 
-            this.c_tbGeographicalCoverage.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.c_tbGeographicalCoverage.Location = new System.Drawing.Point(120, 0);
-            this.c_tbGeographicalCoverage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.c_tbGeographicalCoverage.Multiline = true;
-            this.c_tbGeographicalCoverage.Name = "c_tbGeographicalCoverage";
-            this.c_tbGeographicalCoverage.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.c_tbGeographicalCoverage.Size = new System.Drawing.Size(380, 69);
-            this.c_tbGeographicalCoverage.TabIndex = 2;
+            this.label19.Text = "API Access URL:";
+            this.label19.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label18
             // 
-            this.label18.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label18.Location = new System.Drawing.Point(0, 0);
+            this.label18.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(36, 813);
             this.label18.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label18.Name = "label18";
-            this.label18.Size = new System.Drawing.Size(120, 23);
+            this.label18.Size = new System.Drawing.Size(91, 15);
             this.label18.TabIndex = 99;
-            this.label18.Text = "Access Options";
+            this.label18.Text = "Access Options:";
+            this.label18.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label16
             // 
-            this.label16.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label16.Location = new System.Drawing.Point(0, 0);
+            this.label16.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label16.Location = new System.Drawing.Point(7, 646);
             this.label16.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(120, 23);
+            this.label16.Size = new System.Drawing.Size(120, 20);
             this.label16.TabIndex = 98;
-            this.label16.Text = "Resource Owner";
+            this.label16.Text = "Resource Owner:";
+            this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // c_tbUpdateFrequency
             // 
-            this.c_tbUpdateFrequency.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.c_tbUpdateFrequency.Location = new System.Drawing.Point(120, 0);
-            this.c_tbUpdateFrequency.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.c_tbUpdateFrequency.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.c_tbUpdateFrequency.Location = new System.Drawing.Point(135, 500);
+            this.c_tbUpdateFrequency.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.c_tbUpdateFrequency.Name = "c_tbUpdateFrequency";
-            this.c_tbUpdateFrequency.Size = new System.Drawing.Size(380, 23);
+            this.c_tbUpdateFrequency.Size = new System.Drawing.Size(369, 23);
             this.c_tbUpdateFrequency.TabIndex = 7;
             // 
             // label4
             // 
-            this.label4.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label4.Location = new System.Drawing.Point(0, 0);
+            this.label4.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(34, 7);
             this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(120, 23);
+            this.label4.Size = new System.Drawing.Size(93, 15);
             this.label4.TabIndex = 65;
-            this.label4.Text = "Detail Page URL asdkjhaslkjdh alkjsh dlkajhs d";
+            this.label4.Text = "Detail Page URL:";
+            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label17
             // 
-            this.label17.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label17.Location = new System.Drawing.Point(0, 0);
+            this.label17.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label17.Location = new System.Drawing.Point(7, 700);
             this.label17.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(120, 92);
+            this.label17.Size = new System.Drawing.Size(120, 20);
             this.label17.TabIndex = 97;
-            this.label17.Text = "Attribution Citation";
+            this.label17.Text = "Attribution Citation:";
+            this.label17.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // c_tbSourceUrl
             // 
-            this.c_tbSourceUrl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.c_tbSourceUrl.Location = new System.Drawing.Point(120, 0);
-            this.c_tbSourceUrl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.c_tbSourceUrl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.c_tbSourceUrl.Location = new System.Drawing.Point(135, 954);
+            this.c_tbSourceUrl.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.c_tbSourceUrl.Name = "c_tbSourceUrl";
-            this.c_tbSourceUrl.Size = new System.Drawing.Size(380, 23);
+            this.c_tbSourceUrl.Size = new System.Drawing.Size(369, 23);
             this.c_tbSourceUrl.TabIndex = 21;
             this.c_tbSourceUrl.TextChanged += new System.EventHandler(this.c_tbSourceUrl_TextChanged);
             // 
             // c_tbTopics
             // 
-            this.c_tbTopics.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.c_tbTopics.Location = new System.Drawing.Point(120, 0);
-            this.c_tbTopics.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.c_tbTopics.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.c_tbTopics.Location = new System.Drawing.Point(135, 331);
+            this.c_tbTopics.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.c_tbTopics.Multiline = true;
             this.c_tbTopics.Name = "c_tbTopics";
             this.c_tbTopics.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.c_tbTopics.Size = new System.Drawing.Size(380, 46);
+            this.c_tbTopics.Size = new System.Drawing.Size(369, 100);
             this.c_tbTopics.TabIndex = 6;
-            // 
-            // label5
-            // 
-            this.label5.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label5.ForeColor = System.Drawing.Color.Black;
-            this.label5.Location = new System.Drawing.Point(0, 0);
-            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(120, 69);
-            this.label5.TabIndex = 67;
-            this.label5.Text = "Geo Coverage";
             // 
             // label14
             // 
-            this.label14.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label14.Location = new System.Drawing.Point(0, 0);
+            this.label14.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label14.Location = new System.Drawing.Point(7, 587);
             this.label14.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(120, 23);
             this.label14.TabIndex = 96;
-            this.label14.Text = "Last Revision Date";
+            this.label14.Text = "Last Revision Date:";
+            this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // c_tbQueryToolUrl
             // 
-            this.c_tbQueryToolUrl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.c_tbQueryToolUrl.Location = new System.Drawing.Point(120, 0);
-            this.c_tbQueryToolUrl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.c_tbQueryToolUrl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.c_tbQueryToolUrl.Location = new System.Drawing.Point(135, 925);
+            this.c_tbQueryToolUrl.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.c_tbQueryToolUrl.Name = "c_tbQueryToolUrl";
-            this.c_tbQueryToolUrl.Size = new System.Drawing.Size(380, 23);
+            this.c_tbQueryToolUrl.Size = new System.Drawing.Size(369, 23);
             this.c_tbQueryToolUrl.TabIndex = 20;
             this.c_tbQueryToolUrl.TextChanged += new System.EventHandler(this.c_tbQueryToolUrl_TextChanged);
             // 
             // c_tbBackgroundSummary
             // 
-            this.c_tbBackgroundSummary.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.c_tbBackgroundSummary.Location = new System.Drawing.Point(120, 0);
-            this.c_tbBackgroundSummary.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.c_tbBackgroundSummary.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.c_tbBackgroundSummary.Location = new System.Drawing.Point(135, 196);
+            this.c_tbBackgroundSummary.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.c_tbBackgroundSummary.Multiline = true;
             this.c_tbBackgroundSummary.Name = "c_tbBackgroundSummary";
             this.c_tbBackgroundSummary.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.c_tbBackgroundSummary.Size = new System.Drawing.Size(380, 92);
+            this.c_tbBackgroundSummary.Size = new System.Drawing.Size(369, 100);
             this.c_tbBackgroundSummary.TabIndex = 4;
             // 
             // label6
             // 
-            this.label6.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label6.Location = new System.Drawing.Point(0, 0);
+            this.label6.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(42, 36);
             this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(120, 23);
+            this.label6.Size = new System.Drawing.Size(85, 15);
             this.label6.TabIndex = 69;
-            this.label6.Text = "Resource Type";
+            this.label6.Text = "Resource Type:";
+            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // c_tbBulkDownloadUrl
             // 
-            this.c_tbBulkDownloadUrl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.c_tbBulkDownloadUrl.Location = new System.Drawing.Point(120, 0);
-            this.c_tbBulkDownloadUrl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.c_tbBulkDownloadUrl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.c_tbBulkDownloadUrl.Location = new System.Drawing.Point(135, 896);
+            this.c_tbBulkDownloadUrl.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.c_tbBulkDownloadUrl.Name = "c_tbBulkDownloadUrl";
-            this.c_tbBulkDownloadUrl.Size = new System.Drawing.Size(380, 23);
+            this.c_tbBulkDownloadUrl.Size = new System.Drawing.Size(369, 23);
             this.c_tbBulkDownloadUrl.TabIndex = 19;
             this.c_tbBulkDownloadUrl.TextChanged += new System.EventHandler(this.c_tbBulkDownloadUrl_TextChanged);
             // 
             // c_tbTimeCoverage
             // 
-            this.c_tbTimeCoverage.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.c_tbTimeCoverage.Location = new System.Drawing.Point(120, 0);
-            this.c_tbTimeCoverage.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.c_tbTimeCoverage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.c_tbTimeCoverage.Location = new System.Drawing.Point(135, 558);
+            this.c_tbTimeCoverage.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.c_tbTimeCoverage.Name = "c_tbTimeCoverage";
-            this.c_tbTimeCoverage.Size = new System.Drawing.Size(380, 23);
+            this.c_tbTimeCoverage.Size = new System.Drawing.Size(369, 23);
             this.c_tbTimeCoverage.TabIndex = 10;
             // 
             // label7
             // 
-            this.label7.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label7.Location = new System.Drawing.Point(0, 0);
+            this.label7.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(61, 306);
             this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(120, 23);
+            this.label7.Size = new System.Drawing.Size(66, 15);
             this.label7.TabIndex = 72;
-            this.label7.Text = "Periodicity";
+            this.label7.Text = "Periodicity:";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label12
             // 
-            this.label12.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label12.Location = new System.Drawing.Point(0, 0);
+            this.label12.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label12.Location = new System.Drawing.Point(7, 529);
             this.label12.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(120, 23);
             this.label12.TabIndex = 93;
-            this.label12.Text = "Update Schedule";
+            this.label12.Text = "Update Schedule:";
+            this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // c_tbBrowseUrl
             // 
-            this.c_tbBrowseUrl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.c_tbBrowseUrl.Location = new System.Drawing.Point(120, 0);
-            this.c_tbBrowseUrl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.c_tbBrowseUrl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.c_tbBrowseUrl.Location = new System.Drawing.Point(135, 867);
+            this.c_tbBrowseUrl.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.c_tbBrowseUrl.Name = "c_tbBrowseUrl";
-            this.c_tbBrowseUrl.Size = new System.Drawing.Size(380, 23);
+            this.c_tbBrowseUrl.Size = new System.Drawing.Size(369, 23);
             this.c_tbBrowseUrl.TabIndex = 18;
             this.c_tbBrowseUrl.TextChanged += new System.EventHandler(this.c_tbBrowseUrl_TextChanged);
             // 
             // c_tbUpdateSchedule
             // 
-            this.c_tbUpdateSchedule.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.c_tbUpdateSchedule.Location = new System.Drawing.Point(120, 0);
-            this.c_tbUpdateSchedule.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.c_tbUpdateSchedule.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.c_tbUpdateSchedule.Location = new System.Drawing.Point(135, 529);
+            this.c_tbUpdateSchedule.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.c_tbUpdateSchedule.Name = "c_tbUpdateSchedule";
-            this.c_tbUpdateSchedule.Size = new System.Drawing.Size(380, 23);
+            this.c_tbUpdateSchedule.Size = new System.Drawing.Size(369, 23);
             this.c_tbUpdateSchedule.TabIndex = 9;
             // 
             // label13
             // 
-            this.label13.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label13.Location = new System.Drawing.Point(0, 0);
+            this.label13.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label13.Location = new System.Drawing.Point(7, 558);
             this.label13.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(120, 23);
             this.label13.TabIndex = 89;
-            this.label13.Text = "Time Coverage";
+            this.label13.Text = "Time Coverage:";
+            this.label13.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // c_tbAPIAccessURL
             // 
-            this.c_tbAPIAccessURL.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.c_tbAPIAccessURL.Location = new System.Drawing.Point(120, 0);
-            this.c_tbAPIAccessURL.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.c_tbAPIAccessURL.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.c_tbAPIAccessURL.Location = new System.Drawing.Point(135, 838);
+            this.c_tbAPIAccessURL.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.c_tbAPIAccessURL.Name = "c_tbAPIAccessURL";
-            this.c_tbAPIAccessURL.Size = new System.Drawing.Size(380, 23);
+            this.c_tbAPIAccessURL.Size = new System.Drawing.Size(369, 23);
             this.c_tbAPIAccessURL.TabIndex = 17;
             this.c_tbAPIAccessURL.TextChanged += new System.EventHandler(this.c_tbAPIAccessURL_TextChanged);
             // 
             // label10
             // 
-            this.label10.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label10.Location = new System.Drawing.Point(0, 0);
+            this.label10.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label10.Location = new System.Drawing.Point(7, 500);
             this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(120, 23);
             this.label10.TabIndex = 77;
-            this.label10.Text = "Update Frequency";
+            this.label10.Text = "Update Frequency:";
+            this.label10.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // c_ddPeriodicity
             // 
-            this.c_ddPeriodicity.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.c_ddPeriodicity.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.c_ddPeriodicity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.c_ddPeriodicity.FormattingEnabled = true;
-            this.c_ddPeriodicity.Location = new System.Drawing.Point(120, 0);
-            this.c_ddPeriodicity.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.c_ddPeriodicity.Location = new System.Drawing.Point(135, 302);
+            this.c_ddPeriodicity.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.c_ddPeriodicity.Name = "c_ddPeriodicity";
-            this.c_ddPeriodicity.Size = new System.Drawing.Size(380, 23);
+            this.c_ddPeriodicity.Size = new System.Drawing.Size(250, 23);
             this.c_ddPeriodicity.TabIndex = 5;
             // 
             // c_tbAccessOptions
             // 
-            this.c_tbAccessOptions.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.c_tbAccessOptions.Location = new System.Drawing.Point(120, 0);
-            this.c_tbAccessOptions.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.c_tbAccessOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.c_tbAccessOptions.Location = new System.Drawing.Point(135, 809);
+            this.c_tbAccessOptions.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.c_tbAccessOptions.Name = "c_tbAccessOptions";
-            this.c_tbAccessOptions.Size = new System.Drawing.Size(380, 23);
+            this.c_tbAccessOptions.Size = new System.Drawing.Size(369, 23);
             this.c_tbAccessOptions.TabIndex = 16;
             // 
             // c_tbLastRevisionDate
             // 
-            this.c_tbLastRevisionDate.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.c_tbLastRevisionDate.Location = new System.Drawing.Point(120, 0);
-            this.c_tbLastRevisionDate.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.c_tbLastRevisionDate.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.c_tbLastRevisionDate.Location = new System.Drawing.Point(135, 587);
+            this.c_tbLastRevisionDate.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.c_tbLastRevisionDate.Name = "c_tbLastRevisionDate";
-            this.c_tbLastRevisionDate.Size = new System.Drawing.Size(380, 23);
+            this.c_tbLastRevisionDate.Size = new System.Drawing.Size(250, 23);
             this.c_tbLastRevisionDate.TabIndex = 11;
             this.c_tbLastRevisionDate.TextChanged += new System.EventHandler(this.c_tbLastRevisionDate_TextChanged);
             // 
             // label9
             // 
-            this.label9.Dock = System.Windows.Forms.DockStyle.Left;
+            this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label9.AutoSize = true;
             this.label9.ForeColor = System.Drawing.Color.Black;
-            this.label9.Location = new System.Drawing.Point(0, 0);
+            this.label9.Location = new System.Drawing.Point(53, 193);
             this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(120, 92);
+            this.label9.Size = new System.Drawing.Size(74, 15);
             this.label9.TabIndex = 79;
-            this.label9.Text = "Background";
+            this.label9.Text = "Background:";
+            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // c_ddType
             // 
-            this.c_ddType.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.c_ddType.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.c_ddType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.c_ddType.FormattingEnabled = true;
-            this.c_ddType.Location = new System.Drawing.Point(120, 0);
-            this.c_ddType.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.c_ddType.Location = new System.Drawing.Point(135, 32);
+            this.c_ddType.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.c_ddType.Name = "c_ddType";
-            this.c_ddType.Size = new System.Drawing.Size(380, 23);
+            this.c_ddType.Size = new System.Drawing.Size(250, 23);
             this.c_ddType.TabIndex = 1;
             // 
             // c_tbResourceOwner
             // 
-            this.c_tbResourceOwner.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.c_tbResourceOwner.Location = new System.Drawing.Point(120, 0);
-            this.c_tbResourceOwner.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.c_tbResourceOwner.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.c_tbResourceOwner.Location = new System.Drawing.Point(135, 645);
+            this.c_tbResourceOwner.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.c_tbResourceOwner.Name = "c_tbResourceOwner";
-            this.c_tbResourceOwner.Size = new System.Drawing.Size(380, 23);
+            this.c_tbResourceOwner.Size = new System.Drawing.Size(369, 23);
             this.c_tbResourceOwner.TabIndex = 13;
             // 
             // c_tbAttributionCitation
             // 
             this.c_tbAttributionCitation.AcceptsReturn = true;
-            this.c_tbAttributionCitation.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.c_tbAttributionCitation.Location = new System.Drawing.Point(120, 0);
-            this.c_tbAttributionCitation.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.c_tbAttributionCitation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.c_tbAttributionCitation.Location = new System.Drawing.Point(135, 703);
+            this.c_tbAttributionCitation.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.c_tbAttributionCitation.Multiline = true;
             this.c_tbAttributionCitation.Name = "c_tbAttributionCitation";
-            this.c_tbAttributionCitation.Size = new System.Drawing.Size(380, 92);
+            this.c_tbAttributionCitation.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.c_tbAttributionCitation.Size = new System.Drawing.Size(369, 100);
             this.c_tbAttributionCitation.TabIndex = 15;
             // 
             // label8
             // 
-            this.label8.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label8.Location = new System.Drawing.Point(0, 0);
+            this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(28, 328);
             this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(120, 46);
+            this.label8.Size = new System.Drawing.Size(99, 15);
             this.label8.TabIndex = 83;
-            this.label8.Text = "Search Keywords";
+            this.label8.Text = "Search Keywords:";
+            this.label8.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // c_tbNumberOfThese
             // 
@@ -658,7 +615,6 @@ namespace Rdmp.UI.MainFormUITabs
             // splitContainer1
             // 
             this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.splitContainer1.Cursor = System.Windows.Forms.Cursors.HSplit;
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
@@ -668,44 +624,17 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.AutoScroll = true;
+            this.splitContainer1.Panel1.AutoScrollMinSize = new System.Drawing.Size(200, 0);
             this.splitContainer1.Panel1.Controls.Add(this.tableLayoutPanel1);
+            this.splitContainer1.Panel1MinSize = 200;
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.AutoScroll = true;
-            this.splitContainer1.Panel2.Controls.Add(this.panel36);
-            this.splitContainer1.Panel2.Controls.Add(this.panel35);
-            this.splitContainer1.Panel2.Controls.Add(this.panel34);
-            this.splitContainer1.Panel2.Controls.Add(this.panel33);
-            this.splitContainer1.Panel2.Controls.Add(this.panel32);
-            this.splitContainer1.Panel2.Controls.Add(this.panel31);
-            this.splitContainer1.Panel2.Controls.Add(this.panel30);
-            this.splitContainer1.Panel2.Controls.Add(this.panel29);
-            this.splitContainer1.Panel2.Controls.Add(this.panel28);
-            this.splitContainer1.Panel2.Controls.Add(this.panel27);
-            this.splitContainer1.Panel2.Controls.Add(this.panel26);
-            this.splitContainer1.Panel2.Controls.Add(this.panel25);
-            this.splitContainer1.Panel2.Controls.Add(this.panel24);
-            this.splitContainer1.Panel2.Controls.Add(this.panel23);
-            this.splitContainer1.Panel2.Controls.Add(this.panel22);
-            this.splitContainer1.Panel2.Controls.Add(this.panel21);
-            this.splitContainer1.Panel2.Controls.Add(this.panel20);
-            this.splitContainer1.Panel2.Controls.Add(this.panel19);
-            this.splitContainer1.Panel2.Controls.Add(this.panel18);
-            this.splitContainer1.Panel2.Controls.Add(this.panel17);
-            this.splitContainer1.Panel2.Controls.Add(this.panel16);
-            this.splitContainer1.Panel2.Controls.Add(this.panel15);
-            this.splitContainer1.Panel2.Controls.Add(this.panel14);
-            this.splitContainer1.Panel2.Controls.Add(this.ticketingControl1);
-            this.splitContainer1.Panel2.Controls.Add(this.panel13);
-            this.splitContainer1.Panel2.Controls.Add(this.panel12);
-            this.splitContainer1.Panel2.Controls.Add(this.panel11);
-            this.splitContainer1.Panel2.Controls.Add(this.panel10);
-            this.splitContainer1.Panel2.Controls.Add(this.panel9);
-            this.splitContainer1.Panel2.Controls.Add(this.panel8);
-            this.splitContainer1.Panel2.Controls.Add(this.panel7);
-            this.splitContainer1.Size = new System.Drawing.Size(521, 1085);
-            this.splitContainer1.SplitterDistance = 297;
+            this.splitContainer1.Panel2.Controls.Add(this.tableLayoutPanel2);
+            this.splitContainer1.Size = new System.Drawing.Size(551, 1085);
+            this.splitContainer1.SplitterDistance = 288;
             this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 114;
             // 
@@ -740,7 +669,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(511, 293);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(524, 284);
             this.tableLayoutPanel1.TabIndex = 160;
             // 
             // flowLayoutPanel1
@@ -751,9 +680,8 @@ namespace Rdmp.UI.MainFormUITabs
             this.flowLayoutPanel1.Controls.Add(this.cbColdStorage);
             this.flowLayoutPanel1.Location = new System.Drawing.Point(132, 119);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(3, 3, 20, 3);
-            this.flowLayoutPanel1.MinimumSize = new System.Drawing.Size(350, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(354, 23);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(367, 23);
             this.flowLayoutPanel1.TabIndex = 159;
             // 
             // cbDeprecated
@@ -794,9 +722,8 @@ namespace Rdmp.UI.MainFormUITabs
             this.tbFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.tbFolder.Location = new System.Drawing.Point(133, 90);
             this.tbFolder.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
-            this.tbFolder.MinimumSize = new System.Drawing.Size(350, 4);
             this.tbFolder.Name = "tbFolder";
-            this.tbFolder.Size = new System.Drawing.Size(353, 23);
+            this.tbFolder.Size = new System.Drawing.Size(366, 23);
             this.tbFolder.TabIndex = 3;
             this.tbFolder.TextChanged += new System.EventHandler(this.tbFolder_TextChanged);
             // 
@@ -805,9 +732,8 @@ namespace Rdmp.UI.MainFormUITabs
             this.tbAcronym.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.tbAcronym.Location = new System.Drawing.Point(133, 61);
             this.tbAcronym.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
-            this.tbAcronym.MinimumSize = new System.Drawing.Size(350, 4);
             this.tbAcronym.Name = "tbAcronym";
-            this.tbAcronym.Size = new System.Drawing.Size(353, 23);
+            this.tbAcronym.Size = new System.Drawing.Size(366, 23);
             this.tbAcronym.TabIndex = 2;
             // 
             // tbName
@@ -815,9 +741,8 @@ namespace Rdmp.UI.MainFormUITabs
             this.tbName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.tbName.Location = new System.Drawing.Point(133, 32);
             this.tbName.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
-            this.tbName.MinimumSize = new System.Drawing.Size(350, 4);
             this.tbName.Name = "tbName";
-            this.tbName.Size = new System.Drawing.Size(353, 23);
+            this.tbName.Size = new System.Drawing.Size(366, 23);
             this.tbName.TabIndex = 1;
             this.tbName.TextChanged += new System.EventHandler(this.tbName_TextChanged);
             // 
@@ -826,10 +751,9 @@ namespace Rdmp.UI.MainFormUITabs
             this.c_tbID.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.c_tbID.Location = new System.Drawing.Point(133, 3);
             this.c_tbID.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
-            this.c_tbID.MinimumSize = new System.Drawing.Size(350, 4);
             this.c_tbID.Name = "c_tbID";
             this.c_tbID.ReadOnly = true;
-            this.c_tbID.Size = new System.Drawing.Size(353, 23);
+            this.c_tbID.Size = new System.Drawing.Size(366, 23);
             this.c_tbID.TabIndex = 0;
             // 
             // label1
@@ -900,464 +824,307 @@ namespace Rdmp.UI.MainFormUITabs
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.Location = new System.Drawing.Point(133, 148);
             this.panel1.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
-            this.panel1.MinimumSize = new System.Drawing.Size(350, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(353, 142);
+            this.panel1.Size = new System.Drawing.Size(366, 133);
             this.panel1.TabIndex = 153;
             // 
-            // panel36
+            // tableLayoutPanel2
             // 
-            this.panel36.Controls.Add(this.tbSourceOfDataCollection);
-            this.panel36.Controls.Add(this.label33);
-            this.panel36.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel36.Location = new System.Drawing.Point(0, 1074);
-            this.panel36.Name = "panel36";
-            this.panel36.Size = new System.Drawing.Size(500, 92);
-            this.panel36.TabIndex = 193;
+            this.tableLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel2.ColumnCount = 2;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.Controls.Add(this.tbSourceOfDataCollection, 1, 30);
+            this.tableLayoutPanel2.Controls.Add(this.tbEthicsApprover, 1, 29);
+            this.tableLayoutPanel2.Controls.Add(this.label33, 0, 30);
+            this.tableLayoutPanel2.Controls.Add(this.ddExplicitConsent, 1, 28);
+            this.tableLayoutPanel2.Controls.Add(this.label32, 0, 29);
+            this.tableLayoutPanel2.Controls.Add(this.tbAdministrativeContactAddress, 1, 27);
+            this.tableLayoutPanel2.Controls.Add(this.label31, 0, 28);
+            this.tableLayoutPanel2.Controls.Add(this.tbAdministrativeContactTelephone, 1, 26);
+            this.tableLayoutPanel2.Controls.Add(this.label11, 0, 27);
+            this.tableLayoutPanel2.Controls.Add(this.tbAdministrativeContactEmail, 1, 25);
+            this.tableLayoutPanel2.Controls.Add(this.label30, 0, 26);
+            this.tableLayoutPanel2.Controls.Add(this.tbAdministrativeContactName, 1, 24);
+            this.tableLayoutPanel2.Controls.Add(this.label29, 0, 25);
+            this.tableLayoutPanel2.Controls.Add(this.tbDataStandards, 1, 23);
+            this.tableLayoutPanel2.Controls.Add(this.label15, 0, 24);
+            this.tableLayoutPanel2.Controls.Add(this.tbCountryOfOrigin, 1, 22);
+            this.tableLayoutPanel2.Controls.Add(this.label26, 0, 23);
+            this.tableLayoutPanel2.Controls.Add(this.c_tbSourceUrl, 1, 21);
+            this.tableLayoutPanel2.Controls.Add(this.label27, 0, 22);
+            this.tableLayoutPanel2.Controls.Add(this.c_tbQueryToolUrl, 1, 20);
+            this.tableLayoutPanel2.Controls.Add(this.label23, 0, 21);
+            this.tableLayoutPanel2.Controls.Add(this.c_tbBulkDownloadUrl, 1, 19);
+            this.tableLayoutPanel2.Controls.Add(this.label22, 0, 20);
+            this.tableLayoutPanel2.Controls.Add(this.c_tbBrowseUrl, 1, 18);
+            this.tableLayoutPanel2.Controls.Add(this.label21, 0, 19);
+            this.tableLayoutPanel2.Controls.Add(this.c_tbAPIAccessURL, 1, 17);
+            this.tableLayoutPanel2.Controls.Add(this.label20, 0, 18);
+            this.tableLayoutPanel2.Controls.Add(this.c_tbAccessOptions, 1, 16);
+            this.tableLayoutPanel2.Controls.Add(this.label19, 0, 17);
+            this.tableLayoutPanel2.Controls.Add(this.tbDatasetStartDate, 1, 14);
+            this.tableLayoutPanel2.Controls.Add(this.label18, 0, 16);
+            this.tableLayoutPanel2.Controls.Add(this.label17, 0, 15);
+            this.tableLayoutPanel2.Controls.Add(this.c_tbResourceOwner, 1, 13);
+            this.tableLayoutPanel2.Controls.Add(this.label41, 0, 14);
+            this.tableLayoutPanel2.Controls.Add(this.c_tbSubjectNumbers, 1, 12);
+            this.tableLayoutPanel2.Controls.Add(this.label16, 0, 13);
+            this.tableLayoutPanel2.Controls.Add(this.c_tbLastRevisionDate, 1, 11);
+            this.tableLayoutPanel2.Controls.Add(this.label28, 0, 12);
+            this.tableLayoutPanel2.Controls.Add(this.c_tbTimeCoverage, 1, 10);
+            this.tableLayoutPanel2.Controls.Add(this.label14, 0, 11);
+            this.tableLayoutPanel2.Controls.Add(this.c_tbBackgroundSummary, 1, 4);
+            this.tableLayoutPanel2.Controls.Add(this.label13, 0, 10);
+            this.tableLayoutPanel2.Controls.Add(this.c_tbUpdateSchedule, 1, 9);
+            this.tableLayoutPanel2.Controls.Add(this.c_tbUpdateFrequency, 1, 8);
+            this.tableLayoutPanel2.Controls.Add(this.label12, 0, 9);
+            this.tableLayoutPanel2.Controls.Add(this.c_tbTopics, 1, 6);
+            this.tableLayoutPanel2.Controls.Add(this.c_ddPeriodicity, 1, 5);
+            this.tableLayoutPanel2.Controls.Add(this.label10, 0, 8);
+            this.tableLayoutPanel2.Controls.Add(this.c_ddGranularity, 1, 3);
+            this.tableLayoutPanel2.Controls.Add(this.label8, 0, 6);
+            this.tableLayoutPanel2.Controls.Add(this.c_ddType, 1, 1);
+            this.tableLayoutPanel2.Controls.Add(this.label7, 0, 5);
+            this.tableLayoutPanel2.Controls.Add(this.c_tbDetailPageURL, 1, 0);
+            this.tableLayoutPanel2.Controls.Add(this.label64, 0, 3);
+            this.tableLayoutPanel2.Controls.Add(this.label4, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.label6, 0, 1);
+            this.tableLayoutPanel2.Controls.Add(this.label5, 0, 2);
+            this.tableLayoutPanel2.Controls.Add(this.c_tbGeographicalCoverage, 1, 2);
+            this.tableLayoutPanel2.Controls.Add(this.label9, 0, 4);
+            this.tableLayoutPanel2.Controls.Add(this.ticketingControl1, 1, 7);
+            this.tableLayoutPanel2.Controls.Add(this.c_tbAttributionCitation, 1, 15);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 31;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(524, 1475);
+            this.tableLayoutPanel2.TabIndex = 194;
             // 
             // tbSourceOfDataCollection
             // 
             this.tbSourceOfDataCollection.AcceptsReturn = true;
-            this.tbSourceOfDataCollection.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbSourceOfDataCollection.Location = new System.Drawing.Point(120, 0);
-            this.tbSourceOfDataCollection.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tbSourceOfDataCollection.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbSourceOfDataCollection.Location = new System.Drawing.Point(135, 1370);
+            this.tbSourceOfDataCollection.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.tbSourceOfDataCollection.Multiline = true;
             this.tbSourceOfDataCollection.Name = "tbSourceOfDataCollection";
-            this.tbSourceOfDataCollection.Size = new System.Drawing.Size(380, 92);
+            this.tbSourceOfDataCollection.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.tbSourceOfDataCollection.Size = new System.Drawing.Size(369, 100);
             this.tbSourceOfDataCollection.TabIndex = 30;
-            // 
-            // label33
-            // 
-            this.label33.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label33.Location = new System.Drawing.Point(0, 0);
-            this.label33.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(120, 92);
-            this.label33.TabIndex = 163;
-            this.label33.Text = "Source of Data Collection";
-            // 
-            // panel35
-            // 
-            this.panel35.Controls.Add(this.tbEthicsApprover);
-            this.panel35.Controls.Add(this.label32);
-            this.panel35.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel35.Location = new System.Drawing.Point(0, 1051);
-            this.panel35.Name = "panel35";
-            this.panel35.Size = new System.Drawing.Size(500, 23);
-            this.panel35.TabIndex = 192;
             // 
             // tbEthicsApprover
             // 
-            this.tbEthicsApprover.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbEthicsApprover.Location = new System.Drawing.Point(120, 0);
-            this.tbEthicsApprover.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tbEthicsApprover.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbEthicsApprover.Location = new System.Drawing.Point(135, 1340);
+            this.tbEthicsApprover.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.tbEthicsApprover.Name = "tbEthicsApprover";
-            this.tbEthicsApprover.Size = new System.Drawing.Size(380, 23);
+            this.tbEthicsApprover.Size = new System.Drawing.Size(369, 23);
             this.tbEthicsApprover.TabIndex = 29;
             // 
-            // label32
+            // label33
             // 
-            this.label32.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label32.Location = new System.Drawing.Point(0, 0);
-            this.label32.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(120, 23);
-            this.label32.TabIndex = 162;
-            this.label32.Text = "Ethics Approver";
-            // 
-            // panel34
-            // 
-            this.panel34.Controls.Add(this.ddExplicitConsent);
-            this.panel34.Controls.Add(this.label31);
-            this.panel34.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel34.Location = new System.Drawing.Point(0, 1028);
-            this.panel34.Name = "panel34";
-            this.panel34.Size = new System.Drawing.Size(500, 23);
-            this.panel34.TabIndex = 191;
+            this.label33.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label33.AutoSize = true;
+            this.label33.Location = new System.Drawing.Point(43, 1366);
+            this.label33.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(84, 30);
+            this.label33.TabIndex = 163;
+            this.label33.Text = "Source of Data\r\nCollection:";
+            this.label33.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // ddExplicitConsent
             // 
-            this.ddExplicitConsent.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ddExplicitConsent.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.ddExplicitConsent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddExplicitConsent.FormattingEnabled = true;
             this.ddExplicitConsent.Items.AddRange(new object[] {
             "",
             "Yes",
             "No"});
-            this.ddExplicitConsent.Location = new System.Drawing.Point(120, 0);
-            this.ddExplicitConsent.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.ddExplicitConsent.Location = new System.Drawing.Point(135, 1311);
+            this.ddExplicitConsent.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.ddExplicitConsent.Name = "ddExplicitConsent";
-            this.ddExplicitConsent.Size = new System.Drawing.Size(380, 23);
+            this.ddExplicitConsent.Size = new System.Drawing.Size(250, 23);
             this.ddExplicitConsent.TabIndex = 28;
             this.ddExplicitConsent.SelectedIndexChanged += new System.EventHandler(this.ddExplicitConsent_SelectedIndexChanged);
             // 
-            // label31
+            // label32
             // 
-            this.label31.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label31.Location = new System.Drawing.Point(0, 0);
-            this.label31.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(120, 23);
-            this.label31.TabIndex = 161;
-            this.label31.Text = "Explicit Consent";
-            // 
-            // panel33
-            // 
-            this.panel33.Controls.Add(this.tbAdministrativeContactAddress);
-            this.panel33.Controls.Add(this.label11);
-            this.panel33.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel33.Location = new System.Drawing.Point(0, 936);
-            this.panel33.Name = "panel33";
-            this.panel33.Size = new System.Drawing.Size(500, 92);
-            this.panel33.TabIndex = 190;
+            this.label32.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label32.AutoSize = true;
+            this.label32.Location = new System.Drawing.Point(34, 1344);
+            this.label32.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(93, 15);
+            this.label32.TabIndex = 162;
+            this.label32.Text = "Ethics Approver:";
+            this.label32.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // tbAdministrativeContactAddress
             // 
             this.tbAdministrativeContactAddress.AcceptsReturn = true;
-            this.tbAdministrativeContactAddress.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbAdministrativeContactAddress.Location = new System.Drawing.Point(120, 0);
-            this.tbAdministrativeContactAddress.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tbAdministrativeContactAddress.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbAdministrativeContactAddress.Location = new System.Drawing.Point(135, 1205);
+            this.tbAdministrativeContactAddress.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.tbAdministrativeContactAddress.Multiline = true;
             this.tbAdministrativeContactAddress.Name = "tbAdministrativeContactAddress";
-            this.tbAdministrativeContactAddress.Size = new System.Drawing.Size(380, 92);
+            this.tbAdministrativeContactAddress.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.tbAdministrativeContactAddress.Size = new System.Drawing.Size(369, 100);
             this.tbAdministrativeContactAddress.TabIndex = 27;
             // 
-            // label11
+            // label31
             // 
-            this.label11.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label11.Location = new System.Drawing.Point(0, 0);
-            this.label11.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(120, 92);
-            this.label11.TabIndex = 160;
-            this.label11.Text = "Admin Address";
-            // 
-            // panel32
-            // 
-            this.panel32.Controls.Add(this.tbAdministrativeContactTelephone);
-            this.panel32.Controls.Add(this.label30);
-            this.panel32.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel32.Location = new System.Drawing.Point(0, 913);
-            this.panel32.Name = "panel32";
-            this.panel32.Size = new System.Drawing.Size(500, 23);
-            this.panel32.TabIndex = 189;
+            this.label31.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label31.AutoSize = true;
+            this.label31.Location = new System.Drawing.Point(32, 1315);
+            this.label31.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(95, 15);
+            this.label31.TabIndex = 161;
+            this.label31.Text = "Explicit Consent:";
+            this.label31.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // tbAdministrativeContactTelephone
             // 
-            this.tbAdministrativeContactTelephone.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbAdministrativeContactTelephone.Location = new System.Drawing.Point(120, 0);
-            this.tbAdministrativeContactTelephone.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tbAdministrativeContactTelephone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbAdministrativeContactTelephone.Location = new System.Drawing.Point(135, 1176);
+            this.tbAdministrativeContactTelephone.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.tbAdministrativeContactTelephone.Name = "tbAdministrativeContactTelephone";
-            this.tbAdministrativeContactTelephone.Size = new System.Drawing.Size(380, 23);
+            this.tbAdministrativeContactTelephone.Size = new System.Drawing.Size(369, 23);
             this.tbAdministrativeContactTelephone.TabIndex = 26;
             // 
-            // label30
+            // label11
             // 
-            this.label30.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label30.Location = new System.Drawing.Point(0, 0);
-            this.label30.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(120, 23);
-            this.label30.TabIndex = 159;
-            this.label30.Text = "Admin Contact Tel";
-            // 
-            // panel31
-            // 
-            this.panel31.Controls.Add(this.tbAdministrativeContactEmail);
-            this.panel31.Controls.Add(this.label29);
-            this.panel31.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel31.Location = new System.Drawing.Point(0, 890);
-            this.panel31.Name = "panel31";
-            this.panel31.Size = new System.Drawing.Size(500, 23);
-            this.panel31.TabIndex = 188;
+            this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label11.Location = new System.Drawing.Point(7, 1202);
+            this.label11.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(120, 20);
+            this.label11.TabIndex = 160;
+            this.label11.Text = "Admin Address:";
+            this.label11.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // tbAdministrativeContactEmail
             // 
-            this.tbAdministrativeContactEmail.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbAdministrativeContactEmail.Location = new System.Drawing.Point(120, 0);
-            this.tbAdministrativeContactEmail.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tbAdministrativeContactEmail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbAdministrativeContactEmail.Location = new System.Drawing.Point(135, 1147);
+            this.tbAdministrativeContactEmail.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.tbAdministrativeContactEmail.Name = "tbAdministrativeContactEmail";
-            this.tbAdministrativeContactEmail.Size = new System.Drawing.Size(380, 23);
+            this.tbAdministrativeContactEmail.Size = new System.Drawing.Size(369, 23);
             this.tbAdministrativeContactEmail.TabIndex = 25;
             // 
-            // label29
+            // label30
             // 
-            this.label29.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label29.Location = new System.Drawing.Point(0, 0);
-            this.label29.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(120, 23);
-            this.label29.TabIndex = 158;
-            this.label29.Text = "Admin Contact Email";
-            // 
-            // panel30
-            // 
-            this.panel30.Controls.Add(this.tbAdministrativeContactName);
-            this.panel30.Controls.Add(this.label15);
-            this.panel30.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel30.Location = new System.Drawing.Point(0, 867);
-            this.panel30.Name = "panel30";
-            this.panel30.Size = new System.Drawing.Size(500, 23);
-            this.panel30.TabIndex = 187;
+            this.label30.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label30.AutoSize = true;
+            this.label30.Location = new System.Drawing.Point(19, 1180);
+            this.label30.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(108, 15);
+            this.label30.TabIndex = 159;
+            this.label30.Text = "Admin Contact Tel:";
+            this.label30.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // tbAdministrativeContactName
             // 
-            this.tbAdministrativeContactName.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbAdministrativeContactName.Location = new System.Drawing.Point(120, 0);
-            this.tbAdministrativeContactName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tbAdministrativeContactName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbAdministrativeContactName.Location = new System.Drawing.Point(135, 1118);
+            this.tbAdministrativeContactName.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.tbAdministrativeContactName.Name = "tbAdministrativeContactName";
-            this.tbAdministrativeContactName.Size = new System.Drawing.Size(380, 23);
+            this.tbAdministrativeContactName.Size = new System.Drawing.Size(369, 23);
             this.tbAdministrativeContactName.TabIndex = 24;
+            // 
+            // label29
+            // 
+            this.label29.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label29.AutoSize = true;
+            this.label29.Location = new System.Drawing.Point(4, 1151);
+            this.label29.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(123, 15);
+            this.label29.TabIndex = 158;
+            this.label29.Text = "Admin Contact Email:";
+            this.label29.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // label15
             // 
-            this.label15.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label15.Location = new System.Drawing.Point(0, 0);
+            this.label15.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(36, 1122);
             this.label15.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(120, 23);
+            this.label15.Size = new System.Drawing.Size(91, 15);
             this.label15.TabIndex = 157;
-            this.label15.Text = "Admin Contact";
+            this.label15.Text = "Admin Contact:";
+            this.label15.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // panel29
+            // label5
             // 
-            this.panel29.Controls.Add(this.tbDataStandards);
-            this.panel29.Controls.Add(this.label26);
-            this.panel29.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel29.Location = new System.Drawing.Point(0, 775);
-            this.panel29.Name = "panel29";
-            this.panel29.Size = new System.Drawing.Size(500, 92);
-            this.panel29.TabIndex = 186;
+            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label5.AutoSize = true;
+            this.label5.ForeColor = System.Drawing.Color.Black;
+            this.label5.Location = new System.Drawing.Point(43, 58);
+            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(84, 15);
+            this.label5.TabIndex = 67;
+            this.label5.Text = "Geo Coverage:";
+            this.label5.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // panel28
+            // c_tbGeographicalCoverage
             // 
-            this.panel28.Controls.Add(this.tbCountryOfOrigin);
-            this.panel28.Controls.Add(this.label27);
-            this.panel28.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel28.Location = new System.Drawing.Point(0, 752);
-            this.panel28.Name = "panel28";
-            this.panel28.Size = new System.Drawing.Size(500, 23);
-            this.panel28.TabIndex = 185;
-            // 
-            // panel27
-            // 
-            this.panel27.Controls.Add(this.c_tbSourceUrl);
-            this.panel27.Controls.Add(this.label23);
-            this.panel27.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel27.Location = new System.Drawing.Point(0, 729);
-            this.panel27.Name = "panel27";
-            this.panel27.Size = new System.Drawing.Size(500, 23);
-            this.panel27.TabIndex = 184;
-            // 
-            // panel26
-            // 
-            this.panel26.Controls.Add(this.c_tbQueryToolUrl);
-            this.panel26.Controls.Add(this.label22);
-            this.panel26.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel26.Location = new System.Drawing.Point(0, 706);
-            this.panel26.Name = "panel26";
-            this.panel26.Size = new System.Drawing.Size(500, 23);
-            this.panel26.TabIndex = 183;
-            // 
-            // panel25
-            // 
-            this.panel25.Controls.Add(this.c_tbBulkDownloadUrl);
-            this.panel25.Controls.Add(this.label21);
-            this.panel25.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel25.Location = new System.Drawing.Point(0, 683);
-            this.panel25.Name = "panel25";
-            this.panel25.Size = new System.Drawing.Size(500, 23);
-            this.panel25.TabIndex = 182;
-            // 
-            // panel24
-            // 
-            this.panel24.Controls.Add(this.c_tbBrowseUrl);
-            this.panel24.Controls.Add(this.label20);
-            this.panel24.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel24.Location = new System.Drawing.Point(0, 660);
-            this.panel24.Name = "panel24";
-            this.panel24.Size = new System.Drawing.Size(500, 23);
-            this.panel24.TabIndex = 181;
-            // 
-            // panel23
-            // 
-            this.panel23.Controls.Add(this.c_tbAPIAccessURL);
-            this.panel23.Controls.Add(this.label19);
-            this.panel23.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel23.Location = new System.Drawing.Point(0, 637);
-            this.panel23.Name = "panel23";
-            this.panel23.Size = new System.Drawing.Size(500, 23);
-            this.panel23.TabIndex = 180;
-            // 
-            // panel22
-            // 
-            this.panel22.Controls.Add(this.c_tbAccessOptions);
-            this.panel22.Controls.Add(this.label18);
-            this.panel22.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel22.Location = new System.Drawing.Point(0, 614);
-            this.panel22.Name = "panel22";
-            this.panel22.Size = new System.Drawing.Size(500, 23);
-            this.panel22.TabIndex = 179;
-            // 
-            // panel21
-            // 
-            this.panel21.Controls.Add(this.c_tbAttributionCitation);
-            this.panel21.Controls.Add(this.label17);
-            this.panel21.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel21.Location = new System.Drawing.Point(0, 522);
-            this.panel21.Name = "panel21";
-            this.panel21.Size = new System.Drawing.Size(500, 92);
-            this.panel21.TabIndex = 178;
-            // 
-            // panel20
-            // 
-            this.panel20.Controls.Add(this.tbDatasetStartDate);
-            this.panel20.Controls.Add(this.label41);
-            this.panel20.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel20.Location = new System.Drawing.Point(0, 499);
-            this.panel20.Name = "panel20";
-            this.panel20.Size = new System.Drawing.Size(500, 23);
-            this.panel20.TabIndex = 177;
-            // 
-            // panel19
-            // 
-            this.panel19.Controls.Add(this.c_tbResourceOwner);
-            this.panel19.Controls.Add(this.label16);
-            this.panel19.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel19.Location = new System.Drawing.Point(0, 476);
-            this.panel19.Name = "panel19";
-            this.panel19.Size = new System.Drawing.Size(500, 23);
-            this.panel19.TabIndex = 176;
-            // 
-            // panel18
-            // 
-            this.panel18.Controls.Add(this.c_tbSubjectNumbers);
-            this.panel18.Controls.Add(this.label28);
-            this.panel18.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel18.Location = new System.Drawing.Point(0, 453);
-            this.panel18.Name = "panel18";
-            this.panel18.Size = new System.Drawing.Size(500, 23);
-            this.panel18.TabIndex = 175;
-            // 
-            // panel17
-            // 
-            this.panel17.Controls.Add(this.c_tbLastRevisionDate);
-            this.panel17.Controls.Add(this.label14);
-            this.panel17.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel17.Location = new System.Drawing.Point(0, 430);
-            this.panel17.Name = "panel17";
-            this.panel17.Size = new System.Drawing.Size(500, 23);
-            this.panel17.TabIndex = 174;
-            // 
-            // panel16
-            // 
-            this.panel16.Controls.Add(this.c_tbTimeCoverage);
-            this.panel16.Controls.Add(this.label13);
-            this.panel16.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel16.Location = new System.Drawing.Point(0, 407);
-            this.panel16.Name = "panel16";
-            this.panel16.Size = new System.Drawing.Size(500, 23);
-            this.panel16.TabIndex = 173;
-            // 
-            // panel15
-            // 
-            this.panel15.Controls.Add(this.c_tbUpdateSchedule);
-            this.panel15.Controls.Add(this.label12);
-            this.panel15.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel15.Location = new System.Drawing.Point(0, 384);
-            this.panel15.Name = "panel15";
-            this.panel15.Size = new System.Drawing.Size(500, 23);
-            this.panel15.TabIndex = 172;
-            // 
-            // panel14
-            // 
-            this.panel14.Controls.Add(this.c_tbUpdateFrequency);
-            this.panel14.Controls.Add(this.label10);
-            this.panel14.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel14.Location = new System.Drawing.Point(0, 361);
-            this.panel14.Name = "panel14";
-            this.panel14.Size = new System.Drawing.Size(500, 23);
-            this.panel14.TabIndex = 171;
+            this.c_tbGeographicalCoverage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.c_tbGeographicalCoverage.Location = new System.Drawing.Point(135, 61);
+            this.c_tbGeographicalCoverage.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
+            this.c_tbGeographicalCoverage.Multiline = true;
+            this.c_tbGeographicalCoverage.Name = "c_tbGeographicalCoverage";
+            this.c_tbGeographicalCoverage.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.c_tbGeographicalCoverage.Size = new System.Drawing.Size(369, 100);
+            this.c_tbGeographicalCoverage.TabIndex = 2;
             // 
             // ticketingControl1
             // 
-            this.ticketingControl1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.ticketingControl1.Location = new System.Drawing.Point(0, 299);
-            this.ticketingControl1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
+            this.ticketingControl1.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.ticketingControl1.Location = new System.Drawing.Point(135, 437);
+            this.ticketingControl1.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.ticketingControl1.Name = "ticketingControl1";
-            this.ticketingControl1.Size = new System.Drawing.Size(500, 62);
+            this.ticketingControl1.Size = new System.Drawing.Size(350, 57);
             this.ticketingControl1.TabIndex = 8;
             this.ticketingControl1.TicketText = "";
-            // 
-            // panel13
-            // 
-            this.panel13.Controls.Add(this.c_tbTopics);
-            this.panel13.Controls.Add(this.label8);
-            this.panel13.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel13.Location = new System.Drawing.Point(0, 253);
-            this.panel13.Name = "panel13";
-            this.panel13.Size = new System.Drawing.Size(500, 46);
-            this.panel13.TabIndex = 170;
-            // 
-            // panel12
-            // 
-            this.panel12.Controls.Add(this.c_ddPeriodicity);
-            this.panel12.Controls.Add(this.label7);
-            this.panel12.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel12.Location = new System.Drawing.Point(0, 230);
-            this.panel12.Name = "panel12";
-            this.panel12.Size = new System.Drawing.Size(500, 23);
-            this.panel12.TabIndex = 169;
-            // 
-            // panel11
-            // 
-            this.panel11.Controls.Add(this.c_tbBackgroundSummary);
-            this.panel11.Controls.Add(this.label9);
-            this.panel11.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel11.Location = new System.Drawing.Point(0, 138);
-            this.panel11.Name = "panel11";
-            this.panel11.Size = new System.Drawing.Size(500, 92);
-            this.panel11.TabIndex = 168;
-            // 
-            // panel10
-            // 
-            this.panel10.Controls.Add(this.c_ddGranularity);
-            this.panel10.Controls.Add(this.label64);
-            this.panel10.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel10.Location = new System.Drawing.Point(0, 115);
-            this.panel10.Name = "panel10";
-            this.panel10.Size = new System.Drawing.Size(500, 23);
-            this.panel10.TabIndex = 167;
-            // 
-            // panel9
-            // 
-            this.panel9.Controls.Add(this.c_tbGeographicalCoverage);
-            this.panel9.Controls.Add(this.label5);
-            this.panel9.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel9.Location = new System.Drawing.Point(0, 46);
-            this.panel9.Name = "panel9";
-            this.panel9.Size = new System.Drawing.Size(500, 69);
-            this.panel9.TabIndex = 166;
-            // 
-            // panel8
-            // 
-            this.panel8.Controls.Add(this.c_ddType);
-            this.panel8.Controls.Add(this.label6);
-            this.panel8.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel8.Location = new System.Drawing.Point(0, 23);
-            this.panel8.Name = "panel8";
-            this.panel8.Size = new System.Drawing.Size(500, 23);
-            this.panel8.TabIndex = 165;
-            // 
-            // panel7
-            // 
-            this.panel7.Controls.Add(this.c_tbDetailPageURL);
-            this.panel7.Controls.Add(this.label4);
-            this.panel7.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel7.Location = new System.Drawing.Point(0, 0);
-            this.panel7.Name = "panel7";
-            this.panel7.Size = new System.Drawing.Size(500, 23);
-            this.panel7.TabIndex = 164;
             // 
             // errorProvider1
             // 
@@ -1370,7 +1137,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.Controls.Add(this.splitContainer1);
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "CatalogueUI";
-            this.Size = new System.Drawing.Size(521, 1085);
+            this.Size = new System.Drawing.Size(551, 1085);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -1379,62 +1146,8 @@ namespace Rdmp.UI.MainFormUITabs
             this.tableLayoutPanel1.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
-            this.panel36.ResumeLayout(false);
-            this.panel36.PerformLayout();
-            this.panel35.ResumeLayout(false);
-            this.panel35.PerformLayout();
-            this.panel34.ResumeLayout(false);
-            this.panel33.ResumeLayout(false);
-            this.panel33.PerformLayout();
-            this.panel32.ResumeLayout(false);
-            this.panel32.PerformLayout();
-            this.panel31.ResumeLayout(false);
-            this.panel31.PerformLayout();
-            this.panel30.ResumeLayout(false);
-            this.panel30.PerformLayout();
-            this.panel29.ResumeLayout(false);
-            this.panel29.PerformLayout();
-            this.panel28.ResumeLayout(false);
-            this.panel28.PerformLayout();
-            this.panel27.ResumeLayout(false);
-            this.panel27.PerformLayout();
-            this.panel26.ResumeLayout(false);
-            this.panel26.PerformLayout();
-            this.panel25.ResumeLayout(false);
-            this.panel25.PerformLayout();
-            this.panel24.ResumeLayout(false);
-            this.panel24.PerformLayout();
-            this.panel23.ResumeLayout(false);
-            this.panel23.PerformLayout();
-            this.panel22.ResumeLayout(false);
-            this.panel22.PerformLayout();
-            this.panel21.ResumeLayout(false);
-            this.panel21.PerformLayout();
-            this.panel20.ResumeLayout(false);
-            this.panel20.PerformLayout();
-            this.panel19.ResumeLayout(false);
-            this.panel19.PerformLayout();
-            this.panel18.ResumeLayout(false);
-            this.panel18.PerformLayout();
-            this.panel17.ResumeLayout(false);
-            this.panel17.PerformLayout();
-            this.panel16.ResumeLayout(false);
-            this.panel16.PerformLayout();
-            this.panel15.ResumeLayout(false);
-            this.panel15.PerformLayout();
-            this.panel14.ResumeLayout(false);
-            this.panel14.PerformLayout();
-            this.panel13.ResumeLayout(false);
-            this.panel13.PerformLayout();
-            this.panel12.ResumeLayout(false);
-            this.panel11.ResumeLayout(false);
-            this.panel11.PerformLayout();
-            this.panel10.ResumeLayout(false);
-            this.panel9.ResumeLayout(false);
-            this.panel9.PerformLayout();
-            this.panel8.ResumeLayout(false);
-            this.panel7.ResumeLayout(false);
-            this.panel7.PerformLayout();
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorProvider1)).EndInit();
             this.ResumeLayout(false);
 
@@ -1451,7 +1164,6 @@ namespace Rdmp.UI.MainFormUITabs
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox c_tbSourceUrl;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox c_tbQueryToolUrl;
         private System.Windows.Forms.TextBox c_tbBulkDownloadUrl;
         private System.Windows.Forms.Label label7;
@@ -1478,7 +1190,6 @@ namespace Rdmp.UI.MainFormUITabs
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.TextBox c_tbNumberOfThese;
         private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.TextBox c_tbGeographicalCoverage;
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.TextBox c_tbDetailPageURL;
         private System.Windows.Forms.Label label20;
@@ -1519,36 +1230,9 @@ namespace Rdmp.UI.MainFormUITabs
         private System.Windows.Forms.ErrorProvider errorProvider1;
         private Panel panel1;
         private FlowLayoutPanel flowLayoutPanel1;
-        private Panel panel7;
-        private Panel panel8;
-        private Panel panel9;
-        private Panel panel10;
-        private Panel panel11;
-        private Panel panel12;
-        private Panel panel14;
-        private Panel panel13;
-        private Panel panel15;
-        private Panel panel16;
-        private Panel panel17;
-        private Panel panel18;
-        private Panel panel19;
-        private Panel panel20;
-        private Panel panel21;
-        private Panel panel22;
-        private Panel panel23;
-        private Panel panel24;
-        private Panel panel25;
-        private Panel panel26;
-        private Panel panel27;
-        private Panel panel28;
-        private Panel panel29;
-        private Panel panel30;
-        private Panel panel31;
-        private Panel panel32;
-        private Panel panel33;
-        private Panel panel34;
-        private Panel panel35;
-        private Panel panel36;
         private TableLayoutPanel tableLayoutPanel1;
+        private TextBox c_tbGeographicalCoverage;
+        private Label label5;
+        private TableLayoutPanel tableLayoutPanel2;
     }
 }
