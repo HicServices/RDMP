@@ -98,9 +98,13 @@ namespace Rdmp.UI.SimpleDialogs
             AddTooltip(cbAdvancedFindFilters,nameof(UserSettings.AdvancedFindFilters));
             AddTooltip(cbIncludeZeroSeriesInGraphs,nameof(UserSettings.IncludeZeroSeriesInGraphs));
             AddTooltip(label7, nameof(UserSettings.CreateDatabaseTimeout));
+            AddTooltip(tbCreateDatabaseTimeout, nameof(UserSettings.CreateDatabaseTimeout));
+            AddTooltip(label4, nameof(UserSettings.WrapMode));
             AddTooltip(ddWordWrap,nameof(UserSettings.WrapMode));
             AddTooltip(ddTheme, nameof(UserSettings.Theme));
+            AddTooltip(label2, nameof(UserSettings.Theme));
             AddTooltip(label5, nameof(UserSettings.HeatMapColours));
+            AddTooltip(tbHeatmapColours, nameof(UserSettings.HeatMapColours));
 
 
             olvErrorCodes.AddObjects(ErrorCodes.KnownCodes);

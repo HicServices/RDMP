@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UserSettingsFileUI));
             this.cbShowHomeOnStartup = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.cbEmphasiseOnTabChanged = new System.Windows.Forms.CheckBox();
@@ -71,6 +70,7 @@
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.userSettingsToolTips = new System.Windows.Forms.ToolTip(this.components);
+            this.label9 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvErrorCodes)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -266,6 +266,8 @@
             this.btnClearFavourites.Size = new System.Drawing.Size(100, 25);
             this.btnClearFavourites.TabIndex = 10;
             this.btnClearFavourites.Text = "Clear Favourites";
+            this.userSettingsToolTips.SetToolTip(this.btnClearFavourites, "Clear all the Favourites (items that have been \'started\') from your collection vi" +
+        "ews.");
             this.btnClearFavourites.UseVisualStyleBackColor = true;
             // 
             // cbDoubleClickToExpand
@@ -446,6 +448,8 @@
             this.label8.Size = new System.Drawing.Size(64, 15);
             this.label8.TabIndex = 19;
             this.label8.Text = "Favourites:";
+            this.userSettingsToolTips.SetToolTip(this.label8, "Clear all the Favourites (items that have been \'started\') from your collection vi" +
+        "ews.");
             // 
             // groupBox4
             // 
@@ -504,6 +508,7 @@
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.label9);
             this.groupBox7.Controls.Add(this.cbDebugPerformance);
             this.groupBox7.Controls.Add(this.tbCreateDatabaseTimeout);
             this.groupBox7.Controls.Add(this.ddWordWrap);
@@ -524,6 +529,15 @@
             this.userSettingsToolTips.InitialDelay = 250;
             this.userSettingsToolTips.IsBalloon = true;
             this.userSettingsToolTips.ReshowDelay = 50;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(250, 72);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(50, 15);
+            this.label9.TabIndex = 19;
+            this.label9.Text = "seconds";
             // 
             // UserSettingsFileUI
             // 
@@ -602,5 +616,6 @@
         private System.Windows.Forms.GroupBox groupBox7;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ToolTip userSettingsToolTips;
+        private System.Windows.Forms.Label label9;
     }
 }

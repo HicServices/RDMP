@@ -63,14 +63,4 @@
   <metadata name="userSettingsToolTips.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="cbDebugPerformance.ToolTip" xml:space="preserve">
-    <value>When enabled RDMP will record certain performance related metrics (how long refresh takes etc).
-
-These figures are completely internal to the application and are not transmitted anywhere. You can view the results in the toolbar.</value>
-  </data>
-  <data name="cbAllowIdentifiableExtractions.ToolTip" xml:space="preserve">
-    <value>Controls whether RDMP permits cohorts to be created where the release ID and private ID are the same (i.e. the linkage ids are not anonymised).
-
-Changing this setting will not affect how cohorts are currently configured or extracted, it only supresses a specific error message that is generated when a cohort source is configured where the private and release identifiers reference the same column</value>
-  </data>
 </root>
