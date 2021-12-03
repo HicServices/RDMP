@@ -28,103 +28,9 @@ using Rdmp.Core.DataExport.DataExtraction.Commands;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations.Swapping
 {
     /// <summary>
-    /// Swaps values stored in a given column for values found in a mapping table (e.g. swap ReleaseID for PrivateID).
-    /// This specific ColumnSwapper, written for improving the extraction process, adds support for replacement of project/ticket variables in the WHERE Logic.
-    /// </summary>
-    class ExtractionColumnSwapper : ColumnSwapper, IPipelineRequirement<IExtractCommand>
-    {
-        private IExtractCommand _command;
-
-        [DemandsInitialization(@"Optional text to add when generating the mapping table. Should not start with WHERE.
-
-Works with the following replacements:
-    $p - Project Name ('e.g. My Project')
-    $n - Project Number(e.g. 234)
-    $t - Master Ticket(e.g. 'LINK-1234')
-    $r - Request Ticket(e.g. 'LINK-1234')
-    $l - Release Ticket(e.g. 'LINK-1234')", DemandType = DemandType.SQL)]
-        public override string WHERELogic { get; set; }
-
-        public void PreInitialize(IExtractCommand value, IDataLoadEventListener listener)
-        {
-            _command = value;
-        }
-
-        protected override string GetMappingTableSql()
-        {
-            string _mappingTableSql = base.GetMappingTableSql();
-
-            if (_command is IExtractDatasetCommand extractDatasetCommand)
-            {
-                if (_mappingTableSql.Contains("$p"))
-                {
-                    _mappingTableSql = _mappingTableSql.Replace("$p",
-                        extractDatasetCommand.Project.Name?.ToString() ?? throw new Exception("Project didn't have a Project Name"));
-                }
-
-                if (_mappingTableSql.Contains("$n"))
-                {
-                    _mappingTableSql = _mappingTableSql.Replace("$n",
-                        extractDatasetCommand.Project.ProjectNumber?.ToString() ?? throw new Exception($"Project '{extractDatasetCommand.Project.Name}' didn't have a Project Number"));
-                }
-
-                if (_mappingTableSql.Contains("$t"))
-                {
-                    _mappingTableSql = _mappingTableSql.Replace("$t",
-                        extractDatasetCommand.Project.MasterTicket?.ToString() ?? throw new Exception($"Project '{extractDatasetCommand.Project.Name}' didn't have a Master Ticket"));
-                }
-
-                if (_mappingTableSql.Contains("$r"))
-                {
-                    _mappingTableSql = _mappingTableSql.Replace("$r",
-                        extractDatasetCommand.SelectedDataSets.ExtractionConfiguration.RequestTicket?.ToString() ?? throw new Exception($"Extraction Configuration '{extractDatasetCommand.SelectedDataSets.ExtractionConfiguration.Name}' didn't have a Request Ticket"));
-                }
-
-                if (_mappingTableSql.Contains("$l"))
-                {
-                    _mappingTableSql = _mappingTableSql.Replace("$l",
-                        extractDatasetCommand.SelectedDataSets.ExtractionConfiguration.ReleaseTicket?.ToString() ?? throw new Exception($"Extraction Configuration '{extractDatasetCommand.SelectedDataSets.ExtractionConfiguration.Name}' didn't have a Release Ticket"));
-                }
-
-            }
-
-            return _mappingTableSql;
-        }
-
-        public override void Check(ICheckNotifier notifier)
-        {
-            if (_command == ExtractDatasetCommand.EmptyCommand) return;
-
-            if (_command is IExtractDatasetCommand extractDatasetCommand)
-            {
-                //Get the mapping table SQL direct from the base class so we don't have any replacements and we know what might need replaced for early checks
-                string _mappingTableSqlWithoutReplacements = base.GetMappingTableSql();
-
-                //If there is a mapping replacement then check that the value is valid
-                if(_mappingTableSqlWithoutReplacements.Contains("$p") && string.IsNullOrEmpty(extractDatasetCommand.Project.Name))
-                    throw new Exception($"Project didn't have a Project Name");
-
-                if (_mappingTableSqlWithoutReplacements.Contains("$n") && extractDatasetCommand.Project.ProjectNumber == null)
-                    throw new Exception($"Project '{extractDatasetCommand.Project.Name}' didn't have a Project Number");
-
-                if (_mappingTableSqlWithoutReplacements.Contains("$t") && string.IsNullOrEmpty(extractDatasetCommand.Project.MasterTicket))
-                    throw new Exception($"Project '{extractDatasetCommand.Project.Name}' didn't have a Master Ticket");
-
-                if (_mappingTableSqlWithoutReplacements.Contains("$r") && string.IsNullOrEmpty(extractDatasetCommand.SelectedDataSets.ExtractionConfiguration.RequestTicket))
-                    throw new Exception($"Extraction Configuration '{extractDatasetCommand.SelectedDataSets.ExtractionConfiguration.Name}' didn't have a Request Ticket");
-
-                if (_mappingTableSqlWithoutReplacements.Contains("$l") && string.IsNullOrEmpty(extractDatasetCommand.SelectedDataSets.ExtractionConfiguration.ReleaseTicket))
-                    throw new Exception($"Extraction Configuration '{extractDatasetCommand.SelectedDataSets.ExtractionConfiguration.Name}' didn't have a Release Ticket");
-            }
-
-            base.Check(notifier);
-        }
-    }
-
-    /// <summary>
     /// Swaps values stored in a given column for values found in a mapping table (e.g. swap ReleaseID for PrivateID)
     /// </summary>
-    class ColumnSwapper:IPluginDataFlowComponent<DataTable>
+    class ColumnSwapper:IPluginDataFlowComponent<DataTable>, IPipelineOptionalRequirement<IExtractCommand>
     {
         [DemandsInitialization("The column in your pipeline containing input values you want swapped.  Leave null to use the same name as the MappingFromColumn")]
         public string InputFromColumn { get; set; }
@@ -138,7 +44,14 @@ Works with the following replacements:
         [DemandsInitialization("The column in your database which stores the output values you want emitted", Mandatory = true)]
         public ColumnInfo MappingToColumn { get; set; }
 
-        [DemandsInitialization("Optional text to add when generating the mapping table. Should not start with WHERE", DemandType = DemandType.SQL)]
+        [DemandsInitialization(@"Optional text to add when generating the mapping table. Should not start with WHERE.
+
+If Pipeline execution environment contains a Project then the following replacements are available:
+    $p - Project Name ('e.g. My Project')
+    $n - Project Number(e.g. 234)
+    $t - Master Ticket(e.g. 'LINK-1234')
+    $r - Request Ticket(e.g. 'LINK-1234')
+    $l - Release Ticket(e.g. 'LINK-1234')", DemandType = DemandType.SQL)]
         public virtual string WHERELogic { get; set; }
 
         [DemandsInitialization("Determines behaviour when the same input value maps to multiple output values", DefaultValue = AliasResolutionStrategy.CrashIfAliasesFound)]
@@ -169,6 +82,8 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
         /// The Type of objects that are stored in the Keys of <see cref="_mappingTable"/>.  For use when input types do not match the mapping table types
         /// </summary>
         Type _keyType;
+
+        protected IExtractCommand _command;
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
         {
@@ -403,7 +318,45 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
                 qb.RootFilterContainer = container;
             }
 
-            return qb.SQL;
+            return AdjustForProjectTokens(qb.SQL);
+        }
+
+        private string AdjustForProjectTokens(string mappingTableSql)
+        {
+            if (_command is IExtractDatasetCommand extractDatasetCommand)
+            {
+                if (mappingTableSql.Contains("$p"))
+                {
+                    mappingTableSql = mappingTableSql.Replace("$p",
+                        extractDatasetCommand.Project.Name?.ToString() ?? throw new Exception("Project didn't have a Project Name"));
+                }
+
+                if (mappingTableSql.Contains("$n"))
+                {
+                    mappingTableSql = mappingTableSql.Replace("$n",
+                        extractDatasetCommand.Project.ProjectNumber?.ToString() ?? throw new Exception($"Project '{extractDatasetCommand.Project.Name}' didn't have a Project Number"));
+                }
+
+                if (mappingTableSql.Contains("$t"))
+                {
+                    mappingTableSql = mappingTableSql.Replace("$t",
+                        extractDatasetCommand.Project.MasterTicket?.ToString() ?? throw new Exception($"Project '{extractDatasetCommand.Project.Name}' didn't have a Master Ticket"));
+                }
+
+                if (mappingTableSql.Contains("$r"))
+                {
+                    mappingTableSql = mappingTableSql.Replace("$r",
+                        extractDatasetCommand.SelectedDataSets.ExtractionConfiguration.RequestTicket?.ToString() ?? throw new Exception($"Extraction Configuration '{extractDatasetCommand.SelectedDataSets.ExtractionConfiguration.Name}' didn't have a Request Ticket"));
+                }
+
+                if (mappingTableSql.Contains("$l"))
+                {
+                    mappingTableSql = mappingTableSql.Replace("$l",
+                        extractDatasetCommand.SelectedDataSets.ExtractionConfiguration.ReleaseTicket?.ToString() ?? throw new Exception($"Extraction Configuration '{extractDatasetCommand.SelectedDataSets.ExtractionConfiguration.Name}' didn't have a Release Ticket"));
+                }
+            }
+
+            return mappingTableSql;
         }
 
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
@@ -433,7 +386,11 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
                 throw new Exception("MappingFromColumn and MappingToColumn must belong to the same table");
 
             notifier.OnCheckPerformed(new CheckEventArgs("Mapping table SQL is:"+ Environment.NewLine + GetMappingTableSql(),CheckResult.Success));
+        }
 
+        public void PreInitialize(IExtractCommand value, IDataLoadEventListener listener)
+        {
+            _command = value;
         }
     }
 }

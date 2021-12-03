@@ -216,13 +216,27 @@ namespace Rdmp.Core.DataFlowPipeline.Requirements
                
         private void PreInitializeComponentWithAllObjects(IDataLoadEventListener listener, object component, params object[] parameters)
         {
-            Dictionary<object, Dictionary<MethodInfo, object>> initializedComponents = new Dictionary<object, Dictionary<MethodInfo, object>>();
-
             //these are all the interfaces like IPipelineRequirement<TableInfo> etc
             var requirements = component.GetType().GetInterfaces().Where(i =>
                 i.IsGenericType && 
                 i.GetGenericTypeDefinition() 
                 == typeof(IPipelineRequirement<>)).ToArray();
+
+            Satisfy(requirements, false, listener, component,parameters);
+
+            // satisfy optional requirements
+            //these are all the interfaces like IPipelineOptionalRequirement<TableInfo> etc
+            var optionals = component.GetType().GetInterfaces().Where(i =>
+                i.IsGenericType &&
+                i.GetGenericTypeDefinition()
+                == typeof(IPipelineOptionalRequirement<>)).ToArray();
+
+            Satisfy(optionals, true, listener, component, parameters);
+        }
+
+        private void Satisfy(Type[] requirements, bool isOptional, IDataLoadEventListener listener, object component, params object[] parameters)
+        {
+            Dictionary<object, Dictionary<MethodInfo, object>> initializedComponents = new Dictionary<object, Dictionary<MethodInfo, object>>();
 
             //these are the T tokens in the above interfaces
             var typesRequired = requirements.Select(i => i.GenericTypeArguments[0]).ToList();
@@ -230,10 +244,7 @@ namespace Rdmp.Core.DataFlowPipeline.Requirements
             // Check if we have some PreInitialize functions for which there are no IPipelineRequirements, most likely an oversight one way or the other
             var preInitializeFunctions = component.GetType().GetMethods().Where(mi => mi.Name == "PreInitialize");
             var preInitializeTypes = preInitializeFunctions.Select(mi => mi.GetParameters()[0].ParameterType);
-            var typesWithNoInterface = preInitializeTypes.Except(typesRequired).ToList();
-            if (typesWithNoInterface.Any())
-                throw new InvalidOperationException("Found PreInitialize functions in component " + component.GetType().Name + " (or parent types) with no corresponding interface declaration for types: " + string.Join(", ", typesWithNoInterface.Select(t => t.Name)));
-           
+       
             //now initialize all the parameters
             foreach (object parameter in parameters)
             {
@@ -241,22 +252,22 @@ namespace Rdmp.Core.DataFlowPipeline.Requirements
                     throw new InvalidOperationException("One of the parameters for PreInitialization of " + component + " is null");
 
                 //see if any of them are forbidden (e.g. if context was created without LoadsSingleTableInfo then it is forbidden to have components with IPipelineRequirement<TableInfo>)
-                if(!IsAllowable(parameter.GetType()))
+                if (!IsAllowable(parameter.GetType()))
                     throw new Exception("Type " + GetFullName(parameter.GetType()) + " is not an allowable PreInitialize parameters type under the current DataFlowPipelineContext (check which flags you passed to the DataFlowPipelineContextFactory and the interfaces IPipelineRequirement<> that your components implement) ");
 
                 var toRemove = PreInitializeComponentWithSingleObject(listener, component, parameter, initializedComponents);
-                
+
                 if (toRemove != null)
                     typesRequired.Remove(toRemove);
             }
 
-            if(typesRequired.Any())
+            if (typesRequired.Any() && !isOptional)
                 throw new Exception(
-                    "Component '" + component.GetType().Name +"' reports a problem" +Environment.NewLine + 
-                    "The following expected types were not passed to PreInitialize:" + string.Join(",",typesRequired.Select(GetFullName))
-                    
-                    +Environment.NewLine + "The object types passed were:" +Environment.NewLine +
-                    string.Join(Environment.NewLine,parameters.Select(p=>p.GetType() + ":" + p.ToString()))
+                    "Component '" + component.GetType().Name + "' reports a problem" + Environment.NewLine +
+                    "The following expected types were not passed to PreInitialize:" + string.Join(",", typesRequired.Select(GetFullName))
+
+                    + Environment.NewLine + "The object types passed were:" + Environment.NewLine +
+                    string.Join(Environment.NewLine, parameters.Select(p => p.GetType() + ":" + p.ToString()))
                     );
         }
 
