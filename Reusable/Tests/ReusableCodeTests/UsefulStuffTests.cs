@@ -9,6 +9,7 @@ using FAnsi.Discovery;
 using NUnit.Framework;
 using Tests.Common;
 using Tests.Common.Scenarios;
+using ReusableLibraryCode;
 
 namespace ReusableCodeTests
 {
@@ -59,6 +60,28 @@ namespace ReusableCodeTests
 
                 Assert.AreEqual(1, db.ExpectTable("v_GetRowCount_Views").GetRowCount());
             }
+        }
+
+        [Test]
+        public void PascalCaseStringToHumanReadable()
+        {
+            Assert.AreEqual("teststringhere", UsefulStuff.PascalCaseStringToHumanReadable("teststringhere"));
+            Assert.AreEqual("test Stringhere", UsefulStuff.PascalCaseStringToHumanReadable("testStringhere"));
+            Assert.AreEqual("test String Here", UsefulStuff.PascalCaseStringToHumanReadable("testStringHere"));
+            Assert.AreEqual("Test String Here", UsefulStuff.PascalCaseStringToHumanReadable("TestStringHere"));
+            Assert.AreEqual("TEST String Here", UsefulStuff.PascalCaseStringToHumanReadable("TESTStringHere"));
+            Assert.AreEqual("Test STRING Here", UsefulStuff.PascalCaseStringToHumanReadable("TestSTRINGHere"));
+            Assert.AreEqual("Test String HERE", UsefulStuff.PascalCaseStringToHumanReadable("TestStringHERE"));
+
+            //Some practical tests for completeness sake
+            Assert.AreEqual("A", UsefulStuff.PascalCaseStringToHumanReadable("A"));
+            Assert.AreEqual("AS", UsefulStuff.PascalCaseStringToHumanReadable("AS"));
+            Assert.AreEqual("A String", UsefulStuff.PascalCaseStringToHumanReadable("AString"));
+            Assert.AreEqual("String A Test", UsefulStuff.PascalCaseStringToHumanReadable("StringATest"));
+            Assert.AreEqual("String AS Test", UsefulStuff.PascalCaseStringToHumanReadable("StringASTest"));
+            Assert.AreEqual("CT Head", UsefulStuff.PascalCaseStringToHumanReadable("CTHead"));
+            Assert.AreEqual("WHERE Clause", UsefulStuff.PascalCaseStringToHumanReadable("WHEREClause"));
+            Assert.AreEqual("Sql WHERE", UsefulStuff.PascalCaseStringToHumanReadable("SqlWHERE"));
         }
     }
 }

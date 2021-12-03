@@ -19,6 +19,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
         public IArgumentHost Parent { get; set; }
 
         public object InitialValue { get; set; }
+        public string ContextText { get; set; }
         public Type Type { get; set; }
         public RequiredPropertyInfo Required { get; set; }
         public ICatalogueRepository CatalogueRepository { get; set; }
@@ -38,6 +39,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
             var newInstance = new ArgumentValueUIArgs();
             newInstance.Parent = Parent;
             newInstance.InitialValue = InitialValue;
+            newInstance.ContextText = ContextText;
             newInstance.Type = Type;
             newInstance.Required = Required;
             newInstance.CatalogueRepository = CatalogueRepository;
