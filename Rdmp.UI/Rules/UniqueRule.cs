@@ -16,8 +16,8 @@ namespace Rdmp.UI.Rules
     {
         private readonly string _problemDescription;
 
-        public UniqueRule(IActivateItems activator, T toTest, Func<T, object> propertyToCheck, Control control)
-            : base(activator, toTest, propertyToCheck, control)
+        public UniqueRule(IActivateItems activator, T toTest, Func<T, object> propertyToCheck, Control control, string propertyToCheckName)
+            : base(activator, toTest, propertyToCheck, control, propertyToCheckName)
         {
             _problemDescription = "Must be unique amongst all " + toTest.GetType().Name + "s";
 

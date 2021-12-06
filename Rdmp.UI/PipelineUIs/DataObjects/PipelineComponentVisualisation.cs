@@ -77,7 +77,7 @@ namespace Rdmp.UI.PipelineUIs.DataObjects
             if (valueOrNullIfBroken == null)
                 ragSmiley1.OnCheckPerformed(new CheckEventArgs("Could not construct object", CheckResult.Fail));
 
-            this.Width = lblText.PreferredWidth + 80;
+            this.Width = lblText.PreferredWidth + 85;
 
             _isEmpty = false;
 

@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added title to graph charts
 - Added a user setting for hiding Series in which all cells are 0/null
 - Added `IPipelineOptionalRequirement` interface for Plugin Pipeline Components that can optionally make use of Pipeline initialization objects but do not require them to function.
+- Support for specifying `--ConnectionStringsFile somefile.yaml` when starting RDMP (gui client or CLI)
 
 ### Fixed
 
@@ -38,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Generate Release Document now shows as impossible when Cohort is not defined or unreachable (e.g. if user does not have access to cohort database)
 - Fixed bug where selecting a [PipelineComponent] for which help is unavailable would leave the previously selected component's help visible
 - Fixed bug with 'Commit Cohort' storing the target cohort database for future clicks
+- Fixed a bug where editing a field like `Description` would fire validation on other properties e.g. `Name` which could slow controls down when validation is slow and change events are fired in rapid succession.
 
 ### Changed
 
@@ -48,6 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Increased size of all text fields in [Catalogue] and [CatalogueItem] to `nvarchar(max)` to support long urls etc
 - Updated icons to a more modern look
 - Extract to database now checks for explicit table names amongst pre-existing tables on the destination
+- Startup no longer reports non dotnet dlls as 'unable to load' (warnings)
 
 ## [7.0.3] - 2021-11-04
 

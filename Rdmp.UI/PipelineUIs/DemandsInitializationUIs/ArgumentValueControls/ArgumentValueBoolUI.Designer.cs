@@ -34,7 +34,8 @@
             // cbValue
             // 
             this.cbValue.AutoSize = true;
-            this.cbValue.Location = new System.Drawing.Point(3, 7);
+            this.cbValue.Location = new System.Drawing.Point(4, 9);
+            this.cbValue.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbValue.Name = "cbValue";
             this.cbValue.Size = new System.Drawing.Size(15, 14);
             this.cbValue.TabIndex = 24;
@@ -43,11 +44,12 @@
             // 
             // ArgumentValueBoolUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.cbValue);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "ArgumentValueBoolUI";
-            this.Size = new System.Drawing.Size(547, 28);
+            this.Size = new System.Drawing.Size(638, 32);
             this.ResumeLayout(false);
             this.PerformLayout();
 

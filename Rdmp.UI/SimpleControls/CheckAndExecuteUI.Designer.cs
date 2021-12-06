@@ -102,7 +102,7 @@ namespace Rdmp.UI.SimpleControls
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(176, 47);
+            this.label5.Location = new System.Drawing.Point(176, 50);
             this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(37, 15);
@@ -112,7 +112,7 @@ namespace Rdmp.UI.SimpleControls
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(106, 50);
+            this.label2.Location = new System.Drawing.Point(104, 50);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(48, 15);
@@ -122,7 +122,7 @@ namespace Rdmp.UI.SimpleControls
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(41, 50);
+            this.label1.Location = new System.Drawing.Point(39, 50);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(45, 15);

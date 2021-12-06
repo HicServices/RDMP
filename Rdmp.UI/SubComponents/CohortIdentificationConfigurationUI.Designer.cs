@@ -36,8 +36,6 @@ namespace Rdmp.UI.SubComponents
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CohortIdentificationConfigurationUI));
-            this.lblName = new System.Windows.Forms.Label();
-            this.lblDescription = new System.Windows.Forms.Label();
             this.tlvCic = new BrightIdeasSoftware.TreeListView();
             this.olvNameCol = new BrightIdeasSoftware.OLVColumn();
             this.olvExecute = new BrightIdeasSoftware.OLVColumn();
@@ -53,7 +51,8 @@ namespace Rdmp.UI.SubComponents
             this.btnAbortLoad = new System.Windows.Forms.Button();
             this.btnExecute = new System.Windows.Forms.Button();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.panel2 = new System.Windows.Forms.Panel();
+            this.gbCicInfo = new System.Windows.Forms.GroupBox();
+            this.tbDescription = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.lblExecuteAllPhase = new System.Windows.Forms.Label();
@@ -62,32 +61,10 @@ namespace Rdmp.UI.SubComponents
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
-            this.panel2.SuspendLayout();
+            this.gbCicInfo.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // lblName
-            // 
-            this.lblName.AutoSize = true;
-            this.lblName.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblName.Location = new System.Drawing.Point(0, 0);
-            this.lblName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblName.Name = "lblName";
-            this.lblName.Size = new System.Drawing.Size(39, 15);
-            this.lblName.TabIndex = 52;
-            this.lblName.Text = "Name";
-            // 
-            // lblDescription
-            // 
-            this.lblDescription.AutoSize = true;
-            this.lblDescription.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblDescription.Location = new System.Drawing.Point(0, 15);
-            this.lblDescription.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblDescription.Name = "lblDescription";
-            this.lblDescription.Size = new System.Drawing.Size(67, 15);
-            this.lblDescription.TabIndex = 53;
-            this.lblDescription.Text = "Description";
             // 
             // tlvCic
             // 
@@ -117,7 +94,7 @@ namespace Rdmp.UI.SubComponents
             this.tlvCic.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tlvCic.Name = "tlvCic";
             this.tlvCic.ShowGroups = false;
-            this.tlvCic.Size = new System.Drawing.Size(1450, 697);
+            this.tlvCic.Size = new System.Drawing.Size(1450, 714);
             this.tlvCic.TabIndex = 60;
             this.tlvCic.UseCompatibleStateImageBehavior = false;
             this.tlvCic.View = System.Windows.Forms.View.Details;
@@ -186,20 +163,20 @@ namespace Rdmp.UI.SubComponents
             // 
             // ticket
             // 
-            this.ticket.Dock = System.Windows.Forms.DockStyle.Right;
-            this.ticket.Location = new System.Drawing.Point(1084, 0);
-            this.ticket.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
+            this.ticket.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ticket.Location = new System.Drawing.Point(1097, 0);
+            this.ticket.Margin = new System.Windows.Forms.Padding(0);
             this.ticket.Name = "ticket";
-            this.ticket.Size = new System.Drawing.Size(366, 99);
+            this.ticket.Size = new System.Drawing.Size(348, 79);
             this.ticket.TabIndex = 55;
             this.ticket.TicketText = "";
             this.ticket.TicketTextChanged += new System.EventHandler(this.ticket_TicketTextChanged);
             // 
             // btnAbortLoad
             // 
-            this.btnAbortLoad.Dock = System.Windows.Forms.DockStyle.Right;
             this.btnAbortLoad.Image = ((System.Drawing.Image)(resources.GetObject("btnAbortLoad.Image")));
-            this.btnAbortLoad.Location = new System.Drawing.Point(133, 0);
+            this.btnAbortLoad.Location = new System.Drawing.Point(178, 0);
             this.btnAbortLoad.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnAbortLoad.Name = "btnAbortLoad";
             this.btnAbortLoad.Size = new System.Drawing.Size(34, 36);
@@ -209,12 +186,11 @@ namespace Rdmp.UI.SubComponents
             // 
             // btnExecute
             // 
-            this.btnExecute.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnExecute.Image = ((System.Drawing.Image)(resources.GetObject("btnExecute.Image")));
             this.btnExecute.Location = new System.Drawing.Point(0, 0);
             this.btnExecute.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnExecute.Name = "btnExecute";
-            this.btnExecute.Size = new System.Drawing.Size(133, 36);
+            this.btnExecute.Size = new System.Drawing.Size(178, 36);
             this.btnExecute.TabIndex = 66;
             this.btnExecute.UseVisualStyleBackColor = true;
             this.btnExecute.Click += new System.EventHandler(this.btnExecute_Click);
@@ -223,6 +199,7 @@ namespace Rdmp.UI.SubComponents
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
+            this.splitContainer2.IsSplitterFixed = true;
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
             this.splitContainer2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.splitContainer2.Name = "splitContainer2";
@@ -230,7 +207,7 @@ namespace Rdmp.UI.SubComponents
             // 
             // splitContainer2.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.panel2);
+            this.splitContainer2.Panel1.Controls.Add(this.gbCicInfo);
             this.splitContainer2.Panel1.Controls.Add(this.groupBox1);
             this.splitContainer2.Panel1.Controls.Add(this.ticket);
             // 
@@ -238,30 +215,47 @@ namespace Rdmp.UI.SubComponents
             // 
             this.splitContainer2.Panel2.Controls.Add(this.tlvCic);
             this.splitContainer2.Size = new System.Drawing.Size(1450, 801);
-            this.splitContainer2.SplitterDistance = 99;
+            this.splitContainer2.SplitterDistance = 82;
             this.splitContainer2.SplitterWidth = 5;
             this.splitContainer2.TabIndex = 67;
             // 
-            // panel2
+            // gbCicInfo
             // 
-            this.panel2.Controls.Add(this.lblDescription);
-            this.panel2.Controls.Add(this.lblName);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(175, 0);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(909, 99);
-            this.panel2.TabIndex = 70;
+            this.gbCicInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbCicInfo.Controls.Add(this.tbDescription);
+            this.gbCicInfo.Location = new System.Drawing.Point(230, 3);
+            this.gbCicInfo.Name = "gbCicInfo";
+            this.gbCicInfo.Size = new System.Drawing.Size(864, 76);
+            this.gbCicInfo.TabIndex = 71;
+            this.gbCicInfo.TabStop = false;
+            this.gbCicInfo.Text = "Name:";
+            // 
+            // tbDescription
+            // 
+            this.tbDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbDescription.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.tbDescription.Location = new System.Drawing.Point(6, 16);
+            this.tbDescription.Margin = new System.Windows.Forms.Padding(3, 3, 1, 0);
+            this.tbDescription.Multiline = true;
+            this.tbDescription.Name = "tbDescription";
+            this.tbDescription.ReadOnly = true;
+            this.tbDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.tbDescription.Size = new System.Drawing.Size(855, 57);
+            this.tbDescription.TabIndex = 54;
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.groupBox1.Controls.Add(this.panel1);
             this.groupBox1.Controls.Add(this.lblExecuteAllPhase);
-            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.groupBox1.Location = new System.Drawing.Point(0, 0);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.groupBox1.Location = new System.Drawing.Point(4, 3);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox1.Size = new System.Drawing.Size(175, 99);
+            this.groupBox1.Size = new System.Drawing.Size(220, 76);
             this.groupBox1.TabIndex = 67;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Controls";
@@ -273,18 +267,20 @@ namespace Rdmp.UI.SubComponents
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(4, 19);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(167, 36);
+            this.panel1.Size = new System.Drawing.Size(212, 36);
             this.panel1.TabIndex = 70;
             // 
             // lblExecuteAllPhase
             // 
-            this.lblExecuteAllPhase.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.lblExecuteAllPhase.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point);
-            this.lblExecuteAllPhase.Location = new System.Drawing.Point(4, 83);
+            this.lblExecuteAllPhase.Enabled = false;
+            this.lblExecuteAllPhase.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblExecuteAllPhase.Location = new System.Drawing.Point(4, 58);
             this.lblExecuteAllPhase.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblExecuteAllPhase.Name = "lblExecuteAllPhase";
-            this.lblExecuteAllPhase.Size = new System.Drawing.Size(167, 13);
+            this.lblExecuteAllPhase.Size = new System.Drawing.Size(178, 13);
             this.lblExecuteAllPhase.TabIndex = 70;
+            this.lblExecuteAllPhase.Text = "Execution status...";
+            this.lblExecuteAllPhase.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // CohortIdentificationConfigurationUI
             // 
@@ -299,8 +295,8 @@ namespace Rdmp.UI.SubComponents
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
-            this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
+            this.gbCicInfo.ResumeLayout(false);
+            this.gbCicInfo.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -308,9 +304,7 @@ namespace Rdmp.UI.SubComponents
         }
 
         #endregion
-        private System.Windows.Forms.Label lblName;
         private TicketingControlUI ticket;
-        private System.Windows.Forms.Label lblDescription;
         private TreeListView tlvCic;
         private OLVColumn olvNameCol;
         private OLVColumn olvExecute;
@@ -327,7 +321,8 @@ namespace Rdmp.UI.SubComponents
         private OLVColumn olvTime;
         private System.Windows.Forms.Label lblExecuteAllPhase;
         private OLVColumn olvCatalogue;
-        private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.GroupBox gbCicInfo;
+        private System.Windows.Forms.TextBox tbDescription;
     }
 }

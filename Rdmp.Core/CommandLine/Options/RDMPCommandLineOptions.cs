@@ -9,6 +9,11 @@ using CommandLine;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
 using ReusableLibraryCode.Checks;
+using NLog;
+using System.Reflection;
+using System.IO;
+using System;
+using YamlDotNet.RepresentationModel;
 
 namespace Rdmp.Core.CommandLine.Options
 {
@@ -33,7 +38,10 @@ namespace Rdmp.Core.CommandLine.Options
 
         [Option(Required = false, HelpText = "Full connection string to the DataExport database, this overrides DataExportDatabaseName and allows custom ports, username/password etc")]
         public string DataExportConnectionString { get; set; }
-                
+
+        [Option(Required = false, HelpText = "Path to the yaml file containing database connection strings.  Defaults to 'Databases.yaml'.  Explicit command line arguments (e.g. --CatalogueConnectionString) override this", Default = "Databases.yaml")]
+        public string ConnectionStringsFile { get; set; }
+
         [Option(Required =false, HelpText = @"Log StartUp output")]
         public bool LogStartup{get;set;}
         
@@ -57,36 +65,52 @@ namespace Rdmp.Core.CommandLine.Options
         {
             if(_repositoryLocator == null)
             {
-                SqlConnectionStringBuilder c;
-
-                if (CatalogueConnectionString != null)
-                    c = new SqlConnectionStringBuilder(CatalogueConnectionString);
-                else
-                {
-                    c = new SqlConnectionStringBuilder();
-                    c.DataSource = ServerName;
-                    c.IntegratedSecurity = true;
-                    c.InitialCatalog = CatalogueDatabaseName;
-                }
-
-                SqlConnectionStringBuilder d = null;
-                if(DataExportConnectionString != null)
-                    d = new SqlConnectionStringBuilder(DataExportConnectionString);
-                else
-                if (DataExportDatabaseName != null)
-                {
-                    d = new SqlConnectionStringBuilder();
-                    d.DataSource = ServerName;
-                    d.IntegratedSecurity = true;
-                    d.InitialCatalog = DataExportDatabaseName;
-                }
-
-                CatalogueRepository.SuppressHelpLoading = true;
-
-                _repositoryLocator = new LinkedRepositoryProvider(c.ConnectionString, d != null ? d.ConnectionString : null);
+                GetConnectionStrings(out var c, out var d);
+                _repositoryLocator = new LinkedRepositoryProvider(c?.ConnectionString, d?.ConnectionString);
             }
 
             return _repositoryLocator;
+        }
+
+        protected virtual bool ShouldLoadHelp()
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Gets the connection strings that have been defined on the command line or by providing a Databases.yaml file
+        /// </summary>
+        /// <param name="c">Catalogue database connection string or null if no explicit value has been defined.  E.g. if consumers are expected to get this elsewhere like user settings</param>
+        /// <param name="d">Data export database connection string or null if no explicit value has been defined.</param>
+        public void GetConnectionStrings(out SqlConnectionStringBuilder c, out SqlConnectionStringBuilder d)
+        {
+            CatalogueRepository.SuppressHelpLoading = !ShouldLoadHelp();
+
+            if (CatalogueConnectionString != null)
+                c = new SqlConnectionStringBuilder(CatalogueConnectionString);
+            else
+            if (CatalogueDatabaseName != null)
+            {
+                c = new SqlConnectionStringBuilder();
+                c.DataSource = ServerName;
+                c.IntegratedSecurity = true;
+                c.InitialCatalog = CatalogueDatabaseName;
+            }
+            else
+                c = null;
+
+            if (DataExportConnectionString != null)
+                d = new SqlConnectionStringBuilder(DataExportConnectionString);
+            else
+            if (DataExportDatabaseName != null)
+            {
+                d = new SqlConnectionStringBuilder();
+                d.DataSource = ServerName;
+                d.IntegratedSecurity = true;
+                d.InitialCatalog = DataExportDatabaseName;
+            }
+            else
+                d = null;
         }
 
         /// <summary>
@@ -103,6 +127,58 @@ namespace Rdmp.Core.CommandLine.Options
             string.IsNullOrWhiteSpace(DataExportConnectionString);
         }
 
+        public void PopulateConnectionStringsFromYamlIfMissing()
+        {
+            var logger = LogManager.GetCurrentClassLogger();
 
+            if (!NoConnectionStringsSpecified())
+            {
+                logger.Info("Connection string options have been specified on command line, yaml config values will be ignored");
+                return;
+            }
+
+            string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var yaml = Path.Combine(assemblyFolder, ConnectionStringsFile);
+
+            if (File.Exists(yaml))
+            {
+                try
+                {
+                    // Setup the input
+                    using (var input = new StreamReader(yaml))
+                    {
+                        // Load the stream
+                        var yamlStream = new YamlStream();
+                        yamlStream.Load(input);
+
+                        // Examine the stream
+                        var mapping = (YamlMappingNode)yamlStream.Documents[0].RootNode;
+
+
+                        foreach (var entry in mapping.Children)
+                        {
+                            string key = ((YamlScalarNode)entry.Key).Value;
+                            string value = ((YamlScalarNode)entry.Value).Value;
+
+
+                            try
+                            {
+                                var prop = typeof(RDMPCommandLineOptions).GetProperty(key);
+                                prop.SetValue(this, value);
+                                logger.Info("Setting yaml config value for " + key);
+                            }
+                            catch (Exception)
+                            {
+                                logger.Error("Could not set property called " + key);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "Failed to read yaml file '" + yaml + "'");
+                }
+            }
+        }
     }
 }

@@ -16,7 +16,7 @@ namespace Rdmp.UI.Rules
 {
     class NoBadNamesRule<T>:BinderRule<T> where T:IMapsDirectlyToDatabaseTable
     {
-        public NoBadNamesRule(IActivateItems activator, T databaseObject, Func<T, object> getter, Control control) : base(activator,databaseObject,getter,control)
+        public NoBadNamesRule(IActivateItems activator, T databaseObject, Func<T, object> getter, Control control,string propertyToCheckName) : base(activator,databaseObject,getter,control, propertyToCheckName)
         {
             
         }

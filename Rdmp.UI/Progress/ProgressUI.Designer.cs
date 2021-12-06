@@ -35,6 +35,10 @@ namespace Rdmp.UI.Progress
             this.lblCrashed = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label1 = new System.Windows.Forms.Label();
+            this.olvProgressEvents = new BrightIdeasSoftware.ObjectListView();
+            this.olvSender = new BrightIdeasSoftware.OLVColumn();
+            this.olvEventDate = new BrightIdeasSoftware.OLVColumn();
+            this.olvMessage = new BrightIdeasSoftware.OLVColumn();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.tbTextFilter = new System.Windows.Forms.ToolStripTextBox();
@@ -43,10 +47,6 @@ namespace Rdmp.UI.Progress
             this.toolStripLabel3 = new System.Windows.Forms.ToolStripLabel();
             this.ddGroupBy = new System.Windows.Forms.ToolStripComboBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.olvProgressEvents = new BrightIdeasSoftware.ObjectListView();
-            this.olvSender = new BrightIdeasSoftware.OLVColumn();
-            this.olvEventDate = new BrightIdeasSoftware.OLVColumn();
-            this.olvMessage = new BrightIdeasSoftware.OLVColumn();
             this.Result = new System.Windows.Forms.ColumnHeader();
             this.Time = new System.Windows.Forms.ColumnHeader();
             this.Sender = new System.Windows.Forms.ColumnHeader();
@@ -57,8 +57,8 @@ namespace Rdmp.UI.Progress
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvProgressEvents)).BeginInit();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // dataGridView1
@@ -70,11 +70,11 @@ namespace Rdmp.UI.Progress
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(0, 23);
+            this.dataGridView1.Location = new System.Drawing.Point(0, 18);
             this.dataGridView1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.Size = new System.Drawing.Size(1030, 163);
+            this.dataGridView1.Size = new System.Drawing.Size(1027, 168);
             this.dataGridView1.TabIndex = 2;
             // 
             // splitContainer1
@@ -104,15 +104,15 @@ namespace Rdmp.UI.Progress
             // 
             // lblCrashed
             // 
-            this.lblCrashed.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.lblCrashed.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblCrashed.BackColor = System.Drawing.Color.IndianRed;
             this.lblCrashed.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.lblCrashed.ForeColor = System.Drawing.Color.Orange;
-            this.lblCrashed.Location = new System.Drawing.Point(4, 191);
+            this.lblCrashed.Location = new System.Drawing.Point(0, 191);
             this.lblCrashed.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblCrashed.Name = "lblCrashed";
-            this.lblCrashed.Size = new System.Drawing.Size(1020, 20);
+            this.lblCrashed.Size = new System.Drawing.Size(1027, 20);
             this.lblCrashed.TabIndex = 7;
             this.lblCrashed.Text = "Crashed";
             this.lblCrashed.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -131,12 +131,58 @@ namespace Rdmp.UI.Progress
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(5, 5);
+            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label1.Location = new System.Drawing.Point(0, 0);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(137, 15);
             this.label1.TabIndex = 3;
             this.label1.Text = "Progress of transfer jobs:";
+            // 
+            // olvProgressEvents
+            // 
+            this.olvProgressEvents.AllColumns.Add(this.olvSender);
+            this.olvProgressEvents.AllColumns.Add(this.olvEventDate);
+            this.olvProgressEvents.AllColumns.Add(this.olvMessage);
+            this.olvProgressEvents.CellEditUseWholeCell = false;
+            this.olvProgressEvents.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.olvSender,
+            this.olvEventDate,
+            this.olvMessage});
+            this.olvProgressEvents.Cursor = System.Windows.Forms.Cursors.Default;
+            this.olvProgressEvents.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.olvProgressEvents.FullRowSelect = true;
+            this.olvProgressEvents.HideSelection = false;
+            this.olvProgressEvents.Location = new System.Drawing.Point(0, 15);
+            this.olvProgressEvents.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.olvProgressEvents.Name = "olvProgressEvents";
+            this.olvProgressEvents.RowHeight = 19;
+            this.olvProgressEvents.ShowGroups = false;
+            this.olvProgressEvents.Size = new System.Drawing.Size(1027, 401);
+            this.olvProgressEvents.TabIndex = 5;
+            this.olvProgressEvents.UseCompatibleStateImageBehavior = false;
+            this.olvProgressEvents.View = System.Windows.Forms.View.Details;
+            // 
+            // olvSender
+            // 
+            this.olvSender.AspectName = "Sender";
+            this.olvSender.Text = "Sender";
+            this.olvSender.Width = 170;
+            // 
+            // olvEventDate
+            // 
+            this.olvEventDate.AspectName = "EventDate";
+            this.olvEventDate.Groupable = false;
+            this.olvEventDate.Text = "Event Date";
+            this.olvEventDate.Width = 140;
+            // 
+            // olvMessage
+            // 
+            this.olvMessage.AspectName = "Message";
+            this.olvMessage.Groupable = false;
+            this.olvMessage.MinimumWidth = 100;
+            this.olvMessage.Text = "Message";
+            this.olvMessage.Width = 300;
             // 
             // toolStrip1
             // 
@@ -203,51 +249,6 @@ namespace Rdmp.UI.Progress
             this.label2.TabIndex = 4;
             this.label2.Text = "Notifications:";
             // 
-            // olvProgressEvents
-            // 
-            this.olvProgressEvents.AllColumns.Add(this.olvSender);
-            this.olvProgressEvents.AllColumns.Add(this.olvEventDate);
-            this.olvProgressEvents.AllColumns.Add(this.olvMessage);
-            this.olvProgressEvents.CellEditUseWholeCell = false;
-            this.olvProgressEvents.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvSender,
-            this.olvEventDate,
-            this.olvMessage});
-            this.olvProgressEvents.Cursor = System.Windows.Forms.Cursors.Default;
-            this.olvProgressEvents.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.olvProgressEvents.FullRowSelect = true;
-            this.olvProgressEvents.HideSelection = false;
-            this.olvProgressEvents.Location = new System.Drawing.Point(0, 15);
-            this.olvProgressEvents.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.olvProgressEvents.Name = "olvProgressEvents";
-            this.olvProgressEvents.RowHeight = 19;
-            this.olvProgressEvents.ShowGroups = false;
-            this.olvProgressEvents.Size = new System.Drawing.Size(1027, 401);
-            this.olvProgressEvents.TabIndex = 5;
-            this.olvProgressEvents.UseCompatibleStateImageBehavior = false;
-            this.olvProgressEvents.View = System.Windows.Forms.View.Details;
-            // 
-            // olvSender
-            // 
-            this.olvSender.AspectName = "Sender";
-            this.olvSender.Text = "Sender";
-            this.olvSender.Width = 177;
-            // 
-            // olvEventDate
-            // 
-            this.olvEventDate.AspectName = "EventDate";
-            this.olvEventDate.Groupable = false;
-            this.olvEventDate.Text = "Event Date";
-            this.olvEventDate.Width = 138;
-            // 
-            // olvMessage
-            // 
-            this.olvMessage.AspectName = "Message";
-            this.olvMessage.Groupable = false;
-            this.olvMessage.MinimumWidth = 100;
-            this.olvMessage.Text = "Message";
-            this.olvMessage.Width = 100;
-            // 
             // Result
             // 
             this.Result.Text = "Result";
@@ -288,9 +289,9 @@ namespace Rdmp.UI.Progress
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.olvProgressEvents)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.olvProgressEvents)).EndInit();
             this.ResumeLayout(false);
 
         }

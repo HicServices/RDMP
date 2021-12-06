@@ -30,11 +30,9 @@ namespace Rdmp.Core.Curation.Data
         public static string[] Ignore = new string[]
         {
             "mscorelib.dll",
-"Hunspellx64.dll",
-"Hunspellx86.dll",
-"NuGet.Squirrel.dll",
-
-
+            "Hunspellx64.dll",
+            "Hunspellx86.dll",
+            "NuGet.Squirrel.dll",
         };
 
         /// <summary>
@@ -91,15 +89,14 @@ namespace Rdmp.Core.Curation.Data
 
                         FileInfo winner = null;
 
-                        // if we already have a copy of this exactl dll we don't care bout loading it
+                        // if we already have a copy of this exact dll we don't care about loading it
                         if(FileVersionsAreEqual(newOneVersion, existingOneVersion))
                         {
                             // no need to spam user with warnings about duplicated dlls
                             DuplicateDllsIgnored++;
                             continue;
                         }
-                        else
-                        // pick the newer one
+
                         if (FileVersionGreaterThan(newOneVersion, existingOneVersion)) 
                         {
                             files.Remove(existing);
@@ -124,6 +121,11 @@ namespace Rdmp.Core.Curation.Data
                 Assembly ass = null;
                 if(Ignore.Contains(f.Name))
                     continue;
+                if(!IsDotNetAssembly(f.FullName))
+                {
+                    listener?.OnCheckPerformed(new CheckEventArgs($"Skipped '{f}' because it is not a dotnet assembly (according to dll header)", CheckResult.Success));
+                    continue;
+                }
 
                 try
                 {
@@ -132,17 +134,21 @@ namespace Rdmp.Core.Curation.Data
                 }
                 catch(ReflectionTypeLoadException ex)
                 {
-                    //if we loaded thea ssembly and some types
+                    //if we loaded the assembly and some types
                     if(ex.Types.Any() && ass != null)
                     {
-                        if(listener != null)
-                            listener.OnCheckPerformed(new CheckEventArgs("Loaded " + ex.Types.Count(t=>t!= null) + "/" + ex.Types.Length + " Types from " + f.Name  ,CheckResult.Warning,ex));
+                        listener?.OnCheckPerformed(new CheckEventArgs(
+                            $"Loaded {ex.Types.Count(t => t != null)}/{ex.Types.Length} Types from {f.Name}",CheckResult.Warning,ex));
                         AddTypes(f,ass,ex.Types,listener); //the assembly is bad but at least some of the Types were legit
                     }
                     else
                         AddBadAssembly(f,ex,listener); //the assembly could not be loaded properly
                 }
-                catch(Exception ex)
+                catch (BadImageFormatException)
+                {
+                    listener?.OnCheckPerformed(new CheckEventArgs($"Did not load '{f}' because it is not a dotnet assembly", CheckResult.Success));
+                }
+                catch (Exception ex)
                 { 
                     AddBadAssembly(f,ex,listener);
                 }
@@ -194,8 +200,7 @@ namespace Rdmp.Core.Curation.Data
             if (!BadAssembliesDictionary.ContainsKey(f.FullName)) //couldn't load anything out of it
             {
                 BadAssembliesDictionary.Add(f.FullName, ex);
-                if(listener != null)
-                    listener.OnCheckPerformed(new CheckEventArgs("Encountered Bad Assembly " + f.FullName + " into memory", CheckResult.Fail, ex));
+                listener?.OnCheckPerformed(new CheckEventArgs($"Encountered Bad Assembly loading {f.FullName} into memory", CheckResult.Fail, ex));
             }
         }
 
@@ -210,8 +215,7 @@ namespace Rdmp.Core.Curation.Data
             GoodAssemblies.Add(f.FullName, ass);
 
             //tell them as we go how far we are through
-            if (listener != null)
-                listener.OnCheckPerformed(new CheckEventArgs("Successfully loaded Assembly " + f.FullName + " into memory", CheckResult.Success));
+            listener?.OnCheckPerformed(new CheckEventArgs($"Successfully loaded Assembly {f.FullName} into memory", CheckResult.Success));
         }
 
         internal void AddType(Type type)
@@ -235,6 +239,60 @@ namespace Rdmp.Core.Curation.Data
         {
             lock(typesByNameLock)
                 return Types;
+        }
+
+        /// <summary>
+        /// See https://stackoverflow.com/a/29643803 by Jeremy Thompson
+        /// </summary>
+        /// <param name="peFile"></param>
+        /// <returns></returns>
+        public static bool IsDotNetAssembly(string peFile)
+        {
+            uint[] dataDictionaryRVA = new uint[16];
+            uint[] dataDictionarySize = new uint[16];
+
+
+            using Stream fs = new FileStream(peFile, FileMode.Open, FileAccess.Read);
+            using BinaryReader reader = new BinaryReader(fs);
+
+            //PE Header starts @ 0x3C (60). It's a 4 byte header.
+            fs.Position = 0x3C;
+
+            var peHeader = reader.ReadUInt32();
+
+            //Moving to PE Header start location...
+            fs.Position = peHeader;
+            if (reader.ReadUInt32() != 0x4550)
+                return false; // PE signature "PE\0\0" as integer
+
+            //We can also show all these value, but we will be       
+            //limiting to the CLI header test.
+
+            reader.ReadUInt16();                    // Machine type, eg 0x8664 for amd64
+            reader.ReadUInt16();                    // Number of sections
+            reader.ReadUInt32();                    // When the file was created/modified (seconds since start of 1970)
+            reader.ReadUInt32();                    // Offset to symbol table if present
+            reader.ReadUInt32();                    // Number of symbols
+            var ohSize=reader.ReadUInt16();  // Size of 'optional' header
+            reader.ReadUInt16();                    // Characteristics; we probably want 0x2000 ('is DLL')
+
+            if (ohSize == 0)
+                return false;   // Can't be a valid .Net DLL without the optional header section
+
+            /*
+             * 28 bytes 'standard' headers
+             * 68 bytes 'NT-specific' headers
+             * 128 bytes for 16 DataDictionaries (each RVA+size DWORD tuples)
+             * 15th DataDictionary consist of CLR header! if it's 0, it's not a CLR file :)
+             */
+            fs.Seek(0x60, SeekOrigin.Current);  // Skip past standard+NT headers
+            for (int i = 0; i < 15; i++)
+            {
+                dataDictionaryRVA[i] = reader.ReadUInt32();
+                dataDictionarySize[i] = reader.ReadUInt32();
+            }
+
+            return (dataDictionaryRVA[14] != 0);    // Non-zero for CLR header present
         }
     }
 }

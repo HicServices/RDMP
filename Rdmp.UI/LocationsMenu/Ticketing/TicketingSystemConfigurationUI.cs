@@ -26,7 +26,7 @@ namespace Rdmp.UI.LocationsMenu.Ticketing
     /// The scope of functionality includes: </para>
     /// 
     /// <para>1. Validating whether a ticket is valid
-    /// 2. Navigating to the ticket when the user clicks 'Show' in a TicketingControl (See TicketingControl)
+    /// 2. Navigating to the ticket when the user clicks 'Show' in a TicketingControlUI (See TicketingControlUI)
     /// 3. Determining whether a given project extraction can go ahead (This lets you drive ethics/approvals process through your normal ticketing system but have RDMP prevent 
     /// releases of data until the ticketing system says its ok). </para>
     /// 

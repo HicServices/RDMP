@@ -45,9 +45,8 @@ namespace Rdmp.UI.ChecksUI
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Left;
-            this.label1.Location = new System.Drawing.Point(0, 0);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Location = new System.Drawing.Point(1, 8);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 0, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(36, 15);
             this.label1.TabIndex = 2;
@@ -55,22 +54,23 @@ namespace Rdmp.UI.ChecksUI
             // 
             // tbFilter
             // 
-            this.tbFilter.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tbFilter.Location = new System.Drawing.Point(36, 0);
-            this.tbFilter.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tbFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbFilter.Location = new System.Drawing.Point(37, 4);
+            this.tbFilter.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
             this.tbFilter.Name = "tbFilter";
-            this.tbFilter.Size = new System.Drawing.Size(610, 23);
+            this.tbFilter.Size = new System.Drawing.Size(611, 23);
             this.tbFilter.TabIndex = 3;
             this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
             // 
             // btnAbortChecking
             // 
-            this.btnAbortChecking.Dock = System.Windows.Forms.DockStyle.Right;
+            this.btnAbortChecking.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAbortChecking.Enabled = false;
-            this.btnAbortChecking.Location = new System.Drawing.Point(646, 0);
-            this.btnAbortChecking.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btnAbortChecking.Location = new System.Drawing.Point(650, 3);
+            this.btnAbortChecking.Margin = new System.Windows.Forms.Padding(2, 3, 0, 3);
             this.btnAbortChecking.Name = "btnAbortChecking";
-            this.btnAbortChecking.Size = new System.Drawing.Size(114, 29);
+            this.btnAbortChecking.Size = new System.Drawing.Size(110, 25);
             this.btnAbortChecking.TabIndex = 4;
             this.btnAbortChecking.Text = "Abort Checking";
             this.btnAbortChecking.UseVisualStyleBackColor = true;

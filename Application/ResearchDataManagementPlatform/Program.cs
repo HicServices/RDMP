@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using CommandLine;
@@ -26,9 +27,6 @@ namespace ResearchDataManagementPlatform
         [STAThread]
         static void Main(string[] args)
         {
-            if (args.Any(a => a.Equals("--squirrel-install", StringComparison.InvariantCultureIgnoreCase)))
-                return;
-
             try
             {
                 AttachConsole(-1);
@@ -45,11 +43,14 @@ namespace ResearchDataManagementPlatform
 
         private static object RunApp(ResearchDataManagementPlatformOptions arg)
         {
+            arg.PopulateConnectionStringsFromYamlIfMissing();
+            arg.GetConnectionStrings(out var c, out var d);
+
             RDMPBootStrapper<RDMPMainForm> bootStrapper =
                 new RDMPBootStrapper<RDMPMainForm>(
                     new EnvironmentInfo(PluginFolders.Main | PluginFolders.Windows),
-                    arg.CatalogueConnectionString,
-                    arg.DataExportConnectionString);
+                    c?.ConnectionString,
+                    d?.ConnectionString);
 
             bootStrapper.Show(false);
             return 0;

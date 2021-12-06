@@ -12,6 +12,8 @@ using System.Text;
 using System.Windows.Forms;
 using Rdmp.UI.SimpleDialogs;
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
+using System.Reflection;
+using System;
 
 namespace Rdmp.UI.Tests
 {
@@ -27,6 +29,10 @@ namespace Rdmp.UI.Tests
             Assert.AreEqual(1, args.Message.Length);
 
             var wmb = new WideMessageBox(args);
+
+            // simulate showing the control without actually blocking/firing
+            var onShow = typeof(WideMessageBox).GetMethod("OnShown", BindingFlags.NonPublic | BindingFlags.Instance);
+            onShow.Invoke(wmb, new[] { new EventArgs() });
 
             //pretend like we launched it
             LastUserInterfaceLaunched = wmb;
@@ -56,6 +62,10 @@ namespace Rdmp.UI.Tests
             Assert.AreEqual(1_000_000, args.Message.Length);
 
             var wmb = new WideMessageBox(args);
+
+            // simulate showing the control without actually blocking/firing
+            var onShow = typeof(WideMessageBox).GetMethod("OnShown", BindingFlags.NonPublic | BindingFlags.Instance);
+            onShow.Invoke(wmb, new[] { new EventArgs()});
 
             //pretend like we launched it
             LastUserInterfaceLaunched = wmb;
