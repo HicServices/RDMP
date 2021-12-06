@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enabled Expand/Collapse all when right clicking whitespace in a tree collection
 - Added title to graph charts
 - Added a user setting for hiding Series in which all cells are 0/null
+- Added `IPipelineOptionalRequirement` interface for Plugin Pipeline Components that can optionally make use of Pipeline initialization objects but do not require them to function.
 
 ### Fixed
 
