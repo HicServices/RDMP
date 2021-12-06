@@ -53,7 +53,7 @@ If Pipeline execution environment contains a Project then the following replacem
     $n - Project Number(e.g. 234)
     $t - Master Ticket(e.g. 'LINK-1234')
 
-If Pipeline execution environment contains an ExtractionConfiguration then the following replacements are available:
+If Pipeline execution environment contains an ExtractionConfiguration then the following additional replacements are available:
     $r - Request Ticket(e.g. 'LINK-1234')
     $l - Release Ticket(e.g. 'LINK-1234')", DemandType = DemandType.SQL)]
         public virtual string WHERELogic { get; set; }
