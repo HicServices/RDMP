@@ -22,13 +22,17 @@ using System.ComponentModel;
 using TypeGuesser;
 using System.Globalization;
 using TypeGuesser.Deciders;
+using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataExport.DataExtraction.Commands;
+using Rdmp.Core.CohortCommitting.Pipeline;
+using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations.Swapping
 {
     /// <summary>
     /// Swaps values stored in a given column for values found in a mapping table (e.g. swap ReleaseID for PrivateID)
     /// </summary>
-    class ColumnSwapper:IPluginDataFlowComponent<DataTable>
+    class ColumnSwapper:IPluginDataFlowComponent<DataTable>, IPipelineOptionalRequirement<IExtractCommand>, IPipelineOptionalRequirement<ICohortCreationRequest>
     {
         [DemandsInitialization("The column in your pipeline containing input values you want swapped.  Leave null to use the same name as the MappingFromColumn")]
         public string InputFromColumn { get; set; }
@@ -42,8 +46,17 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations.Swapping
         [DemandsInitialization("The column in your database which stores the output values you want emitted", Mandatory = true)]
         public ColumnInfo MappingToColumn { get; set; }
 
-        [DemandsInitialization("Optional text to add when generating the mapping table. Should not start with WHERE")]
-        public string WHERELogic { get; set; }
+        [DemandsInitialization(@"Optional text to add when generating the mapping table. Should not start with WHERE.
+
+If Pipeline execution environment contains a Project then the following replacements are available:
+    $p - Project Name ('e.g. My Project')
+    $n - Project Number(e.g. 234)
+    $t - Master Ticket(e.g. 'LINK-1234')
+
+If Pipeline execution environment contains an ExtractionConfiguration then the following replacements are available:
+    $r - Request Ticket(e.g. 'LINK-1234')
+    $l - Release Ticket(e.g. 'LINK-1234')", DemandType = DemandType.SQL)]
+        public virtual string WHERELogic { get; set; }
 
         [DemandsInitialization("Determines behaviour when the same input value maps to multiple output values", DefaultValue = AliasResolutionStrategy.CrashIfAliasesFound)]
         public AliasResolutionStrategy AliasResolutionStrategy { get; set; }
@@ -73,6 +86,10 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
         /// The Type of objects that are stored in the Keys of <see cref="_mappingTable"/>.  For use when input types do not match the mapping table types
         /// </summary>
         Type _keyType;
+
+
+        protected IProject _project;
+        protected IExtractionConfiguration _configuration;
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
         {
@@ -290,7 +307,7 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
                 listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,$"Discarded {nulls} Null key values read from mapping table"));
         }
 
-        private string GetMappingTableSql()
+        protected virtual string GetMappingTableSql()
         {
             var repo = new MemoryCatalogueRepository();
 
@@ -307,7 +324,71 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
                 qb.RootFilterContainer = container;
             }
 
-            return qb.SQL;
+            return AdjustForProjectTokens(qb.SQL);
+        }
+
+        private string AdjustForProjectTokens(string mappingTableSql)
+        {
+            if (mappingTableSql.Contains("$p"))
+            {
+                if(_project == null)
+                {
+                    throw new Exception("You cannot use $p in contexts where there is no Project available");
+                }
+
+                mappingTableSql = mappingTableSql.Replace("$p",
+                    _project.Name?.ToString() ?? throw new Exception("Project didn't have a Project Name"));
+            }
+
+            if (mappingTableSql.Contains("$n"))
+            {
+
+                if (_project == null)
+                {
+                    throw new Exception("You cannot use $n in contexts where there is no Project available");
+                }
+
+                mappingTableSql = mappingTableSql.Replace("$n",
+                    _project.ProjectNumber?.ToString() ?? throw new Exception($"Project '{_project.Name}' didn't have a Project Number"));
+            }
+
+            if (mappingTableSql.Contains("$t"))
+            {
+
+                if (_project == null)
+                {
+                    throw new Exception("You cannot use $t in contexts where there is no Project available");
+                }
+
+                mappingTableSql = mappingTableSql.Replace("$t",
+                    _project.MasterTicket?.ToString() ?? throw new Exception($"Project '{_project.Name}' didn't have a Master Ticket"));
+            }
+
+            if (mappingTableSql.Contains("$r"))
+            {
+
+                if (_configuration == null)
+                {
+                    throw new Exception("You cannot use $r in contexts where there is no ExtractionConfiguration available");
+                }
+
+                mappingTableSql = mappingTableSql.Replace("$r",
+                    _configuration.RequestTicket?.ToString() ?? throw new Exception($"Extraction Configuration '{_configuration.Name}' didn't have a Request Ticket"));
+            }
+
+            if (mappingTableSql.Contains("$l"))
+            {
+                if (_configuration == null)
+                {
+                    throw new Exception("You cannot use $l in contexts where there is no ExtractionConfiguration available");
+                }
+
+                mappingTableSql = mappingTableSql.Replace("$l",
+                    _configuration.ReleaseTicket?.ToString() ?? throw new Exception($"Extraction Configuration '{_configuration.Name}' didn't have a Release Ticket"));
+            }
+            
+
+            return mappingTableSql;
         }
 
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
@@ -324,7 +405,7 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
         {
         }
 
-        public void Check(ICheckNotifier notifier)
+        public virtual void Check(ICheckNotifier notifier)
         {
             if(!string.IsNullOrWhiteSpace(WHERELogic))
                 if(WHERELogic.StartsWith("WHERE"))
@@ -337,7 +418,17 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
                 throw new Exception("MappingFromColumn and MappingToColumn must belong to the same table");
 
             notifier.OnCheckPerformed(new CheckEventArgs("Mapping table SQL is:"+ Environment.NewLine + GetMappingTableSql(),CheckResult.Success));
+        }
 
+        public void PreInitialize(IExtractCommand value, IDataLoadEventListener listener)
+        {
+            _project = value.Configuration?.Project;
+            _configuration = value.Configuration;
+        }
+
+        public void PreInitialize(ICohortCreationRequest value, IDataLoadEventListener listener)
+        {
+            _project = value.Project;
         }
     }
 }
