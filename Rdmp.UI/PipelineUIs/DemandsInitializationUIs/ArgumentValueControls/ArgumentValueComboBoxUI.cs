@@ -143,7 +143,15 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
                 if (dialog.Selected == null)
                     cbxValue.Text = ClearSelection;
                 else
+                {
+                    if(!cbxValue.Items.Contains(dialog.Selected))
+                    {
+                        cbxValue.Items.Add(dialog.Selected);
+                    }
+
                     cbxValue.SelectedItem = dialog.Selected;
+                }
+                    
         }
     }
 }
