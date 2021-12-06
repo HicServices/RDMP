@@ -543,7 +543,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
                 p.ProjectNumber == 1
             );
 
-            var mockConfig = Mock.Of<IExtractionConfiguration>();
+            var mockConfig = Mock.Of<IExtractionConfiguration>(c =>
+                c.Project == mockPj);
 
             var mockSelectedDatasets = Mock.Of<ISelectedDataSets>(sds =>
                 sds.ExtractionConfiguration == mockConfig
@@ -551,6 +552,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 
             var mockExtractDsCmd = Mock.Of<IExtractDatasetCommand>(d =>
                 d.Project == mockPj &&
+                d.Configuration == mockConfig &&
                 d.SelectedDataSets == mockSelectedDatasets
             );
 
