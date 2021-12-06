@@ -64,10 +64,26 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
             else
             {
                 cbxValue.DropDownStyle = ComboBoxStyle.DropDownList;
-                cbxValue.Items.AddRange(objectsForComboBox);
-                cbxValue.Items.Add(ClearSelection);
+
+                cbxValue.DropDown += (s, e) => { LateLoad(objectsForComboBox); };
             }
             
+        }
+
+        bool haveLateLoaded = false;
+        private void LateLoad(object[] objectsForComboBox)
+        {
+            if(haveLateLoaded)
+            {
+                return;
+            }
+
+            cbxValue.BeginUpdate();
+            cbxValue.Items.AddRange(objectsForComboBox.Except(cbxValue.Items.Cast<object>()).ToArray());
+            cbxValue.Items.Add(ClearSelection);
+            cbxValue.EndUpdate();
+
+            haveLateLoaded = true;
         }
 
         public void SetUp(IActivateItems activator, ArgumentValueUIArgs args)
@@ -87,6 +103,11 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
             catch (Exception e)
             {
                 _args.Fatal(e);
+            }
+
+            if(cbxValue.Items.Count == 0 && _args.InitialValue != null)
+            {
+                cbxValue.Items.Add(_args.InitialValue);
             }
 
             if (currentValue != null)
@@ -122,7 +143,15 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
                 if (dialog.Selected == null)
                     cbxValue.Text = ClearSelection;
                 else
+                {
+                    if(!cbxValue.Items.Contains(dialog.Selected))
+                    {
+                        cbxValue.Items.Add(dialog.Selected);
+                    }
+
                     cbxValue.SelectedItem = dialog.Selected;
+                }
+                    
         }
     }
 }
