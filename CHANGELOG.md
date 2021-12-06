@@ -41,6 +41,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug where selecting a [PipelineComponent] for which help is unavailable would leave the previously selected component's help visible
 - Fixed bug with 'Commit Cohort' storing the target cohort database for future clicks
 - Fixed a bug where editing a field like `Description` would fire validation on other properties e.g. `Name` which could slow controls down when validation is slow and change events are fired in rapid succession.
+- Edit Catalogue window layout updated to allow errors to be seen on the right hand side of inputs (https://github.com/HicServices/RDMP/issues/758)
+- Cohort Identification Configuration descriptions box is now easy to read and edit (https://github.com/HicServices/RDMP/issues/755)
+- Fixed bug where RDMP would lose focus when "checks" were being run in background resulting in RDMP appearing unresponsive (https://github.com/HicServices/RDMP/issues/747)
+- Fixed bug where some words in RDMP would have spaces in the wrong place (e.g. "W HERE") (https://github.com/HicServices/RDMP/issues/752)
 
 ### Changed
 
@@ -50,9 +54,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changed to Dock layout for Pipeline editing control (may improve performance on older machines)
 - Removed dependency on `System.Drawing.Common` by updating usages to `System.Drawing`
 - Increased size of all text fields in [Catalogue] and [CatalogueItem] to `nvarchar(max)` to support long urls etc
-- Updated icons to a more modern look
+- Updated icons to a more modern look. Catalogue Item image no longer has black corner. Green yellow and red smiley faces have been replaced. Cloud API icon replaced (https://github.com/HicServices/RDMP/issues/712)
 - Extract to database now checks for explicit table names amongst pre-existing tables on the destination
 - Startup no longer reports non dotnet dlls as 'unable to load' (warnings)
+- Added Project number to Title Bar (and full project name to tooltip) for Extraction Configurations (https://github.com/HicServices/RDMP/issues/621)
+- Root Cohort Identification Configuration will now highlight SET container issues with red highlight (https://github.com/HicServices/RDMP/issues/681)
+- "Data Export" has been renamed to "Projects" to be more consistent (https://github.com/HicServices/RDMP/issues/720)
+- Corrected layout of "Master Ticket" in New Project dialog (https://github.com/HicServices/RDMP/issues/735)
+- Corrected layout of "Create New Lookup" (https://github.com/HicServices/RDMP/issues/730)
+- Aligned buttons for Pipeline options (https://github.com/HicServices/RDMP/issues/721)
+- Add "clause" (e.g. WHERE) to SQL attribute input to make it clearer what SQL you need to enter (https://github.com/HicServices/RDMP/issues/751)
+- User Settings dialog now has a nicer layout (https://github.com/HicServices/RDMP/issues/760)
+
 
 ## [7.0.3] - 2021-11-04
 
