@@ -240,11 +240,7 @@ namespace Rdmp.Core.DataFlowPipeline.Requirements
 
             //these are the T tokens in the above interfaces
             var typesRequired = requirements.Select(i => i.GenericTypeArguments[0]).ToList();
-
-            // Check if we have some PreInitialize functions for which there are no IPipelineRequirements, most likely an oversight one way or the other
-            var preInitializeFunctions = component.GetType().GetMethods().Where(mi => mi.Name == "PreInitialize");
-            var preInitializeTypes = preInitializeFunctions.Select(mi => mi.GetParameters()[0].ParameterType);
-       
+                   
             //now initialize all the parameters
             foreach (object parameter in parameters)
             {

@@ -32,7 +32,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         [TestCase(false)]
         public void TestColumnSwapper_NormalUseCase(bool keepInputColumnToo)
         {
-            var dt = new DataTable();
+            using var dt = new DataTable();
             dt.Columns.Add("In");
             dt.Columns.Add("Out");
 
@@ -52,8 +52,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
             swapper.KeepInputColumnToo = keepInputColumnToo;
 
             swapper.Check(new ThrowImmediatelyCheckNotifier());
-            
-            var dtToSwap = new DataTable();
+
+            using var dtToSwap = new DataTable();
 
             dtToSwap.Columns.Add("In");
             dtToSwap.Columns.Add("Name");
@@ -209,7 +209,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         [TestCase(AliasResolutionStrategy.MultiplyInputDataRowsByAliases)]
         public void TestColumnSwapper_Aliases(AliasResolutionStrategy strategy)
         {
-            var dt = new DataTable();
+            using var dt = new DataTable();
             dt.Columns.Add("In");
             dt.Columns.Add("Out");
 
@@ -230,7 +230,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 
             swapper.Check(new ThrowImmediatelyCheckNotifier());
 
-            var dtToSwap = new DataTable();
+            using var dtToSwap = new DataTable();
 
             dtToSwap.Columns.Add("In");
             dtToSwap.Columns.Add("Name");
@@ -271,7 +271,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         [TestCase(false)]
         public void TestColumnSwapper_MissingMappings(bool crashIfNoMappingsFound)
         {
-            var dt = new DataTable();
+            using var dt = new DataTable();
             dt.Columns.Add("In");
             dt.Columns.Add("Out");
 
@@ -293,7 +293,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 
             swapper.Check(new ThrowImmediatelyCheckNotifier());
 
-            var dtToSwap = new DataTable();
+            using var dtToSwap = new DataTable();
 
             dtToSwap.Columns.Add("In");
             dtToSwap.Columns.Add("Name");
@@ -317,7 +317,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         [Test]
         public void TestColumnSwapper_ProjectSpecificMappings()
         {
-            var dt = new DataTable();
+            using var dt = new DataTable();
             dt.Columns.Add("In");
             dt.Columns.Add("Out");
             dt.Columns.Add("Proj");
@@ -342,7 +342,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 
             swapper.Check(new ThrowImmediatelyCheckNotifier());
 
-            var dtToSwap = new DataTable();
+            using var dtToSwap = new DataTable();
 
             dtToSwap.Columns.Add("In");
             dtToSwap.Columns.Add("Name");
@@ -351,7 +351,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
             dtToSwap.Rows.Add("A", "Dave", 30);
             dtToSwap.Rows.Add("B", "Frank", 50);
 
-            var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+            using var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
             Assert.AreEqual(2, resultDt.Rows.Count);
 
@@ -368,7 +368,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         [Test]
         public void TestColumnSwapper_InputTableNulls()
         {
-            var dt = new DataTable();
+            using var dt = new DataTable();
             dt.Columns.Add("In");
             dt.Columns.Add("Out");
 
@@ -385,7 +385,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 
             swapper.Check(new ThrowImmediatelyCheckNotifier());
 
-            var dtToSwap = new DataTable();
+            using var dtToSwap = new DataTable();
 
             dtToSwap.Columns.Add("In",typeof(int));
             dtToSwap.Columns.Add("Name");
@@ -411,7 +411,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         [Test]
         public void TestColumnSwapper_MappingTableNulls()
         {
-            var dt = new DataTable();
+            using var dt = new DataTable();
             dt.Columns.Add("In");
             dt.Columns.Add("Out");
 
@@ -429,7 +429,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 
             swapper.Check(new ThrowImmediatelyCheckNotifier());
 
-            var dtToSwap = new DataTable();
+            using var dtToSwap = new DataTable();
 
             dtToSwap.Columns.Add("In",typeof(int));
             dtToSwap.Columns.Add("Name");
@@ -458,7 +458,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         [Test]
         public void TestColumnSwapper_MixedDatatypes_StringInDatabase()
         {
-            var dt = new DataTable();
+            using var dt = new DataTable();
             dt.Columns.Add("In");
             dt.Columns.Add("Out");
 
@@ -481,7 +481,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 
             swapper.Check(new ThrowImmediatelyCheckNotifier());
 
-            var dtToSwap = new DataTable();
+            using var dtToSwap = new DataTable();
 
             dtToSwap.Columns.Add("In");
             dtToSwap.Columns.Add("Name");
@@ -501,7 +501,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         [Test]
         public void TestColumnSwapper_MixedDatatypes_IntegerInDatabase()
         {
-            var dt = new DataTable();
+            using var dt = new DataTable();
             dt.Columns.Add("In");
             dt.Columns.Add("Out");
 
@@ -523,7 +523,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 
             swapper.Check(new ThrowImmediatelyCheckNotifier());
 
-            var dtToSwap = new DataTable();
+            using var dtToSwap = new DataTable();
 
             dtToSwap.Columns.Add("In");
             dtToSwap.Columns.Add("Name");
