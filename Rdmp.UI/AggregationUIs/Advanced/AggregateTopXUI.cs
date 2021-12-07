@@ -12,6 +12,7 @@ using Rdmp.Core.QueryBuilding.Options;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using System.Windows.Forms;
 
 namespace Rdmp.UI.AggregationUIs.Advanced
 {
@@ -32,6 +33,10 @@ namespace Rdmp.UI.AggregationUIs.Advanced
         public AggregateTopXUI()
         {
             InitializeComponent();
+
+            //Stop mouse wheel scroll from scrolling the combobox when it's closed to avoid the value being changed without user noticing.
+            ddAscOrDesc.MouseWheel += (s, e) => ((HandledMouseEventArgs)e).Handled = !((ComboBox)s).DroppedDown;
+            ddOrderByDimension.MouseWheel += (s, e) => ((HandledMouseEventArgs)e).Handled = !((ComboBox)s).DroppedDown;
         }
 
         private bool bLoading = false;

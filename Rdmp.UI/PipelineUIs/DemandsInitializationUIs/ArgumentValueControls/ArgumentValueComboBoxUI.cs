@@ -39,6 +39,9 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
             _objectsForComboBox = objectsForComboBox;
             InitializeComponent();
 
+            //Stop mouse wheel scroll from scrolling the combobox when it's closed to avoid the value being changed without user noticing.
+            cbxValue.MouseWheel += (s, e) => ((HandledMouseEventArgs)e).Handled = !((ComboBox)s).DroppedDown;
+
             if(objectsForComboBox == null || objectsForComboBox.Length == 0)
                 return;
 

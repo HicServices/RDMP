@@ -41,6 +41,10 @@ namespace Rdmp.UI.SimpleDialogs
             _activator = activator;
 
             InitializeComponent();
+            //Stop mouse wheel scroll from scrolling the combobox when it's closed to avoid the value being changed without user noticing.
+            ddWordWrap.MouseWheel += (s, e) => ((HandledMouseEventArgs)e).Handled = !((ComboBox)s).DroppedDown;
+            ddTheme.MouseWheel += (s, e) => ((HandledMouseEventArgs)e).Handled = !((ComboBox)s).DroppedDown;
+
 
             olvErrorCodes.CellEditActivation = CellEditActivateMode.SingleClick;
             olvErrorCodes.ShowGroups = false;
