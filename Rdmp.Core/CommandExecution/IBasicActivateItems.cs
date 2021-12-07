@@ -48,6 +48,8 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         /// <param name="aggregate"></param>
         void ShowGraph(AggregateConfiguration aggregate);
+        
+        
 
         /// <summary>
         /// Display information about the logged activities of the <paramref name="rootObject"/>
@@ -291,10 +293,18 @@ namespace Rdmp.Core.CommandExecution
         bool YesNo(string text, string caption);
 
         /// <summary>
+        /// Offers the user a binary choice for whether they want to proceede on a dangerous/complex operation.  Returns true if 
+        /// environment is not interactive or an external setting auto confirms e.g. a command line argument etc
+        /// </summary>
+        /// <param name="text">The question to pose</param>
+        /// <param name="caption"></param>
+        /// <returns></returns>
+        bool Confirm(string text, string caption);
+
+        /// <summary>
         /// Component for auditing errors that should be brought to the users attention subtly (e.g. if a plugin crashes while attempting to create menu items)
         /// </summary>
         ICheckNotifier GlobalErrorCheckNotifier { get; }
-
         /// <summary>
         /// Called when <see cref="BasicCommandExecution.Publish"/> is invoked.  Allows you to respond to publish events outside of UI code.  UI code
         /// should invoke the RefreshBus system in Rdmp.UI
