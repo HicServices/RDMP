@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
@@ -42,8 +43,8 @@ namespace Rdmp.UI.SimpleDialogs
 
             InitializeComponent();
             //Stop mouse wheel scroll from scrolling the combobox when it's closed to avoid the value being changed without user noticing.
-            ddWordWrap.MouseWheel += (s, e) => ((HandledMouseEventArgs)e).Handled = !((ComboBox)s).DroppedDown;
-            ddTheme.MouseWheel += (s, e) => ((HandledMouseEventArgs)e).Handled = !((ComboBox)s).DroppedDown;
+            RDMPControlCommonFunctionality.DisableMouseWheel(ddWordWrap);
+            RDMPControlCommonFunctionality.DisableMouseWheel(ddTheme);
 
 
             olvErrorCodes.CellEditActivation = CellEditActivateMode.SingleClick;

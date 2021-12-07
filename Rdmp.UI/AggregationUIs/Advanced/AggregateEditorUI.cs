@@ -82,8 +82,8 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             InitializeComponent();
 
             //Stop mouse wheel scroll from scrolling the combobox when it's closed to avoid the value being changed without user noticing.
-            ddAxisDimension.MouseWheel += (s, e) => ((HandledMouseEventArgs)e).Handled = !((ComboBox)s).DroppedDown;
-            ddPivotDimension.MouseWheel += (s, e) => ((HandledMouseEventArgs)e).Handled = !((ComboBox)s).DroppedDown;
+            RDMPControlCommonFunctionality.DisableMouseWheel(ddAxisDimension);
+            RDMPControlCommonFunctionality.DisableMouseWheel(ddPivotDimension);
             
             if(VisualStudioDesignMode)
                 return;

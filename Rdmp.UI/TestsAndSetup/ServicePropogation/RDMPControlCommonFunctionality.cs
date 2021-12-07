@@ -479,5 +479,14 @@ Stack Trace:{exception.StackTrace}";
             //go red after you have set the text
             ScintillaGoRed(queryEditor,true);
         }
+
+        /// <summary>
+        /// Disables mouse wheel scrolling on the given <paramref name="cb"/>
+        /// </summary>
+        /// <param name="cb"></param>
+        public static void DisableMouseWheel(ComboBox cb)
+        {
+            cb.MouseWheel += (s, e) => ((HandledMouseEventArgs)e).Handled = !((ComboBox)s).DroppedDown;
+        }
     }
 }
