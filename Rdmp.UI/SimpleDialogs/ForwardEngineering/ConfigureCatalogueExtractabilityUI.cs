@@ -77,6 +77,12 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
         private BinderWithErrorProviderFactory _binder;
         
         ObjectSaverButton objectSaverButton1 = new ObjectSaverButton();
+        
+        /// <summary>
+        /// True if we are making programatic changes to values and shouldn't respond to control events (e.g. dropdown changes)
+        /// </summary>
+        private bool isLoading;
+        const string None = "<<None>>";
 
         public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfo tableInfo,string initialDescription, IProject projectSpecificIfAny):this(activator)
         {
@@ -150,6 +156,10 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             olvIsExtractionIdentifier.AspectPutter += IsExtractionIdentifier_AspectPutter;
             olvIsExtractionIdentifier.AspectGetter += IsExtractionIdentifier_AspectGetter;
 
+
+            olvIsHashOnRelease.AspectPutter += IsHashOnRelease_AspectPutter;
+            olvIsHashOnRelease.AspectGetter += IsHashOnRelease_AspectGetter;
+
             olvColumnInfoName.ImageGetter = ImageGetter;
             olvColumnExtractability.RebuildColumns();
             
@@ -161,7 +171,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
                 pbProject.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Project);
             }
 
-            ddIsExtractionIdentifier.Items.Add("<<None>>");
+            ddIsExtractionIdentifier.Items.Add(None);
             ddIsExtractionIdentifier.Items.AddRange(olvColumnExtractability.Objects.OfType<ColPair>().ToArray());
 
             CommonFunctionality.AddHelp(btnPickProject, "IExtractableDataSet.Project_ID", "Project Specific Datasets");
@@ -170,6 +180,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             RDMPCollectionCommonFunctionality.SetupColumnTracking(olvColumnExtractability, olvColumnInfoName, new Guid("86e7bf77-8829-4f72-aa47-29a30710621f"));
             RDMPCollectionCommonFunctionality.SetupColumnTracking(olvColumnExtractability, olvExtractionCategory, new Guid("ad106fe4-bea0-4670-9ded-61967699269f"));
             RDMPCollectionCommonFunctionality.SetupColumnTracking(olvColumnExtractability, olvIsExtractionIdentifier, new Guid("f9a87191-9676-4c86-a292-608dc95e8eef"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvColumnExtractability, olvIsHashOnRelease, new Guid("d3590a68-ee78-40c6-b073-eea32cac49ec"));
         }
 
         protected override void OnLoad(EventArgs e)
@@ -193,6 +204,29 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             Debug.Assert(n.ExtractionInformation != null, "n.ExtractionInformation != null");
             n.ExtractionInformation.IsExtractionIdentifier = (bool)newvalue;
             n.ExtractionInformation.SaveToDatabase();
+
+
+            // if there is now exactly 1 IsExtractionIdentifier
+            var identifiers = olvColumnExtractability.Objects.OfType<ColPair>().Where(c => c.ExtractionInformation?.IsExtractionIdentifier ?? false).ToArray();
+            isLoading = true;
+
+            if (identifiers.Length == 1)
+            {
+                // update the combo box to show that this is the only one
+                ddIsExtractionIdentifier.SelectedItem = identifiers[0];
+                ddIsExtractionIdentifier.Enabled = true;
+            }
+            else
+            {
+                // if there are 2+ or 0 then clear the dropdown because that control only works
+                // for selecting a single patient identifier
+                ddIsExtractionIdentifier.SelectedItem = null;
+
+
+                // let them pick one with the dropdown if it is 0 but if it is 2+ then they have to use the checkboxes
+                ddIsExtractionIdentifier.Enabled = identifiers.Length < 2;
+            }
+            isLoading = false;
         }
 
         private object ImageGetter(object rowObject)
@@ -212,6 +246,28 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             return n.ExtractionInformation.IsExtractionIdentifier;
         }
 
+
+        private void IsHashOnRelease_AspectPutter(object rowobject, object newvalue)
+        {
+            var n = (ColPair)rowobject;
+
+            if (n.ExtractionInformation == null)
+                MakeExtractable(n, true, ExtractionCategory.Core);
+
+            Debug.Assert(n.ExtractionInformation != null, "n.ExtractionInformation != null");
+            n.ExtractionInformation.HashOnDataRelease = (bool)newvalue;
+            n.ExtractionInformation.SaveToDatabase();
+        }
+
+        private object IsHashOnRelease_AspectGetter(object rowObject)
+        {
+            var n = (ColPair)rowObject;
+
+            if (n.ExtractionInformation == null)
+                return false;
+
+            return n.ExtractionInformation.HashOnDataRelease;
+        }
 
         private void MakeExtractable(object o, bool shouldBeExtractable, ExtractionCategory? category = null)
         {
@@ -523,7 +579,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
         {
             if (projectSpecificIfAny == null)
             {
-                lblProject.Text = "<<None>>";
+                lblProject.Text = None;
                 btnPickProject.Text = "Pick...";
                 _projectSpecific = null;
             }
@@ -553,6 +609,11 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 
         private void ddIsExtractionIdentifier_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if(isLoading)
+            {
+                return;
+            }
+
             var n = ddIsExtractionIdentifier.SelectedItem as ColPair;
 
             //turn off all IsExtractionIdentifierness
