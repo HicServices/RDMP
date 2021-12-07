@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
-
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 {
@@ -38,6 +38,9 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
             _activator = activator;
             _objectsForComboBox = objectsForComboBox;
             InitializeComponent();
+
+            //Stop mouse wheel scroll from scrolling the combobox when it's closed to avoid the value being changed without user noticing.
+            RDMPControlCommonFunctionality.DisableMouseWheel(cbxValue);
 
             if(objectsForComboBox == null || objectsForComboBox.Length == 0)
                 return;

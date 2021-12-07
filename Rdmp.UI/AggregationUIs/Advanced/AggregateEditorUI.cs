@@ -80,6 +80,10 @@ namespace Rdmp.UI.AggregationUIs.Advanced
         public AggregateEditorUI()
         {
             InitializeComponent();
+
+            //Stop mouse wheel scroll from scrolling the combobox when it's closed to avoid the value being changed without user noticing.
+            RDMPControlCommonFunctionality.DisableMouseWheel(ddAxisDimension);
+            RDMPControlCommonFunctionality.DisableMouseWheel(ddPivotDimension);
             
             if(VisualStudioDesignMode)
                 return;
