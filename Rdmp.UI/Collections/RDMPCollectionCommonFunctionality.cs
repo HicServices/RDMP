@@ -43,7 +43,7 @@ namespace Rdmp.UI.Collections
     /// height, child nodes etc.  Also centralises functionality like applying a CollectionPinFilterUI to an RDMPCollectionUI, keeping trees up to date during object
     /// refreshes / deletes etc.
     /// </summary>
-    public class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
+    public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     {
         private RDMPCollection _collection;
 
@@ -690,9 +690,36 @@ namespace Rdmp.UI.Collections
             if(menu != null)
                 menu.AddCommonMenuItems(this);
 
+            if(menu != null)
+            {
+                OrderMenuItems(menu.Items);
+            }            
+
             return menu;
         }
 
+        private void OrderMenuItems(ToolStripItemCollection coll)
+        {
+            ArrayList oAList = new ArrayList(coll);
+            oAList.Sort(new ToolStripItemComparer(coll));
+            coll.Clear();
+
+            foreach (ToolStripItem oItem in oAList)
+            {
+                coll.Add(oItem);
+
+                if (oItem is ToolStripMenuItem mi)
+                {
+                    // if menu item has submenus
+                    if(mi.DropDownItems.Count > 0)
+                    {
+                        // sort those too - recurisvely
+                        OrderMenuItems(mi.DropDownItems);
+                    }
+
+                }
+            }
+        }
 
         public void CommonItemActivation(object sender, EventArgs eventArgs)
         {

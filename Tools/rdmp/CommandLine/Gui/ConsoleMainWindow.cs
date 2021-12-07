@@ -421,7 +421,8 @@ namespace Rdmp.Core.CommandLine.Gui
             return
                 GetExtraCommands(o)
                 .Union(factory.CreateCommands(o))
-                .Union(_activator.PluginUserInterfaces.SelectMany(p=>p.GetAdditionalRightClickMenuItems(o)));
+                .Union(_activator.PluginUserInterfaces.SelectMany(p=>p.GetAdditionalRightClickMenuItems(o)))
+                .OrderBy(c=>c.Weight);
         }
 
         private IEnumerable<IAtomicCommand> GetExtraCommands(object o)
