@@ -43,7 +43,7 @@ namespace Rdmp.UI.Collections
     /// height, child nodes etc.  Also centralises functionality like applying a CollectionPinFilterUI to an RDMPCollectionUI, keeping trees up to date during object
     /// refreshes / deletes etc.
     /// </summary>
-    public class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
+    public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     {
         private RDMPCollection _collection;
 
@@ -718,20 +718,6 @@ namespace Rdmp.UI.Collections
                     }
 
                 }
-            }
-        }
-
-        public class ToolStripItemComparer : IComparer
-        {
-            public int Compare(object x, object y)
-            {
-                ToolStripItem oItem1 = (ToolStripItem)x;
-                ToolStripItem oItem2 = (ToolStripItem)y;
-
-                var cmd1 = oItem1.Tag as IAtomicCommand;
-                var cmd2 = oItem2.Tag as IAtomicCommand;
-
-                return (cmd1?.Weight ?? 0) - (cmd2?.Weight ?? 0);
             }
         }
 
