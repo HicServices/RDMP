@@ -256,6 +256,13 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 
             Debug.Assert(n.ExtractionInformation != null, "n.ExtractionInformation != null");
             n.ExtractionInformation.HashOnDataRelease = (bool)newvalue;
+            
+            // if we are turning on hashing then ensure the column has an alias
+            if((bool)newvalue)
+            {
+                n.ExtractionInformation.Alias = n.ExtractionInformation.GetRuntimeName();
+            }
+            
             n.ExtractionInformation.SaveToDatabase();
         }
 
