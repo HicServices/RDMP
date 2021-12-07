@@ -701,7 +701,7 @@ namespace Rdmp.UI.Collections
         private void OrderMenuItems(ToolStripItemCollection coll)
         {
             ArrayList oAList = new ArrayList(coll);
-            oAList.Sort(new ToolStripItemComparer());
+            oAList.Sort(new ToolStripItemComparer(coll));
             coll.Clear();
 
             foreach (ToolStripItem oItem in oAList)

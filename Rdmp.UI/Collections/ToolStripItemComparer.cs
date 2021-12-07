@@ -17,6 +17,13 @@ namespace Rdmp.UI.Collections
     {
         public class ToolStripItemComparer : IComparer
         {
+            private ToolStripItemCollection _originalOrder;
+
+            public ToolStripItemComparer(ToolStripItemCollection originalOrder)
+            {
+                this._originalOrder = originalOrder;
+            }
+
             public int Compare(object x, object y)
             {
                 ToolStripItem oItem1 = (ToolStripItem)x;
@@ -25,7 +32,16 @@ namespace Rdmp.UI.Collections
                 var cmd1 = oItem1.Tag as IAtomicCommand;
                 var cmd2 = oItem2.Tag as IAtomicCommand;
 
-                return (cmd1?.Weight ?? 0) - (cmd2?.Weight ?? 0);
+                var explicitOrder = (cmd1?.Weight ?? 0) - (cmd2?.Weight ?? 0);
+
+                // if there is no difference in explicit weight 
+                if(explicitOrder == 0)
+                {
+                    // use the original weight it had in the menu
+                    return _originalOrder.IndexOf(oItem1) - _originalOrder.IndexOf(oItem2);
+                }
+
+                return explicitOrder;
             }
         }
 
