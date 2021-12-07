@@ -33,5 +33,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// True to require Ctrl key to be pressed when <see cref="SuggestedShortcut"/> is entered
         /// </summary>
         bool Ctrl { get; set; }
+
+        /// <summary>
+        /// The relative heaviness of the control in menus.  Higher means that it sinks down the menu
+        /// Lower floats to the top.
+        /// </summary>
+        int Weight { get; set; }
     }
 }

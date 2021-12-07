@@ -690,9 +690,50 @@ namespace Rdmp.UI.Collections
             if(menu != null)
                 menu.AddCommonMenuItems(this);
 
+            if(menu != null)
+            {
+                OrderMenuItems(menu.Items);
+            }            
+
             return menu;
         }
 
+        private void OrderMenuItems(ToolStripItemCollection coll)
+        {
+            ArrayList oAList = new ArrayList(coll);
+            oAList.Sort(new ToolStripItemComparer());
+            coll.Clear();
+
+            foreach (ToolStripItem oItem in oAList)
+            {
+                coll.Add(oItem);
+
+                if (oItem is ToolStripMenuItem mi)
+                {
+                    // if menu item has submenus
+                    if(mi.DropDownItems.Count > 0)
+                    {
+                        // sort those too - recurisvely
+                        OrderMenuItems(mi.DropDownItems);
+                    }
+
+                }
+            }
+        }
+
+        public class ToolStripItemComparer : IComparer
+        {
+            public int Compare(object x, object y)
+            {
+                ToolStripItem oItem1 = (ToolStripItem)x;
+                ToolStripItem oItem2 = (ToolStripItem)y;
+
+                var cmd1 = oItem1.Tag as IAtomicCommand;
+                var cmd2 = oItem2.Tag as IAtomicCommand;
+
+                return (cmd1?.Weight ?? 0) - (cmd2?.Weight ?? 0);
+            }
+        }
 
         public void CommonItemActivation(object sender, EventArgs eventArgs)
         {
