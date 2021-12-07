@@ -57,6 +57,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             base.Execute();
 
+            if(!BasicActivator.Confirm("Generate new Cohort Identification Configurations for each container?", "Confirm UnMerge"))
+            {
+                return;
+            }
+
             var merger = new CohortIdentificationConfigurationMerger((CatalogueRepository)BasicActivator.RepositoryLocator.CatalogueRepository);
             var results = merger.UnMerge(_target);
 
