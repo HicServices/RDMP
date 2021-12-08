@@ -414,6 +414,10 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void restartApplicationToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (UserSettings.ConfirmApplicationExiting && Activator.Confirm("Restart Application?", "Confirm Restart") == false)
+                return;
+
+
             ApplicationRestarter.Restart();
         }
     }
