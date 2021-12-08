@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `IPipelineOptionalRequirement` interface for Plugin Pipeline Components that can optionally make use of Pipeline initialization objects but do not require them to function.
 - Support for templating in `ColumnSwapper` when used in an extraction pipeline (e.g. $n for project number)
 - Support for specifying `--ConnectionStringsFile somefile.yaml` when starting RDMP (gui client or CLI)
+- Added 'Hash On Release' column to initial new Catalogue extractability configuration dialog (https://github.com/HicServices/RDMP/issues/394)
 
 ### Fixed
 

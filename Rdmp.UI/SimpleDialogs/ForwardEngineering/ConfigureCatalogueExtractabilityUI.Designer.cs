@@ -35,6 +35,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             this.olvColumnInfoName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvExtractionCategory = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvIsExtractionIdentifier = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvIsHashOnRelease = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnAddToExisting = new System.Windows.Forms.Button();
             this.btnOk = new System.Windows.Forms.Button();
@@ -77,6 +78,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             this.olvColumnExtractability.AllColumns.Add(this.olvColumnInfoName);
             this.olvColumnExtractability.AllColumns.Add(this.olvExtractionCategory);
             this.olvColumnExtractability.AllColumns.Add(this.olvIsExtractionIdentifier);
+            this.olvColumnExtractability.AllColumns.Add(this.olvIsHashOnRelease);
             this.olvColumnExtractability.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -111,10 +113,18 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             // olvIsExtractionIdentifier
             // 
             this.olvIsExtractionIdentifier.CheckBoxes = true;
-            this.olvIsExtractionIdentifier.DisplayIndex = 2;
+            this.olvIsExtractionIdentifier.DisplayIndex = 3;
             this.olvIsExtractionIdentifier.IsVisible = false;
             this.olvIsExtractionIdentifier.Text = "IsExtractionIdentifier";
             this.olvIsExtractionIdentifier.Width = 106;
+            // 
+            // olvIsHashOnRelease
+            // 
+            this.olvIsHashOnRelease.CheckBoxes = true;
+            this.olvIsHashOnRelease.DisplayIndex = 2;
+            this.olvIsHashOnRelease.IsVisible = false;
+            this.olvIsHashOnRelease.Text = "Hash On Release";
+            this.olvIsHashOnRelease.Width = 106;
             // 
             // btnCancel
             // 
@@ -450,6 +460,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
         private System.Windows.Forms.ComboBox ddCategoriseMany;
         private System.Windows.Forms.Label label3;
         private BrightIdeasSoftware.OLVColumn olvIsExtractionIdentifier;
+        private BrightIdeasSoftware.OLVColumn olvIsHashOnRelease;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnOk;
         private System.Windows.Forms.Button btnAddToExisting;
