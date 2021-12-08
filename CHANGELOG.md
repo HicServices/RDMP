@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [7.0.4] - 2021-12-08
+
 ### Added
 
 - Added `RoundFloatsTo` to ExecuteDatasetExtractionFlatFileDestination
@@ -1006,7 +1008,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.3...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.4...develop
+[7.0.4]: https://github.com/HicServices/RDMP/compare/v7.0.3...v7.0.4
 [7.0.3]: https://github.com/HicServices/RDMP/compare/v7.0.2...v7.0.3
 [7.0.2]: https://github.com/HicServices/RDMP/compare/v7.0.1...v7.0.2
 [7.0.1]: https://github.com/HicServices/RDMP/compare/v7.0.0...v7.0.1
