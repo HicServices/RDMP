@@ -4,11 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Rdmp.Core.CommandExecution
 {
@@ -56,5 +52,26 @@ namespace Rdmp.Core.CommandExecution
         /// </para>
         /// </summary>
         public string InitialSearchText { get; set; }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            if (!string.IsNullOrEmpty(WindowTitle))
+                sb.AppendLine($"Title:{WindowTitle}");
+
+            if (!string.IsNullOrEmpty(TaskDescription))
+                sb.AppendLine($"Task:{TaskDescription}");
+
+            if (!string.IsNullOrEmpty(EntryLabel))
+                sb.AppendLine($"Label:{EntryLabel}");
+
+            if(sb.Length == 0)
+            {
+                return "Undefined DialogArgs";
+            }
+
+            return sb.ToString();
+        }
     }
 }
