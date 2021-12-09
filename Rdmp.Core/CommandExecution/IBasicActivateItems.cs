@@ -157,11 +157,7 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="callback"></param>
         void SelectAnythingThen(string prompt, Action<IMapsDirectlyToDatabaseTable> callback);
 
-        /// <summary>
-        /// Show all objects in RDMP (with search).  If a single selection is made then invoke the callback
-        /// </summary>
-        /// <param name="args"></param>
-        /// <param name="callback"></param>
+        /// <inheritdoc cref="SelectAnythingThen(string, Action{IMapsDirectlyToDatabaseTable})"/>
         void SelectAnythingThen(DialogArgs args, Action<IMapsDirectlyToDatabaseTable> callback);
 
         /// <summary>
@@ -175,6 +171,9 @@ namespace Rdmp.Core.CommandExecution
         /// <returns></returns>
         IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,IMapsDirectlyToDatabaseTable[] availableObjects,string initialSearchText = null);
         
+        /// <inheritdoc cref="SelectMany(string, Type, IMapsDirectlyToDatabaseTable[], string)"/>
+        IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType, IMapsDirectlyToDatabaseTable[] availableObjects);
+
         /// <summary>
         /// Prompts user to pick one of the <paramref name="availableObjects"/>
         /// </summary>

@@ -258,8 +258,8 @@ namespace Rdmp.UI.Tests
             };
         }
 
-        public override IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
-            IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText)
+        public override IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType,
+            IMapsDirectlyToDatabaseTable[] availableObjects)
         {
             throw new NotImplementedException();
         }

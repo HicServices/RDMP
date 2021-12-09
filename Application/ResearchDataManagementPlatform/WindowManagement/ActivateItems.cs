@@ -670,8 +670,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return false;
         }
 
-        public override IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
-            IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText)
+        public override IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType,
+            IMapsDirectlyToDatabaseTable[] availableObjects)
         {
             if (!availableObjects.Any())
             {
@@ -680,8 +680,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
             }
 
             var selectDialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(this, availableObjects, false, false);
-            selectDialog.Text = prompt;
-            selectDialog.SetInitialFilter(initialSearchText);
+            selectDialog.Text = args.WindowTitle;
+            selectDialog.SetInitialFilter(args.InitialSearchText);
             selectDialog.AllowMultiSelect = true;
             
             if (selectDialog.ShowDialog() == DialogResult.OK)

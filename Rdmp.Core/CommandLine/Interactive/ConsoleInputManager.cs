@@ -133,13 +133,10 @@ namespace Rdmp.Core.CommandLine.Interactive
         }
 
 
-        public override IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
-            IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText)
+        public override IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType,
+            IMapsDirectlyToDatabaseTable[] availableObjects)
         {
-            if (DisallowInput)
-                throw new InputDisallowedException($"Value required for '{prompt}'");
-
-            Console.WriteLine(prompt);
+            WritePromptFor(args);
 
             var value = ReadLineWithAuto(new PickObjectBase[]
                 {new PickObjectByID(RepositoryLocator), new PickObjectByName(RepositoryLocator)},
@@ -151,6 +148,34 @@ namespace Rdmp.Core.CommandLine.Interactive
                 throw new Exception("The following objects were not among the listed available objects " + string.Join(",",unavailable.Select(o=>o.ToString())));
 
             return value.DatabaseEntities.ToArray();
+        }
+
+        /// <summary>
+        /// Displays the text described in the prompt theming <paramref name="args"/>
+        /// </summary>
+        /// <param name="args"></param>
+        /// <exception cref="InputDisallowedException">Thrown if <see cref="DisallowInput"/> is true</exception>
+        private void WritePromptFor(DialogArgs args)
+        {
+            if (DisallowInput)
+                throw new InputDisallowedException($"Value required for '{args}'");
+
+            if (!string.IsNullOrWhiteSpace(args.WindowTitle))
+            {
+                Console.WriteLine(args.WindowTitle);
+            }
+                
+            if (!string.IsNullOrWhiteSpace(args.TaskDescription))
+            {
+                Console.WriteLine(args.TaskDescription);
+            }
+            
+
+            if (!string.IsNullOrWhiteSpace(args.EntryLabel))
+            {
+                Console.Write(args.EntryLabel);
+            }
+            
         }
 
         public override IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args, IMapsDirectlyToDatabaseTable[] availableObjects)

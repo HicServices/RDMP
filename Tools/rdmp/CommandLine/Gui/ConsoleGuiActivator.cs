@@ -145,10 +145,10 @@ namespace Rdmp.Core.CommandLine.Gui
             return null;
         }
 
-        public override IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
-            IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null)
+        public override IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType,
+            IMapsDirectlyToDatabaseTable[] availableObjects)
         {
-            var dlg = new ConsoleGuiSelectMany(this, prompt, availableObjects);
+            var dlg = new ConsoleGuiSelectMany(this, args.WindowTitle, availableObjects);
             Application.Run(dlg);
 
             return dlg.ResultOk ? dlg.Result.Cast<IMapsDirectlyToDatabaseTable>().ToArray() : new IMapsDirectlyToDatabaseTable[0];

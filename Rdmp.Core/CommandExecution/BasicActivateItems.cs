@@ -478,8 +478,19 @@ namespace Rdmp.Core.CommandExecution
         public abstract DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription);
         
         /// <inheritdoc/>
-        public abstract IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
-            IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null);
+        public IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
+            IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null)
+        {
+            return SelectMany(new DialogArgs()
+            {
+                WindowTitle = prompt,
+                InitialSearchText = initialSearchText,
+            },arrayElementType,availableObjects);
+        }
+
+        /// <inheritdoc/>
+        public abstract IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType,
+            IMapsDirectlyToDatabaseTable[] availableObjects);
 
         /// <inheritdoc/>
         public virtual IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
@@ -618,10 +629,9 @@ namespace Rdmp.Core.CommandExecution
             return false;
         }
 
-        public virtual void SelectAnythingThen(string prompt, Action<IMapsDirectlyToDatabaseTable> callback)
+        public void SelectAnythingThen(string prompt, Action<IMapsDirectlyToDatabaseTable> callback)
         {
             SelectAnythingThen(new DialogArgs() { WindowTitle = prompt}, callback);
-
         }
         public virtual void SelectAnythingThen(DialogArgs args, Action<IMapsDirectlyToDatabaseTable> callback)
         {
