@@ -565,13 +565,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             //if there is only one object available to select
             if (availableObjects.Length == 1)
-                if(allowAutoSelect || YesNo("You only have one compatible object, use '"+availableObjects[0]+"'","Select '" + availableObjects[0] + "'?"))
+                if(allowAutoSelect)
                 {
                     return availableObjects[0];
-                }
-                else
-                {
-                    return null;
                 }
 
             var selectDialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(this, availableObjects, false, false);
