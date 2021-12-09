@@ -207,10 +207,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
             HistoryProvider.Add(args.Request.ObjectToEmphasise);
         }
 
-        public override bool SelectEnum(string prompt, Type enumType, out Enum chosen)
+        public override bool SelectEnum(DialogArgs args, Type enumType, out Enum chosen)
         {
             var selector = new SelectDialog<Enum>(this,Enum.GetValues(enumType).Cast<Enum>().ToArray(), false,false);
-            selector.Text = prompt;
+            selector.Text = args.WindowTitle;
 
             if (selector.ShowDialog() == DialogResult.OK)
             {
@@ -222,10 +222,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return false;
         }
 
-        public override bool SelectType(string prompt, Type[] available,out Type chosen)
+        public override bool SelectType(DialogArgs args, Type[] available,out Type chosen)
         {
             var dlg =  new SelectDialog<Type>(this,available, false,false);
-            dlg.Text = prompt;
+            dlg.Text = args.WindowTitle;
 
             if (dlg.ShowDialog() == DialogResult.OK)
             {
@@ -476,9 +476,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
 
         /// <inheritdoc/>
-        public override bool YesNo(string text,string caption,out bool chosen)
+        public override bool YesNo(DialogArgs args,out bool chosen)
         {
-            var dr = MessageBox.Show(text, caption, MessageBoxButtons.YesNo);
+            var dr = MessageBox.Show(args.TaskDescription, args.WindowTitle, MessageBoxButtons.YesNo);
 
             if (dr == DialogResult.Yes)
             {
@@ -496,9 +496,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return false;
         }
 
-        public override bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText)
+        public override bool TypeText(DialogArgs args, int maxLength, string initialText, out string text, bool requireSaneHeaderText)
         {
-            var textTyper = new TypeTextOrCancelDialog(header, prompt, maxLength, initialText, allowBlankText: false, multiLine: maxLength > 1000)
+            var textTyper = new TypeTextOrCancelDialog(args.WindowTitle, args.EntryLabel, maxLength, initialText, allowBlankText: false, multiLine: maxLength > 1000)
             {
                 RequireSaneHeaderText = requireSaneHeaderText
             };
@@ -580,10 +580,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return null; //user didn't select one of the IMapsDirectlyToDatabaseTable objects shown in the dialog
         }
 
-        public override bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null, bool allowAutoSelect = false)
+        public override bool SelectObject<T>(DialogArgs args, T[] available, out T selected)
         {
             var pick = new SelectDialog<T>(this,available,false,false);
-            pick.Text = prompt;
+            pick.Text = args.WindowTitle;
 
             if (pick.ShowDialog() == DialogResult.OK)
             {
@@ -595,10 +595,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return false;
         }
 
-        public override bool SelectObjects<T>(string prompt, T[] available, out T[] selected, string initialSearchText = null)
+        public override bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected)
         {
             var pick = new SelectDialog<T>(this, available, false, false);
-            pick.Text = prompt;
+            pick.Text = args.WindowTitle;
             pick.AllowMultiSelect = true;
 
             if (pick.ShowDialog() == DialogResult.OK)
@@ -654,10 +654,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
             }
         }
 
-        protected override bool SelectValueTypeImpl(string prompt, Type paramType, object initialValue, out object chosen)
+        protected override bool SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue, out object chosen)
         {
             //whatever else it is use string
-            var typeTextDialog = new TypeTextOrCancelDialog("Enter Value", prompt + " (" + paramType.Name + ")",1000,
+            var typeTextDialog = new TypeTextOrCancelDialog(args.WindowTitle,args.EntryLabel + " (" + paramType.Name + ")",1000,
                 initialValue?.ToString());
 
             if (typeTextDialog.ShowDialog() == DialogResult.OK)

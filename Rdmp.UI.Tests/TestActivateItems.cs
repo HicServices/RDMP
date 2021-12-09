@@ -128,12 +128,12 @@ namespace Rdmp.UI.Tests
             return true;
         }
 
-        public override bool SelectEnum(string prompt, Type enumType, out Enum chosen)
+        public override bool SelectEnum(DialogArgs args, Type enumType, out Enum chosen)
         {
             throw new NotImplementedException();
         }
 
-        public override bool SelectType(string prompt, Type[] available,out Type chosen)
+        public override bool SelectType(DialogArgs args, Type[] available,out Type chosen)
         {
             throw new NotImplementedException();
         }
@@ -204,7 +204,7 @@ namespace Rdmp.UI.Tests
         /// </summary>
         public bool? YesNoResponse { get;set;}
 
-        public override bool YesNo(string text, string caption, out bool chosen)
+        public override bool YesNo(DialogArgs args, out bool chosen)
         {
             if (YesNoResponse.HasValue)
             {
@@ -215,7 +215,7 @@ namespace Rdmp.UI.Tests
             }
                 
 
-            throw new Exception("Did not expect to be asked a question but we were asked :" + text);
+            throw new Exception("Did not expect to be asked a question but we were asked :" + args);
         }
 
 
@@ -224,7 +224,7 @@ namespace Rdmp.UI.Tests
         /// </summary>
         public string TypeTextResponse { get; set; }
 
-        public override bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText)
+        public override bool TypeText(DialogArgs args, int maxLength, string initialText, out string text, bool requireSaneHeaderText)
         {
             text = TypeTextResponse;
             return !string.IsNullOrWhiteSpace(TypeTextResponse);
@@ -288,7 +288,7 @@ namespace Rdmp.UI.Tests
             throw new NotImplementedException();
         }
 
-        protected override bool SelectValueTypeImpl(string prompt, Type paramType, object initialValue,out object chosen)
+        protected override bool SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue,out object chosen)
         {
             throw new NotImplementedException();
         }
@@ -323,12 +323,12 @@ namespace Rdmp.UI.Tests
             throw new NotImplementedException();
         }
 
-        public override bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null, bool allowAutoSelect = false)
+        public override bool SelectObject<T>(DialogArgs args, T[] available, out T selected)
         {
             throw new NotImplementedException();
         }
 
-        public override bool SelectObjects<T>(string prompt, T[] available, out T[] selected, string initialSearchText = null)
+        public override bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected)
         {
             throw new NotImplementedException();
         }

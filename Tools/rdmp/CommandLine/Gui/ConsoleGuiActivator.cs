@@ -42,9 +42,9 @@ namespace Rdmp.Core.CommandLine.Gui
         }
 
 
-        protected override bool SelectValueTypeImpl(string prompt, Type paramType, object initialValue, out object chosen)
+        protected override bool SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue, out object chosen)
         {
-            var dlg = new ConsoleGuiTextDialog(prompt, initialValue?.ToString());
+            var dlg = new ConsoleGuiTextDialog(args.WindowTitle, initialValue?.ToString());
             if (dlg.ShowDialog())
             {
                 if (string.IsNullOrWhiteSpace(dlg.ResultText) || dlg.ResultText.Equals("null", StringComparison.CurrentCultureIgnoreCase))
@@ -87,10 +87,10 @@ namespace Rdmp.Core.CommandLine.Gui
                 Application.Run(dlg);
             }
         }
-        public override bool YesNo(string text, string caption, out bool chosen)
+        public override bool YesNo(DialogArgs args, out bool chosen)
         {
             GetDialogDimensions(out var w, out var h);
-            int result = MessageBox.Query(w, h, caption, text, "yes", "no", "cancel");
+            int result = MessageBox.Query(w, h, args.TaskDescription, args.WindowTitle, "yes", "no", "cancel");
             chosen = result == 0;
 
             return result != 2;
@@ -107,10 +107,10 @@ namespace Rdmp.Core.CommandLine.Gui
 
         
 
-        public override bool TypeText(string header, string prompt, int maxLength, string initialText, out string text,
+        public override bool TypeText(DialogArgs args, int maxLength, string initialText, out string text,
             bool requireSaneHeaderText)
         {
-            var dlg = new ConsoleGuiTextDialog(prompt, initialText);
+            var dlg = new ConsoleGuiTextDialog(args.WindowTitle, initialText);
             if (dlg.ShowDialog())
             {
                 text = dlg.ResultText;
@@ -168,15 +168,15 @@ namespace Rdmp.Core.CommandLine.Gui
 
 
         /// <inheritdoc/>
-        public override bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null, bool allowAutoSelect = false)
+        public override bool SelectObject<T>(DialogArgs args, T[] available, out T selected)
         {
-            if (allowAutoSelect && available.Length == 1)
+            if (args.AllowAutoSelect && available.Length == 1)
             {
                 selected = available[0];
                 return true;
             }
 
-            var dlg = new ConsoleGuiBigListBox<T>(prompt,"Ok",true,available,t=>t.ToString(),true);
+            var dlg = new ConsoleGuiBigListBox<T>(args.WindowTitle,"Ok",true,available,t=>t.ToString(),true);
 
             if (dlg.ShowDialog())
             {
@@ -188,9 +188,9 @@ namespace Rdmp.Core.CommandLine.Gui
             return false;
         }
 
-        public override bool SelectObjects<T>(string prompt, T[] available, out T[] selected, string initialSearchText = null)
+        public override bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected)
         {  
-            var dlg = new ConsoleGuiSelectMany(this, prompt, available);
+            var dlg = new ConsoleGuiSelectMany(this, args.WindowTitle, available);
             Application.Run(dlg);
 
             selected = dlg.Result.Cast<T>().ToArray();
@@ -252,9 +252,9 @@ namespace Rdmp.Core.CommandLine.Gui
             return openDir.FilePaths?.Select(f=>new FileInfo(f))?.ToArray();
         }
 
-        public override bool SelectEnum(string prompt, Type enumType, out Enum chosen)
+        public override bool SelectEnum(DialogArgs args, Type enumType, out Enum chosen)
         {
-            var dlg = new ConsoleGuiBigListBox<Enum>(prompt, "Ok", false, Enum.GetValues(enumType).Cast<Enum>().ToList(), null,false);
+            var dlg = new ConsoleGuiBigListBox<Enum>(args.WindowTitle, "Ok", false, Enum.GetValues(enumType).Cast<Enum>().ToList(), null,false);
 
             if (dlg.ShowDialog())
             {
@@ -266,9 +266,9 @@ namespace Rdmp.Core.CommandLine.Gui
             return false;
         }
 
-        public override bool SelectType(string prompt, Type[] available,out Type chosen)
+        public override bool SelectType(DialogArgs args, Type[] available,out Type chosen)
         {
-            var dlg = new ConsoleGuiBigListBox<Type>(prompt, "Ok", true, available.ToList(), null,true);
+            var dlg = new ConsoleGuiBigListBox<Type>(args.WindowTitle, "Ok", true, available.ToList(), null,true);
 
             if (dlg.ShowDialog())
             {

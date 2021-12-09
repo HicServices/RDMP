@@ -184,7 +184,6 @@ namespace Rdmp.Core.CommandExecution
         /// <returns></returns>
         IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null, bool allowAutoSelect = false);
 
-
         /// <summary>
         /// Prompts user to pick one of the <paramref name="availableObjects"/>
         /// </summary>
@@ -204,6 +203,8 @@ namespace Rdmp.Core.CommandExecution
         /// <returns>True if a selection was made</returns>
         bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null, bool allowAutoSelect = false) where T : class;
 
+        /// <inheritdoc cref="SelectObject{T}(string, T[], out T, string, bool)"/>
+        bool SelectObject<T>(DialogArgs args, T[] available, out T selected) where T : class;
 
         /// <summary>
         /// Prompts user to pick several of <paramref name="available"/> objects
@@ -214,6 +215,9 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="selected"></param>
         /// <param name="initialSearchText"></param>
         bool SelectObjects<T>(string prompt, T[] available, out T[] selected, string initialSearchText = null) where T : class;
+
+        /// <inheritdoc cref="SelectObjects{T}(string, T[], out T[], string)"/>
+        bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected) where T : class;
 
         /// <summary>
         /// Prompts user to select a directory on disk
@@ -260,6 +264,10 @@ namespace Rdmp.Core.CommandExecution
         bool SelectValueType(string prompt, Type paramType, object initialValue,out object chosen);
 
 
+        /// <inheritdoc cref="SelectValueType(string, Type, object, out object)"/>
+        bool SelectValueType(DialogArgs args, Type paramType, object initialValue, out object chosen);
+
+
         /// <summary>
         /// Offers the user a binary choice and returns true if they consciously select a value.  This method is blocking.
         /// </summary>
@@ -269,6 +277,9 @@ namespace Rdmp.Core.CommandExecution
         /// <returns>true if user successfully made a choice</returns>
         bool YesNo(string text, string caption, out bool chosen);
 
+        /// <inheritdoc cref="YesNo(string, string, out bool)"/>
+        bool YesNo(DialogArgs args, out bool chosen);
+
         /// <summary>
         /// Offers the user a binary choice returning the choice or false if user cancels (to distinguish between false and cancel
         /// use the overload).  This method is blocking.</summary>
@@ -276,6 +287,10 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="caption"></param>
         /// <returns>Users choice or false if user cancels</returns>
         bool YesNo(string text, string caption);
+
+        /// <inheritdoc cref="YesNo(string, string)"/>
+        bool YesNo(DialogArgs args);
+
 
         /// <summary>
         /// Offers the user a binary choice for whether they want to proceede on a dangerous/complex operation.  Returns true if 
@@ -285,6 +300,9 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="caption"></param>
         /// <returns></returns>
         bool Confirm(string text, string caption);
+
+        /// <inheritdoc cref="Confirm(string, string)"/>
+        bool Confirm(DialogArgs args);
 
         /// <summary>
         /// Display the given message to the user (e.g. in a MessageBox or out into the Console)
@@ -310,6 +328,9 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="requireSaneHeaderText"></param>
         /// <returns></returns>
         bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText);
+
+        /// <inheritdoc cref="TypeText(string, string, int, string, out string, bool)"/>
+        bool TypeText(DialogArgs args, int maxLength, string initialText, out string text, bool requireSaneHeaderText);
 
         /// <summary>
         /// Prompts the user to pick a database
@@ -353,6 +374,9 @@ namespace Rdmp.Core.CommandExecution
         /// <returns></returns>
         bool SelectEnum(string prompt, Type enumType, out Enum chosen);
 
+        /// <inheritdoc cref="SelectEnum(string, Type, out Enum)"/>
+        bool SelectEnum(DialogArgs args, Type enumType, out Enum chosen);
+
         /// <summary>
         /// Requests user select a <see cref="Type"/> (optional one that is assignable to <paramref name="baseTypeIfAny"/>).
         /// This will only offer concrete classes and not abstract classes or interfaces.  To allow picking those use the overload.
@@ -362,6 +386,9 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="chosen"></param>
         /// <returns></returns>
         bool SelectType(string prompt, Type baseTypeIfAny, out Type chosen);
+
+        /// <inheritdoc cref="SelectValueType(string, Type, object, out object)"/>
+        bool SelectType(DialogArgs args, Type baseTypeIfAny, out Type chosen);
 
 
         /// <summary>
@@ -375,6 +402,9 @@ namespace Rdmp.Core.CommandExecution
         /// <returns></returns>
         bool SelectType(string prompt, Type baseTypeIfAny, bool allowAbstract, bool allowInterfaces, out Type chosen);
 
+        /// <inheritdoc cref="SelectType(string, Type, bool, bool, out Type)"/>
+        bool SelectType(DialogArgs args, Type baseTypeIfAny, bool allowAbstract, bool allowInterfaces, out Type chosen);
+
         /// <summary>
         /// Requests user select one of the <paramref name="available"/> <see cref="Type"/>
         /// </summary>
@@ -383,6 +413,9 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="chosen">The users choice (unless the option is cancelled - see return value)</param>
         /// <returns>True if a choice was made or False if the choice was cancelled</returns>
         bool SelectType(string prompt, Type[] available, out Type chosen);
+
+        /// <inheritdoc cref="SelectType(string, Type[], out Type)"/>
+        bool SelectType(DialogArgs args, Type[] available, out Type chosen);
 
         #endregion
 
