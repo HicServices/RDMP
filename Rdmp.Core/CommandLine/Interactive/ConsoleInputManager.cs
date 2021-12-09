@@ -153,20 +153,21 @@ namespace Rdmp.Core.CommandLine.Interactive
             return value.DatabaseEntities.ToArray();
         }
 
-        public override IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
-            string initialSearchText = null, bool allowAutoSelect = false)
+        public override IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args, IMapsDirectlyToDatabaseTable[] availableObjects)
         {
             if (DisallowInput)
-                throw new InputDisallowedException($"Value required for '{prompt}'");
-
-            Console.WriteLine(prompt);
+                throw new InputDisallowedException($"Value required for '{args}'");
 
             if (availableObjects.Length == 0)
                 throw new Exception("No available objects found");
 
             //handle auto selection when there is one object
-            if (availableObjects.Length == 1 && allowAutoSelect)
+            if (availableObjects.Length == 1 && args.AllowAutoSelect)
                 return availableObjects[0];
+
+            Console.WriteLine(args.WindowTitle);
+
+            Console.Write(args.EntryLabel);
 
             var value = ReadLineWithAuto(new PickObjectBase[]
                 {new PickObjectByID(RepositoryLocator), new PickObjectByName(RepositoryLocator)},

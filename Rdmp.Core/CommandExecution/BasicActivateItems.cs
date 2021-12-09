@@ -482,9 +482,20 @@ namespace Rdmp.Core.CommandExecution
             IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null);
 
         /// <inheritdoc/>
-        public abstract IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
-            string initialSearchText = null, bool allowAutoSelect = false);
-        
+        public virtual IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
+            string initialSearchText = null, bool allowAutoSelect = false)
+        {
+            return SelectOne(new DialogArgs()
+            {
+                WindowTitle = prompt,
+                AllowAutoSelect = allowAutoSelect,
+                InitialSearchText = initialSearchText
+            }, availableObjects);
+        }
+
+        /// <inheritdoc/>
+        public abstract IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args, IMapsDirectlyToDatabaseTable[] availableObjects);
+
         /// <inheritdoc/>
         public abstract bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null, bool allowAutoSelect = false) where T : class;
 
@@ -609,11 +620,15 @@ namespace Rdmp.Core.CommandExecution
 
         public virtual void SelectAnythingThen(string prompt, Action<IMapsDirectlyToDatabaseTable> callback)
         {
-            var selected = SelectOne(prompt, CoreChildProvider.GetAllSearchables().Keys.ToArray());
+            SelectAnythingThen(new DialogArgs() { WindowTitle = prompt}, callback);
 
-            if(selected != null)
+        }
+        public virtual void SelectAnythingThen(DialogArgs args, Action<IMapsDirectlyToDatabaseTable> callback)
+        {
+            var selected = SelectOne(args, CoreChildProvider.GetAllSearchables().Keys.ToArray());
+
+            if (selected != null)
                 callback(selected);
-
         }
 
         public abstract void ShowData(IViewSQLAndResultsCollection collection);

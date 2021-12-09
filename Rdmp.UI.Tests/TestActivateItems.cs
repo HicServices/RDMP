@@ -264,8 +264,7 @@ namespace Rdmp.UI.Tests
             throw new NotImplementedException();
         }
 
-        public override IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
-            string initialSearchText = null, bool allowAutoSelect = false)
+        public override IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args, IMapsDirectlyToDatabaseTable[] availableObjects)
         {
             throw new NotImplementedException();
         }

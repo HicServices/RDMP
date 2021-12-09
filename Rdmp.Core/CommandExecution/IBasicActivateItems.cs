@@ -96,7 +96,14 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="prompt"></param>
         /// <param name="callback"></param>
         void SelectAnythingThen(string prompt, Action<IMapsDirectlyToDatabaseTable> callback);
-        
+
+        /// <summary>
+        /// Show all objects in RDMP (with search).  If a single selection is made then invoke the callback
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="callback"></param>
+        void SelectAnythingThen(DialogArgs args, Action<IMapsDirectlyToDatabaseTable> callback);
+
         /// <summary>
         /// Show some SQL and the data that it returns.  This should be non modal
         /// </summary>
@@ -187,6 +194,14 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="allowAutoSelect"></param>
         /// <returns></returns>
         IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null, bool allowAutoSelect = false);
+
+
+        /// <summary>
+        /// Prompts user to pick one of the <paramref name="availableObjects"/>
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="availableObjects">Objects that can be selected</param>
+        IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args, IMapsDirectlyToDatabaseTable[] availableObjects);
 
         /// <summary>
         /// Prompts user to pick one of <paramref name="available"/> objects

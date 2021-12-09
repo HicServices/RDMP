@@ -554,25 +554,24 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
 
         
-        public override IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
-            string initialSearchText = null, bool allowAutoSelect = false)
+        public override IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args, IMapsDirectlyToDatabaseTable[] availableObjects)
         {
             if (!availableObjects.Any())
             {
-                MessageBox.Show("There are no compatible objects in your RMDP for '"+ prompt +"''");
+                MessageBox.Show($"There are no compatible objects in your RMDP for:{Environment.NewLine}{args}");
                 return null;
             }
 
             //if there is only one object available to select
             if (availableObjects.Length == 1)
-                if(allowAutoSelect)
+                if(args.AllowAutoSelect)
                 {
                     return availableObjects[0];
                 }
 
             var selectDialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(this, availableObjects, false, false);
-            selectDialog.Text = prompt;
-            selectDialog.SetInitialFilter(initialSearchText);
+            selectDialog.Text = args.WindowTitle;
+            selectDialog.SetInitialFilter(args.InitialSearchText);
 
 
             if (selectDialog.ShowDialog() == DialogResult.OK)
