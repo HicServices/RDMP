@@ -774,9 +774,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return true;
         }
 
-        public override void SelectAnythingThen(string prompt, Action<IMapsDirectlyToDatabaseTable> callback)
+        public override void SelectAnythingThen(DialogArgs args, Action<IMapsDirectlyToDatabaseTable> callback)
         {
-            NavigateToObjectUI navigate = new NavigateToObjectUI(this) { Text = prompt };
+            NavigateToObjectUI navigate = new NavigateToObjectUI(this) { Text = args.WindowTitle };
             navigate.CompletionAction = callback;
             navigate.Show();
         }
