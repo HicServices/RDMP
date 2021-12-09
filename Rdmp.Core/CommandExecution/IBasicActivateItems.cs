@@ -89,21 +89,6 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         event EmphasiseItemHandler Emphasise;
 
-
-        /// <summary>
-        /// Show all objects in RDMP (with search).  If a single selection is made then invoke the callback
-        /// </summary>
-        /// <param name="prompt"></param>
-        /// <param name="callback"></param>
-        void SelectAnythingThen(string prompt, Action<IMapsDirectlyToDatabaseTable> callback);
-
-        /// <summary>
-        /// Show all objects in RDMP (with search).  If a single selection is made then invoke the callback
-        /// </summary>
-        /// <param name="args"></param>
-        /// <param name="callback"></param>
-        void SelectAnythingThen(DialogArgs args, Action<IMapsDirectlyToDatabaseTable> callback);
-
         /// <summary>
         /// Show some SQL and the data that it returns.  This should be non modal
         /// </summary>
@@ -155,6 +140,7 @@ namespace Rdmp.Core.CommandExecution
         /// <returns></returns>
         IPipelineRunner GetPipelineRunner(IPipelineUseCase useCase, IPipeline pipeline);
 
+        #region Select X Modal methods
         /// <summary>
         /// Prompts the user to enter a description for a cohort they are trying to create including whether it is intended to replace an old version of another cohort.
         /// </summary>
@@ -163,6 +149,20 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="cohortInitialDescription">Optional initial description for the cohort which may be changed by the user</param>
         /// <returns></returns>
         CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable, IProject project, string cohortInitialDescription);
+
+        /// <summary>
+        /// Show all objects in RDMP (with search).  If a single selection is made then invoke the callback
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <param name="callback"></param>
+        void SelectAnythingThen(string prompt, Action<IMapsDirectlyToDatabaseTable> callback);
+
+        /// <summary>
+        /// Show all objects in RDMP (with search).  If a single selection is made then invoke the callback
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="callback"></param>
+        void SelectAnythingThen(DialogArgs args, Action<IMapsDirectlyToDatabaseTable> callback);
 
         /// <summary>
         /// Prompts the user to pick from one of the <paramref name="availableObjects"/> one or more objects.  Returns null or empty if
@@ -175,16 +175,6 @@ namespace Rdmp.Core.CommandExecution
         /// <returns></returns>
         IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,IMapsDirectlyToDatabaseTable[] availableObjects,string initialSearchText = null);
         
-        /// <summary>
-        /// Prompts user or directly creates a new satelite database (e.g. logging / dqe etc) and returns a persistent reference to it
-        /// </summary>
-        /// <param name="catalogueRepository">The main catalogue database</param>
-        /// <param name="defaultToSet">If the created database is to become the new default database of it's type provide this</param>
-        /// <param name="db">The server in which the database should be created or null if the user is expected to pick themselves as part of the method e.g. through a UI</param>
-        /// <param name="patcher">The schema and patches to run to create the database</param>
-        /// <returns></returns>
-        ExternalDatabaseServer CreateNewPlatformDatabase(ICatalogueRepository catalogueRepository, PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db);
-         
         /// <summary>
         /// Prompts user to pick one of the <paramref name="availableObjects"/>
         /// </summary>
@@ -259,19 +249,6 @@ namespace Rdmp.Core.CommandExecution
         /// <returns></returns>
         FileInfo SelectFile(string prompt,string patternDescription, string pattern);
         
-        /// <summary>
-        /// Return all Types of the given {T} which should be <see cref="IMapsDirectlyToDatabaseTable"/>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        IEnumerable<T> GetAll<T>();
-
-        /// <summary>
-        ///  Return all Types of the given <paramref name="t"/> which should be <see cref="IMapsDirectlyToDatabaseTable"/>
-        /// </summary>
-        /// <param name="t"></param>
-        /// <returns></returns>
-        IEnumerable<IMapsDirectlyToDatabaseTable> GetAll(Type t);
 
         /// <summary>
         /// User must supply a basic value type e.g. string, double, int
@@ -283,12 +260,6 @@ namespace Rdmp.Core.CommandExecution
         /// <returns></returns>
         bool SelectValueType(string prompt, Type paramType, object initialValue,out object chosen);
 
-        /// <summary>
-        /// Delete the <paramref name="deleteable"/> ideally asking the user for confirmation first (if appropriate)
-        /// </summary>
-        /// <param name="deleteable"></param>
-        /// <returns></returns>
-        bool DeleteWithConfirmation(IDeleteable deleteable);
 
         /// <summary>
         /// Offers the user a binary choice and returns true if they consciously select a value.  This method is blocking.
@@ -315,17 +286,6 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="caption"></param>
         /// <returns></returns>
         bool Confirm(string text, string caption);
-
-        /// <summary>
-        /// Component for auditing errors that should be brought to the users attention subtly (e.g. if a plugin crashes while attempting to create menu items)
-        /// </summary>
-        ICheckNotifier GlobalErrorCheckNotifier { get; }
-        /// <summary>
-        /// Called when <see cref="BasicCommandExecution.Publish"/> is invoked.  Allows you to respond to publish events outside of UI code.  UI code
-        /// should invoke the RefreshBus system in Rdmp.UI
-        /// </summary>
-        /// <param name="databaseEntity"></param>
-        void Publish(IMapsDirectlyToDatabaseTable databaseEntity);
 
         /// <summary>
         /// Display the given message to the user (e.g. in a MessageBox or out into the Console)
@@ -385,19 +345,6 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="cts"></param>
         void Wait(string title, Task task, CancellationTokenSource cts);
 
-        
-        /// <summary>
-        /// Requests that the activator highlight or otherwise emphasise the supplied item.  Depending on who is subscribed to this event nothing may actually happen
-        /// </summary>
-        void RequestItemEmphasis(object sender, EmphasiseRequest emphasiseRequest);
-
-        /// <summary>
-        /// Returns the root object in the tree hierarchy or the inputted parameter (<paramref name="objectToEmphasise"/>)
-        /// </summary>
-        /// <param name="objectToEmphasise"></param>
-        /// <returns></returns>
-        object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise);
-
         /// <summary>
         /// Requests a selection of one of the values of the <see cref="Enum"/> <paramref name="enumType"/>
         /// </summary>
@@ -438,6 +385,8 @@ namespace Rdmp.Core.CommandExecution
         /// <returns>True if a choice was made or False if the choice was cancelled</returns>
         bool SelectType(string prompt, Type[] available, out Type chosen);
 
+        #endregion
+
         /// <summary>
         /// Launches an appropriate user interface for <paramref name="o"/> (or does nothing if
         /// environment is not interactive e.g. console)
@@ -462,5 +411,60 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="cic"></param>
         /// <returns>True if a wizard was shown even if no configuration was then created</returns>
         bool ShowCohortWizard(out CohortIdentificationConfiguration cic);
+
+
+        /// <summary>
+        /// Requests that the activator highlight or otherwise emphasise the supplied item.  Depending on who is subscribed to this event nothing may actually happen
+        /// </summary>
+        void RequestItemEmphasis(object sender, EmphasiseRequest emphasiseRequest);
+
+        /// <summary>
+        /// Returns the root object in the tree hierarchy or the inputted parameter (<paramref name="objectToEmphasise"/>)
+        /// </summary>
+        /// <param name="objectToEmphasise"></param>
+        /// <returns></returns>
+        object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise);
+
+
+        /// <summary>
+        /// Prompts user or directly creates a new satelite database (e.g. logging / dqe etc) and returns a persistent reference to it
+        /// </summary>
+        /// <param name="catalogueRepository">The main catalogue database</param>
+        /// <param name="defaultToSet">If the created database is to become the new default database of it's type provide this</param>
+        /// <param name="db">The server in which the database should be created or null if the user is expected to pick themselves as part of the method e.g. through a UI</param>
+        /// <param name="patcher">The schema and patches to run to create the database</param>
+        /// <returns></returns>
+        ExternalDatabaseServer CreateNewPlatformDatabase(ICatalogueRepository catalogueRepository, PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db);
+
+        /// <summary>
+        /// Return all Types of the given {T} which should be <see cref="IMapsDirectlyToDatabaseTable"/>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        IEnumerable<T> GetAll<T>();
+
+        /// <summary>
+        ///  Return all Types of the given <paramref name="t"/> which should be <see cref="IMapsDirectlyToDatabaseTable"/>
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        IEnumerable<IMapsDirectlyToDatabaseTable> GetAll(Type t);
+        /// <summary>
+        /// Delete the <paramref name="deleteable"/> ideally asking the user for confirmation first (if appropriate)
+        /// </summary>
+        /// <param name="deleteable"></param>
+        /// <returns></returns>
+        bool DeleteWithConfirmation(IDeleteable deleteable);
+
+        /// <summary>
+        /// Component for auditing errors that should be brought to the users attention subtly (e.g. if a plugin crashes while attempting to create menu items)
+        /// </summary>
+        ICheckNotifier GlobalErrorCheckNotifier { get; }
+        /// <summary>
+        /// Called when <see cref="BasicCommandExecution.Publish"/> is invoked.  Allows you to respond to publish events outside of UI code.  UI code
+        /// should invoke the RefreshBus system in Rdmp.UI
+        /// </summary>
+        /// <param name="databaseEntity"></param>
+        void Publish(IMapsDirectlyToDatabaseTable databaseEntity);
     }
 }
