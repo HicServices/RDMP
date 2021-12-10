@@ -6,7 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-...
+### Added
+
+### Fixed
+
+### Changed
+- Updated CatalogueItemUI (https://github.com/HicServices/RDMP/issues/820)
 
 ## [7.0.4] - 2021-12-08
 

@@ -69,6 +69,7 @@ namespace Rdmp.UI.MainFormUITabs
                 var f = new ScintillaTextEditorFactory();
                 _scintillaDescription = f.Create(null, null, null, true, false,activator.CurrentDirectory);
                 _scintillaDescription.Font = System.Drawing.SystemFonts.DefaultFont;
+                _scintillaDescription.WrapMode = WrapMode.Word;
                 panel1.Controls.Add(_scintillaDescription);
             }
 
