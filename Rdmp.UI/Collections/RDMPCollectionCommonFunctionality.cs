@@ -246,7 +246,6 @@ namespace Rdmp.UI.Collections
             
             Tree.FormatRow += Tree_FormatRow;
             Tree.KeyDown += Tree_KeyDown;
-            Tree.CellToolTipGetter += Tree_CellToolTipGetter;
 
             if(Settings.AllowSorting)
             {
@@ -277,6 +276,7 @@ namespace Rdmp.UI.Collections
 
         private void Tree_CellToolTipShowing(object sender, ToolTipShowingEventArgs e)
         {
+            
             var model = e.Model;
 
             if (model is IMasqueradeAs m)
@@ -284,6 +284,18 @@ namespace Rdmp.UI.Collections
 
             e.AutoPopDelay = 32767;
 
+            string problem = _activator.DescribeProblemIfAny(model);
+
+            if (!string.IsNullOrWhiteSpace(problem))
+            {
+                e.StandardIcon = ToolTipControl.StandardIcons.Error;
+                e.Title = model.ToString();
+
+                e.Text = problem;
+                e.IsBalloon = true;
+
+            }
+            else
             if (model is ICanBeSummarised sum)
             {
                 e.StandardIcon = ToolTipControl.StandardIcons.Info;
@@ -338,11 +350,6 @@ namespace Rdmp.UI.Collections
                 ctrl.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right;
 
             Tree.Parent.Controls.Add(ctrl);
-        }
-
-        private string Tree_CellToolTipGetter(OLVColumn column, object modelObject)
-        {
-            return  _activator.DescribeProblemIfAny(modelObject);
         }
 
         void Tree_FormatRow(object sender, FormatRowEventArgs e)
