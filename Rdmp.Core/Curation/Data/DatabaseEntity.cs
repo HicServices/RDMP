@@ -9,11 +9,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Repositories;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
 
 namespace Rdmp.Core.Curation.Data
@@ -29,7 +32,7 @@ namespace Rdmp.Core.Curation.Data
     /// <para>A DatabaseEntity must have the same name as a Table in in the IRepository and must only have public properties that match columns in that table.  This enforces
     /// a transparent mapping between code and database.  If you need to add other public properties you must decorate them with [NoMappingToDatabase]</para>
     /// </summary>
-    public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged
+    public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICanBeSummarised
     {
         /// <inheritdoc/>
         public int ID { get; set; }
@@ -268,6 +271,37 @@ namespace Rdmp.Core.Curation.Data
 
             if(save)
                 to.SaveToDatabase();
+        }
+
+        /// <inheritdoc/>
+        public virtual string GetSummary(bool includeName)
+        {
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var prop in GetType().GetProperties())
+            {
+                var val = prop.GetValue(this);
+
+                // don't show Name if we are being told not to
+                if (!includeName && prop.Name.EndsWith("Name"))
+                    continue;
+
+                // don't show foreign key ID properties
+                if (prop.Name.EndsWith("_ID"))
+                    continue;
+
+                // skip properties marked with 'do not extract'
+                if (prop.GetCustomAttributes(typeof(DoNotExtractProperty), true).Any())
+                    continue;
+
+                if (val is string || val is IFormattable)
+                {
+                    sb.AppendLine($"{prop.Name }:{val}");
+                }
+            }
+
+            return sb.ToString();
         }
     }
 }

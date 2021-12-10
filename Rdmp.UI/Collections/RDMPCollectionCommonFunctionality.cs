@@ -280,27 +280,15 @@ namespace Rdmp.UI.Collections
             if (model is IMasqueradeAs m)
                 model = m.MasqueradingAs();
 
-            e.StandardIcon = ToolTipControl.StandardIcons.Info;
-            e.Title = model.ToString();
-
-            StringBuilder sb = new StringBuilder();
-
-            foreach(var prop in model.GetType().GetProperties())
+            if(model is ICanBeSummarised sum)
             {
-                var val = prop.GetValue(model);
-                var representation = val?.ToString();
+                e.StandardIcon = ToolTipControl.StandardIcons.Info;
+                e.Title = model.ToString();
 
-                if (string.IsNullOrWhiteSpace(representation))
-                {
-                    continue;
-                }
-
-                sb.AppendLine($"{prop.Name }:{representation}");
+                e.Text = sum.GetSummary(false);
+                e.IsBalloon = true;
             }
-            e.Font = new Font("Tahoma", 14);
 
-            e.Text = sb.ToString();
-            e.IsBalloon = true;
         }
 
         private void Tree_KeyDown(object sender, KeyEventArgs e)
