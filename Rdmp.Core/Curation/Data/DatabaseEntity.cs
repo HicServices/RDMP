@@ -301,9 +301,9 @@ namespace Rdmp.Core.Curation.Data
                 if (prop.GetCustomAttributes(typeof(DoNotExtractProperty), true).Any())
                     continue;
 
-                if (val is string || val is IFormattable)
+                if (val is string || val is IFormattable || val is bool)
                 {
-                    var representation = $"{prop.Name }: {val}";
+                    var representation = $"{prop.Name }: { FormatForSummary(val)}";
 
                     if(representation.Length > MAX_SUMMARY_ITEM_LENGTH)
                     {
@@ -320,6 +320,21 @@ namespace Rdmp.Core.Curation.Data
             }
 
             return sb.ToString();
+        }
+
+        /// <summary>
+        /// Formats a given value for user readability in the results of <see cref="GetSummary(bool)"/>
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
+        protected string FormatForSummary(object val)
+        {
+            if(val is bool b)
+            {
+                return b ? "Yes" : "No";
+            }
+
+            return val.ToString();
         }
     }
 }

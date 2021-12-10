@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Text;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
@@ -267,6 +268,16 @@ namespace Rdmp.Core.Curation.Data
                 return null;
 
             return ColumnInfo.GetQuerySyntaxHelper();
+        }
+
+        public override string GetSummary(bool includeName)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine($"Transform: {FormatForSummary(IsProperTransform())}");
+            sb.AppendLine(base.GetSummary(includeName));
+
+            return sb.ToString();
         }
     }
 }

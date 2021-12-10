@@ -158,6 +158,8 @@ namespace Rdmp.UI.Collections
             Tree.FullRowSelect = true;
             Tree.HideSelection = false;
             Tree.KeyPress += Tree_KeyPress;
+
+            Tree.CellToolTip.InitialDelay = 1000;
             Tree.CellToolTipShowing += Tree_CellToolTipShowing;
 
             Tree.RevealAfterExpand = true;
@@ -280,7 +282,9 @@ namespace Rdmp.UI.Collections
             if (model is IMasqueradeAs m)
                 model = m.MasqueradingAs();
 
-            if(model is ICanBeSummarised sum)
+            e.AutoPopDelay = 32767;
+
+            if (model is ICanBeSummarised sum)
             {
                 e.StandardIcon = ToolTipControl.StandardIcons.Info;
                 e.Title = model.ToString();

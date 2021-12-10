@@ -449,8 +449,8 @@ namespace Rdmp.Core.Curation.Data
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine($"Extractable: {(ExtractionInformation == null ? "No" : "Yes")}");
-            sb.AppendLine($"Transform: {(ExtractionInformation?.IsProperTransform() ?? false ? "Yes" : "No")}");
+            sb.AppendLine($"Extractable: { FormatForSummary(ExtractionInformation != null)}");
+            sb.AppendLine($"Transform: {FormatForSummary(ExtractionInformation?.IsProperTransform() ?? false)}");
             sb.AppendLine($"Category: {ExtractionInformation?.ExtractionCategory ?? (object)"Not Extractable"}");
 
             sb.AppendLine(base.GetSummary(includeName));
