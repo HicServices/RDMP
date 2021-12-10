@@ -275,15 +275,27 @@ namespace Rdmp.UI.Collections
 
         private void Tree_CellToolTipShowing(object sender, ToolTipShowingEventArgs e)
         {
+            var model = e.Model;
+
+            if (model is IMasqueradeAs m)
+                model = m.MasqueradingAs();
 
             e.StandardIcon = ToolTipControl.StandardIcons.Info;
-            e.Title = e.Model.ToString();
+            e.Title = model.ToString();
 
             StringBuilder sb = new StringBuilder();
 
-            foreach(var prop in e.Model.GetType().GetProperties())
+            foreach(var prop in model.GetType().GetProperties())
             {
-                sb.AppendLine(prop.Name + prop.GetValue(e.Model));
+                var val = prop.GetValue(model);
+                var representation = val?.ToString();
+
+                if (string.IsNullOrWhiteSpace(representation))
+                {
+                    continue;
+                }
+
+                sb.AppendLine($"{prop.Name }:{representation}");
             }
             e.Font = new Font("Tahoma", 14);
 
