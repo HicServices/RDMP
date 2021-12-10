@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Updated CatalogueItemUI (https://github.com/HicServices/RDMP/issues/820)
 
+### Fixed
+
+- Fixed bug where configuring dataset didn't show all available tables when listing optional joinable tables (https://github.com/HicServices/RDMP/issues/804)
+
 ## [7.0.4] - 2021-12-08
 
 ### Added
