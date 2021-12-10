@@ -51,24 +51,15 @@ namespace Rdmp.UI.SimpleDialogs
             InitializeComponent();
 
             var header = args.WindowTitle;
-            var task = args.TaskDescription;
-            var entryLabel = args.EntryLabel;
+           
 
             if (header != null && header.Length > WideMessageBox.MAX_LENGTH_TITLE)
                 header = header.Substring(0, WideMessageBox.MAX_LENGTH_TITLE);
 
-            lblTaskDescription.Visible = !string.IsNullOrWhiteSpace(task);
-            lblTaskDescription.Text = task;
-
-            if (entryLabel != null && entryLabel.Length > WideMessageBox.MAX_LENGTH_BODY)
-                entryLabel = entryLabel.Substring(0, WideMessageBox.MAX_LENGTH_BODY);
+            taskDescriptionLabel1.SetupFor(args);
 
             this.Text = header;
-
-            // set prompt text. If theres a TaskDescription too then leave a bit of extra space
-            this.lblPrompt.Text = !string.IsNullOrWhiteSpace(task) ? Environment.NewLine + entryLabel : entryLabel;
             this.textBox1.MaxLength = maxCharacters;
-
 
             if (_multiline)
             {
@@ -89,8 +80,7 @@ namespace Rdmp.UI.SimpleDialogs
             else
             {
                 textBox1.Text = startingTextForInputBox;
-                var desiredWidth = entryLabel == null ? 0 : TextRenderer.MeasureText(entryLabel, lblPrompt.Font).Width;
-                Width = Math.Max(540, Math.Min(740, desiredWidth));
+                Width = Math.Max(540, Math.Min(740, taskDescriptionLabel1.PreferredWidth));
             }
 
             SetEnabledness();          
