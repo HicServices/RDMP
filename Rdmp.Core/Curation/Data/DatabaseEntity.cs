@@ -12,6 +12,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Revertable;
@@ -302,12 +303,17 @@ namespace Rdmp.Core.Curation.Data
 
                 if (val is string || val is IFormattable)
                 {
-                    var representation = $"{prop.Name }:{val}";
+                    var representation = $"{prop.Name }: {val}";
 
                     if(representation.Length > MAX_SUMMARY_ITEM_LENGTH)
                     {
                         representation = representation.Substring(0, MAX_SUMMARY_ITEM_LENGTH - 3) + "...";
                     }
+
+                    if(representation.Contains('\n'))
+                    {
+                        representation = Regex.Replace(representation, @"\r?\n", " ");
+                    }   
 
                     sb.AppendLine(representation);
                 }
