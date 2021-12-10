@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added diagnostic screen logging last executed command (https://github.com/HicServices/RDMP/issues/815)
+
 ### Fixed
 
 ### Changed
