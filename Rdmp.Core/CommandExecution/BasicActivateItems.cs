@@ -484,7 +484,8 @@ namespace Rdmp.Core.CommandExecution
             return SelectValueType(
                 new DialogArgs
                 {
-                    WindowTitle = prompt,
+                    WindowTitle = "Enter value for" + prompt,
+                    EntryLabel = prompt,
                 },paramType,initialValue,out chosen);
         }
 
