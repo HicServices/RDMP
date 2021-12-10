@@ -11,6 +11,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
@@ -157,6 +158,7 @@ namespace Rdmp.UI.Collections
             Tree.FullRowSelect = true;
             Tree.HideSelection = false;
             Tree.KeyPress += Tree_KeyPress;
+            Tree.CellToolTipShowing += Tree_CellToolTipShowing;
 
             Tree.RevealAfterExpand = true;
 
@@ -269,6 +271,24 @@ namespace Rdmp.UI.Collections
             else
                 foreach (OLVColumn c in Tree.AllColumns)
                     c.Sortable = false;
+        }
+
+        private void Tree_CellToolTipShowing(object sender, ToolTipShowingEventArgs e)
+        {
+
+            e.StandardIcon = ToolTipControl.StandardIcons.Info;
+            e.Title = e.Model.ToString();
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach(var prop in e.Model.GetType().GetProperties())
+            {
+                sb.AppendLine(prop.Name + prop.GetValue(e.Model));
+            }
+            e.Font = new Font("Tahoma", 14);
+
+            e.Text = sb.ToString();
+            e.IsBalloon = true;
         }
 
         private void Tree_KeyDown(object sender, KeyEventArgs e)
