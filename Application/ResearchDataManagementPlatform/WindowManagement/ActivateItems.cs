@@ -498,7 +498,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override bool TypeText(DialogArgs args, int maxLength, string initialText, out string text, bool requireSaneHeaderText)
         {
-            var textTyper = new TypeTextOrCancelDialog(args.WindowTitle, args.EntryLabel, maxLength, initialText, allowBlankText: false, multiLine: maxLength > 1000)
+            var textTyper = new TypeTextOrCancelDialog(args, maxLength, initialText, allowBlankText: false, multiLine: maxLength > 1000)
             {
                 RequireSaneHeaderText = requireSaneHeaderText
             };
@@ -657,8 +657,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         protected override bool SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue, out object chosen)
         {
             //whatever else it is use string
-            var typeTextDialog = new TypeTextOrCancelDialog(args.WindowTitle,args.EntryLabel + " (" + paramType.Name + ")",1000,
-                initialValue?.ToString());
+            var typeTextDialog = new TypeTextOrCancelDialog(args,1000,initialValue?.ToString());
 
             if (typeTextDialog.ShowDialog() == DialogResult.OK)
             {

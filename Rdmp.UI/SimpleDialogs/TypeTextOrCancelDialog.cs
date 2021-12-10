@@ -64,14 +64,16 @@ namespace Rdmp.UI.SimpleDialogs
                 entryLabel = entryLabel.Substring(0, WideMessageBox.MAX_LENGTH_BODY);
 
             this.Text = header;
-            this.lblPrompt.Text = entryLabel;
+
+            // set prompt text. If theres a TaskDescription too then leave a bit of extra space
+            this.lblPrompt.Text = !string.IsNullOrWhiteSpace(task) ? Environment.NewLine + entryLabel : entryLabel;
             this.textBox1.MaxLength = maxCharacters;
 
 
             if (_multiline)
             {
                 var editor = new ScintillaTextEditorFactory();
-                _scintilla = editor.Create(null,null,null,true,true);
+                _scintilla = editor.Create(null,null,null,true,false);
                 _scintilla.Dock = DockStyle.Fill;
                 _scintilla.TextChanged += _scintilla_TextChanged;
                 _scintilla.Text = startingTextForInputBox;
