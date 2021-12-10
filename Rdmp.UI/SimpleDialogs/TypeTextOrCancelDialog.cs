@@ -8,7 +8,9 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using FAnsi.Discovery;
+using Rdmp.Core.CommandExecution;
 using Rdmp.UI.ScintillaHelper;
+using ScintillaNET;
 
 namespace Rdmp.UI.SimpleDialogs
 {
@@ -20,35 +22,63 @@ namespace Rdmp.UI.SimpleDialogs
     {
         private readonly bool _allowBlankText;
         private readonly bool _multiline;
-        public string ResultText {get { return textBox1.Text.Trim(); }}
+        private Scintilla _scintilla;
+
+        public string ResultText {get { return (_multiline ? _scintilla.Text : textBox1.Text)?.Trim(); }}
 
         /// <summary>
         /// True to require that text typed be sane for usage as a column name, table name etc e.g. "bob" but not "bob::bbbbb".
         /// </summary>
-        public bool RequireSaneHeaderText{get;set;}
+        public bool RequireSaneHeaderText{get;set; }
 
-        public TypeTextOrCancelDialog(string header, string label, int maxCharacters, string startingTextForInputBox = null, bool allowBlankText = false, bool multiLine = false)
+        //"Column Name","Enter name for column (this should NOT include any qualifiers e.g. database name)", 300);
+
+        public TypeTextOrCancelDialog(string title, string prompt, int maxCharacters, string startingTextForInputBox = null, bool allowBlankText = false, bool multiLine = false)
+            : this(new DialogArgs
+            {
+                WindowTitle = title,
+                EntryLabel = prompt,
+            },maxCharacters,startingTextForInputBox,allowBlankText,multiLine)
+        {
+            
+        }
+
+        public TypeTextOrCancelDialog(DialogArgs args, int maxCharacters, string startingTextForInputBox = null, bool allowBlankText = false, bool multiLine = false)
         {
             _allowBlankText = allowBlankText;
             _multiline = multiLine;
 
             InitializeComponent();
-            
-            if(header.Length > WideMessageBox.MAX_LENGTH_TITLE)
+
+            var header = args.WindowTitle;
+            var task = args.TaskDescription;
+            var entryLabel = args.EntryLabel;
+
+            if (header != null && header.Length > WideMessageBox.MAX_LENGTH_TITLE)
                 header = header.Substring(0, WideMessageBox.MAX_LENGTH_TITLE);
 
-            if (label.Length > WideMessageBox.MAX_LENGTH_BODY)
-                label = label.Substring(0, WideMessageBox.MAX_LENGTH_BODY);
+            lblTaskDescription.Visible = !string.IsNullOrWhiteSpace(task);
+            lblTaskDescription.Text = task;
+
+            if (entryLabel != null && entryLabel.Length > WideMessageBox.MAX_LENGTH_BODY)
+                entryLabel = entryLabel.Substring(0, WideMessageBox.MAX_LENGTH_BODY);
 
             this.Text = header;
-            this.label1.Text = label;
+            this.lblPrompt.Text = entryLabel;
             this.textBox1.MaxLength = maxCharacters;
 
-            textBox1.Text = startingTextForInputBox;
 
             if (_multiline)
             {
-                lblNewLineInstructions.Visible = true;
+                var editor = new ScintillaTextEditorFactory();
+                _scintilla = editor.Create(null,null,null,true,true);
+                _scintilla.Dock = DockStyle.Fill;
+                _scintilla.TextChanged += _scintilla_TextChanged;
+                _scintilla.Text = startingTextForInputBox;
+
+                pTextEditor.Controls.Remove(textBox1);
+                pTextEditor.Controls.Add(_scintilla);
+
                 this.textBox1.Anchor = (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right);
                 this.textBox1.ScrollBars = ScrollBars.Vertical;
                 this.Height = 290;
@@ -56,11 +86,17 @@ namespace Rdmp.UI.SimpleDialogs
             }
             else
             {
-                var desiredWidth = TextRenderer.MeasureText(label, label1.Font).Width;
+                textBox1.Text = startingTextForInputBox;
+                var desiredWidth = entryLabel == null ? 0 : TextRenderer.MeasureText(entryLabel, lblPrompt.Font).Width;
                 Width = Math.Max(540, Math.Min(740, desiredWidth));
             }
 
             SetEnabledness();          
+        }
+
+        private void _scintilla_TextChanged(object sender, EventArgs e)
+        {
+            SetEnabledness();
         }
 
         private void btnOk_Click(object sender, EventArgs e)
@@ -118,7 +154,7 @@ namespace Rdmp.UI.SimpleDialogs
                 }
             }
 
-            btnOk.Enabled = (!string.IsNullOrWhiteSpace(textBox1.Text)) || _allowBlankText;
+            btnOk.Enabled = (!string.IsNullOrWhiteSpace(ResultText)) || _allowBlankText;
         }
     }
 }

@@ -43,7 +43,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if (!_explicitNewValuePassed)
             {
                 
-                if (TypeText("Rename " + _nameable.GetType().Name, "Name", 2000, _nameable.Name,out string text))
+                if (TypeText("Rename " + _nameable.GetType().Name, "Name", 500, _nameable.Name,out string text))
                 {
                     while(UsefulStuff.IsBadName(text))
                     {
