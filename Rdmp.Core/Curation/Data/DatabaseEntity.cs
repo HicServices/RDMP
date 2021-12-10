@@ -34,6 +34,11 @@ namespace Rdmp.Core.Curation.Data
     /// </summary>
     public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICanBeSummarised
     {
+        /// <summary>
+        /// The maximum length for any given line in return value of <see cref="GetSummary"/>
+        /// </summary>
+        public const int MAX_SUMMARY_ITEM_LENGTH = 100;
+
         /// <inheritdoc/>
         public int ID { get; set; }
 
@@ -297,7 +302,14 @@ namespace Rdmp.Core.Curation.Data
 
                 if (val is string || val is IFormattable)
                 {
-                    sb.AppendLine($"{prop.Name }:{val}");
+                    var representation = $"{prop.Name }:{val}";
+
+                    if(representation.Length > MAX_SUMMARY_ITEM_LENGTH)
+                    {
+                        representation = representation.Substring(0, MAX_SUMMARY_ITEM_LENGTH - 3) + "...";
+                    }
+
+                    sb.AppendLine(representation);
                 }
             }
 
