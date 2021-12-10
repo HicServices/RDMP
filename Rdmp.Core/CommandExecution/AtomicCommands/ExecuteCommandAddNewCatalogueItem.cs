@@ -51,14 +51,20 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             //if we have not got an explicit one to import let the user pick one
             if (_columnInfos.Length == 0)
             {
-                Show("Select which column the new CatalogueItem will describe/extract", "Choose underlying Column");
-
-                ColumnInfo columnInfo;
                 string text;
 
                 //get them to pick a column info
-                SelectOne(BasicActivator.CoreChildProvider.AllColumnInfos,out columnInfo);
-                                               
+                var columnInfo = (ColumnInfo)BasicActivator.SelectOne(new DialogArgs
+                {
+                    TaskDescription = "Select which column the new CatalogueItem will describe/extract",
+                    WindowTitle = "Choose underlying Column"
+                },BasicActivator.CoreChildProvider.AllColumnInfos);
+
+                if (columnInfo == null)
+                {
+                    return;
+                }   
+                
                 //get them to type a name for it (based on the ColumnInfo if picked)
                 if(TypeText("Name", "Type a name for the new CatalogueItem", 500,columnInfo?.GetRuntimeName(),out text))
                 {

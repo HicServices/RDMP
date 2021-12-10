@@ -209,9 +209,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override bool SelectEnum(DialogArgs args, Type enumType, out Enum chosen)
         {
-            var selector = new SelectDialog<Enum>(this,Enum.GetValues(enumType).Cast<Enum>().ToArray(), false,false);
-            selector.Text = args.WindowTitle;
-
+            var selector = new SelectDialog<Enum>(args,this,Enum.GetValues(enumType).Cast<Enum>().ToArray(), false,false);
+            
             if (selector.ShowDialog() == DialogResult.OK)
             {
                 chosen = selector.Selected;
@@ -224,8 +223,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override bool SelectType(DialogArgs args, Type[] available,out Type chosen)
         {
-            var dlg =  new SelectDialog<Type>(this,available, false,false);
-            dlg.Text = args.WindowTitle;
+            var dlg =  new SelectDialog<Type>(args,this,available, false,false);
 
             if (dlg.ShowDialog() == DialogResult.OK)
             {
@@ -569,10 +567,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                     return availableObjects[0];
                 }
 
-            var selectDialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(this, availableObjects, false, false);
-            selectDialog.Text = args.WindowTitle;
-            selectDialog.SetInitialFilter(args.InitialSearchText);
-
+            var selectDialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(args,this, availableObjects, false, false);
 
             if (selectDialog.ShowDialog() == DialogResult.OK)
                 return selectDialog.Selected;
@@ -582,8 +577,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override bool SelectObject<T>(DialogArgs args, T[] available, out T selected)
         {
-            var pick = new SelectDialog<T>(this,available,false,false);
-            pick.Text = args.WindowTitle;
+            var pick = new SelectDialog<T>(args,this,available,false,false);
 
             if (pick.ShowDialog() == DialogResult.OK)
             {
@@ -597,8 +591,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected)
         {
-            var pick = new SelectDialog<T>(this, available, false, false);
-            pick.Text = args.WindowTitle;
+            var pick = new SelectDialog<T>(args,this, available, false, false);
             pick.AllowMultiSelect = true;
 
             if (pick.ShowDialog() == DialogResult.OK)
@@ -678,9 +671,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 return null;
             }
 
-            var selectDialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(this, availableObjects, false, false);
-            selectDialog.Text = args.WindowTitle;
-            selectDialog.SetInitialFilter(args.InitialSearchText);
+            var selectDialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(args, this, availableObjects, false, false);
             selectDialog.AllowMultiSelect = true;
             
             if (selectDialog.ShowDialog() == DialogResult.OK)

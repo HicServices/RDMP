@@ -26,13 +26,16 @@ namespace Rdmp.UI.SimpleDialogs
             lblTaskDescription.Visible = !string.IsNullOrWhiteSpace(task);
             lblTaskDescription.Text = task;
 
+            lblEntryLabel.Visible = !string.IsNullOrWhiteSpace(entryLabel);
+
             if (entryLabel != null && entryLabel.Length > WideMessageBox.MAX_LENGTH_BODY)
                 entryLabel = entryLabel.Substring(0, WideMessageBox.MAX_LENGTH_BODY);
 
             // set prompt text. If theres a TaskDescription too then leave a bit of extra space
             this.lblEntryLabel.Text = !string.IsNullOrWhiteSpace(task) ? Environment.NewLine + entryLabel : entryLabel;
 
-            this.Height = lblEntryLabel.Height + (!string.IsNullOrWhiteSpace(task) ? lblTaskDescription.Height : 0);
+            this.Height = (!string.IsNullOrWhiteSpace(entryLabel) ? lblEntryLabel.Height : 0) + 
+                          (!string.IsNullOrWhiteSpace(task) ? lblTaskDescription.Height : 0);
         }
 
         /// <summary>

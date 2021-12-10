@@ -41,11 +41,23 @@ namespace Rdmp.UI.SimpleDialogs
 
         private bool _useCatalogueFilter = false;
 
+
+        public SelectDialog(DialogArgs args, IBasicActivateItems activator, IEnumerable<T> toSelectFrom, bool allowSelectingNULL, bool allowDeleting) :
+            this(activator, toSelectFrom, allowSelectingNULL, allowDeleting)
+        {
+            taskDescriptionLabel1.Visible = true;
+            taskDescriptionLabel1.SetupFor(args);
+
+            Text = args.WindowTitle;
+            SetInitialFilter(args.InitialSearchText);
+        }
         public SelectDialog(IBasicActivateItems activator,IEnumerable<T> toSelectFrom, bool allowSelectingNULL,bool allowDeleting)
         {
             _activator = activator;
             _allowDeleting = allowDeleting;
             InitializeComponent();
+
+            taskDescriptionLabel1.Visible = false;
 
             //start at cancel so if they hit the X nothing is selected
             DialogResult = DialogResult.Cancel;
