@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -285,44 +286,55 @@ namespace Rdmp.Core.Curation.Data
 
             StringBuilder sb = new StringBuilder();
 
-            foreach (var prop in GetType().GetProperties())
+            foreach (var prop in GetType().GetProperties().Where(p=>p.Name.Contains("Description")))
             {
-                var val = prop.GetValue(this);
+                AppendPropertyToSummary(sb, prop, includeName, includeID);
+            }
 
-                // don't show Name if we are being told not to
-                if (!includeName && prop.Name.EndsWith("Name"))
-                    continue;
-
-                if (!includeID && prop.Name.Equals("ID"))
-                    continue;
-
-                // don't show foreign key ID properties
-                if (prop.Name.EndsWith("_ID"))
-                    continue;
-
-                // skip properties marked with 'do not extract'
-                if (prop.GetCustomAttributes(typeof(DoNotExtractProperty), true).Any())
-                    continue;
-
-                if (val is string || val is IFormattable || val is bool)
-                {
-                    var representation = $"{prop.Name }: { FormatForSummary(val)}";
-
-                    if(representation.Length > MAX_SUMMARY_ITEM_LENGTH)
-                    {
-                        representation = representation.Substring(0, MAX_SUMMARY_ITEM_LENGTH - 3) + "...";
-                    }
-
-                    if(representation.Contains('\n'))
-                    {
-                        representation = Regex.Replace(representation, @"\r?\n", " ");
-                    }   
-
-                    sb.AppendLine(representation);
-                }
+            foreach (var prop in GetType().GetProperties().Where(p => !p.Name.Contains("Description")))
+            {
+                AppendPropertyToSummary(sb, prop, includeName, includeID);
             }
 
             return sb.ToString();
+        }
+
+        protected void AppendPropertyToSummary(StringBuilder sb, PropertyInfo prop, bool includeName, bool includeID)
+        {
+
+            var val = prop.GetValue(this);
+
+            // don't show Name if we are being told not to
+            if (!includeName && prop.Name.EndsWith("Name"))
+                return;
+
+            if (!includeID && prop.Name.Equals("ID"))
+                return;
+
+            // don't show foreign key ID properties
+            if (prop.Name.EndsWith("_ID"))
+                return;
+
+            // skip properties marked with 'do not extract'
+            if (prop.GetCustomAttributes(typeof(DoNotExtractProperty), true).Any())
+                return;
+
+            if (val is string || val is IFormattable || val is bool)
+            {
+                var representation = $"{prop.Name }: { FormatForSummary(val)}";
+
+                if (representation.Length > MAX_SUMMARY_ITEM_LENGTH)
+                {
+                    representation = representation.Substring(0, MAX_SUMMARY_ITEM_LENGTH - 3) + "...";
+                }
+
+                if (representation.Contains('\n'))
+                {
+                    representation = Regex.Replace(representation, @"\r?\n", " ");
+                }
+
+                sb.AppendLine(representation);
+            }
         }
 
         /// <summary>
