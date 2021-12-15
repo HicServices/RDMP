@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+﻿// Copyright (c) The University of Dundee 2018-2019
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using FAnsi;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Revertable;
@@ -40,6 +41,8 @@ namespace Rdmp.Core.Curation.Data
         /// The maximum length for any given line in return value of <see cref="GetSummary"/>
         /// </summary>
         public const int MAX_SUMMARY_ITEM_LENGTH = 100;
+
+        protected const string SUMMARY_LINE_DIVIDER = "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯";
 
         /// <inheritdoc/>
         public int ID { get; set; }
@@ -284,22 +287,26 @@ namespace Rdmp.Core.Curation.Data
         public virtual string GetSummary(bool includeName, bool includeID)
         {
 
-            StringBuilder sb = new StringBuilder();
-
+            StringBuilder sbPart1 = new StringBuilder();
             foreach (var prop in GetType().GetProperties().Where(p=>p.Name.Contains("Description")))
             {
-                AppendPropertyToSummary(sb, prop, includeName, includeID);
+                AppendPropertyToSummary(sbPart1, prop, includeName, includeID, false);
             }
 
+            StringBuilder sbPart2 = new StringBuilder();
             foreach (var prop in GetType().GetProperties().Where(p => !p.Name.Contains("Description")))
             {
-                AppendPropertyToSummary(sb, prop, includeName, includeID);
+                AppendPropertyToSummary(sbPart2, prop, includeName, includeID);
             }
 
-            return sb.ToString();
+            if (sbPart1.Length > 0 && sbPart2.Length > 0)
+                sbPart1.AppendLine(SUMMARY_LINE_DIVIDER);
+            sbPart1.Append(sbPart2);
+
+            return sbPart1.ToString();
         }
 
-        protected void AppendPropertyToSummary(StringBuilder sb, PropertyInfo prop, bool includeName, bool includeID)
+        protected void AppendPropertyToSummary(StringBuilder sb, PropertyInfo prop, bool includeName, bool includeID, bool includePropertyName = true)
         {
 
             var val = prop.GetValue(this);
@@ -309,6 +316,9 @@ namespace Rdmp.Core.Curation.Data
                 return;
 
             if (!includeID && prop.Name.Equals("ID"))
+                return;
+
+            if (prop.Name.Contains("Password"))
                 return;
 
             // don't show foreign key ID properties
@@ -321,7 +331,11 @@ namespace Rdmp.Core.Curation.Data
 
             if (val is string || val is IFormattable || val is bool)
             {
-                var representation = $"{prop.Name }: { FormatForSummary(val)}";
+                // skip properties values that are "unknown"
+                if (val is Enum e && Convert.ToInt32(e) == 0 && !(val is DatabaseType))
+                    return;
+
+                var representation = $"{(includePropertyName?UsefulStuff.PascalCaseStringToHumanReadable(prop.Name) + ": " : "")}{ FormatForSummary(val)}";
 
                 if (representation.Length > MAX_SUMMARY_ITEM_LENGTH)
                 {
