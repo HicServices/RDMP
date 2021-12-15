@@ -363,7 +363,7 @@ namespace Rdmp.Core.Curation.Data
                 return b ? "Yes" : "No";
             }
 
-            return val.ToString();
+            return val.ToString()?.Trim();
         }
     }
 }

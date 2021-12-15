@@ -274,7 +274,7 @@ namespace Rdmp.Core.Curation.Data
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine($"Transform: {FormatForSummary(IsProperTransform())}");
+            sb.AppendLine($"Transforms Data: {FormatForSummary(IsProperTransform())}");
             sb.AppendLine(base.GetSummary(includeName, includeID));
 
             return sb.ToString();

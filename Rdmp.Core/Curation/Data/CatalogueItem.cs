@@ -457,7 +457,7 @@ namespace Rdmp.Core.Curation.Data
             sb.AppendLine(SUMMARY_LINE_DIVIDER);
 
             sb.AppendLine($"Extractable: { FormatForSummary(ExtractionInformation != null)}");
-            sb.AppendLine($"Transform: {FormatForSummary(ExtractionInformation?.IsProperTransform() ?? false)}");
+            sb.AppendLine($"Transforms Data: {FormatForSummary(ExtractionInformation?.IsProperTransform() ?? false)}");
             sb.AppendLine($"Category: {ExtractionInformation?.ExtractionCategory ?? (object)"Not Extractable"}");
 
             foreach (var prop in GetType().GetProperties().Where(p => !p.Name.Contains("Description")))
