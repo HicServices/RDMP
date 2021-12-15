@@ -24,8 +24,6 @@ namespace Rdmp.UI.AutoComplete
 
         private char Separator = ';';
 
-        public char[] ExtraWordChars = new[] { '.','[', ']','_' };
-
         public void RegisterForEvents(Scintilla queryEditor)
         {
             queryEditor.KeyDown += (s, e) =>
