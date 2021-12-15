@@ -277,9 +277,25 @@ namespace Rdmp.Core.CommandExecution
         /// <returns></returns>
         protected T SelectOne<T>(IList<T> availableObjects, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
         {
-            return SelectOne(availableObjects, out T selected, initialSearchText,allowAutoSelect) ? selected : null;
+            return SelectOne(new DialogArgs { 
+                InitialSearchText = initialSearchText,
+                AllowAutoSelect = allowAutoSelect,
+            },availableObjects, out T selected) ? selected : null;
+
         }
-        
+
+        /// <summary>
+        /// Prompts user to select 1 of the objects of type T in the list you provide
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="args"></param>
+        /// <param name="availableObjects"></param>
+        /// <returns></returns>
+        protected T SelectOne<T>(DialogArgs args, IList<T> availableObjects) where T : DatabaseEntity
+        {
+            return SelectOne(args, availableObjects, out T selected) ? selected : null;
+        }
+
         /// <summary>
         /// Prompts user to select 1 object of type T from all the ones stored in the repository provided
         /// </summary>
@@ -290,7 +306,10 @@ namespace Rdmp.Core.CommandExecution
         /// <returns></returns>
         protected T SelectOne<T>(IRepository repository, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
         {
-            return SelectOne(repository.GetAllObjects<T>().ToList(),out T answer,initialSearchText,allowAutoSelect) ? answer: null;
+            return SelectOne(new DialogArgs { 
+                    InitialSearchText = initialSearchText,
+                    AllowAutoSelect = allowAutoSelect,
+            },repository.GetAllObjects<T>().ToList(),out T answer) ? answer: null;
         }
 
         /// <summary>
@@ -304,7 +323,11 @@ namespace Rdmp.Core.CommandExecution
         /// <returns></returns>
         protected bool SelectOne<T>(IRepository repository, out T selected, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
         {
-            return SelectOne(repository.GetAllObjects<T>().ToList(),out selected,initialSearchText,allowAutoSelect);
+            return SelectOne(new DialogArgs
+            {
+                InitialSearchText = initialSearchText,
+                AllowAutoSelect = allowAutoSelect
+            }, repository.GetAllObjects<T>().ToList(),out selected);
         }
 
         /// <summary>
@@ -318,7 +341,24 @@ namespace Rdmp.Core.CommandExecution
         /// <returns></returns>
         protected bool SelectOne<T>(IList<T> availableObjects, out T selected, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
         {
-            selected = (T)BasicActivator.SelectOne("Select One",availableObjects.ToArray(), initialSearchText, allowAutoSelect);
+            return SelectOne(new DialogArgs
+            {
+                InitialSearchText = initialSearchText,
+                AllowAutoSelect = allowAutoSelect,
+            },availableObjects,out selected);
+        }
+
+        /// <summary>
+        /// Prompts user to select 1 of the objects of type T in the list you provide, returns true if they made a non null selection
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="args"></param>
+        /// <param name="availableObjects"></param>
+        /// <param name="selected"></param>
+        /// <returns></returns>
+        protected bool SelectOne<T>(DialogArgs args, IList<T> availableObjects, out T selected) where T : DatabaseEntity
+        {
+            selected = (T)BasicActivator.SelectOne(args,availableObjects.ToArray());
             return selected != null;
         }
         
