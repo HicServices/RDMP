@@ -1333,7 +1333,7 @@ namespace Rdmp.Core.Curation.Data
             sb.Append(base.GetSummary(includeName, includeID));
 
             if(extractionPrimaryKeys.Any())
-                sb.AppendLine("Extraction Primary Key(s): " + string.Join(',', extractionPrimaryKeys.Select(c=>c.ToString())));
+                sb.AppendLine("Extraction Primary Key(s): " + string.Join(", ", extractionPrimaryKeys.Select(c=>c.ToString())));
 
             return sb.ToString();
 
