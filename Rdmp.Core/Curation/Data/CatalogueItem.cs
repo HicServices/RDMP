@@ -445,7 +445,7 @@ namespace Rdmp.Core.Curation.Data
             return clone;
         }
 
-        public override string GetSummary(bool includeName)
+        public override string GetSummary(bool includeName, bool includeID)
         {
             StringBuilder sb = new StringBuilder();
 
@@ -453,7 +453,7 @@ namespace Rdmp.Core.Curation.Data
             sb.AppendLine($"Transform: {FormatForSummary(ExtractionInformation?.IsProperTransform() ?? false)}");
             sb.AppendLine($"Category: {ExtractionInformation?.ExtractionCategory ?? (object)"Not Extractable"}");
 
-            sb.AppendLine(base.GetSummary(includeName));
+            sb.AppendLine(base.GetSummary(includeName,includeID));
 
             return sb.ToString();
         }

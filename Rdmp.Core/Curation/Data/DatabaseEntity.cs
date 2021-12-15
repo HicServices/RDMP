@@ -280,7 +280,7 @@ namespace Rdmp.Core.Curation.Data
         }
 
         /// <inheritdoc/>
-        public virtual string GetSummary(bool includeName)
+        public virtual string GetSummary(bool includeName, bool includeID)
         {
 
             StringBuilder sb = new StringBuilder();
@@ -291,6 +291,9 @@ namespace Rdmp.Core.Curation.Data
 
                 // don't show Name if we are being told not to
                 if (!includeName && prop.Name.EndsWith("Name"))
+                    continue;
+
+                if (!includeID && prop.Name.Equals("ID"))
                     continue;
 
                 // don't show foreign key ID properties
@@ -323,7 +326,7 @@ namespace Rdmp.Core.Curation.Data
         }
 
         /// <summary>
-        /// Formats a given value for user readability in the results of <see cref="GetSummary(bool)"/>
+        /// Formats a given value for user readability in the results of <see cref="GetSummary(bool,bool)"/>
         /// </summary>
         /// <param name="val"></param>
         /// <returns></returns>

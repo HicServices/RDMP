@@ -18,7 +18,8 @@ namespace MapsDirectlyToDatabaseTable
         /// <param name="includeName">true to include the name or title of the object.  False to 
         /// skip that out when sumarising (e.g. if you are inserting into a body of text which
         /// already has a distinguishing title)</param>
+        /// <param name="includeId"></param>
         /// <returns></returns>
-        public string GetSummary(bool includeName);
+        public string GetSummary(bool includeName, bool includeId);
     }
 }

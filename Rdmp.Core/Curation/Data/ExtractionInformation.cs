@@ -270,12 +270,12 @@ namespace Rdmp.Core.Curation.Data
             return ColumnInfo.GetQuerySyntaxHelper();
         }
 
-        public override string GetSummary(bool includeName)
+        public override string GetSummary(bool includeName, bool includeID)
         {
             StringBuilder sb = new StringBuilder();
 
             sb.AppendLine($"Transform: {FormatForSummary(IsProperTransform())}");
-            sb.AppendLine(base.GetSummary(includeName));
+            sb.AppendLine(base.GetSummary(includeName, includeID));
 
             return sb.ToString();
         }

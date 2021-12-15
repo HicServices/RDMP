@@ -284,6 +284,8 @@ namespace Rdmp.UI.Collections
 
             e.AutoPopDelay = 32767;
 
+            
+
             string problem = _activator.DescribeProblemIfAny(model);
 
             if (!string.IsNullOrWhiteSpace(problem))
@@ -299,9 +301,17 @@ namespace Rdmp.UI.Collections
             if (model is ICanBeSummarised sum)
             {
                 e.StandardIcon = ToolTipControl.StandardIcons.Info;
-                e.Title = model.ToString();
+                
+                if(model is IMapsDirectlyToDatabaseTable d)
+                {
+                    e.Title = $"{model} (ID={d.ID})";
+                }
+                else
+                {
+                    e.Title = model.ToString();
+                }
 
-                e.Text = sum.GetSummary(false);
+                e.Text = sum.GetSummary(false,false);
                 e.IsBalloon = true;
             }
 
