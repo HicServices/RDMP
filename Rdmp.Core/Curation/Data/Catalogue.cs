@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
 using System.Linq;
+using System.Text;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
@@ -1322,6 +1323,20 @@ namespace Rdmp.Core.Curation.Data
                 .CreateAll().FirstOrDefault(p => p.ShouldRun(this));
 
             return true;
+        }
+
+        public override string GetSummary(bool includeName, bool includeID)
+        {
+            var extractionPrimaryKeys = CatalogueItems.Where(c => c.ExtractionInformation?.IsPrimaryKey ?? false).ToArray();
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append(base.GetSummary(includeName, includeID));
+
+            if(extractionPrimaryKeys.Any())
+                sb.AppendLine("Extraction Primary Key(s): " + string.Join(',', extractionPrimaryKeys.Select(c=>c.ToString())));
+
+            return sb.ToString();
+
         }
     }
 }
