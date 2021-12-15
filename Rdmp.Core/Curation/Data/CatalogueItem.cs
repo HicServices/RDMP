@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
@@ -442,6 +443,29 @@ namespace Rdmp.Core.Curation.Data
             var clone = new CatalogueItem(CatalogueRepository, into, Name);
             CopyShallowValuesTo(clone);
             return clone;
+        }
+
+        public override string GetSummary(bool includeName, bool includeID)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var prop in GetType().GetProperties().Where(p => p.Name.Contains("Description")))
+            {
+                AppendPropertyToSummary(sb, prop, includeName, includeID, false);
+            }
+
+            sb.AppendLine(SUMMARY_LINE_DIVIDER);
+
+            sb.AppendLine($"Extractable: { FormatForSummary(ExtractionInformation != null)}");
+            sb.AppendLine($"Transforms Data: {FormatForSummary(ExtractionInformation?.IsProperTransform() ?? false)}");
+            sb.AppendLine($"Category: {ExtractionInformation?.ExtractionCategory ?? (object)"Not Extractable"}");
+
+            foreach (var prop in GetType().GetProperties().Where(p => !p.Name.Contains("Description")))
+            {
+                AppendPropertyToSummary(sb, prop, includeName, includeID);
+            }
+
+            return sb.ToString();
         }
     }
 }
