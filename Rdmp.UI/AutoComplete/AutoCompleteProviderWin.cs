@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using FAnsi.Discovery.QuerySyntax;
@@ -37,12 +36,17 @@ namespace Rdmp.UI.AutoComplete
                     ShowAutocomplete(queryEditor, true);
                 }
             };
-
+            
             queryEditor.AutoCSeparator = Separator;
             queryEditor.CharAdded += scintilla_CharAdded;
             queryEditor.AutoCIgnoreCase = true;
             queryEditor.AutoCOrder = Order.Custom;
             queryEditor.AutoCAutoHide = false;
+
+            for (int i = 0; i < Images.Length; i++)
+            {
+                queryEditor.RegisterRgbaImage(i, Images[i]);
+            }
         }
 
         private void scintilla_CharAdded(object sender, CharAddedEventArgs e)
@@ -66,7 +70,17 @@ namespace Rdmp.UI.AutoComplete
                 .OrderBy(a => a);
 
             // Display the autocompletion list
-            scintilla.AutoCShow(word.Length, string.Join(Separator, list));
+            scintilla.AutoCShow(word.Length, string.Join(Separator, list.Select(FormatForAutocomplete)));
+        }
+
+        private string FormatForAutocomplete(string word)
+        {
+            if(ItemsWithImages.ContainsKey(word))
+            {
+                return $"{word}?{ItemsWithImages[word]}";
+            }
+
+            return word;
         }
     }
 }

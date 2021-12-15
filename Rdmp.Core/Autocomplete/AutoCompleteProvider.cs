@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
@@ -14,6 +15,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.Core.Autocomplete
@@ -25,11 +27,28 @@ namespace Rdmp.Core.Autocomplete
     {
         public HashSet<string> Items { get; set; }  = new ();
 
+        /// <summary>
+        /// Array of images that items can be depicted with.  Use <see cref="ItemsWithImages"/> to index into
+        /// this array to get the image out
+        /// </summary>
+        public Bitmap[] Images;
+        public Dictionary<string,int> ItemsWithImages { get; set; } = new Dictionary<string, int> ();
+
+        private const int TABLE_INFO_IDX = 0;
+        private const int COLUMN_INFO_IDX = 1;
+        private const int SQL_IDX = 2;
+        private const int PARAMETER_IDX = 3;
+
         public AutoCompleteProvider()
         {
+            Images = new Bitmap[4];
 
+            Images[TABLE_INFO_IDX] = CatalogueIcons.TableInfo;
+            Images[COLUMN_INFO_IDX] = CatalogueIcons.ColumnInfo;
+            Images[SQL_IDX] = CatalogueIcons.SQL;
+            Images[PARAMETER_IDX] = CatalogueIcons.ParametersNode;
         }
-        public AutoCompleteProvider(IQuerySyntaxHelper helper)
+        public AutoCompleteProvider(IQuerySyntaxHelper helper) :this()
         {
             if(helper != null)
             {
@@ -65,18 +84,21 @@ namespace Rdmp.Core.Autocomplete
             var fullySpecified = syntaxHelper.EnsureFullyQualified(dbName, tableInfo.Schema, table, col);
 
             AddUnlessDuplicate(fullySpecified);
+            AddUnlessDuplicateImage(fullySpecified, COLUMN_INFO_IDX);
         }
 
         public void Add(ColumnInfo columnInfo)
         {
             AddUnlessDuplicate(columnInfo.GetFullyQualifiedName());
+            AddUnlessDuplicateImage(columnInfo.GetFullyQualifiedName(), COLUMN_INFO_IDX);
         }
 
         private void Add(PreLoadDiscardedColumn discardedColumn, ITableInfo tableInfo, string rawDbName)
         {
             var colName = discardedColumn.GetRuntimeName();
-
-            AddUnlessDuplicate(tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(rawDbName, null, tableInfo.GetRuntimeName(), colName));
+            var representation = tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(rawDbName, null, tableInfo.GetRuntimeName(), colName);
+            AddUnlessDuplicate(representation);
+            AddUnlessDuplicateImage(representation, COLUMN_INFO_IDX);
         }
 
         public void Add(IColumn column)
@@ -92,6 +114,7 @@ namespace Rdmp.Core.Autocomplete
             }
 
             AddUnlessDuplicate(column.SelectSQL);
+            AddUnlessDuplicateImage(column.SelectSQL, COLUMN_INFO_IDX);
         }
 
         private void AddUnlessDuplicate(string text)
@@ -99,6 +122,11 @@ namespace Rdmp.Core.Autocomplete
             Items.Add(text);
         }
 
+        private void AddUnlessDuplicateImage(string fullySpecified, int idx)
+        {
+            if(!ItemsWithImages.ContainsKey(fullySpecified))
+                ItemsWithImages.Add(fullySpecified, idx);
+        }
         public void AddSQLKeywords(IQuerySyntaxHelper syntaxHelper)
         {
             if (syntaxHelper == null)
@@ -107,12 +135,14 @@ namespace Rdmp.Core.Autocomplete
             foreach (KeyValuePair<string, string> kvp in syntaxHelper.GetSQLFunctionsDictionary())
             {
                 AddUnlessDuplicate(kvp.Value);
+                AddUnlessDuplicateImage(kvp.Value, SQL_IDX);
             }
         }
 
         public void Add(ISqlParameter parameter)
         {
             AddUnlessDuplicate(parameter.ParameterName);
+            AddUnlessDuplicateImage(parameter.ParameterName,PARAMETER_IDX);
         }
 
         public void Add(ITableInfo tableInfo, LoadStage loadStage)
@@ -142,11 +172,13 @@ namespace Rdmp.Core.Autocomplete
             }
 
             AddUnlessDuplicate(fullSql);
+            AddUnlessDuplicateImage(fullSql,TABLE_INFO_IDX);
         }
 
         public void Add(DiscoveredTable discoveredTable)
         {
             AddUnlessDuplicate(discoveredTable.GetFullyQualifiedName());
+            AddUnlessDuplicateImage(discoveredTable.GetFullyQualifiedName(), TABLE_INFO_IDX);
 
             DiscoveredColumn[] columns = null;
             try
@@ -167,6 +199,7 @@ namespace Rdmp.Core.Autocomplete
         private void Add(DiscoveredColumn discoveredColumn)
         {
             AddUnlessDuplicate(discoveredColumn.GetFullyQualifiedName());
+            AddUnlessDuplicateImage(discoveredColumn.GetFullyQualifiedName(), COLUMN_INFO_IDX);
         }
 
         public void Clear()
