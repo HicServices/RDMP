@@ -11,8 +11,18 @@ using System.Linq;
 
 namespace ReusableLibraryCode
 {
+    /// <summary>
+    /// Provides extension methods for all objects
+    /// </summary>
     public static class ObjectExtensions
     {
+        /// <summary>
+        /// Returns a beautiful representation of the given object.  For example splitting array elements into
+        /// a comma seperated list.  Falls back on calling <paramref name="o"/> normal ToString if no specific logic
+        /// is defined for it's Type.
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
         public static string ToBeautifulString(this object o)
         {
             if (o is Array a)
