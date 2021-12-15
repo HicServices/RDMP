@@ -61,11 +61,20 @@ namespace Rdmp.UI.AutoComplete
             string word = scintilla.GetWordFromPosition(scintilla.CurrentPosition)?.Trim();
             
             if (string.IsNullOrWhiteSpace(word) && !all)
-                    return;
+            {
+                scintilla.AutoCCancel();
+                return;
+            }
 
             var list = Items.Distinct()
                 .Where(s => !string.IsNullOrWhiteSpace(s) && s.Contains(word,StringComparison.CurrentCultureIgnoreCase))
                 .OrderBy(a => a);
+
+            if(!list.Any())
+            {
+                scintilla.AutoCCancel();
+                return;
+            }
 
             // Display the autocompletion list
             scintilla.AutoCShow(word.Length, string.Join(Separator, list.Select(FormatForAutocomplete)));
