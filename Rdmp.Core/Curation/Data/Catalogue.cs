@@ -1331,12 +1331,11 @@ namespace Rdmp.Core.Curation.Data
 
             StringBuilder sb = new StringBuilder();
             sb.Append(base.GetSummary(includeName, includeID));
-
-            if(extractionPrimaryKeys.Any())
-                sb.AppendLine("Extraction Primary Key(s): " + string.Join(", ", extractionPrimaryKeys.Select(c=>c.ToString())));
+            
+            if (extractionPrimaryKeys.Any())
+                sb.AppendLine("Extraction Primary Key(s): " + extractionPrimaryKeys.ToBeautifulString());
 
             return sb.ToString();
-
         }
     }
 }
