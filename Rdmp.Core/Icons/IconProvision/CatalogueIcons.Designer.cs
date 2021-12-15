@@ -489,7 +489,19 @@ namespace Rdmp.Core.Icons.IconProvision {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap CatalogueItemTransform
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("CatalogueItemTransform", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
