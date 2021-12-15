@@ -449,11 +449,21 @@ namespace Rdmp.Core.Curation.Data
         {
             StringBuilder sb = new StringBuilder();
 
+            foreach (var prop in GetType().GetProperties().Where(p => p.Name.Contains("Description")))
+            {
+                AppendPropertyToSummary(sb, prop, includeName, includeID, false);
+            }
+
+            sb.AppendLine(SUMMARY_LINE_DIVIDER);
+
             sb.AppendLine($"Extractable: { FormatForSummary(ExtractionInformation != null)}");
             sb.AppendLine($"Transform: {FormatForSummary(ExtractionInformation?.IsProperTransform() ?? false)}");
             sb.AppendLine($"Category: {ExtractionInformation?.ExtractionCategory ?? (object)"Not Extractable"}");
 
-            sb.AppendLine(base.GetSummary(includeName,includeID));
+            foreach (var prop in GetType().GetProperties().Where(p => !p.Name.Contains("Description")))
+            {
+                AppendPropertyToSummary(sb, prop, includeName, includeID);
+            }
 
             return sb.ToString();
         }

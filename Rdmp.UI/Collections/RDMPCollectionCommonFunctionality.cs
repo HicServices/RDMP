@@ -304,7 +304,7 @@ namespace Rdmp.UI.Collections
                 
                 if(model is IMapsDirectlyToDatabaseTable d)
                 {
-                    e.Title = $"{model} (ID={d.ID})";
+                    e.Title = $"{model} (ID: {d.ID})";
                 }
                 else
                 {
