@@ -68,6 +68,7 @@ namespace Rdmp.UI.SimpleDialogs
                 _scintilla.Dock = DockStyle.Fill;
                 _scintilla.TextChanged += _scintilla_TextChanged;
                 _scintilla.Text = startingTextForInputBox;
+                _scintilla.WrapMode = WrapMode.Word;
 
                 pTextEditor.Controls.Remove(textBox1);
                 pTextEditor.Controls.Add(_scintilla);
