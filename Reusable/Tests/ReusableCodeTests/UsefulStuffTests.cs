@@ -82,6 +82,11 @@ namespace ReusableCodeTests
             Assert.AreEqual("CT Head", UsefulStuff.PascalCaseStringToHumanReadable("CTHead"));
             Assert.AreEqual("WHERE Clause", UsefulStuff.PascalCaseStringToHumanReadable("WHEREClause"));
             Assert.AreEqual("Sql WHERE", UsefulStuff.PascalCaseStringToHumanReadable("SqlWHERE"));
+
+            Assert.AreEqual("Test String", UsefulStuff.PascalCaseStringToHumanReadable("Test_String"));
+            Assert.AreEqual("Test string", UsefulStuff.PascalCaseStringToHumanReadable("Test_string"));
+            Assert.AreEqual("test String", UsefulStuff.PascalCaseStringToHumanReadable("_testString"));
+            Assert.AreEqual("test String", UsefulStuff.PascalCaseStringToHumanReadable("_testString_"));
         }
     }
 }
