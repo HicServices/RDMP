@@ -5,7 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Autocomplete;
 using ScintillaNET;
@@ -21,28 +23,50 @@ namespace Rdmp.UI.AutoComplete
         {
         }
 
+        private char Separator = ';';
+
+        public char[] ExtraWordChars = new[] { '.','[', ']','_' };
+
         public void RegisterForEvents(Scintilla queryEditor)
         {
+            queryEditor.KeyDown += (s, e) =>
+            {
+                if (e.KeyCode == Keys.Space && e.Control)
+                {
+                    e.SuppressKeyPress = true;
+                    ShowAutocomplete(queryEditor, true);
+                }
+            };
+
+            queryEditor.AutoCSeparator = Separator;
             queryEditor.CharAdded += scintilla_CharAdded;
             queryEditor.AutoCIgnoreCase = true;
+            queryEditor.AutoCOrder = Order.Custom;
+            queryEditor.AutoCAutoHide = false;
         }
-
 
         private void scintilla_CharAdded(object sender, CharAddedEventArgs e)
         {
             if (sender is not Scintilla scintilla)
                 return;
+            
+            ShowAutocomplete(scintilla,false);
+        }
 
+        private void ShowAutocomplete(Scintilla scintilla,bool all)
+        {
             // Find the word start
-            var currentPos = scintilla.CurrentPosition;
-            var wordStartPos = scintilla.WordStartPosition(currentPos, false);
-            var lenEntered = currentPos - wordStartPos;
-            if (lenEntered <= 0) return;
+            string word = scintilla.GetWordFromPosition(scintilla.CurrentPosition)?.Trim();
+            
+            if (string.IsNullOrWhiteSpace(word) && !all)
+                    return;
 
-            var list = Items.SelectMany(GetBits).Distinct().Where(s => !string.IsNullOrWhiteSpace(s)).OrderBy(a => a);
+            var list = Items.Distinct()
+                .Where(s => !string.IsNullOrWhiteSpace(s) && s.Contains(word,StringComparison.CurrentCultureIgnoreCase))
+                .OrderBy(a => a);
 
             // Display the autocompletion list
-            scintilla.AutoCShow(lenEntered, string.Join(' ', list));
+            scintilla.AutoCShow(word.Length, string.Join(Separator, list));
         }
     }
 }
