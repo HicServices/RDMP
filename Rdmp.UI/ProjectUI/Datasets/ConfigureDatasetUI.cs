@@ -587,6 +587,16 @@ namespace Rdmp.UI.ProjectUI.Datasets
             foreach (TableInfo tableInfo in tablesInQuery)
                 nodes.Add(new AvailableForceJoinNode(tableInfo, true));
 
+            // Add all tables as optional joins that the Catalogue has
+            foreach (var t in SelectedDataSet.GetCatalogue().GetTableInfoList(false))
+            {
+                var node = new AvailableForceJoinNode((TableInfo)t, false);
+
+                if (!nodes.Contains(node))
+                    nodes.Add(node);
+            }
+
+            // Add all tables under other ProjectSpecific Catalogues that are associated with this Project
             foreach (var projectCatalogue in SelectedDataSet.ExtractionConfiguration.Project.GetAllProjectCatalogues())
                 foreach (TableInfo projectSpecificTables in projectCatalogue.GetTableInfoList(false))
                 {
