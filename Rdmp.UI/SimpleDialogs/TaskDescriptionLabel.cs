@@ -29,16 +29,16 @@ namespace Rdmp.UI.SimpleDialogs
             var task = args.TaskDescription;
             var entryLabel = args.EntryLabel;
 
-            tbTaskDescription.Visible = !string.IsNullOrWhiteSpace(task);
+            tbTaskDescription.Visible = pnlTaskDescription.Visible = !string.IsNullOrWhiteSpace(task);
             tbTaskDescription.Text = task;
 
-            tbEntryLabel.Visible = !string.IsNullOrWhiteSpace(entryLabel);
+            tbEntryLabel.Visible = pnlEntryLabel.Visible = !string.IsNullOrWhiteSpace(entryLabel);
 
             if (entryLabel != null && entryLabel.Length > WideMessageBox.MAX_LENGTH_BODY)
                 entryLabel = entryLabel.Substring(0, WideMessageBox.MAX_LENGTH_BODY);
 
             // set prompt text. If theres a TaskDescription too then leave a bit of extra space
-            this.tbEntryLabel.Text = !string.IsNullOrWhiteSpace(task) ? Environment.NewLine + entryLabel : entryLabel;
+            this.tbEntryLabel.Text = entryLabel;
 
             this.Height = (!string.IsNullOrWhiteSpace(entryLabel) ? tbEntryLabel.Height : 0) + 
                           (!string.IsNullOrWhiteSpace(task) ? tbTaskDescription.Height : 0);
@@ -56,12 +56,10 @@ namespace Rdmp.UI.SimpleDialogs
                                                             tbTaskDescription.Font,
                                                             tbTaskDescription.Width,
                                                             new StringFormat(0));
+
             tbTaskDescription.Height = (int)MessageSize.Height + 3;
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
+            pnltbTaskDescriptionBorder.Height = tbTaskDescription.Height + 20;
+            pnlTaskDescription.Height = pnltbTaskDescriptionBorder.Height + 25;
         }
 
         private void tbEntryLabel_Resize(object sender, EventArgs e)
@@ -71,7 +69,10 @@ namespace Rdmp.UI.SimpleDialogs
                                                             tbEntryLabel.Font,
                                                             tbEntryLabel.Width,
                                                             new StringFormat(0));
+
             tbEntryLabel.Height = (int)MessageSize.Height + 3;
+            pnlEntryLabelBorder.Height = tbEntryLabel.Height + 20;
+            pnlEntryLabel.Height = pnlEntryLabelBorder.Height + 25;
         }
     }
 }
