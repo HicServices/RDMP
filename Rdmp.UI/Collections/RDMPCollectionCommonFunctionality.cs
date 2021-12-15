@@ -11,6 +11,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
@@ -158,6 +159,9 @@ namespace Rdmp.UI.Collections
             Tree.HideSelection = false;
             Tree.KeyPress += Tree_KeyPress;
 
+            Tree.CellToolTip.InitialDelay = UserSettings.TooltipAppearDelay;
+            Tree.CellToolTipShowing += Tree_CellToolTipShowing;
+
             Tree.RevealAfterExpand = true;
 
             if (!Settings.SuppressChildrenAdder)
@@ -242,7 +246,6 @@ namespace Rdmp.UI.Collections
             
             Tree.FormatRow += Tree_FormatRow;
             Tree.KeyDown += Tree_KeyDown;
-            Tree.CellToolTipGetter += Tree_CellToolTipGetter;
 
             if(Settings.AllowSorting)
             {
@@ -269,6 +272,49 @@ namespace Rdmp.UI.Collections
             else
                 foreach (OLVColumn c in Tree.AllColumns)
                     c.Sortable = false;
+        }
+
+        private void Tree_CellToolTipShowing(object sender, ToolTipShowingEventArgs e)
+        {
+            
+            var model = e.Model;
+
+            if (model is IMasqueradeAs m)
+                model = m.MasqueradingAs();
+
+            e.AutoPopDelay = 32767;
+
+            
+
+            string problem = _activator.DescribeProblemIfAny(model);
+
+            if (!string.IsNullOrWhiteSpace(problem))
+            {
+                e.StandardIcon = ToolTipControl.StandardIcons.Error;
+                e.Title = model.ToString();
+
+                e.Text = problem;
+                e.IsBalloon = true;
+
+            }
+            else
+            if (model is ICanBeSummarised sum)
+            {
+                e.StandardIcon = ToolTipControl.StandardIcons.Info;
+                
+                if(model is IMapsDirectlyToDatabaseTable d)
+                {
+                    e.Title = $"{model} (ID: {d.ID})";
+                }
+                else
+                {
+                    e.Title = model.ToString();
+                }
+
+                e.Text = sum.GetSummary(false,false);
+                e.IsBalloon = true;
+            }
+
         }
 
         private void Tree_KeyDown(object sender, KeyEventArgs e)
@@ -314,11 +360,6 @@ namespace Rdmp.UI.Collections
                 ctrl.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right;
 
             Tree.Parent.Controls.Add(ctrl);
-        }
-
-        private string Tree_CellToolTipGetter(OLVColumn column, object modelObject)
-        {
-            return  _activator.DescribeProblemIfAny(modelObject);
         }
 
         void Tree_FormatRow(object sender, FormatRowEventArgs e)

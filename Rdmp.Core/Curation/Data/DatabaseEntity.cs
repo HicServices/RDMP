@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+﻿// Copyright (c) The University of Dundee 2018-2019
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -9,11 +9,17 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text;
+using System.Text.RegularExpressions;
+using FAnsi;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Repositories;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
 
 namespace Rdmp.Core.Curation.Data
@@ -29,8 +35,15 @@ namespace Rdmp.Core.Curation.Data
     /// <para>A DatabaseEntity must have the same name as a Table in in the IRepository and must only have public properties that match columns in that table.  This enforces
     /// a transparent mapping between code and database.  If you need to add other public properties you must decorate them with [NoMappingToDatabase]</para>
     /// </summary>
-    public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged
+    public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICanBeSummarised
     {
+        /// <summary>
+        /// The maximum length for any given line in return value of <see cref="GetSummary"/>
+        /// </summary>
+        public const int MAX_SUMMARY_ITEM_LENGTH = 100;
+
+        protected const string SUMMARY_LINE_DIVIDER = "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯";
+
         /// <inheritdoc/>
         public int ID { get; set; }
 
@@ -268,6 +281,89 @@ namespace Rdmp.Core.Curation.Data
 
             if(save)
                 to.SaveToDatabase();
+        }
+
+        /// <inheritdoc/>
+        public virtual string GetSummary(bool includeName, bool includeID)
+        {
+
+            StringBuilder sbPart1 = new StringBuilder();
+            foreach (var prop in GetType().GetProperties().Where(p=>p.Name.Contains("Description")))
+            {
+                AppendPropertyToSummary(sbPart1, prop, includeName, includeID, false);
+            }
+
+            StringBuilder sbPart2 = new StringBuilder();
+            foreach (var prop in GetType().GetProperties().Where(p => !p.Name.Contains("Description")))
+            {
+                AppendPropertyToSummary(sbPart2, prop, includeName, includeID);
+            }
+
+            if (sbPart1.Length > 0 && sbPart2.Length > 0)
+                sbPart1.AppendLine(SUMMARY_LINE_DIVIDER);
+            sbPart1.Append(sbPart2);
+
+            return sbPart1.ToString();
+        }
+
+        protected void AppendPropertyToSummary(StringBuilder sb, PropertyInfo prop, bool includeName, bool includeID, bool includePropertyName = true)
+        {
+
+            var val = prop.GetValue(this);
+
+            // don't show Name if we are being told not to
+            if (!includeName && prop.Name.EndsWith("Name"))
+                return;
+
+            if (!includeID && prop.Name.Equals("ID"))
+                return;
+
+            if (prop.Name.Contains("Password"))
+                return;
+
+            // don't show foreign key ID properties
+            if (prop.Name.EndsWith("_ID"))
+                return;
+
+            // skip properties marked with 'do not extract'
+            if (prop.GetCustomAttributes(typeof(DoNotExtractProperty), true).Any())
+                return;
+
+            if (val is string || val is IFormattable || val is bool)
+            {
+                // skip properties values that are "unknown"
+                if (val is Enum e && Convert.ToInt32(e) == 0 && !(val is DatabaseType))
+                    return;
+
+                var representation = $"{(includePropertyName?UsefulStuff.PascalCaseStringToHumanReadable(prop.Name) + ": " : "")}{ FormatForSummary(val)}";
+
+                if (representation.Length > MAX_SUMMARY_ITEM_LENGTH)
+                {
+                    representation = representation.Substring(0, MAX_SUMMARY_ITEM_LENGTH - 3) + "...";
+                }
+
+                if (representation.Contains('\n'))
+                {
+                    representation = Regex.Replace(representation, @"\r?\n", " ");
+                }
+
+                sb.AppendLine(representation);
+            }
+        }
+
+        /// <summary>
+        /// Formats a given value for user readability in the results of <see cref="GetSummary(bool,bool)"/>
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
+        protected string FormatForSummary(object val)
+        {
+            if(val is bool b)
+            {
+                return b ? "Yes" : "No";
+            }
+
+            return val.ToString()?.Trim();
         }
     }
 }
