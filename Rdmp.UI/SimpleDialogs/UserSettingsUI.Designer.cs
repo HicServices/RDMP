@@ -69,8 +69,11 @@
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.userSettingsToolTips = new System.Windows.Forms.ToolTip(this.components);
+            this.label11 = new System.Windows.Forms.Label();
+            this.tbTooltipAppearDelay = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
+            this.userSettingsToolTips = new System.Windows.Forms.ToolTip(this.components);
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvErrorCodes)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -163,9 +166,9 @@
             // 
             // label3
             // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(675, 9);
+            this.label3.Location = new System.Drawing.Point(12, 750);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(93, 15);
@@ -175,7 +178,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 97);
+            this.label4.Location = new System.Drawing.Point(51, 97);
             this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(94, 15);
@@ -186,7 +189,7 @@
             // 
             this.ddWordWrap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddWordWrap.FormattingEnabled = true;
-            this.ddWordWrap.Location = new System.Drawing.Point(148, 94);
+            this.ddWordWrap.Location = new System.Drawing.Point(153, 94);
             this.ddWordWrap.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ddWordWrap.Name = "ddWordWrap";
             this.ddWordWrap.Size = new System.Drawing.Size(100, 23);
@@ -361,7 +364,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(3, 71);
+            this.label7.Location = new System.Drawing.Point(4, 72);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(142, 15);
             this.label7.TabIndex = 17;
@@ -371,7 +374,7 @@
             // 
             this.tbCreateDatabaseTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbCreateDatabaseTimeout.Location = new System.Drawing.Point(148, 68);
+            this.tbCreateDatabaseTimeout.Location = new System.Drawing.Point(153, 68);
             this.tbCreateDatabaseTimeout.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbCreateDatabaseTimeout.Name = "tbCreateDatabaseTimeout";
             this.tbCreateDatabaseTimeout.Size = new System.Drawing.Size(100, 23);
@@ -508,6 +511,9 @@
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.label11);
+            this.groupBox7.Controls.Add(this.tbTooltipAppearDelay);
+            this.groupBox7.Controls.Add(this.label10);
             this.groupBox7.Controls.Add(this.label9);
             this.groupBox7.Controls.Add(this.cbDebugPerformance);
             this.groupBox7.Controls.Add(this.tbCreateDatabaseTimeout);
@@ -522,6 +528,41 @@
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Miscellaneous";
             // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(260, 124);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(73, 15);
+            this.label11.TabIndex = 22;
+            this.label11.Text = "milliseconds";
+            // 
+            // tbTooltipAppearDelay
+            // 
+            this.tbTooltipAppearDelay.Location = new System.Drawing.Point(153, 121);
+            this.tbTooltipAppearDelay.Name = "tbTooltipAppearDelay";
+            this.tbTooltipAppearDelay.Size = new System.Drawing.Size(100, 23);
+            this.tbTooltipAppearDelay.TabIndex = 21;
+            this.tbTooltipAppearDelay.TextChanged += new System.EventHandler(this.tbTooltipAppearDelay_TextChanged);
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(21, 124);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(124, 15);
+            this.label10.TabIndex = 20;
+            this.label10.Text = "Tooltip Appear Delay*:";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(260, 72);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(50, 15);
+            this.label9.TabIndex = 19;
+            this.label9.Text = "seconds";
+            // 
             // userSettingsToolTips
             // 
             this.userSettingsToolTips.AutomaticDelay = 250;
@@ -530,26 +571,17 @@
             this.userSettingsToolTips.IsBalloon = true;
             this.userSettingsToolTips.ReshowDelay = 50;
             // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(250, 72);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(50, 15);
-            this.label9.TabIndex = 19;
-            this.label9.Text = "seconds";
-            // 
             // UserSettingsFileUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(781, 762);
+            this.ClientSize = new System.Drawing.Size(781, 768);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.ddTheme);
             this.Controls.Add(this.cbThemeMenus);
-            this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.Controls.Add(this.label3);
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "UserSettingsFileUI";
             this.Text = "User Settings";
@@ -617,5 +649,8 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ToolTip userSettingsToolTips;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.TextBox tbTooltipAppearDelay;
     }
 }

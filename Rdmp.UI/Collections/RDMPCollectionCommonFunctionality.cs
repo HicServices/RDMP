@@ -159,7 +159,7 @@ namespace Rdmp.UI.Collections
             Tree.HideSelection = false;
             Tree.KeyPress += Tree_KeyPress;
 
-            Tree.CellToolTip.InitialDelay = 1000;
+            Tree.CellToolTip.InitialDelay = UserSettings.TooltipAppearDelay;
             Tree.CellToolTipShowing += Tree_CellToolTipShowing;
 
             Tree.RevealAfterExpand = true;

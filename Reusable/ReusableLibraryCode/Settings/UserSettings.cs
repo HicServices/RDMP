@@ -149,6 +149,15 @@ namespace ReusableLibraryCode.Settings
         }
 
         /// <summary>
+        /// Set the amount of time (in milliseconds) that tooltips should take to appear in the tree collection views (e.g. list of Cataologues etc)
+        /// </summary>
+        public static int TooltipAppearDelay
+        {
+            get { return AppSettings.GetValueOrDefault("TooltipAppearDelay", 750); }
+            set { AppSettings.AddOrUpdateValue("TooltipAppearDelay", Math.Max(10,value)); }
+        }
+
+        /// <summary>
         /// When using the Find feature this option will automatically filter out any cohort set containers (i.e. UNION / INTERSECT / EXCEPT containers)
         /// </summary>
         public static bool ScoreZeroForCohortAggregateContainers
