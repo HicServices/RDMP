@@ -44,7 +44,7 @@
             this.textBox1.Location = new System.Drawing.Point(0, 0);
             this.textBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(524, 23);
+            this.textBox1.Size = new System.Drawing.Size(684, 23);
             this.textBox1.TabIndex = 0;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
@@ -52,7 +52,7 @@
             // btnOk
             // 
             this.btnOk.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnOk.Location = new System.Drawing.Point(166, 4);
+            this.btnOk.Location = new System.Drawing.Point(246, 4);
             this.btnOk.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(88, 27);
@@ -64,7 +64,7 @@
             // btnCancel
             // 
             this.btnCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnCancel.Location = new System.Drawing.Point(262, 4);
+            this.btnCancel.Location = new System.Drawing.Point(342, 4);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(88, 27);
@@ -78,9 +78,9 @@
             this.panel1.Controls.Add(this.btnOk);
             this.panel1.Controls.Add(this.btnCancel);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 76);
+            this.panel1.Location = new System.Drawing.Point(0, 136);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(524, 35);
+            this.panel1.Size = new System.Drawing.Size(684, 35);
             this.panel1.TabIndex = 4;
             // 
             // pTextEditor
@@ -89,22 +89,25 @@
             this.pTextEditor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pTextEditor.Location = new System.Drawing.Point(0, 40);
             this.pTextEditor.Name = "pTextEditor";
-            this.pTextEditor.Size = new System.Drawing.Size(524, 36);
+            this.pTextEditor.Size = new System.Drawing.Size(684, 96);
             this.pTextEditor.TabIndex = 6;
             // 
             // taskDescriptionLabel1
             // 
+            this.taskDescriptionLabel1.AutoSize = true;
+            this.taskDescriptionLabel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.taskDescriptionLabel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.taskDescriptionLabel1.Location = new System.Drawing.Point(0, 0);
+            this.taskDescriptionLabel1.MinimumSize = new System.Drawing.Size(200, 0);
             this.taskDescriptionLabel1.Name = "taskDescriptionLabel1";
-            this.taskDescriptionLabel1.Size = new System.Drawing.Size(524, 40);
+            this.taskDescriptionLabel1.Size = new System.Drawing.Size(684, 40);
             this.taskDescriptionLabel1.TabIndex = 7;
             // 
             // TypeTextOrCancelDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(524, 111);
+            this.ClientSize = new System.Drawing.Size(684, 171);
             this.Controls.Add(this.pTextEditor);
             this.Controls.Add(this.taskDescriptionLabel1);
             this.Controls.Add(this.panel1);
@@ -117,6 +120,7 @@
             this.pTextEditor.ResumeLayout(false);
             this.pTextEditor.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 

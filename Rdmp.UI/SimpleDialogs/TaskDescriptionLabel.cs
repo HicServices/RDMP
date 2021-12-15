@@ -29,24 +29,49 @@ namespace Rdmp.UI.SimpleDialogs
             var task = args.TaskDescription;
             var entryLabel = args.EntryLabel;
 
-            lblTaskDescription.Visible = !string.IsNullOrWhiteSpace(task);
-            lblTaskDescription.Text = task;
+            tbTaskDescription.Visible = !string.IsNullOrWhiteSpace(task);
+            tbTaskDescription.Text = task;
 
-            lblEntryLabel.Visible = !string.IsNullOrWhiteSpace(entryLabel);
+            tbEntryLabel.Visible = !string.IsNullOrWhiteSpace(entryLabel);
 
             if (entryLabel != null && entryLabel.Length > WideMessageBox.MAX_LENGTH_BODY)
                 entryLabel = entryLabel.Substring(0, WideMessageBox.MAX_LENGTH_BODY);
 
             // set prompt text. If theres a TaskDescription too then leave a bit of extra space
-            this.lblEntryLabel.Text = !string.IsNullOrWhiteSpace(task) ? Environment.NewLine + entryLabel : entryLabel;
+            this.tbEntryLabel.Text = !string.IsNullOrWhiteSpace(task) ? Environment.NewLine + entryLabel : entryLabel;
 
-            this.Height = (!string.IsNullOrWhiteSpace(entryLabel) ? lblEntryLabel.Height : 0) + 
-                          (!string.IsNullOrWhiteSpace(task) ? lblTaskDescription.Height : 0);
+            this.Height = (!string.IsNullOrWhiteSpace(entryLabel) ? tbEntryLabel.Height : 0) + 
+                          (!string.IsNullOrWhiteSpace(task) ? tbTaskDescription.Height : 0);
         }
 
         /// <summary>
         /// Returns the width this control would ideally like to take up
         /// </summary>
-        public int PreferredWidth => Math.Max(lblEntryLabel.PreferredWidth, lblTaskDescription.PreferredWidth);
+        public int PreferredWidth => Math.Max(tbEntryLabel.Width, tbTaskDescription.Width);
+
+        private void textBox1_Resize(object sender, EventArgs e)
+        {
+            SizeF MessageSize = tbTaskDescription.CreateGraphics()
+                                            .MeasureString(tbTaskDescription.Text,
+                                                            tbTaskDescription.Font,
+                                                            tbTaskDescription.Width,
+                                                            new StringFormat(0));
+            tbTaskDescription.Height = (int)MessageSize.Height + 3;
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tbEntryLabel_Resize(object sender, EventArgs e)
+        {
+            SizeF MessageSize = tbEntryLabel.CreateGraphics()
+                                            .MeasureString(tbEntryLabel.Text,
+                                                            tbEntryLabel.Font,
+                                                            tbEntryLabel.Width,
+                                                            new StringFormat(0));
+            tbEntryLabel.Height = (int)MessageSize.Height + 3;
+        }
     }
 }
