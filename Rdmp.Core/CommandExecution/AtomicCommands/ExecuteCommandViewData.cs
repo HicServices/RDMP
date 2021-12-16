@@ -78,7 +78,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public ExecuteCommandViewData(IBasicActivateItems activator, ViewType viewType, ExtractionInformation ei) : base(activator)
         {
             _viewType = viewType;
-            CreateCollection(ei);
+            _collection = CreateCollection(ei);
         }
 
         /// <summary>
