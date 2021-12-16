@@ -33,6 +33,7 @@ namespace ReusableLibraryCode.Icons.IconProvision
         Help,
         Hashed,
         Cloud,
-        BigE
+        BigE,
+        IsExtractionIdentifier
     }
 }
