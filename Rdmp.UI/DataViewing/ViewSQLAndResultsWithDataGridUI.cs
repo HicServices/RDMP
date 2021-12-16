@@ -108,7 +108,7 @@ namespace Rdmp.UI.DataViewing
 
                 // Create the SQL editor for that language
                 ScintillaTextEditorFactory factory = new ScintillaTextEditorFactory();
-                _scintilla = factory.Create(null, "mssql", syntax);
+                _scintilla = factory.Create(null, SyntaxLanguage.SQL, syntax);
                 splitContainer1.Panel1.Controls.Add(_scintilla);
                 _scintilla.TextChanged += _scintilla_TextChanged;
                 _scintilla.KeyUp += ScintillaOnKeyUp;

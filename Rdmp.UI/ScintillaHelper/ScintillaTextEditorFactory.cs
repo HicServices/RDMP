@@ -20,6 +20,14 @@ using ScintillaNET;
 
 namespace Rdmp.UI.ScintillaHelper
 {
+    public enum SyntaxLanguage
+    {
+            None,
+            SQL,
+            CSharp,
+            XML
+    };
+
     /// <summary>
     /// Factory for creating instances of <see cref="Scintilla"/> with a consistent look and feel and behaviour (e.g. drag and drop).
     /// </summary>
@@ -39,7 +47,7 @@ namespace Rdmp.UI.ScintillaHelper
         /// <param name="lineNumbers"></param>
         /// <param name="currentDirectory"></param>
         /// <returns></returns>
-        public Scintilla Create(ICombineableFactory commandFactory = null, string language = "mssql", IQuerySyntaxHelper syntaxHelper = null, bool spellCheck = false, bool lineNumbers = true, string currentDirectory = null)
+        public Scintilla Create(ICombineableFactory commandFactory = null, SyntaxLanguage language = SyntaxLanguage.SQL, IQuerySyntaxHelper syntaxHelper = null, bool spellCheck = false, bool lineNumbers = true, string currentDirectory = null)
         {
             var toReturn =  new Scintilla();
             toReturn.Dock = DockStyle.Fill;
@@ -55,15 +63,19 @@ namespace Rdmp.UI.ScintillaHelper
             toReturn.ClearCmdKey(Keys.Control | Keys.S); //prevent Ctrl+S displaying ascii code
             toReturn.ClearCmdKey(Keys.Control | Keys.R); //prevent Ctrl+R displaying ascii code
             toReturn.ClearCmdKey(Keys.Control | Keys.W); //prevent Ctrl+W displaying ascii code
-            
-            if (language == "mssql")
-                SetSQLHighlighting(toReturn,syntaxHelper);
 
-            if (language == "csharp")
-                SetCSharpHighlighting(toReturn);
-
-            if (language == "xml")
-                SetLexerEnumHighlighting(toReturn,Lexer.Xml);           
+            switch (language)
+            {
+                case SyntaxLanguage.SQL:
+                    SetSQLHighlighting(toReturn, syntaxHelper);
+                    break;
+                case SyntaxLanguage.CSharp:
+                    SetCSharpHighlighting(toReturn);
+                    break;
+                case SyntaxLanguage.XML:
+                    SetLexerEnumHighlighting(toReturn, Lexer.Xml);
+                    break;
+            }      
 
             if (commandFactory != null)
             {
