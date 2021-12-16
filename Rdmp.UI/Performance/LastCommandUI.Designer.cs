@@ -62,7 +62,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(360, 57);
+            this.ClientSize = new System.Drawing.Size(684, 57);
             this.Controls.Add(this.btnCopyToClipboard);
             this.Controls.Add(this.label1);
             this.Name = "LastCommandUI";
