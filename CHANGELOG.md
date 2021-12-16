@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added tooltips for objects in tree views (https://github.com/HicServices/RDMP/issues/819).
 - Added custom icon for [CatalogueItem] that represent transforms on the underlying column (https://github.com/HicServices/RDMP/issues/818)
 - Added Extraction Primary Keys to Catalogue tooltip
+- Added ability to 'View TOP 100' etc samples on [ExtractionInformation] (previously only available on [ColumnInfo] objects)
 
 ### Fixed
 

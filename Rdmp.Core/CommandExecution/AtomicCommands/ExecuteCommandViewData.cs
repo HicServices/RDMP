@@ -15,6 +15,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private readonly IViewSQLAndResultsCollection _collection;
         private readonly ViewType _viewType;
 
+        #region Constructors
         /// <summary>
         /// Fetches the <paramref name="viewType"/> of the data in <see cref="ColumnInfo"/> <paramref name="c"/>
         /// </summary>
@@ -23,16 +24,21 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// <param name="c"></param>
         public ExecuteCommandViewData(IBasicActivateItems activator, ViewType viewType, ColumnInfo c) : base(activator)
         {
-            _collection = new ViewColumnInfoExtractUICollection(c, viewType);
+            _collection = new ViewColumnExtractCollection(c, viewType);
             _viewType = viewType;
 
             if (!c.IsNumerical() && viewType == ViewType.Distribution)
                 SetImpossible("Column is not numerical");
         }
 
-        public override string GetCommandName()
+
+        public ExecuteCommandViewData(IBasicActivateItems activator, ViewType viewType, ExtractionInformation ei) : base(activator)
         {
-            return "View " + _viewType.ToString().Replace("_", " ");
+            _collection = new ViewColumnExtractCollection(ei, viewType);
+            _viewType = viewType;
+
+            if ((!ei.ColumnInfo?.IsNumerical()??false) && viewType == ViewType.Distribution)
+                SetImpossible("Column is not numerical");
         }
 
         /// <summary>
@@ -46,6 +52,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _viewType = ViewType.TOP_100;
             _collection = new ViewTableInfoExtractUICollection(tableInfo, _viewType);
         }
+        #endregion
+
+        public override string GetCommandName()
+        {
+            return "View " + _viewType.ToString().Replace("_", " ");
+        }
+
 
         public override void Execute()
         {
