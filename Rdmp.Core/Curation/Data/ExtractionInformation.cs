@@ -277,7 +277,7 @@ namespace Rdmp.Core.Curation.Data
             sb.AppendLine($"Transforms Data: {FormatForSummary(IsProperTransform())}");
             sb.AppendLine(base.GetSummary(includeName, includeID));
 
-            return sb.ToString();
+            return sb.ToString().Replace("Is Primary Key:","Is Extraction Primary Key:");
         }
     }
 }
