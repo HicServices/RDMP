@@ -48,7 +48,11 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
                 Bitmap toReturn = GetImage(ei.ExtractionCategory);
                 
                 if (ei.IsExtractionIdentifier)
-                    return _overlayProvider.GetOverlay(toReturn, OverlayKind.Key);
+                    toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.IsExtractionIdentifier);
+
+
+                if (ei.IsPrimaryKey)
+                    toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Key);
 
                 if (ei.HashOnDataRelease) 
                     toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Hashed);

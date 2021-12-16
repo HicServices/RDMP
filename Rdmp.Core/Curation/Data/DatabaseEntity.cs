@@ -335,7 +335,7 @@ namespace Rdmp.Core.Curation.Data
                 if (val is Enum e && Convert.ToInt32(e) == 0 && !(val is DatabaseType))
                     return;
 
-                var representation = $"{(includePropertyName?UsefulStuff.PascalCaseStringToHumanReadable(prop.Name) + ": " : "")}{ FormatForSummary(val)}";
+                var representation = $"{(includePropertyName? FormatPropertyNameForSummary(prop) + ": " : "")}{ FormatForSummary(val)}";
 
                 if (representation.Length > MAX_SUMMARY_ITEM_LENGTH)
                 {
@@ -349,6 +349,16 @@ namespace Rdmp.Core.Curation.Data
 
                 sb.AppendLine(representation);
             }
+        }
+
+        /// <summary>
+        /// Returns the human readable property name adjusted to be elegant to read (e.g. with spaces not pascal case)
+        /// </summary>
+        /// <param name="prop"></param>
+        /// <returns></returns>
+        protected virtual string FormatPropertyNameForSummary(PropertyInfo prop)
+        {
+            return UsefulStuff.PascalCaseStringToHumanReadable(prop.Name);
         }
 
         /// <summary>

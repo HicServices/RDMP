@@ -42,6 +42,12 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
                 if (ei.HashOnDataRelease) 
                     toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Hashed);
 
+                if (ei.IsExtractionIdentifier)
+                    toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.IsExtractionIdentifier);
+                
+                if (ei.IsPrimaryKey)
+                    toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Key);
+
                 switch (ei.ExtractionCategory)
                 {
                     case ExtractionCategory.ProjectSpecific:
