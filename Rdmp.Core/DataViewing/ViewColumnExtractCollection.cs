@@ -149,7 +149,7 @@ namespace Rdmp.Core.DataViewing
             }
 
             if (ViewType == ViewType.Aggregate)
-                qb.AddCustomLine("count(*),", QueryComponent.QueryTimeColumn);
+                qb.AddCustomLine("count(*) as Count,", QueryComponent.QueryTimeColumn);
 
             var sql = qb.SQL;
 
