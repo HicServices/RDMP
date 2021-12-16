@@ -149,9 +149,9 @@ namespace Rdmp.UI.ExtractionUIs
             CommonFunctionality.AddHelp(cbHashOnDataRelease, "IColumn.HashOnDataRelease", "Hash on Data Release");
             CommonFunctionality.AddHelp(cbIsExtractionIdentifier, "IColumn.IsExtractionIdentifier", "Is Extraction Identifier");
             CommonFunctionality.AddHelp(cbIsPrimaryKey, "IColumn.IsPrimaryKey", "Is Primary Key");
-            CommonFunctionality.AddHelpString(lblIsTransform, "Is Transform", "When the extraction SQL is different from the column SQL then it is considered to 'transform' the data.  For example 'UPPER([mydb].[mycol]) as mycol'.  Transforms must always have an alias.");
+            CommonFunctionality.AddHelpString(lblIsTransform, "Transforms Data", "When the extraction SQL is different from the column SQL then it is considered to 'transform' the data.  For example 'UPPER([mydb].[mycol]) as mycol'.  Transforms must always have an alias.");
 
-            lblIsTransform.Text = $"Is Transform:{(ExtractionInformation.IsProperTransform() ? "Yes" : "No")}";
+            lblIsTransform.Text = $"Transforms Data: {(ExtractionInformation.IsProperTransform() ? "Yes" : "No")}";
 
             _isLoading = false;
         }

@@ -44,8 +44,8 @@
             this.label6 = new System.Windows.Forms.Label();
             this.tbId = new System.Windows.Forms.TextBox();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.panel3 = new System.Windows.Forms.Panel();
             this.lblIsTransform = new System.Windows.Forms.Label();
+            this.panel3 = new System.Windows.Forms.Panel();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.SuspendLayout();
@@ -232,6 +232,15 @@
             this.panel2.Size = new System.Drawing.Size(1315, 94);
             this.panel2.TabIndex = 14;
             // 
+            // lblIsTransform
+            // 
+            this.lblIsTransform.AutoSize = true;
+            this.lblIsTransform.Location = new System.Drawing.Point(691, 72);
+            this.lblIsTransform.Name = "lblIsTransform";
+            this.lblIsTransform.Size = new System.Drawing.Size(114, 15);
+            this.lblIsTransform.TabIndex = 14;
+            this.lblIsTransform.Text = "Transforms Data: No";
+            // 
             // panel3
             // 
             this.panel3.Controls.Add(this.label5);
@@ -244,15 +253,6 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(1315, 596);
             this.panel3.TabIndex = 15;
-            // 
-            // lblIsTransform
-            // 
-            this.lblIsTransform.AutoSize = true;
-            this.lblIsTransform.Location = new System.Drawing.Point(691, 72);
-            this.lblIsTransform.Name = "lblIsTransform";
-            this.lblIsTransform.Size = new System.Drawing.Size(93, 15);
-            this.lblIsTransform.TabIndex = 14;
-            this.lblIsTransform.Text = "Is Transform: No";
             // 
             // ExtractionInformationUI
             // 
