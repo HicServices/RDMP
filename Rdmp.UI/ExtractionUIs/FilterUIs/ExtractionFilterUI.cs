@@ -66,18 +66,6 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
         {
             InitializeComponent();
 
-            #region Query Editor setup
-
-            if (VisualStudioDesignMode) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
-                return;
-
-            QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
-            QueryEditor.TextChanged += QueryEditor_TextChanged;
-            pQueryEditor.Controls.Add(QueryEditor);
-            QueryEditor.Dock = DockStyle.Fill;
-            #endregion QueryEditor
-
-
             ObjectSaverButton1.BeforeSave += BeforeSave;
         }
 
@@ -93,9 +81,16 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
         {
             var factory = new FilterUIOptionsFactory();
             var options = factory.Create(_extractionFilter);
-            
-            _autoCompleteProvider = new AutoCompleteProviderWin(_extractionFilter.GetQuerySyntaxHelper());
-            
+
+            var querySyntaxHelper = _extractionFilter.GetQuerySyntaxHelper();
+
+            QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory(), SyntaxLanguage.SQL, querySyntaxHelper);
+            QueryEditor.TextChanged += QueryEditor_TextChanged;
+            pQueryEditor.Controls.Add(QueryEditor);
+            QueryEditor.Dock = DockStyle.Fill;
+
+            _autoCompleteProvider = new AutoCompleteProviderWin(querySyntaxHelper);
+
             foreach (var t in options.GetTableInfos())
                 _autoCompleteProvider.Add(t);
 
@@ -109,7 +104,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
 
             _autoCompleteProvider.RegisterForEvents(QueryEditor);
         }
-        
+
         private bool BeforeSave(DatabaseEntity databaseEntity)
         {
             SubstituteQueryEditorTextIfContainsLineComments();
