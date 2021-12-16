@@ -6,9 +6,11 @@
 
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Repositories.Construction;
 using System;
+using System.IO;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -16,6 +18,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     {
         private readonly IViewSQLAndResultsCollection _collection;
         private readonly ViewType _viewType;
+        public FileInfo ToFile { get; set; }
 
         #region Constructors
 
@@ -24,16 +27,20 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// </summary>
         /// <param name="activator"></param>
         /// <param name="viewType"></param>
+        /// <param name="toFile"></param>
         /// <param name="obj"></param>
         /// <exception cref="ArgumentException"></exception>
         [UseWithObjectConstructor]
         public ExecuteCommandViewData(IBasicActivateItems activator,
             [DemandsInitialization("The ColumnInfo, TableInfo or ExtractionInformation you want to view a sample of")]
             IMapsDirectlyToDatabaseTable obj,
-            [DemandsInitialization("The view mode you want to see.  Options include 'TOP_100', 'Aggregate' and 'Distribution'",DefaultValue = ViewType.TOP_100)]
-            ViewType viewType = ViewType.TOP_100) :base(activator)
+            [DemandsInitialization("Optional. The view mode you want to see.  Options include 'TOP_100', 'Aggregate' and 'Distribution'",DefaultValue = ViewType.TOP_100)]
+            ViewType viewType = ViewType.TOP_100,
+            [DemandsInitialization("Optional. A file to write the records to instead of the console")]
+            FileInfo toFile = null) :base(activator)
         {
             _viewType = viewType;
+            ToFile = toFile;
 
             if (obj is TableInfo ti)
             {
@@ -113,7 +120,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public override void Execute()
         {
-            BasicActivator.ShowData(_collection);
+            if (ToFile == null)
+            {
+                BasicActivator.ShowData(_collection);
+            }
+            else
+            {
+                ExtractTableVerbatim.ExtractDataToFile(_collection, ToFile);
+            }
         }
     }
 }
