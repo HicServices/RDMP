@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
@@ -277,7 +278,16 @@ namespace Rdmp.Core.Curation.Data
             sb.AppendLine($"Transforms Data: {FormatForSummary(IsProperTransform())}");
             sb.AppendLine(base.GetSummary(includeName, includeID));
 
-            return sb.ToString().Replace("Is Primary Key:","Is Extraction Primary Key:");
+            return sb.ToString();
+        }
+
+        protected override string FormatPropertyNameForSummary(PropertyInfo prop)
+        {
+            // rebrand this property so it is clearer to the user that it applies only on extraction
+            if (prop.Name == nameof(IsPrimaryKey))
+                return "Is Extraction Primary Key";
+
+            return base.FormatPropertyNameForSummary(prop);
         }
     }
 }
