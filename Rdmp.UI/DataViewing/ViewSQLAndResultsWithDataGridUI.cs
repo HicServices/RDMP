@@ -101,23 +101,21 @@ namespace Rdmp.UI.DataViewing
             var overlayer = new IconOverlayProvider();
             btnResetSql.Image = overlayer.GetOverlay(FamFamFamIcons.text_align_left, OverlayKind.Problem);
 
-            var syntax = _collection.GetQuerySyntaxHelper();
-
             if (_scintilla == null)
             {
+                // figure out what DBMS we are targetting
+                var syntax = _collection.GetQuerySyntaxHelper();
+
+                // Create the SQL editor for that language
                 ScintillaTextEditorFactory factory = new ScintillaTextEditorFactory();
                 _scintilla = factory.Create(null, "mssql", syntax);
                 splitContainer1.Panel1.Controls.Add(_scintilla);
                 _scintilla.TextChanged += _scintilla_TextChanged;
                 _scintilla.KeyUp += ScintillaOnKeyUp;
-            }
 
-            if (_autoComplete == null)
-            {
+                // Setup autocomplete menu for the DBMS language
                 _autoComplete = new AutoCompleteProviderWin(syntax);
-
                 _collection.AdjustAutocomplete(_autoComplete);
-
                 _autoComplete.RegisterForEvents(_scintilla);
             }
 
