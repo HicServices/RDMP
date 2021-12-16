@@ -64,11 +64,6 @@ namespace Rdmp.UI.DataViewing
         {
             InitializeComponent();
 
-            ScintillaTextEditorFactory factory = new ScintillaTextEditorFactory();
-            _scintilla = factory.Create();
-            splitContainer1.Panel1.Controls.Add(_scintilla);
-            _scintilla.TextChanged += _scintilla_TextChanged;
-            _scintilla.KeyUp += ScintillaOnKeyUp;
 
             btnExecuteSql.Click += (s,e) => RunQuery();
             btnResetSql.Click += btnResetSql_Click;
@@ -106,9 +101,20 @@ namespace Rdmp.UI.DataViewing
             var overlayer = new IconOverlayProvider();
             btnResetSql.Image = overlayer.GetOverlay(FamFamFamIcons.text_align_left, OverlayKind.Problem);
 
-            if(_autoComplete == null)
+            var syntax = _collection.GetQuerySyntaxHelper();
+
+            if (_scintilla == null)
             {
-                _autoComplete = new AutoCompleteProviderWin( _collection.GetQuerySyntaxHelper());
+                ScintillaTextEditorFactory factory = new ScintillaTextEditorFactory();
+                _scintilla = factory.Create(null, "mssql", syntax);
+                splitContainer1.Panel1.Controls.Add(_scintilla);
+                _scintilla.TextChanged += _scintilla_TextChanged;
+                _scintilla.KeyUp += ScintillaOnKeyUp;
+            }
+
+            if (_autoComplete == null)
+            {
+                _autoComplete = new AutoCompleteProviderWin(syntax);
 
                 _collection.AdjustAutocomplete(_autoComplete);
 
