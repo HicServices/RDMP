@@ -25,7 +25,8 @@ namespace Rdmp.UI.ScintillaHelper
             None,
             SQL,
             CSharp,
-            XML
+            XML,
+            LogFile
     };
 
     /// <summary>
@@ -74,6 +75,9 @@ namespace Rdmp.UI.ScintillaHelper
                     break;
                 case SyntaxLanguage.XML:
                     SetLexerEnumHighlighting(toReturn, Lexer.Xml);
+                    break;
+                case SyntaxLanguage.LogFile:
+                    SetLexerEnumHighlighting(toReturn, Lexer.Verilog);
                     break;
             }      
 

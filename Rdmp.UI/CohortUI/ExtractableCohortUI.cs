@@ -99,7 +99,7 @@ namespace Rdmp.UI.CohortUI
             if (VisualStudioDesignMode) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
                 return;
 
-            auditLogEditor = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
+            auditLogEditor = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory(), SyntaxLanguage.LogFile);
             pDescription.Controls.Add(auditLogEditor);
             auditLogEditor.TextChanged += AuditLogEditorOnTextChanged;
 
