@@ -87,12 +87,6 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             
             if(VisualStudioDesignMode)
                 return;
-
-            QueryHaving = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
-            
-            gbHaving.Controls.Add(QueryHaving);
-
-            QueryHaving.TextChanged += HavingTextChanged;
             
             olvJoin.CheckStateGetter += ForceJoinCheckStateGetter;
             olvJoin.CheckStatePutter += ForceJoinCheckStatePutter;
@@ -303,7 +297,13 @@ namespace Rdmp.UI.AggregationUIs.Advanced
 
         private void PopulateHavingText()
         {
-            var autoComplete = new AutoCompleteProviderWin(_aggregate.GetQuerySyntaxHelper());
+            var querySyntaxHelper = _aggregate.GetQuerySyntaxHelper();
+
+            QueryHaving = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory(), SyntaxLanguage.SQL, querySyntaxHelper);
+            QueryHaving.TextChanged += HavingTextChanged;
+            gbHaving.Controls.Add(QueryHaving);
+
+            var autoComplete = new AutoCompleteProviderWin(querySyntaxHelper);
             autoComplete.RegisterForEvents(QueryHaving);
             autoComplete.Add(_aggregate);
 
