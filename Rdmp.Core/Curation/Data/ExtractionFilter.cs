@@ -64,7 +64,7 @@ namespace Rdmp.Core.Curation.Data
         [NoMappingToDatabase]
         public override int? FilterContainer_ID
         {
-            get { return ID; }
+            get { throw new NotSupportedException(); }
             set { throw new NotSupportedException(); }
         }
 
