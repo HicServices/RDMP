@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
@@ -40,6 +41,25 @@ namespace Rdmp.UI.Menus
                 Add(new ExecuteCommandViewCatalogueExtractionSqlUI(_activator) { OverrideCommandName = "View Extraction Sql" }.SetTarget(catalogue));
             }
 
+            if (catalogue.LoadMetadata_ID != null)
+            {
+                var dir = catalogue.LoadMetadata.LocationOfFlatFiles;
+                DirectoryInfo dirReal;
+                if (dir != null)
+                {
+                    try
+                    {
+                        dirReal = new DirectoryInfo(dir);
+                    }
+                    catch (Exception)
+                    {
+                        // if the directory name is bad or corrupt
+                        return;
+                    }
+                    Add(new ExecuteCommandOpenInExplorer(_activator, dirReal) { OverrideCommandName = "Open Load Directory"});
+                }
+            }
+            
         }
 
     }
