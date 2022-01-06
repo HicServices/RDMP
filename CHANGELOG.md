@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ability to 'View TOP 100' etc samples on [ExtractionInformation] (previously only available on [ColumnInfo] objects)
 - Added icon overlays for 'Is Extraction Identifier' and 'Is Extraction Primary Key' (https://github.com/HicServices/RDMP/issues/830)
 - Extraction Information for a Catalogue Item now includes "Transforms Data" property (which shows yes/no based on whether it transform the column data)
+- Added 'open load directory' command to [Catalogue] context menu
 
 ### Fixed
 
