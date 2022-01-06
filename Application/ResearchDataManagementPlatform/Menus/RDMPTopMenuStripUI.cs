@@ -120,7 +120,6 @@ namespace ResearchDataManagementPlatform.Menus
 
                     var launchNew = new ToolStripMenuItem(yaml.Name, null, (s, e) => { LaunchNew(yaml); })
                     {
-                        Enabled = !isSameAsCurrent,
                         Checked = isSameAsCurrent
                     };
 
