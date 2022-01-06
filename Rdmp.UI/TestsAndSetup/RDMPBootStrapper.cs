@@ -20,6 +20,11 @@ namespace Rdmp.UI.TestsAndSetup
         private readonly EnvironmentInfo _environmentInfo;
         private readonly string catalogueConnection;
         private readonly string dataExportConnection;
+        
+        /// <summary>
+        /// The last used connection string arguments when launching using this factory class.  Typically the boot strapper
+        /// should only ever be used once so you can safely query this field but best to check that it is not null anyway.
+        /// </summary>
         public static ResearchDataManagementPlatformOptions ApplicationArguments;
         private T _mainForm;
 
