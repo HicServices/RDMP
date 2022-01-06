@@ -308,9 +308,6 @@ namespace Rdmp.Core.Curation.Data
 
         protected void AppendPropertyToSummary(StringBuilder sb, PropertyInfo prop, bool includeName, bool includeID, bool includePropertyName = true)
         {
-
-            var val = prop.GetValue(this);
-
             // don't show Name if we are being told not to
             if (!includeName && prop.Name.EndsWith("Name"))
                 return;
@@ -324,6 +321,23 @@ namespace Rdmp.Core.Curation.Data
             // don't show foreign key ID properties
             if (prop.Name.EndsWith("_ID"))
                 return;
+
+            object val;
+            try
+            {
+                val = prop.GetValue(this);
+            }
+            catch (TargetInvocationException ex)
+            {
+                if(ex.InnerException is NotSupportedException)
+                {
+                    return;
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
             // skip properties marked with 'do not extract'
             if (prop.GetCustomAttributes(typeof(DoNotExtractProperty), true).Any())
