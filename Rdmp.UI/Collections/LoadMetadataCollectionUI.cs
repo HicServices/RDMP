@@ -87,8 +87,7 @@ namespace Rdmp.UI.Collections
             tlvLoadMetadata.AddObject(Activator.CoreChildProvider.AllPermissionWindowsNode);
             tlvLoadMetadata.AddObject(Activator.CoreChildProvider.AllLoadMetadatasNode);
 
-            
-            CommonFunctionality.Add(new ExecuteCommandCreateNewLoadMetadata(Activator),"New");
+            BuildCommandList();
 
             if(_isFirstTime)
             {
@@ -110,6 +109,8 @@ namespace Rdmp.UI.Collections
 
             if (e.Object is CacheProgress)
                 tlvLoadMetadata.RefreshObject(tlvLoadMetadata.Objects.OfType<AllPermissionWindowsNode>());
+
+            BuildCommandList();
         }
         
         public static bool IsRootObject(object root)
@@ -117,6 +118,12 @@ namespace Rdmp.UI.Collections
             return
                 root is AllPermissionWindowsNode ||
                 root is AllLoadMetadatasNode;
+        }
+
+        public void BuildCommandList()
+        {
+            CommonFunctionality.ClearToolStrip();
+            CommonFunctionality.Add(new ExecuteCommandCreateNewLoadMetadata(Activator), "New");
         }
     }
 }
