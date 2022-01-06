@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -14,6 +15,7 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
+using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataQualityEngine;
@@ -32,6 +34,7 @@ using Rdmp.UI.PluginManagement.CodeGeneration;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SimpleDialogs.NavigateTo;
+using Rdmp.UI.TestsAndSetup;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Tutorials;
 using ResearchDataManagementPlatform.Menus.MenuItems;
@@ -78,8 +81,83 @@ namespace ResearchDataManagementPlatform.Menus
         public RDMPTopMenuStripUI()
         {
             InitializeComponent();
+
+            var args = RDMPBootStrapper<RDMPMainForm>.ApplicationArguments;
+            
+
+            // somehow app was launched without populating the load args
+            if (args == null)
+            {
+                return;
+            }
+            
+            var exeDir = UsefulStuff.GetExecutableDirectory();
+            var origYamlFile = args.ConnectionStringsFile;
+            
+            //default settings were used if no yaml file was specified or the file specified did not exist
+            var defaultsUsed = string.IsNullOrWhiteSpace(origYamlFile) || !File.Exists(Path.Combine(exeDir.FullName, origYamlFile));
+
+            // if defaults were not used then it is valid to switch to them
+            switchToDefaultSettings.Enabled = !defaultsUsed;
+            launchNewWithDefaultSettings.Enabled = !defaultsUsed;
+
+            switchToDefaultSettings.Checked = defaultsUsed;
+            launchNewWithDefaultSettings.Checked = defaultsUsed;
+
+            foreach (var yaml in exeDir.GetFiles("*.yaml"))
+            {
+                var opts = new ResearchDataManagementPlatformOptions
+                {
+                    ConnectionStringsFile = yaml.Name
+                };
+
+
+                // if the yaml file is valid 
+                opts.PopulateConnectionStringsFromYamlIfMissing();
+                if(!opts.NoConnectionStringsSpecified())
+                {
+                    bool isSameAsCurrent = string.Equals(yaml.Name, origYamlFile);
+
+                    var launchNew = new ToolStripMenuItem(yaml.Name, null, (s, e) => { LaunchNew(yaml); })
+                    {
+                        Enabled = !isSameAsCurrent,
+                        Checked = isSameAsCurrent
+                    };
+
+                    var switchTo = new ToolStripMenuItem(yaml.Name, null, (s, e) => { SwitchTo(yaml); })
+                    {
+                        Enabled = !isSameAsCurrent,
+                        Checked = isSameAsCurrent
+                    };
+
+                    launchAnotherInstanceToolStripMenuItem.DropDownItems.Add(launchNew);
+                    switchToInstanceToolStripMenuItem.DropDownItems.Add(switchTo);
+                }
+            }
+            launchAnotherInstanceToolStripMenuItem.Enabled = launchAnotherInstanceToolStripMenuItem.DropDownItems.Count > 0;
+            switchToInstanceToolStripMenuItem.Enabled = switchToInstanceToolStripMenuItem.DropDownItems.Count > 0;
         }
-        
+
+        private void SwitchTo(FileInfo yaml)
+        {
+            LaunchNew(yaml);
+
+            Application.Exit();
+        }
+
+        private void LaunchNew(FileInfo yaml)
+        {
+            var exeName = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, Process.GetCurrentProcess().ProcessName);
+            if(yaml == null)
+            {
+                Process.Start(exeName);
+            }
+            else
+            {
+                Process.Start(exeName, $"--{nameof(RDMPCommandLineOptions.ConnectionStringsFile)} \"{yaml.Name}\"");
+            }
+        }
+
         private void configureExternalServersToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new ExecuteCommandConfigureDefaultServers(Activator).Execute();
@@ -426,6 +504,16 @@ namespace ResearchDataManagementPlatform.Menus
         {
             var lastCommand = new LastCommandUI();
             lastCommand.Show();
+        }
+
+        private void switchToUsingUserSettings_Click(object sender, EventArgs e)
+        {
+            SwitchTo(null);
+        }
+
+        private void launchNewInstanceWithUserSettings_Click(object sender, EventArgs e)
+        {
+            LaunchNew(null);
         }
     }
 }

@@ -44,6 +44,9 @@ namespace ResearchDataManagementPlatform.Menus
             this.LocationsMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.configureExternalServersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setTicketingSystemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.launchAnotherInstanceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.launchNewWithDefaultSettings = new System.Windows.Forms.ToolStripMenuItem();
+            this.switchToInstanceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logViewerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.userSettingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,6 +64,7 @@ namespace ResearchDataManagementPlatform.Menus
             this.listAllTypesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.showPerformanceCounterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lastCommandMonitorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openExeDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.queryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.queryCatalogue = new System.Windows.Forms.ToolStripMenuItem();
@@ -74,7 +78,7 @@ namespace ResearchDataManagementPlatform.Menus
             this.licenseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rdmpTaskBar1 = new ResearchDataManagementPlatform.WindowManagement.TopBar.RDMPTaskBarUI();
-            this.lastCommandMonitorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.switchToDefaultSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -175,7 +179,9 @@ namespace ResearchDataManagementPlatform.Menus
             // 
             this.LocationsMenu.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.configureExternalServersToolStripMenuItem,
-            this.setTicketingSystemToolStripMenuItem});
+            this.setTicketingSystemToolStripMenuItem,
+            this.launchAnotherInstanceToolStripMenuItem,
+            this.switchToInstanceToolStripMenuItem});
             this.LocationsMenu.Name = "LocationsMenu";
             this.LocationsMenu.Size = new System.Drawing.Size(70, 20);
             this.LocationsMenu.Text = "Locations";
@@ -184,16 +190,39 @@ namespace ResearchDataManagementPlatform.Menus
             // 
             this.configureExternalServersToolStripMenuItem.Name = "configureExternalServersToolStripMenuItem";
             this.configureExternalServersToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
-            this.configureExternalServersToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.configureExternalServersToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             this.configureExternalServersToolStripMenuItem.Text = "Default Servers...";
             this.configureExternalServersToolStripMenuItem.Click += new System.EventHandler(this.configureExternalServersToolStripMenuItem_Click);
             // 
             // setTicketingSystemToolStripMenuItem
             // 
             this.setTicketingSystemToolStripMenuItem.Name = "setTicketingSystemToolStripMenuItem";
-            this.setTicketingSystemToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.setTicketingSystemToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
             this.setTicketingSystemToolStripMenuItem.Text = "Set Ticketing System...";
             this.setTicketingSystemToolStripMenuItem.Click += new System.EventHandler(this.setTicketingSystemToolStripMenuItem_Click);
+            // 
+            // launchAnotherInstanceToolStripMenuItem
+            // 
+            this.launchAnotherInstanceToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.launchNewWithDefaultSettings});
+            this.launchAnotherInstanceToolStripMenuItem.Name = "launchAnotherInstanceToolStripMenuItem";
+            this.launchAnotherInstanceToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.launchAnotherInstanceToolStripMenuItem.Text = "Launch Another Instance";
+            // 
+            // launchNewInstanceWithUserSettings
+            // 
+            this.launchNewWithDefaultSettings.Name = "launchNewInstanceWithUserSettings";
+            this.launchNewWithDefaultSettings.Size = new System.Drawing.Size(180, 22);
+            this.launchNewWithDefaultSettings.Text = "Default";
+            this.launchNewWithDefaultSettings.Click += new System.EventHandler(this.launchNewInstanceWithUserSettings_Click);
+            // 
+            // switchToInstanceToolStripMenuItem
+            // 
+            this.switchToInstanceToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.switchToDefaultSettings});
+            this.switchToInstanceToolStripMenuItem.Name = "switchToInstanceToolStripMenuItem";
+            this.switchToInstanceToolStripMenuItem.Size = new System.Drawing.Size(206, 22);
+            this.switchToInstanceToolStripMenuItem.Text = "Switch To Instance";
             // 
             // viewToolStripMenuItem
             // 
@@ -338,6 +367,13 @@ namespace ResearchDataManagementPlatform.Menus
             this.showPerformanceCounterToolStripMenuItem.Text = "Show Performance Counter...";
             this.showPerformanceCounterToolStripMenuItem.Click += new System.EventHandler(this.showPerformanceCounterToolStripMenuItem_Click);
             // 
+            // lastCommandMonitorToolStripMenuItem
+            // 
+            this.lastCommandMonitorToolStripMenuItem.Name = "lastCommandMonitorToolStripMenuItem";
+            this.lastCommandMonitorToolStripMenuItem.Size = new System.Drawing.Size(229, 22);
+            this.lastCommandMonitorToolStripMenuItem.Text = "Last Command Monitor";
+            this.lastCommandMonitorToolStripMenuItem.Click += new System.EventHandler(this.lastCommandMonitorToolStripMenuItem_Click);
+            // 
             // openExeDirectoryToolStripMenuItem
             // 
             this.openExeDirectoryToolStripMenuItem.Name = "openExeDirectoryToolStripMenuItem";
@@ -440,12 +476,12 @@ namespace ResearchDataManagementPlatform.Menus
             this.rdmpTaskBar1.Size = new System.Drawing.Size(1353, 29);
             this.rdmpTaskBar1.TabIndex = 57;
             // 
-            // lastCommandMonitorToolStripMenuItem
+            // switchToUsingUserSettings
             // 
-            this.lastCommandMonitorToolStripMenuItem.Name = "lastCommandMonitorToolStripMenuItem";
-            this.lastCommandMonitorToolStripMenuItem.Size = new System.Drawing.Size(229, 22);
-            this.lastCommandMonitorToolStripMenuItem.Text = "Last Command Monitor";
-            this.lastCommandMonitorToolStripMenuItem.Click += new System.EventHandler(this.lastCommandMonitorToolStripMenuItem_Click);
+            this.switchToDefaultSettings.Name = "switchToUsingUserSettings";
+            this.switchToDefaultSettings.Size = new System.Drawing.Size(180, 22);
+            this.switchToDefaultSettings.Text = "Default";
+            this.switchToDefaultSettings.Click += new System.EventHandler(this.switchToUsingUserSettings_Click);
             // 
             // RDMPTopMenuStripUI
             // 
@@ -509,5 +545,9 @@ namespace ResearchDataManagementPlatform.Menus
         private System.Windows.Forms.ToolStripMenuItem newSessionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem restartApplicationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem lastCommandMonitorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem launchAnotherInstanceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem switchToInstanceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem launchNewWithDefaultSettings;
+        private System.Windows.Forms.ToolStripMenuItem switchToDefaultSettings;
     }
 }

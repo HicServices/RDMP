@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using CommandLine;
 using Rdmp.Core.Startup;
+using Rdmp.UI;
 using Rdmp.UI.TestsAndSetup;
 using ReusableLibraryCode;
 
@@ -44,13 +45,11 @@ namespace ResearchDataManagementPlatform
         private static object RunApp(ResearchDataManagementPlatformOptions arg)
         {
             arg.PopulateConnectionStringsFromYamlIfMissing();
-            arg.GetConnectionStrings(out var c, out var d);
 
             RDMPBootStrapper<RDMPMainForm> bootStrapper =
                 new RDMPBootStrapper<RDMPMainForm>(
                     new EnvironmentInfo(PluginFolders.Main | PluginFolders.Windows),
-                    c?.ConnectionString,
-                    d?.ConnectionString);
+                    arg);
 
             bootStrapper.Show(false);
             return 0;

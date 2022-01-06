@@ -20,14 +20,19 @@ namespace Rdmp.UI.TestsAndSetup
         private readonly EnvironmentInfo _environmentInfo;
         private readonly string catalogueConnection;
         private readonly string dataExportConnection;
+        public static ResearchDataManagementPlatformOptions ApplicationArguments;
         private T _mainForm;
 
         
-        public RDMPBootStrapper(EnvironmentInfo environmentInfo,string catalogueConnection, string dataExportConnection)
+        public RDMPBootStrapper(EnvironmentInfo environmentInfo, ResearchDataManagementPlatformOptions args)
         {
+            ApplicationArguments = args;
+            args.GetConnectionStrings(out var c, out var d);
+
             this._environmentInfo = environmentInfo;
-            this.catalogueConnection = catalogueConnection;
-            this.dataExportConnection = dataExportConnection;
+            this.catalogueConnection = c?.ConnectionString;
+            this.dataExportConnection = d?.ConnectionString;
+
         }
 
         public HashSet<string> IgnoreExceptions = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase){ 
