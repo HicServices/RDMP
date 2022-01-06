@@ -80,6 +80,15 @@ namespace Rdmp.UI.Copying
             if (pipeline != null)
                 return new PipelineCombineable(pipeline);
 
+            if (modelObject is CatalogueItem ci)
+                return new CatalogueItemCombineable(ci);
+
+            var arrayOfCatalogueItems = IsArrayOf<CatalogueItem>(modelObject);
+            if (arrayOfCatalogueItems != null)
+            {
+                return new CatalogueItemCombineable(arrayOfCatalogueItems);
+            }
+
             //table column pointers (not extractable)
             var columnInfo = modelObject as ColumnInfo; //ColumnInfo is not an IColumn btw because it does not have column order or other extraction rule stuff (alias, hash etc)
             var linkedColumnInfo = modelObject as LinkedColumnInfoNode;
