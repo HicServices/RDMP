@@ -214,6 +214,7 @@ namespace Rdmp.UI.ExtractionUIs
                 autoComplete.Add(ExtractionInformation.CatalogueItem.Catalogue);
                 
                 autoComplete.RegisterForEvents(QueryEditor);
+                isFirstTimeSetupCalled = false;
             }
             
             var colInfo = ExtractionInformation.ColumnInfo;

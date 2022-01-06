@@ -79,8 +79,15 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
 
         private void FigureOutGlobalsAndAutoComplete()
         {
+
             var factory = new FilterUIOptionsFactory();
             var options = factory.Create(_extractionFilter);
+            GlobalFilterParameters = options.GetGlobalParametersInFilterScope();
+
+            if (QueryEditor != null)
+            {
+                return;
+            }
 
             var querySyntaxHelper = _extractionFilter.GetQuerySyntaxHelper();
 
@@ -96,8 +103,6 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
 
             foreach (var c in options.GetIColumnsInFilterScope())
                 _autoCompleteProvider.Add(c);
-
-            GlobalFilterParameters = options.GetGlobalParametersInFilterScope();
 
             foreach (ISqlParameter parameter in GlobalFilterParameters)
                 _autoCompleteProvider.Add(parameter);

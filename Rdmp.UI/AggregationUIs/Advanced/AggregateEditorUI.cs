@@ -297,15 +297,18 @@ namespace Rdmp.UI.AggregationUIs.Advanced
 
         private void PopulateHavingText()
         {
-            var querySyntaxHelper = _aggregate.GetQuerySyntaxHelper();
+            if(QueryHaving == null)
+            {
+                var querySyntaxHelper = _aggregate.GetQuerySyntaxHelper();
 
-            QueryHaving = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory(), SyntaxLanguage.SQL, querySyntaxHelper);
-            QueryHaving.TextChanged += HavingTextChanged;
-            gbHaving.Controls.Add(QueryHaving);
+                QueryHaving = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory(), SyntaxLanguage.SQL, querySyntaxHelper);
+                QueryHaving.TextChanged += HavingTextChanged;
+                gbHaving.Controls.Add(QueryHaving);
 
-            var autoComplete = new AutoCompleteProviderWin(querySyntaxHelper);
-            autoComplete.RegisterForEvents(QueryHaving);
-            autoComplete.Add(_aggregate);
+                var autoComplete = new AutoCompleteProviderWin(querySyntaxHelper);
+                autoComplete.RegisterForEvents(QueryHaving);
+                autoComplete.Add(_aggregate);
+            }
 
             QueryHaving.Text = _aggregate.HavingSQL;
         }
