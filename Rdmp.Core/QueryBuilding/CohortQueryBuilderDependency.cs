@@ -205,9 +205,29 @@ namespace Rdmp.Core.QueryBuilding
             //We would prefer a cache hit on the exact uncached SQL
             SqlFullyCached = GetCacheFetchSqlIfPossible(parent, CohortSet, SqlCacheless, isSolitaryPatientIndexTable, pluginCohortCompiler,cancellationToken);
 
+            // if we have a patient index table where the Sql is not fully cached then we should invalidate anyone using it
+            if(isSolitaryPatientIndexTable && SqlFullyCached == null && parent.CacheManager != null)
+            {
+                ClearCacheForUsersOfPatientIndexTable(parent.CacheManager, CohortSet);
+            }
+
             //but if that misses we would take a cache hit of an execution of the SqlPartiallyCached
             if(SqlFullyCached == null && SqlPartiallyCached != null)
                 SqlFullyCached = GetCacheFetchSqlIfPossible(parent,CohortSet,SqlPartiallyCached,isSolitaryPatientIndexTable, pluginCohortCompiler, cancellationToken);
+        }
+
+        private void ClearCacheForUsersOfPatientIndexTable(CachedAggregateConfigurationResultsManager cacheManager, AggregateConfiguration cohortSet)
+        {
+            if (cacheManager == null)
+                return;
+
+            var join = CohortSet.JoinableCohortAggregateConfiguration ?? throw new Exception($"{nameof(AggregateConfiguration.JoinableCohortAggregateConfiguration)} was null for CohortSet {cohortSet} so we were unable to clear the joinable cache users");
+
+            // get each Aggregate Configuration that joins using this patient index table
+            foreach (var user in join.Users.Select(j => j.AggregateConfiguration))
+            {
+                cacheManager.DeleteCacheEntryIfAny(user, AggregateOperation.IndexedExtractionIdentifierList);
+            }
         }
 
         private CohortQueryBuilderDependencySql GetCacheFetchSqlIfPossible(CohortQueryBuilderResult parent, AggregateConfiguration aggregate,
