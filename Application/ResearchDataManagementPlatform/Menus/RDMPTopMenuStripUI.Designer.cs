@@ -214,6 +214,7 @@ namespace ResearchDataManagementPlatform.Menus
             this.launchNewWithDefaultSettings.Name = "launchNewInstanceWithUserSettings";
             this.launchNewWithDefaultSettings.Size = new System.Drawing.Size(180, 22);
             this.launchNewWithDefaultSettings.Text = "Default";
+            this.launchNewWithDefaultSettings.ToolTipText = "The RDMP instance recorded in your user settings";
             this.launchNewWithDefaultSettings.Click += new System.EventHandler(this.launchNewInstanceWithUserSettings_Click);
             // 
             // switchToInstanceToolStripMenuItem
@@ -481,6 +482,7 @@ namespace ResearchDataManagementPlatform.Menus
             this.switchToDefaultSettings.Name = "switchToUsingUserSettings";
             this.switchToDefaultSettings.Size = new System.Drawing.Size(180, 22);
             this.switchToDefaultSettings.Text = "Default";
+            this.switchToDefaultSettings.ToolTipText = "The RDMP instance recorded in your user settings";
             this.switchToDefaultSettings.Click += new System.EventHandler(this.switchToUsingUserSettings_Click);
             // 
             // RDMPTopMenuStripUI
