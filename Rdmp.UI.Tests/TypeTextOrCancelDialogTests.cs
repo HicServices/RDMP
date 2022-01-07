@@ -26,7 +26,7 @@ namespace Rdmp.UI.Tests
 
             //the title and body should be a reasonable length
             Assert.AreEqual(1, dlg.Text.Length);
-            Assert.AreEqual(1, GetControl<Label>().First().Text.Length);
+            Assert.AreEqual(1, GetControl<TextBox>()[1].Text.Length);
 
             //dialog shouldn't go thinner than 460 pixels
             Assert.AreEqual(540, dlg.Width);
