@@ -87,9 +87,9 @@
             // 
             this.pTextEditor.Controls.Add(this.textBox1);
             this.pTextEditor.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pTextEditor.Location = new System.Drawing.Point(0, 65);
+            this.pTextEditor.Location = new System.Drawing.Point(0, 42);
             this.pTextEditor.Name = "pTextEditor";
-            this.pTextEditor.Size = new System.Drawing.Size(739, 31);
+            this.pTextEditor.Size = new System.Drawing.Size(739, 54);
             this.pTextEditor.TabIndex = 6;
             // 
             // taskDescriptionLabel1
@@ -99,7 +99,7 @@
             this.taskDescriptionLabel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.taskDescriptionLabel1.Location = new System.Drawing.Point(0, 0);
             this.taskDescriptionLabel1.Name = "taskDescriptionLabel1";
-            this.taskDescriptionLabel1.Size = new System.Drawing.Size(739, 65);
+            this.taskDescriptionLabel1.Size = new System.Drawing.Size(739, 42);
             this.taskDescriptionLabel1.TabIndex = 7;
             // 
             // TypeTextOrCancelDialog

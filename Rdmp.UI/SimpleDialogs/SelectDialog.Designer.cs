@@ -42,9 +42,9 @@ namespace Rdmp.UI.SimpleDialogs
             this.label1 = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.catalogueCollectionFilterUI1 = new Rdmp.UI.Collections.CatalogueCollectionFilterUI();
             this.panel1 = new System.Windows.Forms.Panel();
             this.taskDescriptionLabel1 = new Rdmp.UI.SimpleDialogs.TaskDescriptionLabel();
+            this.catalogueCollectionFilterUI1 = new Rdmp.UI.Collections.CatalogueCollectionFilterUI();
             ((System.ComponentModel.ISupportInitialize)(this.olvObjects)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -67,11 +67,11 @@ namespace Rdmp.UI.SimpleDialogs
             this.olvObjects.Dock = System.Windows.Forms.DockStyle.Fill;
             this.olvObjects.FullRowSelect = true;
             this.olvObjects.HideSelection = false;
-            this.olvObjects.Location = new System.Drawing.Point(0, 40);
+            this.olvObjects.Location = new System.Drawing.Point(0, 0);
             this.olvObjects.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.olvObjects.Name = "olvObjects";
             this.olvObjects.ShowGroups = false;
-            this.olvObjects.Size = new System.Drawing.Size(314, 372);
+            this.olvObjects.Size = new System.Drawing.Size(298, 420);
             this.olvObjects.TabIndex = 1;
             this.olvObjects.UseCompatibleStateImageBehavior = false;
             this.olvObjects.UseFiltering = true;
@@ -99,10 +99,10 @@ namespace Rdmp.UI.SimpleDialogs
             // btnSelect
             // 
             this.btnSelect.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.btnSelect.Location = new System.Drawing.Point(0, 511);
+            this.btnSelect.Location = new System.Drawing.Point(0, 513);
             this.btnSelect.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnSelect.Name = "btnSelect";
-            this.btnSelect.Size = new System.Drawing.Size(322, 27);
+            this.btnSelect.Size = new System.Drawing.Size(298, 27);
             this.btnSelect.TabIndex = 2;
             this.btnSelect.Text = "Select";
             this.btnSelect.UseVisualStyleBackColor = true;
@@ -111,10 +111,10 @@ namespace Rdmp.UI.SimpleDialogs
             // btnSelectNULL
             // 
             this.btnSelectNULL.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.btnSelectNULL.Location = new System.Drawing.Point(0, 538);
+            this.btnSelectNULL.Location = new System.Drawing.Point(0, 540);
             this.btnSelectNULL.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnSelectNULL.Name = "btnSelectNULL";
-            this.btnSelectNULL.Size = new System.Drawing.Size(322, 27);
+            this.btnSelectNULL.Size = new System.Drawing.Size(298, 27);
             this.btnSelectNULL.TabIndex = 3;
             this.btnSelectNULL.Text = "Select \'NULL\'";
             this.btnSelectNULL.UseVisualStyleBackColor = true;
@@ -123,10 +123,10 @@ namespace Rdmp.UI.SimpleDialogs
             // btnCancel
             // 
             this.btnCancel.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.btnCancel.Location = new System.Drawing.Point(0, 565);
+            this.btnCancel.Location = new System.Drawing.Point(0, 567);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(322, 27);
+            this.btnCancel.Size = new System.Drawing.Size(298, 27);
             this.btnCancel.TabIndex = 4;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
@@ -136,10 +136,10 @@ namespace Rdmp.UI.SimpleDialogs
             // 
             this.tbFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbFilter.Location = new System.Drawing.Point(43, 421);
+            this.tbFilter.Location = new System.Drawing.Point(43, 424);
             this.tbFilter.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbFilter.Name = "tbFilter";
-            this.tbFilter.Size = new System.Drawing.Size(275, 23);
+            this.tbFilter.Size = new System.Drawing.Size(251, 23);
             this.tbFilter.TabIndex = 0;
             this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
             this.tbFilter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbFilter_KeyDown);
@@ -149,7 +149,7 @@ namespace Rdmp.UI.SimpleDialogs
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(4, 425);
+            this.label1.Location = new System.Drawing.Point(4, 428);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(36, 15);
@@ -164,6 +164,7 @@ namespace Rdmp.UI.SimpleDialogs
             // 
             // splitContainer1
             // 
+            this.splitContainer1.Cursor = System.Windows.Forms.Cursors.HSplit;
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
@@ -174,16 +175,37 @@ namespace Rdmp.UI.SimpleDialogs
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.panel1);
+            this.splitContainer1.Panel1.Controls.Add(this.taskDescriptionLabel1);
             this.splitContainer1.Panel1.Controls.Add(this.tbFilter);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.catalogueCollectionFilterUI1);
-            this.splitContainer1.Size = new System.Drawing.Size(322, 511);
-            this.splitContainer1.SplitterDistance = 446;
+            this.splitContainer1.Size = new System.Drawing.Size(298, 513);
+            this.splitContainer1.SplitterDistance = 449;
             this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 5;
+            // 
+            // panel1
+            // 
+            this.panel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.panel1.Controls.Add(this.olvObjects);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 29);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(298, 420);
+            this.panel1.TabIndex = 4;
+            // 
+            // taskDescriptionLabel1
+            // 
+            this.taskDescriptionLabel1.AutoSize = true;
+            this.taskDescriptionLabel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.taskDescriptionLabel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.taskDescriptionLabel1.Location = new System.Drawing.Point(0, 0);
+            this.taskDescriptionLabel1.Name = "taskDescriptionLabel1";
+            this.taskDescriptionLabel1.Size = new System.Drawing.Size(298, 29);
+            this.taskDescriptionLabel1.TabIndex = 0;
             // 
             // catalogueCollectionFilterUI1
             // 
@@ -193,31 +215,11 @@ namespace Rdmp.UI.SimpleDialogs
             this.catalogueCollectionFilterUI1.Size = new System.Drawing.Size(312, 60);
             this.catalogueCollectionFilterUI1.TabIndex = 0;
             // 
-            // panel1
-            // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.Controls.Add(this.olvObjects);
-            this.panel1.Controls.Add(this.taskDescriptionLabel1);
-            this.panel1.Location = new System.Drawing.Point(4, 3);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(314, 412);
-            this.panel1.TabIndex = 4;
-            // 
-            // taskDescriptionLabel1
-            // 
-            this.taskDescriptionLabel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.taskDescriptionLabel1.Location = new System.Drawing.Point(0, 0);
-            this.taskDescriptionLabel1.Name = "taskDescriptionLabel1";
-            this.taskDescriptionLabel1.Size = new System.Drawing.Size(314, 40);
-            this.taskDescriptionLabel1.TabIndex = 0;
-            // 
             // SelectDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(322, 592);
+            this.ClientSize = new System.Drawing.Size(298, 594);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.btnSelect);
             this.Controls.Add(this.btnSelectNULL);

@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution;
+using ReusableLibraryCode.Progress;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,6 +20,8 @@ namespace Rdmp.UI.SimpleDialogs
 {
     public partial class TaskDescriptionLabel : UserControl
     {
+        private Color _backColour;
+        private Color _foreColour;
         public TaskDescriptionLabel()
         {
             InitializeComponent();
@@ -28,6 +31,7 @@ namespace Rdmp.UI.SimpleDialogs
         {
             var task = args.TaskDescription;
             var entryLabel = args.EntryLabel;
+            
 
             tbTaskDescription.Visible = pnlTaskDescription.Visible = !string.IsNullOrWhiteSpace(task);
             tbTaskDescription.Text = task;
@@ -42,6 +46,28 @@ namespace Rdmp.UI.SimpleDialogs
 
             this.Height = (!string.IsNullOrWhiteSpace(entryLabel) ? tbEntryLabel.Height : 0) + 
                           (!string.IsNullOrWhiteSpace(task) ? tbTaskDescription.Height : 0);
+
+            //Switch style based on args.DesciptionSeverity
+            switch (args.DesciptionSeverity)
+            {
+                case (ProgressEventType.Warning):
+                    _backColour = Color.FromArgb(253, 248, 228);
+                    _foreColour = Color.FromArgb(134, 105, 53);
+                    break;
+                case (ProgressEventType.Error):
+                    _backColour = Color.FromArgb(242, 222, 223);
+                    _foreColour = Color.FromArgb(143, 58, 75);
+                    break;
+                //Default blue information colours
+                default:
+                    _backColour = Color.FromArgb(217, 236, 242);
+                    _foreColour = Color.FromArgb(44, 108, 128);
+                    break;
+            }
+
+            pnlTaskDescriptionBorder.BackColor = _backColour;
+            tbTaskDescription.BackColor = _backColour;
+            tbTaskDescription.ForeColor = _foreColour;
         }
 
         /// <summary>
@@ -58,8 +84,8 @@ namespace Rdmp.UI.SimpleDialogs
                                                             new StringFormat(0));
 
             tbTaskDescription.Height = (int)MessageSize.Height + 3;
-            pnltbTaskDescriptionBorder.Height = tbTaskDescription.Height + 20;
-            pnlTaskDescription.Height = pnltbTaskDescriptionBorder.Height + 25;
+            pnlTaskDescriptionBorder.Height = tbTaskDescription.Height + 20;
+            pnlTaskDescription.Height = pnlTopMargin.Height + pnlTaskDescriptionBorder.Height;
         }
 
         private void tbEntryLabel_Resize(object sender, EventArgs e)
@@ -71,8 +97,7 @@ namespace Rdmp.UI.SimpleDialogs
                                                             new StringFormat(0));
 
             tbEntryLabel.Height = (int)MessageSize.Height + 3;
-            pnlEntryLabelBorder.Height = tbEntryLabel.Height + 20;
-            pnlEntryLabel.Height = pnlEntryLabelBorder.Height + 25;
+            pnlEntryLabel.Height = pnlTopMargin.Height + tbEntryLabel.Height;
         }
     }
 }

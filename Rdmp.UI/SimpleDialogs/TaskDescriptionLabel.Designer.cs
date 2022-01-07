@@ -32,13 +32,12 @@
             this.tbEntryLabel = new System.Windows.Forms.TextBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.pnlTaskDescription = new System.Windows.Forms.Panel();
+            this.pnlTaskDescriptionBorder = new System.Windows.Forms.Panel();
             this.pnlEntryLabel = new System.Windows.Forms.Panel();
-            this.pnlEntryLabelBorder = new System.Windows.Forms.Panel();
-            this.pnltbTaskDescriptionBorder = new System.Windows.Forms.Panel();
+            this.pnlTopMargin = new System.Windows.Forms.Panel();
             this.pnlTaskDescription.SuspendLayout();
+            this.pnlTaskDescriptionBorder.SuspendLayout();
             this.pnlEntryLabel.SuspendLayout();
-            this.pnlEntryLabelBorder.SuspendLayout();
-            this.pnltbTaskDescriptionBorder.SuspendLayout();
             this.SuspendLayout();
             // 
             // tbTaskDescription
@@ -55,7 +54,7 @@
             this.tbTaskDescription.Multiline = true;
             this.tbTaskDescription.Name = "tbTaskDescription";
             this.tbTaskDescription.ReadOnly = true;
-            this.tbTaskDescription.Size = new System.Drawing.Size(563, 84);
+            this.tbTaskDescription.Size = new System.Drawing.Size(588, 94);
             this.tbTaskDescription.TabIndex = 2;
             this.tbTaskDescription.Text = "tbTaskDescription";
             this.tbTaskDescription.Resize += new System.EventHandler(this.textBox1_Resize);
@@ -65,16 +64,15 @@
             this.tbEntryLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbEntryLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(253)))), ((int)(((byte)(248)))), ((int)(((byte)(228)))));
             this.tbEntryLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.tbEntryLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.tbEntryLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(134)))), ((int)(((byte)(105)))), ((int)(((byte)(53)))));
-            this.tbEntryLabel.Location = new System.Drawing.Point(10, 10);
-            this.tbEntryLabel.Margin = new System.Windows.Forms.Padding(10);
+            this.tbEntryLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.tbEntryLabel.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.tbEntryLabel.Location = new System.Drawing.Point(6, 0);
+            this.tbEntryLabel.Margin = new System.Windows.Forms.Padding(10, 0, 10, 10);
             this.tbEntryLabel.Multiline = true;
             this.tbEntryLabel.Name = "tbEntryLabel";
             this.tbEntryLabel.ReadOnly = true;
-            this.tbEntryLabel.Size = new System.Drawing.Size(565, 102);
+            this.tbEntryLabel.Size = new System.Drawing.Size(612, 30);
             this.tbEntryLabel.TabIndex = 3;
             this.tbEntryLabel.Text = "tbEntryLabel";
             this.tbEntryLabel.Resize += new System.EventHandler(this.tbEntryLabel_Resize);
@@ -85,54 +83,51 @@
             this.flowLayoutPanel1.AutoSize = true;
             this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(283, 23);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(283, 28);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(0, 0);
             this.flowLayoutPanel1.TabIndex = 4;
             // 
             // pnlTaskDescription
             // 
-            this.pnlTaskDescription.Controls.Add(this.pnltbTaskDescriptionBorder);
+            this.pnlTaskDescription.Controls.Add(this.pnlTaskDescriptionBorder);
             this.pnlTaskDescription.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlTaskDescription.Location = new System.Drawing.Point(0, 0);
+            this.pnlTaskDescription.Location = new System.Drawing.Point(0, 10);
             this.pnlTaskDescription.Name = "pnlTaskDescription";
-            this.pnlTaskDescription.Size = new System.Drawing.Size(607, 132);
+            this.pnlTaskDescription.Size = new System.Drawing.Size(632, 132);
             this.pnlTaskDescription.TabIndex = 5;
             this.pnlTaskDescription.Visible = false;
             // 
-            // pnlEntryLabel
+            // pnlTaskDescriptionBorder
             // 
-            this.pnlEntryLabel.Controls.Add(this.pnlEntryLabelBorder);
-            this.pnlEntryLabel.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pnlEntryLabel.Location = new System.Drawing.Point(0, 132);
-            this.pnlEntryLabel.Name = "pnlEntryLabel";
-            this.pnlEntryLabel.Size = new System.Drawing.Size(607, 147);
-            this.pnlEntryLabel.TabIndex = 6;
-            // 
-            // pnlEntryLabelBorder
-            // 
-            this.pnlEntryLabelBorder.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.pnlTaskDescriptionBorder.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pnlEntryLabelBorder.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(253)))), ((int)(((byte)(248)))), ((int)(((byte)(228)))));
-            this.pnlEntryLabelBorder.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlEntryLabelBorder.Controls.Add(this.tbEntryLabel);
-            this.pnlEntryLabelBorder.Location = new System.Drawing.Point(10, 13);
-            this.pnlEntryLabelBorder.Margin = new System.Windows.Forms.Padding(10);
-            this.pnlEntryLabelBorder.Name = "pnlEntryLabelBorder";
-            this.pnlEntryLabelBorder.Size = new System.Drawing.Size(587, 124);
-            this.pnlEntryLabelBorder.TabIndex = 4;
+            this.pnlTaskDescriptionBorder.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(236)))), ((int)(((byte)(242)))));
+            this.pnlTaskDescriptionBorder.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnlTaskDescriptionBorder.Controls.Add(this.tbTaskDescription);
+            this.pnlTaskDescriptionBorder.Location = new System.Drawing.Point(10, 0);
+            this.pnlTaskDescriptionBorder.Margin = new System.Windows.Forms.Padding(10, 0, 10, 10);
+            this.pnlTaskDescriptionBorder.Name = "pnlTaskDescriptionBorder";
+            this.pnlTaskDescriptionBorder.Size = new System.Drawing.Size(612, 119);
+            this.pnlTaskDescriptionBorder.TabIndex = 3;
             // 
-            // pnltbTaskDescriptionBorder
+            // pnlEntryLabel
             // 
-            this.pnltbTaskDescriptionBorder.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(236)))), ((int)(((byte)(242)))));
-            this.pnltbTaskDescriptionBorder.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnltbTaskDescriptionBorder.Controls.Add(this.tbTaskDescription);
-            this.pnltbTaskDescriptionBorder.Location = new System.Drawing.Point(10, 10);
-            this.pnltbTaskDescriptionBorder.Margin = new System.Windows.Forms.Padding(10);
-            this.pnltbTaskDescriptionBorder.Name = "pnltbTaskDescriptionBorder";
-            this.pnltbTaskDescriptionBorder.Size = new System.Drawing.Size(587, 109);
-            this.pnltbTaskDescriptionBorder.TabIndex = 3;
+            this.pnlEntryLabel.Controls.Add(this.tbEntryLabel);
+            this.pnlEntryLabel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pnlEntryLabel.Location = new System.Drawing.Point(0, 142);
+            this.pnlEntryLabel.Name = "pnlEntryLabel";
+            this.pnlEntryLabel.Size = new System.Drawing.Size(632, 147);
+            this.pnlEntryLabel.TabIndex = 6;
+            // 
+            // pnlTopMargin
+            // 
+            this.pnlTopMargin.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pnlTopMargin.Location = new System.Drawing.Point(0, 0);
+            this.pnlTopMargin.Name = "pnlTopMargin";
+            this.pnlTopMargin.Size = new System.Drawing.Size(632, 10);
+            this.pnlTopMargin.TabIndex = 4;
             // 
             // TaskDescriptionLabel
             // 
@@ -143,14 +138,14 @@
             this.Controls.Add(this.pnlEntryLabel);
             this.Controls.Add(this.pnlTaskDescription);
             this.Controls.Add(this.flowLayoutPanel1);
+            this.Controls.Add(this.pnlTopMargin);
             this.Name = "TaskDescriptionLabel";
-            this.Size = new System.Drawing.Size(607, 279);
+            this.Size = new System.Drawing.Size(632, 289);
             this.pnlTaskDescription.ResumeLayout(false);
+            this.pnlTaskDescriptionBorder.ResumeLayout(false);
+            this.pnlTaskDescriptionBorder.PerformLayout();
             this.pnlEntryLabel.ResumeLayout(false);
-            this.pnlEntryLabelBorder.ResumeLayout(false);
-            this.pnlEntryLabelBorder.PerformLayout();
-            this.pnltbTaskDescriptionBorder.ResumeLayout(false);
-            this.pnltbTaskDescriptionBorder.PerformLayout();
+            this.pnlEntryLabel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -162,7 +157,7 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Panel pnlTaskDescription;
         private System.Windows.Forms.Panel pnlEntryLabel;
-        private System.Windows.Forms.Panel pnlEntryLabelBorder;
-        private System.Windows.Forms.Panel pnltbTaskDescriptionBorder;
+        private System.Windows.Forms.Panel pnlTaskDescriptionBorder;
+        private System.Windows.Forms.Panel pnlTopMargin;
     }
 }
