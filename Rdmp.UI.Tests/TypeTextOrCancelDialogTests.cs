@@ -51,9 +51,9 @@ namespace Rdmp.UI.Tests
             //the title and body should be a reasonable length
             Assert.AreEqual(WideMessageBox.MAX_LENGTH_TITLE, dlg.Text.Length);
             Assert.AreEqual(WideMessageBox.MAX_LENGTH_BODY, GetControl<TextBox>()[1].Text.Length);
-            
-            //dialog shouldn't go wider than 720 pixels
-            Assert.AreEqual(740,dlg.Width);
+
+            //dialog shouldn't go wider than 840 pixels
+            Assert.LessOrEqual(dlg.Width, 840);
 
         }
         
