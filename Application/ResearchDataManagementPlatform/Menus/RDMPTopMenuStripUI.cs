@@ -295,7 +295,8 @@ namespace ResearchDataManagementPlatform.Menus
             rdmpTaskBar1.SetWindowManager(_windowManager);
 
             // Location menu
-            LocationsMenu.DropDownItems.Add(_atomicCommandUIFactory.CreateMenuItem(new ExecuteCommandChoosePlatformDatabase(Activator.RepositoryLocator)));
+            instancesToolStripMenuItem.DropDownItems.Add(_atomicCommandUIFactory.CreateMenuItem(
+                new ExecuteCommandChoosePlatformDatabase(Activator.RepositoryLocator) { OverrideCommandName = "Change Default Instance" }));
 
             Activator.Theme.ApplyTo(menuStrip1);
 
@@ -308,9 +309,19 @@ namespace ResearchDataManagementPlatform.Menus
                 Activator.GlobalErrorCheckNotifier.OnCheckPerformed(
                     new CheckEventArgs("Failed to BuildSwitchInstanceMenuItems", CheckResult.Fail, ex));
             }
+            
+            launchAnotherInstanceToolStripMenuItem.ToolTipText = "Start another copy of the RDMP process targetting the same (or another) RDMP platform database";
 
-            launchAnotherInstanceToolStripMenuItem.Enabled = launchAnotherInstanceToolStripMenuItem.DropDownItems.Count > 0;
-            switchToInstanceToolStripMenuItem.Enabled = switchToInstanceToolStripMenuItem.DropDownItems.Count > 1;
+            if(switchToInstanceToolStripMenuItem.DropDownItems.Count > 1)
+            {
+                switchToInstanceToolStripMenuItem.Enabled = true;
+                switchToInstanceToolStripMenuItem.ToolTipText = "Close the application and start another copy of the RDMP process targetting another RDMP platform database";
+            }
+            else
+            {
+                switchToInstanceToolStripMenuItem.Enabled = false;
+                switchToInstanceToolStripMenuItem.ToolTipText = "There are no other RDMP platform databases configured, create a .yaml file with connection strings to enable this feature";
+            }
         }
 
 
