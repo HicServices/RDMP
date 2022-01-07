@@ -56,6 +56,7 @@ namespace Rdmp.UI.SubComponents
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.lblExecuteAllPhase = new System.Windows.Forms.Label();
+            this.btnClearCache = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.tlvCic)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -225,9 +226,9 @@ namespace Rdmp.UI.SubComponents
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gbCicInfo.Controls.Add(this.tbDescription);
-            this.gbCicInfo.Location = new System.Drawing.Point(230, 3);
+            this.gbCicInfo.Location = new System.Drawing.Point(261, 3);
             this.gbCicInfo.Name = "gbCicInfo";
-            this.gbCicInfo.Size = new System.Drawing.Size(864, 76);
+            this.gbCicInfo.Size = new System.Drawing.Size(833, 76);
             this.gbCicInfo.TabIndex = 71;
             this.gbCicInfo.TabStop = false;
             this.gbCicInfo.Text = "Name:";
@@ -244,7 +245,7 @@ namespace Rdmp.UI.SubComponents
             this.tbDescription.Name = "tbDescription";
             this.tbDescription.ReadOnly = true;
             this.tbDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbDescription.Size = new System.Drawing.Size(855, 57);
+            this.tbDescription.Size = new System.Drawing.Size(824, 57);
             this.tbDescription.TabIndex = 54;
             // 
             // groupBox1
@@ -254,19 +255,20 @@ namespace Rdmp.UI.SubComponents
             this.groupBox1.Location = new System.Drawing.Point(4, 3);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox1.Size = new System.Drawing.Size(220, 76);
+            this.groupBox1.Size = new System.Drawing.Size(255, 76);
             this.groupBox1.TabIndex = 67;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Controls";
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnClearCache);
             this.panel1.Controls.Add(this.btnExecute);
             this.panel1.Controls.Add(this.btnAbortLoad);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(4, 19);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(212, 36);
+            this.panel1.Size = new System.Drawing.Size(247, 36);
             this.panel1.TabIndex = 70;
             // 
             // lblExecuteAllPhase
@@ -280,6 +282,17 @@ namespace Rdmp.UI.SubComponents
             this.lblExecuteAllPhase.TabIndex = 70;
             this.lblExecuteAllPhase.Text = "Execution status...";
             this.lblExecuteAllPhase.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // btnClearCache
+            // 
+            this.btnClearCache.Image = ((System.Drawing.Image)(resources.GetObject("btnClearCache.Image")));
+            this.btnClearCache.Location = new System.Drawing.Point(212, 0);
+            this.btnClearCache.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btnClearCache.Name = "btnClearCache";
+            this.btnClearCache.Size = new System.Drawing.Size(34, 36);
+            this.btnClearCache.TabIndex = 67;
+            this.btnClearCache.UseVisualStyleBackColor = true;
+            this.btnClearCache.Click += new System.EventHandler(this.btnClearCache_Click);
             // 
             // CohortIdentificationConfigurationUI
             // 
@@ -323,5 +336,6 @@ namespace Rdmp.UI.SubComponents
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.GroupBox gbCicInfo;
         private System.Windows.Forms.TextBox tbDescription;
+        private System.Windows.Forms.Button btnClearCache;
     }
 }

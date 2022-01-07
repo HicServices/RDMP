@@ -15,6 +15,7 @@ using FAnsi.Naming;
 using NLog;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;

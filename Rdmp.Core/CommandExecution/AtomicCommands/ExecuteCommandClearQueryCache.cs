@@ -5,6 +5,7 @@ using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryCaching.Aggregation;
 using ReusableLibraryCode.Icons.IconProvision;
+using System;
 using System.Drawing;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
@@ -31,10 +32,17 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if(cic.QueryCachingServer_ID == null)
             {
                 SetImpossible($"CohortIdentificationConfiguration {cic} does not have a query cache configured");
+                return;
             }
             if(cic.RootCohortAggregateContainer_ID == null)
             {
                 SetImpossible($"CohortIdentificationConfiguration {cic} has no root container");
+                return;
+            }
+
+            if(GetCacheCount() == 0)
+            {
+                SetImpossible($"There are no cache entries for {cic}");
             }
         }
         public override Image GetImage(IIconProvider iconProvider)
@@ -63,6 +71,28 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
             
             Show("Cache Entries Cleared", $"Deleted {deleted} cache entries");
+        }
+
+
+        private int GetCacheCount()
+        {
+            var cacheManager = new CachedAggregateConfigurationResultsManager(_cic.QueryCachingServer);
+            int found = 0;
+
+            foreach (var ag in _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively())
+            {
+                // just incase they changed the role or something wierd we should nuke all it's roles
+                found += cacheManager.GetLatestResultsTableUnsafe(ag, AggregateOperation.IndexedExtractionIdentifierList) != null ? 1 : 0;
+                found += cacheManager.GetLatestResultsTableUnsafe(ag, AggregateOperation.JoinableInceptionQuery) != null ? 1 : 0;
+            }
+            foreach (var joinable in _cic.GetAllJoinables())
+            {
+                // just incase they changed the role or something wierd we should nuke all it's roles
+                found += cacheManager.GetLatestResultsTableUnsafe(joinable.AggregateConfiguration, AggregateOperation.IndexedExtractionIdentifierList) != null ? 1 : 0;
+                found += cacheManager.GetLatestResultsTableUnsafe(joinable.AggregateConfiguration, AggregateOperation.JoinableInceptionQuery) != null ? 1 : 0;
+            }
+
+            return found;
         }
 
     }

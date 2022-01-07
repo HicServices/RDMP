@@ -71,8 +71,7 @@ namespace Rdmp.UI.SubComponents
     public partial class CohortIdentificationConfigurationUI : CohortIdentificationConfigurationUI_Design,IRefreshBusSubscriber
     {
         private CohortIdentificationConfiguration _configuration;
-
-
+        private ExecuteCommandClearQueryCache _clearCacheCommand;
         ToolStripMenuItem cbIncludeCumulative = new ToolStripMenuItem("Calculate Cumulative Totals") { CheckOnClick = true };
 
 
@@ -223,7 +222,9 @@ namespace Rdmp.UI.SubComponents
         {
             base.SetDatabaseObject(activator,databaseObject);
             _configuration = databaseObject;
-            
+
+            RebuildClearCacheCommand();
+
             gbCicInfo.Text = $"Name: {_configuration.Name}";
             tbDescription.Text = $"Description: {_configuration.Description}";
             ticket.TicketText = _configuration.Ticket;
@@ -270,6 +271,22 @@ namespace Rdmp.UI.SubComponents
             Compiler.CohortIdentificationConfiguration = _configuration;
             Compiler.CoreChildProvider = activator.CoreChildProvider;
             RecreateAllTasks();
+        }
+
+        /// <summary>
+        /// Resets the state of <see cref="btnClearCache"/> to reflect any changes in cached status
+        /// </summary>
+        private void RebuildClearCacheCommand()
+        {
+            if(InvokeRequired)
+            {
+                Invoke(new MethodInvoker(RebuildClearCacheCommand));
+                return;
+            }
+
+            _clearCacheCommand = new ExecuteCommandClearQueryCache(Activator, _configuration);
+            btnClearCache.Enabled = !_clearCacheCommand.IsImpossible;
+            btnClearCache.Image = _clearCacheCommand.GetImage(Activator.CoreIconProvider);
         }
 
         private void TlvCic_ItemActivate(object sender, EventArgs e)
@@ -559,7 +576,7 @@ namespace Rdmp.UI.SubComponents
 
             _runner = new CohortCompilerRunner(Compiler, _timeoutControls.Timeout);
             _runner.PhaseChanged += RunnerOnPhaseChanged;
-            new Task(() =>
+            Task.Run(() =>
             {
                 try
                 {
@@ -570,7 +587,9 @@ namespace Rdmp.UI.SubComponents
                     ExceptionViewer.Show(e);
                 }
 
-            }).Start();
+            }).ContinueWith((s, e) => {
+                RebuildClearCacheCommand();
+            }, TaskScheduler.FromCurrentSynchronizationContext());
         }
         private void RunnerOnPhaseChanged(object sender, EventArgs eventArgs)
         {
@@ -629,8 +648,20 @@ namespace Rdmp.UI.SubComponents
         {
             CancelAll();
         }
+        private void btnClearCache_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                _clearCacheCommand.Execute();
+            }
+            catch (Exception ex)
+            {
+                ExceptionViewer.Show(ex);
+            }
 
-        
+            RebuildClearCacheCommand();
+        }
+
         private void MenuBuilt(object sender, MenuBuiltEventArgs e)
         {
             var c = GetKey(e.Obj);
