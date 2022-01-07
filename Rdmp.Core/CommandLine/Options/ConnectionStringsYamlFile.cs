@@ -28,7 +28,7 @@ namespace Rdmp.Core.CommandLine.Options
         public string DataExportConnectionString { get; set; }
 
         /// <summary>
-        /// Optional user readable name for these settings e.g. TestingInstance
+        /// Optional user readable name for these settings e.g. 'Testing Instance'
         /// </summary>
         public string Name { get; set; }
 
