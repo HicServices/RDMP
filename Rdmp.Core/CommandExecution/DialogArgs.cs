@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using ReusableLibraryCode.Progress;
 using System.Text;
 
 namespace Rdmp.Core.CommandExecution
@@ -28,11 +29,15 @@ namespace Rdmp.Core.CommandExecution
         public string TaskDescription { get; set; }
 
         /// <summary>
+        /// Used to indicate level of severity assocaited with the <see cref="TaskDescription" />
+        /// </summary>
+        public ProgressEventType DesciptionSeverity { get; set; } = ProgressEventType.Information;
+
+        /// <summary>
         /// The final line of text before user entered input e.g. the label on
         /// a text box in which the user must enter the choice
         /// </summary>
         public string EntryLabel { get; set; }
-
 
         /// <summary>
         /// If there is only one valid choice can this be automatically selected without
