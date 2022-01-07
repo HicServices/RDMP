@@ -101,7 +101,6 @@ namespace ResearchDataManagementPlatform.Menus
 
             // if defaults were not used then it is valid to switch to them
             switchToDefaultSettings.Enabled = !defaultsUsed;
-            launchNewWithDefaultSettings.Enabled = !defaultsUsed;
 
             switchToDefaultSettings.Checked = defaultsUsed;
             launchNewWithDefaultSettings.Checked = defaultsUsed;
