@@ -73,7 +73,7 @@ namespace Rdmp.UI.SubComponents
         private CohortIdentificationConfiguration _configuration;
         private ExecuteCommandClearQueryCache _clearCacheCommand;
         ToolStripMenuItem cbIncludeCumulative = new ToolStripMenuItem("Calculate Cumulative Totals") { CheckOnClick = true };
-
+        ToolTip tt = new ToolTip();
 
         private RDMPCollectionCommonFunctionality _commonFunctionality;
         private ExternalDatabaseServer _queryCachingServer;
@@ -135,6 +135,9 @@ namespace Rdmp.UI.SubComponents
             RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvOrder, new Guid("5be4e6e7-bad6-4bd5-821c-a235bc056053"));
             RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvTime, new Guid("88f88d4a-6204-4f83-b9a7-5421186808b7"));
             RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvWorking, new Guid("cfe55a4f-9e17-4205-9016-ae506667f22d"));
+
+            tt.SetToolTip(btnExecute, "Starts running and caches all cohort sets and containers");
+            tt.SetToolTip(btnAbortLoad, "Cancells execution of any running cohort sets");
         }
 
         private object Working_AspectGetter(object rowobject)
@@ -250,6 +253,7 @@ namespace Rdmp.UI.SubComponents
             CommonFunctionality.AddToMenu(cbIncludeCumulative);
             CommonFunctionality.AddToMenu(new ToolStripSeparator());
             CommonFunctionality.AddToMenu(new ExecuteCommandSetQueryCachingDatabase(Activator, _configuration));
+            CommonFunctionality.AddToMenu(new ExecuteCommandClearQueryCache(Activator, _configuration));
             CommonFunctionality.AddToMenu(new ExecuteCommandCreateNewQueryCacheDatabase(activator, _configuration));
             CommonFunctionality.AddToMenu(
                 new ExecuteCommandSet(activator, _configuration, _configuration.GetType().GetProperty("Description"))
@@ -287,6 +291,8 @@ namespace Rdmp.UI.SubComponents
             _clearCacheCommand = new ExecuteCommandClearQueryCache(Activator, _configuration);
             btnClearCache.Enabled = !_clearCacheCommand.IsImpossible;
             btnClearCache.Image = _clearCacheCommand.GetImage(Activator.CoreIconProvider);
+
+            tt.SetToolTip(btnClearCache, _clearCacheCommand.IsImpossible ? _clearCacheCommand.ReasonCommandImpossible : "Clears any cached results (stale or otherwise) from the query cache");
         }
 
         private void TlvCic_ItemActivate(object sender, EventArgs e)
