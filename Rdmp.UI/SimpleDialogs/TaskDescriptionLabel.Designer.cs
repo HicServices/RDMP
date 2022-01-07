@@ -47,6 +47,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbTaskDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(236)))), ((int)(((byte)(242)))));
             this.tbTaskDescription.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.tbTaskDescription.Cursor = System.Windows.Forms.Cursors.Default;
             this.tbTaskDescription.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.tbTaskDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(44)))), ((int)(((byte)(108)))), ((int)(((byte)(128)))));
             this.tbTaskDescription.Location = new System.Drawing.Point(11, 13);
@@ -65,6 +66,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbEntryLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.tbEntryLabel.Cursor = System.Windows.Forms.Cursors.Default;
             this.tbEntryLabel.Font = new System.Drawing.Font("Segoe UI Semibold", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.tbEntryLabel.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.tbEntryLabel.Location = new System.Drawing.Point(6, 0);
