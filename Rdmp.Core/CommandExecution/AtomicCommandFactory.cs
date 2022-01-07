@@ -278,6 +278,11 @@ namespace Rdmp.Core.CommandExecution
                 }
             }
 
+            if(Is(o, out QueryCacheUsedByCohortIdentificationNode cicQueryCache))
+            {
+                yield return new ExecuteCommandClearQueryCache(_activator, cicQueryCache.User);
+            }
+
             if(Is(o,out AllFreeCohortIdentificationConfigurationsNode _) || Is(o,out AllProjectCohortIdentificationConfigurationsNode _))
                 yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator);
 

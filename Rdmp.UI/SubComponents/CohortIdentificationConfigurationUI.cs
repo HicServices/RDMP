@@ -72,7 +72,6 @@ namespace Rdmp.UI.SubComponents
     {
         private CohortIdentificationConfiguration _configuration;
 
-        ToolStripMenuItem _miClearCache = new ToolStripMenuItem("Clear Cached Records");
 
         ToolStripMenuItem cbIncludeCumulative = new ToolStripMenuItem("Calculate Cumulative Totals") { CheckOnClick = true };
 
@@ -116,9 +115,6 @@ namespace Rdmp.UI.SubComponents
             olvTime.AspectGetter = Time_AspectGetter;
             olvWorking.AspectGetter = Working_AspectGetter;
             olvCatalogue.AspectGetter = Catalogue_AspectGetter;
-
-            _miClearCache.Click += MiClearCacheClick;
-            _miClearCache.Image = CatalogueIcons.ExternalDatabaseServer_Cache;
 
             cbIncludeCumulative.CheckedChanged += (s, e) =>
             {
@@ -252,7 +248,6 @@ namespace Rdmp.UI.SubComponents
 
             CommonFunctionality.AddToMenu(cbIncludeCumulative);
             CommonFunctionality.AddToMenu(new ToolStripSeparator());
-            CommonFunctionality.AddToMenu(_miClearCache);
             CommonFunctionality.AddToMenu(new ExecuteCommandSetQueryCachingDatabase(Activator, _configuration));
             CommonFunctionality.AddToMenu(new ExecuteCommandCreateNewQueryCacheDatabase(activator, _configuration));
             CommonFunctionality.AddToMenu(
@@ -605,15 +600,6 @@ namespace Rdmp.UI.SubComponents
 
             btnExecute.Enabled = plan == Operation.Execute;
             btnAbortLoad.Enabled = plan == Operation.Cancel;
-            
-            _miClearCache.Enabled = AnyCachedTasks();
-        }
-        public bool AnyCachedTasks()
-        {
-            lock(Compiler.Tasks)
-            {
-                return Compiler.Tasks.Keys.OfType<ICacheableTask>().Any(t => !t.IsCacheableWhenFinished());
-            }
         }
 
         private Operation PlanGlobalOperation()
