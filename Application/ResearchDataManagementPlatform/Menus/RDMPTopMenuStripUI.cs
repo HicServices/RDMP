@@ -92,10 +92,10 @@ namespace ResearchDataManagementPlatform.Menus
             }
             
             var exeDir = UsefulStuff.GetExecutableDirectory();
-            var origYamlFile = args.ConnectionStringsFile;
+            var origYamlFile = args.ConnectionStringsFileLoaded;
             
             //default settings were used if no yaml file was specified or the file specified did not exist
-            var defaultsUsed = string.IsNullOrWhiteSpace(origYamlFile) || !File.Exists(Path.Combine(exeDir.FullName, origYamlFile));
+            var defaultsUsed = origYamlFile == null;
 
             // if defaults were not used then it is valid to switch to them
             switchToDefaultSettings.Enabled = !defaultsUsed;
@@ -106,45 +106,39 @@ namespace ResearchDataManagementPlatform.Menus
 
             foreach (var yaml in exeDir.GetFiles("*.yaml"))
             {
-                var opts = new ResearchDataManagementPlatformOptions
+                // if the yaml file is invalid bail out early
+                if (!ConnectionStringsYamlFile.TryLoadFrom(yaml, out var connectionStrings))
+                    continue;
+
+                bool isSameAsCurrent = origYamlFile == null ? false : yaml.FullName.Equals(origYamlFile.FileLoaded.FullName);
+
+                var launchNew = new ToolStripMenuItem(connectionStrings.Name ?? yaml.Name, null, (s, e) => { LaunchNew(connectionStrings); })
                 {
-                    ConnectionStringsFile = yaml.Name
+                    Checked = isSameAsCurrent
                 };
 
-
-                // if the yaml file is valid 
-                opts.PopulateConnectionStringsFromYamlIfMissing();
-                if(!opts.NoConnectionStringsSpecified())
+                var switchTo = new ToolStripMenuItem(connectionStrings.Name ?? yaml.Name, null, (s, e) => { SwitchTo(connectionStrings); })
                 {
-                    bool isSameAsCurrent = string.Equals(yaml.Name, origYamlFile);
+                    Enabled = !isSameAsCurrent,
+                    Checked = isSameAsCurrent
+                };
 
-                    var launchNew = new ToolStripMenuItem(yaml.Name, null, (s, e) => { LaunchNew(yaml); })
-                    {
-                        Checked = isSameAsCurrent
-                    };
-
-                    var switchTo = new ToolStripMenuItem(yaml.Name, null, (s, e) => { SwitchTo(yaml); })
-                    {
-                        Enabled = !isSameAsCurrent,
-                        Checked = isSameAsCurrent
-                    };
-
-                    launchAnotherInstanceToolStripMenuItem.DropDownItems.Add(launchNew);
-                    switchToInstanceToolStripMenuItem.DropDownItems.Add(switchTo);
-                }
+                launchAnotherInstanceToolStripMenuItem.DropDownItems.Add(launchNew);
+                switchToInstanceToolStripMenuItem.DropDownItems.Add(switchTo);
+                
             }
             launchAnotherInstanceToolStripMenuItem.Enabled = launchAnotherInstanceToolStripMenuItem.DropDownItems.Count > 0;
             switchToInstanceToolStripMenuItem.Enabled = switchToInstanceToolStripMenuItem.DropDownItems.Count > 0;
         }
 
-        private void SwitchTo(FileInfo yaml)
+        private void SwitchTo(ConnectionStringsYamlFile yaml)
         {
             LaunchNew(yaml);
 
             Application.Exit();
         }
 
-        private void LaunchNew(FileInfo yaml)
+        private void LaunchNew(ConnectionStringsYamlFile yaml)
         {
             var exeName = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, Process.GetCurrentProcess().ProcessName);
             if(yaml == null)
@@ -153,7 +147,7 @@ namespace ResearchDataManagementPlatform.Menus
             }
             else
             {
-                Process.Start(exeName, $"--{nameof(RDMPCommandLineOptions.ConnectionStringsFile)} \"{yaml.Name}\"");
+                Process.Start(exeName, $"--{nameof(RDMPCommandLineOptions.ConnectionStringsFile)} \"{yaml.FileLoaded.FullName}\"");
             }
         }
 

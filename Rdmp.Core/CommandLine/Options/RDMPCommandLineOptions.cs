@@ -50,7 +50,14 @@ namespace Rdmp.Core.CommandLine.Options
 
         [Option(Required = false, Default = false, HelpText = "Process returns errorcode '1' (instead of 0) if there are warnings")]
         public bool FailOnWarnings { get; set; }
-        
+
+        /// <summary>
+        /// If <see cref="ConnectionStringsFile"/> was specified and that file existed and was succesfully loaded
+        /// using <see cref="PopulateConnectionStringsFromYamlIfMissing()"/> then this property will store the
+        /// file used including name and description
+        /// </summary>
+        public ConnectionStringsYamlFile ConnectionStringsFileLoaded { get; private set; }
+
         protected const string ExampleCatalogueConnectionString = "Server=myServer;Database=RDMP_Catalogue;User Id=myUsername;Password=myPassword;";
         protected const string ExampleDataExportConnectionString = "Server=myServer;Database=RDMP_DataExport;User Id=myUsername;Password=myPassword;";
 
@@ -144,35 +151,11 @@ namespace Rdmp.Core.CommandLine.Options
             {
                 try
                 {
-                    // Setup the input
-                    using (var input = new StreamReader(yaml))
-                    {
-                        // Load the stream
-                        var yamlStream = new YamlStream();
-                        yamlStream.Load(input);
+                    var cstrs = ConnectionStringsYamlFile.LoadFrom(new FileInfo(yaml));
+                    CatalogueConnectionString = cstrs.CatalogueConnectionString;
+                    DataExportConnectionString = cstrs.DataExportConnectionString;
 
-                        // Examine the stream
-                        var mapping = (YamlMappingNode)yamlStream.Documents[0].RootNode;
-
-
-                        foreach (var entry in mapping.Children)
-                        {
-                            string key = ((YamlScalarNode)entry.Key).Value;
-                            string value = ((YamlScalarNode)entry.Value).Value;
-
-
-                            try
-                            {
-                                var prop = typeof(RDMPCommandLineOptions).GetProperty(key);
-                                prop.SetValue(this, value);
-                                logger.Info("Setting yaml config value for " + key);
-                            }
-                            catch (Exception)
-                            {
-                                logger.Error("Could not set property called " + key);
-                            }
-                        }
-                    }
+                    ConnectionStringsFileLoaded = cstrs;
                 }
                 catch (Exception ex)
                 {
