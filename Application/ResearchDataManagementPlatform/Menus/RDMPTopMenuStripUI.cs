@@ -42,6 +42,7 @@ using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -81,19 +82,20 @@ namespace ResearchDataManagementPlatform.Menus
         public RDMPTopMenuStripUI()
         {
             InitializeComponent();
+        }
 
+        private void BuildSwitchInstanceMenuItems()
+        {
             var args = RDMPBootStrapper<RDMPMainForm>.ApplicationArguments;
-            
 
             // somehow app was launched without populating the load args
             if (args == null)
             {
                 return;
             }
-            
-            var exeDir = UsefulStuff.GetExecutableDirectory();
+
             var origYamlFile = args.ConnectionStringsFileLoaded;
-            
+
             //default settings were used if no yaml file was specified or the file specified did not exist
             var defaultsUsed = origYamlFile == null;
 
@@ -104,31 +106,45 @@ namespace ResearchDataManagementPlatform.Menus
             switchToDefaultSettings.Checked = defaultsUsed;
             launchNewWithDefaultSettings.Checked = defaultsUsed;
 
-            foreach (var yaml in exeDir.GetFiles("*.yaml"))
+            // load the yaml files in the RDMP binary directory
+            var exeDir = UsefulStuff.GetExecutableDirectory();
+            AddMenuItemsForSwitchingToInstancesInYamlFilesOf(origYamlFile, exeDir);
+
+            // also add yaml files from wherever they got their original yaml file 
+            if (origYamlFile?.FileLoaded != null && !exeDir.FullName.Equals(origYamlFile.FileLoaded.Directory.FullName))
+            {
+                AddMenuItemsForSwitchingToInstancesInYamlFilesOf(origYamlFile, origYamlFile.FileLoaded.Directory);
+            }
+
+        }
+
+        private void AddMenuItemsForSwitchingToInstancesInYamlFilesOf(ConnectionStringsYamlFile origYamlFile, DirectoryInfo dir)
+        {
+            foreach (var yaml in dir.GetFiles("*.yaml"))
             {
                 // if the yaml file is invalid bail out early
                 if (!ConnectionStringsYamlFile.TryLoadFrom(yaml, out var connectionStrings))
                     continue;
 
-                bool isSameAsCurrent = origYamlFile == null ? false : yaml.FullName.Equals(origYamlFile.FileLoaded.FullName);
+                bool isSameAsCurrent = origYamlFile?.FileLoaded == null ? false : yaml.FullName.Equals(origYamlFile.FileLoaded.FullName);
 
                 var launchNew = new ToolStripMenuItem(connectionStrings.Name ?? yaml.Name, null, (s, e) => { LaunchNew(connectionStrings); })
                 {
-                    Checked = isSameAsCurrent
+                    Checked = isSameAsCurrent,
+                    ToolTipText = connectionStrings.Description ?? yaml.FullName
                 };
 
                 var switchTo = new ToolStripMenuItem(connectionStrings.Name ?? yaml.Name, null, (s, e) => { SwitchTo(connectionStrings); })
                 {
                     Enabled = !isSameAsCurrent,
-                    Checked = isSameAsCurrent
+                    Checked = isSameAsCurrent,
+                    ToolTipText = connectionStrings.Description ?? yaml.FullName
                 };
 
                 launchAnotherInstanceToolStripMenuItem.DropDownItems.Add(launchNew);
                 switchToInstanceToolStripMenuItem.DropDownItems.Add(switchTo);
-                
+
             }
-            launchAnotherInstanceToolStripMenuItem.Enabled = launchAnotherInstanceToolStripMenuItem.DropDownItems.Count > 0;
-            switchToInstanceToolStripMenuItem.Enabled = switchToInstanceToolStripMenuItem.DropDownItems.Count > 0;
         }
 
         private void SwitchTo(ConnectionStringsYamlFile yaml)
@@ -283,6 +299,19 @@ namespace ResearchDataManagementPlatform.Menus
             LocationsMenu.DropDownItems.Add(_atomicCommandUIFactory.CreateMenuItem(new ExecuteCommandChoosePlatformDatabase(Activator.RepositoryLocator)));
 
             Activator.Theme.ApplyTo(menuStrip1);
+
+            try
+            {
+                BuildSwitchInstanceMenuItems();
+            }
+            catch (Exception ex)
+            {
+                Activator.GlobalErrorCheckNotifier.OnCheckPerformed(
+                    new CheckEventArgs("Failed to BuildSwitchInstanceMenuItems", CheckResult.Fail, ex));
+            }
+
+            launchAnotherInstanceToolStripMenuItem.Enabled = launchAnotherInstanceToolStripMenuItem.DropDownItems.Count > 0;
+            switchToInstanceToolStripMenuItem.Enabled = switchToInstanceToolStripMenuItem.DropDownItems.Count > 1;
         }
 
 
