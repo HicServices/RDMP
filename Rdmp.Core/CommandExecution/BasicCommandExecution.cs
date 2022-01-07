@@ -37,6 +37,11 @@ namespace Rdmp.Core.CommandExecution
     /// </summary>
     public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
     {
+        /// <summary>
+        /// The last command executed by RDMP (will be null at start)
+        /// </summary>
+        public static IAtomicCommand LastCommand;
+
         public IBasicActivateItems BasicActivator { get; }
 
         public bool IsImpossible { get; private set; }
@@ -78,6 +83,9 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         public bool Ctrl { get; set; }
 
+        /// <inheritdoc/>
+        public int Weight { get; set; }
+
         public BasicCommandExecution()
         {
 
@@ -90,7 +98,9 @@ namespace Rdmp.Core.CommandExecution
 
         public virtual void Execute()
         {
-            if(IsImpossible)
+            LastCommand = this;
+
+            if (IsImpossible)
                 throw new ImpossibleCommandException(this, ReasonCommandImpossible);
         }
 

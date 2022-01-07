@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Reflection;
+using System.Text;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
@@ -267,6 +269,25 @@ namespace Rdmp.Core.Curation.Data
                 return null;
 
             return ColumnInfo.GetQuerySyntaxHelper();
+        }
+
+        public override string GetSummary(bool includeName, bool includeID)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine($"Transforms Data: {FormatForSummary(IsProperTransform())}");
+            sb.AppendLine(base.GetSummary(includeName, includeID));
+
+            return sb.ToString();
+        }
+
+        protected override string FormatPropertyNameForSummary(PropertyInfo prop)
+        {
+            // rebrand this property so it is clearer to the user that it applies only on extraction
+            if (prop.Name == nameof(IsPrimaryKey))
+                return "Is Extraction Primary Key";
+
+            return base.FormatPropertyNameForSummary(prop);
         }
     }
 }

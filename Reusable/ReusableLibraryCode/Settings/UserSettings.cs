@@ -35,18 +35,28 @@ namespace ReusableLibraryCode.Settings
             }
         }
 
+        /// <summary>
+        /// Show a Yes/No confirmation dialog box when closing RDMP
+        /// </summary>
         public static bool ConfirmApplicationExiting
         {
             get { return AppSettings.GetValueOrDefault("ConfirmExit", true); }
             set { AppSettings.AddOrUpdateValue("ConfirmExit", value); }
         }
 
+        /// <summary>
+        /// True if the user has accepted the open source license agreements for RDMP and
+        /// dependencies used in the software (i.e. MIT and GNU licenses).
+        /// </summary>
         public static string LicenseAccepted
         {
             get { return AppSettings.GetValueOrDefault("LicenseAccepted",null); }
             set { AppSettings.AddOrUpdateValue("LicenseAccepted", value); }
         }
 
+        /// <summary>
+        /// Automatically launch the RDMP Home Screen on launch of the RDMP application, regardless of the last window you viewed.
+        /// </summary>
         public static bool ShowHomeOnStartup
         {
             get { return AppSettings.GetValueOrDefault("ShowHomeOnStartup", false); }
@@ -54,7 +64,7 @@ namespace ReusableLibraryCode.Settings
         }
 
         /// <summary>
-        /// True to include in data table/graphs series in which all values are 0.  Defaults to true
+        /// If checked series included in graphs that have no values will not be displayed
         /// </summary>
         public static bool IncludeZeroSeriesInGraphs
         {
@@ -62,24 +72,38 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("IncludeZeroSeriesInGraphs", value); }
         }
 
+        /// <summary>
+        /// Adds an additional behaviour when changing tabs that highlights the tree view
+        /// collection that has that object visible in it.
+        /// </summary>
         public static bool EmphasiseOnTabChanged
         {
             get { return AppSettings.GetValueOrDefault("EmphasiseOnTabChanged", false); }
             set { AppSettings.AddOrUpdateValue("EmphasiseOnTabChanged", value); }
         }
 
+        /// <summary>
+        /// True to disable any auto starting tutorials
+        /// </summary>
         public static bool DisableTutorials
         {
             get { return AppSettings.GetValueOrDefault("DisableTutorials", false); }
             set { AppSettings.AddOrUpdateValue("DisableTutorials", value); }
         }
 
+        /// <summary>
+        /// The connection string to the main RDMP platform database
+        /// </summary>
         public static string CatalogueConnectionString
         {
             get { return AppSettings.GetValueOrDefault("CatalogueConnectionString", ""); }
             set { AppSettings.AddOrUpdateValue("CatalogueConnectionString", value); }
         }
 
+        /// <summary>
+        /// The connection string to the data export RDMP platform database.  This database will contain
+        /// refrerences to objects in the <see cref="CatalogueConnectionString"/> database
+        /// </summary>
         public static string DataExportConnectionString
         {
             get { return AppSettings.GetValueOrDefault("DataExportConnectionString", ""); }
@@ -87,7 +111,9 @@ namespace ReusableLibraryCode.Settings
         }
 
         /// <summary>
-        /// Controls whether RDMP permits cohorts to be created where the release ID and private ID are the same (i.e. the linkage ids are not anonymised).
+        /// <para>Controls whether RDMP permits cohorts to be created where the release ID and private ID are the same (i.e. the linkage ids are not anonymised).</para>
+        /// 
+        /// <para>Changing this setting will not affect how cohorts are currently configured or extracted, it only supresses a specific error message that is generated when a cohort source is configured where the private and release identifiers reference the same column</para>
         /// </summary>
         public static bool AllowIdentifiableExtractions
         {
@@ -95,24 +121,45 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("AllowIdentifiableExtractions", value); }
         }
 
+        /// <summary>
+        /// The colour scheme and format for the RDMP gui client application
+        /// </summary>
         public static string Theme
         {
             get { return AppSettings.GetValueOrDefault("Theme", "ResearchDataManagementPlatform.Theme.MyVS2015BlueTheme"); }
             set { AppSettings.AddOrUpdateValue("Theme", value); }
         }
 
+        /// <summary>
+        /// When selecting a result from the Find dialog the selected item is pinned in the corresponding view.
+        /// </summary>
         public static bool FindShouldPin
         {
             get { return AppSettings.GetValueOrDefault("FindShouldPin", true); }
             set { AppSettings.AddOrUpdateValue("FindShouldPin", value); }
         }
 
+        /// <summary>
+        /// Set the amount of time (in seconds) that the Create Database processes should wait before timing out.
+        /// </summary>
         public static int CreateDatabaseTimeout
         {
             get { return AppSettings.GetValueOrDefault("CreateDatabaseTimeout", 30); }
             set { AppSettings.AddOrUpdateValue("CreateDatabaseTimeout", DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = Math.Max(value,30)); }
         }
 
+        /// <summary>
+        /// Set the amount of time (in milliseconds) that tooltips should take to appear in the tree collection views (e.g. list of Cataologues etc)
+        /// </summary>
+        public static int TooltipAppearDelay
+        {
+            get { return AppSettings.GetValueOrDefault("TooltipAppearDelay", 750); }
+            set { AppSettings.AddOrUpdateValue("TooltipAppearDelay", Math.Max(10,value)); }
+        }
+
+        /// <summary>
+        /// When using the Find feature this option will automatically filter out any cohort set containers (i.e. UNION / INTERSECT / EXCEPT containers)
+        /// </summary>
         public static bool ScoreZeroForCohortAggregateContainers
         {
             get { return AppSettings.GetValueOrDefault("ScoreZeroForCohortAggregateContainers", false); }
@@ -148,36 +195,61 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("ShowNonExtractableCatalogues", value); }
         }
 
+        /// <summary>
+        /// True to apply theme changes to context menus and tool strips.
+        /// </summary>
         public static bool ApplyThemeToMenus
         {
             get { return AppSettings.GetValueOrDefault("ApplyThemeToMenus", true); }
             set { AppSettings.AddOrUpdateValue("ApplyThemeToMenus", value); }
         }
 
+        /// <summary>
+        /// Determines line wrapping in multi line editor controls when lines stretch off the control client area
+        /// </summary>
         public static int WrapMode
         {
             get { return AppSettings.GetValueOrDefault("WrapMode", 0); }
             set { AppSettings.AddOrUpdateValue("WrapMode", value); }
         }
 
+        /// <summary>
+        /// <para>Base colours used for generating heatmaps in HEX format.  Colour intensity will vary
+        /// from the first color to the second.</para>
+        /// 
+        /// <para>The first colour represents the lowest values and should
+        /// typically be darker than the second which represents high values.</para>
+        /// </summary>
         public static string HeatMapColours 
         {
             get { return AppSettings.GetValueOrDefault("HeatMapColours", null); }
             set { AppSettings.AddOrUpdateValue("HeatMapColours", value); }
         }
-        
+
+        /// <summary>
+        /// <para>Adds a 5 second delay after startup</para>
+        /// <para>Use this option to add a delay that can be helpful for troubleshooting issues on RDMP startup. </para>
+        /// </summary>
         public static bool Wait5SecondsAfterStartupUI
         {
             get { return AppSettings.GetValueOrDefault("Wait5SecondsAfterStartupUI", true); }
             set { AppSettings.AddOrUpdateValue("Wait5SecondsAfterStartupUI", value); }
         }
 
+        /// <summary>
+        /// True to show the cohort creation wizard when creating new cohorts.  False to create
+        /// a default empty configuration.
+        /// </summary>
         public static bool ShowCohortWizard
         {
             get { return AppSettings.GetValueOrDefault("ShowCohortWizard", false); }
             set { AppSettings.AddOrUpdateValue("ShowCohortWizard", value); }
         }
 
+        /// <summary>
+        /// Changes the behaviour of mouse double clicks in tree views.  When enabled double
+        /// click expands nodes instead of opening the double clicked object (the default behaviour).
+        /// </summary>
         public static bool DoubleClickToExpand
         {
             get { return AppSettings.GetValueOrDefault("DoubleClickToExpand", false); }
@@ -190,10 +262,17 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("RecentHistory", value); }
         }
 
+        /// <summary>
+        /// <para>When enabled RDMP will record certain performance related metrics (how long refresh takes etc).</para>
+        /// <para>These figures are completely internal to the application and are not transmitted anywhere.You can view the results in the toolbar.</para>
+        /// </summary>
         public static bool DebugPerformance { 
             get { return AppSettings.GetValueOrDefault("DebugPerformance", false); }
             set { AppSettings.AddOrUpdateValue("DebugPerformance", value); } }
 
+        /// <summary>
+        /// Show a popup confirmation dialog at the end of a pipeline completing execution
+        /// </summary>
         public static bool ShowPipelineCompletedPopup { 
             get { return AppSettings.GetValueOrDefault("ShowPipelineCompletedPopup", false); }
             set { AppSettings.AddOrUpdateValue("ShowPipelineCompletedPopup", value); } }
@@ -204,12 +283,20 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("ConsoleColorScheme", value); }
         }
 
+        /// <summary>
+        /// <para>When true RDMP log viewer will hide table load audits where no inserts/updates/deletes were applied.</para>
+        /// <para>This is helpful if a load targets many tables not all of which will be updated in a given run</para>
+        /// </summary>
         public static bool HideEmptyTableLoadRunAudits
         {
             get { return AppSettings.GetValueOrDefault("HideEmptyTableLoadRunAudits", false); }
             set { AppSettings.AddOrUpdateValue("HideEmptyTableLoadRunAudits", value); }
         }
 
+        /// <summary>
+        /// <para>Enables additional Find filters for objects that are in:</para>
+        /// <para>Cold Storage, Internal, Deprecated, Project Specific and Non Extractable</para>
+        /// </summary>
         public static bool AdvancedFindFilters
         {
             get { return AppSettings.GetValueOrDefault("AdvancedFindFilters", false); }

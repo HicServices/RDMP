@@ -50,6 +50,10 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
             if (UsefulStuff.IsAssignableToGenericType(toSetPropertiesOf.GetType(),typeof (IPipelineRequirement<>)))
                 throw new Exception("ProcessTask '" + ProcessTask.Name + "' was was an instance of Class '" + ProcessTask.Path + "' which declared an IPipelineRequirement<>.  RuntimeTask classes are not the same as IDataFlowComponents, IDataFlowComponents can make IPipelineRequirement requests but RuntimeTasks cannot");
 
+            if (UsefulStuff.IsAssignableToGenericType(toSetPropertiesOf.GetType(), typeof(IPipelineOptionalRequirement<>)))
+                throw new Exception("ProcessTask '" + ProcessTask.Name + "' was was an instance of Class '" + ProcessTask.Path + "' which declared an IPipelineOptionalRequirement<>.  RuntimeTask classes are not the same as IDataFlowComponents, IDataFlowComponents can make IPipelineRequirement requests but RuntimeTasks cannot");
+
+
             //get all possible properties that we could set
             foreach (var propertyInfo in toSetPropertiesOf.GetType().GetProperties())
             {

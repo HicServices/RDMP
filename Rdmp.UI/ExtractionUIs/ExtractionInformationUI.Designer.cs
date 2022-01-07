@@ -44,6 +44,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.tbId = new System.Windows.Forms.TextBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.lblIsTransform = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -136,9 +137,9 @@
             this.cbIsPrimaryKey.Location = new System.Drawing.Point(463, 71);
             this.cbIsPrimaryKey.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbIsPrimaryKey.Name = "cbIsPrimaryKey";
-            this.cbIsPrimaryKey.Size = new System.Drawing.Size(100, 19);
+            this.cbIsPrimaryKey.Size = new System.Drawing.Size(156, 19);
             this.cbIsPrimaryKey.TabIndex = 7;
-            this.cbIsPrimaryKey.Text = "Is Primary Key";
+            this.cbIsPrimaryKey.Text = "Is Extraction Primary Key";
             this.cbIsPrimaryKey.UseVisualStyleBackColor = true;
             // 
             // label4
@@ -212,6 +213,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.lblIsTransform);
             this.panel2.Controls.Add(this.tbId);
             this.panel2.Controls.Add(this.label3);
             this.panel2.Controls.Add(this.label1);
@@ -229,6 +231,15 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1315, 94);
             this.panel2.TabIndex = 14;
+            // 
+            // lblIsTransform
+            // 
+            this.lblIsTransform.AutoSize = true;
+            this.lblIsTransform.Location = new System.Drawing.Point(691, 72);
+            this.lblIsTransform.Name = "lblIsTransform";
+            this.lblIsTransform.Size = new System.Drawing.Size(114, 15);
+            this.lblIsTransform.TabIndex = 14;
+            this.lblIsTransform.Text = "Transforms Data: No";
             // 
             // panel3
             // 
@@ -280,5 +291,6 @@
         private System.Windows.Forms.TextBox tbId;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Label lblIsTransform;
     }
 }

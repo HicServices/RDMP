@@ -80,15 +80,13 @@ namespace Rdmp.UI.AggregationUIs.Advanced
         public AggregateEditorUI()
         {
             InitializeComponent();
+
+            //Stop mouse wheel scroll from scrolling the combobox when it's closed to avoid the value being changed without user noticing.
+            RDMPControlCommonFunctionality.DisableMouseWheel(ddAxisDimension);
+            RDMPControlCommonFunctionality.DisableMouseWheel(ddPivotDimension);
             
             if(VisualStudioDesignMode)
                 return;
-
-            QueryHaving = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
-            
-            gbHaving.Controls.Add(QueryHaving);
-
-            QueryHaving.TextChanged += HavingTextChanged;
             
             olvJoin.CheckStateGetter += ForceJoinCheckStateGetter;
             olvJoin.CheckStatePutter += ForceJoinCheckStatePutter;
@@ -299,9 +297,18 @@ namespace Rdmp.UI.AggregationUIs.Advanced
 
         private void PopulateHavingText()
         {
-            var autoComplete = new AutoCompleteProviderWin(_aggregate.GetQuerySyntaxHelper());
-            autoComplete.RegisterForEvents(QueryHaving);
-            autoComplete.Add(_aggregate);
+            if(QueryHaving == null)
+            {
+                var querySyntaxHelper = _aggregate.GetQuerySyntaxHelper();
+
+                QueryHaving = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory(), SyntaxLanguage.SQL, querySyntaxHelper);
+                QueryHaving.TextChanged += HavingTextChanged;
+                gbHaving.Controls.Add(QueryHaving);
+
+                var autoComplete = new AutoCompleteProviderWin(querySyntaxHelper);
+                autoComplete.RegisterForEvents(QueryHaving);
+                autoComplete.Add(_aggregate);
+            }
 
             QueryHaving.Text = _aggregate.HavingSQL;
         }

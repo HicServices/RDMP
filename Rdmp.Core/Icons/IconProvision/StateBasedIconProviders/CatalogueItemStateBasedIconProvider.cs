@@ -16,11 +16,13 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
     public class CatalogueItemStateBasedIconProvider : IObjectStateBasedIconProvider
     {
         private readonly Bitmap basicImage;
+        private readonly Bitmap transformImage;
         private readonly IconOverlayProvider _overlayProvider;
 
         public CatalogueItemStateBasedIconProvider(IconOverlayProvider overlayProvider)
         {
             basicImage = CatalogueIcons.CatalogueItem;
+            transformImage = CatalogueIcons.CatalogueItemTransform;
             _overlayProvider = overlayProvider;
         }
 
@@ -31,15 +33,20 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             if (ci == null)
                 return null;
 
-            Bitmap toReturn = basicImage;
-
             var ei = ci.ExtractionInformation;
+            Bitmap toReturn = ei?.IsProperTransform() ?? false ? transformImage: basicImage;
 
             //it's extractable
             if (ei != null)
             {
                 if (ei.HashOnDataRelease) 
                     toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Hashed);
+
+                if (ei.IsExtractionIdentifier)
+                    toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.IsExtractionIdentifier);
+                
+                if (ei.IsPrimaryKey)
+                    toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Key);
 
                 switch (ei.ExtractionCategory)
                 {

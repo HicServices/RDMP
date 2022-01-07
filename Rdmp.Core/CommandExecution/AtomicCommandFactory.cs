@@ -20,6 +20,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.Data.Referencing;
+using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataViewing;
@@ -127,12 +128,31 @@ namespace Rdmp.Core.CommandExecution
                 };
             }
 
+            if(Is(o, out ExtractionInformation ei))
+            {
+                yield return new ExecuteCommandCreateNewFilter(_activator, new ExtractionFilterFactory(ei));
+                yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, ei);
+                yield return new ExecuteCommandChangeExtractionCategory(_activator, ei);
+
+                yield return new ExecuteCommandViewData(_activator, ViewType.TOP_100, ei) { SuggestedCategory = "View Data" };
+                yield return new ExecuteCommandViewData(_activator, ViewType.Aggregate, ei) { SuggestedCategory = "View Data" };
+                yield return new ExecuteCommandViewData(_activator, ViewType.Distribution, ei) { SuggestedCategory = "View Data" };
+            }
+
             if(Is(o,out  CatalogueItem ci))
             {
                 yield return new ExecuteCommandLinkCatalogueItemToColumnInfo(_activator, ci);
                 yield return new ExecuteCommandMakeCatalogueItemExtractable(_activator, ci);
                 yield return new ExecuteCommandChangeExtractionCategory(_activator, ci.ExtractionInformation);
                 yield return new ExecuteCommandImportCatalogueItemDescription(_activator, ci){SuggestedShortcut= "I",Ctrl=true };
+
+                var ciExtractionInfo = ci.ExtractionInformation;
+                if(ciExtractionInfo != null)
+                {
+                    yield return new ExecuteCommandViewData(_activator, ViewType.TOP_100, ciExtractionInfo) { SuggestedCategory = "View Data" };
+                    yield return new ExecuteCommandViewData(_activator, ViewType.Aggregate, ciExtractionInfo) { SuggestedCategory = "View Data" };
+                    yield return new ExecuteCommandViewData(_activator, ViewType.Distribution, ciExtractionInfo) { SuggestedCategory = "View Data" };
+                }
             }
 
             if(Is(o, out SupportingSQLTable sqlTable))

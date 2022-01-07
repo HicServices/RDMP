@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
-
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 {
@@ -39,6 +39,9 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
             _objectsForComboBox = objectsForComboBox;
             InitializeComponent();
 
+            //Stop mouse wheel scroll from scrolling the combobox when it's closed to avoid the value being changed without user noticing.
+            RDMPControlCommonFunctionality.DisableMouseWheel(cbxValue);
+
             if(objectsForComboBox == null || objectsForComboBox.Length == 0)
                 return;
 
@@ -64,10 +67,26 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
             else
             {
                 cbxValue.DropDownStyle = ComboBoxStyle.DropDownList;
-                cbxValue.Items.AddRange(objectsForComboBox);
-                cbxValue.Items.Add(ClearSelection);
+
+                cbxValue.DropDown += (s, e) => { LateLoad(objectsForComboBox); };
             }
             
+        }
+
+        bool haveLateLoaded = false;
+        private void LateLoad(object[] objectsForComboBox)
+        {
+            if(haveLateLoaded)
+            {
+                return;
+            }
+
+            cbxValue.BeginUpdate();
+            cbxValue.Items.AddRange(objectsForComboBox.Except(cbxValue.Items.Cast<object>()).ToArray());
+            cbxValue.Items.Add(ClearSelection);
+            cbxValue.EndUpdate();
+
+            haveLateLoaded = true;
         }
 
         public void SetUp(IActivateItems activator, ArgumentValueUIArgs args)
@@ -87,6 +106,11 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
             catch (Exception e)
             {
                 _args.Fatal(e);
+            }
+
+            if(cbxValue.Items.Count == 0 && _args.InitialValue != null)
+            {
+                cbxValue.Items.Add(_args.InitialValue);
             }
 
             if (currentValue != null)
@@ -122,7 +146,15 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
                 if (dialog.Selected == null)
                     cbxValue.Text = ClearSelection;
                 else
+                {
+                    if(!cbxValue.Items.Contains(dialog.Selected))
+                    {
+                        cbxValue.Items.Add(dialog.Selected);
+                    }
+
                     cbxValue.SelectedItem = dialog.Selected;
+                }
+                    
         }
     }
 }

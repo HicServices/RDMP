@@ -11,8 +11,11 @@ using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Extensions;
+using Moq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases.Exceptions;
@@ -29,7 +32,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         [TestCase(false)]
         public void TestColumnSwapper_NormalUseCase(bool keepInputColumnToo)
         {
-            var dt = new DataTable();
+            using var dt = new DataTable();
             dt.Columns.Add("In");
             dt.Columns.Add("Out");
 
@@ -49,8 +52,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
             swapper.KeepInputColumnToo = keepInputColumnToo;
 
             swapper.Check(new ThrowImmediatelyCheckNotifier());
-            
-            var dtToSwap = new DataTable();
+
+            using var dtToSwap = new DataTable();
 
             dtToSwap.Columns.Add("In");
             dtToSwap.Columns.Add("Name");
@@ -206,7 +209,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         [TestCase(AliasResolutionStrategy.MultiplyInputDataRowsByAliases)]
         public void TestColumnSwapper_Aliases(AliasResolutionStrategy strategy)
         {
-            var dt = new DataTable();
+            using var dt = new DataTable();
             dt.Columns.Add("In");
             dt.Columns.Add("Out");
 
@@ -227,7 +230,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 
             swapper.Check(new ThrowImmediatelyCheckNotifier());
 
-            var dtToSwap = new DataTable();
+            using var dtToSwap = new DataTable();
 
             dtToSwap.Columns.Add("In");
             dtToSwap.Columns.Add("Name");
@@ -268,7 +271,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         [TestCase(false)]
         public void TestColumnSwapper_MissingMappings(bool crashIfNoMappingsFound)
         {
-            var dt = new DataTable();
+            using var dt = new DataTable();
             dt.Columns.Add("In");
             dt.Columns.Add("Out");
 
@@ -290,7 +293,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 
             swapper.Check(new ThrowImmediatelyCheckNotifier());
 
-            var dtToSwap = new DataTable();
+            using var dtToSwap = new DataTable();
 
             dtToSwap.Columns.Add("In");
             dtToSwap.Columns.Add("Name");
@@ -309,16 +312,63 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
                 AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
                 Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
             }
-
         }
-        
+
+        [Test]
+        public void TestColumnSwapper_ProjectSpecificMappings()
+        {
+            using var dt = new DataTable();
+            dt.Columns.Add("In");
+            dt.Columns.Add("Out");
+            dt.Columns.Add("Proj");
+
+            //Anonymise A and B differently depending on ProjectNumber (valid project numbers are 1 and 2)
+            dt.Rows.Add("A", 1,1);
+            dt.Rows.Add("A", 2,2);
+            dt.Rows.Add("B", 3,1);
+            dt.Rows.Add("B", 4,2);
+
+            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+
+            Import(db.CreateTable("Map", dt), out var map, out var mapCols);
+
+            var swapper = new ColumnSwapper();
+            swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
+            swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
+            swapper.WHERELogic = "Proj = $n";
+            
+            // initialize with a mock that returns ProjectNumber 1
+            swapper.PreInitialize(GetMockExtractDatasetCommand(), new ThrowImmediatelyDataLoadEventListener());
+
+            swapper.Check(new ThrowImmediatelyCheckNotifier());
+
+            using var dtToSwap = new DataTable();
+
+            dtToSwap.Columns.Add("In");
+            dtToSwap.Columns.Add("Name");
+            dtToSwap.Columns.Add("Age");
+
+            dtToSwap.Rows.Add("A", "Dave", 30);
+            dtToSwap.Rows.Add("B", "Frank", 50);
+
+            using var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+
+            Assert.AreEqual(2, resultDt.Rows.Count);
+
+            // Should have project specific results for A of 1 and for B of 3 because the ProjectNumber is 1
+            AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
+            Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+            AreBasicallyEquals(3, resultDt.Rows[1]["Out"]);
+            Assert.AreEqual("Frank", resultDt.Rows[1]["Name"]);
+        }
+
         /// <summary>
         /// Tests ColumnSwapper when there are null values in the input <see cref="DataTable"/> being processed
         /// </summary>
         [Test]
         public void TestColumnSwapper_InputTableNulls()
         {
-            var dt = new DataTable();
+            using var dt = new DataTable();
             dt.Columns.Add("In");
             dt.Columns.Add("Out");
 
@@ -335,7 +385,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 
             swapper.Check(new ThrowImmediatelyCheckNotifier());
 
-            var dtToSwap = new DataTable();
+            using var dtToSwap = new DataTable();
 
             dtToSwap.Columns.Add("In",typeof(int));
             dtToSwap.Columns.Add("Name");
@@ -361,7 +411,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         [Test]
         public void TestColumnSwapper_MappingTableNulls()
         {
-            var dt = new DataTable();
+            using var dt = new DataTable();
             dt.Columns.Add("In");
             dt.Columns.Add("Out");
 
@@ -379,7 +429,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 
             swapper.Check(new ThrowImmediatelyCheckNotifier());
 
-            var dtToSwap = new DataTable();
+            using var dtToSwap = new DataTable();
 
             dtToSwap.Columns.Add("In",typeof(int));
             dtToSwap.Columns.Add("Name");
@@ -408,7 +458,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         [Test]
         public void TestColumnSwapper_MixedDatatypes_StringInDatabase()
         {
-            var dt = new DataTable();
+            using var dt = new DataTable();
             dt.Columns.Add("In");
             dt.Columns.Add("Out");
 
@@ -431,7 +481,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 
             swapper.Check(new ThrowImmediatelyCheckNotifier());
 
-            var dtToSwap = new DataTable();
+            using var dtToSwap = new DataTable();
 
             dtToSwap.Columns.Add("In");
             dtToSwap.Columns.Add("Name");
@@ -451,7 +501,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         [Test]
         public void TestColumnSwapper_MixedDatatypes_IntegerInDatabase()
         {
-            var dt = new DataTable();
+            using var dt = new DataTable();
             dt.Columns.Add("In");
             dt.Columns.Add("Out");
 
@@ -473,7 +523,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 
             swapper.Check(new ThrowImmediatelyCheckNotifier());
 
-            var dtToSwap = new DataTable();
+            using var dtToSwap = new DataTable();
 
             dtToSwap.Columns.Add("In");
             dtToSwap.Columns.Add("Name");
@@ -484,6 +534,29 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
             Assert.AreEqual(1, resultDt.Rows.Count);
             AreBasicallyEquals(2, resultDt.Rows[0]["Out"]);
             Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+        }
+
+        private IExtractDatasetCommand GetMockExtractDatasetCommand()
+        {
+            var mockPj = Mock.Of<IProject>(p =>
+                p.Name == "My Project" &&
+                p.ProjectNumber == 1
+            );
+
+            var mockConfig = Mock.Of<IExtractionConfiguration>(c =>
+                c.Project == mockPj);
+
+            var mockSelectedDatasets = Mock.Of<ISelectedDataSets>(sds =>
+                sds.ExtractionConfiguration == mockConfig
+            );
+
+            var mockExtractDsCmd = Mock.Of<IExtractDatasetCommand>(d =>
+                d.Project == mockPj &&
+                d.Configuration == mockConfig &&
+                d.SelectedDataSets == mockSelectedDatasets
+            );
+
+            return mockExtractDsCmd;
         }
     }
 }

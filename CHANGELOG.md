@@ -6,7 +6,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-...
+### Added
+- Added diagnostic screen logging last executed command (https://github.com/HicServices/RDMP/issues/815)
+- Added tooltips for objects in tree views (https://github.com/HicServices/RDMP/issues/819).
+- Added custom icon for [CatalogueItem] that represent transforms on the underlying column (https://github.com/HicServices/RDMP/issues/818)
+- Added Extraction Primary Keys to Catalogue tooltip
+- Added ability to 'View TOP 100' etc samples on [ExtractionInformation] (previously only available on [ColumnInfo] objects)
+- Added icon overlays for 'Is Extraction Identifier' and 'Is Extraction Primary Key' (https://github.com/HicServices/RDMP/issues/830)
+- Extraction Information for a Catalogue Item now includes "Transforms Data" property (which shows yes/no based on whether it transform the column data)
+- Added 'open load directory' command to [Catalogue] context menu
+
+### Fixed
+
+### Changed
+- Updated CatalogueItemUI (https://github.com/HicServices/RDMP/issues/820)
+- Fixed bug where cached aggregates were not considered stale even though changes had been made to their patient index table (https://github.com/HicServices/RDMP/issues/849)
+
+### Fixed
+
+- Fixed bug where configuring dataset didn't show all available tables when listing optional joinable tables (https://github.com/HicServices/RDMP/issues/804)
+
+## [7.0.4] - 2021-12-08
 
 ### Added
 
@@ -21,7 +41,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enabled Expand/Collapse all when right clicking whitespace in a tree collection
 - Added title to graph charts
 - Added a user setting for hiding Series in which all cells are 0/null
+- Added `IPipelineOptionalRequirement` interface for Plugin Pipeline Components that can optionally make use of Pipeline initialization objects but do not require them to function.
+- Support for templating in `ColumnSwapper` when used in an extraction pipeline (e.g. $n for project number)
 - Support for specifying `--ConnectionStringsFile somefile.yaml` when starting RDMP (gui client or CLI)
+- Added 'Hash On Release' column to initial new Catalogue extractability configuration dialog (https://github.com/HicServices/RDMP/issues/394)
 
 ### Fixed
 
@@ -39,17 +62,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug where selecting a [PipelineComponent] for which help is unavailable would leave the previously selected component's help visible
 - Fixed bug with 'Commit Cohort' storing the target cohort database for future clicks
 - Fixed a bug where editing a field like `Description` would fire validation on other properties e.g. `Name` which could slow controls down when validation is slow and change events are fired in rapid succession.
+- Edit Catalogue window layout updated to allow errors to be seen on the right hand side of inputs (https://github.com/HicServices/RDMP/issues/758)
+- Cohort Identification Configuration descriptions box is now easy to read and edit (https://github.com/HicServices/RDMP/issues/755)
+- Fixed bug where RDMP would lose focus when "checks" were being run in background resulting in RDMP appearing unresponsive (https://github.com/HicServices/RDMP/issues/747)
+- Fixed bug where some words in RDMP would have spaces in the wrong place (e.g. "W HERE") (https://github.com/HicServices/RDMP/issues/752)
 
 ### Changed
 
 - Bump System.Drawing.Common from 5.0.2 to 5.0.3
 - Bump System.Security.Permissions from 5.0.0 to 6.0.0
+- Bump NLog from 4.7.12 to 4.7.13
 - Changed to Dock layout for Pipeline editing control (may improve performance on older machines)
 - Removed dependency on `System.Drawing.Common` by updating usages to `System.Drawing`
 - Increased size of all text fields in [Catalogue] and [CatalogueItem] to `nvarchar(max)` to support long urls etc
-- Updated icons to a more modern look
+- Updated icons to a more modern look. Catalogue Item image no longer has black corner. Green yellow and red smiley faces have been replaced. Cloud API icon replaced (https://github.com/HicServices/RDMP/issues/712)
 - Extract to database now checks for explicit table names amongst pre-existing tables on the destination
 - Startup no longer reports non dotnet dlls as 'unable to load' (warnings)
+- Added Project number to Title Bar (and full project name to tooltip) for Extraction Configurations (https://github.com/HicServices/RDMP/issues/621)
+- Root Cohort Identification Configuration will now highlight SET container issues with red highlight (https://github.com/HicServices/RDMP/issues/681)
+- "Data Export" has been renamed to "Projects" to be more consistent (https://github.com/HicServices/RDMP/issues/720)
+- Corrected layout of "Master Ticket" in New Project dialog (https://github.com/HicServices/RDMP/issues/735)
+- Corrected layout of "Create New Lookup" (https://github.com/HicServices/RDMP/issues/730)
+- Aligned buttons for Pipeline options (https://github.com/HicServices/RDMP/issues/721)
+- Add "clause" (e.g. WHERE) to SQL attribute input to make it clearer what SQL you need to enter (https://github.com/HicServices/RDMP/issues/751)
+- User Settings dialog now has a nicer layout (https://github.com/HicServices/RDMP/issues/760)
+
 
 ## [7.0.3] - 2021-11-04
 
@@ -989,7 +1026,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.3...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.4...develop
+[7.0.4]: https://github.com/HicServices/RDMP/compare/v7.0.3...v7.0.4
 [7.0.3]: https://github.com/HicServices/RDMP/compare/v7.0.2...v7.0.3
 [7.0.2]: https://github.com/HicServices/RDMP/compare/v7.0.1...v7.0.2
 [7.0.1]: https://github.com/HicServices/RDMP/compare/v7.0.0...v7.0.1

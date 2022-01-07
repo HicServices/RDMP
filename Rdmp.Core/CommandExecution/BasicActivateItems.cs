@@ -67,6 +67,16 @@ namespace Rdmp.Core.CommandExecution
         }
 
         /// <inheritdoc/>
+        public bool Confirm(string text, string caption)
+        {
+            // auto confirm if not in user interactive mode
+            if (!IsInteractive)
+                return true;
+
+            return YesNo(text,caption);
+        }
+
+        /// <inheritdoc/>
         public ICheckNotifier GlobalErrorCheckNotifier { get; set; }
 
         /// <inheritdoc/>

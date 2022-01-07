@@ -199,7 +199,6 @@ namespace Rdmp.UI.SubComponents
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer2.IsSplitterFixed = true;
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
             this.splitContainer2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.splitContainer2.Name = "splitContainer2";
@@ -210,6 +209,7 @@ namespace Rdmp.UI.SubComponents
             this.splitContainer2.Panel1.Controls.Add(this.gbCicInfo);
             this.splitContainer2.Panel1.Controls.Add(this.groupBox1);
             this.splitContainer2.Panel1.Controls.Add(this.ticket);
+            this.splitContainer2.Panel1MinSize = 82;
             // 
             // splitContainer2.Panel2
             // 
@@ -234,7 +234,8 @@ namespace Rdmp.UI.SubComponents
             // 
             // tbDescription
             // 
-            this.tbDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.tbDescription.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbDescription.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.tbDescription.Location = new System.Drawing.Point(6, 16);
@@ -248,8 +249,6 @@ namespace Rdmp.UI.SubComponents
             // 
             // groupBox1
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
             this.groupBox1.Controls.Add(this.panel1);
             this.groupBox1.Controls.Add(this.lblExecuteAllPhase);
             this.groupBox1.Location = new System.Drawing.Point(4, 3);
