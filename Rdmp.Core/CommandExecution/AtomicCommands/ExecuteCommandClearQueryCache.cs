@@ -47,13 +47,22 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             base.Execute();
 
             var cacheManager = new CachedAggregateConfigurationResultsManager(_cic.QueryCachingServer);
+            int deleted = 0;
 
             foreach(var ag in _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively())
             {
-                // lets just be brutal and delete all roles
-                cacheManager.DeleteCacheEntryIfAny(ag, AggregateOperation.ExtractableAggregateResults);
-                cacheManager.DeleteCacheEntryIfAny(ag, AggregateOperation.JoinableInceptionQuery);
+                // just incase they changed the role or something wierd we should nuke all it's roles
+                deleted += cacheManager.DeleteCacheEntryIfAny(ag, AggregateOperation.IndexedExtractionIdentifierList) ? 1 : 0;
+                deleted += cacheManager.DeleteCacheEntryIfAny(ag, AggregateOperation.JoinableInceptionQuery) ? 1:0;
             }
+            foreach(var joinable in _cic.GetAllJoinables())
+            {
+                // just incase they changed the role or something wierd we should nuke all it's roles
+                deleted += cacheManager.DeleteCacheEntryIfAny(joinable.AggregateConfiguration, AggregateOperation.IndexedExtractionIdentifierList) ? 1 : 0;
+                deleted += cacheManager.DeleteCacheEntryIfAny(joinable.AggregateConfiguration, AggregateOperation.JoinableInceptionQuery) ? 1 : 0;
+            }
+            
+            Show("Cache Entries Cleared", $"Deleted {deleted} cache entries");
         }
 
     }
