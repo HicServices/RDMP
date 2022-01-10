@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added icon overlays for 'Is Extraction Identifier' and 'Is Extraction Primary Key' (https://github.com/HicServices/RDMP/issues/830)
 - Extraction Information for a Catalogue Item now includes "Transforms Data" property (which shows yes/no based on whether it transform the column data)
 - Added 'open load directory' command to [Catalogue] context menu
+- Added ability to switch between instances of RDMP using the Locations menu
 - Added CLI command `ClearQueryCache`
 - Added Description capability to prompts. More descriptions to be added (https://github.com/HicServices/RDMP/issues/814)
 - Added description to Publish Filter "Select One" dialog (https://github.com/HicServices/RDMP/issues/813)

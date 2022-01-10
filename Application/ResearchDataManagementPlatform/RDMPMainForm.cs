@@ -13,11 +13,13 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.UI;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
+using Rdmp.UI.TestsAndSetup;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Theme;
 using ResearchDataManagementPlatform.Theme;
@@ -117,9 +119,15 @@ namespace ResearchDataManagementPlatform
             if (Activator?.RepositoryLocator?.CatalogueRepository is TableRepository connectedTo)
             {
                 var database = connectedTo.DiscoveredServer?.GetCurrentDatabase();
+                var instanceDescription = "";
 
+                var connectionStringsFileLoaded = RDMPBootStrapper<RDMPMainForm>.ApplicationArguments?.ConnectionStringsFileLoaded;
+                if (connectionStringsFileLoaded != null)
+                {
+                    instanceDescription = " - " + (connectionStringsFileLoaded.Name ?? connectionStringsFileLoaded.FileLoaded.Name);
+                }
                 if (database != null) 
-                    _connectedTo = $"({database.GetRuntimeName()} on {database.Server.Name})";
+                    _connectedTo = $"({database.GetRuntimeName()} on {database.Server.Name}){instanceDescription}";
             }
             
             Text = "Research Data Management Platform";
