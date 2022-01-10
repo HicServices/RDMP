@@ -22,31 +22,64 @@ namespace Rdmp.Core.DataViewing
     /// <summary>
     /// Builds a query to fetch data in a <see cref="ColumnInfo"/> (Based on the <see cref="ViewType"/>)
     /// </summary>
-    public class ViewColumnInfoExtractUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
+    public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
     {
         public ViewType ViewType { get; private set; }
 
         /// <summary>
+        /// The SELECT column (can be null if this instance was constructed using a <see cref="ColumnInfo"/>)
+        /// </summary>
+        public ExtractionInformation ExtractionInformation
+        {
+            get { return DatabaseObjects.OfType<ExtractionInformation>().SingleOrDefault(); }
+        }
+
+        /// <summary>
+        /// The SELECT column (can be null if this instance was constructed using a <see cref="ExtractionInformation"/>)
+        /// </summary>
+        public ColumnInfo ColumnInfo
+        {
+            get { return DatabaseObjects.OfType<ColumnInfo>().SingleOrDefault(); }
+        }
+
+
+        #region Constructors
+        /// <summary>
         /// for persistence, do not use
         /// </summary>
-        public ViewColumnInfoExtractUICollection()
+        public ViewColumnExtractCollection()
         {
         }
 
-        public ViewColumnInfoExtractUICollection(ColumnInfo c, ViewType viewType, IFilter filter = null) : this()
+        public ViewColumnExtractCollection(ColumnInfo c, ViewType viewType, IFilter filter = null) : this()
         {
             DatabaseObjects.Add(c);
             if (filter != null)
                 DatabaseObjects.Add(filter);
             ViewType = viewType;
         }
-        public ViewColumnInfoExtractUICollection(ColumnInfo c, ViewType viewType, IContainer container) : this()
+        public ViewColumnExtractCollection(ColumnInfo c, ViewType viewType, IContainer container) : this()
         {
             DatabaseObjects.Add(c);
             if (container != null)
                 DatabaseObjects.Add(container);
             ViewType = viewType;
         }
+        public ViewColumnExtractCollection(ExtractionInformation ei, ViewType viewType, IFilter filter = null) : this()
+        {
+            DatabaseObjects.Add(ei);
+            if (filter != null)
+                DatabaseObjects.Add(filter);
+            ViewType = viewType;
+        }
+        public ViewColumnExtractCollection(ExtractionInformation ei, ViewType viewType, IContainer container) : this()
+        {
+            DatabaseObjects.Add(ei);
+            if (container != null)
+                DatabaseObjects.Add(container);
+            ViewType = viewType;
+        }
+        #endregion
 
         public override string SaveExtraText()
         {
@@ -67,20 +100,30 @@ namespace Rdmp.Core.DataViewing
             if (GetContainerIfAny() is ConcreteContainer c)
                 yield return c;
 
-            yield return ColumnInfo.TableInfo;
+            yield return GetTableInfo() as TableInfo;
         }
 
         public IDataAccessPoint GetDataAccessPoint()
         {
-            if (ColumnInfo == null)
-                return null;
+            return GetTableInfo();
+        }
 
-            return ColumnInfo.TableInfo;
+        private ITableInfo GetTableInfo()
+        {
+            if (ExtractionInformation != null)
+            {
+                return ExtractionInformation.ColumnInfo?.TableInfo;
+            }
+
+            if (ColumnInfo != null)
+                return ColumnInfo.TableInfo;
+
+            return null;
         }
 
         public string GetSql()
         {
-            var qb = new QueryBuilder(null, null, new[] { ColumnInfo.TableInfo });
+            var qb = new QueryBuilder(null, null, new[] { GetTableInfo()});
 
             if (ViewType == ViewType.TOP_100)
                 qb.TopX = 100;
@@ -88,7 +131,7 @@ namespace Rdmp.Core.DataViewing
             if (ViewType == ViewType.Distribution)
                 AddDistributionColumns(qb);
             else
-                qb.AddColumn(new ColumnInfoToIColumn(new MemoryRepository(), ColumnInfo));
+                qb.AddColumn(GetIColumn());
 
             var filter = GetFilterIfAny();
             var container = GetContainerIfAny();
@@ -106,56 +149,77 @@ namespace Rdmp.Core.DataViewing
             }
 
             if (ViewType == ViewType.Aggregate)
-                qb.AddCustomLine("count(*),", QueryComponent.QueryTimeColumn);
+                qb.AddCustomLine("count(*) as Count,", QueryComponent.QueryTimeColumn);
 
             var sql = qb.SQL;
 
             if (ViewType == ViewType.Aggregate)
-                sql += " GROUP BY " + ColumnInfo;
+                sql += " GROUP BY " + GetColumnSelectSql();
 
             return sql;
+        }
+
+        private IColumn GetIColumn()
+        {
+            if(ExtractionInformation != null)
+            {
+                return ExtractionInformation;
+            }
+            if(ColumnInfo != null)
+            {
+                return new ColumnInfoToIColumn(new MemoryRepository(), ColumnInfo);
+            }
+
+            return null;
         }
 
         private void AddDistributionColumns(QueryBuilder qb)
         {
             var repo = new MemoryRepository();
             qb.AddColumn(new SpontaneouslyInventedColumn(repo, "CountTotal", "count(1)"));
-            qb.AddColumn(new SpontaneouslyInventedColumn(repo, "CountNull", "SUM(CASE WHEN " + ColumnInfo.GetFullyQualifiedName() + " IS NULL THEN 1 ELSE 0  END)"));
-            qb.AddColumn(new SpontaneouslyInventedColumn(repo, "CountZero", "SUM(CASE WHEN " + ColumnInfo.GetFullyQualifiedName() + " = 0 THEN 1  ELSE 0 END)"));
+            qb.AddColumn(new SpontaneouslyInventedColumn(repo, "CountNull", "SUM(CASE WHEN " + GetColumnSelectSql() + " IS NULL THEN 1 ELSE 0  END)"));
+            qb.AddColumn(new SpontaneouslyInventedColumn(repo, "CountZero", "SUM(CASE WHEN " + GetColumnSelectSql() + " = 0 THEN 1  ELSE 0 END)"));
 
-            qb.AddColumn(new SpontaneouslyInventedColumn(repo, "Max", "max(" + ColumnInfo.GetFullyQualifiedName() + ")"));
-            qb.AddColumn(new SpontaneouslyInventedColumn(repo, "Min", "min(" + ColumnInfo.GetFullyQualifiedName() + ")"));
+            qb.AddColumn(new SpontaneouslyInventedColumn(repo, "Max", "max(" + GetColumnSelectSql() + ")"));
+            qb.AddColumn(new SpontaneouslyInventedColumn(repo, "Min", "min(" + GetColumnSelectSql() + ")"));
 
             switch (ColumnInfo.GetQuerySyntaxHelper().DatabaseType)
             {
                 case DatabaseType.MicrosoftSQLServer:
-                    qb.AddColumn(new SpontaneouslyInventedColumn(repo, "stdev ", "stdev(" + ColumnInfo.GetFullyQualifiedName() + ")"));
+                    qb.AddColumn(new SpontaneouslyInventedColumn(repo, "stdev ", "stdev(" + GetColumnSelectSql() + ")"));
                     break;
                 case DatabaseType.MySql:
                 case DatabaseType.Oracle:
-                    qb.AddColumn(new SpontaneouslyInventedColumn(repo, "stddev ", "stddev(" + ColumnInfo.GetFullyQualifiedName() + ")"));
+                    qb.AddColumn(new SpontaneouslyInventedColumn(repo, "stddev ", "stddev(" + GetColumnSelectSql() + ")"));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
 
-            qb.AddColumn(new SpontaneouslyInventedColumn(repo, "avg", "avg(" + ColumnInfo.GetFullyQualifiedName() + ")"));
+            qb.AddColumn(new SpontaneouslyInventedColumn(repo, "avg", "avg(" + GetColumnSelectSql() + ")"));
 
+        }
+
+        /// <summary>
+        /// Returns the column Select SQL (without alias) for use in query building
+        /// </summary>
+        /// <returns></returns>
+        private string GetColumnSelectSql()
+        {
+            return GetIColumn().SelectSQL;
         }
 
         public string GetTabName()
         {
-            return ColumnInfo + "(" + ViewType + ")";
+            return GetIColumn() + "(" + ViewType + ")";
         }
 
         public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
         {
-            autoComplete.Add(ColumnInfo);
-        }
-
-        public ColumnInfo ColumnInfo
-        {
-            get { return DatabaseObjects.OfType<ColumnInfo>().SingleOrDefault(); }
+            if(ColumnInfo != null)
+            {
+                autoComplete.Add(ColumnInfo);
+            }   
         }
 
         private IFilter GetFilterIfAny()

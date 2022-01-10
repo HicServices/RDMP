@@ -79,12 +79,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if (_columnInfo == null)
                 return;
 
-            ViewColumnInfoExtractUICollection collection = null;
+            ViewColumnExtractCollection collection = null;
 
             if (_filter != null)
-                collection = new ViewColumnInfoExtractUICollection(_columnInfo, _viewType, _filter);
+                collection = new ViewColumnExtractCollection(_columnInfo, _viewType, _filter);
             if (_container != null)
-                collection = new ViewColumnInfoExtractUICollection(_columnInfo, _viewType, _container);
+                collection = new ViewColumnExtractCollection(_columnInfo, _viewType, _container);
 
             if (collection == null)
                 throw new Exception("ViewFilterMatchData Command had no filter or container");

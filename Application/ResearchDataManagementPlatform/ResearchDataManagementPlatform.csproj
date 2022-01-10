@@ -17,6 +17,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <ApplicationIcon>Icon\main.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Updates\UpdaterUI.cs" />
@@ -28,12 +29,11 @@
   <ItemGroup>
     <PackageReference Include="Autoupdater.NET.Official" Version="1.7.0" />
     <PackageReference Include="DockPanelSuite.ThemeVS2015" Version="3.1.0" />
-    <PackageReference Include="SecurityCodeScan.VS2019" Version="5.2.1">
+    <PackageReference Include="SecurityCodeScan.VS2019" Version="5.6.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="HIC.BadMedicine" Version="0.1.6" />
-    <PackageReference Include="Squirrel.Windows" Version="1.9.1" />
     <PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +70,7 @@
       <Link>Hunspellx86.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Icon\main.ico" />
     <Content Include="Icon\main.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

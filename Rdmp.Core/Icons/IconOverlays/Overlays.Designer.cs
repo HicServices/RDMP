@@ -206,7 +206,18 @@ namespace Rdmp.Core.Icons.IconOverlays {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
-        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IsExtractionIdentifier
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("IsExtractionIdentifier", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>

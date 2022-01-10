@@ -66,18 +66,6 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
         {
             InitializeComponent();
 
-            #region Query Editor setup
-
-            if (VisualStudioDesignMode) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
-                return;
-
-            QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
-            QueryEditor.TextChanged += QueryEditor_TextChanged;
-            pQueryEditor.Controls.Add(QueryEditor);
-            QueryEditor.Dock = DockStyle.Fill;
-            #endregion QueryEditor
-
-
             ObjectSaverButton1.BeforeSave += BeforeSave;
         }
 
@@ -91,25 +79,37 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
 
         private void FigureOutGlobalsAndAutoComplete()
         {
+
             var factory = new FilterUIOptionsFactory();
             var options = factory.Create(_extractionFilter);
-            
-            _autoCompleteProvider = new AutoCompleteProviderWin(_extractionFilter.GetQuerySyntaxHelper());
-            
+            GlobalFilterParameters = options.GetGlobalParametersInFilterScope();
+
+            if (QueryEditor != null)
+            {
+                return;
+            }
+
+            var querySyntaxHelper = _extractionFilter.GetQuerySyntaxHelper();
+
+            QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory(), SyntaxLanguage.SQL, querySyntaxHelper);
+            QueryEditor.TextChanged += QueryEditor_TextChanged;
+            pQueryEditor.Controls.Add(QueryEditor);
+            QueryEditor.Dock = DockStyle.Fill;
+
+            _autoCompleteProvider = new AutoCompleteProviderWin(querySyntaxHelper);
+
             foreach (var t in options.GetTableInfos())
                 _autoCompleteProvider.Add(t);
 
             foreach (var c in options.GetIColumnsInFilterScope())
                 _autoCompleteProvider.Add(c);
 
-            GlobalFilterParameters = options.GetGlobalParametersInFilterScope();
-
             foreach (ISqlParameter parameter in GlobalFilterParameters)
                 _autoCompleteProvider.Add(parameter);
 
             _autoCompleteProvider.RegisterForEvents(QueryEditor);
         }
-        
+
         private bool BeforeSave(DatabaseEntity databaseEntity)
         {
             SubstituteQueryEditorTextIfContainsLineComments();

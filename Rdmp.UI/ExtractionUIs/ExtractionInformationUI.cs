@@ -79,8 +79,6 @@ namespace Rdmp.UI.ExtractionUIs
 
             //note that we don't add the Any category
             ddExtractionCategory.DataSource = new object[] { ExtractionCategory.Core, ExtractionCategory.Supplemental, ExtractionCategory.SpecialApprovalRequired, ExtractionCategory.Internal,ExtractionCategory.Deprecated, ExtractionCategory.ProjectSpecific};
-            QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
-            QueryEditor.TextChanged += QueryEditorOnTextChanged;
 
             ObjectSaverButton1.BeforeSave += BeforeSave;
 
@@ -139,7 +137,7 @@ namespace Rdmp.UI.ExtractionUIs
             _isLoading = true;
             ExtractionInformation = databaseObject;
             base.SetDatabaseObject(activator, databaseObject);
-            
+                        
             Setup(databaseObject);
 
             ObjectSaverButton1.BeforeSave += objectSaverButton1OnBeforeSave;
@@ -148,7 +146,11 @@ namespace Rdmp.UI.ExtractionUIs
 
             CommonFunctionality.AddHelp(cbHashOnDataRelease, "IColumn.HashOnDataRelease", "Hash on Data Release");
             CommonFunctionality.AddHelp(cbIsExtractionIdentifier, "IColumn.IsExtractionIdentifier", "Is Extraction Identifier");
-            CommonFunctionality.AddHelp(cbIsPrimaryKey, "IColumn.IsPrimaryKey", "Is Primary Key");
+            CommonFunctionality.AddHelp(cbIsPrimaryKey, "IColumn.IsPrimaryKey", "Is Extraction Primary Key");
+            CommonFunctionality.AddHelpString(lblIsTransform, "Transforms Data", "When the extraction SQL is different from the column SQL then it is considered to 'transform' the data.  For example 'UPPER([mydb].[mycol]) as mycol'.  Transforms must always have an alias.");
+
+            lblIsTransform.Text = $"Transforms Data: {(ExtractionInformation.IsProperTransform() ? "Yes" : "No")}";
+
             _isLoading = false;
         }
 
@@ -207,10 +209,16 @@ namespace Rdmp.UI.ExtractionUIs
                 if (ExtractionInformation.CatalogueItem.Name.Equals(ExtractionInformation.ToString()))
                     _namesMatchedWhenDialogWasLaunched = true;
 
-                var autoComplete = new AutoCompleteProviderWin(ExtractionInformation.GetQuerySyntaxHelper());
+                _querySyntaxHelper = ExtractionInformation.GetQuerySyntaxHelper();
+
+                QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory(), SyntaxLanguage.SQL, _querySyntaxHelper);
+                QueryEditor.TextChanged += QueryEditorOnTextChanged;
+
+                var autoComplete = new AutoCompleteProviderWin(_querySyntaxHelper);
                 autoComplete.Add(ExtractionInformation.CatalogueItem.Catalogue);
                 
                 autoComplete.RegisterForEvents(QueryEditor);
+                isFirstTimeSetupCalled = false;
             }
             
             var colInfo = ExtractionInformation.ColumnInfo;

@@ -53,7 +53,7 @@ namespace Rdmp.UI.SimpleDialogs
             if (designMode) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
                 return;
 
-            QueryEditor = new ScintillaTextEditorFactory().Create(null, "csharp");
+            QueryEditor = new ScintillaTextEditorFactory().Create(null, SyntaxLanguage.CSharp);
 
             panel1.Controls.Add(QueryEditor);
 

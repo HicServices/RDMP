@@ -27,6 +27,7 @@ using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.LocationsMenu.Ticketing;
 using Rdmp.UI.MainFormUITabs;
 using Rdmp.UI.Menus.MenuItems;
+using Rdmp.UI.Performance;
 using Rdmp.UI.PluginManagement.CodeGeneration;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.SimpleDialogs;
@@ -419,6 +420,12 @@ namespace ResearchDataManagementPlatform.Menus
 
 
             ApplicationRestarter.Restart();
+        }
+
+        private void lastCommandMonitorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var lastCommand = new LastCommandUI();
+            lastCommand.Show();
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Rdmp.UI.SimpleDialogs.SqlDialogs
         private Scintilla QueryEditorAfter;
 
 
-        public SQLBeforeAndAfterViewer(string sqlBefore, string sqlAfter, string headerTextForBefore, string headerTextForAfter, string caption, MessageBoxButtons buttons, string language = "mssql")
+        public SQLBeforeAndAfterViewer(string sqlBefore, string sqlAfter, string headerTextForBefore, string headerTextForAfter, string caption, MessageBoxButtons buttons, SyntaxLanguage language = SyntaxLanguage.SQL)
         {
             InitializeComponent();
 

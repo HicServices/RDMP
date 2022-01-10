@@ -624,8 +624,6 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.AutoScroll = true;
-            this.splitContainer1.Panel1.AutoScrollMinSize = new System.Drawing.Size(200, 0);
             this.splitContainer1.Panel1.Controls.Add(this.tableLayoutPanel1);
             this.splitContainer1.Panel1MinSize = 200;
             // 
@@ -633,6 +631,7 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             this.splitContainer1.Panel2.AutoScroll = true;
             this.splitContainer1.Panel2.Controls.Add(this.tableLayoutPanel2);
+            this.splitContainer1.Panel2MinSize = 200;
             this.splitContainer1.Size = new System.Drawing.Size(551, 1085);
             this.splitContainer1.SplitterDistance = 288;
             this.splitContainer1.SplitterWidth = 5;
@@ -669,7 +668,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(524, 284);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(524, 278);
             this.tableLayoutPanel1.TabIndex = 160;
             // 
             // flowLayoutPanel1
@@ -825,7 +824,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel1.Location = new System.Drawing.Point(133, 148);
             this.panel1.Margin = new System.Windows.Forms.Padding(4, 3, 20, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(366, 133);
+            this.panel1.Size = new System.Drawing.Size(366, 127);
             this.panel1.TabIndex = 153;
             // 
             // tableLayoutPanel2
@@ -930,7 +929,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(524, 1475);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(473, 1475);
             this.tableLayoutPanel2.TabIndex = 194;
             // 
             // tbSourceOfDataCollection

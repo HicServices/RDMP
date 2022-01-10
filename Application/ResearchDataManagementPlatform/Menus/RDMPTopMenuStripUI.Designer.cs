@@ -65,6 +65,7 @@ namespace ResearchDataManagementPlatform.Menus
             this.queryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.queryCatalogue = new System.Windows.Forms.ToolStripMenuItem();
             this.queryDataExport = new System.Windows.Forms.ToolStripMenuItem();
+            this.restartApplicationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.userManualToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateClassTableSummaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -73,7 +74,7 @@ namespace ResearchDataManagementPlatform.Menus
             this.licenseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rdmpTaskBar1 = new ResearchDataManagementPlatform.WindowManagement.TopBar.RDMPTaskBarUI();
-            this.restartApplicationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lastCommandMonitorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -286,6 +287,7 @@ namespace ResearchDataManagementPlatform.Menus
             this.pluginsToolStripMenuItem,
             this.toolStripSeparator1,
             this.showPerformanceCounterToolStripMenuItem,
+            this.lastCommandMonitorToolStripMenuItem,
             this.openExeDirectoryToolStripMenuItem,
             this.queryToolStripMenuItem,
             this.restartApplicationToolStripMenuItem});
@@ -366,6 +368,13 @@ namespace ResearchDataManagementPlatform.Menus
             this.queryDataExport.Text = "Data Export...";
             this.queryDataExport.Click += new System.EventHandler(this.queryDataExport_Click);
             // 
+            // restartApplicationToolStripMenuItem
+            // 
+            this.restartApplicationToolStripMenuItem.Name = "restartApplicationToolStripMenuItem";
+            this.restartApplicationToolStripMenuItem.Size = new System.Drawing.Size(229, 22);
+            this.restartApplicationToolStripMenuItem.Text = "Restart Application";
+            this.restartApplicationToolStripMenuItem.Click += new System.EventHandler(this.restartApplicationToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -431,12 +440,12 @@ namespace ResearchDataManagementPlatform.Menus
             this.rdmpTaskBar1.Size = new System.Drawing.Size(1353, 29);
             this.rdmpTaskBar1.TabIndex = 57;
             // 
-            // restartApplicationToolStripMenuItem
+            // lastCommandMonitorToolStripMenuItem
             // 
-            this.restartApplicationToolStripMenuItem.Name = "restartApplicationToolStripMenuItem";
-            this.restartApplicationToolStripMenuItem.Size = new System.Drawing.Size(229, 22);
-            this.restartApplicationToolStripMenuItem.Text = "Restart Application";
-            this.restartApplicationToolStripMenuItem.Click += new System.EventHandler(this.restartApplicationToolStripMenuItem_Click);
+            this.lastCommandMonitorToolStripMenuItem.Name = "lastCommandMonitorToolStripMenuItem";
+            this.lastCommandMonitorToolStripMenuItem.Size = new System.Drawing.Size(229, 22);
+            this.lastCommandMonitorToolStripMenuItem.Text = "Last Command Monitor";
+            this.lastCommandMonitorToolStripMenuItem.Click += new System.EventHandler(this.lastCommandMonitorToolStripMenuItem_Click);
             // 
             // RDMPTopMenuStripUI
             // 
@@ -499,5 +508,6 @@ namespace ResearchDataManagementPlatform.Menus
         private System.Windows.Forms.ToolStripMenuItem quitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newSessionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem restartApplicationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem lastCommandMonitorToolStripMenuItem;
     }
 }
