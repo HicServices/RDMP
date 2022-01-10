@@ -41,10 +41,10 @@
             // textBox1
             // 
             this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox1.Location = new System.Drawing.Point(0, 0);
+            this.textBox1.Location = new System.Drawing.Point(10, 0);
             this.textBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(739, 23);
+            this.textBox1.Size = new System.Drawing.Size(719, 23);
             this.textBox1.TabIndex = 0;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             this.textBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBox1_KeyDown);
@@ -89,6 +89,7 @@
             this.pTextEditor.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pTextEditor.Location = new System.Drawing.Point(0, 42);
             this.pTextEditor.Name = "pTextEditor";
+            this.pTextEditor.Padding = new System.Windows.Forms.Padding(10, 0, 10, 0);
             this.pTextEditor.Size = new System.Drawing.Size(739, 54);
             this.pTextEditor.TabIndex = 6;
             // 
