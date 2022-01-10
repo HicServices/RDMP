@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -74,8 +75,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
 
             //do we know where it's going to end up?
             if (ect == null)
-                if (!SelectOne(BasicActivator.RepositoryLocator.DataExportRepository, out ect, null, true)) //not yet, get user to pick one
+                if (!SelectOne(
+                    GetChooseCohortDialogArgs(),
+                    BasicActivator.RepositoryLocator.DataExportRepository,
+                    out ect)) //not yet, get user to pick one
+                {
                     return null;//user didn't select one and cancelled dialog
+                }
+                    
 
             //and document the request
 
@@ -94,6 +101,21 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
 
                 return req;
             }
+        }
+
+        /// <summary>
+        /// Describes in a user friendly way the activity of picking an <see cref="ExternalCohortTable"/>
+        /// </summary>
+        /// <returns></returns>
+        public static DialogArgs GetChooseCohortDialogArgs()
+        {
+            return new DialogArgs()
+            {
+                WindowTitle = "Choose where to save cohort",
+                TaskDescription = "Select the Cohort Database in which to store the identifiers.  If you have multiple methods of anonymising cohorts or manage different types of identifiers (e.g. CHI lists, ECHI lists and/or BarcodeIDs) then you must pick the Cohort Database that matches your cohort identifier type/anonymisation protocol.",
+                EntryLabel = "Select Cohort Database",
+                AllowAutoSelect = true,
+            };
         }
 
         private ICohortCreationRequest GenerateCohortCreationRequestFromNameAndProject(string name, string auditLogDescription,ExternalCohortTable ect)

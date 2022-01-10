@@ -368,7 +368,20 @@ namespace Rdmp.Core.CommandExecution
             selected = (T)BasicActivator.SelectOne(args,availableObjects.ToArray());
             return selected != null;
         }
-        
+
+        /// <summary>
+        /// Prompts user to select 1 of the objects of type T from the objects existing in <paramref name="repository"/>, returns true if they made a non null selection
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="args"></param>
+        /// <param name="repository"></param>
+        /// <param name="selected"></param>
+        /// <returns></returns>
+        protected bool SelectOne<T>(DialogArgs args,IRepository repository, out T selected) where T : DatabaseEntity
+        {
+            selected = (T)BasicActivator.SelectOne(args, repository.GetAllObjects<T>().ToArray());
+            return selected != null;
+        }
         protected bool SelectMany<T>(T[] available, out T[] selected, string initialSearchText = null) where T : DatabaseEntity
         {
             selected = BasicActivator.SelectMany("Select Objects", typeof(T), available,initialSearchText)?.Cast<T>()?.ToArray();
