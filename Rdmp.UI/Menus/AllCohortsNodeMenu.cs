@@ -26,7 +26,7 @@ namespace Rdmp.UI.Menus
 
             Add(new ExecuteCommandCreateNewCohortDatabaseUsingWizard(_activator));
 
-            Items.Add("Create blank cohort source (Not recommended)", _activator.CoreIconProvider.GetImage(RDMPConcept.ExternalCohortTable, OverlayKind.Problem), (s, e) => AddBlankExternalCohortTable());
+            Items.Add("Create blank cohort database (Not recommended)", _activator.CoreIconProvider.GetImage(RDMPConcept.ExternalCohortTable, OverlayKind.Problem), (s, e) => AddBlankExternalCohortTable());
             
         }
         
