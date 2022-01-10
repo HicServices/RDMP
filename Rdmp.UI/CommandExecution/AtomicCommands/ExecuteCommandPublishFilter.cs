@@ -58,7 +58,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             var toAddTo = SelectOne(new DialogArgs { 
                 WindowTitle = "Associated Column",
-                TaskDescription = "All filters must be associated with a single column.  Pick which column to associate this filter with"},_allExtractionInformations);
+                TaskDescription = "All filters must be associated with a single column.  Pick which column to associate this filter with."},_allExtractionInformations);
 
             if(toAddTo != null)
             {
