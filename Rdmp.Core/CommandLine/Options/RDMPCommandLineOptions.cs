@@ -94,7 +94,14 @@ namespace Rdmp.Core.CommandLine.Options
             CatalogueRepository.SuppressHelpLoading = !ShouldLoadHelp();
 
             if (CatalogueConnectionString != null)
-                c = new SqlConnectionStringBuilder(CatalogueConnectionString);
+                try
+                {
+                    c = new SqlConnectionStringBuilder(CatalogueConnectionString);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("CatalogueConnectionString is invalid",ex);
+                }
             else
             if (CatalogueDatabaseName != null)
             {
@@ -107,7 +114,14 @@ namespace Rdmp.Core.CommandLine.Options
                 c = null;
 
             if (DataExportConnectionString != null)
-                d = new SqlConnectionStringBuilder(DataExportConnectionString);
+                try
+                {
+                    d = new SqlConnectionStringBuilder(DataExportConnectionString);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("DataExportConnectionString is invalid", ex);
+                }
             else
             if (DataExportDatabaseName != null)
             {
