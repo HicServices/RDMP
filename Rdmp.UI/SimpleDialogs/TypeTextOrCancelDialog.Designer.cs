@@ -28,12 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.btnOk = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.pTextEditor = new System.Windows.Forms.Panel();
             this.taskDescriptionLabel1 = new Rdmp.UI.SimpleDialogs.TaskDescriptionLabel();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.panel1.SuspendLayout();
             this.pTextEditor.SuspendLayout();
             this.SuspendLayout();
@@ -58,6 +60,7 @@
             this.btnOk.Size = new System.Drawing.Size(88, 27);
             this.btnOk.TabIndex = 2;
             this.btnOk.Text = "Ok";
+            this.toolTip.SetToolTip(this.btnOk, "Press to Save (ENTER)");
             this.btnOk.UseVisualStyleBackColor = true;
             this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
@@ -70,6 +73,7 @@
             this.btnCancel.Size = new System.Drawing.Size(88, 27);
             this.btnCancel.TabIndex = 2;
             this.btnCancel.Text = "Cancel";
+            this.toolTip.SetToolTip(this.btnCancel, "Press to Close (ESCAPE)");
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
@@ -132,5 +136,6 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel pTextEditor;
         private TaskDescriptionLabel taskDescriptionLabel1;
+        private System.Windows.Forms.ToolTip toolTip;
     }
 }

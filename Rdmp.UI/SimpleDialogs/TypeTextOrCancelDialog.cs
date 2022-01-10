@@ -67,24 +67,39 @@ namespace Rdmp.UI.SimpleDialogs
                 _scintilla = editor.Create(null,null,null,true,false);
                 _scintilla.Dock = DockStyle.Fill;
                 _scintilla.TextChanged += _scintilla_TextChanged;
+                _scintilla.KeyDown += _scintilla_KeyDown;
                 _scintilla.Text = startingTextForInputBox;
                 _scintilla.WrapMode = WrapMode.Word;
 
                 pTextEditor.Controls.Remove(textBox1);
                 pTextEditor.Controls.Add(_scintilla);
 
+                //Move cursor to the end of the textbox
+                this.ActiveControl = _scintilla;
+                _scintilla.SelectionStart = _scintilla.TextLength;
+
                 this.textBox1.Anchor = (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right);
                 this.textBox1.ScrollBars = ScrollBars.Vertical;
                 this.Height = 290;
                 this.Width = 740;
+
+                //Update the tooltip for the OK button
+                toolTip.SetToolTip(btnOk, "Press to Save (SHIFT + ENTER)");
             }
             else
             {
                 textBox1.Text = startingTextForInputBox;
                 Width = Math.Max(540, Math.Min(740, taskDescriptionLabel1.PreferredWidth));
+
+                this.ActiveControl = textBox1;
             }
 
             SetEnabledness();          
+        }
+
+        private void _scintilla_KeyDown(object sender, KeyEventArgs e)
+        {
+            FinishedKeyCheck(e);
         }
 
         private void _scintilla_TextChanged(object sender, EventArgs e)
@@ -106,24 +121,7 @@ namespace Rdmp.UI.SimpleDialogs
 
         private void textBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            //If they've pressed enter...
-            if (e.KeyCode == Keys.Enter)
-            {
-                if(!(_multiline && e.Control))
-                {
-                    //Supress the enter key (so a new line isn't created) and press the OK button (if it's enabled) if we're NOT (in a multiline control while holding the control key)
-                    //i.e. in a multiline control hold CTRL+Enter to create a new line, else we treat enter as normal and "OK" the window
-                    e.Handled = true;
-                    e.SuppressKeyPress = true;
-
-                    if (btnOk.Enabled)
-                        btnOk_Click(null, null);
-                }
-            }
-
-            //Escape should work for all controls
-            if (e.KeyCode == Keys.Escape)
-                btnCancel_Click(null, null);
+            FinishedKeyCheck(e);
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -148,6 +146,27 @@ namespace Rdmp.UI.SimpleDialogs
             }
 
             btnOk.Enabled = (!string.IsNullOrWhiteSpace(ResultText)) || _allowBlankText;
+        }
+
+        private void FinishedKeyCheck(KeyEventArgs e)
+        {
+            //If they've pressed enter...
+            if (e.KeyCode == Keys.Enter)
+            {
+                //If the OK button is enabled AND... (we're not multiline OR we are multiline but they're holding shift)
+                if(btnOk.Enabled && (!_multiline || (_multiline && e.Shift)))
+                {
+                    //Supress the enter key (so a new line isn't created) and press the OK button
+                    e.Handled = true;
+                    e.SuppressKeyPress = true;
+                    btnOk_Click(null, null);
+                }
+            }
+
+            //Escape should work for all controls
+            if (e.KeyCode == Keys.Escape)
+             btnCancel_Click(null, null);
+
         }
     }
 }
