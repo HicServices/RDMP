@@ -144,5 +144,10 @@ namespace Rdmp.Core.DataExport.Data
         {
             return $"Extraction Progress {ID}";
         }
+
+        public bool MoreToFetch()
+        {
+            return ProgressDate < EndDate;
+        }
     }
 }

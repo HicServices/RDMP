@@ -55,5 +55,11 @@ namespace Rdmp.Core.DataExport.Data
 
         /// <inheritdoc cref="ExtractionInformation_ID"/>
         ExtractionInformation ExtractionInformation { get; }
+
+        /// <summary>
+        /// Returns true if the progress is not completed yet
+        /// </summary>
+        /// <returns></returns>
+        bool MoreToFetch();
     }
 }

@@ -28,7 +28,8 @@ namespace Rdmp.Core.DataExport.DataExtraction.Commands
         public ISelectedDataSets SelectedDataSets { get; set; }
 
         private IExtractableDatasetBundle _datasetBundle;
-        
+        private List<IColumn> _origColumnsToExtract;
+
         public IExtractableCohort ExtractableCohort { get; set; }
 
         public IExtractableDatasetBundle DatasetBundle
@@ -71,6 +72,10 @@ namespace Rdmp.Core.DataExport.DataExtraction.Commands
             ExtractableCohort = extractableCohort;
             DatasetBundle = datasetBundle;
             ColumnsToExtract = columnsToExtract;
+            
+            // create a copy of the columns so we can support Reset()
+            _origColumnsToExtract = ColumnsToExtract.ToList();
+
             Salt = salt;
             Directory = directory;
             IncludeValidation = includeValidation;
@@ -94,6 +99,10 @@ namespace Rdmp.Core.DataExport.DataExtraction.Commands
             ExtractableCohort = configuration.GetExtractableCohort();
             DatasetBundle = datasetBundle;
             ColumnsToExtract = new List<IColumn>(Configuration.GetAllExtractableColumnsFor(datasetBundle.DataSet));
+            
+            // create a copy of the columns so we can support Reset()
+            _origColumnsToExtract = ColumnsToExtract.ToList();
+
             Salt = new HICProjectSalt(Project);
             Directory = new ExtractionDirectory(Project.ExtractionDirectory, configuration);
             IncludeValidation = includeValidation;
@@ -120,6 +129,14 @@ namespace Rdmp.Core.DataExport.DataExtraction.Commands
             
         }
 
+        /// <summary>
+        /// Resets the state of the command to when it was first constructed
+        /// </summary>
+        public void Reset()
+        {
+            ColumnsToExtract = _origColumnsToExtract.ToList();
+            QueryBuilder = null;
+        }
         public void GenerateQueryBuilder()
         {
             List<ReleaseIdentifierSubstitution> substitutions;

@@ -33,8 +33,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Commands
         
         public void ElevateState(ExtractCommandState newState)
         {
-            if (State < newState)
-                State = newState;
+            State = newState;
         }
     }
 }
