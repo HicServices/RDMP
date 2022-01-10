@@ -258,6 +258,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             "MyTest",
             "UserControl1",
             "MyPluginUI",
+            "NuGet",
         };
         #endregion
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)
