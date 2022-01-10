@@ -64,7 +64,7 @@ namespace Rdmp.UI.SimpleDialogs
             if (_multiline)
             {
                 var editor = new ScintillaTextEditorFactory();
-                _scintilla = editor.Create(null,null,null,true,false);
+                _scintilla = editor.Create(null,SyntaxLanguage.None,null,true,false);
                 _scintilla.Dock = DockStyle.Fill;
                 _scintilla.TextChanged += _scintilla_TextChanged;
                 _scintilla.KeyDown += _scintilla_KeyDown;

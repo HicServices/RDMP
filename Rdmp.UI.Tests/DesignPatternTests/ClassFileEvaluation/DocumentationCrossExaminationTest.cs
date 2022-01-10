@@ -258,7 +258,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             "MyTest",
             "UserControl1",
             "MyPluginUI",
-            "SelectIMapsDirectlyToDatabaseTableDialog"
+            "SelectIMapsDirectlyToDatabaseTableDialog",
             "NuGet",
         };
         #endregion
