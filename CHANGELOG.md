@@ -16,12 +16,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Extraction Information for a Catalogue Item now includes "Transforms Data" property (which shows yes/no based on whether it transform the column data)
 - Added 'open load directory' command to [Catalogue] context menu
 - Added CLI command `ClearQueryCache`
-
+- Added Description capability to prompts. More descriptions to be added (https://github.com/HicServices/RDMP/issues/814)
+- Added description to Publish Filter "Select One" dialog (https://github.com/HicServices/RDMP/issues/813)
 ### Fixed
+- Changed to SHIFT+Enter for closing multiline dialogs (https://github.com/HicServices/RDMP/issues/817)
 
 ### Changed
 - Updated CatalogueItemUI (https://github.com/HicServices/RDMP/issues/820)
 - Fixed bug where cached aggregates were not considered stale even though changes had been made to their patient index table (https://github.com/HicServices/RDMP/issues/849)
+- "You only have one object Yes/No" box has been removed in favour of being more consistent for the user (https://github.com/HicServices/RDMP/issues/811)
 
 ### Fixed
 
