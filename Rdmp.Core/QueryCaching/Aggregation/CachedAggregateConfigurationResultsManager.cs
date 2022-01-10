@@ -15,6 +15,7 @@ using FAnsi.Naming;
 using NLog;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
@@ -198,7 +199,14 @@ WHERE
             }
         }
 
-        public void DeleteCacheEntryIfAny(AggregateConfiguration configuration, AggregateOperation operation)
+        /// <summary>
+        /// Deletes any cache entries for <paramref name="configuration"/> in its role as <paramref name="operation"/>
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <param name="operation"></param>
+        /// <returns>True if a cache entry was found and deleted otherwise false</returns>
+        /// <exception cref="Exception"></exception>
+        public bool DeleteCacheEntryIfAny(AggregateConfiguration configuration, AggregateOperation operation)
         {
             var table = GetLatestResultsTableUnsafe(configuration, operation);
             var mgrTable = _database.ExpectTable(ResultsManagerTable);
@@ -219,8 +227,12 @@ WHERE
                         int deletedRows = cmd.ExecuteNonQuery();
                         if(deletedRows != 1)
                             throw new Exception("Expected exactly 1 record in CachedAggregateConfigurationResults to be deleted when erasing its record of operation " + operation + " but there were " + deletedRows +" affected records");
-                    }                
+                    }
+
+                    return true;
                 }
+
+            return false;
         }
     }
 }

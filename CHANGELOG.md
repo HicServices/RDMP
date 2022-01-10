@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Extraction Information for a Catalogue Item now includes "Transforms Data" property (which shows yes/no based on whether it transform the column data)
 - Added 'open load directory' command to [Catalogue] context menu
 - Added ability to switch between instances of RDMP using the Locations menu
+- Added CLI command `ClearQueryCache`
 
 ### Fixed
 

@@ -145,7 +145,7 @@ See [PluginWriting](./PluginWriting.md)
 
 ### How is RDMP versioned?
 
-RDMP software has a build Major, Minor and Patch number (Semantic Versioning).  Updates are provided through [Squirrel](https://github.com/Squirrel/Squirrel.Windows).  When an API update is issued that requires a change in the platform databases, accompanying sql scripts will be included to perform the update (which will run during startup).
+RDMP software has a build Major, Minor and Patch number (Semantic Versioning).  When an API update is issued that requires a change in the platform databases, accompanying sql scripts will be included to perform the update (which will run during startup).
 
 Platform databases are divided into three tiers:
 

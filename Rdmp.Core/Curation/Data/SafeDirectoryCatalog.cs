@@ -32,7 +32,6 @@ namespace Rdmp.Core.Curation.Data
             "mscorelib.dll",
             "Hunspellx64.dll",
             "Hunspellx86.dll",
-            "NuGet.Squirrel.dll",
         };
 
         /// <summary>

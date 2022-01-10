@@ -25,7 +25,7 @@ namespace Rdmp.UI.PluginManagement.CodeGeneration
             InitializeComponent();
 
             var factory = new ScintillaTextEditorFactory();
-            _codeEditor = factory.Create(null, "csharp");
+            _codeEditor = factory.Create(null, SyntaxLanguage.CSharp);
             _codeEditor.ReadOnly = false;
             panel1.Controls.Add(_codeEditor);
         }

@@ -47,7 +47,7 @@ namespace Rdmp.UI.SimpleDialogs.Revertable
         private Scintilla QueryEditorAfter;
 
 
-        public void CreateScintillaComponents(string textBefore, string textAfter, string language = "mssql")
+        public void CreateScintillaComponents(string textBefore, string textAfter, SyntaxLanguage language = SyntaxLanguage.SQL)
         {
             QueryEditorBefore = new ScintillaTextEditorFactory().Create();
             QueryEditorBefore.Text = textBefore;

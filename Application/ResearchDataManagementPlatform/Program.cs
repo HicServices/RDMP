@@ -38,7 +38,7 @@ namespace ResearchDataManagementPlatform
             }
 
             UsefulStuff.GetParser()
-                       .ParseArguments<ResearchDataManagementPlatformOptions>(args.Except(new[] { "--squirrel-firstrun" }))
+                       .ParseArguments<ResearchDataManagementPlatformOptions>(args)
                        .MapResult(RunApp, err => -1);
         }
 

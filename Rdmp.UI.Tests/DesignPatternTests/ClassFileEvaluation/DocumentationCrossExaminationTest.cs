@@ -258,6 +258,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             "MyTest",
             "UserControl1",
             "MyPluginUI",
+            "NuGet",
         };
         #endregion
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)
@@ -343,7 +344,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             {
                 foreach (string s in kvp.Value)
                 {
-                    if(!codeTokens.Contains(s))
+                    if(!codeTokens.Contains(s) && !codeTokens.Contains("ExecuteCommand"+s))
                     {
                         if (_whitelist.Contains(s))
                             continue;
