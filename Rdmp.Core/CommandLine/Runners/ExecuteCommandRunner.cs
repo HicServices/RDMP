@@ -105,7 +105,7 @@ namespace Rdmp.Core.CommandLine.Runners
             while (true)
             {
                 Console.WriteLine("Enter Command (or 'exit')");
-                var command = _input.GetString("Command", _commands.Keys.ToList());
+                var command = _input.GetString(new DialogArgs { WindowTitle = "Command" }, _commands.Keys.ToList());
                 try
                 {
                     command = GetCommandAndPickerFromLine(command, out _picker,repositoryLocator);

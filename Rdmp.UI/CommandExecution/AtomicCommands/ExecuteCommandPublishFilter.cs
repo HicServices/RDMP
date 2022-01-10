@@ -6,6 +6,7 @@
 
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.FilterImporting;
@@ -55,7 +56,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             if (_catalogue == null)
                 _catalogue = SelectOne<Catalogue>(Activator.RepositoryLocator.CatalogueRepository);
 
-            var toAddTo = SelectOne(_allExtractionInformations);
+            var toAddTo = SelectOne(new DialogArgs { 
+                WindowTitle = "Associated Column",
+                TaskDescription = "All filters must be associated with a single column.  Pick which column to associate this filter with."},_allExtractionInformations);
 
             if(toAddTo != null)
             {

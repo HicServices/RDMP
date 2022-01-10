@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents;
 using Rdmp.UI.SimpleDialogs;
@@ -189,11 +190,15 @@ namespace Rdmp.UI.CatalogueSummary.DataQualityReporting
                 return;
             }
 
-                TypeTextOrCancelDialog inputBox = new TypeTextOrCancelDialog("Enter Annotation Text", "Type some annotation text (will be saved to the database for other data analysts to see)",500);
-            if (DialogResult.OK == inputBox.ShowDialog())
+            if (Activator.TypeText(new DialogArgs
+                {
+                    WindowTitle = "Add Annotation",
+                    TaskDescription = "Type some annotation text(will be saved to the database for other data analysts to see)",
+                    EntryLabel = "Annotation:"
+                }, 500, null, out string result, false))
             {
                 //create new annotation in the database
-                new DQEGraphAnnotation(_currentEvaluation.DQERepository,pointStartX, pointStartY, pointEndX, pointEndY, inputBox.ResultText, _currentEvaluation, DQEGraphType.TimePeriodicityGraph, _pivotCategoryValue);
+                new DQEGraphAnnotation(_currentEvaluation.DQERepository,pointStartX, pointStartY, pointEndX, pointEndY, result, _currentEvaluation, DQEGraphType.TimePeriodicityGraph, _pivotCategoryValue);
                 
                 //refresh the annotations
                 AddUserAnnotations(_currentEvaluation);

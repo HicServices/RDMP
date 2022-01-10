@@ -55,14 +55,10 @@ namespace Rdmp.Core.CommandLine.Interactive
             Console.WriteLine(message);
         }
 
-        public override bool TypeText(string header, string prompt, int maxLength, string initialText, out string text,
+        public override bool TypeText(DialogArgs args, int maxLength, string initialText, out string text,
             bool requireSaneHeaderText)
         {
-            if (DisallowInput)
-                throw new InputDisallowedException($"Value required for '{header}' ({prompt})");
-
-            Console.WriteLine(header);
-            Console.Write(prompt +":");
+            WritePromptFor(args);
             text = ReadLineWithAuto();
             return !string.IsNullOrWhiteSpace(text);
         }
@@ -92,12 +88,12 @@ namespace Rdmp.Core.CommandLine.Interactive
             throw exception ?? new Exception(errorText);
         }
         
-        public override bool SelectEnum(string prompt, Type enumType, out Enum chosen)
+        public override bool SelectEnum(DialogArgs args, Type enumType, out Enum chosen)
         {
             if (DisallowInput)
-                throw new InputDisallowedException($"Value required for '{prompt}'");
+                throw new InputDisallowedException($"Value required for '{args}'");
 
-            string chosenStr = GetString(prompt, Enum.GetNames(enumType).ToList());
+            string chosenStr = GetString(args, Enum.GetNames(enumType).ToList());
             try
             {
                 chosen = (Enum)Enum.Parse(enumType, chosenStr);
@@ -111,12 +107,12 @@ namespace Rdmp.Core.CommandLine.Interactive
             return true;
         }
 
-        public override bool SelectType(string prompt, Type[] available,out Type chosen)
+        public override bool SelectType(DialogArgs args, Type[] available,out Type chosen)
         {
             if (DisallowInput)
-                throw new InputDisallowedException($"Value required for '{prompt}'"); 
+                throw new InputDisallowedException($"Value required for '{args}'"); 
 
-            string chosenStr = GetString(prompt, available.Select(t=>t.Name).ToList());
+            string chosenStr = GetString(args, available.Select(t=>t.Name).ToList());
 
             if (string.IsNullOrWhiteSpace(chosenStr))
             {
@@ -133,13 +129,10 @@ namespace Rdmp.Core.CommandLine.Interactive
         }
 
 
-        public override IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
-            IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText)
+        public override IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType,
+            IMapsDirectlyToDatabaseTable[] availableObjects)
         {
-            if (DisallowInput)
-                throw new InputDisallowedException($"Value required for '{prompt}'");
-
-            Console.WriteLine(prompt);
+            WritePromptFor(args);
 
             var value = ReadLineWithAuto(new PickObjectBase[]
                 {new PickObjectByID(RepositoryLocator), new PickObjectByName(RepositoryLocator)},
@@ -153,20 +146,50 @@ namespace Rdmp.Core.CommandLine.Interactive
             return value.DatabaseEntities.ToArray();
         }
 
-        public override IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
-            string initialSearchText = null, bool allowAutoSelect = false)
+        /// <summary>
+        /// Displays the text described in the prompt theming <paramref name="args"/>
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="entryLabel"></param>
+        /// <exception cref="InputDisallowedException">Thrown if <see cref="DisallowInput"/> is true</exception>
+        private void WritePromptFor(DialogArgs args, bool entryLabel = true)
         {
             if (DisallowInput)
-                throw new InputDisallowedException($"Value required for '{prompt}'");
+                throw new InputDisallowedException($"Value required for '{args}'");
 
-            Console.WriteLine(prompt);
+            if (!string.IsNullOrWhiteSpace(args.WindowTitle))
+            {
+                Console.WriteLine(args.WindowTitle);
+            }
+                
+            if (!string.IsNullOrWhiteSpace(args.TaskDescription))
+            {
+                Console.WriteLine(args.TaskDescription);
+            }
+            
+
+            if (entryLabel && !string.IsNullOrWhiteSpace(args.EntryLabel))
+            {
+                Console.Write(args.EntryLabel);
+            }
+            
+        }
+
+        public override IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args, IMapsDirectlyToDatabaseTable[] availableObjects)
+        {
+            if (DisallowInput)
+                throw new InputDisallowedException($"Value required for '{args}'");
 
             if (availableObjects.Length == 0)
                 throw new Exception("No available objects found");
 
             //handle auto selection when there is one object
-            if (availableObjects.Length == 1 && allowAutoSelect)
+            if (availableObjects.Length == 1 && args.AllowAutoSelect)
                 return availableObjects[0];
+
+            Console.WriteLine(args.WindowTitle);
+
+            Console.Write(args.EntryLabel);
 
             var value = ReadLineWithAuto(new PickObjectBase[]
                 {new PickObjectByID(RepositoryLocator), new PickObjectByName(RepositoryLocator)},
@@ -183,12 +206,14 @@ namespace Rdmp.Core.CommandLine.Interactive
             return chosen;
         }
 
-        public override bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null, bool allowAutoSelect = false)
+        public override bool SelectObject<T>(DialogArgs args, T[] available, out T selected)
         {
             for(int i=0;i<available.Length;i++)
             {
                 Console.WriteLine(i + ":" + available[i]);
             }
+
+            Console.Write(args.EntryLabel);
 
             var result = Console.ReadLine();
 
@@ -304,23 +329,20 @@ namespace Rdmp.Core.CommandLine.Interactive
         }
         
 
-        protected override bool SelectValueTypeImpl(string prompt, Type paramType, object initialValue,out object chosen)
+        protected override bool SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue,out object chosen)
         {
-            if (DisallowInput)
-                throw new InputDisallowedException($"Value required for '{prompt}'");
+            WritePromptFor(args);
 
-            Console.WriteLine($"Enter value for {prompt}:");
             chosen = UsefulStuff.ChangeType(ReadLineWithAuto(), paramType);
 
             return true;
         }
         
-        public override bool YesNo(string text, string caption, out bool chosen)
+        public override bool YesNo(DialogArgs args, out bool chosen)
         {
-            if (DisallowInput)
-                throw new InputDisallowedException($"Value required for '{text}'");
+            WritePromptFor(args, false);
 
-            Console.WriteLine(text + "(Y/n)");
+            Console.WriteLine(args.EntryLabel + "(Y/n)");
             
             //if user picks no then it's false otherwise true
             chosen = !string.Equals(Console.ReadLine()?.Trim(), "n", StringComparison.CurrentCultureIgnoreCase);
@@ -329,13 +351,12 @@ namespace Rdmp.Core.CommandLine.Interactive
             return true;
         }
         
-        public string GetString(string prompt, List<string> options)
+        public string GetString(DialogArgs args, List<string> options)
         {
-            if (DisallowInput)
-                throw new InputDisallowedException($"Value required for '{prompt}'");
+            WritePromptFor(args);
             
             ReadLine.AutoCompletionHandler = new AutoComplete(options);
-            return ReadLine.Read(prompt +":");
+            return ReadLine.Read();
         }
 
         public override void ShowData(IViewSQLAndResultsCollection collection)
@@ -388,7 +409,7 @@ namespace Rdmp.Core.CommandLine.Interactive
             ShowData(new ViewAggregateExtractUICollection(aggregate));
         }
 
-        public override bool SelectObjects<T>(string prompt, T[] available, out T[] selected, string initialSearchText = null)
+        public override bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected)
         {
             if(available.Length == 0)
             {

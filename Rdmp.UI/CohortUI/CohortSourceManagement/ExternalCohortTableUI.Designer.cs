@@ -105,9 +105,9 @@ namespace Rdmp.UI.CohortUI.CohortSourceManagement
             this.label3.Location = new System.Drawing.Point(521, 57);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(216, 13);
+            this.label3.Size = new System.Drawing.Size(228, 13);
             this.label3.TabIndex = 1;
-            this.label3.Text = "(How you want to refer to this cohort source)";
+            this.label3.Text = "(How you want to refer to this cohort database)";
             // 
             // tbTableName
             // 
@@ -330,7 +330,7 @@ namespace Rdmp.UI.CohortUI.CohortSourceManagement
             this.groupBox2.Size = new System.Drawing.Size(1037, 86);
             this.groupBox2.TabIndex = 11;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Cohort Source Settings";
+            this.groupBox2.Text = "Cohort Database Settings";
             // 
             // ExternalCohortTableUI
             // 
