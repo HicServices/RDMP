@@ -91,9 +91,9 @@ namespace Rdmp.Core.Reports.ExtractionTime
                     SetTableCell(t,rownum,0,"Cohorts Found In Dataset");
                     SetTableCell(t,rownum,1,Executer.Source.UniqueReleaseIdentifiersEncountered.Count.ToString());
                     rownum++;
-
+                    
                     SetTableCell(t,rownum,0,"Dataset Line Count");
-                    SetTableCell(t,rownum,1,Executer.Destination.TableLoadInfo.Inserts.ToString());
+                    SetTableCell(t,rownum,1, Executer.Source.Request.CumulativeExtractionResults.RecordsExtracted.ToString("N0"));
                     rownum++;
 
                     if (_destination.GeneratesFiles)
