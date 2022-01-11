@@ -77,6 +77,15 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
     
         protected override void Open(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
         {
+            if(_request.IsBatchResume)
+            {
+                
+                // if it is a batch resume then create a backup of the file as it looked at the start of the process
+                _backupFile = _output.OutputFilename + ".bak";
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Creating {_backupFile}"));
+                File.Copy(_output.OutputFilename, _backupFile, true);
+            }
+
             _output.Open(_request.IsBatchResume);
 
             // write the headers for the file unless we are resuming
@@ -108,6 +117,20 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
             CloseFile(listener);
+
+            // if pipeline execution failed and we are doing a batch resume
+            if(pipelineFailureExceptionIfAny != null &&
+                (_request?.IsBatchResume ?? false) && _backupFile != null && _output?.OutputFilename != null)
+            {
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Pipeline crashed so restoring backup file {_backupFile}"));
+                File.Copy(_backupFile, _output.OutputFilename, true);
+            }
+
+            if(_backupFile != null && File.Exists(_backupFile))
+            {
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Deleting {_backupFile}"));
+                File.Delete(_backupFile);
+            }
         }
 
         public override void Abort(IDataLoadEventListener listener)
@@ -116,6 +139,12 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         }
 
         private bool _fileAlreadyClosed = false;
+
+        /// <summary>
+        /// If performing a batch resume then this file will be a copy of the flat file
+        /// before we began appending data to it in case the pipeline execution fails
+        /// </summary>
+        private string _backupFile;
 
         private void CloseFile(IDataLoadEventListener listener)
         {

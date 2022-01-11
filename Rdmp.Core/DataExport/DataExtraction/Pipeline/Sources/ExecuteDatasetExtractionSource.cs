@@ -184,7 +184,8 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                                                                 Request.GetDistinctLiveDatabaseServer().Builder, 
                                                                 ExecutionTimeout);
 
-                _hostedSource.AllowEmptyResultSets = AllowEmptyExtractions;
+                // If we are running in batches then always allow empty extractions
+                _hostedSource.AllowEmptyResultSets = AllowEmptyExtractions || Request.IsBatchResume;
                 _hostedSource.BatchSize = BatchSize;
             }
 
