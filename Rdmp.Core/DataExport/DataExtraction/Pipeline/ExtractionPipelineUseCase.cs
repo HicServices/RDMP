@@ -83,8 +83,12 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
                 do
                 {
                     runSuccessful = ExecuteOnce(listener);
-                    runAgain = runSuccessful && IncrementProgressIfAny(eds);
-                    
+                    runAgain = runSuccessful && IncrementProgressIfAny(eds, listener);
+
+                    if(runSuccessful && runAgain)
+                    {
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Running pipeline again for next batch in ExtractionProgress"));
+                    }
                 }
                 while (runSuccessful && runAgain);
             }
@@ -101,7 +105,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        private bool IncrementProgressIfAny(ExtractDatasetCommand extractDatasetCommand)
+        private bool IncrementProgressIfAny(ExtractDatasetCommand extractDatasetCommand, IDataLoadEventListener listener)
         {
             var progress = extractDatasetCommand.SelectedDataSets.ExtractionProgressIfAny;
 
@@ -114,8 +118,9 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
                 // update our progress
                 progress.ProgressDate = extractDatasetCommand.BatchEnd.Value;
                 progress.SaveToDatabase();
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Saving batch extraction progress as {progress.ProgressDate}"));
 
-                if(progress.MoreToFetch())
+                if (progress.MoreToFetch())
                 {
                     // clear the query builder so it can be rebuilt for the new dates
                     extractDatasetCommand.Reset();
