@@ -6,6 +6,7 @@ BEGIN
 
 CREATE TABLE ExtractionProgress(
     [ID] [int] IDENTITY(1,1) NOT NULL,
+    [Name] varchar(max) NOT NULL,
     [SelectedDataSets_ID] [int] NOT NULL,
     [ProgressDate] [datetime] NULL,
     [ExtractionInformation_ID] [int] NOT NULL,    

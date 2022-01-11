@@ -15,7 +15,7 @@ using System.Data.Common;
 namespace Rdmp.Core.DataExport.Data
 {
     /// <inheritdoc cref="IExtractionProgress"/>
-    public class ExtractionProgress : DatabaseEntity, IExtractionProgress
+    public class ExtractionProgress : DatabaseEntity, IExtractionProgress, INamed
     {
         #region Database Properties
 
@@ -25,6 +25,7 @@ namespace Rdmp.Core.DataExport.Data
         private DateTime? _startDate;
         private DateTime? _endDate;
         private int _numberOfDaysPerBatch;
+        private string _name;
         #endregion
 
         /// <inheritdoc/>
@@ -67,6 +68,13 @@ namespace Rdmp.Core.DataExport.Data
         {
             get { return _extractionInformation_ID; }
             set { SetField(ref _extractionInformation_ID, value); }
+        }
+
+        /// <inheritdoc/>
+        public string Name
+        {
+            get { return _name; }
+            set { SetField(ref _name, value); }
         }
 
         #region Relationships
@@ -124,7 +132,8 @@ namespace Rdmp.Core.DataExport.Data
             {
                 { "SelectedDataSets_ID",sds.ID},
                 { "ExtractionInformation_ID",coverageColId},
-                { "NumberOfDaysPerBatch",365}
+                { "NumberOfDaysPerBatch",365},
+                { "Name","ExtractionProgress"+Guid.NewGuid() }
             });
 
             if (ID == 0 || Repository != repository)
@@ -138,11 +147,12 @@ namespace Rdmp.Core.DataExport.Data
             EndDate = ObjectToNullableDateTime(r["EndDate"]);
             ExtractionInformation_ID = Convert.ToInt32(r["ExtractionInformation_ID"]);
             NumberOfDaysPerBatch = Convert.ToInt32(r["NumberOfDaysPerBatch"]);
+            Name = r["Name"].ToString();
         }
 
         public override string ToString()
         {
-            return $"Extraction Progress {ID}";
+            return Name;
         }
 
         public bool MoreToFetch()
