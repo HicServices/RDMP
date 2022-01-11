@@ -144,8 +144,8 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 {
                     if(_request.IsBatchResume)
                     {
-                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                                            $"Table {existing.GetFullyQualifiedName()} already exists.  Assuming it is fine because this is a batch data extraction resume"));
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                                            $"Table {existing.GetFullyQualifiedName()} already exists but it IsBatchResume so no problem."));
 
                     }
                     else
