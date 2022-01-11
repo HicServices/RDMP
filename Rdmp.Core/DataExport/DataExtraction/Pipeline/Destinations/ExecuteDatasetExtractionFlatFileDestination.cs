@@ -79,11 +79,17 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         {
             if(_request.IsBatchResume)
             {
-                
-                // if it is a batch resume then create a backup of the file as it looked at the start of the process
-                _backupFile = _output.OutputFilename + ".bak";
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Creating {_backupFile}"));
-                File.Copy(_output.OutputFilename, _backupFile, true);
+                if (File.Exists(_output.OutputFilename))
+                {
+                    // if it is a batch resume then create a backup of the file as it looked at the start of the process
+                    _backupFile = _output.OutputFilename + ".bak";
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Creating {_backupFile}"));
+                    File.Copy(_output.OutputFilename, _backupFile, true);
+                }
+                else
+                {
+                    throw new Exception($"Batch resume is true but there was no file to append to (expected a file to exist at '{_output.OutputFilename}')");
+                }
             }
 
             _output.Open(_request.IsBatchResume);
@@ -122,8 +128,11 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             if(pipelineFailureExceptionIfAny != null &&
                 (_request?.IsBatchResume ?? false) && _backupFile != null && _output?.OutputFilename != null)
             {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Pipeline crashed so restoring backup file {_backupFile}"));
-                File.Copy(_backupFile, _output.OutputFilename, true);
+                if(File.Exists(_backupFile))
+                {
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Pipeline crashed so restoring backup file {_backupFile}"));
+                    File.Copy(_backupFile, _output.OutputFilename, true);
+                }
             }
 
             if(_backupFile != null && File.Exists(_backupFile))
@@ -159,6 +168,11 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 //whatever happens in the writing block, make sure to at least attempt to close off the file
                 _output.Close();
                 GC.Collect(); //prevents file locks from sticking around
+
+                if(TableLoadInfo == null)
+                {
+                    return;
+                }
 
                 //close audit object - unless it was prematurely closed e.g. by a failure somewhere
                 if (!TableLoadInfo.IsClosed)

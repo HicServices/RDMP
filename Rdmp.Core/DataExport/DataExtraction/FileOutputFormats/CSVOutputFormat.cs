@@ -79,9 +79,9 @@ namespace Rdmp.Core.DataExport.DataExtraction.FileOutputFormats
 
         public override void Close()
         {
-            _sw.Flush();
-            _sw.Close();
-            _sw.Dispose();
+            _sw?.Flush();
+            _sw?.Close();
+            _sw?.Dispose();
         }
 
         public string CleanString(object o)

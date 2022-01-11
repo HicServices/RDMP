@@ -67,40 +67,6 @@ namespace Rdmp.Core.Tests.DataExport.Data
         }
 
         [Test]
-        public void TestQueryGeneration_WithExtractionProgress()
-        {
-            Reset();
-
-            _catalogue.TimeCoverage_ExtractionInformation_ID = _extractionInformations.Single(e => e.GetRuntimeName().Equals("DateOfBirth")).ID;
-            _catalogue.SaveToDatabase();
-
-            var progress = new ExtractionProgress(DataExportRepository, _request.SelectedDataSets);
-            progress.ProgressDate = new DateTime(2001, 01, 01);
-            progress.NumberOfDaysPerBatch = 10;
-            progress.SaveToDatabase();
-
-            _request.GenerateQueryBuilder();
-
-            StringAssert.Contains("SET @batchStart='2001-01-01'", _request.QueryBuilder.SQL);
-            StringAssert.Contains("SET @batchEnd='2001-01-11'", _request.QueryBuilder.SQL);
-            StringAssert.Contains("ScratchArea].[dbo].[TestTable].[DateOfBirth] >= @batchStart AND ", _request.QueryBuilder.SQL);
-            StringAssert.Contains("_ScratchArea].[dbo].[TestTable].[DateOfBirth] < @batchEnd)", _request.QueryBuilder.SQL);
-
-
-            Execute(out _, out IExecuteDatasetExtractionDestination result);
-
-            Assert.IsTrue(result.GeneratesFiles);
-            var fileContents = File.ReadAllText(result.OutputFile);
-
-            // Notice that there are no headers.  That is because we are resuming a batch execution (ProgressDate was not null)
-            Assert.AreEqual($"Pub_54321,Dave,2001-01-01{Environment.NewLine}", fileContents);
-            
-            File.Delete(result.OutputFile);
-            progress.DeleteInDatabase();
-        }
-
-
-        [Test]
         public void TestQueryGeneration_FirstBatch()
         {
             Reset();

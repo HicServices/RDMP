@@ -142,6 +142,9 @@ AND
 
 
             deepClone.DeleteInDatabase();
+
+            // remove the progress so that it doesn't trip other tests
+            origProgress.DeleteInDatabase();
         }
 
 
