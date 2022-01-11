@@ -15,7 +15,7 @@ using System.Data.Common;
 namespace Rdmp.Core.DataExport.Data
 {
     /// <inheritdoc cref="IExtractionProgress"/>
-    public class ExtractionProgress : DatabaseEntity, IExtractionProgress, INamed
+    public class ExtractionProgress : DatabaseEntity, IExtractionProgress
     {
         #region Database Properties
 
@@ -118,6 +118,21 @@ namespace Rdmp.Core.DataExport.Data
         public ExtractionInformation ExtractionInformation { get => DataExportRepository.CatalogueRepository.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID); }
         #endregion
 
+        public ExtractionProgress(IDataExportRepository repository, ISelectedDataSets sds, DateTime? startDate, DateTime? endDate,int numberOfDaysPerBatch,string name, int extractionInformation_ID)
+        {
+            repository.InsertAndHydrate(this, new Dictionary<string, object>()
+            {
+                { "SelectedDataSets_ID",sds.ID},
+                { "ExtractionInformation_ID",extractionInformation_ID},
+                { "NumberOfDaysPerBatch",numberOfDaysPerBatch},
+                { "StartDate", startDate},
+                { "EndDate", endDate},
+                { "Name",name }
+            });
+
+            if (ID == 0 || Repository != repository)
+                throw new ArgumentException("Repository failed to properly hydrate this class");
+        }
         public ExtractionProgress(IDataExportRepository repository, ISelectedDataSets sds)
         {
             var cata = sds.GetCatalogue();

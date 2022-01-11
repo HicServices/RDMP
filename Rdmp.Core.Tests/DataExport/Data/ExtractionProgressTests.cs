@@ -110,6 +110,7 @@ namespace Rdmp.Core.Tests.DataExport.Data
 
             var progress = new ExtractionProgress(DataExportRepository, _request.SelectedDataSets);
             progress.StartDate = new DateTime(2001, 01, 01);
+            progress.EndDate = new DateTime(2001, 01, 10);
             progress.NumberOfDaysPerBatch = 10;
             progress.SaveToDatabase();
 

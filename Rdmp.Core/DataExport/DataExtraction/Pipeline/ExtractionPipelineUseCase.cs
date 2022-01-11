@@ -115,10 +115,14 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
                 progress.ProgressDate = extractDatasetCommand.BatchEnd.Value;
                 progress.SaveToDatabase();
 
-                // clear the query builder so it can be rebuilt for the new dates
-                extractDatasetCommand.Reset();
+                if(progress.MoreToFetch())
+                {
+                    // clear the query builder so it can be rebuilt for the new dates
+                    extractDatasetCommand.Reset();
+                    return true;
+                }
 
-                return progress.MoreToFetch();
+                return false;
             }
             return false;
         }
