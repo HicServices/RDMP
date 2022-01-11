@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -14,6 +15,7 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
+using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataQualityEngine;
@@ -32,6 +34,7 @@ using Rdmp.UI.PluginManagement.CodeGeneration;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SimpleDialogs.NavigateTo;
+using Rdmp.UI.TestsAndSetup;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Tutorials;
 using ResearchDataManagementPlatform.Menus.MenuItems;
@@ -39,6 +42,7 @@ using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -79,7 +83,89 @@ namespace ResearchDataManagementPlatform.Menus
         {
             InitializeComponent();
         }
-        
+
+        private void BuildSwitchInstanceMenuItems()
+        {
+            var args = RDMPBootStrapper<RDMPMainForm>.ApplicationArguments;
+
+            // somehow app was launched without populating the load args
+            if (args == null)
+            {
+                return;
+            }
+
+            var origYamlFile = args.ConnectionStringsFileLoaded;
+
+            //default settings were used if no yaml file was specified or the file specified did not exist
+            var defaultsUsed = origYamlFile == null;
+
+            // if defaults were not used then it is valid to switch to them
+            switchToDefaultSettings.Enabled = !defaultsUsed;
+
+            switchToDefaultSettings.Checked = defaultsUsed;
+            launchNewWithDefaultSettings.Checked = defaultsUsed;
+
+            // load the yaml files in the RDMP binary directory
+            var exeDir = UsefulStuff.GetExecutableDirectory();
+            AddMenuItemsForSwitchingToInstancesInYamlFilesOf(origYamlFile, exeDir);
+
+            // also add yaml files from wherever they got their original yaml file 
+            if (origYamlFile?.FileLoaded != null && !exeDir.FullName.Equals(origYamlFile.FileLoaded.Directory.FullName))
+            {
+                AddMenuItemsForSwitchingToInstancesInYamlFilesOf(origYamlFile, origYamlFile.FileLoaded.Directory);
+            }
+
+        }
+
+        private void AddMenuItemsForSwitchingToInstancesInYamlFilesOf(ConnectionStringsYamlFile origYamlFile, DirectoryInfo dir)
+        {
+            foreach (var yaml in dir.GetFiles("*.yaml"))
+            {
+                // if the yaml file is invalid bail out early
+                if (!ConnectionStringsYamlFile.TryLoadFrom(yaml, out var connectionStrings))
+                    continue;
+
+                bool isSameAsCurrent = origYamlFile?.FileLoaded == null ? false : yaml.FullName.Equals(origYamlFile.FileLoaded.FullName);
+
+                var launchNew = new ToolStripMenuItem(connectionStrings.Name ?? yaml.Name, null, (s, e) => { LaunchNew(connectionStrings); })
+                {
+                    Checked = isSameAsCurrent,
+                    ToolTipText = connectionStrings.Description ?? yaml.FullName
+                };
+
+                var switchTo = new ToolStripMenuItem(connectionStrings.Name ?? yaml.Name, null, (s, e) => { SwitchTo(connectionStrings); })
+                {
+                    Enabled = !isSameAsCurrent,
+                    Checked = isSameAsCurrent,
+                    ToolTipText = connectionStrings.Description ?? yaml.FullName
+                };
+
+                launchAnotherInstanceToolStripMenuItem.DropDownItems.Add(launchNew);
+                switchToInstanceToolStripMenuItem.DropDownItems.Add(switchTo);
+
+            }
+        }
+
+        private void SwitchTo(ConnectionStringsYamlFile yaml)
+        {
+            LaunchNew(yaml);
+
+            Application.Exit();
+        }
+
+        private void LaunchNew(ConnectionStringsYamlFile yaml)
+        {
+            var exeName = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, Process.GetCurrentProcess().ProcessName);
+            if(yaml == null)
+            {
+                Process.Start(exeName);
+            }
+            else
+            {
+                Process.Start(exeName, $"--{nameof(RDMPCommandLineOptions.ConnectionStringsFile)} \"{yaml.FileLoaded.FullName}\"");
+            }
+        }
+
         private void configureExternalServersToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new ExecuteCommandConfigureDefaultServers(Activator).Execute();
@@ -209,9 +295,33 @@ namespace ResearchDataManagementPlatform.Menus
             rdmpTaskBar1.SetWindowManager(_windowManager);
 
             // Location menu
-            LocationsMenu.DropDownItems.Add(_atomicCommandUIFactory.CreateMenuItem(new ExecuteCommandChoosePlatformDatabase(Activator.RepositoryLocator)));
+            instancesToolStripMenuItem.DropDownItems.Add(_atomicCommandUIFactory.CreateMenuItem(
+                new ExecuteCommandChoosePlatformDatabase(Activator.RepositoryLocator) { OverrideCommandName = "Change Default Instance" }));
 
             Activator.Theme.ApplyTo(menuStrip1);
+
+            try
+            {
+                BuildSwitchInstanceMenuItems();
+            }
+            catch (Exception ex)
+            {
+                Activator.GlobalErrorCheckNotifier.OnCheckPerformed(
+                    new CheckEventArgs("Failed to BuildSwitchInstanceMenuItems", CheckResult.Fail, ex));
+            }
+            
+            launchAnotherInstanceToolStripMenuItem.ToolTipText = "Start another copy of the RDMP process targetting the same (or another) RDMP platform database";
+
+            if(switchToInstanceToolStripMenuItem.DropDownItems.Count > 1)
+            {
+                switchToInstanceToolStripMenuItem.Enabled = true;
+                switchToInstanceToolStripMenuItem.ToolTipText = "Close the application and start another copy of the RDMP process targetting another RDMP platform database";
+            }
+            else
+            {
+                switchToInstanceToolStripMenuItem.Enabled = false;
+                switchToInstanceToolStripMenuItem.ToolTipText = "There are no other RDMP platform databases configured, create a .yaml file with connection strings to enable this feature";
+            }
         }
 
 
@@ -426,6 +536,16 @@ namespace ResearchDataManagementPlatform.Menus
         {
             var lastCommand = new LastCommandUI();
             lastCommand.Show();
+        }
+
+        private void switchToUsingUserSettings_Click(object sender, EventArgs e)
+        {
+            SwitchTo(null);
+        }
+
+        private void launchNewInstanceWithUserSettings_Click(object sender, EventArgs e)
+        {
+            LaunchNew(null);
         }
     }
 }

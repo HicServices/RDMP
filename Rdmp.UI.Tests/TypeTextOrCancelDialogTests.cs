@@ -26,10 +26,11 @@ namespace Rdmp.UI.Tests
 
             //the title and body should be a reasonable length
             Assert.AreEqual(1, dlg.Text.Length);
-            Assert.AreEqual(1, GetControl<Label>().First().Text.Length);
+            Assert.AreEqual(1, GetControl<TextBox>()[1].Text.Length);
 
-            //dialog shouldn't go thinner than 460 pixels
-            Assert.AreEqual(540, dlg.Width);
+            //dialog shouldn't go thinner than 540 or wider than 840 pixels
+            Assert.GreaterOrEqual(dlg.Width, 540);
+            Assert.LessOrEqual(dlg.Width, 840);
         }
 
         [Test]
@@ -50,10 +51,11 @@ namespace Rdmp.UI.Tests
 
             //the title and body should be a reasonable length
             Assert.AreEqual(WideMessageBox.MAX_LENGTH_TITLE, dlg.Text.Length);
-            Assert.AreEqual(WideMessageBox.MAX_LENGTH_BODY, GetControl<Label>().First().Text.Length);
-            
-            //dialog shouldn't go wider than 720 pixels
-            Assert.AreEqual(740,dlg.Width);
+            Assert.AreEqual(WideMessageBox.MAX_LENGTH_BODY, GetControl<TextBox>()[1].Text.Length);
+
+            //dialog shouldn't go thinner than 540 or wider than 840 pixels
+            Assert.GreaterOrEqual(dlg.Width, 540);
+            Assert.LessOrEqual(dlg.Width, 840);
 
         }
         

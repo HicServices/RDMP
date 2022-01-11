@@ -15,6 +15,7 @@ using FAnsi;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.CommandLine.Interactive;
+using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Checks;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Repositories;
@@ -22,10 +23,10 @@ using Rdmp.Core.Startup;
 using Rdmp.UI.ChecksUI;
 using Rdmp.UI.DataLoadUIs.ModuleUIs;
 using Rdmp.UI.SimpleDialogs;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
-
-
+using YamlDotNet.Serialization;
 
 namespace Rdmp.UI.LocationsMenu
 {
@@ -407,6 +408,35 @@ namespace Rdmp.UI.LocationsMenu
             catch(Exception)
             {
                 tb.ForeColor = Color.Red;
+            }
+        }
+
+        private void btnCreateYamlFile_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var toSerialize = new ConnectionStringsYamlFile()
+                {
+                    CatalogueConnectionString = tbCatalogueConnectionString.Text,
+                    DataExportConnectionString = tbDatabasePrefix.Text,
+                };
+
+                var serializer = new Serializer();
+                var yaml = serializer.Serialize(toSerialize);
+
+                var sfd = new SaveFileDialog();
+                sfd.Filter = "Yaml|*.yaml";
+                sfd.Title = "Save yaml";
+                sfd.InitialDirectory = UsefulStuff.GetExecutableDirectory().FullName;
+
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    File.WriteAllText(sfd.FileName, yaml);
+                }
+            }
+            catch (Exception ex)
+            {
+                ExceptionViewer.Show(ex);
             }
         }
     }

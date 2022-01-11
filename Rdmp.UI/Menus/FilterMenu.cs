@@ -23,10 +23,6 @@ namespace Rdmp.UI.Menus
 
             Items.Add(new ToolStripSeparator());
 
-            var dis = filter as IDisableable;
-            if (dis != null)
-                Add(new ExecuteCommandDisableOrEnable(_activator, dis));
-
             Add(new ExecuteCommandExportObjectsToFile(_activator, new[] {filter}));
             Add(new ExecuteCommandImportFilterDescriptionsFromShare(_activator, filter));
             

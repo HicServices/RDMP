@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [7.0.5] - 2022-01-10
+
 ### Added
 - Added diagnostic screen logging last executed command (https://github.com/HicServices/RDMP/issues/815)
 - Added tooltips for objects in tree views (https://github.com/HicServices/RDMP/issues/819).
@@ -15,12 +17,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added icon overlays for 'Is Extraction Identifier' and 'Is Extraction Primary Key' (https://github.com/HicServices/RDMP/issues/830)
 - Extraction Information for a Catalogue Item now includes "Transforms Data" property (which shows yes/no based on whether it transform the column data)
 - Added 'open load directory' command to [Catalogue] context menu
-
+- Added ability to switch between instances of RDMP using the Locations menu
+- Added CLI command `ClearQueryCache`
+- Added Description capability to prompts. More descriptions to be added (https://github.com/HicServices/RDMP/issues/814)
+- Added description to Publish Filter "Select One" dialog (https://github.com/HicServices/RDMP/issues/813)
 ### Fixed
+- Changed to SHIFT+Enter for closing multiline dialogs (https://github.com/HicServices/RDMP/issues/817)
 
 ### Changed
 - Updated CatalogueItemUI (https://github.com/HicServices/RDMP/issues/820)
 - Fixed bug where cached aggregates were not considered stale even though changes had been made to their patient index table (https://github.com/HicServices/RDMP/issues/849)
+- "You only have one object Yes/No" box has been removed in favour of being more consistent for the user (https://github.com/HicServices/RDMP/issues/811)
 
 ### Fixed
 
@@ -1026,7 +1033,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.4...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.5...develop
+[7.0.5]: https://github.com/HicServices/RDMP/compare/v7.0.4...v7.0.5
 [7.0.4]: https://github.com/HicServices/RDMP/compare/v7.0.3...v7.0.4
 [7.0.3]: https://github.com/HicServices/RDMP/compare/v7.0.2...v7.0.3
 [7.0.2]: https://github.com/HicServices/RDMP/compare/v7.0.1...v7.0.2

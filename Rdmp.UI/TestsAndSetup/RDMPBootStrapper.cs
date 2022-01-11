@@ -18,16 +18,24 @@ namespace Rdmp.UI.TestsAndSetup
     public class RDMPBootStrapper<T> where T : RDMPForm, new()
     {
         private readonly EnvironmentInfo _environmentInfo;
-        private readonly string catalogueConnection;
-        private readonly string dataExportConnection;
+        private string catalogueConnection;
+        private string dataExportConnection;
+        
+        /// <summary>
+        /// The last used connection string arguments when launching using this factory class.  Typically the boot strapper
+        /// should only ever be used once so you can safely query this field but best to check that it is not null anyway.
+        /// </summary>
+        public static ResearchDataManagementPlatformOptions ApplicationArguments;
+        private readonly ResearchDataManagementPlatformOptions _args;
         private T _mainForm;
 
         
-        public RDMPBootStrapper(EnvironmentInfo environmentInfo,string catalogueConnection, string dataExportConnection)
+        public RDMPBootStrapper(EnvironmentInfo environmentInfo, ResearchDataManagementPlatformOptions args)
         {
+            ApplicationArguments = args;
+            _args = args;
             this._environmentInfo = environmentInfo;
-            this.catalogueConnection = catalogueConnection;
-            this.dataExportConnection = dataExportConnection;
+
         }
 
         public HashSet<string> IgnoreExceptions = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase){ 
@@ -56,6 +64,18 @@ namespace Rdmp.UI.TestsAndSetup
                 };
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             AppDomain.CurrentDomain.UnhandledException += GlobalExceptionHandler.Instance.Handle;
+
+            try
+            {
+                _args.GetConnectionStrings(out var c, out var d);
+                this.catalogueConnection = c?.ConnectionString;
+                this.dataExportConnection = d?.ConnectionString;
+            }
+            catch (Exception ex)
+            {
+                ExceptionViewer.Show("Failed to get connection strings", ex);
+                return;
+            }
 
             try
             {
