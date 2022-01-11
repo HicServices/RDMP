@@ -106,6 +106,17 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 
         protected override void WriteRows(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
         {
+            // empty batches are allowed when using batch/resume
+            if(toProcess.Rows.Count == 0 && _request.IsBatchResume)
+            {
+                return;
+            }
+            
+            if(_request.IsBatchResume)
+            {
+                _destination.AllowLoadingPopulatedTables = true;
+            }
+
             _destination.ProcessPipelineData(toProcess, job, cancellationToken);
 
             LinesWritten += toProcess.Rows.Count;
@@ -131,6 +142,13 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 var existing = _destinationDatabase.ExpectTable(tblName);
                 if (existing.Exists())
                 {
+                    if(_request.IsBatchResume)
+                    {
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                                            $"Table {existing.GetFullyQualifiedName()} already exists.  Assuming it is fine because this is a batch data extraction resume"));
+
+                    }
+                    else
                     if (AlwaysDropExtractionTables)
                     {
                         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
@@ -581,7 +599,8 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                         return;
                     }
                     
-                    if(tables.Any(t=>t.GetRuntimeName().Equals(tableName)))
+                    // if the expected table exists and we are not doing a batch resume
+                    if(tables.Any(t=>t.GetRuntimeName().Equals(tableName))  && !_request.IsBatchResume)
                     {
                         notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExistingExtractionTableInDatabase, tableName,database));
                     }
