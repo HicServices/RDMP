@@ -179,7 +179,7 @@ namespace Rdmp.Core.DataExport.Data
         }
 
         /// <inheritdoc/>
-        public void CompleteAudit(Type destinationType, string destinationDescription, int distinctIdentifiers)
+        public void CompleteAudit(Type destinationType, string destinationDescription, int distinctIdentifiers, bool isBatchResume)
         {
             DestinationType = destinationType.FullName;
             DestinationDescription = destinationDescription;

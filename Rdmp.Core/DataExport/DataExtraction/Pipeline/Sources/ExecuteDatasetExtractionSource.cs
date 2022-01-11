@@ -436,18 +436,30 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
             var previousAudit = dataExportRepo.GetAllCumulativeExtractionResultsFor(Request.Configuration, Request.DatasetBundle.DataSet).ToArray();
 
-            //delete old audit records
-            foreach (var audit in previousAudit)
-                audit.DeleteInDatabase();
+            if (Request.IsBatchResume)
+            {
+                var match = previousAudit.FirstOrDefault(a => a.ExtractableDataSet_ID == Request.DatasetBundle.DataSet.ID);
+                if(match == null)
+                {
+                    throw new Exception($"Could not find previous CumulativeExtractionResults for dataset {Request.DatasetBundle.DataSet} despite the Request being marked as a batch resume");
+                }
+                Request.CumulativeExtractionResults = match;
+            }
+            else
+            {
+                //delete old audit records
+                foreach (var audit in previousAudit)
+                    audit.DeleteInDatabase();
 
-            var extractionResults = new CumulativeExtractionResults(dataExportRepo, Request.Configuration, Request.DatasetBundle.DataSet, sql);
+                var extractionResults = new CumulativeExtractionResults(dataExportRepo, Request.Configuration, Request.DatasetBundle.DataSet, sql);
 
-            string filterDescriptions = RecursivelyListAllFilterNames(Request.Configuration.GetFilterContainerFor(Request.DatasetBundle.DataSet));
+                string filterDescriptions = RecursivelyListAllFilterNames(Request.Configuration.GetFilterContainerFor(Request.DatasetBundle.DataSet));
 
-            extractionResults.FiltersUsed = filterDescriptions.TrimEnd(',');
-            extractionResults.SaveToDatabase();
+                extractionResults.FiltersUsed = filterDescriptions.TrimEnd(',');
+                extractionResults.SaveToDatabase();
 
-            Request.CumulativeExtractionResults = extractionResults;
+                Request.CumulativeExtractionResults = extractionResults;
+            }
         }
 
         private void StartAuditGlobals()

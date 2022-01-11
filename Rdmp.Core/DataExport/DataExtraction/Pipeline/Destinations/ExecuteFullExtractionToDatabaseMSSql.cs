@@ -358,7 +358,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             {
                 var result = ((IExtractDatasetCommand)_request).CumulativeExtractionResults;
                 if (result != null && _toProcess != null)
-                    result.CompleteAudit(this.GetType(), GetDestinationDescription(), TableLoadInfo.Inserts);
+                    result.CompleteAudit(this.GetType(), GetDestinationDescription(), TableLoadInfo.Inserts, _request.IsBatchResume);
             }
         }
 

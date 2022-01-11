@@ -181,7 +181,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 // also close off the cumulative extraction result
                 var result = ((IExtractDatasetCommand)_request).CumulativeExtractionResults;
                 if (result != null) 
-                    result.CompleteAudit(this.GetType(), GetDestinationDescription(), LinesWritten);
+                    result.CompleteAudit(this.GetType(), GetDestinationDescription(), LinesWritten,_request.IsBatchResume);
             }
             catch (Exception e)
             {
