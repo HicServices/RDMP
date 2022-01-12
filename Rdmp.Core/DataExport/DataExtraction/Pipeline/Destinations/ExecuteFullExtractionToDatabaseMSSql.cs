@@ -71,6 +71,9 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         [DemandsInitialization("True to always drop the destination database table(s) from the destination if they already existed", DefaultValue = false)]
         public bool AlwaysDropExtractionTables { get; set; }
 
+        [DemandsInitialization("True to apply a distincting operation to the final table when using an ExtractionProgress.  This prevents data duplication from failed batch resumes.", DefaultValue = true)]
+        public bool MakeFinalTableDistinctWhenBatchResuming { get; set; } = true;
+
         private DiscoveredDatabase _destinationDatabase;
         private DataTableUploadDestination _destination;
 
@@ -346,6 +349,21 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "DropTableIfLoadFails is true so about to drop table " + tbl));
                             tbl.Drop();
                             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Dropped table " + tbl));
+                        }
+                    }
+                }
+
+                if(pipelineFailureExceptionIfAny == null && _request.IsBatchResume && MakeFinalTableDistinctWhenBatchResuming)
+                {
+                    var tbl = _destinationDatabase.ExpectTable(_toProcess.TableName);
+                    if (tbl.Exists())
+                    {
+                        // if there is no primary key then failed batches may have introduced duplication
+                        if(!tbl.DiscoverColumns().Any(p=>p.IsPrimaryKey))
+                        {
+                            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Making {tbl} distinct incase there are duplicate rows from bad batch resumes"));
+                            tbl.MakeDistinct(50000000);
+                            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Finished distincting {tbl}"));
                         }
                     }
                 }
