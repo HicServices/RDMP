@@ -356,7 +356,8 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 if(pipelineFailureExceptionIfAny == null 
                     && _request.IsBatchResume 
                     && MakeFinalTableDistinctWhenBatchResuming
-                    && _destinationDatabase != null)
+                    && _destinationDatabase != null
+                    && _toProcess != null)
                 {
                     var tbl = _destinationDatabase.ExpectTable(_toProcess.TableName);
                     if (tbl.Exists())
