@@ -240,7 +240,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             {
                 listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Data exhausted after reading " + _rowsRead + " rows of data ("+UniqueReleaseIdentifiersEncountered.Count + " unique release identifiers seen)"));
                 if (Request != null)
-                    Request.CumulativeExtractionResults.DistinctReleaseIdentifiersEncountered = UniqueReleaseIdentifiersEncountered.Count;
+                    Request.CumulativeExtractionResults.DistinctReleaseIdentifiersEncountered = Request.IsBatchResume ? -1 : UniqueReleaseIdentifiersEncountered.Count;
                 return null;
             }
 

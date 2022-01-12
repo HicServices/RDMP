@@ -54,6 +54,15 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             EvaluateIsImpossible();
         }
 
+        public ExecuteCommandResetExtractionProgress(IBasicActivateItems activator, ExtractionProgress progress) : base(activator)
+        {
+            if (progress.ProgressDate != null)
+            {
+                _toClear.Add(progress);
+            }
+
+            EvaluateIsImpossible();
+        }
         private void EvaluateIsImpossible()
         {
             if (_toClear.Count == 0)

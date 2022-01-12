@@ -477,6 +477,11 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandAddExtractionProgress(_activator,sds);
                 yield return new ExecuteCommandResetExtractionProgress(_activator, sds);
             }
+
+            if(Is(o,out ExtractionProgress progress))
+            {
+                yield return new ExecuteCommandResetExtractionProgress(_activator, progress);
+            }
             
             if(Is(o, out ExtractionConfiguration ec))
             {
