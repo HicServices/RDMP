@@ -66,6 +66,7 @@ namespace Rdmp.Core.Curation.Data
         /// <param name="destinationDescription"></param>
         /// <param name="recordsExtracted">Total number of records in the dataset extracted</param>
         /// <param name="isBatchResume">True if the <paramref name="recordsExtracted"/> is a subset of those already extracted</param>
-        void CompleteAudit(Type destinationType, string destinationDescription, int recordsExtracted, bool isBatchResume);
+        /// <param name="failed">True if the extraction pipeline execution failed otherwise false</param>
+        void CompleteAudit(Type destinationType, string destinationDescription, int recordsExtracted, bool isBatchResume, bool failed);
     }
 }

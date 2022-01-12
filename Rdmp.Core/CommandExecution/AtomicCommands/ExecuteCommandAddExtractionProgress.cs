@@ -26,6 +26,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 SetImpossible("Catalogue does not have a time coverage field configured");
             }
+
+            if(_sds.ExtractionProgressIfAny != null)
+            {
+                SetImpossible("Catalogue does not have a time coverage field configured");
+            }
         }
 
         public override Image GetImage(IIconProvider iconProvider)
@@ -39,6 +44,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             var ep = new ExtractionProgress(BasicActivator.RepositoryLocator.DataExportRepository, _sds);
             Publish(ep);
+            Activate(ep);
         }
     }
 }

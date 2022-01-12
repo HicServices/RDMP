@@ -122,7 +122,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
         public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
-            CloseFile(listener);
+            CloseFile(listener, pipelineFailureExceptionIfAny != null);
 
             // if pipeline execution failed and we are doing a batch resume
             if(pipelineFailureExceptionIfAny != null &&
@@ -144,7 +144,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
         public override void Abort(IDataLoadEventListener listener)
         {
-            CloseFile(listener);
+            CloseFile(listener,true);
         }
 
         private bool _fileAlreadyClosed = false;
@@ -155,7 +155,8 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         /// </summary>
         private string _backupFile;
 
-        private void CloseFile(IDataLoadEventListener listener)
+
+        private void CloseFile(IDataLoadEventListener listener, bool failed)
         {
             //we never even started or have already closed
             if (!haveOpened || _fileAlreadyClosed )
@@ -178,10 +179,12 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 if (!TableLoadInfo.IsClosed)
                     TableLoadInfo.CloseAndArchive();
 
+                // TODO: Make sure to only increment if batch succeeded
+
                 // also close off the cumulative extraction result
                 var result = ((IExtractDatasetCommand)_request).CumulativeExtractionResults;
                 if (result != null) 
-                    result.CompleteAudit(this.GetType(), GetDestinationDescription(), LinesWritten,_request.IsBatchResume);
+                    result.CompleteAudit(this.GetType(), GetDestinationDescription(), LinesWritten,_request.IsBatchResume, failed);
             }
             catch (Exception e)
             {

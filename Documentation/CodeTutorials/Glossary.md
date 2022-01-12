@@ -122,6 +122,12 @@ Describes in a single line of SELECT SQL.  This can be either the fully qualifie
 
 Every ExtractionInformation has an ExtractionCategory which lets you flag the sensitivity of the data being extracted e.g. SpecialApprovalRequired.  One (or more) [ExtractionInformation] in a [Catalogue] can be flagged as [IsExtractionIdentifier]. This is the column(s) which will be joined against cohorts in data extraction linkages.
 
+## ExtractionProgress![Icon](./../../Rdmp.Core/Icons/ExtractionProgress.png)
+
+When declared on a dataset in an [ExtractionConfiguration] results in batch/resume system being enabled.  This means extracting the dataset is split from one chunked operation to multiple seperate executions.  This allows recovery of a failed extraction by resuming from the point in data time that the load failed at.
+
+For example if you have a dataset Biochemistry that spans 1980 to 2020 then you can extract it in 1 year chunks.
+
 ## GovernanceDocument![Icon](./../../Rdmp.Core/Icons/GovernanceDocument.png)
 
 Contains the path to a useful file which reflects either a request or a granting of governance e.g. a letter from your local healthboard authorising you to host/use 1 or more datasets for a given period of time. 

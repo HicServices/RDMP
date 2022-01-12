@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added [ExtractionProgress] for robustly extracting large datasets in multiple smaller executions
+
 ## [7.0.5] - 2022-01-10
 
 ### Added
@@ -1078,6 +1082,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [FAnsiSql]: https://github.com/HicServices/FAnsiSql/
 [BadMedicine]: https://github.com/HicServices/BadMedicine/
 
+[ExtractionProgress]: ./Documentation/CodeTutorials/Glossary.md#ExtractionProgress
 [DBMS]: ./Documentation/CodeTutorials/Glossary.md#DBMS
 [UNION]: ./Documentation/CodeTutorials/Glossary.md#UNION
 [INTERSECT]: ./Documentation/CodeTutorials/Glossary.md#INTERSECT

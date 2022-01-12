@@ -91,7 +91,7 @@ namespace Rdmp.Core.Reports.ExtractionTime
                     rownum++;
 
                     SetTableCell(t,rownum,0,"Cohorts Found In Dataset");
-                    SetTableCell(t,rownum,1, request.IsBatchResume ? "unknown" : Executer.Source.UniqueReleaseIdentifiersEncountered.Count.ToString());
+                    SetTableCell(t,rownum,1, request.IsBatchResume ? "unknown (batching was used)" : Executer.Source.UniqueReleaseIdentifiersEncountered.Count.ToString());
                     rownum++;
                     
                     SetTableCell(t,rownum,0,"Dataset Line Count");
