@@ -82,12 +82,12 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
                 bool runAgain;
                 do
                 {
+                    Token?.ThrowIfStopRequested();
+                    Token?.ThrowIfAbortRequested();
+
                     runSuccessful = ExecuteOnce(listener);
                     runAgain = runSuccessful && IncrementProgressIfAny(eds, listener);
                     
-                    Token.ThrowIfStopRequested();
-                    Token.ThrowIfAbortRequested();
-
                     if (runSuccessful && runAgain)
                     {
                         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Running pipeline again for next batch in ExtractionProgress"));
