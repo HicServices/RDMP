@@ -353,7 +353,10 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                     }
                 }
 
-                if(pipelineFailureExceptionIfAny == null && _request.IsBatchResume && MakeFinalTableDistinctWhenBatchResuming)
+                if(pipelineFailureExceptionIfAny == null 
+                    && _request.IsBatchResume 
+                    && MakeFinalTableDistinctWhenBatchResuming
+                    && _destinationDatabase != null)
                 {
                     var tbl = _destinationDatabase.ExpectTable(_toProcess.TableName);
                     if (tbl.Exists())
