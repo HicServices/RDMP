@@ -6,11 +6,12 @@
 
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataQualityEngine;
+using Rdmp.Core.Reports;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode.Checks;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace Rdmp.UI.MainFormUITabs
     public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveableUI
     {
         public ExtractionProgress ExtractionProgress { get => (ExtractionProgress)DatabaseObject; }
+        public IDetermineDatasetTimespan TimespanCalculator { get; set; } = new DatasetTimespanCalculator();
 
         public ExtractionProgressUI()
         {
@@ -38,10 +40,11 @@ namespace Rdmp.UI.MainFormUITabs
         public override void SetDatabaseObject(IActivateItems activator, ExtractionProgress databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
-            
 
-            tbStartDate.Text = databaseObject.StartDate == null ? "": databaseObject.StartDate.Value.ToString("yyyy-MM-dd");
-            tbEndDate.Text = databaseObject.EndDate == null ? "" : databaseObject.EndDate.Value.ToString("yyyy-MM-dd");
+            var result = TimespanCalculator.GetMachineReadableTimespanIfKnownOf(databaseObject.ExtractionInformation.CatalogueItem.Catalogue, false, out _);
+
+            tbStartDate.Text = databaseObject.StartDate == null ? result.Item1?.ToString("yyyy-MM-dd") : databaseObject.StartDate.Value.ToString("yyyy-MM-dd");
+            tbEndDate.Text = databaseObject.EndDate == null ? result.Item2?.AddDays(1).ToString("yyyy-MM-dd") : databaseObject.EndDate.Value.ToString("yyyy-MM-dd");
             tbProgress.Text = databaseObject.ProgressDate == null ? "" : databaseObject.ProgressDate.Value.ToString("yyyy-MM-dd");
 
             var cata = databaseObject.SelectedDataSets.GetCatalogue();
