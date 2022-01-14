@@ -63,13 +63,13 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                     // but do they have a shared parent dir?
                     var files = cumulativeExtractionResults.Select(c => new FileInfo(c.DestinationDescription)).ToArray();
 
-                    var parents = files.Select(f => f.Directory?.Parent).Where(d=>d != null).Distinct().ToArray();
+                    var parents = files.Select(f => f.Directory?.Parent?.FullName).Where(d=>d != null).Distinct().ToArray();
 
                     if (parents.Length != 1)
                         SetImpossible($"Extracted files do not share a common extraction directory");
                     else
                     {
-                        _dir = parents[0];
+                        _dir = new DirectoryInfo(parents[0]);
                     }
                         
                 }
