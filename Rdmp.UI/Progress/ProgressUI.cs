@@ -68,7 +68,7 @@ namespace Rdmp.UI.Progress
 
             DataGridViewCellStyle style = new DataGridViewCellStyle();
             style.Format = "N0";
-            dataGridView1.Columns["Progress"].DefaultCellStyle = style;
+            dataGridView1.Columns["Count"].DefaultCellStyle = style;
 
             dataGridView1.CellFormatting += dataGridView1_CellFormatting;
             _processingTimeColIndex = dataGridView1.Columns["Processing Time"].Index;
@@ -231,7 +231,7 @@ namespace Rdmp.UI.Progress
                         }
                         else
                         {
-                            progress.Rows.Find(args.TaskDescription)["Progress"] = args.Progress.Value;
+                            progress.Rows.Find(args.TaskDescription)["Count"] = args.Progress.Value;
                             progress.Rows.Find(args.TaskDescription)["Processing Time"] = args.TimeSpentProcessingSoFar;
                         }
 
@@ -276,7 +276,7 @@ namespace Rdmp.UI.Progress
             foreach (var jobsAlreadySeen in JobsreceivedFromSender[sender])
                 if (progress.Rows.Contains(jobsAlreadySeen))
                 {
-                    startAtProgressAmount += Convert.ToInt32(progress.Rows.Find(jobsAlreadySeen)["Progress"]);
+                    startAtProgressAmount += Convert.ToInt32(progress.Rows.Find(jobsAlreadySeen)["Count"]);
                     progress.Rows.Remove(progress.Rows.Find(jobsAlreadySeen)); //discard the flood of messages that might be in data table 
                     
                 }
@@ -309,7 +309,7 @@ namespace Rdmp.UI.Progress
            if (progress.Rows.Contains(floodJob))
            {
                //update with progress
-               progress.Rows.Find(floodJob)["Progress"] = Convert.ToInt32(progress.Rows.Find(floodJob)["Progress"]) + progressAmountToAdd;
+               progress.Rows.Find(floodJob)["Count"] = Convert.ToInt32(progress.Rows.Find(floodJob)["Count"]) + progressAmountToAdd;
 
            }
            else

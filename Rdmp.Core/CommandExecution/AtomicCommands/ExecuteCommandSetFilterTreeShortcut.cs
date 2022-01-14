@@ -68,10 +68,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if(_pointTo == null && setOn.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID == null)
                 SetImpossible($"{_pointTo} does not have a shortcut to clear");
         }
-        public override Image GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.FilterContainer,OverlayKind.Shortcut);
-        }
         public override void Execute()
         {
             base.Execute();

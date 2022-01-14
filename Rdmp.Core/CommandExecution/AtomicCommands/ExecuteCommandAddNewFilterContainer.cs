@@ -8,7 +8,10 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Icons.IconProvision;
+using ReusableLibraryCode.Icons.IconProvision;
 using System;
+using System.Drawing;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -26,6 +29,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 SetImpossible("Aggregate is set to use another's filter container tree");
 
             _host = host;
+        }
+
+        public override Image GetImage(IIconProvider iconProvider)
+        {
+            return iconProvider.GetImage(RDMPConcept.FilterContainer,OverlayKind.Add);
         }
         public ExecuteCommandAddNewFilterContainer(IBasicActivateItems activator, IContainer container):base(activator)
         {

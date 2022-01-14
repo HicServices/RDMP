@@ -46,7 +46,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         }
         public override Image GetImage(IIconProvider iconProvider)
         {
-            return iconProvider.GetImage(RDMPConcept.Filter, OverlayKind.Add);
+            return iconProvider.GetImage(RDMPConcept.Filter, OverlayKind.Import);
         }
 
         public override void Execute()
