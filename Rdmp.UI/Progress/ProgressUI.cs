@@ -57,8 +57,8 @@ namespace Rdmp.UI.Progress
             progress.Columns.Add("Job");
             progress.PrimaryKey = new []{progress.Columns[0]};
 
-            progress.Columns.Add("Progress",typeof(int));
-            progress.Columns.Add("Quantity");
+            progress.Columns.Add("Count",typeof(int));
+            progress.Columns.Add("Unit");
             progress.Columns.Add("Processing Time",typeof(TimeSpan));
 
             Timer t = new Timer();
