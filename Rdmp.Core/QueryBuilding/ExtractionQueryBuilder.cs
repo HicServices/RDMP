@@ -168,7 +168,19 @@ namespace Rdmp.Core.QueryBuilding
             request.BatchStart = start;
             request.BatchEnd = end;
 
-            string line = $"({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd)";
+            string line;
+            
+            if(!request.IsBatchResume)
+            {
+                // if it is a first batch, also pull the null dates
+                line = $"(({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd) OR {ei.SelectSQL} is null)";
+            }
+            else
+            {
+                // it is a subsequent batch
+                line = $"({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd)";
+            }
+            
 
             queryBuilder.AddCustomLine(line, QueryComponent.WHERE);
 
