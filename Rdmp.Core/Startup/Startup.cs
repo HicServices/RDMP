@@ -13,6 +13,11 @@ using System.Linq;
 using System.Reflection;
 using FAnsi.Discovery;
 using FAnsi.Discovery.ConnectionStringDefaults;
+using FAnsi.Implementation;
+using FAnsi.Implementations.MicrosoftSQL;
+using FAnsi.Implementations.MySql;
+using FAnsi.Implementations.Oracle;
+using FAnsi.Implementations.PostgreSql;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.CommandLine.Runners;
@@ -337,5 +342,23 @@ namespace Rdmp.Core.Startup
             notifier.OnCheckPerformed(new CheckEventArgs("Help loading took:" + sw.Elapsed, CheckResult.Success));
         }
         #endregion
+
+        /// <summary>
+        /// <para>
+        /// Call before running <see cref="Startup"/>.  Sets up basic assembly redirects to the execution directory 
+        /// (see <see cref="AssemblyResolver"/>) and FAnsiSql DBMS implementations.
+        /// </para>
+        /// <para>Note that this method can be used even if you do not then go on to use <see cref="Startup"/> e.g. if you 
+        /// are performing a low level operation like patching</para>
+        /// </summary>
+        public static void PreStartup()
+        {
+            AssemblyResolver.SetupAssemblyResolver();
+
+            ImplementationManager.Load<MicrosoftSQLImplementation>();
+            ImplementationManager.Load<MySqlImplementation>();
+            ImplementationManager.Load<OracleImplementation>();
+            ImplementationManager.Load<PostgreSqlImplementation>();
+        }
     }
 }

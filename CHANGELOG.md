@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed a rare dll resolving issue that could occur during startup when running the RDMP windows client from outside the current directory (https://github.com/HicServices/RDMP/issues/877)
+
 ## [7.0.5] - 2022-01-10
 
 ### Added

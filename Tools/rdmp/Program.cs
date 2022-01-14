@@ -6,18 +6,11 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using CommandLine;
-using FAnsi.Implementation;
-using FAnsi.Implementations.MicrosoftSQL;
-using FAnsi.Implementations.MySql;
-using FAnsi.Implementations.Oracle;
-using FAnsi.Implementations.PostgreSql;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NLog;
-using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.CommandLine.Gui;
@@ -29,7 +22,6 @@ using Rdmp.Core.Logging.Listeners.NLogListeners;
 using Rdmp.Core.Startup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using YamlDotNet.RepresentationModel;
 using YamlDotNet.Serialization;
 
 namespace Rdmp.Core
@@ -67,19 +59,9 @@ namespace Rdmp.Core
             logger.Info("Dotnet Version:" + Environment.Version);
             logger.Info("RDMP Version:" + typeof(Catalogue).Assembly.GetName().Version);
 
-            PreStartup();
+            Startup.Startup.PreStartup();
 
             return HandleArguments(args,logger);
-        }
-        
-        private static void PreStartup()
-        {
-            AssemblyResolver.SetupAssemblyResolver();
-
-            ImplementationManager.Load<MicrosoftSQLImplementation>();
-            ImplementationManager.Load<MySqlImplementation>();
-            ImplementationManager.Load<OracleImplementation>();
-            ImplementationManager.Load<PostgreSqlImplementation>();
         }
 
         private static int HandleArguments(string[] args, Logger logger)
@@ -181,11 +163,6 @@ namespace Rdmp.Core
 
         private static int Run(RDMPCommandLineOptions opts)
         {
-            ImplementationManager.Load<MicrosoftSQLImplementation>();
-            ImplementationManager.Load<MySqlImplementation>();
-            ImplementationManager.Load<OracleImplementation>();
-            ImplementationManager.Load<PostgreSqlImplementation>();
-
             opts.PopulateConnectionStringsFromYamlIfMissing();
 
             // where RDMP objects are stored
@@ -237,11 +214,6 @@ namespace Rdmp.Core
         
         private static int Run(PatchDatabaseOptions opts)
         {
-            ImplementationManager.Load<MicrosoftSQLImplementation>();
-            ImplementationManager.Load<MySqlImplementation>();
-            ImplementationManager.Load<OracleImplementation>();
-            ImplementationManager.Load<PostgreSqlImplementation>();
-
             opts.PopulateConnectionStringsFromYamlIfMissing();
 
             var repo = opts.GetRepositoryLocator();
