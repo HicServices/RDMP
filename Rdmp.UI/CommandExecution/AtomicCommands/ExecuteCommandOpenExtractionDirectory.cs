@@ -7,6 +7,7 @@
 using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
@@ -18,6 +19,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
     internal class ExecuteCommandOpenExtractionDirectory : BasicUICommandExecution,IAtomicCommand
     {
         private FileInfo _file;
+        private DirectoryInfo _dir;
 
         public ExecuteCommandOpenExtractionDirectory(IActivateItems activator, ISelectedDataSets sds):base(activator)
         {
@@ -44,6 +46,41 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         }
 
+        public ExecuteCommandOpenExtractionDirectory(IActivateItems activator, IExtractionConfiguration configuration) : base(activator)
+        {
+            var cumulativeExtractionResults = configuration.SelectedDataSets.Select(s=>s.GetCumulativeExtractionResultsIfAny()).Where(c=>c!=null).ToArray();
+            try
+            {
+                if (cumulativeExtractionResults.Length == 0)
+                    SetImpossible("No datasets have ever been extracted");
+                else
+                if (!cumulativeExtractionResults.All(c=>c.DestinationType != null && c.DestinationType.EndsWith("FlatFileDestination")))
+                    SetImpossible("Extraction destinations were not to disk");
+                else
+                {
+                    // all datasets have been extracted to disk
+
+                    // but do they have a shared parent dir?
+                    var files = cumulativeExtractionResults.Select(c => new FileInfo(c.DestinationDescription)).ToArray();
+
+                    var parents = files.Select(f => f.Directory?.Parent?.FullName).Where(d=>d != null).Distinct().ToArray();
+
+                    if (parents.Length != 1)
+                        SetImpossible($"Extracted files do not share a common extraction directory");
+                    else
+                    {
+                        _dir = new DirectoryInfo(parents[0]);
+                    }
+                        
+                }
+            }
+            catch (Exception)
+            {
+                SetImpossible("Could not determine file location");
+            }
+
+        }
+
         public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ExtractionDirectoryNode);
@@ -53,7 +90,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var cmd = new ExecuteCommandOpenInExplorer(Activator, _file);
+            var cmd = _file != null?
+                new ExecuteCommandOpenInExplorer(Activator, _file):
+                new ExecuteCommandOpenInExplorer(Activator, _dir);
             
             if(!cmd.IsImpossible)
                 cmd.Execute();
