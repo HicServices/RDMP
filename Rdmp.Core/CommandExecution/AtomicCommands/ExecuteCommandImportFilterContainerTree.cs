@@ -11,10 +11,13 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
+using ReusableLibraryCode.Icons.IconProvision;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
@@ -94,6 +97,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _intoSubContainer = into;
             _explicitChoice = explicitChoice;
 
+        }
+        public override Image GetImage(IIconProvider iconProvider)
+        {
+            return iconProvider.GetImage(RDMPConcept.FilterContainer, OverlayKind.Import);
         }
 
         public override void Execute()
