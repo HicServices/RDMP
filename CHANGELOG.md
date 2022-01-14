@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed a bug where ProjectUI would not show cohorts when some cohort sources are unreachable
+
 ## [7.0.5] - 2022-01-10
 
 ### Added
