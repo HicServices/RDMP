@@ -14,6 +14,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Providers;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
@@ -53,21 +54,20 @@ namespace Rdmp.UI.ProjectUI
             if(_project == null || _project.ProjectNumber == null)
                 return;
 
-            var cohorts = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableCohort>().ToArray();
+            var dxChildProvider = Activator.CoreChildProvider as DataExportChildProvider;
+
+            if(dxChildProvider == null)
+            {
+                return;
+            }
+
             List<ExtractableCohort> toShow = new List<ExtractableCohort>();
 
-            foreach(var c in cohorts)
+            foreach(var c in dxChildProvider.Cohorts)
             {
-                try
+                if (c.ExternalProjectNumber == _project.ProjectNumber)
                 {
-                    if (c.GetExternalData(3).ExternalProjectNumber == _project.ProjectNumber)
-                    {
-                        toShow.Add(c);
-                    }
-                }
-                catch (Exception)
-                {
-                    // could not reach cohort.  Oh well.
+                    toShow.Add(c);
                 }
             }
 
