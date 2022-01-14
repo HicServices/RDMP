@@ -21,6 +21,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public int Sample { get; }
         public FileInfo ToFile { get; }
 
+        /// <summary>
+        /// Set to true to prompt user to pick a <see cref="ToFile"/> at command execution time.
+        /// </summary>
+        public bool AskForFile { get; set; }
+
         public ExecuteCommandViewCohortSample(IBasicActivateItems activator,
             [DemandsInitialization("The cohort that you want to fetch records for")]
             ExtractableCohort cohort,
@@ -41,13 +46,25 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 Top = Sample
             };
 
-            if(ToFile == null)
+            FileInfo toFile = ToFile;
+
+            if(AskForFile)
+            {
+                toFile = BasicActivator.SelectFile("Save cohort as", "Comma Separated Values", "*.csv");
+                if(toFile == null)
+                {
+                    // user cancelled selecting a file
+                    return;
+                }
+            }
+
+            if(toFile == null)
             {
                 BasicActivator.ShowData(collection);
             }
             else
             {
-                ExtractTableVerbatim.ExtractDataToFile(collection, ToFile);
+                ExtractTableVerbatim.ExtractDataToFile(collection, toFile);
             }
             
         }

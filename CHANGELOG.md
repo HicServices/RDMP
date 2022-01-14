@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Added ability to export [ExtractableCohort] to CSV file
+
 ## [7.0.5] - 2022-01-10
 
 ### Added
@@ -1081,6 +1084,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [FAnsiSql]: https://github.com/HicServices/FAnsiSql/
 [BadMedicine]: https://github.com/HicServices/BadMedicine/
 
+[ExtractableCohort]: ./Documentation/CodeTutorials/Glossary.md#ExtractableCohort
 [DBMS]: ./Documentation/CodeTutorials/Glossary.md#DBMS
 [UNION]: ./Documentation/CodeTutorials/Glossary.md#UNION
 [INTERSECT]: ./Documentation/CodeTutorials/Glossary.md#INTERSECT
