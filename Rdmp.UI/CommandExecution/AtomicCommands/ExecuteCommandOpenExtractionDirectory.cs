@@ -28,9 +28,11 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             {
                 if(result == null)
                     SetImpossible("Dataset has not been extracted");
-                else 
-                if (result.DestinationType == null || !result.DestinationType.EndsWith("FlatFileDestination"))
-                    SetImpossible("Extraction destination was not to disk");
+                else
+                if(result.DestinationType == null)
+                    SetImpossible("This extraction has not been run");
+                else if (!result.DestinationType.EndsWith("FlatFileDestination"))
+                    SetImpossible($"Extraction destination was '{result.DestinationType}' so cannot be opened");
                 else
                 {
                     _file = new FileInfo(result.DestinationDescription);
