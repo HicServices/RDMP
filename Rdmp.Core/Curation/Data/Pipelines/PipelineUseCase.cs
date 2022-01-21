@@ -119,16 +119,24 @@ namespace Rdmp.Core.Curation.Data.Pipelines
             {
                 return false;
             }
-
-            // Does the pipeline contain any components that are invalid under the current list of available initialization objects etc
-            foreach(var component in pipeline.PipelineComponents)
+            try
             {
-                var type = component.GetClassAsSystemType();
-                var advert = new AdvertisedPipelineComponentTypeUnderContext(type, this);
-                if(!advert.IsCompatible())
+                // Does the pipeline contain any components that are invalid under the current list of available initialization objects etc
+                foreach (var component in pipeline.PipelineComponents)
                 {
-                    return false;
+                    var type = component.GetClassAsSystemType();
+                    var advert = new AdvertisedPipelineComponentTypeUnderContext(type, this);
+                    if (!advert.IsCompatible())
+                    {
+                        return false;
+                    }
                 }
+            }
+            catch (Exception)
+            {
+                // if any Pipeline components are broken e.g. not possible to find the Type they reference
+                // then we tell the user it is not compatible
+                return false;
             }
 
             // nothing incompatible here
