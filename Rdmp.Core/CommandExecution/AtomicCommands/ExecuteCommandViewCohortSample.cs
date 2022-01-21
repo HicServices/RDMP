@@ -17,6 +17,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     /// </summary>
     class ExecuteCommandViewCohortSample : BasicCommandExecution
     {
+        private readonly bool _includeCohortID;
+
         public ExtractableCohort Cohort { get; }
         public int Sample { get; }
         public FileInfo ToFile { get; }
@@ -32,18 +34,23 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             [DemandsInitialization("Optional. The maximum number of records to retrieve")]
             int sample = 100,
             [DemandsInitialization("Optional. A file to write the records to instead of the console")]
-            FileInfo toFile = null):base(activator)
+            FileInfo toFile = null,
+
+            [DemandsInitialization("True to include the OriginId of the cohort when extracting",DefaultValue = true)]
+            bool includeCohortID = true):base(activator)
         {
             Cohort = cohort;
             Sample = sample;
             ToFile = toFile;
+            _includeCohortID = includeCohortID;
         }
         public override void Execute()
         {
             base.Execute();
 
             var collection = new ViewCohortExtractionUICollection(Cohort) {
-                Top = Sample
+                Top = Sample,
+                IncludeCohortID = _includeCohortID
             };
 
             FileInfo toFile = ToFile;

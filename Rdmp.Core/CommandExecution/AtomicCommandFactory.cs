@@ -540,7 +540,7 @@ namespace Rdmp.Core.CommandExecution
             if(Is(o,out ExtractableCohort cohort))
             {
                 yield return new ExecuteCommandViewCohortSample(_activator, cohort, 100);
-                yield return new ExecuteCommandViewCohortSample(_activator, cohort, int.MaxValue) 
+                yield return new ExecuteCommandViewCohortSample(_activator, cohort, int.MaxValue,null,false) 
                 {
                     AskForFile = true,
                     OverrideCommandName = "Save Cohort To File...",
