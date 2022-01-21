@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.CohortDescribing;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.ItemActivation;
@@ -64,7 +65,11 @@ namespace Rdmp.UI.CohortUI
             var ecd = rowObject as ExtractableCohortDescription;
 
             if (ecd != null)
-                return _auditLogBuilder.GetObjectIfAny(ecd.Cohort, Activator.RepositoryLocator);
+            {
+                var obj = _auditLogBuilder.GetObjectIfAny(ecd.Cohort, Activator.RepositoryLocator);
+                return obj is ExtractionInformation ei ? $"{ei.CatalogueItem.Catalogue}.{ei}" : obj;
+            }
+                
 
             return null;   
         }
