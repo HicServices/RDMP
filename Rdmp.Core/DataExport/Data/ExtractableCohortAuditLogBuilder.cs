@@ -71,7 +71,7 @@ namespace Rdmp.Core.DataExport.Data
         /// <param name="cohort"></param>
         /// <param name="repositoryLocator"></param>
         /// <returns></returns>
-        public object GetObjectIfAny(ExtractableCohort cohort, Repositories.IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        public object GetObjectIfAny(IExtractableCohort cohort, Repositories.IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             var audit = cohort.AuditLog;
             
