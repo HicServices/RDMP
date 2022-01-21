@@ -42,7 +42,7 @@ namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes
         /// <inheritdoc/>
         public string GetDeleteVerb()
         {
-            return "Disasociate";
+            return "Dissociate";
         }
 
         #region Equality Members
