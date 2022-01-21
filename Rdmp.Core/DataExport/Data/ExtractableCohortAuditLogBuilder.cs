@@ -18,7 +18,13 @@ namespace Rdmp.Core.DataExport.Data
     public class ExtractableCohortAuditLogBuilder
     {
         Regex _regexGetID = new Regex(@"\(ID=(\d+)\)");
-        Regex _regexGetFilePath = new Regex(@$"{InExtractionInformation} '(.*)'");
+        Regex _regexGetFilePath = new Regex(@$"{InFile} '(.*)'");
+
+        /// <summary>
+        /// regex for picking up <see cref="CohortIdentificationConfiguration"/> IDs from audit log based on a legacy way of
+        /// writting that ID into the <see cref="ExtractableCohort.AuditLog"/>
+        /// </summary>
+        Regex _legacyCic = new Regex(@"Created by running cic ([\d]+)");
 
         const string InFile = "Patient identifiers in file";
         const string InCohortIdentificationConfiguration = "Patients in CohortIdentificationConfiguration";
@@ -63,25 +69,37 @@ namespace Rdmp.Core.DataExport.Data
         /// null if its not possible to work out what created the cohort.
         /// </summary>
         /// <param name="cohort"></param>
+        /// <param name="repositoryLocator"></param>
         /// <returns></returns>
-        public object GetObjectIfAny(ExtractableCohort cohort)
+        public object GetObjectIfAny(ExtractableCohort cohort, Repositories.IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             var audit = cohort.AuditLog;
+            
+            // no audit means no object
+            if(string.IsNullOrWhiteSpace(audit))
+            {
+                return null;
+            }
+
+            if(_legacyCic.IsMatch(audit))
+            {
+                return GetObjectFromLog<CohortIdentificationConfiguration>(_legacyCic.Match(audit), repositoryLocator.CatalogueRepository);
+            }
 
             if(audit.Contains(InCohortIdentificationConfiguration))
             {
-                return GetObjectFromLog<CohortIdentificationConfiguration>(audit, cohort.CatalogueRepository);
+                return GetObjectFromLog<CohortIdentificationConfiguration>(audit, repositoryLocator.CatalogueRepository);
             }
 
             if(audit.Contains(InExtractionInformation))
             {
-                return GetObjectFromLog<ExtractionInformation>(audit, cohort.CatalogueRepository);
+                return GetObjectFromLog<ExtractionInformation>(audit, repositoryLocator.CatalogueRepository);
             }
 
             if (audit.Contains(InFile))
             {
                 var m = _regexGetFilePath.Match(audit);
-                if(m != null)
+                if(m.Success)
                 {
                     try
                     {
@@ -109,10 +127,15 @@ namespace Rdmp.Core.DataExport.Data
                 return null;
             }
 
+            return GetObjectFromLog<T>(m, repository);
+        }
+
+        private T GetObjectFromLog<T>(Match m, IRepository repository) where T : class, IMapsDirectlyToDatabaseTable
+        {
             try
             {
-                var cicId = int.Parse(m.Groups[1].Value);
-                return repository.GetObjectByID<T>(cicId);
+                var objId = int.Parse(m.Groups[1].Value);
+                return repository.GetObjectByID<T>(objId);
             }
             catch (System.Exception)
             {
