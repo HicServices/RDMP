@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Drawing;
 using System.Linq;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -58,7 +59,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
         {
             return "Run the cohort identification configuration (query) and save the resulting final cohort identifier list into a saved cohort database";
         }
-
+        
         public override void Execute()
         {
             base.Execute();
@@ -70,8 +71,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
 
             if (cic == null)
                 return;
-            
-            var request = GetCohortCreationRequest("Patients in CohortIdentificationConfiguration '" + cic + "' (ID=" + cic.ID + ")");
+
+            var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
+            var request = GetCohortCreationRequest(auditLogBuilder.GetDescription(cic));
 
             //user choose to cancel the cohort creation request dialogue
             if (request == null)
