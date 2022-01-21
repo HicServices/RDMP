@@ -112,5 +112,28 @@ namespace Rdmp.Core.Curation.Data.Pipelines
             if (o != null)
                 InitializationObjects.Add(o);
         }
+
+        public bool IsAllowable(Pipeline pipeline)
+        {
+            // Pipeline is not compatible with the execution context of the pipeline use case
+            if(!_context.IsAllowable(pipeline))
+            {
+                return false;
+            }
+
+            // Does the pipeline contain any components that are invalid under the current list of available initialization objects etc
+            foreach(var component in pipeline.PipelineComponents)
+            {
+                var type = component.GetClassAsSystemType();
+                var advert = new AdvertisedPipelineComponentTypeUnderContext(type, this);
+                if(!advert.IsCompatible())
+                {
+                    return false;
+                }
+            }
+
+            // nothing incompatible here
+            return true;
+        }
     }
 }

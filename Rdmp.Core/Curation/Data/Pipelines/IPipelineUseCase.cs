@@ -34,6 +34,12 @@ namespace Rdmp.Core.Curation.Data.Pipelines
         /// <param name="pipelines"></param>
         /// <returns></returns>
         IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines);
+        
+        /// <summary>
+        /// Returns true if the <paramref name="pipeline"/> is compatible with the use case
+        /// </summary>
+        /// <returns></returns>
+        bool IsAllowable(Pipeline pipeline);
 
         /// <summary>
         /// Returns an object describing which <see cref="Pipeline"/>s can be used to undertake the activity described by this use case (e.g. loading a flat file into the

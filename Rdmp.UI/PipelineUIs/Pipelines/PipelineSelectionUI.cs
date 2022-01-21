@@ -55,15 +55,15 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             var before = ddPipelines.SelectedItem as Pipeline;
 
             ddPipelines.Items.Clear();
-
+            
             var context = _useCase.GetContext();
             
             //add pipelines
             var allPipelines = _repository.GetAllObjects<Pipeline>();
             ddPipelines.Items.AddRange(context == null || cbOnlyShowCompatiblePipelines.Checked == false 
                 ? allPipelines.ToArray() //no context/show incompatible enabled so add all pipelines
-                : allPipelines.Where(context.IsAllowable).ToArray()); //only compatible components
-
+                : allPipelines.Where(_useCase.IsAllowable).ToArray()); //only compatible components
+            
             ddPipelines.Items.Add("<<None>>");
 
             //reselect if it is still there

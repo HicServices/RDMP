@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 using ReusableLibraryCode.Checks;
@@ -26,7 +27,7 @@ namespace Rdmp.UI.PipelineUIs.DataObjects
     public partial class DataFlowComponentVisualisation : UserControl
     {
         public object Value { get; set; }
-        private readonly Role _role;
+        private readonly PipelineComponentRole _role;
         
         private ICheckable _checkable;
         private MandatoryPropertyChecker _mandatoryChecker;
@@ -39,18 +40,18 @@ namespace Rdmp.UI.PipelineUIs.DataObjects
         private readonly Func<DragEventArgs, DataFlowComponentVisualisation, DragDropEffects> _shouldAllowDrop;
 
         public DataFlowComponentVisualisation()
-            : this(Role.Middle, null,null)
+            : this(PipelineComponentRole.Middle, null,null)
         {
             if (LicenseManager.UsageMode != LicenseUsageMode.Designtime) //dont connect to database in design mode unless they passed in a fist full of nulls
                 throw new NotSupportedException("Do not use this constructor, it is for use by Visual Studio Designer");
         }
 
-        public Role GetRole()
+        public PipelineComponentRole GetRole()
         {
             return _role;
         }
 
-        public DataFlowComponentVisualisation(Role role, object value, Func<DragEventArgs, DataFlowComponentVisualisation, DragDropEffects> shouldAllowDrop)
+        public DataFlowComponentVisualisation(PipelineComponentRole role, object value, Func<DragEventArgs, DataFlowComponentVisualisation, DragDropEffects> shouldAllowDrop)
         {
             Value = value;
             _role = role;
@@ -78,13 +79,13 @@ namespace Rdmp.UI.PipelineUIs.DataObjects
 
             switch (role)
             {
-                case Role.Source:
+                case PipelineComponentRole.Source:
                     prongLeft1.Visible = false;
                     prongLeft2.Visible = false;
                     break;
-                case Role.Middle:
+                case PipelineComponentRole.Middle:
                     break;
-                case Role.Destination:
+                case PipelineComponentRole.Destination:
                     prongRight1.Visible = false;
                     prongRight2.Visible = false;
                     break;
@@ -131,12 +132,6 @@ namespace Rdmp.UI.PipelineUIs.DataObjects
         protected Pen _fullPen = new Pen(new SolidBrush(Color.Black));
         
 
-        public enum Role
-        {
-            Source,
-            Middle,
-            Destination
-        }
         
         protected override void OnPaintBackground(PaintEventArgs e)
         {
@@ -192,23 +187,5 @@ namespace Rdmp.UI.PipelineUIs.DataObjects
             }
         }
 
-        public static Role GetRoleFor(Type componentType)
-        {
-            if (IsGenericType(componentType, typeof(IDataFlowSource<>)))
-                return  Role.Source;
-            
-            if (IsGenericType(componentType, typeof(IDataFlowDestination<>)))
-                return Role.Destination;
-
-            if (IsGenericType(componentType, typeof(IDataFlowComponent<>)))
-                return Role.Middle;
-            
-            throw new ArgumentException("Object must be an IDataFlowComponent<> but was " + componentType);
-        }
-
-        private static bool IsGenericType(Type toCheck, Type genericType)
-        {
-            return toCheck.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == genericType);
-        }
     }
 }

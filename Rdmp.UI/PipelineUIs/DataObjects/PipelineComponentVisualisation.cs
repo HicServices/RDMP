@@ -59,7 +59,7 @@ namespace Rdmp.UI.PipelineUIs.DataObjects
         }
 
 
-        public PipelineComponentVisualisation(IPipelineComponent component, Role role, object valueOrNullIfBroken, Exception constructionExceptionIfAny, Func<DragEventArgs, DataFlowComponentVisualisation, DragDropEffects> shouldAllowDrop)
+        public PipelineComponentVisualisation(IPipelineComponent component, PipelineComponentRole role, object valueOrNullIfBroken, Exception constructionExceptionIfAny, Func<DragEventArgs, DataFlowComponentVisualisation, DragDropEffects> shouldAllowDrop)
             : base(role, valueOrNullIfBroken, shouldAllowDrop)
         {
             PipelineComponent = component;

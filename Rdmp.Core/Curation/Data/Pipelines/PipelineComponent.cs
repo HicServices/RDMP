@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 
@@ -204,6 +205,25 @@ namespace Rdmp.Core.Curation.Data.Pipelines
             }
 
             base.DeleteInDatabase();
+        }
+
+        private static bool IsGenericType(Type toCheck, Type genericType)
+        {
+            return toCheck.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == genericType);
+        }
+
+        public static PipelineComponentRole GetRoleFor(Type componentType)
+        {
+            if (IsGenericType(componentType, typeof(IDataFlowSource<>)))
+                return PipelineComponentRole.Source;
+
+            if (IsGenericType(componentType, typeof(IDataFlowDestination<>)))
+                return PipelineComponentRole.Destination;
+
+            if (IsGenericType(componentType, typeof(IDataFlowComponent<>)))
+                return PipelineComponentRole.Middle;
+
+            throw new ArgumentException("Object must be an IDataFlowComponent<> but was " + componentType);
         }
     }
 }
