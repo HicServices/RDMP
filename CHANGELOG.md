@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed a bug where ProjectUI would not show cohorts when some cohort sources are unreachable
 
+### Changed
+
+- Restricted [Pipelines] shown to only those where all components are compatible with the input objects (previously on context was checked) (https://github.com/HicServices/RDMP/issues/885)
+
 ## [7.0.5] - 2022-01-10
 
 ### Added
@@ -1111,6 +1115,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [PipelineComponent]: ./Documentation/CodeTutorials/Glossary.md#PipelineComponent
 [Pipeline]: ./Documentation/CodeTutorials/Glossary.md#Pipeline
+[Pipelines]: ./Documentation/CodeTutorials/Glossary.md#Pipeline
 
 [Lookup]: ./Documentation/CodeTutorials/Glossary.md#Lookup
 [CohortIdentificationConfiguration]: ./Documentation/CodeTutorials/Glossary.md#CohortIdentificationConfiguration
