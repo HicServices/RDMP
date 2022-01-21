@@ -7,11 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - Added ability to export [ExtractableCohort] to CSV file
+
+### Fixed
+
+- Fixed a bug where ProjectUI would not show cohorts when some cohort sources are unreachable
 
 ## [7.0.5] - 2022-01-10
 
 ### Added
+
+- Added ability to open extraction directory for an [ExtractionConfiguration]
 - Added diagnostic screen logging last executed command (https://github.com/HicServices/RDMP/issues/815)
 - Added tooltips for objects in tree views (https://github.com/HicServices/RDMP/issues/819).
 - Added custom icon for [CatalogueItem] that represent transforms on the underlying column (https://github.com/HicServices/RDMP/issues/818)
@@ -1084,7 +1091,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [FAnsiSql]: https://github.com/HicServices/FAnsiSql/
 [BadMedicine]: https://github.com/HicServices/BadMedicine/
 
-[ExtractableCohort]: ./Documentation/CodeTutorials/Glossary.md#ExtractableCohort
 [DBMS]: ./Documentation/CodeTutorials/Glossary.md#DBMS
 [UNION]: ./Documentation/CodeTutorials/Glossary.md#UNION
 [INTERSECT]: ./Documentation/CodeTutorials/Glossary.md#INTERSECT

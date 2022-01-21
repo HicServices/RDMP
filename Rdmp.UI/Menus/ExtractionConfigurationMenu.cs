@@ -28,6 +28,8 @@ namespace Rdmp.UI.Menus
             Add(new ExecuteCommandViewSqlParameters(_activator, extractionConfiguration));
             Add(new ExecuteCommandRefreshExtractionConfigurationsCohort(_activator, extractionConfiguration));
 
+            Add(new ExecuteCommandOpenExtractionDirectory(_activator, extractionConfiguration));
+
             ReBrandActivateAs("Extract...", RDMPConcept.ExtractionConfiguration, OverlayKind.Execute);
 
             

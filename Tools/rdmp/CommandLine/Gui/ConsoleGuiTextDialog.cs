@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.CommandExecution;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,41 +14,59 @@ namespace Rdmp.Core.CommandLine.Gui
 {
     class ConsoleGuiTextDialog
     {
-        private readonly string _prompt;
-        private readonly string _initialText;
+        private readonly DialogArgs _args;
+        private readonly string _initialValue;
 
         public string ResultText;
 
-        public ConsoleGuiTextDialog(string prompt, string initialText)
+        public ConsoleGuiTextDialog(DialogArgs args, string initialValue)
         {
-            _prompt = prompt;
-            _initialText = initialText;
+            _args = args;
+            this._initialValue = initialValue;
         }
         public bool ShowDialog()
         {
             bool okClicked = false;
 
-            var win = new Window (_prompt) {
+            var win = new Window(_args.WindowTitle) {
                 X = 0,
                 Y = 0,
 
                 // By using Dim.Fill(), it will automatically resize without manual intervention
-                Width = Dim.Fill (),
-                Height = Dim.Fill (),
+                Width = Dim.Fill(1),
+                Height = Dim.Fill(1),
                 Modal = true,
                 ColorScheme = ConsoleMainWindow.ColorScheme
             };
 
+            var description = new Label
+            {
+                Text = _args.TaskDescription ?? "",
+                Y = 0,
+            };
+
+            win.Add(description);
+
+            var entryLabel = new Label
+            {
+                Text = _args.EntryLabel ?? "",
+                Y = Pos.Bottom(description),
+            };
+
+            win.Add(entryLabel);
+
             var textField = new TextView()
             {
                 X = 1,
-                Y = 1,
+                Y = Pos.Bottom(entryLabel),
                 Height = Dim.Fill(2),
                 Width = Dim.Fill(2),
-                Text = _initialText ?? "",
+                Text = _initialValue ?? "",
                 AllowsTab = false
             };
-            
+
+            win.Add(textField);
+
             var btnOk = new Button("Ok",true)
             {
                 X = 0,
@@ -88,7 +107,6 @@ namespace Rdmp.Core.CommandLine.Gui
                 textField.Text = "";
             };
 
-            win.Add(textField);
             win.Add(btnOk);
             win.Add(btnCancel);
             win.Add(btnClear);
