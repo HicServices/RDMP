@@ -90,8 +90,7 @@ namespace Rdmp.Core.Curation.Data.Pipelines
         /// <inheritdoc/>
         public virtual IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines)
         {
-            var context = GetContext();
-            return pipelines.Where(context.IsAllowable);
+            return pipelines.Where(IsAllowable);
         }
         
         /// <inheritdoc/>
