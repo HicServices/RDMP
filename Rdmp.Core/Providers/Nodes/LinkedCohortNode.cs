@@ -65,5 +65,11 @@ namespace Rdmp.Core.Providers.Nodes
         {
             return "clear the cohort for ExtractionConfiguration '" + Configuration + "'";
         }
+
+        /// <inheritdoc/>
+        public string GetDeleteVerb()
+        {
+            return "Remove";
+        }
     }
 }

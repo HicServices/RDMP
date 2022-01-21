@@ -30,9 +30,16 @@ namespace Rdmp.Core.Providers.Nodes.CohortNodes
             User.SaveToDatabase();
         }
 
+        /// <inheritdoc/>
         public string GetDeleteMessage()
         {
             return "Stop using cache database '" + ObjectBeingUsed + "'";
+        }
+
+        /// <inheritdoc/>
+        public string GetDeleteVerb()
+        {
+            return "Dissociate";
         }
     }
 }

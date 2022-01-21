@@ -132,6 +132,12 @@ namespace Rdmp.Core.DataExport.Data
             return "disassociate this CohortIdentificationConfiguration from the Project";
         }
 
+        /// <inheritdoc/>
+        public string GetDeleteVerb()
+        {
+            return "Dissociate";
+        }
+
         /// <summary>
         /// Returns the <see cref="CohortIdentificationConfiguration_ID"/>
         /// </summary>

@@ -33,5 +33,10 @@ namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes
         {
             return "stop using explicit RAW server";
         }
+        /// <inheritdoc/>
+        public string GetDeleteVerb()
+        {
+            return "Disasociate";
+        }
     }
 }
