@@ -16,13 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed a bug where ProjectUI would not show cohorts when some cohort sources are unreachable
 - Fixed ProgressUI filter hiding global errors on extraction where the whole operation failed and a dataset filter was selected ([888](https://github.com/HicServices/RDMP/issues/888))
+- Fixed a rare dll resolving issue that could occur during startup when running the RDMP windows client from outside the current directory (https://github.com/HicServices/RDMP/issues/877)
 
 ### Changed
 
 - Changed right click context menu item 'Delete' to say 'Remove' when deleting a chain or relationship object (e.g. cohort usage by a project) ([#887](https://github.com/HicServices/RDMP/issues/887))
-
-### Changed
-
 - Restricted [Pipelines] shown to only those where all components are compatible with the input objects (previously on context was checked) (https://github.com/HicServices/RDMP/issues/885)
 - "Show All/Incompatible Pipelines" option added to Pipelines dropdown to make a simpler user interface
 

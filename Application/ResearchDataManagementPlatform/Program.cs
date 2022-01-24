@@ -37,6 +37,8 @@ namespace ResearchDataManagementPlatform
                 Console.WriteLine("Couldn't redirect console. Nevermind");
             }
 
+            Startup.PreStartup();
+
             UsefulStuff.GetParser()
                        .ParseArguments<ResearchDataManagementPlatformOptions>(args)
                        .MapResult(RunApp, err => -1);
