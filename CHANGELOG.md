@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Changed right click context menu item 'Delete' to say 'Remove' when deleting a chain or relationship object (e.g. cohort usage by a project) ([#887](https://github.com/HicServices/RDMP/issues/887))
 
+### Changed
+
+- Restricted [Pipelines] shown to only those where all components are compatible with the input objects (previously on context was checked) (https://github.com/HicServices/RDMP/issues/885)
+
 ## [7.0.5] - 2022-01-10
 
 ### Added
@@ -1119,6 +1123,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [PipelineComponent]: ./Documentation/CodeTutorials/Glossary.md#PipelineComponent
 [Pipeline]: ./Documentation/CodeTutorials/Glossary.md#Pipeline
+[Pipelines]: ./Documentation/CodeTutorials/Glossary.md#Pipeline
 
 [Lookup]: ./Documentation/CodeTutorials/Glossary.md#Lookup
 [CohortIdentificationConfiguration]: ./Documentation/CodeTutorials/Glossary.md#CohortIdentificationConfiguration

@@ -7,21 +7,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Rdmp.Core.Curation.Data.Pipelines;
-using Rdmp.UI.PipelineUIs.DataObjects;
 
-namespace Rdmp.UI.PipelineUIs.Pipelines.Models
+namespace Rdmp.Core.Curation.Data.Pipelines
 {
+
     /// <summary>
     /// Describes an IDataFlowComponent which may or may not be compatible with a specific DataFlowPipelineContext.  It describes how/if it's requirements conflict with the context
     /// e.g. a DelimitedFlatFileDataFlowSource requires a FlatFileToLoad and is therefore incompatible under any context where that object is not available.
     /// </summary>
-    internal class AdvertisedPipelineComponentTypeUnderContext
+    public class AdvertisedPipelineComponentTypeUnderContext
     {
         private bool _allowableUnderContext;
         private string _allowableReason;
 
-        private readonly DataFlowComponentVisualisation.Role _role;
+        private readonly PipelineComponentRole _role;
         private Type _componentType;
 
 
@@ -31,7 +30,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines.Models
         {
             _componentType = componentType;
 
-            _role = DataFlowComponentVisualisation.GetRoleFor(componentType);
+            _role = PipelineComponent.GetRoleFor(componentType);
 
             var context = useCase.GetContext();
 
@@ -42,7 +41,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines.Models
             var initializationObjects = useCase.GetInitializationObjects();
 
             //it is permitted to specify only Types as initialization objects if it is design time and the user hasn't picked any objects to execute the use case under
-            if (useCase.IsDesignTime && initializationObjects.All(t=>t is Type))
+            if (useCase.IsDesignTime && initializationObjects.All(t => t is Type))
                 initializationTypes = initializationObjects.Cast<Type>().ToArray();
             else
                 initializationTypes = useCase.GetInitializationObjects().Select(o => o.GetType()).ToArray();
@@ -68,13 +67,13 @@ namespace Rdmp.UI.PipelineUIs.Pipelines.Models
             return _componentType.Name;
         }
 
-        public DataFlowComponentVisualisation.Role GetRole()
+        public PipelineComponentRole GetRole()
         {
             return _role;
         }
         public string UIDescribeCompatible()
         {
-            return _allowableUnderContext && !unmetRequirements.Any()? "Yes" : "No";
+            return _allowableUnderContext && !unmetRequirements.Any() ? "Yes" : "No";
         }
 
         public bool IsCompatible()
@@ -91,14 +90,14 @@ namespace Rdmp.UI.PipelineUIs.Pipelines.Models
                 if (!string.IsNullOrWhiteSpace(toReturn))
                     toReturn += " and the";
                 else
-                toReturn += "The";
+                    toReturn += "The";
 
                 toReturn +=
                     " following types are required by the component but not available as input objects to the pipeline " +
                     string.Join(",", unmetRequirements);
 
             }
-            
+
             return toReturn;
         }
     }

@@ -90,8 +90,7 @@ namespace Rdmp.Core.Curation.Data.Pipelines
         /// <inheritdoc/>
         public virtual IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines)
         {
-            var context = GetContext();
-            return pipelines.Where(context.IsAllowable);
+            return pipelines.Where(IsAllowable);
         }
         
         /// <inheritdoc/>
@@ -111,6 +110,37 @@ namespace Rdmp.Core.Curation.Data.Pipelines
         {
             if (o != null)
                 InitializationObjects.Add(o);
+        }
+
+        public bool IsAllowable(Pipeline pipeline)
+        {
+            // Pipeline is not compatible with the execution context of the pipeline use case
+            if(!_context.IsAllowable(pipeline))
+            {
+                return false;
+            }
+            try
+            {
+                // Does the pipeline contain any components that are invalid under the current list of available initialization objects etc
+                foreach (var component in pipeline.PipelineComponents)
+                {
+                    var type = component.GetClassAsSystemType();
+                    var advert = new AdvertisedPipelineComponentTypeUnderContext(type, this);
+                    if (!advert.IsCompatible())
+                    {
+                        return false;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // if any Pipeline components are broken e.g. not possible to find the Type they reference
+                // then we tell the user it is not compatible
+                return false;
+            }
+
+            // nothing incompatible here
+            return true;
         }
     }
 }
