@@ -39,7 +39,7 @@ namespace Rdmp.Core.Providers.Nodes.CohortNodes
         /// <inheritdoc/>
         public string GetDeleteVerb()
         {
-            return "Dissociate";
+            return "Remove";
         }
     }
 }

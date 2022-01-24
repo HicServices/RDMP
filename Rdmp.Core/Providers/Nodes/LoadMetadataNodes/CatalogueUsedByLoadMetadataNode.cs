@@ -33,7 +33,7 @@ namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes
         /// <inheritdoc/>
         public string GetDeleteVerb()
         {
-            return "Dissociate";
+            return "Remove";
         }
     }
 }

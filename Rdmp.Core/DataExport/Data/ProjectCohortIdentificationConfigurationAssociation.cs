@@ -135,7 +135,7 @@ namespace Rdmp.Core.DataExport.Data
         /// <inheritdoc/>
         public string GetDeleteVerb()
         {
-            return "Dissociate";
+            return "Remove";
         }
 
         /// <summary>
