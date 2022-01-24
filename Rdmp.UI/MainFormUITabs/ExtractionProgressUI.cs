@@ -31,6 +31,8 @@ namespace Rdmp.UI.MainFormUITabs
         public ExtractionProgressUI()
         {
             InitializeComponent();
+            var tt = new ToolTip();
+            tt.SetToolTip(btnFromDQE, "Populate Start and End dates according to the latest DQE results");
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, ExtractionProgress databaseObject)
@@ -39,6 +41,7 @@ namespace Rdmp.UI.MainFormUITabs
 
             Bind(tbID, "Text", "ID", d => d.ID);
             Bind(tbDaysPerBatch, "Text", "NumberOfDaysPerBatch", d => d.NumberOfDaysPerBatch);
+            
         }
 
         public override void SetDatabaseObject(IActivateItems activator, ExtractionProgress databaseObject)
