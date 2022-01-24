@@ -36,6 +36,11 @@ namespace Rdmp.UI.Progress
         DataTable progress = new DataTable();
 
         /// <summary>
+        /// Sender for all global errors that should never be filtered out of the <see cref="ProgressUI"/>
+        /// </summary>
+        public const string GlobalRunError = "Run Error";
+
+        /// <summary>
         /// See HandleFloodOfMessagesFromJob, basically if the message in a progress event changes over time we don't want to spam the datagrid so instead we just note that there is a
         /// flood of distinct messages coming from a specific source component
         /// </summary>
@@ -397,11 +402,13 @@ namespace Rdmp.UI.Progress
 
         private void SetFilterFromTextBox()
         {
-            olvProgressEvents.ModelFilter = new TextMatchFilter(olvProgressEvents, tbTextFilter.Text, StringComparison.CurrentCultureIgnoreCase);
+            var alwaysShow = olvProgressEvents.Objects.OfType<ProgressUIEntry>().Where(p => p.Sender == GlobalRunError).ToArray();
+            olvProgressEvents.ModelFilter = new TextMatchFilterWithWhiteList(alwaysShow, olvProgressEvents, tbTextFilter.Text, StringComparison.CurrentCultureIgnoreCase);
         }
         public void SetFatal()
         {
             lblCrashed.Visible = true;
+            lblCrashed.BringToFront();
         }
 
         
