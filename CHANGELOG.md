@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added [ExtractionProgress] for robustly extracting large datasets in multiple smaller executions
 - Added ability to export [ExtractableCohort] to CSV file
 - Added 'Created From' column to cohort detail page (parses cohorts AuditLog)
 
@@ -43,15 +44,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added description to Publish Filter "Select One" dialog (https://github.com/HicServices/RDMP/issues/813)
 ### Fixed
 - Changed to SHIFT+Enter for closing multiline dialogs (https://github.com/HicServices/RDMP/issues/817)
+- Fixed bug where configuring dataset didn't show all available tables when listing optional joinable tables (https://github.com/HicServices/RDMP/issues/804)
 
 ### Changed
 - Updated CatalogueItemUI (https://github.com/HicServices/RDMP/issues/820)
 - Fixed bug where cached aggregates were not considered stale even though changes had been made to their patient index table (https://github.com/HicServices/RDMP/issues/849)
 - "You only have one object Yes/No" box has been removed in favour of being more consistent for the user (https://github.com/HicServices/RDMP/issues/811)
-
-### Fixed
-
-- Fixed bug where configuring dataset didn't show all available tables when listing optional joinable tables (https://github.com/HicServices/RDMP/issues/804)
 
 ## [7.0.4] - 2021-12-08
 
@@ -1101,6 +1099,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [FAnsiSql]: https://github.com/HicServices/FAnsiSql/
 [BadMedicine]: https://github.com/HicServices/BadMedicine/
 
+[ExtractionProgress]: ./Documentation/CodeTutorials/Glossary.md#ExtractionProgress
 [DBMS]: ./Documentation/CodeTutorials/Glossary.md#DBMS
 [UNION]: ./Documentation/CodeTutorials/Glossary.md#UNION
 [INTERSECT]: ./Documentation/CodeTutorials/Glossary.md#INTERSECT

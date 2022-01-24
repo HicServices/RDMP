@@ -92,6 +92,9 @@ namespace Rdmp.Core.DataExport.DataRelease.Potential
             if (SqlOutOfSyncWithDataExportManagerConfiguration(extractionResults))
                 return Releaseability.ExtractionSQLDesynchronisation;
 
+            if (ExtractionProgressIsIncomplete(null))
+                return Releaseability.NeverBeenSuccessfullyExecuted;
+
             var finalAssessment = GetSpecificAssessment(extractionResults);
 
             if (finalAssessment == Releaseability.Undefined)
@@ -100,6 +103,30 @@ namespace Rdmp.Core.DataExport.DataRelease.Potential
                     : Releaseability.Releaseable;
 
             return finalAssessment;
+        }
+
+        private bool ExtractionProgressIsIncomplete(ICheckNotifier notifier)
+        {
+            var progress = SelectedDataSet.ExtractionProgressIfAny;
+            
+            if (progress == null)
+            {
+                return false;
+            }
+
+            if (progress.ProgressDate == null)
+            {
+                notifier?.OnCheckPerformed(new CheckEventArgs($"ExtractionProgress ProgressDate is null for '{SelectedDataSet}'.", CheckResult.Warning));
+                return true;
+            }
+
+            if (progress.ProgressDate < progress.EndDate)
+            {
+                notifier?.OnCheckPerformed(new CheckEventArgs($"ExtractionProgress is incomplete for '{SelectedDataSet}'.  ProgressDate is {progress.ProgressDate} but EndDate is {progress.EndDate}", CheckResult.Warning));
+                return true;
+            }
+
+            return false;
         }
 
         private Releaseability MakeSupplementalAssesment(ISupplementalExtractionResults supplementalExtractionResults)
@@ -182,6 +209,14 @@ namespace Rdmp.Core.DataExport.DataRelease.Potential
             if (extractionResults.SQLExecuted == null)
                 throw new Exception("Cumulative Extraction Results for the extraction in which this dataset was involved in does not have any SQLExecuted recorded for it.");
             
+            // When using extraction progress the SQL can be whatever you want
+            // if the progress date says End then we blindly assume that whatever you
+            // executed was legit
+            if(SelectedDataSet.ExtractionProgressIfAny != null)
+            {
+                return false;
+            }
+
             //if the SQL today is different to the SQL that was run when the user last extracted the data then there is a desync in the SQL (someone has changed something in the catalogue/data export manager configuration since the data was extracted)
             return !SqlCurrentConfiguration.Equals(extractionResults.SQLExecuted);
         }
@@ -208,6 +243,9 @@ namespace Rdmp.Core.DataExport.DataRelease.Potential
         {
             if (DatasetExtractionResult == null || DatasetExtractionResult.DestinationDescription == null)
                 return;
+
+            // check if we have a halfway completed extraction
+            ExtractionProgressIsIncomplete(notifier);
 
             if (DatasetExtractionResult.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted)
                 notifier.OnCheckPerformed(new CheckEventArgs(

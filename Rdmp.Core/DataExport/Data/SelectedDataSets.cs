@@ -83,6 +83,11 @@ namespace Rdmp.Core.DataExport.Data
         public ISelectedDataSetsForcedJoin[] SelectedDataSetsForcedJoins {
             get { return _selectedDatasetsForcedJoins.Value; }}
 
+
+        /// <inheritdoc/>
+        [NoMappingToDatabase]
+        public IExtractionProgress ExtractionProgressIfAny { get => DataExportRepository.GetAllObjectsWithParent<ExtractionProgress>(this).SingleOrDefault(); }
+
         #endregion
 
         internal SelectedDataSets(IDataExportRepository repository, DbDataReader r)

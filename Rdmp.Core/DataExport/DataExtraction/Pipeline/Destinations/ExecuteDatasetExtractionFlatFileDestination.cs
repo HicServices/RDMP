@@ -77,8 +77,28 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
     
         protected override void Open(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
         {
-            _output.Open();
-            _output.WriteHeaders(toProcess);
+            if(_request.IsBatchResume)
+            {
+                if (File.Exists(_output.OutputFilename))
+                {
+                    // if it is a batch resume then create a backup of the file as it looked at the start of the process
+                    _backupFile = _output.OutputFilename + ".bak";
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Creating {_backupFile}"));
+                    File.Copy(_output.OutputFilename, _backupFile, true);
+                }
+                else
+                {
+                    throw new Exception($"Batch resume is true but there was no file to append to (expected a file to exist at '{_output.OutputFilename}')");
+                }
+            }
+
+            _output.Open(_request.IsBatchResume);
+
+            // write the headers for the file unless we are resuming
+            if(!_request.IsBatchResume)
+            {
+                _output.WriteHeaders(toProcess);
+            }
         }
 
         protected override void WriteRows(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
@@ -102,17 +122,41 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
         public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
-            CloseFile(listener);
+            CloseFile(listener, pipelineFailureExceptionIfAny != null);
+
+            // if pipeline execution failed and we are doing a batch resume
+            if(pipelineFailureExceptionIfAny != null &&
+                (_request?.IsBatchResume ?? false) && _backupFile != null && _output?.OutputFilename != null)
+            {
+                if(File.Exists(_backupFile))
+                {
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Pipeline crashed so restoring backup file {_backupFile}"));
+                    File.Copy(_backupFile, _output.OutputFilename, true);
+                }
+            }
+
+            if(_backupFile != null && File.Exists(_backupFile))
+            {
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Deleting {_backupFile}"));
+                File.Delete(_backupFile);
+            }
         }
 
         public override void Abort(IDataLoadEventListener listener)
         {
-            CloseFile(listener);
+            CloseFile(listener,true);
         }
 
         private bool _fileAlreadyClosed = false;
 
-        private void CloseFile(IDataLoadEventListener listener)
+        /// <summary>
+        /// If performing a batch resume then this file will be a copy of the flat file
+        /// before we began appending data to it in case the pipeline execution fails
+        /// </summary>
+        private string _backupFile;
+
+
+        private void CloseFile(IDataLoadEventListener listener, bool failed)
         {
             //we never even started or have already closed
             if (!haveOpened || _fileAlreadyClosed )
@@ -126,14 +170,21 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 _output.Close();
                 GC.Collect(); //prevents file locks from sticking around
 
+                if(TableLoadInfo == null)
+                {
+                    return;
+                }
+
                 //close audit object - unless it was prematurely closed e.g. by a failure somewhere
                 if (!TableLoadInfo.IsClosed)
                     TableLoadInfo.CloseAndArchive();
 
+                // TODO: Make sure to only increment if batch succeeded
+
                 // also close off the cumulative extraction result
                 var result = ((IExtractDatasetCommand)_request).CumulativeExtractionResults;
                 if (result != null) 
-                    result.CompleteAudit(this.GetType(), GetDestinationDescription(), LinesWritten);
+                    result.CompleteAudit(this.GetType(), GetDestinationDescription(), LinesWritten,_request.IsBatchResume, failed);
             }
             catch (Exception e)
             {

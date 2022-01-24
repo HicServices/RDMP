@@ -76,17 +76,83 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
 
         public void Execute(IDataLoadEventListener listener)
         {
+            if(ExtractCommand is ExtractDatasetCommand eds)
+            {
+                bool runSuccessful;
+                bool runAgain;
+                do
+                {
+                    Token?.ThrowIfStopRequested();
+                    Token?.ThrowIfAbortRequested();
+
+                    runSuccessful = ExecuteOnce(listener);
+                    runAgain = runSuccessful && IncrementProgressIfAny(eds, listener);
+                    
+                    if (runSuccessful && runAgain)
+                    {
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Running pipeline again for next batch in ExtractionProgress"));
+                    }
+                }
+                while (runSuccessful && runAgain);
+            }
+            else
+            {
+                ExecuteOnce(listener);
+            }
+        }
+
+        /// <summary>
+        /// Inspects the <paramref name="extractDatasetCommand"/> to see if it is a batch load that has
+        /// only done part of its full execution.  If so then progress will be recorded and true will be returned
+        /// (i.e. run again).
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        private bool IncrementProgressIfAny(ExtractDatasetCommand extractDatasetCommand, IDataLoadEventListener listener)
+        {
+            var progress = extractDatasetCommand.SelectedDataSets.ExtractionProgressIfAny;
+
+            if (progress == null)
+                return false;
+
+            // if load ended successfully and it is a batch load
+            if (extractDatasetCommand.BatchEnd != null)
+            {
+                // update our progress
+                progress.ProgressDate = extractDatasetCommand.BatchEnd.Value;
+                progress.SaveToDatabase();
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Saving batch extraction progress as {progress.ProgressDate}"));
+
+                if (progress.MoreToFetch())
+                {
+                    // clear the query builder so it can be rebuilt for the new dates
+                    extractDatasetCommand.Reset();
+                    return true;
+                }
+
+                return false;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Runs the extraction once and returns true if it was success otherwise false
+        /// </summary>
+        /// <param name="listener"></param>
+        /// <returns></returns>
+        private bool ExecuteOnce(IDataLoadEventListener listener)
+        {
             try
             {
                 ExtractCommand.ElevateState(ExtractCommandState.WaitingToExecute);
 
-                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"Running Extraction {ExtractCommand} with Pipeline {_pipeline.Name} (ID={_pipeline.ID})"));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Running Extraction {ExtractCommand} with Pipeline {_pipeline.Name} (ID={_pipeline.ID})"));
 
                 var engine = GetEngine(_pipeline, listener);
 
                 try
                 {
-                    engine.ExecutePipeline(Token?? new GracefulCancellationToken());
+                    engine.ExecutePipeline(Token ?? new GracefulCancellationToken());
                     listener.OnNotify(Destination, new NotifyEventArgs(ProgressEventType.Information, "Extraction completed successfully into : " + Destination.GetDestinationDescription()));
                 }
                 catch (Exception e)
@@ -108,7 +174,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
                         foreach (var extractionResults in result)
                         {
                             extractionResults.Exception = ExceptionHelper.ExceptionToListOfInnerMessages(e, true);
-                            extractionResults.SaveToDatabase();   
+                            extractionResults.SaveToDatabase();
                         }
                     }
 
@@ -121,7 +187,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
 
                 if (Source.WasCancelled)
                 {
-                    Destination.TableLoadInfo.DataLoadInfoParent.LogFatalError(this.GetType().Name,"User Cancelled Extraction");
+                    Destination.TableLoadInfo.DataLoadInfoParent.LogFatalError(this.GetType().Name, "User Cancelled Extraction");
                     ExtractCommand.ElevateState(ExtractCommandState.UserAborted);
 
                     if (ExtractCommand is ExtractDatasetCommand)
@@ -145,18 +211,22 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
             }
             catch (Exception ex)
             {
-                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Execute pipeline failed with Exception",ex));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Execute pipeline failed with Exception", ex));
                 ExtractCommand.ElevateState(ExtractCommandState.Crashed);
             }
 
             //if it didn't crash / get aborted etc
             if (ExtractCommand.State < ExtractCommandState.WritingMetadata)
             {
-                if (ExtractCommand is ExtractDatasetCommand) 
+                if (ExtractCommand is ExtractDatasetCommand)
                     WriteMetadata(listener);
                 else
                     ExtractCommand.ElevateState(ExtractCommandState.Completed);
             }
+            else
+                return false; // it crashed or was aborted etc
+
+            return true;
         }
 
         public override IDataFlowPipelineEngine GetEngine(IPipeline pipeline, IDataLoadEventListener listener)

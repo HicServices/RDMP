@@ -483,6 +483,13 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandCreateNewFilterFromCatalogue(_activator,sds);
                 yield return new ExecuteCommandViewExtractionSql(_activator,sds);
                 yield return new ExecuteCommandSetExtractionIdentifier(_activator, sds.GetCatalogue(), sds.ExtractionConfiguration,null);
+                yield return new ExecuteCommandAddExtractionProgress(_activator,sds);
+                yield return new ExecuteCommandResetExtractionProgress(_activator, sds);
+            }
+
+            if(Is(o,out ExtractionProgress progress))
+            {
+                yield return new ExecuteCommandResetExtractionProgress(_activator, progress);
             }
             
             if(Is(o, out ExtractionConfiguration ec))
@@ -505,6 +512,8 @@ namespace Rdmp.Core.CommandExecution
                     yield return new ExecuteCommandFreezeExtractionConfiguration(_activator, ec);
 
                 yield return new ExecuteCommandCloneExtractionConfiguration(_activator, ec);
+
+                yield return new ExecuteCommandResetExtractionProgress(_activator, ec, null);
             }
 
             if(Is(o, out ProjectCataloguesNode pcn))

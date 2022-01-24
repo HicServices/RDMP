@@ -84,16 +84,18 @@ namespace Rdmp.Core.Reports.ExtractionTime
                         rownum++;
                     }
 
+                    var request = Executer.Source.Request;
+
                     SetTableCell(t,rownum,0,"Cohort Size (Distinct)");
-                    SetTableCell(t,rownum,1,Executer.Source.Request.ExtractableCohort.CountDistinct.ToString());
+                    SetTableCell(t,rownum,1, request.ExtractableCohort.CountDistinct.ToString());
                     rownum++;
 
                     SetTableCell(t,rownum,0,"Cohorts Found In Dataset");
-                    SetTableCell(t,rownum,1,Executer.Source.UniqueReleaseIdentifiersEncountered.Count.ToString());
+                    SetTableCell(t,rownum,1, request.IsBatchResume ? "unknown (batching was used)" : Executer.Source.UniqueReleaseIdentifiersEncountered.Count.ToString());
                     rownum++;
-
+                    
                     SetTableCell(t,rownum,0,"Dataset Line Count");
-                    SetTableCell(t,rownum,1,Executer.Destination.TableLoadInfo.Inserts.ToString());
+                    SetTableCell(t,rownum,1, request.CumulativeExtractionResults.RecordsExtracted.ToString("N0"));
                     rownum++;
 
                     if (_destination.GeneratesFiles)
@@ -144,19 +146,21 @@ namespace Rdmp.Core.Reports.ExtractionTime
                     //if a count of date times seen exists for this extraction create a graph of the counts seen
                     if (Executer.Source.ExtractionTimeTimeCoverageAggregator != null && Executer.Source.ExtractionTimeTimeCoverageAggregator.Buckets.Any())
                     {
-                        try
+                        if(!request.IsBatchResume)
                         {
-                            InsertSectionPageBreak(document);
-                            InsertHeader(document, "Dataset Timespan");
-                            
-                            CreateTimespanGraph(Executer.Source.ExtractionTimeTimeCoverageAggregator);
+                            try
+                            {
+                                InsertSectionPageBreak(document);
+                                InsertHeader(document, "Dataset Timespan");
 
-                        }
-                        catch (Exception e)
-                        {
-                            ExceptionsGeneratingWordFile.Add(e);
-                        }
+                                CreateTimespanGraph(Executer.Source.ExtractionTimeTimeCoverageAggregator);
 
+                            }
+                            catch (Exception e)
+                            {
+                                ExceptionsGeneratingWordFile.Add(e);
+                            }
+                        }
                     }
 
                     InsertSectionPageBreak(document);

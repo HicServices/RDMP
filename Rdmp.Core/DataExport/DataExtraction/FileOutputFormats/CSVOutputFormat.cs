@@ -43,8 +43,12 @@ namespace Rdmp.Core.DataExport.DataExtraction.FileOutputFormats
 
         public override void Open()
         {
-
             _sw = new StreamWriter(OutputFilename);
+            _sbWriteOutLinesBuffer = new StringBuilder();
+        }
+        public override void Open(bool append)
+        {
+            _sw = new StreamWriter(OutputFilename,append);
             _sbWriteOutLinesBuffer = new StringBuilder();
         }
 
@@ -75,9 +79,9 @@ namespace Rdmp.Core.DataExport.DataExtraction.FileOutputFormats
 
         public override void Close()
         {
-            _sw.Flush();
-            _sw.Close();
-            _sw.Dispose();
+            _sw?.Flush();
+            _sw?.Close();
+            _sw?.Dispose();
         }
 
         public string CleanString(object o)

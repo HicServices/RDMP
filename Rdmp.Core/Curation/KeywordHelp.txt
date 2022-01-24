@@ -87,3 +87,5 @@ ix_JoinColumnsMustBeUnique: Prevents you creating two joins involving the same p
 ix_CumulativeExtractionResultsMustBeUnique: Prevents two release audits of the same extraction record
 ix_OneBinaryPerPlugin: Prevents a Plugin from having more than one binary file (nupkg)
 ????: Source column could not be matched to destination table column
+ix_OneExtractionProgressPerDataset: Ensures that a dataset can only ever have one ExtractionProgress record
+FK_ExtractionProgress_SelectedDataSets: Ensures that deleting a SelectedDataSets (removing a dataset from an extraction) clears any batch extraction progress

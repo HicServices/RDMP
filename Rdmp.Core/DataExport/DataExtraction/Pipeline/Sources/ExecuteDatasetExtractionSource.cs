@@ -43,7 +43,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
 
         private readonly List<string> _extractionIdentifiersidx = new List<string>();
         
-        private bool _cancel = false;
+        private bool _cancel = false;   
         
         ICatalogue _catalogue;
 
@@ -184,7 +184,8 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                                                                 Request.GetDistinctLiveDatabaseServer().Builder, 
                                                                 ExecutionTimeout);
 
-                _hostedSource.AllowEmptyResultSets = AllowEmptyExtractions;
+                // If we are running in batches then always allow empty extractions
+                _hostedSource.AllowEmptyResultSets = AllowEmptyExtractions || Request.IsBatchResume;
                 _hostedSource.BatchSize = BatchSize;
             }
 
@@ -239,7 +240,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             {
                 listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Data exhausted after reading " + _rowsRead + " rows of data ("+UniqueReleaseIdentifiersEncountered.Count + " unique release identifiers seen)"));
                 if (Request != null)
-                    Request.CumulativeExtractionResults.DistinctReleaseIdentifiersEncountered = UniqueReleaseIdentifiersEncountered.Count;
+                    Request.CumulativeExtractionResults.DistinctReleaseIdentifiersEncountered = Request.IsBatchResume ? -1 : UniqueReleaseIdentifiersEncountered.Count;
                 return null;
             }
 
@@ -435,18 +436,30 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
             var previousAudit = dataExportRepo.GetAllCumulativeExtractionResultsFor(Request.Configuration, Request.DatasetBundle.DataSet).ToArray();
 
-            //delete old audit records
-            foreach (var audit in previousAudit)
-                audit.DeleteInDatabase();
+            if (Request.IsBatchResume)
+            {
+                var match = previousAudit.FirstOrDefault(a => a.ExtractableDataSet_ID == Request.DatasetBundle.DataSet.ID);
+                if(match == null)
+                {
+                    throw new Exception($"Could not find previous CumulativeExtractionResults for dataset {Request.DatasetBundle.DataSet} despite the Request being marked as a batch resume");
+                }
+                Request.CumulativeExtractionResults = match;
+            }
+            else
+            {
+                //delete old audit records
+                foreach (var audit in previousAudit)
+                    audit.DeleteInDatabase();
 
-            var extractionResults = new CumulativeExtractionResults(dataExportRepo, Request.Configuration, Request.DatasetBundle.DataSet, sql);
+                var extractionResults = new CumulativeExtractionResults(dataExportRepo, Request.Configuration, Request.DatasetBundle.DataSet, sql);
 
-            string filterDescriptions = RecursivelyListAllFilterNames(Request.Configuration.GetFilterContainerFor(Request.DatasetBundle.DataSet));
+                string filterDescriptions = RecursivelyListAllFilterNames(Request.Configuration.GetFilterContainerFor(Request.DatasetBundle.DataSet));
 
-            extractionResults.FiltersUsed = filterDescriptions.TrimEnd(',');
-            extractionResults.SaveToDatabase();
+                extractionResults.FiltersUsed = filterDescriptions.TrimEnd(',');
+                extractionResults.SaveToDatabase();
 
-            Request.CumulativeExtractionResults = extractionResults;
+                Request.CumulativeExtractionResults = extractionResults;
+            }
         }
 
         private void StartAuditGlobals()
@@ -477,10 +490,9 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
             return toReturn;
         }
-        
         public virtual void Dispose(IDataLoadEventListener job, Exception pipelineFailureExceptionIfAny)
         {
-            
+
         }
 
         public void Abort(IDataLoadEventListener listener)
