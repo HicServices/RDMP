@@ -41,6 +41,7 @@ namespace Rdmp.UI.CohortUI
             this.olvProjectNumber = new BrightIdeasSoftware.OLVColumn();
             this.olvVersion = new BrightIdeasSoftware.OLVColumn();
             this.olvCreationDate = new BrightIdeasSoftware.OLVColumn();
+            this.olvCreatedFrom = new BrightIdeasSoftware.OLVColumn();
             this.olvViewLog = new BrightIdeasSoftware.OLVColumn();
             this.olvID = new BrightIdeasSoftware.OLVColumn();
             this.tbFilter = new System.Windows.Forms.TextBox();
@@ -61,6 +62,7 @@ namespace Rdmp.UI.CohortUI
             this.lbCohortDatabaseTable.AllColumns.Add(this.olvProjectNumber);
             this.lbCohortDatabaseTable.AllColumns.Add(this.olvVersion);
             this.lbCohortDatabaseTable.AllColumns.Add(this.olvCreationDate);
+            this.lbCohortDatabaseTable.AllColumns.Add(this.olvCreatedFrom);
             this.lbCohortDatabaseTable.AllColumns.Add(this.olvViewLog);
             this.lbCohortDatabaseTable.AllColumns.Add(this.olvID);
             this.lbCohortDatabaseTable.CellEditUseWholeCell = false;
@@ -74,6 +76,7 @@ namespace Rdmp.UI.CohortUI
             this.olvProjectNumber,
             this.olvVersion,
             this.olvCreationDate,
+            this.olvCreatedFrom,
             this.olvViewLog,
             this.olvID});
             this.lbCohortDatabaseTable.Cursor = System.Windows.Forms.Cursors.Default;
@@ -148,6 +151,10 @@ namespace Rdmp.UI.CohortUI
             this.olvCreationDate.AspectName = "CreationDate";
             this.olvCreationDate.Text = "CreationDate";
             this.olvCreationDate.Width = 100;
+            // olvCreatedFrom
+            this.olvCreatedFrom.Text = "Created From";
+            this.olvCreatedFrom.Width = 100;
+
             // 
             // olvViewLog
             // 
@@ -208,8 +215,9 @@ namespace Rdmp.UI.CohortUI
         private BrightIdeasSoftware.OLVColumn olvProjectNumber;
         private BrightIdeasSoftware.OLVColumn olvVersion;
         private BrightIdeasSoftware.OLVColumn olvCreationDate;
-        private System.Windows.Forms.TextBox tbFilter;
         private BrightIdeasSoftware.OLVColumn olvSource;
+        private BrightIdeasSoftware.OLVColumn olvCreatedFrom;
+        private System.Windows.Forms.TextBox tbFilter;
         private BrightIdeasSoftware.OLVColumn olvViewLog;
         private BrightIdeasSoftware.OLVColumn olvID;
         private System.Windows.Forms.GroupBox groupBox1;

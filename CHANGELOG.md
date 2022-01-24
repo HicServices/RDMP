@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added ability to export [ExtractableCohort] to CSV file
+- Added 'Created From' column to cohort detail page (parses cohorts AuditLog)
 
 ### Fixed
 

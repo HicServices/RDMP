@@ -87,7 +87,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
             else
                 flatFile = new FlatFileToLoad(_file);
 
-            var request = GetCohortCreationRequest("Patient identifiers in file '" + flatFile.File.FullName + "'");
+            var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
+            var request = GetCohortCreationRequest(auditLogBuilder.GetDescription(flatFile.File));
 
             //user choose to cancel the cohort creation request dialogue
             if (request == null)
