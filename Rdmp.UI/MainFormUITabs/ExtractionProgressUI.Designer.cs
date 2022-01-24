@@ -47,6 +47,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnFromDQE = new System.Windows.Forms.Button();
             this.lblEvaluationDate = new System.Windows.Forms.Label();
+            this.btnResetProgress = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -75,6 +76,7 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             this.tbProgress.Location = new System.Drawing.Point(109, 149);
             this.tbProgress.Name = "tbProgress";
+            this.tbProgress.ReadOnly = true;
             this.tbProgress.Size = new System.Drawing.Size(313, 23);
             this.tbProgress.TabIndex = 2;
             this.tbProgress.TextChanged += new System.EventHandler(this.tbDate_TextChanged);
@@ -256,10 +258,21 @@ namespace Rdmp.UI.MainFormUITabs
             this.lblEvaluationDate.TabIndex = 10;
             this.lblEvaluationDate.Text = "label6";
             // 
+            // btnResetProgress
+            // 
+            this.btnResetProgress.Location = new System.Drawing.Point(432, 170);
+            this.btnResetProgress.Name = "btnResetProgress";
+            this.btnResetProgress.Size = new System.Drawing.Size(44, 23);
+            this.btnResetProgress.TabIndex = 11;
+            this.btnResetProgress.Text = "Reset";
+            this.btnResetProgress.UseVisualStyleBackColor = true;
+            this.btnResetProgress.Click += new System.EventHandler(this.btnResetProgress_Click);
+            // 
             // ExtractionProgressUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.btnResetProgress);
             this.Controls.Add(this.lblEvaluationDate);
             this.Controls.Add(this.btnFromDQE);
             this.Controls.Add(this.tableLayoutPanel1);
@@ -292,5 +305,6 @@ namespace Rdmp.UI.MainFormUITabs
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btnFromDQE;
         private System.Windows.Forms.Label lblEvaluationDate;
+        private System.Windows.Forms.Button btnResetProgress;
     }
 }

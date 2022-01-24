@@ -134,6 +134,11 @@ namespace Rdmp.UI.MainFormUITabs
             tbStartDate.Text = dqeResult.Item1?.ToString("yyyy-MM-dd");
             tbEndDate.Text = dqeResult.Item2?.AddDays(1).ToString("yyyy-MM-dd");
         }
+
+        private void btnResetProgress_Click(object sender, EventArgs e)
+        {
+            tbProgress.Text = "";
+        }
     }
 
 
