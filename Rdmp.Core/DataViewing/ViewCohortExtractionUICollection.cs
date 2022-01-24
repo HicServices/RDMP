@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
@@ -29,7 +30,16 @@ namespace Rdmp.Core.DataViewing
         Dictionary<string, string> _arguments = new Dictionary<string, string>();
         private const string TopKey = "Top";
 
-        public string Username { get; set; }
+        private const string IncludeCohortIDKey = "IncludeCohortID";
+
+        /// <summary>
+        /// True to fetch the cohort ID (OriginID) from the cohort table as a SELECT column when retrieving records
+        /// </summary>
+        public bool IncludeCohortID
+        {
+            get => _arguments.ContainsKey(IncludeCohortIDKey) ? bool.Parse(_arguments[IncludeCohortIDKey]) : true;
+            set => _arguments[IncludeCohortIDKey] = value.ToString();
+        }
 
         public ViewCohortExtractionUICollection()
         {
@@ -51,6 +61,8 @@ namespace Rdmp.Core.DataViewing
 
         public ExtractableCohort Cohort { get { return DatabaseObjects.OfType<ExtractableCohort>().SingleOrDefault(); } }
 
+        
+
         public IEnumerable<DatabaseEntity> GetToolStripObjects()
         {
             yield return Cohort;
@@ -66,17 +78,48 @@ namespace Rdmp.Core.DataViewing
             if (Cohort == null)
                 return "";
 
-            var tableName = Cohort.ExternalCohortTable.TableName;
+            var ect = Cohort.ExternalCohortTable;
+            var tableName = ect.TableName;
 
             var response = GetQuerySyntaxHelper().HowDoWeAchieveTopX(Top);
 
+            var selectSql = GetSelectList(ect);
+
             return response.Location switch
             {
-                QueryComponent.SELECT  => $"Select {response.SQL} * from {tableName} WHERE {Cohort.WhereSQL()}",
-                QueryComponent.WHERE   => $"Select * from {tableName} WHERE {response.SQL} AND {Cohort.WhereSQL()}",
-                QueryComponent.Postfix => $"Select * from {tableName} WHERE {Cohort.WhereSQL()} {response.SQL}",
+                QueryComponent.SELECT  => $"Select {response.SQL} {selectSql} from {tableName} WHERE {Cohort.WhereSQL()}",
+                QueryComponent.WHERE   => $"Select {selectSql} from {tableName} WHERE {response.SQL} AND {Cohort.WhereSQL()}",
+                QueryComponent.Postfix => $"Select {selectSql} from {tableName} WHERE {Cohort.WhereSQL()} {response.SQL}",
                 _ => throw new ArgumentOutOfRangeException()
             };
+        }
+
+        /// <summary>
+        /// Returns a block that should be inserted after the SELECT keyword in the query
+        /// that contains all relevant columns to be extracted for cohorts in the given cohort
+        /// database
+        /// </summary>
+        /// <param name="ect"></param>
+        /// <returns></returns>
+        private string GetSelectList(IExternalCohortTable ect)
+        {
+            var selectList = new List<string>();
+
+            selectList.Add(ect.PrivateIdentifierField);
+
+            // if it is not an identifiable extraction
+            if (!string.Equals(ect.PrivateIdentifierField, ect.ReleaseIdentifierField))
+            {
+                // add the release identifier too
+                selectList.Add(ect.ReleaseIdentifierField);
+            }
+
+            if (IncludeCohortID)
+            {
+                selectList.Add(ect.DefinitionTableForeignKeyField);
+            }
+
+            return Environment.NewLine + string.Join($",{Environment.NewLine}", selectList) + Environment.NewLine;
         }
 
         public string GetTabName()
