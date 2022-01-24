@@ -129,7 +129,7 @@ namespace Rdmp.Core.DataExport.Data
         /// <inheritdoc/>
         public string GetDeleteMessage()
         {
-            return "disassociate this CohortIdentificationConfiguration from the Project";
+            return "remove CohortIdentificationConfiguration from the Project";
         }
 
         /// <inheritdoc/>

@@ -63,7 +63,7 @@ namespace Rdmp.Core.Providers.Nodes
 
         public string GetDeleteMessage()
         {
-            return "clear the cohort for ExtractionConfiguration '" + Configuration + "'";
+            return "remove cohort from ExtractionConfiguration '" + Configuration + "'";
         }
 
         /// <inheritdoc/>

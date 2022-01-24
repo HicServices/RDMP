@@ -33,7 +33,7 @@ namespace Rdmp.Core.Providers.Nodes.CohortNodes
         /// <inheritdoc/>
         public string GetDeleteMessage()
         {
-            return "Stop using cache database '" + ObjectBeingUsed + "'";
+            return "remove cache database use";
         }
 
         /// <inheritdoc/>

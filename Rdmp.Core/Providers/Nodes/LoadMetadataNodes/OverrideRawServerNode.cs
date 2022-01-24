@@ -31,7 +31,7 @@ namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes
 
         public string GetDeleteMessage()
         {
-            return "stop using explicit RAW server";
+            return "remove explicit RAW server";
         }
         /// <inheritdoc/>
         public string GetDeleteVerb()
