@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.CohortDescribing;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.ItemActivation;
@@ -30,6 +31,7 @@ namespace Rdmp.UI.CohortUI
     /// </summary>
     public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeSubscriber
     {
+        ExtractableCohortAuditLogBuilder _auditLogBuilder = new ExtractableCohortAuditLogBuilder();
         public ExtractableCohortCollectionUI()
         {
             InitializeComponent();
@@ -45,10 +47,31 @@ namespace Rdmp.UI.CohortUI
 
             olvViewLog.AspectGetter = ViewLogAspectGetter;
             olvID.AspectGetter = IDAspectGetter;
+
             lbCohortDatabaseTable.ButtonClick += lbCohortDatabaseTable_ButtonClick;
             lbCohortDatabaseTable.RowHeight = 19;
 
             lbCohortDatabaseTable.BeforeSorting += BeforeSorting;
+        }
+        public override void SetItemActivator(IActivateItems activator)
+        {
+            base.SetItemActivator(activator);
+
+            // wait till we have an activator before registering this callback otherwise we will get null reference
+            olvCreatedFrom.AspectGetter = CreatedFromAspectGetter;
+        }
+        private object CreatedFromAspectGetter(object rowObject)
+        {
+            var ecd = rowObject as ExtractableCohortDescription;
+
+            if (ecd != null)
+            {
+                var obj = _auditLogBuilder.GetObjectIfAny(ecd.Cohort, Activator.RepositoryLocator);
+                return obj is ExtractionInformation ei ? $"{ei.CatalogueItem.Catalogue}.{ei}" : obj;
+            }
+                
+
+            return null;   
         }
 
         private void BeforeSorting(object sender, BeforeSortingEventArgs e)

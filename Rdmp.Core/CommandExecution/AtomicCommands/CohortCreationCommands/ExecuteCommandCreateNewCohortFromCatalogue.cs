@@ -136,7 +136,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
 
             base.Execute();
 
-            var request = GetCohortCreationRequest("All patient identifiers in ExtractionInformation '" + _extractionIdentifierColumn.CatalogueItem.Catalogue + "." + _extractionIdentifierColumn.GetRuntimeName() + "'  (ID=" + _extractionIdentifierColumn.ID + ")");
+            var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
+            var request = GetCohortCreationRequest(auditLogBuilder.GetDescription(_extractionIdentifierColumn));
 
             //user choose to cancel the cohort creation request dialogue
             if (request == null)

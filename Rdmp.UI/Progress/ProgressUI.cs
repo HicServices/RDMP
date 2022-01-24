@@ -36,6 +36,11 @@ namespace Rdmp.UI.Progress
         DataTable progress = new DataTable();
 
         /// <summary>
+        /// Sender for all global errors that should never be filtered out of the <see cref="ProgressUI"/>
+        /// </summary>
+        public const string GlobalRunError = "Run Error";
+
+        /// <summary>
         /// See HandleFloodOfMessagesFromJob, basically if the message in a progress event changes over time we don't want to spam the datagrid so instead we just note that there is a
         /// flood of distinct messages coming from a specific source component
         /// </summary>
@@ -57,8 +62,8 @@ namespace Rdmp.UI.Progress
             progress.Columns.Add("Job");
             progress.PrimaryKey = new []{progress.Columns[0]};
 
-            progress.Columns.Add("Progress",typeof(int));
-            progress.Columns.Add("Quantity");
+            progress.Columns.Add("Count",typeof(int));
+            progress.Columns.Add("Unit");
             progress.Columns.Add("Processing Time",typeof(TimeSpan));
 
             Timer t = new Timer();
@@ -68,7 +73,7 @@ namespace Rdmp.UI.Progress
 
             DataGridViewCellStyle style = new DataGridViewCellStyle();
             style.Format = "N0";
-            dataGridView1.Columns["Progress"].DefaultCellStyle = style;
+            dataGridView1.Columns["Count"].DefaultCellStyle = style;
 
             dataGridView1.CellFormatting += dataGridView1_CellFormatting;
             _processingTimeColIndex = dataGridView1.Columns["Processing Time"].Index;
@@ -231,7 +236,7 @@ namespace Rdmp.UI.Progress
                         }
                         else
                         {
-                            progress.Rows.Find(args.TaskDescription)["Progress"] = args.Progress.Value;
+                            progress.Rows.Find(args.TaskDescription)["Count"] = args.Progress.Value;
                             progress.Rows.Find(args.TaskDescription)["Processing Time"] = args.TimeSpentProcessingSoFar;
                         }
 
@@ -276,7 +281,7 @@ namespace Rdmp.UI.Progress
             foreach (var jobsAlreadySeen in JobsreceivedFromSender[sender])
                 if (progress.Rows.Contains(jobsAlreadySeen))
                 {
-                    startAtProgressAmount += Convert.ToInt32(progress.Rows.Find(jobsAlreadySeen)["Progress"]);
+                    startAtProgressAmount += Convert.ToInt32(progress.Rows.Find(jobsAlreadySeen)["Count"]);
                     progress.Rows.Remove(progress.Rows.Find(jobsAlreadySeen)); //discard the flood of messages that might be in data table 
                     
                 }
@@ -309,7 +314,7 @@ namespace Rdmp.UI.Progress
            if (progress.Rows.Contains(floodJob))
            {
                //update with progress
-               progress.Rows.Find(floodJob)["Progress"] = Convert.ToInt32(progress.Rows.Find(floodJob)["Progress"]) + progressAmountToAdd;
+               progress.Rows.Find(floodJob)["Count"] = Convert.ToInt32(progress.Rows.Find(floodJob)["Count"]) + progressAmountToAdd;
 
            }
            else
@@ -397,11 +402,13 @@ namespace Rdmp.UI.Progress
 
         private void SetFilterFromTextBox()
         {
-            olvProgressEvents.ModelFilter = new TextMatchFilter(olvProgressEvents, tbTextFilter.Text, StringComparison.CurrentCultureIgnoreCase);
+            var alwaysShow = olvProgressEvents.Objects.OfType<ProgressUIEntry>().Where(p => p.Sender == GlobalRunError).ToArray();
+            olvProgressEvents.ModelFilter = new TextMatchFilterWithWhiteList(alwaysShow, olvProgressEvents, tbTextFilter.Text, StringComparison.CurrentCultureIgnoreCase);
         }
         public void SetFatal()
         {
             lblCrashed.Visible = true;
+            lblCrashed.BringToFront();
         }
 
         

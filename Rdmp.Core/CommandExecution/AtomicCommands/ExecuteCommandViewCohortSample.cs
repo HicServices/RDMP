@@ -17,9 +17,16 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     /// </summary>
     class ExecuteCommandViewCohortSample : BasicCommandExecution
     {
+        private readonly bool _includeCohortID;
+
         public ExtractableCohort Cohort { get; }
         public int Sample { get; }
         public FileInfo ToFile { get; }
+
+        /// <summary>
+        /// Set to true to prompt user to pick a <see cref="ToFile"/> at command execution time.
+        /// </summary>
+        public bool AskForFile { get; set; }
 
         public ExecuteCommandViewCohortSample(IBasicActivateItems activator,
             [DemandsInitialization("The cohort that you want to fetch records for")]
@@ -27,27 +34,44 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             [DemandsInitialization("Optional. The maximum number of records to retrieve")]
             int sample = 100,
             [DemandsInitialization("Optional. A file to write the records to instead of the console")]
-            FileInfo toFile = null):base(activator)
+            FileInfo toFile = null,
+
+            [DemandsInitialization("True to include the OriginId of the cohort when extracting",DefaultValue = true)]
+            bool includeCohortID = true):base(activator)
         {
             Cohort = cohort;
             Sample = sample;
             ToFile = toFile;
+            _includeCohortID = includeCohortID;
         }
         public override void Execute()
         {
             base.Execute();
 
             var collection = new ViewCohortExtractionUICollection(Cohort) {
-                Top = Sample
+                Top = Sample,
+                IncludeCohortID = _includeCohortID
             };
 
-            if(ToFile == null)
+            FileInfo toFile = ToFile;
+
+            if(AskForFile)
+            {
+                toFile = BasicActivator.SelectFile("Save cohort as", "Comma Separated Values", "*.csv");
+                if(toFile == null)
+                {
+                    // user cancelled selecting a file
+                    return;
+                }
+            }
+
+            if(toFile == null)
             {
                 BasicActivator.ShowData(collection);
             }
             else
             {
-                ExtractTableVerbatim.ExtractDataToFile(collection, ToFile);
+                ExtractTableVerbatim.ExtractDataToFile(collection, toFile);
             }
             
         }

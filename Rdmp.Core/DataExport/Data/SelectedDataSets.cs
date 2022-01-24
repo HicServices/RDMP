@@ -133,6 +133,12 @@ namespace Rdmp.Core.DataExport.Data
         }
 
         /// <inheritdoc/>
+        public string GetDeleteVerb()
+        {
+            return "Remove";
+        }
+
+        /// <inheritdoc/>
         public string GetDeleteMessage()
         {
             return "remove '" + ExtractableDataSet + "' from ExtractionConfiguration '" + ExtractionConfiguration + "'";

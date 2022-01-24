@@ -9,10 +9,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added [ExtractionProgress] for robustly extracting large datasets in multiple smaller executions
+- Added ability to export [ExtractableCohort] to CSV file
+- Added 'Created From' column to cohort detail page (parses cohorts AuditLog)
+
+### Fixed
+
+- Fixed a bug where ProjectUI would not show cohorts when some cohort sources are unreachable
+- Fixed ProgressUI filter hiding global errors on extraction where the whole operation failed and a dataset filter was selected ([888](https://github.com/HicServices/RDMP/issues/888))
+
+### Changed
+
+- Changed right click context menu item 'Delete' to say 'Remove' when deleting a chain or relationship object (e.g. cohort usage by a project) ([#887](https://github.com/HicServices/RDMP/issues/887))
 
 ## [7.0.5] - 2022-01-10
 
 ### Added
+
+- Added ability to open extraction directory for an [ExtractionConfiguration]
 - Added diagnostic screen logging last executed command (https://github.com/HicServices/RDMP/issues/815)
 - Added tooltips for objects in tree views (https://github.com/HicServices/RDMP/issues/819).
 - Added custom icon for [CatalogueItem] that represent transforms on the underlying column (https://github.com/HicServices/RDMP/issues/818)
