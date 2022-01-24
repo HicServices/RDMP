@@ -437,6 +437,16 @@ namespace Rdmp.Core.DataExport.Data
                         foreach (SelectedDataSetsForcedJoin oldForcedJoin in Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(selected))
                             new SelectedDataSetsForcedJoin((IDataExportRepository) Repository, newSelectedDataSet,oldForcedJoin.TableInfo);
                        
+                        // clone should copy any ExtractionProgresses
+                        if(selected.ExtractionProgressIfAny != null)
+                        {
+                            var old =  selected.ExtractionProgressIfAny;
+                            var clonedProgress = new ExtractionProgress(repo, newSelectedDataSet,old.StartDate,old.EndDate,old.NumberOfDaysPerBatch,old.Name,old.ExtractionInformation_ID);
+
+                            // Notice that we do not set the ProgressDate because the cloned copy should be extracting from the begining
+                            // when it is run.  We don't want the user to have to manually reset it
+                            clonedProgress.SaveToDatabase();                            
+                        }
 
                         try
                         {

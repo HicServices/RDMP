@@ -21,5 +21,12 @@ namespace Rdmp.Core.DataExport.DataExtraction.Commands
 
         ExtractCommandState State { get; }
         void ElevateState(ExtractCommandState newState);
+
+        /// <summary>
+        /// Flag that can be set by sources that support resume.  This indicates that the request is for the next
+        /// set of new data that has not been succesfully outputted yet and should be appended to the destination 
+        /// instead of overwritting.
+        /// </summary>
+        bool IsBatchResume{ get; set; }
     }
 }

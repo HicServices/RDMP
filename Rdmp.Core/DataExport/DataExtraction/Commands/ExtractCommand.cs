@@ -14,6 +14,9 @@ namespace Rdmp.Core.DataExport.DataExtraction.Commands
         public IProject Project { get; private set; }
         public IExtractionConfiguration Configuration { get; private set; }
 
+        /// <inheritdoc/>
+        public bool IsBatchResume { get; set; }
+
         protected ExtractCommand(IExtractionConfiguration configuration)
         {
             Configuration = configuration;
@@ -30,8 +33,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Commands
         
         public void ElevateState(ExtractCommandState newState)
         {
-            if (State < newState)
-                State = newState;
+            State = newState;
         }
     }
 }

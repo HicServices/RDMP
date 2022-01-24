@@ -155,13 +155,13 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
                     else 
                         //there wasn't an explicit one so there was a PipelineComponent maybe? albiet one that might be broken?
                         if (pipeline.SourcePipelineComponent_ID != null)
-                            AddPipelineComponent((int) pipeline.SourcePipelineComponent_ID,DataFlowComponentVisualisation.Role.Source, pipeline.Repository);//add the possibly broken PipelineComponent to the diagram
+                            AddPipelineComponent((int) pipeline.SourcePipelineComponent_ID, PipelineComponentRole.Source, pipeline.Repository);//add the possibly broken PipelineComponent to the diagram
                         else
-                            AddBlankComponent(DataFlowComponentVisualisation.Role.Source);//the user hasn't put one in yet 
+                            AddBlankComponent(PipelineComponentRole.Source);//the user hasn't put one in yet 
 
 
                     foreach (var middleComponent in pipeline.PipelineComponents.Where( c=>c.ID!= pipeline.SourcePipelineComponent_ID && c.ID != pipeline.DestinationPipelineComponent_ID).OrderBy(comp=>comp.Order))
-                        AddPipelineComponent(middleComponent, DataFlowComponentVisualisation.Role.Middle);//add the possibly broken PipelineComponent to the diagram
+                        AddPipelineComponent(middleComponent, PipelineComponentRole.Middle);//add the possibly broken PipelineComponent to the diagram
                
                     //was there an explicit instance?
                     if (_useCase.ExplicitDestination != null)
@@ -172,11 +172,11 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
                     else
                         //there wasn't an explicit one so there was a PipelineComponent maybe? albiet one that might be broken?
                         if (pipeline.DestinationPipelineComponent_ID != null)
-                            AddPipelineComponent((int)pipeline.DestinationPipelineComponent_ID, DataFlowComponentVisualisation.Role.Destination, pipeline.Repository);//add the possibly broken PipelineComponent to the diagram
+                            AddPipelineComponent((int)pipeline.DestinationPipelineComponent_ID, PipelineComponentRole.Destination, pipeline.Repository);//add the possibly broken PipelineComponent to the diagram
                         else
                         {
                             AddDividerIfReorderingAvailable();
-                            AddBlankComponent(DataFlowComponentVisualisation.Role.Destination);//the user hasn't put one in yet 
+                            AddBlankComponent(PipelineComponentRole.Destination);//the user hasn't put one in yet 
                         }
 
 
@@ -188,14 +188,14 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
                 //user has not picked a pipeline yet, show him the shell (factory)
                 //factory has no source, add empty source
                 if (_useCase.ExplicitSource == null)
-                    AddBlankComponent(DataFlowComponentVisualisation.Role.Source);
+                    AddBlankComponent(PipelineComponentRole.Source);
                 else
                     AddExplicit(_useCase.ExplicitSource);
 
 
                 //factory has no source, add empty source
                 if (_useCase.ExplicitDestination == null)
-                    AddBlankComponent(DataFlowComponentVisualisation.Role.Destination);
+                    AddBlankComponent(PipelineComponentRole.Destination);
                 else
                     AddExplicit(_useCase.ExplicitDestination);
             }
@@ -206,19 +206,19 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
         }
 
         //by ID overload
-        private void AddPipelineComponent(int componentID, DataFlowComponentVisualisation.Role role, IRepository repository)
+        private void AddPipelineComponent(int componentID, PipelineComponentRole role, IRepository repository)
         {
             AddPipelineComponent(repository.GetObjectByID<PipelineComponent>(componentID), role);
         }
 
-        private void AddPipelineComponent(IPipelineComponent toRealize, DataFlowComponentVisualisation.Role role)
+        private void AddPipelineComponent(IPipelineComponent toRealize, PipelineComponentRole role)
         {
             Exception exConstruction;
             
             //create the pipeline realization (might fail
             var value = _pipelineFactory.TryCreateComponent(toRealize, out exConstruction);
 
-            if (role != DataFlowComponentVisualisation.Role.Source)
+            if (role != PipelineComponentRole.Source)
                 AddDividerIfReorderingAvailable();
 
             //create the visualization
@@ -291,7 +291,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
         private void AddExplicit(object value)
         {
 
-            var role = DataFlowComponentVisualisation.GetRoleFor(value.GetType());
+            var role = PipelineComponent.GetRoleFor(value.GetType());
 
             var component = new DataFlowComponentVisualisation(role,value,null);
             flpPipelineDiagram.Controls.Add(component);//add the explicit component
@@ -307,7 +307,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             }
         }
         
-        private void AddBlankComponent(DataFlowComponentVisualisation.Role role)
+        private void AddBlankComponent(PipelineComponentRole role)
         {
             DataFlowComponentVisualisation toAdd = new DataFlowComponentVisualisation(role, null, component_shouldAllowDrop);
             toAdd.DragDrop += component_DragDrop;
@@ -349,7 +349,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             var vis = (PipelineComponentVisualisation)arg.Data.GetData(typeof(PipelineComponentVisualisation));
 
             //only middle components can be reordered
-            if (vis.GetRole() == DataFlowComponentVisualisation.Role.Middle)
+            if (vis.GetRole() == PipelineComponentRole.Middle)
                 return DragDropEffects.Move;
             
             return DragDropEffects.None;
@@ -383,7 +383,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
             if (
                 //if user is trying to add a source
-                advert.GetRole() == DataFlowComponentVisualisation.Role.Source
+                advert.GetRole() == PipelineComponentRole.Source
                 //and there is already an explicit source or a configured one
                 && (_useCase.ExplicitSource != null || _pipeline.SourcePipelineComponent_ID != null))
             {
@@ -393,7 +393,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
             if (
                 //if user is trying to add a destination
-               advert.GetRole() == DataFlowComponentVisualisation.Role.Destination
+               advert.GetRole() == PipelineComponentRole.Destination
                 //and there is already an explicit destination or a configured one
                && (_useCase.ExplicitDestination != null || _pipeline.DestinationPipelineComponent_ID != null))
             {
@@ -415,13 +415,13 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
           
             newcomp.SaveToDatabase();
             
-            if (advert.GetRole() == DataFlowComponentVisualisation.Role.Source)
+            if (advert.GetRole() == PipelineComponentRole.Source)
             {
                 _pipeline.SourcePipelineComponent_ID = newcomp.ID;
                 _pipeline.SaveToDatabase();
             }
 
-            if (advert.GetRole() == DataFlowComponentVisualisation.Role.Destination)
+            if (advert.GetRole() == PipelineComponentRole.Destination)
             {
                 _pipeline.DestinationPipelineComponent_ID = newcomp.ID;
                 _pipeline.SaveToDatabase();

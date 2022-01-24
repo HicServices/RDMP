@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
@@ -111,6 +112,41 @@ AND
                 filter.DeleteInDatabase();
             }
         }
+
+
+        [Test]
+        public void CloneWithExtractionProgress()
+        {
+            var sds = _configuration.SelectedDataSets[0];
+            var ci = sds.GetCatalogue().CatalogueItems.First();
+            var origProgress = new ExtractionProgress(DataExportRepository, sds, null, DateTime.Now, 10, "fff drrr", ci.ID);
+            origProgress.ProgressDate = new DateTime(2001, 01, 01);
+            origProgress.SaveToDatabase();
+
+            ExtractionConfiguration deepClone = _configuration.DeepCloneWithNewIDs();
+            Assert.AreEqual(deepClone.Cohort_ID, _configuration.Cohort_ID);
+            Assert.AreNotEqual(deepClone.ID, _configuration.ID);
+
+            var clonedSds = deepClone.SelectedDataSets.Single(s => s.ExtractableDataSet_ID == sds.ExtractableDataSet_ID);
+
+            var clonedProgress = clonedSds.ExtractionProgressIfAny;
+
+            Assert.IsNotNull(clonedProgress);
+            Assert.IsNull(clonedProgress.StartDate);
+            Assert.IsNull(clonedProgress.ProgressDate, "Cloning a ExtractionProgress should reset its ProgressDate back to null in anticipation of it being extracted again");
+            
+            Assert.AreEqual(clonedProgress.EndDate, origProgress.EndDate);
+            Assert.AreEqual(clonedProgress.NumberOfDaysPerBatch, origProgress.NumberOfDaysPerBatch);
+            Assert.AreEqual(clonedProgress.Name, origProgress.Name);
+            Assert.AreEqual(clonedProgress.ExtractionInformation_ID, origProgress.ExtractionInformation_ID);
+
+
+            deepClone.DeleteInDatabase();
+
+            // remove the progress so that it doesn't trip other tests
+            origProgress.DeleteInDatabase();
+        }
+
 
         public void IntroduceOrphan()
         {

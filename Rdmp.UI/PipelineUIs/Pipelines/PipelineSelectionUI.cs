@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+﻿// Copyright (c) The University of Dundee 2018-2019
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -31,6 +31,8 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
         ToolTip tt = new ToolTip();
 
+        const string ShowAll = "Show All/Incompatible Pipelines";
+        public bool showAll = false;
         public IPipeline Pipeline
         {
             get { return _pipeline; }
@@ -49,22 +51,28 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             set { gbPrompt.Text = value; }
         }
 
+        /// <summary>
+        /// Refresh the list of pipeline components
+        /// </summary>
         private void RefreshPipelineList()
         {
 
             var before = ddPipelines.SelectedItem as Pipeline;
 
             ddPipelines.Items.Clear();
-
+            
             var context = _useCase.GetContext();
             
-            //add pipelines
-            var allPipelines = _repository.GetAllObjects<Pipeline>();
-            ddPipelines.Items.AddRange(context == null || cbOnlyShowCompatiblePipelines.Checked == false 
-                ? allPipelines.ToArray() //no context/show incompatible enabled so add all pipelines
-                : allPipelines.Where(context.IsAllowable).ToArray()); //only compatible components
+            //add pipelines sorted alphabetically
+            var allPipelines = _repository.GetAllObjects<Pipeline>().OrderBy(p=>p.Name).ToArray();
 
             ddPipelines.Items.Add("<<None>>");
+
+            ddPipelines.Items.AddRange(allPipelines.Where(_useCase.IsAllowable).ToArray());
+            ddPipelines.Items.Add(ShowAll);
+
+            if (showAll)
+                ddPipelines.Items.AddRange(allPipelines.Where(o => !_useCase.IsAllowable(o)).ToArray());
 
             //reselect if it is still there
             if (before != null)
@@ -97,27 +105,70 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
             RefreshPipelineList();
 
-            tt.SetToolTip(cbOnlyShowCompatiblePipelines,"Untick to show all pipelines, even if they are not compatible with the current operation.");
             tt.SetToolTip(btnClonePipeline,"Create a new copy of the selected pipeline");
             tt.SetToolTip(btnEditPipeline, "Change which components are run in the Pipeline and with what settings");
+
+            ddPipelines.DrawMode = DrawMode.OwnerDrawFixed;
+            ddPipelines.DrawItem += new DrawItemEventHandler(cmb_Type_DrawItem);
+
         }
 
+        void cmb_Type_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            e.DrawBackground();
+            if(e.Index == -1)
+            {
+                return;
+            }
+
+            var render = ddPipelines.Items[e.Index].ToString();
+            bool isIncompatible = e.Index > ddPipelines.Items.IndexOf(ShowAll);
+
+            var italic = new Font(ddPipelines.Font, FontStyle.Italic);
+
+            if (Equals(ddPipelines.Items[e.Index],ShowAll))
+            {
+                // draw a line along the top
+                e.Graphics.DrawLine(Pens.CornflowerBlue, new Point(e.Bounds.Left, e.Bounds.Top + 1), new Point(e.Bounds.Right, e.Bounds.Top + 1));
+
+                if(showAll)
+                {
+                    render = "✓ " + render;
+                }   
+
+                TextRenderer.DrawText(e.Graphics, render, italic , new Rectangle(new Point(e.Bounds.Left, e.Bounds.Top + 1), e.Bounds.Size), Color.CornflowerBlue, TextFormatFlags.Left);
+            }
+            else
+            {
+                TextRenderer.DrawText(e.Graphics, render, isIncompatible ? italic : ddPipelines.Font, e.Bounds, ddPipelines.ForeColor, TextFormatFlags.Left);
+            }
+
+            e.DrawFocusRectangle();
+        }
         private void groupBox1_Enter(object sender, EventArgs e)
         {
 
         }
 
-        
-
         private void ddPipelines_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if(Equals(ddPipelines.SelectedItem , ShowAll))
+            {
+                // toggle show all
+                showAll = !showAll;
+                RefreshPipelineList();
+                // Force dropdown to show again with newly refreshed list
+                ddPipelines.DroppedDown = true;
+                return;
+            }
+
             Pipeline = ddPipelines.SelectedItem as Pipeline;
 
             if (Pipeline == null)
                 tbDescription.Text = "";
             else
                 tbDescription.Text = Pipeline.Description;
-
+            
             btnEditPipeline.Enabled = Pipeline != null;
             btnDeletePipeline.Enabled = Pipeline != null;
             btnClonePipeline.Enabled = Pipeline != null;
@@ -155,11 +206,6 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             Pipeline = _repository.GetObjectByID<Pipeline>(Pipeline.ID);
             ddPipelines.Items.Add(Pipeline);
             ddPipelines.SelectedItem = Pipeline;
-        }
-
-        private void cbOnlyShowCompatiblePipelines_CheckedChanged(object sender, EventArgs e)
-        {
-            RefreshPipelineList();
         }
 
         private void btnDeletePipeline_Click(object sender, EventArgs e)
@@ -202,18 +248,14 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             ddPipelines.Location = new Point(0, 3);
             ddPipelines.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 
-            foreach (var button in new Control[] { btnEditPipeline, btnCreateNewPipeline, btnClonePipeline, btnDeletePipeline, cbOnlyShowCompatiblePipelines })
+            foreach (var button in new Control[] { btnEditPipeline, btnCreateNewPipeline, btnClonePipeline, btnDeletePipeline })
             {
                 this.Controls.Add(button);
                 button.Location = new Point(2, 2);
                 button.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             }
 
-            cbOnlyShowCompatiblePipelines.Text = "";
-            cbOnlyShowCompatiblePipelines.Left = Width - cbOnlyShowCompatiblePipelines.Width;
-            cbOnlyShowCompatiblePipelines.Top = 8;
-
-            btnDeletePipeline.Left = cbOnlyShowCompatiblePipelines.Left- btnDeletePipeline.Width;
+            btnDeletePipeline.Left = Width - btnDeletePipeline.Width;
             btnClonePipeline.Left = btnDeletePipeline.Left - btnClonePipeline.Width;
             btnCreateNewPipeline.Left = btnClonePipeline.Left - btnCreateNewPipeline.Width;
             btnEditPipeline.Left = btnCreateNewPipeline.Left - btnEditPipeline.Width;

@@ -222,11 +222,22 @@ namespace Rdmp.Core.DataExport.Data
         }
 
         /// <inheritdoc/>
-        public void CompleteAudit(Type destinationType, string destinationDescription, int recordsExtracted)
+        public void CompleteAudit(Type destinationType, string destinationDescription, int recordsExtracted, bool isBatchResume, bool failed)
         {
             DestinationType = destinationType.FullName;
             DestinationDescription = destinationDescription;
-            RecordsExtracted = recordsExtracted;
+
+            if(isBatchResume)
+            {
+                if(!failed)
+                {
+                    RecordsExtracted += recordsExtracted;
+                }
+            }
+            else
+            {
+                RecordsExtracted = recordsExtracted;
+            }
 
             SaveToDatabase();
         }
