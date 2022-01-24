@@ -402,7 +402,8 @@ namespace Rdmp.UI.Progress
 
         private void SetFilterFromTextBox()
         {
-            var alwaysShow = olvProgressEvents.Objects.OfType<ProgressUIEntry>().Where(p => p.Sender == GlobalRunError).ToArray();
+            var alwaysShow = olvProgressEvents.Objects == null ? new ProgressUIEntry[0] :
+                olvProgressEvents.Objects.OfType<ProgressUIEntry>().Where(p => p.Sender == GlobalRunError).ToArray();
             olvProgressEvents.ModelFilter = new TextMatchFilterWithWhiteList(alwaysShow, olvProgressEvents, tbTextFilter.Text, StringComparison.CurrentCultureIgnoreCase);
         }
         public void SetFatal()
