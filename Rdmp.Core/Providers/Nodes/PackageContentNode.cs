@@ -64,9 +64,16 @@ namespace Rdmp.Core.Providers.Nodes
             return DataSet;
         }
 
+        /// <inheritdoc/>
         public string GetDeleteMessage()
         {
-            return "Remove '" + DataSet + "' from Pacakge";
+            return "remove '" + DataSet + "' from Pacakge";
+        }
+
+        /// <inheritdoc/>
+        public string GetDeleteVerb()
+        {
+            return "Remove";
         }
     }
 }

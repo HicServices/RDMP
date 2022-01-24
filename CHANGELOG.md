@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed a bug where ProjectUI would not show cohorts when some cohort sources are unreachable
 
+### Changed
+
+- Changed right click context menu item 'Delete' to say 'Remove' when deleting a chain or relationship object (e.g. cohort usage by a project) ([#887](https://github.com/HicServices/RDMP/issues/887))
+
 ## [7.0.5] - 2022-01-10
 
 ### Added
