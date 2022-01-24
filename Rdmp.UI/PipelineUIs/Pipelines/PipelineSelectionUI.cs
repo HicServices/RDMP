@@ -124,12 +124,12 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             var render = ddPipelines.Items[e.Index].ToString();
             bool isIncompatible = e.Index > ddPipelines.Items.IndexOf(ShowAll);
 
+            var italic = new Font(ddPipelines.Font, FontStyle.Italic);
+
             if (Equals(ddPipelines.Items[e.Index],ShowAll))
             {
                 // draw a line along the top
                 e.Graphics.DrawLine(Pens.CornflowerBlue, new Point(e.Bounds.Left, e.Bounds.Top + 1), new Point(e.Bounds.Right, e.Bounds.Top + 1));
-
-                var italic = new Font(ddPipelines.Font, FontStyle.Italic);
 
                 if(showAll)
                 {
@@ -140,7 +140,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             }
             else
             {
-                TextRenderer.DrawText(e.Graphics, render, ddPipelines.Font, e.Bounds, isIncompatible ? Color.Gray : ddPipelines.ForeColor, TextFormatFlags.Left);
+                TextRenderer.DrawText(e.Graphics, render, isIncompatible ? italic : ddPipelines.Font, e.Bounds, ddPipelines.ForeColor, TextFormatFlags.Left);
             }
 
             e.DrawFocusRectangle();
