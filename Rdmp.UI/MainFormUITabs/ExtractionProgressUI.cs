@@ -7,11 +7,13 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataQualityEngine;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Reports;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using ReusableLibraryCode.Icons.IconProvision;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -23,6 +25,8 @@ namespace Rdmp.UI.MainFormUITabs
     {
         public ExtractionProgress ExtractionProgress { get => (ExtractionProgress)DatabaseObject; }
         public IDetermineDatasetTimespan TimespanCalculator { get; set; } = new DatasetTimespanCalculator();
+        
+        private Tuple<DateTime?, DateTime?> dqeResult;
 
         public ExtractionProgressUI()
         {
@@ -41,14 +45,30 @@ namespace Rdmp.UI.MainFormUITabs
         {
             base.SetDatabaseObject(activator, databaseObject);
 
-            var result = TimespanCalculator.GetMachineReadableTimespanIfKnownOf(databaseObject.ExtractionInformation.CatalogueItem.Catalogue, false, out _);
+            var result = TimespanCalculator.GetMachineReadableTimespanIfKnownOf(databaseObject.ExtractionInformation.CatalogueItem.Catalogue, false, out DateTime? date);
 
-            tbStartDate.Text = databaseObject.StartDate == null ? result.Item1?.ToString("yyyy-MM-dd") : databaseObject.StartDate.Value.ToString("yyyy-MM-dd");
-            tbEndDate.Text = databaseObject.EndDate == null ? result.Item2?.AddDays(1).ToString("yyyy-MM-dd") : databaseObject.EndDate.Value.ToString("yyyy-MM-dd");
+            btnFromDQE.Image = activator.CoreIconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Import);
+
+            if (date != null)
+            {
+                lblEvaluationDate.Text = $"(DQE Run on {date})";
+                btnFromDQE.Enabled = true;
+                dqeResult = result;
+            }
+            else
+            {
+                lblEvaluationDate.Text = $"(DQE has not been run)";
+                btnFromDQE.Enabled = false;
+            }
+            
+
+            tbStartDate.Text = databaseObject.StartDate == null ? "" :databaseObject.StartDate.Value.ToString("yyyy-MM-dd") ?? "";
+            tbEndDate.Text = databaseObject.EndDate == null ? "" : databaseObject.EndDate.Value.ToString("yyyy-MM-dd");
             tbProgress.Text = databaseObject.ProgressDate == null ? "" : databaseObject.ProgressDate.Value.ToString("yyyy-MM-dd");
 
             var cata = databaseObject.SelectedDataSets.GetCatalogue();
             ddColumn.DataSource = cata.GetAllExtractionInformation();
+
 
             try
             {
@@ -104,6 +124,12 @@ namespace Rdmp.UI.MainFormUITabs
                 ExtractionProgress.ValidateSelectedColumn(ragSmiley1, col);
                 ExtractionProgress.ExtractionInformation_ID = col.ID;
             }
+        }
+
+        private void btnFromDQE_Click(object sender, EventArgs e)
+        {
+            tbStartDate.Text = dqeResult.Item1?.ToString("yyyy-MM-dd");
+            tbEndDate.Text = dqeResult.Item2?.AddDays(1).ToString("yyyy-MM-dd");
         }
     }
 

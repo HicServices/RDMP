@@ -45,6 +45,8 @@ namespace Rdmp.UI.MainFormUITabs
             this.ragSmiley1 = new Rdmp.UI.ChecksUI.RAGSmiley();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnFromDQE = new System.Windows.Forms.Button();
+            this.lblEvaluationDate = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -54,7 +56,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.tbID.Enabled = false;
             this.tbID.Location = new System.Drawing.Point(109, 3);
             this.tbID.Name = "tbID";
-            this.tbID.Size = new System.Drawing.Size(200, 23);
+            this.tbID.Size = new System.Drawing.Size(91, 23);
             this.tbID.TabIndex = 1;
             // 
             // lblID
@@ -73,7 +75,7 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             this.tbProgress.Location = new System.Drawing.Point(109, 149);
             this.tbProgress.Name = "tbProgress";
-            this.tbProgress.Size = new System.Drawing.Size(250, 23);
+            this.tbProgress.Size = new System.Drawing.Size(313, 23);
             this.tbProgress.TabIndex = 2;
             this.tbProgress.TextChanged += new System.EventHandler(this.tbDate_TextChanged);
             // 
@@ -93,7 +95,7 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             this.tbStartDate.Location = new System.Drawing.Point(109, 62);
             this.tbStartDate.Name = "tbStartDate";
-            this.tbStartDate.Size = new System.Drawing.Size(250, 23);
+            this.tbStartDate.Size = new System.Drawing.Size(313, 23);
             this.tbStartDate.TabIndex = 3;
             this.tbStartDate.TextChanged += new System.EventHandler(this.tbDate_TextChanged);
             // 
@@ -113,7 +115,7 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             this.tbEndDate.Location = new System.Drawing.Point(109, 91);
             this.tbEndDate.Name = "tbEndDate";
-            this.tbEndDate.Size = new System.Drawing.Size(250, 23);
+            this.tbEndDate.Size = new System.Drawing.Size(313, 23);
             this.tbEndDate.TabIndex = 4;
             this.tbEndDate.TextChanged += new System.EventHandler(this.tbDate_TextChanged);
             // 
@@ -133,7 +135,7 @@ namespace Rdmp.UI.MainFormUITabs
             // 
             this.tbDaysPerBatch.Location = new System.Drawing.Point(109, 120);
             this.tbDaysPerBatch.Name = "tbDaysPerBatch";
-            this.tbDaysPerBatch.Size = new System.Drawing.Size(200, 23);
+            this.tbDaysPerBatch.Size = new System.Drawing.Size(91, 23);
             this.tbDaysPerBatch.TabIndex = 5;
             // 
             // label4
@@ -236,17 +238,38 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel1.Size = new System.Drawing.Size(320, 30);
             this.panel1.TabIndex = 9;
             // 
+            // btnFromDQE
+            // 
+            this.btnFromDQE.Location = new System.Drawing.Point(435, 80);
+            this.btnFromDQE.Name = "btnFromDQE";
+            this.btnFromDQE.Size = new System.Drawing.Size(31, 28);
+            this.btnFromDQE.TabIndex = 9;
+            this.btnFromDQE.UseVisualStyleBackColor = true;
+            this.btnFromDQE.Click += new System.EventHandler(this.btnFromDQE_Click);
+            // 
+            // lblEvaluationDate
+            // 
+            this.lblEvaluationDate.AutoSize = true;
+            this.lblEvaluationDate.Location = new System.Drawing.Point(435, 112);
+            this.lblEvaluationDate.Name = "lblEvaluationDate";
+            this.lblEvaluationDate.Size = new System.Drawing.Size(38, 15);
+            this.lblEvaluationDate.TabIndex = 10;
+            this.lblEvaluationDate.Text = "label6";
+            // 
             // ExtractionProgressUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.lblEvaluationDate);
+            this.Controls.Add(this.btnFromDQE);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "ExtractionProgressUI";
-            this.Size = new System.Drawing.Size(431, 225);
+            this.Size = new System.Drawing.Size(479, 205);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -267,5 +290,7 @@ namespace Rdmp.UI.MainFormUITabs
         private ChecksUI.RAGSmiley ragSmiley1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Button btnFromDQE;
+        private System.Windows.Forms.Label lblEvaluationDate;
     }
 }
