@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Restricted [Pipelines] shown to only those where all components are compatible with the input objects (previously on context was checked) (https://github.com/HicServices/RDMP/issues/885)
+- "Show All/Incompatible Pipelines" option added to Pipelines dropdown to make a simpler user interface
 
 ## [7.0.5] - 2022-01-10
 
