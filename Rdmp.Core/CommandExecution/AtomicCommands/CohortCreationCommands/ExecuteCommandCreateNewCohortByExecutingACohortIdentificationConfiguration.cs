@@ -14,6 +14,7 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline.Events;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 
@@ -71,6 +72,16 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
 
             if (cic == null)
                 return;
+
+
+            if (Project == null && BasicActivator.CoreChildProvider is DataExportChildProvider dx)
+            {
+                var projAssociations = dx.AllProjectAssociatedCics.Where(c => c.CohortIdentificationConfiguration_ID == cic.ID).ToArray();
+                if (projAssociations.Length == 1)
+                {
+                    Project = projAssociations[0].Project;
+                }
+            }
 
             var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
             var request = GetCohortCreationRequest(auditLogBuilder.GetDescription(cic));
