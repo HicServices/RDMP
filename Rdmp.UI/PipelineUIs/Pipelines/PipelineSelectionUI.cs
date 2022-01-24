@@ -87,9 +87,6 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
                 ? (object) ddPipelines.Items.OfType<Pipeline>().Single()
                 : "<<None>>";
 
-            // add horizontal line
-            var width = ddPipelines.Items.Cast<object>().Max(o => o.ToString().Length);
-
             // add show all
             ddPipelines.Items.Add(ShowAll);
         }
