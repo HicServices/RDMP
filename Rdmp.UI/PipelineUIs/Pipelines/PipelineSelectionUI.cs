@@ -31,7 +31,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
         ToolTip tt = new ToolTip();
 
-        const string ShowAll = "Show All Pipelines";
+        const string ShowAll = "Show All/Incompatible Pipelines";
         public bool showAll = false;
         public IPipeline Pipeline
         {
@@ -51,6 +51,9 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             set { gbPrompt.Text = value; }
         }
 
+        /// <summary>
+        /// Refresh the list of pipeline components
+        /// </summary>
         private void RefreshPipelineList()
         {
 
@@ -65,10 +68,12 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
             ddPipelines.Items.Add("<<None>>");
 
-            ddPipelines.Items.AddRange(context == null || showAll 
-                ? allPipelines.ToArray() //no context/show incompatible enabled so add all pipelines
-                : allPipelines.Where(_useCase.IsAllowable).ToArray()); //only compatible components
-            
+            ddPipelines.Items.AddRange(allPipelines.Where(_useCase.IsAllowable).ToArray());
+            ddPipelines.Items.Add(ShowAll);
+
+            if (showAll)
+                ddPipelines.Items.AddRange(allPipelines.Where(o => !_useCase.IsAllowable(o)).ToArray());
+
             //reselect if it is still there
             if (before != null)
             {
@@ -86,9 +91,6 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             ddPipelines.SelectedItem = ddPipelines.Items.OfType<Pipeline>().Count() == 1
                 ? (object) ddPipelines.Items.OfType<Pipeline>().Single()
                 : "<<None>>";
-
-            // add show all
-            ddPipelines.Items.Add(ShowAll);
         }
         
         public PipelineSelectionUI(IActivateItems activator,IPipelineUseCase useCase, ICatalogueRepository repository)
@@ -120,6 +122,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             }
 
             var render = ddPipelines.Items[e.Index].ToString();
+            bool isIncompatible = e.Index > ddPipelines.Items.IndexOf(ShowAll);
 
             if (Equals(ddPipelines.Items[e.Index],ShowAll))
             {
@@ -137,7 +140,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             }
             else
             {
-                TextRenderer.DrawText(e.Graphics, render, ddPipelines.Font, e.Bounds, ddPipelines.ForeColor, TextFormatFlags.Left);
+                TextRenderer.DrawText(e.Graphics, render, ddPipelines.Font, e.Bounds, isIncompatible ? Color.Gray : ddPipelines.ForeColor, TextFormatFlags.Left);
             }
 
             e.DrawFocusRectangle();
@@ -147,8 +150,6 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
         }
 
-        
-
         private void ddPipelines_SelectedIndexChanged(object sender, EventArgs e)
         {
             if(Equals(ddPipelines.SelectedItem , ShowAll))
@@ -156,6 +157,8 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
                 // toggle show all
                 showAll = !showAll;
                 RefreshPipelineList();
+                // Force dropdown to show again with newly refreshed list
+                ddPipelines.DroppedDown = true;
                 return;
             }
 
