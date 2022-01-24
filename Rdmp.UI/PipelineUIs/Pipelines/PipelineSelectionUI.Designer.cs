@@ -57,7 +57,7 @@
             this.btnCreateNewPipeline.Location = new System.Drawing.Point(16, 89);
             this.btnCreateNewPipeline.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnCreateNewPipeline.Name = "btnCreateNewPipeline";
-            this.btnCreateNewPipeline.Size = new System.Drawing.Size(59, 25);
+            this.btnCreateNewPipeline.Size = new System.Drawing.Size(59, 26);
             this.btnCreateNewPipeline.TabIndex = 27;
             this.btnCreateNewPipeline.Text = "New...";
             this.btnCreateNewPipeline.UseVisualStyleBackColor = true;
@@ -69,7 +69,7 @@
             this.btnEditPipeline.Location = new System.Drawing.Point(16, 57);
             this.btnEditPipeline.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnEditPipeline.Name = "btnEditPipeline";
-            this.btnEditPipeline.Size = new System.Drawing.Size(48, 25);
+            this.btnEditPipeline.Size = new System.Drawing.Size(48, 26);
             this.btnEditPipeline.TabIndex = 27;
             this.btnEditPipeline.Text = "Edit...";
             this.btnEditPipeline.UseVisualStyleBackColor = true;
@@ -101,7 +101,7 @@
             this.btnClonePipeline.Location = new System.Drawing.Point(666, 22);
             this.btnClonePipeline.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnClonePipeline.Name = "btnClonePipeline";
-            this.btnClonePipeline.Size = new System.Drawing.Size(56, 25);
+            this.btnClonePipeline.Size = new System.Drawing.Size(56, 26);
             this.btnClonePipeline.TabIndex = 31;
             this.btnClonePipeline.Text = "Clone";
             this.btnClonePipeline.UseVisualStyleBackColor = true;
@@ -137,7 +137,7 @@
             this.btnDeletePipeline.Location = new System.Drawing.Point(16, 121);
             this.btnDeletePipeline.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnDeletePipeline.Name = "btnDeletePipeline";
-            this.btnDeletePipeline.Size = new System.Drawing.Size(59, 25);
+            this.btnDeletePipeline.Size = new System.Drawing.Size(59, 26);
             this.btnDeletePipeline.TabIndex = 27;
             this.btnDeletePipeline.Text = "Delete";
             this.btnDeletePipeline.UseVisualStyleBackColor = true;
