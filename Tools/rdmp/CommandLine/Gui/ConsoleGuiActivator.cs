@@ -44,7 +44,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
         protected override bool SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue, out object chosen)
         {
-            var dlg = new ConsoleGuiTextDialog(args.WindowTitle, initialValue?.ToString());
+            var dlg = new ConsoleGuiTextDialog(args, initialValue?.ToString());
             if (dlg.ShowDialog())
             {
                 if (string.IsNullOrWhiteSpace(dlg.ResultText) || dlg.ResultText.Equals("null", StringComparison.CurrentCultureIgnoreCase))
@@ -90,7 +90,11 @@ namespace Rdmp.Core.CommandLine.Gui
         public override bool YesNo(DialogArgs args, out bool chosen)
         {
             GetDialogDimensions(out var w, out var h);
-            int result = MessageBox.Query(w, h, args.TaskDescription, args.WindowTitle, "yes", "no", "cancel");
+
+            // dont use the full height if your just asking a yes/no question with no big description
+            h = Math.Min(5+((args.TaskDescription?.Length ??0) / 20), h);
+
+            int result = MessageBox.Query(w, h, args.WindowTitle ?? "", args.TaskDescription ?? "", "yes", "no", "cancel");
             chosen = result == 0;
 
             return result != 2;
@@ -110,7 +114,7 @@ namespace Rdmp.Core.CommandLine.Gui
         public override bool TypeText(DialogArgs args, int maxLength, string initialText, out string text,
             bool requireSaneHeaderText)
         {
-            var dlg = new ConsoleGuiTextDialog(args.WindowTitle, initialText);
+            var dlg = new ConsoleGuiTextDialog(args, initialText);
             if (dlg.ShowDialog())
             {
                 text = dlg.ResultText;

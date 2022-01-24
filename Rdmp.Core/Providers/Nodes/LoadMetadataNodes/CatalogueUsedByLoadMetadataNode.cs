@@ -27,7 +27,13 @@ namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes
 
         public string GetDeleteMessage()
         {
-            return "disassociate Catalogue '" + ObjectBeingUsed +"' from its Load logic";
+            return "remove Catalogue '" + ObjectBeingUsed +"' from Load";
+        }
+
+        /// <inheritdoc/>
+        public string GetDeleteVerb()
+        {
+            return "Remove";
         }
     }
 }

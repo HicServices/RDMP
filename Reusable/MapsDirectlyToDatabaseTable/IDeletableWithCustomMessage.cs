@@ -14,6 +14,12 @@ namespace MapsDirectlyToDatabaseTable
     public interface IDeletableWithCustomMessage : IDeleteable
     {
         /// <summary>
+        /// Verb that describes the effect of deleting this object e.g. 'Remove', 'Disassociate' etc
+        /// </summary>
+        /// <returns></returns>
+        string GetDeleteVerb();
+
+        /// <summary>
         /// Describes the effects of deleting the IDeletable e.g. Remove dataset X from configuration Y.  Should not be phrased as a question.
         /// </summary>
         /// <returns></returns>

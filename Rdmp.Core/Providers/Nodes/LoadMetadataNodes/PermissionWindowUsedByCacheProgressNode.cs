@@ -34,11 +34,17 @@ namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes
             CacheProgress.SaveToDatabase();
         }
 
+        /// <inheritdoc/>
         public string GetDeleteMessage()
         {
-            return "stop using a PermissionWindow with this CacheProgress";
+            return "remove PermissionWindow from CacheProgress";
         }
-        
+        /// <inheritdoc/>
+        public string GetDeleteVerb()
+        {
+            return "Remove";
+        }
+
         #region Equality Members
         protected bool Equals(PermissionWindowUsedByCacheProgressNode other)
         {

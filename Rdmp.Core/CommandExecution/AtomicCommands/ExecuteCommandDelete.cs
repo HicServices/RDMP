@@ -50,6 +50,31 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if (_deletables.Any(d => d is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out reason)))
                 SetImpossible(reason);
         }
+
+        public override string GetCommandName()
+        {
+            var verb = GetDeleteVerbIfAny();
+
+            return verb != null ? verb : base.GetCommandName();
+        }
+
+        private string GetDeleteVerbIfAny()
+        {
+            // if all objects are IDeletableWithCustomMessage
+            if (OverrideCommandName == null && _deletables.Count > 0 && _deletables.All(d => typeof(IDeletableWithCustomMessage).IsAssignableFrom(d.GetType())))
+            {
+                // Get the verbs (e.g. Remove, Disassociate etc)
+                var verbs = _deletables.Cast<IDeletableWithCustomMessage>().Select(d => d.GetDeleteVerb()).Distinct().ToArray();
+
+                // if they agree on one specific verb
+                if (verbs.Length == 1)
+                    return verbs[0]; // use that
+            }
+
+            // couldn't agree on a verb or not all are IDeletableWithCustomMessage
+            return null;
+        }
+
         public override void Execute()
         {
             base.Execute();
@@ -74,7 +99,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 
             // if it is interactive, only proceed if the user confirms behaviour
             if (BasicActivator.IsInteractive &&
-                !YesNo($"Delete {_deletables.Count} Items?", "Delete Items")) return;
+                !YesNo($"{GetDeleteVerbIfAny()??"Delete"} {_deletables.Count} Items?", "Delete Items")) return;
 
             try
             {

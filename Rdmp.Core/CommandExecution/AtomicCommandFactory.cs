@@ -24,6 +24,7 @@ using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
@@ -178,8 +179,16 @@ namespace Rdmp.Core.CommandExecution
 
                 yield return new ExecuteCommandCreateNewFilterFromCatalogue(_activator,ac);
                 
-                yield return new ExecuteCommandSetFilterTreeShortcut(_activator,ac);
-                yield return new ExecuteCommandSetFilterTreeShortcut(_activator,ac,null){OverrideCommandName="Clear Filter Tree Shortcut" };
+                if(ac.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
+                {
+                    yield return new ExecuteCommandSetFilterTreeShortcut(_activator, ac, null) { OverrideCommandName = "Clear Filter Tree Shortcut" };
+                }
+                else
+                {
+                    yield return new ExecuteCommandSetFilterTreeShortcut(_activator, ac);
+                }
+                
+                
 
                 //only allow them to execute graph if it is normal aggregate graph
                 if (!ac.IsCohortIdentificationAggregate)
@@ -531,6 +540,12 @@ namespace Rdmp.Core.CommandExecution
             if(Is(o,out ExtractableCohort cohort))
             {
                 yield return new ExecuteCommandViewCohortSample(_activator, cohort, 100);
+                yield return new ExecuteCommandViewCohortSample(_activator, cohort, int.MaxValue,null,false) 
+                {
+                    AskForFile = true,
+                    OverrideCommandName = "Save Cohort To File...",
+                    OverrideIcon = FamFamFamIcons.disk
+                };
                 yield return new ExecuteCommandDeprecate(_activator, cohort, !cohort.IsDeprecated);
             }
 

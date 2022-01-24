@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -13,6 +14,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Providers;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
@@ -52,10 +54,24 @@ namespace Rdmp.UI.ProjectUI
             if(_project == null || _project.ProjectNumber == null)
                 return;
 
-            var cohorts = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableCohort>()
-                .Where(c => c.GetExternalData().ExternalProjectNumber == _project.ProjectNumber).ToArray();
+            var dxChildProvider = Activator.CoreChildProvider as DataExportChildProvider;
 
-            extractableCohortCollection1.SetupFor(cohorts);
+            if(dxChildProvider == null)
+            {
+                return;
+            }
+
+            List<ExtractableCohort> toShow = new List<ExtractableCohort>();
+
+            foreach(var c in dxChildProvider.Cohorts)
+            {
+                if (c.ExternalProjectNumber == _project.ProjectNumber)
+                {
+                    toShow.Add(c);
+                }
+            }
+
+            extractableCohortCollection1.SetupFor(toShow.ToArray());
         }
 
         //menu item setup
