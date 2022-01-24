@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Changed right click context menu item 'Delete' to say 'Remove' when deleting a chain or relationship object (e.g. cohort usage by a project) ([#887](https://github.com/HicServices/RDMP/issues/887))
 - Restricted [Pipelines] shown to only those where all components are compatible with the input objects (previously on context was checked) (https://github.com/HicServices/RDMP/issues/885)
 - "Show All/Incompatible Pipelines" option added to Pipelines dropdown to make a simpler user interface
+- When committing a cohort through the Cohort Builder the Project will automatically be selected if it already belongs to a single one (https://github.com/HicServices/RDMP/issues/868)
 
 ## [7.0.5] - 2022-01-10
 
