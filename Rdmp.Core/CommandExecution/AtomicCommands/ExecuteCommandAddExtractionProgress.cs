@@ -22,14 +22,16 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             _sds = sds;
 
+            if (_sds.ExtractionProgressIfAny != null)
+            {
+                SetImpossible("Catalogue already has an ExtractionProgress");
+                return;
+            }
+
             if (_sds.GetCatalogue()?.TimeCoverage_ExtractionInformation_ID == null)
             {
                 SetImpossible("Catalogue does not have a time coverage field configured");
-            }
-
-            if(_sds.ExtractionProgressIfAny != null)
-            {
-                SetImpossible("Catalogue does not have a time coverage field configured");
+                return;
             }
         }
 
