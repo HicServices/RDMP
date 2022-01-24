@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed a bug where ProjectUI would not show cohorts when some cohort sources are unreachable
+- Fixed ProgressUI filter hiding global errors on extraction where the whole operation failed and a dataset filter was selected ([888](https://github.com/HicServices/RDMP/issues/888))
 
 ## [7.0.5] - 2022-01-10
 

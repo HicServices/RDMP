@@ -13,6 +13,7 @@ using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Progress;
 using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.TransparentHelpSystem;
@@ -219,7 +220,7 @@ namespace Rdmp.UI.SimpleControls
             }
             catch (Exception ex)
             {
-                loadProgressUI1.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Fatal Error",ex));
+                loadProgressUI1.OnNotify(ProgressUI.GlobalRunError,new NotifyEventArgs(ProgressEventType.Error, "Fatal Error",ex));
             }
 
             return -1;
