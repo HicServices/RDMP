@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <item>
-    <version>7.0.5.0</version>
-    <url>https://github.com/HicServices/RDMP/releases/download/v7.0.5/rdmp-client.zip</url>
-    <changelog>https://github.com/HicServices/RDMP/blob/master/CHANGELOG.md#705</changelog>
+    <version>7.0.6.0</version>
+    <url>https://github.com/HicServices/RDMP/releases/download/v7.0.6/rdmp-client.zip</url>
+    <changelog>https://github.com/HicServices/RDMP/blob/master/CHANGELOG.md#706</changelog>
     <mandatory>true</mandatory>
 </item>

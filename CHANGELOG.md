@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [7.0.6] - 2022-01-25
+
+*Database Patch Included (enables ExtractionProgress batching)*
+
 ### Added
 
 - Added [ExtractionProgress] for robustly extracting large datasets in multiple smaller executions
@@ -1051,7 +1055,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.5...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.6...develop
+[7.0.6]: https://github.com/HicServices/RDMP/compare/v7.0.5...v7.0.6
 [7.0.5]: https://github.com/HicServices/RDMP/compare/v7.0.4...v7.0.5
 [7.0.4]: https://github.com/HicServices/RDMP/compare/v7.0.3...v7.0.4
 [7.0.3]: https://github.com/HicServices/RDMP/compare/v7.0.2...v7.0.3
