@@ -34,22 +34,75 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
         /// </summary>
         public bool ResultOk { get; internal set; }
         private object[] _available;
+        private IReadOnlyCollection<object> _original;
+        private TextField _tbSearch;
 
         public ConsoleGuiSelectMany(IBasicActivateItems activator,string prompt, object[] available)
         {
             _available = available;
+            _original = available.ToList().AsReadOnly();
+
+            // By using Dim.Fill(), it will automatically resize without manual intervention
+            Width = Dim.Fill();
+            Height = Dim.Fill();
+            Modal = true;
+            ColorScheme = ConsoleMainWindow.ColorScheme;
 
             lv = new ListView(available);
             lv.AllowsMarking = true;
             lv.AllowsMultipleSelection = true;
 
             lv.Width = Dim.Fill();
-            lv.Height = Dim.Fill();
+            lv.Height = Dim.Fill(1);
             lv.KeyPress += Lv_KeyPress;
+            Add(lv);
+
+            var lblSearch = new Label
+            {
+                Text = "Search:",
+                Y = Pos.Bottom(lv),
+            };
+            Add(lblSearch);
+
+            _tbSearch = new TextField
+            {
+                X = Pos.Right(lblSearch),
+                Y = Pos.Bottom(lv),
+                Width = Dim.Fill()
+            };
+            _tbSearch.TextChanged += TbSearch_TextChanged;
+            Add(_tbSearch);
 
             Text = prompt;
-            Add(lv);
+            
             this._activator = activator;
+        }
+
+        private void TbSearch_TextChanged(NStack.ustring obj)
+        {
+            // everything they have ticked so far
+            var ticked = Result;
+            var search = _tbSearch.Text?.ToString();
+
+            // plus everything else that matches on search text
+            var matchingFilter = _original.Except(ticked)
+                                          .Where(o => string.IsNullOrWhiteSpace(search) || o.ToString().Contains(search, StringComparison.CurrentCultureIgnoreCase))
+                                          .ToArray();
+            
+            // make a list of all marked followed by unmarked but matching filter
+            var all = ticked.ToList();
+            all.AddRange(matchingFilter);
+
+            // update the available list in the list view (destructive recreate)
+            _available = all.ToArray();
+            lv.SetSource(all);
+
+            // since we changed the source we need to remark the originally ticked ones
+            for(int i=0;i<ticked.Length;i++)
+            {
+                lv.Source.SetMark(i, true);
+            }
+            SetNeedsDisplay();
         }
 
         private void Lv_KeyPress(KeyEventEventArgs obj)
@@ -67,6 +120,7 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
                 ResultOk = true;
                 Application.RequestStop();
             }
+            SetNeedsDisplay();
         }
     }
 }
