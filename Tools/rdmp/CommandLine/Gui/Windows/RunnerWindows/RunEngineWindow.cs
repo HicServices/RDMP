@@ -89,6 +89,7 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
         {
             lock (lockList)
             {
+                _results.SelectedItem = 0;
                 consoleOutput.Clear();
                 _results.SetNeedsDisplay();
             }

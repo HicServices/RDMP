@@ -166,7 +166,7 @@ namespace Rdmp.Core.CommandLine.Gui
             
             // clear old results
             _results.Text = "";
-
+            _results.SelectedItem = 0;
             Task.Run(()=>
             {
                 try
