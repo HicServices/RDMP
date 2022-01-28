@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed closing and changing instance not consulting tabs before closing
+
 ## [7.0.6] - 2022-01-25
 
 *Database Patch Included (enables ExtractionProgress batching)*
