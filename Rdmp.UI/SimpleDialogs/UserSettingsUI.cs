@@ -86,6 +86,7 @@ namespace Rdmp.UI.SimpleDialogs
             cbAdvancedFindFilters.Checked = UserSettings.AdvancedFindFilters;
             cbIncludeZeroSeriesInGraphs.Checked = UserSettings.IncludeZeroSeriesInGraphs;
             tbCreateDatabaseTimeout.Text = UserSettings.CreateDatabaseTimeout.ToString();
+            tbArchiveTriggerTimeout.Text = UserSettings.ArchiveTriggerTimeout.ToString();
             tbTooltipAppearDelay.Text = UserSettings.TooltipAppearDelay.ToString();
 
             AddTooltip(cbShowHomeOnStartup,nameof(UserSettings.ShowHomeOnStartup));
@@ -105,6 +106,7 @@ namespace Rdmp.UI.SimpleDialogs
             AddTooltip(cbIncludeZeroSeriesInGraphs,nameof(UserSettings.IncludeZeroSeriesInGraphs));
             AddTooltip(label7, nameof(UserSettings.CreateDatabaseTimeout));
             AddTooltip(tbCreateDatabaseTimeout, nameof(UserSettings.CreateDatabaseTimeout));
+            AddTooltip(tbArchiveTriggerTimeout, nameof(UserSettings.ArchiveTriggerTimeout));
             AddTooltip(tbTooltipAppearDelay, nameof(UserSettings.TooltipAppearDelay));
             AddTooltip(label4, nameof(UserSettings.WrapMode));
             AddTooltip(ddWordWrap,nameof(UserSettings.WrapMode));
@@ -248,6 +250,14 @@ namespace Rdmp.UI.SimpleDialogs
                 UserSettings.CreateDatabaseTimeout = result;
             }
         }
+        private void tbArchiveTriggerTimeout_TextChanged(object sender, EventArgs e)
+        {
+
+            if (int.TryParse(tbArchiveTriggerTimeout.Text, out int result))
+            {
+                UserSettings.ArchiveTriggerTimeout = result;
+            }
+        }
         private void tbTooltipAppearDelay_TextChanged(object sender, EventArgs e)
         {
             if (int.TryParse(tbTooltipAppearDelay.Text, out int result))
@@ -255,5 +265,6 @@ namespace Rdmp.UI.SimpleDialogs
                 UserSettings.TooltipAppearDelay = result;
             }
         }
+
     }
 }

@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added ArchiveTriggerTimeout user setting [#623](https://github.com/HicServices/RDMP/issues/623)
+
+...
+
 ## [7.0.6] - 2022-01-25
 
 *Database Patch Included (enables ExtractionProgress batching)*
