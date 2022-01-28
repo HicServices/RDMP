@@ -18,6 +18,7 @@ using Rdmp.UI;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
+using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Theme;
@@ -232,6 +233,23 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             return RDMPCollection.None;
         }
+
+        internal void OnFormClosing(System.Windows.Forms.FormClosingEventArgs e)
+        {
+            foreach(var c in _trackedWindows)
+            {
+                if(c.Control is IConsultableBeforeClosing consult)
+                {
+                    consult.ConsultAboutClosing(this, e);
+
+                    if(e.Cancel)
+                    {
+                        return;
+                    }
+                }
+            }
+        }
+
 
         /// <summary>
         /// Attempts to ensure that a compatible RDMPCollectionUI is made visible for the supplied object which must be one of the expected root Tree types of 

@@ -547,6 +547,14 @@ namespace ResearchDataManagementPlatform.Menus
         {
             LaunchNew(null);
         }
+
+        private void terminateProcessToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(Activator.YesNo("Terminate the process without saving?","Terminate"))
+            {
+                Process.GetCurrentProcess().Kill();
+            }   
+        }
     }
 }
 
