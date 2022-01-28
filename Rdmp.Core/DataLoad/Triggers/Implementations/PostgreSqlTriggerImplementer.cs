@@ -11,6 +11,7 @@ using FAnsi;
 using FAnsi.Discovery;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Exceptions;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.DataLoad.Triggers.Implementations
 {
@@ -46,10 +47,16 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
                     con.Open();
 
                     using(var cmd = _server.GetCommand("DROP TRIGGER IF EXISTS \"" + _triggerRuntimeName + "\" ON " + _table.GetFullyQualifiedName(), con))
+                    {
+                        cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                         cmd.ExecuteNonQuery();
+                    }
 
                     using(var cmd = _server.GetCommand("DROP FUNCTION IF EXISTS  " + _procedureNameFullyQualified, con))
+                    {
+                        cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                         cmd.ExecuteNonQuery();
+                    }
 
                     thingsThatWorkedDroppingTrigger = "Droppped trigger " + _triggerRuntimeName;
                 }
@@ -61,11 +68,11 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
             }
         }
 
-        public override string CreateTrigger(ICheckNotifier notifier, int timeout = 30)
+        public override string CreateTrigger(ICheckNotifier notifier)
         {
-            string creationSql = base.CreateTrigger(notifier, timeout);
+            string creationSql = base.CreateTrigger(notifier);
 
-            CreateProcedure(notifier,timeout);
+            CreateProcedure(notifier);
             
             var sql = string.Format(@"CREATE TRIGGER ""{0}"" BEFORE UPDATE ON {1} FOR EACH ROW
 EXECUTE PROCEDURE {2}();", 
@@ -78,13 +85,17 @@ EXECUTE PROCEDURE {2}();",
                 con.Open();
 
                 using(var cmd = _server.GetCommand(sql, con))
+                {
+                    cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                     cmd.ExecuteNonQuery();
+                }
+                    
             }
 
             return creationSql;
         }
 
-        private void CreateProcedure(ICheckNotifier notifier, int timeout)
+        private void CreateProcedure(ICheckNotifier notifier)
         {
             var sql = string.Format(@"CREATE OR REPLACE FUNCTION {0}()
   RETURNS trigger AS
@@ -101,7 +112,11 @@ LANGUAGE 'plpgsql';"
                 con.Open();
 
                 using(var cmd = _server.GetCommand(sql, con))
+                {
+                    cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                     cmd.ExecuteNonQuery();
+                }
+                    
             }
         }
 

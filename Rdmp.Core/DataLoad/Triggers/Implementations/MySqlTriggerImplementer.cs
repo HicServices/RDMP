@@ -11,6 +11,7 @@ using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Exceptions;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.DataLoad.Triggers.Implementations
 {
@@ -34,7 +35,10 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
                     con.Open();
 
                     using(var cmd = _server.GetCommand("DROP TRIGGER " + GetTriggerName(), con))
+                    {
+                        cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                         cmd.ExecuteNonQuery();
+                    }
 
                     thingsThatWorkedDroppingTrigger = "Droppped trigger " + GetTriggerName();
                 }
@@ -46,9 +50,9 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
             }
         }
 
-        public override string CreateTrigger(ICheckNotifier notifier, int timeout = 30)
+        public override string CreateTrigger(ICheckNotifier notifier)
         {
-            string creationSql = base.CreateTrigger(notifier, timeout);
+            string creationSql = base.CreateTrigger(notifier);
 
             var sql = string.Format(@"CREATE TRIGGER {0} BEFORE UPDATE ON {1} FOR EACH ROW
 {2};", 
@@ -61,21 +65,24 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
                 con.Open();
 
                 using(var cmd = _server.GetCommand(sql, con))
+                {
+                    cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                     cmd.ExecuteNonQuery();
+                }                    
             }
 
             return creationSql;
         }
 
-        protected override void AddValidFrom(DiscoveredTable table, IQuerySyntaxHelper syntaxHelper, int timeout)
+        protected override void AddValidFrom(DiscoveredTable table, IQuerySyntaxHelper syntaxHelper)
         {
             // MySql changed how they do default date fields between 5.5 and 5.6
             //https://dba.stackexchange.com/a/132954
  
             if (UseOldDateTimeDefaultMethod(table))
-                table.AddColumn(SpecialFieldNames.ValidFrom,"TIMESTAMP DEFAULT CURRENT_TIMESTAMP",true,timeout);
+                table.AddColumn(SpecialFieldNames.ValidFrom,"TIMESTAMP DEFAULT CURRENT_TIMESTAMP",true, UserSettings.ArchiveTriggerTimeout);
             else
-                table.AddColumn(SpecialFieldNames.ValidFrom,"DATETIME DEFAULT CURRENT_TIMESTAMP",true,timeout);
+                table.AddColumn(SpecialFieldNames.ValidFrom,"DATETIME DEFAULT CURRENT_TIMESTAMP",true, UserSettings.ArchiveTriggerTimeout);
         }
 
         public bool UseOldDateTimeDefaultMethod(DiscoveredTable table)
