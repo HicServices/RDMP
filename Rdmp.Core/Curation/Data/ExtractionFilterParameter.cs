@@ -152,9 +152,6 @@ namespace Rdmp.Core.Curation.Data
             if (string.IsNullOrWhiteSpace(sqlParameter.ParameterSQL))
                 reasonParameterRejected = "The is no ParameterSQL";
             else
-            if (string.IsNullOrWhiteSpace(sqlParameter.Comment))
-                reasonParameterRejected = "There is no description comment";
-            else
             if (string.IsNullOrWhiteSpace(sqlParameter.Value))
                 reasonParameterRejected = "There is no value/default value listed";
 
