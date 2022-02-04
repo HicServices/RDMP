@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Restricted [Pipelines] shown to only those where all components are compatible with the input objects (previously on context was checked) (https://github.com/HicServices/RDMP/issues/885)
 - "Show All/Incompatible Pipelines" option added to Pipelines dropdown to make a simpler user interface
 - When committing a cohort through the Cohort Builder the Project will automatically be selected if it already belongs to a single one (https://github.com/HicServices/RDMP/issues/868)
+- Removed requirement for filter parameters to have comments to be published (https://github.com/HicServices/RDMP/issues/582)
 
 ## [7.0.5] - 2022-01-10
 
