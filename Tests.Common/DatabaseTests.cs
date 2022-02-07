@@ -137,8 +137,14 @@ namespace Tests.Common
             var defaults = CatalogueRepository.GetServerDefaults();
 
             DataQualityEngineConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, PlatformDatabaseCreation.DefaultDQEDatabaseName, PermissableDefaults.DQE,new DataQualityEnginePatcher());
+            DataQualityEngineConnectionString.TrustServerCertificate = true;
             UnitTestLoggingConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, PlatformDatabaseCreation.DefaultLoggingDatabaseName, PermissableDefaults.LiveLoggingServer_ID, new LoggingDatabasePatcher());
+            UnitTestLoggingConnectionString.TrustServerCertificate = true;
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn = new DiscoveredServer(CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, null, PermissableDefaults.RAWDataLoadServer, null));
+            if (DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder is SqlConnectionStringBuilder dsiccrdatocsb)
+            {
+                dsiccrdatocsb.TrustServerCertificate = true;
+            }
 
             _discoveredSqlServer = new DiscoveredServer(TestDatabaseSettings.ServerName,null,DatabaseType.MicrosoftSQLServer,TestDatabaseSettings.Username,TestDatabaseSettings.Password);
             if (_discoveredSqlServer.Builder is SqlConnectionStringBuilder csb)
@@ -266,7 +272,7 @@ namespace Tests.Common
             if (args.Status == RDMPPlatformDatabaseStatus.Healthy)
                 return;
 
-             if(args.Status == RDMPPlatformDatabaseStatus.SoftwareOutOfDate)
+            if(args.Status == RDMPPlatformDatabaseStatus.SoftwareOutOfDate)
                 Assert.Fail(@"Your TEST database schema is out of date with the API version you are testing with, 'run rdmp.exe install ...' to install the version which matches your nuget package.");
 
             if (args.Exception != null)

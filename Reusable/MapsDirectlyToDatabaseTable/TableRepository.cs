@@ -515,9 +515,9 @@ namespace MapsDirectlyToDatabaseTable
         {
             try
             {
-                using (var con = GetConnection())
-                    if (con.Connection.State != ConnectionState.Open)
-                        throw new Exception("State of connection was " + con.Connection.State);
+                using var con = GetConnection();
+                if (con.Connection.State != ConnectionState.Open)
+                    throw new Exception($"State of connection was {con.Connection.State}");
             }
             catch (Exception e)
             {
@@ -529,7 +529,7 @@ namespace MapsDirectlyToDatabaseTable
                 if(!string.IsNullOrWhiteSpace(pass))
                     msg = msg.Replace(pass,"****");
                 
-                throw new Exception("Testing connection failed, connection string was '" + msg + "'", e);
+                throw new Exception($"Testing connection failed, connection string was '{msg}'", e);
             }
         }
 

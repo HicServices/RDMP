@@ -24,19 +24,16 @@ namespace ReusableCodeTests
             Assert.AreEqual("GetRowCountWhenNoIndexes",table.GetRuntimeName());
             var server = table.Database.Server;
 
-            using (var con = server.GetConnection())
-            {
-                con.Open();
+            using var con = server.GetConnection();
+            con.Open();
 
-                var cmd = server.GetCommand("CREATE TABLE " + table .GetRuntimeName()+ " (age int, name varchar(5))", con);
-                cmd.ExecuteNonQuery();
+            var cmd = server.GetCommand($"CREATE TABLE {table.GetRuntimeName()} (age int, name varchar(5))", con);
+            cmd.ExecuteNonQuery();
 
-                var cmdInsert = server.GetCommand("INSERT INTO " + table.GetRuntimeName() + " VALUES (1,'Fish')", con);
-                Assert.AreEqual(1,cmdInsert.ExecuteNonQuery());
+            var cmdInsert = server.GetCommand($"INSERT INTO {table.GetRuntimeName()} VALUES (1,'Fish')", con);
+            Assert.AreEqual(1,cmdInsert.ExecuteNonQuery());
 
-                Assert.AreEqual(1,table.GetRowCount());
-                
-            }
+            Assert.AreEqual(1,table.GetRowCount());
         }
 
         [Test]
