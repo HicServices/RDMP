@@ -137,9 +137,7 @@ namespace Tests.Common
             var defaults = CatalogueRepository.GetServerDefaults();
 
             DataQualityEngineConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, PlatformDatabaseCreation.DefaultDQEDatabaseName, PermissableDefaults.DQE,new DataQualityEnginePatcher());
-            DataQualityEngineConnectionString.TrustServerCertificate = true;
             UnitTestLoggingConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, PlatformDatabaseCreation.DefaultLoggingDatabaseName, PermissableDefaults.LiveLoggingServer_ID, new LoggingDatabasePatcher());
-            UnitTestLoggingConnectionString.TrustServerCertificate = true;
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn = new DiscoveredServer(CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, null, PermissableDefaults.RAWDataLoadServer, null));
             if (DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder is SqlConnectionStringBuilder dsiccrdatocsb)
             {
@@ -180,7 +178,8 @@ namespace Tests.Common
                 ServerName = TestDatabaseSettings.ServerName,
                 Prefix = prefix,
                 Username = TestDatabaseSettings.Username,
-                Password = TestDatabaseSettings.Password
+                Password = TestDatabaseSettings.Password,
+                ValidateCertificate = false
             };
 
             var builder = opts.GetBuilder(databaseName);
