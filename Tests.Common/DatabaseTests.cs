@@ -67,9 +67,9 @@ namespace Tests.Common
         private readonly DiscoveredServer _discoveredMySqlServer;
         private readonly DiscoveredServer _discoveredOracleServer;
         private readonly DiscoveredServer _discoveredPostgresServer;
-        private DiscoveredServer _discoveredSqlServer;
+        private readonly DiscoveredServer _discoveredSqlServer;
 
-        static private Startup _startup;
+        private static Startup _startup;
 
         static DatabaseTests()
         {
@@ -141,6 +141,10 @@ namespace Tests.Common
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn = new DiscoveredServer(CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, null, PermissableDefaults.RAWDataLoadServer, null));
 
             _discoveredSqlServer = new DiscoveredServer(TestDatabaseSettings.ServerName,null,DatabaseType.MicrosoftSQLServer,TestDatabaseSettings.Username,TestDatabaseSettings.Password);
+            if (_discoveredSqlServer.Builder is SqlConnectionStringBuilder csb)
+            {
+                csb.TrustServerCertificate = true;
+            }
 
             if (TestDatabaseSettings.MySql != null)
             {
@@ -148,7 +152,7 @@ namespace Tests.Common
                 
                 foreach (string k in builder.Keys)
                 {
-                    if (k == "server" || k == "database" || k== "user id" || k =="password")
+                    if (k is "server" or "database" or "user id" or "password")
                         continue;
 
                     new ConnectionStringKeyword(CatalogueRepository, DatabaseType.MySql, k, builder[k].ToString());
@@ -483,34 +487,30 @@ delete from {1}..Project
         protected DiscoveredDatabase GetCleanedServer(DatabaseType type, string dbnName = null)
         {
             //the standard scratch area database
-            string standardName = TestDatabaseNames.GetConsistentName("ScratchArea");
+            var standardName = TestDatabaseNames.GetConsistentName("ScratchArea");
 
             //if user specified the standard name or no name
-            bool isStandardDb = dbnName == null || dbnName == standardName;
+            var isStandardDb = dbnName == null || dbnName == standardName;
             
             //use the standard name if they haven't specified one
-            if(dbnName == null)
-                dbnName = standardName;
+            dbnName ??= standardName;
 
-            DiscoveredServer server;
-
-            switch (type)
+            var server = type switch
             {
-                case DatabaseType.MicrosoftSQLServer:
-                    server = _discoveredSqlServer == null ? null : new DiscoveredServer(_discoveredSqlServer.Builder);
-                    break;
-                case DatabaseType.MySql:
-                    server = _discoveredMySqlServer == null ? null : new DiscoveredServer(_discoveredMySqlServer.Builder);
-                    break;
-                case DatabaseType.Oracle:
-                    server = _discoveredOracleServer == null ? null : new DiscoveredServer(_discoveredOracleServer.Builder);
-                    break;
-                case DatabaseType.PostgreSql:
-                    server = _discoveredPostgresServer == null ? null : new DiscoveredServer(_discoveredPostgresServer.Builder);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("type");
-            }
+                DatabaseType.MicrosoftSQLServer => _discoveredSqlServer == null
+                    ? null
+                    : new DiscoveredServer(_discoveredSqlServer.Builder),
+                DatabaseType.MySql => _discoveredMySqlServer == null
+                    ? null
+                    : new DiscoveredServer(_discoveredMySqlServer.Builder),
+                DatabaseType.Oracle => _discoveredOracleServer == null
+                    ? null
+                    : new DiscoveredServer(_discoveredOracleServer.Builder),
+                DatabaseType.PostgreSql => _discoveredPostgresServer == null
+                    ? null
+                    : new DiscoveredServer(_discoveredPostgresServer.Builder),
+                _ => throw new ArgumentOutOfRangeException(nameof(type))
+            };
 
             if (server == null)
                 Assert.Inconclusive();
@@ -524,9 +524,7 @@ delete from {1}..Project
             var database = server.ExpectDatabase(dbnName);
 
             if (database.Exists())
-            {
                 DeleteTables(database);
-            }
             else
                 database.Create(true);
 
