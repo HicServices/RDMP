@@ -34,38 +34,28 @@ namespace Tests.Common
 
         public string GetLowPrivilegeUsername(DatabaseType databaseType)
         {
-            switch (databaseType)
+            return databaseType switch
             {
-                case DatabaseType.MicrosoftSQLServer:
-                    return SqlServerLowPrivilegeUsername;
-                case DatabaseType.MySql:
-                    return MySqlLowPrivilegeUsername;
-                case DatabaseType.Oracle:
-                    return OracleLowPrivilegeUsername;
-                case DatabaseType.PostgreSql:
-                    return PostgreSqlLowPrivilegeUsername;
-                default:
-                    throw new ArgumentOutOfRangeException("databaseType");
-            }
+                DatabaseType.MicrosoftSQLServer => SqlServerLowPrivilegeUsername,
+                DatabaseType.MySql => MySqlLowPrivilegeUsername,
+                DatabaseType.Oracle => OracleLowPrivilegeUsername,
+                DatabaseType.PostgreSql => PostgreSqlLowPrivilegeUsername,
+                _ => throw new ArgumentOutOfRangeException("databaseType"),
+            };
         }
 
         
 
         public string GetLowPrivilegePassword(DatabaseType databaseType)
         {
-            switch (databaseType)
+            return databaseType switch
             {
-                case DatabaseType.MicrosoftSQLServer:
-                    return SqlServerLowPrivilegePassword;
-                case DatabaseType.MySql:
-                    return MySqlLowPrivilegePassword;
-                case DatabaseType.Oracle:
-                    return OracleLowPrivilegePassword;
-                case DatabaseType.PostgreSql:
-                    return PostgreSqlLowPrivilegePassword;
-                default:
-                    throw new ArgumentOutOfRangeException("databaseType");
-            }
+                DatabaseType.MicrosoftSQLServer => SqlServerLowPrivilegePassword,
+                DatabaseType.MySql => MySqlLowPrivilegePassword,
+                DatabaseType.Oracle => OracleLowPrivilegePassword,
+                DatabaseType.PostgreSql => PostgreSqlLowPrivilegePassword,
+                _ => throw new ArgumentOutOfRangeException("databaseType"),
+            };
         }
     }
 }

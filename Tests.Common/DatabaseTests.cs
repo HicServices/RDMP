@@ -93,13 +93,11 @@ namespace Tests.Common
             if (!f.Exists) 
                 throw new FileNotFoundException("Could not find file '" + f.FullName + "'");
 
-            using(StreamReader s = new StreamReader(f.OpenRead()))
-            {
-                var deserializer = new DeserializerBuilder()
-                    .Build();
-            
-                TestDatabaseSettings = (TestDatabasesSettings) deserializer.Deserialize(s, typeof(TestDatabasesSettings));
-            }
+            using StreamReader s = new StreamReader(f.OpenRead());
+            var deserializer = new DeserializerBuilder()
+                .Build();
+
+            TestDatabaseSettings = (TestDatabasesSettings)deserializer.Deserialize(s, typeof(TestDatabasesSettings));
         }
 
         public DatabaseTests()
@@ -110,7 +108,8 @@ namespace Tests.Common
                 ServerName = TestDatabaseSettings.ServerName,
                 Prefix = TestDatabaseNames.Prefix,
                 Username = TestDatabaseSettings.Username,
-                Password = TestDatabaseSettings.Password
+                Password = TestDatabaseSettings.Password,
+                ValidateCertificate = false
             };
 
             
