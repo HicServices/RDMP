@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed bug where setting `SuggestedCategory` on a plugin command resulted in it vanishing from context menu
+
 ## [7.0.6] - 2022-01-25
 
 *Database Patch Included (enables ExtractionProgress batching)*
