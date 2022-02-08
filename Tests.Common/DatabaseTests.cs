@@ -35,6 +35,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using YamlDotNet.Serialization;
+using FAnsi.Discovery.ConnectionStringDefaults;
 
 namespace Tests.Common
 {
@@ -74,6 +75,9 @@ namespace Tests.Common
         static DatabaseTests()
         {
             CatalogueRepository.SuppressHelpLoading = true;
+
+            // Always ignore SSL when running tests
+            DiscoveredServerHelper.AddConnectionStringKeyword(DatabaseType.MicrosoftSQLServer, "TrustServerCertificate", "true", ConnectionStringKeywordPriority.ApiRule);
             
             ImplementationManager.Load<MicrosoftSQLImplementation>();
             ImplementationManager.Load<MySqlImplementation>();
