@@ -37,11 +37,8 @@ namespace Rdmp.Core.Startup.Events
 
         public string SummariseAsString()
         {
-            return "RDMPPlatformDatabaseStatus is " + Status + " for tier " + Patcher.Tier + " database of type " + Patcher.Name+ " with connection string " +
-                   (Repository == null ? "Unknown" : Repository.ConnectionString) + Environment.NewLine +
-                   (Exception == null
-                       ? "No exception"
-                       : ExceptionHelper.ExceptionToListOfInnerMessages(Exception));
+            return
+                $"RDMPPlatformDatabaseStatus is {Status} for tier {Patcher.Tier} database of type {Patcher.Name} with connection string {(Repository == null ? "Unknown" : Repository.ConnectionString)}{Environment.NewLine}{(Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(Exception))}";
         }
     }
 }

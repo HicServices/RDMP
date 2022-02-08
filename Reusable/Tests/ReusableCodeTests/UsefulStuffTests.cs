@@ -24,42 +24,37 @@ namespace ReusableCodeTests
             Assert.AreEqual("GetRowCountWhenNoIndexes",table.GetRuntimeName());
             var server = table.Database.Server;
 
-            using (var con = server.GetConnection())
-            {
-                con.Open();
+            using var con = server.GetConnection();
+            con.Open();
 
-                var cmd = server.GetCommand("CREATE TABLE " + table .GetRuntimeName()+ " (age int, name varchar(5))", con);
-                cmd.ExecuteNonQuery();
+            var cmd = server.GetCommand($"CREATE TABLE {table.GetRuntimeName()} (age int, name varchar(5))", con);
+            cmd.ExecuteNonQuery();
 
-                var cmdInsert = server.GetCommand("INSERT INTO " + table.GetRuntimeName() + " VALUES (1,'Fish')", con);
-                Assert.AreEqual(1,cmdInsert.ExecuteNonQuery());
+            var cmdInsert = server.GetCommand($"INSERT INTO {table.GetRuntimeName()} VALUES (1,'Fish')", con);
+            Assert.AreEqual(1,cmdInsert.ExecuteNonQuery());
 
-                Assert.AreEqual(1,table.GetRowCount());
-                
-            }
+            Assert.AreEqual(1,table.GetRowCount());
         }
 
         [Test]
         public void GetRowCount_Views()
         {
             var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-            using (var con = db.Server.GetConnection())
-            {
-                con.Open();
+            using var con = db.Server.GetConnection();
+            con.Open();
 
-                var cmd = db.Server.GetCommand("CREATE TABLE GetRowCount_Views (age int, name varchar(5))", con);
-                cmd.ExecuteNonQuery();
+            var cmd = db.Server.GetCommand("CREATE TABLE GetRowCount_Views (age int, name varchar(5))", con);
+            cmd.ExecuteNonQuery();
 
-                var cmdInsert = db.Server.GetCommand("INSERT INTO GetRowCount_Views VALUES (1,'Fish')", con);
-                Assert.AreEqual(1, cmdInsert.ExecuteNonQuery());
+            var cmdInsert = db.Server.GetCommand("INSERT INTO GetRowCount_Views VALUES (1,'Fish')", con);
+            Assert.AreEqual(1, cmdInsert.ExecuteNonQuery());
 
 
-                var cmdView = db.Server.GetCommand(
-                    "CREATE VIEW v_GetRowCount_Views as select * from GetRowCount_Views", con);
-                cmdView.ExecuteNonQuery();
+            var cmdView = db.Server.GetCommand(
+                "CREATE VIEW v_GetRowCount_Views as select * from GetRowCount_Views", con);
+            cmdView.ExecuteNonQuery();
 
-                Assert.AreEqual(1, db.ExpectTable("v_GetRowCount_Views").GetRowCount());
-            }
+            Assert.AreEqual(1, db.ExpectTable("v_GetRowCount_Views").GetRowCount());
         }
 
         [Test]
