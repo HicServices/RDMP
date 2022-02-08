@@ -112,10 +112,11 @@ Create a nuspec file called `MyPlugin.nuspec` that describes your plugin:
         </dependencies>
     </metadata>
     <files>
-    <file src="bin\net5.0\*" target="lib\main" />	
+    <file src="bin\Debug\net5.0\*" target="lib\main" />	
     </files>
 </package>
 ```
+_Substitute 'net5.0' for whatever version of dotnet you are using_
 
 Build the solution and package it with the [nuget cli app](https://www.nuget.org/downloads):
 ```
