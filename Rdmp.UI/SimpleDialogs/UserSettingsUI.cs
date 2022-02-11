@@ -106,6 +106,7 @@ namespace Rdmp.UI.SimpleDialogs
             AddTooltip(cbIncludeZeroSeriesInGraphs,nameof(UserSettings.IncludeZeroSeriesInGraphs));
             AddTooltip(label7, nameof(UserSettings.CreateDatabaseTimeout));
             AddTooltip(tbCreateDatabaseTimeout, nameof(UserSettings.CreateDatabaseTimeout));
+            AddTooltip(label13, nameof(UserSettings.ArchiveTriggerTimeout));
             AddTooltip(tbArchiveTriggerTimeout, nameof(UserSettings.ArchiveTriggerTimeout));
             AddTooltip(tbTooltipAppearDelay, nameof(UserSettings.TooltipAppearDelay));
             AddTooltip(label4, nameof(UserSettings.WrapMode));
