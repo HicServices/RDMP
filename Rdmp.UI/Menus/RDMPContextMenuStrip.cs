@@ -192,6 +192,10 @@ namespace Rdmp.UI.Menus
 
             if(gotoMenu != null)
                 RegisterFetchGoToObjecstCallback(gotoMenu);
+
+            //ensure any new submenus still appear
+            foreach (var mi in _subMenuDictionary.Values.Except(Items.OfType<ToolStripMenuItem>()))
+                Items.Add(mi);
         }
                 
         private void AddFactoryMenuItems()

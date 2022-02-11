@@ -62,16 +62,19 @@ namespace Rdmp.Core.Tests.CohortCreation
             Assert.AreEqual("Cannot clone filter called 'folk' because:WhereSQL is not populated",ex.Message);
         }
 
+        /// <summary>
+        /// Check parameters can be created without a comment
+        /// </summary>
         [Test]
-        public void NotPopulated_ParameterNotCreated()
+        public void NotPopulated_ParameterNoComment()
         {
             _filter.Description = "fish swim in the sea and make people happy to be";
             _filter.WhereSQL = "LovelyCoconuts = @coconutCount";
             _filter.SaveToDatabase();
             new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(_filter, null);
 
-            var ex = Assert.Throws<Exception>(()=>new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(_filter, null));
-            Assert.AreEqual("Cannot clone filter called 'folk' because:Parameter '@coconutCount' was rejected :There is no description comment",ex.Message);
+            IFilter importedFilter = new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(_filter, null);
+            Assert.AreEqual("folk", importedFilter.Name);
         }
 
 
