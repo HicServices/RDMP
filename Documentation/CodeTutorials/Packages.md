@@ -21,7 +21,7 @@
 | NPOI | [GitHub](https://github.com/tonyqus/npoi) | [2.5.5](https://www.nuget.org/packages/NPOI/2.5.5) | Apache 2.0 | Enables reading/writing Microsoft Excel files |
 | ExcelNumberFormat | [GitHub](https://github.com/andersnm/ExcelNumberFormat) | [1.1.0](https://www.nuget.org/packages/ExcelNumberFormat/1.1.0) |[MIT](https://opensource.org/licenses/MIT)  | Handles translating number formats from Excel formats into usable values | |
 | [NLog](https://nlog-project.org/) | [GitHub](https://github.com/NLog/NLog) | [4.7.13](https://www.nuget.org/packages/NLog/4.7.13) | [BSD 3-Clause](https://github.com/NLog/NLog/blob/dev/LICENSE.txt) | Flexible user configurable logging | |
-| HIC.FAnsiSql |[GitHub](https://github.com/HicServices/FAnsiSql) | [2.0.1](https://www.nuget.org/packages/HIC.FansiSql/2.0.1) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | [DBMS] abstraction layer |
+| HIC.FAnsiSql |[GitHub](https://github.com/HicServices/FAnsiSql) | [2.0.2](https://www.nuget.org/packages/HIC.FansiSql/2.0.2) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | [DBMS] abstraction layer |
 | HIC.BadMedicine | [GitHub](https://github.com/HicServices/BadMedicine) | [0.1.6](https://www.nuget.org/packages/HIC.BadMedicine/0.1.6) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | Generate Test Datasets for tests/exericses |
 | SSH.NET  | [GitHub](https://github.com/sshnet/SSH.NET)  | [2020.0.1](https://www.nuget.org/packages/SSH.NET/2020.0.1) | [MIT](https://github.com/sshnet/SSH.NET/blob/develop/LICENSE) | Enables fetching files from SFTP servers |
 | Moq 4 | [GitHub](https://github.com/moq/moq4) | [4.16.1](https://www.nuget.org/packages/Moq/4.16.1) |[BSD 3](https://github.com/moq/moq4/blob/master/License.txt)  | Mock objects during unit testing |
@@ -46,7 +46,7 @@
 | System.Resources.Extensions | [GitHub](https://github.com/dotnet/corefx) | [4.6.0](https://www.nuget.org/packages/System.Resources.Extensions/4.6.0) | [MIT](https://opensource.org/licenses/MIT) | Allows [publishing with dotnet publish on machines with netcoreapp3.0 SDK installed](https://github.com/microsoft/msbuild/issues/4704#issuecomment-530034240) | |
 | ReadLine | [GitHub](https://github.com/tonerdo/readline) | [2.0.1](https://www.nuget.org/packages/ReadLine/2.0.1) | [MIT](https://opensource.org/licenses/MIT) | Allows autocomplete on command line | |
 | HIC.System.Windows.Forms.DataVisualization | [GitHub](https://github.com/HicServices/winforms-datavisualization) | [1.0.1](https://www.nuget.org/packages/HIC.System.Windows.Forms.DataVisualization/1.0.1) |[MIT](https://opensource.org/licenses/MIT) | Dotnet core support for DQE charts |  |
-| System.DirectoryServices.Protocols | [GitHub](https://github.com/dotnet/runtime) | [6.0.0](https://www.nuget.org/packages/System.DirectoryServices.Protocols/6.0.0) | MIT | Required dependency of Oracle when using LDAP auth |
+| System.DirectoryServices.Protocols | [GitHub](https://github.com/dotnet/runtime) | [6.0.1](https://www.nuget.org/packages/System.DirectoryServices.Protocols/6.0.1) | MIT | Required dependency of Oracle when using LDAP auth |
 | Autoupdater.NET | [GitHub](https://github.com/ravibpatel/AutoUpdater.NET) | [1.7.0](https://github.com/ravibpatel/AutoUpdater.NET) | MIT | Manages updating of the RDMP windows client directly from the RDMP GitHub Releases|
 
 [DBMS]: ./Glossary.md#DBMS

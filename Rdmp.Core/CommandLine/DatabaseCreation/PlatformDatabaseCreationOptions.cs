@@ -71,20 +71,22 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
 
         public SqlConnectionStringBuilder GetBuilder(string databaseName)
         {
-         var builder = new SqlConnectionStringBuilder();
-            builder.DataSource = ServerName;
-            builder.InitialCatalog = (Prefix ?? "") + databaseName;
-            builder.TrustServerCertificate = !ValidateCertificate;
+         var builder = new SqlConnectionStringBuilder
+         {
+             DataSource = ServerName,
+             InitialCatalog = (Prefix ?? "") + databaseName,
+             TrustServerCertificate = !ValidateCertificate
+         };
 
-            if (!string.IsNullOrWhiteSpace(Username))
-            {
-                builder.UserID = Username;
-                builder.Password = Password;
-            }
-            else
-                builder.IntegratedSecurity = true;
+         if (!string.IsNullOrWhiteSpace(Username))
+         {
+             builder.UserID = Username;
+             builder.Password = Password;
+         }
+         else
+             builder.IntegratedSecurity = true;
 
-            return builder;
+         return builder;
         }
     }
 }

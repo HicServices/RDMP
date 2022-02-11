@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed closing and changing instance not consulting tabs before closing
+- Fixed bug where setting `SuggestedCategory` on a plugin command resulted in it vanishing from context menu
 
 ## [7.0.6] - 2022-01-25
 
@@ -32,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Restricted [Pipelines] shown to only those where all components are compatible with the input objects (previously on context was checked) (https://github.com/HicServices/RDMP/issues/885)
 - "Show All/Incompatible Pipelines" option added to Pipelines dropdown to make a simpler user interface
 - When committing a cohort through the Cohort Builder the Project will automatically be selected if it already belongs to a single one (https://github.com/HicServices/RDMP/issues/868)
+- Removed requirement for filter parameters to have comments to be published (https://github.com/HicServices/RDMP/issues/582)
 
 ## [7.0.5] - 2022-01-10
 
