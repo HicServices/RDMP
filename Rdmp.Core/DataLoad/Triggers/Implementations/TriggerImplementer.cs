@@ -12,6 +12,7 @@ using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.DataLoad.Triggers.Exceptions;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Settings;
 using TypeGuesser;
 
 namespace Rdmp.Core.DataLoad.Triggers.Implementations
@@ -49,7 +50,7 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
 
         public abstract void DropTrigger(out string problemsDroppingTrigger, out string thingsThatWorkedDroppingTrigger);
 
-        public virtual string CreateTrigger(ICheckNotifier notifier, int timeout = 30)
+        public virtual string CreateTrigger(ICheckNotifier notifier)
         {
             if (!_primaryKeys.Any())
                 throw new TriggerException("There must be at least 1 primary key");
@@ -71,14 +72,14 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
 
             //must add validFrom outside of transaction if we want SMO to pick it up
             if (b_mustCreate_dataloadRunId)
-                _table.AddColumn(SpecialFieldNames.DataLoadRunID, new DatabaseTypeRequest(typeof(int)), true, timeout);
+                _table.AddColumn(SpecialFieldNames.DataLoadRunID, new DatabaseTypeRequest(typeof(int)), true, UserSettings.ArchiveTriggerTimeout);
 
             var syntaxHelper = _server.GetQuerySyntaxHelper();
             
 
             //must add validFrom outside of transaction if we want SMO to pick it up
             if (b_mustCreate_validFrom)
-                AddValidFrom(_table, syntaxHelper,timeout);
+                AddValidFrom(_table, syntaxHelper);
 
             //if we created columns we need to update _column
             if (b_mustCreate_dataloadRunId || b_mustCreate_validFrom)
@@ -92,22 +93,26 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
                     con.Open();
                 
                     using(var cmdCreateArchive = _server.GetCommand(sql, con))
+                    {
+                        cmdCreateArchive.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                         cmdCreateArchive.ExecuteNonQuery();
+                    }
+                        
 
-                    _archiveTable.AddColumn("hic_validTo", new DatabaseTypeRequest(typeof(DateTime)), true, timeout);
-                    _archiveTable.AddColumn("hic_userID", new DatabaseTypeRequest(typeof(string), 128), true, timeout);
-                    _archiveTable.AddColumn("hic_status", new DatabaseTypeRequest(typeof(string), 1), true, timeout);
+                    _archiveTable.AddColumn("hic_validTo", new DatabaseTypeRequest(typeof(DateTime)), true, UserSettings.ArchiveTriggerTimeout);
+                    _archiveTable.AddColumn("hic_userID", new DatabaseTypeRequest(typeof(string), 128), true, UserSettings.ArchiveTriggerTimeout);
+                    _archiveTable.AddColumn("hic_status", new DatabaseTypeRequest(typeof(string), 1), true, UserSettings.ArchiveTriggerTimeout);
                 }
 
             return sql;
         }
 
-        protected virtual void AddValidFrom(DiscoveredTable table, IQuerySyntaxHelper syntaxHelper, int timeout)
+        protected virtual void AddValidFrom(DiscoveredTable table, IQuerySyntaxHelper syntaxHelper)
         {
             var dateTimeDatatype = syntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof (DateTime)));
             var nowFunction = syntaxHelper.GetScalarFunctionSql(MandatoryScalarFunctions.GetTodaysDate);
             
-            _table.AddColumn(SpecialFieldNames.ValidFrom, string.Format(" {0} DEFAULT {1}", dateTimeDatatype, nowFunction), true, timeout);
+            _table.AddColumn(SpecialFieldNames.ValidFrom, string.Format(" {0} DEFAULT {1}", dateTimeDatatype, nowFunction), true, UserSettings.ArchiveTriggerTimeout);
         }
 
 

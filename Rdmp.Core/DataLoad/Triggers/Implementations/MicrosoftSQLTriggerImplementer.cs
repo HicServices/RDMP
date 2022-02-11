@@ -15,6 +15,7 @@ using FAnsi.Implementations.MicrosoftSQL;
 using Rdmp.Core.DataLoad.Triggers.Exceptions;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Exceptions;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.DataLoad.Triggers.Implementations
 {
@@ -54,6 +55,7 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
                 using(var cmdDropTrigger = _server.GetCommand("DROP TRIGGER " + _triggerName, con))
                     try
                     {
+                        cmdDropTrigger.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                         thingsThatWorkedDroppingTrigger += "Dropped Trigger successfully" + Environment.NewLine;
                         cmdDropTrigger.ExecuteNonQuery();
                     }
@@ -66,6 +68,7 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
                 using(var cmdDropArchiveIndex = _server.GetCommand("DROP INDEX PKsIndex ON " + _archiveTable.GetRuntimeName(), con))
                     try
                     {
+                        cmdDropArchiveIndex.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                         cmdDropArchiveIndex.ExecuteNonQuery();
 
                         thingsThatWorkedDroppingTrigger += "Dropped index PKsIndex on Archive table successfully" + Environment.NewLine;
@@ -78,6 +81,7 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
                 using(var cmdDropArchiveLegacyView = _server.GetCommand("DROP FUNCTION " + _table.GetRuntimeName() + "_Legacy", con))
                     try
                     {
+                        cmdDropArchiveLegacyView.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                         cmdDropArchiveLegacyView.ExecuteNonQuery();
                         thingsThatWorkedDroppingTrigger += "Dropped Legacy Table View successfully" + Environment.NewLine;
                     }
@@ -88,9 +92,9 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
             }
         }
 
-        public override string CreateTrigger(ICheckNotifier notifier, int timeout = 30)
+        public override string CreateTrigger(ICheckNotifier notifier)
         {
-            var createArchiveTableSQL = base.CreateTrigger(notifier, timeout);
+            var createArchiveTableSQL = base.CreateTrigger(notifier);
 
             using(var con = _server.GetConnection())
             {
@@ -99,7 +103,11 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
                 string trigger = GetCreateTriggerSQL();
                 
                 using (var cmdAddTrigger = _server.GetCommand(trigger, con))
+                {
+                    cmdAddTrigger.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                     cmdAddTrigger.ExecuteNonQuery();
+                }
+                    
                     
                 //Add key so that we can more easily do comparisons on primary key between main table and archive
                 string idxCompositeKeyBody = "";
@@ -114,7 +122,7 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
                 using(var cmdCreateIndex = _server.GetCommand(createIndexSQL, con))
                     try
                     {
-                        cmdCreateIndex.CommandTimeout = timeout;
+                        cmdCreateIndex.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                         cmdCreateIndex.ExecuteNonQuery();
                     }
                     catch (SqlException e)
@@ -289,7 +297,10 @@ END
             sqlToRun += "END" + Environment.NewLine;
 
             using(var cmd = _server.GetCommand(sqlToRun, con))
+            {
+                cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                 cmd.ExecuteNonQuery();
+            }
         }
 
         public override TriggerStatus GetTriggerStatus()
@@ -307,6 +318,7 @@ if exists (select 1 from sys.triggers WHERE name=@triggerName) SELECT is_disable
                     conn.Open();
                     using (var cmd = _server.GetCommand(queryTriggerIsItDisabledOrMissing, conn))
                     {
+                        cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                         cmd.Parameters.Add(new SqlParameter("@triggerName",SqlDbType.VarChar));
                         cmd.Parameters["@triggerName"].Value = updateTriggerName;
 
@@ -355,8 +367,12 @@ if exists (select 1 from sys.triggers WHERE name=@triggerName) SELECT is_disable
                     string result;
 
                     con.Open();
-                    using(var cmd = _server.GetCommand(query, con)) 
+                    using(var cmd = _server.GetCommand(query, con))
+                    {
+                        cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                         result = cmd.ExecuteScalar() as string;
+                    }
+                        
 
                     if (String.IsNullOrWhiteSpace(result))
                         throw new TriggerMissingException("Trigger " + updateTriggerName +

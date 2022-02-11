@@ -303,6 +303,15 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("AdvancedFindFilters", value); }
         }
 
+        /// <summary>
+        /// Timeout in seconds to allow for creating archive trigger, index etc
+        /// </summary>
+        public static int ArchiveTriggerTimeout
+        {
+            get { return AppSettings.GetValueOrDefault("ArchiveTriggerTimeout", 30); }
+            set { AppSettings.AddOrUpdateValue("ArchiveTriggerTimeout", value); }
+        }
+
         #endregion
 
         /// <summary>

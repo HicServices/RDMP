@@ -10,6 +10,7 @@ using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Oracle.ManagedDataAccess.Client;
 using ReusableLibraryCode.Exceptions;
+using ReusableLibraryCode.Settings;
 using TypeGuesser;
 
 namespace Rdmp.Core.DataLoad.Triggers.Implementations
@@ -44,9 +45,9 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
             return null;
         }
 
-        protected override void AddValidFrom(DiscoveredTable table, IQuerySyntaxHelper syntaxHelper, int timeout)
+        protected override void AddValidFrom(DiscoveredTable table, IQuerySyntaxHelper syntaxHelper)
         {
-            _table.AddColumn(SpecialFieldNames.ValidFrom, " DATE DEFAULT CURRENT_TIMESTAMP", true, timeout);
+            _table.AddColumn(SpecialFieldNames.ValidFrom, " DATE DEFAULT CURRENT_TIMESTAMP", true, UserSettings.ArchiveTriggerTimeout);
         }
 
         protected override string CreateTriggerBody()

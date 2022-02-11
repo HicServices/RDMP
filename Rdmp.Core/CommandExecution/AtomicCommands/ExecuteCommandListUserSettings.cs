@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using ReusableLibraryCode.Settings;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -22,7 +23,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             var sb = new StringBuilder();
 
-            foreach(var prop in typeof(UserSettings).GetProperties(BindingFlags.Public | BindingFlags.Static))
+            foreach(var prop in 
+                typeof(UserSettings)
+                .GetProperties(BindingFlags.Public | BindingFlags.Static)
+                .OrderBy(p=>p.Name))
             {
                 sb.AppendLine($"{prop.Name}:{prop.GetValue(null)}");
             }

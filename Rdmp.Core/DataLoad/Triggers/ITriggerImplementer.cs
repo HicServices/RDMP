@@ -26,9 +26,8 @@ namespace Rdmp.Core.DataLoad.Triggers
         /// should be created
         /// </summary>
         /// <param name="notifier"></param>
-        /// <param name="timeout"></param>
         /// <returns></returns>
-        string CreateTrigger(ICheckNotifier notifier, int timeout = 30);
+        string CreateTrigger(ICheckNotifier notifier);
 
         /// <summary>
         /// Describes whether or not the table that the <see cref="ITriggerImplementer"/> is pointed at has an intact UPDATE trigger that populates
