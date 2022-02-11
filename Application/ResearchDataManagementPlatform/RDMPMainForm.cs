@@ -255,7 +255,14 @@ namespace ResearchDataManagementPlatform
 
         private void CloseForm(object sender, FormClosingEventArgs e)
         {
-            
+            // give the window manager a chance to cancel closing
+            _windowManager.OnFormClosing(e);
+
+            if (e.Cancel)
+            {
+                return;
+            }
+
             if (e.CloseReason == CloseReason.UserClosing && UserSettings.ConfirmApplicationExiting)
                 if (!Activator.YesNo("Are you sure you want to Exit?", "Confirm Exit"))
                 {
