@@ -260,6 +260,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             "MyPluginUI",
             "SelectIMapsDirectlyToDatabaseTableDialog",
             "NuGet",
+            "MyPluginClass",
         };
         #endregion
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)
