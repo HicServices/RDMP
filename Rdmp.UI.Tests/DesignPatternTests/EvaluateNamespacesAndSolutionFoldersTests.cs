@@ -23,7 +23,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
         private const string SolutionName = "HIC.DataManagementPlatform.sln";
         public List<string> csFilesFound = new List<string>();
 
-        public static string[] Whitelist = new[]
+        public static string[] Ignorelist = new[]
         {
             "Program.cs",
             "Settings.Designer.cs",
@@ -190,7 +190,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
 
                     foreach (var found in tidy.csFilesFound)
                         if (csFilesFound.Any(otherFile => Path.GetFileName(otherFile).Equals(Path.GetFileName(found))))
-                            if (!Whitelist.Contains(Path.GetFileName(found)))
+                            if (!Ignorelist.Contains(Path.GetFileName(found)))
                                 Error("Found 2+ files called " + Path.GetFileName(found));
 
                     csFilesFound.AddRange(tidy.csFilesFound);
@@ -214,7 +214,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
 
             foreach (var file in csFilesFound)
             {
-                if (file.Contains(".Designer.cs") || EvaluateNamespacesAndSolutionFoldersTests.Whitelist.Contains(file))
+                if (file.Contains(".Designer.cs") || EvaluateNamespacesAndSolutionFoldersTests.Ignorelist.Contains(file))
                     continue;
 
                 bool changes = false;

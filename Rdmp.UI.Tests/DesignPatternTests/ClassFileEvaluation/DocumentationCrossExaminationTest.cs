@@ -25,9 +25,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
         public const bool ReWriteMarkdownToReferenceGlossary = true;
 
         //words that are in Pascal case and you can use in comments despite not being in the codebase... this is an ironic variable to be honest
-        //since the very fact that you add something to _whitelist means that it is in the codebase after all!
-        #region Whitelist Terms
-        private string[] _whitelist = new []
+        //since the very fact that you add something to _ignorelist means that it is in the codebase after all!
+        #region Ignorelist Terms
+        private string[] _ignorelist = new []
         {
         "ExecuteAggregateGraph",
  "ExtractMetadata",
@@ -347,7 +347,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
                 {
                     if(!codeTokens.Contains(s) && !codeTokens.Contains("ExecuteCommand"+s))
                     {
-                        if (_whitelist.Contains(s))
+                        if (_ignorelist.Contains(s))
                             continue;
 
                         //it's SHOUTY TEXT
@@ -369,7 +369,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
 
             if (problems.Any())
             {
-                Console.WriteLine("Found problem words in comments (Scroll down to see by file then if you think they are fine add them to DocumentationCrossExaminationTest._whitelist):");
+                Console.WriteLine("Found problem words in comments (Scroll down to see by file then if you think they are fine add them to DocumentationCrossExaminationTest._ignorelist):");
                 foreach (var pLine in problems.Where(l=>l.Contains('\n')).Select(p => p.Split('\n')))
                     Console.WriteLine("\"" + pLine[1] + "\",");
                 

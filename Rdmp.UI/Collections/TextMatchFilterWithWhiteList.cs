@@ -12,16 +12,16 @@ using BrightIdeasSoftware;
 namespace Rdmp.UI.Collections
 {
     /// <summary>
-    /// <see cref="TextMatchFilter"/> which always shows a given list of objects (the whitelist).  This class is an <see cref="IModelFilter"/>
+    /// <see cref="TextMatchFilter"/> which always shows a given list of objects (the alwaysShowList).  This class is an <see cref="IModelFilter"/>
     /// for use with ObjectListView
     /// </summary>
-    public class TextMatchFilterWithWhiteList : TextMatchFilter
+    public class TextMatchFilterWithAlwaysShowList : TextMatchFilter
     {
-        public HashSet<object>  WhiteList = new HashSet<object>();
+        public HashSet<object>  AlwaysShow = new HashSet<object>();
         private string[] _tokens;
         private CompositeAllFilter _compositeFilter;
 
-        public TextMatchFilterWithWhiteList(IEnumerable<object> whiteList ,ObjectListView olv, string text, StringComparison comparison): base(olv, text, comparison)
+        public TextMatchFilterWithAlwaysShowList(IEnumerable<object> alwaysShow ,ObjectListView olv, string text, StringComparison comparison): base(olv, text, comparison)
         {
             if(!string.IsNullOrWhiteSpace(text) && text.Contains(" "))
             {
@@ -34,8 +34,8 @@ namespace Rdmp.UI.Collections
                 _compositeFilter = new CompositeAllFilter(filters);
             }
 
-            foreach (object o in whiteList)
-                WhiteList.Add(o);
+            foreach (object o in alwaysShow)
+                AlwaysShow.Add(o);
         }
 
         /// <summary>
@@ -48,8 +48,8 @@ namespace Rdmp.UI.Collections
             //gets us the highlight and composite match if the user put in spaces
             bool showing = _compositeFilter != null ? _compositeFilter.Filter(modelObject) : base.Filter(modelObject);
 
-            //if its in the whitelist show it
-            if (WhiteList.Contains(modelObject))
+            //if its in the always show it
+            if (AlwaysShow.Contains(modelObject))
                 return true;
 
             return showing;
