@@ -773,6 +773,7 @@ namespace Rdmp.Core.CommandExecution
         /// <inheritdoc/>
         public abstract void ShowGraph(AggregateConfiguration aggregate);
 
+        /// <inheritdoc/>
         public IRepository GetRepositoryFor(Type type)
         {
             foreach(var repo in RepositoryLocator.GetAllRepositories())

@@ -162,14 +162,15 @@ namespace Rdmp.Core.Tests.CommandLine
         {
             var oc = new ObjectConstructor();
 
-            var mem = RepositoryLocator.DataExportRepository;
+            var mem = new MemoryDataExportRepository();
+            mem.MEF = MEF;
 
             //create some objects that the examples can successfully reference
             new Catalogue(mem.CatalogueRepository, "mycata1"); //ID = 1
             new Catalogue(mem.CatalogueRepository, "mycata2"); //ID = 2
             new Catalogue(mem.CatalogueRepository, "mycata3"); //ID = 3
 
-            PickObjectBase picker = (PickObjectBase) oc.Construct(pickerType, GetActivator());
+            PickObjectBase picker = (PickObjectBase) oc.Construct(pickerType, GetActivator(new RepositoryProvider(mem)));
 
             Assert.IsNotEmpty(picker.Help,"No Help for picker {0}",picker);
             Assert.IsNotEmpty(picker.Format,"No Format for picker {0}",picker);

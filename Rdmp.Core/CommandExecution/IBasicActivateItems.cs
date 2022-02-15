@@ -96,10 +96,12 @@ namespace Rdmp.Core.CommandExecution
         void ShowData(IViewSQLAndResultsCollection collection);
         
         /// <summary>
-        /// Returns the repository that stores objects of the given <paramref name="type"/> (Must be <see cref="IMapsDirectlyToDatabaseTable"/>)
+        /// Returns the repository that stores objects of the given <paramref name="type"/> (Must be <see cref="IMapsDirectlyToDatabaseTable"/>).
+        /// Throws if no compatible repo is found.
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
+        /// <exception cref="ArgumentException">If no repositories are found that own the given <paramref name="type"/></exception>
         IRepository GetRepositoryFor(Type type);
 
         /// <summary>
