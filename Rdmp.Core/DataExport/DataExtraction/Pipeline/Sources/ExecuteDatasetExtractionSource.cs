@@ -228,7 +228,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                 throw new Exception("Data read cancelled because our cancellationToken was set, aborting data reading");
             
             //if the first chunk is null
-            if (firstChunk && chunk == null)
+            if (firstChunk && chunk == null && !AllowEmptyExtractions)
                 throw new Exception("There is no data to load, query returned no rows, query was:" + Environment.NewLine + 
                                     (_hostedSource.Sql??Request.QueryBuilder.SQL));
             
