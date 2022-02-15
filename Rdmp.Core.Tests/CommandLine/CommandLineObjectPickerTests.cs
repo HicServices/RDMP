@@ -12,6 +12,7 @@ using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
+using Rdmp.Core.Startup;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandLine
@@ -161,16 +162,14 @@ namespace Rdmp.Core.Tests.CommandLine
         {
             var oc = new ObjectConstructor();
 
-            var mem = new MemoryDataExportRepository();
-            mem.CatalogueRepository.MEF = MEF;
+            var mem = RepositoryLocator.DataExportRepository;
 
             //create some objects that the examples can successfully reference
             new Catalogue(mem.CatalogueRepository, "mycata1"); //ID = 1
             new Catalogue(mem.CatalogueRepository, "mycata2"); //ID = 2
             new Catalogue(mem.CatalogueRepository, "mycata3"); //ID = 3
 
-
-            PickObjectBase picker = (PickObjectBase) oc.Construct(pickerType, new RepositoryProvider(mem));
+            PickObjectBase picker = (PickObjectBase) oc.Construct(pickerType, GetActivator());
 
             Assert.IsNotEmpty(picker.Help,"No Help for picker {0}",picker);
             Assert.IsNotEmpty(picker.Format,"No Format for picker {0}",picker);

@@ -177,7 +177,7 @@ namespace Rdmp.Core.Providers
         private IChildProvider[] _pluginChildProviders;
         private readonly ICatalogueRepository _catalogueRepository;
         private readonly ICheckNotifier _errorsCheckNotifier;
-        private readonly List<IChildProvider> _blacklistedPlugins = new List<IChildProvider>();
+        private readonly List<IChildProvider> _blockedPlugins = new List<IChildProvider>();
 
         public AllGovernanceNode AllGovernanceNode { get; private set; }
         public GovernancePeriod[] AllGovernancePeriods { get; private set; }
@@ -226,7 +226,7 @@ namespace Rdmp.Core.Providers
             // all the objects which are 
             AllMasqueraders = new ConcurrentDictionary<object, HashSet<IMasqueradeAs>>();
             
-            _pluginChildProviders = pluginChildProviders;
+            _pluginChildProviders = pluginChildProviders ?? new IChildProvider[0];
             
             ReportProgress("Before object fetches");
 
@@ -1456,7 +1456,7 @@ namespace Rdmp.Core.Providers
             
                 Stopwatch sw = new Stopwatch();
 
-                var providers = _pluginChildProviders.Except(_blacklistedPlugins).ToArray();
+                var providers = _pluginChildProviders.Except(_blockedPlugins).ToArray();
 
                 //for every object found so far
                 if(providers.Any())
@@ -1475,7 +1475,7 @@ namespace Rdmp.Core.Providers
                                 //if the plugin takes too long to respond we need to stop
                                 if (sw.ElapsedMilliseconds > 1000)
                                 {
-                                    _blacklistedPlugins.Add(plugin);
+                                    _blockedPlugins.Add(plugin);
                                     throw new Exception("Plugin '" + plugin + "' was blacklisted for taking too long to respond to GetChildren(o) where o was a '" + o.GetType().Name + "' ('" + o + "')");
                                 }
 

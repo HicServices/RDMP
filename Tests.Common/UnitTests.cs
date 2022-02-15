@@ -71,12 +71,13 @@ namespace Tests.Common
 
         /// <summary>
         /// Returns an <see cref="IBasicActivateItems"/> based on the <see cref="RepositoryLocator"/>
-        /// that throws if input is sought (e.g. <see cref="IBasicActivateItems.YesNo(DialogArgs)"/>)
+        /// (or <paramref name="locator"/> if specified) that throws if input is sought (e.g.
+        /// <see cref="IBasicActivateItems.YesNo(DialogArgs)"/>)
         /// </summary>
         /// <returns></returns>
-        protected IBasicActivateItems GetActivator()
+        protected IBasicActivateItems GetActivator(IRDMPPlatformRepositoryServiceLocator locator = null)
         {
-            return new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier()) { DisallowInput = true};
+            return new ConsoleInputManager(locator ?? RepositoryLocator, new ThrowImmediatelyCheckNotifier()) { DisallowInput = true};
         }
 
         /// <summary>
