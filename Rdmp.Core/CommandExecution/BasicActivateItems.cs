@@ -124,10 +124,11 @@ namespace Rdmp.Core.CommandExecution
             //Shouldn't ever change externally to your session so doesn't need constantly refreshed
             FavouritesProvider = new FavouritesProvider(this);
 
+            // This has to happen before we create the child providers
+            ConstructPluginChildProviders();
+
             // Note that this is virtual so can return null e.g. if other stuff has to happen with the activator before a valid child provider can be built (e.g. loading plugin user interfaces)
             CoreChildProvider = GetChildProvider();
-
-            ConstructPluginChildProviders();
 
             //handle custom icons from plugin user interfaces in which
             CoreIconProvider = new DataExportIconProvider(repositoryLocator, PluginUserInterfaces.ToArray());
