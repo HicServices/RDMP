@@ -8,6 +8,7 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
 using System;
+using System.Collections.Generic;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation
 {
@@ -49,6 +50,11 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
         public IMapsDirectlyToDatabaseTable GetObjectByID(Type t, int value)
         {
             return _linkedRepositoryProvider.GetObjectByID(t,value);
+        }
+
+        public IEnumerable<IRepository> GetAllRepositories()
+        {
+            return _linkedRepositoryProvider.GetAllRepositories();
         }
 
         public PlatformDatabaseCreationRepositoryFinder(PlatformDatabaseCreationOptions options)

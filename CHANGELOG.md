@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Added ArchiveTriggerTimeout user setting [#623](https://github.com/HicServices/RDMP/issues/623)
-- 
+- Support for referencing plugin objects from command line e.g. `./rdmp.exe cmd delete MyPluginClass:2`
+
 ### Fixed
 - Fixed closing and changing instance not consulting tabs before closing
 - Fixed bug where setting `SuggestedCategory` on a plugin command resulted in it vanishing from context menu

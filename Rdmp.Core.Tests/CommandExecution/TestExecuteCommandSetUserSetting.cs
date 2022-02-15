@@ -21,11 +21,11 @@ namespace Rdmp.Core.Tests.CommandExecution
         {
             UserSettings.AllowIdentifiableExtractions = false;
 
-            GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetUserSetting),new CommandLineObjectPicker(new []{"AllowIdentifiableExtractions","true"},RepositoryLocator));
+            GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetUserSetting),new CommandLineObjectPicker(new []{"AllowIdentifiableExtractions","true"}, GetActivator()));
 
             Assert.IsTrue(UserSettings.AllowIdentifiableExtractions);
 
-            GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetUserSetting),new CommandLineObjectPicker(new []{"AllowIdentifiableExtractions","false"},RepositoryLocator));
+            GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetUserSetting),new CommandLineObjectPicker(new []{"AllowIdentifiableExtractions","false"}, GetActivator()));
             
             Assert.IsFalse(UserSettings.AllowIdentifiableExtractions);
 

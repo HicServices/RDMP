@@ -307,7 +307,7 @@ namespace Rdmp.Core.CommandExecution
 
             try
             {
-                var constructor = GetConstructor(t, new CommandLineObjectPicker(new string[0]{ },_repositoryLocator));
+                var constructor = GetConstructor(t, new CommandLineObjectPicker(new string[0]{ },_basicActivator));
 
                 if (constructor == null)
                     return false;

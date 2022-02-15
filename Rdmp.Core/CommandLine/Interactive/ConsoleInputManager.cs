@@ -135,7 +135,7 @@ namespace Rdmp.Core.CommandLine.Interactive
             WritePromptFor(args);
 
             var value = ReadLineWithAuto(new PickObjectBase[]
-                {new PickObjectByID(RepositoryLocator), new PickObjectByName(RepositoryLocator)},
+                {new PickObjectByID(this), new PickObjectByName(this)},
                 availableObjects.Select(t=>t.GetType().Name).Distinct());
             
             var unavailable = value.DatabaseEntities.Except(availableObjects).ToArray();
@@ -192,7 +192,7 @@ namespace Rdmp.Core.CommandLine.Interactive
             Console.Write(args.EntryLabel);
 
             var value = ReadLineWithAuto(new PickObjectBase[]
-                {new PickObjectByID(RepositoryLocator), new PickObjectByName(RepositoryLocator)},
+                {new PickObjectByID(this), new PickObjectByName(this)},
                 availableObjects.Select(t=>t.GetType().Name).Distinct());
 
             var chosen = value.DatabaseEntities?.SingleOrDefault();

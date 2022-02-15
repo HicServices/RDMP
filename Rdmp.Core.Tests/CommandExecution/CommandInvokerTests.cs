@@ -40,16 +40,15 @@ namespace Rdmp.Core.Tests.CommandExecution
         [Timeout(5000)]
         public void Test_Delete_WithPicker()
         {
-            var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
+            var mgr = GetActivator();
             var invoker = new CommandInvoker(mgr);
 
             WhenIHaveA<Catalogue>();
 
-            var picker = new CommandLineObjectPicker(new[] {"Catalogue:*"}, RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new[] {"Catalogue:*"}, mgr);
             invoker.ExecuteCommand(typeof(ExecuteCommandDelete),picker);
         }
 
-        
         [Test]
         [Timeout(5000)]
         public void Test_Generic_WithPicker()
@@ -70,7 +69,7 @@ namespace Rdmp.Core.Tests.CommandExecution
 
         private CommandLineObjectPicker GetPicker(params string[] args)
         {
-            return new CommandLineObjectPicker(args, RepositoryLocator);
+            return new CommandLineObjectPicker(args, GetActivator());
         }
 
         private class GenericTestCommand<T> : BasicCommandExecution

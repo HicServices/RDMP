@@ -15,7 +15,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
 {
     class PickType : PickObjectBase
     {
-        public PickType(IRDMPPlatformRepositoryServiceLocator repositoryLocator) : base(repositoryLocator, new Regex(".*"))
+        public PickType(IBasicActivateItems activator) : base(activator, new Regex(".*"))
         {
         }
 
@@ -40,10 +40,10 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
 
             try
             {
-                return 
-                    RepositoryLocator.CatalogueRepository.MEF.GetType(BasicCommandExecution.ExecuteCommandPrefix + arg)
+                return
+                    Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(BasicCommandExecution.ExecuteCommandPrefix + arg)
                     ??
-                    RepositoryLocator.CatalogueRepository.MEF.GetType(arg);
+                    Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(arg);
             }
             catch (Exception)
             {

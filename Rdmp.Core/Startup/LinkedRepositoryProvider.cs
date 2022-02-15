@@ -27,6 +27,7 @@ namespace Rdmp.Core.Startup
     {
         private List<IPluginRepositoryFinder> _pluginRepositoryFinders = null;
 
+
         public LinkedRepositoryProvider(string catalogueConnectionString, string dataExportConnectionString)
         {
             try
@@ -109,6 +110,23 @@ namespace Rdmp.Core.Startup
             //it's a plugin?
             foreach (Type type in CatalogueRepository.MEF.GetTypes<IPluginRepositoryFinder>())
                 _pluginRepositoryFinders.Add((IPluginRepositoryFinder)constructor.Construct(type, this));
+        }
+
+        public override IEnumerable<IRepository> GetAllRepositories()
+        {
+            LoadPluginRepositoryFindersIfNotLoaded();
+
+            yield return CatalogueRepository;
+
+            if(DataExportRepository != null)
+                yield return DataExportRepository;
+
+            foreach(var p in _pluginRepositoryFinders)
+            {
+                var r = p.GetRepositoryIfAny();
+                if (r != null)
+                    yield return r;
+            }
         }
     }
 }

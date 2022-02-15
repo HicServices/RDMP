@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
@@ -32,8 +33,8 @@ NamePattern2+: (optional) only allowed if you are being prompted for multiple ob
             "Catalogue:mycata1,mycata2"
         };
 
-        public PickObjectByName(IRDMPPlatformRepositoryServiceLocator repositoryLocator) :
-            base(repositoryLocator,
+        public PickObjectByName(IBasicActivateItems activator) :
+            base(activator,
             new Regex(@"^([A-Za-z]+):([^:]+)$",RegexOptions.IgnoreCase))
         {
         }

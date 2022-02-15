@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 
@@ -43,8 +44,8 @@ ID2+: (optional) only allowed if you are being prompted for multiple objects, al
             return baseMatch && IsDatabaseObjectType(Regex.Match(arg).Groups[1].Value, out _);
         }
 
-        public PickObjectByID(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
-            :base(repositoryLocator,
+        public PickObjectByID(IBasicActivateItems activator)
+            :base(activator,
                 new Regex("^([A-Za-z]+):([0-9,]+)$",RegexOptions.IgnoreCase))
         {
                 

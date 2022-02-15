@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
@@ -33,8 +34,8 @@ NamePattern: must be a value that could appear for the given Property.  Comparis
             "Catalogue?Folder:*edris*"
         };
 
-        public PickObjectByQuery(IRDMPPlatformRepositoryServiceLocator repositoryLocator) :
-            base(repositoryLocator,
+        public PickObjectByQuery(IBasicActivateItems activator) :
+            base(activator,
             new Regex(@"^(\w+)\?(\w+):([^:]+)$", RegexOptions.IgnoreCase))
         {
         }

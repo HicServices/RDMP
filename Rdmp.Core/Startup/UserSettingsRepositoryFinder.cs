@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Comments;
@@ -120,6 +121,11 @@ namespace Rdmp.Core.Startup
         public IMapsDirectlyToDatabaseTable GetObjectByID(Type t, int value)
         {
             return _linkedRepositoryProvider.GetObjectByID(t,value);
+        }
+
+        public IEnumerable<IRepository> GetAllRepositories()
+        {
+            return _linkedRepositoryProvider.GetAllRepositories();
         }
     }
 }

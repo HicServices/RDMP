@@ -773,5 +773,17 @@ namespace Rdmp.Core.CommandExecution
         /// <inheritdoc/>
         public abstract void ShowGraph(AggregateConfiguration aggregate);
 
+        public IRepository GetRepositoryFor(Type type)
+        {
+            foreach(var repo in RepositoryLocator.GetAllRepositories())
+            {
+                if(repo.SupportsObjectType(type))
+                {
+                    return repo;
+                }
+            }
+
+            throw new ArgumentException("Did not know what repository to use to fetch objects of Type '" + type + "'");
+        }
     }
 }
