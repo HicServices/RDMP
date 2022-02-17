@@ -414,8 +414,6 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
             if(AlwaysFilterOn != null)
                 showOnlyTypes = new List<Type>(new []{AlwaysFilterOn});
 
-            var favourites = Activator.FavouritesProvider.CurrentFavourites;
-
             var scores = scorer.ScoreMatches(_searchables, text, cancellationToken,showOnlyTypes);
 
             if (scores == null)
