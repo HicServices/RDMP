@@ -414,20 +414,15 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
             if(AlwaysFilterOn != null)
                 showOnlyTypes = new List<Type>(new []{AlwaysFilterOn});
 
+            var favourites = Activator.FavouritesProvider.CurrentFavourites;
+
             var scores = scorer.ScoreMatches(_searchables, text, cancellationToken,showOnlyTypes);
 
             if (scores == null)
                 return;
             lock (oMatches)
             {
-                _matches =
-                    scores
-                        .Where(score => score.Value > 0)
-                        .OrderByDescending(score => score.Value)
-                        .ThenByDescending(id=>id.Key.Key.ID) //favour newer objects over ties
-                        .Take(MaxMatches)
-                        .Select(score => score.Key.Key)
-                        .ToList();
+                _matches = scorer.ShortList(scores, MaxMatches,Activator);
             }
         }
 

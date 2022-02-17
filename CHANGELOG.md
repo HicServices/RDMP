@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed closing and changing instance not consulting tabs before closing
 - Fixed bug where setting `SuggestedCategory` on a plugin command resulted in it vanishing from context menu
 
+### Changed
+
+- Find sorts ties firstly by favourite status (favourite items appear above others)
+- Find sorts ties lastly alphabetically (previously by order of ID)
+
 ## [7.0.6] - 2022-01-25
 
 *Database Patch Included (enables ExtractionProgress batching)*

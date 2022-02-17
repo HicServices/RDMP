@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -365,6 +366,27 @@ namespace Rdmp.Core.Providers
                     (includeProjectSpecific && isProjectSpecific) ||
                     (includeNonExtractable && !isExtractable));
 
+        }
+
+        /// <summary>
+        /// Shortlists the output of <see cref="ScoreMatches(Dictionary{IMapsDirectlyToDatabaseTable, DescendancyList}, string, CancellationToken, List{Type})"/>
+        /// producing a list of results up to the supplied length (<paramref name="take"/>).
+        /// </summary>
+        /// <param name="scores"></param>
+        /// <param name="take"></param>
+        /// <param name="activator"></param>
+        /// <returns></returns>
+        public List<IMapsDirectlyToDatabaseTable> ShortList(Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> scores, int take, IBasicActivateItems activator)
+        {
+            var favourites = activator.FavouritesProvider.CurrentFavourites;
+
+            return scores.Where(score => score.Value > 0)
+                        .OrderByDescending(score => score.Value)
+                        .ThenByDescending(kvp => favourites.Any(f=>f.IsReferenceTo(kvp.Key.Key))) // favour favourites
+                        .ThenBy(kvp => kvp.Key.Key.ToString()) // sort ties alphabetically
+                        .Take(take)
+                        .Select(score => score.Key.Key)
+                        .ToList();
         }
     }
 }
