@@ -17,14 +17,14 @@ namespace Rdmp.UI.Collections
     internal class CherryPickingTailFilter : IListFilter
     {
         private readonly int _numberOfObjects;
-        private readonly TextMatchFilterWithWhiteList _modelFilter;
+        private readonly TextMatchFilterWithAlwaysShowList _modelFilter;
 
         /// <summary>
         /// Creates a new whole list filter that prioritizes items in the <paramref name="modelFilter"/> if any
         /// </summary>
-        /// <param name="numberOfObjects">The maximum number of objects to return (can be exceeded if there are <see cref="TextMatchFilterWithWhiteList.WhiteList"/> objects)</param>
-        /// <param name="modelFilter">The optional search/whitelist filter from which objects should be returned from first</param>
-        public CherryPickingTailFilter(int numberOfObjects,TextMatchFilterWithWhiteList modelFilter)
+        /// <param name="numberOfObjects">The maximum number of objects to return (can be exceeded if there are <see cref="TextMatchFilterWithAlwaysShowList.AlwaysShow"/> objects)</param>
+        /// <param name="modelFilter">The optional search/alwaysShowList filter from which objects should be returned from first</param>
+        public CherryPickingTailFilter(int numberOfObjects,TextMatchFilterWithAlwaysShowList modelFilter)
         {
             _numberOfObjects = numberOfObjects;
             _modelFilter = modelFilter;
@@ -43,12 +43,12 @@ namespace Rdmp.UI.Collections
                 return modelObjects.Cast<object>().Take(_numberOfObjects);
 
             bool hasSearchTokens = _modelFilter.HasComponents;
-            bool hasWhitelist = _modelFilter.WhiteList != null && _modelFilter.WhiteList.Any();
+            bool hasAlwaysShowlist = _modelFilter.AlwaysShow != null && _modelFilter.AlwaysShow.Any();
 
             var available = modelObjects.Cast<object>().ToList();
 
-            //We will return the whitelisted objects for sure
-            var toReturn = hasWhitelist ? new HashSet<object>(available.Intersect(_modelFilter.WhiteList)) : new HashSet<object>();
+            //We will return the alwaysShowList objects for sure
+            var toReturn = hasAlwaysShowlist ? new HashSet<object>(available.Intersect(_modelFilter.AlwaysShow)) : new HashSet<object>();
             
             //but lets also take up to _numberOfObjects other objects that match the filter (if any)
             foreach (var a in available.Where(o => !hasSearchTokens || _modelFilter.Filter(o)))

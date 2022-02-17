@@ -9,11 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added ArchiveTriggerTimeout user setting [#623](https://github.com/HicServices/RDMP/issues/623)
 - Support for referencing plugin objects from command line e.g. `./rdmp.exe cmd delete MyPluginClass:2`
+- The word 'now' is a valid date when supplied on the command line
 
 ### Fixed
 - Fixed closing and changing instance not consulting tabs before closing
 - Fixed bug where setting `SuggestedCategory` on a plugin command resulted in it vanishing from context menu
 - Fixed bug with AllowEmptyExtractions not working under some situations
+
+### Changed
+
+- Find sorts ties firstly by favourite status (favourite items appear above others)
+- Find sorts ties lastly alphabetically (previously by order of ID)
 
 ## [7.0.6] - 2022-01-25
 

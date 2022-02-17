@@ -20,7 +20,7 @@ namespace Rdmp.Core.Validation.Constraints.Secondary
 {
     /// <summary>
     /// Specifies that values in the column must (or must not - see InvertLogic) appear in another column.  This lets you have a database table which contains a
-    /// whitelist (or blacklist) of expected values.  This is particularly useful if you want to create a Lookup table but you don't want to create a constraint
+    /// always allowed (or forbidden) of expected values.  This is particularly useful if you want to create a Lookup table but you don't want to create a constraint
     /// at database level because you expect dirty data and don't want to crash the data load.
     /// </summary>
     public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable

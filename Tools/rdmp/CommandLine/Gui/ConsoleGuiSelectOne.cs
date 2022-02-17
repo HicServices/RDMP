@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Providers;
 using Terminal.Gui;
 
@@ -16,6 +17,7 @@ namespace Rdmp.Core.CommandLine.Gui
 {
     class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabaseTable>
     {
+        private readonly IBasicActivateItems _activator;
         private readonly Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> _masterCollection;
         private SearchablesMatchScorer _scorer;
         private TextField txtId;
@@ -30,10 +32,11 @@ namespace Rdmp.Core.CommandLine.Gui
             
         }
         
-        public ConsoleGuiSelectOne(ICoreChildProvider childProvider):this()
+        public ConsoleGuiSelectOne(IBasicActivateItems activator):this()
         {
-            _masterCollection = childProvider.GetAllSearchables();
-            SetAspectGet(childProvider);
+            _activator = activator;
+            _masterCollection = _activator.CoreChildProvider.GetAllSearchables();
+            SetAspectGet(_activator.CoreChildProvider);
         }
 
         private void SetAspectGet(ICoreChildProvider childProvider)
@@ -94,14 +97,7 @@ namespace Rdmp.Core.CommandLine.Gui
             if(dict == null)
                 return new List<IMapsDirectlyToDatabaseTable>();
 
-            return
-                dict
-                .Where(score => !token.IsCancellationRequested && score.Value > 0)
-                .OrderByDescending(score => score.Value)
-                .ThenByDescending(id => id.Key.Key.ID) //favour newer objects over ties
-                .Take(MaxMatches)
-                .Select(score => score.Key.Key)
-                .ToList();
+            return _scorer.ShortList(dict, MaxMatches,_activator);
         }
 
         protected override IList<IMapsDirectlyToDatabaseTable> GetInitialSource()

@@ -10,21 +10,21 @@ using BrightIdeasSoftware;
 namespace Rdmp.UI.Collections
 {
     /// <summary>
-    /// Filter which always shows a given list of objects (the whitelist).  This class is an <see cref="IModelFilter"/>
+    /// Filter which always shows a given list of objects (the allowList).  This class is an <see cref="IModelFilter"/>
     /// for use with ObjectListView
     /// </summary>
-    public class WhiteListOnlyFilter : IModelFilter
+    public class AlwaysShowListOnlyFilter : IModelFilter
     {
-        public HashSet<object> Whitelist { get; private set; }
+        public HashSet<object> AlwaysShowList { get; private set; }
 
-        public WhiteListOnlyFilter(IEnumerable<object> whitelist)
+        public AlwaysShowListOnlyFilter(IEnumerable<object> alwaysShowList)
         {
-            Whitelist = new HashSet<object>(whitelist);
+            AlwaysShowList = new HashSet<object>(alwaysShowList);
         }
 
         public bool Filter(object modelObject)
         {
-            return Whitelist.Contains(modelObject);
+            return AlwaysShowList.Contains(modelObject);
         }
     }
 }

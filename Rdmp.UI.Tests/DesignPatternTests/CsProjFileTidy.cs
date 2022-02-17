@@ -23,7 +23,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
         private DirectoryInfo _root;
 
         //these class files are excused from having 2+ class files in them or 0
-        private string[] Whitelist = new[]
+        private string[] Ignorelist = new[]
         {
             "Attributes.cs", "AssemblyInfo.cs", "Annotations.cs", "StageArgs.cs" ,"ICustomUI.cs","MapsDirectlyToDatabaseTableStatelessDefinition.cs",
             "IObjectUsedByOtherObjectNode.cs", "IInjectKnown.cs", "Themes.cs","TableView.cs","TreeView.cs"
@@ -67,7 +67,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
         
         private void ConfirmClassNameAndNamespaces(FileInfo csFile)
         {
-            if(Whitelist.Contains(csFile.Name))
+            if(Ignorelist.Contains(csFile.Name))
                 return;
 
             csFilesFound.Add(csFile.FullName);
