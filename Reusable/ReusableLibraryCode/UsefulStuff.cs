@@ -609,6 +609,9 @@ namespace ReusableLibraryCode
 
             if (t == typeof(DateTime) && value is string s)
             {
+                if (string.Equals(s, "now",StringComparison.CurrentCultureIgnoreCase))
+                    return DateTime.Now;
+
                 //Convert.ChangeType doesn't handle dates, so let's deal with that
                 return DateTime.Parse(s);
             }
