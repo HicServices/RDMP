@@ -19,18 +19,18 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             Dictionary<string,string> problemFiles = new Dictionary<string, string>();
             List<string> prohibitedStrings = new List<string>();
             
-            List<string> whitelist = new List<string>();
-            whitelist.Add("ExplicitDatabaseNameChecker.cs"); //us obviously since we do contain that text!
-            whitelist.Add("DatabaseCreationProgramOptions.cs"); //allowed because it is the usage text for the program.
-            whitelist.Add("AutomationServiceOptions.cs");//allowed because it is the usage text for the program.
-            whitelist.Add("DatabaseTests.cs"); //allowed because it is telling user about how you can setup database tests support
-            whitelist.Add("ChoosePlatformDatabasesUI.Designer.cs"); //allowed because it is a suggestion to user about what prefix to use
-            whitelist.Add("PluginPackagerProgramOptions.cs"); //allwed because it's a suggestion to the user about command line arguments
-            whitelist.Add("DocumentationCrossExaminationTest.cs"); //allowed because its basically a list of comments that are allowed despite not appearing in the codebase
-            whitelist.Add("ResearchDataManagementPlatformOptions.cs"); //allowed because it's an Example
+            List<string> ignoreList = new List<string>();
+            ignoreList.Add("ExplicitDatabaseNameChecker.cs"); //us obviously since we do contain that text!
+            ignoreList.Add("DatabaseCreationProgramOptions.cs"); //allowed because it is the usage text for the program.
+            ignoreList.Add("AutomationServiceOptions.cs");//allowed because it is the usage text for the program.
+            ignoreList.Add("DatabaseTests.cs"); //allowed because it is telling user about how you can setup database tests support
+            ignoreList.Add("ChoosePlatformDatabasesUI.Designer.cs"); //allowed because it is a suggestion to user about what prefix to use
+            ignoreList.Add("PluginPackagerProgramOptions.cs"); //allwed because it's a suggestion to the user about command line arguments
+            ignoreList.Add("DocumentationCrossExaminationTest.cs"); //allowed because its basically a list of comments that are allowed despite not appearing in the codebase
+            ignoreList.Add("ResearchDataManagementPlatformOptions.cs"); //allowed because it's an Example
 
 
-            whitelist.AddRange(
+            ignoreList.AddRange(
                 new string[]
                 {
                     "DleOptions.cs",
@@ -50,7 +50,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
 
             foreach (string file in csFilesFound)
             {
-                if (whitelist.Any(str=>str.Equals(Path.GetFileName(file))))
+                if (ignoreList.Any(str=>str.Equals(Path.GetFileName(file))))
                     continue;
                 
                 var contents = File.ReadAllText(file);

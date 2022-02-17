@@ -372,7 +372,7 @@ namespace Rdmp.UI.SimpleDialogs
 
         private void ApplyFilter()
         {            
-            var modelFilter = new TextMatchFilterWithWhiteList(MultiSelected,olvObjects,tbFilter.Text,StringComparison.InvariantCultureIgnoreCase);
+            var modelFilter = new TextMatchFilterWithAlwaysShowList(MultiSelected,olvObjects,tbFilter.Text,StringComparison.InvariantCultureIgnoreCase);
             olvObjects.ListFilter = new CherryPickingTailFilter(MaxObjectsToShow,modelFilter);
 
             olvObjects.ModelFilter = _useCatalogueFilter ? 

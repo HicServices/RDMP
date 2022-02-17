@@ -404,7 +404,7 @@ namespace Rdmp.UI.Progress
         {
             var alwaysShow = olvProgressEvents.Objects == null ? new ProgressUIEntry[0] :
                 olvProgressEvents.Objects.OfType<ProgressUIEntry>().Where(p => p.Sender == GlobalRunError).ToArray();
-            olvProgressEvents.ModelFilter = new TextMatchFilterWithWhiteList(alwaysShow, olvProgressEvents, tbTextFilter.Text, StringComparison.CurrentCultureIgnoreCase);
+            olvProgressEvents.ModelFilter = new TextMatchFilterWithAlwaysShowList(alwaysShow, olvProgressEvents, tbTextFilter.Text, StringComparison.CurrentCultureIgnoreCase);
         }
         public void SetFatal()
         {

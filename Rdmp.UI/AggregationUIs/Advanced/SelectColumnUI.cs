@@ -335,7 +335,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
         private void tbFilter_TextChanged(object sender, EventArgs e)
         {
             olvSelectColumns.UseFiltering = true;
-            olvSelectColumns.ModelFilter = new TextMatchFilterWithWhiteList(_includedColumns,olvSelectColumns,tbFilter.Text,StringComparison.CurrentCultureIgnoreCase);
+            olvSelectColumns.ModelFilter = new TextMatchFilterWithAlwaysShowList(_includedColumns,olvSelectColumns,tbFilter.Text,StringComparison.CurrentCultureIgnoreCase);
         }
     }
 }

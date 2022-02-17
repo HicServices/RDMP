@@ -27,7 +27,7 @@ namespace Rdmp.UI.Collections
 {
     /// <summary>
     /// User interface component for indicating to the user that there is a Pinned object in an RDMPCollectionUI.  Bumps the collection tree down 19 pixels (or docks top).
-    /// And then assembles a whitelist filter that will show only the pinned object hierarchy and children.
+    /// And then assembles a always show list filter that will show only the pinned object hierarchy and children.
     /// </summary>
     [TechnicalUI]
     public partial class CollectionPinFilterUI : UserControl
@@ -122,24 +122,24 @@ namespace Rdmp.UI.Collections
             _beforeModelFilter = _tree.ModelFilter;
             _beforeUseFiltering = _tree.UseFiltering;
 
-            RefreshWhiteList(_activator.CoreChildProvider,descendancy);
+            RefreshAlwaysShowList(_activator.CoreChildProvider,descendancy);
         }
 
-        private void RefreshWhiteList(ICoreChildProvider childProvider,DescendancyList descendancy)
+        private void RefreshAlwaysShowList(ICoreChildProvider childProvider,DescendancyList descendancy)
         {
             //get rid of all objects that are not the object to emphasise tree either as parents or as children (recursive)
-            List<object> whitelist = new List<object>();
+            List<object> alwaysShowList = new List<object>();
 
-            //add parents to whitelist
+            //add parents to alwaysShowList
             if (descendancy != null && descendancy.Parents.Any())
-                whitelist.AddRange(descendancy.Parents);
+                alwaysShowList.AddRange(descendancy.Parents);
 
-            whitelist.Add(_toPin);
+            alwaysShowList.Add(_toPin);
 
-            whitelist.AddRange(childProvider.GetAllChildrenRecursively(_toPin));
+            alwaysShowList.AddRange(childProvider.GetAllChildrenRecursively(_toPin));
             
             _tree.UseFiltering = true;
-            _tree.ModelFilter = new WhiteListOnlyFilter(whitelist);
+            _tree.ModelFilter = new AlwaysShowListOnlyFilter(alwaysShowList);
         }
 
         public void UnApplyToTree()
@@ -185,7 +185,7 @@ namespace Rdmp.UI.Collections
             if(_tree == null)
                 return;
 
-            var whitelistFilter = _tree.ModelFilter as WhiteListOnlyFilter;
+            var alwaysShowList = _tree.ModelFilter as AlwaysShowListOnlyFilter;
 
             if(_beforeModelFilter is CatalogueCollectionFilter f1)
                 f1.ChildProvider = childProvider;
@@ -194,11 +194,11 @@ namespace Rdmp.UI.Collections
                 f2.ChildProvider = childProvider;
 
             //someone somehow erased the pin filter? or overwrote it with another filter
-            if(whitelistFilter == null)
+            if(alwaysShowList == null)
                 return;
 
             if(_toPin != null)
-                RefreshWhiteList(childProvider,childProvider.GetDescendancyListIfAnyFor(_toPin));
+                RefreshAlwaysShowList(childProvider,childProvider.GetDescendancyListIfAnyFor(_toPin));
         }
     }
 }
