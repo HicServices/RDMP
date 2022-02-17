@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.CommandLine.Interactive.Picking
@@ -25,21 +26,21 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         public int Length => Arguments.Count;
 
         private readonly HashSet<PickObjectBase> _pickers = new HashSet<PickObjectBase>();
-        
+
         /// <summary>
         /// Constructs a picker with all possible formats and immediately parse the provided <paramref name="args"/>
         /// </summary>
         /// <param name="args"></param>
-        /// <param name="repositoryLocator"></param>
+        /// <param name="activator"></param>
         public CommandLineObjectPicker(IEnumerable<string> args,
-            IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+            IBasicActivateItems activator)
         {
-            _pickers.Add(new PickObjectByID(repositoryLocator));
-            _pickers.Add(new PickObjectByName(repositoryLocator));
-            _pickers.Add(new PickObjectByQuery(repositoryLocator));
+            _pickers.Add(new PickObjectByID(activator));
+            _pickers.Add(new PickObjectByName(activator));
+            _pickers.Add(new PickObjectByQuery(activator));
             _pickers.Add(new PickDatabase());
             _pickers.Add(new PickTable());
-            _pickers.Add(new PickType(repositoryLocator));
+            _pickers.Add(new PickType(activator));
             Arguments = new ReadOnlyCollection<CommandLineObjectPickerArgumentValue>(args.Select(ParseValue).ToList());
         }
 

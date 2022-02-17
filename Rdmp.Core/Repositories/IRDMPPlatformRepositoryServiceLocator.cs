@@ -8,6 +8,7 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.Providers;
 using System;
+using System.Collections.Generic;
 
 namespace Rdmp.Core.Repositories
 {
@@ -47,5 +48,12 @@ namespace Rdmp.Core.Repositories
         /// <param name="value"></param>
         /// <returns></returns>
         IMapsDirectlyToDatabaseTable GetObjectByID(Type t,int value);
+
+        /// <summary>
+        /// Returns all repositories (including plugin repositories if supported) known about by this
+        /// repository locator.
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<IRepository> GetAllRepositories();
     }
 }

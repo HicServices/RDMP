@@ -54,7 +54,7 @@ namespace Rdmp.Core.CommandLine.Runners
 
             _picker = 
                 _options.CommandArgs != null && _options.CommandArgs.Any() ?
-                 new CommandLineObjectPicker(_options.CommandArgs, repositoryLocator) :
+                 new CommandLineObjectPicker(_options.CommandArgs, _input) :
                 null;
             
             if(!string.IsNullOrWhiteSpace(_options.File) && _options.Script == null)
@@ -136,7 +136,7 @@ namespace Rdmp.Core.CommandLine.Runners
         {    
             if (command.Contains(' '))
             {
-                picker = new CommandLineObjectPicker(SplitCommandLine(command).Skip(1).ToArray(),repositoryLocator);
+                picker = new CommandLineObjectPicker(SplitCommandLine(command).Skip(1).ToArray(),_input);
                 return command.Substring(0, command.IndexOf(' '));
             }
 

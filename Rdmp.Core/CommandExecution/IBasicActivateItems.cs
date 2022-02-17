@@ -94,6 +94,15 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         /// <param name="collection"></param>
         void ShowData(IViewSQLAndResultsCollection collection);
+        
+        /// <summary>
+        /// Returns the repository that stores objects of the given <paramref name="type"/> (Must be <see cref="IMapsDirectlyToDatabaseTable"/>).
+        /// Throws if no compatible repo is found.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">If no repositories are found that own the given <paramref name="type"/></exception>
+        IRepository GetRepositoryFor(Type type);
 
         /// <summary>
         /// Component for recording object tree inheritance (for RDMPCollectionUI primarily but also for anyone who wants to know children of objects or all objects quickly without having to go back to the database)

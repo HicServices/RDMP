@@ -12,6 +12,7 @@ using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
+using Rdmp.Core.Startup;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandLine
@@ -43,7 +44,7 @@ namespace Rdmp.Core.Tests.CommandLine
         public void Test_RandomGarbage_GeneratesRawValueOnly()
         {
             string str = $"Shiver me timbers";
-             var picker = new CommandLineObjectPicker(new []{str}, RepositoryLocator);
+             var picker = new CommandLineObjectPicker(new []{str}, GetActivator());
 
             Assert.AreEqual(str,picker[0].RawValue); 
             Assert.IsNull(picker[0].DatabaseEntities);
@@ -57,13 +58,13 @@ namespace Rdmp.Core.Tests.CommandLine
         {
            var cata =  WhenIHaveA<Catalogue>();
 
-           var picker = new CommandLineObjectPicker(new []{$"Catalogue:{cata.ID}"}, RepositoryLocator);
+           var picker = new CommandLineObjectPicker(new []{$"Catalogue:{cata.ID}"}, GetActivator());
 
            Assert.AreEqual(cata,picker[0].DatabaseEntities.Single());
 
            
            //specifying the same ID twice shouldn't return duplicate objects
-           picker = new CommandLineObjectPicker(new []{$"Catalogue:{cata.ID},{cata.ID}"}, RepositoryLocator);
+           picker = new CommandLineObjectPicker(new []{$"Catalogue:{cata.ID},{cata.ID}"}, GetActivator());
 
            Assert.AreEqual(cata,picker[0].DatabaseEntities.Single());
         }
@@ -76,7 +77,7 @@ namespace Rdmp.Core.Tests.CommandLine
         [TestCase("\r\n")]
         public void Test_PickerForWhitespace(string val)
         {
-            var picker = new CommandLineObjectPicker(new []{val },RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new []{val }, GetActivator());
 
             Assert.AreEqual(1,picker.Length);
             
@@ -96,7 +97,7 @@ namespace Rdmp.Core.Tests.CommandLine
             var cata1 =  WhenIHaveA<Catalogue>();
             var cata2 =  WhenIHaveA<Catalogue>();
 
-            var picker = new CommandLineObjectPicker(new []{$"Catalogue:{cata1.ID},{cata2.ID}"}, RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new []{$"Catalogue:{cata1.ID},{cata2.ID}"}, GetActivator());
 
             Assert.AreEqual(2, picker[0].DatabaseEntities.Count);
             Assert.Contains(cata1,picker[0].DatabaseEntities);
@@ -118,7 +119,7 @@ namespace Rdmp.Core.Tests.CommandLine
            cata2.SaveToDatabase();
            cata3.SaveToDatabase();
 
-           var picker = new CommandLineObjectPicker(new []{$"Catalogue:lol*"}, RepositoryLocator);
+           var picker = new CommandLineObjectPicker(new []{$"Catalogue:lol*"}, GetActivator());
 
            Assert.AreEqual(2, picker[0].DatabaseEntities.Count);
            Assert.Contains(cata1, picker[0].DatabaseEntities);
@@ -134,7 +135,7 @@ namespace Rdmp.Core.Tests.CommandLine
             Assert.IsEmpty(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>());
 
             //when interpreting the string "Catalogue" for a command
-            var picker = new CommandLineObjectPicker(new []{"Catalogue" },RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new []{"Catalogue" }, GetActivator());
 
             //we can pick it as either a Catalogue or a collection of all the Catalogues
             Assert.AreEqual(typeof(Catalogue),picker.Arguments.Single().Type);
@@ -162,15 +163,14 @@ namespace Rdmp.Core.Tests.CommandLine
             var oc = new ObjectConstructor();
 
             var mem = new MemoryDataExportRepository();
-            mem.CatalogueRepository.MEF = MEF;
+            mem.MEF = MEF;
 
             //create some objects that the examples can successfully reference
             new Catalogue(mem.CatalogueRepository, "mycata1"); //ID = 1
             new Catalogue(mem.CatalogueRepository, "mycata2"); //ID = 2
             new Catalogue(mem.CatalogueRepository, "mycata3"); //ID = 3
 
-
-            PickObjectBase picker = (PickObjectBase) oc.Construct(pickerType, new RepositoryProvider(mem));
+            PickObjectBase picker = (PickObjectBase) oc.Construct(pickerType, GetActivator(new RepositoryProvider(mem)));
 
             Assert.IsNotEmpty(picker.Help,"No Help for picker {0}",picker);
             Assert.IsNotEmpty(picker.Format,"No Format for picker {0}",picker);
@@ -191,7 +191,7 @@ namespace Rdmp.Core.Tests.CommandLine
         [Test]
         public void PickTypeName()
         {
-            var picker = new CommandLineObjectPicker(new []{"Name"},RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new []{"Name"}, GetActivator());
             
             Assert.IsNull(picker[0].Type);
             Assert.AreEqual("Name",picker[0].RawValue);
@@ -201,7 +201,7 @@ namespace Rdmp.Core.Tests.CommandLine
         [TestCase("NULL")]
         public void PickNull(string nullString)
         {
-            var picker = new CommandLineObjectPicker(new []{nullString},RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new []{nullString}, GetActivator());
             Assert.IsTrue(picker[0].ExplicitNull);
         }
         [Test]
@@ -213,7 +213,7 @@ namespace Rdmp.Core.Tests.CommandLine
             cata1.Name = "Biochem";
             cata2.Name = "Haematology";
 
-            var picker = new CommandLineObjectPicker(new[] { $"c:*io*" }, RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new[] { $"c:*io*" }, GetActivator());
 
             Assert.AreEqual(cata1, picker[0].DatabaseEntities[0]);
             Assert.AreEqual(1, picker[0].DatabaseEntities.Count);
@@ -225,7 +225,7 @@ namespace Rdmp.Core.Tests.CommandLine
             var cata1 = WhenIHaveA<Catalogue>();
             var cata2 = WhenIHaveA<Catalogue>();
 
-            var picker = new CommandLineObjectPicker(new[] { $"c:{cata1.ID},{cata2.ID}" }, RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new[] { $"c:{cata1.ID},{cata2.ID}" }, GetActivator());
 
             Assert.AreEqual(2, picker[0].DatabaseEntities.Count);
             Assert.Contains(cata1, picker[0].DatabaseEntities);
@@ -240,7 +240,7 @@ namespace Rdmp.Core.Tests.CommandLine
 
             // c is short for Catalogue 
             // so this would be the use case 'rdmp cmd list Catalogue' where user can instead write 'rdmp cmd list c'
-            var picker = new CommandLineObjectPicker(new[] { $"c" }, RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new[] { $"c" }, GetActivator());
 
             Assert.AreEqual(2, picker[0].DatabaseEntities.Count);
             Assert.Contains(cata1, picker[0].DatabaseEntities);
@@ -258,7 +258,7 @@ namespace Rdmp.Core.Tests.CommandLine
             var ci3 = WhenIHaveA<CatalogueItem>();
 
             var cataId = ci.Catalogue.ID;
-            var picker = new CommandLineObjectPicker(new[] { $"CatalogueItem?Catalogue_ID:{cataId}" }, RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new[] { $"CatalogueItem?Catalogue_ID:{cataId}" }, GetActivator());
 
             Assert.AreEqual(2, picker[0].DatabaseEntities.Count);
             Assert.Contains(ci, picker[0].DatabaseEntities);
@@ -277,7 +277,7 @@ namespace Rdmp.Core.Tests.CommandLine
             c2.Folder = new CatalogueFolder("\\datasets\\no\\");
             c3.Folder = new CatalogueFolder("\\datasets\\hi\\");
 
-            var picker = new CommandLineObjectPicker(new[] { $"Catalogue?Folder:*hi*" }, RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new[] { $"Catalogue?Folder:*hi*" }, GetActivator());
 
             Assert.AreEqual(2, picker[0].DatabaseEntities.Count);
             Assert.Contains(c1, picker[0].DatabaseEntities);
@@ -294,7 +294,7 @@ namespace Rdmp.Core.Tests.CommandLine
             c1.PivotCategory_ExtractionInformation_ID = 10;
             c2.PivotCategory_ExtractionInformation_ID = null;
 
-            var picker = new CommandLineObjectPicker(new[] { $"Catalogue?PivotCategory_ExtractionInformation_ID:null" }, RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new[] { $"Catalogue?PivotCategory_ExtractionInformation_ID:null" }, GetActivator());
 
             Assert.AreEqual(1, picker[0].DatabaseEntities.Count);
             Assert.Contains(c2, picker[0].DatabaseEntities);
@@ -302,7 +302,7 @@ namespace Rdmp.Core.Tests.CommandLine
         [Test]
         public void Test_PickWithPropertyQuery_UnknownProperty()
         {
-            var ex = Assert.Throws<Exception>(()=>new CommandLineObjectPicker(new[] { $"Catalogue?Blarg:null" }, RepositoryLocator));
+            var ex = Assert.Throws<Exception>(()=>new CommandLineObjectPicker(new[] { $"Catalogue?Blarg:null" }, GetActivator()));
             Assert.AreEqual("Unknown property 'Blarg'.  Did not exist on Type 'Catalogue'", ex.Message);
         }
     }

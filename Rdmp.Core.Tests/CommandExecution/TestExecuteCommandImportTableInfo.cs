@@ -18,7 +18,7 @@ namespace Rdmp.Core.Tests.CommandExecution
         {
             
             var ex = Assert.Throws<Exception>(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandImportTableInfo),
-                new CommandLineObjectPicker(new string[0], RepositoryLocator)));
+                new CommandLineObjectPicker(new string[0], GetActivator())));
 
             StringAssert.StartsWith("Expected parameter at index 0 to be a FAnsi.Discovery.DiscoveredTable (for parameter 'table') but it was Missing",ex.Message);
         }
@@ -27,7 +27,7 @@ namespace Rdmp.Core.Tests.CommandExecution
         public void Test_ImportTableInfo_MalformedArgument()
         {
             var ex = Assert.Throws<Exception>(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandImportTableInfo),
-                new CommandLineObjectPicker(new string[]{ "MyTable"}, RepositoryLocator)));
+                new CommandLineObjectPicker(new string[]{ "MyTable"}, GetActivator())));
 
             StringAssert.StartsWith("Expected parameter at index 0 to be a FAnsi.Discovery.DiscoveredTable (for parameter 'table') but it was MyTable",ex.Message);
         }
@@ -38,7 +38,7 @@ namespace Rdmp.Core.Tests.CommandExecution
             var tbl = "Table:MyTable:DatabaseType:MicrosoftSQLServer:Server=myServerAddress;Database=myDataBase;Trusted_Connection=True";
             
             var ex = Assert.Throws<Exception>(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandImportTableInfo),
-                new CommandLineObjectPicker(new string[]{ tbl,"true"}, RepositoryLocator)));
+                new CommandLineObjectPicker(new string[]{ tbl,"true"}, GetActivator())));
             
             StringAssert.StartsWith("Could not reach server myServerAddress",ex.Message);
         }

@@ -23,7 +23,7 @@ namespace Rdmp.Core.Tests.CommandExecution
         {
             
             var ex = Assert.Throws<Exception>(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandNewObject),
-                new CommandLineObjectPicker(new string[0], RepositoryLocator)));
+                new CommandLineObjectPicker(new string[0], GetActivator())));
 
             StringAssert.StartsWith("First parameter must be a Type",ex.Message);
         }
@@ -32,7 +32,7 @@ namespace Rdmp.Core.Tests.CommandExecution
         public void Test_NewObjectCommand_NonExistentTypeArgument()
         {
             var ex = Assert.Throws<Exception>(() =>  GetInvoker().ExecuteCommand(typeof(ExecuteCommandNewObject),
-                new CommandLineObjectPicker(new[]{"Fissdlkfldfj"}, RepositoryLocator)));
+                new CommandLineObjectPicker(new[]{"Fissdlkfldfj"}, GetActivator())));
 
             StringAssert.StartsWith("First parameter must be a Type",ex.Message);
         }
@@ -40,7 +40,7 @@ namespace Rdmp.Core.Tests.CommandExecution
         [Test]
         public void Test_NewObjectCommand_WrongTypeArgument()
         {
-            var picker = new CommandLineObjectPicker(new[] {"UnitTests"},RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new[] {"UnitTests"}, GetActivator());
             Assert.AreEqual(typeof(UnitTests),picker[0].Type);
 
             var ex = Assert.Throws<Exception>(() =>  GetInvoker().ExecuteCommand(typeof(ExecuteCommandNewObject),picker));
@@ -51,7 +51,7 @@ namespace Rdmp.Core.Tests.CommandExecution
         [Test]
         public void Test_NewObjectCommand_MissingNameArgument()
         {
-            var picker = new CommandLineObjectPicker(new[] {"Catalogue"},RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new[] {"Catalogue"}, GetActivator());
             Assert.AreEqual(typeof(Catalogue),picker[0].Type);
 
             var ex = Assert.Throws<ArgumentException>(() =>  GetInvoker().ExecuteCommand(typeof(ExecuteCommandNewObject),picker));
@@ -62,7 +62,7 @@ namespace Rdmp.Core.Tests.CommandExecution
         [Test]
         public void Test_NewObjectCommand_Success()
         {
-            var picker = new CommandLineObjectPicker(new[] {"Catalogue","lolzeeeyeahyeah"},RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new[] {"Catalogue","lolzeeeyeahyeah"}, GetActivator());
             Assert.AreEqual(typeof(Catalogue),picker[0].Type);
 
             Assert.DoesNotThrow(() =>  GetInvoker().ExecuteCommand(typeof(ExecuteCommandNewObject),picker));

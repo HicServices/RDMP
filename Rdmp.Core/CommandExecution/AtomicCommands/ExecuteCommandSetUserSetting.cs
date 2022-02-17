@@ -64,7 +64,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
             else
             {
-                var picker = new CommandLineObjectPicker(new string[]{value ?? "NULL"},activator.RepositoryLocator);
+                var picker = new CommandLineObjectPicker(new string[]{value ?? "NULL"},activator);
 
                 if(!picker.HasArgumentOfType(0,_property.PropertyType))
                 {

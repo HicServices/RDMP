@@ -75,7 +75,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Sources
             {
                 DataTable chunk = GetChunkSchema(_reader);
                 
-                while (_reader.Read())
+                while (_reader.HasRows && _reader.Read())
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 

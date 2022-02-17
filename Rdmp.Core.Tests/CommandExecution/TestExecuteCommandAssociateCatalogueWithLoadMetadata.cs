@@ -30,7 +30,7 @@ namespace Rdmp.Core.Tests.CommandExecution
             var lmd = new LoadMetadata(RepositoryLocator.CatalogueRepository,"mylmd");
 
             GetInvoker().ExecuteCommand(typeof(ExecuteCommandAssociateCatalogueWithLoadMetadata),
-                new CommandLineObjectPicker(new[]{$"LoadMetadata:{lmd.ID}", "Catalogue:fff"}, RepositoryLocator));
+                new CommandLineObjectPicker(new[]{$"LoadMetadata:{lmd.ID}", "Catalogue:fff"}, GetActivator()));
 
             cata1.RevertToDatabaseState();
             cata2.RevertToDatabaseState();

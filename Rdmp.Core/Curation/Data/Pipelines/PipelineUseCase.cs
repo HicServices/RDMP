@@ -125,6 +125,11 @@ namespace Rdmp.Core.Curation.Data.Pipelines
                 foreach (var component in pipeline.PipelineComponents)
                 {
                     var type = component.GetClassAsSystemType();
+                    if(type == null)
+                    {
+                        return false;
+                    }
+
                     var advert = new AdvertisedPipelineComponentTypeUnderContext(type, this);
                     if (!advert.IsCompatible())
                     {

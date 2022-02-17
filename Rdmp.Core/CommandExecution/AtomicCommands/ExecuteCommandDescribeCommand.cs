@@ -40,7 +40,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             var invoker = new CommandInvoker(BasicActivator);
 
-            var commandCtor = invoker.GetConstructor(_commandType, new CommandLineObjectPicker(new string[0],BasicActivator.RepositoryLocator));
+            var commandCtor = invoker.GetConstructor(_commandType, new CommandLineObjectPicker(new string[0],BasicActivator));
 
             var sb = new StringBuilder();
 

@@ -230,6 +230,8 @@ namespace Rdmp.Core.Providers
             }
 
             ReportProgress("Pipeline adding");
+
+            GetPluginChildren();
         }
 
         private void AddChildren(IExtractableDataSetPackage package, DescendancyList descendancy)

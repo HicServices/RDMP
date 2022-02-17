@@ -24,7 +24,7 @@ namespace Rdmp.Core.Tests.CommandExecution
             Assert.IsEmpty(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(),"Failed to clear CatalogueRepository");
 
             GetInvoker().ExecuteCommand(typeof(ExecuteCommandList),
-                new CommandLineObjectPicker(new string[]{ "Catalogue"}, RepositoryLocator));
+                new CommandLineObjectPicker(new string[]{ "Catalogue"}, GetActivator()));
         }
         
         [Test]
@@ -33,7 +33,7 @@ namespace Rdmp.Core.Tests.CommandExecution
             var c = WhenIHaveA<Catalogue>();
 
             GetInvoker().ExecuteCommand(typeof(ExecuteCommandList),
-                new CommandLineObjectPicker(new string[]{ "Catalogue"}, RepositoryLocator));
+                new CommandLineObjectPicker(new string[]{ "Catalogue"}, GetActivator()));
             
             c.DeleteInDatabase();
         }

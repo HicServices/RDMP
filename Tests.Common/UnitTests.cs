@@ -18,6 +18,8 @@ using FAnsi.Implementations.Oracle;
 using FAnsi.Implementations.PostgreSql;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cache;
@@ -67,6 +69,16 @@ namespace Tests.Common
             RepositoryLocator = new RepositoryProvider(Repository);
         }
 
+        /// <summary>
+        /// Returns an <see cref="IBasicActivateItems"/> based on the <see cref="RepositoryLocator"/>
+        /// (or <paramref name="locator"/> if specified) that throws if input is sought (e.g.
+        /// <see cref="IBasicActivateItems.YesNo(DialogArgs)"/>)
+        /// </summary>
+        /// <returns></returns>
+        protected IBasicActivateItems GetActivator(IRDMPPlatformRepositoryServiceLocator locator = null)
+        {
+            return new ConsoleInputManager(locator ?? RepositoryLocator, new ThrowImmediatelyCheckNotifier()) { DisallowInput = true};
+        }
 
         /// <summary>
         /// Override to do stuff before your first instance is constructed

@@ -24,7 +24,7 @@ namespace Rdmp.Core.Tests.CommandExecution
         {
             var cata = new Catalogue(Repository.CatalogueRepository, "Bob");
 
-            GetInvoker().ExecuteCommand(typeof(ExecuteCommandSet),new CommandLineObjectPicker(new []{"Catalogue:" + cata.ID,"Description","Some long description"},RepositoryLocator));
+            GetInvoker().ExecuteCommand(typeof(ExecuteCommandSet),new CommandLineObjectPicker(new []{"Catalogue:" + cata.ID,"Description","Some long description"}, GetActivator()));
 
             cata.RevertToDatabaseState();
             Assert.AreEqual("Some long description",cata.Description);
@@ -38,7 +38,7 @@ namespace Rdmp.Core.Tests.CommandExecution
             cata.Description = "something cool";
             cata.SaveToDatabase();
 
-            GetInvoker().ExecuteCommand(typeof(ExecuteCommandSet),new CommandLineObjectPicker(new []{"Catalogue:" + cata.ID,"Description","NULL"},RepositoryLocator));
+            GetInvoker().ExecuteCommand(typeof(ExecuteCommandSet),new CommandLineObjectPicker(new []{"Catalogue:" + cata.ID,"Description","NULL"}, GetActivator()));
 
             cata.RevertToDatabaseState();
             Assert.IsNull(cata.Description);
@@ -63,7 +63,7 @@ namespace Rdmp.Core.Tests.CommandExecution
             Assert.IsNull(pta.Value);
             Assert.IsNull(pta.GetValueAsSystemType());
 
-            GetInvoker().ExecuteCommand(typeof(ExecuteCommandSet),new CommandLineObjectPicker(new []{"ProcessTaskArgument:TablesToIsolate" ,"Value",ids},RepositoryLocator));
+            GetInvoker().ExecuteCommand(typeof(ExecuteCommandSet),new CommandLineObjectPicker(new []{"ProcessTaskArgument:TablesToIsolate" ,"Value",ids}, GetActivator()));
 
             Assert.AreEqual(ids,pta.Value);
 

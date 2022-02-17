@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
@@ -21,7 +22,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         public abstract IEnumerable<string> Examples { get; }
 
         protected Regex Regex { get; }
-        protected readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
+        protected readonly IBasicActivateItems Activator;
         
         public virtual bool IsMatch(string arg, int idx)
         {
@@ -47,15 +48,15 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
             return match;
         }
 
-        public PickObjectBase(IRDMPPlatformRepositoryServiceLocator repositoryLocator,Regex regex)
+        public PickObjectBase(IBasicActivateItems activator,Regex regex)
         {
             Regex = regex;
-            RepositoryLocator = repositoryLocator;
+            Activator = activator;
         }
 
         protected Type ParseDatabaseEntityType(string objectType, string arg, int idx)
         {
-            Type t = GetTypeFromShortCodeIfAny(objectType) ?? RepositoryLocator.CatalogueRepository.MEF.GetType(objectType);
+            Type t = GetTypeFromShortCodeIfAny(objectType) ?? Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(objectType);
 
             if(t == null)
                 throw new CommandLineObjectPickerParseException("Could not recognize Type name",idx,arg);
@@ -77,7 +78,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         {
             try
             {
-                t = GetTypeFromShortCodeIfAny(possibleTypeName) ?? RepositoryLocator.CatalogueRepository.MEF.GetType(possibleTypeName);
+                t = GetTypeFromShortCodeIfAny(possibleTypeName) ?? Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(possibleTypeName);
             }
             catch (Exception)
             {
@@ -96,28 +97,15 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         }
         protected IMapsDirectlyToDatabaseTable GetObjectByID(Type type, int id)
         {
-            if(RepositoryLocator.CatalogueRepository.SupportsObjectType(type))
-                return RepositoryLocator.CatalogueRepository.GetObjectByID(type,id);
-            if(RepositoryLocator.DataExportRepository.SupportsObjectType(type))
-                return RepositoryLocator.DataExportRepository.GetObjectByID(type,id);
-            
-            throw new ArgumentException("Did not know what repository to use to fetch objects of Type '" + type + "'");
+            var repo = Activator.GetRepositoryFor(type);
+            return repo.GetObjectByID(type,id);
         }
 
 
         protected IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type type)
         {
-            IEnumerable<IMapsDirectlyToDatabaseTable> toReturn;
-
-            if(RepositoryLocator.CatalogueRepository.SupportsObjectType(type))
-                toReturn = RepositoryLocator.CatalogueRepository.GetAllObjects(type);
-            else
-            if(RepositoryLocator.DataExportRepository.SupportsObjectType(type))
-                toReturn = RepositoryLocator.DataExportRepository.GetAllObjects(type);
-            else
-                throw new ArgumentException("Did not know what repository to use to fetch objects of Type '" + type + "'");
-
-            return toReturn;
+            var repo = Activator.GetRepositoryFor(type);
+            return repo.GetAllObjects(type);
         }
         
         Dictionary<string,Regex> patternDictionary = new Dictionary<string, Regex>();

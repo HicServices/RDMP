@@ -18,7 +18,7 @@ namespace Rdmp.Core.Tests.CommandExecution
         [Test]
         public void TestSetArgument_WrongArgCount()
         {
-            var picker = new CommandLineObjectPicker(new []{"yyy" },RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new []{"yyy" }, GetActivator());
             var cmd = new ExecuteCommandSetArgument(GetMockActivator().Object,picker);
 
             Assert.IsTrue(cmd.IsImpossible);
@@ -29,7 +29,7 @@ namespace Rdmp.Core.Tests.CommandExecution
         {
             var c = WhenIHaveA<Catalogue>();
 
-            var picker = new CommandLineObjectPicker(new []{$"Catalogue:{c.ID}","fff","yyy" },RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new []{$"Catalogue:{c.ID}","fff","yyy" }, GetActivator());
             var cmd = new ExecuteCommandSetArgument(GetMockActivator().Object,picker);
 
             Assert.IsTrue(cmd.IsImpossible);
@@ -42,7 +42,7 @@ namespace Rdmp.Core.Tests.CommandExecution
             var pt = WhenIHaveA<ProcessTask>();
             
 
-            var picker = new CommandLineObjectPicker(new []{$"ProcessTask:{pt.ID}","fff","yyy" },RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new []{$"ProcessTask:{pt.ID}","fff","yyy" }, GetActivator());
             var cmd = new ExecuteCommandSetArgument(GetMockActivator().Object,picker);
 
             Assert.IsTrue(cmd.IsImpossible);
@@ -60,7 +60,7 @@ namespace Rdmp.Core.Tests.CommandExecution
             // Argument expects int but is given string value "yyy"
             pta.SetType(typeof(int));
 
-            var picker = new CommandLineObjectPicker(new []{$"ProcessTask:{pt.ID}","fff","yyy" },RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new []{$"ProcessTask:{pt.ID}","fff","yyy" }, GetActivator());
             var cmd = new ExecuteCommandSetArgument(GetMockActivator().Object,picker);
 
             Assert.IsTrue(cmd.IsImpossible);
@@ -79,7 +79,7 @@ namespace Rdmp.Core.Tests.CommandExecution
 
             Assert.IsNull(pta.Value);
 
-            var picker = new CommandLineObjectPicker(new []{$"ProcessTask:{pt.ID}","fff","5" },RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new []{$"ProcessTask:{pt.ID}","fff","5" }, GetActivator());
             
             Assert.DoesNotThrow(() =>  GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetArgument),picker));
 
@@ -101,7 +101,7 @@ namespace Rdmp.Core.Tests.CommandExecution
 
             Assert.IsNull(pta.Value);
 
-            var picker = new CommandLineObjectPicker(new []{$"ProcessTask:{pt.ID}","fff",$"Catalogue:kapow splat" },RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new []{$"ProcessTask:{pt.ID}","fff",$"Catalogue:kapow splat" }, GetActivator());
             
             Assert.DoesNotThrow(() =>  GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetArgument),picker));
 
@@ -124,7 +124,7 @@ namespace Rdmp.Core.Tests.CommandExecution
 
             Assert.IsNull(pca.Value);
 
-            var picker = new CommandLineObjectPicker(new []{$"PipelineComponent:{pc.ID}","ggg",$"Catalogue:lolzzzyy" },RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new []{$"PipelineComponent:{pc.ID}","ggg",$"Catalogue:lolzzzyy" }, GetActivator());
             
             Assert.DoesNotThrow(() =>  GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetArgument),picker));
 
@@ -150,7 +150,7 @@ namespace Rdmp.Core.Tests.CommandExecution
 
             Assert.IsNull(pca.Value);
 
-            var picker = new CommandLineObjectPicker(new []{$"PipelineComponent:{pc.ID}","ggg",$"Catalogue:kapow*" },RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new []{$"PipelineComponent:{pc.ID}","ggg",$"Catalogue:kapow*" }, GetActivator());
             
             Assert.DoesNotThrow(() =>  GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetArgument),picker));
 
@@ -176,7 +176,7 @@ namespace Rdmp.Core.Tests.CommandExecution
             
             Assert.Contains(cata1, (System.Collections.ICollection)pca.GetValueAsSystemType());
 
-            var picker = new CommandLineObjectPicker(new []{$"PipelineComponent:{pc.ID}","ggg",$"Null" },RepositoryLocator);
+            var picker = new CommandLineObjectPicker(new []{$"PipelineComponent:{pc.ID}","ggg",$"Null" }, GetActivator());
             
             Assert.DoesNotThrow(() =>  GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetArgument),picker));
 

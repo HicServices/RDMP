@@ -121,5 +121,12 @@ namespace Rdmp.Core.Repositories
             else
                 throw new ArgumentException("Did not know what repository to use to fetch objects of Type '" + t + "'");
         }
+        public virtual IEnumerable<IRepository> GetAllRepositories()
+        {
+            yield return CatalogueRepository;
+
+            if(DataExportRepository != null)
+                yield return DataExportRepository;
+        }
     }
 }
