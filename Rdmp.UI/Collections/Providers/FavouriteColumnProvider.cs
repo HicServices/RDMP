@@ -44,7 +44,13 @@ namespace Rdmp.UI.Collections.Providers
             _olvFavourite.Text = "Favourite";
             _olvFavourite.ImageGetter += FavouriteImageGetter;
             _olvFavourite.IsEditable = false;
-            _olvFavourite.Sortable = false;
+            _olvFavourite.Sortable = true;
+
+            // setup value of column as 1 (favourite) or 0 (not favourite)
+            _olvFavourite.AspectGetter = FavouriteAspectGetter;
+            // but don't actually write that value when rendering (just use for sort etc)
+            _olvFavourite.AspectToStringConverter = (st) => "";
+
             _tlv.CellClick += OnCellClick;
             
             _tlv.AllColumns.Add(_olvFavourite);
@@ -83,6 +89,16 @@ namespace Rdmp.UI.Collections.Providers
 
             if (o != null)
                 return _activator.FavouritesProvider.IsFavourite(o) ? _starFull : _starHollow;
+                    
+
+            return null;
+        }
+        private object FavouriteAspectGetter(object rowobject)
+        {
+            var o = rowobject as DatabaseEntity;
+
+            if (o != null)
+                return _activator.FavouritesProvider.IsFavourite(o) ? 1 : 0;
                     
 
             return null;

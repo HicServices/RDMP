@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ArchiveTriggerTimeout user setting [#623](https://github.com/HicServices/RDMP/issues/623)
 - Support for referencing plugin objects from command line e.g. `./rdmp.exe cmd delete MyPluginClass:2`
 - The word 'now' is a valid date when supplied on the command line
+- Ability to sort based on Favourite status
 
 ### Fixed
 - Fixed closing and changing instance not consulting tabs before closing
