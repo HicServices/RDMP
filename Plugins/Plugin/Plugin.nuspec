@@ -40,10 +40,10 @@
         </dependencies>
     </metadata>
   <files>
-    <file src="bin\$configuration$\net5.0\*.dll" target="lib\net5.0" exclude="bin\$configuration$\net5.0\Plugin.dll" />
-    <file src="bin\$configuration$\net5.0\*.pdb" target="lib\net5.0" exclude="bin\$configuration$\net5.0\Plugin.pdb" />
-    <file src="bin\$configuration$\net5.0\*.xml" target="lib\net5.0" exclude="bin\$configuration$\net5.0\Plugin.xml" />
+    <file src="bin\$configuration$\net6.0\*.dll" target="lib\net6.0" exclude="bin\$configuration$\net6.0\Plugin.dll" />
+    <file src="bin\$configuration$\net6.0\*.pdb" target="lib\net6.0" exclude="bin\$configuration$\net6.0\Plugin.pdb" />
+    <file src="bin\$configuration$\net6.0\*.xml" target="lib\net6.0" exclude="bin\$configuration$\net6.0\Plugin.xml" />
 
-    <file src="..\..\Tools\rdmp\bin\$configuration$\net5.0\**\*" target="tools\net5.0"/>
+    <file src="..\..\Tools\rdmp\bin\$configuration$\net6.0\**\*" target="tools\net6.0"/>
   </files>
 </package>
