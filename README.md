@@ -31,7 +31,7 @@ The Windows client:
 
 ```
 dotnet build
-cd Application\ResearchDataManagementPlatform\bin\Debug\net5.0-windows\win-x64
+cd Application\ResearchDataManagementPlatform\bin\Debug\net6.0-windows\win-x64
 ./ResearchDataManagementPlatform.exe
 ```
 
@@ -39,7 +39,7 @@ The console client:
 
 ```
 dotnet build
-cd Tools\rdmp\bin\Debug\net5.0\
+cd Tools\rdmp\bin\Debug\net6.0\
 ./rdmp.exe --help
 ```
 
@@ -50,7 +50,7 @@ Only the console client can be built/run in Linux
 ```
 cd Tools/rdmp
 dotnet build
-cd bin/Debug/net5.0
+cd bin/Debug/net6.0
 ./rdmp --help
 ```
 
@@ -62,7 +62,7 @@ If using a docker container or alternate sql server instance then substitute you
 
 ```
 dotnet build
-./Tools/rdmp/bin/Debug/net5.0/rdmp.exe install "(localdb)\MSSQLLocalDB" TEST_ -d
+./Tools/rdmp/bin/Debug/net6.0/rdmp.exe install "(localdb)\MSSQLLocalDB" TEST_ -d
 
 echo "ServerName: (localdb)\MSSQLLocalDB" > ./Tests.Common/TestDatabases.txt
 echo "Prefix: TEST_" >> ./Tests.Common/TestDatabases.txt

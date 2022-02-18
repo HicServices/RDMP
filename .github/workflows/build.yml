@@ -31,7 +31,7 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1.9.0
         with:
-          dotnet-version: 5.0.x
+          dotnet-version: 6.0.x
       - name: Install MS SQL 2019
         run: Choco-Install -PackageName sql-server-2019 --params="'/IgnorePendingReboot'"
       - uses: shogo82148/actions-setup-mysql@v1
@@ -46,7 +46,7 @@ jobs:
           dotnet restore -v:q
           dotnet build --configuration Release --nologo --verbosity minimal
       - name: Initialise RDMP
-        run: dotnet Tools/rdmp/bin/Release/net5.0/rdmp.dll install localhost TEST_
+        run: dotnet Tools/rdmp/bin/Release/net6.0/rdmp.dll install localhost TEST_
       - name: Clean coverage output directory
         run: Remove-Item coverage -Recurse -ErrorAction Ignore
       - name: Test Reusable code

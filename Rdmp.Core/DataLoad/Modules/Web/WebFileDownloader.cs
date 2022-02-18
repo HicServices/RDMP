@@ -169,7 +169,10 @@ namespace Rdmp.Core.DataLoad.Modules.Web
 
         private HttpWebRequest CreateNewRequest(string url)
         {
+#pragma warning disable SYSLIB0014 // Type or member is obsolete
             HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+#pragma warning restore SYSLIB0014 // Type or member is obsolete
+
             request.Timeout = 5000; // milliseconds, adjust as needed
             request.UserAgent =
                 "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2049.0 Safari/537.36";
