@@ -112,11 +112,11 @@ Create a nuspec file called `MyPlugin.nuspec` that describes your plugin:
         </dependencies>
     </metadata>
     <files>
-    <file src="bin\Debug\net5.0\*" target="lib\main" />	
+    <file src="bin\Debug\net6.0\*" target="lib\main" />	
     </files>
 </package>
 ```
-_Substitute 'net5.0' for whatever version of dotnet you are using_
+_Substitute 'net6.0' for whatever version of dotnet you are using_
 
 Build the solution and package it with the [nuget cli app](https://www.nuget.org/downloads):
 ```
@@ -146,7 +146,7 @@ If you have the RDMP command line you can also call your command from there:
 
 For example on windows running in powershell the following output would appear:
 ```
-PS Z:\Repos\RDMP\Tools\rdmp\bin\Debug\net5.0> ./rdmp cmd HelloWorld
+PS Z:\Repos\RDMP\Tools\rdmp\bin\Debug\net6.0> ./rdmp cmd HelloWorld
 2021-10-19 10:42:00.7839 INFO Dotnet Version:5.0.10 .
 2021-10-19 10:42:00.8063 INFO RDMP Version:7.0.0.0 .
 2021-10-19 10:42:01.6559 INFO Setting yaml config value for CatalogueConnectionString .
@@ -581,7 +581,7 @@ Run the unit test again.  It should fail at test fixture setup with something li
 
 ```
 OneTimeSetUp: System.TypeInitializationException : The type initializer for 'Tests.Common.DatabaseTests' threw an exception.
-      ----> System.IO.FileNotFoundException : Could not find file 'Z:\Repos\SmiServices\MyPipelinePluginTests\bin\x64\Debug\net5.0\TestDatabases.txt'
+      ----> System.IO.FileNotFoundException : Could not find file 'Z:\Repos\SmiServices\MyPipelinePluginTests\bin\x64\Debug\net6.0\TestDatabases.txt'
 
 ```
 
@@ -1393,8 +1393,8 @@ To package your plugin as a nupkg that is usable by others.  Update `MyPlugin.nu
 
 ```
     <files>
-    <file src="MyPlugin\bin\net5.0\*" target="lib\main" />
-    <file src="MyPluginUI\bin\net5.0-windows\*" target="lib\windows" />
+    <file src="MyPlugin\bin\net6.0\*" target="lib\main" />
+    <file src="MyPluginUI\bin\net6.0-windows\*" target="lib\windows" />
     </files>
 ```
 
@@ -1429,7 +1429,7 @@ This is done by deleting the plugin from the RDMP client and then deleting the c
 
 If your plugin has many dependencies that are not already included in RDMP then you will need to ensure the dlls also appear in the relevant lib directory of the plugin.
 
-For example instead of using `dotnet build` and packaging `bin\net5.0\*` in your `MyPlugin.nuspec` you should use `dotnet publish`
+For example instead of using `dotnet build` and packaging `bin\net6.0\*` in your `MyPlugin.nuspec` you should use `dotnet publish`
 
 ```
 dotnet publish --runtime win-x64 -c Release --self-contained false
@@ -1439,7 +1439,7 @@ When packaging `dotnet publish` results you can exclude dlls that already come w
 
 ```
 <files>
-    <file src="Plugin\windows\bin\$configuration$\net5.0-windows\win-x64\publish\*"
+    <file src="Plugin\windows\bin\$configuration$\net6.0-windows\win-x64\publish\*"
           exclude="**\BadMedicine.Core.dll;**\FAnsi.*;**\MapsDirectlyToDatabaseTable.dll;**\MySql.Data.dll;**\Oracle.ManagedDataAccess.dll;**\Rdmp.Core.dll;**\NPOI.*;**\Renci.*;**\MathNet.Numerics.dll*;**\Rdmp.UI.dll;**\ScintillaNET.dll;**\ReusableUIComponents.dll;**\ObjectListView.dll;**\WeifenLuo.WinFormsUI.Docking*"
           target="lib\windows" />
 </files>

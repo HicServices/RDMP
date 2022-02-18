@@ -185,7 +185,9 @@ namespace Rdmp.Core.DataLoad.Modules.FTP
                 else
                     uri = "ftp://" + _host;
 
+#pragma warning disable SYSLIB0014 // Type or member is obsolete
                 reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri(uri));
+#pragma warning restore SYSLIB0014 // Type or member is obsolete
                 reqFTP.UseBinary = true;
                 reqFTP.Credentials = new NetworkCredential(_username, _password);
                 reqFTP.Method = WebRequestMethods.Ftp.ListDirectory;
@@ -245,7 +247,9 @@ namespace Rdmp.Core.DataLoad.Modules.FTP
             }
 
             FtpWebRequest reqFTP;
+#pragma warning disable SYSLIB0014 // Type or member is obsolete
             reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri(uri));
+#pragma warning restore SYSLIB0014 // Type or member is obsolete
             reqFTP.Credentials = new NetworkCredential(_username, _password);
             reqFTP.KeepAlive = false;
             reqFTP.Method = WebRequestMethods.Ftp.DownloadFile;
@@ -293,7 +297,9 @@ namespace Rdmp.Core.DataLoad.Modules.FTP
                 foreach (string file in _filesRetrieved)
                 {
                     FtpWebRequest reqFTP;
+#pragma warning disable SYSLIB0014 // Type or member is obsolete
                     reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri(file));
+#pragma warning restore SYSLIB0014 // Type or member is obsolete
                     reqFTP.Credentials = new NetworkCredential(_username, _password);
                     reqFTP.KeepAlive = false;
                     reqFTP.Method = WebRequestMethods.Ftp.DeleteFile;
