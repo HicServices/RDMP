@@ -285,6 +285,8 @@ namespace Rdmp.Core.CommandExecution
                     yield return new ExecuteCommandViewLogs(_activator,eds,new LogViewerFilter(LoggingTables.ProgressLog));
                     yield return new ExecuteCommandViewLogs(_activator,eds,new LogViewerFilter(LoggingTables.TableLoadRun));
                 }
+
+                yield return new ExecuteCommandQueryPlatformDatabase(_activator, eds) { OverrideCommandName = "Query Database"};
             }
 
             if(Is(o, out QueryCacheUsedByCohortIdentificationNode cicQueryCache))

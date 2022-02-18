@@ -246,7 +246,7 @@ namespace Rdmp.UI.Validation
             //first row
             tableLayoutPanel1.RowStyles[0].SizeType = SizeType.AutoSize;
 
-            Height = (_requiredProperties.Length * rowHeight) + 35 + inflation;
+            Height = (_requiredProperties.Length * rowHeight) + 45 + inflation;
 
             loadingComplete = true;
 

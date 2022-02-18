@@ -10,12 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ArchiveTriggerTimeout user setting [#623](https://github.com/HicServices/RDMP/issues/623)
 - Support for referencing plugin objects from command line e.g. `./rdmp.exe cmd delete MyPluginClass:2`
 - The word 'now' is a valid date when supplied on the command line
+- Added ability to query an [ExternalDatabaseServer] from the right click context menu [#910](https://github.com/HicServices/RDMP/issues/910)
 
 ### Fixed
 - Fixed closing and changing instance not consulting tabs before closing
 - Fixed bug where setting `SuggestedCategory` on a plugin command resulted in it vanishing from context menu
 - Fixed bug with AllowEmptyExtractions not working under some situations
 - Fixed [Lookup] creation UI creating CatalogueItem with the suffix _Desc even when you ask it not to in prompt
+- Fixed layout bug in rule validation configuration UI where rationale tip was cut off [#909](https://github.com/HicServices/RDMP/issues/909)
 
 ### Changed
 
@@ -1153,3 +1155,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [CohortAggregateContainer]: ./Documentation/CodeTutorials/Glossary.md#CohortAggregateContainer
 [ExtractionFilter]: ./Documentation/CodeTutorials/Glossary.md#ExtractionFilter
 [MigrateUsages]: https://github.com/HicServices/RDMP/pull/666
+[ExternalDatabaseServer]: ./Documentation/CodeTutorials/Glossary.md#ExternalDatabaseServer
