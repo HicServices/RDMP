@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ArchiveTriggerTimeout user setting [#623](https://github.com/HicServices/RDMP/issues/623)
 - Support for referencing plugin objects from command line e.g. `./rdmp.exe cmd delete MyPluginClass:2`
 - The word 'now' is a valid date when supplied on the command line
+- Ability to sort based on Favourite status [#925](https://github.com/HicServices/RDMP/issues/925)
+- Added Frozen column to Cohort Builder tree for easier sorting
 - Added ability to query an [ExternalDatabaseServer] from the right click context menu [#910](https://github.com/HicServices/RDMP/issues/910)
 
 ### Fixed
