@@ -88,18 +88,18 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 foreach (var supplementalKeyPair in _fkToPkTuples.Skip(1))
                     new LookupCompositeJoinInfo(_catalogueRepository, lookup, supplementalKeyPair.Item1, supplementalKeyPair.Item2, _collation);
 
-                string proposedName;
-
-                if (_lookupDescriptionColumns.Length == 1)
-                    proposedName = _foreignKeyExtractionInformation.GetRuntimeName() + "_Desc";
-                else
-                    proposedName = _foreignKeyExtractionInformation.GetRuntimeName() + "_" + descCol.GetRuntimeName();
-
-                var newCatalogueItem = new CatalogueItem(_catalogueRepository, _catalogue, proposedName);
-                newCatalogueItem.SetColumnInfo(descCol);
-
                 if (_alsoCreateExtractionInformations)
                 {
+                    string proposedName;
+
+                    if (_lookupDescriptionColumns.Length == 1)
+                        proposedName = _foreignKeyExtractionInformation.GetRuntimeName() + "_Desc";
+                    else
+                        proposedName = _foreignKeyExtractionInformation.GetRuntimeName() + "_" + descCol.GetRuntimeName();
+
+                    var newCatalogueItem = new CatalogueItem(_catalogueRepository, _catalogue, proposedName);
+                    newCatalogueItem.SetColumnInfo(descCol);
+
                     //bump everyone down 1
                     foreach (var toBumpDown in _allExtractionInformations.Where(e => e.Order > _foreignKeyExtractionInformation.Order))
                     {

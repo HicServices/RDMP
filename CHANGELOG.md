@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed closing and changing instance not consulting tabs before closing
 - Fixed bug where setting `SuggestedCategory` on a plugin command resulted in it vanishing from context menu
 - Fixed bug with AllowEmptyExtractions not working under some situations
+- Fixed [Lookup] creation UI creating CatalogueItem with the suffix _Desc even when you ask it not to in prompt
 - Fixed layout bug in rule validation configuration UI where rationale tip was cut off [#909](https://github.com/HicServices/RDMP/issues/909)
 
 ### Changed
