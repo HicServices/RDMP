@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Repositories;
@@ -33,11 +34,12 @@ namespace Rdmp.Core.Curation.Data
     /// <para>At query building time QueryBuilder rationalizes all the various containers, subcontainers, filters and parameters into one extraction
     /// SQL query (including whatever columns/transforms it was setup with).</para>
     /// </summary>
-    public class ExtractionFilter : ConcreteFilter, IHasDependencies
+    public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<ExtractionFilterParameterSet[]>
     {
      
         #region Database Properties
         private int _extractionInformationID;
+        private Lazy<ExtractionFilterParameterSet[]> _knownExtractionFilterParameterSets;
 
         /// <summary>
         /// The column in the <see cref="Catalogue"/> which is best/most associated with this filter.  A filter can query any column in any of the table(s) under
@@ -71,7 +73,7 @@ namespace Rdmp.Core.Curation.Data
         [NoMappingToDatabase]
         public ExtractionFilterParameterSet[] ExtractionFilterParameterSets
         {
-            get { return CatalogueRepository.GetAllObjectsWithParent<ExtractionFilterParameterSet>(this); }
+            get { return _knownExtractionFilterParameterSets.Value; }
         }
 
         /// <inheritdoc/>
@@ -126,6 +128,8 @@ namespace Rdmp.Core.Curation.Data
                 {"Name", name},
                 {"ExtractionInformation_ID", parent.ID}
             });
+
+            ClearAllInjections();
         }
 
         internal ExtractionFilter(ICatalogueRepository repository, DbDataReader r)
@@ -136,6 +140,8 @@ namespace Rdmp.Core.Curation.Data
             Description = r["Description"] as string;
             Name = r["Name"] as string;
             IsMandatory = (bool) r["IsMandatory"];
+
+            ClearAllInjections();
         }
 
         /// <inheritdoc/>
@@ -176,6 +182,14 @@ namespace Rdmp.Core.Curation.Data
             return ExtractionFilterParameters.ToArray();
         }
 
-    
+        public void InjectKnown(ExtractionFilterParameterSet[] instance)
+        {
+            _knownExtractionFilterParameterSets = new Lazy<ExtractionFilterParameterSet[]>(instance);
+        }
+
+        public void ClearAllInjections()
+        {
+            _knownExtractionFilterParameterSets = new Lazy<ExtractionFilterParameterSet[]>(() => CatalogueRepository.GetAllObjectsWithParent<ExtractionFilterParameterSet>(this));
+        }
     }
 }

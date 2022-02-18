@@ -65,6 +65,7 @@ namespace Rdmp.Core.Icons.IconProvision
             StateBasedIconProviders.Add(new ReleaseabilityStateBasedIconProvider());
             StateBasedIconProviders.Add(new ExtractableCohortStateBasedIconProvider(OverlayProvider));
             StateBasedIconProviders.Add(new PipelineComponentStateBasedIconProvider());
+            StateBasedIconProviders.Add(new FilterStateBasedIconProvider(OverlayProvider));
 
             StateBasedIconProviders.Add(new ExtractCommandStateBasedIconProvider());
         }
@@ -119,9 +120,6 @@ namespace Rdmp.Core.Icons.IconProvision
 
             if (concept is DataAccessCredentialUsageNode)
                 return GetImageImpl(ImagesCollection[RDMPConcept.DataAccessCredentials], OverlayKind.Link);
-
-            if (ConceptIs(typeof(IFilter), concept))
-                return GetImageImpl(RDMPConcept.Filter, kind);
 
             if (ConceptIs(typeof(ISqlParameter), concept))
                 return GetImageImpl(RDMPConcept.ParametersNode, kind);
@@ -238,7 +236,13 @@ namespace Rdmp.Core.Icons.IconProvision
             }
         }
 
-        private bool ConceptIs(Type t, object concept)
+        /// <summary>
+        /// Returns true if the <paramref name="concept"/> is an instance of, System.Type or assignable to Type <paramref name="t"/>
+        /// </summary>
+        /// <param name="t"></param>
+        /// <param name="concept"></param>
+        /// <returns></returns>
+        public static bool ConceptIs(Type t, object concept)
         {
             if (t.IsInstanceOfType(concept))
                 return true;
