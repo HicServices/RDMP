@@ -57,14 +57,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if(patcherType == typeof(DataExportPatcher))
             {
-                db = SetDatabase(BasicActivator.RepositoryLocator.DataExportRepository);
+                db = GetDatabase(BasicActivator.RepositoryLocator.DataExportRepository);
                 _query = _query ?? "Select * from Project";
                 _table = db.ExpectTable("Project");
                 return;
             }
             else if (patcherType == typeof(CataloguePatcher))
             {
-                db = SetDatabase(BasicActivator.RepositoryLocator.CatalogueRepository);
+                db = GetDatabase(BasicActivator.RepositoryLocator.CatalogueRepository);
                 _query = _query ?? "Select * from Catalogue";
                 _table = db.ExpectTable("Catalogue");
                 return;
@@ -74,7 +74,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 var eds = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>();
 
                 var patcher = (IPatcher)Activator.CreateInstance(patcherType);
-                db = SetDatabase(eds.Where(e => e.WasCreatedBy(patcher)).ToArray());
+                db = GetDatabase(eds.Where(e => e.WasCreatedBy(patcher)).ToArray());
                 
             }
 
@@ -83,15 +83,27 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 return;
             }
 
-            _table = db.DiscoverTables(false).FirstOrDefault();
+            SetTargetDatabase(db);
+        }
+        public ExecuteCommandQueryPlatformDatabase(IBasicActivateItems activator,ExternalDatabaseServer eds) : base(activator)
+        {
+            DiscoveredDatabase db;
 
-            if(_table == null)
+            try
             {
-                SetImpossible("Database was empty");
+                db = eds.Discover(DataAccessContext.InternalDataProcessing);
             }
+            catch (Exception)
+            {
+                SetImpossible("Not a queryable SQL database");
+                return;
+            }
+
+            SetTargetDatabase(db);
         }
 
-        private DiscoveredDatabase SetDatabase(IRepository repository)
+
+        private DiscoveredDatabase GetDatabase(IRepository repository)
         {
                 if (repository is TableRepository tableRepo)
                 {
@@ -102,7 +114,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 return null;
         }
 
-        private DiscoveredDatabase SetDatabase(ExternalDatabaseServer[] eds)
+        private DiscoveredDatabase GetDatabase(ExternalDatabaseServer[] eds)
         {
             if(eds.Length == 0)
             {
@@ -117,6 +129,17 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
 
             return eds[0].Discover(DataAccessContext.InternalDataProcessing);
+        }
+
+
+        private void SetTargetDatabase(DiscoveredDatabase database)
+        {
+            _table = database.DiscoverTables(false).FirstOrDefault();
+
+            if (_table == null)
+            {
+                SetImpossible("Database was empty");
+            }
         }
         public override void Execute()
         {
