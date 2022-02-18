@@ -34,6 +34,7 @@ namespace ReusableLibraryCode.Icons.IconProvision
         Hashed,
         Cloud,
         BigE,
-        IsExtractionIdentifier
+        IsExtractionIdentifier,
+        Parameter
     }
 }

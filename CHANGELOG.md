@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ability to sort based on Favourite status [#925](https://github.com/HicServices/RDMP/issues/925)
 - Added Frozen column to Cohort Builder tree for easier sorting
 - Added ability to query an [ExternalDatabaseServer] from the right click context menu [#910](https://github.com/HicServices/RDMP/issues/910)
+- Added an overlay @ symbol for filters that have known parameter values configured [#914](https://github.com/HicServices/RDMP/issues/914)
 
 ### Fixed
 - Fixed closing and changing instance not consulting tabs before closing

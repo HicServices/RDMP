@@ -1087,7 +1087,9 @@ namespace Rdmp.Core.Providers
         {
             var children = new HashSet<object>();
             var parameters = AllCatalogueParameters.Where(p => p.ExtractionFilter_ID == filter.ID).ToArray();
-            var parameterSets = AllCatalogueValueSets.Where(vs => vs.ExtractionFilter_ID == filter.ID);
+            var parameterSets = AllCatalogueValueSets.Where(vs => vs.ExtractionFilter_ID == filter.ID).ToArray();
+
+            filter.InjectKnown(parameterSets);
 
             if (parameters.Any())
                 children.Add(new ParametersNode(filter, parameters));
