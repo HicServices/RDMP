@@ -31,7 +31,7 @@ namespace Rdmp.UI.Collections
         public CohortIdentificationCollectionUI()
         {
             InitializeComponent();
-            olvFrozen.AspectGetter = (o) => o is CohortIdentificationConfiguration cic ? cic.Frozen ? "Yes" : "No" : null;
+            olvFrozen.AspectGetter = (o) => o is CohortIdentificationConfiguration cic ? (cic.Frozen ? "Yes" : "No") : null;
         }
 
         public override void SetItemActivator(IActivateItems activator)
