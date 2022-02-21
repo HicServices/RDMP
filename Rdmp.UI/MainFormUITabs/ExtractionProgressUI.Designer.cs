@@ -45,6 +45,8 @@ namespace Rdmp.UI.MainFormUITabs
             this.ragSmiley1 = new Rdmp.UI.ChecksUI.RAGSmiley();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label6 = new System.Windows.Forms.Label();
+            this.ddRetry = new System.Windows.Forms.ComboBox();
             this.btnFromDQE = new System.Windows.Forms.Button();
             this.lblEvaluationDate = new System.Windows.Forms.Label();
             this.btnResetProgress = new System.Windows.Forms.Button();
@@ -213,9 +215,11 @@ namespace Rdmp.UI.MainFormUITabs
             this.tableLayoutPanel1.Controls.Add(this.tbProgress, 1, 7);
             this.tableLayoutPanel1.Controls.Add(this.label5, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.label2, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.label6, 0, 8);
+            this.tableLayoutPanel1.Controls.Add(this.ddRetry, 1, 8);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 21);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 8;
+            this.tableLayoutPanel1.RowCount = 9;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -224,7 +228,8 @@ namespace Rdmp.UI.MainFormUITabs
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(426, 176);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(426, 209);
             this.tableLayoutPanel1.TabIndex = 8;
             // 
             // panel1
@@ -239,6 +244,28 @@ namespace Rdmp.UI.MainFormUITabs
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(320, 30);
             this.panel1.TabIndex = 9;
+            // 
+            // label6
+            // 
+            this.label6.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(3, 184);
+            this.label6.MinimumSize = new System.Drawing.Size(100, 0);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(100, 15);
+            this.label6.TabIndex = 10;
+            this.label6.Text = "Retry:";
+            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // ddRetry
+            // 
+            this.ddRetry.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ddRetry.FormattingEnabled = true;
+            this.ddRetry.Location = new System.Drawing.Point(109, 178);
+            this.ddRetry.Name = "ddRetry";
+            this.ddRetry.Size = new System.Drawing.Size(250, 23);
+            this.ddRetry.TabIndex = 11;
+            this.ddRetry.SelectedIndexChanged += new System.EventHandler(this.ddRetry_SelectedIndexChanged);
             // 
             // btnFromDQE
             // 
@@ -277,7 +304,7 @@ namespace Rdmp.UI.MainFormUITabs
             this.Controls.Add(this.btnFromDQE);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "ExtractionProgressUI";
-            this.Size = new System.Drawing.Size(479, 205);
+            this.Size = new System.Drawing.Size(479, 255);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.panel1.ResumeLayout(false);
@@ -306,5 +333,7 @@ namespace Rdmp.UI.MainFormUITabs
         private System.Windows.Forms.Button btnFromDQE;
         private System.Windows.Forms.Label lblEvaluationDate;
         private System.Windows.Forms.Button btnResetProgress;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ComboBox ddRetry;
     }
 }

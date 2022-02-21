@@ -80,20 +80,47 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
             {
                 bool runSuccessful;
                 bool runAgain;
+                int totalFailureCount = 0;
+                int consecutiveFailureCount = 0;
+
                 do
                 {
                     Token?.ThrowIfStopRequested();
                     Token?.ThrowIfAbortRequested();
 
-                    runSuccessful = ExecuteOnce(listener);
-                    runAgain = runSuccessful && IncrementProgressIfAny(eds, listener);
-                    
-                    if (runSuccessful && runAgain)
+                    try
                     {
-                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Running pipeline again for next batch in ExtractionProgress"));
+                        runSuccessful = ExecuteOnce(listener);
+                    }
+                    catch (Exception)
+                    {
+                        runSuccessful = false;
+                    }
+                    
+                    if(runSuccessful)
+                    {
+                        runAgain = IncrementProgressIfAny(eds, listener);
+                        consecutiveFailureCount = 0;
+
+                        if(runAgain)
+                        {
+                            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Running pipeline again for next batch in ExtractionProgress"));
+                        }
+                    }
+                    else
+                    {
+                        totalFailureCount++;
+                        consecutiveFailureCount++;
+
+                        runAgain = ShouldRetry(eds, listener, totalFailureCount, consecutiveFailureCount);
+
+                        if(runAgain)
+                        {
+                            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Retrying pipeline"));
+                        }
                     }
                 }
-                while (runSuccessful && runAgain);
+                while (runAgain);
             }
             else
             {
@@ -134,6 +161,26 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
             }
             return false;
         }
+
+        /// <summary>
+        /// Returns whether to retry the extraction.  This method may perform a wait operation
+        /// before returning true.
+        /// </summary>
+        /// <param name="extractDatasetCommand"></param>
+        /// <param name="listener"></param>
+        /// <param name="totalFailureCount"></param>
+        /// <param name="consecutiveFailureCount"></param>
+        /// <returns></returns>
+        private bool ShouldRetry(ExtractDatasetCommand extractDatasetCommand, IDataLoadEventListener listener, int totalFailureCount, int consecutiveFailureCount)
+        {
+            var progress = extractDatasetCommand.SelectedDataSets.ExtractionProgressIfAny;
+
+            if (progress == null)
+                return false;
+
+            return progress.ApplyRetryWaitStrategy(Token,listener, totalFailureCount, consecutiveFailureCount);
+        }
+
 
         /// <summary>
         /// Runs the extraction once and returns true if it was success otherwise false
