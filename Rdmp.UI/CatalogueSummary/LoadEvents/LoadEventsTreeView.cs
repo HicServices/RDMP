@@ -182,13 +182,13 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
             {
 
                 if(dli.Errors.Any())
-                    children.Add(new LoadEventsTreeView_Category("Errors", dli.Errors.ToArray(), LoggingTables.FatalError, dli.ID));
+                    children.Add(new LoadEventsTreeView_Category("Errors", dli.Errors.OrderByDescending(d=>d.Date).ToArray(), LoggingTables.FatalError, dli.ID));
 
                 if(dli.Progress.Any())
-                    children.Add(new LoadEventsTreeView_Category("Progress Messages", dli.Progress.ToArray(),LoggingTables.ProgressLog, dli.ID));
+                    children.Add(new LoadEventsTreeView_Category("Progress Messages", dli.Progress.OrderByDescending(d => d.Date).ToArray(),LoggingTables.ProgressLog, dli.ID));
 
                 if(dli.TableLoadInfos.Any())
-                    children.Add(new LoadEventsTreeView_Category("Tables Loaded", dli.TableLoadInfos.ToArray(),LoggingTables.TableLoadRun, dli.ID));
+                    children.Add(new LoadEventsTreeView_Category("Tables Loaded", dli.TableLoadInfos.OrderByDescending(d => d.Start).ToArray(),LoggingTables.TableLoadRun, dli.ID));
             }
 
             var category = model as LoadEventsTreeView_Category;
@@ -452,7 +452,9 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
             SetItemActivator(activator);
 
             Collection = (LoadEventsTreeViewObjectCollection)collection;
-            
+
+            RDMPCollectionCommonFunctionality.SetupColumnSortTracking(treeView1, new Guid("ccbea22e-a784-4968-a127-7c3a55b6d281"));
+
             CommonFunctionality.ClearToolStrip();
 
             CommonFunctionality.Add(new ToolStripLabel("Filter:"));
