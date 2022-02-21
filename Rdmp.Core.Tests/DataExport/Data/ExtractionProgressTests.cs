@@ -67,6 +67,22 @@ namespace Rdmp.Core.Tests.DataExport.Data
         }
 
         [Test]
+        public void ExtractionProgress_RetrySave()
+        {
+            var progress = CreateAnExtractionProgress();
+            Assert.AreEqual(progress.Retry, RetryStrategy.NoRetry);
+
+            progress.Retry = RetryStrategy.IterativeBackoff1Hour;
+            progress.SaveToDatabase();
+
+            progress.RevertToDatabaseState();
+            Assert.AreEqual(progress.Retry, RetryStrategy.IterativeBackoff1Hour);
+
+            var freshCopy = progress.Repository.GetObjectByID<ExtractionProgress>(progress.ID);
+            Assert.AreEqual(freshCopy.Retry, RetryStrategy.IterativeBackoff1Hour);
+
+        }
+        [Test]
         public void TestQueryGeneration_FirstBatch()
         {
             Reset();
