@@ -13,217 +13,213 @@ using ReusableLibraryCode.Progress;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Threading;
 using System.Threading.Tasks;
 
-namespace Rdmp.Core.DataExport.Data
+namespace Rdmp.Core.DataExport.Data;
+
+/// <inheritdoc cref="IExtractionProgress"/>
+public class ExtractionProgress : DatabaseEntity, IExtractionProgress
 {
-    /// <inheritdoc cref="IExtractionProgress"/>
-    public class ExtractionProgress : DatabaseEntity, IExtractionProgress
+    #region Database Properties
+
+    private int _selectedDataSets_ID;
+    private DateTime? _progress;
+    private int _extractionInformation_ID;
+    private DateTime? _startDate;
+    private DateTime? _endDate;
+    private int _numberOfDaysPerBatch;
+    private string _name;
+    private RetryStrategy _retry;
+    #endregion
+
+    /// <inheritdoc/>
+    public int SelectedDataSets_ID
     {
-        #region Database Properties
+        get => _selectedDataSets_ID;
+        set => SetField(ref _selectedDataSets_ID, value);
+    }
 
-        private int _selectedDataSets_ID;
-        private DateTime? _progress;
-        private int _extractionInformation_ID;
-        private DateTime? _startDate;
-        private DateTime? _endDate;
-        private int _numberOfDaysPerBatch;
-        private string _name;
-        private RetryStrategy _retry;
-        #endregion
+    /// <inheritdoc/>
+    public DateTime? ProgressDate
+    {
+        get => _progress;
+        set => SetField(ref _progress, value);
+    }
 
-        /// <inheritdoc/>
-        public int SelectedDataSets_ID
+    /// <inheritdoc/>
+    public DateTime? StartDate
+    {
+        get => _startDate;
+        set => SetField(ref _startDate, value);
+    }
+
+    /// <inheritdoc/>
+    public DateTime? EndDate
+    {
+        get => _endDate;
+        set => SetField(ref _endDate, value);
+    }
+
+    /// <inheritdoc/>
+    public int NumberOfDaysPerBatch
+    {
+        get => _numberOfDaysPerBatch;
+        set => SetField(ref _numberOfDaysPerBatch, value);
+    }
+
+    /// <inheritdoc/>
+    public int ExtractionInformation_ID
+    {
+        get => _extractionInformation_ID;
+        set => SetField(ref _extractionInformation_ID, value);
+    }
+
+    /// <inheritdoc/>
+    public string Name
+    {
+        get => _name;
+        set => SetField(ref _name, value);
+    }
+
+    public RetryStrategy Retry
+    {
+        get => _retry;
+        set => SetField(ref _retry, value);
+    }
+
+    #region Relationships
+    /// <inheritdoc/>
+    [NoMappingToDatabase]
+    public ISelectedDataSets SelectedDataSets => DataExportRepository.GetObjectByID<SelectedDataSets>(SelectedDataSets_ID);
+
+    public void ValidateSelectedColumn(ICheckNotifier notifier,ExtractionInformation ei)
+    {
+        if (ei == null)
         {
-            get { return _selectedDataSets_ID; }
-            set { SetField(ref _selectedDataSets_ID, value); }
+            notifier.OnCheckPerformed(new CheckEventArgs("A date column on which to split batches must be selected", CheckResult.Fail));
+            return;
         }
 
-        /// <inheritdoc/>
-        public DateTime? ProgressDate
+        var col = ei.ColumnInfo;
+
+        if (col == null)
         {
-            get { return _progress; }
-            set { SetField(ref _progress, value); }
+            notifier.OnCheckPerformed(new CheckEventArgs($"ExtractionInformation '{ei}' is an orphan with no associated ColumnInfo", CheckResult.Fail));
+            return;
         }
 
-        /// <inheritdoc/>
-        public DateTime? StartDate
+        try
         {
-            get { return _startDate; }
-            set { SetField(ref _startDate, value); }
-        }
 
-        /// <inheritdoc/>
-        public DateTime? EndDate
-        {
-            get { return _endDate; }
-            set { SetField(ref _endDate, value); }
-        }
-
-        /// <inheritdoc/>
-        public int NumberOfDaysPerBatch
-        {
-            get { return _numberOfDaysPerBatch; }
-            set { SetField(ref _numberOfDaysPerBatch, value); }
-        }
-
-        /// <inheritdoc/>
-        public int ExtractionInformation_ID
-        {
-            get { return _extractionInformation_ID; }
-            set { SetField(ref _extractionInformation_ID, value); }
-        }
-
-        /// <inheritdoc/>
-        public string Name
-        {
-            get { return _name; }
-            set { SetField(ref _name, value); }
-        }
-
-        public RetryStrategy Retry
-        {
-            get { return _retry; }
-            set { SetField(ref _retry, value); }
-        }
-
-        #region Relationships
-        /// <inheritdoc/>
-        [NoMappingToDatabase]
-        public ISelectedDataSets SelectedDataSets { get => DataExportRepository.GetObjectByID<SelectedDataSets>(SelectedDataSets_ID); }
-
-        public void ValidateSelectedColumn(ICheckNotifier notifier,ExtractionInformation ei)
-        {
-            if (ei == null)
+            if (col.GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(col.Data_type) != typeof(DateTime))
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("A date column on which to split batches must be selected", CheckResult.Fail));
-                return;
+                notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractionProgressColumnProbablyNotADate, ei, col.Data_type));
             }
-
-            var col = ei.ColumnInfo;
-
-            if (col == null)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs($"ExtractionInformation '{ei}' is an orphan with no associated ColumnInfo", CheckResult.Fail));
-                return;
-            }
-
-            try
-            {
-
-                if (col.GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(col.Data_type) != typeof(DateTime))
-                {
-                    notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractionProgressColumnProbablyNotADate, ei, col.Data_type));
-                }
-            }
-            catch (Exception ex)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs($"Could not determine datatype of ColumnInfo {col} ('{col?.Data_type}')", CheckResult.Fail, ex));
-            }
+        }
+        catch (Exception ex)
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs($"Could not determine datatype of ColumnInfo {col} ('{col?.Data_type}')", CheckResult.Fail, ex));
+        }
             
+    }
+
+    /// <inheritdoc/>
+    [NoMappingToDatabase]
+    public ExtractionInformation ExtractionInformation => DataExportRepository.CatalogueRepository.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID);
+
+    #endregion
+
+    public ExtractionProgress(IDataExportRepository repository, ISelectedDataSets sds, DateTime? startDate, DateTime? endDate,int numberOfDaysPerBatch,string name, int extractionInformation_ID)
+    {
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
+        {
+            { "SelectedDataSets_ID",sds.ID},
+            { "ExtractionInformation_ID",extractionInformation_ID},
+            { "NumberOfDaysPerBatch",numberOfDaysPerBatch},
+            { "StartDate", startDate},
+            { "EndDate", endDate},
+            { "Name",name },
+            { "Retry",RetryStrategy.NoRetry }
+        });
+
+        if (ID == 0 || Repository != repository)
+            throw new ArgumentException("Repository failed to properly hydrate this class");
+    }
+    public ExtractionProgress(IDataExportRepository repository, ISelectedDataSets sds)
+    {
+        var cata = sds.GetCatalogue();
+        var coverageColId = cata?.TimeCoverage_ExtractionInformation_ID;
+
+        if (!coverageColId.HasValue)
+        {
+            throw new ArgumentException($"Cannot create ExtractionProgress because Catalogue {cata} does not have a time coverage column");
         }
 
-        /// <inheritdoc/>
-        [NoMappingToDatabase]
-        public ExtractionInformation ExtractionInformation { get => DataExportRepository.CatalogueRepository.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID); }
-
-        #endregion
-
-        public ExtractionProgress(IDataExportRepository repository, ISelectedDataSets sds, DateTime? startDate, DateTime? endDate,int numberOfDaysPerBatch,string name, int extractionInformation_ID)
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            repository.InsertAndHydrate(this, new Dictionary<string, object>()
-            {
-                { "SelectedDataSets_ID",sds.ID},
-                { "ExtractionInformation_ID",extractionInformation_ID},
-                { "NumberOfDaysPerBatch",numberOfDaysPerBatch},
-                { "StartDate", startDate},
-                { "EndDate", endDate},
-                { "Name",name },
-                { "Retry",RetryStrategy.NoRetry }
-            });
+            { "SelectedDataSets_ID",sds.ID},
+            { "ExtractionInformation_ID",coverageColId},
+            { "NumberOfDaysPerBatch",365},
+            { "Name","ExtractionProgress"+Guid.NewGuid() },
+            { "Retry",RetryStrategy.NoRetry }
+        });
 
-            if (ID == 0 || Repository != repository)
-                throw new ArgumentException("Repository failed to properly hydrate this class");
-        }
-        public ExtractionProgress(IDataExportRepository repository, ISelectedDataSets sds)
+        if (ID == 0 || Repository != repository)
+            throw new ArgumentException("Repository failed to properly hydrate this class");
+    }
+    public ExtractionProgress(IDataExportRepository repository, DbDataReader r) : base(repository, r)
+    {
+        SelectedDataSets_ID = Convert.ToInt32(r["SelectedDataSets_ID"]);
+        ProgressDate = ObjectToNullableDateTime(r["ProgressDate"]);
+        StartDate = ObjectToNullableDateTime(r["StartDate"]);
+        EndDate = ObjectToNullableDateTime(r["EndDate"]);
+        ExtractionInformation_ID = Convert.ToInt32(r["ExtractionInformation_ID"]);
+        NumberOfDaysPerBatch = Convert.ToInt32(r["NumberOfDaysPerBatch"]);
+        Name = r["Name"].ToString();
+        Retry = (RetryStrategy)Enum.Parse(typeof(RetryStrategy),r["Retry"].ToString());
+    }
+
+    public override string ToString()
+    {
+        return Name;
+    }
+
+    public bool MoreToFetch()
+    {
+        return ProgressDate < EndDate;
+    }
+
+    public bool ApplyRetryWaitStrategy(GracefulCancellationToken token, IDataLoadEventListener listener, int totalFailureCount, int consecutiveFailureCount)
+    {
+        return Retry switch
         {
-            var cata = sds.GetCatalogue();
-            var coverageColId = cata?.TimeCoverage_ExtractionInformation_ID;
+            RetryStrategy.NoRetry => false,
+            RetryStrategy.IterativeBackoff1Hour => IterativeBackoff1Hour(token, listener, totalFailureCount),
+            _ => throw new ArgumentOutOfRangeException($"Unknown retry strategy {Retry}")
+        };
+    }
 
-            if (!coverageColId.HasValue)
-            {
-                throw new ArgumentException($"Cannot create ExtractionProgress because Catalogue {cata} does not have a time coverage column");
-            }
+    private bool IterativeBackoff1Hour(GracefulCancellationToken token, IDataLoadEventListener listener, int totalFailureCount)
+    {
+        token.ThrowIfAbortRequested();
 
-            repository.InsertAndHydrate(this, new Dictionary<string, object>()
-            {
-                { "SelectedDataSets_ID",sds.ID},
-                { "ExtractionInformation_ID",coverageColId},
-                { "NumberOfDaysPerBatch",365},
-                { "Name","ExtractionProgress"+Guid.NewGuid() },
-                { "Retry",RetryStrategy.NoRetry }
-            });
+        int[] waitTimes = { 0, 1, 2, 3, 5, 8, 13, 21, 34 };
 
-            if (ID == 0 || Repository != repository)
-                throw new ArgumentException("Repository failed to properly hydrate this class");
-        }
-        public ExtractionProgress(IDataExportRepository repository, DbDataReader r) : base(repository, r)
+        if (totalFailureCount > waitTimes.Length)
         {
-            SelectedDataSets_ID = Convert.ToInt32(r["SelectedDataSets_ID"]);
-            ProgressDate = ObjectToNullableDateTime(r["ProgressDate"]);
-            StartDate = ObjectToNullableDateTime(r["StartDate"]);
-            EndDate = ObjectToNullableDateTime(r["EndDate"]);
-            ExtractionInformation_ID = Convert.ToInt32(r["ExtractionInformation_ID"]);
-            NumberOfDaysPerBatch = Convert.ToInt32(r["NumberOfDaysPerBatch"]);
-            Name = r["Name"].ToString();
-            Retry = (RetryStrategy)Enum.Parse(typeof(RetryStrategy),r["Retry"].ToString());
-        }
-
-        public override string ToString()
-        {
-            return Name;
+            return false;
         }
 
-        public bool MoreToFetch()
-        {
-            return ProgressDate < EndDate;
-        }
-
-        public bool ApplyRetryWaitStrategy(GracefulCancellationToken token, IDataLoadEventListener listener, int totalFailureCount, int consecutiveFailureCount)
-        {
-            switch (Retry)
-            {
-                case RetryStrategy.NoRetry: return false;
-                case RetryStrategy.IterativeBackoff1Hour: return IterativeBackoff1Hour(token,listener, totalFailureCount);
-                default: throw new ArgumentOutOfRangeException($"Unknown retry strategy {Retry}");
-            }
-        }
-
-        private bool IterativeBackoff1Hour(GracefulCancellationToken token, IDataLoadEventListener listener, int totalFailureCount)
-        {
-            token.ThrowIfAbortRequested();
-
-            int[] waitTimes = new int[] { 0, 1, 2, 3, 5, 8, 13, 21, 34 };
-
-            if (totalFailureCount > waitTimes.Length)
-            {
-                return false;
-            }
-            else
-            {
-                // sleep for however many minutes we are up to
-                var mins  = waitTimes[totalFailureCount];
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Waiting {mins} mins before retry"));
+        // sleep for however many minutes we are up to
+        var mins  = waitTimes[totalFailureCount];
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Waiting {mins} mins before retry"));
                 
-                // wait for the minutes but cancel if abort is hit
-                Task.Delay((int)TimeSpan.FromMinutes(mins).TotalMilliseconds,token.AbortToken).Wait();
+        // wait for the minutes but cancel if abort is hit
+        Task.Delay((int)TimeSpan.FromMinutes(mins).TotalMilliseconds,token.AbortToken).Wait();
 
-                token.ThrowIfAbortRequested();
+        token.ThrowIfAbortRequested();
 
-                // then retry
-                return true;
-            }
-        }
+        // then retry
+        return true;
     }
 }
