@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+*Database Patch Included (enables ExtractionProgress retry)*
+
 ### Added
 - Added ArchiveTriggerTimeout user setting [#623](https://github.com/HicServices/RDMP/issues/623)
 - Support for referencing plugin objects from command line e.g. `./rdmp.exe cmd delete MyPluginClass:2`
