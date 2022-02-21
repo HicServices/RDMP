@@ -57,9 +57,23 @@ namespace Rdmp.Core.DataExport.Data
         ExtractionInformation ExtractionInformation { get; }
 
         /// <summary>
+        /// When extraction fails, what is the policy on retrying
+        /// </summary>
+        RetryStrategy Retry { get; }
+
+        /// <summary>
         /// Returns true if the progress is not completed yet
         /// </summary>
         /// <returns></returns>
         bool MoreToFetch();
+
+        /// <summary>
+        /// Blocks for a suitable amount of time (if any) based on the <see cref="Retry"/>
+        /// strategy configured.  Then returns true to retry or false to abandon retrying
+        /// </summary>
+        /// <param name="totalFailureCount"></param>
+        /// <param name="consecutiveFailureCount"></param>
+        /// <returns></returns>
+        bool ApplyRetryWaitStrategy(int totalFailureCount, int consecutiveFailureCount);
     }
 }

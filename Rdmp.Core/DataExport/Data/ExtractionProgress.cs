@@ -11,6 +11,7 @@ using ReusableLibraryCode.Checks;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Threading;
 
 namespace Rdmp.Core.DataExport.Data
 {
@@ -26,6 +27,7 @@ namespace Rdmp.Core.DataExport.Data
         private DateTime? _endDate;
         private int _numberOfDaysPerBatch;
         private string _name;
+        private RetryStrategy _retry;
         #endregion
 
         /// <inheritdoc/>
@@ -77,6 +79,12 @@ namespace Rdmp.Core.DataExport.Data
             set { SetField(ref _name, value); }
         }
 
+        public RetryStrategy Retry
+        {
+            get { return _retry; }
+            set { SetField(ref _retry, value); }
+        }
+
         #region Relationships
         /// <inheritdoc/>
         [NoMappingToDatabase]
@@ -116,6 +124,7 @@ namespace Rdmp.Core.DataExport.Data
         /// <inheritdoc/>
         [NoMappingToDatabase]
         public ExtractionInformation ExtractionInformation { get => DataExportRepository.CatalogueRepository.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID); }
+
         #endregion
 
         public ExtractionProgress(IDataExportRepository repository, ISelectedDataSets sds, DateTime? startDate, DateTime? endDate,int numberOfDaysPerBatch,string name, int extractionInformation_ID)
@@ -127,7 +136,8 @@ namespace Rdmp.Core.DataExport.Data
                 { "NumberOfDaysPerBatch",numberOfDaysPerBatch},
                 { "StartDate", startDate},
                 { "EndDate", endDate},
-                { "Name",name }
+                { "Name",name },
+                { "Retry",RetryStrategy.NoRetry }
             });
 
             if (ID == 0 || Repository != repository)
@@ -148,7 +158,8 @@ namespace Rdmp.Core.DataExport.Data
                 { "SelectedDataSets_ID",sds.ID},
                 { "ExtractionInformation_ID",coverageColId},
                 { "NumberOfDaysPerBatch",365},
-                { "Name","ExtractionProgress"+Guid.NewGuid() }
+                { "Name","ExtractionProgress"+Guid.NewGuid() },
+                { "Retry",RetryStrategy.NoRetry }
             });
 
             if (ID == 0 || Repository != repository)
@@ -163,6 +174,7 @@ namespace Rdmp.Core.DataExport.Data
             ExtractionInformation_ID = Convert.ToInt32(r["ExtractionInformation_ID"]);
             NumberOfDaysPerBatch = Convert.ToInt32(r["NumberOfDaysPerBatch"]);
             Name = r["Name"].ToString();
+            Retry = (RetryStrategy)Enum.Parse(typeof(RetryStrategy),r["Retry"].ToString());
         }
 
         public override string ToString()
@@ -173,6 +185,34 @@ namespace Rdmp.Core.DataExport.Data
         public bool MoreToFetch()
         {
             return ProgressDate < EndDate;
+        }
+
+        public bool ApplyRetryWaitStrategy(int totalFailureCount, int consecutiveFailureCount)
+        {
+            switch (Retry)
+            {
+                case RetryStrategy.NoRetry: return false;
+                case RetryStrategy.IterativeBackoff1Hour: return IterativeBackoff1Hour(totalFailureCount);
+                default: throw new ArgumentOutOfRangeException($"Unknown retry strategy {Retry}");
+            }
+        }
+
+        private bool IterativeBackoff1Hour(int totalFailureCount)
+        {
+            int[] waitTimes = new int[] { 0, 1, 2, 3, 5, 8, 13, 21, 34 };
+
+            if (totalFailureCount > waitTimes.Length)
+            {
+                return false;
+            }
+            else
+            {
+                // sleep for however many minutes we are up to
+                Thread.Sleep((int)TimeSpan.FromMinutes(waitTimes[totalFailureCount]).TotalMilliseconds);
+
+                // then retry
+                return true;
+            }
         }
     }
 }
