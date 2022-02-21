@@ -33,6 +33,7 @@ namespace Rdmp.UI.MainFormUITabs
             InitializeComponent();
             var tt = new ToolTip();
             tt.SetToolTip(btnFromDQE, "Populate Start and End dates according to the latest DQE results");
+            ddRetry.DataSource = Enum.GetValues(typeof(RetryStrategy));
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, ExtractionProgress databaseObject)
@@ -41,7 +42,6 @@ namespace Rdmp.UI.MainFormUITabs
 
             Bind(tbID, "Text", "ID", d => d.ID);
             Bind(tbDaysPerBatch, "Text", "NumberOfDaysPerBatch", d => d.NumberOfDaysPerBatch);
-            
         }
 
         public override void SetDatabaseObject(IActivateItems activator, ExtractionProgress databaseObject)
@@ -68,6 +68,8 @@ namespace Rdmp.UI.MainFormUITabs
             tbStartDate.Text = databaseObject.StartDate == null ? "" :databaseObject.StartDate.Value.ToString("yyyy-MM-dd") ?? "";
             tbEndDate.Text = databaseObject.EndDate == null ? "" : databaseObject.EndDate.Value.ToString("yyyy-MM-dd");
             tbProgress.Text = databaseObject.ProgressDate == null ? "" : databaseObject.ProgressDate.Value.ToString("yyyy-MM-dd");
+
+            ddRetry.SelectedItem = databaseObject.Retry;
 
             var cata = databaseObject.SelectedDataSets.GetCatalogue();
             ddColumn.DataSource = cata.GetAllExtractionInformation();
@@ -138,6 +140,15 @@ namespace Rdmp.UI.MainFormUITabs
         private void btnResetProgress_Click(object sender, EventArgs e)
         {
             tbProgress.Text = "";
+        }
+
+        private void ddRetry_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(ExtractionProgress == null)
+            {
+                return;
+            }
+            ExtractionProgress.Retry = (RetryStrategy)ddRetry.SelectedItem;
         }
     }
 
