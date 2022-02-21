@@ -21,11 +21,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug with AllowEmptyExtractions not working under some situations
 - Fixed [Lookup] creation UI creating CatalogueItem with the suffix _Desc even when you ask it not to in prompt
 - Fixed layout bug in rule validation configuration UI where rationale tip was cut off [#909](https://github.com/HicServices/RDMP/issues/909)
+- Fixed ViewLogs tab not remembering sort order between usages [#902](https://github.com/HicServices/RDMP/issues/902)
 
 ### Changed
 
 - Find sorts ties firstly by favourite status (favourite items appear above others)
 - Find sorts ties lastly alphabetically (previously by order of ID)
+- Default sort order of ViewLogs on first time use is now date order descending [#902](https://github.com/HicServices/RDMP/issues/902)
 
 ## [7.0.6] - 2022-01-25
 

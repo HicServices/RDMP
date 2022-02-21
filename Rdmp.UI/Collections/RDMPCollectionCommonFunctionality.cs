@@ -122,6 +122,28 @@ namespace Rdmp.UI.Collections
 
             view.RebuildColumns();
         }
+
+        public static void SetupColumnSortTracking(ObjectListView tree, Guid collectionGuid)
+        {
+            tree.PrimarySortColumn ??= tree.AllColumns.FirstOrDefault(c => c.IsVisible && c.Sortable);
+
+            //persist user sort orders
+            if (collectionGuid == Guid.Empty) return;
+            
+            //if we know the sort order for this collection last time
+            var lastSort = UserSettings.GetLastColumnSortForCollection(collectionGuid);
+
+            //reestablish that sort order
+            if (lastSort != null && tree.AllColumns.Any(c => c.Text == lastSort.Item1))
+            {
+                tree.PrimarySortColumn = tree.GetColumn(lastSort.Item1);
+                tree.PrimarySortOrder = lastSort.Item2 ? SortOrder.Ascending : SortOrder.Descending;
+            }
+
+            //and track changes to the sort order
+            tree.AfterSorting += (s, e) => TreeOnAfterSorting(s, e, collectionGuid);
+        }
+
         /// <summary>
         /// Sets up common functionality for an RDMPCollectionUI with the default settings
         /// </summary>
@@ -249,25 +271,7 @@ namespace Rdmp.UI.Collections
 
             if(Settings.AllowSorting)
             {
-                if (Tree.PrimarySortColumn == null)
-                    Tree.PrimarySortColumn = Tree.AllColumns.FirstOrDefault(c => c.IsVisible && c.Sortable);
-
-                //persist user sort orders
-                if (TreeGuids.ContainsKey(_collection))
-                {
-                    //if we know the sort order fo this collection last time
-                    var lastSort = UserSettings.GetLastColumnSortForCollection(TreeGuids[_collection]);
-
-                    //reestablish that sort order
-                    if (lastSort != null && Tree.AllColumns.Any(c => c.Text == lastSort.Item1))
-                    {
-                        Tree.PrimarySortColumn = Tree.GetColumn(lastSort.Item1);
-                        Tree.PrimarySortOrder = lastSort.Item2 ? SortOrder.Ascending : SortOrder.Descending;
-                    }
-
-                    //and track changes to the sort order
-                    Tree.AfterSorting += TreeOnAfterSorting;
-                }
+                SetupColumnSortTracking(Tree, TreeGuids.ContainsKey(collection) ? TreeGuids[collection] : Guid.Empty);
             }
             else
                 foreach (OLVColumn c in Tree.AllColumns)
@@ -334,10 +338,9 @@ namespace Rdmp.UI.Collections
                 e.Handled = true;
         }
 
-        private void TreeOnAfterSorting(object sender, AfterSortingEventArgs e)
+        private static void TreeOnAfterSorting(object sender, AfterSortingEventArgs e, Guid collectionGuid)
         {
-            if (TreeGuids.ContainsKey(_collection))
-                UserSettings.SetLastColumnSortForCollection(TreeGuids[_collection], e.ColumnToSort == null ? null:e.ColumnToSort.Text, e.SortOrder == SortOrder.Ascending);
+            UserSettings.SetLastColumnSortForCollection(collectionGuid, e.ColumnToSort == null ? null:e.ColumnToSort.Text, e.SortOrder == SortOrder.Ascending);
         }
 
         private void CreateColorIndicator(TreeListView tree, RDMPCollection collection)
