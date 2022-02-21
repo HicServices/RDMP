@@ -6,12 +6,15 @@
 
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Progress;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Rdmp.Core.DataExport.Data
 {
@@ -187,18 +190,20 @@ namespace Rdmp.Core.DataExport.Data
             return ProgressDate < EndDate;
         }
 
-        public bool ApplyRetryWaitStrategy(int totalFailureCount, int consecutiveFailureCount)
+        public bool ApplyRetryWaitStrategy(GracefulCancellationToken token, IDataLoadEventListener listener, int totalFailureCount, int consecutiveFailureCount)
         {
             switch (Retry)
             {
                 case RetryStrategy.NoRetry: return false;
-                case RetryStrategy.IterativeBackoff1Hour: return IterativeBackoff1Hour(totalFailureCount);
+                case RetryStrategy.IterativeBackoff1Hour: return IterativeBackoff1Hour(token,listener, totalFailureCount);
                 default: throw new ArgumentOutOfRangeException($"Unknown retry strategy {Retry}");
             }
         }
 
-        private bool IterativeBackoff1Hour(int totalFailureCount)
+        private bool IterativeBackoff1Hour(GracefulCancellationToken token, IDataLoadEventListener listener, int totalFailureCount)
         {
+            token.ThrowIfAbortRequested();
+
             int[] waitTimes = new int[] { 0, 1, 2, 3, 5, 8, 13, 21, 34 };
 
             if (totalFailureCount > waitTimes.Length)
@@ -208,7 +213,13 @@ namespace Rdmp.Core.DataExport.Data
             else
             {
                 // sleep for however many minutes we are up to
-                Thread.Sleep((int)TimeSpan.FromMinutes(waitTimes[totalFailureCount]).TotalMilliseconds);
+                var mins  = waitTimes[totalFailureCount];
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Waiting {mins} mins before retry"));
+                
+                // wait for the minutes but cancel if abort is hit
+                Task.Delay((int)TimeSpan.FromMinutes(mins).TotalMilliseconds,token.AbortToken).Wait();
+
+                token.ThrowIfAbortRequested();
 
                 // then retry
                 return true;

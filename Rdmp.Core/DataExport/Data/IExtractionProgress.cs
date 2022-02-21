@@ -6,6 +6,8 @@
 
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataFlowPipeline;
+using ReusableLibraryCode.Progress;
 using System;
 
 namespace Rdmp.Core.DataExport.Data
@@ -71,9 +73,11 @@ namespace Rdmp.Core.DataExport.Data
         /// Blocks for a suitable amount of time (if any) based on the <see cref="Retry"/>
         /// strategy configured.  Then returns true to retry or false to abandon retrying
         /// </summary>
+        /// <param name="token">Cancellation token for if the user wants to abandon waiting</param>
+        /// <param name="listener"></param>
         /// <param name="totalFailureCount"></param>
         /// <param name="consecutiveFailureCount"></param>
         /// <returns></returns>
-        bool ApplyRetryWaitStrategy(int totalFailureCount, int consecutiveFailureCount);
+        bool ApplyRetryWaitStrategy(GracefulCancellationToken token, IDataLoadEventListener listener, int totalFailureCount, int consecutiveFailureCount);
     }
 }

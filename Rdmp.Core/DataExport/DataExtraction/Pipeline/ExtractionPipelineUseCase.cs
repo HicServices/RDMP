@@ -175,10 +175,10 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
         {
             var progress = extractDatasetCommand.SelectedDataSets.ExtractionProgressIfAny;
 
-            if (progress == null || progress.Retry == RetryStrategy.NoRetry)
+            if (progress == null)
                 return false;
 
-            return progress.ApplyRetryWaitStrategy(totalFailureCount, consecutiveFailureCount);
+            return progress.ApplyRetryWaitStrategy(Token,listener, totalFailureCount, consecutiveFailureCount);
         }
 
 
