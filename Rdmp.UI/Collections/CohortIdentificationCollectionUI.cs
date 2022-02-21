@@ -26,18 +26,12 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
 {
     bool _firstTime = true;
 
-    private static string AspectGetter(object o)
-    {
-        if (o is CohortIdentificationConfiguration cic)
-            return cic.Frozen ? "Yes" : "No";
-        return null;
-    }
 
     //for expand all/ collapse all
     public CohortIdentificationCollectionUI()
     {
         InitializeComponent();
-        olvFrozen.AspectGetter = AspectGetter;
+        olvFrozen.AspectGetter = FrozenAspectGetter;
     }
 
     public override void SetItemActivator(IActivateItems activator)
@@ -93,6 +87,12 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-            
+
+    }
+    private string FrozenAspectGetter(object o)
+    {
+        if (o is CohortIdentificationConfiguration cic)
+            return cic.Frozen ? "Yes" : "No";
+        return null;
     }
 }
