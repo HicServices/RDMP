@@ -285,15 +285,13 @@ namespace MapsDirectlyToDatabaseTable.Versioning
 
         private bool SupportsBackup(DiscoveredDatabase database)
         {
-            // Only ms has a backup implementation in FAnsi currently
-            if (database.Server.DatabaseType != DatabaseType.MicrosoftSQLServer)
+            // Only MS SQL Server has a backup implementation in FAnsi currently
+            return database.Server.DatabaseType switch
             {
-                // Sql Server databases 
-                return false;
-            }
-
-            // if it's an azure server don't bother issuing BACKUP because it wont support it
-            return !database.Server.Builder.ContainsKey("Authentication");
+                // BACKUP doesn't work on Azure SQL Server either:
+                DatabaseType.MicrosoftSQLServer => !database.Server.Builder.ContainsKey("Authentication"),
+                _ => false
+            };
         }
 
         /// <summary>
