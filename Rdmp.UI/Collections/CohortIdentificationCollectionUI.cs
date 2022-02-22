@@ -10,88 +10,89 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 
-namespace Rdmp.UI.Collections
+namespace Rdmp.UI.Collections;
+
+/// <summary>
+/// Displays all the cohort identification configurations you have configured in RDMP. Cohort Identification Configurations (CIC) are created to identify specific patients e.g. 'all patients 
+/// with 3 or more prescriptions for a diabetes drug or who have been hospitalised for an amputation'.  Each CIC achieves its goal by combining Cohort Sets with Set operations (UNION,
+/// INTERSECT, EXCEPT) for example Cohort Set 1 '3+ diabetes drug prescriptions' UNION 'hospital admissions for amputations'.  Cohort sets can be from the same or different data sets (as
+/// long as they have a common identifier).
+/// </summary>
+public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
 {
-    /// <summary>
-    /// Displays all the cohort identification configurations you have configured in RDMP. Cohort Identification Configurations (CIC) are created to identify specific patients e.g. 'all patients 
-    /// with 3 or more prescriptions for a diabetes drug or who have been hospitalised for an amputation'.  Each CIC achieves it's goal by combining Cohort Sets with Set operations (UNION,
-    /// INTERSECT, EXCEPT) for example Cohort Set 1 '3+ diabetes drug prescriptions' UNION 'hospital admissions for amputations'.  Cohort sets can be from the same or different data sets (as
-    /// long as they have a common identifier).
-    /// </summary>
-    public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
+    bool _firstTime = true;
+
+
+    //for expand all/ collapse all
+    public CohortIdentificationCollectionUI()
     {
-        bool _firstTime = true;
+        InitializeComponent();
+        olvFrozen.AspectGetter = FrozenAspectGetter;
+    }
 
-        //for expand all/ collapse all
-        public CohortIdentificationCollectionUI()
-        {
-            InitializeComponent();
-            olvFrozen.AspectGetter = (o) => o is CohortIdentificationConfiguration cic ? cic.Frozen ? "Yes" : "No" : null;
-        }
+    public override void SetItemActivator(IActivateItems activator)
+    {
+        base.SetItemActivator(activator);
 
-        public override void SetItemActivator(IActivateItems activator)
-        {
-            base.SetItemActivator(activator);
-
-            //important to register the setup before the lifetime subscription so it gets priority on events
-            CommonTreeFunctionality.SetUp(
-                RDMPCollection.Cohort, 
-                tlvCohortIdentificationConfigurations,
-                Activator,
-                olvName,//column with the icon
-                olvName//column that can be renamed
+        //important to register the setup before the lifetime subscription so it gets priority on events
+        CommonTreeFunctionality.SetUp(
+            RDMPCollection.Cohort, 
+            tlvCohortIdentificationConfigurations,
+            Activator,
+            olvName,//column with the icon
+            olvName//column that can be renamed
                 
-                );
-            CommonTreeFunctionality.AxeChildren = new Type[]{typeof (CohortIdentificationConfiguration)};
-            
-            var dataExportChildProvider = activator.CoreChildProvider as DataExportChildProvider;
+        );
+        CommonTreeFunctionality.AxeChildren = new[]{typeof (CohortIdentificationConfiguration)};
 
-            if (dataExportChildProvider == null)
-            {
-                CommonTreeFunctionality.MaintainRootObjects = new Type[] { typeof(CohortIdentificationConfiguration) };
-                tlvCohortIdentificationConfigurations.AddObjects(Activator.CoreChildProvider.AllCohortIdentificationConfigurations);
-            }
-            else
-            {
-                CommonTreeFunctionality.MaintainRootObjects = new Type[] { typeof(AllProjectCohortIdentificationConfigurationsNode), typeof(AllFreeCohortIdentificationConfigurationsNode) };
-                tlvCohortIdentificationConfigurations.AddObject(dataExportChildProvider.AllProjectCohortIdentificationConfigurationsNode);
-                tlvCohortIdentificationConfigurations.AddObject(dataExportChildProvider.AllFreeCohortIdentificationConfigurationsNode);
-            }
-
-            tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.OrphanAggregateConfigurationsNode);
-
-            CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[]{
-                new ExecuteCommandCreateNewCohortIdentificationConfiguration(a),
-                new ExecuteCommandMergeCohortIdentificationConfigurations(a,null)};
-
-            Activator.RefreshBus.EstablishLifetimeSubscription(this);
-
-            var factory = new AtomicCommandUIFactory(activator);
-            
-            CommonFunctionality.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator)),"New...");
-            CommonFunctionality.Add(factory.CreateMenuItem(new ExecuteCommandMergeCohortIdentificationConfigurations(Activator,null){OverrideCommandName = "By Merging Existing..."}),"New...");
-
-            if(_firstTime)
-            {
-                CommonTreeFunctionality.SetupColumnTracking(olvName,new Guid("f8a42259-ce5a-4006-8ab8-e0305fce05aa"));
-                CommonTreeFunctionality.SetupColumnTracking(olvFrozen, new Guid("d1e155ef-a28f-41b5-81e4-b763627ddb3c"));
-                _firstTime = false;
-            }
+        if (activator.CoreChildProvider is not DataExportChildProvider dataExportChildProvider)
+        {
+            CommonTreeFunctionality.MaintainRootObjects = new[] { typeof(CohortIdentificationConfiguration) };
+            tlvCohortIdentificationConfigurations.AddObjects(Activator.CoreChildProvider.AllCohortIdentificationConfigurations);
         }
+        else
+        {
+            CommonTreeFunctionality.MaintainRootObjects = new[] { typeof(AllProjectCohortIdentificationConfigurationsNode), typeof(AllFreeCohortIdentificationConfigurationsNode) };
+            tlvCohortIdentificationConfigurations.AddObject(dataExportChildProvider.AllProjectCohortIdentificationConfigurationsNode);
+            tlvCohortIdentificationConfigurations.AddObject(dataExportChildProvider.AllFreeCohortIdentificationConfigurationsNode);
+        }
+
+        tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.OrphanAggregateConfigurationsNode);
+
+        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a=>new IAtomicCommand[]{
+            new ExecuteCommandCreateNewCohortIdentificationConfiguration(a),
+            new ExecuteCommandMergeCohortIdentificationConfigurations(a,null)};
+
+        Activator.RefreshBus.EstablishLifetimeSubscription(this);
+
+        var factory = new AtomicCommandUIFactory(activator);
+            
+        CommonFunctionality.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator)),"New...");
+        CommonFunctionality.Add(factory.CreateMenuItem(new ExecuteCommandMergeCohortIdentificationConfigurations(Activator,null){OverrideCommandName = "By Merging Existing..."}),"New...");
+
+        if (!_firstTime) return;
+        CommonTreeFunctionality.SetupColumnTracking(olvName,new Guid("f8a42259-ce5a-4006-8ab8-e0305fce05aa"));
+        CommonTreeFunctionality.SetupColumnTracking(olvFrozen, new Guid("d1e155ef-a28f-41b5-81e4-b763627ddb3c"));
+        _firstTime = false;
+    }
         
-        public static bool IsRootObject(object root)
-        {
-            return root is CohortIdentificationConfiguration || root is AllProjectCohortIdentificationConfigurationsNode || root is AllFreeCohortIdentificationConfigurationsNode;
-        }
+    public static bool IsRootObject(object root)
+    {
+        return root is CohortIdentificationConfiguration or AllProjectCohortIdentificationConfigurationsNode or AllFreeCohortIdentificationConfigurationsNode;
+    }
 
-        public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
-        {
-            
-        }
+    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    {
+
+    }
+    private string FrozenAspectGetter(object o)
+    {
+        if (o is CohortIdentificationConfiguration cic)
+            return cic.Frozen ? "Yes" : "No";
+        return null;
     }
 }
