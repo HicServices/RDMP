@@ -56,6 +56,12 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
         [Option(Required = false, Default = false, HelpText = "Set to true to validate the SSL certificate of the server you are installing into")]
         public bool ValidateCertificate {get;set;}
 
+        [Option(Required = false, Default = 30, HelpText = "Timeout in seconds for CREATE DATABASE SQL commands.  Defaults to 30")]
+        public int CreateDatabaseTimeout { get; set; } = 30;
+
+        [Option(Required = false, HelpText = "Optional connection string keywords to use e.g. \"Key1=Value1; Key2=Value2\".  When using this option you must manually specify IntegratedSecurity if required.")]
+        public string OtherKeywords { get; set; }
+
         [Usage]
         public static IEnumerable<Example> Examples
         {
@@ -71,21 +77,23 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
 
         public SqlConnectionStringBuilder GetBuilder(string databaseName)
         {
-         var builder = new SqlConnectionStringBuilder
-         {
-             DataSource = ServerName,
-             InitialCatalog = (Prefix ?? "") + databaseName,
-             TrustServerCertificate = !ValidateCertificate
-         };
+         var builder = string.IsNullOrWhiteSpace(OtherKeywords) ? new SqlConnectionStringBuilder() : new SqlConnectionStringBuilder(OtherKeywords);
 
+         builder.DataSource = ServerName;
+         builder.InitialCatalog = (Prefix ?? "") + databaseName;
+         builder.TrustServerCertificate = !ValidateCertificate;
+         
          if (!string.IsNullOrWhiteSpace(Username))
          {
              builder.UserID = Username;
              builder.Password = Password;
          }
          else
-             builder.IntegratedSecurity = true;
-
+         {
+            // if they are specifying other keywords they might be auth related so we don't want to blindly turn this on
+            builder.IntegratedSecurity = string.IsNullOrWhiteSpace(OtherKeywords);
+         }
+            
          return builder;
         }
     }

@@ -262,15 +262,19 @@ namespace Rdmp.UI.LocationsMenu
 
                 Console.SetOut(new StringWriter(sb));
 
-                var opts = new PlatformDatabaseCreationOptions();
-                opts.ServerName = tbSuiteServer.Text;
-                opts.Prefix = tbDatabasePrefix.Text;
-                opts.Username = tbUsername.Text;
-                opts.Password = tbPassword.Text;
-                opts.ExampleDatasets = cbCreateExampleDatasets.Checked;
-                opts.Seed = _seed;
-                opts.NumberOfPeople = _peopleCount;
-                opts.NumberOfRowsPerDataset = _rowCount;
+                var opts = new PlatformDatabaseCreationOptions
+                {
+                    ServerName = tbSuiteServer.Text,
+                    Prefix = tbDatabasePrefix.Text,
+                    Username = tbUsername.Text,
+                    Password = tbPassword.Text,
+                    ExampleDatasets = cbCreateExampleDatasets.Checked,
+                    Seed = _seed,
+                    NumberOfPeople = _peopleCount,
+                    NumberOfRowsPerDataset = _rowCount,
+                    OtherKeywords = tbOtherKeywords.Text,
+                    CreateDatabaseTimeout = int.TryParse(tbCreateDatabaseTimeout.Text, out var timeout) ? timeout:30
+                };
 
                 bool failed = false;
 
@@ -439,5 +443,11 @@ namespace Rdmp.UI.LocationsMenu
                 ExceptionViewer.Show(ex);
             }
         }
+
+        private void cbCreateExampleDatasets_CheckedChanged(object sender, EventArgs e)
+        {
+            gbExampleDatasets.Enabled = cbCreateExampleDatasets.Checked;
+        }
+
     }
 }

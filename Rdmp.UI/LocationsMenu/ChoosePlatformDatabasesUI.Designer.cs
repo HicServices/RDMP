@@ -58,18 +58,24 @@ namespace Rdmp.UI.LocationsMenu
             this.btnUseExisting = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.gbCreateNew = new System.Windows.Forms.GroupBox();
-            this.tbSeed = new System.Windows.Forms.TextBox();
-            this.tbRowCount = new System.Windows.Forms.TextBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.tbPeopleCount = new System.Windows.Forms.TextBox();
-            this.label12 = new System.Windows.Forms.Label();
-            this.cbCreateExampleDatasets = new System.Windows.Forms.CheckBox();
-            this.label9 = new System.Windows.Forms.Label();
-            this.tbPassword = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
+            this.gbSqlAuthentication = new System.Windows.Forms.GroupBox();
             this.tbUsername = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.tbPassword = new System.Windows.Forms.TextBox();
+            this.gbExampleDatasets = new System.Windows.Forms.GroupBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.tbPeopleCount = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.tbRowCount = new System.Windows.Forms.TextBox();
+            this.cbCreateExampleDatasets = new System.Windows.Forms.CheckBox();
+            this.tbSeed = new System.Windows.Forms.TextBox();
+            this.tbOtherKeywords = new System.Windows.Forms.TextBox();
+            this.tbCreateDatabaseTimeout = new System.Windows.Forms.TextBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
             this.btnBack1 = new System.Windows.Forms.Button();
             this.pResults = new System.Windows.Forms.Panel();
             this.gbUseExisting.SuspendLayout();
@@ -77,6 +83,8 @@ namespace Rdmp.UI.LocationsMenu
             this.pReferenceACatalogue.SuspendLayout();
             this.pChooseOption.SuspendLayout();
             this.gbCreateNew.SuspendLayout();
+            this.gbSqlAuthentication.SuspendLayout();
+            this.gbExampleDatasets.SuspendLayout();
             this.pResults.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -274,10 +282,10 @@ namespace Rdmp.UI.LocationsMenu
             // 
             // btnCreateSuite
             // 
-            this.btnCreateSuite.Location = new System.Drawing.Point(527, 22);
+            this.btnCreateSuite.Location = new System.Drawing.Point(108, 144);
             this.btnCreateSuite.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnCreateSuite.Name = "btnCreateSuite";
-            this.btnCreateSuite.Size = new System.Drawing.Size(125, 27);
+            this.btnCreateSuite.Size = new System.Drawing.Size(75, 27);
             this.btnCreateSuite.TabIndex = 2;
             this.btnCreateSuite.Text = "Create";
             this.btnCreateSuite.UseVisualStyleBackColor = true;
@@ -286,7 +294,7 @@ namespace Rdmp.UI.LocationsMenu
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(14, 28);
+            this.label5.Location = new System.Drawing.Point(54, 30);
             this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(42, 15);
@@ -295,7 +303,7 @@ namespace Rdmp.UI.LocationsMenu
             // 
             // tbSuiteServer
             // 
-            this.tbSuiteServer.Location = new System.Drawing.Point(69, 23);
+            this.tbSuiteServer.Location = new System.Drawing.Point(108, 27);
             this.tbSuiteServer.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbSuiteServer.Name = "tbSuiteServer";
             this.tbSuiteServer.Size = new System.Drawing.Size(166, 23);
@@ -304,7 +312,7 @@ namespace Rdmp.UI.LocationsMenu
             // 
             // tbDatabasePrefix
             // 
-            this.tbDatabasePrefix.Location = new System.Drawing.Point(355, 24);
+            this.tbDatabasePrefix.Location = new System.Drawing.Point(108, 56);
             this.tbDatabasePrefix.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbDatabasePrefix.Name = "tbDatabasePrefix";
             this.tbDatabasePrefix.Size = new System.Drawing.Size(166, 23);
@@ -314,7 +322,7 @@ namespace Rdmp.UI.LocationsMenu
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(248, 28);
+            this.label6.Location = new System.Drawing.Point(10, 59);
             this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(91, 15);
@@ -366,107 +374,207 @@ namespace Rdmp.UI.LocationsMenu
             // 
             // gbCreateNew
             // 
-            this.gbCreateNew.Controls.Add(this.tbSeed);
-            this.gbCreateNew.Controls.Add(this.tbRowCount);
-            this.gbCreateNew.Controls.Add(this.label11);
-            this.gbCreateNew.Controls.Add(this.label10);
-            this.gbCreateNew.Controls.Add(this.tbPeopleCount);
-            this.gbCreateNew.Controls.Add(this.label12);
-            this.gbCreateNew.Controls.Add(this.cbCreateExampleDatasets);
+            this.gbCreateNew.Controls.Add(this.gbSqlAuthentication);
+            this.gbCreateNew.Controls.Add(this.gbExampleDatasets);
+            this.gbCreateNew.Controls.Add(this.tbOtherKeywords);
+            this.gbCreateNew.Controls.Add(this.tbCreateDatabaseTimeout);
+            this.gbCreateNew.Controls.Add(this.label14);
+            this.gbCreateNew.Controls.Add(this.label13);
             this.gbCreateNew.Controls.Add(this.label9);
-            this.gbCreateNew.Controls.Add(this.tbPassword);
-            this.gbCreateNew.Controls.Add(this.label4);
-            this.gbCreateNew.Controls.Add(this.tbUsername);
-            this.gbCreateNew.Controls.Add(this.label3);
             this.gbCreateNew.Controls.Add(this.tbSuiteServer);
             this.gbCreateNew.Controls.Add(this.btnBack1);
             this.gbCreateNew.Controls.Add(this.tbDatabasePrefix);
             this.gbCreateNew.Controls.Add(this.label5);
             this.gbCreateNew.Controls.Add(this.btnCreateSuite);
             this.gbCreateNew.Controls.Add(this.label6);
-            this.gbCreateNew.Location = new System.Drawing.Point(559, 470);
+            this.gbCreateNew.Location = new System.Drawing.Point(559, 252);
             this.gbCreateNew.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.gbCreateNew.Name = "gbCreateNew";
             this.gbCreateNew.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.gbCreateNew.Size = new System.Drawing.Size(888, 151);
+            this.gbCreateNew.Size = new System.Drawing.Size(888, 180);
             this.gbCreateNew.TabIndex = 15;
             this.gbCreateNew.TabStop = false;
             this.gbCreateNew.Text = "Create New Platform Databases";
             this.gbCreateNew.Visible = false;
             // 
-            // tbSeed
+            // gbSqlAuthentication
             // 
-            this.tbSeed.Location = new System.Drawing.Point(691, 53);
-            this.tbSeed.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tbSeed.Name = "tbSeed";
-            this.tbSeed.Size = new System.Drawing.Size(190, 23);
-            this.tbSeed.TabIndex = 11;
-            this.tbSeed.Text = "500";
-            this.tbSeed.TextChanged += new System.EventHandler(this.Tb_TextChanged);
+            this.gbSqlAuthentication.Controls.Add(this.tbUsername);
+            this.gbSqlAuthentication.Controls.Add(this.label3);
+            this.gbSqlAuthentication.Controls.Add(this.label4);
+            this.gbSqlAuthentication.Controls.Add(this.tbPassword);
+            this.gbSqlAuthentication.Location = new System.Drawing.Point(281, 25);
+            this.gbSqlAuthentication.Name = "gbSqlAuthentication";
+            this.gbSqlAuthentication.Size = new System.Drawing.Size(237, 76);
+            this.gbSqlAuthentication.TabIndex = 15;
+            this.gbSqlAuthentication.TabStop = false;
+            this.gbSqlAuthentication.Text = "Sql Authentication*";
             // 
-            // tbRowCount
+            // tbUsername
             // 
-            this.tbRowCount.Location = new System.Drawing.Point(691, 102);
-            this.tbRowCount.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tbRowCount.Name = "tbRowCount";
-            this.tbRowCount.Size = new System.Drawing.Size(190, 23);
-            this.tbRowCount.TabIndex = 11;
-            this.tbRowCount.TextChanged += new System.EventHandler(this.Tb_TextChanged);
+            this.tbUsername.Location = new System.Drawing.Point(80, 17);
+            this.tbUsername.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tbUsername.Name = "tbUsername";
+            this.tbUsername.Size = new System.Drawing.Size(149, 23);
+            this.tbUsername.TabIndex = 3;
             // 
-            // label11
+            // label3
             // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(610, 105);
-            this.label11.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(69, 15);
-            this.label11.TabIndex = 10;
-            this.label11.Text = "Row Count:";
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(12, 22);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(63, 15);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "Username:";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(15, 45);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(60, 15);
+            this.label4.TabIndex = 6;
+            this.label4.Text = "Password:";
+            // 
+            // tbPassword
+            // 
+            this.tbPassword.Location = new System.Drawing.Point(80, 42);
+            this.tbPassword.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tbPassword.Name = "tbPassword";
+            this.tbPassword.Size = new System.Drawing.Size(149, 23);
+            this.tbPassword.TabIndex = 4;
+            this.tbPassword.UseSystemPasswordChar = true;
+            // 
+            // gbExampleDatasets
+            // 
+            this.gbExampleDatasets.Controls.Add(this.label10);
+            this.gbExampleDatasets.Controls.Add(this.label12);
+            this.gbExampleDatasets.Controls.Add(this.tbPeopleCount);
+            this.gbExampleDatasets.Controls.Add(this.label11);
+            this.gbExampleDatasets.Controls.Add(this.tbRowCount);
+            this.gbExampleDatasets.Controls.Add(this.cbCreateExampleDatasets);
+            this.gbExampleDatasets.Controls.Add(this.tbSeed);
+            this.gbExampleDatasets.Enabled = false;
+            this.gbExampleDatasets.Location = new System.Drawing.Point(536, 33);
+            this.gbExampleDatasets.Name = "gbExampleDatasets";
+            this.gbExampleDatasets.Size = new System.Drawing.Size(230, 100);
+            this.gbExampleDatasets.TabIndex = 14;
+            this.gbExampleDatasets.TabStop = false;
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(643, 58);
+            this.label10.Location = new System.Drawing.Point(51, 25);
             this.label10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(35, 15);
             this.label10.TabIndex = 10;
             this.label10.Text = "Seed:";
             // 
-            // tbPeopleCount
-            // 
-            this.tbPeopleCount.Location = new System.Drawing.Point(691, 77);
-            this.tbPeopleCount.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tbPeopleCount.Name = "tbPeopleCount";
-            this.tbPeopleCount.Size = new System.Drawing.Size(190, 23);
-            this.tbPeopleCount.TabIndex = 11;
-            this.tbPeopleCount.TextChanged += new System.EventHandler(this.Tb_TextChanged);
-            // 
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(604, 81);
+            this.label12.Location = new System.Drawing.Point(7, 49);
             this.label12.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(82, 15);
             this.label12.TabIndex = 10;
             this.label12.Text = "Person Count:";
             // 
+            // tbPeopleCount
+            // 
+            this.tbPeopleCount.Location = new System.Drawing.Point(94, 46);
+            this.tbPeopleCount.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tbPeopleCount.Name = "tbPeopleCount";
+            this.tbPeopleCount.Size = new System.Drawing.Size(129, 23);
+            this.tbPeopleCount.TabIndex = 11;
+            this.tbPeopleCount.TextChanged += new System.EventHandler(this.Tb_TextChanged);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(20, 74);
+            this.label11.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(69, 15);
+            this.label11.TabIndex = 10;
+            this.label11.Text = "Row Count:";
+            // 
+            // tbRowCount
+            // 
+            this.tbRowCount.Location = new System.Drawing.Point(94, 71);
+            this.tbRowCount.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tbRowCount.Name = "tbRowCount";
+            this.tbRowCount.Size = new System.Drawing.Size(129, 23);
+            this.tbRowCount.TabIndex = 11;
+            this.tbRowCount.TextChanged += new System.EventHandler(this.Tb_TextChanged);
+            // 
             // cbCreateExampleDatasets
             // 
             this.cbCreateExampleDatasets.AutoSize = true;
-            this.cbCreateExampleDatasets.Location = new System.Drawing.Point(691, 27);
+            this.cbCreateExampleDatasets.Location = new System.Drawing.Point(7, 2);
             this.cbCreateExampleDatasets.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbCreateExampleDatasets.Name = "cbCreateExampleDatasets";
             this.cbCreateExampleDatasets.Size = new System.Drawing.Size(118, 19);
             this.cbCreateExampleDatasets.TabIndex = 9;
             this.cbCreateExampleDatasets.Text = "Example Datasets";
             this.cbCreateExampleDatasets.UseVisualStyleBackColor = true;
+            this.cbCreateExampleDatasets.CheckedChanged += new System.EventHandler(this.cbCreateExampleDatasets_CheckedChanged);
+            // 
+            // tbSeed
+            // 
+            this.tbSeed.Location = new System.Drawing.Point(94, 22);
+            this.tbSeed.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tbSeed.Name = "tbSeed";
+            this.tbSeed.Size = new System.Drawing.Size(129, 23);
+            this.tbSeed.TabIndex = 11;
+            this.tbSeed.Text = "500";
+            this.tbSeed.TextChanged += new System.EventHandler(this.Tb_TextChanged);
+            // 
+            // tbOtherKeywords
+            // 
+            this.tbOtherKeywords.Location = new System.Drawing.Point(108, 115);
+            this.tbOtherKeywords.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tbOtherKeywords.Name = "tbOtherKeywords";
+            this.tbOtherKeywords.Size = new System.Drawing.Size(410, 23);
+            this.tbOtherKeywords.TabIndex = 13;
+            // 
+            // tbCreateDatabaseTimeout
+            // 
+            this.tbCreateDatabaseTimeout.Location = new System.Drawing.Point(108, 85);
+            this.tbCreateDatabaseTimeout.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tbCreateDatabaseTimeout.Name = "tbCreateDatabaseTimeout";
+            this.tbCreateDatabaseTimeout.Size = new System.Drawing.Size(90, 23);
+            this.tbCreateDatabaseTimeout.TabIndex = 13;
+            this.tbCreateDatabaseTimeout.Text = "30";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(10, 118);
+            this.label14.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(94, 15);
+            this.label14.TabIndex = 12;
+            this.label14.Text = "Other Keywords:";
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(10, 88);
+            this.label13.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(91, 15);
+            this.label13.TabIndex = 12;
+            this.label13.Text = "Create Timeout:";
             // 
             // label9
             // 
+            this.label9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(14, 81);
+            this.label9.Location = new System.Drawing.Point(318, 156);
             this.label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(564, 15);
@@ -474,47 +582,10 @@ namespace Rdmp.UI.LocationsMenu
             this.label9.Text = "(* Username and Password are Optional.  If omitted then Integrated Security will " +
     "be used - recommended)";
             // 
-            // tbPassword
-            // 
-            this.tbPassword.Location = new System.Drawing.Point(332, 54);
-            this.tbPassword.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tbPassword.Name = "tbPassword";
-            this.tbPassword.Size = new System.Drawing.Size(166, 23);
-            this.tbPassword.TabIndex = 4;
-            this.tbPassword.UseSystemPasswordChar = true;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(258, 58);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(65, 15);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "*Password:";
-            // 
-            // tbUsername
-            // 
-            this.tbUsername.Location = new System.Drawing.Point(89, 54);
-            this.tbUsername.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tbUsername.Name = "tbUsername";
-            this.tbUsername.Size = new System.Drawing.Size(166, 23);
-            this.tbUsername.TabIndex = 3;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(14, 58);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(68, 15);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "*Username:";
-            // 
             // btnBack1
             // 
             this.btnBack1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnBack1.Location = new System.Drawing.Point(7, 114);
+            this.btnBack1.Location = new System.Drawing.Point(8, 144);
             this.btnBack1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnBack1.Name = "btnBack1";
             this.btnBack1.Size = new System.Drawing.Size(88, 27);
@@ -556,6 +627,10 @@ namespace Rdmp.UI.LocationsMenu
             this.pChooseOption.PerformLayout();
             this.gbCreateNew.ResumeLayout(false);
             this.gbCreateNew.PerformLayout();
+            this.gbSqlAuthentication.ResumeLayout(false);
+            this.gbSqlAuthentication.PerformLayout();
+            this.gbExampleDatasets.ResumeLayout(false);
+            this.gbExampleDatasets.PerformLayout();
             this.pResults.ResumeLayout(false);
             this.pResults.PerformLayout();
             this.ResumeLayout(false);
@@ -604,5 +679,11 @@ namespace Rdmp.UI.LocationsMenu
         private System.Windows.Forms.TextBox tbPeopleCount;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Button btnCreateYamlFile;
+        private System.Windows.Forms.GroupBox gbExampleDatasets;
+        private System.Windows.Forms.TextBox tbOtherKeywords;
+        private System.Windows.Forms.TextBox tbCreateDatabaseTimeout;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.GroupBox gbSqlAuthentication;
     }
 }
