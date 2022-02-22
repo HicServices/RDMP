@@ -272,6 +272,16 @@ namespace Rdmp.UI.LocationsMenu
                 opts.NumberOfPeople = _peopleCount;
                 opts.NumberOfRowsPerDataset = _rowCount;
 
+                try
+                {
+                    opts.CreateDatabaseTimeout = int.Parse(tbCreateDatabaseTimeout.Text);
+                }
+                catch (Exception)
+                {
+                    opts.CreateDatabaseTimeout = 30;
+                }
+                opts.OtherKeywords = tbOtherKeywords.Text;
+
                 bool failed = false;
 
                 var task = new Task(() =>
@@ -439,5 +449,11 @@ namespace Rdmp.UI.LocationsMenu
                 ExceptionViewer.Show(ex);
             }
         }
+
+        private void cbCreateExampleDatasets_CheckedChanged(object sender, EventArgs e)
+        {
+            gbExampleDatasets.Enabled = cbCreateExampleDatasets.Checked;
+        }
+
     }
 }
