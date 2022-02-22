@@ -218,7 +218,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
 
             Version maxPatchVersion = patches.Values.Max(pat => pat.DatabaseVersionNumber);
 
-            if (backupDatabase && Database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer) //todo: Only ms has a backup implementation in FAnsi currently
+            if (backupDatabase && SupportsBackup(Database))
             {
                 try
                 {
@@ -281,6 +281,19 @@ namespace MapsDirectlyToDatabaseTable.Versioning
                 notifier.OnCheckPerformed(new CheckEventArgs("Error occurred during patching", CheckResult.Fail, e));
                 return false;
             }
+        }
+
+        private bool SupportsBackup(DiscoveredDatabase database)
+        {
+            // Only ms has a backup implementation in FAnsi currently
+            if (database.Server.DatabaseType != DatabaseType.MicrosoftSQLServer)
+            {
+                // Sql Server databases 
+                return false;
+            }
+
+            // if it's an azure server don't bother issuing BACKUP because it wont support it
+            return !database.Server.Builder.ContainsKey("Authentication");
         }
 
         /// <summary>
