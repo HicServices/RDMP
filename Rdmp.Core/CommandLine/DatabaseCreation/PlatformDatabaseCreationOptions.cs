@@ -56,6 +56,9 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
         [Option(Required = false, Default = false, HelpText = "Set to true to validate the SSL certificate of the server you are installing into")]
         public bool ValidateCertificate {get;set;}
 
+        [Option(Required = false, Default = 30, HelpText = "Timeout in seconds for CREATE DATABASE SQL commands.  Defaults to 30")]
+        public int CreateDatabaseTimeout { get; set; } = 30;
+
         [Usage]
         public static IEnumerable<Example> Examples
         {

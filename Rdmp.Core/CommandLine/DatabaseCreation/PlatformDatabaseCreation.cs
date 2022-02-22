@@ -32,6 +32,8 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
         /// <param name="options"></param>
         public void CreatePlatformDatabases(PlatformDatabaseCreationOptions options)
         {
+            DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = options.CreateDatabaseTimeout;
+
             Create(DefaultCatalogueDatabaseName, new CataloguePatcher(), options);
             Create(DefaultDataExportDatabaseName, new DataExportPatcher(), options);
 
