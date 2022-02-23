@@ -73,7 +73,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             this.cbIsMandatory.Name = "cbIsMandatory";
             this.cbIsMandatory.Size = new System.Drawing.Size(92, 19);
             this.cbIsMandatory.TabIndex = 9;
-            this.cbIsMandatory.Text = "IsMandatory";
+            this.cbIsMandatory.Text = "Is Mandatory";
             this.toolTip1.SetToolTip(this.cbIsMandatory, "Mandatory filters are automatically added to ExtractionConfigurations and Cohort " +
         "Identification Queries when the parent dataset is selected");
             this.cbIsMandatory.UseVisualStyleBackColor = true;
