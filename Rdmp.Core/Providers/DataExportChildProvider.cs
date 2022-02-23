@@ -504,7 +504,7 @@ namespace Rdmp.Core.Providers
 
                 if (server == null || !server.RespondsWithinTime(3, out ex) || !source.IsFullyPopulated())
                 {
-                    forbidlist(source,ex);
+                    ForbidList(source,ex);
                     return;
                 }
 
@@ -551,11 +551,18 @@ namespace Rdmp.Core.Providers
                 }
                 catch (Exception e)
                 {
-                    forbidlist(source,e);
+                    ForbidList(source,e);
                 }
         }
 
-        private void forbidlist(ExternalCohortTable source,Exception ex)
+        /// <summary>
+        /// Marks the <paramref name="source"/> as unreachable and prevents future
+        /// attempts to retrieve it.  This is important as it can take multiple seconds
+        /// to determine that a server doesn't exist (e.g. network TCP timeout).
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="ex"></param>
+        private void ForbidList(ExternalCohortTable source,Exception ex)
         {
             ForbidListedSources.Add(source);
 
