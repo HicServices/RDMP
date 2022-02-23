@@ -51,7 +51,7 @@ namespace Rdmp.Core.Providers
 
         private string DescribeProblem(ExternalCohortTable externalCohortTable)
         {
-            if (_exportChildProvider != null && _exportChildProvider.BlackListedSources.Contains(externalCohortTable))
+            if (_exportChildProvider != null && _exportChildProvider.ForbidListedSources.Contains(externalCohortTable))
                 return "Cohort Source database was unreachable";
 
             return null;

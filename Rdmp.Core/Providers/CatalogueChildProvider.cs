@@ -1464,7 +1464,7 @@ namespace Rdmp.Core.Providers
                 if(providers.Any())
                     foreach (var o in objectsToAskAbout?? GetAllObjects())
                     {
-                        //for every plugin loaded (that is not blacklisted)
+                        //for every plugin loaded (that is not forbidlisted)
                         foreach (var plugin in providers)
                         {
                             //ask about the children
@@ -1478,7 +1478,7 @@ namespace Rdmp.Core.Providers
                                 if (sw.ElapsedMilliseconds > 1000)
                                 {
                                     _blockedPlugins.Add(plugin);
-                                    throw new Exception("Plugin '" + plugin + "' was blacklisted for taking too long to respond to GetChildren(o) where o was a '" + o.GetType().Name + "' ('" + o + "')");
+                                    throw new Exception("Plugin '" + plugin + "' was forbidlisted for taking too long to respond to GetChildren(o) where o was a '" + o.GetType().Name + "' ('" + o + "')");
                                 }
 
                                 //it has children

@@ -99,7 +99,7 @@ namespace Rdmp.Core.Tests.Databases
                 "LoadModules.Generic.Attachers.MdfAttachStrategy",
                 "LoadModules.Generic.Attachers.RemoteTableAttacher",
                 "LoadModules.Generic.DataFlowOperations.Aliases.AliasResolutionStrategy",
-                "LoadModules.Generic.DataFlowOperations.ColumnBlacklister",
+                "LoadModules.Generic.DataFlowOperations.ColumnForbidder",
                 "LoadModules.Generic.DataFlowOperations.ColumnRenamer",
                 "LoadModules.Generic.DataFlowOperations.ExtractCatalogueMetadata",
                 "LoadModules.Generic.DataFlowOperations.ReleaseMetadata",

@@ -45,7 +45,7 @@ namespace Rdmp.UI.SimpleDialogs
 
         readonly Stack<WideMessageBoxArgs> _navigationStack = new Stack<WideMessageBoxArgs>();
 
-        private static readonly HashSet<string> KeywordBlacklist = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase)
+        private static readonly HashSet<string> KeywordIgnoreList = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase)
         {
             "date",
             "example",
@@ -324,7 +324,7 @@ namespace Rdmp.UI.SimpleDialogs
                 return null;
 
             //do not highlight common words like "example"
-            if (KeywordBlacklist.Contains(word) || KeywordBlacklist.Contains(word.TrimEnd('s')))
+            if (KeywordIgnoreList.Contains(word) || KeywordIgnoreList.Contains(word.TrimEnd('s')))
                 return null;
 
             var keyword = CommentStore.GetDocumentationKeywordIfExists(word.Trim(), true);

@@ -19,7 +19,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
         readonly List<string> _rdmpFormClassNames = new List<string>();
         readonly List<string> _fails = new List<string>();
 
-        List<string> methodBlacklist = new List<string>()
+        List<string> methodIgnoreList = new List<string>()
          {
              "if",
              "catch",
@@ -121,7 +121,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
                 {
                     string methodName = m.Groups[1].Value;
 
-                    if (methodBlacklist.Contains(methodName))
+                    if (methodIgnoreList.Contains(methodName))
                         continue;
 
                     Console.WriteLine("Constructor calls method:" + m.Groups[1].Value);

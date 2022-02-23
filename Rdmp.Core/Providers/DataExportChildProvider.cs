@@ -62,7 +62,7 @@ namespace Rdmp.Core.Providers
         private Dictionary<ExtractionConfiguration, List<SelectedDataSets>> _configurationToDatasetMapping;
         private IFilterManager _dataExportFilterManager;
 
-        public List<ExternalCohortTable> BlackListedSources { get; private set; }
+        public List<ExternalCohortTable> ForbidListedSources { get; private set; }
         
         public List<IObjectUsedByOtherObjectNode<Project,IMapsDirectlyToDatabaseTable>> DuplicatesByProject = new List<IObjectUsedByOtherObjectNode<Project,IMapsDirectlyToDatabaseTable>>();
         public List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>> DuplicatesByCohortSourceUsedByProjectNode = new List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>>();
@@ -99,7 +99,7 @@ namespace Rdmp.Core.Providers
 
         public DataExportChildProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IChildProvider[] pluginChildProviders,ICheckNotifier errorsCheckNotifier, DataExportChildProvider previousStateIfKnown) : base(repositoryLocator.CatalogueRepository, pluginChildProviders,errorsCheckNotifier,previousStateIfKnown)
         {
-            BlackListedSources = previousStateIfKnown?.BlackListedSources ?? new List<ExternalCohortTable>();
+            ForbidListedSources = previousStateIfKnown?.ForbidListedSources ?? new List<ExternalCohortTable>();
             _errorsCheckNotifier = errorsCheckNotifier;
             dataExportRepository = repositoryLocator.DataExportRepository;
 
@@ -480,7 +480,7 @@ namespace Rdmp.Core.Providers
 
         private void GetCohortAvailability()
         {
-            Parallel.ForEach(CohortSources.Except(BlackListedSources), GetCohortAvailability);
+            Parallel.ForEach(CohortSources.Except(ForbidListedSources), GetCohortAvailability);
         }
 
         private void GetCohortAvailability(ExternalCohortTable source)
@@ -504,7 +504,7 @@ namespace Rdmp.Core.Providers
 
                 if (server == null || !server.RespondsWithinTime(3, out ex) || !source.IsFullyPopulated())
                 {
-                    Blacklist(source,ex);
+                    ForbidList(source,ex);
                     return;
                 }
 
@@ -551,13 +551,20 @@ namespace Rdmp.Core.Providers
                 }
                 catch (Exception e)
                 {
-                    Blacklist(source,e);
+                    ForbidList(source,e);
                 }
         }
 
-        private void Blacklist(ExternalCohortTable source,Exception ex)
+        /// <summary>
+        /// Marks the <paramref name="source"/> as unreachable and prevents future
+        /// attempts to retrieve it.  This is important as it can take multiple seconds
+        /// to determine that a server doesn't exist (e.g. network TCP timeout).
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="ex"></param>
+        private void ForbidList(ExternalCohortTable source,Exception ex)
         {
-            BlackListedSources.Add(source);
+            ForbidListedSources.Add(source);
 
             _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not reach cohort '" + source + "' (it may be slow responding or inaccessible due to user permissions)", CheckResult.Warning, ex));
 
@@ -729,7 +736,7 @@ namespace Rdmp.Core.Providers
                 ExtractionConfigurationsByProject = dxOther.ExtractionConfigurationsByProject;
                 _configurationToDatasetMapping = dxOther._configurationToDatasetMapping;
                 _dataExportFilterManager = dxOther._dataExportFilterManager;
-                BlackListedSources = dxOther.BlackListedSources;
+                ForbidListedSources = dxOther.ForbidListedSources;
                 DuplicatesByProject = dxOther.DuplicatesByProject;
                 DuplicatesByCohortSourceUsedByProjectNode = dxOther.DuplicatesByCohortSourceUsedByProjectNode;
                 ProjectNumberToCohortsDictionary = dxOther.ProjectNumberToCohortsDictionary;

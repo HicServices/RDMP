@@ -408,12 +408,12 @@ namespace Tests.Common
                 return (T)(object)new Pipeline(Repository,"My Pipeline");
 
             if (typeof (T) == typeof(PipelineComponent))
-                return (T)(object)new PipelineComponent(Repository, WhenIHaveA<Pipeline>(), typeof(ColumnBlacklister),0,"My Component");
+                return (T)(object)new PipelineComponent(Repository, WhenIHaveA<Pipeline>(), typeof(ColumnForbidder),0,"My Component");
             
             if (typeof (T) == typeof(PipelineComponentArgument))
             {
                 var comp = WhenIHaveA<PipelineComponent>();
-                return (T)comp.CreateArgumentsForClassIfNotExists<ColumnBlacklister>().First();
+                return (T)comp.CreateArgumentsForClassIfNotExists<ColumnForbidder>().First();
             }
 
             if (typeof (T) == typeof(PreLoadDiscardedColumn))

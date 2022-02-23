@@ -89,15 +89,15 @@ namespace Rdmp.Core.Tests.Curation.Integration.ObscureDependencyTests
                 //and explode
                 Assert.Throws<ValidationXmlDependencyException>(() => finder.ThrowIfDeleteDisallowed(l2ColumnInfo));
                 
-                Assert.AreEqual(0,finder.BlackList.Count);
+                Assert.AreEqual(0,finder.CataloguesWithBrokenValidationXml.Count);
 
                 //now clear the validation XML
                 testData.catalogue.ValidatorXML = testData.catalogue.ValidatorXML.Insert(100,"I've got a lovely bunch of coconuts!");
                 testData.catalogue.SaveToDatabase();
 
-                //column info should be deleteable but only because we got ourselves onto the blacklist
+                //column info should be deleteable but only because we got ourselves onto the forbidlist
                 Assert.DoesNotThrow(() => finder.ThrowIfDeleteDisallowed(l2ColumnInfo));
-                Assert.AreEqual(1, finder.BlackList.Count);
+                Assert.AreEqual(1, finder.CataloguesWithBrokenValidationXml.Count);
 
                 testData.catalogue.ValidatorXML = "";
                 testData.catalogue.SaveToDatabase();

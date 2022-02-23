@@ -23,7 +23,7 @@ namespace Rdmp.Core.Reports.ExtractionTime
         private ICatalogue Catalogue { get; set; }
 
         //This is an alternative for [DoNotExtractProperty] that only applies to this class where [DoNotExtractProperty] applies to all users of Catalogue e.g. DITAExtractor
-        private static string[] PropertyBlacklist = new string[]
+        private static string[] PropertyIgnorelist = new string[]
         {
             "Statistical_cons", "Research_relevance", "Topic", "Agg_method", "Limitations", "Comments", "Periodicity",
             "Acronym",
@@ -125,7 +125,7 @@ namespace Rdmp.Core.Reports.ExtractionTime
             foreach (PropertyInfo property in propertyInfo )
             {
                 //Check whether property can be written to
-                if (property.CanRead && Attribute.IsDefined(property, typeof(DoNotExtractProperty)) == false && !PropertyBlacklist.Contains(property.Name))
+                if (property.CanRead && Attribute.IsDefined(property, typeof(DoNotExtractProperty)) == false && !PropertyIgnorelist.Contains(property.Name))
                     if (property.PropertyType.IsValueType || property.PropertyType.IsEnum ||property.PropertyType.Equals(typeof (System.String)))
                             count++;
 
@@ -144,7 +144,7 @@ namespace Rdmp.Core.Reports.ExtractionTime
             {
                 
                 //Check whether property can be written to
-                if (property.CanRead && Attribute.IsDefined(property, typeof(DoNotExtractProperty)) == false && !PropertyBlacklist.Contains(property.Name))
+                if (property.CanRead && Attribute.IsDefined(property, typeof(DoNotExtractProperty)) == false && !PropertyIgnorelist.Contains(property.Name))
                     if (property.PropertyType.IsValueType || property.PropertyType.IsEnum || property.PropertyType.Equals(typeof(System.String)))
                     {
                         SetTableCell(table, currentRow, 0, property.Name);
