@@ -73,7 +73,7 @@ namespace Rdmp.Core.Tests.CohortCreation
             _filter.SaveToDatabase();
             new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(_filter, null);
 
-            IFilter importedFilter = new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(_container, _filter, null);
+            IFilter importedFilter = new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(null, _filter, null);
             Assert.AreEqual("folk", importedFilter.Name);
         }
 
