@@ -1092,10 +1092,26 @@ namespace Rdmp.Core.Providers
                 children.Add(p);
 
             foreach (ExtractionFilterParameterSet set in parameterSets)
+            {
                 children.Add(set);
+                AddChildren(set, descendancy.Add(set), parameters);
+            }
 
             if(children.Any())
                 AddToDictionaries(children,descendancy);
+        }
+
+        private void AddChildren(ExtractionFilterParameterSet set, DescendancyList descendancy, ExtractionFilterParameter[] filterParameters)
+        {
+            var children = new HashSet<object>();
+
+            foreach (var setValue in AllCatalogueValueSetValues.Where(v => v.ExtractionFilterParameterSet_ID == set.ID))
+            {
+                setValue.InjectKnown(filterParameters.SingleOrDefault(p => p.ID == setValue.ExtractionFilterParameter_ID));
+                children.Add(setValue);
+            }
+
+            AddToDictionaries(children, descendancy);
         }
 
         private void AddChildren(CohortIdentificationConfiguration cic)
