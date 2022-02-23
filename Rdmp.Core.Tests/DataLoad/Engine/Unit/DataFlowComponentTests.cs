@@ -90,24 +90,24 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
     }
 
     [Category("Unit")]
-    class ColumnBlacklistTests
+    class ColumnforbidlistTests
     {
         [Test]
-        public void ColumnBlacklisterTest_MatchingColumn()
+        public void ColumnForbidderTest_MatchingColumn()
         {
-            var blacklister = new ColumnBlacklister();
-            blacklister.CrashIfAnyColumnMatches = new Regex("^fish$");
+            var forbidlister = new ColumnForbidder();
+            forbidlister.CrashIfAnyColumnMatches = new Regex("^fish$");
 
             var toProcess = new DataTable();
             toProcess.Columns.Add("ToFind");
 
-            Assert.DoesNotThrow(() => blacklister.ProcessPipelineData(toProcess, new ThrowImmediatelyDataLoadJob(), null));
+            Assert.DoesNotThrow(() => forbidlister.ProcessPipelineData(toProcess, new ThrowImmediatelyDataLoadJob(), null));
             toProcess.Columns.Add("fish");
 
-            Assert.Throws<Exception>(()=>blacklister.ProcessPipelineData(toProcess, new ThrowImmediatelyDataLoadJob(), null));
+            Assert.Throws<Exception>(()=>forbidlister.ProcessPipelineData(toProcess, new ThrowImmediatelyDataLoadJob(), null));
 
-            blacklister.Rationale = "kaleidoscope engage";
-            var ex = Assert.Throws<Exception>(() => blacklister.ProcessPipelineData(toProcess, new ThrowImmediatelyDataLoadJob(), null));
+            forbidlister.Rationale = "kaleidoscope engage";
+            var ex = Assert.Throws<Exception>(() => forbidlister.ProcessPipelineData(toProcess, new ThrowImmediatelyDataLoadJob(), null));
             Assert.IsTrue(ex.Message.Contains("kaleidoscope engage"));
 
 

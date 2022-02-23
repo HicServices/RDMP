@@ -105,8 +105,8 @@ namespace Rdmp.Core.Tests.Curation.Integration
             var middle = new PipelineComponent(CatalogueRepository, p, typeof (ColumnRenamer), 1);
             middle.CreateArgumentsForClassIfNotExists<ColumnRenamer>();
             
-            var middle2 = new PipelineComponent(CatalogueRepository, p, typeof(ColumnBlacklister), 1);
-            middle2.CreateArgumentsForClassIfNotExists<ColumnBlacklister>();
+            var middle2 = new PipelineComponent(CatalogueRepository, p, typeof(ColumnForbidder), 1);
+            middle2.CreateArgumentsForClassIfNotExists<ColumnForbidder>();
 
             var destination = new PipelineComponent(CatalogueRepository, p, typeof (DataTableUploadDestination), 2);
             destination.CreateArgumentsForClassIfNotExists<DataTableUploadDestination>();

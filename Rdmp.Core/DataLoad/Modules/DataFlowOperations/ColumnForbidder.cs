@@ -17,13 +17,13 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations
 {
     /// <summary>
     /// Pipeline component designed to prevent unwanted data existing within DataTables passing through the pipeline.  The component will crash the entire pipeline
-    /// if it sees columns which match the blacklist.  Use cases for this include when the user wants to prevent private identifiers being accidentally released
-    /// due to system misconfiguration e.g. you might blacklist all columns containing the strings starting "Patient" on the grounds that they are likely to be
+    /// if it sees columns which match the forbidlist.  Use cases for this include when the user wants to prevent private identifiers being accidentally released
+    /// due to system misconfiguration e.g. you might forbidlist all columns containing the strings starting "Patient" on the grounds that they are likely to be
     /// identifiable (PatientName, PatientDob etc).
     /// 
     /// <para>Crashes the pipeline if any column matches the regex e.g. '^(mCHI)|(chi)$'</para>
     /// </summary>
-    public class ColumnBlacklister : IPluginDataFlowComponent<DataTable>
+    public class ColumnForbidder : IPluginDataFlowComponent<DataTable>
     {
         [DemandsInitialization("Crashes the load if any column name matches this regex")]
         public Regex CrashIfAnyColumnMatches { get; set; }
@@ -41,9 +41,9 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations
             foreach (var c in toProcess.Columns.Cast<DataColumn>().Select(c => c.ColumnName))
                 if (checkPattern.IsMatch(c))
                     if(string.IsNullOrWhiteSpace(Rationale))
-                        throw new Exception("Column " + c + " matches blacklist regex");
+                        throw new Exception("Column " + c + " matches forbidlist regex");
                     else
-                        throw new Exception(Rationale + Environment.NewLine + "Exception generated because Column " + c + " matches blacklist regex" );
+                        throw new Exception(Rationale + Environment.NewLine + "Exception generated because Column " + c + " matches forbidlist regex" );
 
             return toProcess;
         }
@@ -67,7 +67,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations
             }
             catch (Exception e)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Problem occurred getting Regex pattern for blacklist",CheckResult.Fail, e));
+                notifier.OnCheckPerformed(new CheckEventArgs("Problem occurred getting Regex pattern for forbidlist",CheckResult.Fail, e));
             }
         }
 

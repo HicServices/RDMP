@@ -26,7 +26,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
 {
     /// <summary>
     /// Creates default pipelines required for basic functionality in RDMP.  These are templates that work but can be expanded upon / modified by the user.  For
-    /// example the user might want to add a ColumnBlacklister to the default export pipeline to prevent sensitive fields being extracted etc.
+    /// example the user might want to add a ColumnForbidder to the default export pipeline to prevent sensitive fields being extracted etc.
     /// 
     /// </summary>
     public class CataloguePipelinesAndReferencesCreation

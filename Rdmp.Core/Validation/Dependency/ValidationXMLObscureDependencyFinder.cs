@@ -34,7 +34,7 @@ namespace Rdmp.Core.Validation.Dependency
         /// <summary>
         /// Catalogues whose ValidationXML doesn't resolve properly
         /// </summary>
-        public List<Catalogue> BlackList = new List<Catalogue>();
+        public List<Catalogue> CataloguesWithBrokenValidationXml = new List<Catalogue>();
 
 
         readonly MEF _mef;
@@ -153,15 +153,15 @@ namespace Rdmp.Core.Validation.Dependency
 
         private bool DeserializeToSeeIfThereIsADependency(IMapsDirectlyToDatabaseTable oTableWrapperObject, Catalogue firstPassSuspect)
         {
-            //we already blacklisted this Catalogue because it has dodgy XML that cant be deserialized properly
-            var blacklisted = BlackList.SingleOrDefault(c => c.ID == firstPassSuspect.ID);
+            //we already forbidlisted this Catalogue because it has dodgy XML that cant be deserialized properly
+            var forbidlisted = CataloguesWithBrokenValidationXml.SingleOrDefault(c => c.ID == firstPassSuspect.ID);
             
-            //it was blacklisted because it had dodgy XML, if the xml hasn't changed it will still be broken so give up
-            if(blacklisted != null)
-                if(blacklisted.ValidatorXML.Equals(firstPassSuspect.ValidatorXML))
+            //it was forbidlisted because it had dodgy XML, if the xml hasn't changed it will still be broken so give up
+            if(forbidlisted != null)
+                if(forbidlisted.ValidatorXML.Equals(firstPassSuspect.ValidatorXML))
                     return false;
                 else
-                    BlackList.Remove(firstPassSuspect);//they have changed the ValidatorXML so maybe it is ok again
+                    CataloguesWithBrokenValidationXml.Remove(firstPassSuspect);//they have changed the ValidatorXML so maybe it is ok again
 
             //deserialize the catalogues validation XML
             Validator validator;
@@ -171,8 +171,8 @@ namespace Rdmp.Core.Validation.Dependency
             }
             catch (Exception)
             {
-                //add the newly identified dodgy Catalogue and add it to the blacklist
-                BlackList.Add(firstPassSuspect);
+                //add the newly identified dodgy Catalogue and add it to the forbidlist
+                CataloguesWithBrokenValidationXml.Add(firstPassSuspect);
                 return false;
             }
 
