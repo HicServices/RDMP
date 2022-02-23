@@ -124,7 +124,10 @@ namespace Rdmp.Core.CommandExecution
             if (Is(forObject, out ExtractionFilter masterFilter))
             {
                 yield return new ExecuteCommandShow(_activator, () =>
-                 _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<AggregateFilter>("ClonedFromExtractionFilter_ID", masterFilter.ID).Select(f => f.GetAggregate()).Distinct()
+                 _activator.RepositoryLocator.CatalogueRepository
+                    .GetAllObjectsWhere<AggregateFilter>("ClonedFromExtractionFilter_ID", masterFilter.ID)
+                    .Select(f => f.GetAggregate())
+                    .Where(a=>a != null).Distinct()
                 ){OverrideCommandName = "Usages (in Cohort Builder)" };
 
                 yield return new ExecuteCommandShow(_activator, () =>
