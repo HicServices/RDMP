@@ -95,7 +95,15 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
 
         }
-        
+        public override string GetCommandName()
+        {
+            if(_property != null)
+            {
+                return $"Set {_property.Name}";
+            }
+
+            return base.GetCommandName();
+        }
         public override void Execute()
         {
             base.Execute();

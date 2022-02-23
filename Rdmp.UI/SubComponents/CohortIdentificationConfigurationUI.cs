@@ -258,7 +258,6 @@ namespace Rdmp.UI.SubComponents
             CommonFunctionality.AddToMenu(
                 new ExecuteCommandSet(activator, _configuration, _configuration.GetType().GetProperty("Description"))
                 {
-                    OverrideCommandName = "Edit Description",
                     OverrideIcon =
                         Activator.CoreIconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Edit)
                 });

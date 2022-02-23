@@ -145,6 +145,12 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandAddNewExtractionFilterParameterSet(_activator, cataFilter);
             }
 
+            if(Is(o, out ISqlParameter p) && p is IMapsDirectlyToDatabaseTable m)
+            {
+                yield return new ExecuteCommandSet(_activator, m, p.GetType().GetProperty(nameof(ISqlParameter.Value)));
+                yield return new ExecuteCommandSet(_activator, m, p.GetType().GetProperty(nameof(ISqlParameter.ParameterSQL)));
+            }
+
             if(Is(o,out  CatalogueItem ci))
             {
                 yield return new ExecuteCommandLinkCatalogueItemToColumnInfo(_activator, ci);
