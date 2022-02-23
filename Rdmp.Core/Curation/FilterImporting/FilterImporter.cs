@@ -42,15 +42,16 @@ namespace Rdmp.Core.Curation.FilterImporting
             _factory = factory;
             _globals = globals;
         }
-        
+
         /// <summary>
         /// Creates a copy of the <paramref name="fromMaster"/> filter and any parameters it might have.  This will handle collisions on parameter name with
         /// <paramref name="existingFiltersAlreadyInScope"/> and will respect any globals this class was constructed with.
         /// </summary>
+        /// <param name="containerToImportOneInto"></param>
         /// <param name="fromMaster"></param>
         /// <param name="existingFiltersAlreadyInScope"></param>
         /// <returns></returns>
-        public IFilter ImportFilter(IFilter fromMaster, IFilter[] existingFiltersAlreadyInScope)
+        public IFilter ImportFilter(IContainer containerToImportOneInto, IFilter fromMaster, IFilter[] existingFiltersAlreadyInScope)
         {
             var extractionFilter = fromMaster as ExtractionFilter;
 
@@ -96,6 +97,11 @@ namespace Rdmp.Core.Curation.FilterImporting
                 fromMaster.ClonedFromExtractionFilter_ID = newFilter.ID;//Make the newly created master our parent (since we are published)
             }
 
+            if(containerToImportOneInto != null)
+            {
+                newFilter.FilterContainer_ID = containerToImportOneInto.ID;
+            }
+
             newFilter.SaveToDatabase();
 
             //If there are some filters already in scope then we need to take into account their parameters when it comes to importing, so fetch a union of all the parameters
@@ -112,10 +118,11 @@ namespace Rdmp.Core.Curation.FilterImporting
         /// <summary>
         /// Imports a collection of IFilters of one type into another type.  Destination type corresponds to the factory.  Returns the newly created filters.
         /// </summary>
+        /// <param name="containerToImportInto"></param>
         /// <param name="allMasters"></param>
         /// <param name="existingFiltersAlreadyInScope"></param>
         /// <returns></returns>
-        public IFilter[] ImportAllFilters(IFilter[] allMasters, IFilter[] existingFiltersAlreadyInScope)
+        public IFilter[] ImportAllFilters(IContainer containerToImportInto, IFilter[] allMasters, IFilter[] existingFiltersAlreadyInScope)
         {
             List<IFilter> createdSoFar = new List<IFilter>();
 
@@ -123,7 +130,7 @@ namespace Rdmp.Core.Curation.FilterImporting
 
             foreach (IFilter master in allMasters)
             {
-                var added = ImportFilter(master, createdSoFar.Union(existingFiltersAlreadyInScope).ToArray());
+                var added = ImportFilter(containerToImportInto,master, createdSoFar.Union(existingFiltersAlreadyInScope).ToArray());
                 createdSoFar.Add(added);
             }
 

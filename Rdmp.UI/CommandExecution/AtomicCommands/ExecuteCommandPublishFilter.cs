@@ -78,7 +78,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                     return;
                 }
                 
-                new FilterImporter(new ExtractionFilterFactory(toAddTo), null).ImportFilter(_filter, null);
+                new FilterImporter(new ExtractionFilterFactory(toAddTo), null).ImportFilter(null, _filter, null);
                 MessageBox.Show("Publish successful");
             }
         }

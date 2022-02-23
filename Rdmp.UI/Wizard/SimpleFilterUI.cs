@@ -159,7 +159,7 @@ namespace Rdmp.UI.Wizard
         public IFilter CreateFilter(IFilterFactory factory ,IContainer filterContainer, IFilter[] alreadyExisting)
         {
             var importer = new FilterImporter(factory, null);
-            var newFilter = importer.ImportFilter(_filter, alreadyExisting);
+            var newFilter = importer.ImportFilter(filterContainer,_filter, alreadyExisting);
             
             foreach (SimpleParameterUI parameterUi in parameterUis)
                 parameterUi.HandleSettingParameters(newFilter);

@@ -163,7 +163,7 @@ namespace Rdmp.Core.Curation.Data
 
         public override string ToString()
         {
-            return ParameterName;
+            return ParameterName + " = " + Value;
         }
 
         public void InjectKnown(ExtractionFilterParameter instance)

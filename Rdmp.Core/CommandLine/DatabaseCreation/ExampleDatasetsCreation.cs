@@ -384,7 +384,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             cic.EnsureNamingConvention(ac); //this will put cicx at the front and cause implicit SaveToDatabase
             
             FilterImporter filterImporter = new FilterImporter(new AggregateFilterFactory(_repos.CatalogueRepository),null);
-            var cloneFilter = filterImporter.ImportFilter(inclusionFilter1,null);
+            var cloneFilter = filterImporter.ImportFilter(whereContainer, inclusionFilter1, null);
             
             whereContainer.AddChild(cloneFilter);
 
