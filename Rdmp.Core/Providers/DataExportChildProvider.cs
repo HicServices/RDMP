@@ -388,11 +388,8 @@ namespace Rdmp.Core.Providers
             var parameters = AllGlobalExtractionFilterParameters.Where(p => p.ExtractionConfiguration_ID == extractionConfiguration.ID)
                 .ToArray();
 
-            if (parameters.Any())
-            {
-                var parameterNode = new ParametersNode(extractionConfiguration, parameters);
-                children.Add(parameterNode);
-            }
+            foreach(var p in parameters)
+                children.Add(p);
 
             //if it has a cohort
             if (extractionConfiguration.Cohort_ID != null)

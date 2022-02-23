@@ -140,6 +140,11 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandViewData(_activator, ViewType.Distribution, ei) { SuggestedCategory = "View Data" };
             }
 
+            if(Is(o,out ExtractionFilter cataFilter))
+            {
+                yield return new ExecuteCommandAddNewExtractionFilterParameterSet(_activator, cataFilter);
+            }
+
             if(Is(o,out  CatalogueItem ci))
             {
                 yield return new ExecuteCommandLinkCatalogueItemToColumnInfo(_activator, ci);

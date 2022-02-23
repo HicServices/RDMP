@@ -995,11 +995,8 @@ namespace Rdmp.Core.Providers
 
             var parameters = AllAnyTableParameters.Where(p => p.IsReferenceTo(aggregateConfiguration)).Cast<ISqlParameter>().ToArray();
 
-            if (parameters.Any())
-            {
-                var node = new ParametersNode(aggregateConfiguration, parameters);
-                childrenObjects.Add(node);
-            }
+            foreach (var p in parameters)
+                childrenObjects.Add(p);
 
             // show the dimensions in the tree
             foreach (var dim in aggregateConfiguration.AggregateDimensions)
@@ -1091,8 +1088,8 @@ namespace Rdmp.Core.Providers
 
             filter.InjectKnown(parameterSets);
 
-            if (parameters.Any())
-                children.Add(new ParametersNode(filter, parameters));
+            foreach (var p in parameters)
+                children.Add(p);
 
             foreach (ExtractionFilterParameterSet set in parameterSets)
                 children.Add(set);
@@ -1110,11 +1107,9 @@ namespace Rdmp.Core.Providers
                 children.Add(new QueryCacheUsedByCohortIdentificationNode(cic, AllExternalServers.Single(s => s.ID == cic.QueryCachingServer_ID)));
             
             var parameters = AllAnyTableParameters.Where(p => p.IsReferenceTo(cic)).Cast<ISqlParameter>().ToArray();
-
-            if (parameters.Any())
+            foreach(var p in parameters)
             {
-                var node = new ParametersNode(cic, parameters);
-                children.Add(node);
+                children.Add(p);
             }
 
             //if it has a root container
@@ -1241,9 +1236,10 @@ namespace Rdmp.Core.Providers
                 //that has parameters
                 var parameters = tableInfo.GetAllParameters();
 
-                //then add those as a node
-                if (parameters.Any())
-                    children.Add(new ParametersNode(tableInfo, parameters));
+                foreach(var p in parameters)
+                {
+                    children.Add(p);
+                }
             }
 
             //next add the column infos

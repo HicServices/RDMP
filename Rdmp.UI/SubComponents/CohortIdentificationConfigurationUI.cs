@@ -98,7 +98,7 @@ namespace Rdmp.UI.SubComponents
             tlvCic.RowHeight = 19;
             olvExecute.AspectGetter += ExecuteAspectGetter;
             tlvCic.ButtonClick += tlvCic_ButtonClick;
-            olvOrder.AspectGetter += (o)=> o is JoinableCollectionNode ? null : o is ParametersNode ? null : (o as IOrderable)?.Order;
+            olvOrder.AspectGetter += (o)=> o is JoinableCollectionNode ? null : o is ISqlParameter ? null : (o as IOrderable)?.Order;
             olvOrder.IsEditable = false;
             tlvCic.ItemActivate += TlvCic_ItemActivate;
             AssociatedCollection = RDMPCollection.Cohort;
