@@ -29,6 +29,29 @@ namespace Rdmp.Core.Curation.Data.Cohort
     /// </summary>
     public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlParameter,IHasDependencies
     {
+
+        /// <summary>
+        /// Names that are not allowed for user custom parameters because they
+        /// are used internally by RMDP query building engines
+        /// </summary>
+        public static readonly string[] ProhibitedParameterNames = new string[]
+        {
+
+"@CohortDefinitionID",
+"@ProjectNumber",
+"@dateAxis",
+"@currentDate",
+"@dbName",
+"@sql",
+"@isPrimaryKeyChange",
+"@Query",
+"@Columns",
+"@value",
+"@pos",
+"@len",
+"@startDate",
+"@endDate"};
+
         #region Database Properties
         private string _parameterSQL;
         private string _value;
@@ -151,6 +174,19 @@ namespace Rdmp.Core.Curation.Data.Cohort
                 return "SQLParameters at this level are intended for fulfilling table valued function parameters, note that these should/can be overridden later on e.g. in Extraction/Cohort generation.  This value is intended to give a baseline result which can be run through DataQualityEngine and Checking etc";
 
             return null;
+        }
+
+
+        /// <summary>
+        /// Returns true if the <paramref name="parameter"/> is user generated and has a name in
+        /// the <see cref="ProhibitedParameterNames"/> list
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public static bool HasProhibitedName(ISqlParameter parameter)
+        {
+            //it is a user parameter and has a prohibited name
+            return parameter is IMapsDirectlyToDatabaseTable && ProhibitedParameterNames.Any(n => n.Equals(parameter.ParameterName, StringComparison.CurrentCultureIgnoreCase));
         }
 
         /// <summary>

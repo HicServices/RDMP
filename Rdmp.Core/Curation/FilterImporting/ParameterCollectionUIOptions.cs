@@ -35,24 +35,6 @@ namespace Rdmp.Core.Curation.FilterImporting
 
         public string UseCase { get; private set; }
 
-        public readonly string[] ProhibitedParameterNames = new string[]
-        {
-
-"@CohortDefinitionID",
-"@ProjectNumber",
-"@dateAxis",
-"@currentDate",
-"@dbName",
-"@sql",
-"@isPrimaryKeyChange",
-"@Query",
-"@Columns",
-"@value",
-"@pos",
-"@len",
-"@startDate",
-"@endDate"};
-
         public ParameterCollectionUIOptions(string useCase, ICollectSqlParameters collector, ParameterLevel currentLevel, ParameterManager parameterManager, CreateNewSqlParameterHandler createNewParameterDelegate = null)
         {
 

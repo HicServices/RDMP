@@ -99,6 +99,10 @@ namespace Rdmp.Core.Providers
             if (string.IsNullOrWhiteSpace(parameter.Value) || parameter.Value == AnyTableSqlParameter.DefaultValue)
                 return "No value defined";
 
+            
+            if (AnyTableSqlParameter.HasProhibitedName(parameter))
+                return "Parameter name is a reserved name for the RDMP software";
+
             return null;
         }
 
