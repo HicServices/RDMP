@@ -216,5 +216,15 @@ namespace Rdmp.Core.Curation.Data.Cohort
 
             return new IHasDependencies[0];
         }
+
+        /// <summary>
+        /// Returns the default parameter declaration (varchar 10)
+        /// </summary>
+        /// <param name="parameterName"></param>
+        /// <returns></returns>
+        public static string GetDefaultDeclaration(string parameterName)
+        {
+            return "DECLARE " + parameterName + " as varchar(10)";
+        }
     }
 }

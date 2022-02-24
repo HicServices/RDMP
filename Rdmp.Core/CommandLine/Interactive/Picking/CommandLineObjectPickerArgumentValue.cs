@@ -163,6 +163,10 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
             if (typeof(ILoggedActivityRootObject) == paramType)
                 return GetOneDatabaseEntity<ILoggedActivityRootObject>();
 
+            if (typeof(ICollectSqlParameters) == paramType)
+                return GetOneDatabaseEntity<ICollectSqlParameters>();
+            
+
             // is it a basic Type (value type or Enum)?
             var basicType = nullableType ?? paramType;
 

@@ -178,7 +178,7 @@ namespace Rdmp.Core.Curation.FilterImporting
                 parameterName = "@" + parameterName;
 
             var ec = (ExtractionConfiguration)collector;
-            return new GlobalExtractionFilterParameter((IDataExportRepository)ec.Repository, ec, "DECLARE " + parameterName + " as varchar(10)");
+            return new GlobalExtractionFilterParameter((IDataExportRepository)ec.Repository, ec, AnyTableSqlParameter.GetDefaultDeclaration(parameterName));
         }
     }
 }

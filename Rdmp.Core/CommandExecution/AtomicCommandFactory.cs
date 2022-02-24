@@ -181,7 +181,7 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandImportFilterContainerTree(_activator,ac);
                 yield return new ExecuteCommandCreateNewFilter(_activator,ac);
 
-                yield return new ExecuteCommandAddParameter(_activator, ac, null);
+                yield return new ExecuteCommandAddParameter(_activator, ac, null,null,null);
 
                 // graph options
                 yield return new ExecuteCommandAddDimension(_activator, ac) { SuggestedCategory = Dimensions };
@@ -515,7 +515,7 @@ namespace Rdmp.Core.CommandExecution
 
                 yield return new ExecuteCommandChooseCohort(_activator, ec);
 
-                yield return new ExecuteCommandAddParameter(_activator, ec, null);
+                yield return new ExecuteCommandAddParameter(_activator, ec, null,null,null);
 
                 /////////////////Add Datasets/////////////
                 yield return new ExecuteCommandAddDatasetsToConfiguration(_activator, ec);

@@ -64,7 +64,7 @@ namespace Rdmp.Core.Curation.FilterImporting
                 parameterName = "@" + parameterName;
 
             var entity = (IMapsDirectlyToDatabaseTable)collector;
-            var newParam = new AnyTableSqlParameter((ICatalogueRepository)entity.Repository, entity, "DECLARE " + parameterName + " as varchar(10)");
+            var newParam = new AnyTableSqlParameter((ICatalogueRepository)entity.Repository, entity, AnyTableSqlParameter.GetDefaultDeclaration(parameterName));
             newParam.Value = AnyTableSqlParameter.DefaultValue;
             newParam.SaveToDatabase();
             return newParam;
