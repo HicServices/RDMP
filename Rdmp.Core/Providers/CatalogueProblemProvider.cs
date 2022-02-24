@@ -96,7 +96,7 @@ namespace Rdmp.Core.Providers
 
         public string DescribeProblem(ISqlParameter parameter)
         {
-            if (string.IsNullOrWhiteSpace(parameter.Value))
+            if (string.IsNullOrWhiteSpace(parameter.Value) || parameter.Value == AnyTableSqlParameter.DefaultValue)
                 return "No value defined";
 
             return null;

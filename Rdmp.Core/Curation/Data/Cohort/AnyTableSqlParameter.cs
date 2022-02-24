@@ -67,6 +67,11 @@ namespace Rdmp.Core.Curation.Data.Cohort
         }
 
         /// <summary>
+        /// The default value to give to parameters when creating new blank/unknown role
+        /// </summary>
+        public const string DefaultValue = "'todo'";
+
+        /// <summary>
         /// Declares that a new <see cref="ISqlParameter"/> (e.g. 'DECLARE @bob as varchar(10)') exists for the parent database object.  The object
         /// should be of a type which passes <see cref="IsSupportedType"/>.  When the object is used for query generation by an <see cref="QueryBuilding.ISqlQueryBuilder"/>
         /// then the parameter will be used 

@@ -83,7 +83,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
 
             var entity = (IMapsDirectlyToDatabaseTable) collector;
             var newParam = new AnyTableSqlParameter((ICatalogueRepository)entity.Repository, entity, "DECLARE " + parameterName + " as varchar(10)");
-            newParam.Value = "'todo'";
+            newParam.Value = AnyTableSqlParameter.DefaultValue;
             newParam.SaveToDatabase();
             return newParam;
         }

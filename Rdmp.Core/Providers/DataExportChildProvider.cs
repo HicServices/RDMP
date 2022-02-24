@@ -444,12 +444,20 @@ namespace Rdmp.Core.Providers
                 children.Add(subcontainer);
             }
 
-            foreach (var filter in _dataExportFilterManager.GetFilters(filterContainer))
+            foreach (DeployedExtractionFilter filter in _dataExportFilterManager.GetFilters(filterContainer))
+            {
+                AddChildren(filter,descendancy.Add(filter));
                 children.Add(filter);
+            }
+                
 
             AddToDictionaries(children,descendancy);
         }
 
+        private void AddChildren(DeployedExtractionFilter filter, DescendancyList descendancyList)
+        {
+            AddToDictionaries(new HashSet<object>(_allParameters.Where(p => p.ExtractionFilter_ID == filter.ID)),descendancyList);
+        }
 
         private void AddChildren(CohortSourceUsedByProjectNode cohortSourceUsedByProjectNode, DescendancyList descendancy)
         {

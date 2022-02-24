@@ -155,6 +155,7 @@ namespace Rdmp.Core.Providers
         public AggregateFilterContainer[] AllAggregateContainers { get { return AllAggregateContainersDictionary.Values.ToArray();}}
 
         public AggregateFilter[] AllAggregateFilters { get; private set; }
+        public AggregateFilterParameter[] AllAggregateFilterParameters { get; private set; }
 
         //Catalogue master filters (does not include any support for filter containers (AND/OR)
         private ExtractionFilter[] AllCatalogueFilters;
@@ -199,6 +200,7 @@ namespace Rdmp.Core.Providers
         protected object WriteLock = new object();
 
         public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get;set; } = new AllOrphanAggregateConfigurationsNode();
+        
 
         public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
 
@@ -346,6 +348,7 @@ namespace Rdmp.Core.Providers
 
             AllAggregateContainersDictionary = GetAllObjects<AggregateFilterContainer>(repository).ToDictionary(o => o.ID, o2 => o2);
             AllAggregateFilters = GetAllObjects<AggregateFilter>(repository);
+            AllAggregateFilterParameters = GetAllObjects<AggregateFilterParameter>(repository);
 
             AllCatalogueFilters = GetAllObjects<ExtractionFilter>(repository);
             AllCatalogueParameters = GetAllObjects<ExtractionFilterParameter>(repository);
@@ -1041,10 +1044,20 @@ namespace Rdmp.Core.Providers
             }
 
             //also add the filters for the container
-            childrenObjects.AddRange(filters);
+            foreach(var f in filters)
+            {
+                // for filters add the parameters under them
+                AddChildren((AggregateFilter)f, descendancy.Add(f));
+                childrenObjects.Add(f);
+            }
             
             //add our children to the dictionary
             AddToDictionaries(new HashSet<object>(childrenObjects),descendancy);
+        }
+
+        private void AddChildren(AggregateFilter f, DescendancyList descendancy)
+        {
+            AddToDictionaries(new HashSet<object>(AllAggregateFilterParameters.Where(p => p.AggregateFilter_ID == f.ID)), descendancy);
         }
 
         private void AddChildren(CatalogueItem ci, DescendancyList descendancy)
@@ -1629,6 +1642,7 @@ namespace Rdmp.Core.Providers
             AllConnectionStringKeywords = otherCat.AllConnectionStringKeywords;
             AllAggregateContainersDictionary = otherCat.AllAggregateContainersDictionary;
             AllAggregateFilters = otherCat.AllAggregateFilters;
+            AllAggregateFilterParameters = otherCat.AllAggregateFilterParameters;
             AllCohortIdentificationConfigurations = otherCat.AllCohortIdentificationConfigurations;
             AllCohortAggregateContainers = otherCat.AllCohortAggregateContainers;
             AllJoinables = otherCat.AllJoinables;
