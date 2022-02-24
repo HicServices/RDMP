@@ -532,8 +532,6 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             CommonFunctionality.Add(new ExecuteCommandExecuteAggregateGraph(activator, databaseObject));
             CommonFunctionality.Add(new ExecuteCommandViewSample(activator, databaseObject));
 
-            CommonFunctionality.AddToMenu(new ExecuteCommandAddParameter(activator, databaseObject,null));
-
             CommonFunctionality.AddChecks(databaseObject);
             CommonFunctionality.StartChecking();
 
