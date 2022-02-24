@@ -121,7 +121,7 @@ namespace Rdmp.Core.DataExport.Data
         /// <returns></returns>
         public override string ToString()
         {
-            return ParameterName;
+            return ParameterName + " = " + Value;
         }
 
 

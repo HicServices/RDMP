@@ -101,7 +101,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
         /// <inheritdoc/>
         public override string ToString()
         {
-            return ParameterName;
+            return ParameterName + " = " + Value;
         }
 
         /// <inheritdoc cref="ParameterSyntaxChecker"/>

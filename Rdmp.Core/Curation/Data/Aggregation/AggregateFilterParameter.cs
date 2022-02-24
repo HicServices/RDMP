@@ -111,8 +111,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         /// <inheritdoc/>
         public override string ToString()
         {
-            //return the name of the variable
-            return ParameterName;
+            return ParameterName + " = " + Value;
         }
 
         /// <inheritdoc cref="ParameterSyntaxChecker"/>
