@@ -9,8 +9,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using MapsDirectlyToDatabaseTable.Revertable;
-using Rdmp.Core.Autocomplete;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.FilterImporting;
@@ -18,14 +16,11 @@ using Rdmp.Core.DataViewing;
 using Rdmp.UI.AutoComplete;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Copying;
-using Rdmp.UI.ExtractionUIs.FilterUIs.Options;
-using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.SimpleControls;
-using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 

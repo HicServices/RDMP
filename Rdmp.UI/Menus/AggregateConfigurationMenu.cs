@@ -24,7 +24,7 @@ namespace Rdmp.UI.Menus
 
             if (!isApi)
             {
-                Add(new ExecuteCommandViewSqlParameters(_activator,aggregate));
+                Add(new ExecuteCommandAddParameter(_activator,aggregate,null));
             }
             
 

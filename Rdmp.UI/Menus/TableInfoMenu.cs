@@ -6,10 +6,10 @@
 
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
-using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using Rdmp.UI.Menus.MenuItems;
 using Rdmp.UI.SimpleDialogs;
 

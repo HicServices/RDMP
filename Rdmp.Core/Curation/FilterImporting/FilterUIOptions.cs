@@ -7,11 +7,10 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
 
-namespace Rdmp.UI.ExtractionUIs.FilterUIs.Options
+namespace Rdmp.Core.Curation.FilterImporting
 {
     /// <summary>
-    /// Input object for <see cref="ExtractionFilterUI"/>.  Determines which parameters should be presented and which
-    /// tables are available for autocomplete etc.
+    /// Determines which parameters should be presented and which tables are available for autocomplete etc.
     /// </summary>
     public abstract class FilterUIOptions
     {

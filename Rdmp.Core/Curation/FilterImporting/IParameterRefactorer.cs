@@ -6,7 +6,7 @@
 
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
+namespace Rdmp.Core.Curation.FilterImporting
 {
     /// <summary>
     /// Handles changing a <see cref="ISqlParameter.ParameterName"/> and enforcing rules about valid names
