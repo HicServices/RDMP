@@ -8,7 +8,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories.Construction;
 using System.Linq;
 
-namespace Rdmp.Core.CommandExecution
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
     /// <summary>
     /// Creates new parameters for <see cref="ExtractionFilterParameterSet"/> when they are
@@ -18,18 +18,18 @@ namespace Rdmp.Core.CommandExecution
     {
         private ExtractionFilterParameterSet[] _sets;
 
-        public ExecuteCommandAddMissingParameters(IBasicActivateItems activator, ExtractionFilterParameterSet set) : this(activator,new[] {set})
+        public ExecuteCommandAddMissingParameters(IBasicActivateItems activator, ExtractionFilterParameterSet set) : this(activator, new[] { set })
         {
 
         }
 
         [UseWithObjectConstructor]
-        public ExecuteCommandAddMissingParameters(IBasicActivateItems activator, ExtractionFilterParameterSet[] sets):base(activator)
+        public ExecuteCommandAddMissingParameters(IBasicActivateItems activator, ExtractionFilterParameterSet[] sets) : base(activator)
         {
             _sets = sets;
 
             // if nobody is missing any entries
-            if(!_sets.Any(s=>s.GetMissingEntries().Any()))
+            if (!_sets.Any(s => s.GetMissingEntries().Any()))
             {
                 SetImpossible("There are no missing parameters");
             }
@@ -39,16 +39,16 @@ namespace Rdmp.Core.CommandExecution
         {
             base.Execute();
 
-            if(_sets.Length == 0)
+            if (_sets.Length == 0)
             {
                 return;
             }
 
-            foreach(var set in _sets)
+            foreach (var set in _sets)
             {
                 set.CreateNewValueEntries();
             }
-            
+
             Publish(_sets.First());
         }
     }
