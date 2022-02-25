@@ -80,7 +80,6 @@ namespace Rdmp.UI.SimpleDialogs
 
                 this.textBox1.Anchor = (AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right);
                 this.textBox1.ScrollBars = ScrollBars.Vertical;
-                this.Height = 290;
                 this.Width = 740;
 
                 //Update the tooltip for the OK button
@@ -167,6 +166,19 @@ namespace Rdmp.UI.SimpleDialogs
             if (e.KeyCode == Keys.Escape)
              btnCancel_Click(null, null);
 
+        }
+
+        private void TypeTextOrCancelDialog_Resize(object sender, EventArgs e)
+        {
+            // Set the height by taking the designer height and adding on the height that the task description label wants to be
+            if (_multiline)
+            {
+                this.Height = taskDescriptionLabel1.PreferredHeight + 220;
+            }
+            else
+            {
+                this.Height = taskDescriptionLabel1.PreferredHeight + 100;
+            }
         }
     }
 }

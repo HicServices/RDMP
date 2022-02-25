@@ -74,6 +74,7 @@ namespace Rdmp.UI.SimpleDialogs
         /// Returns the width this control would ideally like to take up
         /// </summary>
         public int PreferredWidth => Math.Max(tbEntryLabel.Width, tbTaskDescription.Width);
+        public int PreferredHeight => this.Height;
 
         private void textBox1_Resize(object sender, EventArgs e)
         {

@@ -111,6 +111,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(739, 131);
             this.Controls.Add(this.pTextEditor);
             this.Controls.Add(this.panel1);
@@ -120,6 +121,7 @@
             this.Name = "TypeTextOrCancelDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Input";
+            this.Resize += new System.EventHandler(this.TypeTextOrCancelDialog_Resize);
             this.panel1.ResumeLayout(false);
             this.pTextEditor.ResumeLayout(false);
             this.pTextEditor.PerformLayout();
