@@ -48,9 +48,5 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             return iconProvider.GetImage(RDMPConcept.ExtractionFilterParameterSet, OverlayKind.Add);
         }
-        public override string GetCommandName()
-        {
-            return "Add New 'Known Good Value(s) Set'";
-        }
     }
 }
