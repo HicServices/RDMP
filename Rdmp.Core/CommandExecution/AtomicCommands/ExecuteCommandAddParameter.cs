@@ -54,7 +54,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     EntryLabel = "Name",
                     TaskDescription = "A name is required for the paramater.  It must start with '@' e.g. @myparameter.  Do not add spaces or start the name with a number.",
                     WindowTitle = "Add Paramater"
-                }, 100,"@myVariable", out string name,false))
+                }, 99,"@myVariable", out string name,false))
                 {
                     // user did type a name
                     n = name;
@@ -75,7 +75,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     EntryLabel = "DataType",
                     TaskDescription = "What data type are you storing in the parameter (e.g. datetime2)",
                     WindowTitle = "Parameter Data Type"
-                }, 100, "varchar(10)", out string datatype, false))
+                }, 99, "varchar(10)", out string datatype, false))
                 {
                     // user did type
                     d = datatype;
@@ -95,7 +95,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     EntryLabel = "Value",
                     TaskDescription = "What value should the parameter have.  Ensure if you are using text that it is appropriately quoted",
                     WindowTitle = "Parameter Value"
-                }, 100, AnyTableSqlParameter.DefaultValue, out string value, false))
+                }, int.MaxValue, AnyTableSqlParameter.DefaultValue, out string value, false))
                 {
                     // user did type
                     v = value;
