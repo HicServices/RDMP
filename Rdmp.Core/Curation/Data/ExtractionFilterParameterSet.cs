@@ -109,7 +109,20 @@ namespace Rdmp.Core.Curation.Data
             return Values.ToArray();
         }
 
+        /// <summary>
+        /// Identifies all parameters which do not exist yet as declared values
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<ExtractionFilterParameter> GetMissingEntries()
+        {
+            var existingCatalogueParameters = ExtractionFilter.GetAllParameters().Cast<ExtractionFilterParameter>().ToArray();
 
+            var personalChildren = Values.ToArray();
+
+            foreach (ExtractionFilterParameter catalogueParameter in existingCatalogueParameters)
+                if (personalChildren.All(c => c.ExtractionFilterParameter_ID != catalogueParameter.ID))
+                    yield return catalogueParameter;
+        }
         /// <summary>
         /// Creates new value entries for each parameter in the filter that does not yet have a value in this value set
         /// </summary>
@@ -118,14 +131,9 @@ namespace Rdmp.Core.Curation.Data
         {
             List<ExtractionFilterParameterSetValue> toReturn = new List<ExtractionFilterParameterSetValue>();
 
-            var existingMasters = ExtractionFilter.GetAllParameters().Cast<ExtractionFilterParameter>().ToArray();
-
-            var personalChildren = Values.ToArray();
-
-            foreach (ExtractionFilterParameter master in existingMasters)
-                if (personalChildren.All(c => c.ExtractionFilterParameter_ID != master.ID))
+            foreach (var catalogueParameter in GetMissingEntries())
                     //we have a master that does not have any child values yet
-                     toReturn.Add(new ExtractionFilterParameterSetValue((ICatalogueRepository) Repository, this, master));
+                     toReturn.Add(new ExtractionFilterParameterSetValue((ICatalogueRepository) Repository, this, catalogueParameter));
 
             return toReturn.ToArray();
         }

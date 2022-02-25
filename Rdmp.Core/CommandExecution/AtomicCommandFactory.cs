@@ -145,7 +145,10 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandAddNewExtractionFilterParameterSet(_activator, cataFilter);
             }
 
-            if(Is(o, out ISqlParameter p) && p is IMapsDirectlyToDatabaseTable m)
+            if (Is(o,out ExtractionFilterParameterSet efps))
+                yield return new ExecuteCommandAddMissingParameters(_activator, efps);
+
+            if (Is(o, out ISqlParameter p) && p is IMapsDirectlyToDatabaseTable m)
             {
                 yield return new ExecuteCommandSet(_activator, m, p.GetType().GetProperty(nameof(ISqlParameter.Value)));
 
@@ -648,6 +651,11 @@ namespace Rdmp.Core.CommandExecution
             if (many.Cast<object>().All(d => d is IDeleteable))
             {
                 yield return new ExecuteCommandDelete(_activator, many.Cast<IDeleteable>().ToArray()){ SuggestedShortcut = "Delete" };
+            }
+
+            if (many.Cast<object>().All(d => d is ExtractionFilterParameterSet))
+            {
+                yield return new ExecuteCommandAddMissingParameters(_activator, many.Cast<ExtractionFilterParameterSet>().ToArray());
             }
         }
     }
