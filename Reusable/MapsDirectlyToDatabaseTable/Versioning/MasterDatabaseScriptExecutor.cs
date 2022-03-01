@@ -141,7 +141,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             using (var con = Database.Server.GetConnection())
             {
                 con.Open();
-                UsefulStuff.ExecuteBatchNonQuery(kvp.Value.GetScriptBody(), con);  
+                UsefulStuff.ExecuteBatchNonQuery(kvp.Value.GetScriptBody(), con,null, DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds);
             }
             
             var now = DateTime.Now;
