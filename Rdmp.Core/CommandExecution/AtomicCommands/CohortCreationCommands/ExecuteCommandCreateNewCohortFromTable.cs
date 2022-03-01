@@ -44,6 +44,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
         {
             var tbl = BasicActivator.SelectTable(false, "Pick a table to import cohorts from");
 
+            if (tbl == null)
+            {
+                // user cancelled selecting a table
+                return;
+            }
 
             if (!BasicActivator.SelectObject(new DialogArgs()
             {
