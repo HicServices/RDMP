@@ -324,7 +324,7 @@ namespace Rdmp.Core.Curation
                         bool modify =
                             notifier.OnCheckPerformed(
                                 new CheckEventArgs(
-                                    "Parameter " + existingCatalogueReference + " is declared as '" + dbDefinition +
+                                    "Parameter " + existingCatalogueReference.ParameterName + " is declared as '" + dbDefinition +
                                     "' but in the Catalogue it appears as '" +
                                     existingCatalogueReference.ParameterSQL +"'", CheckResult.Fail, null,
                                     "Change the definition in the Catalogue to '" + dbDefinition + "'"));

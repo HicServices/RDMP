@@ -9,7 +9,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.DataExport.Data;
 
-namespace Rdmp.UI.ExtractionUIs.FilterUIs.Options
+namespace Rdmp.Core.Curation.FilterImporting
 {
     /// <summary>
     /// Factory for providing the correct implementation of <see cref="FilterUIOptions"/> based on the Type of the

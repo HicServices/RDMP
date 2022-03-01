@@ -140,6 +140,22 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandViewData(_activator, ViewType.Distribution, ei) { SuggestedCategory = "View Data" };
             }
 
+            if(Is(o,out ExtractionFilter cataFilter))
+            {
+                yield return new ExecuteCommandAddNewExtractionFilterParameterSet(_activator, cataFilter);
+            }
+
+            if (Is(o,out ExtractionFilterParameterSet efps))
+                yield return new ExecuteCommandAddMissingParameters(_activator, efps);
+
+            if (Is(o, out ISqlParameter p) && p is IMapsDirectlyToDatabaseTable m)
+            {
+                yield return new ExecuteCommandSet(_activator, m, p.GetType().GetProperty(nameof(ISqlParameter.Value)));
+
+                if(p is not ExtractionFilterParameterSetValue)
+                    yield return new ExecuteCommandSet(_activator, m, p.GetType().GetProperty(nameof(ISqlParameter.ParameterSQL)));
+            }
+
             if(Is(o,out  CatalogueItem ci))
             {
                 yield return new ExecuteCommandLinkCatalogueItemToColumnInfo(_activator, ci);
@@ -168,6 +184,7 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandImportFilterContainerTree(_activator,ac);
                 yield return new ExecuteCommandCreateNewFilter(_activator,ac);
 
+                yield return new ExecuteCommandAddParameter(_activator, ac, null,null,null);
 
                 // graph options
                 yield return new ExecuteCommandAddDimension(_activator, ac) { SuggestedCategory = Dimensions };
@@ -501,6 +518,8 @@ namespace Rdmp.Core.CommandExecution
 
                 yield return new ExecuteCommandChooseCohort(_activator, ec);
 
+                yield return new ExecuteCommandAddParameter(_activator, ec, null,null,null);
+
                 /////////////////Add Datasets/////////////
                 yield return new ExecuteCommandAddDatasetsToConfiguration(_activator, ec);
 
@@ -632,6 +651,11 @@ namespace Rdmp.Core.CommandExecution
             if (many.Cast<object>().All(d => d is IDeleteable))
             {
                 yield return new ExecuteCommandDelete(_activator, many.Cast<IDeleteable>().ToArray()){ SuggestedShortcut = "Delete" };
+            }
+
+            if (many.Cast<object>().All(d => d is ExtractionFilterParameterSet))
+            {
+                yield return new ExecuteCommandAddMissingParameters(_activator, many.Cast<ExtractionFilterParameterSet>().ToArray());
             }
         }
     }

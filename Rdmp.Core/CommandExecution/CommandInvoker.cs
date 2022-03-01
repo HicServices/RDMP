@@ -85,6 +85,7 @@ namespace Rdmp.Core.CommandExecution
             AddDelegate(typeof(IDeleteable[]), false, SelectMany<IDeleteable>);
             AddDelegate(typeof(IDeleteable),false, SelectOne<IDeleteable>);
             AddDelegate(typeof(ILoggedActivityRootObject),false, SelectOne<ILoggedActivityRootObject>);
+            AddDelegate(typeof(ICollectSqlParameters), false, SelectOne<ICollectSqlParameters>);
             AddDelegate(typeof(IRootFilterContainerHost),false, SelectOne<IRootFilterContainerHost>);            
 
             AddDelegate(typeof(Enum),false,(p)=>_basicActivator.SelectEnum(GetPromptFor(p) , p.Type, out Enum chosen)?chosen:null);

@@ -47,10 +47,10 @@ namespace Rdmp.Core.QueryBuilding
             throw new NotSupportedException();
         }
 
-        /// <inheritdoc cref="ParameterName"/>
+        /// <inheritdoc/>
         public override string ToString()
         {
-            return ParameterName;
+            return ParameterName + " = " + Value;
         }
 
         /// <summary>

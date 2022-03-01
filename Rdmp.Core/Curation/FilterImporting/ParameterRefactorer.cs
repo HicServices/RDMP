@@ -6,77 +6,65 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
-using Rdmp.Core.Curation.FilterImporting;
-using Rdmp.UI.SimpleDialogs;
+using ReusableLibraryCode.Checks;
 
-
-namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
+namespace Rdmp.Core.Curation.FilterImporting
 {
     /// <summary>
     /// Handles renaming a parameter in the WHERE SQL of it's parent (if it has one).  Use this when you want the user to be able to change the name of a parameter and for this
     /// to be carried through to the parent without having any knowledge available to what that parent is or even if it has one
     /// </summary>
-    public class ParameterRefactorer :IParameterRefactorer
+    public class ParameterRefactorer : IParameterRefactorer
     {
         public HashSet<IFilter> RefactoredFilters { get; private set; }
 
-        private YesNoYesToAllDialog _yesNoToAll;
-        
         public ParameterRefactorer()
         {
-            _yesNoToAll = new YesNoYesToAllDialog();
             RefactoredFilters = new HashSet<IFilter>();
         }
 
         public bool HandleRename(ISqlParameter parameter, string oldName, string newName)
         {
-            if(string.IsNullOrWhiteSpace(newName))
+            if (string.IsNullOrWhiteSpace(newName))
                 return false;
 
-            if(string.IsNullOrWhiteSpace(oldName))
+            if (string.IsNullOrWhiteSpace(oldName))
                 return false;
 
             //they are the same name!
             if (oldName.Equals(newName))
                 return false;
 
-            if(!parameter.ParameterName.Equals(newName ))
+            if (!parameter.ParameterName.Equals(newName))
                 throw new ArgumentException("Expected parameter " + parameter + " to have name '" + newName + "' but it's value was " + parameter.ParameterName + ", this means someone was lying about the rename event");
 
             var owner = parameter.GetOwnerIfAny();
 
             var filter = owner as IFilter;
 
-            if(filter == null || filter is SpontaneousObject)
+            if (filter == null || filter is SpontaneousObject)
                 return false;
 
             //There is no WHERE SQL anyway
             if (string.IsNullOrWhiteSpace(filter.WhereSQL))
                 return false;
 
-            if (_yesNoToAll.ShowDialog("Would you like to rename Parameter " + oldName + " to " + newName + " in Filter " + filter + "?",
-                    "Rename parameter") == DialogResult.Yes)
-            {
-                string before = filter.WhereSQL;
-                string after = ParameterCreator.RenameParameterInSQL(before,oldName,newName);
+            string before = filter.WhereSQL;
+            string after = ParameterCreator.RenameParameterInSQL(before, oldName, newName);
 
-                //no change was actually made
-                if (before.Equals(after))
-                    return false;
+            //no change was actually made
+            if (before.Equals(after))
+                return false;
 
-                filter.WhereSQL = after;
-                filter.SaveToDatabase();
+            filter.WhereSQL = after;
+            filter.SaveToDatabase();
 
-                if (!RefactoredFilters.Contains(filter))
-                    RefactoredFilters.Add(filter);
+            if (!RefactoredFilters.Contains(filter))
+                RefactoredFilters.Add(filter);
 
-                return true;
-            }
-
-            return false;
+            return true;
         }
 
     }

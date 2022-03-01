@@ -8,7 +8,7 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
+using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;

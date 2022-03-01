@@ -8,13 +8,15 @@ using FAnsi.Implementations.MicrosoftSQL;
 using Moq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Curation.FilterImporting.Construction;
+using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration.FilterImportingTests
 {
     [Category("Unit")]
-    public class FilterImporterTests
+    public class FilterImporterTests : UnitTests
     {
         
         [Test]
@@ -36,7 +38,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.FilterImportingTests
             var filterCreator = new FilterImporter(factory.Object,null);
         
             //The method we are testing
-            filterCreator.ImportFilter(master,null);
+            filterCreator.ImportFilter(WhenIHaveA<AggregateFilterContainer>(),master,null);
 
             //Did the factory mock get ordered to create a filter called "Space Odyssey"?
             factory.Verify(f=>f.CreateNewFilter(It.IsAny<string>()),Times.Once);
@@ -65,7 +67,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.FilterImportingTests
             var filterCreator = new FilterImporter(factory.Object, null);
 
             //The method we are testing
-            filterCreator.ImportFilter(master,new []{existing});
+            filterCreator.ImportFilter(WhenIHaveA<AggregateFilterContainer>(), master,new []{existing});
 
             //Did the factory mock get ordered to create a filter called "Copy of Space Odyssey" (because there was already one called "Space Odyssey" in the same scope)
             factory.Verify();
@@ -87,7 +89,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.FilterImportingTests
 
             var filterCreator = new FilterImporter(factory.Object, null);
             //Returns constructed
-            filterCreator.ImportFilter(master, null);
+            filterCreator.ImportFilter(WhenIHaveA<AggregateFilterContainer>(), master, null);
             
             factory.Verify(m => m.CreateNewFilter("Space Odyssey"),Times.Once);
             factory.Verify(m=>m.CreateNewParameter(constructed, "DECLARE @hall AS varchar(50);"), Times.Once);
@@ -126,7 +128,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.FilterImportingTests
 
             //The thing we are actually testing
             var filterCreator = new FilterImporter(factory, null);
-            filterCreator.ImportFilter(master, null);//Import it brah
+            filterCreator.ImportFilter(WhenIHaveA<AggregateFilterContainer>(), master, null);//Import it brah
             
             //Master filter should have been asked what it's parameters are
             Mock.Get(master).Verify();
@@ -168,7 +170,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.FilterImportingTests
 
             //The thing we are testing
             var filterCreator = new FilterImporter(factory.Object, null);
-            filterCreator.ImportFilter(master, new []{existing});
+            filterCreator.ImportFilter(WhenIHaveA<AggregateFilterContainer>(), master, new []{existing});
 
             //Existing filter in the scope should have been asked what it's parameters are
             Mock.Get(existing).Verify(x=>x.GetAllParameters(),Times.Once);
@@ -214,7 +216,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.FilterImportingTests
 
             //The thing we are testing
             var filterCreator = new FilterImporter(factory.Object, null);
-            filterCreator.ImportFilter(master, new[] { existing });
+            filterCreator.ImportFilter(WhenIHaveA<AggregateFilterContainer>(), master, new[] { existing });
 
             Assert.AreEqual("@hall2 = 'active'",constructed.WhereSQL);
 

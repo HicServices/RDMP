@@ -99,15 +99,14 @@ namespace Rdmp.Core.DataExport.Data
             Value = r["Value"] as string;
             Comment = r["Comment"] as string;
         }
-       
+
         /// <summary>
         /// returns the <see cref="ParameterName"/>
         /// </summary>
         /// <returns></returns>
         public override string ToString()
         {
-            //return the name of the variable
-            return ParameterName;
+            return ParameterName + " = " + Value;
         }
 
         /// <summary>

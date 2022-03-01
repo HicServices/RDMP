@@ -7,8 +7,8 @@
 using System;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.QueryBuilding;
-using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
 {

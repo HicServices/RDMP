@@ -29,6 +29,29 @@ namespace Rdmp.Core.Curation.Data.Cohort
     /// </summary>
     public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlParameter,IHasDependencies
     {
+
+        /// <summary>
+        /// Names that are not allowed for user custom parameters because they
+        /// are used internally by RMDP query building engines
+        /// </summary>
+        public static readonly string[] ProhibitedParameterNames = new string[]
+        {
+
+"@CohortDefinitionID",
+"@ProjectNumber",
+"@dateAxis",
+"@currentDate",
+"@dbName",
+"@sql",
+"@isPrimaryKeyChange",
+"@Query",
+"@Columns",
+"@value",
+"@pos",
+"@len",
+"@startDate",
+"@endDate"};
+
         #region Database Properties
         private string _parameterSQL;
         private string _value;
@@ -67,6 +90,11 @@ namespace Rdmp.Core.Curation.Data.Cohort
         }
 
         /// <summary>
+        /// The default value to give to parameters when creating new blank/unknown role
+        /// </summary>
+        public const string DefaultValue = "'todo'";
+
+        /// <summary>
         /// Declares that a new <see cref="ISqlParameter"/> (e.g. 'DECLARE @bob as varchar(10)') exists for the parent database object.  The object
         /// should be of a type which passes <see cref="IsSupportedType"/>.  When the object is used for query generation by an <see cref="QueryBuilding.ISqlQueryBuilder"/>
         /// then the parameter will be used 
@@ -96,7 +124,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
         /// <inheritdoc/>
         public override string ToString()
         {
-            return ParameterName;
+            return ParameterName + " = " + Value;
         }
 
         /// <inheritdoc cref="ParameterSyntaxChecker"/>
@@ -148,6 +176,19 @@ namespace Rdmp.Core.Curation.Data.Cohort
             return null;
         }
 
+
+        /// <summary>
+        /// Returns true if the <paramref name="parameter"/> is user generated and has a name in
+        /// the <see cref="ProhibitedParameterNames"/> list
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public static bool HasProhibitedName(ISqlParameter parameter)
+        {
+            //it is a user parameter and has a prohibited name
+            return parameter is IMapsDirectlyToDatabaseTable && ProhibitedParameterNames.Any(n => n.Equals(parameter.ParameterName, StringComparison.CurrentCultureIgnoreCase));
+        }
+
         /// <summary>
         /// Returns the parent object that declares this paramter (see <see cref="ReferenceOtherObjectDatabaseEntity.ReferencedObjectID"/> and <see cref="ReferenceOtherObjectDatabaseEntity.ReferencedObjectType"/>)
         /// </summary>
@@ -174,6 +215,16 @@ namespace Rdmp.Core.Curation.Data.Cohort
                 return new[] {parent};
 
             return new IHasDependencies[0];
+        }
+
+        /// <summary>
+        /// Returns the default parameter declaration (varchar 10)
+        /// </summary>
+        /// <param name="parameterName"></param>
+        /// <returns></returns>
+        public static string GetDefaultDeclaration(string parameterName)
+        {
+            return "DECLARE " + parameterName + " as varchar(10)";
         }
     }
 }

@@ -602,7 +602,7 @@ namespace Rdmp.Core.DataExport.Data
                 var globals = GlobalExtractionFilterParameters;
                 var importer = new FilterImporter(new DeployedExtractionFilterFactory(dataExportRepo), globals);
 
-                var mandatoryFilters = importer.ImportAllFilters(mandatoryExtractionFiltersToApplyToDataset, null);
+                var mandatoryFilters = importer.ImportAllFilters(rootFilterContainer,mandatoryExtractionFiltersToApplyToDataset, null);
 
                 foreach (DeployedExtractionFilter filter in mandatoryFilters.Cast<DeployedExtractionFilter>())
                 {

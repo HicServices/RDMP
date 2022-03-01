@@ -315,12 +315,12 @@ namespace Rdmp.Core.QueryBuilding.Parameters
                     int newSuffix = GetSuffixForRenaming(toImportParameterName);
 
                     //Add the rename operation to the audit
-                    parameterNameSubstitutions.Add(toImportParameterName, parameterToImport + "_" + newSuffix);
+                    parameterNameSubstitutions.Add(toImportParameterName, parameterToImport.ParameterName + "_" + newSuffix);
 
                     //do the rename operation into a spontaneous object because modifying the ISqlParameter directly could corrupt it for other users (especially if SuperCaching is on! See RDMPDEV-668)
                     var spont = new SpontaneouslyInventedSqlParameter(
                         _memoryRepository,
-                        parameterToImport.ParameterSQL.Replace(toImportParameterName, parameterToImport + "_" + newSuffix),
+                        parameterToImport.ParameterSQL.Replace(toImportParameterName, parameterToImport.ParameterName + "_" + newSuffix),
                         parameterToImport.Value,
                         parameterToImport.Comment,
                         parameterToImport.GetQuerySyntaxHelper()

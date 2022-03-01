@@ -14,20 +14,17 @@ using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
-using Rdmp.UI.ExtractionUIs.FilterUIs.Options;
-using Rdmp.UI.SimpleDialogs;
 
-
-namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
+namespace Rdmp.Core.Curation.FilterImporting
 {
     /// <summary>
     /// Creates instances of <see cref="ParameterCollectionUIOptions"/> based on the Type of <see cref="ICollectSqlParameters"/> host.
     /// </summary>
     public class ParameterCollectionUIOptionsFactory
     {
-        private const string UseCaseIFilter = 
+        private const string UseCaseIFilter =
             "You are editing a filter which will be used in a WHERE SQL statement.  This control will let you view which higher level parameters (if any) you can use in your query.  It also lets you change the values/datatypes of any parameters you have used in your Filter. To create a new Parameter just type it's name as you normally would into the Filter dialog (above).";
-        
+
         private const string UseCaseTableInfo =
             "You are viewing the SQL parameters associated with a Table Valued Function.  You should ONLY change comment/value on these parameters. If you have changed the underlying database implementation of your TableValuedFunction and want to adjust parameters here accordingly then you should instead use the 'Synchronize TableInfo' command.";
 
@@ -43,7 +40,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
         private const string UseCaseExtractionConfigurationGlobals =
             @"You are trying to perform a data extraction of one or more datasets against a cohort.  It is likely that your datasets contain filters (e.g. 'only records from Tayside').  These filters may contain duplicate parameters (e.g. if you have 5 datasets each filtered by healthboard each with a parameter called @healthboard).  This dialog lets you configure a single 'overriding' master copy at the ExtractionConfiguration level which will allow you to change all copies at once in one place.  You will also see two global parameters the system generates automatically when doing extractions these are @CohortDefinitionID and @ProjectNumber";
 
-        
+
 
         public ParameterCollectionUIOptions Create(IFilter value, ISqlParameter[] globalFilterParameters)
         {
@@ -51,8 +48,8 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
 
             foreach (ISqlParameter globalFilterParameter in globalFilterParameters)
                 pm.AddGlobalParameter(globalFilterParameter);
-            
-            pm.AddParametersFor(value,ParameterLevel.QueryLevel);
+
+            pm.AddParametersFor(value, ParameterLevel.QueryLevel);
 
             return new ParameterCollectionUIOptions(UseCaseIFilter, value, ParameterLevel.QueryLevel, pm);
         }
@@ -61,28 +58,28 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
         {
             var pm = new ParameterManager();
             pm.AddParametersFor(tableInfo);
-            return new ParameterCollectionUIOptions(UseCaseTableInfo,tableInfo,ParameterLevel.TableInfo,pm);
+            return new ParameterCollectionUIOptions(UseCaseTableInfo, tableInfo, ParameterLevel.TableInfo, pm);
         }
         public ParameterCollectionUIOptions Create(ExtractionFilterParameterSet parameterSet)
         {
             var pm = new ParameterManager();
             pm.ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].AddRange(parameterSet.Values);
-            
+
             return new ParameterCollectionUIOptions(UseCaseParameterValueSet, parameterSet, ParameterLevel.TableInfo, pm);
         }
         public ParameterCollectionUIOptions Create(AggregateConfiguration aggregateConfiguration, ICoreChildProvider coreChildProvider)
         {
             ParameterManager pm;
 
-            if(aggregateConfiguration.IsCohortIdentificationAggregate)
+            if (aggregateConfiguration.IsCohortIdentificationAggregate)
             {
 
                 //Add the globals if it is part of a CohortIdentificationConfiguration
                 var cic = aggregateConfiguration.GetCohortIdentificationConfigurationIfAny();
-                
-                var globals = cic != null ? cic.GetAllParameters(): new ISqlParameter[0];
 
-                var builder = new CohortQueryBuilder(aggregateConfiguration,globals,coreChildProvider);
+                var globals = cic != null ? cic.GetAllParameters() : new ISqlParameter[0];
+
+                var builder = new CohortQueryBuilder(aggregateConfiguration, globals, coreChildProvider);
                 pm = builder.ParameterManager;
 
                 try
@@ -93,7 +90,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
                 catch (QueryBuildingException)
                 {
                     //if there's a problem with parameters or anything else, it is okay this dialog might let the user fix that
-                }  
+                }
             }
             else
             {
@@ -108,59 +105,51 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
                 catch (QueryBuildingException)
                 {
                     //if there's a problem with parameters or anything else, it is okay this dialog might let the user fix that
-                }          
+                }
             }
 
-            
-            return new ParameterCollectionUIOptions(UseCaseAggregateConfiguration,aggregateConfiguration,ParameterLevel.CompositeQueryLevel, pm);
+
+            return new ParameterCollectionUIOptions(UseCaseAggregateConfiguration, aggregateConfiguration, ParameterLevel.CompositeQueryLevel, pm);
         }
 
-        
+
 
         public ParameterCollectionUIOptions Create(ICollectSqlParameters host, ICoreChildProvider coreChildProvider)
         {
             if (host is TableInfo)
-                return Create((TableInfo) host);
-            
+                return Create((TableInfo)host);
+
             if (host is ExtractionFilterParameterSet)
                 return Create((ExtractionFilterParameterSet)host);
-            
+
             if (host is AggregateConfiguration)
-                return Create((AggregateConfiguration)host,coreChildProvider);
-            
+                return Create((AggregateConfiguration)host, coreChildProvider);
+
             if (host is IFilter)
             {
                 FilterUIOptionsFactory factory = new FilterUIOptionsFactory();
-                var globals = factory.Create((IFilter) host).GetGlobalParametersInFilterScope();
+                var globals = factory.Create((IFilter)host).GetGlobalParametersInFilterScope();
 
-                return Create((IFilter) host, globals);
+                return Create((IFilter)host, globals);
             }
-            
+
             if (host is CohortIdentificationConfiguration)
-                return Create((CohortIdentificationConfiguration)host,coreChildProvider);
+                return Create((CohortIdentificationConfiguration)host, coreChildProvider);
 
             if (host is ExtractionConfiguration)
-                return Create((ExtractionConfiguration) host);
+                return Create((ExtractionConfiguration)host);
 
             throw new ArgumentException("Host Type was not recognised as one of the Types we know how to deal with", "host");
         }
 
-        private ParameterCollectionUIOptions Create(CohortIdentificationConfiguration cohortIdentificationConfiguration,ICoreChildProvider coreChildProvider)
+        private ParameterCollectionUIOptions Create(CohortIdentificationConfiguration cohortIdentificationConfiguration, ICoreChildProvider coreChildProvider)
         {
-            var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,coreChildProvider);
-
-            try
-            {
-                builder.RegenerateSQL();
-            }
-            catch (QueryBuildingException ex)
-            {
-                ExceptionViewer.Show("There was a problem resolving all the underlying parameters in all your various Aggregates, the following dialogue is reliable only for the Globals", ex);
-            }
+            var builder = new CohortQueryBuilder(cohortIdentificationConfiguration, coreChildProvider);
+            builder.RegenerateSQL();
 
             var paramManager = builder.ParameterManager;
 
-            return new ParameterCollectionUIOptions(UseCaseCohortIdentificationConfiguration,cohortIdentificationConfiguration, ParameterLevel.Global, paramManager);
+            return new ParameterCollectionUIOptions(UseCaseCohortIdentificationConfiguration, cohortIdentificationConfiguration, ParameterLevel.Global, paramManager);
         }
 
         private ParameterCollectionUIOptions Create(ExtractionConfiguration extractionConfiguration)
@@ -168,28 +157,28 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
             var globals = extractionConfiguration.GlobalExtractionFilterParameters;
             var paramManager = new ParameterManager(globals);
 
-            
+
             foreach (var selectedDatasets in extractionConfiguration.SelectedDataSets)
             {
                 var rootFilterContainer = selectedDatasets.RootFilterContainer;
-                
-                if(rootFilterContainer != null)
+
+                if (rootFilterContainer != null)
                 {
                     var allFilters = SqlQueryBuilderHelper.GetAllFiltersUsedInContainerTreeRecursively(rootFilterContainer).ToList();
                     paramManager.AddParametersFor(allFilters);//query level
                 }
             }
 
-            return new ParameterCollectionUIOptions(UseCaseExtractionConfigurationGlobals, extractionConfiguration,ParameterLevel.Global, paramManager, CreateNewParameterForExtractionConfiguration);
+            return new ParameterCollectionUIOptions(UseCaseExtractionConfigurationGlobals, extractionConfiguration, ParameterLevel.Global, paramManager, CreateNewParameterForExtractionConfiguration);
         }
 
-        private ISqlParameter CreateNewParameterForExtractionConfiguration(ICollectSqlParameters collector,string parameterName)
+        private ISqlParameter CreateNewParameterForExtractionConfiguration(ICollectSqlParameters collector, string parameterName)
         {
             if (!parameterName.StartsWith("@"))
                 parameterName = "@" + parameterName;
 
             var ec = (ExtractionConfiguration)collector;
-            return new GlobalExtractionFilterParameter((IDataExportRepository)ec.Repository, ec, "DECLARE " + parameterName + " as varchar(10)");
+            return new GlobalExtractionFilterParameter((IDataExportRepository)ec.Repository, ec, AnyTableSqlParameter.GetDefaultDeclaration(parameterName));
         }
     }
 }

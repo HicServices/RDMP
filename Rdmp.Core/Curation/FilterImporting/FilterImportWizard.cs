@@ -70,7 +70,7 @@ namespace Rdmp.Core.Curation.FilterImporting
                 importer.AlternateValuesToUseForNewParameters = chosenParameterValues.GetAllParameters();
 
             //create the filter
-            var newFilter = importer.ImportFilter(filterToImport, otherFiltersInScope);
+            var newFilter = importer.ImportFilter(containerToImportOneInto,filterToImport, otherFiltersInScope);
 
             //if we used custom parameter values we should update the filter name so the user is reminded that the concept of the filter includes both 'Condition' and the value they selected e.g. 'Dementia'
             if (chosenParameterValues != null)

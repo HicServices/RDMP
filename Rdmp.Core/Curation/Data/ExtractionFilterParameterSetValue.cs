@@ -10,6 +10,7 @@ using System.Data.Common;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.QueryBuilding.SyntaxChecking;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
@@ -19,7 +20,7 @@ namespace Rdmp.Core.Curation.Data
     /// <summary>
     /// Stores a known specific useful value for a given ExtractionFilterParameter.  See <see cref="Data.ExtractionFilterParameterSet"/> for a use case for this.
     /// </summary>
-    public class ExtractionFilterParameterSetValue: DatabaseEntity, ISqlParameter
+    public class ExtractionFilterParameterSetValue: DatabaseEntity, ISqlParameter, IInjectKnown<ExtractionFilterParameter>
     {
         #region Database Properties
         private string _value;
@@ -54,11 +55,8 @@ namespace Rdmp.Core.Curation.Data
         #endregion
 
         #region cached values stored so we can act like a readonly ISqlParameter but secretly only Value will actually be changeable
-        private string _parameterName;
-        private string _parameterSQL;
-        private string _comment; 
-        
-        private ExtractionFilterParameterSet _extractionFilterParameterSet;
+
+        private Lazy<ExtractionFilterParameter> _knownExtractionFilterParameter;
 
         /// <inheritdoc/>
         /// <remarks>Readonly, fetched from associated <see cref="ExtractionFilterParameter_ID"/></remarks>
@@ -67,8 +65,7 @@ namespace Rdmp.Core.Curation.Data
         {
             get
             {
-                CacheMasterParameterFieldsIfRequired();
-                return _parameterName;
+                return _knownExtractionFilterParameter.Value.ParameterName;
             }
         }
 
@@ -80,8 +77,7 @@ namespace Rdmp.Core.Curation.Data
         {
             get
             {
-                CacheMasterParameterFieldsIfRequired(); 
-                return _parameterSQL;
+                return _knownExtractionFilterParameter.Value.ParameterSQL;
             }
             set { }
         }
@@ -93,29 +89,9 @@ namespace Rdmp.Core.Curation.Data
         {
             get
             {
-                CacheMasterParameterFieldsIfRequired(); 
-                return _comment;
+                return _knownExtractionFilterParameter.Value.Comment;
             }
             set {  }
-        }
-
-        private bool haveCachedMasterValues = false;
-        
-
-        private void CacheMasterParameterFieldsIfRequired()
-        {
-            if(haveCachedMasterValues)
-                return;
-
-            var master = ExtractionFilterParameter;
-
-            _parameterName = master.ParameterName;
-            _parameterSQL = master.ParameterSQL;
-            _comment = master.Comment;
-
-            _extractionFilterParameterSet = ExtractionFilterParameterSet;
-
-            haveCachedMasterValues = true;
         }
 
         /// <summary>
@@ -124,7 +100,7 @@ namespace Rdmp.Core.Curation.Data
         /// <returns></returns>
         public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
         {
-            return _extractionFilterParameterSet;
+            return ExtractionFilterParameterSet;
         }
         #endregion
 
@@ -136,7 +112,7 @@ namespace Rdmp.Core.Curation.Data
 
         /// <inheritdoc cref="ExtractionFilterParameter_ID"/>
         [NoMappingToDatabase]
-        public ExtractionFilterParameter ExtractionFilterParameter { get { return Repository.GetObjectByID<ExtractionFilterParameter>(ExtractionFilterParameter_ID); } }
+        public ExtractionFilterParameter ExtractionFilterParameter { get { return _knownExtractionFilterParameter.Value; } }
 
         #endregion
 
@@ -147,6 +123,8 @@ namespace Rdmp.Core.Curation.Data
             ExtractionFilterParameterSet_ID =   Convert.ToInt32(r["ExtractionFilterParameterSet_ID"]);
             ExtractionFilterParameter_ID =      Convert.ToInt32(r["ExtractionFilterParameter_ID"]);
             Value = r["Value"] as string;
+
+            ClearAllInjections();
         }
 
         /// <summary>
@@ -167,6 +145,8 @@ namespace Rdmp.Core.Curation.Data
                 {"ExtractionFilterParameterSet_ID",parent.ID},
                 {"ExtractionFilterParameter_ID",valueIsForParameter.ID}
             });
+
+            ClearAllInjections();
         }
 
         /// <inheritdoc/>
@@ -179,6 +159,21 @@ namespace Rdmp.Core.Curation.Data
         public void Check(ICheckNotifier notifier)
         {
             new ParameterSyntaxChecker(this).Check(notifier);
+        }
+
+        public override string ToString()
+        {
+            return ParameterName + " = " + Value;
+        }
+
+        public void InjectKnown(ExtractionFilterParameter instance)
+        {
+            _knownExtractionFilterParameter = new Lazy<ExtractionFilterParameter>(instance);
+        }
+
+        public void ClearAllInjections()
+        {
+            _knownExtractionFilterParameter = new Lazy<ExtractionFilterParameter>(() => Repository.GetObjectByID<ExtractionFilterParameter>(ExtractionFilterParameter_ID));
         }
     }
 }

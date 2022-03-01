@@ -388,11 +388,8 @@ namespace Rdmp.Core.Providers
             var parameters = AllGlobalExtractionFilterParameters.Where(p => p.ExtractionConfiguration_ID == extractionConfiguration.ID)
                 .ToArray();
 
-            if (parameters.Any())
-            {
-                var parameterNode = new ParametersNode(extractionConfiguration, parameters);
-                children.Add(parameterNode);
-            }
+            foreach(var p in parameters)
+                children.Add(p);
 
             //if it has a cohort
             if (extractionConfiguration.Cohort_ID != null)
@@ -447,12 +444,20 @@ namespace Rdmp.Core.Providers
                 children.Add(subcontainer);
             }
 
-            foreach (var filter in _dataExportFilterManager.GetFilters(filterContainer))
+            foreach (DeployedExtractionFilter filter in _dataExportFilterManager.GetFilters(filterContainer))
+            {
+                AddChildren(filter,descendancy.Add(filter));
                 children.Add(filter);
+            }
+                
 
             AddToDictionaries(children,descendancy);
         }
 
+        private void AddChildren(DeployedExtractionFilter filter, DescendancyList descendancyList)
+        {
+            AddToDictionaries(new HashSet<object>(_allParameters.Where(p => p.ExtractionFilter_ID == filter.ID)),descendancyList);
+        }
 
         private void AddChildren(CohortSourceUsedByProjectNode cohortSourceUsedByProjectNode, DescendancyList descendancy)
         {

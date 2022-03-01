@@ -77,7 +77,7 @@ namespace Rdmp.Core.Providers
             if (o is AllCataloguesUsedByLoadMetadataNode)
                 return DescribeProblem((AllCataloguesUsedByLoadMetadataNode) o);
 
-            if (o is ParametersNode p)
+            if (o is ISqlParameter p)
                 return DescribeProblem(p);
 
             if (o is CohortAggregateContainer container)
@@ -94,13 +94,14 @@ namespace Rdmp.Core.Providers
             return null;
         }
 
-        public string DescribeProblem(ParametersNode parameterNode)
+        public string DescribeProblem(ISqlParameter parameter)
         {
-            var emptyParams = parameterNode.Parameters.Where(p => string.IsNullOrWhiteSpace(p.Value)).ToArray();
+            if (string.IsNullOrWhiteSpace(parameter.Value) || parameter.Value == AnyTableSqlParameter.DefaultValue)
+                return "No value defined";
 
-            if (emptyParams.Any())
-                return "The following parameters do not have values defined:" +
-                       string.Join(",", emptyParams.Select(p => p.ParameterName));
+            
+            if (AnyTableSqlParameter.HasProhibitedName(parameter))
+                return "Parameter name is a reserved name for the RDMP software";
 
             return null;
         }

@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using TypeGuesser;
 using IFilter = Rdmp.Core.Curation.Data.IFilter;
@@ -128,7 +129,7 @@ namespace Rdmp.Core.Curation.FilterImporting
 
                         if (newParameter != null)
                         {
-                            newParameter.Value = "'todo'";
+                            newParameter.Value = AnyTableSqlParameter.DefaultValue;
                             newParameter.SaveToDatabase();
                         }
                     }

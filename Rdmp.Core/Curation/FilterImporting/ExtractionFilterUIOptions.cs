@@ -8,7 +8,7 @@ using Rdmp.Core;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
 
-namespace Rdmp.UI.ExtractionUIs.FilterUIs.Options
+namespace Rdmp.Core.Curation.FilterImporting
 {
     /// <inheritdoc/>
     public class ExtractionFilterUIOptions : FilterUIOptions
@@ -23,8 +23,8 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.Options
 
             var colInfo = masterCatalogueFilter.GetColumnInfoIfExists();
 
-            if(colInfo == null)
-                throw new MissingColumnInfoException("No ColumnInfo found for filter '" + masterCatalogueFilter +"'");
+            if (colInfo == null)
+                throw new MissingColumnInfoException("No ColumnInfo found for filter '" + masterCatalogueFilter + "'");
 
             _globals = colInfo.TableInfo.GetAllParameters();
             _tables = c.GetTableInfoList(false);

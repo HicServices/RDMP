@@ -14,14 +14,12 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
-using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SimpleDialogs.ForwardEngineering;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.DataAccess;
-
+using Rdmp.Core.Curation.FilterImporting;
 
 namespace Rdmp.UI.MainFormUITabs.SubComponents
 {

@@ -42,7 +42,7 @@ namespace Rdmp.Core.Tests.CohortCreation
         [Test]
         public void NotPopulated_Description()
         {
-            var ex = Assert.Throws<Exception>(()=>new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(_filter, null));
+            var ex = Assert.Throws<Exception>(()=>new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(_container,_filter, null));
             Assert.AreEqual("Cannot clone filter called 'folk' because:There is no description",ex.Message);
         }
 
@@ -50,7 +50,7 @@ namespace Rdmp.Core.Tests.CohortCreation
         public void NotPopulated_DescriptionTooShort()
         {
             _filter.Description = "fish";
-            var ex = Assert.Throws<Exception>(()=>new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(_filter, null));
+            var ex = Assert.Throws<Exception>(()=>new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(_container, _filter, null));
             Assert.AreEqual("Cannot clone filter called 'folk' because:Description is not long enough (minimum length is 20 characters)",ex.Message);
         }
 
@@ -58,7 +58,7 @@ namespace Rdmp.Core.Tests.CohortCreation
         public void NotPopulated_WhereSQLNotSet()
         {
             _filter.Description = "fish swim in the sea and make people happy to be";
-            var ex = Assert.Throws<Exception>(()=>new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(_filter, null));
+            var ex = Assert.Throws<Exception>(()=>new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(_container, _filter, null));
             Assert.AreEqual("Cannot clone filter called 'folk' because:WhereSQL is not populated",ex.Message);
         }
 
@@ -73,7 +73,7 @@ namespace Rdmp.Core.Tests.CohortCreation
             _filter.SaveToDatabase();
             new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(_filter, null);
 
-            IFilter importedFilter = new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(_filter, null);
+            IFilter importedFilter = new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(null, _filter, null);
             Assert.AreEqual("folk", importedFilter.Name);
         }
 
@@ -90,7 +90,7 @@ namespace Rdmp.Core.Tests.CohortCreation
             parameter.Value = null;//clear it's value
             parameter.SaveToDatabase();
 
-            var ex = Assert.Throws<Exception>(()=>new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation),null).ImportFilter(_filter,null));
+            var ex = Assert.Throws<Exception>(()=>new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation),null).ImportFilter(_container, _filter,null));
             Assert.AreEqual("Cannot clone filter called 'folk' because:Parameter '@coconutCount' was rejected :There is no value/default value listed",ex.Message);
 
         }
@@ -186,7 +186,7 @@ namespace Rdmp.Core.Tests.CohortCreation
             parameter.Value = "3";
             parameter.SaveToDatabase();
             
-            var newMaster = new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(_filter, null);
+            var newMaster = new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(null, _filter, null);
 
             //we should now be a clone of the master we just created
             Assert.AreEqual(_filter.ClonedFromExtractionFilter_ID,newMaster.ID);

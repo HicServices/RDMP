@@ -49,7 +49,7 @@ namespace Rdmp.Core.Tests.DataExport.Cloning
 
                 //create a deployed filter
                 var importer = new FilterImporter(new DeployedExtractionFilterFactory(DataExportRepository), null);
-                var deployedFilter = (DeployedExtractionFilter)importer.ImportFilter(filter, null);
+                var deployedFilter = (DeployedExtractionFilter)importer.ImportFilter(container, filter, null);
                 deployedFilter.FilterContainer_ID = container.ID;
                 deployedFilter.Name = "FilterByFishDeployed";
                 deployedFilter.SaveToDatabase();

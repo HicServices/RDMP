@@ -11,18 +11,18 @@ using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
+namespace Rdmp.Core.Curation.FilterImporting
 {
-    public delegate ISqlParameter CreateNewSqlParameterHandler(ICollectSqlParameters collector,string parameterName);
+    public delegate ISqlParameter CreateNewSqlParameterHandler(ICollectSqlParameters collector, string parameterName);
 
     /// <summary>
-    /// Helper object for <see cref="ParameterCollectionUI"/>.  Models a <see cref="Collector"/> who has 0 or more <see cref="ISqlParameter"/> associated
+    /// Models a <see cref="Collector"/> who has 0 or more <see cref="ISqlParameter"/> associated
     /// with it (handled by a <see cref="ParameterManager"/>).
     /// </summary>
     public class ParameterCollectionUIOptions
-    {  
+    {
         public ICollectSqlParameters Collector { get; set; }
-        
+
         /// <summary>
         /// True if the <see cref="Collector"/> is <see cref="IMightBeReadOnly"/> and is readonly
         /// </summary>
@@ -35,25 +35,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
 
         public string UseCase { get; private set; }
 
-        public readonly string[]  ProhibitedParameterNames = new string[]
-        {
-            
-"@CohortDefinitionID",
-"@ProjectNumber",
-"@dateAxis",
-"@currentDate",
-"@dbName",
-"@sql",
-"@isPrimaryKeyChange",
-"@Query",
-"@Columns",
-"@value",
-"@pos",
-"@len",
-"@startDate",
-"@endDate"};
-
-        public ParameterCollectionUIOptions(string useCase, ICollectSqlParameters collector, ParameterLevel currentLevel, ParameterManager parameterManager ,CreateNewSqlParameterHandler createNewParameterDelegate = null)
+        public ParameterCollectionUIOptions(string useCase, ICollectSqlParameters collector, ParameterLevel currentLevel, ParameterManager parameterManager, CreateNewSqlParameterHandler createNewParameterDelegate = null)
         {
 
             UseCase = useCase;
@@ -81,9 +63,9 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
             if (!parameterName.StartsWith("@"))
                 parameterName = "@" + parameterName;
 
-            var entity = (IMapsDirectlyToDatabaseTable) collector;
-            var newParam = new AnyTableSqlParameter((ICatalogueRepository)entity.Repository, entity, "DECLARE " + parameterName + " as varchar(10)");
-            newParam.Value = "'todo'";
+            var entity = (IMapsDirectlyToDatabaseTable)collector;
+            var newParam = new AnyTableSqlParameter((ICatalogueRepository)entity.Repository, entity, AnyTableSqlParameter.GetDefaultDeclaration(parameterName));
+            newParam.Value = AnyTableSqlParameter.DefaultValue;
             newParam.SaveToDatabase();
             return newParam;
         }
@@ -95,9 +77,9 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
 
         public ISqlParameter CreateNewParameter(string parameterName)
         {
-            return _createNewParameterDelegate(Collector,parameterName);
+            return _createNewParameterDelegate(Collector, parameterName);
         }
-        
+
         public bool IsHigherLevel(ISqlParameter parameter)
         {
             return ParameterManager.GetLevelForParameter(parameter) > CurrentLevel;
@@ -120,7 +102,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
 
         public bool ShouldBeReadOnly(ISqlParameter p)
         {
-            return ReadOnly || (IsOverridden(p) || IsDifferentLevel(p) || p is SpontaneousObject);
+            return ReadOnly || IsOverridden(p) || IsDifferentLevel(p) || p is SpontaneousObject;
         }
     }
 }

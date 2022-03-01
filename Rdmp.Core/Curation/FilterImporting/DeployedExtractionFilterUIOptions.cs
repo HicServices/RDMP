@@ -9,7 +9,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.QueryBuilding;
 
-namespace Rdmp.UI.ExtractionUIs.FilterUIs.Options
+namespace Rdmp.Core.Curation.FilterImporting
 {
     /// <inheritdoc/>
     public class DeployedExtractionFilterUIOptions : FilterUIOptions
@@ -22,15 +22,15 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.Options
         {
             var selectedDataSet = deployedExtractionFilter.GetDataset();
 
-            
+
             var ds = selectedDataSet.ExtractableDataSet;
             var c = selectedDataSet.ExtractionConfiguration;
-            
+
             _tables = ds.Catalogue.GetTableInfoList(false);
             _globals = c.GlobalExtractionFilterParameters;
 
             List<IColumn> columns = new List<IColumn>();
-            
+
             columns.AddRange(c.GetAllExtractableColumnsFor(ds));
             columns.AddRange(c.Project.GetAllProjectCatalogueColumns(ExtractionCategory.ProjectSpecific));
 

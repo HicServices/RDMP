@@ -174,7 +174,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.TableValuedFunctionTests
             var syncer = new TableInfoSynchronizer(_function.TableInfoCreated);
 
             var ex = Assert.Throws<Exception>(() => syncer.Synchronize(new ThrowImmediatelyCheckNotifier()));
-            Assert.IsTrue(ex.Message.Contains(expectedMessage));
+            StringAssert.Contains(expectedMessage,ex.Message);
 
             //no changes should yet have taken place since we didn't accept it yet
             Assert.IsTrue(parameter.HasLocalChanges().Evaluation == ChangeDescription.NoChanges);

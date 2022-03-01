@@ -560,7 +560,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
 
                 foreach (ExtractionFilter filter in mandatoryFilters)
                 {
-                    var newFilter = (AggregateFilter)filterImporter.ImportFilter(filter, createdSoFar.ToArray());
+                    var newFilter = (AggregateFilter)filterImporter.ImportFilter(container, filter, createdSoFar.ToArray());
 
                     container.AddChild(newFilter);
                     createdSoFar.Add(newFilter);

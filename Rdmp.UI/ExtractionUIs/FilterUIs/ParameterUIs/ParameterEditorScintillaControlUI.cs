@@ -12,9 +12,10 @@ using System.Linq;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.Copying;
-using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
@@ -147,11 +148,8 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
                 foreach (ISqlParameter parameter in finalParameters)
                 {
                     //if it's a user one
-                    if(parameter is IMapsDirectlyToDatabaseTable)
-                        //and it has a name that could conflict with RDMP constant parameters
-                        if(Options.ProhibitedParameterNames.Any(n=>n.Equals(parameter.ParameterName,StringComparison.CurrentCultureIgnoreCase)))
-                            if(!ProblemObjects.ContainsKey(parameter))
-                                ProblemObjects.Add(parameter,new Exception("Parameter name " + parameter.ParameterName + " is a reserved name for the RDMP software"));//advise them
+                    if(AnyTableSqlParameter.HasProhibitedName(parameter) && !ProblemObjects.ContainsKey(parameter))
+                        ProblemObjects.Add(parameter,new Exception("Parameter name " + parameter.ParameterName + " is a reserved name for the RDMP software"));//advise them
 
                     try
                     {
