@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added command CreateNewCohortFromTable which creates a cohort from a table directly without having to first import it as a [Catalogue]
+
 ## [7.0.7] - 2022-03-01
 
 *Database Patches Included (enables ExtractionProgress retry)*

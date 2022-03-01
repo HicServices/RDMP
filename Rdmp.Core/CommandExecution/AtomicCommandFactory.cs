@@ -555,7 +555,7 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandCreateNewCohortFromFile(_activator,null).SetTarget(savedCohortsNode.Project);
                 yield return new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator,null).SetTarget(savedCohortsNode.Project);
                 yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator).SetTarget(savedCohortsNode.Project);
-
+                yield return new ExecuteCommandCreateNewCohortFromTable(_activator,null).SetTarget(savedCohortsNode.Project);
                 yield return new ExecuteCommandImportAlreadyExistingCohort(_activator,null,savedCohortsNode.Project);
             }
 
@@ -564,6 +564,7 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandCreateNewCohortFromFile(_activator, ect);
                 yield return new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, ect);
                 yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, ect);
+                yield return new ExecuteCommandCreateNewCohortFromTable(_activator,ect);
                 yield return new ExecuteCommandImportAlreadyExistingCohort(_activator, ect, null);
             }
 

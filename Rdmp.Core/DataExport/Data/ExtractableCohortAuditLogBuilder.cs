@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -19,6 +20,7 @@ namespace Rdmp.Core.DataExport.Data
     {
         Regex _regexGetID = new Regex(@"\(ID=(\d+)\)");
         Regex _regexGetFilePath = new Regex(@$"{InFile} '(.*)'");
+        Regex _regexGetColumn = new Regex(@$"{InColumn} '(.*)'");
 
         /// <summary>
         /// regex for picking up <see cref="CohortIdentificationConfiguration"/> IDs from audit log based on a legacy way of
@@ -27,6 +29,7 @@ namespace Rdmp.Core.DataExport.Data
         Regex _legacyCic = new Regex(@"Created by running cic ([\d]+)");
 
         const string InFile = "Patient identifiers in file";
+        const string InColumn = "Patient identifiers in column ";
         const string InCohortIdentificationConfiguration = "Patients in CohortIdentificationConfiguration";
         const string InExtractionInformation = "All patient identifiers in ExtractionInformation";
 
@@ -50,6 +53,11 @@ namespace Rdmp.Core.DataExport.Data
         public string GetDescription(ExtractionInformation extractionIdentifierColumn)
         {
             return InExtractionInformation + " '" + extractionIdentifierColumn.CatalogueItem.Catalogue + "." + extractionIdentifierColumn.GetRuntimeName() + "'  (ID=" + extractionIdentifierColumn.ID + ")";
+        }
+
+        internal string GetDescription(DiscoveredColumn col)
+        {
+            return InColumn + " '" + col.GetFullyQualifiedName() + "'";
         }
 
         /// <summary>
@@ -112,7 +120,14 @@ namespace Rdmp.Core.DataExport.Data
                     }
                 }
             }
-
+            if (audit.Contains(InColumn))
+            {
+                var m = _regexGetColumn.Match(audit);
+                if (m.Success)
+                {
+                    return m.Groups[1].Value;
+                }
+            }
             // who knows how this cohort was created
             return null;
         }
