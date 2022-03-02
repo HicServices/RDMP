@@ -53,27 +53,27 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
             _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "File " + _fileToLoad + " is empty"));
         }
         
-        public bool ReadingExceptionOccurred(CsvHelperException obj)
+        public bool ReadingExceptionOccurred(ReadingExceptionOccurredArgs args)
         {
-            var line = new FlatFileLine(obj.ReadingContext);
+            var line = new FlatFileLine(args.Exception.Context);
 
             switch (_strategy)
             {
                 case BadDataHandlingStrategy.IgnoreRows:
                     if (_maximumErrorsToReport-- >0)
-                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Ignored ReadingException on " + line.GetLineDescription(), obj));
+                        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Ignored ReadingException on " + line.GetLineDescription(), args.Exception));
 
                     //move to next line
-                    _dataPusher.BadLines.Add(obj.ReadingContext.RawRow);
+                    _dataPusher.BadLines.Add(args.Exception.Context.Parser.RawRow);
 
                     break;
                 case BadDataHandlingStrategy.DivertRows:
 
-                    DivertErrorRow(new FlatFileLine(obj.ReadingContext), obj);
+                    DivertErrorRow(new FlatFileLine(args.Exception.Context), args.Exception);
                     break;
 
                 case BadDataHandlingStrategy.ThrowException:
-                    throw new FlatFileLoadException("Bad data found on li" + line.GetLineDescription(), obj);
+                    throw new FlatFileLoadException("Bad data found on li" + line.GetLineDescription(), args.Exception);
 
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -135,12 +135,5 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
             //move to next line
             _dataPusher.BadLines.Add(line.LineNumber);
         }
-
-        public void RegisterEvents(IReaderConfiguration configuration)
-        {
-            configuration.BadDataFound = s=>BadDataFound(new FlatFileLine(s),true);
-            configuration.ReadingExceptionOccurred = ReadingExceptionOccurred;
-        }
-
     }
 }
