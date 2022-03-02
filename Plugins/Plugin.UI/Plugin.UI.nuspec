@@ -13,10 +13,10 @@
         <description>UI package for plugin development</description>
         <copyright>Copyright 2018-2019</copyright>
         <dependencies>
-			<dependency id="HIC.BadMedicine" version="0.1.6" />
+			<dependency id="HIC.BadMedicine" version="1.0.0" />
             <dependency id="HIC.FAnsiSql" version="2.0.3" />
             <dependency id="DockPanelSuite.ThemeVS2015" version="2.13.0" />
-            <dependency id="CsvHelper" version="19.0.0" />
+            <dependency id="CsvHelper" version="27.2.1" />
 			<dependency id="NHunspell" version="1.2.5554.16953" />
 			<dependency id="Newtonsoft.Json" version="13.0.1"/>
             <dependency id="fernandreu.ScintillaNET" version="4.0.4" />
