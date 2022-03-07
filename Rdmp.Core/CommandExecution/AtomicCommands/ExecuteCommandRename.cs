@@ -27,6 +27,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             
             if (nameable is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out string reason))
                 SetImpossible(reason);
+
+            Weight = 50.2f;
         }
 
         [UseWithObjectConstructor]
