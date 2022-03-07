@@ -36,8 +36,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         /// <summary>
         /// The relative heaviness of the control in menus.  Higher means that it sinks down the menu
-        /// Lower floats to the top.
+        /// Lower floats to the top.  Also determines where Separators appear (if supported by the UI
+        /// framework).
         /// </summary>
-        int Weight { get; set; }
+        float Weight { get; set; }
     }
 }

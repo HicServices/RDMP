@@ -744,25 +744,59 @@ namespace Rdmp.UI.Collections
 
         private void OrderMenuItems(ToolStripItemCollection coll)
         {
-            ArrayList oAList = new ArrayList(coll);
-            oAList.Sort(new ToolStripItemComparer(coll));
-            coll.Clear();
+            Dictionary<int, List<ToolStripItem>> itemsByBucket = new Dictionary<int, List<ToolStripItem>>();
 
-            foreach (ToolStripItem oItem in oAList)
+            // Create buckets for every item in every context menu
+            foreach(ToolStripItem oItem in coll)
             {
-                coll.Add(oItem);
+                int bucket = (int)GetWeight(oItem);
 
-                if (oItem is ToolStripMenuItem mi)
+                if (!itemsByBucket.ContainsKey(bucket))
                 {
-                    // if menu item has submenus
-                    if(mi.DropDownItems.Count > 0)
-                    {
-                        // sort those too - recurisvely
-                        OrderMenuItems(mi.DropDownItems);
-                    }
+                    itemsByBucket.Add(bucket, new List<ToolStripItem>());
+                }
 
+                itemsByBucket[bucket].Add(oItem);
+            }
+
+            coll.Clear();
+            
+            var buckets = itemsByBucket.OrderBy(kvp => kvp.Key).ToArray();
+
+            for(int i =0;i< buckets.Length;i++)
+            {
+                // add all the items
+                foreach(var item in buckets[i].Value.OrderBy(i=>GetWeight(i)))
+                {
+                    coll.Add(item);
+
+                    if (item is ToolStripMenuItem mi)
+                    {
+                        // if menu item has submenus
+                        if (mi.DropDownItems.Count > 0)
+                        {
+                            // sort those too - recurisvely
+                            OrderMenuItems(mi.DropDownItems);
+                        }
+                    }
+                }
+
+                // if there are more buckets to come
+                if(i != buckets.Length - 1)
+                {
+                    coll.Add(new ToolStripSeparator());
                 }
             }
+        }
+
+        private float GetWeight(ToolStripItem oItem)
+        {
+            if (oItem.Tag is IAtomicCommand cmd)
+            {
+                return cmd.Weight;
+            }
+
+            return 0;
         }
 
         public void CommonItemActivation(object sender, EventArgs eventArgs)
