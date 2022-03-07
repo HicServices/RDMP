@@ -796,6 +796,10 @@ namespace Rdmp.UI.Collections
                 return cmd.Weight;
             }
 
+            if (oItem is ToolStripMenuItem mi && mi.DropDownItems.Count > 0)
+            {
+                return mi.DropDownItems.Cast<ToolStripItem>().Max(GetWeight);
+            }
             return 0;
         }
 
