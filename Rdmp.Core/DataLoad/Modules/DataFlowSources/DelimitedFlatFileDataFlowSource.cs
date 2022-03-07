@@ -44,7 +44,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources
         #region User viewable descriptions of what properties do (used to help wrapper classes have consistent definitions
         public const string ForceHeaders_DemandDescription = "Forces specific headers to be interpreted for columns, this is a string that will effectively be appended to the front of the file when it is read.  WARNING: Use this argument only when the file does not have any headers (Note that you must use the appropriate separator for your file)";
         public const string ForceHeadersReplacesFirstLineInFile_Description = "Only used when ForceHeaders is specified, if true then the line will replace the first line of the file.  If left as false (default) then the line will be appended to the file.  Use true if you want to replace existing headers in the file and false if hte file doesn't have any headers in it at all.";
-        public const string IgnoreQuotes_DemandDescription = "DEPRECATED, this function no longer works with the latest CsvHelper and does nothing";
+        public const string IgnoreQuotes_DemandDescription = "True if the parser should treat double quotes as normal characters";
         public const string IgnoreBlankLines_DemandDescription = "True if the parser should skip over blank lines";
         public const string MakeHeaderNamesSane_DemandDescription = "True (recommended) if you want to fix columns that have crazy names e.g. 'my column #1' would become 'mycolumn1'";
         
@@ -86,7 +86,6 @@ This will not help you avoid bad data as the full file structure must still be r
         [DemandsInitialization(ForceHeadersReplacesFirstLineInFile_Description)]
         public bool ForceHeadersReplacesFirstLineInFile { get; set; }
 
-        [Obsolete("Do not use, no longer supported by CsvHelper")]
         [DemandsInitialization(IgnoreQuotes_DemandDescription)]
         public bool IgnoreQuotes { get; set; }
 
@@ -394,6 +393,7 @@ This will not help you avoid bad data as the full file structure must still be r
                 HasHeaderRecord = string.IsNullOrWhiteSpace(ForceHeaders),
                 ShouldSkipRecord = ShouldSkipRecord,
                 IgnoreBlankLines = IgnoreBlankLines,
+                Mode = IgnoreQuotes ? CsvMode.Escape : CsvMode.RFC4180,
                 BadDataFound = s => EventHandlers.BadDataFound(new FlatFileLine(s), true),
                 ReadingExceptionOccurred = EventHandlers.ReadingExceptionOccurred,
             });

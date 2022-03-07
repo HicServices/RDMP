@@ -32,7 +32,6 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
             set { _source.ForceHeaders = value; }
         }
         
-        [Obsolete("Do not use, no longer supported by CsvHelper")]
         [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreQuotes_DemandDescription)]
         public bool IgnoreQuotes
         {

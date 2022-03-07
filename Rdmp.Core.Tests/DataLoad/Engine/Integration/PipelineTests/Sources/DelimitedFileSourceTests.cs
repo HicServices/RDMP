@@ -350,7 +350,7 @@ old"",2001-01-05");
             try
             {
                 var ex = Assert.Throws<FlatFileLoadException>(() => source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
-                Assert.AreEqual("Bad data found on line 4", ex.Message);
+                Assert.AreEqual("Bad data found on line 3", ex.Message);
             }
             finally
             {
