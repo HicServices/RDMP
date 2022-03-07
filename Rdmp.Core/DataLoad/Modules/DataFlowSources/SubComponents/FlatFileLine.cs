@@ -46,7 +46,13 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
             //Doesn't seem to be correct:  StartPosition = context.RawRecordStartPosition;
         }
 
-        
+        public FlatFileLine(BadDataFoundArgs bad)
+        {
+            LineNumber = bad.Context.Parser.RawRow;
+            Cells = new string[0];
+            RawRecord = bad.RawRecord;
+            ReadingContext = bad.Context;
+        }
 
         public string this[int i]
         {

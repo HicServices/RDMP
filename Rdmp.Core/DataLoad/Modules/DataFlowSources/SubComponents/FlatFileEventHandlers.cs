@@ -92,6 +92,10 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
                     return;
                 }
 
+            // if we have seen this bad line already
+            if (_dataPusher.BadLines.Contains(line.LineNumber))
+                return;
+
             switch (_strategy)
             {
                 case BadDataHandlingStrategy.IgnoreRows:

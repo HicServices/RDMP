@@ -394,7 +394,7 @@ This will not help you avoid bad data as the full file structure must still be r
                 ShouldSkipRecord = ShouldSkipRecord,
                 IgnoreBlankLines = IgnoreBlankLines,
                 Mode = IgnoreQuotes ? CsvMode.Escape : CsvMode.RFC4180,
-                BadDataFound = s => EventHandlers.BadDataFound(new FlatFileLine(s.Context), true),
+                BadDataFound = s => EventHandlers.BadDataFound(new FlatFileLine(s), true),
                 ReadingExceptionOccurred = EventHandlers.ReadingExceptionOccurred,
             });
 

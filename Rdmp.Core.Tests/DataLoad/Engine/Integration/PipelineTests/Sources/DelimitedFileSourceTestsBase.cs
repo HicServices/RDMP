@@ -38,7 +38,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
                 Assert.Fail("No Divert file was generated at expected path " + filename);
 
             var contents = File.ReadAllText(filename);
-            Assert.AreEqual(contents,expectedContents);
+            Assert.AreEqual(expectedContents, contents);
         }
 
 
