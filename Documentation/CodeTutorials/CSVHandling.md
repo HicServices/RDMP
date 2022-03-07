@@ -214,15 +214,3 @@ Frank,Is the greatest,100
 Frank,Is the greatest,100
 ```
 _BadCSV_UnclosedQuote_
-
-You can try to solve this problem by setting `IgnoreQuotes` but this will prevent escaping (obviously).
-
-```
-Name,Description,Age
-Frank,Is the greatest,100
-Frank,Is the greatest,100
-Frank,\"Is the greatest,100
-Frank,Is the greatest,100
-Frank,Is the greatest,100
-```
-_BadCSV_UnclosedQuote_IgnoreQuotes_

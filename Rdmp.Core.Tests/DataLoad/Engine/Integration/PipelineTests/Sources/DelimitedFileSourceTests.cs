@@ -216,7 +216,6 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
 
             source.StronglyTypeInput = true; //makes the source interpret the file types properly
             source.BadDataHandlingStrategy = BadDataHandlingStrategy.ThrowException;
-            source.IgnoreQuotes = false;
             source.IgnoreBadReads = false;
 
             try
@@ -259,7 +258,6 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
             DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
             source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
             source.Separator = ",";
-            source.IgnoreQuotes = false;
             source.MaxBatchSize = 10000;
 
             source.StronglyTypeInput = true; //makes the source interpret the file types properly
@@ -304,7 +302,6 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
             DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
             source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
             source.Separator = ",";
-            source.IgnoreQuotes = false;
             source.MaxBatchSize = 10000;
 
             source.StronglyTypeInput = true; //makes the source interpret the file types properly
@@ -323,10 +320,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
             }
         }
 
-
-        [TestCase(true)]
-        [TestCase(false)]
-        public void DelimitedFlatFileDataFlowSource_LoadDataWithQuotesInMiddle_WithMultiLineRecords(bool ignoreQuotes)
+        [Test]
+        public void DelimitedFlatFileDataFlowSource_LoadDataWithQuotesInMiddle_WithMultiLineRecords()
         {
             if (File.Exists(filename))
                 File.Delete(filename);
@@ -347,7 +342,6 @@ old"",2001-01-05");
             DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
             source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
             source.Separator = ",";
-            source.IgnoreQuotes = ignoreQuotes;
             source.MaxBatchSize = 10000;
             source.AttemptToResolveNewLinesInRecords = true;
 
@@ -355,19 +349,8 @@ old"",2001-01-05");
             source.BadDataHandlingStrategy = BadDataHandlingStrategy.ThrowException;
             try
             {
-                if (!ignoreQuotes)
-                    Assert.Throws<ParserException>(() => source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
-                else
-                {
-                    var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
-                    Assert.AreEqual(3, chunk.Rows.Count);
-                    Assert.AreEqual("Dave is \"over\" 1000 years old", chunk.Rows[1][2]);
-                    Assert.AreEqual(@"""Dave is
-""over"" 1000 years 
-
-old""", chunk.Rows[2][2]);
-
-                }
+                var ex = Assert.Throws<FlatFileLoadException>(() => source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+                Assert.AreEqual("Bad data found on line 4", ex.Message);
             }
             finally
             {
@@ -671,11 +654,10 @@ old""", chunk.Rows[2][2]);
         }
 
         /// <summary>
-        /// Depicts a case where quotes appear at the start of a string field, in order to parse this IgnoreQuotes is needed
+        /// Depicts a case where quotes appear at the start of a string field
         /// </summary>
-        [TestCase(true)]
-        [TestCase(false)]
-        public void Test_IgnoreQuotes(bool ignoreQuotes)
+        [Test]
+        public void Test_IgnoreQuotes()
         {
             var f = Path.Combine(TestContext.CurrentContext.WorkDirectory,"talk.csv");
             
@@ -689,24 +671,11 @@ old""", chunk.Rows[2][2]);
             source.MaxBatchSize = DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize;
             source.StronglyTypeInputBatchSize = DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize;
             source.StronglyTypeInput = true;
-            source.IgnoreQuotes = ignoreQuotes;
 
-            if(!ignoreQuotes)
-            {
-                var toMem = new ToMemoryDataLoadEventListener(true);
-                var ex = Assert.Throws<ParserException>(()=>source.GetChunk(toMem,new GracefulCancellationToken()));
-                Assert.AreEqual(2,ex.Context.Parser.RawRow);
-                source.Dispose(new ThrowImmediatelyDataLoadEventListener(),null);
-            }
-            else
-            {
-                var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
-                Assert.AreEqual(2, dt.Rows.Count);
-                Assert.AreEqual(@"Watch out guys its Billie ""The Killer"" Cole",dt.Rows[0]["Field2"]);
-                Assert.AreEqual(@"""The Killer""? I've heard of him hes a bad un",dt.Rows[1]["Field2"]);
-                source.Dispose(new ThrowImmediatelyDataLoadEventListener(),null);
-            }
-            
+            var toMem = new ToMemoryDataLoadEventListener(true);
+            var ex = Assert.Throws<FlatFileLoadException>(()=>source.GetChunk(toMem,new GracefulCancellationToken()));
+            Assert.AreEqual("Bad data found on line 2", ex.Message);
+            source.Dispose(new ThrowImmediatelyDataLoadEventListener(),null);
         }
     }
 }
