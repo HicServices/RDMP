@@ -32,6 +32,8 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             if(!commonFunctionality.Tree.CanExpand(toExpand))
                 SetImpossible("Node cannot be expanded");
+
+            Weight = 100.4f;
         }
 
         public override string GetCommandName()

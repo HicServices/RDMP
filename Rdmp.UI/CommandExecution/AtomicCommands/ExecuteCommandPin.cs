@@ -22,6 +22,8 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             if(!CollectionPinFilterUI.IsPinnableType(databaseEntity))
                 SetImpossible("Object is not a Pinnable Type");
+
+            Weight = 100.4f;
         }
 
         public override void Execute()

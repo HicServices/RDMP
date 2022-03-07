@@ -145,8 +145,7 @@ namespace Rdmp.UI.Menus
             var databaseEntity = _o as DatabaseEntity;
 
             var treeMenuItem = AddMenuIfNotExists(Tree);
-            var inspectionMenuItem =  AddMenuIfNotExists(Inspection);
-            
+
             //ensure all submenus appear in the same place
             foreach(var mi in _subMenuDictionary.Values)
                 Items.Add(mi);
@@ -166,13 +165,15 @@ namespace Rdmp.UI.Menus
                 }
             }
 
-            if(Items.Count > 0)
-                Items.Add(new ToolStripSeparator());
+            //Check if we even want to display this
+            if (commonFunctionality.CheckColumnProvider != null)
+            { 
+                var inspectionMenuItem = AddMenuIfNotExists(Inspection);
+                Items.Add(inspectionMenuItem);
+                PopulateInspectionMenu(commonFunctionality, inspectionMenuItem);
+            }
 
             //add seldom used submenus (pin, view dependencies etc)
-            Items.Add(inspectionMenuItem);
-            PopulateInspectionMenu(commonFunctionality, inspectionMenuItem);
-
             Items.Add(treeMenuItem);
             PopulateTreeMenu(commonFunctionality, treeMenuItem);
 
