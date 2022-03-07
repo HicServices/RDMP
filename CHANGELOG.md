@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- CSV files with unclosed leading quotes are no longer preserved when using IgnoreQuotes (side effect of updating CsvHelper)
+
 ## [7.0.7] - 2022-03-01
 
 *Database Patches Included (enables ExtractionProgress retry)*
