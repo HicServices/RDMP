@@ -17,9 +17,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     public class ExecuteCommandViewSample : BasicCommandExecution, IAtomicCommand
     {
         private readonly AggregateConfiguration _aggregate;
+        private float DEFAULT_WEIGHT = 2.5f;
 
         public ExecuteCommandViewSample(IBasicActivateItems activator, AggregateConfiguration aggregate) : base(activator)
         {
+            Weight = DEFAULT_WEIGHT;
             _aggregate = aggregate;
 
             if (_aggregate.IsCohortIdentificationAggregate && _aggregate.GetCohortIdentificationConfigurationIfAny() == null)

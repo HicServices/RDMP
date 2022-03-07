@@ -19,9 +19,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     {
         private IRootFilterContainerHost _host;
         private IContainer _container;
+        private const float DEFAULT_WEIGHT = 1.1f;
 
         public ExecuteCommandAddNewFilterContainer(IBasicActivateItems activator, IRootFilterContainerHost host):base(activator)
         {
+            Weight = DEFAULT_WEIGHT;
+
             if(host.RootFilterContainer_ID != null)
                 SetImpossible("There is already a root filter container on this object");
             
@@ -33,10 +36,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public override Image GetImage(IIconProvider iconProvider)
         {
+            Weight = DEFAULT_WEIGHT;
+
             return iconProvider.GetImage(RDMPConcept.FilterContainer,OverlayKind.Add);
         }
         public ExecuteCommandAddNewFilterContainer(IBasicActivateItems activator, IContainer container):base(activator)
         {
+            Weight = DEFAULT_WEIGHT;
+
             _container = container;
         }
         public override void Execute()

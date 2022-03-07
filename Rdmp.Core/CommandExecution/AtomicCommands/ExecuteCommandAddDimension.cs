@@ -21,9 +21,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private readonly AggregateConfiguration aggregate;
         private readonly string column;
         private readonly bool askAtRuntime;
+        private float DEFAULT_WEIGHT = 2.4f;
 
         public ExecuteCommandAddDimension(IBasicActivateItems basicActivator, AggregateConfiguration aggregate) : base(basicActivator)
         {
+            Weight = DEFAULT_WEIGHT;
             this.aggregate = aggregate;
             askAtRuntime = true;
         }
@@ -31,6 +33,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         [UseWithObjectConstructor]
         public ExecuteCommandAddDimension(IBasicActivateItems basicActivator, AggregateConfiguration aggregate, string column) : base(basicActivator)
         {
+            Weight = DEFAULT_WEIGHT;
             this.aggregate = aggregate;
             this.column = column;
 

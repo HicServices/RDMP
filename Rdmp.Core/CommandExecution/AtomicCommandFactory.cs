@@ -179,12 +179,15 @@ namespace Rdmp.Core.CommandExecution
 
             if(Is(o,out  AggregateConfiguration ac) && !ac.Catalogue.IsApiCall())
             {
-                yield return new ExecuteCommandViewSample(_activator, ac);
-                yield return new ExecuteCommandAddNewFilterContainer(_activator,ac);
-                yield return new ExecuteCommandImportFilterContainerTree(_activator,ac);
-                yield return new ExecuteCommandCreateNewFilter(_activator,ac);
+                yield return new ExecuteCommandCreateNewFilter(_activator, ac) { SuggestedCategory = Add, OverrideCommandName = "New Filter" };
+                yield return new ExecuteCommandCreateNewFilterFromCatalogue(_activator, ac) { SuggestedCategory = Add, OverrideCommandName = "Exisiting Filter" };
 
-                yield return new ExecuteCommandAddParameter(_activator, ac, null,null,null);
+                yield return new ExecuteCommandAddNewFilterContainer(_activator,ac) { SuggestedCategory = Add, OverrideCommandName = "New Filter Container" };
+                yield return new ExecuteCommandImportFilterContainerTree(_activator, ac) { SuggestedCategory = Add, OverrideCommandName = "Exisiting Filter Container (copy of)" };
+
+                yield return new ExecuteCommandAddParameter(_activator, ac, null, null, null) { SuggestedCategory = Add, OverrideCommandName = "New Catalogue Filter Parameter" };
+
+                yield return new ExecuteCommandViewSample(_activator, ac) { OverrideCommandName = "View Sample SQL/Data" };
 
                 // graph options
                 yield return new ExecuteCommandAddDimension(_activator, ac) { SuggestedCategory = Dimensions };
@@ -193,25 +196,21 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandSetAxis(_activator, ac) { SuggestedCategory = Dimensions };
                 yield return new ExecuteCommandSetAxis(_activator, ac, null) { OverrideCommandName = "Clear Axis", SuggestedCategory = Dimensions };
 
-
-                yield return new ExecuteCommandCreateNewFilterFromCatalogue(_activator,ac);
                 
-                if(ac.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
+                /*if(ac.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
                 {
                     yield return new ExecuteCommandSetFilterTreeShortcut(_activator, ac, null) { OverrideCommandName = "Clear Filter Tree Shortcut" };
                 }
                 else
                 {
                     yield return new ExecuteCommandSetFilterTreeShortcut(_activator, ac);
-                }
-                
-                
+                }*/
 
                 //only allow them to execute graph if it is normal aggregate graph
                 if (!ac.IsCohortIdentificationAggregate)
                     yield return new ExecuteCommandExecuteAggregateGraph(_activator, ac);
 
-                yield return new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(_activator,ac);
+                //yield return new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(_activator,ac);
             }
             
             if(Is(o,out  IContainer container))
@@ -303,7 +302,7 @@ namespace Rdmp.Core.CommandExecution
                     yield return new ExecuteCommandViewLogs(_activator,eds,new LogViewerFilter(LoggingTables.TableLoadRun));
                 }
 
-                yield return new ExecuteCommandQueryPlatformDatabase(_activator, eds) { OverrideCommandName = "Query Database"};
+                yield return new ExecuteCommandQueryPlatformDatabase(_activator, eds) { OverrideCommandName = "View Data"};
             }
 
             if(Is(o, out QueryCacheUsedByCohortIdentificationNode cicQueryCache))
@@ -581,18 +580,18 @@ namespace Rdmp.Core.CommandExecution
 
             if (Is(o, out CohortAggregateContainer cohortAggregateContainer))
             {
-                yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer, SetOperation.EXCEPT) { SuggestedCategory = SetContainerOperation };
-                yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer, SetOperation.UNION) { SuggestedCategory = SetContainerOperation };
-                yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer, SetOperation.INTERSECT) { SuggestedCategory = SetContainerOperation };
+                yield return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator, cohortAggregateContainer) { SuggestedCategory = Add, OverrideCommandName = "Catalogue" };
+                yield return new ExecuteCommandAddCohortSubContainer(_activator, cohortAggregateContainer) { SuggestedCategory = Add,  OverrideCommandName = "Sub Container" };
+                yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator, cohortAggregateContainer, true) { SuggestedCategory = Add, OverrideCommandName = "Existing Cohort Set (copy of)" };
+                yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator, cohortAggregateContainer, false) { SuggestedCategory = Add, OverrideCommandName = "Aggregate" };
+                yield return new ExecuteCommandImportCohortIdentificationConfiguration(_activator, null, cohortAggregateContainer) { SuggestedCategory = Add, OverrideCommandName = "Existing Cohort Builder Query (copy of)" };
 
-                yield return new ExecuteCommandAddCohortSubContainer(_activator, cohortAggregateContainer) { SuggestedCategory = Add };
+                //Set Operation
+                yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer, SetOperation.UNION) { SuggestedCategory = SetContainerOperation, OverrideCommandName = "UNION" };
+                yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer, SetOperation.EXCEPT) { SuggestedCategory = SetContainerOperation, OverrideCommandName = "EXCEPT" };
+                yield return new ExecuteCommandSetContainerOperation(_activator, cohortAggregateContainer, SetOperation.INTERSECT) { SuggestedCategory = SetContainerOperation, OverrideCommandName = "INTERSECT" };
 
-                yield return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator, cohortAggregateContainer) { SuggestedCategory = Add };
-                yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator, cohortAggregateContainer, true) { SuggestedCategory = Add };
-                yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator, cohortAggregateContainer, false) { SuggestedCategory = Add };
-
-                yield return new ExecuteCommandImportCohortIdentificationConfiguration(_activator, null, cohortAggregateContainer) { SuggestedCategory = Add };
-                yield return new ExecuteCommandUnMergeCohortIdentificationConfiguration(_activator, cohortAggregateContainer);
+                yield return new ExecuteCommandUnMergeCohortIdentificationConfiguration(_activator, cohortAggregateContainer) { OverrideCommandName = "Seperate Cohort Builder Query"};
 
             }
 

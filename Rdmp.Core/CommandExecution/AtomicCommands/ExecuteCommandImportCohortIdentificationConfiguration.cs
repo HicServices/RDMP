@@ -23,6 +23,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public ExecuteCommandImportCohortIdentificationConfiguration(IBasicActivateItems activator,CohortIdentificationConfiguration[] toImport, CohortAggregateContainer intoContainer) : base(activator)
         {
+            Weight = 0.15f;
+
             ToImport = toImport;
             IntoContainer = intoContainer;
 

@@ -31,10 +31,20 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 SetImpossible(reason);
             }
+
+            switch (_operation)
+            {
+                case SetOperation.UNION: Weight = 0.21f; break;
+                case SetOperation.EXCEPT: Weight = 0.22f; break;
+                case SetOperation.INTERSECT: Weight = 0.23f; break;
+            }
         }
 
         public override string GetCommandName()
         {
+            if (!string.IsNullOrWhiteSpace(OverrideCommandName))
+                return OverrideCommandName;
+
             return "Set operation " + _operation;
         }
 
