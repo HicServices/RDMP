@@ -196,7 +196,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
                     var dt2 = RunGetChunk(file, adjust);
                     Assert.AreEqual(2, dt2.Rows.Count);
 
-                    AssertDivertFileIsExactly(Environment.NewLine + "Other People To Investigate" + Environment.NewLine);
+                    AssertDivertFileIsExactly("Other People To Investigate" + Environment.NewLine);
 
                     break;
                 default:
