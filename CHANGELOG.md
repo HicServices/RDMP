@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [7.0.8] - 2022-03-08
+
 ### Fixed
 
 - Fixed Startup skipping some plugin dlls during load and enabled multithreading
@@ -1094,7 +1096,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.7...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.8...develop
+[7.0.8]: https://github.com/HicServices/RDMP/compare/v7.0.7...v7.0.8
 [7.0.7]: https://github.com/HicServices/RDMP/compare/v7.0.6...v7.0.7
 [7.0.6]: https://github.com/HicServices/RDMP/compare/v7.0.5...v7.0.6
 [7.0.5]: https://github.com/HicServices/RDMP/compare/v7.0.4...v7.0.5
