@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed Startup skipping some plugin dlls during load and enabled multithreading
+- Fixed CLI not showing underlying exception when unable to reach platform databases
+
 ### Removed
 
 - CSV files with unclosed leading quotes are no longer preserved when using IgnoreQuotes (side effect of updating CsvHelper)

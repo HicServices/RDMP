@@ -100,16 +100,6 @@ namespace Tests.Common
         {
         }
 
-        ///
-        /// Sanity check the .Net assembly checker
-        ///
-        [Test]
-        public static void TestIsDotNetAssembly()
-        {
-            Assert.True(SafeDirectoryCatalog.IsDotNetAssembly(Path.Combine(
-                RuntimeEnvironment.GetRuntimeDirectory(),
-                "System.Net.dll")));
-        }
 
         /// <summary>
         /// Creates a minimum viable object of Type T.  This includes the object and any dependencies e.g. a 
