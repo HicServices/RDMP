@@ -45,7 +45,7 @@ namespace Rdmp.Core.CommandLine.Gui
         
         private ListView _listView;
         private bool _changes;
-        private TextField mainInput;
+        private TextField _mainInput;
         private DateTime _lastKeypress = DateTime.Now;
 
         /// <summary>
@@ -141,6 +141,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 Width = Dim.Fill(2)
             };
 
+            _listView.KeyPress += _listView_KeyPress;
             _listView.SetSource( (_collection = BuildList(this.GetInitialSource())).ToList());
             win.Add(_listView);
 
@@ -178,19 +179,19 @@ namespace Rdmp.Core.CommandLine.Gui
 
                 win.Add(searchLabel);
             
-                mainInput = new TextField ("") {
+                _mainInput = new TextField ("") {
                     X = Pos.Right(searchLabel),
                     Y = Pos.Bottom(_listView),
                     Width = 30,
                 };
 
                 btnOk.X = 38;
-                btnCancel.X = 48;
+                btnCancel.X = Pos.Right(btnOk) + 1;
 
-                win.Add(mainInput);
-                mainInput.SetFocus();
+                win.Add(_mainInput);
+                _mainInput.SetFocus();
                 
-                mainInput.TextChanged += (s) =>
+                _mainInput.TextChanged += (s) =>
                 {
                     // Don't update the UI while user is hammering away on the keyboard
                     _lastKeypress = DateTime.Now;
@@ -218,7 +219,14 @@ namespace Rdmp.Core.CommandLine.Gui
             return okClicked;
         }
 
-        
+        private void _listView_KeyPress(View.KeyEventEventArgs obj)
+        {
+            // if user types in some text change the focus to the text box to enable searching
+            if (char.IsLetterOrDigit((char)obj.KeyEvent.KeyValue))
+            {
+                _mainInput.FocusFirst();
+            }
+        }
 
         /// <summary>
         /// Last minute method for adding extra stuff to the window (to the right of <paramref name="btnCancel"/>)
@@ -249,7 +257,7 @@ namespace Rdmp.Core.CommandLine.Gui
         }
         protected void RestartFiltering()
         {
-            RestartFiltering(mainInput.Text.ToString());
+            RestartFiltering(_mainInput.Text.ToString());
         }
 
         protected void RestartFiltering(string searchTerm)
