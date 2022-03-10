@@ -108,7 +108,16 @@ namespace Rdmp.Core.Curation.FilterImporting
             }
             ,typeof(ExtractionFilter), filtersThatCouldBeImported))
             {
-                yield return Import(containerToImportOneInto, (IFilter)f, globalParameters, otherFiltersInScope);
+                var i = Import(containerToImportOneInto, (IFilter)f, globalParameters, otherFiltersInScope);
+
+                // returns null if cancelled
+                if(i != null)
+                    yield return i;
+                else
+                {
+                    // user cancelled import half way through
+                    yield break;
+                }
             }
         }
 
@@ -125,7 +134,13 @@ namespace Rdmp.Core.Curation.FilterImporting
 
             if (parameterSets.Any())
             {
-                var chosen = _activator.SelectOne("Parameter Set", parameterSets);
+                var chosen = _activator.SelectOne(new DialogArgs
+                {
+                    WindowTitle = "Choose Parameter Set",
+                    TaskDescription = @$"Filter '{filter}' has parameters ({
+                        string.Join(',',filter.GetAllParameters().Select(p=>p.ParameterName))
+                    }).  There are existing parameter sets configured for these parameters.  Choose which parameter values to use with this filter"
+                }, parameterSets);
 
                 if (chosen != null)
                     return chosen as ExtractionFilterParameterSet;
