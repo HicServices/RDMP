@@ -97,6 +97,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         }
         public override string GetCommandName()
         {
+            if(!string.IsNullOrEmpty(OverrideCommandName))
+            {
+                return OverrideCommandName;
+            }
+
             if(_property != null)
             {
                 return $"Set {_property.Name}";
