@@ -100,7 +100,13 @@ namespace Rdmp.Core.Curation.FilterImporting
 
         private IEnumerable<IFilter> ImportManyFromSelection(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported, ISqlParameter[] globalParameters, IFilter[] otherFiltersInScope)
         {
-            foreach(var f in _activator.SelectMany("Import filter",typeof(ExtractionFilter), filtersThatCouldBeImported))
+            foreach(var f in _activator.SelectMany(new DialogArgs {
+                WindowTitle = "Import Filter(s)",
+                EntryLabel = "Import",
+                TaskDescription = "The following Catalogue filters are available for importing.  Selecting a filter will make a new cloned copy in your WHERE container.  If a filter has declared parameters you may be prompted to pick from an existing predetermined set of values."
+
+            }
+            ,typeof(ExtractionFilter), filtersThatCouldBeImported))
             {
                 yield return Import(containerToImportOneInto, (IFilter)f, globalParameters, otherFiltersInScope);
             }
