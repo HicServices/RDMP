@@ -41,10 +41,14 @@ namespace Rdmp.Core.Curation.FilterImporting
 
         public IFilter ImportOneFromSelection(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported)
         {
-            ISqlParameter[] global;
-            IFilter[] otherFilters;
-            GetGlobalsAndFilters(containerToImportOneInto, out global, out otherFilters);
+            GetGlobalsAndFilters(containerToImportOneInto, out var global, out var otherFilters);
             return ImportOneFromSelection(containerToImportOneInto, filtersThatCouldBeImported, global, otherFilters);
+        }
+
+        public IEnumerable<IFilter> ImportManyFromSelection(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported)
+        {
+            GetGlobalsAndFilters(containerToImportOneInto, out var global, out var otherFilters);
+            return ImportManyFromSelection(containerToImportOneInto, filtersThatCouldBeImported, global, otherFilters);
         }
 
         private IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport, ISqlParameter[] globalParameters, IFilter[] otherFiltersInScope)
@@ -92,6 +96,14 @@ namespace Rdmp.Core.Curation.FilterImporting
             }
 
             return null;//user chose not to import anything
+        }
+
+        private IEnumerable<IFilter> ImportManyFromSelection(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported, ISqlParameter[] globalParameters, IFilter[] otherFiltersInScope)
+        {
+            foreach(var f in _activator.SelectMany("Import filter",typeof(ExtractionFilter), filtersThatCouldBeImported))
+            {
+                yield return Import(containerToImportOneInto, (IFilter)f, globalParameters, otherFiltersInScope);
+            }
         }
 
         private ExtractionFilterParameterSet AdvertiseAvailableFilterParameterSetsIfAny(IFilter filter, out bool cancel)
