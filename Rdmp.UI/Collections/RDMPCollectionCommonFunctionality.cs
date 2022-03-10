@@ -597,7 +597,7 @@ namespace Rdmp.UI.Collections
                     }
 
                     MenuBuilt?.Invoke(this,new MenuBuiltEventArgs(menu,o));
-                    return menu;
+                    return Sort(menu);
                 }
 
                 if (o != null)
@@ -632,7 +632,7 @@ namespace Rdmp.UI.Collections
                         }
                         
                         MenuBuilt?.Invoke(this,new MenuBuiltEventArgs(menu,o));
-                        return menu;
+                        return Sort(menu);
                     }
 
                     //no compatible menus so just return default menu
@@ -640,7 +640,7 @@ namespace Rdmp.UI.Collections
                     defaultMenu.AddCommonMenuItems(this);
                     
                     MenuBuilt?.Invoke(this,new MenuBuiltEventArgs(defaultMenu,o));
-                    return defaultMenu;
+                    return Sort(defaultMenu);
                 }
                 else
                 {
@@ -652,7 +652,7 @@ namespace Rdmp.UI.Collections
                     {
                         var menu = factory.CreateMenu(_activator, Tree, _collection, WhitespaceRightClickMenuCommandsGetter(_activator));
                         menu.AddCommonMenuItems(this);
-                        return menu;
+                        return Sort(menu);
 
                     }
                 }
@@ -734,11 +734,15 @@ namespace Rdmp.UI.Collections
             if(menu != null)
                 menu.AddCommonMenuItems(this);
 
-            if(menu != null)
+            return menu;
+        }
+
+        private ContextMenuStrip Sort(ContextMenuStrip menu)
+        {
+            if (menu != null)
             {
                 OrderMenuItems(menu.Items);
-            }            
-
+            }
             return menu;
         }
 
