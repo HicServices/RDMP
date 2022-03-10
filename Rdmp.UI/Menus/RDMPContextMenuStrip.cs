@@ -65,9 +65,15 @@ namespace Rdmp.UI.Menus
             AtomicCommandUIFactory = new AtomicCommandUIFactory(_activator);
             
             RepositoryLocator = _activator.RepositoryLocator;
-                    
-            if(o != null && !(o is RDMPCollection))
-                ActivateCommandMenuItem = Add(new ExecuteCommandActivate(_activator,args.Masquerader?? o),Keys.None);
+
+            if (o != null && !(o is RDMPCollection))
+            {
+                var activateCommand = new ExecuteCommandActivate(_activator, args.Masquerader ?? o);
+                if (!(activateCommand.ReasonCommandImpossible?.Equals(GlobalStrings.ObjectCannotBeActivated) ?? false))
+                {
+                    ActivateCommandMenuItem = Add(activateCommand, Keys.None);
+                }
+            }
         }
 
         /// <summary>
@@ -93,6 +99,10 @@ namespace Rdmp.UI.Menus
         protected void ReBrandActivateAs(string newTextForActivate, RDMPConcept newConcept, OverlayKind overlayKind = OverlayKind.None)
         {
             //Activate is currently branded edit by parent lets tailor that
+            if(ActivateCommandMenuItem == null)
+            {
+                throw new ArgumentException($"Object cannot be rebranded as '{newTextForActivate}' as the object '{_o}' cannot be activated.");
+            }
             ActivateCommandMenuItem.Image = _activator.CoreIconProvider.GetImage(newConcept, overlayKind);
             ActivateCommandMenuItem.Text = newTextForActivate;
         }
