@@ -422,7 +422,7 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var navigate = new NavigateToObjectUI(Activator);
+            var navigate = new NavigateToObjectUI(Activator, addFindMultiple: true);
             navigate.Text = "Open";
             navigate.CompletionAction = (o) => Activator.WindowArranger.SetupEditAnything(this, o);
             navigate.Show();
@@ -432,7 +432,7 @@ namespace ResearchDataManagementPlatform.Menus
         {
             var visibleCollection = _windowManager.GetFocusedCollection();
 
-            new NavigateToObjectUI(Activator, null, visibleCollection).Show();
+            new NavigateToObjectUI(Activator, null, visibleCollection, addFindMultiple: true).Show();
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -558,21 +558,7 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void findMultipleToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-            var sessions = Activator.GetSessions().ToArray();
-
-            string name = "Find Results";
-
-            int i = 1;
-
-            while(sessions.Any(s=>s.Collection.SessionName.Equals(name)))
-            {
-                i++;
-                name = "Find Results " + i;
-            }
-
-
-            var cmd = new ExecuteCommandStartSession(Activator, null, name);
+            var cmd = new ExecuteCommandStartSession(Activator, null, ExecuteCommandStartSession.FindResultsTitle);
             cmd.Execute();
         }
     }

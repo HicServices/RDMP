@@ -7,6 +7,7 @@
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
+using System.Linq;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
@@ -15,8 +16,14 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
     /// </summary>
     public class ExecuteCommandStartSession : BasicUICommandExecution, IAtomicCommand
     {
+        public const string FindResultsTitle = "Find Results";
         private readonly string _sessionName;
         private IMapsDirectlyToDatabaseTable[] _initialSelection;
+
+        /// <summary>
+        /// True if the command was cancelled before finishing <see cref="Execute"/>
+        /// </summary>
+        public bool Cancelled { get; set; } = true;
 
         public ExecuteCommandStartSession(IActivateItems activator, IMapsDirectlyToDatabaseTable[] initialSelection, string sessionName) : base(activator)
         {
@@ -38,7 +45,26 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 name = sessionName;
             }
 
+            name = MakeNovel(name);
+
             Activator.StartSession(name, _initialSelection);
+            Cancelled = false;
+        }
+
+        private string MakeNovel(string name)
+        {
+            var novelName = name;
+            var sessions = ((IActivateItems)BasicActivator).GetSessions().ToArray();
+
+            int i = 1;
+
+            while (sessions.Any(s => s.Collection.SessionName.Equals(novelName)))
+            {
+                i++;
+                novelName = name + i;
+            }
+
+            return novelName;
         }
     }
 }

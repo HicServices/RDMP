@@ -56,7 +56,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
                 btnOpen.DisplayStyle = ToolStripItemDisplayStyle.Text;
                 btnOpen.Click += (s, e) =>
                 {
-                    var ui = new NavigateToObjectUI(activator);
+                    var ui = new NavigateToObjectUI(activator,addFindMultiple:true);
                     ui.AlwaysFilterOn = openType;
                     ui.CompletionAction = Open;
                     ui.Show();

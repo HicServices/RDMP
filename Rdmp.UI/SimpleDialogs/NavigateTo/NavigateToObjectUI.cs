@@ -25,6 +25,8 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Theme;
@@ -64,6 +66,8 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
         private CancellationTokenSource _lastCancellationToken;
         private Type[] _types;
         private HashSet<string> _typeNames;
+
+        private bool _suppressAutoClose;
 
         /// <summary>
         /// Object types that appear in the task bar as filterable types
@@ -128,7 +132,7 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
             }
         }
 
-        public NavigateToObjectUI(IActivateItems activator, string initialSearchQuery = null,RDMPCollection focusedCollection = RDMPCollection.None):base(activator)
+        public NavigateToObjectUI(IActivateItems activator, string initialSearchQuery = null,RDMPCollection focusedCollection = RDMPCollection.None, bool addFindMultiple = false):base(activator)
         {
             _coreIconProvider = activator.CoreIconProvider;
             _favouriteProvider = Activator.FavouritesProvider;
@@ -205,6 +209,34 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
                 AddUserSettingCheckbox(() => UserSettings.ShowColdStorageCatalogues, (v) => UserSettings.ShowColdStorageCatalogues = v, "C", "Include Cold Storage");
                 AddUserSettingCheckbox(() => UserSettings.ShowProjectSpecificCatalogues, (v) => UserSettings.ShowProjectSpecificCatalogues = v, "P", "Include Project Specific");
                 AddUserSettingCheckbox(() => UserSettings.ShowNonExtractableCatalogues, (v) => UserSettings.ShowNonExtractableCatalogues = v, "E", "Include Extractable");
+            }
+
+            if(addFindMultiple)
+            {
+                toolStrip1.Items.Add(new ToolStripSeparator());
+                toolStrip1.Items.Add(new ToolStripButton("Find Multiple", null, FindMultiple_Click));
+            }
+        }
+
+        private void FindMultiple_Click(object sender, EventArgs e)
+        {
+            _suppressAutoClose = true;
+
+            try
+            {
+                var cmd = new ExecuteCommandStartSession(Activator, null, ExecuteCommandStartSession.FindResultsTitle)
+                {
+                    OverrideCommandName = "Find Multiple"
+                };
+                cmd.Execute();
+
+                if(!cmd.Cancelled)
+                    Close();
+            }
+            finally
+            {
+
+                _suppressAutoClose = false;
             }
         }
 
@@ -361,7 +393,8 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
 
         protected override void OnDeactivate(EventArgs e)
         {
-            this.Close();
+            if(!_suppressAutoClose)
+                this.Close();
         }
 
 

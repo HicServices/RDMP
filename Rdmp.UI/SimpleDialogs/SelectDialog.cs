@@ -136,6 +136,14 @@ namespace Rdmp.UI.SimpleDialogs
             btnCancel.KeyPress += BtnKeypress;
             btnSelect.KeyPress += BtnKeypress;
             btnSelectNULL.KeyPress += BtnKeypress;
+
+            // Prevents the object list view going 'BONG' every time the user hits space
+            // to check/uncheck objects
+            olvObjects.KeyPress += (s, e) =>
+            {
+                if (e.KeyChar == ' ' || e.KeyChar == '\r' || e.KeyChar == '\n')
+                    e.Handled = true;
+            };
         }
 
         private void BtnKeypress(object sender, KeyPressEventArgs e)
