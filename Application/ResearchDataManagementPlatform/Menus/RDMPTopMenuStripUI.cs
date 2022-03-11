@@ -506,7 +506,7 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void newSessionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandStartSession(Activator,null);
+            var cmd = new ExecuteCommandStartSession(Activator,null,null);
             cmd.Execute();
         }
 
@@ -554,6 +554,26 @@ namespace ResearchDataManagementPlatform.Menus
             {
                 Process.GetCurrentProcess().Kill();
             }   
+        }
+
+        private void findMultipleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+            var sessions = Activator.GetSessions().ToArray();
+
+            string name = "Find Results";
+
+            int i = 1;
+
+            while(sessions.Any(s=>s.Collection.SessionName.Equals(name)))
+            {
+                i++;
+                name = "Find Results " + i;
+            }
+
+
+            var cmd = new ExecuteCommandStartSession(Activator, null, name);
+            cmd.Execute();
         }
     }
 }

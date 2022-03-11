@@ -132,6 +132,21 @@ namespace Rdmp.UI.SimpleDialogs
 
             RDMPCollectionCommonFunctionality.SetupColumnTracking(olvObjects, olvName, new Guid("298cda00-5ec8-423c-9230-71d78bec6bc4"));
             RDMPCollectionCommonFunctionality.SetupColumnTracking(olvObjects, olvID, new Guid("bb0fe2f0-1e73-4b00-a5b7-4b6ce3510bab"));
+
+            btnCancel.KeyPress += BtnKeypress;
+            btnSelect.KeyPress += BtnKeypress;
+            btnSelectNULL.KeyPress += BtnKeypress;
+        }
+
+        private void BtnKeypress(object sender, KeyPressEventArgs e)
+        {
+            // if user is typing change the focus to the text box
+            if(char.IsLetterOrDigit(e.KeyChar))
+            {
+                tbFilter.Text += e.KeyChar;
+                tbFilter.Select(tbFilter.TextLength, 0);
+                tbFilter.Focus();
+            }
         }
 
         private bool IsBasicallyAllCatalogues(T[] o)

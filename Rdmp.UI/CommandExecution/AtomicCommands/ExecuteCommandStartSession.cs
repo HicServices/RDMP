@@ -15,19 +15,30 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
     /// </summary>
     public class ExecuteCommandStartSession : BasicUICommandExecution, IAtomicCommand
     {
+        private readonly string _sessionName;
         private IMapsDirectlyToDatabaseTable[] _initialSelection;
 
-        public ExecuteCommandStartSession(IActivateItems activator, IMapsDirectlyToDatabaseTable[] initialSelection) : base(activator)
+        public ExecuteCommandStartSession(IActivateItems activator, IMapsDirectlyToDatabaseTable[] initialSelection, string sessionName) : base(activator)
         {
             _initialSelection = initialSelection;
+            _sessionName = sessionName;
         }
 
         public override void Execute()
         {
             base.Execute();
 
-            if (Activator.TypeText("Session Name", "Name", 100, "Session 0", out string sessionName, false))
-                Activator.StartSession(sessionName, _initialSelection);
+            var name = _sessionName;
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                if (!Activator.TypeText("Session Name", "Name", 100, "Session 0", out string sessionName, false))
+                    return;
+
+                name = sessionName;
+            }
+
+            Activator.StartSession(name, _initialSelection);
         }
     }
 }

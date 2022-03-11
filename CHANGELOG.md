@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved performance of Select objects dialog when there are many objects available to pick from
 - Made Select objects dialog filter in the same way as the Find dialog (i.e. support short codes and Type names)
 - Ability to select multiple objects at once when adding to a Session
+- Ability to find multiple objects at once (ctrl+shift+f)
 
 ## [7.0.8] - 2022-03-08
 
