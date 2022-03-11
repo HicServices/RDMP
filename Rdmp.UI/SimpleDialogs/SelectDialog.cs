@@ -76,8 +76,6 @@ namespace Rdmp.UI.SimpleDialogs
             }
 
             olvName.AspectGetter = (m) => m.ToString();
-            
-            olvObjects.ListFilter = new TailFilter(MaxObjectsToShow);
 
             olvName.ImageGetter = GetImage;
             olvObjects.RowHeight = 19;
@@ -100,9 +98,6 @@ namespace Rdmp.UI.SimpleDialogs
             var o = toSelectFrom.ToArray();
             _allObjects = o;
 
-            //Add them to the tree view
-            olvObjects.AddObjects(o);
-
             if (o.Length>0 && IsBasicallyAllCatalogues(o))
             {
                 splitContainer1.Panel2Collapsed = false;
@@ -111,7 +106,15 @@ namespace Rdmp.UI.SimpleDialogs
             }
             else
                 splitContainer1.Panel2Collapsed = true;
-            
+
+            //We don't need to add objects if the FindSearchTailFilterWithAlwaysShowList is on
+            //because even if it's given an empty list it returns the matching objects
+            if (!UseAdvancedTailFilter())
+            {
+                //Add them to the tree view as we're not using the tail filter
+                olvObjects.AddObjects(o);
+            }            
+
             AddUsefulPropertiesIfHomogeneousTypes(o);
 
             // Setup olvSelected but leave it removed for now (IsVisible is problematic - especially for first columns)
@@ -215,7 +218,6 @@ namespace Rdmp.UI.SimpleDialogs
                     {
                         //add a column
                         var newCol = new OLVColumn(propertyInfo.Name, propertyInfo.Name);
-                        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvObjects, newCol, new Guid("646da5ab-468a-49d0-afbb-a60c23e45bbb" + propertyInfo.Name));
                         olvObjects.AllColumns.Add(newCol);
                     }
                 }
@@ -272,7 +274,7 @@ namespace Rdmp.UI.SimpleDialogs
                     olvObjects.ShowGroups = true;
                     olvObjects.AlwaysGroupByColumn = olvSelected;
                     olvObjects.AlwaysGroupBySortOrder = SortOrder.Descending;
-                    olvObjects.ShowItemCountOnGroups = true;   
+                    olvObjects.ShowItemCountOnGroups = true;
                 }
                 else
                 {
@@ -406,7 +408,7 @@ namespace Rdmp.UI.SimpleDialogs
 
 
             // if we are dealing with database objects
-            if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(typeof(T)) && !_useCatalogueFilter)
+            if (UseAdvancedTailFilter())
             {
                 FindSearchTailFilterWithAlwaysShowList filter = null;
 
@@ -436,7 +438,12 @@ namespace Rdmp.UI.SimpleDialogs
                     : modelFilter;
             }
         }
-        
+
+        private bool UseAdvancedTailFilter()
+        {
+            return typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(typeof(T)) && !_useCatalogueFilter;
+        }
+
         private void tbFilter_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down)

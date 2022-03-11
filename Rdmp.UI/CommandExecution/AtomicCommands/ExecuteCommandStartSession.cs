@@ -24,6 +24,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// True if the command was cancelled before finishing <see cref="Execute"/>
         /// </summary>
         public bool Cancelled { get; set; } = true;
+        public string InitialSearch { get; set; }
 
         public ExecuteCommandStartSession(IActivateItems activator, IMapsDirectlyToDatabaseTable[] initialSelection, string sessionName) : base(activator)
         {
@@ -47,7 +48,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             name = MakeNovel(name);
 
-            Activator.StartSession(name, _initialSelection);
+            Activator.StartSession(name, _initialSelection, InitialSearch);
             Cancelled = false;
         }
 

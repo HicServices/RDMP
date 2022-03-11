@@ -226,7 +226,8 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
             {
                 var cmd = new ExecuteCommandStartSession(Activator, null, ExecuteCommandStartSession.FindResultsTitle)
                 {
-                    OverrideCommandName = "Find Multiple"
+                    OverrideCommandName = "Find Multiple",
+                    InitialSearch = textBox1.Text
                 };
                 cmd.Execute();
 

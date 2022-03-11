@@ -695,14 +695,15 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 new CommandInvokerDelegate(typeof(IActivateItems),true,(p)=>this)
             };
         }
-        public void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialObjects)
+        public void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialObjects, string initialSearch)
         {
             if(initialObjects == null)
             {
                 initialObjects =  SelectMany(new DialogArgs
                 {
                     WindowTitle = "Session Objects",
-                    TaskDescription = "Pick which objects you want added to the session window.  You can always add more later"
+                    TaskDescription = "Pick which objects you want added to the session window.  You can always add more later",
+                    InitialSearchText = initialSearch
                 },typeof(IMapsDirectlyToDatabaseTable),CoreChildProvider.GetAllSearchables().Keys.ToArray())?.ToList();
 
                 if(initialObjects == null || initialObjects.Count() == 0)
