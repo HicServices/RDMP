@@ -174,6 +174,10 @@ namespace Rdmp.UI.SimpleDialogs
 
         private void Selected_AspectPutter(object rowobject, object newvalue)
         {
+
+            timer1.Stop();
+            timer1.Start();
+
             var b = (bool) newvalue;
             if (b)
                 MultiSelected.Add((T) rowobject);
@@ -211,6 +215,7 @@ namespace Rdmp.UI.SimpleDialogs
                     {
                         //add a column
                         var newCol = new OLVColumn(propertyInfo.Name, propertyInfo.Name);
+                        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvObjects, newCol, new Guid("646da5ab-468a-49d0-afbb-a60c23e45bbb" + propertyInfo.Name));
                         olvObjects.AllColumns.Add(newCol);
                     }
                 }
@@ -225,6 +230,7 @@ namespace Rdmp.UI.SimpleDialogs
                     //yes, then tell the user what they are with this exciting new column
                     var newCol = new OLVColumn("Type", null);
                     newCol.AspectGetter += TypeAspectGetter;
+                    RDMPCollectionCommonFunctionality.SetupColumnTracking(olvObjects, newCol, new Guid("189ea535-2ada-4bdd-b137-0d7db2c833c6"));
                     olvObjects.AllColumns.Add(newCol);
                 }
             }
@@ -478,7 +484,11 @@ namespace Rdmp.UI.SimpleDialogs
             if (buildGroupsRequired)
             {
                 buildGroupsRequired = false;
+                olvObjects.BeginUpdate();
+                olvObjects.SuspendLayout();
                 olvObjects.BuildGroups();
+                olvObjects.EndUpdate();
+                olvObjects.ResumeLayout();
             }
         }
     }
