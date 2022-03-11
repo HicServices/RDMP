@@ -8,6 +8,7 @@ using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Providers;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,8 @@ namespace Rdmp.UI.SimpleDialogs
                 var searchThese = allObjects.ToDictionary(o => o, activator.CoreChildProvider.GetDescendancyListIfAnyFor);
 
                 var scorer = new SearchablesMatchScorer();
-                var matches = scorer.ScoreMatches(searchThese, text, cancellationToken, null);
+                scorer.TypeNames = new HashSet<string>(allObjects.Select(m => m.GetType().Name).Distinct(), StringComparer.CurrentCultureIgnoreCase);
+                var matches = scorer.ScoreMatches(searchThese, text, cancellationToken,null);
 
                 // we were cancelled
                 if (matches == null)
