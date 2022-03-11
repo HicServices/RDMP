@@ -400,7 +400,7 @@ namespace Rdmp.UI.SimpleDialogs
 
 
             // if we are dealing with database objects
-            if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(typeof(T)))
+            if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(typeof(T)) && !_useCatalogueFilter)
             {
                 FindSearchTailFilterWithAlwaysShowList filter = null;
 
