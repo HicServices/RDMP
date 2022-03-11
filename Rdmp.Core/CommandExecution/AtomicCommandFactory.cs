@@ -216,12 +216,11 @@ namespace Rdmp.Core.CommandExecution
             if(Is(o,out  IContainer container))
             {
                 string targetOperation = container.Operation == FilterContainerOperation.AND ? "OR" : "AND";
+                yield return new ExecuteCommandSet(_activator,container,nameof(IContainer.Operation),targetOperation){OverrideCommandName = $"Set Operation to {targetOperation}" };               
 
-                yield return new ExecuteCommandSet(_activator,container,nameof(IContainer.Operation),targetOperation){OverrideCommandName = $"Set Operation to {targetOperation}" };
-                
-                yield return new ExecuteCommandCreateNewFilter(_activator,container.GetFilterFactory(),container);
-                yield return new ExecuteCommandCreateNewFilterFromCatalogue(_activator, container);
-                yield return new ExecuteCommandAddNewFilterContainer(_activator,container){OverrideCommandName = "Add SubContainer" };
+                yield return new ExecuteCommandCreateNewFilter(_activator,container.GetFilterFactory(),container) { SuggestedCategory = Add, OverrideCommandName = "New Filter" };
+                yield return new ExecuteCommandCreateNewFilterFromCatalogue(_activator, container) { SuggestedCategory = Add, OverrideCommandName = "Existing Filter" };
+                yield return new ExecuteCommandAddNewFilterContainer(_activator,container){ SuggestedCategory = Add, OverrideCommandName = "Sub Container" };
                
                 yield return new ExecuteCommandViewFilterMatchData(_activator, container, ViewType.TOP_100);
                 yield return new ExecuteCommandViewFilterMatchData(_activator, container, ViewType.Aggregate);
