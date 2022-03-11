@@ -676,20 +676,6 @@ namespace Rdmp.UI.SubComponents
                 e.Menu.Items.Add(new ToolStripSeparator());
 
                 e.Menu.Items.Add(
-                    BuildItem("View Sql", c, a => !string.IsNullOrWhiteSpace(a.CountSQL),
-                        a => WideMessageBox.Show($"Sql {c}", a.CountSQL, WideMessageBoxTheme.Help))
-                );
-                
-                                
-                e.Menu.Items.Add(
-                    new ToolStripMenuItem("View Crash Message", null,
-                        (s, ev) => ViewCrashMessage(c)){Enabled = c.CrashMessage != null});
-
-                e.Menu.Items.Add(
-                    new ToolStripMenuItem("View Build Log", null,
-                        (s, ev) => WideMessageBox.Show($"Build Log {c}", c.Log, WideMessageBoxTheme.Help)));
-                
-                e.Menu.Items.Add(
                     BuildItem("View Results", c, a => a.Identifiers != null,
                         a =>
                         {
@@ -697,9 +683,21 @@ namespace Rdmp.UI.SubComponents
                         })
                 );
 
+                e.Menu.Items.Add(
+                    BuildItem("View SQL", c, a => !string.IsNullOrWhiteSpace(a.CountSQL),
+                        a => WideMessageBox.Show($"Sql {c}", a.CountSQL, WideMessageBoxTheme.Help))
+                );
+
+                e.Menu.Items.Add(
+                    new ToolStripMenuItem("View Build Log", null,
+                        (s, ev) => WideMessageBox.Show($"Build Log {c}", c.Log, WideMessageBoxTheme.Help)));
+
+                e.Menu.Items.Add(
+                    new ToolStripMenuItem("View Crash Message", null,
+                        (s, ev) => ViewCrashMessage(c)){Enabled = c.CrashMessage != null });
                 
                 e.Menu.Items.Add(
-                    BuildItem("Clear Cache", c, a => a.SubqueriesCached > 0,
+                    BuildItem("Clear Object from Cache", c, a => a.SubqueriesCached > 0,
                         a =>
                         {
                             if (c is ICacheableTask cacheable)
