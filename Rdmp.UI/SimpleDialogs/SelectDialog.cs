@@ -9,12 +9,15 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers.Filtering;
@@ -41,6 +44,8 @@ namespace Rdmp.UI.SimpleDialogs
 
         private bool _useCatalogueFilter = false;
 
+        CancellationTokenSource cts = new CancellationTokenSource();
+        private T[] _allObjects;
 
         public SelectDialog(DialogArgs args, IBasicActivateItems activator, IEnumerable<T> toSelectFrom, bool allowSelectingNULL, bool allowDeleting) :
             this(activator, toSelectFrom, allowSelectingNULL, allowDeleting)
@@ -93,7 +98,8 @@ namespace Rdmp.UI.SimpleDialogs
 
             //Array them
             var o = toSelectFrom.ToArray();
-            
+            _allObjects = o;
+
             //Add them to the tree view
             olvObjects.AddObjects(o);
 
@@ -105,17 +111,7 @@ namespace Rdmp.UI.SimpleDialogs
             }
             else
                 splitContainer1.Panel2Collapsed = true;
-
-            //If there were any
-            if(o.Any())
-            {
-                //Set Width of the Form to accommodate all names no matter how long
-                var pixelWidthofWidestText = o.Max(s =>TextRenderer.MeasureText( s.ToString(),olvObjects.Font).Width);
-
-                //But don't make it too small (smaller than the form designer shows or larger than 1000 pixels)
-                this.Width = Math.Min(Math.Max(Width,100 + pixelWidthofWidestText),1000);
-            }
-
+            
             AddUsefulPropertiesIfHomogeneousTypes(o);
 
             // Setup olvSelected but leave it removed for now (IsVisible is problematic - especially for first columns)
@@ -370,16 +366,46 @@ namespace Rdmp.UI.SimpleDialogs
             ApplyFilter();
         }
 
+
         private void ApplyFilter()
-        {            
-            var modelFilter = new TextMatchFilterWithAlwaysShowList(MultiSelected,olvObjects,tbFilter.Text,StringComparison.InvariantCultureIgnoreCase);
-            olvObjects.ListFilter = new CherryPickingTailFilter(MaxObjectsToShow,modelFilter);
+        {
+            // cancel the old token
+            cts.Cancel();
 
-            olvObjects.ModelFilter = _useCatalogueFilter ? 
-                (IModelFilter) new CompositeAllFilter(new List<IModelFilter>{modelFilter,new CatalogueCollectionFilter(_activator.CoreChildProvider)})
-                : modelFilter;
-            
+            // and allocate a new one
+            cts = new CancellationTokenSource();
 
+
+            // if we are dealing with database objects
+            if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(typeof(T)))
+            {
+                FindSearchTailFilterWithAlwaysShowList filter = null;
+
+                Task.Run(() =>
+                
+                // construct the new filter in a new Thread since we may be typing lots of keystrokes in
+                // rapid succession and constructing is the expensive bit of this operation
+                filter = new FindSearchTailFilterWithAlwaysShowList(
+                    _activator, MultiSelected, _allObjects.Cast<IMapsDirectlyToDatabaseTable>(), tbFilter.Text, MaxObjectsToShow, cts.Token), cts.Token)
+                    .ContinueWith(
+                    (t)=>
+                    {
+                        // on the UI thread if we constructed the filter successfully then set it
+                        if(t.IsCompletedSuccessfully)
+                        {
+                            olvObjects.ListFilter = filter;
+                        }
+                    }, TaskScheduler.FromCurrentSynchronizationContext());
+            }
+            else
+            {
+                var modelFilter = new TextMatchFilterWithAlwaysShowList(MultiSelected, olvObjects, tbFilter.Text, StringComparison.InvariantCultureIgnoreCase);
+                olvObjects.ListFilter = new CherryPickingTailFilter(MaxObjectsToShow, modelFilter);
+
+                olvObjects.ModelFilter = _useCatalogueFilter ?
+                    (IModelFilter)new CompositeAllFilter(new List<IModelFilter> { modelFilter, new CatalogueCollectionFilter(_activator.CoreChildProvider) })
+                    : modelFilter;
+            }
         }
         
         private void tbFilter_KeyUp(object sender, KeyEventArgs e)

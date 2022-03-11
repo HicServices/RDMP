@@ -697,9 +697,24 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
         public void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialObjects)
         {
+            if(initialObjects == null)
+            {
+                initialObjects =  SelectMany(new DialogArgs
+                {
+                    WindowTitle = "Session Objects",
+                    TaskDescription = "Pick which objects you want added to the session window.  You can always add more later"
+                },typeof(IMapsDirectlyToDatabaseTable),CoreChildProvider.GetAllSearchables().Keys.ToArray())?.ToList();
+
+                if(initialObjects == null || initialObjects.Count() == 0)
+                {
+                    // user cancelled picking objects
+                    return;
+                }
+            }
+
             var panel = WindowFactory.Create(this,new SessionCollectionUI(),new SessionCollection(sessionName)
             {
-                DatabaseObjects = initialObjects?.ToList() ?? new List<IMapsDirectlyToDatabaseTable>()
+                DatabaseObjects = initialObjects.ToList()
             },CatalogueIcons.WindowLayout);
             panel.Show(_mainDockPanel,DockState.DockLeft);
         }

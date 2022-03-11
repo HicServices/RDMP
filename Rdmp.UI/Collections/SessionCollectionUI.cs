@@ -6,15 +6,13 @@
 
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core;
-using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.Data.Spontaneous;
-using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
-using Rdmp.UI.SimpleDialogs.NavigateTo;
 using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using System;
@@ -138,9 +136,20 @@ namespace Rdmp.UI.Collections
         }
         private void AddObjectToSession(object sender, EventArgs e)
         {
-            var ui = new NavigateToObjectUI(Activator);
-            ui.CompletionAction = (s)=>Add(s);
-            ui.Show();
+            var toAdd = Activator.SelectMany(new DialogArgs
+                {
+                    WindowTitle = "Add to Session",
+                    TaskDescription = "Pick which objects you want added to the session window."
+                }, typeof(IMapsDirectlyToDatabaseTable),
+                Activator.CoreChildProvider.GetAllSearchables().Keys.Except(Collection.DatabaseObjects).ToArray())?.ToList();
+
+            if (toAdd == null || toAdd.Count() == 0)
+            {
+                // user cancelled picking objects
+                return;
+            }
+
+            Add(toAdd.ToArray());
         }
 
         private void RefreshSessionObjects()
