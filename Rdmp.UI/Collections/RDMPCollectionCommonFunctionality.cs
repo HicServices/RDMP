@@ -278,6 +278,11 @@ namespace Rdmp.UI.Collections
                     c.Sortable = false;
         }
 
+        internal static void SetupColumnTracking(object olvObjects, OLVColumn olvID, Guid guid)
+        {
+            throw new NotImplementedException();
+        }
+
         private void Tree_CellToolTipShowing(object sender, ToolTipShowingEventArgs e)
         {
             

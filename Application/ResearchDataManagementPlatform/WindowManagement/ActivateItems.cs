@@ -671,7 +671,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 return null;
             }
 
-            var selectDialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(args, this, availableObjects, false, false);
+            var selectDialog = new SelectDialog2<IMapsDirectlyToDatabaseTable>(args, this, availableObjects, false, false);
             selectDialog.AllowMultiSelect = true;
             
             if (selectDialog.ShowDialog() == DialogResult.OK)
