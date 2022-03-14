@@ -46,7 +46,6 @@ namespace Rdmp.UI.SimpleDialogs
             this.panel1 = new System.Windows.Forms.Panel();
             this.tbFilter = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.olv)).BeginInit();
             this.toolStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -72,9 +71,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.olv.Size = new System.Drawing.Size(587, 270);
             this.olv.TabIndex = 0;
             this.olv.UseCompatibleStateImageBehavior = false;
-            this.olv.UseFiltering = true;
             this.olv.View = System.Windows.Forms.View.Details;
-            this.olv.VirtualMode = true;
             this.olv.CellClick += new System.EventHandler<BrightIdeasSoftware.CellClickEventArgs>(this.listBox1_CellClick);
             this.olv.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             this.olv.KeyUp += new System.Windows.Forms.KeyEventHandler(this.listBox1_KeyUp);
@@ -186,10 +183,6 @@ namespace Rdmp.UI.SimpleDialogs
             this.label1.Text = "Filter:";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // timer1
-            // 
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
             // SelectDialog2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -229,6 +222,5 @@ namespace Rdmp.UI.SimpleDialogs
         private OLVColumn olvName;
         private OLVColumn olvID;
         private OLVColumn olvSelected;
-        private Timer timer1;
     }
 }

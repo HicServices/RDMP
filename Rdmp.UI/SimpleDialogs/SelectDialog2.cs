@@ -31,7 +31,7 @@ namespace Rdmp.UI.SimpleDialogs
         private ICoreIconProvider _coreIconProvider;
         private FavouritesProvider _favouriteProvider;
 
-        private const int MaxMatches = 100;
+        private const int MaxMatches = 500;
         private List<IMapsDirectlyToDatabaseTable> _matches;
         private object oMatches = new object();
 
@@ -51,7 +51,7 @@ namespace Rdmp.UI.SimpleDialogs
         private IActivateItems _activator;
         private bool _allowDeleting;
 
-
+        private bool _noSearchTerms = true;
 
         /// <summary>
         /// Hides the Type selection toggle buttons and forces results to only appear matching the given Type
@@ -86,20 +86,6 @@ namespace Rdmp.UI.SimpleDialogs
                 else
                 {
                     olv.AllColumns.Remove(olvSelected);
-                }
-
-                if (value)
-                {
-                    olv.ShowGroups = true;
-                    olv.AlwaysGroupByColumn = olvSelected;
-                    olv.AlwaysGroupBySortOrder = SortOrder.Descending;
-                    olv.ShowItemCountOnGroups = true;
-                }
-                else
-                {
-
-                    olv.AlwaysGroupByColumn = null;
-                    olv.ShowGroups = false;
                 }
 
                 olv.RebuildColumns();
@@ -152,7 +138,8 @@ namespace Rdmp.UI.SimpleDialogs
 
             if(IsDatabaseObjects())
             {
-                _searchables = toSelectFrom.Cast<IMapsDirectlyToDatabaseTable>().ToDictionary(k => k, activator.CoreChildProvider.GetDescendancyListIfAnyFor);
+                _allObjects = toSelectFrom.ToArray();
+                _searchables = _allObjects.Cast<IMapsDirectlyToDatabaseTable>().ToDictionary(k => k, activator.CoreChildProvider.GetDescendancyListIfAnyFor);
             }
             else
             {
@@ -178,7 +165,6 @@ namespace Rdmp.UI.SimpleDialogs
             };
 
             StartPosition = FormStartPosition.CenterScreen;
-            DoubleBuffered = true;
 
             _types = _searchables.Keys.Select(k => k.GetType()).Distinct().ToArray();
             _typeNames = new HashSet<string>(_types.Select(t => t.Name));
@@ -227,9 +213,6 @@ namespace Rdmp.UI.SimpleDialogs
                 AddUserSettingCheckbox(() => UserSettings.ShowProjectSpecificCatalogues, (v) => UserSettings.ShowProjectSpecificCatalogues = v, "P", "Include Project Specific");
                 AddUserSettingCheckbox(() => UserSettings.ShowNonExtractableCatalogues, (v) => UserSettings.ShowNonExtractableCatalogues = v, "E", "Include Extractable");
             }
-
-
-
 
             taskDescriptionLabel1.Visible = false;
 
@@ -309,26 +292,12 @@ namespace Rdmp.UI.SimpleDialogs
             return bmp == _activator.CoreIconProvider.ImageUnknown ? null : bmp;
         }
 
-        private bool buildGroupsRequired = false;
         private bool _isClosed;
 
         /// <summary>
         /// All the objects when T is not an IMapsDirectlyToDatabaseTable.
         /// </summary>
         private T[] _allObjects;
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            if (buildGroupsRequired)
-            {
-                buildGroupsRequired = false;
-                olv.BeginUpdate();
-                olv.SuspendLayout();
-                olv.BuildGroups();
-                olv.EndUpdate();
-                olv.ResumeLayout();
-            }
-        }
 
         private object GroupKeyGetter(object rowObject)
         {
@@ -340,17 +309,11 @@ namespace Rdmp.UI.SimpleDialogs
 
         private void Selected_AspectPutter(object rowobject, object newvalue)
         {
-            timer1.Stop();
-            timer1.Start();
-
             var b = (bool)newvalue;
             if (b)
                 MultiSelected.Add((T)rowobject);
             else
                 MultiSelected.Remove((T)rowobject);
-
-            //olvObjects.BuildGroups();
-            buildGroupsRequired = true;
 
             UpdateButtonEnabledness();
         }
@@ -389,33 +352,40 @@ namespace Rdmp.UI.SimpleDialogs
             if (AlwaysFilterOn != null)
                 showOnlyTypes = new List<Type>(new[] { AlwaysFilterOn });
 
-            var scores = scorer.ScoreMatches(_searchables, text, cancellationToken, showOnlyTypes);
+            _noSearchTerms = string.IsNullOrWhiteSpace(text) && showOnlyTypes.Count == 0;
 
+            var scores = scorer.ScoreMatches(_searchables, text, cancellationToken, showOnlyTypes);
+            
+            
             if (scores == null)
                 return;
             lock (oMatches)
             {
-                _matches = scorer.ShortList(scores, MaxMatches, _activator);
+                // when returning search results always put checked items first
+                var matches = new List<IMapsDirectlyToDatabaseTable>(MultiSelected.Cast<IMapsDirectlyToDatabaseTable>());
+                matches.AddRange(scorer.ShortList(scores, MaxMatches, _activator).Cast<IMapsDirectlyToDatabaseTable>().Except(matches));
+
+                _matches = matches;
             }
         }
 
         private void listBox1_CellClick(object sender, CellClickEventArgs e)
         {
-            throw new NotImplementedException();
+         
         }
         private void listBox1_KeyUp(object sender, KeyEventArgs e)
         {
-            throw new NotImplementedException();
+            
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            
         }
 
         private void CollectionCheckedChanged(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            
         }
 
         private bool IsDatabaseObjects()
@@ -448,8 +418,7 @@ namespace Rdmp.UI.SimpleDialogs
                             if (_isClosed)
                                 return;
 
-                            // TODO: might need some magic here
-                            olv.Sort();
+                            olv.VirtualListDataSource = this;
                         }
                         catch (ObjectDisposedException)
                         {
@@ -461,62 +430,81 @@ namespace Rdmp.UI.SimpleDialogs
 
         public void AddObjects(ICollection modelObjects)
         {
-            throw new NotImplementedException();
+
         }
 
         public object GetNthObject(int n)
         {
-            throw new NotImplementedException();
+
+            lock (oMatches)
+            {
+
+                if (_matches != null && _matches.Count > 0)
+                {
+
+                    if (n >= _matches.Count)
+                        return null;
+
+                    return _matches[n];
+                }
+
+                return _allObjects[n];
+            }
         }
 
         public int GetObjectCount()
         {
-            if(IsDatabaseObjects())
+            lock (oMatches)
             {
-                return _matches.Count;
-            }
+                if (IsDatabaseObjects())
+                {
+                    if (_noSearchTerms)
+                    {
+                        return Math.Min(_allObjects.Length, MaxMatches);
+                    }
 
-            return _allObjects.Length;            
+                    return _matches.Count;
+                }
+
+                return _allObjects.Length;
+            }        
         }
 
         public int GetObjectIndex(object model)
         {
-            throw new NotImplementedException();
+            return -1;
         }
 
         public void InsertObjects(int index, ICollection modelObjects)
         {
-            throw new NotImplementedException();
+            
         }
 
         public void PrepareCache(int first, int last)
         {
-            throw new NotImplementedException();
         }
 
         public void RemoveObjects(ICollection modelObjects)
         {
-            throw new NotImplementedException();
         }
 
         public int SearchText(string value, int first, int last, OLVColumn column)
         {
-            throw new NotImplementedException();
+            // TODO: figure this out
+            return 0;
         }
 
         public void SetObjects(IEnumerable collection)
         {
-            throw new NotImplementedException();
         }
 
         public void Sort(OLVColumn column, SortOrder order)
         {
-            throw new NotImplementedException();
         }
 
         public void UpdateObject(int index, object modelObject)
         {
-            throw new NotImplementedException();
+            
         }
         private void AddUserSettingCheckbox(Func<bool> getter, Action<bool> setter, string name, string toolTip)
         {
