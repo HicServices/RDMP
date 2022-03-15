@@ -433,7 +433,10 @@ namespace ResearchDataManagementPlatform.Menus
             Activator.SelectAnythingThen(new DialogArgs
             {
                 WindowTitle = "Find",
-                InitialSearchTextGuid = new Guid("00a0733b-848f-4bf3-bcde-7028fe159050"),                
+                InitialSearchTextGuid = new Guid("00a0733b-848f-4bf3-bcde-7028fe159050"),
+                IsFind = true,
+                TaskDescription = "Enter the name of an object or part of the name or the dataset/project it is in."
+
             }, (o) => Activator.RequestItemEmphasis(this, new EmphasiseRequest(o)));
         }
 

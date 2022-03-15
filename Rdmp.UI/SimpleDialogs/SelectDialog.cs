@@ -49,6 +49,7 @@ namespace Rdmp.UI.SimpleDialogs
         private List<Type> showOnlyTypes = new List<Type>();
         private Type _alwaysFilterOn;
         private ToolStripTextBox _lblId;
+        private readonly DialogArgs _args;
         private IActivateItems _activator;
         private bool _allowDeleting;
 
@@ -146,6 +147,7 @@ namespace Rdmp.UI.SimpleDialogs
 
         public SelectDialog(DialogArgs args, IActivateItems activator, IEnumerable<T> toSelectFrom, bool allowDeleting, RDMPCollection focusedCollection = RDMPCollection.None)
         {
+            _args = args;
             _activator = activator;
             _allowDeleting = allowDeleting;
 
@@ -170,7 +172,7 @@ namespace Rdmp.UI.SimpleDialogs
             taskDescriptionLabel1.SetupFor(args);
 
             Text = args.WindowTitle;
-
+            label1.Text = args.IsFind ? "Find:" : "Filter:";
             tbFilter.Text = args.InitialSearchText;
             tbFilter.KeyPress += (s, e) =>
             {
@@ -465,6 +467,7 @@ namespace Rdmp.UI.SimpleDialogs
             var scorer = new SearchablesMatchScorer();
             scorer.RespectUserSettings = UserSettings.AdvancedFindFilters;
             scorer.TypeNames = _typeNames;
+            scorer.ReturnEmptyResultWhenNoSearchTerms = _args.IsFind;
             scorer.BumpMatches = _activator.HistoryProvider.History.Select(h => h.Object).ToList();
 
             if (_lblId != null && int.TryParse(_lblId.Text, out int requireId))

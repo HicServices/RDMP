@@ -81,7 +81,10 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         public Guid? InitialSearchTextGuid { get; set; }
 
-  
+        /// <summary>
+        /// If this instance is being sent to the find dialog then set to true otherwise leave false
+        /// </summary>
+        public bool IsFind { get; set; }
 
         public override string ToString()
         {
