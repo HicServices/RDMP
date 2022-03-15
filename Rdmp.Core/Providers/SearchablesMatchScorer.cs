@@ -130,10 +130,6 @@ namespace Rdmp.Core.Providers
                     if (AlsoIncludes.ContainsKey(s))
                         foreach(var v in AlsoIncludes[s])
                             searchText += " " + v.Name;
- 
-            //if we have nothing to search for return no results
-            if(string.IsNullOrWhiteSpace(searchText) && ID == null)
-                return new Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int>();
             
             var tokens = (searchText??"").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             

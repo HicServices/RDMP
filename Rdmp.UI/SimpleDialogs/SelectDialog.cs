@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.UI.Collections;
@@ -193,6 +194,9 @@ namespace Rdmp.UI.SimpleDialogs
             olvName.AspectGetter = (m) => m?.ToString();
             olvHierarchy.AspectGetter = GetHierarchy;
             olvHierarchy.IsVisible = IsDatabaseObjects();
+            olvHierarchy.ImageGetter = GetHierarchyImage;
+            olv.UseCellFormatEvents = true;
+            olv.FormatCell += Olv_FormatCell;
 
             olvName.ImageGetter = GetImage;
             olv.RowHeight = 19;
@@ -255,6 +259,37 @@ namespace Rdmp.UI.SimpleDialogs
             };
         }
 
+        private void Olv_FormatCell(object sender, FormatCellEventArgs e)
+        {
+            if(e.Column == olvHierarchy)
+            {
+                e.SubItem.ForeColor = Color.Gray;
+            }
+        }
+
+        IconOverlayProvider provider = new IconOverlayProvider();
+
+        private Bitmap GetHierarchyImage(object rowObject)
+        {
+            if (!(rowObject is IMapsDirectlyToDatabaseTable m))
+                return null;
+
+            lock (oMatches)
+            {
+                if (_searchables.ContainsKey(m))
+                {
+                    var descendancy = _searchables[m];
+                    var parent = descendancy?.GetMostDescriptiveParent();
+
+                    if (parent == null)
+                        return null;
+
+                    return provider.GetGrayscale(_activator.CoreIconProvider.GetImage(parent));
+                }
+            }
+
+            return null;
+        }
 
         private object GetHierarchy(object rowObject)
         {
@@ -266,7 +301,7 @@ namespace Rdmp.UI.SimpleDialogs
                 if (_searchables.ContainsKey(m))
                 {
                     var descendancy = _searchables[m];
-                    return descendancy != null ? Regex.Replace(string.Join('\\', descendancy.GetUsefulParents()), "\\\\+", "\\") : null;
+                    return descendancy != null ? Regex.Replace(string.Join('\\', descendancy.GetUsefulParents()), "\\\\+", "\\").Trim('\\') : null;
                 }
             }   
 
