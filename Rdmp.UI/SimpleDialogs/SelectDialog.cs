@@ -126,7 +126,7 @@ namespace Rdmp.UI.SimpleDialogs
 
 
         /// <summary>
-        /// Identifies which Types are checked by default when the NavigateToObjectUI is shown when the given RDMPCollection has focus
+        /// Identifies which Types are checked by default when the dialog is shown when the given RDMPCollection has focus
         /// </summary>
         public Dictionary<RDMPCollection, Type[]> StartingEasyFilters
             = new Dictionary<RDMPCollection, Type[]>()
