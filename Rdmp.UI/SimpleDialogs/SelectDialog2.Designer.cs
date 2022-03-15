@@ -32,10 +32,9 @@ namespace Rdmp.UI.SimpleDialogs
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.olv = new BrightIdeasSoftware.VirtualObjectListView();
-            this.olvID = new BrightIdeasSoftware.OLVColumn();
             this.olvSelected = new BrightIdeasSoftware.OLVColumn();
+            this.olvID = new BrightIdeasSoftware.OLVColumn();
             this.olvName = new BrightIdeasSoftware.OLVColumn();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
@@ -53,13 +52,13 @@ namespace Rdmp.UI.SimpleDialogs
             // 
             // olv
             // 
-            this.olv.AllColumns.Add(this.olvID);
             this.olv.AllColumns.Add(this.olvSelected);
+            this.olv.AllColumns.Add(this.olvID);
             this.olv.AllColumns.Add(this.olvName);
             this.olv.CellEditUseWholeCell = false;
             this.olv.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvID,
             this.olvSelected,
+            this.olvID,
             this.olvName});
             this.olv.Cursor = System.Windows.Forms.Cursors.Default;
             this.olv.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -72,19 +71,20 @@ namespace Rdmp.UI.SimpleDialogs
             this.olv.TabIndex = 0;
             this.olv.UseCompatibleStateImageBehavior = false;
             this.olv.View = System.Windows.Forms.View.Details;
+            this.olv.VirtualMode = true;
             this.olv.CellClick += new System.EventHandler<BrightIdeasSoftware.CellClickEventArgs>(this.listBox1_CellClick);
             this.olv.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             this.olv.KeyUp += new System.Windows.Forms.KeyEventHandler(this.listBox1_KeyUp);
-            // 
-            // olvID
-            // 
-            this.olvID.AspectName = "";
-            this.olvID.Text = "ID";
             // 
             // olvSelected
             // 
             this.olvSelected.Text = "Selected";
             this.olvSelected.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // olvID
+            // 
+            this.olvID.AspectName = "";
+            this.olvID.Text = "ID";
             // 
             // olvName
             // 
@@ -119,6 +119,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.btnSelect.TabIndex = 5;
             this.btnSelect.Text = "Select";
             this.btnSelect.UseVisualStyleBackColor = true;
+            this.btnSelect.Click += new System.EventHandler(this.btnSelect_Click);
             // 
             // btnSelectNULL
             // 
@@ -130,6 +131,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.btnSelectNULL.TabIndex = 6;
             this.btnSelectNULL.Text = "Select \'NULL\'";
             this.btnSelectNULL.UseVisualStyleBackColor = true;
+            this.btnSelectNULL.Click += new System.EventHandler(this.btnSelectNULL_Click);
             // 
             // btnCancel
             // 
@@ -141,6 +143,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.btnCancel.TabIndex = 7;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // taskDescriptionLabel1
             // 

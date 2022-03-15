@@ -24,7 +24,7 @@ using System.Windows.Forms;
 
 namespace Rdmp.UI.SimpleDialogs
 {
-    public partial class SelectDialog2<T> : Form, IVirtualListDataSource
+    public partial class SelectDialog2<T> : Form, IVirtualListDataSource where T : class
     {
         private readonly Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> _searchables;
         private readonly AttributePropertyFinder<UsefulPropertyAttribute> _usefulPropertyFinder;
@@ -32,7 +32,6 @@ namespace Rdmp.UI.SimpleDialogs
         private FavouritesProvider _favouriteProvider;
 
         private const int MaxMatches = 500;
-        private List<IMapsDirectlyToDatabaseTable> _matches;
         private object oMatches = new object();
 
         private const float DrawMatchesStartingAtY = 50;
@@ -52,6 +51,21 @@ namespace Rdmp.UI.SimpleDialogs
         private bool _allowDeleting;
 
         private bool _noSearchTerms = true;
+
+        /// <summary>
+        /// All the objects when T is not an IMapsDirectlyToDatabaseTable.
+        /// </summary>
+        private T[] _allObjects;
+        private List<T> _objectsToDisplay = new List<T>();
+        private List<IMapsDirectlyToDatabaseTable> _tempMatches;
+        private List<IMapsDirectlyToDatabaseTable> _matches;
+        bool stateChanged = true;
+
+        /// <summary>
+        /// The users final selection when not using mutli select mode
+        /// </summary>
+        public T Selected;
+        public HashSet<T> MultiSelected { get; private set; }
 
         /// <summary>
         /// Hides the Type selection toggle buttons and forces results to only appear matching the given Type
@@ -91,7 +105,6 @@ namespace Rdmp.UI.SimpleDialogs
                 olv.RebuildColumns();
             }
         }
-        public HashSet<T> MultiSelected { get; }
 
         /// <summary>
         /// Object types that appear in the task bar as filterable types
@@ -227,7 +240,7 @@ namespace Rdmp.UI.SimpleDialogs
                 olv.AllColumns.Remove(olvID);
             }
 
-            olvName.AspectGetter = (m) => m.ToString();
+            olvName.AspectGetter = (m) => m?.ToString();
 
             olvName.ImageGetter = GetImage;
             olv.RowHeight = 19;
@@ -251,10 +264,6 @@ namespace Rdmp.UI.SimpleDialogs
             olv.RebuildColumns();
 
             MultiSelected = new HashSet<T>();
-
-            olvSelected.GroupWithItemCountFormat = "{0} ({1} objects)";
-            olvSelected.GroupWithItemCountSingularFormat = "{0} (1 objects)";
-            olvSelected.GroupKeyGetter += GroupKeyGetter;
 
             RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, olvName, new Guid("298cda00-5ec8-423c-9230-71d78bec6bc4"));
             RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, olvID, new Guid("bb0fe2f0-1e73-4b00-a5b7-4b6ce3510bab"));
@@ -294,19 +303,6 @@ namespace Rdmp.UI.SimpleDialogs
 
         private bool _isClosed;
 
-        /// <summary>
-        /// All the objects when T is not an IMapsDirectlyToDatabaseTable.
-        /// </summary>
-        private T[] _allObjects;
-
-        private object GroupKeyGetter(object rowObject)
-        {
-            if (MultiSelected == null)
-                return false;
-
-            return MultiSelected.Contains((T)rowObject) ? "Selected" : "Not Selected";
-        }
-
         private void Selected_AspectPutter(object rowobject, object newvalue)
         {
             var b = (bool)newvalue;
@@ -314,9 +310,17 @@ namespace Rdmp.UI.SimpleDialogs
                 MultiSelected.Add((T)rowobject);
             else
                 MultiSelected.Remove((T)rowobject);
-
-            UpdateButtonEnabledness();
+            
+            StateChanged();
         }
+
+        private void StateChanged()
+        {
+            UpdateButtonEnabledness();
+            stateChanged = true;
+            olv.VirtualListDataSource = this;
+        }
+
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
             base.OnFormClosed(e);
@@ -335,6 +339,9 @@ namespace Rdmp.UI.SimpleDialogs
         {
             if (!AllowMultiSelect)
                 return null;
+            
+            if (rowObject == null)
+                return false;
 
             return MultiSelected.Contains((T)rowObject);
         }
@@ -356,36 +363,106 @@ namespace Rdmp.UI.SimpleDialogs
 
             var scores = scorer.ScoreMatches(_searchables, text, cancellationToken, showOnlyTypes);
             
-            
             if (scores == null)
+            {
+                stateChanged = true;
                 return;
+            }
+
             lock (oMatches)
             {
-                // when returning search results always put checked items first
-                var matches = new List<IMapsDirectlyToDatabaseTable>(MultiSelected.Cast<IMapsDirectlyToDatabaseTable>());
-                matches.AddRange(scorer.ShortList(scores, MaxMatches, _activator).Cast<IMapsDirectlyToDatabaseTable>().Except(matches));
-
-                _matches = matches;
+                _tempMatches = scorer.ShortList(scores, MaxMatches, _activator);
             }
         }
 
         private void listBox1_CellClick(object sender, CellClickEventArgs e)
         {
-         
+            if (e.ClickCount >= 2)
+            {
+                Selected = olv.SelectedObject as T;
+
+                if (Selected == null)
+                    return;
+
+                //double clicking on a row when several others are selected should not make it the only selected item
+                if (AllowMultiSelect)
+                {
+                    //instead it should just add it to the multi selection
+                    MultiSelected.Add(Selected);
+                    UpdateButtonEnabledness();
+                    return;
+                }
+
+                MultiSelected = new HashSet<T>(new[] { Selected });
+                DialogResult = DialogResult.OK;
+                this.Close();
+            }
         }
         private void listBox1_KeyUp(object sender, KeyEventArgs e)
         {
-            
+            var deletable = olv.SelectedObject as IDeleteable;
+            if (e.KeyCode == Keys.Delete && _allowDeleting && deletable != null)
+            {
+                if (MessageBox.Show("Confirm deleting " + deletable, "Really delete?", MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
+                {
+                    try
+                    {
+                        deletable.DeleteInDatabase();
+                        olv.RemoveObject(deletable);
+                    }
+                    catch (Exception exception)
+                    {
+                        ExceptionViewer.Show(exception);
+                    }
+                }
+            }
+
+            if (e.KeyCode == Keys.Enter && olv.SelectedObject != null)
+            {
+                DialogResult = DialogResult.OK;
+                Selected = olv.SelectedObject is T s ? s : default(T);
+
+                if (Selected == null)
+                    return;
+
+                MultiSelected = new HashSet<T>(new[] { Selected });
+                this.Close();
+            }
+
+            //space flips the selectedness of the objects that are selected
+            if (e.KeyCode == Keys.Space && AllowMultiSelect && olv.SelectedObjects != null)
+            {
+                foreach (T o in olv.SelectedObjects)
+                {
+                    if (MultiSelected.Contains(o))
+                        MultiSelected.Remove(o);
+                    else
+                        MultiSelected.Add(o);
+                }
+
+                UpdateButtonEnabledness();
+
+            }
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            
+            UpdateButtonEnabledness();
         }
 
         private void CollectionCheckedChanged(object sender, EventArgs e)
         {
-            
+            var button = (ToolStripButton)sender;
+
+            var togglingType = (Type)button.Tag;
+
+            if (button.Checked)
+                showOnlyTypes.Add(togglingType);
+            else
+                showOnlyTypes.Remove(togglingType);
+
+            //refresh the objects showing
+            tbFilter_TextChanged(null, null);
         }
 
         private bool IsDatabaseObjects()
@@ -418,7 +495,16 @@ namespace Rdmp.UI.SimpleDialogs
                             if (_isClosed)
                                 return;
 
-                            olv.VirtualListDataSource = this;
+                            if(s.IsCompleted)
+                            {
+                                lock (oMatches)
+                                {
+                                    // updates the list
+                                    _matches = _tempMatches;
+                                    StateChanged();
+                                }
+                            }
+
                         }
                         catch (ObjectDisposedException)
                         {
@@ -435,44 +521,54 @@ namespace Rdmp.UI.SimpleDialogs
 
         public object GetNthObject(int n)
         {
-
             lock (oMatches)
             {
-
-                if (_matches != null && _matches.Count > 0)
-                {
-
-                    if (n >= _matches.Count)
-                        return null;
-
-                    return _matches[n];
-                }
-
-                return _allObjects[n];
+                return n >= _objectsToDisplay.Count ? null : _objectsToDisplay[n];
             }
         }
+
 
         public int GetObjectCount()
         {
             lock (oMatches)
             {
-                if (IsDatabaseObjects())
+                // regenerate the _toDisplayList because the state has changed
+                if (stateChanged)
                 {
-                    if (_noSearchTerms)
+                    if (IsDatabaseObjects())
                     {
-                        return Math.Min(_allObjects.Length, MaxMatches);
+
+                        // when returning search results always put checked items first
+                        var toDisplay = new List<IMapsDirectlyToDatabaseTable>(MultiSelected.Cast<IMapsDirectlyToDatabaseTable>());
+
+                        if (_noSearchTerms)
+                        {
+                            toDisplay.AddRange(_allObjects.Cast<IMapsDirectlyToDatabaseTable>().Except(toDisplay));
+                            _objectsToDisplay = toDisplay.Cast<T>().ToList();
+
+                        }
+                        else
+                        {
+                            toDisplay.AddRange(_matches.Cast<IMapsDirectlyToDatabaseTable>().Except(toDisplay));
+                            _objectsToDisplay = toDisplay.Cast<T>().ToList();
+
+                        }
+                    }
+                    else
+                    {
+                        _objectsToDisplay = _allObjects.ToList();
                     }
 
-                    return _matches.Count;
+                    stateChanged = false;
                 }
 
-                return _allObjects.Length;
-            }        
+                return Math.Min(_objectsToDisplay.Count,MaxMatches);
+            }
         }
 
         public int GetObjectIndex(object model)
         {
-            return -1;
+            return _objectsToDisplay.IndexOf((T)model);
         }
 
         public void InsertObjects(int index, ICollection modelObjects)
@@ -522,6 +618,30 @@ namespace Rdmp.UI.SimpleDialogs
             };
 
             toolStrip1.Items.Add(b);
+        }
+        private void btnSelect_Click(object sender, EventArgs e)
+        {
+            if (!AllowMultiSelect)
+                Selected = (T)olv.SelectedObject;
+
+            DialogResult = DialogResult.OK;
+            this.Close();
+        }
+
+        private void btnSelectNULL_Click(object sender, EventArgs e)
+        {
+            Selected = default(T);
+            MultiSelected = null;
+            DialogResult = DialogResult.OK;
+            this.Close();
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            Selected = default(T);
+            MultiSelected = null;
+            DialogResult = DialogResult.Cancel;
+            this.Close();
         }
     }
 }
