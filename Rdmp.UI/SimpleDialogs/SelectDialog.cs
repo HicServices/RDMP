@@ -227,6 +227,7 @@ namespace Rdmp.UI.SimpleDialogs
 
             RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, olvName, new Guid("298cda00-5ec8-423c-9230-71d78bec6bc4"));
             RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, olvID, new Guid("bb0fe2f0-1e73-4b00-a5b7-4b6ce3510bab"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, olvHierarchy, new Guid("9393c6f0-b2c5-4bf8-8675-3a0117a2c850"));
 
             btnCancel.KeyPress += BtnKeypress;
             btnSelect.KeyPress += BtnKeypress;
@@ -251,7 +252,17 @@ namespace Rdmp.UI.SimpleDialogs
             }
 
             olv.VirtualListDataSource = this;
+
+            Width = UserSettings.FindWindowWidth;
+            Height = UserSettings.FindWindowHeight;
+
+            Resize += (s, e) =>
+            {
+                UserSettings.FindWindowWidth = Width;
+                UserSettings.FindWindowHeight = Height;
+            };
         }
+
 
         private object GetHierarchy(object rowObject)
         {

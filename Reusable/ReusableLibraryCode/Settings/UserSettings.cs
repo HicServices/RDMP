@@ -312,6 +312,17 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("ArchiveTriggerTimeout", value); }
         }
 
+        public static int FindWindowWidth
+        {
+            get { return AppSettings.GetValueOrDefault("FindWindowWidth", 300); }
+            set { AppSettings.AddOrUpdateValue("FindWindowWidth", value); }
+        }
+        public static int FindWindowHeight
+        {
+            get { return AppSettings.GetValueOrDefault("FindWindowHeight", 500); }
+            set { AppSettings.AddOrUpdateValue("FindWindowHeight", value); }
+        }
+
         #endregion
 
         /// <summary>
