@@ -197,7 +197,7 @@ namespace Rdmp.UI.SimpleDialogs.Governance
                 toAdd = toAdd.Except(olvCatalogues.Objects.Cast<Catalogue>()).ToArray();
 
                 if (!toAdd.Any())
-                    MessageBox.Show("Selected GovernancePeriod '" + selected +
+                    MessageBox.Show("Selected GovernancePeriod '" + selected.Name +
                                     "' does not govern any novel Catalogues (Catalogues already in your configuration are not repeat imported)");
                 else
                 {

@@ -98,7 +98,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
 
             if (Activator.SelectObject(new DialogArgs
             {
-                TaskDescription = $"Which other table should be joined to '{_leftTableInfo}'?"
+                TaskDescription = $"Which other table should be joined to '{_leftTableInfo.Name}'?"
             }, _leftTableInfo.Repository.GetAllObjects<TableInfo>().Where(t => t.ID != _leftTableInfo.ID).ToArray(),
             out var selected))
             {

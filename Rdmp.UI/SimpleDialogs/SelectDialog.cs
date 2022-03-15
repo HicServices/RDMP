@@ -34,16 +34,9 @@ namespace Rdmp.UI.SimpleDialogs
     {
         private readonly Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> _searchables;
         private readonly AttributePropertyFinder<UsefulPropertyAttribute> _usefulPropertyFinder;
-        private ICoreIconProvider _coreIconProvider;
-        private FavouritesProvider _favouriteProvider;
 
         private const int MaxMatches = 500;
         private object oMatches = new object();
-
-        private const float DrawMatchesStartingAtY = 50;
-        private const float RowHeight = 20;
-
-        private const int DiagramTabDistance = 20;
 
         private Task _lastFetchTask = null;
         private CancellationTokenSource _lastCancellationToken;
@@ -151,8 +144,6 @@ namespace Rdmp.UI.SimpleDialogs
         {
             _activator = activator;
             _allowDeleting = allowDeleting;
-            _coreIconProvider = activator.CoreIconProvider;
-            _favouriteProvider = activator.FavouritesProvider;
 
             InitializeComponent();
 
