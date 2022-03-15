@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 
@@ -89,9 +90,13 @@ namespace Rdmp.UI.SimpleControls
 
         private void lPick_Click(object sender, System.EventArgs e)
         {
-            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(_activator, _available.Cast<IMapsDirectlyToDatabaseTable>(), false, false);
-            if (dialog.ShowDialog() == DialogResult.OK)
-                suggestComboBox1.SelectedItem = dialog.Selected;
+            if(_activator.SelectObject(new DialogArgs
+            {
+                WindowTitle = "Select New Value"
+            }, _available.ToArray(),out var selected))
+            {
+                suggestComboBox1.SelectedItem = selected;
+            }
         }
 
         private void suggestComboBox1_TextUpdate(object sender, EventArgs e)

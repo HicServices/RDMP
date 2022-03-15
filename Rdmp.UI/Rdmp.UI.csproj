@@ -285,9 +285,6 @@
     <Compile Update="TestsAndSetup\StartupUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="SimpleDialogs\NavigateTo\NavigateToObjectUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Update="SimpleDialogs\NavigateTo\RunUI.cs">
       <SubType>Form</SubType>
     </Compile>

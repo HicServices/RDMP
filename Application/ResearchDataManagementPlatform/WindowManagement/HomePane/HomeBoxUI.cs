@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
@@ -56,10 +57,13 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
                 btnOpen.DisplayStyle = ToolStripItemDisplayStyle.Text;
                 btnOpen.Click += (s, e) =>
                 {
-                    var ui = new NavigateToObjectUI(activator,addFindMultiple:true);
-                    ui.AlwaysFilterOn = openType;
-                    ui.CompletionAction = Open;
-                    ui.Show();
+                    if(activator.SelectObject(new DialogArgs
+                    {
+                        WindowTitle = "Open"
+                    },activator.GetAll(openType).ToArray(),out var selected))
+                    {
+                        Open(selected);
+                    }
                 };
 
             

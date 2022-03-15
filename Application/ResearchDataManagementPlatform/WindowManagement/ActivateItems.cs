@@ -209,31 +209,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override bool SelectEnum(DialogArgs args, Type enumType, out Enum chosen)
         {
-            var selector = new SelectDialog<Enum>(args,this,Enum.GetValues(enumType).Cast<Enum>().ToArray(), false,false);
-            
-            if (selector.ShowDialog() == DialogResult.OK)
-            {
-                chosen = selector.Selected;
-                return true;
-            }
-            
-            chosen = default;
-            return false;
+            return SelectObject(args, Enum.GetValues(enumType).Cast<Enum>().ToArray(), out chosen);
         }
 
         public override bool SelectType(DialogArgs args, Type[] available,out Type chosen)
         {
-            var dlg =  new SelectDialog<Type>(args,this,available, false,false);
-
-            if (dlg.ShowDialog() == DialogResult.OK)
-            {
-                chosen = dlg.Selected;
-                return true;
-            }
-
-
-            chosen = null;
-            return false;
+            return SelectObject(args, available, out chosen);
         }
 
         public override bool CanActivate(object target)
@@ -567,17 +548,17 @@ namespace ResearchDataManagementPlatform.WindowManagement
                     return availableObjects[0];
                 }
 
-            var selectDialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(args,this, availableObjects, false, false);
-
-            if (selectDialog.ShowDialog() == DialogResult.OK)
-                return selectDialog.Selected;
+            if(SelectObject(args,availableObjects, out var selected))
+            {
+                return selected;
+            }
 
             return null; //user didn't select one of the IMapsDirectlyToDatabaseTable objects shown in the dialog
         }
 
         public override bool SelectObject<T>(DialogArgs args, T[] available, out T selected)
         {
-            var pick = new SelectDialog<T>(args,this,available,false,false);
+            var pick = new SelectDialog2<T>(args,this,available,false);
 
             if (pick.ShowDialog() == DialogResult.OK)
             {
@@ -591,7 +572,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected)
         {
-            var pick = new SelectDialog<T>(args,this, available, false, false);
+            var pick = new SelectDialog2<T>(args,this, available, false);
             pick.AllowMultiSelect = true;
 
             if (pick.ShowDialog() == DialogResult.OK)
@@ -671,7 +652,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 return null;
             }
 
-            var selectDialog = new SelectDialog2<IMapsDirectlyToDatabaseTable>(args, this, availableObjects, false, false);
+            var selectDialog = new SelectDialog2<IMapsDirectlyToDatabaseTable>(args, this, availableObjects, false);
             selectDialog.AllowMultiSelect = true;
             
             if (selectDialog.ShowDialog() == DialogResult.OK)
@@ -782,9 +763,14 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override void SelectAnythingThen(DialogArgs args, Action<IMapsDirectlyToDatabaseTable> callback)
         {
-            NavigateToObjectUI navigate = new NavigateToObjectUI(this) { Text = args.WindowTitle };
-            navigate.CompletionAction = callback;
-            navigate.Show();
+            var select = new SelectDialog2<IMapsDirectlyToDatabaseTable>(
+                args, this, CoreChildProvider.GetAllSearchables().Select(k => k.Key), false);
+
+            select.Show();
+            if(select.DialogResult == DialogResult.OK && select.Selected != null)
+            {
+                callback(select.Selected);
+            }
         }
 
         public override void ShowData(IViewSQLAndResultsCollection collection)

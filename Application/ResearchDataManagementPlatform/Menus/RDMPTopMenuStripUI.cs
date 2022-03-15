@@ -422,17 +422,18 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var navigate = new NavigateToObjectUI(Activator, addFindMultiple: true);
-            navigate.Text = "Open";
-            navigate.CompletionAction = (o) => Activator.WindowArranger.SetupEditAnything(this, o);
-            navigate.Show();
+            Activator.SelectAnythingThen(new DialogArgs
+            {
+                WindowTitle = "Open"
+            }, (o) => Activator.WindowArranger.SetupEditAnything(this, o));
         }
 
         private void findToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var visibleCollection = _windowManager.GetFocusedCollection();
-
-            new NavigateToObjectUI(Activator, null, visibleCollection, addFindMultiple: true).Show();
+            Activator.SelectAnythingThen(new DialogArgs
+            {
+                WindowTitle = "Open"
+            }, (o) => Activator.RequestItemEmphasis(this, new EmphasiseRequest(o)));
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -493,7 +494,7 @@ namespace ResearchDataManagementPlatform.Menus
             {
                 WindowTitle = "Create New",
                 TaskDescription = "What do you want to create?"
-            },Activator,GetNewCommands(),false,false);
+            },Activator,GetNewCommands(),false);
 
             if (dlg.ShowDialog() == DialogResult.OK)
             {

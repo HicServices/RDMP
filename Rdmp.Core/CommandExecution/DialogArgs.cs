@@ -4,7 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Progress;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Rdmp.Core.CommandExecution
@@ -57,6 +59,18 @@ namespace Rdmp.Core.CommandExecution
         /// </para>
         /// </summary>
         public string InitialSearchText { get; set; }
+
+        /// <summary>
+        /// If asking the user to select RDMP database objects then this should be the initially
+        /// ticked set of objects in the dialog.
+        /// </summary>
+        public IMapsDirectlyToDatabaseTable[] InitialObjectSelection { get; set; }
+        
+        /// <summary>
+        /// If choosing Null is a valid option for the user then set this to true.
+        /// Defaults to false.
+        /// </summary>
+        public bool AllowSelectingNull { get; set; }
 
         public override string ToString()
         {

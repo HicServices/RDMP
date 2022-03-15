@@ -141,7 +141,7 @@ namespace Rdmp.UI.SimpleDialogs
             };
 
 
-        public SelectDialog2(DialogArgs args, IActivateItems activator, IEnumerable<T> toSelectFrom, bool allowSelectingNULL, bool allowDeleting, RDMPCollection focusedCollection = RDMPCollection.None)
+        public SelectDialog2(DialogArgs args, IActivateItems activator, IEnumerable<T> toSelectFrom, bool allowDeleting, RDMPCollection focusedCollection = RDMPCollection.None)
         {
             _activator = activator;
             _allowDeleting = allowDeleting;
@@ -199,7 +199,7 @@ namespace Rdmp.UI.SimpleDialogs
             olvName.ImageGetter = GetImage;
             olv.RowHeight = 19;
 
-            if (!allowSelectingNULL)
+            if (!args.AllowSelectingNull)
             {
                 //disable the option to select NULL
                 btnSelectNULL.Visible = false;
@@ -233,6 +233,11 @@ namespace Rdmp.UI.SimpleDialogs
                 if (e.KeyChar == ' ' || e.KeyChar == '\r' || e.KeyChar == '\n')
                     e.Handled = true;
             };
+
+            if(args.InitialObjectSelection != null)
+            {
+                SetInitialSelection(args.InitialObjectSelection.Cast<T>());
+            }
 
             if(IsDatabaseObjects())
             {
@@ -687,6 +692,11 @@ namespace Rdmp.UI.SimpleDialogs
             MultiSelected = null;
             DialogResult = DialogResult.Cancel;
             this.Close();
+        }
+        public void SetInitialSelection(IEnumerable<T> toSelect)
+        {
+            MultiSelected = new HashSet<T>(toSelect);
+            tbFilter_TextChanged(null,null);
         }
     }
 }
