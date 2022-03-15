@@ -7,6 +7,7 @@
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.Data.Spontaneous;
@@ -38,6 +39,7 @@ namespace Rdmp.UI.Collections
             InitializeComponent();
 
             olvName.AspectGetter = (o)=>o.ToString();
+            CommonTreeFunctionality.AxeChildren = new Type[] { typeof(CohortIdentificationConfiguration)};
         }
 
         public IPersistableObjectCollection GetCollection()
@@ -71,6 +73,7 @@ namespace Rdmp.UI.Collections
                 CommonTreeFunctionality.SetUp(RDMPCollection.None,olvTree,activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings()
                 {
                     // add custom options here
+                    
                 });
             }
                 
