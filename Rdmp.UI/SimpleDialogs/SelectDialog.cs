@@ -261,11 +261,14 @@ namespace Rdmp.UI.SimpleDialogs
             if (!(rowObject is IMapsDirectlyToDatabaseTable m))
                 return null;
 
-            if(_searchables.ContainsKey(m))
+            lock(oMatches)
             {
-                return Regex.Replace(string.Join('\\', _searchables[m].GetUsefulParents()), "\\\\+", "\\");
-            }
-                
+                if (_searchables.ContainsKey(m))
+                {
+                    var descendancy = _searchables[m];
+                    return descendancy != null ? Regex.Replace(string.Join('\\', descendancy.GetUsefulParents()), "\\\\+", "\\") : null;
+                }
+            }   
 
             return null;
         }
