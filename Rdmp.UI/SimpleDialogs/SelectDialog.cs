@@ -17,6 +17,7 @@ using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.UI.Collections;
+using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Theme;
 using ReusableLibraryCode.Settings;
@@ -51,8 +52,6 @@ namespace Rdmp.UI.SimpleDialogs
         private IActivateItems _activator;
         private bool _allowDeleting;
 
-        private bool _noSearchTerms = true;
-
         /// <summary>
         /// All the objects when T is not an IMapsDirectlyToDatabaseTable.
         /// </summary>
@@ -61,6 +60,9 @@ namespace Rdmp.UI.SimpleDialogs
         private List<IMapsDirectlyToDatabaseTable> _tempMatches;
         private List<IMapsDirectlyToDatabaseTable> _matches;
         bool stateChanged = true;
+
+        private bool _isClosed;
+        private RecentHistoryOfControls recentHistoryOfSearches;
 
         /// <summary>
         /// The users final selection when not using mutli select mode
@@ -170,7 +172,6 @@ namespace Rdmp.UI.SimpleDialogs
             Text = args.WindowTitle;
 
             tbFilter.Text = args.InitialSearchText;
-            tbFilter.TextChanged += tbFilter_TextChanged;
             tbFilter.KeyPress += (s, e) =>
             {
                 //prevents windows 'bong' noise when you hit enter
@@ -242,9 +243,16 @@ namespace Rdmp.UI.SimpleDialogs
                 SetInitialSelection(args.InitialObjectSelection.Cast<T>());
             }
 
-            if(IsDatabaseObjects())
+
+            if (args.InitialSearchTextGuid != null)
             {
-                FetchMatches(args.InitialSearchText, CancellationToken.None);
+                recentHistoryOfSearches = new RecentHistoryOfControls(tbFilter, args.InitialSearchTextGuid.Value);
+                recentHistoryOfSearches.SetValueToMostRecentlySavedValue(tbFilter);
+            }
+
+            if (IsDatabaseObjects())
+            {
+                tbFilter_TextChanged(null,null);
             }
 
             olv.VirtualListDataSource = this;
@@ -257,8 +265,16 @@ namespace Rdmp.UI.SimpleDialogs
                 UserSettings.FindWindowWidth = Width;
                 UserSettings.FindWindowHeight = Height;
             };
-        }
 
+            tbFilter.TextChanged += tbFilter_TextChanged;
+        }
+        protected override void OnShown(EventArgs e)
+        {
+            base.OnShown(e);
+
+            tbFilter.SelectAll();
+            tbFilter.Focus();
+        }
         private void Olv_FormatCell(object sender, FormatCellEventArgs e)
         {
             if(e.Column == olvHierarchy)
@@ -398,7 +414,6 @@ namespace Rdmp.UI.SimpleDialogs
             return bmp == _activator.CoreIconProvider.ImageUnknown ? null : bmp;
         }
 
-        private bool _isClosed;
 
         private void Selected_AspectPutter(object rowobject, object newvalue)
         {
@@ -423,6 +438,8 @@ namespace Rdmp.UI.SimpleDialogs
             base.OnFormClosed(e);
             
             _isClosed = true;
+            recentHistoryOfSearches?.AddResult(tbFilter.Text);
+
         }
         private void UpdateButtonEnabledness()
         {
@@ -450,18 +467,14 @@ namespace Rdmp.UI.SimpleDialogs
             scorer.TypeNames = _typeNames;
             scorer.BumpMatches = _activator.HistoryProvider.History.Select(h => h.Object).ToList();
 
-            _noSearchTerms = string.IsNullOrWhiteSpace(text) && showOnlyTypes.Count == 0;
-
             if (_lblId != null && int.TryParse(_lblId.Text, out int requireId))
             {
                 scorer.ID = requireId;
-                _noSearchTerms = false;
             }
                 
             if (AlwaysFilterOn != null)
             {
                 showOnlyTypes = new List<Type>(new[] { AlwaysFilterOn });
-                _noSearchTerms = false;
             }
                 
             var scores = scorer.ScoreMatches(_searchables, text, cancellationToken, showOnlyTypes);
@@ -646,22 +659,14 @@ namespace Rdmp.UI.SimpleDialogs
                 {
                     if (IsDatabaseObjects())
                     {
+                        if (_matches == null)
+                            return 0;
 
                         // when returning search results always put checked items first
                         var toDisplay = new List<IMapsDirectlyToDatabaseTable>(MultiSelected.Cast<IMapsDirectlyToDatabaseTable>());
-
-                        if (_noSearchTerms)
-                        {
-                            toDisplay.AddRange(_allObjects.Cast<IMapsDirectlyToDatabaseTable>().Except(toDisplay));
-                            _objectsToDisplay = toDisplay.Cast<T>().ToList();
-
-                        }
-                        else
-                        {
-                            toDisplay.AddRange(_matches.Cast<IMapsDirectlyToDatabaseTable>().Except(toDisplay));
-                            _objectsToDisplay = toDisplay.Cast<T>().ToList();
-
-                        }
+                        
+                        toDisplay.AddRange(_matches.Cast<IMapsDirectlyToDatabaseTable>().Except(toDisplay));
+                        _objectsToDisplay = toDisplay.Cast<T>().ToList();
                     }
                     else
                     {

@@ -6,6 +6,7 @@
 
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Progress;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -71,6 +72,16 @@ namespace Rdmp.Core.CommandExecution
         /// Defaults to false.
         /// </summary>
         public bool AllowSelectingNull { get; set; }
+
+        /// <summary>
+        /// If <see cref="InitialSearchText"/> is supported by the dialog and autocomplete/history
+        /// is supported by the user interface then this can be set to a unique GUID that identifies
+        /// the source call site of the dialog e.g. find.  Once set future calls from the same site
+        /// should respect the same search text history
+        /// </summary>
+        public Guid? InitialSearchTextGuid { get; set; }
+
+  
 
         public override string ToString()
         {

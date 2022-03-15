@@ -323,6 +323,7 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("FindWindowHeight", value); }
         }
 
+
         #endregion
 
         /// <summary>
@@ -395,7 +396,7 @@ namespace ReusableLibraryCode.Settings
         }
         public static string[] GetHistoryForControl(Guid controlGuid)
         {
-            return AppSettings.GetValueOrDefault("A_" +controlGuid.ToString("N"), "").Split(new []{"#!#"},StringSplitOptions.RemoveEmptyEntries);
+            return AppSettings.GetValueOrDefault("A_" +controlGuid.ToString("N"), "").Split(new []{"#!#"},StringSplitOptions.None);
         }
         
         public static void SetHistoryForControl(Guid controlGuid,IEnumerable<string> history)

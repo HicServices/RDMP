@@ -432,7 +432,8 @@ namespace ResearchDataManagementPlatform.Menus
         {
             Activator.SelectAnythingThen(new DialogArgs
             {
-                WindowTitle = "Open"
+                WindowTitle = "Find",
+                InitialSearchTextGuid = new Guid("00a0733b-848f-4bf3-bcde-7028fe159050"),                
             }, (o) => Activator.RequestItemEmphasis(this, new EmphasiseRequest(o)));
         }
 
