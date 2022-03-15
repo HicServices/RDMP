@@ -24,6 +24,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -262,11 +263,7 @@ namespace Rdmp.UI.SimpleDialogs
 
             if(_searchables.ContainsKey(m))
             {
-                var toReturn = string.Join('\\', _searchables[m].GetUsefulParents());
-                if (toReturn.StartsWith(@"\\"))
-                    return toReturn.Substring(1);
-
-                return toReturn;
+                return Regex.Replace(string.Join('\\', _searchables[m].GetUsefulParents()), "\\\\+", "\\");
             }
                 
 
