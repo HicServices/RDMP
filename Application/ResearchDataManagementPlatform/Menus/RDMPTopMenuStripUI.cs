@@ -489,8 +489,11 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void NewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var dlg = new SelectDialog<IAtomicCommand>(Activator,GetNewCommands(),false,false);
-            dlg.Text = "Create New:";
+            var dlg = new SelectDialog2<IAtomicCommand>(new DialogArgs
+            {
+                WindowTitle = "Create New",
+                TaskDescription = "What do you want to create?"
+            },Activator,GetNewCommands(),false,false);
 
             if (dlg.ShowDialog() == DialogResult.OK)
             {

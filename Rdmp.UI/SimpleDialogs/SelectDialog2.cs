@@ -103,6 +103,7 @@ namespace Rdmp.UI.SimpleDialogs
                 }
 
                 olv.RebuildColumns();
+                olvSelected.DisplayIndex = 0;
             }
         }
 
@@ -153,18 +154,21 @@ namespace Rdmp.UI.SimpleDialogs
             {
                 _allObjects = toSelectFrom.ToArray();
                 _searchables = _allObjects.Cast<IMapsDirectlyToDatabaseTable>().ToDictionary(k => k, activator.CoreChildProvider.GetDescendancyListIfAnyFor);
+                _usefulPropertyFinder = new AttributePropertyFinder<UsefulPropertyAttribute>(_searchables.Keys);
+
+                BuildToolStripForDatabaseObjects(focusedCollection);
             }
             else
             {
                 _allObjects = toSelectFrom.ToArray();
+                
+                // don't bother with the tool strip because its not database objects so we can't filter by ID/type etc
+                this.Controls.Remove(toolStrip1);
             }
 
             taskDescriptionLabel1.SetupFor(args);
 
-
             Text = args.WindowTitle;
-
-            _usefulPropertyFinder = new AttributePropertyFinder<UsefulPropertyAttribute>(_searchables.Keys);
 
             tbFilter.Focus();
 
@@ -178,56 +182,6 @@ namespace Rdmp.UI.SimpleDialogs
             };
 
             StartPosition = FormStartPosition.CenterScreen;
-
-            _types = _searchables.Keys.Select(k => k.GetType()).Distinct().ToArray();
-            _typeNames = new HashSet<string>(_types.Select(t => t.Name));
-
-            foreach (Type t in StartingEasyFilters.SelectMany(v => v.Value))
-            {
-                if (!_typeNames.Contains(t.Name))
-                    _typeNames.Add(t.Name);
-            }
-
-            Type[] startingFilters = null;
-
-            if (focusedCollection != RDMPCollection.None && StartingEasyFilters.ContainsKey(focusedCollection))
-                startingFilters = StartingEasyFilters[focusedCollection];
-
-            BackColorProvider backColorProvider = new BackColorProvider();
-
-            foreach (Type t in EasyFilterTypesAndAssociatedCollections.Keys)
-            {
-                var b = new ToolStripButton();
-                b.Image = activator.CoreIconProvider.GetImage(t);
-                b.CheckOnClick = true;
-                b.Tag = t;
-                b.DisplayStyle = ToolStripItemDisplayStyle.Image;
-
-                string shortCode = SearchablesMatchScorer.ShortCodes.Single(kvp => kvp.Value == t).Key;
-
-                b.Text = $"{t.Name} ({shortCode})";
-                b.CheckedChanged += CollectionCheckedChanged;
-                b.Checked = startingFilters != null && startingFilters.Contains(t);
-
-                b.BackgroundImage = backColorProvider.GetBackgroundImage(b.Size, EasyFilterTypesAndAssociatedCollections[t]);
-
-                toolStrip1.Items.Add(b);
-            }
-
-            toolStrip1.Items.Add(new ToolStripLabel("ID:"));
-            toolStrip1.Items.Add(_lblId = new ToolStripTextBox());
-            _lblId.TextChanged += tbFilter_TextChanged;
-
-            if (UserSettings.AdvancedFindFilters)
-            {
-                AddUserSettingCheckbox(() => UserSettings.ShowInternalCatalogues, (v) => UserSettings.ShowInternalCatalogues = v, "I", "Include Internal");
-                AddUserSettingCheckbox(() => UserSettings.ShowDeprecatedCatalogues, (v) => UserSettings.ShowDeprecatedCatalogues = v, "D", "Include Deprecated");
-                AddUserSettingCheckbox(() => UserSettings.ShowColdStorageCatalogues, (v) => UserSettings.ShowColdStorageCatalogues = v, "C", "Include Cold Storage");
-                AddUserSettingCheckbox(() => UserSettings.ShowProjectSpecificCatalogues, (v) => UserSettings.ShowProjectSpecificCatalogues = v, "P", "Include Project Specific");
-                AddUserSettingCheckbox(() => UserSettings.ShowNonExtractableCatalogues, (v) => UserSettings.ShowNonExtractableCatalogues = v, "E", "Include Extractable");
-            }
-
-            taskDescriptionLabel1.Visible = false;
 
             //start at cancel so if they hit the X nothing is selected
             DialogResult = DialogResult.Cancel;
@@ -283,6 +237,56 @@ namespace Rdmp.UI.SimpleDialogs
             FetchMatches(args.InitialSearchText, CancellationToken.None);
 
             olv.VirtualListDataSource = this;
+        }
+
+        private void BuildToolStripForDatabaseObjects(RDMPCollection focusedCollection)
+        {
+            _types = _searchables.Keys.Select(k => k.GetType()).Distinct().ToArray();
+            _typeNames = new HashSet<string>(_types.Select(t => t.Name));
+
+            foreach (Type t in StartingEasyFilters.SelectMany(v => v.Value))
+            {
+                if (!_typeNames.Contains(t.Name))
+                    _typeNames.Add(t.Name);
+            }
+            Type[] startingFilters = null;
+
+            if (focusedCollection != RDMPCollection.None && StartingEasyFilters.ContainsKey(focusedCollection))
+                startingFilters = StartingEasyFilters[focusedCollection];
+
+            BackColorProvider backColorProvider = new BackColorProvider();
+
+            foreach (Type t in EasyFilterTypesAndAssociatedCollections.Keys)
+            {
+                var b = new ToolStripButton();
+                b.Image = _activator.CoreIconProvider.GetImage(t);
+                b.CheckOnClick = true;
+                b.Tag = t;
+                b.DisplayStyle = ToolStripItemDisplayStyle.Image;
+
+                string shortCode = SearchablesMatchScorer.ShortCodes.Single(kvp => kvp.Value == t).Key;
+
+                b.Text = $"{t.Name} ({shortCode})";
+                b.CheckedChanged += CollectionCheckedChanged;
+                b.Checked = startingFilters != null && startingFilters.Contains(t);
+
+                b.BackgroundImage = backColorProvider.GetBackgroundImage(b.Size, EasyFilterTypesAndAssociatedCollections[t]);
+
+                toolStrip1.Items.Add(b);
+            }
+
+            toolStrip1.Items.Add(new ToolStripLabel("ID:"));
+            toolStrip1.Items.Add(_lblId = new ToolStripTextBox());
+            _lblId.TextChanged += tbFilter_TextChanged;
+
+            if (UserSettings.AdvancedFindFilters)
+            {
+                AddUserSettingCheckbox(() => UserSettings.ShowInternalCatalogues, (v) => UserSettings.ShowInternalCatalogues = v, "I", "Include Internal");
+                AddUserSettingCheckbox(() => UserSettings.ShowDeprecatedCatalogues, (v) => UserSettings.ShowDeprecatedCatalogues = v, "D", "Include Deprecated");
+                AddUserSettingCheckbox(() => UserSettings.ShowColdStorageCatalogues, (v) => UserSettings.ShowColdStorageCatalogues = v, "C", "Include Cold Storage");
+                AddUserSettingCheckbox(() => UserSettings.ShowProjectSpecificCatalogues, (v) => UserSettings.ShowProjectSpecificCatalogues = v, "P", "Include Project Specific");
+                AddUserSettingCheckbox(() => UserSettings.ShowNonExtractableCatalogues, (v) => UserSettings.ShowNonExtractableCatalogues = v, "E", "Include Extractable");
+            }
         }
 
         private void BtnKeypress(object sender, KeyPressEventArgs e)
@@ -348,19 +352,31 @@ namespace Rdmp.UI.SimpleDialogs
 
         private void FetchMatches(string text, CancellationToken cancellationToken)
         {
+            if(!IsDatabaseObjects())
+            {
+                // TODO: allow searching for non db objects
+                return;
+            }
+
             var scorer = new SearchablesMatchScorer();
             scorer.RespectUserSettings = UserSettings.AdvancedFindFilters;
             scorer.TypeNames = _typeNames;
             scorer.BumpMatches = _activator.HistoryProvider.History.Select(h => h.Object).ToList();
 
-            if (_lblId != null && int.TryParse(_lblId.Text, out int requireId))
-                scorer.ID = requireId;
-
-            if (AlwaysFilterOn != null)
-                showOnlyTypes = new List<Type>(new[] { AlwaysFilterOn });
-
             _noSearchTerms = string.IsNullOrWhiteSpace(text) && showOnlyTypes.Count == 0;
 
+            if (_lblId != null && int.TryParse(_lblId.Text, out int requireId))
+            {
+                scorer.ID = requireId;
+                _noSearchTerms = false;
+            }
+                
+            if (AlwaysFilterOn != null)
+            {
+                showOnlyTypes = new List<Type>(new[] { AlwaysFilterOn });
+                _noSearchTerms = false;
+            }
+                
             var scores = scorer.ScoreMatches(_searchables, text, cancellationToken, showOnlyTypes);
             
             if (scores == null)

@@ -70,7 +70,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.olvObjects.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.olvObjects.Name = "olvObjects";
             this.olvObjects.ShowGroups = false;
-            this.olvObjects.Size = new System.Drawing.Size(480, 435);
+            this.olvObjects.Size = new System.Drawing.Size(480, 434);
             this.olvObjects.TabIndex = 1;
             this.olvObjects.UseCompatibleStateImageBehavior = false;
             this.olvObjects.UseFiltering = true;
@@ -181,7 +181,7 @@ namespace Rdmp.UI.SimpleDialogs
             // 
             this.splitContainer1.Panel2.Controls.Add(this.catalogueCollectionFilterUI1);
             this.splitContainer1.Size = new System.Drawing.Size(480, 582);
-            this.splitContainer1.SplitterDistance = 502;
+            this.splitContainer1.SplitterDistance = 501;
             this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 5;
             // 
@@ -191,7 +191,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.panel1.Controls.Add(this.tbFilter);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 477);
+            this.panel1.Location = new System.Drawing.Point(0, 476);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(480, 25);
             this.panel1.TabIndex = 4;
