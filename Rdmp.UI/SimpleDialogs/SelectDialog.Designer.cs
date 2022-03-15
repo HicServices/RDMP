@@ -36,6 +36,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.olvSelected = new BrightIdeasSoftware.OLVColumn();
             this.olvID = new BrightIdeasSoftware.OLVColumn();
             this.olvName = new BrightIdeasSoftware.OLVColumn();
+            this.olvHierarchy = new BrightIdeasSoftware.OLVColumn();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.btnSelect = new System.Windows.Forms.Button();
@@ -55,11 +56,13 @@ namespace Rdmp.UI.SimpleDialogs
             this.olv.AllColumns.Add(this.olvSelected);
             this.olv.AllColumns.Add(this.olvID);
             this.olv.AllColumns.Add(this.olvName);
+            this.olv.AllColumns.Add(this.olvHierarchy);
             this.olv.CellEditUseWholeCell = false;
             this.olv.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvSelected,
             this.olvID,
-            this.olvName});
+            this.olvName,
+            this.olvHierarchy});
             this.olv.Cursor = System.Windows.Forms.Cursors.Default;
             this.olv.Dock = System.Windows.Forms.DockStyle.Fill;
             this.olv.FullRowSelect = true;
@@ -92,6 +95,13 @@ namespace Rdmp.UI.SimpleDialogs
             this.olvName.MinimumWidth = 100;
             this.olvName.Text = "Name";
             this.olvName.Width = 100;
+            // 
+            // olvHierarchy
+            // 
+            this.olvHierarchy.AspectName = "";
+            this.olvHierarchy.MinimumWidth = 100;
+            this.olvHierarchy.Text = "Hierarchy";
+            this.olvHierarchy.Width = 100;
             // 
             // toolStrip1
             // 
@@ -225,6 +235,7 @@ namespace Rdmp.UI.SimpleDialogs
         private System.Windows.Forms.TextBox tbFilter;
         private System.Windows.Forms.Label label1;
         private OLVColumn olvName;
+        private OLVColumn olvHierarchy;
         private OLVColumn olvID;
         private OLVColumn olvSelected;
     }

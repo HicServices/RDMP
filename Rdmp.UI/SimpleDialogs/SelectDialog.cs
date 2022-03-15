@@ -199,6 +199,8 @@ namespace Rdmp.UI.SimpleDialogs
             }
 
             olvName.AspectGetter = (m) => m?.ToString();
+            olvHierarchy.AspectGetter = GetHierarchy;
+            olvHierarchy.IsVisible = IsDatabaseObjects();
 
             olvName.ImageGetter = GetImage;
             olv.RowHeight = 19;
@@ -249,6 +251,24 @@ namespace Rdmp.UI.SimpleDialogs
             }
 
             olv.VirtualListDataSource = this;
+        }
+
+        private object GetHierarchy(object rowObject)
+        {
+            if (!(rowObject is IMapsDirectlyToDatabaseTable m))
+                return null;
+
+            if(_searchables.ContainsKey(m))
+            {
+                var toReturn = string.Join('\\', _searchables[m].GetUsefulParents());
+                if (toReturn.StartsWith(@"\\"))
+                    return toReturn.Substring(1);
+
+                return toReturn;
+            }
+                
+
+            return null;
         }
 
         private void BuildToolStripForDatabaseObjects(RDMPCollection focusedCollection)
