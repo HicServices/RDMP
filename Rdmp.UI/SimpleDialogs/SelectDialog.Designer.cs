@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace Rdmp.UI.SimpleDialogs
 {
-    partial class SelectDialog2<T>
+    partial class SelectDialog<T>
     {
         /// <summary>
         /// Required designer variable.
@@ -68,7 +68,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.olv.Name = "olv";
             this.olv.ShowGroups = false;
             this.olv.Size = new System.Drawing.Size(587, 270);
-            this.olv.TabIndex = 0;
+            this.olv.TabIndex = 5;
             this.olv.UseCompatibleStateImageBehavior = false;
             this.olv.View = System.Windows.Forms.View.Details;
             this.olv.VirtualMode = true;
@@ -100,7 +100,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(587, 25);
-            this.toolStrip1.TabIndex = 3;
+            this.toolStrip1.TabIndex = 6;
             this.toolStrip1.Text = "toolStrip1";
             // 
             // toolStripLabel1
@@ -116,7 +116,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.btnSelect.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnSelect.Name = "btnSelect";
             this.btnSelect.Size = new System.Drawing.Size(587, 27);
-            this.btnSelect.TabIndex = 5;
+            this.btnSelect.TabIndex = 2;
             this.btnSelect.Text = "Select";
             this.btnSelect.UseVisualStyleBackColor = true;
             this.btnSelect.Click += new System.EventHandler(this.btnSelect_Click);
@@ -128,7 +128,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.btnSelectNULL.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnSelectNULL.Name = "btnSelectNULL";
             this.btnSelectNULL.Size = new System.Drawing.Size(587, 27);
-            this.btnSelectNULL.TabIndex = 6;
+            this.btnSelectNULL.TabIndex = 3;
             this.btnSelectNULL.Text = "Select \'NULL\'";
             this.btnSelectNULL.UseVisualStyleBackColor = true;
             this.btnSelectNULL.Click += new System.EventHandler(this.btnSelectNULL_Click);
@@ -140,7 +140,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(587, 27);
-            this.btnCancel.TabIndex = 7;
+            this.btnCancel.TabIndex = 4;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);

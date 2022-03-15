@@ -24,7 +24,7 @@ using System.Windows.Forms;
 
 namespace Rdmp.UI.SimpleDialogs
 {
-    public partial class SelectDialog2<T> : Form, IVirtualListDataSource where T : class
+    public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : class
     {
         private readonly Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> _searchables;
         private readonly AttributePropertyFinder<UsefulPropertyAttribute> _usefulPropertyFinder;
@@ -141,7 +141,7 @@ namespace Rdmp.UI.SimpleDialogs
             };
 
 
-        public SelectDialog2(DialogArgs args, IActivateItems activator, IEnumerable<T> toSelectFrom, bool allowDeleting, RDMPCollection focusedCollection = RDMPCollection.None)
+        public SelectDialog(DialogArgs args, IActivateItems activator, IEnumerable<T> toSelectFrom, bool allowDeleting, RDMPCollection focusedCollection = RDMPCollection.None)
         {
             _activator = activator;
             _allowDeleting = allowDeleting;
@@ -169,8 +169,6 @@ namespace Rdmp.UI.SimpleDialogs
             taskDescriptionLabel1.SetupFor(args);
 
             Text = args.WindowTitle;
-
-            tbFilter.Focus();
 
             tbFilter.Text = args.InitialSearchText;
             tbFilter.TextChanged += tbFilter_TextChanged;

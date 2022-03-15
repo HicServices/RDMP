@@ -558,7 +558,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override bool SelectObject<T>(DialogArgs args, T[] available, out T selected)
         {
-            var pick = new SelectDialog2<T>(args,this,available,false);
+            var pick = new SelectDialog<T>(args,this,available,false);
 
             if (pick.ShowDialog() == DialogResult.OK)
             {
@@ -572,7 +572,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected)
         {
-            var pick = new SelectDialog2<T>(args,this, available, false);
+            var pick = new SelectDialog<T>(args,this, available, false);
             pick.AllowMultiSelect = true;
 
             if (pick.ShowDialog() == DialogResult.OK)
@@ -652,7 +652,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 return null;
             }
 
-            var selectDialog = new SelectDialog2<IMapsDirectlyToDatabaseTable>(args, this, availableObjects, false);
+            var selectDialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(args, this, availableObjects, false);
             selectDialog.AllowMultiSelect = true;
             
             if (selectDialog.ShowDialog() == DialogResult.OK)
@@ -763,11 +763,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override void SelectAnythingThen(DialogArgs args, Action<IMapsDirectlyToDatabaseTable> callback)
         {
-            var select = new SelectDialog2<IMapsDirectlyToDatabaseTable>(
+            var select = new SelectDialog<IMapsDirectlyToDatabaseTable>(
                 args, this, CoreChildProvider.GetAllSearchables().Select(k => k.Key), false);
 
-            select.Show();
-            if(select.DialogResult == DialogResult.OK && select.Selected != null)
+            if(select.ShowDialog() == DialogResult.OK && select.Selected != null)
             {
                 callback(select.Selected);
             }
