@@ -234,7 +234,10 @@ namespace Rdmp.UI.SimpleDialogs
                     e.Handled = true;
             };
 
-            FetchMatches(args.InitialSearchText, CancellationToken.None);
+            if(IsDatabaseObjects())
+            {
+                FetchMatches(args.InitialSearchText, CancellationToken.None);
+            }
 
             olv.VirtualListDataSource = this;
         }
@@ -299,6 +302,22 @@ namespace Rdmp.UI.SimpleDialogs
                 tbFilter.Focus();
             }
         }
+        private void tbFilter_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down)
+                if (!olv.Focused)
+                {
+                    olv.Focus();
+                    SendKeys.Send(e.KeyCode == Keys.Up ? "{UP}" : "{DOWN}");
+                }
+        }
+
+        private void tbFilter_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                e.SuppressKeyPress = true;
+        }
+
         public Bitmap GetImage(object model)
         {
             var bmp = _activator.CoreIconProvider.GetImage(model);
@@ -352,12 +371,6 @@ namespace Rdmp.UI.SimpleDialogs
 
         private void FetchMatches(string text, CancellationToken cancellationToken)
         {
-            if(!IsDatabaseObjects())
-            {
-                // TODO: allow searching for non db objects
-                return;
-            }
-
             var scorer = new SearchablesMatchScorer();
             scorer.RespectUserSettings = UserSettings.AdvancedFindFilters;
             scorer.TypeNames = _typeNames;
@@ -488,6 +501,12 @@ namespace Rdmp.UI.SimpleDialogs
 
         private void tbFilter_TextChanged(object sender, EventArgs e)
         {
+            if (!IsDatabaseObjects())
+            {
+                StateChanged();
+                return;
+            }
+
             //cancel the last execution if it has not completed yet
             if (_lastFetchTask != null && !_lastFetchTask.IsCompleted)
                 _lastCancellationToken.Cancel();
@@ -572,7 +591,11 @@ namespace Rdmp.UI.SimpleDialogs
                     }
                     else
                     {
-                        _objectsToDisplay = _allObjects.ToList();
+                        var searchText = tbFilter.Text;
+
+                        _objectsToDisplay = string.IsNullOrWhiteSpace(searchText) ?
+                            _allObjects.ToList() :
+                            _allObjects.Where(o=>IsSimpleTextMatch(o, searchText)).ToList();
                     }
 
                     stateChanged = false;
@@ -580,6 +603,12 @@ namespace Rdmp.UI.SimpleDialogs
 
                 return Math.Min(_objectsToDisplay.Count,MaxMatches);
             }
+        }
+
+        private bool IsSimpleTextMatch(T arg, string searchText)
+        {
+            var terms = searchText.Split(' ',StringSplitOptions.RemoveEmptyEntries);
+            return terms.All(t=>arg.ToString().Contains(t,StringComparison.CurrentCultureIgnoreCase));
         }
 
         public int GetObjectIndex(object model)
