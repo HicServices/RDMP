@@ -268,23 +268,31 @@ namespace Rdmp.UI.SimpleDialogs
 
             BackColorProvider backColorProvider = new BackColorProvider();
 
-            foreach (Type t in EasyFilterTypesAndAssociatedCollections.Keys)
+            // if there are at least 2 Types of object let them filter
+            if(_types.Count() > 1)
             {
-                var b = new ToolStripButton();
-                b.Image = _activator.CoreIconProvider.GetImage(t);
-                b.CheckOnClick = true;
-                b.Tag = t;
-                b.DisplayStyle = ToolStripItemDisplayStyle.Image;
+                foreach (Type t in EasyFilterTypesAndAssociatedCollections.Keys)
+                {
+                    var b = new ToolStripButton();
+                    b.Image = _activator.CoreIconProvider.GetImage(t);
+                    b.CheckOnClick = true;
+                    b.Tag = t;
+                    b.DisplayStyle = ToolStripItemDisplayStyle.Image;
 
-                string shortCode = SearchablesMatchScorer.ShortCodes.Single(kvp => kvp.Value == t).Key;
+                    string shortCode = SearchablesMatchScorer.ShortCodes.Single(kvp => kvp.Value == t).Key;
 
-                b.Text = $"{t.Name} ({shortCode})";
-                b.CheckedChanged += CollectionCheckedChanged;
-                b.Checked = startingFilters != null && startingFilters.Contains(t);
+                    b.Text = $"{t.Name} ({shortCode})";
+                    b.CheckedChanged += CollectionCheckedChanged;
+                    b.Checked = startingFilters != null && startingFilters.Contains(t);
 
-                b.BackgroundImage = backColorProvider.GetBackgroundImage(b.Size, EasyFilterTypesAndAssociatedCollections[t]);
+                    b.BackgroundImage = backColorProvider.GetBackgroundImage(b.Size, EasyFilterTypesAndAssociatedCollections[t]);
 
-                toolStrip1.Items.Add(b);
+                    toolStrip1.Items.Add(b);
+                }
+            }      
+            else
+            {
+                toolStripLabel1.Visible = false;
             }
 
             toolStrip1.Items.Add(new ToolStripLabel("ID:"));
