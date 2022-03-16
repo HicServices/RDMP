@@ -535,6 +535,17 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandResetExtractionProgress(_activator, ec, null);
             }
 
+            if(Is(o, out Project proj))
+            {
+                yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator) { OverrideCommandName = "New Cohort Builder Query",SuggestedCategory = Add, Weight = -5f };
+                yield return new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, null) { OverrideCommandName = "New Cohort From Cohort Builder Query", SuggestedCategory = Add, Weight = -4.9f };
+                yield return new ExecuteCommandCreateNewCohortFromFile(_activator, null) { OverrideCommandName = "New Cohort From File", SuggestedCategory = Add, Weight = -4.8f };
+                yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, (Catalogue)null) { OverrideCommandName = "New Cohort From Catalogue", SuggestedCategory = Add, Weight = -4.7f };
+                yield return new ExecuteCommandCreateNewExtractionConfigurationForProject(_activator) { OverrideCommandName = "New Extraction Configuration", SuggestedCategory = Add, Weight = -2f };
+                yield return new ExecuteCommandCreateNewCatalogueByImportingFile(_activator) { OverrideCommandName = "New Project Specific Catalogue From File...", SuggestedCategory = Add, Weight = -1.9f };
+                yield return new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator) { OverrideCommandName = "New Project Specific Catalogue From Database...", SuggestedCategory = Add, Weight = -1.8f };
+            }
+
             if(Is(o, out ProjectCataloguesNode pcn))
             {
                 yield return new ExecuteCommandMakeCatalogueProjectSpecific(_activator).SetTarget(pcn.Project);

@@ -202,15 +202,15 @@ namespace Rdmp.UI.Collections
 
             return new IAtomicCommand[]
                {
-                    new ExecuteCommandCreateNewDataExtractionProject(Activator) { OverrideCommandName = "New Project",Weight = -10 },
-                    new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator) { OverrideCommandName = "New Cohort Builder Query" ,Weight = -5 },
-                    new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator, null) { OverrideCommandName = "From Cohort Builder Query",SuggestedCategory = "New Cohort", Weight = -4.9f},
-                    new ExecuteCommandCreateNewCohortFromFile(Activator, null) { OverrideCommandName = "From File" ,SuggestedCategory = "New Cohort",Weight = -4.8f},
-                    new ExecuteCommandCreateNewCohortFromCatalogue(Activator,(Catalogue)null) { OverrideCommandName = "From Catalogue" ,SuggestedCategory = "New Cohort",Weight = -4.7f},
-                    new ExecuteCommandCreateNewExtractionConfigurationForProject(Activator){OverrideCommandName = "New Extraction Configuration" ,Weight = -2f},
-                    new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator) { OverrideCommandName = "From File...",SuggestedCategory = "New Project Specific Catalogue" ,Weight = -1.9f},
-                    new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator) { OverrideCommandName = "From Database...",SuggestedCategory = "New Project Specific Catalogue" ,Weight = -1.8f},
-                    new ExecuteCommandCreateNewExtractableDataSetPackage(Activator){ OverrideCommandName = "New Package" , Weight = -0.9f}
+                    new ExecuteCommandCreateNewDataExtractionProject(Activator) { OverrideCommandName = "Add New Project",Weight = -10 },
+                    new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator) { OverrideCommandName = "Add New Cohort Builder Query" ,Weight = -4.95f },
+                    new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator, null) { OverrideCommandName = "From Cohort Builder Query",SuggestedCategory = "Add New Cohort", Weight = -4.9f},
+                    new ExecuteCommandCreateNewCohortFromFile(Activator, null) { OverrideCommandName = "From File" ,SuggestedCategory = "Add New Cohort",Weight = -4.8f},
+                    new ExecuteCommandCreateNewCohortFromCatalogue(Activator,(Catalogue)null) { OverrideCommandName = "From Catalogue" ,SuggestedCategory = "Add New Cohort",Weight = -4.7f},
+                    new ExecuteCommandCreateNewExtractionConfigurationForProject(Activator){OverrideCommandName = "Add New Extraction Configuration" ,Weight = -2f},
+                    new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator) { OverrideCommandName = "From File...",SuggestedCategory = "Add New Project Specific Catalogue" ,Weight = -1.9f},
+                    new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator) { OverrideCommandName = "From Database...",SuggestedCategory = "Add New Project Specific Catalogue" ,Weight = -1.8f},
+                    new ExecuteCommandCreateNewExtractableDataSetPackage(Activator){ OverrideCommandName = "Add New Package" , Weight = -1.7f}
                };
         }
         public static bool IsRootObject(object root)
