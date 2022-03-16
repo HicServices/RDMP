@@ -650,9 +650,15 @@ namespace Rdmp.UI.Collections
 
                     if (WhitespaceRightClickMenuCommandsGetter != null)
                     {
-                        var menu = factory.CreateMenu(_activator, Tree, _collection, WhitespaceRightClickMenuCommandsGetter(_activator));
-                        menu.AddCommonMenuItems(this);
-                        return Sort(menu);
+                        var toReturn = new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(_activator, Tree, this), this);
+
+                        foreach(var cmd in WhitespaceRightClickMenuCommandsGetter(_activator))
+                        {
+                            toReturn.Add(cmd);
+                        }
+
+                        toReturn.AddCommonMenuItems(this);
+                        return Sort(toReturn);
 
                     }
                 }

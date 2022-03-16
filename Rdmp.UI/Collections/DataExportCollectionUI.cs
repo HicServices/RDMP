@@ -110,11 +110,7 @@ namespace Rdmp.UI.Collections
                 olvName
                 );
 
-            CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter =(a)=> new IAtomicCommand[]
-            {
-                new ExecuteCommandCreateNewDataExtractionProject(a),
-                new ExecuteCommandCreateNewExtractableDataSetPackage(a)
-            };
+            CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a) => GetWhitespaceRightClickMenu();
             
             CommonTreeFunctionality.MaintainRootObjects = new Type[]{typeof(ExtractableDataSetPackage),typeof(Project)};
 
@@ -199,7 +195,24 @@ namespace Rdmp.UI.Collections
             CommonFunctionality.Add(mi,NewMenu);
             CommonFunctionality.Add(new ExecuteCommandCreateNewExtractableDataSetPackage(Activator), "Package", null, NewMenu);
         }
-        
+
+
+        private IAtomicCommand[] GetWhitespaceRightClickMenu()
+        {
+
+            return new IAtomicCommand[]
+               {
+                    new ExecuteCommandCreateNewDataExtractionProject(Activator) { OverrideCommandName = "New Project",Weight = -10 },
+                    new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator) { OverrideCommandName = "New Cohort Builder Query" ,Weight = -5 },
+                    new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator, null) { OverrideCommandName = "From Cohort Builder Query",SuggestedCategory = "New Cohort", Weight = -4.9f},
+                    new ExecuteCommandCreateNewCohortFromFile(Activator, null) { OverrideCommandName = "From File" ,SuggestedCategory = "New Cohort",Weight = -4.8f},
+                    new ExecuteCommandCreateNewCohortFromCatalogue(Activator,(Catalogue)null) { OverrideCommandName = "From Catalogue" ,SuggestedCategory = "New Cohort",Weight = -4.7f},
+                    new ExecuteCommandCreateNewExtractionConfigurationForProject(Activator){OverrideCommandName = "New Extraction Configuration" ,Weight = -2f},
+                    new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator) { OverrideCommandName = "From File...",SuggestedCategory = "New Project Specific Catalogue" ,Weight = -1.9f},
+                    new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator) { OverrideCommandName = "From Database...",SuggestedCategory = "New Project Specific Catalogue" ,Weight = -1.8f},
+                    new ExecuteCommandCreateNewExtractableDataSetPackage(Activator){ OverrideCommandName = "New Package" , Weight = -0.9f}
+               };
+        }
         public static bool IsRootObject(object root)
         {
             return root is Project || root is ExtractableDataSetPackage;
