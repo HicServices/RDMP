@@ -39,7 +39,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
 
         public ExecuteCommandCreateNewCohortFromCatalogue(IBasicActivateItems activator, Catalogue catalogue) : this(activator)
         {
-            SetExtractionIdentifierColumn(GetExtractionInformationFromCatalogue(catalogue));
+            if(catalogue != null)
+                SetExtractionIdentifierColumn(GetExtractionInformationFromCatalogue(catalogue));
         }
 
         [UseWithObjectConstructor]
@@ -102,7 +103,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
 
         private ExtractionInformation GetExtractionInformationFromCatalogue(ICatalogue catalogue)
         {
-
             var eis = catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
 
             if (eis.Count(ei => ei.IsExtractionIdentifier) != 1)
