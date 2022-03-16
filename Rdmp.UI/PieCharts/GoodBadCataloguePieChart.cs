@@ -11,6 +11,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
@@ -247,13 +248,14 @@ namespace Rdmp.UI.PieCharts
 
         private void btnSingleCatalogue_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), false,false);
-
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if(Activator.SelectObject(new DialogArgs
             {
-                var c = (Catalogue) dialog.Selected;
-                _collection.SetSingleCatalogueMode(c);
-                
+                TaskDescription = "Which Catalogue should the graph depict?"
+
+            }, Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(),out var selected))
+            {
+                _collection.SetSingleCatalogueMode(selected);
+
                 btnAllCatalogues.Checked = false;
                 btnSingleCatalogue.Checked = true;
 
@@ -285,18 +287,14 @@ namespace Rdmp.UI.PieCharts
 
         private void btnViewDataTable_Click(object sender, EventArgs e)
         {
-            var navigateTo = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, GetCatalogueItems().Where(ci => string.IsNullOrWhiteSpace(ci.Description)), false, false);
-
-            navigateTo.Show();
-
-            navigateTo.Closed += (o, args) =>
+            if(Activator.SelectObject(new DialogArgs
             {
-                if (navigateTo.DialogResult == DialogResult.OK)
-                {
-                    var cmd = new ExecuteCommandShow(Activator,navigateTo.Selected,1);
-                    cmd.Execute();
-                }   
-            };
+                TaskDescription = "The following CatalogueItem(s) do not currently have descriptions. Select one to navigate to it"
+            }, GetCatalogueItems().Where(ci => string.IsNullOrWhiteSpace(ci.Description)).ToArray(),out var selected))
+            {
+                var cmd = new ExecuteCommandShow(Activator, selected, 1);
+                cmd.Execute();   
+            }
         }
     }
 }

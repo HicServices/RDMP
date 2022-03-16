@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
@@ -140,21 +141,27 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 
         private void btnPick_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(_activator, _objectsForComboBox.Cast<IMapsDirectlyToDatabaseTable>(), true,false);
+            if (_activator.SelectObject(new DialogArgs
+            {
+                TaskDescription = $"Choose a new value for '{_args.Required.Name}'",
+                AllowSelectingNull = true,
+            }, _objectsForComboBox,out var selected))
+            {
 
-            if (dialog.ShowDialog() == DialogResult.OK)
-                if (dialog.Selected == null)
+                if (selected == null)
+                {
                     cbxValue.Text = ClearSelection;
+                }   
                 else
                 {
-                    if(!cbxValue.Items.Contains(dialog.Selected))
+                    if (!cbxValue.Items.Contains(selected))
                     {
-                        cbxValue.Items.Add(dialog.Selected);
+                        cbxValue.Items.Add(selected);
                     }
 
-                    cbxValue.SelectedItem = dialog.Selected;
+                    cbxValue.SelectedItem = selected;
                 }
-                    
+            }        
         }
     }
 }

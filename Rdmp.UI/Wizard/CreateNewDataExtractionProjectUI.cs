@@ -447,39 +447,36 @@ namespace Rdmp.UI.Wizard
 
         private void btnPick_Click(object sender, EventArgs e)
         {
-            var dlg = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator,
-                cbxDatasets.Items.Cast<ExtractableDataSet>().ToArray(), false, false);
-            
-            foreach (var eds in this._selectedDatasets)
-                dlg.MultiSelected.Add(eds);
-            
-            dlg.AllowMultiSelect = true;
+            if(Activator.SelectObjects(new DialogArgs
+            {
+                InitialObjectSelection = _selectedDatasets,
+                TaskDescription = "Which datasets should be extracted in this Project?"
 
-            if (dlg.ShowDialog() == DialogResult.OK)
-                _selectedDatasets = dlg.MultiSelected.Cast<ExtractableDataSet>().ToArray();
-
-            UpdateDatasetControlVisibility();
+            }, cbxDatasets.Items.Cast<ExtractableDataSet>().ToArray(), out var selected))
+            {
+                _selectedDatasets = selected;
+                UpdateDatasetControlVisibility();
+            }
         }
 
 
         private void btnPackage_Click(object sender, EventArgs e)
         {
-            var dlg = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator,
-                Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSetPackage>(), false, false);
-            dlg.AllowMultiSelect = true;
-
-            if (dlg.ShowDialog() == DialogResult.OK)
+            if(Activator.SelectObjects(new DialogArgs
             {
-                _selectedDatasets = dlg.MultiSelected
-                    .Cast<ExtractableDataSetPackage>()
+                TaskDescription = "Which Package(s) should be added to the Project.  Datasets in all packages chosen will be added to the Project"
+            }, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableDataSetPackage>(), out var selected))
+            {
+                _selectedDatasets = selected
                     .SelectMany(p =>
                         Activator.RepositoryLocator.DataExportRepository.PackageManager.GetAllDataSets(p,
                             cbxDatasets.Items.Cast<ExtractableDataSet>().ToArray()))
                     .Distinct()
                     .ToArray();
+
+                UpdateDatasetControlVisibility();
             }
 
-            UpdateDatasetControlVisibility();
         }
 
         /// <summary>

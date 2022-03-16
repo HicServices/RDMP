@@ -153,5 +153,18 @@ namespace Rdmp.Core.Providers
                 !(parent is IContainer)
             );
         }
+        /// <summary>
+        /// Returns all <see cref="Parents"/> which are meaningful to the user in locating the object within
+        /// a hierarchy 
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<object> GetUsefulParents()
+        {
+            return Parents.Where(parent =>
+                !TypesThatAreNotUsefulParents.Contains(parent.GetType())
+                &&
+                !(parent is IContainer)
+            );
+        }
     }
 }

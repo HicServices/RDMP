@@ -95,10 +95,15 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
 
         private void btnChooseRightTableInfo_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, _leftTableInfo.Repository.GetAllObjects<TableInfo>().Where(t=>t.ID != _leftTableInfo.ID), false, false);
 
-            if (dialog.ShowDialog() == DialogResult.OK)
-                SetRightTableInfo((TableInfo) dialog.Selected);
+            if (Activator.SelectObject(new DialogArgs
+            {
+                TaskDescription = $"Which other table should be joined to '{_leftTableInfo.Name}'?"
+            }, _leftTableInfo.Repository.GetAllObjects<TableInfo>().Where(t => t.ID != _leftTableInfo.ID).ToArray(),
+            out var selected))
+            {
+                SetRightTableInfo(selected);
+            }
         }
 
         private void SetRightTableInfo(TableInfo t)

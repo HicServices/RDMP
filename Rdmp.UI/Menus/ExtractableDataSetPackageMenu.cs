@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
@@ -35,17 +36,16 @@ namespace Rdmp.UI.Menus
             var packageManager = _activator.RepositoryLocator.DataExportRepository.PackageManager;
             var notInPackage = _childProvider.ExtractableDataSets.Except(packageManager.GetAllDataSets(_package, _childProvider.ExtractableDataSets));
 
-            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(_activator, notInPackage, false, false);
-            dialog.AllowMultiSelect = true;
-
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if(_activator.SelectObjects(new DialogArgs
             {
-                foreach (ExtractableDataSet ds in dialog.MultiSelected.Cast<ExtractableDataSet>())
+                TaskDescription = "Which datasets should become part of the package.  When adding a package to an ExtractionConfiguration all datasets will be added at once."
+            }, notInPackage.ToArray(), out var selected))
+            {
+                foreach (ExtractableDataSet ds in selected)
                     packageManager.AddDataSetToPackage(_package, ds);
 
                 //package contents changed
-                if(dialog.MultiSelected.Any())
-                    Publish(_package);
+                Publish(_package);
             }
         }
     }

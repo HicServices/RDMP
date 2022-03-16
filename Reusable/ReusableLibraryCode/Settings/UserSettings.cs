@@ -312,6 +312,18 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("ArchiveTriggerTimeout", value); }
         }
 
+        public static int FindWindowWidth
+        {
+            get { return AppSettings.GetValueOrDefault("FindWindowWidth", 300); }
+            set { AppSettings.AddOrUpdateValue("FindWindowWidth", value); }
+        }
+        public static int FindWindowHeight
+        {
+            get { return AppSettings.GetValueOrDefault("FindWindowHeight", 500); }
+            set { AppSettings.AddOrUpdateValue("FindWindowHeight", value); }
+        }
+
+
         #endregion
 
         /// <summary>
@@ -384,7 +396,7 @@ namespace ReusableLibraryCode.Settings
         }
         public static string[] GetHistoryForControl(Guid controlGuid)
         {
-            return AppSettings.GetValueOrDefault("A_" +controlGuid.ToString("N"), "").Split(new []{"#!#"},StringSplitOptions.RemoveEmptyEntries);
+            return AppSettings.GetValueOrDefault("A_" +controlGuid.ToString("N"), "").Split(new []{"#!#"},StringSplitOptions.None);
         }
         
         public static void SetHistoryForControl(Guid controlGuid,IEnumerable<string> history)

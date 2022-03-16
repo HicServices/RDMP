@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.DataExport.Data;
@@ -236,14 +237,16 @@ namespace Rdmp.UI.Raceway
         
         private void btnAddCatalogue_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(_activator, _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Except(_collection.GetCatalogues()), false, false);
-            dialog.AllowMultiSelect = true;
-
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if(_activator.SelectObjects(new DialogArgs { 
+                TaskDescription = "Choose which new Catalogues should be represented in the diagram.",
+            },
+                _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>()
+                .Except(_collection.GetCatalogues())
+                .ToArray(),
+                out var selected))
             {
-                var selectedCatalogues = dialog.MultiSelected;
-                foreach (var catalogue in selectedCatalogues)
-                    AddCatalogue((Catalogue)catalogue);
+                foreach (var catalogue in selected)
+                    AddCatalogue(catalogue);
 
                 SaveCollectionChanges();
                 GenerateChart();
@@ -269,12 +272,13 @@ namespace Rdmp.UI.Raceway
 
             if(dataExportChildProvider == null)
                 return;
-            
-            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, dataExportChildProvider.AllPackages, false, false);
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                var packageToAdd = (ExtractableDataSetPackage) dialog.Selected;
 
+            if(Activator.SelectObject(new DialogArgs
+            {
+                TaskDescription = "Choose a Package.  All Catalogues in the Package will be added to the diagram.",
+
+            }, dataExportChildProvider.AllPackages,out var packageToAdd))
+            {
                 var contents = _activator.RepositoryLocator.DataExportRepository.PackageManager.GetAllDataSets(packageToAdd, dataExportChildProvider.ExtractableDataSets);
 
                 foreach (var cata in contents.Select(ds => ds.Catalogue))

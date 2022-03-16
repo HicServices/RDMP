@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 
@@ -77,20 +78,14 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
             if (!_args.CatalogueRepository.SupportsObjectType(elementType))
                 throw new NotSupportedException("CatalogueRepository does not support element "+elementType+" for DemandsInitialization Type " + type);
 
-            var objects = _args.CatalogueRepository.GetAllObjects(elementType);
-            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(_activator, objects, true, false);
-            dialog.AllowMultiSelect = true;
-            
-            if(_value is IEnumerable<IMapsDirectlyToDatabaseTable> v)
+            if(_activator.SelectObjects(new DialogArgs
             {
-                dialog.SetInitialSelection(v);
-            }
-
-            if (dialog.ShowDialog() == DialogResult.OK)
+                TaskDescription = $"Which objects should be selected for Argument '{_args.Required.Name}'",
+                InitialObjectSelection = _value is IEnumerable<IMapsDirectlyToDatabaseTable> v ? v.ToArray() : null,
+            }, _args.CatalogueRepository.GetAllObjects(elementType).ToArray(), out var selected))
             {
-                var result = dialog.MultiSelected == null ? null : dialog.MultiSelected.ToArray();
-                _args.Setter(result);
-                SetUp(result);
+                _args.Setter(selected);
+                SetUp(selected);
             }
         }
     }

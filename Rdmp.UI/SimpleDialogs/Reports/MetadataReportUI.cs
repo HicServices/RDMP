@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.DataQualityEngine;
@@ -205,12 +206,14 @@ namespace Rdmp.UI.SimpleDialogs.Reports
 
         private void btnPick_Click(object sender, EventArgs e)
         {
-            var available = cbxCatalogues.Items.OfType<Catalogue>();
-            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, available, false, false);
-            dialog.AllowMultiSelect = true;
-
-            if (dialog.ShowDialog() == DialogResult.OK)
-                SetCatalogueSelection(dialog.MultiSelected.OfType<ICatalogue>().ToArray());
+            if(Activator.SelectObjects(new DialogArgs
+            {
+                TaskDescription = "Which Catalogue(s) do you want to generate metadata for?"
+            }, cbxCatalogues.Items.OfType<Catalogue>().ToArray(),out var selected))
+            {
+                SetCatalogueSelection(selected);
+            }
+                
         }
 
         private bool bLoading = false;
@@ -256,12 +259,14 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             var folders = Activator.CoreChildProvider.GetAllChildrenRecursively(CatalogueFolder.Root).OfType<CatalogueFolder>().ToList();
             folders.Add(CatalogueFolder.Root);
 
-            var dlg = new SelectDialog<CatalogueFolder>(Activator,folders.ToArray(),false,false);
-            dlg.Text = "Generate For Folder";
-
-            if (dlg.ShowDialog() == DialogResult.OK)
-                SetCatalogueSelection(Activator.CoreChildProvider.GetAllChildrenRecursively(dlg.Selected)
+            if(Activator.SelectObject(new DialogArgs
+            {
+                TaskDescription = "Which folder do you want to generate metadata for? All Catalogues in that folder will be included in the metadata report generated"
+            }, folders.ToArray(),out var selected))
+            {
+                SetCatalogueSelection(Activator.CoreChildProvider.GetAllChildrenRecursively(selected)
                     .OfType<ICatalogue>().ToArray());
+            }   
         }
     }
 }
