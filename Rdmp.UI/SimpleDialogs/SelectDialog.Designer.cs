@@ -43,12 +43,12 @@ namespace Rdmp.UI.SimpleDialogs
             this.btnSelectNULL = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.taskDescriptionLabel1 = new Rdmp.UI.SimpleDialogs.TaskDescriptionLabel();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.pFilter = new System.Windows.Forms.Panel();
             this.tbFilter = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.olv)).BeginInit();
             this.toolStrip1.SuspendLayout();
-            this.panel1.SuspendLayout();
+            this.pFilter.SuspendLayout();
             this.SuspendLayout();
             // 
             // olv
@@ -165,16 +165,16 @@ namespace Rdmp.UI.SimpleDialogs
             this.taskDescriptionLabel1.Size = new System.Drawing.Size(587, 42);
             this.taskDescriptionLabel1.TabIndex = 8;
             // 
-            // panel1
+            // pFilter
             // 
-            this.panel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.panel1.Controls.Add(this.tbFilter);
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 337);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(587, 25);
-            this.panel1.TabIndex = 9;
+            this.pFilter.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.pFilter.Controls.Add(this.tbFilter);
+            this.pFilter.Controls.Add(this.label1);
+            this.pFilter.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pFilter.Location = new System.Drawing.Point(0, 337);
+            this.pFilter.Name = "pFilter";
+            this.pFilter.Size = new System.Drawing.Size(587, 25);
+            this.pFilter.TabIndex = 9;
             // 
             // tbFilter
             // 
@@ -198,25 +198,25 @@ namespace Rdmp.UI.SimpleDialogs
             this.label1.Text = "Filter:";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // SelectDialog2
+            // SelectDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(587, 443);
             this.Controls.Add(this.olv);
-            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.pFilter);
             this.Controls.Add(this.taskDescriptionLabel1);
             this.Controls.Add(this.btnSelect);
             this.Controls.Add(this.btnSelectNULL);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.toolStrip1);
-            this.Name = "SelectDialog2";
+            this.Name = "SelectDialog";
             this.Text = "SelectDialog2";
             ((System.ComponentModel.ISupportInitialize)(this.olv)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
+            this.pFilter.ResumeLayout(false);
+            this.pFilter.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -231,12 +231,12 @@ namespace Rdmp.UI.SimpleDialogs
         private System.Windows.Forms.Button btnSelectNULL;
         private System.Windows.Forms.Button btnCancel;
         private TaskDescriptionLabel taskDescriptionLabel1;
-        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox tbFilter;
         private System.Windows.Forms.Label label1;
         private OLVColumn olvName;
         private OLVColumn olvHierarchy;
         private OLVColumn olvID;
         private OLVColumn olvSelected;
+        private Panel pFilter;
     }
 }

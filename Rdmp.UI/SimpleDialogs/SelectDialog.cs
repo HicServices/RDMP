@@ -173,6 +173,12 @@ namespace Rdmp.UI.SimpleDialogs
 
             Text = args.WindowTitle;
             label1.Text = args.IsFind ? "Find:" : "Filter:";
+
+            if(args.IsFind)
+            {
+                pFilter.Dock = DockStyle.Top;
+            }
+
             tbFilter.Text = args.InitialSearchText;
             tbFilter.KeyPress += (s, e) =>
             {
