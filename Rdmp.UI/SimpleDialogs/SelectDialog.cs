@@ -275,6 +275,12 @@ namespace Rdmp.UI.SimpleDialogs
             };
 
             tbFilter.TextChanged += tbFilter_TextChanged;
+
+            if(IsDatabaseObjects())
+            {
+                olv.CellToolTip.InitialDelay = UserSettings.TooltipAppearDelay;
+                olv.CellToolTipShowing += (s, e) => RDMPCollectionCommonFunctionality.Tree_CellToolTipShowing(activator, e);
+            }
         }
         protected override void OnShown(EventArgs e)
         {
@@ -515,6 +521,7 @@ namespace Rdmp.UI.SimpleDialogs
                     //instead it should just add it to the multi selection
                     MultiSelected.Add(Selected);
                     UpdateButtonEnabledness();
+                    olv.RefreshObject(Selected);
                     return;
                 }
 
@@ -546,6 +553,14 @@ namespace Rdmp.UI.SimpleDialogs
             {
                 DialogResult = DialogResult.OK;
                 Selected = olv.SelectedObject is T s ? s : default(T);
+
+                // if there are some multi selected items already
+                if(AllowMultiSelect && MultiSelected.Any())
+                {
+                    // select only those
+                    this.Close();
+                    return;
+                }
 
                 if (Selected == null)
                     return;

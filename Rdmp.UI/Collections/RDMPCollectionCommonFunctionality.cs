@@ -182,7 +182,7 @@ namespace Rdmp.UI.Collections
             Tree.KeyPress += Tree_KeyPress;
 
             Tree.CellToolTip.InitialDelay = UserSettings.TooltipAppearDelay;
-            Tree.CellToolTipShowing += Tree_CellToolTipShowing;
+            Tree.CellToolTipShowing += (s,e)=>Tree_CellToolTipShowing(activator,e);
 
             Tree.RevealAfterExpand = true;
 
@@ -283,7 +283,7 @@ namespace Rdmp.UI.Collections
             throw new NotImplementedException();
         }
 
-        private void Tree_CellToolTipShowing(object sender, ToolTipShowingEventArgs e)
+        public static void Tree_CellToolTipShowing(IActivateItems activator, ToolTipShowingEventArgs e)
         {
             
             var model = e.Model;
@@ -293,9 +293,7 @@ namespace Rdmp.UI.Collections
 
             e.AutoPopDelay = 32767;
 
-            
-
-            string problem = _activator.DescribeProblemIfAny(model);
+            string problem = activator.DescribeProblemIfAny(model);
 
             if (!string.IsNullOrWhiteSpace(problem))
             {

@@ -682,9 +682,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
             {
                 initialObjects =  SelectMany(new DialogArgs
                 {
-                    WindowTitle = "Session Objects",
+                    WindowTitle = sessionName.StartsWith(ExecuteCommandStartSession.FindResultsTitle) ? "Find Multiple" : "Session Objects",
                     TaskDescription = "Pick which objects you want added to the session window.  You can always add more later",
-                    InitialSearchText = initialSearch
+                    InitialSearchText = initialSearch,
+
+                    IsFind = sessionName.StartsWith(ExecuteCommandStartSession.FindResultsTitle),
                 },typeof(IMapsDirectlyToDatabaseTable),CoreChildProvider.GetAllSearchables().Keys.ToArray())?.ToList();
 
                 if(initialObjects == null || initialObjects.Count() == 0)
