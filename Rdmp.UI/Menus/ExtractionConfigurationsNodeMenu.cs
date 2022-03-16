@@ -14,7 +14,8 @@ namespace Rdmp.UI.Menus
     {
         public ExtractionConfigurationsNodeMenu(RDMPContextMenuStripArgs args, ExtractionConfigurationsNode extractionConfigurationsNode): base(args, extractionConfigurationsNode)
         {
-            Add(new ExecuteCommandCreateNewExtractionConfigurationForProject(_activator, extractionConfigurationsNode.Project));
+            Add(new ExecuteCommandExecuteExtractionConfiguration(_activator, extractionConfigurationsNode.Project) { Weight = -10.2f});
+            Add(new ExecuteCommandRelease(_activator) { Weight = -10.1f }.SetTarget(extractionConfigurationsNode.Project));
         }
     }
 }

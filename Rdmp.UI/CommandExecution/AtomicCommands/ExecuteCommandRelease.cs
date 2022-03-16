@@ -24,7 +24,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         public ExecuteCommandRelease(IActivateItems activator) : base(activator)
         {
-            UseTripleDotSuffix = true;
+            OverrideCommandName = "Run Release...";
         }
 
         public override string GetCommandHelp()

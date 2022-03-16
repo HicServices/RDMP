@@ -17,8 +17,6 @@ namespace Rdmp.UI.Menus
     [System.ComponentModel.DesignerCategory("")]
     class ProjectMenu:RDMPContextMenuStrip
     {
-        private const string AddProjectSpecificCatalogueMenuText = "Add Project Specific Catalogue";
-
         public ProjectMenu(RDMPContextMenuStripArgs args, Project project)
             : base(args,project)
         {

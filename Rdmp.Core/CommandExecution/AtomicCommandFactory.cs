@@ -548,34 +548,36 @@ namespace Rdmp.Core.CommandExecution
 
             if (Is(o, out ProjectCataloguesNode pcn))
             {
-                yield return new ExecuteCommandMakeCatalogueProjectSpecific(_activator).SetTarget(pcn.Project);
-                yield return new ExecuteCommandCreateNewCatalogueByImportingFile(_activator).SetTarget(pcn.Project);
-                yield return new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator).SetTarget(pcn.Project);
+                yield return new ExecuteCommandMakeCatalogueProjectSpecific(_activator) { OverrideCommandName = "Add Existing Catalogue", Weight = -10}.SetTarget(pcn.Project);
+                yield return new ExecuteCommandCreateNewCatalogueByImportingFile(_activator) { OverrideCommandName = "Add New Catalogue From File", Weight = -9.5f}.SetTarget(pcn.Project);
+                yield return new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator) { OverrideCommandName = "Add New Catalogue From Existing Data Table", Weight = -9.4f }.SetTarget(pcn.Project);
             }
-
-            if(Is(o, out ProjectCohortIdentificationConfigurationAssociationsNode pccan))
-            {
-                yield return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator).SetTarget(pccan.Project);
-                yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator).SetTarget(pccan.Project);
-            }
-
-            if(Is(o, out ProjectSavedCohortsNode savedCohortsNode ))
-            {
-                yield return new ExecuteCommandCreateNewCohortFromFile(_activator,null).SetTarget(savedCohortsNode.Project);
-                yield return new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator,null).SetTarget(savedCohortsNode.Project);
-                yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator).SetTarget(savedCohortsNode.Project);
-
-                yield return new ExecuteCommandImportAlreadyExistingCohort(_activator,null,savedCohortsNode.Project);
-            }
-
 
             if (Is(o, out ProjectCohortsNode projCohorts))
             {
                 yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator) { OverrideCommandName = "Add New Cohort Builder Query", Weight = -5.1f }.SetTarget(projCohorts.Project);
                 yield return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator) { OverrideCommandName = "Add Existing Cohort Builder Query (link to)", Weight = -5f }.SetTarget(projCohorts.Project);
-                yield return new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, null) { OverrideCommandName = "Add New Cohort From Cohort Builder Query",Weight = -4.9f }.SetTarget(projCohorts.Project);
+                yield return new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, null) { OverrideCommandName = "Add New Cohort From Cohort Builder Query", Weight = -4.9f }.SetTarget(projCohorts.Project);
                 yield return new ExecuteCommandCreateNewCohortFromFile(_activator, null) { OverrideCommandName = "Add New Cohort From File", Weight = -4.8f }.SetTarget(projCohorts.Project);
                 yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, (Catalogue)null) { OverrideCommandName = "Add New Cohort From Catalogue", Weight = -4.7f }.SetTarget(projCohorts.Project);
+            }
+
+            if (Is(o, out ProjectCohortIdentificationConfigurationAssociationsNode pccan))
+            {
+                yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator) { OverrideCommandName = "Add New Cohort Builder Query", Weight = -5.1f }.SetTarget(pccan.Project);
+                yield return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator) { OverrideCommandName = "Add Existing Cohort Builder Query (link to)", Weight = -5f }.SetTarget(pccan.Project);
+            }
+
+            if(Is(o, out ProjectSavedCohortsNode savedCohortsNode ))
+            {
+                yield return new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, null) { OverrideCommandName = "Add New Cohort From Cohort Builder Query", Weight = -4.9f }.SetTarget(savedCohortsNode.Project);
+                yield return new ExecuteCommandCreateNewCohortFromFile(_activator, null) { OverrideCommandName = "Add New Cohort From File", Weight = -4.8f }.SetTarget(savedCohortsNode.Project);
+                yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, (Catalogue)null) { OverrideCommandName = "Add New Cohort From Catalogue", Weight = -4.7f }.SetTarget(savedCohortsNode.Project);
+            }
+
+            if(Is(o, out ExtractionConfigurationsNode ecn))
+            {
+                yield return new ExecuteCommandCreateNewExtractionConfigurationForProject(_activator, ecn.Project) { OverrideCommandName = "Add New Extraction Configuration", Weight = -4.7f };
             }
 
             if (Is(o,out ExternalCohortTable ect))
