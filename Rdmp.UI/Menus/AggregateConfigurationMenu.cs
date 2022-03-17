@@ -19,7 +19,16 @@ namespace Rdmp.UI.Menus
     class AggregateConfigurationMenu :RDMPContextMenuStrip
     {
         public AggregateConfigurationMenu(RDMPContextMenuStripArgs args, AggregateConfiguration aggregate): base(args, aggregate)
-        {                                                
+        {
+            if (aggregate.IsCohortIdentificationAggregate)
+            {
+                args.SkipCommand<ExecuteCommandSetPivot>();
+                args.SkipCommand<ExecuteCommandSetAxis>();
+
+                Add(new ExecuteCommandAddDimension(_activator, aggregate) { SuggestedCategory = "Add" });
+                args.SkipCommand<ExecuteCommandAddDimension>();
+            }
+
             //if it is a cohort aggregate (but not joinables since they don't match patients they match records and select many columns)
             if ( aggregate.IsCohortIdentificationAggregate && !aggregate.IsJoinablePatientIndexTable())
             {
@@ -40,7 +49,7 @@ namespace Rdmp.UI.Menus
                         // Occurs if the AggregateConfiguration is badly set up e.g. has too many extraction identifiers
                         graphsAvailableInCatalogue = new AggregateConfiguration[0];
                     }
-                    
+
                     //and offer graph generation for the cohort subsets
                     var matchRecords = new ToolStripMenuItem("Graph Matching Records Only",_activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph));
                     var matchIdentifiers = new ToolStripMenuItem("Graph All Records For Matching Patients",_activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph));
@@ -51,7 +60,7 @@ namespace Rdmp.UI.Menus
                     foreach (AggregateConfiguration graph in graphsAvailableInCatalogue)
                     {
                         //records in
-                        Add(new ExecuteCommandViewCohortAggregateGraph(_activator,new CohortSummaryAggregateGraphObjectCollection(aggregate, graph,CohortSummaryAdjustment.WhereRecordsIn)),
+                        Add(new ExecuteCommandViewCohortAggregateGraph(_activator,new CohortSummaryAggregateGraphObjectCollection(aggregate, graph, CohortSummaryAdjustment.WhereRecordsIn)),
                             Keys.None,
                             matchRecords);
 
@@ -63,8 +72,11 @@ namespace Rdmp.UI.Menus
                             );
                     }
 
-                    Items.Add(matchRecords);
-                    Items.Add(matchIdentifiers);
+                    //Create new graph menu item
+                    var miGraph = new ToolStripMenuItem("Graph");
+                    miGraph.DropDownItems.Add(matchRecords);
+                    miGraph.DropDownItems.Add(matchIdentifiers);
+                    Items.Add(miGraph);
                 }
             }
 

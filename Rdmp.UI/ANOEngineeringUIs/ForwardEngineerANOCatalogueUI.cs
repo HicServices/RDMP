@@ -224,17 +224,22 @@ namespace Rdmp.UI.ANOEngineeringUIs
                         return;
                     }
 
-                    var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, Activator.CoreChildProvider.AllANOTables, true, false);
-                    try
-                    {
-                        if (dialog.ShowDialog() == DialogResult.OK)
-                            plan.ANOTable = dialog.Selected as ANOTable;
 
-                        Check();
-                    }
-                    catch (Exception exception)
+                    if(Activator.SelectObject(new DialogArgs
                     {
-                        ExceptionViewer.Show(exception);
+                        TaskDescription = "Choose an ANOTable into which to put the identifiable values stored in this column"
+
+                    }, Activator.CoreChildProvider.AllANOTables, out var selected))
+                    {
+                        try
+                        {
+                            plan.ANOTable = selected;
+                            Check();
+                        }
+                        catch (Exception exception)
+                        {
+                            ExceptionViewer.Show(exception);
+                        }
                     }
 
                     e.Cancel = true;

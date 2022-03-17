@@ -24,12 +24,12 @@ namespace Rdmp.UI.Menus
         {
             Items.Add("Edit", null, (s, e) => _activator.Activate<ExtractionConfigurationUI, ExtractionConfiguration>(extractionConfiguration));
 
-            Add(new ExecuteCommandRelease(_activator).SetTarget(extractionConfiguration));
+            Add(new ExecuteCommandRelease(_activator) { Weight = -99.5f}.SetTarget(extractionConfiguration));
             Add(new ExecuteCommandRefreshExtractionConfigurationsCohort(_activator, extractionConfiguration));
 
             Add(new ExecuteCommandOpenExtractionDirectory(_activator, extractionConfiguration));
 
-            ReBrandActivateAs("Extract...", RDMPConcept.ExtractionConfiguration, OverlayKind.Execute);
+            ReBrandActivateAs("Configure/Run Extract...", RDMPConcept.ExtractionConfiguration, OverlayKind.Execute);
         }
 
     }

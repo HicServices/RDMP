@@ -4,7 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Progress;
+using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Rdmp.Core.CommandExecution
@@ -57,6 +60,31 @@ namespace Rdmp.Core.CommandExecution
         /// </para>
         /// </summary>
         public string InitialSearchText { get; set; }
+
+        /// <summary>
+        /// If asking the user to select RDMP database objects then this should be the initially
+        /// ticked set of objects in the dialog.
+        /// </summary>
+        public IMapsDirectlyToDatabaseTable[] InitialObjectSelection { get; set; }
+        
+        /// <summary>
+        /// If choosing Null is a valid option for the user then set this to true.
+        /// Defaults to false.
+        /// </summary>
+        public bool AllowSelectingNull { get; set; }
+
+        /// <summary>
+        /// If <see cref="InitialSearchText"/> is supported by the dialog and autocomplete/history
+        /// is supported by the user interface then this can be set to a unique GUID that identifies
+        /// the source call site of the dialog e.g. find.  Once set future calls from the same site
+        /// should respect the same search text history
+        /// </summary>
+        public Guid? InitialSearchTextGuid { get; set; }
+
+        /// <summary>
+        /// If this instance is being sent to the find dialog then set to true otherwise leave false
+        /// </summary>
+        public bool IsFind { get; set; }
 
         public override string ToString()
         {

@@ -26,6 +26,8 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public ExecuteCommandShowKeywordHelp(IActivateItems activator,  RDMPContextMenuStripArgs args) : base(activator)
         {
             _args = args;
+
+            Weight = 100.6f;
         }
 
         public override string GetCommandName()

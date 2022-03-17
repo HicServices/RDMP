@@ -228,9 +228,15 @@ namespace Rdmp.UI.CohortUI
                 Activator.RequestItemEmphasis(this, new EmphasiseRequest(projects.Single(), 1));
             else
             {
-                var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, projects,false,false);
-                if(dialog.ShowDialog() == DialogResult.OK)
-                    Activator.RequestItemEmphasis(this, new EmphasiseRequest(dialog.Selected, 1));
+                var show = Activator.SelectOne(new DialogArgs
+                {
+                    TaskDescription = $"There are multiple Projects with the ProjectNumber {_extractableCohort.ExternalProjectNumber}.  Which would you like to see?"
+                }, projects);
+                
+                if(show != null)
+                {
+                    Activator.RequestItemEmphasis(this, new EmphasiseRequest(show, 1));
+                }   
             }
         }
 

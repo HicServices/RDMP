@@ -196,7 +196,7 @@ namespace Rdmp.UI.Collections
             {
                 new ExecuteCommandCreateNewCatalogueByImportingFileUI(a),
                 new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(a),
-                new ExecuteCommandCreateNewEmptyCatalogue(a)
+                new ExecuteCommandCreateNewEmptyCatalogue(a),
             };
 
             Activator.RefreshBus.EstablishLifetimeSubscription(this);

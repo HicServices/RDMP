@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
@@ -27,6 +28,8 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             if (session == null && !activator.GetSessions().Any())
                 SetImpossible("There are no active Sessions");
 
+            Weight = 100.2f;
+
         }
         public override void Execute()
         {
@@ -41,9 +44,13 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                     ses = sessions[0];
                 else
                 {
-                    var dlg = new SelectDialog<SessionCollectionUI>(BasicActivator,sessions,false,false);
-                    if (dlg.ShowDialog() == DialogResult.OK)
-                        ses = dlg.Selected;
+                    if(BasicActivator.SelectObject(new DialogArgs 
+                    {
+                     TaskDescription = "Choose which session to add the objects to"
+                    }, sessions,out var selected))
+                    {
+                        ses = selected;
+                    }                       
                 }
             }
 

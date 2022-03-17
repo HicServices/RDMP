@@ -20,6 +20,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             UpdateViabilityForTarget(target);
             _targets = new[] { target };
+
+            Weight = 50.1f;
         }
 
         public ExecuteCommandDisableOrEnable(IBasicActivateItems  activator, IDisableable[] disableables) : base(activator)
@@ -41,6 +43,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 SetImpossible("All objects must be in the same disabled/enabled state");
             }
+
+            Weight = 50.1f;
         }
         private void UpdateViabilityForTarget(IDisableable target)
         {

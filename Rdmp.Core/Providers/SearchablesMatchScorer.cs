@@ -59,6 +59,13 @@ namespace Rdmp.Core.Providers
         /// </summary>
         public bool RespectUserSettings { get; set; } = false;
 
+
+        /// <summary>
+        /// Determines behaviour when there are no search terms.  If true then return an empty dictionary.
+        /// If false return a dictionary in which all items are scored 0.
+        /// </summary>
+        public bool ReturnEmptyResultWhenNoSearchTerms { get; set; }
+
         /// <summary>
         /// When the user types one of these they get a filter on the full Type
         /// </summary>
@@ -130,11 +137,11 @@ namespace Rdmp.Core.Providers
                     if (AlsoIncludes.ContainsKey(s))
                         foreach(var v in AlsoIncludes[s])
                             searchText += " " + v.Name;
- 
+
             //if we have nothing to search for return no results
-            if(string.IsNullOrWhiteSpace(searchText) && ID == null)
+            if (ReturnEmptyResultWhenNoSearchTerms && string.IsNullOrWhiteSpace(searchText) && ID == null)
                 return new Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int>();
-            
+
             var tokens = (searchText??"").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             
             var regexes = new List<Regex>();

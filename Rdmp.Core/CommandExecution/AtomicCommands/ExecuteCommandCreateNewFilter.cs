@@ -20,9 +20,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private IFilterFactory _factory;
         private IContainer _container;
         private IRootFilterContainerHost _host;
+        private const float DEFAULT_WEIGHT = 0.1f;
 
         public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, IRootFilterContainerHost host):base(activator)
         {
+            Weight = DEFAULT_WEIGHT;
+
             _factory = host.GetFilterFactory();
             _container = host.RootFilterContainer;
             _host = host;
@@ -32,6 +35,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         }
         public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, IFilterFactory factory, IContainer container = null):base(activator)
         {
+            Weight = DEFAULT_WEIGHT;
+
             _factory = factory;
             _container = container;
         }

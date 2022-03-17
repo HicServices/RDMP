@@ -30,17 +30,30 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// </summary>
         public bool DoNotClone { get; set; }
 
+        private void SetCommandWeight()
+        {
+            if (_offerCohortAggregates)
+                Weight = 0.14f;
+            else
+                Weight = 0.13f;
+        }
+
+
         private ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(IBasicActivateItems activator, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
         {
             _targetCohortAggregateContainer = targetCohortAggregateContainer;
 
             if (targetCohortAggregateContainer.ShouldBeReadOnly(out string reason))
                 SetImpossible(reason);
+
+            SetCommandWeight();
         }
 
         public ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(IBasicActivateItems activator,AggregateConfigurationCombineable aggregateConfigurationCommand, CohortAggregateContainer targetCohortAggregateContainer) : this(activator,targetCohortAggregateContainer)
         {
             _aggregateConfigurationCombineable = aggregateConfigurationCommand;
+
+            SetCommandWeight();
         }
 
         /// <summary>
@@ -71,6 +84,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
 
             this._offerCohortAggregates = offerCohortAggregates;
+
+            SetCommandWeight();
         }
 
         public override Image GetImage(IIconProvider iconProvider)
@@ -80,8 +95,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public override string GetCommandName()
         {
+            // If we're explicity overriding the command name, then use that
+            if (!string.IsNullOrWhiteSpace(OverrideCommandName))
+                return OverrideCommandName;
+
             // if an execute time decision is expected then command name should reflect the kind of available objects the user can add
-            if(_available?.Any() ?? false)
+            if (_available?.Any() ?? false)
             {
                 return _offerCohortAggregates ? "Import (Copy of) Cohort Set into container" : "Add Aggregate(s) into container";
             }

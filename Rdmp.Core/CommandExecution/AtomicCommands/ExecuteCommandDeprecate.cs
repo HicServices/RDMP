@@ -27,7 +27,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public override string GetCommandName()
         {
-            return _desiredState ? "Deprecate" : "UnDeprecate";
+            if (!string.IsNullOrEmpty(OverrideCommandName))
+                return OverrideCommandName;
+
+            return _desiredState ? "Deprecate" : "Undeprecate";
         }
 
         public override void Execute()
