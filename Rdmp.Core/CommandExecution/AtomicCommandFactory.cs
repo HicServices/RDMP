@@ -32,6 +32,7 @@ using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 using Rdmp.Core.Providers.Nodes.SharingNodes;
+using Rdmp.Core.Providers.Nodes.UsedByProject;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using System;
@@ -321,10 +322,11 @@ namespace Rdmp.Core.CommandExecution
                     cic = pcic.CohortIdentificationConfiguration;
                 }
 
-                yield return new ExecuteCommandViewCohortIdentificationConfiguration(_activator, cic, true);
-                yield return new ExecuteCommandViewCohortIdentificationConfiguration(_activator, cic, false);
-
-                var commit = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, null).SetTarget(cic);
+                var commit = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, null)
+                {
+                    OverrideCommandName = "Commit Cohort",
+                    Weight = -99.8f 
+                }.SetTarget(cic);
                 if (pcic != null)
                 {
                     commit.SetTarget((DatabaseEntity)pcic.Project);
@@ -332,23 +334,22 @@ namespace Rdmp.Core.CommandExecution
 
                 yield return commit;
 
-                //associate with project
-                yield return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator).SetTarget(cic);
-                
-                var clone = new ExecuteCommandCloneCohortIdentificationConfiguration(_activator).SetTarget(cic);
-                if(pcic != null)
+                yield return new ExecuteCommandViewCohortIdentificationConfiguration(_activator, cic, true) { Weight = -99.7f};
+                yield return new ExecuteCommandViewCohortIdentificationConfiguration(_activator, cic, false) { Weight = -99.6f };
+
+                yield return new ExecuteCommandFreezeCohortIdentificationConfiguration(_activator, cic, !cic.Frozen) { Weight = -50.5f };
+
+                var clone = new ExecuteCommandCloneCohortIdentificationConfiguration(_activator) { Weight = -50.4f, OverrideCommandName = "Clone" }.SetTarget(cic);
+                if (pcic != null)
                 {
-                    clone.SetTarget((DatabaseEntity) pcic.Project);
+                    clone.SetTarget((DatabaseEntity)pcic.Project);
                 }
-
                 yield return clone;
+                //associate with project
+                yield return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator) { Weight = -50.3f, OverrideCommandName = "Associate with Project" }.SetTarget(cic);
+                
+                yield return new ExecuteCommandSetQueryCachingDatabase(_activator, cic) { Weight = -50.4f, OverrideCommandName = "Change Query Cache" };
 
-                yield return new ExecuteCommandFreezeCohortIdentificationConfiguration(_activator, cic, !cic.Frozen);
-
-                yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator);
-
-                yield return new ExecuteCommandSetQueryCachingDatabase(_activator, cic);
-                yield return new ExecuteCommandCreateNewExternalDatabaseServer(_activator, new QueryCachingPatcher(), PermissableDefaults.WebServiceQueryCachingServer_ID);
             }
 
             if(Is(o,out AllGovernanceNode _))
@@ -582,22 +583,39 @@ namespace Rdmp.Core.CommandExecution
 
             if (Is(o,out ExternalCohortTable ect))
             {
-                yield return new ExecuteCommandCreateNewCohortFromFile(_activator, ect);
-                yield return new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, ect);
-                yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, ect);
-                yield return new ExecuteCommandImportAlreadyExistingCohort(_activator, ect, null);
+                var ectProj = o is CohortSourceUsedByProjectNode csbpn ? csbpn.User : null;
+
+                yield return new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, null)
+                    { OverrideCommandName = "New Cohort From Cohort Builder Query", Weight = -4.9f, SuggestedCategory = "Add" }
+                    .SetTarget(ect)
+                    .SetTarget(ectProj);
+                yield return new ExecuteCommandCreateNewCohortFromFile(_activator, null) 
+                { OverrideCommandName = "New Cohort From File", Weight = -4.8f, SuggestedCategory = "Add" }
+                    .SetTarget(ect)
+                    .SetTarget(ectProj);
+                yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, (Catalogue)null) 
+                { OverrideCommandName = "New Cohort From Catalogue", Weight = -4.7f, SuggestedCategory = "Add" }
+                    .SetTarget(ect)
+                    .SetTarget(ectProj);
+                yield return new ExecuteCommandImportAlreadyExistingCohort(_activator, ect, null) 
+                { OverrideCommandName = "Existing Cohort", Weight = -4.6f,SuggestedCategory = "Add" };
             }
 
             if(Is(o,out ExtractableCohort cohort))
             {
-                yield return new ExecuteCommandViewCohortSample(_activator, cohort, 100);
+                yield return new ExecuteCommandViewCohortSample(_activator, cohort, 100) { Weight = -99.9f};
                 yield return new ExecuteCommandViewCohortSample(_activator, cohort, int.MaxValue,null,false) 
                 {
                     AskForFile = true,
                     OverrideCommandName = "Save Cohort To File...",
-                    OverrideIcon = FamFamFamIcons.disk
+                    OverrideIcon = FamFamFamIcons.disk,
+                    Weight = -99.8f
                 };
-                yield return new ExecuteCommandDeprecate(_activator, cohort, !cohort.IsDeprecated);
+                yield return new ExecuteCommandDeprecate(_activator, cohort, !cohort.IsDeprecated)
+                {
+                    OverrideCommandName = cohort.IsDeprecated ? "Undeprecate Cohort": "Deprecate Cohort",
+                    Weight = -99.7f
+                };
             }
 
             if (Is(o, out CohortAggregateContainer cohortAggregateContainer))
