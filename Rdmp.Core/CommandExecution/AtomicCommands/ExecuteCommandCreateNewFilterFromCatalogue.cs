@@ -20,19 +20,23 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private IContainer _container;
         private ExtractionFilter[] _filters;
         private IRootFilterContainerHost _host;
+        private const float DEFAULT_WEIGHT = 0.2f;
 
         public ExecuteCommandCreateNewFilterFromCatalogue(IBasicActivateItems itemActivator, IContainer container) : this(itemActivator,container.GetCatalogueIfAny())
         {
+            Weight = DEFAULT_WEIGHT;
             _container = container;
         }
 
         public ExecuteCommandCreateNewFilterFromCatalogue(IBasicActivateItems itemActivator, IRootFilterContainerHost host) : this(itemActivator, host.GetCatalogue())
         {
+            Weight = DEFAULT_WEIGHT;
             _host = host;
         }
 
         private ExecuteCommandCreateNewFilterFromCatalogue(IBasicActivateItems itemActivator, ICatalogue catalogue) : base(itemActivator)
         {
+            Weight = DEFAULT_WEIGHT;
             if (catalogue == null)
             {
                 SetImpossible("No Catalogue found");

@@ -23,9 +23,9 @@ namespace Rdmp.UI.Menus
         {
             var projectOnlyNode = args.Masquerader as CohortSourceUsedByProjectNode;
             if (projectOnlyNode != null)
-                Add(new ExecuteCommandShowSummaryOfCohorts(_activator, projectOnlyNode));
+                Add(new ExecuteCommandShowSummaryOfCohorts(_activator, projectOnlyNode) { Weight = -99.9f});
             else
-                Add(new ExecuteCommandShowSummaryOfCohorts(_activator, externalCohortTable));
+                Add(new ExecuteCommandShowSummaryOfCohorts(_activator, externalCohortTable) { Weight = -99.9f });
         }
     }
 }

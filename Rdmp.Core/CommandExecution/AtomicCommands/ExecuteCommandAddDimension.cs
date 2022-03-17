@@ -21,16 +21,20 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private readonly AggregateConfiguration aggregate;
         private readonly string column;
         private readonly bool askAtRuntime;
+        private float DEFAULT_WEIGHT = 2.4f;
 
         public ExecuteCommandAddDimension(IBasicActivateItems basicActivator, AggregateConfiguration aggregate) : base(basicActivator)
         {
+            Weight = DEFAULT_WEIGHT;
             this.aggregate = aggregate;
             askAtRuntime = true;
+            ValidateCanAdd(aggregate);
         }
 
         [UseWithObjectConstructor]
         public ExecuteCommandAddDimension(IBasicActivateItems basicActivator, AggregateConfiguration aggregate, string column) : base(basicActivator)
         {
+            Weight = DEFAULT_WEIGHT;
             this.aggregate = aggregate;
             this.column = column;
 
@@ -48,6 +52,20 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 if (aggregate.PivotOnDimensionID == null)
                 {
                     SetImpossible($"AggregateConfiguration {aggregate} does not have a pivot to clear");
+                    return;
+                }
+            }
+
+            ValidateCanAdd(aggregate);
+        }
+
+        private void ValidateCanAdd(AggregateConfiguration aggregate)
+        {
+            if (aggregate.IsCohortIdentificationAggregate && !aggregate.IsJoinablePatientIndexTable())
+            {
+                if (aggregate.AggregateDimensions.Any())
+                {
+                    SetImpossible("Cohort aggregates can only have a single dimension. Remove existing dimension to select another.");
                 }
             }
         }

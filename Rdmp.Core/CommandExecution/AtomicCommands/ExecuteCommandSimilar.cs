@@ -73,6 +73,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 SetImpossible("Error finding Similar:" + ex.Message);
             }
+
+            Weight = 50.3f;
         }
 
         public override void Execute()

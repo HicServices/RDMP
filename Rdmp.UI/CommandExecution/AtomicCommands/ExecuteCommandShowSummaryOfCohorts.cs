@@ -25,12 +25,12 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public ExecuteCommandShowSummaryOfCohorts(IActivateItems activator)
             : base(activator)
         {
-            _commandName = "Show Detailed Summary of Cohorts";
+            _commandName = "Show Cohort Summary";
         }
 
         public ExecuteCommandShowSummaryOfCohorts(IActivateItems activator,CohortSourceUsedByProjectNode projectSource) : base(activator)
         {
-            _commandName = "Show Detailed Summary of Project Cohorts";
+            _commandName = "Show Cohort Summary";
 
             if (projectSource.IsEmptyNode)
                 SetImpossible("Node is empty");

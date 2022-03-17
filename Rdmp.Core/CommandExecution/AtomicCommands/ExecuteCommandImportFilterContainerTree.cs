@@ -32,7 +32,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// </summary>
         private readonly ICatalogue _catalogue;
         private readonly IRootFilterContainerHost _into;
-        
+        private const float DEFAULT_WEIGHT = 1.2f;
+
         /// <summary>
         /// May be null, if populated this is the explicit subcontainer into which the tree should be imported i.e. not <see cref="_into"/>
         /// </summary>
@@ -45,12 +46,16 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         private ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator):base(activator)
         {
+            Weight = DEFAULT_WEIGHT;
+
             if(!(activator.CoreChildProvider is DataExportChildProvider))
                 SetImpossible("Data export functions unavailable");
         }
 
         public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, IRootFilterContainerHost into):this(activator)
         {
+            Weight = DEFAULT_WEIGHT;
+
             _into = into;
 
             if(into.RootFilterContainer_ID != null)
@@ -70,7 +75,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         [UseWithObjectConstructor]
         public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, IRootFilterContainerHost into, IRootFilterContainerHost from):this(activator,into)
         {
-            if(from.RootFilterContainer_ID == null)
+            Weight = DEFAULT_WEIGHT;
+
+            if (from.RootFilterContainer_ID == null)
                 SetImpossible("AggregateConfiguration has no root container");
             else
                 _explicitChoice = from.RootFilterContainer;
@@ -84,6 +91,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// <param name="explicitChoice"></param>
         public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, IRootFilterContainerHost into, IContainer explicitChoice):this(activator,into)
         {
+            Weight = DEFAULT_WEIGHT;
+
             _explicitChoice = explicitChoice;
         }
         /// <summary>
@@ -94,6 +103,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// <param name="explicitChoice"></param>
         public ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator, IContainer into, IContainer explicitChoice):this(activator)
         {
+            Weight = DEFAULT_WEIGHT;
+
             _intoSubContainer = into;
             _explicitChoice = explicitChoice;
 

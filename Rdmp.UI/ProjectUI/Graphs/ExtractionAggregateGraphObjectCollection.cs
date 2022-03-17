@@ -7,6 +7,7 @@
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.DataExport.Data;
+using System;
 
 namespace Rdmp.UI.ProjectUI.Graphs
 {
@@ -45,6 +46,25 @@ namespace Rdmp.UI.ProjectUI.Graphs
         {
             DatabaseObjects.Add(selectedDataSet);
             DatabaseObjects.Add(graph);
+        }
+
+        /// <summary>
+        /// Returns true if the collection is not in a fit state to generate the graph.  Note that
+        /// the graph may still fail later in the query generation/execution phase.  This is just
+        /// fast checks that can be quickly performed e.g. is there a cohort on the ExtractionConfiguration
+        /// </summary>
+        /// <param name="reason"></param>
+        /// <returns></returns>
+        public bool IsImpossible(out string reason)
+        {
+            if(SelectedDataSets.ExtractionConfiguration.Cohort_ID == null)
+            {
+                reason = "ExtractionConfiguration does not have a cohort";
+                return true;
+            }
+
+            reason = null;
+            return false;
         }
     }
 }

@@ -65,9 +65,17 @@ namespace Rdmp.UI.Menus
             AtomicCommandUIFactory = new AtomicCommandUIFactory(_activator);
             
             RepositoryLocator = _activator.RepositoryLocator;
-                    
-            if(o != null && !(o is RDMPCollection))
-                ActivateCommandMenuItem = Add(new ExecuteCommandActivate(_activator,args.Masquerader?? o),Keys.None);
+
+            if (o != null && !(o is RDMPCollection))
+            {
+                var activateCommand = new ExecuteCommandActivate(_activator, args.Masquerader ?? o);
+                ActivateCommandMenuItem = Add(activateCommand, Keys.None);
+
+                if (activateCommand.ReasonCommandImpossible?.Equals(GlobalStrings.ObjectCannotBeActivated)??false)
+                {
+                    Items.Remove(ActivateCommandMenuItem);
+                }
+            }
         }
 
         /// <summary>
@@ -92,7 +100,11 @@ namespace Rdmp.UI.Menus
 
         protected void ReBrandActivateAs(string newTextForActivate, RDMPConcept newConcept, OverlayKind overlayKind = OverlayKind.None)
         {
-            //Activate is currently branded edit by parent lets tailor that
+            // if we are rebranding activate lets make sure its definetly in the menu
+            if(!Items.Contains(ActivateCommandMenuItem))
+            {
+                Items.Insert(0,ActivateCommandMenuItem);
+            }
             ActivateCommandMenuItem.Image = _activator.CoreIconProvider.GetImage(newConcept, overlayKind);
             ActivateCommandMenuItem.Text = newTextForActivate;
         }
@@ -145,8 +157,7 @@ namespace Rdmp.UI.Menus
             var databaseEntity = _o as DatabaseEntity;
 
             var treeMenuItem = AddMenuIfNotExists(Tree);
-            var inspectionMenuItem =  AddMenuIfNotExists(Inspection);
-            
+
             //ensure all submenus appear in the same place
             foreach(var mi in _subMenuDictionary.Values)
                 Items.Add(mi);
@@ -166,13 +177,15 @@ namespace Rdmp.UI.Menus
                 }
             }
 
-            if(Items.Count > 0)
-                Items.Add(new ToolStripSeparator());
+            //Check if we even want to display this
+            if (commonFunctionality.CheckColumnProvider != null)
+            { 
+                var inspectionMenuItem = AddMenuIfNotExists(Inspection);
+                Items.Add(inspectionMenuItem);
+                PopulateInspectionMenu(commonFunctionality, inspectionMenuItem);
+            }
 
             //add seldom used submenus (pin, view dependencies etc)
-            Items.Add(inspectionMenuItem);
-            PopulateInspectionMenu(commonFunctionality, inspectionMenuItem);
-
             Items.Add(treeMenuItem);
             PopulateTreeMenu(commonFunctionality, treeMenuItem);
 

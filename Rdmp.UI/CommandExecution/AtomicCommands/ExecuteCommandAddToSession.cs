@@ -28,6 +28,8 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             if (session == null && !activator.GetSessions().Any())
                 SetImpossible("There are no active Sessions");
 
+            Weight = 100.2f;
+
         }
         public override void Execute()
         {

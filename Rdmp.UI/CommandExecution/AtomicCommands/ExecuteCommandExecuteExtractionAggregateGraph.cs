@@ -20,6 +20,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public ExecuteCommandExecuteExtractionAggregateGraph(IActivateItems activator,ExtractionAggregateGraphObjectCollection collection) : base(activator)
         {
             _collection = collection;
+
+            if (_collection.IsImpossible(out string reason))
+                SetImpossible(reason);
         }
 
         public override string GetCommandHelp()

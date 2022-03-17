@@ -27,10 +27,14 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             if(_checkable == null)
                 SetImpossible("Object is not checkable");
+
+            Weight = 100.3f;
         }
         public ExecuteCommandCheckAsync(IActivateItems activator, DatabaseEntity checkable,Action<ICheckable,CheckResult> reportWorst): this(activator,checkable)
         {
             _reportWorstTo = reportWorst;
+
+            Weight = 100.3f;
         }
 
         public override void Execute()

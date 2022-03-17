@@ -22,13 +22,15 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public ExecuteCommandUnMergeCohortIdentificationConfiguration(IBasicActivateItems activator, CohortIdentificationConfiguration cic) :
             this(activator,cic?.RootCohortAggregateContainer)
         {
-
+            Weight = 0.3f;
         }
         public ExecuteCommandUnMergeCohortIdentificationConfiguration(IBasicActivateItems activator,CohortAggregateContainer container): base(activator)
         {
             _target = container;
-            
-            if(_target == null)
+
+            Weight = 0.3f;
+
+            if (_target == null)
             {
                 SetImpossible("No root container");
                 return;
