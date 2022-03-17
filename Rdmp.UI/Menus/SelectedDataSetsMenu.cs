@@ -13,7 +13,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ProjectUI.Graphs;
 using Rdmp.UI.SimpleDialogs;
-
+using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.Menus
 {
@@ -27,13 +27,18 @@ namespace Rdmp.UI.Menus
             _selectedDataSet = selectedDataSet;
             _extractionConfiguration = _selectedDataSet.ExtractionConfiguration;
 
-            Add(new ExecuteCommandExecuteExtractionConfiguration(_activator, selectedDataSet));
+            ReBrandActivateAs("Edit Extractable Columns", RDMPConcept.ExtractionConfiguration, OverlayKind.Edit);
 
-            Add(new ExecuteCommandRelease(_activator).SetTarget(selectedDataSet));
+            Add(new ExecuteCommandExecuteExtractionConfiguration(_activator, selectedDataSet) { Weight = 4f});
+
+            Add(new ExecuteCommandRelease(_activator) { Weight = 4.1f }.SetTarget(selectedDataSet));
+
+
+
+            Add(new ExecuteCommandViewThenVsNowSql(_activator, selectedDataSet) { Weight = 5.1f });
+
 
             /////////////////// Extraction Graphs //////////////////////////////
-            var graphs = new ToolStripMenuItem("View Extraction Graphs", CatalogueIcons.Graph);
-            
             var cata = selectedDataSet.ExtractableDataSet.Catalogue;
             
             // If the Catalogue has been deleted, don't build Catalogue specific menu items
@@ -42,39 +47,20 @@ namespace Rdmp.UI.Menus
 
             var availableGraphs = cata.AggregateConfigurations.Where(a => !a.IsCohortIdentificationAggregate).ToArray();
 
-            foreach (AggregateConfiguration ac in availableGraphs)
-                graphs.DropDownItems.Add(ac.ToString(), CatalogueIcons.Graph, (s, e) => GenerateExtractionGraphs(ac));
-
-            if(availableGraphs.Length > 1)
-                graphs.DropDownItems.Add("All", null, (s,e)=>GenerateExtractionGraphs(availableGraphs));
-
-            //must have graphs available and must have a cohort
-            graphs.Enabled = graphs.DropDownItems.Count > 0 && _extractionConfiguration.Cohort_ID != null;
-            Items.Add(graphs);
+            foreach (AggregateConfiguration graph in availableGraphs)
+            {
+                Add(new ExecuteCommandExecuteExtractionAggregateGraph(_activator, new ExtractionAggregateGraphObjectCollection(_selectedDataSet, graph))
+                {
+                    SuggestedCategory = "Graph",
+                    OverrideCommandName = graph.Name,
+                    Weight = 5.2f
+                });
+            }
             ////////////////////////////////////////////////////////////////////
             
-            
-            Add(new ExecuteCommandViewThenVsNowSql(_activator, selectedDataSet));
 
             Add(new ExecuteCommandOpenExtractionDirectory(_activator, selectedDataSet));
         }
 
-        private void GenerateExtractionGraphs(params AggregateConfiguration[] graphsToExecute)
-        {
-            try
-            {
-                foreach (AggregateConfiguration graph in graphsToExecute)
-                {
-                    var args = new ExtractionAggregateGraphObjectCollection(_selectedDataSet, graph);
-                    new ExecuteCommandExecuteExtractionAggregateGraph(_activator,args).Execute();
-                }
-
-                
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show(exception);
-            }
-        }
     }
 }

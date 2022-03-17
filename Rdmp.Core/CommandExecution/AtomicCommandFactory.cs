@@ -50,6 +50,7 @@ namespace Rdmp.Core.CommandExecution
         IBasicActivateItems _activator;
         GoToCommandFactory _goto;
         public const string Add = "Add";
+        public const string Batching = "Batching";
         public const string New = "New";
         public const string GoTo = "Go To";
         public const string Extraction = "Extractability";
@@ -495,14 +496,27 @@ namespace Rdmp.Core.CommandExecution
 
             if(Is(o, out SelectedDataSets sds))
             {
-                yield return new ExecuteCommandAddNewFilterContainer(_activator,sds);
-                yield return new ExecuteCommandImportFilterContainerTree(_activator,sds);
-                yield return new ExecuteCommandCreateNewFilter(_activator,sds);
-                yield return new ExecuteCommandCreateNewFilterFromCatalogue(_activator,sds);
-                yield return new ExecuteCommandViewExtractionSql(_activator,sds);
-                yield return new ExecuteCommandSetExtractionIdentifier(_activator, sds.GetCatalogue(), sds.ExtractionConfiguration,null);
-                yield return new ExecuteCommandAddExtractionProgress(_activator,sds);
-                yield return new ExecuteCommandResetExtractionProgress(_activator, sds);
+                yield return new ExecuteCommandSetExtractionIdentifier(_activator, sds.GetCatalogue(), sds.ExtractionConfiguration, null)
+                { Weight = -99.8f};
+
+                ////////////// Add submenu ///////////////
+
+                yield return new ExecuteCommandCreateNewFilter(_activator,sds)
+                    { OverrideCommandName = "New Filter", SuggestedCategory = Add};
+                yield return new ExecuteCommandCreateNewFilterFromCatalogue(_activator, sds)
+                    { OverrideCommandName = "Existing Filter (copy of)", SuggestedCategory = Add};
+
+                yield return new ExecuteCommandAddNewFilterContainer(_activator,sds)
+                    {OverrideCommandName = "New Filter Container", SuggestedCategory = Add};
+                yield return new ExecuteCommandImportFilterContainerTree(_activator,sds)
+                    { OverrideCommandName = "Existing Filter Container (copy of)", SuggestedCategory = Add};
+
+
+                yield return new ExecuteCommandViewExtractionSql(_activator,sds);                
+                yield return new ExecuteCommandAddExtractionProgress(_activator, sds)
+                    {  SuggestedCategory = Batching, Weight = 1.1f };
+                yield return new ExecuteCommandResetExtractionProgress(_activator, sds)
+                { SuggestedCategory = Batching, Weight = 1.2f };
             }
 
             if(Is(o,out ExtractionProgress progress))
@@ -513,27 +527,24 @@ namespace Rdmp.Core.CommandExecution
             if(Is(o, out ExtractionConfiguration ec))
             {
 
-                ///////////////////Change Cohorts//////////////
+                ///////////////////Add//////////////
 
-                yield return new ExecuteCommandChooseCohort(_activator, ec);
+                yield return new ExecuteCommandChooseCohort(_activator, ec) { Weight = -99.8f,SuggestedCategory = Add,OverrideCommandName = "Existing Cohort"};
+                yield return new ExecuteCommandAddDatasetsToConfiguration(_activator, ec) { Weight = -99.7f, SuggestedCategory = Add, OverrideCommandName = "Existing Datasets" };
+                yield return new ExecuteCommandAddPackageToConfiguration(_activator, ec) { Weight = -99.6f, SuggestedCategory = Add, OverrideCommandName = "Existing Package" };
+                yield return new ExecuteCommandAddParameter(_activator, ec, null,null,null) { Weight = -99.5f, SuggestedCategory = Add, OverrideCommandName = "New Extraction Filter Parameter" };
 
-                yield return new ExecuteCommandAddParameter(_activator, ec, null,null,null);
-
-                /////////////////Add Datasets/////////////
-                yield return new ExecuteCommandAddDatasetsToConfiguration(_activator, ec);
-
-                yield return new ExecuteCommandAddPackageToConfiguration(_activator, ec);
-
-                yield return new ExecuteCommandGenerateReleaseDocument(_activator, ec);
+                
+                yield return new ExecuteCommandGenerateReleaseDocument(_activator, ec) { Weight = -99.4f};
 
                 if (ec.IsReleased)
-                    yield return new ExecuteCommandUnfreezeExtractionConfiguration(_activator, ec);
+                    yield return new ExecuteCommandUnfreezeExtractionConfiguration(_activator, ec) { Weight = 1.2f };
                 else
-                    yield return new ExecuteCommandFreezeExtractionConfiguration(_activator, ec);
+                    yield return new ExecuteCommandFreezeExtractionConfiguration(_activator, ec) { Weight = 1.2f };
 
-                yield return new ExecuteCommandCloneExtractionConfiguration(_activator, ec);
+                yield return new ExecuteCommandCloneExtractionConfiguration(_activator, ec) { Weight = 1.3f };
 
-                yield return new ExecuteCommandResetExtractionProgress(_activator, ec, null);
+                yield return new ExecuteCommandResetExtractionProgress(_activator, ec, null) { Weight = 1.4f };
             }
 
             if(Is(o, out Project proj))
