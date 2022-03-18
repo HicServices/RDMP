@@ -67,13 +67,19 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 throw new Exception("Container was null, either host failed to create or explicit null container was chosen");
 
             var wizard = new FilterImportWizard(BasicActivator);
-            var import = wizard.ImportOneFromSelection(_container, _filters);
 
-            if (import != null)
+
+            var import = wizard.ImportManyFromSelection(_container, _filters).ToArray();
+
+            foreach (var f in import)
             {
-                _container.AddChild(import);
-                Publish((DatabaseEntity)import);
-                Emphasise((DatabaseEntity)import);
+                _container.AddChild(f);
+            }
+
+            if (import.Length > 0)
+            {
+                Publish((DatabaseEntity)_container);
+                Emphasise((DatabaseEntity)_container);
             }
         }
     }
