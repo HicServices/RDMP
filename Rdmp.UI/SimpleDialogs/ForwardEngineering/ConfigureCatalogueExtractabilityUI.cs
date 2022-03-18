@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 using Rdmp.Core.Curation;
@@ -433,12 +434,14 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
                 return;
             }
             
+            if(Activator.SelectObject(new DialogArgs
+            {
+                TaskDescription = "You are about to add the newly imported table columns to an existing Catalogue.  This will mean that your Catalogue draws data from 2+ tables.  You will need to also create a join between the underlying columns for this to work properly."
+            }, Activator.CoreChildProvider.AllCatalogues,out var selected))
+            {
+                AddToExistingCatalogue(selected, eis);
+            }
 
-            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, Activator.CoreChildProvider.AllCatalogues, false, false);
-                if (dialog.ShowDialog() == DialogResult.OK)
-
-                    if (MessageBox.Show("This will add " + eis.Length + " new columns to " + dialog.Selected + ". Are you sure this is what you want?","Add to existing", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                        AddToExistingCatalogue((Catalogue) dialog.Selected,eis);
         }
 
         private void AddToExistingCatalogue(Catalogue addToInstead, ExtractionInformation[] eis)
@@ -606,12 +609,14 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
                 SelectProject(null);
             else
             {
-
-                var all = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
-                var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, all, false, false);
-
-                if (dialog.ShowDialog() == DialogResult.OK)
-                    SelectProject((Project)dialog.Selected);
+                if(Activator.SelectObject(new DialogArgs
+                {
+                    TaskDescription = "Which Project should this Catalogue be associated with? ProjectSpecific Catalogues can only be extracted in extractions of that Project and will not appear in the main Catalogues tree."
+                }, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().ToArray(),
+                out var selected))
+                {
+                    SelectProject(selected);
+                }
             }
             
         }

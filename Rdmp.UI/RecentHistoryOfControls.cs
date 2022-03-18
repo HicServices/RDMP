@@ -19,7 +19,7 @@ namespace Rdmp.UI
     public class RecentHistoryOfControls
     {
         private readonly Guid _controlGuid;
-        private  HashSet<string> _recentValues;
+        private  List<string> _recentValues;
 
         public RecentHistoryOfControls(TextBox c, Guid controlGuid):this(controlGuid)
         {
@@ -54,11 +54,16 @@ namespace Rdmp.UI
         private RecentHistoryOfControls(Guid controlGuid)
         {
             _controlGuid = controlGuid;
-            _recentValues = new HashSet<string>(UserSettings.GetHistoryForControl(controlGuid));
+            _recentValues = new List<string>(UserSettings.GetHistoryForControl(controlGuid));
         }
 
         public void AddResult( string value,bool save = true)
         {
+            // bump it to the top
+            if(_recentValues.Contains(value))
+            {
+                _recentValues.Remove(value);
+            }
             _recentValues.Add(value);
             if (save)
                 Save();

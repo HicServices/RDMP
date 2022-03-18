@@ -84,7 +84,7 @@ namespace Rdmp.Core.CommandExecution
         public bool Ctrl { get; set; }
 
         /// <inheritdoc/>
-        public int Weight { get; set; }
+        public float Weight { get; set; }
 
         public BasicCommandExecution()
         {

@@ -34,6 +34,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if (!BasicActivator.CanActivate(_o))
                 SetImpossible(GlobalStrings.ObjectCannotBeActivated);
+
+            Weight = -99.99999f;
         }
 
         public override Image GetImage(IIconProvider iconProvider)

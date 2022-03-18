@@ -17,6 +17,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         
         public ExecuteCommandAddCohortSubContainer(IBasicActivateItems activator, CohortAggregateContainer container):base(activator)
         {
+            Weight = 0.12f;
+
             this._container = container;
 
             if (container.ShouldBeReadOnly(out string reason))

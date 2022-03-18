@@ -36,7 +36,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator) : base(activator)
         {
-            OverrideCommandName = "Extract...";
+            OverrideCommandName = "Run Extraction...";
         }
 
         public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator, SelectedDataSets selectedDataSet) : this(activator)

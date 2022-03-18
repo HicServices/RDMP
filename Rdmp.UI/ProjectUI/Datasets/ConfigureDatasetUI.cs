@@ -652,11 +652,13 @@ namespace Rdmp.UI.ProjectUI.Datasets
                         toEmphasise = cols[0]; //emphasise it to the user
                     else
                     {
-                        //otherwise show all the columns and let them pick which one they want to navigate to (emphasise)
-                        var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, cols, false,false);
-
-                        if (dialog.ShowDialog() == DialogResult.OK)
-                            toEmphasise = (ColumnInfo) dialog.Selected;
+                        if(Activator.SelectObject(new DialogArgs 
+                        {
+                            TaskDescription = "There are multiple columns involved in the join, which do you want to navigate to?"
+                        },cols,out var selected))
+                        {
+                            toEmphasise = selected;
+                        }
                     }
 
                     if(toEmphasise != null)
@@ -678,9 +680,14 @@ namespace Rdmp.UI.ProjectUI.Datasets
                     otherTable = otherTables[0];
                 else
                 {
-                    var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, otherTables, false, false);
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                        otherTable = (TableInfo) dialog.Selected;
+                    if(Activator.SelectObject(new DialogArgs
+                    {
+                        TaskDescription = "Which table do you want to join to?"
+                    }, otherTables, out var selected))
+                    {
+                        otherTable = selected;
+                    }
+                        
                 }
 
                 if(otherTable != null)

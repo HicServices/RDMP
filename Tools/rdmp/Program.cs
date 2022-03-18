@@ -257,19 +257,28 @@ namespace Rdmp.Core
             {
                 if(l.CatalogueRepository is TableRepository c)
                 {
-                    if(!c.DiscoveredServer.Exists())
+                    try
                     {
-                        logger.Error($"Could not reach {c.DiscoveredServer} (Database:{c.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
+                        c.DiscoveredServer.TestConnection();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Error(ex,$"Could not reach {c.DiscoveredServer} (Database:{c.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
                         return false;
                     }
                 }
 
                 if (l.DataExportRepository is TableRepository d)
                 {
-                    if (!d.DiscoveredServer.Exists())
+                    try
                     {
-                        logger.Error($"Could not reach {d.DiscoveredServer} (Database:{d.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
+                        d.DiscoveredServer.TestConnection();
+                    }
+                    catch(Exception ex)
+                    {
+                        logger.Error(ex,$"Could not reach {d.DiscoveredServer} (Database:{d.DiscoveredServer.GetCurrentDatabase()}).  Ensure that you have configured RDMP database connections in Databases.yaml correctly and/or that you have run install to setup platform databases");
                         return false;
+
                     }
                 }
             }

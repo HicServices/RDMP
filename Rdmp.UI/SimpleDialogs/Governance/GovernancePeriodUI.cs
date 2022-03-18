@@ -133,18 +133,18 @@ namespace Rdmp.UI.SimpleDialogs.Governance
             var availableToSelect =
                 allCatalogues.Where(c => !alreadyMappedCatalogues.Contains(c)).ToArray();
 
-            var selector = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, availableToSelect, false, false);
-            selector.AllowMultiSelect = true;
-
-            if (selector.ShowDialog() == DialogResult.OK)
+            if(Activator.SelectObjects(new DialogArgs
+            {
+                TaskDescription = "Which Catalogue(s) should become part of this GovernancePeriod"
+            },availableToSelect,out var selected))
             {
                 try
                 {
-                    AddCatalogues(selector.MultiSelected.Cast<Catalogue>().ToArray());
+                    AddCatalogues(selected.ToArray());
                 }
                 catch (Exception ex)
                 {
-                    ExceptionViewer.Show("Could not add relationship to Catalogue:" + selector.Selected,ex);
+                    ExceptionViewer.Show("Could not add relationship to Catalogues:" + string.Join(',',selected.Select(c=>c.Name)), ex);
                 }
             }
         }
@@ -180,21 +180,24 @@ namespace Rdmp.UI.SimpleDialogs.Governance
 
             if (!toImportFrom.Any())
             {
+
+
                 MessageBox.Show("You do not have any other GovernancePeriods in your Catalogue");
                 return;
             }
             
-            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, toImportFrom,false,false);
-
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if(Activator.SelectObject(new DialogArgs
             {
-                ICatalogue[] toAdd = ((GovernancePeriod) dialog.Selected).GovernedCatalogues.ToArray();
+                TaskDescription = "Select another GovernancePeriod.  All Catalogues currently associated with that period will be added to this period (they will still be covered by their previous period(s) too)",
+            }, toImportFrom,out var selected))
+            { 
+                ICatalogue[] toAdd = selected.GovernedCatalogues.ToArray();
 
                 //do not add any we already have
                 toAdd = toAdd.Except(olvCatalogues.Objects.Cast<Catalogue>()).ToArray();
 
                 if (!toAdd.Any())
-                    MessageBox.Show("Selected GovernancePeriod '" + dialog.Selected +
+                    MessageBox.Show("Selected GovernancePeriod '" + selected.Name +
                                     "' does not govern any novel Catalogues (Catalogues already in your configuration are not repeat imported)");
                 else
                 {

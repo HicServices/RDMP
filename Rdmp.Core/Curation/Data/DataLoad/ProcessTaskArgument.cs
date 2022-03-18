@@ -19,7 +19,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
     /// <summary>
     /// Contains a strongly typed value which will be provided to an instantiated data class of ProcessTask at runtime.  These usually correspond
     /// 1 to 1 with [DemandsInitialization] flagged properties of a data class e.g. 'LoadModules.Generic.Attachers.AnySeparatorFileAttacher' would have
-    /// a ProcessTaskArgument record for the property UnderReadBehaviour and one for IgnoreBlankLines and one for IgnoreQuotes etc. 
+    /// a ProcessTaskArgument record for the property UnderReadBehaviour and one for IgnoreBlankLines etc. 
     /// 
     /// <para>This all happens transparently by reflection and is handled at design time through PluginProcessTaskUI seamlessly</para>
     /// </summary>

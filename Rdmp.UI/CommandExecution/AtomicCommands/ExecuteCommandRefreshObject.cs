@@ -28,6 +28,8 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             if(_databaseEntity == null)
                 SetImpossible("No DatabaseEntity was specified");
+
+            Weight = 100.5f;
         }
 
         public override void Execute()

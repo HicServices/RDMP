@@ -20,7 +20,7 @@ namespace Rdmp.Core.Providers.Nodes.ProjectCohortNodes
 
         public override string ToString()
         {
-            return "Cohort";
+            return "Project Cohorts";
         }
 
         public int Order { get { return 1; } set { } }

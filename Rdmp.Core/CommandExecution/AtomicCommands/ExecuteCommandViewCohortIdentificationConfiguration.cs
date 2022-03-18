@@ -21,14 +21,15 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             this._cic = cic;
             this._useCache = useCache;
+            SuggestedCategory = "View";
         }
 
         public override string GetCommandName()
         {
             if (_useCache)
-                return "View SQL";
+                return "Query Builder SQL/Results";
 
-            return "View SQL (No Cache)";
+            return "Query Builder SQL/Results (No Cache)";
         }
         public override Image GetImage(IIconProvider iconProvider)
         {

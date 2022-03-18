@@ -9,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using CsvHelper;
+using CsvHelper.Configuration;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Repositories;
@@ -23,7 +24,11 @@ namespace Rdmp.Core.Reports
     {
         private readonly IDetermineDatasetTimespan _timespanCalculator;
         private readonly ICatalogueRepository _repository;
-        
+
+        private readonly CsvConfiguration _csvConfig = new CsvConfiguration(CultureInfo.CurrentCulture)
+        {
+            Delimiter = ","
+        };
         public GovernanceReport(IDetermineDatasetTimespan timespanCalculator,ICatalogueRepository repository)
         {
             _timespanCalculator = timespanCalculator;
@@ -36,10 +41,8 @@ namespace Rdmp.Core.Reports
 
             using (var s = new StreamWriter(f.FullName))
             {
-                using (CsvWriter writer = new CsvWriter(s,CultureInfo.CurrentCulture))
+                using (CsvWriter writer = new CsvWriter(s, _csvConfig))
                 {
-                    writer.Configuration.Delimiter = ",";
-
                     writer.WriteField("Extractable Datasets");
                     writer.NextRecord();
                         

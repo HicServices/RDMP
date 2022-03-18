@@ -422,17 +422,22 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var navigate = new NavigateToObjectUI(Activator);
-            navigate.Text = "Open";
-            navigate.CompletionAction = (o) => Activator.WindowArranger.SetupEditAnything(this, o);
-            navigate.Show();
+            Activator.SelectAnythingThen(new DialogArgs
+            {
+                WindowTitle = "Open"
+            }, (o) => Activator.WindowArranger.SetupEditAnything(this, o));
         }
 
         private void findToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var visibleCollection = _windowManager.GetFocusedCollection();
+            Activator.SelectAnythingThen(new DialogArgs
+            {
+                WindowTitle = "Find",
+                InitialSearchTextGuid = new Guid("00a0733b-848f-4bf3-bcde-7028fe159050"),
+                IsFind = true,
+                TaskDescription = "Enter the name of an object or part of the name or the dataset/project it is in."
 
-            new NavigateToObjectUI(Activator, null, visibleCollection).Show();
+            }, (o) => Activator.RequestItemEmphasis(this, new EmphasiseRequest(o)));
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -489,8 +494,11 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void NewToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var dlg = new SelectDialog<IAtomicCommand>(Activator,GetNewCommands(),false,false);
-            dlg.Text = "Create New:";
+            var dlg = new SelectDialog<IAtomicCommand>(new DialogArgs
+            {
+                WindowTitle = "Create New",
+                TaskDescription = "What do you want to create?"
+            },Activator,GetNewCommands(),false);
 
             if (dlg.ShowDialog() == DialogResult.OK)
             {
@@ -506,7 +514,7 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void newSessionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandStartSession(Activator,null);
+            var cmd = new ExecuteCommandStartSession(Activator,null,null);
             cmd.Execute();
         }
 
@@ -554,6 +562,12 @@ namespace ResearchDataManagementPlatform.Menus
             {
                 Process.GetCurrentProcess().Kill();
             }   
+        }
+
+        private void findMultipleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var cmd = new ExecuteCommandStartSession(Activator, null, ExecuteCommandStartSession.FindResultsTitle);
+            cmd.Execute();
         }
     }
 }

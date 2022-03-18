@@ -261,6 +261,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             "SelectIMapsDirectlyToDatabaseTableDialog",
             "NuGet",
             "MyPluginClass",
+            "SubContainer"
         };
         #endregion
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)

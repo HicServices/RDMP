@@ -16,9 +16,12 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
     public class ExecuteCommandViewCohortAggregateGraph:BasicUICommandExecution,IAtomicCommand
     {
         private readonly CohortSummaryAggregateGraphObjectCollection _collection;
+        private float DEFAULT_WEIGHT = 2.6f;
 
         public ExecuteCommandViewCohortAggregateGraph(IActivateItems activator, CohortSummaryAggregateGraphObjectCollection collection) : base(activator)
         {
+            Weight = DEFAULT_WEIGHT;
+
             _collection = collection;
 
             if(collection.CohortIfAny != null && collection.CohortIfAny.IsJoinablePatientIndexTable())

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CohortCommitting.Pipeline;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
@@ -300,9 +301,13 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
 
         private void btnExisting_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>(), false, false);
-            if(dialog.ShowDialog()== DialogResult.OK)
-                SetProject((Project)dialog.Selected);
+            if(Activator.SelectObject(new DialogArgs
+            {
+                TaskDescription = "Choose a Project which this cohort will be associated with.  This will set the cohorts ProjectNumber.  A cohort can only be extracted from a Project whose ProjectNumber matches the cohort (multiple Projects are allowed to have the same ProjectNumber)"
+            }, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>(), out var proj))
+            {
+                SetProject(proj);
+            }                
         }
 
         private void tbSetProjectNumber_TextChanged(object sender, EventArgs e)

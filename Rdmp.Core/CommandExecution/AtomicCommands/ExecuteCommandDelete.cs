@@ -30,6 +30,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public ExecuteCommandDelete(IBasicActivateItems activator, 
             IDeleteable deletable) : this(activator,new []{ deletable})
         {
+            Weight = 50.4f;
         }
 
 
@@ -49,6 +50,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if (_deletables.Any(d => d is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out reason)))
                 SetImpossible(reason);
+
+            Weight = 50.4f;
         }
 
         public override string GetCommandName()

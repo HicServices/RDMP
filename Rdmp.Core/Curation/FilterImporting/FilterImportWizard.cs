@@ -41,10 +41,14 @@ namespace Rdmp.Core.Curation.FilterImporting
 
         public IFilter ImportOneFromSelection(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported)
         {
-            ISqlParameter[] global;
-            IFilter[] otherFilters;
-            GetGlobalsAndFilters(containerToImportOneInto, out global, out otherFilters);
+            GetGlobalsAndFilters(containerToImportOneInto, out var global, out var otherFilters);
             return ImportOneFromSelection(containerToImportOneInto, filtersThatCouldBeImported, global, otherFilters);
+        }
+
+        public IEnumerable<IFilter> ImportManyFromSelection(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported)
+        {
+            GetGlobalsAndFilters(containerToImportOneInto, out var global, out var otherFilters);
+            return ImportManyFromSelection(containerToImportOneInto, filtersThatCouldBeImported, global, otherFilters);
         }
 
         private IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport, ISqlParameter[] globalParameters, IFilter[] otherFiltersInScope)
@@ -94,6 +98,29 @@ namespace Rdmp.Core.Curation.FilterImporting
             return null;//user chose not to import anything
         }
 
+        private IEnumerable<IFilter> ImportManyFromSelection(IContainer containerToImportOneInto, IFilter[] filtersThatCouldBeImported, ISqlParameter[] globalParameters, IFilter[] otherFiltersInScope)
+        {
+            foreach(var f in _activator.SelectMany(new DialogArgs {
+                WindowTitle = "Import Filter(s)",
+                EntryLabel = "Import",
+                TaskDescription = "The following Catalogue filters are available for importing.  Selecting a filter will make a new cloned copy in your WHERE container.  If a filter has declared parameters you may be prompted to pick from an existing predetermined set of values."
+
+            }
+            ,typeof(ExtractionFilter), filtersThatCouldBeImported))
+            {
+                var i = Import(containerToImportOneInto, (IFilter)f, globalParameters, otherFiltersInScope);
+
+                // returns null if cancelled
+                if(i != null)
+                    yield return i;
+                else
+                {
+                    // user cancelled import half way through
+                    yield break;
+                }
+            }
+        }
+
         private ExtractionFilterParameterSet AdvertiseAvailableFilterParameterSetsIfAny(IFilter filter, out bool cancel)
         {
             cancel = false;
@@ -107,7 +134,13 @@ namespace Rdmp.Core.Curation.FilterImporting
 
             if (parameterSets.Any())
             {
-                var chosen = _activator.SelectOne("Parameter Set", parameterSets);
+                var chosen = _activator.SelectOne(new DialogArgs
+                {
+                    WindowTitle = "Choose Parameter Set",
+                    TaskDescription = @$"Filter '{filter}' has parameters ({
+                        string.Join(',',filter.GetAllParameters().Select(p=>p.ParameterName))
+                    }).  There are existing parameter sets configured for these parameters.  Choose which parameter values to use with this filter"
+                }, parameterSets);
 
                 if (chosen != null)
                     return chosen as ExtractionFilterParameterSet;

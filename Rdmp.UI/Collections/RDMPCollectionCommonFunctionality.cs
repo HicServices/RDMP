@@ -182,7 +182,7 @@ namespace Rdmp.UI.Collections
             Tree.KeyPress += Tree_KeyPress;
 
             Tree.CellToolTip.InitialDelay = UserSettings.TooltipAppearDelay;
-            Tree.CellToolTipShowing += Tree_CellToolTipShowing;
+            Tree.CellToolTipShowing += (s,e)=>Tree_CellToolTipShowing(activator,e);
 
             Tree.RevealAfterExpand = true;
 
@@ -278,7 +278,12 @@ namespace Rdmp.UI.Collections
                     c.Sortable = false;
         }
 
-        private void Tree_CellToolTipShowing(object sender, ToolTipShowingEventArgs e)
+        internal static void SetupColumnTracking(object olvObjects, OLVColumn olvID, Guid guid)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static void Tree_CellToolTipShowing(IActivateItems activator, ToolTipShowingEventArgs e)
         {
             
             var model = e.Model;
@@ -288,9 +293,7 @@ namespace Rdmp.UI.Collections
 
             e.AutoPopDelay = 32767;
 
-            
-
-            string problem = _activator.DescribeProblemIfAny(model);
+            string problem = activator.DescribeProblemIfAny(model);
 
             if (!string.IsNullOrWhiteSpace(problem))
             {
@@ -586,7 +589,7 @@ namespace Rdmp.UI.Collections
 
                     if (many.Cast<object>().All(d => d is IMapsDirectlyToDatabaseTable))
                     {
-                        menu.Items.Add(factory.CreateMenuItem(new ExecuteCommandStartSession(_activator, many.Cast<IMapsDirectlyToDatabaseTable>().ToArray())));
+                        menu.Items.Add(factory.CreateMenuItem(new ExecuteCommandStartSession(_activator, many.Cast<IMapsDirectlyToDatabaseTable>().ToArray(),null)));
                         menu.Items.Add(factory.CreateMenuItem(new ExecuteCommandAddToSession(_activator, many.Cast<IMapsDirectlyToDatabaseTable>().ToArray(),null)));
                     }
 
@@ -597,7 +600,7 @@ namespace Rdmp.UI.Collections
                     }
 
                     MenuBuilt?.Invoke(this,new MenuBuiltEventArgs(menu,o));
-                    return menu;
+                    return Sort(menu);
                 }
 
                 if (o != null)
@@ -632,7 +635,7 @@ namespace Rdmp.UI.Collections
                         }
                         
                         MenuBuilt?.Invoke(this,new MenuBuiltEventArgs(menu,o));
-                        return menu;
+                        return Sort(menu);
                     }
 
                     //no compatible menus so just return default menu
@@ -640,7 +643,7 @@ namespace Rdmp.UI.Collections
                     defaultMenu.AddCommonMenuItems(this);
                     
                     MenuBuilt?.Invoke(this,new MenuBuiltEventArgs(defaultMenu,o));
-                    return defaultMenu;
+                    return Sort(defaultMenu);
                 }
                 else
                 {
@@ -650,9 +653,15 @@ namespace Rdmp.UI.Collections
 
                     if (WhitespaceRightClickMenuCommandsGetter != null)
                     {
-                        var menu = factory.CreateMenu(_activator, Tree, _collection, WhitespaceRightClickMenuCommandsGetter(_activator));
-                        menu.AddCommonMenuItems(this);
-                        return menu;
+                        var toReturn = new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(_activator, Tree, this), this);
+
+                        foreach(var cmd in WhitespaceRightClickMenuCommandsGetter(_activator))
+                        {
+                            toReturn.Add(cmd);
+                        }
+
+                        toReturn.AddCommonMenuItems(this);
+                        return Sort(toReturn);
 
                     }
                 }
@@ -734,35 +743,77 @@ namespace Rdmp.UI.Collections
             if(menu != null)
                 menu.AddCommonMenuItems(this);
 
-            if(menu != null)
+            return menu;
+        }
+
+        private ContextMenuStrip Sort(ContextMenuStrip menu)
+        {
+            if (menu != null)
             {
                 OrderMenuItems(menu.Items);
-            }            
-
+            }
             return menu;
         }
 
         private void OrderMenuItems(ToolStripItemCollection coll)
         {
-            ArrayList oAList = new ArrayList(coll);
-            oAList.Sort(new ToolStripItemComparer(coll));
-            coll.Clear();
+            Dictionary<int, List<ToolStripItem>> itemsByBucket = new Dictionary<int, List<ToolStripItem>>();
 
-            foreach (ToolStripItem oItem in oAList)
+            // Create buckets for every item in every context menu
+            foreach(ToolStripItem oItem in coll)
             {
-                coll.Add(oItem);
+                int bucket = (int)GetWeight(oItem);
 
-                if (oItem is ToolStripMenuItem mi)
+                if (!itemsByBucket.ContainsKey(bucket))
                 {
-                    // if menu item has submenus
-                    if(mi.DropDownItems.Count > 0)
-                    {
-                        // sort those too - recurisvely
-                        OrderMenuItems(mi.DropDownItems);
-                    }
+                    itemsByBucket.Add(bucket, new List<ToolStripItem>());
+                }
 
+                itemsByBucket[bucket].Add(oItem);
+            }
+
+            coll.Clear();
+            
+            var buckets = itemsByBucket.OrderBy(kvp => kvp.Key).ToArray();
+
+            for(int i =0;i< buckets.Length;i++)
+            {
+                // add all the items
+                foreach(var item in buckets[i].Value.OrderBy(i=>GetWeight(i)))
+                {
+                    coll.Add(item);
+
+                    if (item is ToolStripMenuItem mi)
+                    {
+                        // if menu item has submenus
+                        if (mi.DropDownItems.Count > 0)
+                        {
+                            // sort those too - recurisvely
+                            OrderMenuItems(mi.DropDownItems);
+                        }
+                    }
+                }
+
+                // if there are more buckets to come
+                if(i != buckets.Length - 1)
+                {
+                    coll.Add(new ToolStripSeparator());
                 }
             }
+        }
+
+        private float GetWeight(ToolStripItem oItem)
+        {
+            if (oItem.Tag is IAtomicCommand cmd)
+            {
+                return cmd.Weight;
+            }
+
+            if (oItem is ToolStripMenuItem mi && mi.DropDownItems.Count > 0)
+            {
+                return mi.DropDownItems.Cast<ToolStripItem>().Max(GetWeight);
+            }
+            return 0;
         }
 
         public void CommonItemActivation(object sender, EventArgs eventArgs)

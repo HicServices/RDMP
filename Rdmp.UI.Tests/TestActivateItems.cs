@@ -293,7 +293,7 @@ namespace Rdmp.UI.Tests
             throw new NotImplementedException();
         }
 
-        public void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialSelectionIfAny)
+        public void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialSelectionIfAny, string initialSearch)
         {
             throw new NotImplementedException();
         }

@@ -22,9 +22,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private readonly string _parameterName;
         private readonly string _datatype;
         private readonly string _value;
+        private const float DEFAULT_WEIGHT = 2.1f;
 
         public ExecuteCommandAddParameter(IBasicActivateItems activator, ICollectSqlParameters collector, string parameterName, string datatype, string value) : base(activator)
         {
+            Weight = DEFAULT_WEIGHT;
             _collector = collector;
             _parameterName = parameterName;
             _datatype = datatype;

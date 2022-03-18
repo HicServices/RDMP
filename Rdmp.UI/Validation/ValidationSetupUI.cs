@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
@@ -386,23 +387,26 @@ namespace Rdmp.UI.Validation
 
         private void lblPickTimePeriodColumn_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any), true, false);
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if(Activator.SelectObject(new DialogArgs { 
+                TaskDescription = "Which date column in the Catalogue should provide the time element of the data when generating graphs, DQE etc?",
+                AllowSelectingNull = true,
+            }, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any),out var selected))
             {
-                var ei = dialog.Selected as ExtractionInformation;
-                cbxTimePeriodColumn.SelectedItem = ei;
-                SetTimePeriod(ei);
+                cbxTimePeriodColumn.SelectedItem = selected;
+                SetTimePeriod(selected);
             }
         }
 
         private void lblPickPivotColumn_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(Activator, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any), true, false);
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if (Activator.SelectObject(new DialogArgs
             {
-                var ei = dialog.Selected as ExtractionInformation;
-                cbxPivotColumn.SelectedItem = ei;
-                SetPivot(ei);
+                TaskDescription = "Which column in the Catalogue provides the most useful subdivision of the data when viewing in DQE? The column should have a relatively small number of unique values e.g. healthboard.",
+                AllowSelectingNull = true,
+            }, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any), out var selected))
+            {
+                cbxPivotColumn.SelectedItem = selected;
+                SetPivot(selected);
             }
         }
     }

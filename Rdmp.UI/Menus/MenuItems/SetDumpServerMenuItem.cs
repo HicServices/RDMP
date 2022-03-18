@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -52,18 +53,15 @@ namespace Rdmp.UI.Menus.MenuItems
 
         private void UseExisting(object sender, EventArgs e)
         {
-            var dialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(_activator, _availableServers, false, false);
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if(_activator.SelectObject(new DialogArgs
             {
-                var selected = (ExternalDatabaseServer) dialog.Selected;
+                TaskDescription = "In which server should the table dump unloaded identifiable data during data loads.  This server must be already configured correctly to support identifier dumping (i.e. be an IdentifierDump).",
+            },_availableServers,out var selected))
+            {
+                _tableInfo.IdentifierDumpServer_ID = selected.ID;
+                _tableInfo.SaveToDatabase();
 
-                if(selected != null)
-                {
-                    _tableInfo.IdentifierDumpServer_ID = selected.ID;
-                    _tableInfo.SaveToDatabase();
-
-                    _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs((TableInfo)_tableInfo));
-                }
+                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs((TableInfo)_tableInfo));
             }
         }
 

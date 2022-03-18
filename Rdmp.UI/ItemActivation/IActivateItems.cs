@@ -146,7 +146,8 @@ namespace Rdmp.UI.ItemActivation
         /// </summary>
         /// <param name="sessionName"></param>
         /// <param name="initialSelectionIfAny">Initial root objects to be in scope (or null if not known)</param>
-        void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialSelectionIfAny);
+        /// <param name="initialSearch">The value to set the search textbox to on load if objects are being selected during this operation, or null.</param>
+        void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialSelectionIfAny, string initialSearch);
 
         /// <summary>
         /// Returns all currently open session uis

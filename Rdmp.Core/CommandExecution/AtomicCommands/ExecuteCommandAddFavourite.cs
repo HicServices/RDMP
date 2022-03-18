@@ -17,11 +17,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public ExecuteCommandAddFavourite(IBasicActivateItems activator) : base(activator)
         {
+            Weight = 100.1f;
         }
 
         public ExecuteCommandAddFavourite(IBasicActivateItems activator, DatabaseEntity databaseEntity) : this(activator)
         {
             _databaseEntity = databaseEntity;
+
+            Weight = 100.1f;
         }
 
         public override string GetCommandName()

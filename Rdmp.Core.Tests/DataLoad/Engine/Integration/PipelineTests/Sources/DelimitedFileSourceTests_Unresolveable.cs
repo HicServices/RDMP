@@ -79,7 +79,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
 
             var dt2 = RunGetChunk(file, adjust);
             Assert.AreEqual(5, dt2.Rows.Count);
-            Assert.AreEqual("\"Is the greatest", dt2.Rows[1]["Description"]);
+            Assert.AreEqual("Is the greatest", dt2.Rows[1]["Description"]);
         }
     }
 }

@@ -5,41 +5,29 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data.Pipelines;
-using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 
 using System.Linq;
-using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
-using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.CommandExecution.Proposals
 {
     class ProposeExecutionWhenTargetIsPipeline : RDMPCommandExecutionProposal<Pipeline>
     {
-        
         public ProposeExecutionWhenTargetIsPipeline(IActivateItems itemActivator): base(itemActivator)
         {
         }
 
-
         public override void Activate(Pipeline target)
         {
-            var dialog = new SelectDialog<StandardPipelineUseCaseNode>(
-                ItemActivator,
-                ItemActivator.CoreChildProvider.PipelineUseCases.ToArray(),false,false);
-
-            dialog.Text = "What is this Pipeline supposed to be used for?";
-
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if(ItemActivator.SelectObject(new DialogArgs
             {
-                var useCase = dialog.Selected;
-                if(useCase != null)
-                {
-                    var cmd = new ExecuteCommandEditPipelineWithUseCase(ItemActivator,target, useCase.UseCase);
-                    cmd.Execute();
-                }
+                TaskDescription = $"The Pipeline '{target.Name}' is not compatible with any known Pipeline use cases.  Select which use case you want to edit it under (which activity best describes what how the Pipeline is supposed to be used?).",
+            }, ItemActivator.CoreChildProvider.PipelineUseCases.ToArray(), out var selected))
+            {
+                var cmd = new ExecuteCommandEditPipelineWithUseCase(ItemActivator, target, selected.UseCase);
+                cmd.Execute();
             }
         }
 

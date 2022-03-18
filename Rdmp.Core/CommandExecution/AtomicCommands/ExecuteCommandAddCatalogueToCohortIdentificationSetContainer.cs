@@ -38,8 +38,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(IBasicActivateItems activator, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
         {
-            // float to top
-            Weight = -10;
+            Weight = 0.11f;
 
             _targetCohortAggregateContainer = targetCohortAggregateContainer;
 

@@ -38,6 +38,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if (_objectToShow == null)
                 SetImpossible("No objects found");
+
+            Weight = 50.3f;
         }
 
 
@@ -70,6 +72,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             _expansionDepth = expansionDepth;
             _useIconAndTypeName = useIconAndTypeName;
+
+            Weight = 50.3f;
         }
 
         /// <summary>
@@ -80,6 +84,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public ExecuteCommandShow(IBasicActivateItems activator, Func<IEnumerable<IMapsDirectlyToDatabaseTable>> getObjectsFunc) : base(activator)
         {
             _getObjectsFunc = getObjectsFunc;
+
+            Weight = 50.3f;
         }
 
         public ExecuteCommandShow(IBasicActivateItems activator, int? foreignKey, Type typeToFetch):base(activator)
@@ -92,6 +98,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 new IMapsDirectlyToDatabaseTable[0];
 
             OverrideCommandName = typeToFetch.Name;
+
+            Weight = 50.3f;
         }
 
         public override string GetCommandName()
