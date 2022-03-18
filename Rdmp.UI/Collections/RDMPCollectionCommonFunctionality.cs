@@ -844,6 +844,12 @@ namespace Rdmp.UI.Collections
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
+            if(Tree.InvokeRequired)
+            {
+                Tree.Invoke(() => RefreshBus_RefreshObject(sender, e));
+                return;
+            }
+
             RefreshObject(e.Object,e.Exists);
 
             //now tell tree view to refresh the object

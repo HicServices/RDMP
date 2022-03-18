@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using Rdmp.Core.CohortCommitting.Pipeline;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
@@ -22,12 +23,15 @@ namespace Rdmp.Core.CommandLine.Runners
     public class CohortCreationRunner : IRunner
     {
         private readonly CohortCreationOptions _options;
+        private readonly IBasicActivateItems _activator;
         private ExtractionConfiguration _configuration;
 
-        public CohortCreationRunner(CohortCreationOptions options)
+        public CohortCreationRunner(IBasicActivateItems activator, CohortCreationOptions options)
         {
+            _activator = activator;
             _options = options;
             _configuration = _options.GetRepositoryLocator().DataExportRepository.GetObjectByID<ExtractionConfiguration>(_options.ExtractionConfiguration);
+            _activator = activator;
         }
 
         public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
@@ -37,7 +41,7 @@ namespace Rdmp.Core.CommandLine.Runners
 
             if (_options.Command == CommandLineActivity.run)
             {
-                var engine = new CohortRefreshEngine(new ThrowImmediatelyDataLoadEventListener(), _configuration);
+                var engine = new CohortRefreshEngine(_activator, new ThrowImmediatelyDataLoadEventListener(), _configuration);
                 engine.Execute();
             }
 

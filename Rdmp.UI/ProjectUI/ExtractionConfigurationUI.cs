@@ -141,7 +141,7 @@ namespace Rdmp.UI.ProjectUI
             try
             {
                 //the use case is extracting a dataset
-                var useCase = new CohortCreationRequest(_extractionConfiguration);
+                var useCase = new CohortCreationRequest(Activator, _extractionConfiguration);
 
                 //the user is DefaultPipeline_ID field of ExtractionConfiguration
                 var user = new PipelineUser(typeof(ExtractionConfiguration).GetProperty("CohortRefreshPipeline_ID"), _extractionConfiguration);
@@ -164,7 +164,7 @@ namespace Rdmp.UI.ProjectUI
             ragSmiley1Refresh.Reset();
             try
             {
-                new CohortCreationRequest(_extractionConfiguration).GetEngine(_cohortRefreshingPipelineSelectionUI.Pipeline, new ThrowImmediatelyDataLoadEventListener());
+                new CohortCreationRequest(Activator, _extractionConfiguration).GetEngine(_cohortRefreshingPipelineSelectionUI.Pipeline, new ThrowImmediatelyDataLoadEventListener());
             }
             catch (Exception ex)
             {

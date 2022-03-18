@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
 using ReusableLibraryCode.Progress;
@@ -26,11 +27,11 @@ namespace Rdmp.Core.CohortCommitting.Pipeline
 
         public CohortCreationRequest Request { get; private set; }
 
-        public CohortRefreshEngine(IDataLoadEventListener listener, ExtractionConfiguration configuration)
+        public CohortRefreshEngine(IBasicActivateItems activator, IDataLoadEventListener listener, ExtractionConfiguration configuration)
         {
             _listener = listener;
             _configuration = configuration;
-            Request = new CohortCreationRequest(configuration);
+            Request = new CohortCreationRequest(activator, configuration);
         }
 
         public void Execute()

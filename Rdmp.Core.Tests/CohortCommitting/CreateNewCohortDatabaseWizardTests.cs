@@ -13,6 +13,7 @@ using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline.Destinations;
 using Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
@@ -136,7 +137,7 @@ namespace Rdmp.Core.Tests.CohortCommitting
             project.SaveToDatabase();
 
             //the request to put it under there
-            var request = new CohortCreationRequest(project, new CohortDefinition(null, "My cohort", 1, 10, ect), DataExportRepository,"Blah");
+            var request = new CohortCreationRequest(project, new CohortDefinition(null, "My cohort", 1, 10, ect), new ThrowImmediatelyActivator(RepositoryLocator),"Blah");
             
             //the actual cohort data
             DataTable dt = new DataTable();

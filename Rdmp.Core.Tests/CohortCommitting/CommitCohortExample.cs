@@ -12,6 +12,7 @@ using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline.Destinations;
 using Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
@@ -61,7 +62,7 @@ namespace Rdmp.Core.Tests.CohortCommitting
 
             //initialize the destination
             pipelineDestination.PreInitialize(
-                new CohortCreationRequest(project, definition, DataExportRepository,"A cohort created in an example unit test"),
+                new CohortCreationRequest(project, definition, new ThrowImmediatelyActivator(RepositoryLocator), "A cohort created in an example unit test"),
                 new ThrowImmediatelyDataLoadEventListener());
 
             //process the cohort data table

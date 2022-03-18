@@ -8,6 +8,7 @@ using System;
 using System.Data;
 using System.Linq;
 using FAnsi.Connections;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -27,11 +28,12 @@ namespace Rdmp.Core.CohortCommitting.Pipeline
     public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationRequest
     {
         private readonly IDataExportRepository _repository;
+        private readonly IBasicActivateItems _activator;
 
         //for pipeline editing initialization when no known cohort is available
 
         #region Things that can be turned into cohorts
-        
+
         private FlatFileToLoad _fileToLoad;
         private ExtractionInformation _extractionIdentifierColumn;
         private CohortIdentificationConfiguration _cohortIdentificationConfiguration;
@@ -92,15 +94,16 @@ namespace Rdmp.Core.CohortCommitting.Pipeline
 
         public string DescriptionForAuditLog { get; set; }
 
-        public CohortCreationRequest(IProject project, ICohortDefinition newCohortDefinition, IDataExportRepository repository, string descriptionForAuditLog)
+        public CohortCreationRequest(IProject project, ICohortDefinition newCohortDefinition, IBasicActivateItems activator, string descriptionForAuditLog)
         {
-            _repository = repository;
+            _repository = activator.RepositoryLocator.DataExportRepository;
             Project = project;
             NewCohortDefinition = newCohortDefinition;
-
+            _activator = activator;
             DescriptionForAuditLog = descriptionForAuditLog;
             
             AddInitializationObject(Project);
+            AddInitializationObject(_activator);
             AddInitializationObject(this);
 
             GenerateContext();
@@ -109,10 +112,12 @@ namespace Rdmp.Core.CohortCommitting.Pipeline
         /// <summary>
         /// For refreshing the current extraction configuration CohortIdentificationConfiguration ONLY.  The ExtractionConfiguration must have a cic and a refresh pipeline configured on it.
         /// </summary>
+        /// <param name="activator"></param>
         /// <param name="configuration"></param>
-        public CohortCreationRequest(ExtractionConfiguration configuration)
+        public CohortCreationRequest(IBasicActivateItems activator, ExtractionConfiguration configuration)
         {
             _repository = (DataExportRepository) configuration.Repository;
+            _activator = activator;
 
             if (configuration.CohortIdentificationConfiguration_ID == null)
                 throw new NotSupportedException("Configuration '" + configuration + "' does not have an associated CohortIdentificationConfiguration for cohort refreshing");
@@ -131,6 +136,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline
             NewCohortDefinition = definition;
             DescriptionForAuditLog = "Cohort Refresh";
 
+            AddInitializationObject(_activator);
             AddInitializationObject(Project);
             AddInitializationObject(CohortIdentificationConfiguration);
             AddInitializationObject(FileToLoad);
@@ -237,6 +243,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline
         /// </summary>
         private CohortCreationRequest():base(new Type[]
         {
+            typeof(IBasicActivateItems),
             typeof(FlatFileToLoad),
             typeof(CohortIdentificationConfiguration),
             typeof(Project),

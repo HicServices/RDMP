@@ -662,7 +662,7 @@ namespace Rdmp.Core.CommandExecution
                 throw new Exception("User chose not to enter a version number and none was provided");
 
 
-            return new CohortCreationRequest(project,new CohortDefinition(null,name,version,projectNumber.Value,externalCohortTable),RepositoryLocator.DataExportRepository,cohortInitialDescription);
+            return new CohortCreationRequest(project,new CohortDefinition(null,name,version,projectNumber.Value,externalCohortTable),this,cohortInitialDescription);
         }
         
         /// <inheritdoc/>

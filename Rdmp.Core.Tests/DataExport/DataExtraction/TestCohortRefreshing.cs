@@ -12,6 +12,7 @@ using NUnit.Framework;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline.Destinations;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -48,7 +49,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             _configuration.CohortRefreshPipeline_ID = pipe.ID;
             _configuration.SaveToDatabase();
 
-            var engine = new CohortRefreshEngine(new ThrowImmediatelyDataLoadEventListener(), _configuration);
+            var engine = new CohortRefreshEngine(new ThrowImmediatelyActivator(RepositoryLocator), new ThrowImmediatelyDataLoadEventListener(), _configuration);
             
             Assert.NotNull(engine.Request.NewCohortDefinition);
             
@@ -136,7 +137,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
                 _configuration.SaveToDatabase();
 
                 //get a refreshing engine
-                var engine = new CohortRefreshEngine(new ThrowImmediatelyDataLoadEventListener(), _configuration);
+                var engine = new CohortRefreshEngine(new ThrowImmediatelyActivator(RepositoryLocator), new ThrowImmediatelyDataLoadEventListener(), _configuration);
                 engine.Execute();
 
                 Assert.NotNull(engine.Request.NewCohortDefinition);
@@ -154,7 +155,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
                 var toMem = new ToMemoryDataLoadEventListener(false);
 
                 //get a new engine
-                engine = new CohortRefreshEngine(toMem, _configuration);
+                engine = new CohortRefreshEngine(new ThrowImmediatelyActivator(RepositoryLocator), toMem, _configuration);
                 
                 //execute it
                 var ex = Assert.Throws<PipelineCrashedException>(()=>engine.Execute());

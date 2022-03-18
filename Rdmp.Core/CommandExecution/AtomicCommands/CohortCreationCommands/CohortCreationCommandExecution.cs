@@ -129,7 +129,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
                 version = existing.Max(v => v.Version) + 1;
             }
 
-            return new CohortCreationRequest(Project, new CohortDefinition(null, name, version, Project.ProjectNumber.Value, ect), BasicActivator.RepositoryLocator.DataExportRepository, auditLogDescription);
+            return new CohortCreationRequest(Project, new CohortDefinition(null, name, version, Project.ProjectNumber.Value, ect), BasicActivator, auditLogDescription);
         }
 
         public virtual IAtomicCommandWithTarget SetTarget(DatabaseEntity target)

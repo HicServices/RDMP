@@ -9,8 +9,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
@@ -21,7 +23,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations
     /// Destination component for Cohort Creation Pipelines, responsible for bulk inserting patient identifiers into the cohort database specified in the
     /// ICohortCreationRequest.  This 
     /// </summary>
-    public class BasicCohortDestination : IPluginCohortDestination
+    public class BasicCohortDestination : IPluginCohortDestination, IPipelineRequirement<IBasicActivateItems>
     {
         private string _privateIdentifier;
         private string _releaseIdentifier;
@@ -43,7 +45,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations
         public bool MigrateUsages { get; set; }
 
         private IAllocateReleaseIdentifiers _allocator = null;
-        
+        private IBasicActivateItems _activator;
         readonly Dictionary<object, object> _cohortDictionary = new Dictionary<object, object>();
 
         /// <summary>
@@ -204,6 +206,12 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations
             int id = Request.ImportAsExtractableCohort(DeprecateOldCohortOnSuccess, MigrateUsages);
 
             listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Cohort successfully comitted to destination and imported as an RDMP ExtractableCohort (ID="+id+" <- this is the ID of the reference pointer, the cohortDefinitionID of the actual cohort remains as you specified:"+Request.NewCohortDefinition.ID+")"));
+
+            if (Request.CohortCreatedIfAny != null && _activator != null)
+            {
+                _activator.Publish(Request.CohortCreatedIfAny.ExternalCohortTable);
+                _activator.RequestItemEmphasis(this, new EmphasiseRequest(Request.CohortCreatedIfAny));
+            }
         }
 
         /// <summary>
@@ -256,6 +264,11 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations
             notifier.OnCheckPerformed(new CheckEventArgs("Cohort identifier columns are '"+ _privateIdentifier + "' (private) and '" + _releaseIdentifier + "' (release)", CheckResult.Success));
             
             Request.Check(notifier);
+        }
+
+        public void PreInitialize(IBasicActivateItems value, IDataLoadEventListener listener)
+        {
+            _activator = value;
         }
     }
 }

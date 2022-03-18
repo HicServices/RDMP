@@ -36,7 +36,7 @@ namespace Rdmp.Core.CommandLine.Runners
                 return new ReleaseRunner(releaseOpts);
 
             if (command is CohortCreationOptions cohortOpts )
-                return new CohortCreationRunner(cohortOpts);
+                return new CohortCreationRunner(activator,cohortOpts);
 
             if(command is PackOptions packOpts )
                 return new PackPluginRunner(packOpts);

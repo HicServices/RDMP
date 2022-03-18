@@ -230,6 +230,11 @@ namespace Rdmp.UI.Collections
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
+            if(InvokeRequired)
+            {
+                Invoke(() => RefreshBus_RefreshObject(sender, e));
+                return;
+            }
             var o = e.Object;
             var cata = o as Catalogue;
 

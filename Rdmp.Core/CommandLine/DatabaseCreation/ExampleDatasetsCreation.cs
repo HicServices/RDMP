@@ -348,7 +348,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             //create a cohort
             var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
 
-            var request = new CohortCreationRequest(project,new CohortDefinition(null,cohortName,1,projectNumber,externalCohortTable),_repos.DataExportRepository, auditLogBuilder.GetDescription(cic));
+            var request = new CohortCreationRequest(project,new CohortDefinition(null,cohortName,1,projectNumber,externalCohortTable), new ThrowImmediatelyActivator(_repos), auditLogBuilder.GetDescription(cic));
             request.CohortIdentificationConfiguration = cic;
 
             var engine = request.GetEngine(cohortCreationPipeline,new ThrowImmediatelyDataLoadEventListener());                        

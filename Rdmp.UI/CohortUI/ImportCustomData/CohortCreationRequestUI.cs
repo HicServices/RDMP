@@ -118,7 +118,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
 
             
             //construct the result
-            Result = new CohortCreationRequest(Project, new CohortDefinition(null, name, version, (int)Project.ProjectNumber, _target), (DataExportRepository)Project.Repository, tbDescription.Text);
+            Result = new CohortCreationRequest(Project, new CohortDefinition(null, name, version, (int)Project.ProjectNumber, _target), Activator, tbDescription.Text);
             
             Result.NewCohortDefinition.CohortReplacedIfAny = ddExistingCohort.SelectedItem as ExtractableCohort;
             

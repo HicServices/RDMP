@@ -54,7 +54,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             progressUi.Text = "Refreshing Cohort (" + _extractionConfiguration + ")";
             Activator.ShowWindow(progressUi,true);
 
-            var engine = new CohortRefreshEngine(progressUi, _extractionConfiguration);
+            var engine = new CohortRefreshEngine(Activator, progressUi, _extractionConfiguration);
             Task.Run(
 
                 //run the pipeline in a Thread

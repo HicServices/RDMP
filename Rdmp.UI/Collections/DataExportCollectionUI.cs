@@ -139,6 +139,12 @@ namespace Rdmp.UI.Collections
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
+            if(InvokeRequired)
+            {
+                Invoke(() => RefreshBus_RefreshObject(sender, e));
+                return;
+            }
+
             if (Activator.CoreChildProvider is DataExportChildProvider dataExportChildProvider)
             {
                 // remove packages and projects which don't exist any more according to child provider

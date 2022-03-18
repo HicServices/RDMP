@@ -11,6 +11,7 @@ using NUnit.Framework;
 using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Data;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
@@ -38,7 +39,7 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
             p.ProjectNumber = 10;
             p.SaveToDatabase();
 
-            var req = new CohortCreationRequest(p,new CohortDefinition(null,"TestCohort1",1,p.ProjectNumber.Value,ect),DataExportRepository,"Ignoreme");
+            var req = new CohortCreationRequest(p,new CohortDefinition(null,"TestCohort1",1,p.ProjectNumber.Value,ect), new ThrowImmediatelyActivator(RepositoryLocator), "Ignoreme");
 
             var allocator = new ProjectConsistentGuidReleaseIdentifierAllocator();
             allocator.Initialize(req);

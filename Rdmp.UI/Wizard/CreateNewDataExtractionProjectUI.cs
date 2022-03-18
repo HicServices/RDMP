@@ -317,8 +317,7 @@ namespace Rdmp.UI.Wizard
                         (ExternalCohortTable) ddCohortSources.SelectedItem);
 
                     //execute the cohort creation bit
-                    var cohortRequest = new CohortCreationRequest(_project, cohortDefinition,
-                        (DataExportRepository) Activator.RepositoryLocator.DataExportRepository, tbCohortName.Text);
+                    var cohortRequest = new CohortCreationRequest(_project, cohortDefinition, Activator, tbCohortName.Text);
 
                     ComboBox dd;
                     if (_cohortFile != null)
