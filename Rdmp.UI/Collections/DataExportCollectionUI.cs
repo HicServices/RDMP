@@ -169,7 +169,7 @@ namespace Rdmp.UI.Collections
                 uiFactory.CreateMenuItem(new ExecuteCommandCreateNewCohortFromFile(Activator, null) { OverrideCommandName = "From File" }),
 
                 // from catalogue
-                uiFactory.CreateMenuItem(new ExecuteCommandCreateNewCohortFromCatalogue(Activator,(Catalogue)null) { OverrideCommandName = "From Catalogue" })
+                uiFactory.CreateMenuItem(new ExecuteCommandCreateNewCohortFromCatalogue(Activator,(Catalogue)null) { OverrideCommandName = "From Catalogue" }),
                 
                 // from table
                 uiFactory.CreateMenuItem(new ExecuteCommandCreateNewCohortFromTable(Activator,null) { OverrideCommandName = "From Table" })

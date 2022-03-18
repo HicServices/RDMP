@@ -588,7 +588,7 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator, null) { OverrideCommandName = "Add New Cohort From Cohort Builder Query", Weight = -4.9f }.SetTarget(savedCohortsNode.Project);
                 yield return new ExecuteCommandCreateNewCohortFromFile(_activator, null) { OverrideCommandName = "Add New Cohort From File", Weight = -4.8f }.SetTarget(savedCohortsNode.Project);
                 yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, (Catalogue)null) { OverrideCommandName = "Add New Cohort From Catalogue", Weight = -4.7f }.SetTarget(savedCohortsNode.Project);
-                yield return new ExecuteCommandCreateNewCohortFromTable(_activator, null) { OverrideCommandName = "Add New Cohort From Table", Weight = -4.6f }.SetTarget(projCohorts.Project);
+                yield return new ExecuteCommandCreateNewCohortFromTable(_activator, null) { OverrideCommandName = "Add New Cohort From Table", Weight = -4.6f }.SetTarget(savedCohortsNode.Project);
                 yield return new ExecuteCommandImportAlreadyExistingCohort(_activator,null,savedCohortsNode.Project);
             }
 
