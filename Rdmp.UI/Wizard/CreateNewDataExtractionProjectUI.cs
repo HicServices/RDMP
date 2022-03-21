@@ -497,5 +497,10 @@ namespace Rdmp.UI.Wizard
             _selectedDatasets = new IExtractableDataSet[0];
             UpdateDatasetControlVisibility();
         }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }
