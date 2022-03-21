@@ -81,6 +81,9 @@ namespace Rdmp.UI.Wizard
             this.cbxDatasets = new System.Windows.Forms.ComboBox();
             this.hlpDefineCohortAndDatasets = new Rdmp.UI.SimpleControls.HelpIcon();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.pbCohort)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbCohortFile)).BeginInit();
             this.gbCic.SuspendLayout();
@@ -88,12 +91,15 @@ namespace Rdmp.UI.Wizard
             ((System.ComponentModel.ISupportInitialize)(this.pbCohortSources)).BeginInit();
             this.gbCohortAndDatasets.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
+            this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(46, 13);
+            this.label1.Location = new System.Drawing.Point(35, 6);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(82, 15);
@@ -102,7 +108,7 @@ namespace Rdmp.UI.Wizard
             // 
             // tbProjectName
             // 
-            this.tbProjectName.Location = new System.Drawing.Point(136, 10);
+            this.tbProjectName.Location = new System.Drawing.Point(125, 3);
             this.tbProjectName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbProjectName.Name = "tbProjectName";
             this.tbProjectName.Size = new System.Drawing.Size(400, 23);
@@ -110,7 +116,7 @@ namespace Rdmp.UI.Wizard
             // 
             // tbProjectNumber
             // 
-            this.tbProjectNumber.Location = new System.Drawing.Point(136, 40);
+            this.tbProjectNumber.Location = new System.Drawing.Point(125, 33);
             this.tbProjectNumber.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbProjectNumber.Name = "tbProjectNumber";
             this.tbProjectNumber.Size = new System.Drawing.Size(170, 23);
@@ -119,7 +125,7 @@ namespace Rdmp.UI.Wizard
             // 
             // tbExtractionDirectory
             // 
-            this.tbExtractionDirectory.Location = new System.Drawing.Point(136, 70);
+            this.tbExtractionDirectory.Location = new System.Drawing.Point(125, 63);
             this.tbExtractionDirectory.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbExtractionDirectory.Name = "tbExtractionDirectory";
             this.tbExtractionDirectory.Size = new System.Drawing.Size(310, 23);
@@ -128,7 +134,7 @@ namespace Rdmp.UI.Wizard
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(34, 43);
+            this.label2.Location = new System.Drawing.Point(23, 36);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(94, 15);
@@ -138,7 +144,7 @@ namespace Rdmp.UI.Wizard
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(14, 74);
+            this.label3.Location = new System.Drawing.Point(3, 67);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(114, 15);
@@ -147,7 +153,7 @@ namespace Rdmp.UI.Wizard
             // 
             // btnBrowse
             // 
-            this.btnBrowse.Location = new System.Drawing.Point(448, 69);
+            this.btnBrowse.Location = new System.Drawing.Point(437, 62);
             this.btnBrowse.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(88, 25);
@@ -302,7 +308,7 @@ namespace Rdmp.UI.Wizard
             this.cbxCohort.SuggestBoxHeight = 110;
             this.cbxCohort.SuggestListOrderRule = null;
             this.cbxCohort.TabIndex = 0;
-            this.cbxCohort.SelectedIndexChanged += new System.EventHandler(this.cbxCohort_SelectedIndexChanged);
+            this.cbxCohort.SelectionChangeCommitted += new System.EventHandler(this.cbxCohort_SelectionChangeCommitted);
             // 
             // gbFile
             // 
@@ -387,7 +393,7 @@ namespace Rdmp.UI.Wizard
             // 
             // btnExecute
             // 
-            this.btnExecute.Location = new System.Drawing.Point(110, 439);
+            this.btnExecute.Location = new System.Drawing.Point(100, 4);
             this.btnExecute.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnExecute.Name = "btnExecute";
             this.btnExecute.Size = new System.Drawing.Size(88, 27);
@@ -441,7 +447,7 @@ namespace Rdmp.UI.Wizard
             this.ragExecute.AlwaysShowHandCursor = false;
             this.ragExecute.BackColor = System.Drawing.Color.Transparent;
             this.ragExecute.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragExecute.Location = new System.Drawing.Point(204, 439);
+            this.ragExecute.Location = new System.Drawing.Point(194, 4);
             this.ragExecute.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.ragExecute.Name = "ragExecute";
             this.ragExecute.Size = new System.Drawing.Size(29, 29);
@@ -452,7 +458,7 @@ namespace Rdmp.UI.Wizard
             this.ragProjectNumber.AlwaysShowHandCursor = false;
             this.ragProjectNumber.BackColor = System.Drawing.Color.Transparent;
             this.ragProjectNumber.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragProjectNumber.Location = new System.Drawing.Point(312, 37);
+            this.ragProjectNumber.Location = new System.Drawing.Point(301, 30);
             this.ragProjectNumber.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.ragProjectNumber.Name = "ragProjectNumber";
             this.ragProjectNumber.Size = new System.Drawing.Size(29, 29);
@@ -479,7 +485,7 @@ namespace Rdmp.UI.Wizard
             // cbDefineCohort
             // 
             this.cbDefineCohort.AutoSize = true;
-            this.cbDefineCohort.Location = new System.Drawing.Point(18, 103);
+            this.cbDefineCohort.Location = new System.Drawing.Point(7, 96);
             this.cbDefineCohort.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbDefineCohort.Name = "cbDefineCohort";
             this.cbDefineCohort.Size = new System.Drawing.Size(198, 19);
@@ -494,15 +500,15 @@ namespace Rdmp.UI.Wizard
             this.gbCohortAndDatasets.Controls.Add(this.gbCic);
             this.gbCohortAndDatasets.Controls.Add(this.label5);
             this.gbCohortAndDatasets.Controls.Add(this.gbFile);
-            this.gbCohortAndDatasets.Enabled = false;
-            this.gbCohortAndDatasets.Location = new System.Drawing.Point(38, 128);
+            this.gbCohortAndDatasets.Location = new System.Drawing.Point(4, 129);
             this.gbCohortAndDatasets.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.gbCohortAndDatasets.Name = "gbCohortAndDatasets";
             this.gbCohortAndDatasets.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.gbCohortAndDatasets.Size = new System.Drawing.Size(1146, 305);
+            this.gbCohortAndDatasets.Size = new System.Drawing.Size(1146, 302);
             this.gbCohortAndDatasets.TabIndex = 18;
             this.gbCohortAndDatasets.TabStop = false;
-            this.gbCohortAndDatasets.Text = "Cohort and Datasets";
+            this.gbCohortAndDatasets.Text = "Load Cohort from...";
+            this.gbCohortAndDatasets.Visible = false;
             // 
             // groupBox1
             // 
@@ -632,7 +638,7 @@ namespace Rdmp.UI.Wizard
             this.hlpDefineCohortAndDatasets.BackColor = System.Drawing.Color.Transparent;
             this.hlpDefineCohortAndDatasets.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("hlpDefineCohortAndDatasets.BackgroundImage")));
             this.hlpDefineCohortAndDatasets.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.hlpDefineCohortAndDatasets.Location = new System.Drawing.Point(211, 100);
+            this.hlpDefineCohortAndDatasets.Location = new System.Drawing.Point(200, 93);
             this.hlpDefineCohortAndDatasets.Margin = new System.Windows.Forms.Padding(0);
             this.hlpDefineCohortAndDatasets.MaximumSize = new System.Drawing.Size(22, 22);
             this.hlpDefineCohortAndDatasets.MinimumSize = new System.Drawing.Size(22, 22);
@@ -643,7 +649,7 @@ namespace Rdmp.UI.Wizard
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(14, 439);
+            this.btnCancel.Location = new System.Drawing.Point(4, 4);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(88, 27);
@@ -652,25 +658,59 @@ namespace Rdmp.UI.Wizard
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.flowLayoutPanel1.AutoSize = true;
+            this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.flowLayoutPanel1.Controls.Add(this.panel1);
+            this.flowLayoutPanel1.Controls.Add(this.gbCohortAndDatasets);
+            this.flowLayoutPanel1.Controls.Add(this.panel2);
+            this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(12, 12);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1154, 476);
+            this.flowLayoutPanel1.TabIndex = 23;
+            this.flowLayoutPanel1.WrapContents = false;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.tbProjectName);
+            this.panel1.Controls.Add(this.tbProjectNumber);
+            this.panel1.Controls.Add(this.hlpDefineCohortAndDatasets);
+            this.panel1.Controls.Add(this.tbExtractionDirectory);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.cbDefineCohort);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.ragProjectNumber);
+            this.panel1.Controls.Add(this.btnBrowse);
+            this.panel1.Location = new System.Drawing.Point(3, 3);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(530, 120);
+            this.panel1.TabIndex = 24;
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.btnExecute);
+            this.panel2.Controls.Add(this.ragExecute);
+            this.panel2.Controls.Add(this.btnCancel);
+            this.panel2.Location = new System.Drawing.Point(3, 437);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(530, 36);
+            this.panel2.TabIndex = 24;
+            // 
             // CreateNewDataExtractionProjectUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1203, 476);
-            this.Controls.Add(this.btnCancel);
-            this.Controls.Add(this.hlpDefineCohortAndDatasets);
-            this.Controls.Add(this.gbCohortAndDatasets);
-            this.Controls.Add(this.cbDefineCohort);
-            this.Controls.Add(this.ragProjectNumber);
-            this.Controls.Add(this.ragExecute);
-            this.Controls.Add(this.btnExecute);
-            this.Controls.Add(this.btnBrowse);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.tbExtractionDirectory);
-            this.Controls.Add(this.tbProjectNumber);
-            this.Controls.Add(this.tbProjectName);
+            this.AutoScroll = true;
+            this.AutoSize = true;
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ClientSize = new System.Drawing.Size(1179, 503);
+            this.Controls.Add(this.flowLayoutPanel1);
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "CreateNewDataExtractionProjectUI";
             this.Text = "New Project";
@@ -686,6 +726,10 @@ namespace Rdmp.UI.Wizard
             this.gbCohortAndDatasets.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -741,5 +785,8 @@ namespace Rdmp.UI.Wizard
         private SimpleControls.HelpIcon hlpFlatFilePipe;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel2;
     }
 }

@@ -228,7 +228,7 @@ namespace Rdmp.UI.Wizard
             
         }
 
-        private void cbxCohort_SelectedIndexChanged(object sender, EventArgs e)
+        private void cbxCohort_SelectionChangeCommitted(object sender, EventArgs e)
         {
             var cic = cbxCohort.SelectedItem as CohortIdentificationConfiguration;
 
@@ -434,7 +434,8 @@ namespace Rdmp.UI.Wizard
 
         private void cbDefineCohort_CheckedChanged(object sender, EventArgs e)
         {
-            gbCohortAndDatasets.Enabled = cbDefineCohort.Checked;
+            gbCohortAndDatasets.Visible = cbDefineCohort.Checked;
+            this.OnSizeChanged(e);
         }
 
         private void cbxDatasets_SelectedIndexChanged(object sender, EventArgs e)
