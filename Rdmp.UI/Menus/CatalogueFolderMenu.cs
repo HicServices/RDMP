@@ -5,6 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
+using Rdmp.Core;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -16,14 +18,18 @@ namespace Rdmp.UI.Menus
     {
         public CatalogueFolderMenu(RDMPContextMenuStripArgs args, CatalogueFolder folder) : base(args, folder)
         {
-            args.SkipCommand<ExecuteCommandCreateNewCatalogueByImportingFile>();
 
             //Things that are always visible regardless
             Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator)
-            {
-                TargetFolder = folder
-            });
-            
+                {
+                    OverrideCommandName = GlobalStrings.FromFile,
+                    TargetFolder = folder,
+                    SuggestedCategory = AtomicCommandFactory.Add,
+                    Weight = -90.9f
+                });
+
+            args.SkipCommand<ExecuteCommandCreateNewCatalogueByImportingFile>();
+
             Add(new ExecuteCommandGenerateMetadataReport(_activator, _activator.CoreChildProvider.GetAllChildrenRecursively(folder).OfType<ICatalogue>().ToArray()));
         }
     }

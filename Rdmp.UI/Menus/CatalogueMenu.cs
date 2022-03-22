@@ -26,19 +26,37 @@ namespace Rdmp.UI.Menus
         {
             var isApiCall = catalogue.IsApiCall();
             
-            Add(new ExecuteCommandGenerateMetadataReport(_activator, catalogue),Keys.None,AtomicCommandFactory.Metadata);
-            Add(new ExecuteCommandImportCatalogueDescriptionsFromShare(_activator, catalogue),Keys.None,AtomicCommandFactory.Metadata);
-            Add(new ExecuteCommandExportInDublinCoreFormat(_activator, catalogue),Keys.None,AtomicCommandFactory.Metadata);
-            Add(new ExecuteCommandImportDublinCoreFormat(_activator, catalogue), Keys.None,AtomicCommandFactory.Metadata);
+            Add(new ExecuteCommandGenerateMetadataReport(_activator, catalogue) {
+                Weight = -99.059f
+            },Keys.None,AtomicCommandFactory.Metadata);
 
-            Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, catalogue,null), Keys.None, AtomicCommandFactory.Add);
+            Add(new ExecuteCommandImportCatalogueDescriptionsFromShare(_activator, catalogue)
+            {
+                Weight = -95.09f,
+            },Keys.None,AtomicCommandFactory.Metadata);
+            
+            
+            Add(new ExecuteCommandExportInDublinCoreFormat(_activator, catalogue)
+            {
+                Weight = -90.10f,
+            }, Keys.None,AtomicCommandFactory.Metadata);
+            Add(new ExecuteCommandImportDublinCoreFormat(_activator, catalogue)
+            {
+                Weight = -90.09f,
+            }, Keys.None, AtomicCommandFactory.Metadata);
+
+            Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, catalogue,null) {
+                OverrideCommandName = "Lookup Table Relationship", Weight = -86.9f}, Keys.None, AtomicCommandFactory.Add);
 
             if (!isApiCall)
             {
                 Items.Add(new DQEMenuItem(_activator, catalogue));
 
                 //create right click context menu
-                Add(new ExecuteCommandViewCatalogueExtractionSqlUI(_activator) { OverrideCommandName = "View Extraction Sql" }.SetTarget(catalogue));
+                Add(new ExecuteCommandViewCatalogueExtractionSqlUI(_activator) {
+                    Weight = -99.001f,
+                    OverrideCommandName = "Catalogue Extraction SQL",
+                SuggestedCategory = AtomicCommandFactory.View}.SetTarget(catalogue));
             }
 
             if (catalogue.LoadMetadata_ID != null)

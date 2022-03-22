@@ -60,6 +60,7 @@ namespace Rdmp.Core.CommandExecution
         public const string SetContainerOperation = "Set Operation";
         public const string Dimensions = "Dimensions";
         public const string Advanced = "Advanced";
+        public const string View = "View";
 
         public AtomicCommandFactory(IBasicActivateItems activator)
         {
@@ -93,42 +94,55 @@ namespace Rdmp.Core.CommandExecution
 
                 if (!isApiCall)
                 {
-                    yield return new ExecuteCommandViewCatalogueData(_activator, c, -1);
-                }
-                
+                    yield return new ExecuteCommandViewCatalogueData(_activator, c, -1)
+                    {
+                        Weight = -99.2f,
+                        OverrideCommandName = "Catalogue SQL/Data",
+                        SuggestedCategory = View
+                    };
 
-                yield return new ExecuteCommandAddNewSupportingSqlTable(_activator, c) { SuggestedCategory = Add };
-                yield return new ExecuteCommandAddNewSupportingDocument(_activator, c) { SuggestedCategory = Add };
+                    yield return new ExecuteCommandAddNewCatalogueItem(_activator, c) { Weight = -99.9f, SuggestedCategory = Add };
+                    yield return new ExecuteCommandAddNewAggregateGraph(_activator, c) { Weight = -98.9f, SuggestedCategory = Add };
+                }
+
+                yield return new ExecuteCommandAddNewSupportingSqlTable(_activator, c) {Weight = -87.9f, SuggestedCategory = Add };
+                yield return new ExecuteCommandAddNewSupportingDocument(_activator, c) { Weight = -87.8f, SuggestedCategory = Add };
 
                 if (!isApiCall)
                 {
-                    yield return new ExecuteCommandAddNewAggregateGraph(_activator, c) { SuggestedCategory = Add };
-                }
+                    yield return new ExecuteCommandChangeExtractability(_activator, c) {
+                        Weight = -99.0010f,
+                        SuggestedCategory = Extraction };
 
-                yield return new ExecuteCommandAddNewCatalogueItem(_activator, c) { SuggestedCategory = Add };
-
-
-                if (!isApiCall)
-                {
-                    yield return new ExecuteCommandChangeExtractability(_activator, c) { SuggestedCategory = Extraction };
-                    yield return new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, null) { SuggestedCategory = Extraction };
-                    yield return new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c) { SuggestedCategory = Extraction };
+                    if(c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository))
+                    {
+                        yield return new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c) { SuggestedCategory = Extraction };
+                    }
+                    else
+                    {
+                        yield return new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, null) { SuggestedCategory = Extraction };
+                    }
+                    
                     yield return new ExecuteCommandSetExtractionIdentifier(_activator, c, null, null) { SuggestedCategory = Extraction };
                 }
 
-                yield return new ExecuteCommandExportObjectsToFile(_activator, new[] {c}) { SuggestedCategory = Metadata };
-                yield return new ExecuteCommandExtractMetadata(_activator, new []{ c},null,null,null,false,null) { SuggestedCategory = Metadata };
+                yield return new ExecuteCommandExportObjectsToFile(_activator, new[] {c}) {
+                    Weight = -95.10f,
+                    SuggestedCategory = Metadata };
+                yield return new ExecuteCommandExtractMetadata(_activator, new []{ c},null,null,null,false,null) {
+                    OverrideCommandName = "Generate Metadata Report (with custom template)",
+                    Weight = -99.058f,
+                    SuggestedCategory = Metadata };
             }
 
             if(Is(o,out CatalogueFolder cf))
             {
-                yield return new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator)
-                {
-                    TargetFolder = cf
-                };
-                yield return new ExecuteCommandCreateNewEmptyCatalogue(_activator){
-                    TargetFolder = cf
-                };
+                yield return new ExecuteCommandCreateNewCatalogueByImportingFile(_activator) { 
+                    OverrideCommandName = GlobalStrings.FromFile,TargetFolder = cf, SuggestedCategory = Add, Weight = -90.9f};
+                yield return new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator) {
+                    OverrideCommandName = GlobalStrings.FromDatabase,TargetFolder = cf, SuggestedCategory = Add, Weight = -90.8f };
+                yield return new ExecuteCommandCreateNewEmptyCatalogue(_activator) {
+                    OverrideCommandName = "Empty Catalogue (Advanced)",TargetFolder = cf, SuggestedCategory = Add, Weight = -90.7f };
             }
 
             if(Is(o, out ExtractionInformation ei))
@@ -137,9 +151,9 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, ei);
                 yield return new ExecuteCommandChangeExtractionCategory(_activator, ei);
 
-                yield return new ExecuteCommandViewData(_activator, ViewType.TOP_100, ei) { SuggestedCategory = "View Data" };
-                yield return new ExecuteCommandViewData(_activator, ViewType.Aggregate, ei) { SuggestedCategory = "View Data" };
-                yield return new ExecuteCommandViewData(_activator, ViewType.Distribution, ei) { SuggestedCategory = "View Data" };
+                yield return new ExecuteCommandViewData(_activator, ViewType.TOP_100, ei) { SuggestedCategory = View };
+                yield return new ExecuteCommandViewData(_activator, ViewType.Aggregate, ei) { SuggestedCategory = View };
+                yield return new ExecuteCommandViewData(_activator, ViewType.Distribution, ei) { SuggestedCategory = View };
             }
 
             if(Is(o,out ExtractionFilter cataFilter))
@@ -168,9 +182,9 @@ namespace Rdmp.Core.CommandExecution
                 var ciExtractionInfo = ci.ExtractionInformation;
                 if(ciExtractionInfo != null)
                 {
-                    yield return new ExecuteCommandViewData(_activator, ViewType.TOP_100, ciExtractionInfo) { SuggestedCategory = "View Data" };
-                    yield return new ExecuteCommandViewData(_activator, ViewType.Aggregate, ciExtractionInfo) { SuggestedCategory = "View Data" };
-                    yield return new ExecuteCommandViewData(_activator, ViewType.Distribution, ciExtractionInfo) { SuggestedCategory = "View Data" };
+                    yield return new ExecuteCommandViewData(_activator, ViewType.TOP_100, ciExtractionInfo) { SuggestedCategory = View };
+                    yield return new ExecuteCommandViewData(_activator, ViewType.Aggregate, ciExtractionInfo) { SuggestedCategory = View };
+                    yield return new ExecuteCommandViewData(_activator, ViewType.Distribution, ciExtractionInfo) { SuggestedCategory = View };
                 }
             }
 
@@ -303,7 +317,7 @@ namespace Rdmp.Core.CommandExecution
                     yield return new ExecuteCommandViewLogs(_activator,eds,new LogViewerFilter(LoggingTables.TableLoadRun));
                 }
 
-                yield return new ExecuteCommandQueryPlatformDatabase(_activator, eds) { OverrideCommandName = "View Data"};
+                yield return new ExecuteCommandQueryPlatformDatabase(_activator, eds) { OverrideCommandName = View};
             }
 
             if(Is(o, out QueryCacheUsedByCohortIdentificationNode cicQueryCache))
@@ -354,9 +368,12 @@ namespace Rdmp.Core.CommandExecution
             }
 
             if(Is(o,out AllGovernanceNode _))
-                yield return new ExecuteCommandCreateNewGovernancePeriod(_activator);
+            {
+                yield return new ExecuteCommandCreateNewGovernancePeriod(_activator) { OverrideCommandName = "Add New Governance Period" };
+                yield return new ExecuteCommandAddNewGovernanceDocument(_activator, null) { OverrideCommandName = "Add New Governance Document" };
+            }
 
-            if(Is(o,out AllLoadMetadatasNode _))
+            if (Is(o,out AllLoadMetadatasNode _))
             {
                 yield return new ExecuteCommandCreateNewLoadMetadata(_activator);
                 yield return new ExecuteCommandImportShareDefinitionList(_activator){OverrideCommandName = "Import Load"};
@@ -474,9 +491,9 @@ namespace Rdmp.Core.CommandExecution
                 
             if(Is(o,out ColumnInfo colInfo))
             {
-                yield return new ExecuteCommandViewData(_activator, ViewType.TOP_100, colInfo) { SuggestedCategory = "View Data" };
-                yield return new ExecuteCommandViewData(_activator, ViewType.Aggregate, colInfo) { SuggestedCategory = "View Data" };
-                yield return new ExecuteCommandViewData(_activator, ViewType.Distribution, colInfo) { SuggestedCategory = "View Data" };
+                yield return new ExecuteCommandViewData(_activator, ViewType.TOP_100, colInfo) { SuggestedCategory = View };
+                yield return new ExecuteCommandViewData(_activator, ViewType.Aggregate, colInfo) { SuggestedCategory = View };
+                yield return new ExecuteCommandViewData(_activator, ViewType.Distribution, colInfo) { SuggestedCategory = View };
 
                 yield return new ExecuteCommandAlterColumnType(_activator, colInfo) { SuggestedCategory = Alter };
 

@@ -811,7 +811,7 @@ namespace Rdmp.UI.Collections
 
             if (oItem is ToolStripMenuItem mi && mi.DropDownItems.Count > 0)
             {
-                return mi.DropDownItems.Cast<ToolStripItem>().Max(GetWeight);
+                return mi.DropDownItems.Cast<ToolStripItem>().Min(GetWeight);
             }
             return 0;
         }

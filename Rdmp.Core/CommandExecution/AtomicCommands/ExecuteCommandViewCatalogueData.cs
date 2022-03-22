@@ -6,6 +6,9 @@
 
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.Icons.IconProvision;
+using ReusableLibraryCode.Icons.IconProvision;
+using System.Drawing;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -32,6 +35,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 collection.TopX = numberToFetch;
 
             BasicActivator.ShowData(collection);
+        }
+
+        public override Image GetImage(IIconProvider iconProvider)
+        {
+            return iconProvider.GetImage(RDMPConcept.SQL);
         }
     }
 }
