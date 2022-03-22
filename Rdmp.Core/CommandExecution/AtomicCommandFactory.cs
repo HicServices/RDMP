@@ -116,14 +116,17 @@ namespace Rdmp.Core.CommandExecution
 
                     if(c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository))
                     {
-                        yield return new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c) { SuggestedCategory = Extraction };
+                        yield return new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c){
+                            Weight = -99.0009f,SuggestedCategory = Extraction };
                     }
                     else
                     {
-                        yield return new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, null) { SuggestedCategory = Extraction };
+                        yield return new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, null) {
+                           Weight = -99.0009f, SuggestedCategory = Extraction };
                     }
                     
-                    yield return new ExecuteCommandSetExtractionIdentifier(_activator, c, null, null) { SuggestedCategory = Extraction };
+                    yield return new ExecuteCommandSetExtractionIdentifier(_activator, c, null, null) {
+                        Weight = -99.0008f, SuggestedCategory = Extraction };
                 }
 
                 yield return new ExecuteCommandExportObjectsToFile(_activator, new[] {c}) {

@@ -46,7 +46,7 @@ namespace Rdmp.UI.Menus
 
         private Dictionary <string,ToolStripMenuItem> _subMenuDictionary = new Dictionary<string, ToolStripMenuItem>();
 
-        public const string Inspection = "Inspection";
+        public const string Checks = "Run Checks";
         public const string Tree = "Tree";
         public const string Alter = "Alter";
 
@@ -180,7 +180,7 @@ namespace Rdmp.UI.Menus
             //Check if we even want to display this
             if (commonFunctionality.CheckColumnProvider != null)
             { 
-                var inspectionMenuItem = AddMenuIfNotExists(Inspection);
+                var inspectionMenuItem = AddMenuIfNotExists(Checks);
                 Items.Add(inspectionMenuItem);
                 PopulateInspectionMenu(commonFunctionality, inspectionMenuItem);
             }
