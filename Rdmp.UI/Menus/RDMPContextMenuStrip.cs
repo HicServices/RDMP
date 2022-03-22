@@ -182,7 +182,7 @@ namespace Rdmp.UI.Menus
             { 
                 var inspectionMenuItem = AddMenuIfNotExists(Checks);
                 Items.Add(inspectionMenuItem);
-                PopulateInspectionMenu(commonFunctionality, inspectionMenuItem);
+                PopulateChecksMenu(commonFunctionality, inspectionMenuItem);
             }
 
             //add seldom used submenus (pin, view dependencies etc)
@@ -257,7 +257,7 @@ namespace Rdmp.UI.Menus
             treeMenuItem.Enabled = treeMenuItem.HasDropDown;
         }
 
-        private void PopulateInspectionMenu(RDMPCollectionCommonFunctionality commonFunctionality, ToolStripMenuItem inspectionMenuItem)
+        private void PopulateChecksMenu(RDMPCollectionCommonFunctionality commonFunctionality, ToolStripMenuItem inspectionMenuItem)
         {
             var databaseEntity = _o as DatabaseEntity;
 
@@ -266,7 +266,13 @@ namespace Rdmp.UI.Menus
                 if (databaseEntity != null)
                     Add(new ExecuteCommandCheckAsync(_activator, databaseEntity, commonFunctionality.CheckColumnProvider.RecordWorst), Keys.None, inspectionMenuItem);
 
-                var checkAll = new ToolStripMenuItem("Check All", null, (s, e) => commonFunctionality.CheckColumnProvider.CheckCheckables());
+                var checkAll = new ToolStripMenuItem("Check All", null, (s, e) => commonFunctionality.CheckColumnProvider.CheckCheckables())
+                {
+                    /* The Weight of ExecuteCommandCheckAsync to ensure there is no tool strip separator*/
+                    Tag = 100.4f,
+                    ToolTipText = "Run validation checks for all visible items in the current window"
+                };
+
                 checkAll.Image = CatalogueIcons.TinyYellow;
                 checkAll.Enabled = commonFunctionality.CheckColumnProvider.GetCheckables().Any();
                 inspectionMenuItem.DropDownItems.Add(checkAll);
