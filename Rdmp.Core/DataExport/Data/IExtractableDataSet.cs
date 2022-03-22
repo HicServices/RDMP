@@ -44,5 +44,10 @@ namespace Rdmp.Core.DataExport.Data
         ///  Prescribing, Demography, Biochemistry catalogues AFTER each patients consent date.</para>
         /// </summary>
         int? Project_ID { get; set; }
+
+        /// <summary>
+        /// Returns true if the <see cref="ICatalogue"/> behind this dataset has been deleted or is marked <see cref="IMightBeDeprecated.IsDeprecated"/>
+        /// </summary>
+        bool IsCatalogueDeprecated { get; }
     }
 }
