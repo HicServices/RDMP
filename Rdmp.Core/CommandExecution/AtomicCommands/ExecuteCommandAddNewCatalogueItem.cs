@@ -11,6 +11,7 @@ using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
@@ -26,18 +27,26 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             
         }
 
+        [UseWithObjectConstructor]
         public ExecuteCommandAddNewCatalogueItem(IBasicActivateItems activator, Catalogue catalogue,params ColumnInfo[] columnInfos) : base(activator)
         {
             _catalogue = catalogue;
 
-            _existingColumnInfos = new HashSet<int>(_catalogue.CatalogueItems.Select(ci=>ci.ColumnInfo_ID).Where(col=>col.HasValue).Select(v=>v.Value).Distinct().ToArray());
+            _existingColumnInfos = GetColumnInfos(_catalogue);
 
             _columnInfos = columnInfos;
 
-            if(_columnInfos.Length > 0 && _columnInfos.All(AlreadyInCatalogue))
+            if(_existingColumnInfos != null && _columnInfos.Length > 0 && _columnInfos.All(c => AlreadyInCatalogue(c,_existingColumnInfos)))
                 SetImpossible("ColumnInfo(s) are already in Catalogue");
         }
 
+        private HashSet<int> GetColumnInfos(Catalogue catalogue)
+        {
+            if (catalogue == null)
+                return null;
+
+            return new HashSet<int>(catalogue.CatalogueItems.Select(ci => ci.ColumnInfo_ID).Where(col => col.HasValue).Select(v => v.Value).Distinct().ToArray());
+        }
 
         public override string GetCommandHelp()
         {
@@ -47,7 +56,27 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-        
+
+            var c = _catalogue;
+            var existingColumnInfos = _existingColumnInfos;
+
+            if(c == null)
+            {
+                if (BasicActivator.SelectObject(new DialogArgs() {
+                    WindowTitle = "Add CatalogueItem",
+                    TaskDescription = "Select which Catalogue you want to add the CatalogueItem to."
+
+                    }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
+                {
+                    c = selected;
+                    existingColumnInfos = GetColumnInfos(c);
+                }
+                else
+                {
+                    // user cancelled selecting a Catalogue
+                    return;
+                }
+            }
             //if we have not got an explicit one to import let the user pick one
             if (_columnInfos.Length == 0)
             {
@@ -68,7 +97,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 //get them to type a name for it (based on the ColumnInfo if picked)
                 if(TypeText("Name", "Type a name for the new CatalogueItem", 500,columnInfo?.GetRuntimeName(),out text))
                 {
-                    var ci = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, _catalogue, "New CatalogueItem " + Guid.NewGuid());
+                    var ci = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, c, "New CatalogueItem " + Guid.NewGuid());
                     ci.Name = text;
 
                     //set the associated column if they did pick it
@@ -77,7 +106,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
                     ci.SaveToDatabase();
 
-                    Publish(_catalogue);
+                    Publish(c);
                     Emphasise(ci,int.MaxValue);
                 }
             }
@@ -85,21 +114,21 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 foreach (ColumnInfo columnInfo in _columnInfos)
                 {
-                    if(AlreadyInCatalogue(columnInfo))
+                    if(AlreadyInCatalogue(columnInfo, existingColumnInfos))
                         continue;
 
-                    var ci = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, _catalogue, columnInfo.Name);
+                    var ci = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, c, columnInfo.GetRuntimeName());
                     ci.SetColumnInfo(columnInfo);
                     ci.SaveToDatabase();
                 }
 
-                Publish(_catalogue);
+                Publish(c);
             }
         }
 
-        private bool AlreadyInCatalogue(ColumnInfo candidate)
+        private bool AlreadyInCatalogue(ColumnInfo candidate, HashSet<int> existingColumnInfos)
         {
-            return _existingColumnInfos.Contains(candidate.ID);
+            return existingColumnInfos.Contains(candidate.ID);
         }
 
         public override Image GetImage(IIconProvider iconProvider)

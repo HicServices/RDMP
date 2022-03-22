@@ -6,6 +6,7 @@
 
 using System;
 using System.Linq;
+using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
@@ -47,7 +48,7 @@ namespace Rdmp.UI.Collections
     public partial class CatalogueCollectionUI : RDMPCollectionUI
     {
         private Catalogue[] _allCatalogues;
-
+        private const string NewMenu = "New...";
         //constructor
 
         private bool bLoading = true;
@@ -123,11 +124,21 @@ namespace Rdmp.UI.Collections
                 CommonTreeFunctionality.SetupColumnTracking(olvOrder, new Guid("0d8e6e49-03ae-48f2-9bf8-acc5107f65f8"));
                 CommonTreeFunctionality.SetupColumnTracking(olvFilters, new Guid("c4c9b2ac-c9b5-4d23-b06d-d1f55013b4e9"));
 
-                CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator),GlobalStrings.FromFile,null,"New...");
-                CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator),GlobalStrings.FromDatabase,null,"New...");
+                CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator), GlobalStrings.FromFile,null, NewMenu);
+                CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator), GlobalStrings.FromDatabase,null, NewMenu);
+                CommonFunctionality.Add(new ExecuteCommandCreateNewEmptyCatalogue(Activator),"Empty Catalogue (Advanced)", null, NewMenu);
+
+                CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
+
+                CommonFunctionality.Add(new ExecuteCommandAddNewCatalogueItem(Activator,null) , "CatalogueItem", null, NewMenu);
+
+                CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
+
+                CommonFunctionality.Add(new ExecuteCommandAddNewAggregateGraph(Activator, null), "Aggregate Graph", null, NewMenu);
+
             }
 
-            if(isFirstTime || Equals(oRefreshFrom, CatalogueFolder.Root))
+            if (isFirstTime || Equals(oRefreshFrom, CatalogueFolder.Root))
             {
                 tlvCatalogues.RefreshObject(CatalogueFolder.Root);
                 tlvCatalogues.Expand(CatalogueFolder.Root);

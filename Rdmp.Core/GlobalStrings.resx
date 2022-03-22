@@ -169,9 +169,9 @@
     <value>Object cannot be Activated</value>
   </data>
   <data name="FromDatabase" xml:space="preserve">
-    <value>From Database...</value>
+    <value>Catalogue from Database...</value>
   </data>
   <data name="FromFile" xml:space="preserve">
-    <value>From File...</value>
+    <value>Catalogue from File...</value>
   </data>
 </root>
