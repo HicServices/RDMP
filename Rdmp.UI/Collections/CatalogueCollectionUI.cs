@@ -218,9 +218,19 @@ namespace Rdmp.UI.Collections
             //Things that are always visible regardless
             CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[]
             {
-                new ExecuteCommandCreateNewCatalogueByImportingFileUI(a),
-                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(a),
-                new ExecuteCommandCreateNewEmptyCatalogue(a),
+                new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator){OverrideCommandName = "Add New Catalogue From File...",Weight = -50.9f},
+                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator) { OverrideCommandName = "Add New Catalogue From Database..." ,Weight = -50.8f},
+                new ExecuteCommandCreateNewEmptyCatalogue(Activator){OverrideCommandName = "Empty Catalogue (Advanced)", Weight = -50.7f},
+
+                new ExecuteCommandAddNewCatalogueItem(Activator, null){ Weight = -49.9f},
+
+                new ExecuteCommandAddNewAggregateGraph(Activator, null){ Weight = -48.9f},
+
+                new ExecuteCommandAddNewSupportingDocument(Activator, null){ Weight = -46.9f},
+                new ExecuteCommandAddNewSupportingSqlTable(Activator, null){ Weight = -46.8f},
+
+                new ExecuteCommandCreateNewGovernancePeriod(Activator){OverrideCommandName = "Add New Governance Period", Weight = 44.9f },
+                new ExecuteCommandAddNewGovernanceDocument(Activator, null){Weight = 44.9f },
             };
 
             Activator.RefreshBus.EstablishLifetimeSubscription(this);

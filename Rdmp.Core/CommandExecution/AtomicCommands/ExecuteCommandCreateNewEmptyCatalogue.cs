@@ -21,12 +21,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         }
 
-
-        public override string GetCommandName()
-        {
-            return base.GetCommandName() + " (Not Recommended)";
-        }
-
         public override string GetCommandHelp()
         {
             return @"Create a new dataset not yet linked to any underlying database columns\tables";
