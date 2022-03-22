@@ -55,7 +55,8 @@ namespace Rdmp.UI.Wizard
         private bool _bLoading = false;
 
         public ExtractionConfiguration ExtractionConfigurationCreatedIfAny { get; private set; }
-        
+        public Project ProjectCreatedIfAny => _project;
+
         public CreateNewDataExtractionProjectUI(IActivateItems activator):base(activator)
         {
             InitializeComponent();
@@ -298,7 +299,7 @@ namespace Rdmp.UI.Wizard
 
                 _project.SaveToDatabase();
 
-                if (_configuration == null)
+                if (_configuration == null && cbDefineCohort.Checked)
                 {
                     _configuration = new ExtractionConfiguration(Activator.RepositoryLocator.DataExportRepository,
                         _project);
