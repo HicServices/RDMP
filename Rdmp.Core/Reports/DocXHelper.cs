@@ -95,6 +95,7 @@ namespace Rdmp.Core.Reports
                 var run = para.CreateRun();
 
                 run.SetText(bit);
+                run.AddBreak();
 
                 if (fontSize != -1)
                     run.FontSize = fontSize;
