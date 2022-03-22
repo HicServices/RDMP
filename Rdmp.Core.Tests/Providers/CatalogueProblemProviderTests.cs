@@ -62,7 +62,7 @@ namespace Rdmp.Core.Tests.Providers
             var problem = pp.DescribeProblem(container);
 
             Assert.IsNotNull(problem);
-            Assert.AreEqual("EXCEPT and INTERSECT container operations must have at least two elements within", problem);
+            Assert.AreEqual("EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required", problem);
         }
 
         [Test]
@@ -77,7 +77,7 @@ namespace Rdmp.Core.Tests.Providers
             var problem = pp.DescribeProblem(container);
 
             Assert.IsNotNull(problem);
-            Assert.AreEqual("EXCEPT and INTERSECT container operations must have at least two elements within", problem);
+            Assert.AreEqual("EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required", problem);
         }
 
         [Test]
@@ -128,7 +128,7 @@ namespace Rdmp.Core.Tests.Providers
             var problem = pp.DescribeProblem(container);
 
             Assert.IsNotNull(problem);
-            Assert.AreEqual("EXCEPT and INTERSECT container operations must have at least two elements within", problem);
+            Assert.AreEqual("EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required", problem);
         }
 
         [Test]
@@ -163,7 +163,7 @@ namespace Rdmp.Core.Tests.Providers
             var problem = pp.DescribeProblem(container);
 
             Assert.IsNotNull(problem);
-            Assert.AreEqual("EXCEPT and INTERSECT container operations must have at least two elements within", problem);
+            Assert.AreEqual("EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required", problem);
         }
 
         [Test]
@@ -199,7 +199,7 @@ namespace Rdmp.Core.Tests.Providers
             var problem = pp.DescribeProblem(childContainer);
 
             Assert.IsNotNull(problem);
-            Assert.AreEqual("SET containers cannot be empty", problem);
+            Assert.AreEqual("SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required", problem);
         }
 
         [Test]
@@ -217,7 +217,7 @@ namespace Rdmp.Core.Tests.Providers
             var problem = pp.DescribeProblem(childContainer);
 
             Assert.IsNotNull(problem);
-            Assert.AreEqual("SET container operations have no effect if there is only one child within", problem);
+            Assert.AreEqual("SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required", problem);
         }
 
         [Test]
@@ -252,7 +252,7 @@ namespace Rdmp.Core.Tests.Providers
             var problem = pp.DescribeProblem(childContainer);
 
             Assert.IsNotNull(problem);
-            Assert.AreEqual("SET containers cannot be empty", problem);
+            Assert.AreEqual("SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required", problem);
         }
 
         [Test]
@@ -270,7 +270,7 @@ namespace Rdmp.Core.Tests.Providers
             var problem = pp.DescribeProblem(childContainer);
 
             Assert.IsNotNull(problem);
-            Assert.AreEqual("SET container operations have no effect if there is only one child within", problem);
+            Assert.AreEqual("SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required", problem);
         }
 
         [Test]
@@ -305,7 +305,7 @@ namespace Rdmp.Core.Tests.Providers
             var problem = pp.DescribeProblem(childContainer);
 
             Assert.IsNotNull(problem);
-            Assert.AreEqual("SET containers cannot be empty", problem);
+            Assert.AreEqual("SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required", problem);
         }
 
         [Test]
@@ -323,7 +323,7 @@ namespace Rdmp.Core.Tests.Providers
             var problem = pp.DescribeProblem(childContainer);
 
             Assert.IsNotNull(problem);
-            Assert.AreEqual("SET container operations have no effect if there is only one child within", problem);
+            Assert.AreEqual("SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required", problem);
         }
 
         [Test]
