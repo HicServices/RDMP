@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed newlines in CatalogueItem descriptions not being output correctly in docx metadata report
+- Fixed iterative data loads run on the CLI throwing and returning non zero when caught up to date with load progress (when running in iterative mode)
 
 ## [7.0.8] - 2022-03-08
 
