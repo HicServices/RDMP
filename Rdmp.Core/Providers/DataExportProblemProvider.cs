@@ -60,11 +60,11 @@ namespace Rdmp.Core.Providers
         private string DescribeProblem(ExtractionConfiguration extractionConfiguration)
         {
             if (extractionConfiguration.Cohort_ID == null)
-                return "Configuration has no Cohort configured";
+                return "Configuration has no Cohort configured. You must add a Saved Cohort to enable extraction.";
 
             if (_exportChildProvider != null)
                 if (!_exportChildProvider.GetDatasets(extractionConfiguration).Any()) //there are no selected datasets!
-                    return "Configuration has no selected datasets";
+                    return "Configuration has no selected datasets. Add exisiting Datasets or Packages to enable extraction.";
 
             return null;
         }
@@ -81,7 +81,7 @@ namespace Rdmp.Core.Providers
         {
             if (_exportChildProvider.Projects.Contains(extractionConfigurationsNode.Project))
                 if (!_exportChildProvider.GetConfigurations(extractionConfigurationsNode.Project).Any())
-                    return "Project has no ExtractionConfigurations";
+                    return "Project has no ExtractionConfigurations. Add a new ExtractionConfiguration to define how data is extracted for this Project.";
 
             return null;
         }
@@ -89,7 +89,7 @@ namespace Rdmp.Core.Providers
         private string DescribeProblem(ProjectSavedCohortsNode projectSavedCohortsNode)
         {
             if (_exportChildProvider.ProjectHasNoSavedCohorts(projectSavedCohortsNode.Project))
-                return "Project has no cohorts";
+                return "Project has no Cohorts. Commit new Cohort(s) from File/Cohort Query Builder to use with this Project's ExtractionConfigurations";
 
             return null;
         }

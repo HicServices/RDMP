@@ -99,9 +99,7 @@ namespace Rdmp.Core.DataExport.Data
             ClearAllInjections();
         }
 
-        /// <summary>
-        /// Returns true if the <see cref="ICatalogue"/> behind this dataset has been deleted or is marked <see cref="IMightBeDeprecated.IsDeprecated"/>
-        /// </summary>
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public bool IsCatalogueDeprecated
         {

@@ -27,16 +27,19 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
             var wizard = new CreateNewDataExtractionProjectUI(Activator);
-            if(wizard.ShowDialog() == DialogResult.OK && wizard.ExtractionConfigurationCreatedIfAny != null)
+            if (wizard.ShowDialog() == DialogResult.OK && wizard.ProjectCreatedIfAny != null)
             {
-                var p = (Project) wizard.ExtractionConfigurationCreatedIfAny.Project;
+                var p = wizard.ProjectCreatedIfAny;
                 Publish(p);
                 Activator.RequestItemEmphasis(this, new EmphasiseRequest(p, int.MaxValue));
-                
-                //now execute it
-                var executeCommand = new ExecuteCommandExecuteExtractionConfiguration(Activator).SetTarget(wizard.ExtractionConfigurationCreatedIfAny);
-                if(!executeCommand.IsImpossible)
-                    executeCommand.Execute(); 
+
+                if (wizard.ExtractionConfigurationCreatedIfAny != null)
+                { 
+                    //now execute it
+                    var executeCommand = new ExecuteCommandExecuteExtractionConfiguration(Activator).SetTarget(wizard.ExtractionConfigurationCreatedIfAny);
+                    if (!executeCommand.IsImpossible)
+                        executeCommand.Execute();
+                }
 
             }
         }

@@ -55,7 +55,8 @@ namespace Rdmp.UI.Wizard
         private bool _bLoading = false;
 
         public ExtractionConfiguration ExtractionConfigurationCreatedIfAny { get; private set; }
-        
+        public Project ProjectCreatedIfAny => _project;
+
         public CreateNewDataExtractionProjectUI(IActivateItems activator):base(activator)
         {
             InitializeComponent();
@@ -228,7 +229,7 @@ namespace Rdmp.UI.Wizard
             
         }
 
-        private void cbxCohort_SelectedIndexChanged(object sender, EventArgs e)
+        private void cbxCohort_SelectionChangeCommitted(object sender, EventArgs e)
         {
             var cic = cbxCohort.SelectedItem as CohortIdentificationConfiguration;
 
@@ -298,7 +299,7 @@ namespace Rdmp.UI.Wizard
 
                 _project.SaveToDatabase();
 
-                if (_configuration == null)
+                if (_configuration == null && cbDefineCohort.Checked)
                 {
                     _configuration = new ExtractionConfiguration(Activator.RepositoryLocator.DataExportRepository,
                         _project);
@@ -434,7 +435,8 @@ namespace Rdmp.UI.Wizard
 
         private void cbDefineCohort_CheckedChanged(object sender, EventArgs e)
         {
-            gbCohortAndDatasets.Enabled = cbDefineCohort.Checked;
+            gbCohortAndDatasets.Visible = cbDefineCohort.Checked;
+            this.OnSizeChanged(e);
         }
 
         private void cbxDatasets_SelectedIndexChanged(object sender, EventArgs e)
@@ -496,6 +498,11 @@ namespace Rdmp.UI.Wizard
         {
             _selectedDatasets = new IExtractableDataSet[0];
             UpdateDatasetControlVisibility();
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }
