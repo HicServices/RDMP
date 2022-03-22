@@ -151,7 +151,7 @@ namespace Rdmp.Core.CommandExecution
 
             if(Is(o, out ExtractionInformation ei))
             {
-                yield return new ExecuteCommandCreateNewFilter(_activator, new ExtractionFilterFactory(ei));
+                yield return new ExecuteCommandCreateNewFilter(_activator, new ExtractionFilterFactory(ei)) { OverrideCommandName = "Add New Filter"};
                 yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, ei);
                 yield return new ExecuteCommandChangeExtractionCategory(_activator, ei);
 
@@ -178,6 +178,7 @@ namespace Rdmp.Core.CommandExecution
 
             if(Is(o,out  CatalogueItem ci))
             {
+                yield return new ExecuteCommandCreateNewFilter(_activator, ci) { OverrideCommandName = "Add New Filter" };
                 yield return new ExecuteCommandLinkCatalogueItemToColumnInfo(_activator, ci);
                 yield return new ExecuteCommandMakeCatalogueItemExtractable(_activator, ci);
                 yield return new ExecuteCommandChangeExtractionCategory(_activator, ci.ExtractionInformation);
