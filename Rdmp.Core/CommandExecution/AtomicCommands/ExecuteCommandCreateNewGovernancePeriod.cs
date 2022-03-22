@@ -13,8 +13,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandCreateNewGovernancePeriod:BasicCommandExecution,IAtomicCommand
     {
-        public ExecuteCommandCreateNewGovernancePeriod(IBasicActivateItems activator) : base(activator)
+        private readonly string _name;
+
+        public ExecuteCommandCreateNewGovernancePeriod(IBasicActivateItems activator, string name = null) : base(activator)
         {
+            this._name = name;
         }
 
         public override Image GetImage(IIconProvider iconProvider)
@@ -26,7 +29,23 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var period = new GovernancePeriod(BasicActivator.RepositoryLocator.CatalogueRepository);
+            var name = _name;
+
+            if (name == null && BasicActivator.IsInteractive)
+            {
+                if (!BasicActivator.TypeText(new DialogArgs
+                {
+                    WindowTitle = "Governance Period Name",
+                    TaskDescription = "Enter a name that describes the Governance required to hold the Catalogue(s).",
+                    EntryLabel = "Name"
+                }, 255, null, out name, false))
+                {
+                    // user cancelled typing a name
+                    return;
+                }
+            }
+
+            var period = new GovernancePeriod(BasicActivator.RepositoryLocator.CatalogueRepository, name);
             Publish(period);
             Emphasise(period);
             Activate(period);

@@ -136,6 +136,19 @@ namespace Rdmp.UI.Collections
 
                 CommonFunctionality.Add(new ExecuteCommandAddNewAggregateGraph(Activator, null), "Aggregate Graph", null, NewMenu);
 
+                CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
+
+                CommonFunctionality.Add(new ExecuteCommandAddNewSupportingDocument(Activator, null), "Supporting Document", null, NewMenu);
+                CommonFunctionality.Add(new ExecuteCommandAddNewSupportingSqlTable(Activator, null), "Supporting SQL Table", null, NewMenu);
+
+                CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
+
+
+                CommonFunctionality.Add(new ExecuteCommandCreateNewGovernancePeriod(Activator), "Governance Period", null, NewMenu);
+                CommonFunctionality.Add(new ExecuteCommandAddNewGovernanceDocument(Activator,null), "Governance Document", null, NewMenu);
+
+
+
             }
 
             if (isFirstTime || Equals(oRefreshFrom, CatalogueFolder.Root))

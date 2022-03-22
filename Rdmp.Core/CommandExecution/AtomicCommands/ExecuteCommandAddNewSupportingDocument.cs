@@ -57,6 +57,26 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             base.Execute();
 
+            var c = _targetCatalogue;
+
+            if (c == null)
+            {
+                if (BasicActivator.SelectObject(new DialogArgs()
+                {
+                    WindowTitle = "Add SupportingDocument",
+                    TaskDescription = "Select which Catalogue you want to add the SupportingDocument to."
+
+                }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
+                {
+                    c = selected;
+                }
+                else
+                {
+                    // user cancelled selecting a Catalogue
+                    return;
+                }
+            }
+
             var files = _fileCollectionCombineable != null ? _fileCollectionCombineable.Files : new[] {BasicActivator.SelectFile("File to add")};
 
             if(files == null || files.All(f=>f == null))
@@ -65,13 +85,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             List<SupportingDocument> created = new List<SupportingDocument>();
             foreach (var f in files)
             {
-                var doc = new SupportingDocument((ICatalogueRepository)_targetCatalogue.Repository, _targetCatalogue, f.Name);
+                var doc = new SupportingDocument((ICatalogueRepository)c.Repository, c, f.Name);
                 doc.URL = new Uri(f.FullName);
                 doc.SaveToDatabase();
                 created.Add(doc);
             }
 
-            Publish(_targetCatalogue);
+            Publish(c);
 
             Emphasise(created.Last());
             
