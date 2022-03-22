@@ -22,7 +22,7 @@ namespace Rdmp.UI.Menus
             //Things that are always visible regardless
             Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator)
                 {
-                    OverrideCommandName = GlobalStrings.FromFile,
+                    OverrideCommandName = "New Catalogue From File...",
                     TargetFolder = folder,
                     SuggestedCategory = AtomicCommandFactory.Add,
                     Weight = -90.9f

@@ -220,7 +220,7 @@ namespace Rdmp.UI.Collections
             {
                 new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator){OverrideCommandName = "Add New Catalogue From File...",Weight = -50.9f},
                 new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator) { OverrideCommandName = "Add New Catalogue From Database..." ,Weight = -50.8f},
-                new ExecuteCommandCreateNewEmptyCatalogue(Activator){OverrideCommandName = "Empty Catalogue (Advanced)", Weight = -50.7f},
+                new ExecuteCommandCreateNewEmptyCatalogue(Activator){OverrideCommandName = "Add New Empty Catalogue (Advanced)", Weight = -50.7f},
 
                 new ExecuteCommandAddNewCatalogueItem(Activator, null){ Weight = -49.9f},
 
