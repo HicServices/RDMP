@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ability to select multiple objects at once when adding to a Session
 - Ability to find multiple objects at once (ctrl+shift+f)
 
+### Fixed
+
+- Fixed newlines in CatalogueItem descriptions not being output correctly in docx metadata report
+
 ## [7.0.8] - 2022-03-08
 
 ### Fixed
