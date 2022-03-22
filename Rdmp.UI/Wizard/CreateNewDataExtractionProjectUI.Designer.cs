@@ -393,7 +393,7 @@ namespace Rdmp.UI.Wizard
             // 
             // btnExecute
             // 
-            this.btnExecute.Location = new System.Drawing.Point(100, 4);
+            this.btnExecute.Location = new System.Drawing.Point(35, 5);
             this.btnExecute.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnExecute.Name = "btnExecute";
             this.btnExecute.Size = new System.Drawing.Size(88, 27);
@@ -447,7 +447,7 @@ namespace Rdmp.UI.Wizard
             this.ragExecute.AlwaysShowHandCursor = false;
             this.ragExecute.BackColor = System.Drawing.Color.Transparent;
             this.ragExecute.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragExecute.Location = new System.Drawing.Point(194, 4);
+            this.ragExecute.Location = new System.Drawing.Point(3, 3);
             this.ragExecute.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.ragExecute.Name = "ragExecute";
             this.ragExecute.Size = new System.Drawing.Size(29, 29);
@@ -485,7 +485,7 @@ namespace Rdmp.UI.Wizard
             // cbDefineCohort
             // 
             this.cbDefineCohort.AutoSize = true;
-            this.cbDefineCohort.Location = new System.Drawing.Point(7, 96);
+            this.cbDefineCohort.Location = new System.Drawing.Point(7, 97);
             this.cbDefineCohort.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbDefineCohort.Name = "cbDefineCohort";
             this.cbDefineCohort.Size = new System.Drawing.Size(198, 19);
@@ -638,7 +638,7 @@ namespace Rdmp.UI.Wizard
             this.hlpDefineCohortAndDatasets.BackColor = System.Drawing.Color.Transparent;
             this.hlpDefineCohortAndDatasets.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("hlpDefineCohortAndDatasets.BackgroundImage")));
             this.hlpDefineCohortAndDatasets.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.hlpDefineCohortAndDatasets.Location = new System.Drawing.Point(200, 93);
+            this.hlpDefineCohortAndDatasets.Location = new System.Drawing.Point(200, 94);
             this.hlpDefineCohortAndDatasets.Margin = new System.Windows.Forms.Padding(0);
             this.hlpDefineCohortAndDatasets.MaximumSize = new System.Drawing.Size(22, 22);
             this.hlpDefineCohortAndDatasets.MinimumSize = new System.Drawing.Size(22, 22);
@@ -649,7 +649,7 @@ namespace Rdmp.UI.Wizard
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(4, 4);
+            this.btnCancel.Location = new System.Drawing.Point(125, 5);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(88, 27);
