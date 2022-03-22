@@ -75,15 +75,13 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 cata.LoggingDataTask = "ff";
                 cata.SaveToDatabase();
             }
-                
-
+            
             lmd.SaveToDatabase();
             
-
             var jobFactory = new SingleScheduledJobFactory(lp,strat,999,lp.LoadMetadata,null);
-            var ex = Assert.Throws<Exception>(()=>jobFactory.Create(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(),null));
+            var job = jobFactory.Create(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), null);
 
-            Assert.AreEqual("DatesToRetrieve was empty for load 'MyLoad'.  Possibly the load is already up to date?",ex.Message);
+            Assert.IsNull(job);
 
             // We have 1 day to load (date is the last fully loaded date)
             lp.DataLoadProgress = DateTime.Now.AddDays(-2);
@@ -92,7 +90,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             strat = stratFactory.Create(lp,new ThrowImmediatelyDataLoadEventListener());
             jobFactory =  new SingleScheduledJobFactory(lp,strat,999,lp.LoadMetadata,null);
 
-            var job = jobFactory.Create(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(),null);
+            job = jobFactory.Create(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(),null);
             Assert.AreEqual(1,((ScheduledDataLoadJob)job).DatesToRetrieve.Count);
         }
     }

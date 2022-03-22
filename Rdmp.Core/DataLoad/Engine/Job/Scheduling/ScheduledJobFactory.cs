@@ -37,8 +37,8 @@ namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling
         {
             var job = CreateImpl(repositoryLocator,listener,configuration);
 
-            if(job.DatesToRetrieve == null || !job.DatesToRetrieve.Any())
-                throw new Exception($"DatesToRetrieve was empty for load '{LoadMetadata}'.  Possibly the load is already up to date?");
+            if (job == null || job.DatesToRetrieve == null || !job.DatesToRetrieve.Any())
+                return null; // No dates to load
 
             return job;
         }
