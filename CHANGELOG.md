@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Made Select objects dialog filter in the same way as the Find dialog (i.e. support short codes and Type names)
 - Ability to select multiple objects at once when adding to a Session
 - Ability to find multiple objects at once (ctrl+shift+f)
+- Added new pipeline component CohortSampler
 
 ### Fixed
 
