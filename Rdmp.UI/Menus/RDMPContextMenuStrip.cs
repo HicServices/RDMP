@@ -278,7 +278,8 @@ namespace Rdmp.UI.Menus
                 inspectionMenuItem.DropDownItems.Add(checkAll);
             }
             
-            inspectionMenuItem.Enabled = inspectionMenuItem.HasDropDown;
+            // disable menu if checking is not supported in the collection or objects clicked are not checkable
+            inspectionMenuItem.Enabled = inspectionMenuItem.HasDropDown && inspectionMenuItem.DropDownItems.OfType<ToolStripMenuItem>().Any(m=>m.Enabled);
         }
 
         protected void Activate(DatabaseEntity o)
