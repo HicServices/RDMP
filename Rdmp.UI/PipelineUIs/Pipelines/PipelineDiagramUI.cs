@@ -14,6 +14,7 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
+using Rdmp.UI.ItemActivation;
 using Rdmp.UI.PipelineUIs.DataObjects;
 using Rdmp.UI.PipelineUIs.Pipelines.Models;
 using Rdmp.UI.SimpleDialogs;
@@ -48,9 +49,9 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
         private DataFlowPipelineEngineFactory _pipelineFactory;
 
         private ToolStripMenuItem _deleteSelectedMenuItem;
-        private readonly IBasicActivateItems _activator;
+        private readonly IActivateItems _activator;
 
-        public PipelineDiagramUI(IBasicActivateItems activator)
+        public PipelineDiagramUI(IActivateItems activator)
         {
             this._activator = activator;
 
@@ -143,9 +144,13 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
                     Image = _activator.CoreIconProvider.GetImage(o),
                 });
 
-                string summary = o is ICanBeSummarised s ? s.GetSummary(true, true) : o.ToString();
-                tt.SetToolTip(b, summary);
-                b.Click += (s, e) => _activator.Show(o.GetType().Name, summary);
+                string typeName = o is Type t ? t.Name : o.GetType().Name;
+                string summary = GetSummary(o);
+
+                tt.SetToolTip(b, typeName + Environment.NewLine +  summary);
+
+                b.Click += (s, e) => _activator.Show(typeName, summary);
+                    
             }
 
             try
@@ -226,6 +231,17 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             {
                 Invalidate();
             }
+        }
+
+        private string GetSummary(object o)
+        {
+            if(o is Type t)
+            {
+                var docs = _activator.CommentStore.GetTypeDocumentationIfExists(t, true, true);
+                return $"A {t.Name} will be available for reading by components when the pipeline is run.{Environment.NewLine}{Environment.NewLine}{docs}".Trim();
+            }
+
+            return o is ICanBeSummarised s ? s.GetSummary(true, true) : o.ToString();
         }
 
         //by ID overload

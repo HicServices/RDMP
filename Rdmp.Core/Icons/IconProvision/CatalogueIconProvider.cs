@@ -176,8 +176,8 @@ namespace Rdmp.Core.Icons.IconProvision
             RDMPConcept t;
 
             //It is a System.Type, get the name and see if there's a corresponding image
-            if (concept is Type)
-                if (Enum.TryParse(((Type)concept).Name, out t))
+            if (concept is Type type)
+                if (TryParseTypeNameToRdmpConcept(type,out t))
                     return GetImageImpl(ImagesCollection[t], kind);
 
             //It is an instance of something, get the System.Type and see if there's a corresponding image
@@ -203,6 +203,24 @@ namespace Rdmp.Core.Icons.IconProvision
 
             return ImageUnknown;
 
+        }
+
+        private bool TryParseTypeNameToRdmpConcept(Type type, out RDMPConcept t)
+        {
+            // is it a known Type like Project
+            if(Enum.TryParse(type.Name, out t))
+            {
+                return true;
+            }
+
+            // try trimming the I off of IProject
+            if(type.IsInterface && Enum.TryParse(type.Name.Substring(1), out t))
+            {
+                return true;
+            }
+
+            // we don't have a known icon for the Type yet
+            return false;
         }
 
         /// <inheritdoc/>
