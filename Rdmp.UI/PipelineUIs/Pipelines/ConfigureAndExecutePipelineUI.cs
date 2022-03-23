@@ -68,12 +68,14 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
        public ConfigureAndExecutePipelineUI(DialogArgs args, IPipelineUseCase useCase, IActivateItems activator)
         {
            _useCase = useCase;
-           
            InitializeComponent();
+
+           taskDescriptionLabel1.SetupFor(args);
 
            //designer mode
            if(useCase == null && activator == null)
                return;
+            Text = args.WindowTitle;
 
             SetItemActivator(activator);
             progressUI1.ApplyTheme(activator.Theme);
@@ -92,18 +94,10 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
             foreach (var o in useCase.GetInitializationObjects())
             {
-                var de = o as DatabaseEntity;
-                if (o is DatabaseEntity)
-                    CommonFunctionality.Add(new ExecuteCommandShow(activator, de, 0, true));
-                else
-                    CommonFunctionality.Add(o.ToString());
-
                 _initializationObjects.Add(o);
             }
 
             SetPipelineOptions( activator.RepositoryLocator.CatalogueRepository);
-
-            lblTask.Text = "Task: " + UsefulStuff.PascalCaseStringToHumanReadable(useCase.GetType().Name);
         }
 
         private bool _pipelineOptionsSet = false;

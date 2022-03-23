@@ -206,6 +206,9 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             Pipeline = _repository.GetObjectByID<Pipeline>(Pipeline.ID);
             ddPipelines.Items.Add(Pipeline);
             ddPipelines.SelectedItem = Pipeline;
+
+            // user may have edited it so raise the changed event
+            PipelineChanged?.Invoke(this, new EventArgs());
         }
 
         private void btnDeletePipeline_Click(object sender, EventArgs e)
