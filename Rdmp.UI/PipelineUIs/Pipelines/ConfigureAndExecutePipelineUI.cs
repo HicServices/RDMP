@@ -80,7 +80,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             SetItemActivator(activator);
             progressUI1.ApplyTheme(activator.Theme);
 
-            pipelineDiagram1 = new PipelineDiagramUI();
+            pipelineDiagram1 = new PipelineDiagramUI(activator);
 
             pipelineDiagram1.Dock = DockStyle.Fill;
             panel_pipelineDiagram1.Controls.Add(pipelineDiagram1);

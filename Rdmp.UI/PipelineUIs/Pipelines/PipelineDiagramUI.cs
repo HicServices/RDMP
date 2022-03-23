@@ -9,8 +9,10 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.PipelineUIs.DataObjects;
 using Rdmp.UI.PipelineUIs.Pipelines.Models;
@@ -46,9 +48,12 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
         private DataFlowPipelineEngineFactory _pipelineFactory;
 
         private ToolStripMenuItem _deleteSelectedMenuItem;
+        private readonly IBasicActivateItems _activator;
 
-        public PipelineDiagramUI()
+        public PipelineDiagramUI(IBasicActivateItems activator)
         {
+            this._activator = activator;
+
             InitializeComponent();
             AllowSelection = false;
 
@@ -124,6 +129,22 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             flpPipelineDiagram.Controls.Clear();
             
             pipelineSmiley.Reset();
+            
+            pInitializationObjects.Controls.Clear();
+            
+            var tt = new ToolTip();
+            foreach(var o in _useCase.GetInitializationObjects())
+            {
+                Button b;
+                pInitializationObjects.Controls.Add(b = new Button
+                {
+                    Width = 26,
+                    Height = 26,
+                    Image = _activator.CoreIconProvider.GetImage(o),
+                    
+                });
+                tt.SetToolTip(b, o is ICanBeSummarised s ? s.GetSummary(true, true) : o.ToString());
+            }
 
             try
             {

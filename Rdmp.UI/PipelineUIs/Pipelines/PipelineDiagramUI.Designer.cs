@@ -29,26 +29,40 @@
         private void InitializeComponent()
         {
             this.flpPipelineDiagram = new System.Windows.Forms.FlowLayoutPanel();
+            this.pInitializationObjects = new System.Windows.Forms.FlowLayoutPanel();
             this.SuspendLayout();
             // 
             // flpPipelineDiagram
             // 
             this.flpPipelineDiagram.AutoScroll = true;
-            this.flpPipelineDiagram.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.flpPipelineDiagram.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flpPipelineDiagram.Location = new System.Drawing.Point(0, 0);
+            this.flpPipelineDiagram.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.flpPipelineDiagram.Name = "flpPipelineDiagram";
-            this.flpPipelineDiagram.Size = new System.Drawing.Size(1000, 110);
+            this.flpPipelineDiagram.Size = new System.Drawing.Size(1165, 97);
             this.flpPipelineDiagram.TabIndex = 5;
             // 
-            // PipelineDiagram
+            // pInitializationObjects
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.pInitializationObjects.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pInitializationObjects.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
+            this.pInitializationObjects.Location = new System.Drawing.Point(0, 97);
+            this.pInitializationObjects.Margin = new System.Windows.Forms.Padding(0);
+            this.pInitializationObjects.Name = "pInitializationObjects";
+            this.pInitializationObjects.Size = new System.Drawing.Size(1165, 28);
+            this.pInitializationObjects.TabIndex = 6;
+            // 
+            // PipelineDiagramUI
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Controls.Add(this.flpPipelineDiagram);
-            this.MinimumSize = new System.Drawing.Size(0, 110);
-            this.Name = "PipelineDiagram";
-            this.Size = new System.Drawing.Size(1000, 110);
+            this.Controls.Add(this.pInitializationObjects);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.MinimumSize = new System.Drawing.Size(0, 127);
+            this.Name = "PipelineDiagramUI";
+            this.Size = new System.Drawing.Size(1165, 125);
             this.ResumeLayout(false);
 
         }
@@ -56,5 +70,6 @@
         #endregion
 
         private System.Windows.Forms.FlowLayoutPanel flpPipelineDiagram;
+        private System.Windows.Forms.FlowLayoutPanel pInitializationObjects;
     }
 }

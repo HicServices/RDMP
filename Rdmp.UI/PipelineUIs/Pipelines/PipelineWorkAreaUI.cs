@@ -53,7 +53,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             olvComponents.AlwaysGroupByColumn = olvRole;
             olvComponents.FullRowSelect = true;
 
-            _pipelineDiagram = new PipelineDiagramUI();
+            _pipelineDiagram = new PipelineDiagramUI(_activator);
             _pipelineDiagram.AllowSelection = true;
             _pipelineDiagram.AllowReOrdering = true;
             _pipelineDiagram.SelectedComponentChanged += _pipelineDiagram_SelectedComponentChanged;
