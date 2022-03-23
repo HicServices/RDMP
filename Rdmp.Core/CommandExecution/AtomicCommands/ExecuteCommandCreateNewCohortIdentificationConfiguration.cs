@@ -124,7 +124,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             var name = _name;
 
             if(name == null)
-                if (!TypeText("Cohort Query Name", "Cohort Name", out name))
+                if (!BasicActivator.TypeText(new DialogArgs
+                {
+                  WindowTitle = "New Cohort Builder Query",
+                  TaskDescription = "Enter a name for the Cohort Builder Query.",
+                  EntryLabel = "Name"
+                },255,null, out name,false))
                     return null;
 
             var cic = new CohortIdentificationConfiguration(BasicActivator.RepositoryLocator.CatalogueRepository, name);
