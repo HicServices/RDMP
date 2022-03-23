@@ -116,15 +116,19 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
         void cmb_Type_DrawItem(object sender, DrawItemEventArgs e)
         {
             e.DrawBackground();
-            if(e.Index == -1)
+            
+            var italic = new Font(ddPipelines.Font, FontStyle.Italic);
+
+            if (e.Index == -1)
             {
+                e.Graphics.FillRectangle(new SolidBrush(Color.Pink), e.Bounds);
+                TextRenderer.DrawText(e.Graphics, "Select Pipeline", italic, new Rectangle(new Point(e.Bounds.Left, e.Bounds.Top + 1), e.Bounds.Size), Color.Black, TextFormatFlags.Left);
                 return;
             }
 
             var render = ddPipelines.Items[e.Index].ToString();
             bool isIncompatible = e.Index > ddPipelines.Items.IndexOf(ShowAll);
 
-            var italic = new Font(ddPipelines.Font, FontStyle.Italic);
 
             if (Equals(ddPipelines.Items[e.Index],ShowAll))
             {
