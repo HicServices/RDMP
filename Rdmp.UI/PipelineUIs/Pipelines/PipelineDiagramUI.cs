@@ -10,10 +10,12 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
+using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.PipelineUIs.DataObjects;
 using Rdmp.UI.PipelineUIs.Pipelines.Models;
@@ -132,25 +134,14 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             pipelineSmiley.Reset();
             
             pInitializationObjects.Controls.Clear();
+
+            var factory = new AtomicCommandUIFactory(_activator);
             
             var tt = new ToolTip();
-            foreach(var o in _useCase.GetInitializationObjects())
+            foreach(var o in _useCase.GetInitializationObjects().Reverse())
             {
-                Button b;
-                pInitializationObjects.Controls.Add(b = new Button
-                {
-                    Width = 26,
-                    Height = 26,
-                    Image = _activator.CoreIconProvider.GetImage(o),
-                });
-
-                string typeName = o is Type t ? t.Name : o.GetType().Name;
-                string summary = GetSummary(o);
-
-                tt.SetToolTip(b, typeName + Environment.NewLine +  summary);
-
-                b.Click += (s, e) => _activator.Show(typeName, summary);
-                    
+                Button b = factory.CreateButton(new ExecuteCommandDescribe(_activator, o));
+                pInitializationObjects.Controls.Add(b);                    
             }
 
             try
@@ -231,17 +222,6 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             {
                 Invalidate();
             }
-        }
-
-        private string GetSummary(object o)
-        {
-            if(o is Type t)
-            {
-                var docs = _activator.CommentStore.GetTypeDocumentationIfExists(t, true, true);
-                return $"A {t.Name} will be available for reading by components when the pipeline is run.{Environment.NewLine}{Environment.NewLine}{docs}".Trim();
-            }
-
-            return o is ICanBeSummarised s ? s.GetSummary(true, true) : o.ToString();
         }
 
         //by ID overload

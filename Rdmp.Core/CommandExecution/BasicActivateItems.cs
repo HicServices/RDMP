@@ -36,6 +36,7 @@ using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Comments;
 
 namespace Rdmp.Core.CommandExecution
 {
@@ -56,6 +57,9 @@ namespace Rdmp.Core.CommandExecution
         /// <inheritdoc/>
         public FavouritesProvider FavouritesProvider { get; private set; }
         public ICoreIconProvider CoreIconProvider { get; private set; }
+
+        public CommentStore CommentStore { get { return RepositoryLocator.CatalogueRepository.CommentStore; } }
+
 
         /// <inheritdoc/>
         public bool YesNo(string text, string caption, out bool chosen)

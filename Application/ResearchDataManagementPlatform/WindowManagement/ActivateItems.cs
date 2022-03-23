@@ -105,7 +105,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public ICombineableFactory CommandFactory { get; private set; }
         public ICommandExecutionFactory CommandExecutionFactory { get; private set; }
-        public CommentStore CommentStore { get { return RepositoryLocator.CatalogueRepository.CommentStore; } }
         public HistoryProvider HistoryProvider { get; private set; }
 
         public List<IProblemProvider> ProblemProviders { get; private set; }

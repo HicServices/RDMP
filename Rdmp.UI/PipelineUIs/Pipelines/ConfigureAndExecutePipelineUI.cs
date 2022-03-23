@@ -94,6 +94,8 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
             foreach (var o in useCase.GetInitializationObjects())
             {
+                CommonFunctionality.Add(new ExecuteCommandDescribe(activator, o));
+
                 _initializationObjects.Add(o);
             }
 

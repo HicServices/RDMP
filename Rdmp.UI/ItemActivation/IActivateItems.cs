@@ -57,11 +57,6 @@ namespace Rdmp.UI.ItemActivation
         /// Component for suggesting completion options for an ongoing drag or paste
         /// </summary>
         ICommandExecutionFactory CommandExecutionFactory { get;}
-
-        /// <summary>
-        /// Component for fetching xmldoc comments from the codebase 
-        /// </summary>
-        CommentStore CommentStore { get; }
         
         /// <summary>
         /// Records when objects are accessed by the user through the UI to allow navigation to recent objects

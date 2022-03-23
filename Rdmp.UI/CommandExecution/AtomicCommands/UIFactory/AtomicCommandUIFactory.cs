@@ -13,6 +13,7 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus;
 using Rdmp.UI.Menus.MenuItems;
+using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory
@@ -41,6 +42,35 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory
         public ToolStripItem CreateToolStripItem(IAtomicCommand command)
         {
             return new AtomicCommandToolStripItem(command, _activator);
+        }
+
+        public Button CreateButton(IAtomicCommand cmd)
+        {
+            var tt = new ToolTip();
+
+            Button b = new Button
+            {
+                Width = 26,
+                Height = 26,
+                Image = cmd.GetImage(_activator.CoreIconProvider),
+                Tag = cmd
+            };
+
+            b.Click += (s, e) =>
+            {
+                try
+                {
+                    cmd.Execute();
+                }
+                catch (Exception ex)
+                {
+                    ExceptionViewer.Show("Command Failed", ex);
+                }
+            };
+
+            tt.SetToolTip(b, cmd.GetCommandHelp());
+
+            return b;
         }
     }
 
