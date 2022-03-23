@@ -12,7 +12,7 @@ using System.Windows.Forms;
 namespace Rdmp.UI.PipelineUIs.Pipelines.Models
 {
     /// <summary>
-    /// Used in PipelineDiagram to indicate an area you can drag and drop a 'Middle' flow component into your Pipeline.  Also allows you to drag and drop 'Middle' flow components that
+    /// Used in <see cref="PipelineDiagramUI"/> to indicate an area you can drag and drop a 'Middle' flow component into your Pipeline.  Also allows you to drag and drop 'Middle' flow components that
     /// are already in the pipeline to reorder them.
     /// </summary>
     [TechnicalUI]
