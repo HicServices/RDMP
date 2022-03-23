@@ -6,6 +6,7 @@
 
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -20,6 +21,10 @@ namespace Rdmp.UI.Menus
         public CohortAggregateContainerMenu(RDMPContextMenuStripArgs args, CohortAggregateContainer container): base( args, container)
         {
             _container = container;
+
+            // Don't add the 'Edit' button but do allow double clicking
+            args.SkipCommand<ExecuteCommandActivate>();
+
             var cic = _container.GetCohortIdentificationConfiguration();
 
             //Add Graph results of container commands
