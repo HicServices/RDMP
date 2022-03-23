@@ -43,6 +43,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if (targetCohortAggregateContainer.ShouldBeReadOnly(out string reason))
                 SetImpossible(reason);
+
+            UseTripleDotSuffix = true;
         }
         public ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(IBasicActivateItems activator,CatalogueCombineable catalogueCombineable, CohortAggregateContainer targetCohortAggregateContainer) : this(activator,targetCohortAggregateContainer)
         {

@@ -46,6 +46,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if (targetCohortAggregateContainer.ShouldBeReadOnly(out string reason))
                 SetImpossible(reason);
 
+            UseTripleDotSuffix = true;
             SetCommandWeight();
         }
 
@@ -97,7 +98,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             // If we're explicity overriding the command name, then use that
             if (!string.IsNullOrWhiteSpace(OverrideCommandName))
-                return OverrideCommandName;
+                return base.GetCommandName();
 
             // if an execute time decision is expected then command name should reflect the kind of available objects the user can add
             if (_available?.Any() ?? false)
@@ -121,7 +122,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     throw new Exception("There are no available objects to add");
                 }
                 
-                if(!SelectMany(_available,out var selected))
+                if(!BasicActivator.SelectObjects(new DialogArgs
+                {
+                    WindowTitle = "Add Aggregate Configuration(s) to Container",
+                    TaskDescription = $"Choose which AggregateConfiguration(s) to add to the cohort container '{_targetCohortAggregateContainer.Name}'.",
+                },_available,out var selected))
                 {
                     // user cancelled
                     return;

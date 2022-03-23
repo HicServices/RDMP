@@ -112,7 +112,7 @@ namespace Rdmp.Core.CommandExecution
         public virtual string GetCommandName()
         {
             if (!string.IsNullOrWhiteSpace(OverrideCommandName))
-                return OverrideCommandName;
+                return UseTripleDotSuffix ? OverrideCommandName + "..." : OverrideCommandName;
 
             var name = GetType().Name;
             var adjusted = name.Replace(ExecuteCommandPrefix, "");
