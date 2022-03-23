@@ -102,7 +102,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if (cols == null || cols.Length == 0)
                 return base.GetCommandName();
 
-            return base.GetCommandName() + "(" + string.Join(",", cols.Select(e=>e.GetRuntimeName())) + ")";
+            return base.GetCommandName() + " (" + string.Join(",", cols.Select(e=>e.GetRuntimeName())) + ")";
         }
 
         public override Image GetImage(IIconProvider iconProvider)

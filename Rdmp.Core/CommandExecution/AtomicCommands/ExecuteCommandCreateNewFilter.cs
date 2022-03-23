@@ -33,6 +33,19 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if(_container == null && _host is AggregateConfiguration ac && ac.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
                 SetImpossible("Aggregate is set to use another's filter container tree");
         }
+
+        public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, CatalogueItem ci) : base(activator)
+        {
+            Weight = DEFAULT_WEIGHT;
+
+            if(ci.ExtractionInformation == null)
+            {
+                SetImpossible("CatalogueItem is not extractable so cannot have filters. Make this CatalogueItem extractable to add filters.");
+                return;
+            }
+
+            _factory = new ExtractionFilterFactory(ci.ExtractionInformation);
+        }
         public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, IFilterFactory factory, IContainer container = null):base(activator)
         {
             Weight = DEFAULT_WEIGHT;

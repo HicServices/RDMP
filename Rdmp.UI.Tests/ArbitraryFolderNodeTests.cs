@@ -41,7 +41,10 @@ namespace Rdmp.UI.Tests
             var menu2 = common.GetMenuIfExists(node);
 
             int count2 = menu2.Items.Count;
-            Assert.AreEqual(count1+1,count2);
+
+            // expect 2 new entries in the context menu.  The "Do Nothing" command added above
+            // and a tool strip seperator to divide the menu commands from the common commands
+            Assert.AreEqual(count1+2,count2);
             
             //what happens if the delegate crashes?
             node.CommandGetter = () => throw new NotSupportedException("It went wrong!");

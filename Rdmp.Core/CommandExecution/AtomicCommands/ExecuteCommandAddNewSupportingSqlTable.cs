@@ -16,10 +16,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     public class ExecuteCommandAddNewSupportingSqlTable : BasicCommandExecution,IAtomicCommand
     {
         private readonly Catalogue _catalogue;
+        private readonly string _name;
 
-        public ExecuteCommandAddNewSupportingSqlTable(IBasicActivateItems activator, Catalogue catalogue) : base(activator)
+        public ExecuteCommandAddNewSupportingSqlTable(IBasicActivateItems activator, Catalogue catalogue, string name = null) : base(activator)
         {
             _catalogue = catalogue;
+            _name = name;
         }
 
         public override string GetCommandHelp()
@@ -31,10 +33,46 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var newSqlTable = new SupportingSQLTable((ICatalogueRepository)_catalogue.Repository, _catalogue, "New Supporting SQL Table " + Guid.NewGuid());
+
+            var c = _catalogue;
+            var name = _name;
+
+            if (c == null)
+            {
+                if (BasicActivator.SelectObject(new DialogArgs()
+                {
+                    WindowTitle = "Add Supporting SQL Table",
+                    TaskDescription = "Select which Catalogue you want to add the Supporting SQL Table to."
+
+                }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
+                {
+                    c = selected;
+                }
+                else
+                {
+                    // user cancelled selecting a Catalogue
+                    return;
+                }
+            }
+
+            if (name == null && BasicActivator.IsInteractive)
+            {
+                if (!BasicActivator.TypeText(new DialogArgs
+                {
+                    WindowTitle = "Supporting SQL Table Name",
+                    TaskDescription = "Enter a name that describes what data the query will show.  This is a human readable name not a table name.",
+                    EntryLabel = "Name"
+                }, 255, null, out name, false))
+                {
+                    // user cancelled typing a name
+                    return;
+                }
+            }
+
+            var newSqlTable = new SupportingSQLTable((ICatalogueRepository)c.Repository, c, name ?? "New Supporting SQL Table " + Guid.NewGuid());
 
             Activate(newSqlTable);
-            Publish(_catalogue);
+            Publish(c);
         }
         
         public override Image GetImage(IIconProvider iconProvider)

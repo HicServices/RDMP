@@ -809,9 +809,13 @@ namespace Rdmp.UI.Collections
                 return cmd.Weight;
             }
 
-            if (oItem is ToolStripMenuItem mi && mi.DropDownItems.Count > 0)
+            if (oItem is ToolStripMenuItem mi)
             {
-                return mi.DropDownItems.Cast<ToolStripItem>().Max(GetWeight);
+                if(mi.DropDownItems.Count > 0)
+                    return mi.DropDownItems.Cast<ToolStripItem>().Min(GetWeight);
+
+                if (mi.Tag is float f)
+                    return f;
             }
             return 0;
         }

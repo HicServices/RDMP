@@ -37,6 +37,20 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             Weight = 100.3f;
         }
 
+        public override string GetCommandName()
+        {
+            if(_checkable == null)
+            {
+                return "Check";
+            }
+            return $"Check '{_checkable}'";
+        }
+
+        public override string GetCommandHelp()
+        {
+            return "Run validation checks for this item to ensure that easily checkable properties are valid";
+        }
+
         public override void Execute()
         {
             base.Execute();

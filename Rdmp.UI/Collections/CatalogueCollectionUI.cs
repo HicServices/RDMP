@@ -6,6 +6,7 @@
 
 using System;
 using System.Linq;
+using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
@@ -47,7 +48,7 @@ namespace Rdmp.UI.Collections
     public partial class CatalogueCollectionUI : RDMPCollectionUI
     {
         private Catalogue[] _allCatalogues;
-
+        private const string NewMenu = "New...";
         //constructor
 
         private bool bLoading = true;
@@ -123,11 +124,34 @@ namespace Rdmp.UI.Collections
                 CommonTreeFunctionality.SetupColumnTracking(olvOrder, new Guid("0d8e6e49-03ae-48f2-9bf8-acc5107f65f8"));
                 CommonTreeFunctionality.SetupColumnTracking(olvFilters, new Guid("c4c9b2ac-c9b5-4d23-b06d-d1f55013b4e9"));
 
-                CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator),GlobalStrings.FromFile,null,"New...");
-                CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator),GlobalStrings.FromDatabase,null,"New...");
+                CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator), GlobalStrings.FromFile,null, NewMenu);
+                CommonFunctionality.Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator), GlobalStrings.FromDatabase,null, NewMenu);
+                CommonFunctionality.Add(new ExecuteCommandCreateNewEmptyCatalogue(Activator),"Empty Catalogue (Advanced)", null, NewMenu);
+
+                CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
+
+                CommonFunctionality.Add(new ExecuteCommandAddNewCatalogueItem(Activator,null) , "CatalogueItem", null, NewMenu);
+
+                CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
+
+                CommonFunctionality.Add(new ExecuteCommandAddNewAggregateGraph(Activator, null), "Aggregate Graph", null, NewMenu);
+
+                CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
+
+                CommonFunctionality.Add(new ExecuteCommandAddNewSupportingDocument(Activator, null), "Supporting Document", null, NewMenu);
+                CommonFunctionality.Add(new ExecuteCommandAddNewSupportingSqlTable(Activator, null), "Supporting SQL Table", null, NewMenu);
+
+                CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
+
+
+                CommonFunctionality.Add(new ExecuteCommandCreateNewGovernancePeriod(Activator), "Governance Period", null, NewMenu);
+                CommonFunctionality.Add(new ExecuteCommandAddNewGovernanceDocument(Activator,null), "Governance Document", null, NewMenu);
+
+
+
             }
 
-            if(isFirstTime || Equals(oRefreshFrom, CatalogueFolder.Root))
+            if (isFirstTime || Equals(oRefreshFrom, CatalogueFolder.Root))
             {
                 tlvCatalogues.RefreshObject(CatalogueFolder.Root);
                 tlvCatalogues.Expand(CatalogueFolder.Root);
@@ -194,9 +218,19 @@ namespace Rdmp.UI.Collections
             //Things that are always visible regardless
             CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[]
             {
-                new ExecuteCommandCreateNewCatalogueByImportingFileUI(a),
-                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(a),
-                new ExecuteCommandCreateNewEmptyCatalogue(a),
+                new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator){OverrideCommandName = "Add New Catalogue From File...",Weight = -50.9f},
+                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator) { OverrideCommandName = "Add New Catalogue From Database..." ,Weight = -50.8f},
+                new ExecuteCommandCreateNewEmptyCatalogue(Activator){OverrideCommandName = "Add New Empty Catalogue (Advanced)", Weight = -50.7f},
+
+                new ExecuteCommandAddNewCatalogueItem(Activator, null){ Weight = -49.9f},
+
+                new ExecuteCommandAddNewAggregateGraph(Activator, null){ Weight = -48.9f},
+
+                new ExecuteCommandAddNewSupportingDocument(Activator, null){ Weight = -46.9f},
+                new ExecuteCommandAddNewSupportingSqlTable(Activator, null){ Weight = -46.8f},
+
+                new ExecuteCommandCreateNewGovernancePeriod(Activator){OverrideCommandName = "Add New Governance Period", Weight = 44.9f },
+                new ExecuteCommandAddNewGovernanceDocument(Activator, null){Weight = 44.9f },
             };
 
             Activator.RefreshBus.EstablishLifetimeSubscription(this);

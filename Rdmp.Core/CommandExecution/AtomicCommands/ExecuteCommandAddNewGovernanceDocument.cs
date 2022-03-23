@@ -32,13 +32,34 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            if (_file == null) 
-                _file = BasicActivator.SelectFile("Document to add");
+            var p = _period;
+            var f = _file;
 
-            if(_file == null)
+            if(p == null)
+            {
+                if (BasicActivator.SelectObject(new DialogArgs()
+                {
+                    WindowTitle = "Add Governance Document",
+                    TaskDescription = "Select which GovernancePeriod you want to attach the document to."
+
+                }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<GovernancePeriod>(), out var selected))
+                {
+                    p = selected;
+                }
+                else
+                {
+                    // user cancelled selecting a Catalogue
+                    return;
+                }
+            }
+
+            if (f == null) 
+                f = BasicActivator.SelectFile("Document to add");
+
+            if(f == null)
                 return;
 
-            var doc = new GovernanceDocument(BasicActivator.RepositoryLocator.CatalogueRepository, _period, _file);
+            var doc = new GovernanceDocument(BasicActivator.RepositoryLocator.CatalogueRepository, p, f);
             Publish(_period);
             Emphasise(doc);
             Activate(doc);
