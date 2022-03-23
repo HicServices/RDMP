@@ -21,6 +21,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(IBasicActivateItems activator, CohortIdentificationConfiguration configuration) : base(activator)
         {
             _configuration = configuration;
+
+            UseTripleDotSuffix = true;
         }
 
         public ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(IBasicActivateItems activator,CatalogueCombineable catalogue, CohortIdentificationConfiguration configuration):this(activator,configuration)
@@ -28,6 +30,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _catalogue = catalogue;
             if(!_catalogue.Catalogue.IsApiCall() && !_catalogue.ContainsAtLeastOneExtractionIdentifier)
                 SetImpossible("Catalogue " + _catalogue.Catalogue + " does not contain any IsExtractionIdentifier columns");
+
+            UseTripleDotSuffix = true;
         }
 
         public override string GetCommandHelp()
