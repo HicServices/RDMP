@@ -144,11 +144,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
         }
 
 
-        protected IPipelineRunner GetConfigureAndExecuteControl(ICohortCreationRequest request, string description)
+        protected IPipelineRunner GetConfigureAndExecuteControl(ICohortCreationRequest request, string description, object cohortIsBeingCreatedFrom)
         {
             var catalogueRepository = BasicActivator.RepositoryLocator.CatalogueRepository;
 
-            var pipelineRunner = BasicActivator.GetPipelineRunner(request, Pipeline);
+            var pipelineRunner = BasicActivator.GetPipelineRunner(new DialogArgs { 
+                WindowTitle = "Commit Cohort",
+                TaskDescription = $"Select a Pipeline compatible with creating a Cohort from an '{cohortIsBeingCreatedFrom.GetType().Name}'.  If the pipeline completes succesfully a new Saved Cohort will be created and the cohort identifiers stored in the selected ExternalCohortTable."
+            },request, Pipeline);
 
             pipelineRunner.PipelineExecutionFinishedsuccessfully += (o, args) => OnCohortCreatedSuccessfully(pipelineRunner, request);
 

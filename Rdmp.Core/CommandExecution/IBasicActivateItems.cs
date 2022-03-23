@@ -147,7 +147,7 @@ namespace Rdmp.Core.CommandExecution
         /// Create a class capable of running a <see cref="IPipeline"/> under a given <see cref="IPipelineUseCase"/>.  This may be an async process e.g. non modal dialogues
         /// </summary>
         /// <returns></returns>
-        IPipelineRunner GetPipelineRunner(IPipelineUseCase useCase, IPipeline pipeline);
+        IPipelineRunner GetPipelineRunner(DialogArgs args,IPipelineUseCase useCase, IPipeline pipeline);
 
         #region Select X Modal methods
         /// <summary>

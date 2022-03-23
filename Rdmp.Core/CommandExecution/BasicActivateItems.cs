@@ -629,7 +629,7 @@ namespace Rdmp.Core.CommandExecution
         }
         
         /// <inheritdoc/>
-        public virtual IPipelineRunner GetPipelineRunner(IPipelineUseCase useCase, IPipeline pipeline)
+        public virtual IPipelineRunner GetPipelineRunner(DialogArgs args, IPipelineUseCase useCase, IPipeline pipeline)
         {
             return new PipelineRunner(useCase,pipeline);
         }

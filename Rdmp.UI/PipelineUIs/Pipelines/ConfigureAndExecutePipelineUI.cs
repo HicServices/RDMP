@@ -10,6 +10,7 @@ using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
@@ -64,7 +65,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
         readonly List<object> _initializationObjects = new List<object>();
 
-       public ConfigureAndExecutePipelineUI(IPipelineUseCase useCase, IActivateItems activator)
+       public ConfigureAndExecutePipelineUI(DialogArgs args, IPipelineUseCase useCase, IActivateItems activator)
         {
            _useCase = useCase;
            

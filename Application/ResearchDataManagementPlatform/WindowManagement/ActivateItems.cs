@@ -710,10 +710,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return _windowManager.GetAllWindows<SessionCollectionUI>();
         }
 
-        public override IPipelineRunner GetPipelineRunner(IPipelineUseCase useCase, IPipeline pipeline)
+        public override IPipelineRunner GetPipelineRunner(DialogArgs args,IPipelineUseCase useCase, IPipeline pipeline)
         {
              
-            ConfigureAndExecutePipelineUI configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(useCase,this);
+            ConfigureAndExecutePipelineUI configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(args,useCase, this);
             configureAndExecuteDialog.Dock = DockStyle.Fill;
             
             return configureAndExecuteDialog;

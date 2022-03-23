@@ -115,9 +115,20 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
 
             var useCase = new UploadFileUseCase(File, db);
 
-            var runner = BasicActivator.GetPipelineRunner(useCase,_pipeline);
+            var runner = BasicActivator.GetPipelineRunner(
+                GetCreateCatalogueFromFileDialogArgs()
+                ,useCase,_pipeline);
             runner.PipelineExecutionFinishedsuccessfully += (s, e) => OnPipelineCompleted(s, e, db);
             runner.Run(BasicActivator.RepositoryLocator,null,null,null);
+        }
+
+        public static DialogArgs GetCreateCatalogueFromFileDialogArgs()
+        {
+            return new DialogArgs
+            {
+                WindowTitle = "Create Catalogue from File",
+                TaskDescription = "Select a Pipeline compatible with the file format you are loading and your intended destination.  If the pipeline completes succesfully a new Catalogue will be created referencing the new table created in your database."
+            };
         }
 
         private void OnPipelineCompleted(object sender, PipelineEngineEventArgs args, DiscoveredDatabase db)
