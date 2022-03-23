@@ -30,11 +30,11 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations
         [DemandsInitialization("The number of unique patient identifiers you want returned from the input data")]
         public int SampleSize { get; set; }
 
-        [DemandsInitialization("Optional.  The name of the identifier column that you are submitting.  Set this if it is different than the destination cohort private identifier field")]
-        public string PrivateIdentifierColumnName { get; set; }
-
         [DemandsInitialization("Determines components behaviour if not enough unique identifiers are being comitted.  True to crash.  False to pass on however many records there are.")]
         public bool FailIfNotEnoughIdentifiers { get; set; }
+
+        [DemandsInitialization("Optional.  The name of the identifier column that you are submitting.  Set this if it is different than the destination cohort private identifier field")]
+        public string PrivateIdentifierColumnName { get; set; }
 
         public void Abort(IDataLoadEventListener listener)
         {
