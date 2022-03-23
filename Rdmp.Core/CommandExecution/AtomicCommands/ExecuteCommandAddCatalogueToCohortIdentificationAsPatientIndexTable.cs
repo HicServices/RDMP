@@ -30,8 +30,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _catalogue = catalogue;
             if(!_catalogue.Catalogue.IsApiCall() && !_catalogue.ContainsAtLeastOneExtractionIdentifier)
                 SetImpossible("Catalogue " + _catalogue.Catalogue + " does not contain any IsExtractionIdentifier columns");
-
-            UseTripleDotSuffix = true;
         }
 
         public override string GetCommandHelp()
