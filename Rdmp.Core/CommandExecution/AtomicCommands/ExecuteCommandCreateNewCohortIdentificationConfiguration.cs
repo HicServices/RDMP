@@ -26,6 +26,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private string _name;
 
         /// <summary>
+        /// True to prompt the user to pick a Project if no explicit Project is configured
+        /// yet on this command.
+        /// </summary>
+        public bool PromptToPickAProject { get; set; } = false;
+
+        /// <summary>
         /// Name to give the inclusion component of new cics created by this command
         /// </summary>
         public static string InclusionCriteriaName = "Inclusion Criteria";
@@ -64,6 +70,18 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             base.Execute();
 
+            var proj = _associateWithProject;
+
+            if(proj == null && BasicActivator.IsInteractive && PromptToPickAProject)
+            {
+                proj = (Project)BasicActivator.SelectOne(new DialogArgs
+                {
+                    WindowTitle = "Associate with Project",
+                    TaskDescription = "Do you want to associate this new query with a Project? if not select Null or Cancel.",
+                    AllowSelectingNull = true,
+                },BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>());
+            }
+
             CohortIdentificationConfiguration cic;
             
             //if user wants to see the wizard and isn't using the CLI constructor
@@ -85,9 +103,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if (cic == null)
                 return;
 
-            if (_associateWithProject != null)
+            if (proj != null)
             {
-                var assoc = _associateWithProject.AssociateWithCohortIdentification(cic);
+                var assoc = proj.AssociateWithCohortIdentification(cic);
                 Publish(assoc);
                 Emphasise(assoc, int.MaxValue);
 

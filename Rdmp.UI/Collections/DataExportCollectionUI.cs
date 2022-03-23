@@ -155,7 +155,8 @@ namespace Rdmp.UI.Collections
             CommonFunctionality.Add(new ExecuteCommandCreateNewDataExtractionProject(Activator),"Project",null,NewMenu);
             CommonFunctionality.Add(new ToolStripSeparator(),NewMenu);
 
-            CommonFunctionality.Add(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator), "Cohort Builder Query", null, NewMenu);
+            CommonFunctionality.Add(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator)
+                { PromptToPickAProject = true}, "Cohort Builder Query", null, NewMenu);
 
             var uiFactory = new AtomicCommandUIFactory(Activator);
             var cohortSubmenu = new ToolStripMenuItem("Cohort");
@@ -203,7 +204,7 @@ namespace Rdmp.UI.Collections
             return new IAtomicCommand[]
                {
                     new ExecuteCommandCreateNewDataExtractionProject(Activator) { OverrideCommandName = "Add New Project",Weight = -10 },
-                    new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator) { OverrideCommandName = "Add New Cohort Builder Query" ,Weight = -4.95f },
+                    new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator) { PromptToPickAProject = true, OverrideCommandName = "Add New Cohort Builder Query" ,Weight = -4.95f },
                     new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator, null) { OverrideCommandName = "From Cohort Builder Query",SuggestedCategory = "Add New Cohort", Weight = -4.9f},
                     new ExecuteCommandCreateNewCohortFromFile(Activator, null) { OverrideCommandName = "From File" ,SuggestedCategory = "Add New Cohort",Weight = -4.8f},
                     new ExecuteCommandCreateNewCohortFromCatalogue(Activator,(Catalogue)null) { OverrideCommandName = "From Catalogue" ,SuggestedCategory = "Add New Cohort",Weight = -4.7f},
