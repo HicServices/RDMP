@@ -14,7 +14,7 @@ namespace Rdmp.UI.Menus
     {
         public JoinableCollectionNodeMenu(RDMPContextMenuStripArgs args, JoinableCollectionNode patientIndexTablesNode): base(args, patientIndexTablesNode)
         {
-            Add(new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(_activator,patientIndexTablesNode.Configuration));
+            Add(new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(_activator, patientIndexTablesNode.Configuration) { OverrideCommandName = "Add Catalogue..."});
         }
 
     }
