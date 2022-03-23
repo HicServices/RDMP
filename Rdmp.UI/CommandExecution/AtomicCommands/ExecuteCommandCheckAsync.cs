@@ -39,6 +39,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         public override string GetCommandName()
         {
+            if(_checkable == null)
+            {
+                return "Check";
+            }
             return $"Check '{_checkable}'";
         }
 
