@@ -61,6 +61,10 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             
             pbProject.Image = CatalogueIcons.Project;
             pbCohortSource.Image = CatalogueIcons.ExternalCohortTable;
+            taskDescriptionLabel1.SetupFor(new DialogArgs
+            {
+                TaskDescription = "Describe the cohort you are trying to create.  Which Project it will be extracted with and which ExternalCohortTable it should be stored in.",
+            });
         }
 
         
