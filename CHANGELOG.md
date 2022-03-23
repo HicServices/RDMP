@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed newlines in CatalogueItem descriptions not being output correctly in docx metadata report
 - Fixed iterative data loads run on the CLI throwing and returning non zero when caught up to date with load progress (when running in iterative mode)
+- Pipeline component order is now "correct" and will list more important variables at the top rather than at the bottom - https://github.com/HicServices/RDMP/issues/996
 
 ## [7.0.8] - 2022-03-08
 

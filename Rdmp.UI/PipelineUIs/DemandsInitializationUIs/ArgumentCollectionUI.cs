@@ -231,6 +231,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
 
             valueui.BringToFront();
             pArguments.Controls.Add(p);
+            p.BringToFront();
         }
 
         private string GetSystemTypeName(Type type)
