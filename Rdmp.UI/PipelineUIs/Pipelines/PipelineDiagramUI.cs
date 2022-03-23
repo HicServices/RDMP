@@ -141,9 +141,11 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
                     Width = 26,
                     Height = 26,
                     Image = _activator.CoreIconProvider.GetImage(o),
-                    
                 });
-                tt.SetToolTip(b, o is ICanBeSummarised s ? s.GetSummary(true, true) : o.ToString());
+
+                string summary = o is ICanBeSummarised s ? s.GetSummary(true, true) : o.ToString();
+                tt.SetToolTip(b, summary);
+                b.Click += (s, e) => _activator.Show(o.GetType().Name, summary);
             }
 
             try
