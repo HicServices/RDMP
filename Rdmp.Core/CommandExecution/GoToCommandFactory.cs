@@ -176,6 +176,15 @@ namespace Rdmp.Core.CommandExecution
                     {
                         yield return new ExecuteCommandShow(_activator, () => cataEds.ExtractionConfigurations.Select(c=>c.Project).Distinct()){OverrideCommandName = "Project(s)" };
                         yield return new ExecuteCommandShow(_activator, () => cataEds.ExtractionConfigurations){OverrideCommandName = "Extraction Configuration(s)" };
+
+                        if(cataEds.Project_ID != null)
+                        {
+                            yield return new ExecuteCommandShow(_activator, () =>
+                            {
+                                return new[] {_activator.RepositoryLocator.DataExportRepository.GetObjectByID<Project>(cataEds.Project_ID.Value) };
+                            }
+                            ) { OverrideCommandName = "Associated Project" };
+                        }
                     }
                         
                 }

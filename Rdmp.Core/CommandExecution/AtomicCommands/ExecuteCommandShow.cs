@@ -159,5 +159,16 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             return _useIconAndTypeName && _objectType != null ? iconProvider.GetImage((object)_objectToShow ?? _objectType) : null;
         }
+
+        /// <summary>
+        /// Resolves any lamdas and returns what object(s) would be shown (if any)
+        /// by running this command.  This method may be expensive to run
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<IMapsDirectlyToDatabaseTable> GetObjects()
+        {
+            FetchDestinationObjects();
+            return new[] {_objectToShow} ?? _objectsToPickFrom ?? Enumerable.Empty<IMapsDirectlyToDatabaseTable>();
+        }
     }
 }
