@@ -10,7 +10,6 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
-using System;
 using System.Drawing;
 using System.Linq;
 
@@ -44,6 +43,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if (targetCohortAggregateContainer.ShouldBeReadOnly(out string reason))
                 SetImpossible(reason);
+
+            UseTripleDotSuffix = true;
         }
         public ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(IBasicActivateItems activator,CatalogueCombineable catalogueCombineable, CohortAggregateContainer targetCohortAggregateContainer) : this(activator,targetCohortAggregateContainer)
         {
@@ -76,7 +77,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             // if user hasn't picked a Catalogue yet
             if(_catalogueCombineable == null)
             {
-                if(!SelectMany(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
+                if(!BasicActivator.SelectObjects(new DialogArgs
+                {
+                    WindowTitle = "Add Catalogue(s) to Container",
+                    TaskDescription = $"Choose which Catalogues to add to the cohort container '{_targetCohortAggregateContainer.Name}'.  Catalogues must have at least one IsExtractionIdentifier column.",
+                },BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
                 {
                     // user didn't pick one
                     return;

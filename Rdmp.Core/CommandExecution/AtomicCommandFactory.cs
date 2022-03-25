@@ -331,7 +331,7 @@ namespace Rdmp.Core.CommandExecution
             }
 
             if(Is(o,out AllFreeCohortIdentificationConfigurationsNode _) || Is(o,out AllProjectCohortIdentificationConfigurationsNode _))
-                yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator);
+                yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator) { PromptToPickAProject=true};
 
 
             CohortIdentificationConfiguration cic = null;

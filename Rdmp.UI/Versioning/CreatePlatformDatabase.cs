@@ -66,7 +66,7 @@ namespace Rdmp.UI.Versioning
             if (db == null)
             {
                 MessageBox.Show(
-                    "You must pick an empty database or enter the name of a new one (that doesn't exist yet)");
+                    "You must pick an empty database or enter the name of a new one");
                 return;
             }
 

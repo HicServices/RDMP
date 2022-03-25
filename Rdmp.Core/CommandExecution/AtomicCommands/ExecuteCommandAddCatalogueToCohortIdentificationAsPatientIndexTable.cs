@@ -21,6 +21,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(IBasicActivateItems activator, CohortIdentificationConfiguration configuration) : base(activator)
         {
             _configuration = configuration;
+
+            UseTripleDotSuffix = true;
         }
 
         public ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(IBasicActivateItems activator,CatalogueCombineable catalogue, CohortIdentificationConfiguration configuration):this(activator,configuration)

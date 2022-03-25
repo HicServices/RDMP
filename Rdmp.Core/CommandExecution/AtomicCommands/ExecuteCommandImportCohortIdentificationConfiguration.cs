@@ -37,7 +37,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if (intoContainer.ShouldBeReadOnly(out string reason))
             {
                 SetImpossible(reason);
-            }   
+            }
+
+            // if we don't know what to import yet then we should have the
+            // 'more choices to come' suffix
+            UseTripleDotSuffix = ToImport == null;
         }
         public override Image GetImage(IIconProvider iconProvider)
         {
@@ -50,7 +54,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             var import = ToImport;
 
             if(import == null)
-                if(!SelectMany(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>(),out import))
+                if(!BasicActivator.SelectObjects(new DialogArgs
+                {
+                    WindowTitle = "Add CohortIdentificationConfiguration(s) to Container",
+                    TaskDescription = $"Choose which CohortIdentificationConfiguration(s) to add to the cohort container '{IntoContainer.Name}'.  For each one selected, the entire query tree will be imported.",
+
+                },BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>(),out import))
                     return;
 
             if(import == null || !import.Any())

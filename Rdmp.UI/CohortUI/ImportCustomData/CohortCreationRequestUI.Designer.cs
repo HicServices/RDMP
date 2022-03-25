@@ -32,7 +32,6 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CohortCreationRequestUI));
-            this.label1 = new System.Windows.Forms.Label();
             this.ddExistingCohort = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.lblExternalCohortTable = new System.Windows.Forms.Label();
@@ -68,6 +67,10 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             this.lblErrorNoProjectNumber = new System.Windows.Forms.Label();
             this.tbSetProjectNumber = new System.Windows.Forms.TextBox();
             this.btnClear = new System.Windows.Forms.Button();
+            this.taskDescriptionLabel1 = new Rdmp.UI.SimpleDialogs.TaskDescriptionLabel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.gbRevisedCohort.SuspendLayout();
             this.gbNewCohort.SuspendLayout();
             this.gbChooseCohortType.SuspendLayout();
@@ -75,17 +78,10 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             this.gbDescription.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbProject)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbCohortSource)).BeginInit();
+            this.panel1.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(14, 10);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(335, 15);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "This form lets you describe the cohort you are trying to import";
             // 
             // ddExistingCohort
             // 
@@ -96,7 +92,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             this.ddExistingCohort.Location = new System.Drawing.Point(172, 18);
             this.ddExistingCohort.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ddExistingCohort.Name = "ddExistingCohort";
-            this.ddExistingCohort.Size = new System.Drawing.Size(510, 23);
+            this.ddExistingCohort.Size = new System.Drawing.Size(565, 23);
             this.ddExistingCohort.Sorted = true;
             this.ddExistingCohort.TabIndex = 1;
             this.ddExistingCohort.SelectedIndexChanged += new System.EventHandler(this.ddExistingCohort_SelectedIndexChanged);
@@ -104,7 +100,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(28, 32);
+            this.label3.Location = new System.Drawing.Point(18, 19);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(116, 15);
@@ -114,7 +110,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             // lblExternalCohortTable
             // 
             this.lblExternalCohortTable.AutoSize = true;
-            this.lblExternalCohortTable.Location = new System.Drawing.Point(173, 32);
+            this.lblExternalCohortTable.Location = new System.Drawing.Point(163, 19);
             this.lblExternalCohortTable.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblExternalCohortTable.Name = "lblExternalCohortTable";
             this.lblExternalCohortTable.Size = new System.Drawing.Size(30, 15);
@@ -139,7 +135,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             this.gbRevisedCohort.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.gbRevisedCohort.Name = "gbRevisedCohort";
             this.gbRevisedCohort.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.gbRevisedCohort.Size = new System.Drawing.Size(950, 78);
+            this.gbRevisedCohort.Size = new System.Drawing.Size(1005, 78);
             this.gbRevisedCohort.TabIndex = 1;
             this.gbRevisedCohort.TabStop = false;
             this.gbRevisedCohort.Text = "Revised Cohort";
@@ -150,7 +146,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             this.existingHelpIcon.BackColor = System.Drawing.Color.Transparent;
             this.existingHelpIcon.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("existingHelpIcon.BackgroundImage")));
             this.existingHelpIcon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.existingHelpIcon.Location = new System.Drawing.Point(919, 20);
+            this.existingHelpIcon.Location = new System.Drawing.Point(974, 20);
             this.existingHelpIcon.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.existingHelpIcon.MaximumSize = new System.Drawing.Size(26, 25);
             this.existingHelpIcon.MinimumSize = new System.Drawing.Size(26, 25);
@@ -163,7 +159,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             // 
             this.label8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(832, 45);
+            this.label8.Location = new System.Drawing.Point(887, 45);
             this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(51, 15);
@@ -174,7 +170,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(690, 45);
+            this.label2.Location = new System.Drawing.Point(745, 45);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(96, 15);
@@ -184,7 +180,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             // tbExistingCohortSource
             // 
             this.tbExistingCohortSource.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbExistingCohortSource.Location = new System.Drawing.Point(796, 18);
+            this.tbExistingCohortSource.Location = new System.Drawing.Point(851, 18);
             this.tbExistingCohortSource.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbExistingCohortSource.Name = "tbExistingCohortSource";
             this.tbExistingCohortSource.ReadOnly = true;
@@ -194,7 +190,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             // tbExistingVersion
             // 
             this.tbExistingVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbExistingVersion.Location = new System.Drawing.Point(690, 18);
+            this.tbExistingVersion.Location = new System.Drawing.Point(745, 18);
             this.tbExistingVersion.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbExistingVersion.Name = "tbExistingVersion";
             this.tbExistingVersion.ReadOnly = true;
@@ -278,7 +274,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             this.gbNewCohort.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.gbNewCohort.Name = "gbNewCohort";
             this.gbNewCohort.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.gbNewCohort.Size = new System.Drawing.Size(950, 54);
+            this.gbNewCohort.Size = new System.Drawing.Size(1005, 54);
             this.gbNewCohort.TabIndex = 0;
             this.gbNewCohort.TabStop = false;
             this.gbNewCohort.Text = "New Cohort";
@@ -300,13 +296,13 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             this.tbName.Location = new System.Drawing.Point(58, 22);
             this.tbName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbName.Name = "tbName";
-            this.tbName.Size = new System.Drawing.Size(884, 23);
+            this.tbName.Size = new System.Drawing.Size(939, 23);
             this.tbName.TabIndex = 1;
             this.tbName.TextChanged += new System.EventHandler(this.tbName_TextChanged);
             // 
             // btnNewProject
             // 
-            this.btnNewProject.Location = new System.Drawing.Point(383, 63);
+            this.btnNewProject.Location = new System.Drawing.Point(373, 50);
             this.btnNewProject.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnNewProject.Name = "btnNewProject";
             this.btnNewProject.Size = new System.Drawing.Size(54, 25);
@@ -317,31 +313,29 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             // 
             // gbChooseCohortType
             // 
-            this.gbChooseCohortType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.gbChooseCohortType.Controls.Add(this.rbRevisedCohort);
             this.gbChooseCohortType.Controls.Add(this.label4);
             this.gbChooseCohortType.Controls.Add(this.rbNewCohort);
-            this.gbChooseCohortType.Location = new System.Drawing.Point(31, 125);
+            this.gbChooseCohortType.Dock = System.Windows.Forms.DockStyle.Top;
+            this.gbChooseCohortType.Location = new System.Drawing.Point(0, 120);
             this.gbChooseCohortType.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.gbChooseCohortType.Name = "gbChooseCohortType";
             this.gbChooseCohortType.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.gbChooseCohortType.Size = new System.Drawing.Size(993, 48);
+            this.gbChooseCohortType.Size = new System.Drawing.Size(1048, 48);
             this.gbChooseCohortType.TabIndex = 9;
             this.gbChooseCohortType.TabStop = false;
             this.gbChooseCohortType.Text = "2. Choose Cohort Type";
             // 
             // groupBox3
             // 
-            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox3.Controls.Add(this.gbNewCohort);
             this.groupBox3.Controls.Add(this.gbRevisedCohort);
-            this.groupBox3.Location = new System.Drawing.Point(31, 180);
+            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Top;
+            this.groupBox3.Location = new System.Drawing.Point(0, 168);
             this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.groupBox3.Size = new System.Drawing.Size(993, 178);
+            this.groupBox3.Size = new System.Drawing.Size(1048, 178);
             this.groupBox3.TabIndex = 10;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "3. Configure Cohort (doesn\'t exist yet, next screen will actually create it)";
@@ -365,13 +359,13 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             this.tbDescription.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbDescription.Multiline = true;
             this.tbDescription.Name = "tbDescription";
-            this.tbDescription.Size = new System.Drawing.Size(914, 67);
+            this.tbDescription.Size = new System.Drawing.Size(969, 67);
             this.tbDescription.TabIndex = 3;
             // 
             // lblProject
             // 
             this.lblProject.AutoSize = true;
-            this.lblProject.Location = new System.Drawing.Point(173, 68);
+            this.lblProject.Location = new System.Drawing.Point(163, 55);
             this.lblProject.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblProject.Name = "lblProject";
             this.lblProject.Size = new System.Drawing.Size(30, 15);
@@ -381,7 +375,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(97, 68);
+            this.label11.Location = new System.Drawing.Point(87, 55);
             this.label11.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(47, 15);
@@ -390,8 +384,8 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             // 
             // btnClearProject
             // 
-            this.btnClearProject.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnClearProject.Location = new System.Drawing.Point(486, 474);
+            this.btnClearProject.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.btnClearProject.Location = new System.Drawing.Point(528, 7);
             this.btnClearProject.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnClearProject.Name = "btnClearProject";
             this.btnClearProject.Size = new System.Drawing.Size(141, 27);
@@ -402,8 +396,8 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             // 
             // btnOk
             // 
-            this.btnOk.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnOk.Location = new System.Drawing.Point(330, 474);
+            this.btnOk.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.btnOk.Location = new System.Drawing.Point(372, 7);
             this.btnOk.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(149, 27);
@@ -415,10 +409,10 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             // ragSmiley1
             // 
             this.ragSmiley1.AlwaysShowHandCursor = false;
-            this.ragSmiley1.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.ragSmiley1.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
             this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(293, 471);
+            this.ragSmiley1.Location = new System.Drawing.Point(335, 4);
             this.ragSmiley1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.ragSmiley1.Name = "ragSmiley1";
             this.ragSmiley1.Size = new System.Drawing.Size(30, 30);
@@ -426,22 +420,21 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             // 
             // gbDescription
             // 
-            this.gbDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.gbDescription.Controls.Add(this.label9);
             this.gbDescription.Controls.Add(this.tbDescription);
-            this.gbDescription.Location = new System.Drawing.Point(31, 365);
+            this.gbDescription.Dock = System.Windows.Forms.DockStyle.Top;
+            this.gbDescription.Location = new System.Drawing.Point(0, 346);
             this.gbDescription.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.gbDescription.Name = "gbDescription";
             this.gbDescription.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.gbDescription.Size = new System.Drawing.Size(993, 99);
+            this.gbDescription.Size = new System.Drawing.Size(1048, 99);
             this.gbDescription.TabIndex = 11;
             this.gbDescription.TabStop = false;
             this.gbDescription.Text = "4. Enter Description Of Cohort";
             // 
             // pbProject
             // 
-            this.pbProject.Location = new System.Drawing.Point(145, 64);
+            this.pbProject.Location = new System.Drawing.Point(135, 51);
             this.pbProject.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbProject.Name = "pbProject";
             this.pbProject.Size = new System.Drawing.Size(30, 30);
@@ -450,7 +443,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             // 
             // pbCohortSource
             // 
-            this.pbCohortSource.Location = new System.Drawing.Point(145, 29);
+            this.pbCohortSource.Location = new System.Drawing.Point(135, 16);
             this.pbCohortSource.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbCohortSource.Name = "pbCohortSource";
             this.pbCohortSource.Size = new System.Drawing.Size(30, 30);
@@ -459,7 +452,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             // 
             // btnExisting
             // 
-            this.btnExisting.Location = new System.Drawing.Point(443, 63);
+            this.btnExisting.Location = new System.Drawing.Point(433, 50);
             this.btnExisting.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnExisting.Name = "btnExisting";
             this.btnExisting.Size = new System.Drawing.Size(78, 25);
@@ -473,7 +466,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             this.lblErrorNoProjectNumber.AutoSize = true;
             this.lblErrorNoProjectNumber.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point);
             this.lblErrorNoProjectNumber.ForeColor = System.Drawing.Color.Red;
-            this.lblErrorNoProjectNumber.Location = new System.Drawing.Point(145, 103);
+            this.lblErrorNoProjectNumber.Location = new System.Drawing.Point(135, 90);
             this.lblErrorNoProjectNumber.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblErrorNoProjectNumber.Name = "lblErrorNoProjectNumber";
             this.lblErrorNoProjectNumber.Size = new System.Drawing.Size(244, 13);
@@ -483,7 +476,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             // 
             // tbSetProjectNumber
             // 
-            this.tbSetProjectNumber.Location = new System.Drawing.Point(397, 99);
+            this.tbSetProjectNumber.Location = new System.Drawing.Point(387, 86);
             this.tbSetProjectNumber.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbSetProjectNumber.Name = "tbSetProjectNumber";
             this.tbSetProjectNumber.Size = new System.Drawing.Size(138, 23);
@@ -493,7 +486,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             // 
             // btnClear
             // 
-            this.btnClear.Location = new System.Drawing.Point(528, 63);
+            this.btnClear.Location = new System.Drawing.Point(518, 50);
             this.btnClear.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(50, 25);
@@ -502,29 +495,68 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
+            // taskDescriptionLabel1
+            // 
+            this.taskDescriptionLabel1.AutoSize = true;
+            this.taskDescriptionLabel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.taskDescriptionLabel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.taskDescriptionLabel1.Location = new System.Drawing.Point(0, 0);
+            this.taskDescriptionLabel1.Name = "taskDescriptionLabel1";
+            this.taskDescriptionLabel1.Size = new System.Drawing.Size(1048, 42);
+            this.taskDescriptionLabel1.TabIndex = 19;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.panel2);
+            this.panel1.Controls.Add(this.gbDescription);
+            this.panel1.Controls.Add(this.groupBox3);
+            this.panel1.Controls.Add(this.gbChooseCohortType);
+            this.panel1.Controls.Add(this.groupBox1);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 42);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(1048, 509);
+            this.panel1.TabIndex = 20;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.pbProject);
+            this.groupBox1.Controls.Add(this.btnNewProject);
+            this.groupBox1.Controls.Add(this.btnClear);
+            this.groupBox1.Controls.Add(this.pbCohortSource);
+            this.groupBox1.Controls.Add(this.label11);
+            this.groupBox1.Controls.Add(this.tbSetProjectNumber);
+            this.groupBox1.Controls.Add(this.btnExisting);
+            this.groupBox1.Controls.Add(this.lblExternalCohortTable);
+            this.groupBox1.Controls.Add(this.lblProject);
+            this.groupBox1.Controls.Add(this.lblErrorNoProjectNumber);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.groupBox1.Location = new System.Drawing.Point(0, 0);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(1048, 120);
+            this.groupBox1.TabIndex = 19;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "1. Project and Destination";
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.btnOk);
+            this.panel2.Controls.Add(this.ragSmiley1);
+            this.panel2.Controls.Add(this.btnClearProject);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel2.Location = new System.Drawing.Point(0, 445);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(1048, 55);
+            this.panel2.TabIndex = 20;
+            // 
             // CohortCreationRequestUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1038, 515);
-            this.Controls.Add(this.btnClear);
-            this.Controls.Add(this.tbSetProjectNumber);
-            this.Controls.Add(this.lblErrorNoProjectNumber);
-            this.Controls.Add(this.btnExisting);
-            this.Controls.Add(this.pbCohortSource);
-            this.Controls.Add(this.btnNewProject);
-            this.Controls.Add(this.pbProject);
-            this.Controls.Add(this.ragSmiley1);
-            this.Controls.Add(this.gbDescription);
-            this.Controls.Add(this.btnClearProject);
-            this.Controls.Add(this.btnOk);
-            this.Controls.Add(this.label11);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.lblProject);
-            this.Controls.Add(this.lblExternalCohortTable);
-            this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.gbChooseCohortType);
+            this.ClientSize = new System.Drawing.Size(1048, 551);
+            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.taskDescriptionLabel1);
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "CohortCreationRequestUI";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -541,14 +573,16 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             this.gbDescription.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbProject)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbCohortSource)).EndInit();
+            this.panel1.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox ddExistingCohort;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label lblExternalCohortTable;
@@ -584,5 +618,9 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
         private System.Windows.Forms.TextBox tbExistingCohortSource;
         private System.Windows.Forms.TextBox tbExistingVersion;
         private HelpIcon existingHelpIcon;
+        private SimpleDialogs.TaskDescriptionLabel taskDescriptionLabel1;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.GroupBox groupBox1;
     }
 }

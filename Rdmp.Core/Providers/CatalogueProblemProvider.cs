@@ -264,16 +264,16 @@ namespace Rdmp.Core.Providers
 
                 //Excepts and Intersects must have at least 2
                 if (enabledChildren.Length < 2 && (container.Operation == SetOperation.EXCEPT || container.Operation == SetOperation.INTERSECT))
-                    return "EXCEPT and INTERSECT container operations must have at least two elements within";
+                    return "EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required";
             }
             else
             {
                 //if it's not a root, then there should be at least 2
                 if (enabledChildren.Length == 0)
-                    return "SET containers cannot be empty";
+                    return "SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required";
 
                 if (enabledChildren.Length == 1)
-                    return "SET container operations have no effect if there is only one child within";
+                    return "SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required";
             }
 
             return null;
