@@ -40,8 +40,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             if (_randomThing != null)
             {
-                BuildDescribe(_randomThing, out string title);
-                return title;
+                return _randomThing is Type t ? t.Name : _randomThing.ToString();
             }
 
             return base.GetCommandName();
