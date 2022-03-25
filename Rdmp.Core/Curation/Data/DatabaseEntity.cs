@@ -213,8 +213,7 @@ namespace Rdmp.Core.Curation.Data
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged(object oldValue, object newValue, [CallerMemberName] string propertyName = null)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedExtendedEventArgs(propertyName,oldValue,newValue));
+            PropertyChanged?.Invoke(this, new PropertyChangedExtendedEventArgs(propertyName,oldValue,newValue));
         }
 
         /// <summary>
@@ -346,7 +345,7 @@ namespace Rdmp.Core.Curation.Data
             if (val is string || val is IFormattable || val is bool)
             {
                 // skip properties values that are "unknown"
-                if (val is Enum e && Convert.ToInt32(e) == 0 && !(val is DatabaseType))
+                if (val is Enum e && Convert.ToInt32(e) == 0 && val is not DatabaseType)
                     return;
 
                 var representation = $"{(includePropertyName? FormatPropertyNameForSummary(prop) + ": " : "")}{ FormatForSummary(val)}";
