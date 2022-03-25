@@ -46,7 +46,7 @@ namespace Rdmp.UI.Menus
             }, Keys.None, AtomicCommandFactory.Metadata);
 
             Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, catalogue,null) {
-                OverrideCommandName = "Lookup Table Relationship", Weight = -86.9f}, Keys.None, AtomicCommandFactory.Add);
+                OverrideCommandName = "New Lookup Table Relationship", Weight = -86.9f}, Keys.None, AtomicCommandFactory.Add);
 
             if (!isApiCall)
             {
