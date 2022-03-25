@@ -127,14 +127,6 @@ namespace Rdmp.UI.MainFormUITabs
             
             _catalogue = databaseObject;
 
-            var gotoFactory = new GoToCommandFactory(activator);
-            foreach(var cmd in gotoFactory.GetCommands(databaseObject).OfType<ExecuteCommandShow>())
-            {
-                cmd.UseIconAndTypeName = true;
-                cmd.FetchDestinationObjects();
-                CommonFunctionality.Add(cmd);
-            }
-
             RefreshUIFromDatabase();
         }
 
