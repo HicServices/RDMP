@@ -49,7 +49,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="fernandreu.ScintillaNET" Version="4.0.4" />
+    <PackageReference Include="fernandreu.ScintillaNET" Version="4.2.0" />
     <PackageReference Include="HIC.System.Windows.Forms.DataVisualization" Version="1.0.1" />
     <PackageReference Include="NHunspell" Version="1.2.5554.16953" />
     <PackageReference Include="ObjectListView.Official" Version="2.9.1" />
