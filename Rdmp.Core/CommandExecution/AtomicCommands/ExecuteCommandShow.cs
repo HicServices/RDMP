@@ -26,15 +26,15 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
 
         private readonly int _expansionDepth;
-        private readonly bool _useIconAndTypeName;
-        private readonly Type _objectType;
+        public bool UseIconAndTypeName;
+        private Type _objectType;
 
         public ExecuteCommandShow(IBasicActivateItems activator, IMapsDirectlyToDatabaseTable objectToShow, int expansionDepth, bool useIconAndTypeName = false) : base(activator)
         {
             _objectToShow = objectToShow;
             _objectType = _objectToShow?.GetType();
             _expansionDepth = expansionDepth;
-            _useIconAndTypeName = useIconAndTypeName;
+            UseIconAndTypeName = useIconAndTypeName;
 
             if (_objectToShow == null)
                 SetImpossible("No objects found");
@@ -71,7 +71,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
 
             _expansionDepth = expansionDepth;
-            _useIconAndTypeName = useIconAndTypeName;
+            UseIconAndTypeName = useIconAndTypeName;
 
             Weight = 50.3f;
         }
@@ -104,7 +104,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public override string GetCommandName()
         {
-            return _useIconAndTypeName && _objectType != null ? "Show " + _objectType.Name : base.GetCommandName();
+            return UseIconAndTypeName && _objectType != null ? "Show " + _objectType.Name : base.GetCommandName();
         }
 
         public override void Execute()
@@ -145,6 +145,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 else
                 {
                     _objectsToPickFrom = pick;
+                    _objectType = _objectsToPickFrom.First().GetType();
                 }
             }
 
@@ -157,7 +158,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public override Image GetImage(IIconProvider iconProvider)
         {
-            return _useIconAndTypeName && _objectType != null ? iconProvider.GetImage((object)_objectToShow ?? _objectType) : null;
+            return UseIconAndTypeName && 
+                // if there is something to show
+                (_objectType != null || _objectToShow != null) ?
+                // return its icon
+                iconProvider.GetImage((object)_objectToShow ?? _objectType) : null;
         }
 
         /// <summary>
