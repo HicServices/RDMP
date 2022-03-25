@@ -169,7 +169,10 @@ namespace Rdmp.UI.Collections
                 uiFactory.CreateMenuItem(new ExecuteCommandCreateNewCohortFromFile(Activator, null) { OverrideCommandName = "From File" }),
 
                 // from catalogue
-                uiFactory.CreateMenuItem(new ExecuteCommandCreateNewCohortFromCatalogue(Activator,(Catalogue)null) { OverrideCommandName = "From Catalogue" })
+                uiFactory.CreateMenuItem(new ExecuteCommandCreateNewCohortFromCatalogue(Activator,(Catalogue)null) { OverrideCommandName = "From Catalogue" }),
+                
+                // from table
+                uiFactory.CreateMenuItem(new ExecuteCommandCreateNewCohortFromTable(Activator,null) { OverrideCommandName = "From Table" })
                 });
             CommonFunctionality.Add(cohortSubmenu, NewMenu);
             CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
@@ -207,6 +210,7 @@ namespace Rdmp.UI.Collections
                     new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator, null) { OverrideCommandName = "From Cohort Builder Query",SuggestedCategory = "Add New Cohort", Weight = -4.9f},
                     new ExecuteCommandCreateNewCohortFromFile(Activator, null) { OverrideCommandName = "From File" ,SuggestedCategory = "Add New Cohort",Weight = -4.8f},
                     new ExecuteCommandCreateNewCohortFromCatalogue(Activator,(Catalogue)null) { OverrideCommandName = "From Catalogue" ,SuggestedCategory = "Add New Cohort",Weight = -4.7f},
+                    new ExecuteCommandCreateNewCohortFromTable(Activator,null) { OverrideCommandName = "From Table" ,SuggestedCategory = "Add New Cohort",Weight = -4.6f},
                     new ExecuteCommandCreateNewExtractionConfigurationForProject(Activator){OverrideCommandName = "Add New Extraction Configuration" ,Weight = -2f},
                     new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator) { OverrideCommandName = "From File...",SuggestedCategory = "Add New Project Specific Catalogue" ,Weight = -1.9f},
                     new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator) { OverrideCommandName = "From Database...",SuggestedCategory = "Add New Project Specific Catalogue" ,Weight = -1.8f},

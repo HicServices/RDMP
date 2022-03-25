@@ -340,6 +340,7 @@ namespace ResearchDataManagementPlatform.Menus
                 new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator,null),
                 new ExecuteCommandCreateNewCohortFromFile(Activator,null),
                 new ExecuteCommandCreateNewCohortFromCatalogue(Activator),
+                new ExecuteCommandCreateNewCohortFromTable(Activator,null),
                 new ExecuteCommandCreateNewExtractableDataSetPackage(Activator),
                 new ExecuteCommandCreateNewDataExtractionProject(Activator),
                 new ExecuteCommandRelease(Activator) { OverrideCommandName = "New Release..." },

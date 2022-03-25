@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added command CreateNewCohortFromTable which creates a cohort from a table directly without having to first import it as a [Catalogue]
 - Import Catalogue filter now allows selecting multiple filters at once.
 - Improved performance of Select objects dialog when there are many objects available to pick from
 - Made Select objects dialog filter in the same way as the Find dialog (i.e. support short codes and Type names)
