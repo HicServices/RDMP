@@ -101,12 +101,12 @@ namespace Rdmp.Core.CommandExecution
                         SuggestedCategory = View
                     };
 
-                    yield return new ExecuteCommandAddNewCatalogueItem(_activator, c) { Weight = -99.9f, SuggestedCategory = Add };
-                    yield return new ExecuteCommandAddNewAggregateGraph(_activator, c) { Weight = -98.9f, SuggestedCategory = Add };
+                    yield return new ExecuteCommandAddNewCatalogueItem(_activator, c) { Weight = -99.9f, SuggestedCategory = Add, OverrideCommandName = "New Catalogue Item" };
+                    yield return new ExecuteCommandAddNewAggregateGraph(_activator, c) { Weight = -98.9f, SuggestedCategory = Add, OverrideCommandName = "New Aggregate Graph" };
                 }
 
-                yield return new ExecuteCommandAddNewSupportingSqlTable(_activator, c) {Weight = -87.9f, SuggestedCategory = Add };
-                yield return new ExecuteCommandAddNewSupportingDocument(_activator, c) { Weight = -87.8f, SuggestedCategory = Add };
+                yield return new ExecuteCommandAddNewSupportingSqlTable(_activator, c) {Weight = -87.9f, SuggestedCategory = Add, OverrideCommandName = "New Supporting SQL Table" };
+                yield return new ExecuteCommandAddNewSupportingDocument(_activator, c) { Weight = -87.8f, SuggestedCategory = Add, OverrideCommandName = "New Supporting Document"};
 
                 if (!isApiCall)
                 {
