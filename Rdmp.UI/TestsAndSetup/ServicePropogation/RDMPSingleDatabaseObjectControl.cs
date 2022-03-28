@@ -114,8 +114,6 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             var gotoFactory = new GoToCommandFactory(activator);
             foreach (var cmd in gotoFactory.GetCommands(databaseObject).OfType<ExecuteCommandShow>())
             {
-                cmd.UseIconAndTypeName = true;
-                cmd.FetchDestinationObjects();
                 cmd.SuggestedCategory = AtomicCommandFactory.GoTo;
                 CommonFunctionality.AddToMenu(cmd,null,null,AtomicCommandFactory.GoTo);
             }

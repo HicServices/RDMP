@@ -162,6 +162,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public override Image GetImage(IIconProvider iconProvider)
         {
+            if (OverrideIcon != null)
+                return base.GetImage(iconProvider);
+
             return UseIconAndTypeName && 
                 // if there is something to show
                 (_objectType != null || _objectToShow != null) ?
