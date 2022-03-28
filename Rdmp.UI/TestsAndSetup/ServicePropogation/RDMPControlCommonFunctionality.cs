@@ -62,7 +62,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         private IActivateItems _activator;
 
         private Dictionary<string,ToolStripDropDownButton> _dropDownButtons = new Dictionary<string, ToolStripDropDownButton>();
-        private Dictionary<string, ToolStripMenuItem> _menuDropDownButtons = new Dictionary<string, ToolStripMenuItem>();
+        private Dictionary<string, ToolStripMenuItem> _addToMenuSubmenus = new Dictionary<string, ToolStripMenuItem>();
 
 
         public RDMPControlCommonFunctionality(IRDMPControl hostControl)
@@ -321,6 +321,8 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 
             _menuDropDown.DropDownItems.Clear();
             _menuDropDown.Visible = false;
+            
+            _addToMenuSubmenus.Clear();
 
             ToolStrip.Items.Add(_menuDropDown);
             ToolStrip.Items.Add(_ragSmileyToolStrip);
@@ -375,11 +377,11 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 
             if (!string.IsNullOrWhiteSpace(underMenu))
             {
-                if (!_menuDropDownButtons.ContainsKey(underMenu))
-                    _menuDropDownButtons.Add(underMenu, new ToolStripMenuItem(underMenu));
+                if (!_addToMenuSubmenus.ContainsKey(underMenu))
+                    _addToMenuSubmenus.Add(underMenu, new ToolStripMenuItem(underMenu));
 
-                _menuDropDownButtons[underMenu].DropDownItems.Add(menuItem);
-                _menuDropDown.DropDownItems.Add(_menuDropDownButtons[underMenu]);
+                _addToMenuSubmenus[underMenu].DropDownItems.Add(menuItem);
+                _menuDropDown.DropDownItems.Add(_addToMenuSubmenus[underMenu]);
             }
             else
                 _menuDropDown.DropDownItems.Add(menuItem);
