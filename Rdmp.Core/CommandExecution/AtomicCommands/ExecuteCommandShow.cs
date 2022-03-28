@@ -97,14 +97,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 new IMapsDirectlyToDatabaseTable[]{activator.RepositoryLocator.GetObjectByID(typeToFetch,foreignKey.Value) } :
                 new IMapsDirectlyToDatabaseTable[0];
 
-            OverrideCommandName = typeToFetch.Name;
+            OverrideCommandName = typeToFetch.Name + "(s)";
 
             Weight = 50.3f;
         }
 
         public override string GetCommandName()
         {
-            return UseIconAndTypeName && _objectType != null ? "Show " + _objectType.Name : base.GetCommandName();
+            return UseIconAndTypeName && _objectType != null ? "Show " + _objectType.Name + "(s)": base.GetCommandName();
         }
 
         public override void Execute()

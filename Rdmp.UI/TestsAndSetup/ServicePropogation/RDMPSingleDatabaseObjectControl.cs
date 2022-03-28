@@ -116,7 +116,8 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             {
                 cmd.UseIconAndTypeName = true;
                 cmd.FetchDestinationObjects();
-                CommonFunctionality.Add(cmd);
+                cmd.SuggestedCategory = AtomicCommandFactory.GoTo;
+                CommonFunctionality.AddToMenu(cmd,null,null,AtomicCommandFactory.GoTo);
             }
         }
 

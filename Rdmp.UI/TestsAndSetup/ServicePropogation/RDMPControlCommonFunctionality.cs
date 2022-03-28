@@ -62,6 +62,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         private IActivateItems _activator;
 
         private Dictionary<string,ToolStripDropDownButton> _dropDownButtons = new Dictionary<string, ToolStripDropDownButton>();
+        private Dictionary<string, ToolStripMenuItem> _menuDropDownButtons = new Dictionary<string, ToolStripMenuItem>();
 
 
         public RDMPControlCommonFunctionality(IRDMPControl hostControl)
@@ -75,7 +76,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             //Add the three lines dropdown for seldom used options (See AddToMenu). This starts disabled.
             _menuDropDown = new ToolStripMenuItem();
             _menuDropDown.Image = CatalogueIcons.Menu;
-            _menuDropDown.Enabled = false;
+            _menuDropDown.Visible = false;
             ToolStrip.Items.Add(_menuDropDown);
                         
             _ragSmileyToolStrip = new RAGSmileyToolStrip((Control)_hostControl);
@@ -319,7 +320,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             ToolStrip.Items.Clear();
 
             _menuDropDown.DropDownItems.Clear();
-            _menuDropDown.Enabled = false;
+            _menuDropDown.Visible = false;
 
             ToolStrip.Items.Add(_menuDropDown);
             ToolStrip.Items.Add(_ragSmileyToolStrip);
@@ -335,7 +336,8 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         /// <param name="cmd"></param>
         /// <param name="overrideCommandName"></param>
         /// <param name="overrideImage"></param>
-        public void AddToMenu(IAtomicCommand cmd, string overrideCommandName = null, Image overrideImage = null)
+        /// <param name="underMenu"></param>
+        public void AddToMenu(IAtomicCommand cmd, string overrideCommandName = null, Image overrideImage = null,string underMenu = null)
         {
             var p = _hostControl.GetTopmostRDMPUserControl();
             if (p != _hostControl)
@@ -353,14 +355,14 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             if (overrideImage != null)
                 menuItem.Image = overrideImage;
 
-            AddToMenu(menuItem);
+            AddToMenu(menuItem,underMenu);
         }
 
         /// <summary>
         /// Adds the given <paramref name="menuItem"/> to the drop down menu button bar at the top of the control.  This
         /// will be visible only when you click on the menu button.
         /// </summary>
-        public void AddToMenu(ToolStripItem menuItem)
+        public void AddToMenu(ToolStripItem menuItem, string underMenu = null)
         {
             var p = _hostControl.GetTopmostRDMPUserControl();
             if (p != _hostControl)
@@ -371,8 +373,18 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 
             InitializeToolStrip();
 
-            _menuDropDown.DropDownItems.Add(menuItem);
-            _menuDropDown.Enabled = true;
+            if (!string.IsNullOrWhiteSpace(underMenu))
+            {
+                if (!_menuDropDownButtons.ContainsKey(underMenu))
+                    _menuDropDownButtons.Add(underMenu, new ToolStripMenuItem(underMenu));
+
+                _menuDropDownButtons[underMenu].DropDownItems.Add(menuItem);
+                _menuDropDown.DropDownItems.Add(_menuDropDownButtons[underMenu]);
+            }
+            else
+                _menuDropDown.DropDownItems.Add(menuItem);
+    
+            _menuDropDown.Visible = true;
         }
 
 
