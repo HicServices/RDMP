@@ -112,15 +112,16 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             FetchDestinationObjects();
 
             base.Execute();
+            var show = _objectToShow;
 
-            if (_objectToShow == null && _objectsToPickFrom != null)
+            if (show == null && _objectsToPickFrom != null)
             {
-                _objectToShow = SelectOne(_objectsToPickFrom.Cast<DatabaseEntity>().ToList());
+                show = SelectOne(_objectsToPickFrom.Cast<DatabaseEntity>().ToList());
 
-                if (_objectToShow == null)
+                if (show == null)
                     return;
             }
-            BasicActivator.RequestItemEmphasis(this,new EmphasiseRequest(_objectToShow, _expansionDepth));
+            BasicActivator.RequestItemEmphasis(this,new EmphasiseRequest(show, _expansionDepth));
         }
 
         /// <summary>
