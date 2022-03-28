@@ -104,6 +104,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public override string GetCommandName()
         {
+            if (!string.IsNullOrWhiteSpace(OverrideCommandName))
+                return base.GetCommandName();
+
             return UseIconAndTypeName && _objectType != null ? "Show " + _objectType.Name + "(s)": base.GetCommandName();
         }
 
