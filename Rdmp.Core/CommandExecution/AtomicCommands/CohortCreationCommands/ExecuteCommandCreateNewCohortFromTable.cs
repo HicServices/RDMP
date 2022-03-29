@@ -87,7 +87,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
             };
 
             request.ExtractionIdentifierColumn = fakeExtractionInformation;
-            var configureAndExecute = GetConfigureAndExecuteControl(request, "Import column " + col.GetFullyQualifiedName() + " as cohort and commmit results");
+            var configureAndExecute = GetConfigureAndExecuteControl(request, "Import column " + col.GetFullyQualifiedName() + " as cohort and commmit results", fakeExtractionInformation);
 
             configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
         }
