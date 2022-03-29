@@ -47,6 +47,11 @@ namespace Rdmp.Core.Providers.Nodes.PipelineNodes
             Pipeline.DeleteInDatabase();
         }
 
+        public override bool Exists()
+        {
+            return Pipeline.Exists();
+        }
+
         #region Equality
         protected bool Equals(PipelineCompatibleWithUseCaseNode other)
         {

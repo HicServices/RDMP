@@ -157,7 +157,7 @@ namespace Rdmp.Core.Curation.Data
         }
 
         /// <inheritdoc/>
-        public bool Exists()
+        public virtual bool Exists()
         {
             return Repository.StillExists(this);
         }
