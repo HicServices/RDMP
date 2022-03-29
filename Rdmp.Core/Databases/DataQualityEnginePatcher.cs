@@ -57,7 +57,7 @@ namespace Rdmp.Core.Databases
             }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn>
             {
                 {columnState_Evaluation_ID ,evaluationId }
-            }, false, null));
+            },true , null));
 
             sql.AppendLine(db.Helper.GetCreateTableSql(db, "RowState", new[]
             {
@@ -72,7 +72,7 @@ namespace Rdmp.Core.Databases
             }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn>
             {
                 {rowState_Evaluation_ID ,evaluationId }
-            }, false, null));
+            }, true, null));
 
 
             sql.AppendLine(db.Helper.GetCreateTableSql(db, "PeriodicityState", new[]
@@ -86,7 +86,7 @@ namespace Rdmp.Core.Databases
             }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn>
             {
                 {periodicityState_Evaluation_ID ,evaluationId }
-            }, false, null));
+            }, true, null));
 
             sql.AppendLine(db.Helper.GetCreateTableSql(db, "DQEGraphAnnotation", new[]
             {
@@ -104,11 +104,7 @@ namespace Rdmp.Core.Databases
             }, new Dictionary<DatabaseColumnRequest, DiscoveredColumn>
             {
                 {annotation_Evaluation_ID ,evaluationId }
-            }, false, null));
-
-
-
-
+            }, true, null));
 
             return new Patch(InitialScriptName, header + sql);
         }

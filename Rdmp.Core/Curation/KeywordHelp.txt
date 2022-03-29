@@ -89,3 +89,8 @@ ix_OneBinaryPerPlugin: Prevents a Plugin from having more than one binary file (
 ????: Source column could not be matched to destination table column
 ix_OneExtractionProgressPerDataset: Ensures that a dataset can only ever have one ExtractionProgress record
 FK_ExtractionProgress_SelectedDataSets: Ensures that deleting a SelectedDataSets (removing a dataset from an extraction) clears any batch extraction progress
+FK_ColumnState_Evaluation: Ensures that when a DQE Evaluation is deleted all child database objects are also deleted
+FK_RowState_Evaluation: Ensures that when a DQE Evaluation is deleted all child database objects are also deleted
+FK_PeriodicityState_Evaluation: Ensures that when a DQE Evaluation is deleted all child database objects are also deleted
+FK_DQEGraphAnnotation_Evaluation: Ensures that when a DQE Evaluation is deleted all child database objects are also deleted
+    
