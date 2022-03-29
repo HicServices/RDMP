@@ -8,11 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.ChecksUI;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Menus;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -378,7 +380,14 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             if (!string.IsNullOrWhiteSpace(underMenu))
             {
                 if (!_addToMenuSubmenus.ContainsKey(underMenu))
+                {
                     _addToMenuSubmenus.Add(underMenu, new ToolStripMenuItem(underMenu));
+                    
+                    // If its the GoTo menu then when the user expands the menu we have to fetch the objects
+                    // and update the IsImpossible status etc.
+                    if (underMenu == AtomicCommandFactory.GoTo)
+                        RDMPContextMenuStrip.RegisterFetchGoToObjecstCallback(_addToMenuSubmenus[underMenu]);
+                }
 
                 _addToMenuSubmenus[underMenu].DropDownItems.Add(menuItem);
                 _menuDropDown.DropDownItems.Add(_addToMenuSubmenus[underMenu]);
