@@ -137,7 +137,6 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
             var factory = new AtomicCommandUIFactory(_activator);
             
-            var tt = new ToolTip();
             foreach(var o in _useCase.GetInitializationObjects().Reverse())
             {
                 Button b = factory.CreateButton(new ExecuteCommandDescribe(_activator, o));
