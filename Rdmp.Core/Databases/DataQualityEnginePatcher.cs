@@ -90,7 +90,7 @@ namespace Rdmp.Core.Databases
 
             sql.AppendLine(db.Helper.GetCreateTableSql(db, "DQEGraphAnnotation", new[]
             {
-                new DatabaseColumnRequest("ID",new DatabaseTypeRequest(typeof(int))){AllowNulls = false, IsPrimaryKey = true},
+                new DatabaseColumnRequest("ID",new DatabaseTypeRequest(typeof(int))){IsAutoIncrement = true, AllowNulls = false, IsPrimaryKey = true},
                 new DatabaseColumnRequest("StartX",new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
                 new DatabaseColumnRequest("StartY",new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
                 new DatabaseColumnRequest("EndX",new DatabaseTypeRequest(typeof(int))){AllowNulls = false},
