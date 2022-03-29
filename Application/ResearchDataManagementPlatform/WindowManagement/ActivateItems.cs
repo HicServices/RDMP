@@ -105,7 +105,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public ICombineableFactory CommandFactory { get; private set; }
         public ICommandExecutionFactory CommandExecutionFactory { get; private set; }
-        public CommentStore CommentStore { get { return RepositoryLocator.CatalogueRepository.CommentStore; } }
         public HistoryProvider HistoryProvider { get; private set; }
 
         public List<IProblemProvider> ProblemProviders { get; private set; }
@@ -710,10 +709,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return _windowManager.GetAllWindows<SessionCollectionUI>();
         }
 
-        public override IPipelineRunner GetPipelineRunner(IPipelineUseCase useCase, IPipeline pipeline)
+        public override IPipelineRunner GetPipelineRunner(DialogArgs args,IPipelineUseCase useCase, IPipeline pipeline)
         {
              
-            ConfigureAndExecutePipelineUI configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(useCase,this);
+            ConfigureAndExecutePipelineUI configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(args,useCase, this);
             configureAndExecuteDialog.Dock = DockStyle.Fill;
             
             return configureAndExecuteDialog;

@@ -8,6 +8,7 @@ using System;
 using System.Data;
 using System.Linq;
 using FAnsi.Connections;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -24,7 +25,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline
     /// All metadata details nessesary to create a cohort including which project it goes into, it's name, version etc.  There are no identifiers for the cohort.
     /// Also functions as the use case for cohort creation (to which it passes itself as an input object).
     /// </summary>
-    public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationRequest
+    public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationRequest, ICanBeSummarised
     {
         private readonly IDataExportRepository _repository;
 
@@ -99,7 +100,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline
             NewCohortDefinition = newCohortDefinition;
 
             DescriptionForAuditLog = descriptionForAuditLog;
-            
+
             AddInitializationObject(Project);
             AddInitializationObject(this);
 
@@ -258,6 +259,11 @@ namespace Rdmp.Core.CohortCommitting.Pipeline
                 return base.ToString();
 
             return NewCohortDefinition.Description;
+        }
+
+        public string GetSummary(bool includeName, bool includeId)
+        {
+            return $"External Cohort Table: {this.NewCohortDefinition?.LocationOfCohort}";
         }
     }
 }

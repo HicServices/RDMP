@@ -373,7 +373,7 @@ namespace Rdmp.Core.CommandLine.Gui
         }
 
 
-        public override IPipelineRunner GetPipelineRunner(IPipelineUseCase useCase, IPipeline pipeline)
+        public override IPipelineRunner GetPipelineRunner(DialogArgs args, IPipelineUseCase useCase, IPipeline pipeline)
         {
             return new ConsoleGuiRunPipeline(this,useCase, pipeline);
         }

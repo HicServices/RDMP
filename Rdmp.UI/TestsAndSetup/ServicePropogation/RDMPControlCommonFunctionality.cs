@@ -8,11 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.ChecksUI;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Menus;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -62,6 +64,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         private IActivateItems _activator;
 
         private Dictionary<string,ToolStripDropDownButton> _dropDownButtons = new Dictionary<string, ToolStripDropDownButton>();
+        private Dictionary<string, ToolStripMenuItem> _addToMenuSubmenus = new Dictionary<string, ToolStripMenuItem>();
 
 
         public RDMPControlCommonFunctionality(IRDMPControl hostControl)
@@ -75,7 +78,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             //Add the three lines dropdown for seldom used options (See AddToMenu). This starts disabled.
             _menuDropDown = new ToolStripMenuItem();
             _menuDropDown.Image = CatalogueIcons.Menu;
-            _menuDropDown.Enabled = false;
+            _menuDropDown.Visible = false;
             ToolStrip.Items.Add(_menuDropDown);
                         
             _ragSmileyToolStrip = new RAGSmileyToolStrip((Control)_hostControl);
@@ -319,7 +322,9 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             ToolStrip.Items.Clear();
 
             _menuDropDown.DropDownItems.Clear();
-            _menuDropDown.Enabled = false;
+            _menuDropDown.Visible = false;
+            
+            _addToMenuSubmenus.Clear();
 
             ToolStrip.Items.Add(_menuDropDown);
             ToolStrip.Items.Add(_ragSmileyToolStrip);
@@ -335,7 +340,8 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         /// <param name="cmd"></param>
         /// <param name="overrideCommandName"></param>
         /// <param name="overrideImage"></param>
-        public void AddToMenu(IAtomicCommand cmd, string overrideCommandName = null, Image overrideImage = null)
+        /// <param name="underMenu"></param>
+        public void AddToMenu(IAtomicCommand cmd, string overrideCommandName = null, Image overrideImage = null,string underMenu = null)
         {
             var p = _hostControl.GetTopmostRDMPUserControl();
             if (p != _hostControl)
@@ -353,14 +359,14 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             if (overrideImage != null)
                 menuItem.Image = overrideImage;
 
-            AddToMenu(menuItem);
+            AddToMenu(menuItem,underMenu);
         }
 
         /// <summary>
         /// Adds the given <paramref name="menuItem"/> to the drop down menu button bar at the top of the control.  This
         /// will be visible only when you click on the menu button.
         /// </summary>
-        public void AddToMenu(ToolStripItem menuItem)
+        public void AddToMenu(ToolStripItem menuItem, string underMenu = null)
         {
             var p = _hostControl.GetTopmostRDMPUserControl();
             if (p != _hostControl)
@@ -371,8 +377,25 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 
             InitializeToolStrip();
 
-            _menuDropDown.DropDownItems.Add(menuItem);
-            _menuDropDown.Enabled = true;
+            if (!string.IsNullOrWhiteSpace(underMenu))
+            {
+                if (!_addToMenuSubmenus.ContainsKey(underMenu))
+                {
+                    _addToMenuSubmenus.Add(underMenu, new ToolStripMenuItem(underMenu));
+                    
+                    // If its the GoTo menu then when the user expands the menu we have to fetch the objects
+                    // and update the IsImpossible status etc.
+                    if (underMenu == AtomicCommandFactory.GoTo)
+                        RDMPContextMenuStrip.RegisterFetchGoToObjecstCallback(_addToMenuSubmenus[underMenu]);
+                }
+
+                _addToMenuSubmenus[underMenu].DropDownItems.Add(menuItem);
+                _menuDropDown.DropDownItems.Add(_addToMenuSubmenus[underMenu]);
+            }
+            else
+                _menuDropDown.DropDownItems.Add(menuItem);
+    
+            _menuDropDown.Visible = true;
         }
 
 

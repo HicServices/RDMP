@@ -10,6 +10,7 @@ using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
@@ -64,20 +65,22 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
         readonly List<object> _initializationObjects = new List<object>();
 
-       public ConfigureAndExecutePipelineUI(IPipelineUseCase useCase, IActivateItems activator)
+       public ConfigureAndExecutePipelineUI(DialogArgs args, IPipelineUseCase useCase, IActivateItems activator)
         {
            _useCase = useCase;
-           
            InitializeComponent();
+
+           taskDescriptionLabel1.SetupFor(args);
 
            //designer mode
            if(useCase == null && activator == null)
                return;
+            Text = args.WindowTitle;
 
             SetItemActivator(activator);
             progressUI1.ApplyTheme(activator.Theme);
 
-            pipelineDiagram1 = new PipelineDiagramUI();
+            pipelineDiagram1 = new PipelineDiagramUI(activator);
 
             pipelineDiagram1.Dock = DockStyle.Fill;
             panel_pipelineDiagram1.Controls.Add(pipelineDiagram1);
@@ -91,18 +94,12 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
             foreach (var o in useCase.GetInitializationObjects())
             {
-                var de = o as DatabaseEntity;
-                if (o is DatabaseEntity)
-                    CommonFunctionality.Add(new ExecuteCommandShow(activator, de, 0, true));
-                else
-                    CommonFunctionality.Add(o.ToString());
+                CommonFunctionality.Add(new ExecuteCommandDescribe(activator, o));
 
                 _initializationObjects.Add(o);
             }
 
             SetPipelineOptions( activator.RepositoryLocator.CatalogueRepository);
-
-            lblTask.Text = "Task: " + UsefulStuff.PascalCaseStringToHumanReadable(useCase.GetType().Name);
         }
 
         private bool _pipelineOptionsSet = false;

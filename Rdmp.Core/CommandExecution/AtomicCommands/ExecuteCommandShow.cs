@@ -26,15 +26,15 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
 
         private readonly int _expansionDepth;
-        private readonly bool _useIconAndTypeName;
-        private readonly Type _objectType;
+        public bool UseIconAndTypeName;
+        private Type _objectType;
 
         public ExecuteCommandShow(IBasicActivateItems activator, IMapsDirectlyToDatabaseTable objectToShow, int expansionDepth, bool useIconAndTypeName = false) : base(activator)
         {
             _objectToShow = objectToShow;
             _objectType = _objectToShow?.GetType();
             _expansionDepth = expansionDepth;
-            _useIconAndTypeName = useIconAndTypeName;
+            UseIconAndTypeName = useIconAndTypeName;
 
             if (_objectToShow == null)
                 SetImpossible("No objects found");
@@ -71,7 +71,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
 
             _expansionDepth = expansionDepth;
-            _useIconAndTypeName = useIconAndTypeName;
+            UseIconAndTypeName = useIconAndTypeName;
 
             Weight = 50.3f;
         }
@@ -97,14 +97,17 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 new IMapsDirectlyToDatabaseTable[]{activator.RepositoryLocator.GetObjectByID(typeToFetch,foreignKey.Value) } :
                 new IMapsDirectlyToDatabaseTable[0];
 
-            OverrideCommandName = typeToFetch.Name;
+            OverrideCommandName = typeToFetch.Name + "(s)";
 
             Weight = 50.3f;
         }
 
         public override string GetCommandName()
         {
-            return _useIconAndTypeName && _objectType != null ? "Show " + _objectType.Name : base.GetCommandName();
+            if (!string.IsNullOrWhiteSpace(OverrideCommandName))
+                return base.GetCommandName();
+
+            return UseIconAndTypeName && _objectType != null ? "Show " + _objectType.Name + "(s)": base.GetCommandName();
         }
 
         public override void Execute()
@@ -112,15 +115,16 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             FetchDestinationObjects();
 
             base.Execute();
+            var show = _objectToShow;
 
-            if (_objectToShow == null && _objectsToPickFrom != null)
+            if (show == null && _objectsToPickFrom != null)
             {
-                _objectToShow = SelectOne(_objectsToPickFrom.Cast<DatabaseEntity>().ToList());
+                show = SelectOne(_objectsToPickFrom.Cast<DatabaseEntity>().ToList());
 
-                if (_objectToShow == null)
+                if (show == null)
                     return;
             }
-            BasicActivator.RequestItemEmphasis(this,new EmphasiseRequest(_objectToShow, _expansionDepth));
+            BasicActivator.RequestItemEmphasis(this,new EmphasiseRequest(show, _expansionDepth));
         }
 
         /// <summary>
@@ -145,6 +149,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 else
                 {
                     _objectsToPickFrom = pick;
+                    _objectType = _objectsToPickFrom.First().GetType();
                 }
             }
 
@@ -157,7 +162,25 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public override Image GetImage(IIconProvider iconProvider)
         {
-            return _useIconAndTypeName && _objectType != null ? iconProvider.GetImage((object)_objectToShow ?? _objectType) : null;
+            if (OverrideIcon != null)
+                return base.GetImage(iconProvider);
+
+            return UseIconAndTypeName && 
+                // if there is something to show
+                (_objectType != null || _objectToShow != null) ?
+                // return its icon
+                iconProvider.GetImage((object)_objectToShow ?? _objectType) : null;
+        }
+
+        /// <summary>
+        /// Resolves any lamdas and returns what object(s) would be shown (if any)
+        /// by running this command.  This method may be expensive to run
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<IMapsDirectlyToDatabaseTable> GetObjects()
+        {
+            FetchDestinationObjects();
+            return new[] {_objectToShow} ?? _objectsToPickFrom ?? Enumerable.Empty<IMapsDirectlyToDatabaseTable>();
         }
     }
 }

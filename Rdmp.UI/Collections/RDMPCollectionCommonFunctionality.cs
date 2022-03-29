@@ -284,8 +284,7 @@ namespace Rdmp.UI.Collections
         }
 
         public static void Tree_CellToolTipShowing(IActivateItems activator, ToolTipShowingEventArgs e)
-        {
-            
+        {            
             var model = e.Model;
 
             if (model is IMasqueradeAs m)
@@ -318,10 +317,61 @@ namespace Rdmp.UI.Collections
                     e.Title = model.ToString();
                 }
 
-                e.Text = sum.GetSummary(false,false);
+                e.Text = GenerateSummary(activator,sum);
                 e.IsBalloon = true;
             }
 
+        }
+
+        static DateTime lastInvalidatedCache = DateTime.Now;
+        static Dictionary<object, string> cache = new Dictionary<object, string>();
+
+        private static string GenerateSummary(IActivateItems activator, ICanBeSummarised sum)
+        {
+            if(DateTime.Now.Subtract(lastInvalidatedCache).TotalSeconds > 10)
+            {
+                cache.Clear();
+                lastInvalidatedCache = DateTime.Now;
+            }
+
+            if(cache.ContainsKey(sum))
+                return cache[sum];
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(sum.GetSummary(false, false));
+
+            var gotoF = new GoToCommandFactory(activator);
+            try
+            {
+                var associatedObjects = gotoF.GetCommands(sum).OfType<ExecuteCommandShow>()
+                    .ToDictionary(cmd => cmd.GetCommandName(), cmd => cmd.GetObjects().Where(o => o != null));
+
+                foreach (var kvp in associatedObjects)
+                {
+                    if (!kvp.Value.Any())
+                        continue;
+
+                    var val = string.Join(", ", kvp.Value.Select(o => o.ToString()).ToArray());
+
+                    if(val.Length>100)
+                    {
+                        val = val.Substring(0,100) + "...";
+                    }
+
+                    sb.AppendLine($"{kvp.Key}: {val}");
+                }
+            }
+            catch (Exception)
+            {
+                // couldn't get all the things you can go to, nevermind
+                return sb.ToString();
+            }
+            finally
+            {
+                cache.Add(sum, sb.ToString());
+            }
+
+            return sb.ToString();
         }
 
         private void Tree_KeyDown(object sender, KeyEventArgs e)

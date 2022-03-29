@@ -9,9 +9,14 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
+using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
+using Rdmp.UI.ItemActivation;
 using Rdmp.UI.PipelineUIs.DataObjects;
 using Rdmp.UI.PipelineUIs.Pipelines.Models;
 using Rdmp.UI.SimpleDialogs;
@@ -46,9 +51,12 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
         private DataFlowPipelineEngineFactory _pipelineFactory;
 
         private ToolStripMenuItem _deleteSelectedMenuItem;
+        private readonly IActivateItems _activator;
 
-        public PipelineDiagramUI()
+        public PipelineDiagramUI(IActivateItems activator)
         {
+            this._activator = activator;
+
             InitializeComponent();
             AllowSelection = false;
 
@@ -124,6 +132,16 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             flpPipelineDiagram.Controls.Clear();
             
             pipelineSmiley.Reset();
+            
+            pInitializationObjects.Controls.Clear();
+
+            var factory = new AtomicCommandUIFactory(_activator);
+            
+            foreach(var o in _useCase.GetInitializationObjects().Reverse())
+            {
+                Button b = factory.CreateButton(new ExecuteCommandDescribe(_activator, o));
+                pInitializationObjects.Controls.Add(b);                    
+            }
 
             try
             {

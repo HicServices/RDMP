@@ -28,6 +28,7 @@ using Rdmp.Core.Logging;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Comments;
 
 namespace Rdmp.Core.CommandExecution
 {
@@ -42,6 +43,11 @@ namespace Rdmp.Core.CommandExecution
         /// APIs that supply additional commands or alter user interface logic (either CLI or windows client)
         /// </summary>
          List<IPluginUserInterface> PluginUserInterfaces { get; }
+
+        /// <summary>
+        /// Component for fetching xmldoc comments from the codebase 
+        /// </summary>
+        public CommentStore CommentStore { get; }
 
         /// <summary>
         /// When implemented should display a graph of the data in <paramref name="aggregate"/>
@@ -147,7 +153,7 @@ namespace Rdmp.Core.CommandExecution
         /// Create a class capable of running a <see cref="IPipeline"/> under a given <see cref="IPipelineUseCase"/>.  This may be an async process e.g. non modal dialogues
         /// </summary>
         /// <returns></returns>
-        IPipelineRunner GetPipelineRunner(IPipelineUseCase useCase, IPipeline pipeline);
+        IPipelineRunner GetPipelineRunner(DialogArgs args,IPipelineUseCase useCase, IPipeline pipeline);
 
         #region Select X Modal methods
         /// <summary>

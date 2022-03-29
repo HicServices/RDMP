@@ -13,7 +13,7 @@ using NLog;
 using System.Reflection;
 using System.IO;
 using System;
-using YamlDotNet.RepresentationModel;
+using YamlDotNet.RepresentationModel;   
 
 namespace Rdmp.Core.CommandLine.Options
 {

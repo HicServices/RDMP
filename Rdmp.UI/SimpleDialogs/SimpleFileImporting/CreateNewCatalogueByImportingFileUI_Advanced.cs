@@ -8,6 +8,8 @@ using System;
 using System.IO;
 using System.Windows.Forms;
 using FAnsi.Discovery;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
@@ -52,7 +54,9 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
 
             InitializeComponent();
             
-            configureAndExecutePipeline1 = new ConfigureAndExecutePipelineUI(new UploadFileUseCase(file,database),activator);
+            configureAndExecutePipeline1 = new ConfigureAndExecutePipelineUI(
+                ExecuteCommandCreateNewCatalogueByImportingFile.GetCreateCatalogueFromFileDialogArgs()
+                ,new UploadFileUseCase(file,database),activator);
             _file = file;
             // 
             // configureAndExecutePipeline1

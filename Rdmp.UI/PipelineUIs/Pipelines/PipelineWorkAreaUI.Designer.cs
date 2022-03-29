@@ -146,7 +146,6 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             this.olvRole,
             this.olvCompatible});
             this.olvComponents.Cursor = System.Windows.Forms.Cursors.Default;
-            this.olvComponents.HideSelection = false;
             this.olvComponents.IsSimpleDragSource = true;
             this.olvComponents.Location = new System.Drawing.Point(0, 36);
             this.olvComponents.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
@@ -246,7 +245,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             // btnReRunChecks
             // 
             this.btnReRunChecks.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnReRunChecks.Location = new System.Drawing.Point(747, 279);
+            this.btnReRunChecks.Location = new System.Drawing.Point(747, 253);
             this.btnReRunChecks.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnReRunChecks.Name = "btnReRunChecks";
             this.btnReRunChecks.Size = new System.Drawing.Size(118, 27);

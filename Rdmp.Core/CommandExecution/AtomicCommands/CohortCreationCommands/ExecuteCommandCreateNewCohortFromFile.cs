@@ -96,7 +96,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
 
             request.FileToLoad = flatFile;
 
-            var configureAndExecuteDialog = GetConfigureAndExecuteControl(request, "Uploading File " + flatFile.File.Name);
+            var configureAndExecuteDialog = GetConfigureAndExecuteControl(request, "Uploading File " + flatFile.File.Name, flatFile);
 
             //add the flat file to the dialog with an appropriate description of what they are trying to achieve
             configureAndExecuteDialog.Run(BasicActivator.RepositoryLocator, null, null, null);

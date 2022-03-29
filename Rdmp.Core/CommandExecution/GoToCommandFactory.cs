@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
@@ -17,6 +18,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 
 namespace Rdmp.Core.CommandExecution
@@ -58,14 +60,18 @@ namespace Rdmp.Core.CommandExecution
             // cic => associated projects
             if (Is(forObject,out CohortIdentificationConfiguration cic))
             {
-                yield return new ExecuteCommandShow(_activator,() =>
+                yield return new ExecuteCommandShow(_activator, () =>
                 {
                     if (_activator.CoreChildProvider is DataExportChildProvider dx)
                         if (dx.AllProjectAssociatedCics != null)
                             return dx.AllProjectAssociatedCics.Where(a => a.CohortIdentificationConfiguration_ID == cic.ID).Select(a => a.Project).Distinct();
 
                     return new CohortIdentificationConfiguration[0];
-                }){OverrideCommandName="Project(s)" };
+                })
+                {
+                    OverrideCommandName = "Project(s)",
+                    OverrideIcon = GetImage(RDMPConcept.Project)
+                };
             }
 
             if (Is(forObject,out ColumnInfo columnInfo))
@@ -73,32 +79,60 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandSimilar(_activator, columnInfo, true) { 
                     OverrideCommandName = "Different",
                     GoTo = true,
+                    OverrideIcon = GetImage(RDMPConcept.ColumnInfo)
                 };
 
-                yield return new ExecuteCommandShow(_activator, columnInfo.TableInfo_ID, typeof(TableInfo));
+                yield return new ExecuteCommandShow(_activator, columnInfo.TableInfo_ID, typeof(TableInfo)) {
+                    OverrideCommandName = "Table Info",
+                    OverrideIcon = GetImage(RDMPConcept.TableInfo)};
                 yield return new ExecuteCommandShow(_activator,() => _activator.CoreChildProvider.AllCatalogueItems.Where(catItem => catItem.ColumnInfo_ID == columnInfo.ID)){
-                    OverrideCommandName = "Catalogue Item(s)" };
+                    OverrideCommandName = "Catalogue Item(s)",
+                    OverrideIcon = GetImage(RDMPConcept.CatalogueItem)
+                };
                 
-                yield return new ExecuteCommandShow(_activator,columnInfo.ANOTable_ID, typeof(ANOTable));
+                yield return new ExecuteCommandShow(_activator, columnInfo.ANOTable_ID, typeof(ANOTable)) { 
+                    OverrideCommandName = "ANO Table",
+                    OverrideIcon = GetImage(RDMPConcept.ANOTable) };
             }
 
             if (Is(forObject, out ExtractionInformation ei))
             {
-                yield return new ExecuteCommandShow(_activator, ei.CatalogueItem?.Catalogue_ID, typeof(Catalogue));
-                yield return new ExecuteCommandShow(_activator, ei.CatalogueItem_ID, typeof(CatalogueItem));
-                yield return new ExecuteCommandShow(_activator, ei.ColumnInfo,0,true);
+                yield return new ExecuteCommandShow(_activator, ei.CatalogueItem?.Catalogue_ID, typeof(Catalogue)) {
+                    OverrideCommandName = "Catalogue",
+                    OverrideIcon = GetImage(RDMPConcept.Catalogue) 
+                };
+                yield return new ExecuteCommandShow(_activator, ei.CatalogueItem_ID, typeof(CatalogueItem)) {
+                    OverrideCommandName = "Catalogue Item",
+                    OverrideIcon = GetImage(RDMPConcept.CatalogueItem) 
+                };
+                yield return new ExecuteCommandShow(_activator, ei.ColumnInfo, 0, true)
+                {
+                    OverrideCommandName = "Column Info",
+                    OverrideIcon = GetImage(RDMPConcept.ColumnInfo) 
+                };
             }
 
             if (Is(forObject, out CatalogueItem ci))
             {
-                yield return new ExecuteCommandShow(_activator, ci.Catalogue_ID, typeof(Catalogue));
-                yield return new ExecuteCommandShow(_activator, ci.ExtractionInformation,0,true);
-                yield return new ExecuteCommandShow(_activator, ci.ColumnInfo, 0,true);
+                yield return new ExecuteCommandShow(_activator, ci.Catalogue_ID, typeof(Catalogue)) {
+                    OverrideCommandName = "Catalogue",
+                    OverrideIcon = GetImage(RDMPConcept.Catalogue) 
+                };
+                yield return new ExecuteCommandShow(_activator, ci.ExtractionInformation,0,true) {
+                    OverrideCommandName = "Extraction Information",
+                    OverrideIcon = GetImage(RDMPConcept.ExtractionInformation) 
+                };
+                yield return new ExecuteCommandShow(_activator, ci.ColumnInfo, 0,true) {
+                    OverrideCommandName = "Column Info",
+                    OverrideIcon = GetImage(RDMPConcept.ColumnInfo) };
             }
 
             if (Is(forObject, out ExtractableDataSet eds))
             {
-                yield return new ExecuteCommandShow(_activator, eds.Catalogue_ID, typeof(Catalogue));
+                yield return new ExecuteCommandShow(_activator, eds.Catalogue_ID, typeof(Catalogue)) {
+                    OverrideCommandName = "Catalogue",
+                    OverrideIcon = GetImage(RDMPConcept.Catalogue) 
+                };
 
                 yield return new ExecuteCommandShow(_activator, () =>
                  {
@@ -106,19 +140,19 @@ namespace Rdmp.Core.CommandExecution
                          return dx.SelectedDataSets.Where(s => s.ExtractableDataSet_ID == eds.ID).Select(s => s.ExtractionConfiguration);
 
                      return new SelectedDataSets[0];
-                 }){ OverrideCommandName = "Extraction Configuration(s)"};
+                 }){ OverrideCommandName = "Extraction Configuration(s)", OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration) };
             }
 
             if (Is(forObject, out GovernancePeriod period))
-                yield return new ExecuteCommandShow(_activator, () => period.GovernedCatalogues){OverrideCommandName = "Catalogue(s)" };
+                yield return new ExecuteCommandShow(_activator, () => period.GovernedCatalogues){OverrideCommandName = "Catalogue(s)", OverrideIcon = GetImage(RDMPConcept.Catalogue) };
 
             if (Is(forObject, out JoinInfo j))
-                yield return new ExecuteCommandShow(_activator, j.ForeignKey_ID, typeof(ColumnInfo)){OverrideCommandName="Foreign Key" };
+                yield return new ExecuteCommandShow(_activator, j.ForeignKey_ID, typeof(ColumnInfo)){OverrideCommandName="Foreign Key", OverrideIcon = GetImage(RDMPConcept.ColumnInfo) };
 
             if (Is(forObject, out Lookup lookup))
             {
                 yield return new ExecuteCommandShow(_activator, lookup.Description.TableInfo_ID, typeof(TableInfo));
-                yield return new ExecuteCommandShow(_activator, lookup.ForeignKey_ID, typeof(ColumnInfo)){OverrideCommandName = "Foreign Key" };
+                yield return new ExecuteCommandShow(_activator, lookup.ForeignKey_ID, typeof(ColumnInfo)){OverrideCommandName = "Foreign Key", OverrideIcon = GetImage(RDMPConcept.ColumnInfo) };
             }
 
             if (Is(forObject, out ExtractionFilter masterFilter))
@@ -149,24 +183,30 @@ namespace Rdmp.Core.CommandExecution
                 }
 
                 if (parent != null)
-                    yield return new ExecuteCommandShow(_activator, parent,0){OverrideCommandName = "Parent Filter" };
+                    yield return new ExecuteCommandShow(_activator, parent,0){OverrideCommandName = "Parent Filter", OverrideIcon = GetImage(RDMPConcept.Filter) };
             }
 
             if (Is(forObject, out SelectedDataSets selectedDataSet))
-                yield return new ExecuteCommandShow(_activator, selectedDataSet.ExtractableDataSet.Catalogue_ID,typeof(Catalogue));
+                yield return new ExecuteCommandShow(_activator, selectedDataSet.ExtractableDataSet.Catalogue_ID, typeof(Catalogue)) {
+                    OverrideCommandName = "Catalogue",
+                    OverrideIcon = GetImage(RDMPConcept.Catalogue) };
 
             if (Is(forObject, out TableInfo tableInfo))
-                yield return new ExecuteCommandShow(_activator, () => tableInfo.ColumnInfos.SelectMany(c => _activator.CoreChildProvider.AllCatalogueItems.Where(catItem => catItem.ColumnInfo_ID == c.ID).Select(catItem => catItem.Catalogue)).Distinct()){OverrideCommandName="Catalogue(s)" };
+                yield return new ExecuteCommandShow(_activator, () => tableInfo.ColumnInfos.SelectMany(c => _activator.CoreChildProvider.AllCatalogueItems.Where(catItem => catItem.ColumnInfo_ID == c.ID).Select(catItem => catItem.Catalogue)).Distinct()){OverrideCommandName="Catalogue(s)", OverrideIcon = GetImage(RDMPConcept.Catalogue) };
 
             if (Is(forObject, out AggregateConfiguration aggregate))
             {
-                yield return new ExecuteCommandShow(_activator, aggregate.GetCohortIdentificationConfigurationIfAny()?.ID,typeof(CohortIdentificationConfiguration));
-                yield return new ExecuteCommandShow(_activator, aggregate.Catalogue_ID,typeof(Catalogue));
+                yield return new ExecuteCommandShow(_activator, aggregate.GetCohortIdentificationConfigurationIfAny()?.ID, typeof(CohortIdentificationConfiguration)) {
+                    OverrideCommandName = "Cohort Identification Configuration",
+                    OverrideIcon = GetImage(RDMPConcept.CohortIdentificationConfiguration) };
+                yield return new ExecuteCommandShow(_activator, aggregate.Catalogue_ID, typeof(Catalogue)) { 
+                    OverrideCommandName = "Catalogue",
+                    OverrideIcon = GetImage(RDMPConcept.Catalogue) };
             }
 
             if (Is(forObject, out Catalogue catalogue))
             {
-                yield return new ExecuteCommandShow(_activator, catalogue.LoadMetadata_ID,typeof(LoadMetadata)){OverrideCommandName = "Data Load" };
+                yield return new ExecuteCommandShow(_activator, catalogue.LoadMetadata_ID,typeof(LoadMetadata)){OverrideCommandName = "Data Load", OverrideIcon = GetImage(RDMPConcept.LoadMetadata) };
 
                 if (_activator.CoreChildProvider is DataExportChildProvider exp)
                 {
@@ -174,13 +214,23 @@ namespace Rdmp.Core.CommandExecution
 
                     if (cataEds != null)
                     {
-                        yield return new ExecuteCommandShow(_activator, () => cataEds.ExtractionConfigurations.Select(c=>c.Project).Distinct()){OverrideCommandName = "Project(s)" };
-                        yield return new ExecuteCommandShow(_activator, () => cataEds.ExtractionConfigurations){OverrideCommandName = "Extraction Configuration(s)" };
+                        if (cataEds.Project_ID != null)
+                        {
+                            yield return new ExecuteCommandShow(_activator, () =>
+                            {
+                                return new[] { _activator.RepositoryLocator.DataExportRepository.GetObjectByID<Project>(cataEds.Project_ID.Value) };
+                            }
+                            )
+                            { OverrideCommandName = "Associated Project", OverrideIcon = GetImage(RDMPConcept.Project) };
+                        }
+
+                        yield return new ExecuteCommandShow(_activator, () => cataEds.ExtractionConfigurations.Select(c=>c.Project).Distinct()){OverrideCommandName = "Extracted In (Project)", OverrideIcon = GetImage(RDMPConcept.Project) };
+                        yield return new ExecuteCommandShow(_activator, () => cataEds.ExtractionConfigurations){OverrideCommandName = "Extracted In (Extraction Configuration)", OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration) };                        
                     }
                         
                 }
 
-                yield return new ExecuteCommandShow(_activator, () => catalogue.GetTableInfoList(true)){OverrideCommandName="Table(s)" };
+                yield return new ExecuteCommandShow(_activator, () => catalogue.GetTableInfoList(true)){OverrideCommandName="Table(s)", OverrideIcon = GetImage(RDMPConcept.TableInfo) };
 
                 yield return new ExecuteCommandShow(_activator,
                     () =>
@@ -190,13 +240,13 @@ namespace Rdmp.Core.CommandExecution
                             .Select(ac => ac.GetCohortIdentificationConfigurationIfAny())
                             .Where(cataCic => cataCic != null)
                             .Distinct())
-                    {
-                    OverrideCommandName ="Cohort Identification Configuration(s)" 
-                    };
+                    { OverrideCommandName ="Cohort Identification Configuration(s)", OverrideIcon = GetImage(RDMPConcept.CohortIdentificationConfiguration) };
 
 
                 yield return new ExecuteCommandShow(_activator, () => _activator.CoreChildProvider.AllGovernancePeriods.Where(p => p.GovernedCatalogues.Contains(catalogue))){
-                    OverrideCommandName = "Governance" };
+                    OverrideCommandName = "Governance",
+                    OverrideIcon = GetImage(RDMPConcept.GovernancePeriod)
+                };
 
             }
 
@@ -208,14 +258,21 @@ namespace Rdmp.Core.CommandExecution
 
                          return new ExtractionConfiguration[0];
                      }){
-                    OverrideCommandName = "Extraction Configurations" };
+                    OverrideCommandName = "Extraction Configurations",
+                    OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration)
+                };
 
             //if it is a masquerader and masquerading as a DatabaseEntity then add a goto the object
             if (forObject is IMasqueradeAs masqueraderIfAny)
             {
                 if (masqueraderIfAny.MasqueradingAs() is DatabaseEntity m)
-                    yield return new ExecuteCommandShow(_activator, m,0,true);
+                    yield return new ExecuteCommandShow(_activator, m, 0, true) { OverrideIcon = _activator.CoreIconProvider.GetImage(m) };
             }
+        }
+
+        private Bitmap GetImage(RDMPConcept concept)
+        {
+            return _activator.CoreIconProvider.GetImage(concept);
         }
     }
 }

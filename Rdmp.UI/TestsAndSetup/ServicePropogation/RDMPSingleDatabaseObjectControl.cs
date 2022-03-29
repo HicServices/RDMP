@@ -7,9 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
@@ -100,7 +102,6 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
                     ReadOnly = false;
                 }
             }
-            
 
             if (_binder == null)
                 _binder = new BinderWithErrorProviderFactory(activator);
@@ -109,7 +110,13 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             
             if(this is ISaveableUI)
                 ObjectSaverButton1.SetupFor(this, databaseObject, activator);
-
+            
+            var gotoFactory = new GoToCommandFactory(activator);
+            foreach (var cmd in gotoFactory.GetCommands(databaseObject).OfType<ExecuteCommandShow>())
+            {
+                cmd.SuggestedCategory = AtomicCommandFactory.GoTo;
+                CommonFunctionality.AddToMenu(cmd,null,null,AtomicCommandFactory.GoTo);
+            }
         }
 
         void CommonFunctionality_ToolStripAddedToHost(object sender, EventArgs e)
