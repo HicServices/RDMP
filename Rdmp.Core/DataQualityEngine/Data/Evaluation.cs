@@ -173,7 +173,8 @@ namespace Rdmp.Core.DataQualityEngine.Data
         private void LoadRowAndColumnStates()
         {
             List<RowState> states = new List<RowState>();
-            var repo = Repository as TableRepository;
+            var repo = Repository as TableRepository 
+                ?? throw new Exception($"Repository was not a {nameof(TableRepository)}.  Evaluation class requires a database back repository to fetch RowStates/ColumnStates.  Repository was of Type '{Repository.GetType().Name}'");
 
             using (var con = repo.GetConnection())
             {
