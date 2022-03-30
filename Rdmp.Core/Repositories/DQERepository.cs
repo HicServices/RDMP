@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -35,6 +36,12 @@ namespace Rdmp.Core.Repositories
         /// <inheritdoc/>
         public ICatalogueRepository CatalogueRepository { get; private set; }
 
+        /// <summary>
+        /// Creates a new DQERepository storing/reading data from the default
+        /// DQE server configured in <paramref name="catalogueRepository"/>
+        /// </summary>
+        /// <param name="catalogueRepository"></param>
+        /// <exception cref="NotSupportedException">If there is no default DQE database configured</exception>
         public DQERepository(ICatalogueRepository catalogueRepository)
         {
             CatalogueRepository = catalogueRepository;
@@ -46,6 +53,21 @@ namespace Rdmp.Core.Repositories
 
              DiscoveredServer = DataAccessPortal.GetInstance().ExpectServer(server, DataAccessContext.InternalDataProcessing);
              _connectionStringBuilder = DiscoveredServer.Builder;
+        }
+
+        /// <summary>
+        /// Creates a new DQERepository storing/reading data from <paramref name="db"/> instead of the default
+        /// (if any) listed in the <paramref name="catalogueRepository"/>.  Use this constructor if you do not
+        /// want to use <see cref="ICatalogueRepository.GetServerDefaults"/> to find the DQE but instead want to
+        /// use an explicit database (<paramref name="db"/>)
+        /// </summary>
+        /// <param name="catalogueRepository"></param>
+        /// <param name="db"></param>
+        public DQERepository(ICatalogueRepository catalogueRepository, DiscoveredDatabase db)
+        {
+            CatalogueRepository = catalogueRepository;
+            DiscoveredServer = db.Server;
+            _connectionStringBuilder = DiscoveredServer.Builder;
         }
 
         /// <inheritdoc/>
