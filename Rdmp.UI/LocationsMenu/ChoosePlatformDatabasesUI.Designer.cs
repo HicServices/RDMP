@@ -374,6 +374,7 @@ namespace Rdmp.UI.LocationsMenu
             // 
             // gbCreateNew
             // 
+            this.gbCreateNew.Controls.Add(this.cbCreateExampleDatasets);
             this.gbCreateNew.Controls.Add(this.gbSqlAuthentication);
             this.gbCreateNew.Controls.Add(this.gbExampleDatasets);
             this.gbCreateNew.Controls.Add(this.tbOtherKeywords);
@@ -454,7 +455,6 @@ namespace Rdmp.UI.LocationsMenu
             this.gbExampleDatasets.Controls.Add(this.tbPeopleCount);
             this.gbExampleDatasets.Controls.Add(this.label11);
             this.gbExampleDatasets.Controls.Add(this.tbRowCount);
-            this.gbExampleDatasets.Controls.Add(this.cbCreateExampleDatasets);
             this.gbExampleDatasets.Controls.Add(this.tbSeed);
             this.gbExampleDatasets.Enabled = false;
             this.gbExampleDatasets.Location = new System.Drawing.Point(536, 33);
@@ -514,7 +514,7 @@ namespace Rdmp.UI.LocationsMenu
             // cbCreateExampleDatasets
             // 
             this.cbCreateExampleDatasets.AutoSize = true;
-            this.cbCreateExampleDatasets.Location = new System.Drawing.Point(7, 2);
+            this.cbCreateExampleDatasets.Location = new System.Drawing.Point(543, 33);
             this.cbCreateExampleDatasets.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbCreateExampleDatasets.Name = "cbCreateExampleDatasets";
             this.cbCreateExampleDatasets.Size = new System.Drawing.Size(118, 19);
