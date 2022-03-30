@@ -28,7 +28,7 @@ namespace Rdmp.Core.Tests.DataQualityEngine
     {
         private DQERepository GetDqeRepository(DatabaseType dbType)
         {
-            var db = GetCleanedServer(dbType);
+            var db = GetCleanedServer(dbType,"DQETempTestDb");
             var patcher = new DataQualityEnginePatcher();
 
             var mds = new MasterDatabaseScriptExecutor(db);
@@ -61,6 +61,8 @@ namespace Rdmp.Core.Tests.DataQualityEngine
             
             //do the validation
             CatalogueConstraintReport report = new CatalogueConstraintReport(testData.catalogue, SpecialFieldNames.DataLoadRunID);
+            report.ExplicitDQERepository = dqeRepository;
+
             report.Check(new ThrowImmediatelyCheckNotifier());
 
             CancellationTokenSource source = new CancellationTokenSource();
@@ -78,7 +80,9 @@ namespace Rdmp.Core.Tests.DataQualityEngine
                 return;
             }
             
-            Assert.IsTrue(listener.EventsReceivedBySender[report].All(m => m.Exception == null));//all messages must have null exceptions
+            Assert.IsTrue(listener.EventsReceivedBySender[report].All(m => m.Exception == null),
+                String.Join(Environment.NewLine,
+                listener.EventsReceivedBySender[report].Where(m => m.Exception != null).Select(m=>m.Exception)));//all messages must have null exceptions
             
             
             //get the reuslts now

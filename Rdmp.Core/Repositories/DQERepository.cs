@@ -73,78 +73,19 @@ namespace Rdmp.Core.Repositories
         /// <inheritdoc/>
         public Evaluation GetMostRecentEvaluationFor(ICatalogue c)
         {
-            return GetEvaluationsWhere("where DateOfEvaluation = (select MAX(DateOfEvaluation) from Evaluation where CatalogueID = " + c.ID + ")").SingleOrDefault();
+            return GetAllEvaluationsFor(c).OrderByDescending(e => e.DateOfEvaluation).FirstOrDefault();
         }
 
         /// <inheritdoc/>
         public IEnumerable<Evaluation> GetAllEvaluationsFor(ICatalogue catalogue)
         {
-            return GetEvaluationsWhere("where CatalogueID = " + catalogue.ID + " order by DateOfEvaluation asc");
+            return GetAllObjects<Evaluation>($"where CatalogueID = {catalogue.ID }").OrderBy(e => e.DateOfEvaluation);
         }
 
         /// <inheritdoc/>
         public bool HasEvaluations(ICatalogue catalogue)
         {
-            using (var con = GetConnection())
-            {
-                //get all the row level data 1 to 1 join with evaluation
-                using(var cmdGetEvaluations = DatabaseCommandHelper.GetCommand("select count(*) from Evaluation where CatalogueID = " + catalogue.ID ,con.Connection, con.Transaction))
-                    return Convert.ToInt32(cmdGetEvaluations.ExecuteScalar()) > 0;
-            }
-        }
-
-        private IEnumerable<Evaluation> GetEvaluationsWhere(string whereSQL)
-        {
-            
-            List<Evaluation> toReturn = new List<Evaluation>();
-
-            using(var con = GetConnection())
-            {
-                //get all the row level data 1 to 1 join with evaluation
-                using(var cmdGetEvaluations = DatabaseCommandHelper.GetCommand("select * from Evaluation " + whereSQL, con.Connection, con.Transaction))
-                    using (DbDataReader r = cmdGetEvaluations.ExecuteReader())
-                    {
-
-                        while (r.Read())
-                        {
-                            Evaluation toAdd = new Evaluation(this, r);
-                            toReturn.Add(toAdd);
-                        }
-                    }
-                
-                //use a separate command to read the children to prevent multiple active results sets problems
-                foreach (Evaluation evaluation in toReturn)
-                {
-                    List<RowState> states = new List<RowState>();
-
-                    //get all the row level data
-                    using (var cmdGetRowStates = DatabaseCommandHelper.GetCommand(
-                        "select * from RowState WHERE Evaluation_ID =" + evaluation.ID, con.Connection,
-                        con.Transaction))
-                    {
-                        using(var r2 = cmdGetRowStates.ExecuteReader())
-                            while (r2.Read())
-                                states.Add(new RowState(r2));
-                    }
-                    
-                    evaluation.RowStates = states.ToArray();
-
-                    //get all the column level data
-                    using(var cmdGetColumnStates = DatabaseCommandHelper.GetCommand("select * from ColumnState WHERE ColumnState.Evaluation_ID =" + evaluation.ID, con.Connection, con.Transaction))
-                        using(var r2 = cmdGetColumnStates.ExecuteReader())
-                        {
-                            List<ColumnState> columnStates = new List<ColumnState>();
-
-                            while (r2.Read())
-                                columnStates.Add(new ColumnState(r2));
-
-                            evaluation.ColumnStates = columnStates.ToArray();
-                            r2.Close();
-                        }
-                }
-            }
-
-            return toReturn;
+            return GetAllEvaluationsFor(catalogue).Any();
         }
 
         private readonly ObjectConstructor _constructor = new ObjectConstructor();
