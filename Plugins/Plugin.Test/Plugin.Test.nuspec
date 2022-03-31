@@ -13,7 +13,7 @@
         <description>Package for writing plugin tests</description>
         <copyright>Copyright 2018-2019</copyright>
         <dependencies>
-			      <dependency id="HIC.BadMedicine" version="1.0.0" />
+			      <dependency id="HIC.BadMedicine" version="1.0.1" />
             <dependency id="HIC.FAnsiSql" version="2.0.3" />
             <dependency id="CsvHelper" version="27.2.1" />
             <dependency id="Newtonsoft.Json" version="13.0.1"/>
