@@ -103,7 +103,7 @@ namespace Rdmp.UI.MainFormUITabs
         {
             try
             {
-                _catalogue.Folder = new CatalogueFolder(_catalogue, tbFolder.Text);
+                _catalogue.Folder = tbFolder.Text;
                 tbFolder.ForeColor = Color.Black;
             }
             catch (Exception )

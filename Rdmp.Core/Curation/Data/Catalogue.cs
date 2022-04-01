@@ -118,13 +118,7 @@ namespace Rdmp.Core.Curation.Data
         public CatalogueFolder Folder
         {
             get { return _folder ?? CatalogueFolder.Root; }
-            set {
-                
-                if(value != null)
-                    value.Parent = this;
-
-                SetField(ref  _folder, value); 
-            }
+            set { SetField(ref  _folder, value); }
         }
          
         /// <inheritdoc/>
@@ -717,11 +711,7 @@ namespace Rdmp.Core.Curation.Data
 
             if (ID == 0 || string.IsNullOrWhiteSpace(Name) || Repository != repository)
                 throw new ArgumentException("Repository failed to properly hydrate this class");
-
-            //default values
-            if(Folder == null)
-                Folder = new CatalogueFolder(this, "\\");
-            
+                        
             //if there is a default logging server
             if (LiveLoggingServer_ID == null)
             {
@@ -860,7 +850,7 @@ namespace Rdmp.Core.Curation.Data
             IsInternalDataset = (bool)r["IsInternalDataset"];
             IsColdStorageDataset = (bool) r["IsColdStorageDataset"];
 
-            Folder = new CatalogueFolder(this,r["Folder"].ToString());
+            Folder = new CatalogueFolder(r["Folder"].ToString());
 
             ClearAllInjections();
         }

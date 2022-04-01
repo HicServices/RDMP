@@ -137,7 +137,7 @@ namespace Rdmp.Core.Repositories
         protected override void SetValue<T>(T toCreate, PropertyInfo prop, string strVal, object val)
         {
             if(prop.PropertyType == typeof(CatalogueFolder) && val is string)
-                base.SetValue(toCreate,prop,strVal,new CatalogueFolder((Catalogue)(object)toCreate,strVal));
+                base.SetValue(toCreate,prop,strVal,new CatalogueFolder(strVal));
             else
                 base.SetValue(toCreate,prop,strVal,val);
         }

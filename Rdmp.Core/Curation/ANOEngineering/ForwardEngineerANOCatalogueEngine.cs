@@ -152,7 +152,7 @@ namespace Rdmp.Core.Curation.ANOEngineering
 
                     NewCatalogue = _planManager.Catalogue.ShallowClone();
                     NewCatalogue.Name = "ANO" + _planManager.Catalogue.Name;
-                    NewCatalogue.Folder = new CatalogueFolder(NewCatalogue, "\\anonymous" + NewCatalogue.Folder.Path);
+                    NewCatalogue.Folder = "\\anonymous" + NewCatalogue.Folder.Path;
                     NewCatalogue.SaveToDatabase();
 
                     AuditParenthood(_planManager.Catalogue, NewCatalogue);

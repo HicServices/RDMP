@@ -590,7 +590,7 @@ namespace Rdmp.Core.Curation.Data.ImportExport
                 if (propertyType == typeof(CatalogueFolder))
                 {
                     //will be passed as a string
-                    value = value is string ? new CatalogueFolder((Catalogue)onObject, (string)value):(CatalogueFolder) value;
+                    value = (CatalogueFolder) value;
                 }
                 else if (propertyType == typeof(Uri))
                     value = value is string ? new Uri((string)value):(Uri) value;
