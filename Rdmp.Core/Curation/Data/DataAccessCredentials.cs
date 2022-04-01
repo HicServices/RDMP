@@ -60,8 +60,13 @@ namespace Rdmp.Core.Curation.Data
                 OnPropertyChanged(old, value);
             }
         }
-        
+
         #endregion
+
+        public DataAccessCredentials()
+        {
+
+        }
 
         /// <summary>
         /// Records a new (initially blank) set of credentials that can be used to access a <see cref="TableInfo"/> or other object requiring authentication.

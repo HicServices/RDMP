@@ -76,6 +76,11 @@ namespace Rdmp.Core.Curation.Data.Cohort.Joinables
         }
         #endregion
 
+        public JoinableCohortAggregateConfiguration()
+        {
+
+        }
+
         internal JoinableCohortAggregateConfiguration(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {

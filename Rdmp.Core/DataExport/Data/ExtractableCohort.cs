@@ -173,6 +173,11 @@ namespace Rdmp.Core.DataExport.Data
             return null;
         }
 
+        public ExtractableCohort()
+        {
+            ClearAllInjections();
+        }
+
         internal ExtractableCohort(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {

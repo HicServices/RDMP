@@ -90,6 +90,11 @@ namespace Rdmp.Core.DataExport.Data
 
         #endregion
 
+        public SelectedDataSets()
+        {
+            ClearAllInjections(); 
+        }
+
         internal SelectedDataSets(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {

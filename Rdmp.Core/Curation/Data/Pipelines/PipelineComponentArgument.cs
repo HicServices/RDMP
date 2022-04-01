@@ -46,6 +46,11 @@ namespace Rdmp.Core.Curation.Data.Pipelines
 
         #endregion
 
+        public PipelineComponentArgument()
+        {
+
+        }
+
         /// <summary>
         /// Creates a new argument storage object for one of the arguments in <see cref="PipelineComponent"/>.  
         /// 

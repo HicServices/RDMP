@@ -63,6 +63,11 @@ namespace Rdmp.Core.Curation.Data.Dashboarding
         public DashboardControl[] Controls{ get { return Repository.GetAllObjectsWithParent<DashboardControl>(this); }}
         #endregion
 
+        public DashboardLayout()
+        {
+
+        }
+
         internal DashboardLayout(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {

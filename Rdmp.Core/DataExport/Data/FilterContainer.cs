@@ -20,6 +20,11 @@ namespace Rdmp.Core.DataExport.Data
     /// </summary>
     public class FilterContainer : ConcreteContainer, IContainer
     {
+
+        public FilterContainer()
+        {
+
+        }
         /// <summary>
         /// Creates a new instance with the given <paramref name="operation"/>
         /// </summary>

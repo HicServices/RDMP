@@ -142,7 +142,10 @@ namespace Rdmp.Core.Curation.Data
 
         #endregion
 
-        
+        public ExternalDatabaseServer()
+        {
+
+        }
         /// <summary>
         /// Creates a new persistent server reference in RDMP platform database that allows it to connect to a (usually database) server.
         /// 

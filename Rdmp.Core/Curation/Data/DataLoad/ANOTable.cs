@@ -113,6 +113,10 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             get { return Repository.GetObjectByID<ExternalDatabaseServer>(Server_ID); }
         }
         #endregion
+        public ANOTable()
+        {
+
+        }
 
         /// <summary>
         /// Declares that a new ANOTable (anonymous mapping table) should exist in the referenced database.  You can call this constructor without first creating the table.  If you do

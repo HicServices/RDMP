@@ -689,7 +689,7 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         public Catalogue()
         {
-
+            ClearAllInjections();
         }
 
         /// <summary>

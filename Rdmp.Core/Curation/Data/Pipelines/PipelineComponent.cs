@@ -70,6 +70,11 @@ namespace Rdmp.Core.Curation.Data.Pipelines
 
         #endregion
 
+        public PipelineComponent()
+        {
+
+        }
+
         /// <inheritdoc/>
         public override string ToString()
         {

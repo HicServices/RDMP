@@ -111,6 +111,11 @@ namespace Rdmp.Core.Curation.Data.Governance
 
         #endregion
 
+        public GovernancePeriod()
+        {
+
+        }
+
         /// <summary>
         /// Creates a new <see cref="GovernancePeriod"/> in the database.  This grants (ethical) permission to hold datasets referenced by <see cref="GovernedCatalogues"/>.
         /// </summary>

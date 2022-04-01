@@ -221,6 +221,11 @@ namespace Rdmp.Core.Curation.Data
         [DoNotExtractProperty]
         public string CatalogueName { get { return Catalogue.Name; }}
 
+        public CatalogueItem()
+        {
+            ClearAllInjections();
+        }
+
         /// <summary>
         /// Creates a new virtual column description for for a column in the dataset (<paramref name="parent"/>) supplied with the given Name.
         /// <para><remarks>You should next choose which <see cref="ColumnInfo"/> powers it and optionally create an <see cref="ExtractionInformation"/> to

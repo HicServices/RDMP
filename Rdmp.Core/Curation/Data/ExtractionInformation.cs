@@ -110,6 +110,10 @@ namespace Rdmp.Core.Curation.Data
         }
         #endregion
 
+        public ExtractionInformation()
+        {
+            ClearAllInjections();
+        }
 
         /// <summary>
         /// Makes the given <see cref="CatalogueItem"/> which has an underlying column <see cref="ColumnInfo"/> in the data repository database extractable using the

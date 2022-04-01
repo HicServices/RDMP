@@ -48,6 +48,12 @@ namespace Rdmp.Core.DataExport.Data
         }
         #endregion
 
+
+        public SelectedDataSetsForcedJoin()
+        {
+            ClearAllInjections();
+        }
+
         /// <summary>
         /// Creates a new declaration in the <paramref name="repository"/> database that the given <paramref name="tableInfo"/> should
         /// always be joined against when extract the <paramref name="sds"/>.

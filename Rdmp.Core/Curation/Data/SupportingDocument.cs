@@ -104,6 +104,10 @@ namespace Rdmp.Core.Curation.Data
 
         #endregion
 
+        public SupportingDocument()
+        {
+
+        }
         /// <summary>
         /// Creates a new supporting document for helping understand the dataset <paramref name="parent"/>
         /// </summary>

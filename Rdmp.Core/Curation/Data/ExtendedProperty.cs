@@ -48,7 +48,10 @@ namespace Rdmp.Core.Curation.Data
             set { SetField(ref _referencedObjectRepositoryType, value); }
         }
         #endregion
-
+        public ExtendedProperty()
+        {
+            ClearAllInjections();
+        }
         public ExtendedProperty(ICatalogueRepository repository,IMapsDirectlyToDatabaseTable setOn, string name, object value)
         {
             if(repository == null)

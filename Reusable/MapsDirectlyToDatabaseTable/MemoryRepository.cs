@@ -300,7 +300,21 @@ namespace MapsDirectlyToDatabaseTable
 
         public Type[] GetCompatibleTypes()
         {
-            return GetType().Assembly.GetTypes().Where(t=>typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t)).ToArray();
+            return
+                this.GetType().Assembly.GetTypes()
+                    .Where(
+                        t =>
+                            typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t)
+                            && !t.IsAbstract
+                            && !t.IsInterface
+
+                            //nothing called spontaneous
+                            && !t.Name.Contains("Spontaneous")
+
+                            //or with a spontaneous base class
+                            && (t.BaseType == null || !t.BaseType.Name.Contains("Spontaneous"))
+
+                            ).ToArray();
         }
     }
 }

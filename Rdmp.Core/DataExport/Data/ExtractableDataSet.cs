@@ -72,6 +72,11 @@ namespace Rdmp.Core.DataExport.Data
         public ICatalogue Catalogue { get {return _catalogue.Value;}}
         #endregion
 
+
+        public ExtractableDataSet()
+        {
+            ClearAllInjections();
+        }
         /// <summary>
         /// Defines that the given Catalogue is extractable to researchers as a data set, this is stored in the DataExport database
         /// </summary>

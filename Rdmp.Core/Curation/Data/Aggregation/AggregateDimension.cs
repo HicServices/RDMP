@@ -136,6 +136,11 @@ namespace Rdmp.Core.Curation.Data.Aggregation
 
         #endregion
 
+        public AggregateDimension()
+        {
+            ClearAllInjections();
+        }
+
         /// <summary>
         /// Declares a new column in an <see cref="AggregateConfiguration"/> (GROUP BY query).  The new column will be based on the master Catalogue column
         /// (<see cref="ExtractionInformation"/>).

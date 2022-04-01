@@ -73,7 +73,7 @@ namespace Rdmp.Core.Curation.Data
             get { return Repository.GetAllObjectsWithParent<CacheProgress>(this); }
         }
         #endregion
-        
+
         /// <inheritdoc/>
         [NoMappingToDatabase]
         public List<PermissionWindowPeriod> PermissionWindowPeriods { get; private set; }
@@ -115,6 +115,11 @@ namespace Rdmp.Core.Curation.Data
                 return true;
 
             return PermissionWindowPeriods.Any(permissionPeriod => permissionPeriod.Contains(dateTimeUTC));
+        }
+
+        public PermissionWindow()
+        {
+
         }
 
         /// <summary>

@@ -116,6 +116,11 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         [NoMappingToDatabase]
         public string Data_type { get { return SqlDataType; } }
 
+        public PreLoadDiscardedColumn()
+        {
+            ClearAllInjections();
+        }
+
         /// <summary>
         /// Creates a new virtual column that will be created in RAW during data loads but does not appear in the LIVE table schema.  This allows
         /// identifiable data to be loaded and processed in a data load without ever hitting the live database.

@@ -135,6 +135,10 @@ namespace Rdmp.Core.DataExport.Data
             return Name;
         }
 
+        public ExternalCohortTable()
+        {
+
+        }
         /// <summary>
         /// Creates a new blank pointer to a cohort database.
         /// </summary>

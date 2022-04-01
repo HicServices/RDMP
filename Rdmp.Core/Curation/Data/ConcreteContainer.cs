@@ -27,6 +27,10 @@ namespace Rdmp.Core.Curation.Data
             set { SetField(ref  _operation, value); }
         }
 
+        public ConcreteContainer()
+        {
+
+        }
         protected ConcreteContainer(IFilterManager manager,IRepository repository, DbDataReader r):base(repository,r)
         {
             _manager = manager;

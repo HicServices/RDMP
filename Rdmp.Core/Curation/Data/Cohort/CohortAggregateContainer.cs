@@ -82,6 +82,11 @@ namespace Rdmp.Core.Curation.Data.Cohort
 
         private ICohortContainerManager _manager;
 
+        public CohortAggregateContainer()
+        {
+
+        }
+
         internal CohortAggregateContainer(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {

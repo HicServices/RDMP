@@ -137,6 +137,12 @@ namespace Rdmp.Core.DataExport.Data
 
         #endregion
 
+
+        public CumulativeExtractionResults()
+        {
+            ClearAllInjections();
+        }
+
         /// <summary>
         /// Creates a new audit record in the data export database for describing an extraction attempt of the given <paramref name="dataset"/> in the 
         /// extraction <paramref name="configuration"/>.

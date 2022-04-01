@@ -104,6 +104,11 @@ namespace Rdmp.Core.Curation.Data
         }}
         #endregion
 
+        public TicketingSystemConfiguration()
+        {
+
+        }
+
         /// <inheritdoc/>
         public TicketingSystemConfiguration(ICatalogueRepository repository, string name):base()
         {

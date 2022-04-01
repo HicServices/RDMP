@@ -86,6 +86,11 @@ namespace Rdmp.Core.Curation.Data
 
         #endregion
 
+        public AggregateTopX()
+        {
+
+        }
+
         /// <summary>
         /// Creates an instance by reading it out of the database for the provided reader
         /// </summary>

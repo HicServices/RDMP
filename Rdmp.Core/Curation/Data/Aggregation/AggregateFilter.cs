@@ -88,7 +88,12 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         public override IContainer FilterContainer { get { return FilterContainer_ID.HasValue? Repository.GetObjectByID<AggregateFilterContainer>(FilterContainer_ID.Value):null;}}
 
         #endregion
-        
+
+        public AggregateFilter()
+        {
+
+        }
+
         /// <summary>
         /// Defines a new filter (line of WHERE SQL) in the specified AggregateFilterContainer (AND / OR).  Calling this constructor creates a new object in the database
         /// </summary>

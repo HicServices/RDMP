@@ -170,10 +170,14 @@ namespace Rdmp.Core.Curation.Data.Cohort
             }
         }
 
-        
+
 
         #endregion
-        
+
+        public CohortIdentificationConfiguration()
+        {
+
+        }
 
         /// <summary>
         /// Declares a new configuration for identifying patient lists matching a study requirements based on the results of cohort sets / patient index tables and set operations

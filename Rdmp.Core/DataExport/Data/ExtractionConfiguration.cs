@@ -301,6 +301,11 @@ namespace Rdmp.Core.DataExport.Data
         [UsefulProperty]
         public string ProjectName{ get=>Project.Name;}
 
+        public ExtractionConfiguration()
+        {
+
+        }
+
         /// <summary>
         /// Creates a new extraction configuration in the <paramref name="repository"/> database for the provided <paramref name="project"/>.
         /// </summary>

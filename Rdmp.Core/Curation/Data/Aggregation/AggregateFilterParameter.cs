@@ -83,6 +83,11 @@ namespace Rdmp.Core.Curation.Data.Aggregation
             get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
         }
 
+        public AggregateFilterParameter()
+        {
+
+        }
+
         /// <summary>
         /// Declares a new parameter to be used by the specified AggregateFilter.  Use AggregateFilterFactory to call this 
         /// constructor.

@@ -108,6 +108,11 @@ namespace Rdmp.Core.DataExport.Data
 
         }
 
+        public DeployedExtractionFilter()
+        {
+
+        }
+
         /// <summary>
         /// Creates a new empty WHERE filter in the given <paramref name="container"/> that will be used when 
         /// extracting the dataset.

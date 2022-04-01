@@ -277,6 +277,11 @@ namespace Rdmp.Core.Curation.Data
             Active
         }
 
+        public ColumnInfo()
+        {
+            ClearAllInjections();
+        }
+
         /// <summary>
         /// Creates a new record of a column found on a database server in the table referenced by <see cref="TableInfo"/>.  This constructor will be used
         /// when first importing a table reference (See <see cref="TableInfoImporter"/>)  and again whenever there are new columns

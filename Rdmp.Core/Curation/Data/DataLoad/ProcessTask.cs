@@ -123,6 +123,11 @@ namespace Rdmp.Core.Curation.Data.DataLoad
 
         #endregion
 
+        public ProcessTask()
+        {
+
+        }
+
         /// <summary>
         /// Creates a new operation in the data load (e.g. copy files from A to B, load all CSV files to RAW table B etc)
         /// </summary>

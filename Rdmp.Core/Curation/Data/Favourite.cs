@@ -43,6 +43,11 @@ namespace Rdmp.Core.Curation.Data
         }
         #endregion
 
+        public Favourite()
+        {
+
+        }
+
         internal Favourite(ICatalogueRepository repository, DbDataReader r): base(repository, r)
         {
             Username = r["Username"].ToString();

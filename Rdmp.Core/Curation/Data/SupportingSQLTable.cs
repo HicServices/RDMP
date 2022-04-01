@@ -139,6 +139,11 @@ namespace Rdmp.Core.Curation.Data
 
         #endregion
 
+        public SupportingSQLTable()
+        {
+
+        }
+
         /// <summary>
         /// Defines a new table that helps in understanding the given dataset <paramref name="parent"/>
         /// </summary>

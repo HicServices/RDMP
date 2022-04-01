@@ -38,6 +38,11 @@ namespace Rdmp.Core.Curation.Data.Aggregation
 
         #endregion
 
+        public AggregateFilterContainer()
+        {
+
+        }
+
         /// <summary>
         /// Creates a new IContainer in the dtabase for use with an <see cref="AggregateConfiguration"/>
         /// </summary>

@@ -75,6 +75,11 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         public AggregateDimension AggregateDimension { get{return Repository.GetObjectByID<AggregateDimension>(AggregateDimension_ID);}}
         #endregion
 
+        public AggregateContinuousDateAxis()
+        {
+
+        }
+
         /// <summary>
         /// Defines that the specified column (<see cref="AggregateDimension"/>) should function as the continuous axis of an <see cref="AggregateConfiguration"/> graph. 
         /// For example if you are graphing the number of prescriptions given out each month then the axis would be applied to the 'PrescribedDate' <see cref="AggregateDimension"/>

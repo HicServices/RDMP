@@ -129,6 +129,11 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
 
     #endregion
 
+    public ExtractionProgress()
+    {
+
+    }
+
     public ExtractionProgress(IDataExportRepository repository, ISelectedDataSets sds, DateTime? startDate, DateTime? endDate,int numberOfDaysPerBatch,string name, int extractionInformation_ID)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>

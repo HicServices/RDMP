@@ -72,6 +72,11 @@ namespace Rdmp.Core.Curation.Data.Cache
 
         #endregion
 
+        public CacheFetchFailure()
+        {
+                
+        }
+
         /// <summary>
         /// Documents that a given cache fetch request was not succesfully executed e.g. the remote endpoint returned an error for that date range.
         /// </summary>

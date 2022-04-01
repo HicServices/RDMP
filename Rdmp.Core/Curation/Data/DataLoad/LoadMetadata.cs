@@ -148,6 +148,11 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         }
         #endregion
 
+        public LoadMetadata()
+        {
+
+        }
+
         /// <summary>
         /// Create a new DLE load.  This load will not have any <see cref="ProcessTask"/> and will not load any <see cref="TableInfo"/> yet.
         /// 

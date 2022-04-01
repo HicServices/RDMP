@@ -316,6 +316,11 @@ namespace Rdmp.Core.Curation.Data.Aggregation
             }
         }
 
+        public AggregateConfiguration()
+        {
+            ClearAllInjections();
+        }
+
         /// <inheritdoc cref="OverrideFiltersByUsingParentAggregateConfigurationInstead_ID"/>
         [NoMappingToDatabase]
         public AggregateConfiguration OverrideFiltersByUsingParentAggregateConfigurationInstead

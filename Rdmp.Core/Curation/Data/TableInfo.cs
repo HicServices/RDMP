@@ -181,6 +181,11 @@ namespace Rdmp.Core.Curation.Data
 
         #endregion
 
+        public TableInfo()
+        {
+            ClearAllInjections();
+        }
+
         /// <summary>
         /// Defines a new table reference in the platform database <paramref name="repository"/>.  
         /// <para>Usually you should use <see cref="TableInfoImporter"/> instead</para>

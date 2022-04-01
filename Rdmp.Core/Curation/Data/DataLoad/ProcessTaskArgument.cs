@@ -49,6 +49,11 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         }}
         #endregion
 
+        public ProcessTaskArgument()
+        {
+
+        }
+
         /// <summary>
         /// Stores a new argument value for the class hosted by <see cref="ProcessTask"/>. Use
         /// <see cref="ArgumentFactory"/> if you want to do this in a more structured manner. 

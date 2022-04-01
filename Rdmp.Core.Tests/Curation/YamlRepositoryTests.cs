@@ -1,14 +1,36 @@
-﻿using NUnit.Framework;
+﻿using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Injection;
+using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Rdmp.Core.Tests.Curation
 {
     internal class YamlRepositoryTests
     {
+        [Test]
+        public void BlankConstructorsForEveryone()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            foreach(var t in new YamlRepository(GetUniqueDirectory()).GetCompatibleTypes())
+            {
+                var blankConstructor = t.GetConstructor(Type.EmptyTypes);
+
+                if (blankConstructor == null)
+                    sb.AppendLine(t.Name);
+            }
+
+            if(sb.Length > 0)
+            {
+                Assert.Fail($"All data classes must have a blank constructor.  The following did not:{Environment.NewLine}{sb}");
+            }
+        }
 
         [Test]
         public void TestYamlRepository_LoadObjects()
@@ -44,6 +66,11 @@ namespace Rdmp.Core.Tests.Curation
         private string GetUniqueDirectoryName()
         {
             return Path.Combine(TestContext.CurrentContext.WorkDirectory, Guid.NewGuid().ToString().Replace("-", ""));
+        }
+
+        private DirectoryInfo GetUniqueDirectory()
+        {
+            return new DirectoryInfo(GetUniqueDirectoryName());
         }
     }
 }
