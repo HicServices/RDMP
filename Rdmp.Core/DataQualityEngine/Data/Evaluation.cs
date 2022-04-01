@@ -173,35 +173,36 @@ namespace Rdmp.Core.DataQualityEngine.Data
         private void LoadRowAndColumnStates()
         {
             List<RowState> states = new List<RowState>();
-            var repo = Repository as TableRepository 
-                ?? throw new Exception($"Repository was not a {nameof(TableRepository)}.  Evaluation class requires a database back repository to fetch RowStates/ColumnStates.  Repository was of Type '{Repository.GetType().Name}'");
+            if (Repository is not TableRepository repo)
+                throw new Exception($"Repository was not a {nameof(TableRepository)}.  Evaluation class requires a database back repository to fetch RowStates/ColumnStates.  Repository was of Type '{Repository.GetType().Name}'");
 
-            using (var con = repo.GetConnection())
+            using var con = repo.GetConnection();
+            //get all the row level data
+            using (var cmdGetRowStates = DatabaseCommandHelper.GetCommand(
+                       $"select * from RowState WHERE Evaluation_ID = {ID}",
+                       con.Connection, con.Transaction))
             {
-                //get all the row level data
-                using (var cmdGetRowStates = DatabaseCommandHelper.GetCommand(
-                    "select * from RowState WHERE Evaluation_ID =" + ID, con.Connection,
-                    con.Transaction))
-                {
-                    using (var r2 = cmdGetRowStates.ExecuteReader())
-                        while (r2.Read())
-                            states.Add(new RowState(r2));
-                }
-
+                using var r2 = cmdGetRowStates.ExecuteReader();
+                while (r2.Read())
+                    states.Add(new RowState(r2));
                 rowStates = states.ToArray();
+                r2.Close();
+            }
 
-                //get all the column level data
-                using (var cmdGetColumnStates = DatabaseCommandHelper.GetCommand("select * from ColumnState WHERE ColumnState.Evaluation_ID =" + ID, con.Connection, con.Transaction))
-                using (var r2 = cmdGetColumnStates.ExecuteReader())
-                {
-                    List<ColumnState> colStates = new List<ColumnState>();
 
-                    while (r2.Read())
-                        colStates.Add(new ColumnState(r2));
+            //get all the column level data
+            using var cmdGetColumnStates = DatabaseCommandHelper.GetCommand(
+                $"select * from ColumnState WHERE ColumnState.Evaluation_ID = {ID}",
+                con.Connection, con.Transaction);
+            {
+                using var r2 = cmdGetColumnStates.ExecuteReader();
+                List<ColumnState> colStates = new List<ColumnState>();
 
-                    columnStates = colStates.ToArray();
-                    r2.Close();
-                }
+                while (r2.Read())
+                    colStates.Add(new ColumnState(r2));
+
+                columnStates = colStates.ToArray();
+                r2.Close();
             }
         }
     }
