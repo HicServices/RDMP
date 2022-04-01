@@ -51,6 +51,9 @@ namespace Rdmp.Core.CommandLine.Options
         [Option(Required = false, Default = false, HelpText = "Process returns errorcode '1' (instead of 0) if there are warnings")]
         public bool FailOnWarnings { get; set; }
 
+        [Option(Required = false, HelpText = "Connect to an RDMP platform 'database' stored on the file system at this folder")]
+        public string Dir { get; set; }
+
         /// <summary>
         /// If <see cref="ConnectionStringsFile"/> was specified and that file existed and was succesfully loaded
         /// using <see cref="PopulateConnectionStringsFromYamlIfMissing()"/> then this property will store the
@@ -70,6 +73,12 @@ namespace Rdmp.Core.CommandLine.Options
 
         public virtual IRDMPPlatformRepositoryServiceLocator GetRepositoryLocator()
         {
+            if(!string.IsNullOrWhiteSpace(Dir))
+            {
+                return new RepositoryProvider(new YamlRepository(new DirectoryInfo(Dir)));
+            }
+                
+
             if(_repositoryLocator == null)
             {
                 GetConnectionStrings(out var c, out var d);

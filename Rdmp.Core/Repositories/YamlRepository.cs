@@ -51,6 +51,11 @@ public class YamlRepository : MemoryDataExportRepository
         _serializer = builder.Build();
 
         LoadObjects();
+
+        MEF = new MEF();
+
+        // Don't create new objects with the ID of existing objects
+        NextObjectId = Objects.Count == 0 ? 0 : Objects.Max(o => o.ID);
     }
 
     private void LoadObjects()
@@ -99,6 +104,8 @@ public class YamlRepository : MemoryDataExportRepository
     public override void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
         base.DeleteFromDatabase(oTableWrapperObject);
+
+        File.Delete(GetPath(oTableWrapperObject));
     }
 
     public override void SaveToDatabase(IMapsDirectlyToDatabaseTable o)

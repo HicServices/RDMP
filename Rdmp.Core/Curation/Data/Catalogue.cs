@@ -117,9 +117,12 @@ namespace Rdmp.Core.Curation.Data
         [YamlMember(SerializeAs = typeof(string))]
         public CatalogueFolder Folder
         {
-            get { return _folder; }
+            get { return _folder ?? CatalogueFolder.Root; }
             set {
-                value.Parent = this;
+                
+                if(value != null)
+                    value.Parent = this;
+
                 SetField(ref  _folder, value); 
             }
         }
