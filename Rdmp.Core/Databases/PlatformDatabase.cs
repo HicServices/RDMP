@@ -8,13 +8,6 @@ using MapsDirectlyToDatabaseTable.Versioning;
 
 namespace Rdmp.Core.Databases
 {
-    public sealed class DataQualityEnginePatcher:Patcher
-    {
-        public DataQualityEnginePatcher() : base(2, "Databases.DataQualityEngineDatabase")
-        {
-            LegacyName = "DataQualityEngine.Database";
-        }
-    }
     public sealed class LoggingDatabasePatcher:Patcher
     {
         public LoggingDatabasePatcher():base(2,"Databases.LoggingDatabase")

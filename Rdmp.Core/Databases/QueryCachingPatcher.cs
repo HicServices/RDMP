@@ -13,6 +13,8 @@ using TypeGuesser;
 
 namespace Rdmp.Core.Databases
 {
+
+
     public sealed class QueryCachingPatcher:Patcher
     {
         public QueryCachingPatcher():base(2,"Databases.QueryCachingDatabase")

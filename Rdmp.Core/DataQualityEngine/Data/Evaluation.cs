@@ -19,19 +19,52 @@ namespace Rdmp.Core.DataQualityEngine.Data
     /// Root object for a DQE run including the time the DQE engine was run, the <see cref="Catalogue"/> being evaluated and all the results.
     /// An <see cref="Evaluation"/> is immutable and created created after each successful run.
     /// </summary>
-    public class Evaluation:DatabaseEntity
+    public class Evaluation : DatabaseEntity
     {
         public DateTime DateOfEvaluation { get; private set; }
-        public int CatalogueID {get; set; }
+        public int CatalogueID { get; set; }
 
         [NoMappingToDatabase]
         public ICatalogue Catalogue { get; private set; }
-        
-        [NoMappingToDatabase]
-        public RowState[] RowStates { get; set; }
+
+        private RowState[] rowStates;
 
         [NoMappingToDatabase]
-        public ColumnState[] ColumnStates { get; set; }
+        public RowState[] RowStates
+        {
+            get
+            {
+                if (rowStates == null)
+                    LoadRowAndColumnStates();
+
+                return rowStates;
+            }
+
+            set
+            {
+                rowStates = value;
+            }
+        }
+
+        
+        private ColumnState[] columnStates;
+
+        [NoMappingToDatabase]
+        public ColumnState[] ColumnStates
+        {
+            get
+            {
+                if(columnStates == null)
+                    LoadRowAndColumnStates();
+
+                return columnStates;
+            }
+
+            set
+            {
+                columnStates = value;
+            }
+        }
 
         [NoMappingToDatabase]
         public DQERepository DQERepository { get; set; }
@@ -135,6 +168,42 @@ namespace Rdmp.Core.DataQualityEngine.Data
             }
 
             return state.CountCorrect + state.CountMissing + state.CountWrong + state.CountInvalidatesRow;
+        }
+
+        private void LoadRowAndColumnStates()
+        {
+            List<RowState> states = new List<RowState>();
+            if (Repository is not TableRepository repo)
+                throw new Exception($"Repository was not a {nameof(TableRepository)}.  Evaluation class requires a database back repository to fetch RowStates/ColumnStates.  Repository was of Type '{Repository.GetType().Name}'");
+
+            using var con = repo.GetConnection();
+            //get all the row level data
+            using (var cmdGetRowStates = DatabaseCommandHelper.GetCommand(
+                       $"select * from RowState WHERE Evaluation_ID = {ID}",
+                       con.Connection, con.Transaction))
+            {
+                using var r2 = cmdGetRowStates.ExecuteReader();
+                while (r2.Read())
+                    states.Add(new RowState(r2));
+                rowStates = states.ToArray();
+                r2.Close();
+            }
+
+
+            //get all the column level data
+            using var cmdGetColumnStates = DatabaseCommandHelper.GetCommand(
+                $"select * from ColumnState WHERE ColumnState.Evaluation_ID = {ID}",
+                con.Connection, con.Transaction);
+            {
+                using var r2 = cmdGetColumnStates.ExecuteReader();
+                List<ColumnState> colStates = new List<ColumnState>();
+
+                while (r2.Read())
+                    colStates.Add(new ColumnState(r2));
+
+                columnStates = colStates.ToArray();
+                r2.Close();
+            }
         }
     }
 }

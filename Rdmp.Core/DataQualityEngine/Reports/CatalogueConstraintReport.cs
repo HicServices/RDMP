@@ -50,6 +50,12 @@ namespace Rdmp.Core.DataQualityEngine.Reports
         string _loggingTask;
         LogManager _logManager;
 
+        /// <summary>
+        /// Set this property to use an explicit DQE results store database instead of the
+        /// default DQE database indicated by the <see cref="ICatalogueRepository.GetServerDefaults"/>
+        /// </summary>
+        public DQERepository ExplicitDQERepository { get; set; }
+
         public CatalogueConstraintReport(ICatalogue catalogue, string dataLoadRunFieldName)
         {
             _dataLoadRunFieldName = dataLoadRunFieldName;
@@ -94,7 +100,7 @@ namespace Rdmp.Core.DataQualityEngine.Reports
             try
             {
                 _catalogue = c;
-                var dqeRepository = new DQERepository(c.CatalogueRepository);
+                var dqeRepository = ExplicitDQERepository ?? new DQERepository(c.CatalogueRepository);
 
                 byPivotCategoryCubesOverTime.Add("ALL", new PeriodicityCubesOverTime("ALL"));
                 byPivotRowStatesOverDataLoadRunId.Add("ALL", new DQEStateOverDataLoadRunId("ALL"));
@@ -216,12 +222,12 @@ namespace Rdmp.Core.DataQualityEngine.Reports
                             foreach (PeriodicityCubesOverTime periodicity in byPivotCategoryCubesOverTime.Values)
                                 periodicity.CommitToDatabase(evaluation);
 
-                        con.ManagedTransaction.CommitAndCloseConnection();
+                        dqeRepository.EndTransactedConnection(true);
 
                     }
                     catch (Exception)
                     {
-                        con.ManagedTransaction.AbandonAndCloseConnection();
+                        dqeRepository.EndTransactedConnection(false);
                         throw;
                     }
                 }
@@ -280,7 +286,7 @@ namespace Rdmp.Core.DataQualityEngine.Reports
             }
             try
             {
-                var dqeRepository = new DQERepository(_catalogue.CatalogueRepository);
+                var dqeRepository = ExplicitDQERepository ?? new DQERepository(_catalogue.CatalogueRepository);
                 notifier.OnCheckPerformed(new CheckEventArgs("Found DQE reporting server " + dqeRepository.DiscoveredServer.Name, CheckResult.Success));
             }
             catch (Exception e)

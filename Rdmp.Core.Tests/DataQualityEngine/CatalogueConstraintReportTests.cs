@@ -7,26 +7,38 @@
 using System;
 using System.Linq;
 using System.Threading;
+using FAnsi;
+using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.Databases;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.DataQualityEngine.Reports;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
+using Tests.Common;
 using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataQualityEngine
 {
     public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfiguration
     {
-        
-        [Test]
-        [TestCase(false)]
-        [TestCase(true)]
-        public void ValidateBulkTestData(bool testCancellingValiationEarly)
+        private DQERepository GetDqeRepository(DatabaseType dbType)
+        {
+            var db = GetCleanedServer(dbType,"DQETempTestDb");
+            var patcher = new DataQualityEnginePatcher();
+
+            var mds = new MasterDatabaseScriptExecutor(db);
+            mds.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier());
+
+            return new DQERepository(CatalogueRepository,db);
+        }
+
+        [TestCaseSource(typeof(All), nameof(All.DatabaseTypesWithBoolFlags))]
+        public void ValidateBulkTestData(DatabaseType dbType, bool testCancellingValiationEarly)
         {
             int numberOfRecordsToGenerate = 10000;
             DateTime startTime = DateTime.Now;
@@ -35,7 +47,7 @@ namespace Rdmp.Core.Tests.DataQualityEngine
             testData.SetupTestData();
             testData.ImportAsCatalogue();
 
-            DQERepository dqeRepository = new DQERepository(CatalogueRepository);
+            DQERepository dqeRepository = GetDqeRepository(dbType);
 
             //the shouldn't be any lingering results in the database
             Assert.IsNull(dqeRepository.GetMostRecentEvaluationFor(_catalogue));
@@ -49,6 +61,8 @@ namespace Rdmp.Core.Tests.DataQualityEngine
             
             //do the validation
             CatalogueConstraintReport report = new CatalogueConstraintReport(testData.catalogue, SpecialFieldNames.DataLoadRunID);
+            report.ExplicitDQERepository = dqeRepository;
+
             report.Check(new ThrowImmediatelyCheckNotifier());
 
             CancellationTokenSource source = new CancellationTokenSource();
@@ -66,7 +80,9 @@ namespace Rdmp.Core.Tests.DataQualityEngine
                 return;
             }
             
-            Assert.IsTrue(listener.EventsReceivedBySender[report].All(m => m.Exception == null));//all messages must have null exceptions
+            Assert.IsTrue(listener.EventsReceivedBySender[report].All(m => m.Exception == null),
+                String.Join(Environment.NewLine,
+                listener.EventsReceivedBySender[report].Where(m => m.Exception != null).Select(m=>m.Exception)));//all messages must have null exceptions
             
             
             //get the reuslts now
@@ -94,6 +110,7 @@ namespace Rdmp.Core.Tests.DataQualityEngine
             testData.DeleteCatalogue();
 
         }
+
 
 
         #region Checkability
