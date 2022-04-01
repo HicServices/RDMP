@@ -137,7 +137,7 @@ namespace Rdmp.Core.DataExport.Data
 
         public ExternalCohortTable()
         {
-
+            SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint();
         }
         /// <summary>
         /// Creates a new blank pointer to a cohort database.

@@ -344,7 +344,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             try
             {
                 var ex = Assert.Throws<NotSupportedException>(()=>c.Folder.Path = "fish");
-                Assert.AreEqual(@"All catalogue paths must start with \ but Catalogue bob had an attempt to set it's folder to :fish",ex.Message);
+                Assert.AreEqual(@"All catalogue paths must start with \.  Invalid path was:fish",ex.Message);
             }
             finally
             {
@@ -359,7 +359,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             try
             {
                 var ex = Assert.Throws<NotSupportedException>(()=>c.Folder.Path = null);
-                Assert.AreEqual(@"An attempt was made to set Catalogue bob Folder to null, every Catalogue must have a folder, set it to \ if you want the root",ex.Message);
+                Assert.AreEqual(@"An attempt was made to set Catalogue Folder to null, every Catalogue must have a folder, set it to \ if you want the root", ex.Message);
             }
             finally
             {
@@ -375,7 +375,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             {
                 //notice the @ symbol that makes the double slashes actual double slashes - common error we might make and what this test is designed to prevent
                 var ex = Assert.Throws<NotSupportedException>(()=>c.Folder.Path = @"\\bob\\");
-                Assert.AreEqual(@"Catalogue paths cannot contain double slashes '\\', Catalogue bob had an attempt to set it's folder to :\\bob\\",ex.Message);
+                Assert.AreEqual(@"Catalogue paths cannot contain double slashes '\\', Invalid path was:\\bob\\", ex.Message);
             }
             finally
             {
