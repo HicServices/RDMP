@@ -149,7 +149,7 @@ namespace MapsDirectlyToDatabaseTable
 
         }
 
-        public void SaveToDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
+        public virtual void SaveToDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
             //forget about property changes (since it's 'saved' now)
             if (_propertyChanges.ContainsKey(oTableWrapperObject))

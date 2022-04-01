@@ -30,6 +30,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using YamlDotNet.Serialization;
 
 namespace Rdmp.Core.Curation.Data
 {
@@ -113,10 +114,14 @@ namespace Rdmp.Core.Curation.Data
         /// <inheritdoc/>
         [DoNotImportDescriptions]
         [UsefulProperty]
+        [YamlMember(SerializeAs = typeof(string))]
         public CatalogueFolder Folder
         {
             get { return _folder; }
-            set { SetField(ref  _folder, value); }
+            set {
+                value.Parent = this;
+                SetField(ref  _folder, value); 
+            }
         }
          
         /// <inheritdoc/>
@@ -679,6 +684,16 @@ namespace Rdmp.Core.Curation.Data
             Clinic
         }
         #endregion
+
+        /// <summary>
+        /// Creates a new instance from an unknown repository (for use with serialization).  You must set
+        /// <see cref="IMapsDirectlyToDatabaseTable.Repository"/> before Methods that retrieve other objects or
+        /// save state can be called (e.g. <see cref="ISaveable.SaveToDatabase"/>)
+        /// </summary>
+        public Catalogue()
+        {
+
+        }
 
         /// <summary>
         /// Declares a new empty virtual dataset with the given Name.  This will not have any virtual columns and will not be tied to any underlying tables.  

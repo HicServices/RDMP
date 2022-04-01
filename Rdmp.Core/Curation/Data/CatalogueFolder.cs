@@ -22,7 +22,7 @@ namespace Rdmp.Core.Curation.Data
     /// </summary>
     public class CatalogueFolder : IConvertible
     {
-        private readonly ICatalogue _parent;
+        public ICatalogue Parent { get; internal set; }
         private string _path;
          
         /// <summary>
@@ -66,7 +66,7 @@ namespace Rdmp.Core.Curation.Data
             //always Lower everything!
             folder = folder.ToLower();
 
-            _parent = parent;
+            Parent = parent;
             Path = folder;
         }
 
@@ -84,16 +84,16 @@ namespace Rdmp.Core.Curation.Data
             reason = null;
 
             if (string.IsNullOrWhiteSpace(candidatePath))
-                reason = "An attempt was made to set Catalogue " +_parent+ " Folder to null, every Catalogue must have a folder, set it to \\ if you want the root";
+                reason = "An attempt was made to set Catalogue " + Parent + " Folder to null, every Catalogue must have a folder, set it to \\ if you want the root";
             else
             if (!candidatePath.StartsWith("\\"))
-                reason = "All catalogue paths must start with \\ but Catalogue " + _parent + " had an attempt to set it's folder to :" + candidatePath;
+                reason = "All catalogue paths must start with \\ but Catalogue " + Parent + " had an attempt to set it's folder to :" + candidatePath;
             else
             if (candidatePath.Contains("\\\\"))//if it contains double slash
-                reason = "Catalogue paths cannot contain double slashes '\\\\', Catalogue " + _parent + " had an attempt to set it's folder to :" + candidatePath;
+                reason = "Catalogue paths cannot contain double slashes '\\\\', Catalogue " + Parent + " had an attempt to set it's folder to :" + candidatePath;
             else
             if (candidatePath.Contains("/"))//if it contains double slash
-                reason = "Catalogue paths must use backwards slashes not forward slashes, Catalogue " + _parent + " had an attempt to set it's folder to :" + candidatePath;
+                reason = "Catalogue paths must use backwards slashes not forward slashes, Catalogue " + Parent + " had an attempt to set it's folder to :" + candidatePath;
 
             return reason == null;
         }
@@ -333,6 +333,10 @@ namespace Rdmp.Core.Curation.Data
 
             return toReturn.Distinct().ToArray();
 
+        }
+        public static explicit operator CatalogueFolder(string path)
+        {
+            return new CatalogueFolder(path);
         }
     }
 }
