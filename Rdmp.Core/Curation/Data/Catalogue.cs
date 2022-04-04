@@ -41,7 +41,7 @@ namespace Rdmp.Core.Curation.Data
         
         private string _acronym;
         private string _name;
-        private string _folder;
+        private string _folder = CatalogueFolder.Root;
         private string _description;
         private Uri _detailPageUrl;
         private CatalogueType _type;
@@ -117,7 +117,7 @@ namespace Rdmp.Core.Curation.Data
         public string Folder
         {
             get { return _folder; }
-            set { SetField(ref  _folder, value); }
+            set { SetField(ref  _folder, CatalogueFolder.Adjust(value)); }
         }
          
         /// <inheritdoc/>

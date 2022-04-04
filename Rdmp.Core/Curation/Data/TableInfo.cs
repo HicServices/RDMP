@@ -147,9 +147,6 @@ namespace Rdmp.Core.Curation.Data
 
         #endregion
         
-        // Temporary fix to remove downcasts to CatalogueRepository when using CatalogueRepository specific classes etc.
-        // Need to fix underlying design issue of having an IRepository in the base when this class requires an ICatalogueRepository
-        private readonly ICatalogueRepository _catalogueRepository;
         private Lazy<ColumnInfo[]> _knownColumnInfos;
         private Lazy<bool> _knownIsLookup;
         private Dictionary<DataAccessContext, Lazy<IDataAccessCredentials>> _knownCredentials = new Dictionary<DataAccessContext, Lazy<IDataAccessCredentials>>();
@@ -194,8 +191,6 @@ namespace Rdmp.Core.Curation.Data
         /// <param name="name"></param>
         public TableInfo(ICatalogueRepository repository, string name)
         {
-            _catalogueRepository = repository;
-
             var dumpServer = repository.GetServerDefaults().GetDefaultFor(PermissableDefaults.IdentifierDumpServer_ID);
 
             repository.InsertAndHydrate(this, new Dictionary<string, object>
@@ -210,8 +205,6 @@ namespace Rdmp.Core.Curation.Data
         internal TableInfo(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
-            _catalogueRepository = repository;
-
             Name =r["Name"].ToString();
             DatabaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), r["DatabaseType"].ToString());
             Server = r["Server"].ToString();
@@ -246,7 +239,7 @@ namespace Rdmp.Core.Curation.Data
         /// <inheritdoc/>
         public ISqlParameter[] GetAllParameters()
         {
-            return _catalogueRepository.GetAllParametersForParentTable(this).ToArray();
+            return CatalogueRepository.GetAllParametersForParentTable(this).ToArray();
         }
 
         /// <summary>
@@ -331,7 +324,7 @@ namespace Rdmp.Core.Curation.Data
         /// <param name="allowOverwritting">False will throw if there is already credentials declared for the table/context</param>
         public void SetCredentials(DataAccessCredentials credentials, DataAccessContext context, bool allowOverwritting = false)
         {
-            var existingCredentials = _catalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this, context);
+            var existingCredentials = CatalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this, context);
             
             //if user told us to set credentials to null complain
             if(credentials == null)
@@ -347,20 +340,20 @@ namespace Rdmp.Core.Curation.Data
 
                 if(!allowOverwritting)
                     throw new Exception("Cannot overwrite existing credentials " + existingCredentials.Name + " with new credentials " + credentials.Name + " with context " + context + " because allowOverwritting was false");
-            
+
                 //allow overwritting is on
                 //remove the existing link
-                _catalogueRepository.TableInfoCredentialsManager.BreakLinkBetween(existingCredentials, this, context);
+                CatalogueRepository.TableInfoCredentialsManager.BreakLinkBetween(existingCredentials, this, context);
             }
             //create a new one to the new credentials
-            _catalogueRepository.TableInfoCredentialsManager.CreateLinkBetween(credentials, this, context);
+            CatalogueRepository.TableInfoCredentialsManager.CreateLinkBetween(credentials, this, context);
         }
 
         /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
-            return 
-                _catalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this)
+            return
+                CatalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this)
                 .Select(kvp => kvp.Value)
                 .Cast<IHasDependencies>()
                 .ToArray();
@@ -402,7 +395,7 @@ namespace Rdmp.Core.Curation.Data
 
         private bool FetchIsLookup()
         {
-            return _catalogueRepository.IsLookupTable(this);
+            return CatalogueRepository.IsLookupTable(this);
         }
 
         /// <inheritdoc/>
@@ -464,7 +457,7 @@ namespace Rdmp.Core.Curation.Data
                 var context1 = context;
                 _knownCredentials.Add(context1,
                     new Lazy<IDataAccessCredentials>(() =>
-                        _catalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this,
+                        CatalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this,
                             context1)));
             }
         }

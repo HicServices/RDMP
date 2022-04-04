@@ -117,7 +117,7 @@ namespace Rdmp.Core.Curation.Data
             List<string> toReturn = new List<string>();
 
 
-            var remoteChildren = collection.Where(c => IsSubFolderOf(currentFolder,c.Folder)).Select(c=>c.Folder).ToArray();
+            var remoteChildren = collection.Where(c => IsSubFolderOf(c.Folder, currentFolder)).Select(c=>c.Folder).ToArray();
 
             //no subfolders exist
             if (!remoteChildren.Any())
