@@ -74,7 +74,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             }
 
             var remnantPipeline =
-                CatalogueRepository.GetAllObjects<Pipeline>("WHERE Name='KVPAttacherTestPipeline'").SingleOrDefault();
+                CatalogueRepository.GetAllObjectsWhere<Pipeline>("WHERE Name='KVPAttacherTestPipeline'").SingleOrDefault();
 
             if(remnantPipeline != null)
                 remnantPipeline.DeleteInDatabase();

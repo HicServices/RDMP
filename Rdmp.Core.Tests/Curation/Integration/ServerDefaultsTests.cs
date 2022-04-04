@@ -16,9 +16,6 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void CreateNewExternalServerAndConfigureItAsDefault()
         {
-
-            ServerDefaults defaults = new ServerDefaults(CatalogueRepository);
-
             var databaseServer = new ExternalDatabaseServer(CatalogueRepository, "Deleteme",null);
 
             try

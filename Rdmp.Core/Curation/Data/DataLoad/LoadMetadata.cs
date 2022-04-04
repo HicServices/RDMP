@@ -336,7 +336,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
 
             if (catalogue.LiveLoggingServer_ID == null)
             {
-                loggingServer = CatalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+                loggingServer = CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
                 if (loggingServer != null)
                     catalogue.LiveLoggingServer_ID = loggingServer.ID;

@@ -97,7 +97,7 @@ count(*)>1", queryBuilder.SQL);
                 param.Value = "'lobster'";
                 param.SaveToDatabase();
 
-                var aggregateForcedJoin = new AggregateForcedJoin(CatalogueRepository);
+                var aggregateForcedJoin = new AggregateForcedJoin(CatalogueTableRepository);
                 aggregateForcedJoin.CreateLinkBetween(agg, _function.TableInfoCreated);
 
                 //do a count * on the query builder

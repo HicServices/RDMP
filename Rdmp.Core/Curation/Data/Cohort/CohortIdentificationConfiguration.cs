@@ -187,7 +187,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
         /// <param name="name"></param>
         public CohortIdentificationConfiguration(ICatalogueRepository repository, string name)
         {
-            var queryCache = repository.GetServerDefaults().GetDefaultFor(PermissableDefaults.CohortIdentificationQueryCachingServer_ID);
+            var queryCache = repository.GetDefaultFor(PermissableDefaults.CohortIdentificationQueryCachingServer_ID);
 
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {

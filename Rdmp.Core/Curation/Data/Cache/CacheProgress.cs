@@ -272,7 +272,7 @@ FETCH NEXT " + batchSize + @" ROWS ONLY", conn.Connection,conn.Transaction))
 
         public DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen)
         {
-            serverChosen = CatalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+            serverChosen = CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
             return GetDistinctLoggingDatabase();
         }
 

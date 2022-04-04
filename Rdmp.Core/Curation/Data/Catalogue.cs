@@ -700,7 +700,7 @@ namespace Rdmp.Core.Curation.Data
         /// <param name="name"></param>
         public Catalogue(ICatalogueRepository repository, string name)
         {
-            var loggingServer = repository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+            var loggingServer = repository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
             repository.InsertAndHydrate(this,new Dictionary<string, object>()
             {
@@ -714,7 +714,7 @@ namespace Rdmp.Core.Curation.Data
             //if there is a default logging server
             if (LiveLoggingServer_ID == null)
             {
-                var liveLoggingServer = repository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+                var liveLoggingServer = repository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
                 
                 if(liveLoggingServer != null)
                     LiveLoggingServer_ID = liveLoggingServer.ID;

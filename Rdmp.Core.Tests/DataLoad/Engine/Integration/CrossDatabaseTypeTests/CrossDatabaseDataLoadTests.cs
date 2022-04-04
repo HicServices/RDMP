@@ -84,7 +84,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
         [TestCase(DatabaseType.MySql, TestCase.WithDiffColumnIgnoreRegex)]
         public void Load(DatabaseType databaseType, TestCase testCase)
         {
-            var defaults = new ServerDefaults(CatalogueRepository);
+            var defaults = CatalogueRepository;
             var logServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
             var logManager = new LogManager(logServer);
             
@@ -288,8 +288,7 @@ MrMurder,2001-01-01,Yella");
         public void DLELoadTwoTables(DatabaseType databaseType)
         {
             //setup the data tables
-            var defaults = new ServerDefaults(CatalogueRepository);
-            var logServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+            var logServer = CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
             var logManager = new LogManager(logServer);
 
             var db = GetCleanedServer(databaseType);

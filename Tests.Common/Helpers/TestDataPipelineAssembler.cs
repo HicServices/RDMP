@@ -29,7 +29,7 @@ namespace Tests.Common.Helpers
         public PipelineComponent Source { get; set; }
         public Pipeline Pipeline { get; set; }
 
-        public TestDataPipelineAssembler(string pipeName, CatalogueRepository catalogueRepository)
+        public TestDataPipelineAssembler(string pipeName, ICatalogueRepository catalogueRepository)
         {
             Pipeline = new Pipeline(catalogueRepository, pipeName);
             Source = new PipelineComponent(catalogueRepository, Pipeline, typeof(TestDataInventor), 1, "DataInventorSource");

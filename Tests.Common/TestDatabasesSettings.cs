@@ -32,6 +32,9 @@ namespace Tests.Common
         public string PostgreSqlLowPrivilegeUsername { get; set; }
         public string PostgreSqlLowPrivilegePassword { get; set; }
 
+
+        public bool UseFileSystemRepo { get; set; }
+
         public string GetLowPrivilegeUsername(DatabaseType databaseType)
         {
             return databaseType switch

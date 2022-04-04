@@ -49,16 +49,46 @@ namespace Tests.Common
         protected readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
         private static TestDatabasesSettings TestDatabaseSettings;
 
-        public CatalogueRepository CatalogueRepository
+        public ICatalogueRepository CatalogueRepository
         {
-            get { return (CatalogueRepository) RepositoryLocator.CatalogueRepository; }
+            get { return RepositoryLocator.CatalogueRepository; }
         }
-        
-        public DataExportRepository DataExportRepository 
+
+        /// <summary>
+        /// Gets an <see cref="ICatalogueRepository"/> that points to a 
+        /// database server or throws with <see cref="Assert.Inconclusive()"/>
+        /// </summary>
+        public CatalogueRepository CatalogueTableRepository
         {
-            get { return (DataExportRepository) RepositoryLocator.DataExportRepository; }
+            get {
+
+                if (RepositoryLocator.CatalogueRepository is CatalogueRepository tableRepository)
+                    return tableRepository;
+
+                Assert.Inconclusive("CatalogueRepository is not a TableRepository");
+                return null;
+            }
         }
-        
+        public IDataExportRepository DataExportRepository 
+        {
+            get { return RepositoryLocator.DataExportRepository; }
+        }
+        /// <summary>
+        /// Gets an <see cref="IDataExportRepository"/> that points to a 
+        /// database server or throws with <see cref="Assert.Inconclusive()"/>
+        /// </summary>
+        public DataExportRepository DataExportTableRepository
+        {
+            get
+            {
+
+                if (RepositoryLocator.DataExportRepository is DataExportRepository tableRepository)
+                    return tableRepository;
+
+                Assert.Inconclusive("DataExportRepository is not a TableRepository");
+                return null;
+            }
+        }
         protected SqlConnectionStringBuilder UnitTestLoggingConnectionString;
         protected SqlConnectionStringBuilder DataQualityEngineConnectionString;
         
@@ -74,7 +104,7 @@ namespace Tests.Common
 
         static DatabaseTests()
         {
-            CatalogueRepository.SuppressHelpLoading = true;
+            Rdmp.Core.Repositories.CatalogueRepository.SuppressHelpLoading = true;
 
             // Always ignore SSL when running tests
             DiscoveredServerHelper.AddConnectionStringKeyword(DatabaseType.MicrosoftSQLServer, "TrustServerCertificate", "true", ConnectionStringKeywordPriority.ApiRule);
@@ -117,28 +147,40 @@ namespace Tests.Common
             };
 
             
-            RepositoryLocator = new PlatformDatabaseCreationRepositoryFinder(opts);
+            RepositoryLocator = TestDatabaseSettings.UseFileSystemRepo ? 
+                new RepositoryProvider(new YamlRepository(new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "Repo")))) :
+                new PlatformDatabaseCreationRepositoryFinder(opts);
 
             
-            Console.WriteLine("Expecting Unit Test Catalogue To Be At Server=" + CatalogueRepository.DiscoveredServer.Name + " Database=" + CatalogueRepository.DiscoveredServer.GetCurrentDatabase());
             
-            if(!CatalogueRepository.DiscoveredServer.Exists())
+            
+            if(CatalogueRepository is TableRepository cataRepo)
             {
-                Assert.Inconclusive("Catalogue database does not exist, run 'rdmp.exe install ...' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
+                Console.WriteLine("Expecting Unit Test Catalogue To Be At Server=" + cataRepo.DiscoveredServer.Name + " Database=" + cataRepo.DiscoveredServer.GetCurrentDatabase());
+
+                if(!cataRepo.DiscoveredServer.Exists())
+                    Assert.Inconclusive("Catalogue database does not exist, run 'rdmp.exe install ...' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
             }
                 
 
             Console.WriteLine("Found Catalogue");
 
-            Console.WriteLine("Expecting Unit Test Data Export To Be At Server=" + DataExportRepository.DiscoveredServer.Name + " Database= " + DataExportRepository.DiscoveredServer.GetCurrentDatabase());
-            Assert.IsTrue(DataExportRepository.DiscoveredServer.Exists(), "Data Export database does not exist, run 'rdmp.exe install ...' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
+            
+
+            if(DataExportRepository is TableRepository tblRepo)
+            {
+                Console.WriteLine("Expecting Unit Test Data Export To Be At Server=" + tblRepo.DiscoveredServer.Name + " Database= " + tblRepo.DiscoveredServer.GetCurrentDatabase());
+                Assert.IsTrue(tblRepo.DiscoveredServer.Exists(), "Data Export database does not exist, run 'rdmp.exe install ...' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
+            }
+                
+
             Console.WriteLine("Found DataExport");
             
             Console.Write(Environment.NewLine + Environment.NewLine + Environment.NewLine);
 
             RunBlitzDatabases(RepositoryLocator);
 
-            var defaults = CatalogueRepository.GetServerDefaults();
+            var defaults = CatalogueRepository;
 
             DataQualityEngineConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, PlatformDatabaseCreation.DefaultDQEDatabaseName, PermissableDefaults.DQE,new DataQualityEnginePatcher());
             UnitTestLoggingConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, PlatformDatabaseCreation.DefaultLoggingDatabaseName, PermissableDefaults.LiveLoggingServer_ID, new LoggingDatabasePatcher());
@@ -214,7 +256,10 @@ namespace Tests.Common
         /// <param name="repositoryLocator"></param>
         protected void RunBlitzDatabases(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
-            using (var con = CatalogueRepository.GetConnection())
+            if (!(CatalogueRepository is TableRepository cataTblRepo))
+                return;
+
+            using (var con = cataTblRepo.GetConnection())
             {
                 var catalogueDatabaseName = ((TableRepository) repositoryLocator.CatalogueRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
                 var dataExportDatabaseName = ((TableRepository) repositoryLocator.DataExportRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
@@ -229,7 +274,10 @@ namespace Tests.Common
         /// </summary>
         protected void BlitzMainDataTables()
         {
-            using (var con = CatalogueRepository.GetConnection())
+            if (!(CatalogueRepository is TableRepository cataTblRepo))
+                return;
+
+            using (var con = cataTblRepo.GetConnection())
             {
                 var catalogueDatabaseName = ((TableRepository)RepositoryLocator.CatalogueRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
                 var dataExportDatabaseName = ((TableRepository)RepositoryLocator.DataExportRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();

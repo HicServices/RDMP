@@ -217,7 +217,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             if (sendDodgyCredentials && !overrideRAW)
                 throw new NotSupportedException("Cannot send dodgy credentials if you aren't overriding RAW");
 
-            ServerDefaults defaults = new ServerDefaults(CatalogueRepository);
+            IServerDefaults defaults = CatalogueRepository;
             var oldDefault = defaults.GetDefaultFor(PermissableDefaults.RAWDataLoadServer);
 
             var testDirPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
@@ -238,7 +238,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 databaseHelper.SetUp(server);
 
                 // Create the Catalogue entities for the dataset
-                catalogueEntities.Create(CatalogueRepository, databaseHelper.DatabaseToLoad, loadDirectory);
+                catalogueEntities.Create(CatalogueTableRepository, databaseHelper.DatabaseToLoad, loadDirectory);
                 
                 if (overrideRAW)
                 {

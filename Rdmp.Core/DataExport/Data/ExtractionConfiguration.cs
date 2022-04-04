@@ -676,7 +676,7 @@ namespace Rdmp.Core.DataExport.Data
                 //failed to get a logging server correctly
 
                 //see if there is a default
-                var defaultGetter = Project.DataExportRepository.CatalogueRepository.GetServerDefaults();
+                var defaultGetter = Project.DataExportRepository.CatalogueRepository;
                 var defaultLoggingServer = defaultGetter.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
                 //there is a default?

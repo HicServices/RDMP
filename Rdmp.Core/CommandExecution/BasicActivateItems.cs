@@ -123,7 +123,7 @@ namespace Rdmp.Core.CommandExecution
             RepositoryLocator = repositoryLocator;
             GlobalErrorCheckNotifier = globalErrorCheckNotifier;
 
-            ServerDefaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
+            ServerDefaults = RepositoryLocator.CatalogueRepository;
             
             //Shouldn't ever change externally to your session so doesn't need constantly refreshed
             FavouritesProvider = new FavouritesProvider(this);

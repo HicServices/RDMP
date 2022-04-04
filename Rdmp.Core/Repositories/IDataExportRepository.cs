@@ -14,7 +14,7 @@ namespace Rdmp.Core.Repositories
     /// <summary>
     /// See DataExportRepository
     /// </summary>
-    public interface IDataExportRepository : IRepository
+    public interface IDataExportRepository : IRepository, IExtractableDataSetPackageManager
     {
         ICatalogueRepository CatalogueRepository { get; }
         CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c);
@@ -26,7 +26,6 @@ namespace Rdmp.Core.Repositories
         /// </summary>
         IFilterManager FilterManager { get; }
 
-        IExtractableDataSetPackageManager PackageManager { get;}
 
         /// <summary>
         /// Handles forbidding deleting stuff / cascading deletes into other objects

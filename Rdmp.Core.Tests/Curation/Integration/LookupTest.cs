@@ -218,7 +218,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
         {
              
             //this only works for MSSQL Servers
-            if (CatalogueRepository.DiscoveredServer.DatabaseType != DatabaseType.MicrosoftSQLServer)
+            if (CatalogueTableRepository.DiscoveredServer.DatabaseType != DatabaseType.MicrosoftSQLServer)
                 Assert.Ignore("This test only targets Microsft SQL Servers");
 
             TableInfo fkTable = null;

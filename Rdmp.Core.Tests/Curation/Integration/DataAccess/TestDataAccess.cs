@@ -160,7 +160,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
         {
             try
             {
-                var repository = new CatalogueRepository(CatalogueRepository.ConnectionStringBuilder);
+                var repository = new CatalogueRepository(CatalogueTableRepository.ConnectionStringBuilder);
                 var cata = new Catalogue(repository, "bob");
                 cata.Name = "Fuss";
                 cata.SaveToDatabase();
@@ -224,7 +224,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
                 }
                 finally
                 {
-                    var linker = new TableInfoCredentialsManager(CatalogueRepository);
+                    var linker = new TableInfoCredentialsManager(CatalogueTableRepository);
                     linker.BreakAllLinksBetween(creds, t);
                     creds.DeleteInDatabase();
                 }

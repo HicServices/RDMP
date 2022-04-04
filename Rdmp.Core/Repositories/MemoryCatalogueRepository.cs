@@ -157,11 +157,6 @@ namespace Rdmp.Core.Repositories
             return Objects.OfType<T>().Where(r => r.IsReferenceTo(o)).ToArray();
         }
 
-        public IServerDefaults GetServerDefaults()
-        {
-            return this;
-        }
-
         public bool IsLookupTable(ITableInfo tableInfo)
         {
             return GetAllObjects<Lookup>().Any(l => l.Description.TableInfo.Equals(tableInfo));
@@ -519,6 +514,31 @@ namespace Rdmp.Core.Repositories
             return new SimpleStringValueEncryption(null);
         }
         public void ClearAllInjections()
+        {
+
+        }
+
+        public void SetEncryptionKeyPath(string fullName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetEncryptionKeyPath()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteEncryptionKeyPath()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IDisposable BeginNewTransaction()
+        {
+            return new EmptyDisposeable();
+        }
+
+        public void EndTransaction(bool commit)
         {
 
         }

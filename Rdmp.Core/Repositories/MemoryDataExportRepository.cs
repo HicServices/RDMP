@@ -93,6 +93,11 @@ namespace Rdmp.Core.Repositories
 
             _packageDictionary[package].Remove(dataSet);
         }
+
+        public Dictionary<int, List<int>> GetPackageContentsDictionary()
+        {
+            throw new System.NotImplementedException();
+        }
         #endregion
     }
 }

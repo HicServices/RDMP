@@ -153,7 +153,7 @@ namespace Rdmp.UI.Versioning
                 newServer.SetProperties(db);
                 
                 if(defaultToSet != PermissableDefaults.None)
-                    repository.GetServerDefaults().SetDefault(defaultToSet, newServer);
+                    repository.SetDefault(defaultToSet, newServer);
 
                 return newServer;
             }

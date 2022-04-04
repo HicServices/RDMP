@@ -27,7 +27,7 @@ namespace Rdmp.Core.Tests.Providers
             Assert.AreNotSame(cata,CatalogueRepository.GetAllObjects<Catalogue>()[0]);
 
             //create a cache
-            var rowVerCache = new RowVerCache<Catalogue>(CatalogueRepository);
+            var rowVerCache = new RowVerCache<Catalogue>(CatalogueTableRepository);
 
             //should fill the cache
             cata = rowVerCache.GetAllObjects()[0];

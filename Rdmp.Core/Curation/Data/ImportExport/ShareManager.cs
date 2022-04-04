@@ -56,7 +56,7 @@ namespace Rdmp.Core.Curation.Data.ImportExport
 
         private int? DefaultLocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipattribute, ShareDefinition sharedefinition)
         {
-            var defaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
+            var defaults = RepositoryLocator.CatalogueRepository;
 
 
             if(property.Name == "LiveLoggingServer_ID" || property.Name == "TestLoggingServer_ID")

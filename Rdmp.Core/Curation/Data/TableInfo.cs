@@ -191,7 +191,7 @@ namespace Rdmp.Core.Curation.Data
         /// <param name="name"></param>
         public TableInfo(ICatalogueRepository repository, string name)
         {
-            var dumpServer = repository.GetServerDefaults().GetDefaultFor(PermissableDefaults.IdentifierDumpServer_ID);
+            var dumpServer = repository.GetDefaultFor(PermissableDefaults.IdentifierDumpServer_ID);
 
             repository.InsertAndHydrate(this, new Dictionary<string, object>
             {

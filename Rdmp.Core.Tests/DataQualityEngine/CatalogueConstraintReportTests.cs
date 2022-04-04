@@ -84,7 +84,7 @@ namespace Rdmp.Core.Tests.DataQualityEngine
             Assert.GreaterOrEqual(results.ColumnStates.Count(),5);
 
             //Did it log?
-            LogManager logManager = new LogManager(CatalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
+            LogManager logManager = new LogManager(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
             var log = logManager.GetArchivalDataLoadInfos("DQE").FirstOrDefault();
             Assert.IsNotNull(log);
             Assert.GreaterOrEqual(log.StartTime, startTime);
@@ -102,7 +102,7 @@ namespace Rdmp.Core.Tests.DataQualityEngine
         [Test]
         public void SupportsValidation_NoLoggingServer()
         {
-            IServerDefaults defaults = CatalogueRepository.GetServerDefaults();
+            IServerDefaults defaults = CatalogueRepository;
             var before = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
             //cannot run test because it didn't have a value to clear!
@@ -130,7 +130,7 @@ namespace Rdmp.Core.Tests.DataQualityEngine
         [Test]
         public void SupportsValidation_NoDQE()
         {
-            IServerDefaults defaults = CatalogueRepository.GetServerDefaults();
+            IServerDefaults defaults = CatalogueRepository;
             var before = defaults.GetDefaultFor(PermissableDefaults.DQE);
 
             //cannot run test because it didn't have a value to clear!
