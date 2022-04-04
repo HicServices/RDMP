@@ -310,7 +310,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             var c = new Catalogue(Repository, "bob");
             try
             {
-                Assert.AreEqual("\\",c.Folder.Path);
+                Assert.AreEqual("\\",c.Folder);
             }
             finally
             {
@@ -323,12 +323,12 @@ namespace Rdmp.Core.Tests.Curation.Integration
             var c = new Catalogue(Repository, "bob"); 
             try
             {
-                c.Folder.Path = "\\Research\\Important";
-                Assert.AreEqual("\\research\\important\\", c.Folder.Path);
+                c.Folder = "\\Research\\Important";
+                Assert.AreEqual("\\research\\important\\", c.Folder);
                 c.SaveToDatabase();
 
                 var c2 = Repository.GetObjectByID<Catalogue>(c.ID);
-                Assert.AreEqual("\\research\\important\\", c2.Folder.Path);
+                Assert.AreEqual("\\research\\important\\", c2.Folder);
             }
             finally
             {
@@ -343,7 +343,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             var c = new Catalogue(Repository, "bob");
             try
             {
-                var ex = Assert.Throws<NotSupportedException>(()=>c.Folder.Path = "fish");
+                var ex = Assert.Throws<NotSupportedException>(()=>c.Folder = "fish");
                 Assert.AreEqual(@"All catalogue paths must start with \.  Invalid path was:fish",ex.Message);
             }
             finally
@@ -358,7 +358,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             var c = new Catalogue(Repository, "bob");
             try
             {
-                var ex = Assert.Throws<NotSupportedException>(()=>c.Folder.Path = null);
+                var ex = Assert.Throws<NotSupportedException>(()=>c.Folder = null);
                 Assert.AreEqual(@"An attempt was made to set Catalogue Folder to null, every Catalogue must have a folder, set it to \ if you want the root", ex.Message);
             }
             finally
@@ -374,7 +374,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             try
             {
                 //notice the @ symbol that makes the double slashes actual double slashes - common error we might make and what this test is designed to prevent
-                var ex = Assert.Throws<NotSupportedException>(()=>c.Folder.Path = @"\\bob\\");
+                var ex = Assert.Throws<NotSupportedException>(()=>c.Folder = @"\\bob\\");
                 Assert.AreEqual(@"Catalogue paths cannot contain double slashes '\\', Invalid path was:\\bob\\", ex.Message);
             }
             finally
@@ -391,16 +391,16 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             try
             {
-                c1.Folder.Path = "\\Research\\";
-                Assert.AreEqual("\\research\\", c1.Folder.Path);
+                c1.Folder = "\\Research\\";
+                Assert.AreEqual("\\research\\", c1.Folder);
                 c1.SaveToDatabase();
 
-                c2.Folder.Path = "\\Research\\Methodology";
-                Assert.AreEqual( "\\research\\methodology\\",c2.Folder.Path);
+                c2.Folder = "\\Research\\Methodology";
+                Assert.AreEqual( "\\research\\methodology\\",c2.Folder);
 
                 c2.SaveToDatabase();
 
-                Assert.IsTrue(c2.Folder.IsSubFolderOf(c1.Folder));
+                Assert.IsTrue(CatalogueFolder.IsSubFolderOf(c2.Folder,c1.Folder));
 
             }
             finally
@@ -420,26 +420,26 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             try
             {
-                c1.Folder.Path = @"\A\B\C\";
+                c1.Folder = @"\A\B\C\";
                 c1.SaveToDatabase();
 
-                c2.Folder.Path = @"\B\C\";
+                c2.Folder = @"\B\C\";
                 c2.SaveToDatabase();
 
-                c3.Folder.Path = @"\A\B\";
+                c3.Folder = @"\A\B\";
                 c3.SaveToDatabase();
                 
                 //c1 is a subfolder of c3
-                Assert.IsFalse(c1.Folder.IsSubFolderOf(c2.Folder));
-                Assert.IsTrue(c1.Folder.IsSubFolderOf(c3.Folder));
+                Assert.IsFalse(CatalogueFolder.IsSubFolderOf(c1.Folder,c2.Folder));
+                Assert.IsTrue(CatalogueFolder.IsSubFolderOf(c1.Folder,c3.Folder));
 
                 //c2 is nobodies subfolder
-                Assert.IsFalse(c2.Folder.IsSubFolderOf(c1.Folder));
-                Assert.IsFalse(c2.Folder.IsSubFolderOf(c3.Folder));
+                Assert.IsFalse(CatalogueFolder.IsSubFolderOf(c2.Folder, c1.Folder));
+                Assert.IsFalse(CatalogueFolder.IsSubFolderOf(c2.Folder, c3.Folder));
 
                 //c2 is nobodies subfolder
-                Assert.IsFalse(c3.Folder.IsSubFolderOf(c1.Folder));
-                Assert.IsFalse(c3.Folder.IsSubFolderOf(c2.Folder));
+                Assert.IsFalse(CatalogueFolder.IsSubFolderOf(c3.Folder,c1.Folder));
+                Assert.IsFalse(CatalogueFolder.IsSubFolderOf(c3.Folder,c2.Folder));
 
             }
             finally
@@ -472,46 +472,48 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             try
             {
-                c1.Folder.Path = @"\2005\Research\Current";
+                c1.Folder = @"\2005\Research\Current";
                 c1.SaveToDatabase();
 
-                c2.Folder.Path = @"\2005\Research\Previous";
+                c2.Folder = @"\2005\Research\Previous";
                 c2.SaveToDatabase();
 
 
-                c3.Folder.Path = @"\2001\Research\Current";
+                c3.Folder = @"\2001\Research\Current";
                 c3.SaveToDatabase();
 
-                c4.Folder.Path = @"\Homeland\Research\Current";
+                c4.Folder = @"\Homeland\Research\Current";
                 c4.SaveToDatabase();
                 
-                c5.Folder.Path = @"\Homeland\Research\Current";
+                c5.Folder = @"\Homeland\Research\Current";
                 c5.SaveToDatabase();
                 
-                c6.Folder.Path = @"\Homeland\Research\Current";
+                c6.Folder = @"\Homeland\Research\Current";
                 c6.SaveToDatabase();
 
                 var collection = new[] {c1, c2, c3, c4,c5,c6};
 
-                var results = CatalogueFolder.Root.GetImmediateSubFoldersUsing(collection);
+                var results = CatalogueFolder.GetImmediateSubFoldersUsing(CatalogueFolder.Root,collection);
 
                 Assert.AreEqual(3,results.Length);
-                CatalogueFolder TwoThousandFive = results.Single(f => f.Path.Equals(@"\2005\"));
-                CatalogueFolder TwoThousandOne = results.Single(f => f.Path.Equals(@"\2001\"));
-                CatalogueFolder Homeland = results.Single(f => f.Path.Equals(@"\homeland\"));
+                string TwoThousandFive = results.Single(f => f.Equals(@"\2005\"));
+                string TwoThousandOne = results.Single(f => f.Equals(@"\2001\"));
+                string Homeland = results.Single(f => f.Equals(@"\homeland\"));
                 
-                Assert.AreEqual(1,Homeland.GetImmediateSubFoldersUsing(collection).Length);
-                Assert.AreEqual(1, Homeland.GetImmediateSubFoldersUsing(collection).Count(f=>f.Path.Equals(@"\homeland\research\")));
+                Assert.AreEqual(1,CatalogueFolder.GetImmediateSubFoldersUsing(Homeland,collection).Length);
+                Assert.AreEqual(1, CatalogueFolder.GetImmediateSubFoldersUsing(Homeland,collection).Count(f=>f.Equals(@"\homeland\research\")));
 
-                Assert.AreEqual(1, TwoThousandOne.GetImmediateSubFoldersUsing(collection).Length);
-                Assert.AreEqual(1, TwoThousandOne.GetImmediateSubFoldersUsing(collection).Count(f => f.Path.Equals(@"\2001\research\")));
+                Assert.AreEqual(1, CatalogueFolder.GetImmediateSubFoldersUsing(TwoThousandOne,collection).Length);
+                Assert.AreEqual(1, CatalogueFolder.GetImmediateSubFoldersUsing(TwoThousandOne,collection).Count(f => f.Equals(@"\2001\research\")));
 
-                CatalogueFolder[] finalResult = TwoThousandFive.GetImmediateSubFoldersUsing(collection).Single().GetImmediateSubFoldersUsing(collection);
+                var sub = CatalogueFolder.GetImmediateSubFoldersUsing(TwoThousandFive, collection).Single();
+
+                string[] finalResult = CatalogueFolder.GetImmediateSubFoldersUsing(sub,collection);
                 Assert.AreEqual(2, finalResult.Length);
-                Assert.AreEqual(1, finalResult.Count(c => c.Path.Equals(@"\2005\research\current\")));
-                Assert.AreEqual(1, finalResult.Count(c => c.Path.Equals(@"\2005\research\previous\")));
+                Assert.AreEqual(1, finalResult.Count(c => c.Equals(@"\2005\research\current\")));
+                Assert.AreEqual(1, finalResult.Count(c => c.Equals(@"\2005\research\previous\")));
 
-                Assert.AreEqual(0,finalResult[0].GetImmediateSubFoldersUsing(collection).Length);
+                Assert.AreEqual(0, CatalogueFolder.GetImmediateSubFoldersUsing(finalResult[0],collection).Length);
             }
             finally 
             {

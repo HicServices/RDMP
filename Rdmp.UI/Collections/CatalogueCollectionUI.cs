@@ -272,10 +272,10 @@ namespace Rdmp.UI.Collections
 
             if (cata != null)
             {
-                var oldFolder = tlvCatalogues.GetParent(cata) as CatalogueFolder;
+                var oldFolder = tlvCatalogues.GetParent(cata) as string;
 
                 //if there's a change to the folder of the catalogue or it is a new Catalogue (no parent folder) we have to rebuild the entire tree
-                if (oldFolder == null || !oldFolder.Path.Equals(cata.Folder.Path))
+                if (oldFolder == null || !oldFolder.Equals(cata.Folder))
                     RefreshUIFromDatabase(CatalogueFolder.Root);
                 else
                     RefreshUIFromDatabase(o);

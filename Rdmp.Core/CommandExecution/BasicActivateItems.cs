@@ -670,7 +670,7 @@ namespace Rdmp.Core.CommandExecution
         }
         
         /// <inheritdoc/>
-        public virtual ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo, ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, CatalogueFolder catalogueFolder)
+        public virtual ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo, ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, string catalogueFolder)
         {
             // Create a new Catalogue based on the table info
             var engineer = new ForwardEngineerCatalogue(tableInfo,tableInfo.ColumnInfos,true);

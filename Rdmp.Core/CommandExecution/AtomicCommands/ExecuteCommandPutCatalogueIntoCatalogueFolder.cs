@@ -13,20 +13,20 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     public class ExecuteCommandPutCatalogueIntoCatalogueFolder: BasicCommandExecution
     {
         private readonly Catalogue[] _catalogues;
-        private readonly CatalogueFolder _targetModel;
+        private readonly string _targetModel;
 
-        public ExecuteCommandPutCatalogueIntoCatalogueFolder(IBasicActivateItems activator, CatalogueCombineable cmd, CatalogueFolder targetModel)
+        public ExecuteCommandPutCatalogueIntoCatalogueFolder(IBasicActivateItems activator, CatalogueCombineable cmd, string targetModel)
             :this(activator,new []{cmd.Catalogue},targetModel)
         {
             
         }
-        public ExecuteCommandPutCatalogueIntoCatalogueFolder(IBasicActivateItems activator, ManyCataloguesCombineable cmd, CatalogueFolder targetModel)
+        public ExecuteCommandPutCatalogueIntoCatalogueFolder(IBasicActivateItems activator, ManyCataloguesCombineable cmd, string targetModel)
             : this(activator, cmd.Catalogues, targetModel)
         {
             
         }
 
-        private ExecuteCommandPutCatalogueIntoCatalogueFolder(IBasicActivateItems activator, Catalogue[] catalogues, CatalogueFolder targetModel) : base(activator)
+        private ExecuteCommandPutCatalogueIntoCatalogueFolder(IBasicActivateItems activator, Catalogue[] catalogues, string targetModel) : base(activator)
         {
             _targetModel = targetModel;
             _catalogues = catalogues;

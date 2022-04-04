@@ -76,7 +76,7 @@ namespace Rdmp.UI.CommandExecution
         private ICommandExecution CreateNoCache(ICombineToMakeCommand cmd, object targetModel,InsertOption insertOption = InsertOption.Default)
         {
             ///////////////Catalogue or ambiguous Drop Targets ////////////////////////
-            var targetCatalogueFolder = targetModel as CatalogueFolder;
+            var targetCatalogueFolder = targetModel as string;
             if (targetCatalogueFolder != null)
                 return CreateWhenTargetIsFolder(cmd, targetCatalogueFolder);
             
@@ -136,7 +136,7 @@ namespace Rdmp.UI.CommandExecution
         }
 
 
-        private ICommandExecution CreateWhenTargetIsFolder(ICombineToMakeCommand cmd, CatalogueFolder targetCatalogueFolder)
+        private ICommandExecution CreateWhenTargetIsFolder(ICombineToMakeCommand cmd, string targetCatalogueFolder)
         {
             var sourceCatalogue = cmd as CatalogueCombineable;
             var sourceManyCatalogues = cmd as ManyCataloguesCombineable;

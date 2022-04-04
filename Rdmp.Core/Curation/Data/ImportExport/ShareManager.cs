@@ -587,12 +587,7 @@ namespace Rdmp.Core.Curation.Data.ImportExport
                 propertyType = propertyType.GetGenericArguments()[0]; //lets pretend it's just int / whatever
 
             if (value != null && value != DBNull.Value && !propertyType.IsInstanceOfType(value))
-                if (propertyType == typeof(CatalogueFolder))
-                {
-                    //will be passed as a string
-                    value = value is string ? new CatalogueFolder((string)value) : (CatalogueFolder)value;
-                }
-                else if (propertyType == typeof(Uri))
+                if (propertyType == typeof(Uri))
                     value = value is string ? new Uri((string)value):(Uri) value;
                 else
                 if (typeof(Enum).IsAssignableFrom(propertyType))

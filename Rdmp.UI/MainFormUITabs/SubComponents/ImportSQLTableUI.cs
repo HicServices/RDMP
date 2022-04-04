@@ -38,7 +38,7 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
         private readonly bool _allowImportAsCatalogue;
         public ITableInfoImporter Importer { get; private set; }
         public ITableInfo TableInfoCreatedIfAny { get; private set; }
-        public CatalogueFolder TargetFolder { get; set; }
+        public string TargetFolder { get; set; }
 
         private Project _projectSpecific;
 

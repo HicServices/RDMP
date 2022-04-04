@@ -138,7 +138,7 @@ namespace Rdmp.Core.CommandExecution
                     SuggestedCategory = Metadata };
             }
 
-            if(Is(o,out CatalogueFolder cf))
+            if(Is(o,out string cf))
             {
                 yield return new ExecuteCommandCreateNewCatalogueByImportingFile(_activator) { 
                     OverrideCommandName = "New Catalogue From File...",TargetFolder = cf, SuggestedCategory = Add, Weight = -90.9f};
