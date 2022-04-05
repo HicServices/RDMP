@@ -247,6 +247,9 @@ select 0", con.Connection, con.Transaction))
         public IExternalDatabaseServer GetDefaultFor(PermissableDefaults field)
         {
 
+            if (field == PermissableDefaults.None)
+                return null;
+
             using (var con = GetConnection())
             {
                 using (var cmd = DatabaseCommandHelper.GetCommand(
@@ -271,6 +274,9 @@ select 0", con.Connection, con.Transaction))
 
         public void ClearDefault(PermissableDefaults toDelete)
         {
+            if (toDelete == PermissableDefaults.None)
+                return;
+
             Delete("DELETE FROM ServerDefaults WHERE DefaultType=@DefaultType",
                 new Dictionary<string, object>()
                 {
