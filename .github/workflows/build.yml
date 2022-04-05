@@ -77,7 +77,7 @@ jobs:
       - name: Test with local file system
         run:  |
               cd Tests.Common
-              echo UseFileSystemRepo: true >> TestDatabases.txt
+              echo "UseFileSystemRepo: true" >> TestDatabases.txt
               type TestDatabases.txt
               cd ..
       - name: Test Reusable (with file system repo)
