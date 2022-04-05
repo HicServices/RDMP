@@ -123,6 +123,17 @@ namespace Rdmp.Core.Curation.Data.Cohort.Joinables
             if(user.ID == AggregateConfiguration_ID)
                 throw new NotSupportedException("Cannot configure AggregateConfiguration "+ user + " as a Join user to itself!");
 
+            var existing = Repository.GetAllObjects<JoinableCohortAggregateConfigurationUse>().FirstOrDefault(u => u.AggregateConfiguration_ID == user.ID);
+
+            // they are trying to use us but you are already using us
+            if (Equals(existing, this))
+                return existing;
+
+            if (existing != null)
+                throw new Exception($"AggregateConfiguration '{user}' already uses '{existing.JoinableCohortAggregateConfiguration}'. Only one patient index table join is permitted.");
+            
+            user.ClearAllInjections();
+
             return new JoinableCohortAggregateConfigurationUse((ICatalogueRepository) Repository, user, this);
         }
 

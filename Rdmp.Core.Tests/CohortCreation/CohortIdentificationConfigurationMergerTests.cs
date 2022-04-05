@@ -59,12 +59,13 @@ namespace Rdmp.Core.Tests.CohortCreation
             var newCicId = result.ID;
 
             // Should have the root containers of the old configs
-            Assert.AreEqual("Root2",result.RootCohortAggregateContainer.GetSubContainers()[0].Name);
-            Assert.AreEqual("Root1",result.RootCohortAggregateContainer.GetSubContainers()[1].Name);
+            var newRoot2 = result.RootCohortAggregateContainer.GetSubContainers().Single(c => c.Name.Equals("Root2"));
+            var newRoot1 = result.RootCohortAggregateContainer.GetSubContainers().Single(c => c.Name.Equals("Root1"));
+            Assert.AreEqual(2, result.RootCohortAggregateContainer.GetSubContainers().Length);
 
             // And should have
-            Assert.AreEqual($"cic_{newCicId}_UnitTestAggregate2",result.RootCohortAggregateContainer.GetSubContainers()[0].GetAggregateConfigurations()[0].Name);
-            Assert.AreEqual($"cic_{newCicId}_UnitTestAggregate1",result.RootCohortAggregateContainer.GetSubContainers()[1].GetAggregateConfigurations()[0].Name);
+            Assert.AreEqual($"cic_{newCicId}_UnitTestAggregate2", newRoot2.GetAggregateConfigurations()[0].Name);
+            Assert.AreEqual($"cic_{newCicId}_UnitTestAggregate1",newRoot1.GetAggregateConfigurations()[0].Name);
 
             Assert.AreEqual($"Merged cics (IDs {cic1.ID},{cic2.ID})",result.Name);
 

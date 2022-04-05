@@ -132,6 +132,8 @@ namespace Rdmp.Core.Curation.Data
                 {"ExtractionCategory", ExtractionCategory.Core.ToString()},
                 {"CatalogueItem_ID",catalogueItem.ID}
             });
+            
+            catalogueItem.ClearAllInjections();
 
             if (catalogueItem.ColumnInfo_ID == null)
                 repository.SaveSpecificPropertyOnlyToDatabase(catalogueItem, "ColumnInfo_ID", column.ID);

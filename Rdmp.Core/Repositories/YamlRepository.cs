@@ -25,6 +25,8 @@ public class YamlRepository : MemoryDataExportRepository
     public IReadOnlyCollection<IMapsDirectlyToDatabaseTable> AllObjects => Objects.Keys.ToList().AsReadOnly();
     public DirectoryInfo Directory { get; }
 
+    object lockFs = new object();
+
     public YamlRepository(DirectoryInfo dir)
     {
         Directory = dir;
@@ -73,13 +75,17 @@ public class YamlRepository : MemoryDataExportRepository
                 Directory.CreateSubdirectory(t.Name);
                 continue;
             }
-
-            foreach (var yaml in typeDir.EnumerateFiles("*.yaml"))
+            
+            lock(lockFs)
             {
-                var obj = (IMapsDirectlyToDatabaseTable)deserializer.Deserialize(File.ReadAllText(yaml.FullName), t);
-                SetRepositoryOnObject(obj);
-                Objects.TryAdd(obj,0);
+                foreach (var yaml in typeDir.EnumerateFiles("*.yaml"))
+                {
+                    var obj = (IMapsDirectlyToDatabaseTable)deserializer.Deserialize(File.ReadAllText(yaml.FullName), t);
+                    SetRepositoryOnObject(obj);
+                    Objects.TryAdd(obj, 0);
+                }
             }
+            
         }
     }
 
@@ -98,14 +104,20 @@ public class YamlRepository : MemoryDataExportRepository
         base.InsertAndHydrate(toCreate, constructorParameters);
 
         // put it on disk
-        SaveToDatabase(toCreate);
+        lock(lockFs)
+        {
+            SaveToDatabase(toCreate);
+        }
+        
     }
 
     public override void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
-        base.DeleteFromDatabase(oTableWrapperObject);
-
-        File.Delete(GetPath(oTableWrapperObject));
+        lock (lockFs)
+        {
+            base.DeleteFromDatabase(oTableWrapperObject);
+            File.Delete(GetPath(oTableWrapperObject));
+        }
     }
 
     public override void SaveToDatabase(IMapsDirectlyToDatabaseTable o)
@@ -114,7 +126,10 @@ public class YamlRepository : MemoryDataExportRepository
 
         var yaml = _serializer.Serialize(o);
 
-        File.WriteAllText(GetPath(o), yaml);
+        lock (lockFs)
+        {
+            File.WriteAllText(GetPath(o), yaml);
+        }
     }
 
     /// <summary>
