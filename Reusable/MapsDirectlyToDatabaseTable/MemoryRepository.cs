@@ -90,6 +90,9 @@ namespace MapsDirectlyToDatabaseTable
 
         public T GetObjectByID<T>(int id) where T : IMapsDirectlyToDatabaseTable
         {
+            if (id == 0)
+                return default(T);
+
             try
             {
                 return Objects.Keys.OfType<T>().Single(o => o.ID == id);

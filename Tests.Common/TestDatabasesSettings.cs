@@ -9,7 +9,7 @@ using FAnsi;
 
 namespace Tests.Common
 {
-    class TestDatabasesSettings
+    public class TestDatabasesSettings
     {
         public string Prefix { get { return TestDatabaseNames.Prefix; } set { TestDatabaseNames.Prefix = value; } }
 

@@ -115,7 +115,9 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         #endregion
         public ANOTable()
         {
-
+            // Defaults
+            NumberOfIntegersToUseInAnonymousRepresentation = 1;
+            NumberOfCharactersToUseInAnonymousRepresentation = 1;
         }
 
         /// <summary>
@@ -130,6 +132,13 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         {
             if (string.IsNullOrWhiteSpace(tableName))
                 throw new NullReferenceException("ANOTable must have a name");
+
+            // Defaults
+            NumberOfIntegersToUseInAnonymousRepresentation = 1;
+            NumberOfCharactersToUseInAnonymousRepresentation = 1;
+
+            if (repository.GetAllObjects<ANOTable>().Any(a => string.Equals(a.Suffix, suffix)))
+                throw new Exception($"There is already another {nameof(ANOTable)} with the suffix '{suffix}'");
 
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
