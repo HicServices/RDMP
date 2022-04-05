@@ -75,7 +75,11 @@ jobs:
      
 
       - name: Test with local file system
-        run:  "echo UseFileSystemRepo: true>>\"./Tests.Common/TestDatabases.txt\""
+        run:  |
+              cd Tests.Common
+              echo UseFileSystemRepo\: true >> TestDatabases.txt
+              type TestDatabases.txt
+              cd ..
       - name: Test Reusable (with file system repo)
         run: dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj"
       - name: Test Core (with file system repo)
