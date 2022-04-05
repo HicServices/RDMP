@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -23,8 +24,14 @@ namespace MapsDirectlyToDatabaseTable
     {
         protected int NextObjectId = 0;
 
-        protected readonly HashSet<IMapsDirectlyToDatabaseTable> Objects = new HashSet<IMapsDirectlyToDatabaseTable>();
-        
+        /// <summary>
+        /// This is a concurrent hashset.  See https://stackoverflow.com/a/18923091
+        /// </summary>
+        protected readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable,byte> Objects = new ();
+
+
+        readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>> _propertyChanges = new ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>>();
+
         public virtual void InsertAndHydrate<T>(T toCreate, Dictionary<string, object> constructorParameters) where T : IMapsDirectlyToDatabaseTable
         {
             NextObjectId++;
@@ -47,7 +54,7 @@ namespace MapsDirectlyToDatabaseTable
 
             toCreate.Repository = this;
             
-            Objects.Add(toCreate);
+            Objects.TryAdd(toCreate,0);
 
             toCreate.PropertyChanged += toCreate_PropertyChanged;
 
@@ -61,17 +68,13 @@ namespace MapsDirectlyToDatabaseTable
             else
                 prop.SetValue(toCreate, val);
         }
-
-        readonly Dictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>> _propertyChanges = new Dictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>>();
-
         void toCreate_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             var changes = (PropertyChangedExtendedEventArgs)e;
             var onObject = (IMapsDirectlyToDatabaseTable)sender;
 
             //if we don't know about this object yet
-            if(!_propertyChanges.ContainsKey(onObject))
-                _propertyChanges.Add(onObject, new HashSet<PropertyChangedExtendedEventArgs>());
+            _propertyChanges.TryAdd(onObject, new HashSet<PropertyChangedExtendedEventArgs>());
 
             //if we already knew of a previous change
             var collision = _propertyChanges[onObject].SingleOrDefault(c => c.PropertyName.Equals(changes.PropertyName));
@@ -89,7 +92,7 @@ namespace MapsDirectlyToDatabaseTable
         {
             try
             {
-                return Objects.OfType<T>().Single(o => o.ID == id);
+                return Objects.Keys.OfType<T>().Single(o => o.ID == id);
             }
             catch(InvalidOperationException e)
             {
@@ -99,7 +102,7 @@ namespace MapsDirectlyToDatabaseTable
 
         public T[] GetAllObjects<T>() where T : IMapsDirectlyToDatabaseTable
         {
-            return Objects.OfType<T>().ToArray();
+            return Objects.Keys.OfType<T>().OrderBy(o=>o.ID).ToArray();
         }
 
         public T[] GetAllObjectsWhere<T>(string property, object value1) where T : IMapsDirectlyToDatabaseTable
@@ -127,7 +130,7 @@ namespace MapsDirectlyToDatabaseTable
 
         public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t)
         {
-            return Objects.Where(o=>o.GetType() == t);
+            return Objects.Keys.Where(o=>o.GetType() == t);
         }
 
         public T[] GetAllObjectsWithParent<T>(IMapsDirectlyToDatabaseTable parent) where T : IMapsDirectlyToDatabaseTable
@@ -136,7 +139,7 @@ namespace MapsDirectlyToDatabaseTable
             string propertyName = parent.GetType().Name + "_ID";
 
             var prop = typeof(T).GetProperty(propertyName);
-            return Objects.OfType<T>().Where(o => prop.GetValue(o) as int? == parent.ID).Cast<T>().ToArray();
+            return Objects.Keys.OfType<T>().Where(o => prop.GetValue(o) as int? == parent.ID).Cast<T>().OrderBy(o => o.ID).ToArray();
         }
 
         public T[] GetAllObjectsWithParent<T, T2>(T2 parent) where T : IMapsDirectlyToDatabaseTable, IInjectKnown<T2> where T2 : IMapsDirectlyToDatabaseTable
@@ -145,24 +148,22 @@ namespace MapsDirectlyToDatabaseTable
             string propertyName = typeof (T2).Name + "_ID";
 
             var prop = typeof (T).GetProperty(propertyName);
-            return Objects.OfType<T>().Where(o => prop.GetValue(o) as int? == parent.ID).Cast<T>().ToArray();
+            return Objects.Keys.OfType<T>().Where(o => prop.GetValue(o) as int? == parent.ID).Cast<T>().OrderBy(o => o.ID).ToArray();
 
         }
 
         public virtual void SaveToDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
             //forget about property changes (since it's 'saved' now)
-            if (_propertyChanges.ContainsKey(oTableWrapperObject))
-                _propertyChanges.Remove(oTableWrapperObject);
+            _propertyChanges.TryRemove(oTableWrapperObject, out _);
         }
 
         public virtual void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
-            Objects.Remove(oTableWrapperObject);
+            Objects.TryRemove(oTableWrapperObject, out _);
 
             //forget about property changes (since it's been deleted)
-            if (_propertyChanges.ContainsKey(oTableWrapperObject))
-                _propertyChanges.Remove(oTableWrapperObject);
+            _propertyChanges.TryRemove(oTableWrapperObject, out _);
         }
 
         public void RevertToDatabaseState(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable)
@@ -184,14 +185,14 @@ namespace MapsDirectlyToDatabaseTable
             }
 
             //forget about all changes now
-            _propertyChanges.Remove(mapsDirectlyToDatabaseTable);
+            _propertyChanges.TryRemove(mapsDirectlyToDatabaseTable, out _);
             
         }
 
         public RevertableObjectReport HasLocalChanges(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable)
         {
             //if we don't know about it then it was deleted
-            if(!Objects.Contains(mapsDirectlyToDatabaseTable))
+            if(!Objects.ContainsKey(mapsDirectlyToDatabaseTable))
                 return new RevertableObjectReport(){Evaluation = ChangeDescription.DatabaseCopyWasDeleted};
 
             //if it has no changes (since a save)
@@ -241,28 +242,28 @@ namespace MapsDirectlyToDatabaseTable
         
         public bool StillExists<T>(int allegedParent) where T : IMapsDirectlyToDatabaseTable
         {
-            return Objects.OfType<T>().Any(o => o.ID == allegedParent);
+            return Objects.Keys.OfType<T>().Any(o => o.ID == allegedParent);
         }
 
         public bool StillExists(IMapsDirectlyToDatabaseTable o)
         {
-            return Objects.Contains(o);
+            return Objects.ContainsKey(o);
         }
 
         public bool StillExists(Type objectType, int objectId)
         {
-            return Objects.Any(o => o.GetType() == objectType && o.ID == objectId);
+            return Objects.Keys.Any(o => o.GetType() == objectType && o.ID == objectId);
         }
 
         public IMapsDirectlyToDatabaseTable GetObjectByID(Type objectType, int objectId)
         {
-            return Objects.Single(o => o.GetType() == objectType && objectId == o.ID);
+            return Objects.Keys.Single(o => o.GetType() == objectType && objectId == o.ID);
         }
 
         public IEnumerable<T> GetAllObjectsInIDList<T>(IEnumerable<int> ids) where T : IMapsDirectlyToDatabaseTable
         {
             var hs = new HashSet<int>(ids);
-            return Objects.OfType<T>().Where(o => hs.Contains(o.ID));
+            return Objects.Keys.OfType<T>().Where(o => hs.Contains(o.ID)).OrderBy(o => o.ID);
         }
 
         public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjectsInIDList(Type elementType, IEnumerable<int> ids)
@@ -280,7 +281,7 @@ namespace MapsDirectlyToDatabaseTable
 
         public IMapsDirectlyToDatabaseTable[] GetAllObjectsInDatabase()
         {
-            return Objects.ToArray();
+            return Objects.Keys.OrderBy(o => o.ID).ToArray();
         }
 
         public bool SupportsObjectType(Type type)

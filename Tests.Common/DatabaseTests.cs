@@ -148,7 +148,7 @@ namespace Tests.Common
 
             
             RepositoryLocator = TestDatabaseSettings.UseFileSystemRepo ? 
-                new RepositoryProvider(new YamlRepository(new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "Repo")))) :
+                new RepositoryProvider(GetFreshYamlRepository()) :
                 new PlatformDatabaseCreationRepositoryFinder(opts);
 
             
@@ -215,6 +215,17 @@ namespace Tests.Common
 
             if(TestDatabaseSettings.PostgreSql != null)
                 _discoveredPostgresServer = new DiscoveredServer(TestDatabaseSettings.PostgreSql, DatabaseType.PostgreSql);
+        }
+
+        private IDataExportRepository GetFreshYamlRepository()
+        {
+            var dir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "Repo"));
+            
+            // clear out any test remnants
+            if (dir.Exists)
+                dir.Delete(true);
+
+            return new YamlRepository(dir);
         }
 
         private SqlConnectionStringBuilder CreateServerPointerInCatalogue(IServerDefaults defaults, string prefix, string databaseName, PermissableDefaults defaultToSet,IPatcher patcher)

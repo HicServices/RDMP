@@ -72,6 +72,18 @@ jobs:
           github-token: ${{ secrets.github_token }}
           path-to-lcov: all.lcov
           flag-name: unit tests
+     
+
+      - name: Test with local file system
+        run:  "echo UseFileSystemRepo: true>>\"./Tests.Common/TestDatabases.txt\""
+      - name: Test Reusable (with file system repo)
+        run: dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj"
+      - name: Test Core (with file system repo)
+        run: dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj"
+      - name: Test UI (with file system repo)
+        run: dotnet test "./Rdmp.UI.Tests/Rdmp.UI.Tests.csproj"
+      
+      
       - name: Package
         run: |
           dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 -c Release -o PublishWinForms --verbosity minimal --nologo

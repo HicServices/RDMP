@@ -90,14 +90,14 @@ namespace Rdmp.Core.Repositories
 
                     //if it's not null we must be able to return it with GetObjectByID
                     if (defaultServer != null)
-                        Objects.Add(defaultServer);
+                        Objects.TryAdd(defaultServer,0);
 
                     _defaults.Add(value,defaultServer);
                 }
 
             //start IDs with the maximum id of any default to avoid collisions
             if (Objects.Any())
-                NextObjectId = Objects.Max(o => o.ID);
+                NextObjectId = Objects.Keys.Max(o => o.ID);
 
 
             var dependencyFinder = new CatalogueObscureDependencyFinder(this);

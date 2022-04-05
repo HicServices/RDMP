@@ -22,7 +22,7 @@ public class YamlRepository : MemoryDataExportRepository
     /// <summary>
     /// All objects that are known about by this repository
     /// </summary>
-    public IReadOnlyCollection<IMapsDirectlyToDatabaseTable> AllObjects => Objects.ToList().AsReadOnly();
+    public IReadOnlyCollection<IMapsDirectlyToDatabaseTable> AllObjects => Objects.Keys.ToList().AsReadOnly();
     public DirectoryInfo Directory { get; }
 
     public YamlRepository(DirectoryInfo dir)
@@ -55,7 +55,7 @@ public class YamlRepository : MemoryDataExportRepository
         MEF = new MEF();
 
         // Don't create new objects with the ID of existing objects
-        NextObjectId = Objects.Count == 0 ? 0 : Objects.Max(o => o.ID);
+        NextObjectId = Objects.Count == 0 ? 0 : Objects.Max(o => o.Key.ID);
     }
 
     private void LoadObjects()
@@ -78,7 +78,7 @@ public class YamlRepository : MemoryDataExportRepository
             {
                 var obj = (IMapsDirectlyToDatabaseTable)deserializer.Deserialize(File.ReadAllText(yaml.FullName), t);
                 SetRepositoryOnObject(obj);
-                Objects.Add(obj);
+                Objects.TryAdd(obj,0);
             }
         }
     }
