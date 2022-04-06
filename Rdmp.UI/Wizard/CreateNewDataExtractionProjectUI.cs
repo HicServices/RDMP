@@ -319,7 +319,7 @@ namespace Rdmp.UI.Wizard
 
                     //execute the cohort creation bit
                     var cohortRequest = new CohortCreationRequest(_project, cohortDefinition,
-                        (DataExportRepository) Activator.RepositoryLocator.DataExportRepository, tbCohortName.Text);
+                        Activator.RepositoryLocator.DataExportRepository, tbCohortName.Text);
 
                     ComboBox dd;
                     if (_cohortFile != null)

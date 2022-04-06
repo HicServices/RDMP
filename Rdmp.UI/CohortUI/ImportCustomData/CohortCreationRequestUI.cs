@@ -36,7 +36,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
     public partial class CohortCreationRequestUI : RDMPForm
     {
         private readonly IExternalCohortTable _target;
-        private DataExportRepository _repository;
+        private IDataExportRepository _repository;
         
         public string CohortDescription
         {
@@ -53,7 +53,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
             if (_target == null)
                 return;
 
-            _repository = (DataExportRepository)_target.Repository;
+            _repository = (IDataExportRepository)_target.Repository;
 
             lblExternalCohortTable.Text = _target.ToString();
 
@@ -122,7 +122,7 @@ namespace Rdmp.UI.CohortUI.ImportCustomData
 
             
             //construct the result
-            Result = new CohortCreationRequest(Project, new CohortDefinition(null, name, version, (int)Project.ProjectNumber, _target), (DataExportRepository)Project.Repository, tbDescription.Text);
+            Result = new CohortCreationRequest(Project, new CohortDefinition(null, name, version, (int)Project.ProjectNumber, _target), (IDataExportRepository)Project.Repository, tbDescription.Text);
             
             Result.NewCohortDefinition.CohortReplacedIfAny = ddExistingCohort.SelectedItem as ExtractableCohort;
             

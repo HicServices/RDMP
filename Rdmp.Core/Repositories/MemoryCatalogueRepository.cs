@@ -471,6 +471,7 @@ namespace Rdmp.Core.Repositories
         public void AddChild(IContainer container, IFilter filter)
         {
             filter.FilterContainer_ID = container.ID;
+            filter.SaveToDatabase();
         }
 
         public void AddSubContainer(IContainer parent, IContainer child)
