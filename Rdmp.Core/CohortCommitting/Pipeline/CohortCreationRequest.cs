@@ -113,7 +113,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline
         /// <param name="configuration"></param>
         public CohortCreationRequest(ExtractionConfiguration configuration)
         {
-            _repository = (DataExportRepository) configuration.Repository;
+            _repository = (IDataExportRepository) configuration.Repository;
 
             if (configuration.CohortIdentificationConfiguration_ID == null)
                 throw new NotSupportedException("Configuration '" + configuration + "' does not have an associated CohortIdentificationConfiguration for cohort refreshing");

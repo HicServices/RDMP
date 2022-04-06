@@ -947,5 +947,15 @@ namespace MapsDirectlyToDatabaseTable
         {
             return GetAllObjects<T>();
         }
+
+        public IDisposable BeginNewTransaction()
+        {
+            return BeginNewTransactedConnection();
+        }
+
+        public void EndTransaction(bool commit)
+        {
+            EndTransactedConnection(commit);
+        }
     }
 }

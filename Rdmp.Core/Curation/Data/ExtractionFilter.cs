@@ -196,5 +196,13 @@ namespace Rdmp.Core.Curation.Data
         {
             _knownExtractionFilterParameterSets = new Lazy<ExtractionFilterParameterSet[]>(() => CatalogueRepository.GetAllObjectsWithParent<ExtractionFilterParameterSet>(this));
         }
+
+        public override void DeleteInDatabase()
+        {
+            if (ExtractionFilterParameterSets.Any())
+                throw new Exception($"Cannot delete '{this}' because there are one or more {nameof(ExtractionFilterParameterSet)} declared on it");
+
+            base.DeleteInDatabase();
+        }
     }
 }

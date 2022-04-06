@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataExport.DataRelease.Audit;
 using Rdmp.Core.Repositories.Managers;
 
 namespace Rdmp.Core.Repositories
@@ -103,6 +104,11 @@ namespace Rdmp.Core.Repositories
         {
             return GetAllObjects<CumulativeExtractionResults>().Where(e=>
             (e.ExtractionConfiguration_ID == configuration.ID) && (e.ExtractableDataSet_ID == dataset.ID));
+        }
+
+        public IReleaseLog GetReleaseLogEntryIfAny(CumulativeExtractionResults cumulativeExtractionResults)
+        {
+            throw new System.NotImplementedException();
         }
         #endregion
     }

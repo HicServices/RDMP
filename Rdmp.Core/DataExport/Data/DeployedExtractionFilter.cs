@@ -171,7 +171,7 @@ namespace Rdmp.Core.DataExport.Data
         {
             base.Check(notifier);
 
-            var checker = new ClonedFilterChecker(this, this.ClonedFromExtractionFilter_ID, ((DataExportRepository)Repository).CatalogueRepository);
+            var checker = new ClonedFilterChecker(this, this.ClonedFromExtractionFilter_ID, ((IDataExportRepository)Repository).CatalogueRepository);
             checker.Check(notifier);
         }
 

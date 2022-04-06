@@ -375,15 +375,5 @@ select 0", con.Connection, con.Transaction))
                 }
             }
         }
-
-        public IDisposable BeginNewTransaction()
-        {
-            return BeginNewTransactedConnection();
-        }
-
-        public void EndTransaction(bool commit)
-        {
-            EndTransactedConnection(commit);
-        }
     }
 }

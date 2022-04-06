@@ -359,5 +359,16 @@ namespace MapsDirectlyToDatabaseTable
 
                             ).ToArray();
         }
+
+
+        public IDisposable BeginNewTransaction()
+        {
+            return new EmptyDisposeable();
+        }
+
+        public void EndTransaction(bool commit)
+        {
+
+        }
     }
 }

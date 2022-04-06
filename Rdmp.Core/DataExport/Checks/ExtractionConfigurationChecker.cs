@@ -106,7 +106,7 @@ namespace Rdmp.Core.DataExport.Checks
 
         private void CheckInProgressConfiguration(ICheckNotifier notifier)
         {
-            var repo = (DataExportRepository)_config.Repository;
+            var repo = (IDataExportRepository)_config.Repository;
             notifier.OnCheckPerformed(new CheckEventArgs("Found configuration '" + _config + "'", CheckResult.Success));
 
             var datasets = _config.GetAllExtractableDataSets().ToArray();

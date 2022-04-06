@@ -417,7 +417,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             //The new Catalogue should have the same number of ExtractionInformations
             var eiSource = bulk.catalogue.GetAllExtractionInformation(ExtractionCategory.Any).OrderBy(ei=>ei.Order).ToArray();
             var eiDestination = anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).OrderBy(ei=>ei.Order).ToArray();
-
+            
             Assert.AreEqual(eiSource.Length,eiDestination.Length,"Both the new and the ANO catalogue should have the same number of ExtractionInformations (extractable columns)");
 
             for (int i = 0; i < eiSource.Length; i++)

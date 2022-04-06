@@ -543,16 +543,6 @@ namespace Rdmp.Core.Repositories
         {
             throw new NotImplementedException();
         }
-
-        public IDisposable BeginNewTransaction()
-        {
-            return new EmptyDisposeable();
-        }
-
-        public void EndTransaction(bool commit)
-        {
-
-        }
         #endregion
         protected override void CascadeDeletes(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
@@ -566,8 +556,13 @@ namespace Rdmp.Core.Repositories
                 }
             }
 
+            if (oTableWrapperObject is ExtractionInformation extractionInformation)
+            {
+                extractionInformation.CatalogueItem.ClearAllInjections();
+            }
+
             // when deleting a TableInfo
-            if(oTableWrapperObject is TableInfo t)
+            if (oTableWrapperObject is TableInfo t)
             {
                 // forget about its credentials usages
                 _credentialsDictionary.Remove(t);

@@ -7,6 +7,7 @@
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataExport.DataRelease.Audit;
 using Rdmp.Core.Repositories.Managers;
 using System.Collections.Generic;
 
@@ -36,5 +37,6 @@ namespace Rdmp.Core.Repositories
         IDataExportPropertyManager DataExportPropertyManager { get; }
         
         IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(IExtractionConfiguration configuration, IExtractableDataSet dataset);
+        IReleaseLog GetReleaseLogEntryIfAny(CumulativeExtractionResults cumulativeExtractionResults);
     }
 }

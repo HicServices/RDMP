@@ -8,11 +8,14 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Linq.Expressions;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataExport.DataRelease.Audit;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.Repositories.Managers;
+using ReusableLibraryCode;
 
 namespace Rdmp.Core.Repositories
 {
@@ -76,10 +79,6 @@ namespace Rdmp.Core.Repositories
             return GetAllObjects<CumulativeExtractionResults>("WHERE ExtractionConfiguration_ID=" + configuration.ID + "AND ExtractableDataSet_ID=" + dataset.ID);
         }
 
-        public IEnumerable<ISupplementalExtractionResults> GetAllGlobalExtractionResultsFor(IExtractionConfiguration configuration)
-        {
-            return GetAllObjects<SupplementalExtractionResults>("WHERE ExtractionConfiguration_ID=" + configuration.ID + "AND CumulativeExtractionResults_ID IS NULL");
-        }
 
         readonly ObjectConstructor _constructor = new ObjectConstructor();
         protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
@@ -221,6 +220,23 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
             }
 
             _packageContentsDictionary.Value[package.ID].Remove(dataSet.ID);
+        }
+
+        public IReleaseLog GetReleaseLogEntryIfAny(CumulativeExtractionResults cumulativeExtractionResults)
+        {
+            using (var con = GetConnection())
+            {
+                using (var cmdselect = DatabaseCommandHelper
+                    .GetCommand(@"SELECT *
+                                    FROM ReleaseLog
+                                    where
+                                    CumulativeExtractionResults_ID = " + cumulativeExtractionResults.ID, con.Connection, con.Transaction))
+                using (var r = cmdselect.ExecuteReader())
+                    if (r.Read())
+                        return new ReleaseLog(this, r);
+
+                return null;
+            }
         }
     }
 }

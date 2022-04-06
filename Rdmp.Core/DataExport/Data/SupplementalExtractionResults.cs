@@ -180,7 +180,7 @@ namespace Rdmp.Core.DataExport.Data
         /// <inheritdoc/>
         public Type GetDestinationType()
         {
-            return ((DataExportRepository)Repository).CatalogueRepository.MEF.GetType(DestinationType);
+            return ((IDataExportRepository)Repository).CatalogueRepository.MEF.GetType(DestinationType);
         }
 
         /// <inheritdoc/>
