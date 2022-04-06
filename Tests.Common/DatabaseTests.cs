@@ -36,6 +36,16 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using YamlDotNet.Serialization;
 using FAnsi.Discovery.ConnectionStringDefaults;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Governance;
+using Rdmp.Core.Curation.Data.Cache;
+using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.ImportExport;
+using Rdmp.Core.DataExport.DataRelease.Audit;
+using Rdmp.Core.DataExport.Data;
 
 namespace Tests.Common
 {
@@ -291,11 +301,9 @@ namespace Tests.Common
         {
             if (CatalogueRepository is YamlRepository y)
             {
-                foreach (var o in y.AllObjects)
-                {
-                    o.DeleteInDatabase();
-                }
+                BlitzMainDataTables(y);
             }
+
             if (!(CatalogueRepository is TableRepository cataTblRepo))
                 return;
 
@@ -305,6 +313,94 @@ namespace Tests.Common
                 var dataExportDatabaseName = ((TableRepository)RepositoryLocator.DataExportRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
 
                 UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabasesLite, catalogueDatabaseName, dataExportDatabaseName), con.Connection);
+            }
+        }
+
+        private void BlitzMainDataTables(YamlRepository y)
+        {
+            DeleteAll<ConnectionStringKeyword>(y);
+            DeleteAll<JoinableCohortAggregateConfigurationUse>(y);
+            DeleteAll<JoinableCohortAggregateConfiguration>(y);
+            DeleteAll<CohortIdentificationConfiguration>(y);
+            DeleteAll<CohortAggregateContainer>(y);
+
+            DeleteAll<AggregateConfiguration>(y);
+            DeleteAll<AggregateFilter>(y);
+            DeleteAll<AggregateFilterContainer>(y);
+            DeleteAll<AggregateFilterParameter>(y);
+
+            DeleteAll<AnyTableSqlParameter>(y);
+
+            DeleteAll<ColumnInfo>(y);
+            DeleteAll<ANOTable>(y);
+
+            DeleteAll<PreLoadDiscardedColumn>(y);
+            DeleteAll<TableInfo>(y);
+            DeleteAll<DataAccessCredentials>(y);
+
+            foreach(var c in CatalogueRepository.GetAllObjects<Catalogue>())
+            {
+                c.PivotCategory_ExtractionInformation_ID = null;
+                c.TimeCoverage_ExtractionInformation_ID = null;
+
+            }
+
+            DeleteAll<ExtractionFilterParameterSetValue>(y);
+            DeleteAll<ExtractionFilterParameterSet>(y);
+
+            DeleteAll<ExtractionInformation>(y);
+
+            DeleteAll<SupportingDocument>(y);
+            DeleteAll<SupportingSQLTable>(y);
+
+            DeleteAll<GovernanceDocument>(y);
+            DeleteAll<GovernancePeriod>(y);
+
+            DeleteAll<Catalogue>(y);
+
+            DeleteAll<CacheProgress>(y);
+            DeleteAll<LoadProgress>(y);
+            DeleteAll<LoadMetadata>(y);
+
+            DeleteAll<Favourite>(y);
+
+            DeleteAll<PipelineComponentArgument>(y);
+            DeleteAll<Pipeline>(y);
+            DeleteAll<PipelineComponent>(y);
+
+            DeleteAll<ObjectExport>(y);
+            DeleteAll<ObjectImport>(y);
+
+            DeleteAll<LoadModuleAssembly>(y);
+            DeleteAll<Rdmp.Core.Curation.Data.Plugin>(y);
+
+            DeleteAll<ReleaseLog>(y);
+            DeleteAll<SupplementalExtractionResults>(y);
+            DeleteAll<CumulativeExtractionResults>(y);
+            DeleteAll<ExtractableColumn>(y);
+            DeleteAll<SelectedDataSets>(y);
+
+            DeleteAll<GlobalExtractionFilterParameter>(y);
+            DeleteAll<ExtractionConfiguration>(y);
+
+            DeleteAll<DeployedExtractionFilterParameter>(y);
+            DeleteAll<DeployedExtractionFilter>(y);
+            DeleteAll<FilterContainer>(y);
+
+            DeleteAll<ExtractableCohort>(y);
+            DeleteAll<ExternalCohortTable>(y);
+
+            DeleteAll<ExtractableDataSetPackage>(y);
+
+            DeleteAll<ExtractableDataSet>(y);
+            DeleteAll<Project>(y);
+        }
+
+        private void DeleteAll<T>(YamlRepository y) where T : IMapsDirectlyToDatabaseTable
+        {
+            foreach (var o in y.GetAllObjects<T>())
+            {
+                o.DeleteInDatabase();
             }
         }
 

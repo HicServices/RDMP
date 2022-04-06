@@ -82,7 +82,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             newCredentials.Password = "mypassword";
             newCredentials.SaveToDatabase();
 
-            var newCopy = CatalogueRepository.GetAllObjectsWhere<DataAccessCredentials>("WHERE Username='myusername'").SingleOrDefault();
+            var newCopy = CatalogueRepository.GetAllObjects<DataAccessCredentials>().SingleOrDefault(c=>c.Username == "myusername");
             Assert.IsNotNull(newCopy);
             
             try

@@ -152,12 +152,6 @@ namespace Rdmp.Core.Repositories
             ObscureDependencyFinder.HandleCascadeDeletesForDeletedObject(oTableWrapperObject);
         }
 
-
-        public T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
-        {
-            throw new NotImplementedException();
-        }
-
         public DbCommand PrepareCommand(string sql, Dictionary<string, object> parameters, DbConnection con, DbTransaction transaction = null)
         {
             throw new NotImplementedException();
@@ -262,8 +256,14 @@ namespace Rdmp.Core.Repositories
         public DataAccessCredentials GetCredentialsIfExistsFor(ITableInfo tableInfo, DataAccessContext context)
         {
             if(_credentialsDictionary.ContainsKey(tableInfo))
+            {
                 if (_credentialsDictionary[tableInfo].ContainsKey(context))
                     return _credentialsDictionary[tableInfo][context];
+
+                if (_credentialsDictionary[tableInfo].ContainsKey(DataAccessContext.Any))
+                    return _credentialsDictionary[tableInfo][DataAccessContext.Any];
+            }
+                
 
             return null;
         }

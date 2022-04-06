@@ -114,9 +114,6 @@ namespace Rdmp.Core.Repositories
         /// <returns></returns>
         TicketingSystemConfiguration GetTicketingSystem();
 
-        T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null)
-            where T : IMapsDirectlyToDatabaseTable;
-
         DbCommand PrepareCommand(string sql, Dictionary<string, object> parameters, DbConnection con, DbTransaction transaction = null);
 
         T[] GetReferencesTo<T>(IMapsDirectlyToDatabaseTable o) where T : ReferenceOtherObjectDatabaseEntity;

@@ -337,11 +337,6 @@ namespace MapsDirectlyToDatabaseTable
                 });
         }
 
-        public T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
-        {
-            return GetAllObjects(typeof (T), whereSQL, parameters).Cast<T>().ToArray();
-        }
-
         public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t, string whereSQL, Dictionary<string, object> parameters = null)
         {
             string typename = t.Name;
