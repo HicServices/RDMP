@@ -63,10 +63,26 @@ namespace MapsDirectlyToDatabaseTable
 
         protected virtual void SetValue<T>(T toCreate, PropertyInfo prop, string strVal, object val) where T : IMapsDirectlyToDatabaseTable
         {
-            if (prop.PropertyType.IsEnum && strVal != null)
-                prop.SetValue(toCreate, Enum.Parse(prop.PropertyType, strVal));
+            if(val == null)
+            {
+                prop.SetValue(toCreate,val);
+                return;
+            }
+
+            var underlying = Nullable.GetUnderlyingType(prop.PropertyType);
+            var type = underlying ?? prop.PropertyType;
+
+            if (type.IsEnum)
+            {
+                if ( strVal != null)
+                    prop.SetValue(toCreate, Enum.Parse(type, strVal));   
+                else
+                {
+                    prop.SetValue(toCreate, Enum.ToObject(type, val));
+                }
+            }
             else
-                prop.SetValue(toCreate, val);
+                prop.SetValue(toCreate, Convert.ChangeType(val, type));
         }
         void toCreate_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -157,16 +173,38 @@ namespace MapsDirectlyToDatabaseTable
 
         public virtual void SaveToDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
+            var existing = Objects.Keys.FirstOrDefault(k=>k.Equals(oTableWrapperObject));
+
+            // If saving a new reference to an existing object then we should update our tracked
+            // objects to the latest reference since the old one is stale
+            if(!ReferenceEquals(existing,oTableWrapperObject))
+            {
+                Objects.TryRemove(oTableWrapperObject, out _);
+                Objects.TryAdd(oTableWrapperObject, 0);
+            }
+
             //forget about property changes (since it's 'saved' now)
             _propertyChanges.TryRemove(oTableWrapperObject, out _);
         }
 
         public virtual void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
+            CascadeDeletes(oTableWrapperObject);
+        
             Objects.TryRemove(oTableWrapperObject, out _);
 
             //forget about property changes (since it's been deleted)
             _propertyChanges.TryRemove(oTableWrapperObject, out _);
+        }
+
+        /// <summary>
+        /// Override to replicate any database delete cascade relationships (e.g. deleting all
+        /// CatalogueItem when a Catalogue is deleted)
+        /// </summary>
+        /// <param name="oTableWrapperObject"></param>
+        protected virtual void CascadeDeletes(IMapsDirectlyToDatabaseTable oTableWrapperObject)
+        {
+            
         }
 
         public void RevertToDatabaseState(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable)

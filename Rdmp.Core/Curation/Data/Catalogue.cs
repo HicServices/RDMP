@@ -705,7 +705,7 @@ namespace Rdmp.Core.Curation.Data
             repository.InsertAndHydrate(this,new Dictionary<string, object>()
             {
                 {"Name",name},
-                {"LiveLoggingServer_ID",loggingServer == null ? (object) DBNull.Value:loggingServer.ID}
+                {"LiveLoggingServer_ID",loggingServer == null ? DBNull.Value:loggingServer.ID}
             });
 
             if (ID == 0 || string.IsNullOrWhiteSpace(Name) || Repository != repository)

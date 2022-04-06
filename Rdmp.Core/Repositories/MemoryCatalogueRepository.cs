@@ -543,6 +543,21 @@ namespace Rdmp.Core.Repositories
 
         }
         #endregion
+        protected override void CascadeDeletes(IMapsDirectlyToDatabaseTable oTableWrapperObject)
+        {
+            base.CascadeDeletes(oTableWrapperObject);
 
+            if (oTableWrapperObject is Catalogue catalogue)
+            {
+                foreach (var ci in catalogue.CatalogueItems)
+                {
+                    ci.DeleteInDatabase();
+                }
+            }
+            if (oTableWrapperObject is CatalogueItem catalogueItem)
+            {
+                catalogueItem.ExtractionInformation?.DeleteInDatabase();
+            }
+        }
     }
 }
