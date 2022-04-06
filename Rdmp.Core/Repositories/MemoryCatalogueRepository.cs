@@ -137,6 +137,17 @@ namespace Rdmp.Core.Repositories
         public override void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
             ObscureDependencyFinder.ThrowIfDeleteDisallowed(oTableWrapperObject);
+
+            if(oTableWrapperObject is DataAccessCredentials creds)
+            {
+                var users = GetAllTablesUsingCredentials(creds);
+
+                // if there are any contexts where there are any associated tables using this credentials
+                if (users.Any(k=>k.Value.Any()))
+                    throw new CredentialsInUseException($"Cannot delete credentials {creds} because it is in use by one or more TableInfo objects({string.Join(",",users.SelectMany(u=>u.Value).Distinct().Select(t =>t.Name))})");
+            }
+            
+
             base.DeleteFromDatabase(oTableWrapperObject);
             ObscureDependencyFinder.HandleCascadeDeletesForDeletedObject(oTableWrapperObject);
         }
@@ -554,6 +565,14 @@ namespace Rdmp.Core.Repositories
                     ci.DeleteInDatabase();
                 }
             }
+
+            // when deleting a TableInfo
+            if(oTableWrapperObject is TableInfo t)
+            {
+                // forget about its credentials usages
+                _credentialsDictionary.Remove(t);
+            }
+
             if (oTableWrapperObject is CatalogueItem catalogueItem)
             {
                 catalogueItem.ExtractionInformation?.DeleteInDatabase();

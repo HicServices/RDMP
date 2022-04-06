@@ -115,7 +115,7 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests
             {
                 joinable.AddUser(aggregate2);
                 var ex = Assert.Throws<Exception>(()=>joinable.AddUser(aggregate2));
-                Assert.AreEqual("AggregateConfiguration 'UnitTestAggregate2' already uses 'Patient Index Table:cic_133_UnitTestAggregate1'. Only one patient index table join is permitted.", ex.Message);
+                Assert.AreEqual($"AggregateConfiguration 'UnitTestAggregate2' already uses 'Patient Index Table:cic_{cohortIdentificationConfiguration.ID}_UnitTestAggregate1'. Only one patient index table join is permitted.", ex.Message);
             }
             finally
             {

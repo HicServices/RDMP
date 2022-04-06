@@ -146,14 +146,10 @@ namespace Tests.Common
                 ValidateCertificate = false
             };
 
-            
             RepositoryLocator = TestDatabaseSettings.UseFileSystemRepo ? 
                 new RepositoryProvider(GetFreshYamlRepository()) :
                 new PlatformDatabaseCreationRepositoryFinder(opts);
-
-            
-            
-            
+                    
             if(CatalogueRepository is TableRepository cataRepo)
             {
                 Console.WriteLine("Expecting Unit Test Catalogue To Be At Server=" + cataRepo.DiscoveredServer.Name + " Database=" + cataRepo.DiscoveredServer.GetCurrentDatabase());
@@ -267,6 +263,14 @@ namespace Tests.Common
         /// <param name="repositoryLocator"></param>
         protected void RunBlitzDatabases(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
+            if(CatalogueRepository is YamlRepository y)
+            {
+                foreach(var o in y.AllObjects)
+                {
+                    o.DeleteInDatabase();
+                }
+            }
+
             if (!(CatalogueRepository is TableRepository cataTblRepo))
                 return;
 
@@ -285,6 +289,13 @@ namespace Tests.Common
         /// </summary>
         protected void BlitzMainDataTables()
         {
+            if (CatalogueRepository is YamlRepository y)
+            {
+                foreach (var o in y.AllObjects)
+                {
+                    o.DeleteInDatabase();
+                }
+            }
             if (!(CatalogueRepository is TableRepository cataTblRepo))
                 return;
 

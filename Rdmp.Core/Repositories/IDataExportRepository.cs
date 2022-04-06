@@ -8,6 +8,7 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories.Managers;
+using System.Collections.Generic;
 
 namespace Rdmp.Core.Repositories
 {
@@ -33,5 +34,7 @@ namespace Rdmp.Core.Repositories
         IObscureDependencyFinder ObscureDependencyFinder { get; set; }
         
         IDataExportPropertyManager DataExportPropertyManager { get; }
+        
+        IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(IExtractionConfiguration configuration, IExtractableDataSet dataset);
     }
 }

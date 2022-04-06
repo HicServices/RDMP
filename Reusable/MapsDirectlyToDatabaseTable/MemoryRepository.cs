@@ -298,7 +298,8 @@ namespace MapsDirectlyToDatabaseTable
 
         public IMapsDirectlyToDatabaseTable GetObjectByID(Type objectType, int objectId)
         {
-            return Objects.Keys.Single(o => o.GetType() == objectType && objectId == o.ID);
+            return Objects.Keys.SingleOrDefault(o => o.GetType() == objectType && objectId == o.ID) 
+                ?? throw new KeyNotFoundException($"Could not find object of Type '{objectType}' with ID '{objectId}' in {nameof(MemoryRepository)}");
         }
 
         public IEnumerable<T> GetAllObjectsInIDList<T>(IEnumerable<int> ids) where T : IMapsDirectlyToDatabaseTable

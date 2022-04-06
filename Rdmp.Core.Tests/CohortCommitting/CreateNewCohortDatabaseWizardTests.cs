@@ -80,7 +80,8 @@ namespace Rdmp.Core.Tests.CohortCommitting
             _c1.DeleteInDatabase();
             
             //now it should gracefully skip over it
-            Assert.IsFalse(wizard.GetPrivateIdentifierCandidates().Any(prototype => prototype.RuntimeName.Equals("PrivateIdentifierA")));
+            Assert.IsFalse(wizard.GetPrivateIdentifierCandidates()
+                .Any(prototype => prototype.RuntimeName.Equals("PrivateIdentifierA")));
             
         }
 

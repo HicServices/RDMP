@@ -432,7 +432,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         
         private void StartAudit(string sql)
         {
-            var dataExportRepo = ((DataExportRepository) Request.DataExportRepository);
+            var dataExportRepo = Request.DataExportRepository;
 
             var previousAudit = dataExportRepo.GetAllCumulativeExtractionResultsFor(Request.Configuration, Request.DatasetBundle.DataSet).ToArray();
 

@@ -50,7 +50,7 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
         {
             var proj = new Project(DataExportRepository, projName);
 
-            CohortCreationRequest request = new CohortCreationRequest(proj, new CohortDefinition(511, "CommittingNewCohorts",1,999,_externalCohortTable), (DataExportRepository)DataExportRepository, "fish");
+            CohortCreationRequest request = new CohortCreationRequest(proj, new CohortDefinition(511, "CommittingNewCohorts",1,999,_externalCohortTable), DataExportRepository, "fish");
             var ex = Assert.Throws<Exception>(()=>request.Check(new ThrowImmediatelyCheckNotifier()));
             Assert.AreEqual("Expected the cohort definition CommittingNewCohorts(Version 1, ID=511) to have a null ID - we are trying to create this, why would it already exist?",ex.Message);
         }
@@ -60,7 +60,7 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
         {
             var proj = new Project(DataExportRepository, projName);
 
-            CohortCreationRequest request = new CohortCreationRequest(proj, new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), (DataExportRepository)DataExportRepository, "fish");
+            CohortCreationRequest request = new CohortCreationRequest(proj, new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository, "fish");
             var ex = Assert.Throws<Exception>(()=>request.Check(new ThrowImmediatelyCheckNotifier()));
             Assert.AreEqual("Project MyProj does not have a ProjectNumber specified, it should have the same number as the CohortCreationRequest (999)",ex.Message);
         }
@@ -71,7 +71,7 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
             var proj = new Project(DataExportRepository, projName) {ProjectNumber = 321};
             proj.SaveToDatabase();
 
-            CohortCreationRequest request = new CohortCreationRequest(proj, new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), (DataExportRepository)DataExportRepository, "fish");
+            CohortCreationRequest request = new CohortCreationRequest(proj, new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository, "fish");
             var ex = Assert.Throws<Exception>(()=>request.Check(new ThrowImmediatelyCheckNotifier()));
             Assert.AreEqual("Project MyProj has ProjectNumber=321 but the CohortCreationRequest.ProjectNumber is 999",ex.Message);
         }
@@ -85,7 +85,7 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
             proj.ProjectNumber = 999;
             proj.SaveToDatabase();
 
-            CohortCreationRequest request = new CohortCreationRequest(proj, new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), (DataExportRepository)DataExportRepository, "fish");
+            CohortCreationRequest request = new CohortCreationRequest(proj, new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository, "fish");
             request.Check(new ThrowImmediatelyCheckNotifier());
 
             DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
@@ -121,7 +121,7 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
             var definition999 = new CohortDefinition(null, "CommittingNewCohorts", 2, 999, _externalCohortTable);
             
             // Create a basic cohort first
-            CohortCreationRequest request1 = new CohortCreationRequest(proj, definition998, (DataExportRepository)DataExportRepository, "fish");
+            CohortCreationRequest request1 = new CohortCreationRequest(proj, definition998, DataExportRepository, "fish");
             request1.Check(new ThrowImmediatelyCheckNotifier());
 
             using var con = _cohortDatabase.Server.GetManagedConnection();
@@ -136,7 +136,7 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
             // define that the new definition attempts to replace the old one
             definition999.CohortReplacedIfAny = cohort998;
 
-            CohortCreationRequest request2 = new CohortCreationRequest(proj, definition999, (DataExportRepository)DataExportRepository, "fish");
+            CohortCreationRequest request2 = new CohortCreationRequest(proj, definition999, DataExportRepository, "fish");
             request2.Check(new ThrowImmediatelyCheckNotifier());
             request2.PushToServer(con);
             request2.ImportAsExtractableCohort(deprecate, false);
@@ -161,7 +161,7 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
             var definition999 = new CohortDefinition(null, "CommittingNewCohorts", 2, 999, _externalCohortTable);
 
             // Create a basic cohort first
-            CohortCreationRequest request1 = new CohortCreationRequest(proj, definition998, (DataExportRepository)DataExportRepository, "fish");
+            CohortCreationRequest request1 = new CohortCreationRequest(proj, definition998, DataExportRepository, "fish");
             request1.Check(new ThrowImmediatelyCheckNotifier());
 
             using var con = _cohortDatabase.Server.GetManagedConnection();
@@ -203,7 +203,7 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
             // define that the new definition attempts to replace the old one
             definition999.CohortReplacedIfAny = cohort998;
 
-            CohortCreationRequest request2 = new CohortCreationRequest(proj, definition999, (DataExportRepository)DataExportRepository, "fish");
+            CohortCreationRequest request2 = new CohortCreationRequest(proj, definition999, DataExportRepository, "fish");
             request2.Check(new ThrowImmediatelyCheckNotifier());
             request2.PushToServer(con);
             request2.ImportAsExtractableCohort(true, migrate);
