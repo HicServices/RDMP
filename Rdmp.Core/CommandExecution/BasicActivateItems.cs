@@ -411,6 +411,8 @@ namespace Rdmp.Core.CommandExecution
                         child.DeleteInDatabase();
                     }
 
+                    f.ClearAllInjections();
+
                     f.DeleteInDatabase();
                     return true;
                 }

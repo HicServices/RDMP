@@ -28,6 +28,8 @@ namespace Rdmp.UI.Tests.Curation.Integration
 
             Assert.IsTrue(filter.Exists());
             Assert.IsTrue(set.Exists());
+            
+            SetupMEF();
 
             var activator = new TestActivateItems(this, Repository);
             activator.InteractiveDeletes = true;

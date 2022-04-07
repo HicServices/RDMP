@@ -303,7 +303,8 @@ namespace Rdmp.Core.DataExport.Data
 
         public ExtractionConfiguration()
         {
-
+            // Default (also default in db)
+            Separator = ",";
         }
 
         /// <summary>
@@ -321,7 +322,8 @@ namespace Rdmp.Core.DataExport.Data
                 {"Project_ID", project.ID},
                 {"Username", Environment.UserName},
                 {"Description", "Initial Configuration"},
-                {"Name","New ExtractionConfiguration" + Guid.NewGuid() }
+                {"Name","New ExtractionConfiguration" + Guid.NewGuid() },
+                {"Separator",","}
             });
         }
         /// <summary>

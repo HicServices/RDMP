@@ -270,8 +270,16 @@ namespace Rdmp.Core.Curation.Data.Aggregation
 
         public override void DeleteInDatabase()
         {
-            var ac = AggregateConfiguration;
-
+            AggregateConfiguration ac = null;
+            try
+            {
+                ac = AggregateConfiguration;
+            }
+            catch (KeyNotFoundException)
+            {
+                // its gone already, must be a bad reference
+            }
+            
             if(ac != null)
             {
                 if(ac.PivotOnDimensionID == ID)

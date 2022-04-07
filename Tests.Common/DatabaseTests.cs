@@ -324,6 +324,9 @@ namespace Tests.Common
             DeleteAll<CohortIdentificationConfiguration>(y);
             DeleteAll<CohortAggregateContainer>(y);
 
+            DeleteAll<AggregateTopX>(y);
+            DeleteAll<AggregateContinuousDateAxis>(y);
+            DeleteAll<AggregateDimension>(y);
             DeleteAll<AggregateConfiguration>(y);
             DeleteAll<AggregateFilter>(y);
             DeleteAll<AggregateFilterContainer>(y);
@@ -356,6 +359,7 @@ namespace Tests.Common
             DeleteAll<GovernanceDocument>(y);
             DeleteAll<GovernancePeriod>(y);
 
+            DeleteAll<CatalogueItem>(y);
             DeleteAll<Catalogue>(y);
 
             DeleteAll<CacheProgress>(y);

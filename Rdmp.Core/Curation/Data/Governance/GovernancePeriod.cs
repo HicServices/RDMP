@@ -126,7 +126,7 @@ namespace Rdmp.Core.Curation.Data.Governance
             repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
                 {"Name", name ?? "GovernancePeriod"+Guid.NewGuid()},
-                {"StartDate",DateTime.Now}
+                {"StartDate",DateTime.Now.Date}
             });
 
             _manager = CatalogueRepository.GovernanceManager;
