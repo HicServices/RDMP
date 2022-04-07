@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Fixed
+
+- Fixed bug preventing example datasets being created from the RDMP UI client because checkbox was disabled
+
 ## [7.0.9] - 2022-03-29
 
 ### Added
