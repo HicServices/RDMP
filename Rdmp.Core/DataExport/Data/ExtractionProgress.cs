@@ -155,6 +155,11 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
         var cata = sds.GetCatalogue();
         var coverageColId = cata?.TimeCoverage_ExtractionInformation_ID;
 
+        if(sds.ExtractionProgressIfAny != null)
+        {
+            throw new Exception($"There is already an ExtractionProgress associated with {sds}");
+        }
+
         if (!coverageColId.HasValue)
         {
             throw new ArgumentException($"Cannot create ExtractionProgress because Catalogue {cata} does not have a time coverage column");

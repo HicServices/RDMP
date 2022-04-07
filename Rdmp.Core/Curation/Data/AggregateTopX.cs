@@ -88,7 +88,7 @@ namespace Rdmp.Core.Curation.Data
 
         public AggregateTopX()
         {
-
+            OrderByDirection = AggregateTopXOrderByDirection.Descending;
         }
 
         /// <summary>
@@ -114,10 +114,16 @@ namespace Rdmp.Core.Curation.Data
         /// <param name="topX"></param>
         public AggregateTopX(ICatalogueRepository repository, AggregateConfiguration forConfiguration, int topX)
         {
+            if(forConfiguration.GetTopXIfAny() != null)
+            {
+                throw new Exception($"AggregateConfiguration {forConfiguration} already has a TopX");
+            }
+
             repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
                 {"AggregateConfiguration_ID", forConfiguration.ID},
                 {"TopX", topX},
+                { nameof(OrderByDirection) , AggregateTopXOrderByDirection.Descending}
             });
         }
 

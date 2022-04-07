@@ -216,6 +216,16 @@ namespace Rdmp.Core.DataExport.Data
         {
             return new DeployedExtractionFilterFactory(DataExportRepository);
         }
+
+        public override void DeleteInDatabase()
+        {
+            if (ExtractionProgressIfAny != null)
+            {
+                ExtractionProgressIfAny.DeleteInDatabase();
+            }
+                
+            base.DeleteInDatabase();
+        }
     }
 }
 

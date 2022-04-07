@@ -101,6 +101,12 @@ namespace Rdmp.Core.Curation.Data
         /// <inheritdoc/>
         public override void DeleteInDatabase()
         {
+            var users = CatalogueRepository.TableInfoCredentialsManager.GetAllTablesUsingCredentials(this);
+
+            // if there are any contexts where there are any associated tables using this credentials
+            if (users.Any(k => k.Value.Any()))
+                throw new CredentialsInUseException($"Cannot delete credentials {Name} because it is in use by one or more TableInfo objects({string.Join(",", users.SelectMany(u => u.Value).Distinct().Select(t => t.Name))})");
+
             try
             {
                 base.DeleteInDatabase();

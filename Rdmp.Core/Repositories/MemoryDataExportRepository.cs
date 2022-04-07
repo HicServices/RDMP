@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
@@ -91,6 +92,9 @@ namespace Rdmp.Core.Repositories
         {
             if (!_packageDictionary.ContainsKey(package))
                 _packageDictionary.Add(package, new HashSet<IExtractableDataSet>());
+
+            if (!_packageDictionary[package].Contains(dataSet))
+                throw new ArgumentException("dataSet " + dataSet + " is not part of package " + package + " so cannot be removed", "dataSet");
 
             _packageDictionary[package].Remove(dataSet);
         }

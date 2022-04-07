@@ -293,8 +293,8 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             ITableInfo[] TablesThatUseCredential = creds.GetAllTableInfosThatUseThis()[DataAccessContext.InternalDataProcessing].ToArray();
 
-            Assert.AreEqual(TablesThatUseCredential[0], tableInfo1);
-            Assert.AreEqual(TablesThatUseCredential[1], tableInfo2); 
+            Assert.Contains(tableInfo1, TablesThatUseCredential);
+            Assert.Contains(tableInfo2, TablesThatUseCredential); 
 
             tableInfo1.DeleteInDatabase();
             tableInfo2.DeleteInDatabase();

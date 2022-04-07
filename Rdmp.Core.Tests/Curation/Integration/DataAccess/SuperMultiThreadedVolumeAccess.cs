@@ -50,6 +50,10 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
         {
             IManagedConnection c= null;
 
+
+            if (CatalogueRepository is not TableRepository && useTransactions)
+                Assert.Inconclusive("YamlRepository does not support transactions so don't test this");
+
             if (useTransactions)
                 c = CatalogueTableRepository.BeginNewTransactedConnection();
 
@@ -126,6 +130,9 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
 
         private void FireMultiThreaded(Action<bool> method, int numberToFire, bool useTransactions)
         {
+            if (CatalogueRepository is not TableRepository)
+                Assert.Inconclusive("We dont have to test this for yaml repos");
+
             
             List<Exception> exes = new List<Exception>();
             

@@ -324,6 +324,9 @@ namespace Tests.Common
             DeleteAll<CohortIdentificationConfiguration>(y);
             DeleteAll<CohortAggregateContainer>(y);
 
+            DeleteAll<ObjectExport>(y);
+            DeleteAll<ObjectImport>(y);
+
             DeleteAll<AggregateTopX>(y);
             DeleteAll<AggregateContinuousDateAxis>(y);
             DeleteAll<AggregateDimension>(y);
@@ -333,6 +336,9 @@ namespace Tests.Common
             DeleteAll<AggregateFilterParameter>(y);
 
             DeleteAll<AnyTableSqlParameter>(y);
+
+            DeleteAll<Lookup>(y);
+            DeleteAll<JoinInfo>(y);
 
             DeleteAll<ColumnInfo>(y);
             DeleteAll<ANOTable>(y);
@@ -371,9 +377,6 @@ namespace Tests.Common
             DeleteAll<PipelineComponentArgument>(y);
             DeleteAll<Pipeline>(y);
             DeleteAll<PipelineComponent>(y);
-
-            DeleteAll<ObjectExport>(y);
-            DeleteAll<ObjectImport>(y);
 
             DeleteAll<LoadModuleAssembly>(y);
             DeleteAll<Rdmp.Core.Curation.Data.Plugin>(y);
