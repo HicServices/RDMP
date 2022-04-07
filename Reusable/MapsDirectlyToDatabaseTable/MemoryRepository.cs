@@ -318,6 +318,7 @@ namespace MapsDirectlyToDatabaseTable
         {
             var prop = entity.GetType().GetProperty(propertyName);
             prop.SetValue(entity,propertyValue);
+            SaveToDatabase(entity);
         }
 
 

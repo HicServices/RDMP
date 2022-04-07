@@ -20,6 +20,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Exceptions;
 using Tests.Common;
+using MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
 {
@@ -133,6 +134,9 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
         [Test]
         public void AsyncTest()
         {
+            if (CatalogueRepository is not TableRepository)
+                Assert.Inconclusive("Test only applies to database repositories");
+
             List<Thread> threads = new List<Thread>();
 
 
