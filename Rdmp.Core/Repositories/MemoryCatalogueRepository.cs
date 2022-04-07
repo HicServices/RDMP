@@ -159,7 +159,7 @@ namespace Rdmp.Core.Repositories
 
         public T[] GetReferencesTo<T>(IMapsDirectlyToDatabaseTable o) where T : ReferenceOtherObjectDatabaseEntity
         {
-            return Objects.OfType<T>().Where(r => r.IsReferenceTo(o)).ToArray();
+            return Objects.Keys.OfType<T>().Where(r => r.IsReferenceTo(o)).ToArray();
         }
 
         public bool IsLookupTable(ITableInfo tableInfo)
@@ -567,6 +567,17 @@ namespace Rdmp.Core.Repositories
             {
                 // forget about its credentials usages
                 _credentialsDictionary.Remove(t);
+            }
+
+            // when deleting a ColumnInfo
+            if (oTableWrapperObject is ColumnInfo columnInfo)
+            {
+                foreach(var ci in Objects.Keys.OfType<CatalogueItem>().Where(ci=>ci.ColumnInfo_ID == columnInfo.ID))
+                {
+                    ci.ColumnInfo_ID = null;
+                    ci.ClearAllInjections();
+                    ci.SaveToDatabase();
+                }
             }
 
             if (oTableWrapperObject is CatalogueItem catalogueItem)

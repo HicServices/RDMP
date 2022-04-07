@@ -318,10 +318,10 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         /// <returns>the new ProcessTask (the clone has a different ID to the parent)</returns>
         public ProcessTask CloneToNewLoadMetadataStage(LoadMetadata loadMetadata, LoadStage loadStage)
         {
-            var cataRepository = ((CatalogueRepository) Repository);
+            var cataRepository = ((ICatalogueRepository) Repository);
 
             //clone only accepts sql connections so make sure we aren't in mysql land or something
-            using (cataRepository.BeginNewTransactedConnection())
+            using (cataRepository.BeginNewTransaction())
             {
                 try
                 {
@@ -345,14 +345,14 @@ namespace Rdmp.Core.Curation.Data.DataLoad
                     clone.SaveToDatabase();
                     
                     //it worked
-                    cataRepository.EndTransactedConnection(true);
+                    cataRepository.EndTransaction(true);
 
                     //return the clone
                     return clone;
                 }
                 catch(Exception)
                 {
-                    cataRepository.EndTransactedConnection(false);
+                    cataRepository.EndTransaction(false);
                     throw;
                 }
             }
