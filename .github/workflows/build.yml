@@ -108,7 +108,7 @@ jobs:
           nuget push HIC.RDMP.Plugin.Test.${{ steps.get_version.outputs.VERSION }}.nupkg -skipDuplicate -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_KEY }}
           
       - name: Archive production artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: dist
           path: |
