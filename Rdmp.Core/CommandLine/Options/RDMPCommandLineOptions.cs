@@ -22,7 +22,7 @@ namespace Rdmp.Core.CommandLine.Options
     /// </summary>
     public abstract class RDMPCommandLineOptions
     {
-        private LinkedRepositoryProvider _repositoryLocator;
+        private IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
 
         [Option(Required = false, HelpText = @"Name of the Metadata server (where Catalogue and Data Export are stored) e.g. localhost\sqlexpress")]
         public string ServerName { get; set; }
@@ -73,16 +73,17 @@ namespace Rdmp.Core.CommandLine.Options
 
         public virtual IRDMPPlatformRepositoryServiceLocator GetRepositoryLocator()
         {
-            if(!string.IsNullOrWhiteSpace(Dir))
-            {
-                return new RepositoryProvider(new YamlRepository(new DirectoryInfo(Dir)));
-            }
-                
-
             if(_repositoryLocator == null)
             {
-                GetConnectionStrings(out var c, out var d);
-                _repositoryLocator = new LinkedRepositoryProvider(c?.ConnectionString, d?.ConnectionString);
+                if (!string.IsNullOrWhiteSpace(Dir))
+                {
+                    return _repositoryLocator = new RepositoryProvider(new YamlRepository(new DirectoryInfo(Dir)));
+                }
+                else
+                {
+                    GetConnectionStrings(out var c, out var d);
+                    _repositoryLocator = new LinkedRepositoryProvider(c?.ConnectionString, d?.ConnectionString);
+                }
             }
 
             return _repositoryLocator;
