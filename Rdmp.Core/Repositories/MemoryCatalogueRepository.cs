@@ -37,13 +37,13 @@ namespace Rdmp.Core.Repositories
     /// Memory only implementation of <see cref="ICatalogueRepository"/> in which all objects are created in 
     /// dictionaries and arrays in memory instead of the database.
     /// </summary>
-    public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, IServerDefaults,ITableInfoCredentialsManager, IAggregateForcedJoinManager, ICohortContainerManager, IFilterManager, IGovernanceManager, IEncryptionManager
+    public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, IServerDefaults,ITableInfoCredentialsManager, IAggregateForcedJoinManager, ICohortContainerManager, IFilterManager, IGovernanceManager
     {
         public IAggregateForcedJoinManager AggregateForcedJoinManager { get { return this; } }
         public IGovernanceManager GovernanceManager { get { return this; }}
         public ITableInfoCredentialsManager TableInfoCredentialsManager { get { return this; }}
         public ICohortContainerManager CohortContainerManager { get { return this; }}
-        public IEncryptionManager EncryptionManager { get { return this; }}
+        public IEncryptionManager EncryptionManager { get; private set; }
 
         public IFilterManager FilterManager { get { return this; }}
         public IPluginManager PluginManager { get; private set; }
@@ -71,6 +71,11 @@ namespace Rdmp.Core.Repositories
         public DbConnectionStringBuilder ConnectionStringBuilder { get { return null; } }
         public DiscoveredServer DiscoveredServer { get { return null; }}
 
+        /// <summary>
+        /// Path to RSA private key encryption certificate for decrypting encrypted credentials.
+        /// </summary>
+        public string EncryptionKeyPath { get; protected set; }
+
         readonly Dictionary<PermissableDefaults, IExternalDatabaseServer> _defaults = new Dictionary<PermissableDefaults, IExternalDatabaseServer>();
 
         public MemoryCatalogueRepository(IServerDefaults currentDefaults = null)
@@ -78,6 +83,7 @@ namespace Rdmp.Core.Repositories
             JoinManager = new JoinManager(this);
             PluginManager = new PluginManager(this);
             CommentStore = new CommentStoreWithKeywords();
+            EncryptionManager = new PasswordEncryptionKeyLocation(this);
 
             //we need to know what the default servers for stuff are
             foreach (PermissableDefaults value in Enum.GetValues(typeof (PermissableDefaults)))
@@ -521,19 +527,19 @@ namespace Rdmp.Core.Repositories
 
         }
 
-        public void SetEncryptionKeyPath(string fullName)
+        public virtual void SetEncryptionKeyPath(string fullName)
         {
-            throw new NotImplementedException();
+            EncryptionKeyPath = fullName;
         }
 
         public string GetEncryptionKeyPath()
         {
-            throw new NotImplementedException();
+            return EncryptionKeyPath;
         }
 
-        public void DeleteEncryptionKeyPath()
+        public virtual void DeleteEncryptionKeyPath()
         {
-            throw new NotImplementedException();
+            EncryptionKeyPath = null;
         }
         #endregion
         protected override void CascadeDeletes(IMapsDirectlyToDatabaseTable oTableWrapperObject)

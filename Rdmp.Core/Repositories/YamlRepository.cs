@@ -54,6 +54,9 @@ public class YamlRepository : MemoryDataExportRepository
 
         LoadObjects();
 
+        if (File.Exists(GetEncryptionKeyPathFile()))
+            EncryptionKeyPath = File.ReadAllText(GetEncryptionKeyPathFile());
+
         MEF = new MEF();
 
         // Don't create new objects with the ID of existing objects
@@ -142,5 +145,31 @@ public class YamlRepository : MemoryDataExportRepository
         return Path.Combine(Directory.FullName, o.GetType().Name, o.ID + ".yaml");
     }
 
-    
+    public override void DeleteEncryptionKeyPath()
+    {
+        base.DeleteEncryptionKeyPath();
+
+        if(File.Exists(GetEncryptionKeyPathFile()))
+            File.Delete(GetEncryptionKeyPathFile());
+    }
+    public override void SetEncryptionKeyPath(string fullName)
+    {
+        base.SetEncryptionKeyPath(fullName);
+
+        // if setting it to null
+        if (string.IsNullOrWhiteSpace(fullName)) {
+
+            // delete the file on disk
+            if (File.Exists(GetEncryptionKeyPathFile()))
+                File.Delete(GetEncryptionKeyPathFile());
+        }
+        else
+            File.WriteAllText(GetEncryptionKeyPathFile(), fullName);
+    }
+    private string GetEncryptionKeyPathFile()
+    {
+        return Path.Combine(Directory.FullName, "EncryptionKeyPath");
+    }
+
+
 }
