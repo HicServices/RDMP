@@ -365,9 +365,6 @@ namespace Tests.Common
             DeleteAll<GovernanceDocument>(y);
             DeleteAll<GovernancePeriod>(y);
 
-            DeleteAll<CatalogueItem>(y);
-            DeleteAll<Catalogue>(y);
-
             DeleteAll<CacheProgress>(y);
             DeleteAll<LoadProgress>(y);
             DeleteAll<LoadMetadata>(y);
@@ -401,6 +398,9 @@ namespace Tests.Common
 
             DeleteAll<ExtractableDataSet>(y);
             DeleteAll<Project>(y);
+
+            DeleteAll<CatalogueItem>(y);
+            DeleteAll<Catalogue>(y);
         }
 
         private void DeleteAll<T>(YamlRepository y) where T : IMapsDirectlyToDatabaseTable

@@ -558,6 +558,11 @@ namespace Rdmp.Core.Repositories
             {
                 // forget about its credentials usages
                 _credentialsDictionary.Remove(t);
+
+                foreach(var c in t.ColumnInfos)
+                {
+                    c.DeleteInDatabase();
+                }
             }
 
             // when deleting a ColumnInfo

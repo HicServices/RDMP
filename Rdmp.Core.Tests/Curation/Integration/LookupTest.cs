@@ -26,6 +26,8 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void Test_MultipleLookupReferences()
         {
+            BlitzMainDataTables();
+
             var tiHeader = new TableInfo(CatalogueRepository,"Head");
             var tiHeader_Code = new ColumnInfo(CatalogueRepository,"code","",tiHeader);
                        
