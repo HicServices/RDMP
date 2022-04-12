@@ -6,6 +6,7 @@
 
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Repositories;
 using System;
 using System.IO;
@@ -35,6 +36,19 @@ namespace Rdmp.Core.Tests.Curation
             }
         }
 
+        [Test]
+        public void PersistDefaults()
+        {
+            var dir = GetUniqueDirectory();
+
+            var repo1 = new YamlRepository(dir);
+            var eds = new ExternalDatabaseServer(repo1,"myServer",null);
+            repo1.SetDefault(PermissableDefaults.LiveLoggingServer_ID, eds);
+
+
+            var repo2 = new YamlRepository(dir);
+            Assert.AreEqual(eds, repo2.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
+        }
         [Test]
         public void TestYamlRepository_LoadObjects()
         {

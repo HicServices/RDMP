@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Defaults;
 using YamlDotNet.Serialization;
 
 namespace Rdmp.Core.Repositories;
@@ -88,8 +90,9 @@ public class YamlRepository : MemoryDataExportRepository
                     Objects.TryAdd(obj, 0);
                 }
             }
-            
         }
+
+        LoadDefaults();
     }
 
     /// <summary>
@@ -171,5 +174,40 @@ public class YamlRepository : MemoryDataExportRepository
         return Path.Combine(Directory.FullName, "EncryptionKeyPath");
     }
 
+    private string GetDefaultsFile()
+    {
+        return Path.Combine(Directory.FullName, "Defaults.yaml");
+    }
+
+    public override void SetDefault(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
+    {
+        base.SetDefault(toChange, externalDatabaseServer);
+
+        SaveDefaults();
+    }
+
+    private void SaveDefaults()
+    {
+        var serializer = new Serializer();
+
+        // save the default and the ID
+        File.WriteAllText(GetDefaultsFile(),serializer.Serialize(Defaults.ToDictionary(k=>k.Key,v=>v.Value?.ID ?? 0)));
+    }
+
+    public void LoadDefaults()
+    {
+        var deserializer = new Deserializer();
+
+        var defaultsFile = GetDefaultsFile();
+
+        if(File.Exists(defaultsFile))
+        {
+            var yaml = File.ReadAllText(defaultsFile);
+            var objectIds = deserializer.Deserialize<Dictionary<PermissableDefaults, int>>(yaml);
+            Defaults = objectIds.ToDictionary(
+                k=>k.Key,
+                v=>v.Value == 0 ? null : (IExternalDatabaseServer)GetObjectByID<ExternalDatabaseServer>(v.Value));
+        }
+    }
 
 }

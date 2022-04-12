@@ -76,7 +76,7 @@ namespace Rdmp.Core.Repositories
         /// </summary>
         public string EncryptionKeyPath { get; protected set; }
 
-        readonly Dictionary<PermissableDefaults, IExternalDatabaseServer> _defaults = new Dictionary<PermissableDefaults, IExternalDatabaseServer>();
+        protected virtual Dictionary<PermissableDefaults, IExternalDatabaseServer> Defaults { get; set; } = new ();
 
         public MemoryCatalogueRepository(IServerDefaults currentDefaults = null)
         {
@@ -88,7 +88,7 @@ namespace Rdmp.Core.Repositories
             //we need to know what the default servers for stuff are
             foreach (PermissableDefaults value in Enum.GetValues(typeof (PermissableDefaults)))
                 if(currentDefaults == null)
-                    _defaults.Add(value, null); //we have no defaults to import
+                    Defaults.Add(value, null); //we have no defaults to import
                 else
                 {
                     //we have defaults to import so get the default
@@ -98,7 +98,7 @@ namespace Rdmp.Core.Repositories
                     if (defaultServer != null)
                         Objects.TryAdd(defaultServer,0);
 
-                    _defaults.Add(value,defaultServer);
+                    Defaults.Add(value,defaultServer);
                 }
 
             //start IDs with the maximum id of any default to avoid collisions
@@ -192,17 +192,17 @@ namespace Rdmp.Core.Repositories
 
         public IExternalDatabaseServer GetDefaultFor(PermissableDefaults field)
         {
-            return _defaults[field];
+            return Defaults[field];
         }
 
         public void ClearDefault(PermissableDefaults toDelete)
         {
-            _defaults[toDelete] = null;
+            Defaults[toDelete] = null;
         }
 
-        public void SetDefault(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
+        public virtual void SetDefault(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
         {
-            _defaults[toChange] = externalDatabaseServer;
+            Defaults[toChange] = externalDatabaseServer;
         }
         
         public override void Clear()
@@ -213,7 +213,7 @@ namespace Rdmp.Core.Repositories
             _credentialsDictionary.Clear();
             _forcedJoins.Clear();
             _whereSubContainers.Clear();
-            _defaults.Clear();
+            Defaults.Clear();
         }
 
         #region ITableInfoToCredentialsLinker
