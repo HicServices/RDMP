@@ -47,22 +47,22 @@ namespace Rdmp.Core.Repositories
 
         #region IDataExportPropertyManager
 
-        Dictionary<DataExportProperty,string>  _propertiesDictionary = new Dictionary<DataExportProperty, string>();
+        protected Dictionary<DataExportProperty,string>  PropertiesDictionary = new Dictionary<DataExportProperty, string>();
         
-        public string GetValue(DataExportProperty property)
+        public virtual string GetValue(DataExportProperty property)
         {
-            if (_propertiesDictionary.ContainsKey(property))
-                return _propertiesDictionary[property];
+            if (PropertiesDictionary.ContainsKey(property))
+                return PropertiesDictionary[property];
 
             return null;
         }
 
-        public void SetValue(DataExportProperty property, string value)
+        public virtual void SetValue(DataExportProperty property, string value)
         {
-            if (!_propertiesDictionary.ContainsKey(property))
-                _propertiesDictionary.Add(property,value);
+            if (!PropertiesDictionary.ContainsKey(property))
+                PropertiesDictionary.Add(property,value);
             else
-                _propertiesDictionary[property] = value;
+                PropertiesDictionary[property] = value;
         }
         #endregion
 

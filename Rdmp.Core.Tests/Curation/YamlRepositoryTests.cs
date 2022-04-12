@@ -8,6 +8,7 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.Repositories.Managers;
 using System;
 using System.IO;
 using System.Linq;
@@ -45,10 +46,23 @@ namespace Rdmp.Core.Tests.Curation
             var eds = new ExternalDatabaseServer(repo1,"myServer",null);
             repo1.SetDefault(PermissableDefaults.LiveLoggingServer_ID, eds);
 
-
             var repo2 = new YamlRepository(dir);
             Assert.AreEqual(eds, repo2.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
         }
+
+
+        [Test]
+        public void PersistDataExportPropertyManagerValues()
+        {
+            var dir = GetUniqueDirectory();
+
+            var repo1 = new YamlRepository(dir);
+            repo1.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern,"yarg");
+
+            var repo2 = new YamlRepository(dir);
+            Assert.AreEqual("yarg", repo2.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern));
+        }
+
         [Test]
         public void TestYamlRepository_LoadObjects()
         {

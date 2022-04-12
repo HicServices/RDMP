@@ -10,6 +10,7 @@ using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.Repositories.Managers;
 using YamlDotNet.Serialization;
 
 namespace Rdmp.Core.Repositories;
@@ -93,6 +94,8 @@ public class YamlRepository : MemoryDataExportRepository
         }
 
         LoadDefaults();
+
+        LoadDataExportProperties();
     }
 
     /// <summary>
@@ -174,6 +177,7 @@ public class YamlRepository : MemoryDataExportRepository
         return Path.Combine(Directory.FullName, "EncryptionKeyPath");
     }
 
+    #region Server Defaults Persistence
     private string GetDefaultsFile()
     {
         return Path.Combine(Directory.FullName, "Defaults.yaml");
@@ -209,5 +213,41 @@ public class YamlRepository : MemoryDataExportRepository
                 v=>v.Value == 0 ? null : (IExternalDatabaseServer)GetObjectByID<ExternalDatabaseServer>(v.Value));
         }
     }
+    #endregion
+
+    #region DataExportProperties Persistence
+    private string GetDataExportPropertiesFile()
+    {
+        return Path.Combine(Directory.FullName, "DataExportProperties.yaml");
+    }
+    public void LoadDataExportProperties()
+    {
+        var deserializer = new Deserializer();
+
+        var defaultsFile = GetDataExportPropertiesFile();
+
+        if (File.Exists(defaultsFile))
+        {
+            var yaml = File.ReadAllText(defaultsFile);
+            PropertiesDictionary = deserializer.Deserialize<Dictionary<DataExportProperty, string>>(yaml);
+        }
+    }
+    private void SaveDataExportProperties()
+    {
+        var serializer = new Serializer();
+
+        // save the default and the ID
+        File.WriteAllText(GetDataExportPropertiesFile(), serializer.Serialize(PropertiesDictionary));
+    }
+    public override string GetValue(DataExportProperty property)
+    {
+        return base.GetValue(property);
+    }
+    public override void SetValue(DataExportProperty property, string value)
+    {
+        base.SetValue(property, value);
+        SaveDataExportProperties();
+    }
+    #endregion
 
 }
