@@ -483,36 +483,36 @@ namespace Rdmp.Core.Repositories
 
         #region IGovernanceManager
 
-        readonly Dictionary<GovernancePeriod,HashSet<ICatalogue>> _governanceCoverage = new Dictionary<GovernancePeriod, HashSet<ICatalogue>>();
+        protected Dictionary<GovernancePeriod,HashSet<ICatalogue>> GovernanceCoverage { get; set; } = new ();
         private MEF _mef;
 
-        public void Unlink(GovernancePeriod governancePeriod, ICatalogue catalogue)
+        public virtual void Unlink(GovernancePeriod governancePeriod, ICatalogue catalogue)
         {
-            if(!_governanceCoverage.ContainsKey(governancePeriod))
-                _governanceCoverage.Add(governancePeriod,new HashSet<ICatalogue>());
+            if(!GovernanceCoverage.ContainsKey(governancePeriod))
+                GovernanceCoverage.Add(governancePeriod,new HashSet<ICatalogue>());
 
-            _governanceCoverage[governancePeriod].Remove(catalogue);
+            GovernanceCoverage[governancePeriod].Remove(catalogue);
         }
 
-        public void Link(GovernancePeriod governancePeriod, ICatalogue catalogue)
+        public virtual void Link(GovernancePeriod governancePeriod, ICatalogue catalogue)
         {
-            if (!_governanceCoverage.ContainsKey(governancePeriod))
-                _governanceCoverage.Add(governancePeriod, new HashSet<ICatalogue>());
+            if (!GovernanceCoverage.ContainsKey(governancePeriod))
+                GovernanceCoverage.Add(governancePeriod, new HashSet<ICatalogue>());
 
-            _governanceCoverage[governancePeriod].Add(catalogue);
+            GovernanceCoverage[governancePeriod].Add(catalogue);
         }
 
         public Dictionary<int, HashSet<int>> GetAllGovernedCataloguesForAllGovernancePeriods()
         {
-            return  _governanceCoverage.ToDictionary(k => k.Key.ID, v => new HashSet<int>(v.Value.Select(c => c.ID)));
+            return  GovernanceCoverage.ToDictionary(k => k.Key.ID, v => new HashSet<int>(v.Value.Select(c => c.ID)));
         }
 
         public IEnumerable<ICatalogue> GetAllGovernedCatalogues(GovernancePeriod governancePeriod)
         {
-            if (!_governanceCoverage.ContainsKey(governancePeriod))
+            if (!GovernanceCoverage.ContainsKey(governancePeriod))
                 return Enumerable.Empty<ICatalogue>();
 
-            return _governanceCoverage[governancePeriod];
+            return GovernanceCoverage[governancePeriod];
         }
 
         #endregion

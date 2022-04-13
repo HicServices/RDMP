@@ -7,6 +7,7 @@
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Managers;
@@ -85,6 +86,25 @@ namespace Rdmp.Core.Tests.Curation
             Assert.AreEqual("yarg", repo2.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern));
         }
 
+        [Test]
+        public void PersistGovernancePeriods()
+        {
+            var dir = GetUniqueDirectory();
+
+            var repo1 = new YamlRepository(dir);
+
+            var period = UnitTests.WhenIHaveA<GovernancePeriod>(repo1);
+            var cata = UnitTests.WhenIHaveA<Catalogue>(repo1);
+
+            Assert.IsEmpty(repo1.GetAllGovernedCatalogues(period));
+            repo1.Link(period, cata);
+            Assert.IsNotEmpty(repo1.GetAllGovernedCatalogues(period));
+
+            // A fresh repo loaded from the same directory should have persisted objects ds and package
+            // as well as the understanding that one contains the other
+            var repo2 = new YamlRepository(dir);
+            Assert.IsNotEmpty(repo2.GetAllGovernedCatalogues(period));
+        }
         [Test]
         public void TestYamlRepository_LoadObjects()
         {

@@ -10,6 +10,7 @@ using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories.Managers;
 using YamlDotNet.Serialization;
@@ -99,6 +100,8 @@ public class YamlRepository : MemoryDataExportRepository
         LoadDataExportProperties();
 
         LoadPackageContents();
+
+        LoadGovernanceCoverage();
     }
 
     /// <summary>
@@ -294,6 +297,55 @@ public class YamlRepository : MemoryDataExportRepository
         base.RemoveDataSetFromPackage(package, dataSet);
 
         SavePackageContents();
+    }
+
+    #endregion
+
+    #region Persist Governance Link Table
+
+    private string GetGovernaceCoverageFile()
+    {
+        return Path.Combine(Directory.FullName, "GovernanceCoverage.yaml");
+    }
+    public void LoadGovernanceCoverage()
+    {
+        var deserializer = new Deserializer();
+
+        var file = GetGovernaceCoverageFile();
+
+        if (File.Exists(file))
+        {
+            var yaml = File.ReadAllText(file);
+            GovernanceCoverage = deserializer.Deserialize<Dictionary<int, List<int>>>(yaml)
+                .ToDictionary(
+                    k => GetObjectByID<GovernancePeriod>(k.Key),
+                    v => new HashSet<ICatalogue>(v.Value.Select(v => GetObjectByID<ICatalogue>(v))));
+        }
+    }
+    private void SaveGovernanceCoverage()
+    {
+        var serializer = new Serializer();
+
+        // save the default and the ID
+        File.WriteAllText(GetGovernaceCoverageFile(), serializer.Serialize(
+            GovernanceCoverage.ToDictionary(
+                k=>k.Key.ID,
+                v=>v.Value.Select(c=>c.ID).ToList()
+                )));
+    }
+
+
+    public override void Link(GovernancePeriod governancePeriod, ICatalogue catalogue)
+    {
+        base.Link(governancePeriod, catalogue);
+        SaveGovernanceCoverage();
+    }
+
+    public override void Unlink(GovernancePeriod governancePeriod, ICatalogue catalogue)
+    {
+        
+        base.Unlink(governancePeriod, catalogue);
+        SaveGovernanceCoverage();
     }
 
     #endregion
