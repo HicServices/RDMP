@@ -99,9 +99,9 @@ public class YamlRepository : MemoryDataExportRepository
 
         LoadDataExportProperties();
 
-        LoadPackageContents();
+        PackageDictionary = Load<IExtractableDataSetPackage,IExtractableDataSet>(nameof(PackageDictionary));
 
-        LoadGovernanceCoverage();
+        GovernanceCoverage = Load<GovernancePeriod, ICatalogue>(nameof(GovernanceCoverage));
     }
 
     /// <summary>
@@ -258,96 +258,68 @@ public class YamlRepository : MemoryDataExportRepository
 
     #region Persist Package Contents
 
-    private string GetPackageContentsFile()
-    {
-        return Path.Combine(Directory.FullName, "PackageContents.yaml");
-    }
-    public void LoadPackageContents()
-    {
-        var deserializer = new Deserializer();
-
-        var packageContentFile = GetPackageContentsFile();
-
-        if (File.Exists(packageContentFile))
-        {
-            var yaml = File.ReadAllText(packageContentFile);
-            PackageDictionary = deserializer.Deserialize<Dictionary<int, List<int>>>(yaml)
-                .ToDictionary(
-                    k => GetObjectByID<IExtractableDataSetPackage>(k.Key),
-                    v => new HashSet<IExtractableDataSet>(v.Value.Select(v => GetObjectByID<ExtractableDataSet>(v))));
-        }
-    }
-    private void SavePackageContents()
-    {
-        var serializer = new Serializer();
-
-        // save the default and the ID
-        File.WriteAllText(GetPackageContentsFile(), serializer.Serialize(GetPackageContentsDictionary()));
-    }
-
     public override void AddDataSetToPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
     {
         base.AddDataSetToPackage(package, dataSet);
-
-        SavePackageContents();
+        Save(PackageDictionary, nameof(PackageDictionary));
     }
 
     public override void RemoveDataSetFromPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
     {
         base.RemoveDataSetFromPackage(package, dataSet);
-
-        SavePackageContents();
+        Save(PackageDictionary,nameof(PackageDictionary));
     }
 
     #endregion
 
     #region Persist Governance Link Table
 
-    private string GetGovernaceCoverageFile()
-    {
-        return Path.Combine(Directory.FullName, "GovernanceCoverage.yaml");
-    }
-    public void LoadGovernanceCoverage()
-    {
-        var deserializer = new Deserializer();
-
-        var file = GetGovernaceCoverageFile();
-
-        if (File.Exists(file))
-        {
-            var yaml = File.ReadAllText(file);
-            GovernanceCoverage = deserializer.Deserialize<Dictionary<int, List<int>>>(yaml)
-                .ToDictionary(
-                    k => GetObjectByID<GovernancePeriod>(k.Key),
-                    v => new HashSet<ICatalogue>(v.Value.Select(v => GetObjectByID<ICatalogue>(v))));
-        }
-    }
-    private void SaveGovernanceCoverage()
-    {
-        var serializer = new Serializer();
-
-        // save the default and the ID
-        File.WriteAllText(GetGovernaceCoverageFile(), serializer.Serialize(
-            GovernanceCoverage.ToDictionary(
-                k=>k.Key.ID,
-                v=>v.Value.Select(c=>c.ID).ToList()
-                )));
-    }
-
-
     public override void Link(GovernancePeriod governancePeriod, ICatalogue catalogue)
     {
         base.Link(governancePeriod, catalogue);
-        SaveGovernanceCoverage();
+        Save(GovernanceCoverage,nameof(GovernanceCoverage));
     }
 
     public override void Unlink(GovernancePeriod governancePeriod, ICatalogue catalogue)
     {
-        
         base.Unlink(governancePeriod, catalogue);
-        SaveGovernanceCoverage();
+        Save(GovernanceCoverage, nameof(GovernanceCoverage));
     }
 
     #endregion
 
+    private Dictionary<T, HashSet<T2>> Load<T, T2>(string filenameWithoutSuffix)
+        where T : IMapsDirectlyToDatabaseTable
+        where T2 : IMapsDirectlyToDatabaseTable
+    {
+        var deserializer = new Deserializer();
+
+        var file = Path.Combine(Directory.FullName, $"{filenameWithoutSuffix}.yaml");
+
+        if (File.Exists(file))
+        {
+            var yaml = File.ReadAllText(file);
+            return deserializer.Deserialize<Dictionary<int, List<int>>>(yaml)
+                .ToDictionary(
+                    k => GetObjectByID<T>(k.Key),
+                    v => new HashSet<T2>(v.Value.Select(v => GetObjectByID<T2>(v))));
+        }
+
+        return new Dictionary<T, HashSet<T2>>();
+    }
+    private void Save<T, T2>(Dictionary<T, HashSet<T2>> collection, string filenameWithoutSuffix)
+        where T : IMapsDirectlyToDatabaseTable
+        where T2 : IMapsDirectlyToDatabaseTable
+    {
+        var file = Path.Combine(Directory.FullName, $"{filenameWithoutSuffix}.yaml");
+        var serializer = new Serializer();
+
+        // save the default and the ID
+        File.WriteAllText(file, serializer.Serialize(
+            collection.ToDictionary(
+                k => k.Key.ID,
+                v => v.Value.Select(c => c.ID).ToList()
+                )));
+
+    }
 }
