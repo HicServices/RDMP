@@ -7,12 +7,14 @@
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Managers;
 using System;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation
 {
@@ -50,6 +52,26 @@ namespace Rdmp.Core.Tests.Curation
             Assert.AreEqual(eds, repo2.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
         }
 
+        [Test]
+        public void PersistPackageContents()
+        {
+            var dir = GetUniqueDirectory();
+
+            var repo1 = new YamlRepository(dir);
+
+            var ds = UnitTests.WhenIHaveA<ExtractableDataSet>(repo1);
+
+            var package = UnitTests.WhenIHaveA<ExtractableDataSetPackage>(repo1);
+
+            Assert.IsEmpty(repo1.GetPackageContentsDictionary());
+            repo1.PackageManager.AddDataSetToPackage(package, ds);
+            Assert.IsNotEmpty(repo1.GetPackageContentsDictionary());
+
+            // A fresh repo loaded from the same directory should have persisted objects ds and package
+            // as well as the understanding that one contains the other
+            var repo2 = new YamlRepository(dir);
+            Assert.IsNotEmpty(repo2.GetPackageContentsDictionary());
+        }
 
         [Test]
         public void PersistDataExportPropertyManagerValues()

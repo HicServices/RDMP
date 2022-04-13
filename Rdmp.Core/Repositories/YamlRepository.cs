@@ -10,6 +10,7 @@ using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories.Managers;
 using YamlDotNet.Serialization;
 
@@ -96,6 +97,8 @@ public class YamlRepository : MemoryDataExportRepository
         LoadDefaults();
 
         LoadDataExportProperties();
+
+        LoadPackageContents();
     }
 
     /// <summary>
@@ -248,6 +251,51 @@ public class YamlRepository : MemoryDataExportRepository
         base.SetValue(property, value);
         SaveDataExportProperties();
     }
+    #endregion
+
+    #region Persist Package Contents
+
+    private string GetPackageContentsFile()
+    {
+        return Path.Combine(Directory.FullName, "PackageContents.yaml");
+    }
+    public void LoadPackageContents()
+    {
+        var deserializer = new Deserializer();
+
+        var packageContentFile = GetPackageContentsFile();
+
+        if (File.Exists(packageContentFile))
+        {
+            var yaml = File.ReadAllText(packageContentFile);
+            PackageDictionary = deserializer.Deserialize<Dictionary<int, List<int>>>(yaml)
+                .ToDictionary(
+                    k => GetObjectByID<IExtractableDataSetPackage>(k.Key),
+                    v => new HashSet<IExtractableDataSet>(v.Value.Select(v => GetObjectByID<ExtractableDataSet>(v))));
+        }
+    }
+    private void SavePackageContents()
+    {
+        var serializer = new Serializer();
+
+        // save the default and the ID
+        File.WriteAllText(GetPackageContentsFile(), serializer.Serialize(GetPackageContentsDictionary()));
+    }
+
+    public override void AddDataSetToPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
+    {
+        base.AddDataSetToPackage(package, dataSet);
+
+        SavePackageContents();
+    }
+
+    public override void RemoveDataSetFromPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
+    {
+        base.RemoveDataSetFromPackage(package, dataSet);
+
+        SavePackageContents();
+    }
+
     #endregion
 
 }

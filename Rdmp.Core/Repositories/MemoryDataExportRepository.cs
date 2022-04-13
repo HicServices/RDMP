@@ -70,38 +70,38 @@ namespace Rdmp.Core.Repositories
 
         #region IExtractableDataSetPackageManager
 
-        readonly Dictionary<IExtractableDataSetPackage,HashSet<IExtractableDataSet>> _packageDictionary = new Dictionary<IExtractableDataSetPackage, HashSet<IExtractableDataSet>>();
+        protected Dictionary<IExtractableDataSetPackage,HashSet<IExtractableDataSet>> PackageDictionary { get; set; } = new ();
 
         public IExtractableDataSet[] GetAllDataSets(IExtractableDataSetPackage package, IExtractableDataSet[] allDataSets)
         {
-            if (!_packageDictionary.ContainsKey(package))
-                _packageDictionary.Add(package, new HashSet<IExtractableDataSet>());
+            if (!PackageDictionary.ContainsKey(package))
+                PackageDictionary.Add(package, new HashSet<IExtractableDataSet>());
 
-            return _packageDictionary[package].ToArray();
+            return PackageDictionary[package].ToArray();
         }
 
-        public void AddDataSetToPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
+        public virtual void AddDataSetToPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
         {
-            if(!_packageDictionary.ContainsKey(package))
-                _packageDictionary.Add(package,new HashSet<IExtractableDataSet>());
+            if(!PackageDictionary.ContainsKey(package))
+                PackageDictionary.Add(package,new HashSet<IExtractableDataSet>());
 
-            _packageDictionary[package].Add(dataSet);
+            PackageDictionary[package].Add(dataSet);
         }
 
-        public void RemoveDataSetFromPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
+        public virtual void RemoveDataSetFromPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
         {
-            if (!_packageDictionary.ContainsKey(package))
-                _packageDictionary.Add(package, new HashSet<IExtractableDataSet>());
+            if (!PackageDictionary.ContainsKey(package))
+                PackageDictionary.Add(package, new HashSet<IExtractableDataSet>());
 
-            if (!_packageDictionary[package].Contains(dataSet))
+            if (!PackageDictionary[package].Contains(dataSet))
                 throw new ArgumentException("dataSet " + dataSet + " is not part of package " + package + " so cannot be removed", "dataSet");
 
-            _packageDictionary[package].Remove(dataSet);
+            PackageDictionary[package].Remove(dataSet);
         }
 
         public Dictionary<int, List<int>> GetPackageContentsDictionary()
         {
-            throw new System.NotImplementedException();
+            return PackageDictionary.ToDictionary(k=>k.Key.ID,v=>v.Value.Select(o=>o.ID).ToList());
         }
 
         public IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(IExtractionConfiguration configuration, IExtractableDataSet dataset)
