@@ -79,7 +79,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if (import.Length > 0)
             {
                 Publish((DatabaseEntity)_container);
-                Emphasise((DatabaseEntity)_container);
+                Emphasise((DatabaseEntity)import.Last());
             }
         }
     }
