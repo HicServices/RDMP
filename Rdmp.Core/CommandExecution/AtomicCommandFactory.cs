@@ -201,10 +201,10 @@ namespace Rdmp.Core.CommandExecution
             if(Is(o,out  AggregateConfiguration ac) && !ac.Catalogue.IsApiCall())
             {
                 yield return new ExecuteCommandCreateNewFilter(_activator, ac) { SuggestedCategory = Add, OverrideCommandName = "New Filter" };
-                yield return new ExecuteCommandCreateNewFilterFromCatalogue(_activator, ac) { SuggestedCategory = Add, OverrideCommandName = "Exisiting Filter" };
+                yield return new ExecuteCommandCreateNewFilterFromCatalogue(_activator, ac) { SuggestedCategory = Add, OverrideCommandName = "Existing Filter" };
 
                 yield return new ExecuteCommandAddNewFilterContainer(_activator,ac) { SuggestedCategory = Add, OverrideCommandName = "New Filter Container" };
-                yield return new ExecuteCommandImportFilterContainerTree(_activator, ac) { SuggestedCategory = Add, OverrideCommandName = "Exisiting Filter Container (copy of)" };
+                yield return new ExecuteCommandImportFilterContainerTree(_activator, ac) { SuggestedCategory = Add, OverrideCommandName = "Existing Filter Container (copy of)" };
 
                 yield return new ExecuteCommandAddParameter(_activator, ac, null, null, null) { SuggestedCategory = Add, OverrideCommandName = "New Catalogue Filter Parameter" };
 
