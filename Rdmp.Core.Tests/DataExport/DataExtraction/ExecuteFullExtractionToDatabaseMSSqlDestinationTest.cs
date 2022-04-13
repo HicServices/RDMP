@@ -31,17 +31,9 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
         private ColumnInfo _columnToTransform;
         private Pipeline _pipeline;
 
-        [TestCase(true)]
-        [TestCase(false)]
-        public void SQLServerDestination(bool lookupsEtc)
+        [Test]
+        public void SQLServerDestination()
         {
-            // TODO: Figure out why running this twice with the YamlRepository fails.
-            // its something to do with the database or tables being dropped between runs
-            // but its not easy to see where the issue is but its definetly in the test harness
-            // rather than the underlying code itself so ignoring it for now
-            if (!lookupsEtc && CatalogueRepository is YamlRepository)
-                Assert.Inconclusive("Ignore repeated runs of this test");
-
             DiscoveredDatabase dbToExtractTo = null;
 
             var ci = new CatalogueItem(CatalogueRepository, _catalogue, "YearOfBirth");
@@ -64,9 +56,8 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
 
                 _extractableColumns.Add(newColumn);
             }
-
-            if (lookupsEtc) 
-                CreateLookupsEtc();
+            
+            CreateLookupsEtc();
 
             try
             {
@@ -93,8 +84,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
                 Assert.AreEqual(_columnToTransform.Data_type, destinationTable.DiscoverColumn("DateOfBirth").DataType.SQLType);
                 Assert.AreEqual("int",destinationTable.DiscoverColumn("YearOfBirth").DataType.SQLType);
                 
-                if (lookupsEtc)
-                    AssertLookupsEtcExist(dbToExtractTo);
+                AssertLookupsEtcExist(dbToExtractTo);
             }
             finally
             {
