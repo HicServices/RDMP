@@ -10,6 +10,7 @@ using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.DataExport.Data;
@@ -108,6 +109,8 @@ public class YamlRepository : MemoryDataExportRepository
         GovernanceCoverage = Load<GovernancePeriod, ICatalogue>(nameof(GovernanceCoverage));
 
         ForcedJoins = Load<AggregateConfiguration,ITableInfo>(nameof(ForcedJoins));
+
+        LoadCohortContainerContents();
     }
 
     /// <summary>
@@ -355,6 +358,107 @@ public class YamlRepository : MemoryDataExportRepository
     }
     #endregion
 
+
+    #region Persist Cohort Containers
+
+    private void SaveCohortContainerContents(CohortAggregateContainer toSave)
+    {
+        var dir = Path.Combine(Directory.FullName, nameof(PersistCohortContainerContent));
+        var file = Path.Combine(dir, $"{toSave.ID}.yaml");
+
+        var serializer = new Serializer();
+        var yaml = serializer.Serialize(CohortContainerContents[toSave].Select(c => new PersistCohortContainerContent(c)).ToList());
+        File.WriteAllText(file, yaml);
+    }
+
+    private void LoadCohortContainerContents()
+    {
+        var dir = new DirectoryInfo(Path.Combine(Directory.FullName, nameof(PersistCohortContainerContent)));
+
+        if (!dir.Exists)
+            dir.Create();
+
+        var deserializer = new Deserializer();
+
+        foreach (var f in dir.GetFiles("*.yaml"))
+        {
+            var id = int.Parse(Path.GetFileNameWithoutExtension(f.Name));
+
+            var content = deserializer.Deserialize<List<PersistCohortContainerContent>>(File.ReadAllText(f.FullName));
+
+            CohortContainerContents.Add(
+                GetObjectByID<CohortAggregateContainer>(id),
+                new HashSet<CohortContainerContent>(content.Select(c => c.GetContent(this))));
+        }
+
+    }
+
+    public override void Add(CohortAggregateContainer parent, AggregateConfiguration child, int order)
+    {
+        base.Add(parent, child, order);
+        SaveCohortContainerContents(parent);
+    }
+
+    public override void Add(CohortAggregateContainer parent, CohortAggregateContainer child)
+    {
+        base.Add(parent, child);
+        SaveCohortContainerContents(parent);
+    }
+
+    public override void Remove(CohortAggregateContainer parent, AggregateConfiguration child)
+    {
+        base.Remove(parent, child);
+        SaveCohortContainerContents(parent);
+    }
+
+    public override void SetOrder(AggregateConfiguration child, int newOrder)
+    {
+        base.SetOrder(child, newOrder);
+        SaveCohortContainerContents(child.GetCohortAggregateContainerIfAny());
+    }
+
+    public override void Remove(CohortAggregateContainer parent, CohortAggregateContainer child)
+    {
+        base.Remove(parent, child);
+        SaveCohortContainerContents(parent);
+    }
+
+    class PersistCohortContainerContent
+    {
+        public string Type { get; set; }
+        public int ID { get; set; }
+        public int Order { get; set; }
+
+        public PersistCohortContainerContent()
+        {
+
+        }
+        public PersistCohortContainerContent(CohortContainerContent c)
+        {
+            Type = c.Orderable.GetType().Name;
+            ID = ((IMapsDirectlyToDatabaseTable)c.Orderable).ID;
+            Order = c.Order;
+        }
+
+
+        public CohortContainerContent GetContent(YamlRepository repository)
+        {
+            if (Type.Equals(nameof(AggregateConfiguration)))
+            {
+                return new CohortContainerContent(repository.GetObjectByID<AggregateConfiguration>(ID), Order);
+            }
+
+            if (Type.Equals(nameof(CohortAggregateContainer)))
+            {
+                return new CohortContainerContent(repository.GetObjectByID<CohortAggregateContainer>(ID), Order);
+            }
+
+            throw new System.Exception($"Unexpected IOrderable Type name '{Type}'");
+        }
+    }
+
+    #endregion
+
     private Dictionary<T, HashSet<T2>> Load<T, T2>(string filenameWithoutSuffix)
         where T : IMapsDirectlyToDatabaseTable
         where T2 : IMapsDirectlyToDatabaseTable
@@ -389,4 +493,5 @@ public class YamlRepository : MemoryDataExportRepository
                 )));
 
     }
+
 }

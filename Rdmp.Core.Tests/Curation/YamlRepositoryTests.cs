@@ -7,6 +7,7 @@
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.DataExport.Data;
@@ -129,6 +130,36 @@ namespace Rdmp.Core.Tests.Curation
             Assert.IsNotEmpty(repo2.AggregateForcedJoinManager.GetAllForcedJoinsFor(ac));
         }
 
+
+        [Test]
+        public void PersistCohortSubcontainers()
+        {
+            var dir = GetUniqueDirectory();
+
+            var repo1 = new YamlRepository(dir);
+
+            var root = UnitTests.WhenIHaveA<CohortAggregateContainer>(repo1);
+            var sub1 = new CohortAggregateContainer(repo1,SetOperation.INTERSECT);
+            var ac = UnitTests.WhenIHaveA<AggregateConfiguration>(repo1);
+            
+            sub1.Order = 2;
+            sub1.SaveToDatabase();
+
+            root.AddChild(sub1); 
+            root.AddChild(ac, 0);
+
+            Assert.IsNotEmpty(root.GetOrderedContents());
+            Assert.AreEqual(ac,root.GetOrderedContents().ToArray()[0]);
+            Assert.AreEqual(sub1, root.GetOrderedContents().ToArray()[1]);
+
+            // A fresh repo loaded from the same directory should have persisted object relationships
+            var repo2 = new YamlRepository(dir);
+            root = repo2.GetObjectByID<CohortAggregateContainer>(root.ID);
+
+            Assert.IsNotEmpty(root.GetOrderedContents());
+            Assert.AreEqual(ac, root.GetOrderedContents().ToArray()[0]);
+            Assert.AreEqual(sub1, root.GetOrderedContents().ToArray()[1]);
+        }
 
 
         [Test]
