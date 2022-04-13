@@ -6,6 +6,7 @@
 
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.DataExport.Data;
@@ -105,6 +106,32 @@ namespace Rdmp.Core.Tests.Curation
             var repo2 = new YamlRepository(dir);
             Assert.IsNotEmpty(repo2.GetAllGovernedCatalogues(period));
         }
+
+
+        [Test]
+        public void PersistForcedJoins()
+        {
+            var dir = GetUniqueDirectory();
+
+            var repo1 = new YamlRepository(dir);
+
+            var ac = UnitTests.WhenIHaveA<AggregateConfiguration>(repo1);
+            var t = UnitTests.WhenIHaveA<TableInfo>(repo1);
+
+            Assert.IsEmpty(ac.ForcedJoins);
+            Assert.IsEmpty(repo1.AggregateForcedJoinManager.GetAllForcedJoinsFor(ac));
+            repo1.AggregateForcedJoinManager.CreateLinkBetween(ac,t);
+            Assert.IsNotEmpty(ac.ForcedJoins);
+            Assert.IsNotEmpty(repo1.AggregateForcedJoinManager.GetAllForcedJoinsFor(ac));
+
+            // A fresh repo loaded from the same directory should have persisted objects ds and package
+            // as well as the understanding that one contains the other
+            var repo2 = new YamlRepository(dir);
+            Assert.IsNotEmpty(ac.ForcedJoins);
+            Assert.IsNotEmpty(repo2.AggregateForcedJoinManager.GetAllForcedJoinsFor(ac));
+        }
+
+
         [Test]
         public void TestYamlRepository_LoadObjects()
         {

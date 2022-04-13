@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.DataExport.Data;
@@ -102,6 +103,8 @@ public class YamlRepository : MemoryDataExportRepository
         PackageDictionary = Load<IExtractableDataSetPackage,IExtractableDataSet>(nameof(PackageDictionary));
 
         GovernanceCoverage = Load<GovernancePeriod, ICatalogue>(nameof(GovernanceCoverage));
+
+        ForcedJoins = Load<AggregateConfiguration,ITableInfo>(nameof(ForcedJoins));
     }
 
     /// <summary>
@@ -256,8 +259,6 @@ public class YamlRepository : MemoryDataExportRepository
     }
     #endregion
 
-    #region Persist Package Contents
-
     public override void AddDataSetToPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
     {
         base.AddDataSetToPackage(package, dataSet);
@@ -270,9 +271,6 @@ public class YamlRepository : MemoryDataExportRepository
         Save(PackageDictionary,nameof(PackageDictionary));
     }
 
-    #endregion
-
-    #region Persist Governance Link Table
 
     public override void Link(GovernancePeriod governancePeriod, ICatalogue catalogue)
     {
@@ -286,7 +284,17 @@ public class YamlRepository : MemoryDataExportRepository
         Save(GovernanceCoverage, nameof(GovernanceCoverage));
     }
 
-    #endregion
+    public override void CreateLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)
+    {
+        base.CreateLinkBetween(configuration, tableInfo);
+        Save(ForcedJoins, nameof(ForcedJoins));
+    }
+
+    public override void BreakLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)
+    {
+        base.BreakLinkBetween(configuration, tableInfo);
+        Save(ForcedJoins, nameof(ForcedJoins));
+    }
 
     private Dictionary<T, HashSet<T2>> Load<T, T2>(string filenameWithoutSuffix)
         where T : IMapsDirectlyToDatabaseTable

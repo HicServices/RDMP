@@ -33,7 +33,7 @@ namespace Rdmp.UI.Tests
         public void Test_ANOTableUI_ServerWrongType()
         {
             ExternalDatabaseServer srv;
-            var anoTable = WhenIHaveA<ANOTable>(out srv);
+            var anoTable = WhenIHaveA<ANOTable>(Repository, out srv);
             srv.CreatedByAssembly = null;
             srv.SaveToDatabase();
 

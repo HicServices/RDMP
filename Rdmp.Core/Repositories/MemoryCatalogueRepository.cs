@@ -174,16 +174,6 @@ namespace Rdmp.Core.Repositories
                                 ci => ci.ColumnInfo_ID != null && ci.ColumnInfo.TableInfo_ID == tableInfo.ID)).ToArray();
         }
 
-        public void UpsertAndHydrate<T>(T toCreate, ShareManager shareManager, ShareDefinition shareDefinition) where T : class, IMapsDirectlyToDatabaseTable
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetValue(PropertyInfo prop, object value, IMapsDirectlyToDatabaseTable onObject)
-        {
-            prop.SetValue(onObject,value);
-        }
-
         public ExternalDatabaseServer[] GetAllDatabases<T>() where T:IPatcher,new()
         {
             IPatcher p = new T();
@@ -211,7 +201,7 @@ namespace Rdmp.Core.Repositories
 
             _cohortContainerContents.Clear();
             _credentialsDictionary.Clear();
-            _forcedJoins.Clear();
+            ForcedJoins.Clear();
             _whereSubContainers.Clear();
             Defaults.Clear();
         }
@@ -311,30 +301,30 @@ namespace Rdmp.Core.Repositories
         #endregion
 
         #region IAggregateForcedJoin
-        readonly Dictionary<AggregateConfiguration,List<ITableInfo>> _forcedJoins = new Dictionary<AggregateConfiguration, List<ITableInfo>>();
+        protected Dictionary<AggregateConfiguration,HashSet<ITableInfo>> ForcedJoins { get; set; } = new ();
 
         public ITableInfo[] GetAllForcedJoinsFor(AggregateConfiguration configuration)
         {
-            if (!_forcedJoins.ContainsKey(configuration))
+            if (!ForcedJoins.ContainsKey(configuration))
                 return new TableInfo[0];
 
-            return _forcedJoins[configuration].ToArray();
+            return ForcedJoins[configuration].ToArray();
         }
 
-        public void BreakLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)
+        public virtual void BreakLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)
         {
-            if (!_forcedJoins.ContainsKey(configuration))
+            if (!ForcedJoins.ContainsKey(configuration))
                 return;
 
-            _forcedJoins[configuration].Remove(tableInfo);
+            ForcedJoins[configuration].Remove(tableInfo);
         }
 
-        public void CreateLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)
+        public virtual void CreateLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)
         {
-            if (!_forcedJoins.ContainsKey(configuration))
-                _forcedJoins.Add(configuration,new List<ITableInfo>());
+            if (!ForcedJoins.ContainsKey(configuration))
+                ForcedJoins.Add(configuration,new HashSet<ITableInfo>());
 
-            _forcedJoins[configuration].Add(tableInfo);
+            ForcedJoins[configuration].Add(tableInfo);
         }
         #endregion
 
