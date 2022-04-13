@@ -200,7 +200,7 @@ namespace Rdmp.Core.Repositories
             base.Clear();
 
             _cohortContainerContents.Clear();
-            _credentialsDictionary.Clear();
+            CredentialsDictionary.Clear();
             ForcedJoins.Clear();
             _whereSubContainers.Clear();
             Defaults.Clear();
@@ -211,44 +211,48 @@ namespace Rdmp.Core.Repositories
         /// <summary>
         /// records which credentials can be used to access the table under which contexts
         /// </summary>
-        readonly Dictionary<ITableInfo,Dictionary<DataAccessContext, DataAccessCredentials>> _credentialsDictionary = new Dictionary<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>>();
+        protected Dictionary<ITableInfo,Dictionary<DataAccessContext, DataAccessCredentials>> CredentialsDictionary { get; set; } = new ();
 
-        public void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
+        public virtual void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
         {
-            if(!_credentialsDictionary.ContainsKey(tableInfo))
-                _credentialsDictionary.Add(tableInfo,new Dictionary<DataAccessContext, DataAccessCredentials>());
+            if(!CredentialsDictionary.ContainsKey(tableInfo))
+                CredentialsDictionary.Add(tableInfo,new Dictionary<DataAccessContext, DataAccessCredentials>());
 
-            _credentialsDictionary[tableInfo].Add(context,credentials);
+            CredentialsDictionary[tableInfo].Add(context,credentials);
+
+            tableInfo.ClearAllInjections();
         }
 
-        public void BreakLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
+        public virtual void BreakLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
         {
-            if (!_credentialsDictionary.ContainsKey(tableInfo))
+            if (!CredentialsDictionary.ContainsKey(tableInfo))
                 return;
 
-            _credentialsDictionary[tableInfo].Remove(context);
+            CredentialsDictionary[tableInfo].Remove(context);
+
+            tableInfo.ClearAllInjections();
         }
 
-        public void BreakAllLinksBetween(DataAccessCredentials credentials, ITableInfo tableInfo)
+        public virtual void BreakAllLinksBetween(DataAccessCredentials credentials, ITableInfo tableInfo)
         {
-            if(!_credentialsDictionary.ContainsKey(tableInfo))
+            if(!CredentialsDictionary.ContainsKey(tableInfo))
                 return;
 
-            var toRemove = _credentialsDictionary[tableInfo].Where(v=>Equals(v.Value ,credentials)).Select(k=>k.Key).ToArray();
+            var toRemove = CredentialsDictionary[tableInfo].Where(v=>Equals(v.Value ,credentials)).Select(k=>k.Key).ToArray();
 
             foreach (DataAccessContext context in toRemove)
-                _credentialsDictionary[tableInfo].Remove(context);
+                CredentialsDictionary[tableInfo].Remove(context);
         }
 
         public DataAccessCredentials GetCredentialsIfExistsFor(ITableInfo tableInfo, DataAccessContext context)
         {
-            if(_credentialsDictionary.ContainsKey(tableInfo))
+            if(CredentialsDictionary.ContainsKey(tableInfo))
             {
-                if (_credentialsDictionary[tableInfo].ContainsKey(context))
-                    return _credentialsDictionary[tableInfo][context];
+                if (CredentialsDictionary[tableInfo].ContainsKey(context))
+                    return CredentialsDictionary[tableInfo][context];
 
-                if (_credentialsDictionary[tableInfo].ContainsKey(DataAccessContext.Any))
-                    return _credentialsDictionary[tableInfo][DataAccessContext.Any];
+                if (CredentialsDictionary[tableInfo].ContainsKey(DataAccessContext.Any))
+                    return CredentialsDictionary[tableInfo][DataAccessContext.Any];
             }
                 
 
@@ -257,8 +261,8 @@ namespace Rdmp.Core.Repositories
 
         public Dictionary<DataAccessContext, DataAccessCredentials> GetCredentialsIfExistsFor(ITableInfo tableInfo)
         {
-            if (_credentialsDictionary.ContainsKey(tableInfo))
-                return _credentialsDictionary[tableInfo];
+            if (CredentialsDictionary.ContainsKey(tableInfo))
+                return CredentialsDictionary[tableInfo];
 
             return null;
         }
@@ -267,7 +271,7 @@ namespace Rdmp.Core.Repositories
         {
             var toreturn = new Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>>();
 
-            foreach (KeyValuePair<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>> kvp in _credentialsDictionary)
+            foreach (KeyValuePair<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>> kvp in CredentialsDictionary)
             {
                 toreturn.Add(kvp.Key, new List<DataAccessCredentialUsageNode>());
 
@@ -286,7 +290,7 @@ namespace Rdmp.Core.Repositories
             foreach (DataAccessContext context in Enum.GetValues(typeof (DataAccessContext)))
                 toreturn.Add(context, new List<ITableInfo>());
 
-            foreach (KeyValuePair<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>> kvp in _credentialsDictionary)
+            foreach (KeyValuePair<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>> kvp in CredentialsDictionary)
                 foreach (KeyValuePair<DataAccessContext, DataAccessCredentials> forNode in kvp.Value)
                     toreturn[forNode.Key].Add(kvp.Key);
             
@@ -553,7 +557,7 @@ namespace Rdmp.Core.Repositories
             if (oTableWrapperObject is TableInfo t)
             {
                 // forget about its credentials usages
-                _credentialsDictionary.Remove(t);
+                CredentialsDictionary.Remove(t);
 
                 foreach(var c in t.ColumnInfos)
                 {

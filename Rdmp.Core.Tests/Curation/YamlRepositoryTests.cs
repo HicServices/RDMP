@@ -69,8 +69,7 @@ namespace Rdmp.Core.Tests.Curation
             repo1.PackageManager.AddDataSetToPackage(package, ds);
             Assert.IsNotEmpty(repo1.GetPackageContentsDictionary());
 
-            // A fresh repo loaded from the same directory should have persisted objects ds and package
-            // as well as the understanding that one contains the other
+            // A fresh repo loaded from the same directory should have persisted object relationships
             var repo2 = new YamlRepository(dir);
             Assert.IsNotEmpty(repo2.GetPackageContentsDictionary());
         }
@@ -82,7 +81,8 @@ namespace Rdmp.Core.Tests.Curation
 
             var repo1 = new YamlRepository(dir);
             repo1.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern,"yarg");
-
+            
+            // A fresh repo loaded from the same directory should have persisted object relationships
             var repo2 = new YamlRepository(dir);
             Assert.AreEqual("yarg", repo2.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern));
         }
@@ -101,8 +101,7 @@ namespace Rdmp.Core.Tests.Curation
             repo1.Link(period, cata);
             Assert.IsNotEmpty(repo1.GetAllGovernedCatalogues(period));
 
-            // A fresh repo loaded from the same directory should have persisted objects ds and package
-            // as well as the understanding that one contains the other
+            // A fresh repo loaded from the same directory should have persisted object relationships
             var repo2 = new YamlRepository(dir);
             Assert.IsNotEmpty(repo2.GetAllGovernedCatalogues(period));
         }
@@ -124,13 +123,45 @@ namespace Rdmp.Core.Tests.Curation
             Assert.IsNotEmpty(ac.ForcedJoins);
             Assert.IsNotEmpty(repo1.AggregateForcedJoinManager.GetAllForcedJoinsFor(ac));
 
-            // A fresh repo loaded from the same directory should have persisted objects ds and package
-            // as well as the understanding that one contains the other
+            // A fresh repo loaded from the same directory should have persisted object relationships
             var repo2 = new YamlRepository(dir);
             Assert.IsNotEmpty(ac.ForcedJoins);
             Assert.IsNotEmpty(repo2.AggregateForcedJoinManager.GetAllForcedJoinsFor(ac));
         }
 
+
+
+        [Test]
+        public void PersistCredentials()
+        {
+            var dir = GetUniqueDirectory();
+
+            var repo1 = new YamlRepository(dir);
+
+            var creds = UnitTests.WhenIHaveA<DataAccessCredentials>(repo1);
+            var t = UnitTests.WhenIHaveA<TableInfo>(repo1);
+
+            Assert.IsEmpty(creds.GetAllTableInfosThatUseThis().SelectMany(v=>v.Value));
+            Assert.IsNull(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
+            Assert.IsNull(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
+
+            repo1.TableInfoCredentialsManager.CreateLinkBetween(creds,t,ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad);
+
+            Assert.AreEqual(t,creds.GetAllTableInfosThatUseThis().SelectMany(v => v.Value).Single());
+            Assert.AreEqual(creds,t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
+            Assert.IsNull(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
+
+
+            // A fresh repo loaded from the same directory should have persisted object relationships
+            var repo2 = new YamlRepository(dir);
+            t = repo2.GetObjectByID<TableInfo>(t.ID);
+
+            Assert.AreEqual(t, creds.GetAllTableInfosThatUseThis().SelectMany(v => v.Value).Single());
+            Assert.AreEqual(creds, t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
+            Assert.IsNull(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
+
+
+        }
 
         [Test]
         public void TestYamlRepository_LoadObjects()

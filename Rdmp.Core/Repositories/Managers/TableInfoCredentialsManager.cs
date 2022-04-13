@@ -62,6 +62,8 @@ namespace Rdmp.Core.Repositories.Managers
                     cmd.ExecuteNonQuery();
                 }
             }
+
+            tableInfo.ClearAllInjections();
         }
 
         /// <inheritdoc/>
@@ -75,6 +77,8 @@ namespace Rdmp.Core.Repositories.Managers
                     {"tid", tableInfo.ID},
                     {"context", context},
                 });
+
+            tableInfo.ClearAllInjections();
         }
 
         /// <inheritdoc/>

@@ -24,11 +24,12 @@ namespace Rdmp.Core.Curation.Data
     /// </summary>
     public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials,INamed,IHasDependencies
     {
-        private readonly EncryptedPasswordHost _encryptedPasswordHost;
+        private EncryptedPasswordHost _encryptedPasswordHost;
 
         #region Database Properties
         private string _name;
         private string _username;
+        private string _tempPassword;
 
         /// <inheritdoc/>
         [Unique]
@@ -52,6 +53,12 @@ namespace Rdmp.Core.Curation.Data
             get { return _encryptedPasswordHost.Password; }
             set
             {
+                if(_encryptedPasswordHost == null)
+                {
+                    _tempPassword = value;
+                    return;
+                }
+
                 if (Equals(_encryptedPasswordHost.Password,value))
                     return;
 
@@ -67,7 +74,14 @@ namespace Rdmp.Core.Curation.Data
         {
 
         }
-
+        internal void SetEncryptedPasswordHost(EncryptedPasswordHost host)
+        {
+            _encryptedPasswordHost = host;
+            if(_tempPassword != null)
+            {
+                Password = _tempPassword;
+            }
+        }
         /// <summary>
         /// Records a new (initially blank) set of credentials that can be used to access a <see cref="TableInfo"/> or other object requiring authentication.
         /// <para>A single <see cref="DataAccessCredentials"/> can be shared by multiple tables</para>

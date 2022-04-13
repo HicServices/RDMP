@@ -14,6 +14,7 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories.Managers;
+using ReusableLibraryCode.DataAccess;
 using YamlDotNet.Serialization;
 
 namespace Rdmp.Core.Repositories;
@@ -100,6 +101,8 @@ public class YamlRepository : MemoryDataExportRepository
 
         LoadDataExportProperties();
 
+        LoadCredentialsDictionary();
+
         PackageDictionary = Load<IExtractableDataSetPackage,IExtractableDataSet>(nameof(PackageDictionary));
 
         GovernanceCoverage = Load<GovernancePeriod, ICatalogue>(nameof(GovernanceCoverage));
@@ -115,6 +118,9 @@ public class YamlRepository : MemoryDataExportRepository
     protected virtual void SetRepositoryOnObject(IMapsDirectlyToDatabaseTable obj)
     {
         obj.Repository = this;
+
+        if (obj is DataAccessCredentials creds)
+            creds.SetEncryptedPasswordHost(new EncryptedPasswordHost(this));
     }
 
     public override void InsertAndHydrate<T>(T toCreate, Dictionary<string, object> constructorParameters)
@@ -295,6 +301,59 @@ public class YamlRepository : MemoryDataExportRepository
         base.BreakLinkBetween(configuration, tableInfo);
         Save(ForcedJoins, nameof(ForcedJoins));
     }
+
+    #region Persist CredentialsDictionary
+    private string GetCredentialsDictionaryFile()
+    {
+        return Path.Combine(Directory.FullName, "CredentialsDictionary.yaml");
+    }
+    public void LoadCredentialsDictionary()
+    {
+        var deserializer = new Deserializer();
+
+        var file = GetCredentialsDictionaryFile();
+
+        if (File.Exists(file))
+        {
+            var yaml = File.ReadAllText(file);
+
+            var ids = deserializer.Deserialize<Dictionary<int, Dictionary<DataAccessContext, int>>>(yaml);
+
+            CredentialsDictionary = ids.ToDictionary(
+                    k=>GetObjectByID<ITableInfo>(k.Key),
+                    v=>v.Value.ToDictionary(k=>k.Key,v=>GetObjectByID<DataAccessCredentials>(v.Value)));
+        }
+    }
+    private void SaveCredentialsDictionary()
+    {
+        var serializer = new Serializer();
+
+        Dictionary<int, Dictionary<DataAccessContext, int>> ids = 
+            CredentialsDictionary.ToDictionary(
+                k => k.Key.ID,
+                v => v.Value.ToDictionary(k => k.Key, v => v.Value.ID));
+
+        // save the default and the ID
+        File.WriteAllText(GetCredentialsDictionaryFile(), serializer.Serialize(ids));
+    }
+
+    public override void BreakAllLinksBetween(DataAccessCredentials credentials, ITableInfo tableInfo)
+    {
+        base.BreakAllLinksBetween(credentials, tableInfo);
+
+        SaveCredentialsDictionary();
+    }
+    public override void BreakLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
+    {
+        base.BreakLinkBetween(credentials, tableInfo, context);
+        SaveCredentialsDictionary();
+    }
+    public override void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
+    {
+        base.CreateLinkBetween(credentials, tableInfo, context);
+        SaveCredentialsDictionary();
+    }
+    #endregion
 
     private Dictionary<T, HashSet<T2>> Load<T, T2>(string filenameWithoutSuffix)
         where T : IMapsDirectlyToDatabaseTable
