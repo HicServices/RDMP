@@ -83,6 +83,27 @@ namespace Rdmp.Core.Curation.FilterImporting
                 newFilter.SaveToDatabase();
             }
 
+            //If we've not imported values but there is a parameter then ask for their values
+            if (chosenParameterValues == null && newFilter.GetAllParameters().Any())
+            {
+                string param;
+
+                foreach (var parameter in newFilter.GetAllParameters())
+                {
+                    if (_activator.TypeText(new DialogArgs()
+                    {
+                        WindowTitle = $"Set '{parameter.ParameterName}' value for '{filterToImport.Name}'",
+                        EntryLabel = parameter.ParameterName,
+                        TaskDescription = parameter.Comment
+                    }, 255, null, out param, false))
+                    {
+                        parameter.Value = param;
+                        parameter.SaveToDatabase();
+                    }
+                }
+            }
+
+
             return newFilter;
         }
 
