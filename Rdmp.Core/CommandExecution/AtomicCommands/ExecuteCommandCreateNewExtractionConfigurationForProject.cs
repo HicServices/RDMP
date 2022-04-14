@@ -46,11 +46,31 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if(p == null)
                 return;
 
-            var newConfig = new ExtractionConfiguration(BasicActivator.RepositoryLocator.DataExportRepository, p);
+            string name = "";
+            if (!BasicActivator.TypeText(new DialogArgs
+            {
+                WindowTitle = "New Extraction Configuration",
+                TaskDescription = "Enter a name for the new Extraction Configuration",
+                EntryLabel = "Name",
+                //Add default project name "PROJ_NUMBER YYYY/MM Extraction"
+            }, 255, null, out name, false))
+                return;
+
+            var newConfig = new ExtractionConfiguration(BasicActivator.RepositoryLocator.DataExportRepository, p, name);
+
+            if (p.GetAssociatedCohortIdentificationConfigurations().Any())
+            {
+                var chooseCohortCommand = new ExecuteCommandChooseCohort(BasicActivator, newConfig);
+                chooseCohortCommand.Execute();
+            }
+
+            var chooseDatasetsCommand = new ExecuteCommandAddDatasetsToConfiguration(BasicActivator, newConfig);
+            chooseDatasetsCommand.Execute();
 
             //refresh the project
             Publish(p);
             Activate(newConfig);
+            Emphasise(newConfig);
         }
     }
 }
