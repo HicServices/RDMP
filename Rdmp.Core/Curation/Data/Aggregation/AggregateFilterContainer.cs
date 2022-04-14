@@ -157,5 +157,16 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         {
             return new AggregateFilterFactory(CatalogueRepository);
         }
+
+        public override void DeleteInDatabase()
+        {
+            base.DeleteInDatabase();
+
+            foreach(var ac in Repository.GetAllObjectsWhere<AggregateConfiguration>(nameof(AggregateConfiguration.RootFilterContainer_ID),ID))
+            {
+                ac.RootFilterContainer_ID = null;
+                ac.SaveToDatabase();
+            }
+        }
     }
 }

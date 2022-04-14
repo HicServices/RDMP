@@ -163,5 +163,16 @@ namespace Rdmp.Core.DataExport.Data
         {
             return new DeployedExtractionFilterFactory(DataExportRepository);
         }
+
+        public override void DeleteInDatabase()
+        {
+            base.DeleteInDatabase();
+
+            foreach (var sds in Repository.GetAllObjectsWhere<SelectedDataSets>(nameof(SelectedDataSets.RootFilterContainer_ID), ID))
+            {
+                sds.RootFilterContainer_ID = null;
+                sds.SaveToDatabase();
+            }
+        }
     }
 }
