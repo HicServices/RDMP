@@ -161,6 +161,76 @@ namespace Rdmp.Core.Tests.Curation
             Assert.AreEqual(sub1, root.GetOrderedContents().ToArray()[1]);
         }
 
+        [Test]
+        public void PersistFilterContainers()
+        {
+            var dir = GetUniqueDirectory();
+
+            var repo1 = new YamlRepository(dir);
+
+            var ac = UnitTests.WhenIHaveA<AggregateConfiguration>(repo1);
+            ac.CreateRootContainerIfNotExists();
+            var root = ac.RootFilterContainer;
+
+            var f = new AggregateFilter(repo1, "my filter");
+            ac.RootFilterContainer.AddChild(f);
+            var sub = new AggregateFilterContainer(repo1,FilterContainerOperation.AND);
+            ac.RootFilterContainer.AddChild(sub);
+
+            Assert.AreEqual(sub,ac.RootFilterContainer.GetSubContainers().Single());
+            Assert.AreEqual(f, ac.RootFilterContainer.GetFilters().Single());
+
+            // A fresh repo loaded from the same directory should have persisted object relationships
+            var repo2 = new YamlRepository(dir);
+            ac = repo2.GetObjectByID<AggregateConfiguration>(ac.ID);
+
+            Assert.AreEqual(sub, ac.RootFilterContainer.GetSubContainers().Single());
+            Assert.AreEqual(f, ac.RootFilterContainer.GetFilters().Single());
+        }
+
+        [Test]
+        public void PersistFilterContainers_Orphans()
+        {
+            var dir = GetUniqueDirectory();
+
+            var repo1 = new YamlRepository(dir);
+
+            var ac = UnitTests.WhenIHaveA<AggregateConfiguration>(repo1);
+            ac.CreateRootContainerIfNotExists();
+            var root = ac.RootFilterContainer;
+
+            var f = new AggregateFilter(repo1, "my filter");
+            ac.RootFilterContainer.AddChild(f);
+            var sub = new AggregateFilterContainer(repo1,FilterContainerOperation.AND);
+            ac.RootFilterContainer.AddChild(sub);
+
+            Assert.AreEqual(sub,ac.RootFilterContainer.GetSubContainers().Single());
+            Assert.AreEqual(f, ac.RootFilterContainer.GetFilters().Single());
+
+            // A fresh repo loaded from the same directory should have persisted object relationships
+            var repo2 = new YamlRepository(dir);
+            ac = repo2.GetObjectByID<AggregateConfiguration>(ac.ID);
+
+            Assert.AreEqual(sub, ac.RootFilterContainer.GetSubContainers().Single());
+            Assert.AreEqual(f, ac.RootFilterContainer.GetFilters().Single());
+
+            // Make an orphan container by deleting the root
+
+            // don't check before deleting stuff
+            ((CatalogueObscureDependencyFinder)ac.CatalogueRepository.ObscureDependencyFinder).OtherDependencyFinders.Clear();
+
+            // delete the root filter
+            ac.RootFilterContainer.DeleteInDatabase();
+
+            // A fresh repo loaded from the same directory 
+            var repo3 = new YamlRepository(dir);
+
+            // all these things should be gone
+            Assert.IsFalse(repo3.StillExists(sub));
+            Assert.IsFalse(repo3.StillExists(root));
+            Assert.IsFalse(repo3.StillExists(f));
+
+        }
 
         [Test]
         public void PersistCredentials()

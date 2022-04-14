@@ -143,12 +143,8 @@ namespace Rdmp.UI.Collections
 
                 CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
 
-
                 CommonFunctionality.Add(new ExecuteCommandCreateNewGovernancePeriod(Activator), "Governance Period", null, NewMenu);
                 CommonFunctionality.Add(new ExecuteCommandAddNewGovernanceDocument(Activator,null), "Governance Document", null, NewMenu);
-
-
-
             }
 
             if (isFirstTime || Equals(oRefreshFrom, CatalogueFolder.Root))
@@ -157,8 +153,6 @@ namespace Rdmp.UI.Collections
                 tlvCatalogues.Expand(CatalogueFolder.Root);
                 isFirstTime = false;
             }
-
-            
         }
         
         public void ApplyFilters()

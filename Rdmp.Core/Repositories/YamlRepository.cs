@@ -111,7 +111,10 @@ public class YamlRepository : MemoryDataExportRepository
         ForcedJoins = Load<AggregateConfiguration,ITableInfo>(nameof(ForcedJoins));
 
         LoadCohortContainerContents();
+
+        LoadWhereSubContainers();
     }
+
 
     /// <summary>
     /// Sets <see cref="IMapsDirectlyToDatabaseTable.Repository"/> on <paramref name="obj"/>.
@@ -124,6 +127,9 @@ public class YamlRepository : MemoryDataExportRepository
 
         if (obj is DataAccessCredentials creds)
             creds.SetEncryptedPasswordHost(new EncryptedPasswordHost(this));
+
+        if (obj is ConcreteContainer container)
+            container.SetManager(this);
     }
 
     public override void InsertAndHydrate<T>(T toCreate, Dictionary<string, object> constructorParameters)
@@ -459,6 +465,42 @@ public class YamlRepository : MemoryDataExportRepository
 
     #endregion
 
+    public override void MakeIntoAnOrphan(IContainer container)
+    {
+        base.MakeIntoAnOrphan(container);
+        SaveWhereSubContainers();
+    }
+    public override void AddSubContainer(IContainer parent, IContainer child)
+    {
+        base.AddSubContainer(parent, child);
+        SaveWhereSubContainers();
+    }
+
+    private void SaveWhereSubContainers()
+    {
+        Save(WhereSubContainers.Where(kvp => kvp.Key is FilterContainer)
+            .ToDictionary(
+            k => k.Key,
+            v => v.Value), "ExtractionFilters");
+
+        Save(WhereSubContainers.Where(kvp => kvp.Key is AggregateFilterContainer)
+            .ToDictionary(
+            k => k.Key,
+            v => v.Value), "AggregateFilters");
+    }
+
+    private void LoadWhereSubContainers()
+    {
+        foreach(var c in Load<FilterContainer, FilterContainer>("ExtractionFilters"))
+        {
+            WhereSubContainers.Add(c.Key, new HashSet<IContainer>(c.Value));
+        }
+        foreach(var c in Load<AggregateFilterContainer, AggregateFilterContainer>("AggregateFilters"))
+        {
+            WhereSubContainers.Add(c.Key, new HashSet<IContainer>(c.Value));
+        }
+    }
+
     private Dictionary<T, HashSet<T2>> Load<T, T2>(string filenameWithoutSuffix)
         where T : IMapsDirectlyToDatabaseTable
         where T2 : IMapsDirectlyToDatabaseTable
@@ -470,10 +512,40 @@ public class YamlRepository : MemoryDataExportRepository
         if (File.Exists(file))
         {
             var yaml = File.ReadAllText(file);
-            return deserializer.Deserialize<Dictionary<int, List<int>>>(yaml)
-                .ToDictionary(
-                    k => GetObjectByID<T>(k.Key),
-                    v => new HashSet<T2>(v.Value.Select(v => GetObjectByID<T2>(v))));
+
+            var dictionary = new Dictionary<T, HashSet<T2>>();
+
+            foreach(var ids in deserializer.Deserialize<Dictionary<int, List<int>>>(yaml))
+            {
+                try
+                {
+                    var key = GetObjectByID<T>(ids.Key);
+
+                    var set = new HashSet<T2>();
+
+                    foreach(var val in ids.Value)
+                    {
+                        try
+                        {
+                            set.Add(GetObjectByID<T2>(val));
+                        }
+                        catch (KeyNotFoundException)
+                        {
+                            // skip missing objects (they will disapear next save anyway)
+                            continue;
+                        }
+                    }
+
+                    dictionary.Add(key, set);
+                }
+                catch (KeyNotFoundException)
+                {
+                    // skip missing container objects (they will disapear next save anyway)
+                    continue;
+                }
+            }
+
+            return dictionary;
         }
 
         return new Dictionary<T, HashSet<T2>>();

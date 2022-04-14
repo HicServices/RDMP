@@ -203,7 +203,7 @@ namespace Rdmp.Core.Repositories
             CohortContainerContents.Clear();
             CredentialsDictionary.Clear();
             ForcedJoins.Clear();
-            _whereSubContainers.Clear();
+            WhereSubContainers.Clear();
             Defaults.Clear();
         }
 
@@ -430,26 +430,26 @@ namespace Rdmp.Core.Repositories
 
         #region IFilterContainerManager
 
-        readonly Dictionary<IContainer, HashSet<IContainer>> _whereSubContainers = new Dictionary<IContainer, HashSet<IContainer>>();
+        protected Dictionary<IContainer, HashSet<IContainer>> WhereSubContainers { get; set; } = new ();
         
         public IContainer[] GetSubContainers(IContainer container)
         {
-            if(!_whereSubContainers.ContainsKey(container))
+            if(!WhereSubContainers.ContainsKey(container))
                 return new IContainer[0];
 
-            return _whereSubContainers[container].ToArray();
+            return WhereSubContainers[container].ToArray();
         }
 
-        public void MakeIntoAnOrphan(IContainer container)
+        public virtual void MakeIntoAnOrphan(IContainer container)
         {
-            foreach (var contents in _whereSubContainers)
+            foreach (var contents in WhereSubContainers)
                 if (contents.Value.Contains(container))
                     contents.Value.Remove(container);
         }
 
         public IContainer GetParentContainerIfAny(IContainer container)
         {
-            var match = _whereSubContainers.Where(k => k.Value.Contains(container)).ToArray();
+            var match = WhereSubContainers.Where(k => k.Value.Contains(container)).ToArray();
             if (match.Length != 0)
                 return match[0].Key;
 
@@ -467,12 +467,12 @@ namespace Rdmp.Core.Repositories
             filter.SaveToDatabase();
         }
 
-        public void AddSubContainer(IContainer parent, IContainer child)
+        public virtual void AddSubContainer(IContainer parent, IContainer child)
         {
-            if (!_whereSubContainers.ContainsKey(parent))
-                _whereSubContainers.Add(parent, new HashSet<IContainer>());
+            if (!WhereSubContainers.ContainsKey(parent))
+                WhereSubContainers.Add(parent, new HashSet<IContainer>());
             
-            _whereSubContainers[parent].Add(child);
+            WhereSubContainers[parent].Add(child);
         }
 
         #endregion
