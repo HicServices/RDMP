@@ -170,7 +170,7 @@ namespace Rdmp.Core.CommandExecution
 
             if (Is(o, out ISqlParameter p) && p is IMapsDirectlyToDatabaseTable m)
             {
-                yield return new ExecuteCommandSet(_activator, m, p.GetType().GetProperty(nameof(ISqlParameter.Value)));
+                yield return new ExecuteCommandSet(_activator, m, p.GetType().GetProperty(nameof(ISqlParameter.Value)), p.GetType().GetProperty(nameof(ISqlParameter.ParameterName)), p.GetType().GetProperty(nameof(ISqlParameter.Comment)));
 
                 if(p is not ExtractionFilterParameterSetValue)
                     yield return new ExecuteCommandSet(_activator, m, p.GetType().GetProperty(nameof(ISqlParameter.ParameterSQL)));

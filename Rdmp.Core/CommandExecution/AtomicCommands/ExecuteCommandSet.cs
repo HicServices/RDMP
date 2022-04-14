@@ -27,6 +27,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     {
         private readonly IMapsDirectlyToDatabaseTable _setOn;
         private readonly PropertyInfo _property;
+        private readonly PropertyInfo _name;
+        private readonly PropertyInfo _description;
         private readonly bool _getValueAtExecuteTime;
 
         /// <summary>
@@ -83,10 +85,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     NewValue = picker[0].GetValueForParameterOfType(_property.PropertyType);
             }
         }
-        public ExecuteCommandSet(IBasicActivateItems activator,IMapsDirectlyToDatabaseTable setOn,PropertyInfo property):base(activator)
+        public ExecuteCommandSet(IBasicActivateItems activator,IMapsDirectlyToDatabaseTable setOn,PropertyInfo property, PropertyInfo name = null, PropertyInfo description = null):base(activator)
         {
             _setOn = setOn;
             _property = property;
+            _name = name;
+            _description = description;
             _getValueAtExecuteTime = true;
 
             if(string.Equals("ID",property?.Name))
@@ -160,7 +164,23 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 
                 if(!populatedNewValueWithRelationship)
                 {
-                    if (BasicActivator.SelectValueType(_property.Name, _property.PropertyType, _property.GetValue(_setOn), out object chosen))
+                    var desc = "";
+                    if(_description != null)
+                    {
+                        desc = _description.GetValue(_setOn)?.ToString();
+                    }
+
+                    var name = _property.Name;
+                    if (_name != null)
+                    {
+                        name = _name.GetValue(_setOn)?.ToString();
+                    }
+
+                    if (BasicActivator.SelectValueType(new DialogArgs() {
+                            WindowTitle = $"Set value for '{name}'",
+                            TaskDescription = desc,
+                            EntryLabel = name
+                    }, _property.PropertyType, _property.GetValue(_setOn), out object chosen))
                     {
                         NewValue = chosen;
                     }
