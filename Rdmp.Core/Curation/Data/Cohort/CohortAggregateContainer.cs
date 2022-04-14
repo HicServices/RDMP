@@ -197,6 +197,8 @@ namespace Rdmp.Core.Curation.Data.Cohort
         /// <remarks>Also deletes subcontainers to avoid leaving orphans in the database</remarks>
         public override void DeleteInDatabase()
         {
+            MakeIntoAnOrphan();
+
             var children = GetSubContainers();
 
             //delete the children

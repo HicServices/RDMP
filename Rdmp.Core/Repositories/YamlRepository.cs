@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -386,15 +387,34 @@ public class YamlRepository : MemoryDataExportRepository
 
         var deserializer = new Deserializer();
 
-        foreach (var f in dir.GetFiles("*.yaml"))
+        foreach (var f in dir.GetFiles("*.yaml").ToArray())
         {
             var id = int.Parse(Path.GetFileNameWithoutExtension(f.Name));
 
             var content = deserializer.Deserialize<List<PersistCohortContainerContent>>(File.ReadAllText(f.FullName));
 
-            CohortContainerContents.Add(
-                GetObjectByID<CohortAggregateContainer>(id),
-                new HashSet<CohortContainerContent>(content.Select(c => c.GetContent(this))));
+            try
+            {
+                CohortAggregateContainer container;
+
+                try
+                {
+                    container = GetObjectByID<CohortAggregateContainer>(id);
+                }
+                catch (KeyNotFoundException)
+                {
+                    // The container doesn't exist anymore
+                    f.Delete();
+                    continue;
+                }
+
+                CohortContainerContents.Add(container,
+                    new HashSet<CohortContainerContent>(content.Select(c => c.GetContent(this))));
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error reading file {f.FullName}",ex);
+            }
         }
 
     }
