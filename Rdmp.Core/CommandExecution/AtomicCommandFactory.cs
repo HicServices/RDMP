@@ -170,7 +170,7 @@ namespace Rdmp.Core.CommandExecution
 
             if (Is(o, out ISqlParameter p) && p is IMapsDirectlyToDatabaseTable m)
             {
-                yield return new ExecuteCommandSet(_activator, m, p.GetType().GetProperty(nameof(ISqlParameter.Value))) { DialogArgs = AnyTableSqlParameter.GetValuePromptDialogArgs(p) };
+                yield return new ExecuteCommandSet(_activator, m, p.GetType().GetProperty(nameof(ISqlParameter.Value)));
 
                 if(p is not ExtractionFilterParameterSetValue)
                     yield return new ExecuteCommandSet(_activator, m, p.GetType().GetProperty(nameof(ISqlParameter.ParameterSQL)));
@@ -453,6 +453,14 @@ namespace Rdmp.Core.CommandExecution
 
             if(Is(o, out IFilter filter))
             {
+                if(filter.GetAllParameters().Any())
+                {
+                    yield return new ExecuteCommandSet(_activator,
+                        () => _activator.SelectOne("Select Parameter to change Value for...", filter.GetAllParameters().OfType<IMapsDirectlyToDatabaseTable>().ToArray()),
+                        typeof(ISqlParameter).GetProperty(nameof(ISqlParameter.Value))
+                    ) 
+                    { OverrideCommandName = "Set Parameter Value(s)", Weight = -10 };
+                }
                 yield return new ExecuteCommandViewFilterMatchData(_activator, filter, ViewType.TOP_100);
                 yield return new ExecuteCommandViewFilterMatchData(_activator, filter, ViewType.Aggregate);
             }

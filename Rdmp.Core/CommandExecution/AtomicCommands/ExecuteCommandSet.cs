@@ -14,6 +14,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Repositories.Construction;
 
@@ -26,6 +27,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     public class ExecuteCommandSet:BasicCommandExecution
     {
         private readonly IMapsDirectlyToDatabaseTable _setOn;
+        private readonly Func<IMapsDirectlyToDatabaseTable> _setOnFunc;
         private readonly PropertyInfo _property;
         private readonly bool _getValueAtExecuteTime;
 
@@ -100,6 +102,19 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
 
         }
+
+        public ExecuteCommandSet(IBasicActivateItems activator, Func<IMapsDirectlyToDatabaseTable> setOnFunc, PropertyInfo property) : base(activator)
+        {
+            _setOnFunc = setOnFunc;
+            _property = property;
+            _getValueAtExecuteTime = true;
+
+            if (string.Equals("ID", property?.Name))
+            {
+                SetImpossible("ID property cannot be changed");
+            }
+
+        }
         public override string GetCommandName()
         {
             if(!string.IsNullOrEmpty(OverrideCommandName))
@@ -120,6 +135,16 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if(_property == null)
                 return;
+
+            var on = _setOn;
+
+            if(_setOnFunc != null)
+            {
+                on = _setOnFunc();
+            }
+
+            if (on == null)
+                return;
             
             if(_getValueAtExecuteTime)
             {
@@ -137,20 +162,20 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                         if (!string.IsNullOrWhiteSpace(rel.ValueGetter))
                         {
                             //get available from that method
-                            var method = _setOn.GetType().GetMethod(rel.ValueGetter,new Type[0]);
+                            var method = on.GetType().GetMethod(rel.ValueGetter,new Type[0]);
 
                             if(method == null)
                             {
-                                throw new Exception($"Could not find a method called '{rel.ValueGetter}' on Type '{_setOn.GetType()}'.  This was specified as a ValueGetter on Property {_property.Name}");
+                                throw new Exception($"Could not find a method called '{rel.ValueGetter}' on Type '{on.GetType()}'.  This was specified as a ValueGetter on Property {_property.Name}");
                             }
 
                             try
                             {
-                                available = ((IEnumerable<IMapsDirectlyToDatabaseTable>)method.Invoke(_setOn, null)).ToArray();
+                                available = ((IEnumerable<IMapsDirectlyToDatabaseTable>)method.Invoke(on, null)).ToArray();
                             }
                             catch (Exception ex)
                             {
-                                throw new Exception($"Error running method '{rel.ValueGetter}' on Type '{_setOn.GetType()}'.  This was specified as a ValueGetter on Property {_property.Name}",ex);
+                                throw new Exception($"Error running method '{rel.ValueGetter}' on Type '{on.GetType()}'.  This was specified as a ValueGetter on Property {_property.Name}",ex);
                             }
                         }
                         else
@@ -165,10 +190,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 
                 if(!populatedNewValueWithRelationship)
                 {
-                    if (BasicActivator.SelectValueType(DialogArgs ?? new DialogArgs() {
-                            WindowTitle = $"Set value for '{_property.Name}'",
-                            EntryLabel = _property.Name
-                    }, _property.PropertyType, _property.GetValue(_setOn), out object chosen))
+                    if (BasicActivator.SelectValueType(GetDialogArgs(on), _property.PropertyType, _property.GetValue(on), out object chosen))
                     {
                         NewValue = chosen;
                     }
@@ -180,12 +202,26 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 }
             }
             
-            ShareManager.SetValue(_property,NewValue,_setOn);
-            ((DatabaseEntity)_setOn).SaveToDatabase();
+            ShareManager.SetValue(_property,NewValue, on);
+            ((DatabaseEntity)on).SaveToDatabase();
 
             Success = true;
-            Publish((DatabaseEntity) _setOn);
+            Publish((DatabaseEntity)on);
         }
 
+        private DialogArgs GetDialogArgs(IMapsDirectlyToDatabaseTable on)
+        {
+            if (DialogArgs != null)
+                return DialogArgs;
+
+            if (on is ISqlParameter p && _property.Name.Equals(nameof(ISqlParameter.Value)))
+                return AnyTableSqlParameter.GetValuePromptDialogArgs(p);
+
+            return new DialogArgs()
+            {
+                WindowTitle = $"Set value for '{_property.Name}'",
+                EntryLabel = _property.Name
+            };
+        }
     }
 }

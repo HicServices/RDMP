@@ -242,6 +242,9 @@ namespace Rdmp.Core.Curation.Data.Cohort
         /// <returns></returns>
         public static DialogArgs GetValuePromptDialogArgs(IFilter filter, ISqlParameter parameter)
         {
+            if (parameter == null)
+                return null;
+
             string windowTitle = $"Set '{parameter.ParameterName}' value";
             if (filter != null)
             {
