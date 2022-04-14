@@ -57,6 +57,7 @@
             this.tbTaskDescription.ReadOnly = true;
             this.tbTaskDescription.Size = new System.Drawing.Size(588, 94);
             this.tbTaskDescription.TabIndex = 2;
+            this.tbTaskDescription.TabStop = false;
             this.tbTaskDescription.Text = "tbTaskDescription";
             this.tbTaskDescription.Resize += new System.EventHandler(this.textBox1_Resize);
             // 
@@ -76,6 +77,7 @@
             this.tbEntryLabel.ReadOnly = true;
             this.tbEntryLabel.Size = new System.Drawing.Size(612, 30);
             this.tbEntryLabel.TabIndex = 3;
+            this.tbEntryLabel.TabStop = false;
             this.tbEntryLabel.Text = "tbEntryLabel";
             this.tbEntryLabel.Resize += new System.EventHandler(this.tbEntryLabel_Resize);
             // 
