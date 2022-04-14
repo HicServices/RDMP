@@ -20,12 +20,8 @@ namespace Rdmp.UI.Menus
         public FilterMenu(RDMPContextMenuStripArgs args, IFilter filter): base(args, (DatabaseEntity)filter)
         {
             Add(new ExecuteCommandViewFilterMatchGraph(_activator, filter));
-
-            Items.Add(new ToolStripSeparator());
-
             Add(new ExecuteCommandExportObjectsToFile(_activator, new[] {filter}));
             Add(new ExecuteCommandImportFilterDescriptionsFromShare(_activator, filter));
-            
         }
     }
 }

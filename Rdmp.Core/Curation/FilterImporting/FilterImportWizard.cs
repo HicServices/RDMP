@@ -14,6 +14,7 @@ using Rdmp.Core.QueryBuilding.Options;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.Curation.Data.Cohort;
 
 namespace Rdmp.Core.Curation.FilterImporting
 {
@@ -81,6 +82,20 @@ namespace Rdmp.Core.Curation.FilterImporting
             {
                 newFilter.Name += "_" + chosenParameterValues.Name;
                 newFilter.SaveToDatabase();
+            }
+
+            //If we've not imported values but there is a parameter then ask for their values
+            if (chosenParameterValues == null && newFilter.GetAllParameters().Any())
+            {
+                string param;
+                foreach (var parameter in newFilter.GetAllParameters())
+                {
+                    if (_activator.TypeText(AnyTableSqlParameter.GetValuePromptDialogArgs(newFilter, parameter), 255, null, out param, false))
+                    {
+                        parameter.Value = param;
+                        parameter.SaveToDatabase();
+                    }
+                }
             }
 
             return newFilter;

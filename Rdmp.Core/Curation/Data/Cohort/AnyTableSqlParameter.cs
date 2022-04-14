@@ -12,6 +12,7 @@ using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Referencing;
 using Rdmp.Core.QueryBuilding.SyntaxChecking;
@@ -225,6 +226,43 @@ namespace Rdmp.Core.Curation.Data.Cohort
         public static string GetDefaultDeclaration(string parameterName)
         {
             return "DECLARE " + parameterName + " as varchar(10)";
+        }
+
+        /// <inheritdoc cref="GetValuePromptDialogArgs(IFilter, ISqlParameter)"/>
+        public static DialogArgs GetValuePromptDialogArgs(ISqlParameter parameter)
+        {
+            return GetValuePromptDialogArgs(null, parameter);
+        }
+
+        /// <summary>
+        /// Returns a task description with user friendly information for when a parameter value needs to be changed
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        public static DialogArgs GetValuePromptDialogArgs(IFilter filter, ISqlParameter parameter)
+        {
+            if (parameter == null)
+                return null;
+
+            string windowTitle = $"Set '{parameter.ParameterName}' value";
+            if (filter != null)
+            {
+                windowTitle += $" for '{filter.Name}'";
+            }
+
+            string desc = $"Enter a value for the parameter '{parameter.ParameterName}'.";
+            if (!string.IsNullOrWhiteSpace(parameter.Comment))
+            {
+                desc += $"{parameter.ParameterName} is '{parameter.Comment}'";
+            }
+
+            return new DialogArgs()
+            {
+                WindowTitle = windowTitle,
+                EntryLabel = parameter.ParameterName,
+                TaskDescription = desc
+            };
         }
     }
 }

@@ -306,6 +306,9 @@ namespace Rdmp.UI.SimpleDialogs
 
             lock (oMatches)
             {
+                if (_searchables == null)
+                    return null;
+
                 if (_searchables.ContainsKey(m))
                 {
                     var descendancy = _searchables[m];
@@ -328,6 +331,9 @@ namespace Rdmp.UI.SimpleDialogs
 
             lock(oMatches)
             {
+                if (_searchables == null)
+                    return null;
+
                 if (_searchables.ContainsKey(m))
                 {
                     var descendancy = _searchables[m];

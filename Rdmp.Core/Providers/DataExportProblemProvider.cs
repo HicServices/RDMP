@@ -64,7 +64,7 @@ namespace Rdmp.Core.Providers
 
             if (_exportChildProvider != null)
                 if (!_exportChildProvider.GetDatasets(extractionConfiguration).Any()) //there are no selected datasets!
-                    return "Configuration has no selected datasets. Add exisiting Datasets or Packages to enable extraction.";
+                    return "Configuration has no selected datasets. Add existing Datasets or Packages to enable extraction.";
 
             return null;
         }
