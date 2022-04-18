@@ -7,18 +7,15 @@
 using CsvHelper;
 using Rdmp.Core.Autocomplete;
 using Rdmp.Core.CommandExecution;
-using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataViewing;
 using ReusableLibraryCode.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Terminal.Gui;
@@ -328,14 +325,11 @@ namespace Rdmp.Core.CommandLine.Gui
             
         }
 
-        private class SqlAutocomplete : Terminal.Gui.Autocomplete
+        private class SqlAutocomplete : Terminal.Gui.TextViewAutocomplete
         {
             public override bool IsWordChar(System.Rune rune)
             {
-                if ((char)rune == '_')
-                    return true;
-
-                return base.IsWordChar(rune);
+                return (char)rune == '_' || base.IsWordChar(rune);
             }
         }
 

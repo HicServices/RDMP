@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
+using System.Runtime.Versioning;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.MainFormUITabs;
@@ -13,6 +14,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 namespace Rdmp.UI.Tests
 {
+    [SupportedOSPlatform("windows7.0")]
     class CatalogueItemUITests : UITests
     {
         [Test, UITimeout(20000)]
