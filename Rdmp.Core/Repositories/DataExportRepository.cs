@@ -76,7 +76,8 @@ namespace Rdmp.Core.Repositories
         
         public IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(IExtractionConfiguration configuration, IExtractableDataSet dataset)
         {
-            return GetAllObjects<CumulativeExtractionResults>("WHERE ExtractionConfiguration_ID=" + configuration.ID + "AND ExtractableDataSet_ID=" + dataset.ID);
+            return GetAllObjects<CumulativeExtractionResults>(
+                $"WHERE ExtractionConfiguration_ID={configuration.ID}AND ExtractableDataSet_ID={dataset.ID}");
         }
 
 
@@ -143,29 +144,27 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
 
         public Dictionary<int, List<int>> GetPackageContentsDictionary()
         {
-            Dictionary<int, List<int>> toReturn = new Dictionary<int, List<int>>();
+            var toReturn = new Dictionary<int, List<int>>();
 
-            using (var con = GetConnection())
+            using var con = GetConnection();
+            var r = DiscoveredServer.GetCommand("SELECT * FROM ExtractableDataSetPackage_ExtractableDataSet ORDER BY ExtractableDataSetPackage_ID", con).ExecuteReader();
+
+            var lastPackageId = -1;
+            while (r.Read())
             {
-                var r = DiscoveredServer.GetCommand("SELECT * FROM ExtractableDataSetPackage_ExtractableDataSet ORDER BY ExtractableDataSetPackage_ID", con).ExecuteReader();
+                var packageID = Convert.ToInt32(r["ExtractableDataSetPackage_ID"]);
+                var dataSetID = Convert.ToInt32(r["ExtractableDataSet_ID"]);
 
-                var lastPackageId = -1;
-                while (r.Read())
+                if (lastPackageId != packageID)
                 {
-                    var packageID = Convert.ToInt32(r["ExtractableDataSetPackage_ID"]);
-                    var dataSetID = Convert.ToInt32(r["ExtractableDataSet_ID"]);
-
-                    if (lastPackageId != packageID)
-                    {
-                        toReturn.Add(packageID, new List<int>());
-                        lastPackageId = packageID;
-                    }
-
-                    toReturn[packageID].Add(dataSetID);
+                    toReturn.Add(packageID, new List<int>());
+                    lastPackageId = packageID;
                 }
 
-                return toReturn;
+                toReturn[packageID].Add(dataSetID);
             }
+
+            return toReturn;
         }
 
         /// <summary>
@@ -181,12 +180,12 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
         public void AddDataSetToPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
         {
             if (_packageContentsDictionary.Value.ContainsKey(package.ID) && _packageContentsDictionary.Value[package.ID].Contains(dataSet.ID))
-                throw new ArgumentException("dataSet " + dataSet + " is already part of package '" + package + "'", "dataSet");
+                throw new ArgumentException($"dataSet {dataSet} is already part of package '{package}'", "dataSet");
 
             using (var con = GetConnection())
             {
                 DiscoveredServer.GetCommand(
-                        "INSERT INTO ExtractableDataSetPackage_ExtractableDataSet(ExtractableDataSetPackage_ID,ExtractableDataSet_ID) VALUES (" + package.ID + "," + dataSet.ID + ")",
+                    $"INSERT INTO ExtractableDataSetPackage_ExtractableDataSet(ExtractableDataSetPackage_ID,ExtractableDataSet_ID) VALUES ({package.ID},{dataSet.ID})",
                         con).ExecuteNonQuery();
             }
 
@@ -210,12 +209,12 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
         public void RemoveDataSetFromPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
         {
             if (!_packageContentsDictionary.Value[package.ID].Contains(dataSet.ID))
-                throw new ArgumentException("dataSet " + dataSet + " is not part of package " + package + " so cannot be removed", "dataSet");
+                throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed", "dataSet");
 
             using (var con = GetConnection())
             {
                 DiscoveredServer.GetCommand(
-                        "DELETE FROM ExtractableDataSetPackage_ExtractableDataSet WHERE ExtractableDataSetPackage_ID = " + package.ID + " AND ExtractableDataSet_ID =" + dataSet.ID,
+                    $"DELETE FROM ExtractableDataSetPackage_ExtractableDataSet WHERE ExtractableDataSetPackage_ID = {package.ID} AND ExtractableDataSet_ID ={dataSet.ID}",
                         con).ExecuteNonQuery();
             }
 
@@ -224,19 +223,14 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
 
         public IReleaseLog GetReleaseLogEntryIfAny(CumulativeExtractionResults cumulativeExtractionResults)
         {
-            using (var con = GetConnection())
-            {
-                using (var cmdselect = DatabaseCommandHelper
-                    .GetCommand(@"SELECT *
+            using var con = GetConnection();
+            using var cmdselect = DatabaseCommandHelper
+                .GetCommand($@"SELECT *
                                     FROM ReleaseLog
                                     where
-                                    CumulativeExtractionResults_ID = " + cumulativeExtractionResults.ID, con.Connection, con.Transaction))
-                using (var r = cmdselect.ExecuteReader())
-                    if (r.Read())
-                        return new ReleaseLog(this, r);
-
-                return null;
-            }
+                                    CumulativeExtractionResults_ID = {cumulativeExtractionResults.ID}", con.Connection, con.Transaction);
+            using var r = cmdselect.ExecuteReader();
+            return r.Read() ? new ReleaseLog(this, r) : null;
         }
     }
 }
