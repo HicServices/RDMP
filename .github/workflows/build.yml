@@ -88,7 +88,7 @@ jobs:
         run: mv `find coverage -type f` uifs.lcov
       
       - name: Merge LCovs
-        run: lcov-result-merger "{ui,core,recode}.lcov" all.lcov
+        run: lcov-result-merger "{ui,core,recode}{,fs}.lcov" all.lcov
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
