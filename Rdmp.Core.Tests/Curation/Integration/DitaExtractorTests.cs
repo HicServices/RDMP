@@ -40,7 +40,8 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 foreach (var cata in catalogues)
                     if (catalogues.Count(c => c.Name.Equals(cata.Name)) > 1)
                     {
-                        Console.WriteLine("Deleteing Catalogue Called " + cata.Name + " (because there are multiple Catalogues with this name) in Catalogue database");
+                        Console.WriteLine(
+                            $"Deleting Catalogue Called {cata.Name} (because there are multiple Catalogues with this name) in Catalogue database");
                         cata.DeleteInDatabase();
                     }
 
