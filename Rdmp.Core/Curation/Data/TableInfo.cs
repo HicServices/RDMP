@@ -330,7 +330,7 @@ namespace Rdmp.Core.Curation.Data
             if(credentials == null)
                 throw new Exception("Credentials was null, to remove a credential use TableInfoToCredentialsLinker.BreakLinkBetween instead");
             
-            //if there are existing credentialoguememls already
+            //if there are existing credentials already
             if (existingCredentials != null)
             {
 
@@ -339,9 +339,10 @@ namespace Rdmp.Core.Curation.Data
                     return;//dont bother
 
                 if(!allowOverwritting)
-                    throw new Exception("Cannot overwrite existing credentials " + existingCredentials.Name + " with new credentials " + credentials.Name + " with context " + context + " because allowOverwritting was false");
+                    throw new Exception(
+                        $"Cannot overwrite existing credentials {existingCredentials.Name} with new credentials {credentials.Name} with context {context} because allowOverwritting was false");
 
-                //allow overwritting is on
+                //allow overwriting is on
                 //remove the existing link
                 CatalogueRepository.TableInfoCredentialsManager.BreakLinkBetween(existingCredentials, this, context);
             }
