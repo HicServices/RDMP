@@ -160,7 +160,7 @@ namespace Rdmp.Core.Startup
                 return false;
             }
 
-            // its not a database we are getting this data from then assume its good to go
+            // it's not a database we are getting this data from then assume its good to go
             if (repository is not ITableRepository tableRepository)
                 return true;
                 
