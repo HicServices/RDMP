@@ -135,7 +135,7 @@ namespace Tests.Common
             var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,settingsFile));
 
             if (!f.Exists) 
-                throw new FileNotFoundException("Could not find file '" + f.FullName + "'");
+                throw new FileNotFoundException($"Could not find file '{f.FullName}'");
 
             using StreamReader s = new StreamReader(f.OpenRead());
             var deserializer = new DeserializerBuilder()
@@ -162,7 +162,8 @@ namespace Tests.Common
                     
             if(CatalogueRepository is TableRepository cataRepo)
             {
-                Console.WriteLine("Expecting Unit Test Catalogue To Be At Server=" + cataRepo.DiscoveredServer.Name + " Database=" + cataRepo.DiscoveredServer.GetCurrentDatabase());
+                Console.WriteLine(
+                    $"Expecting Unit Test Catalogue To Be At Server={cataRepo.DiscoveredServer.Name} Database={cataRepo.DiscoveredServer.GetCurrentDatabase()}");
 
                 if(!cataRepo.DiscoveredServer.Exists())
                     Assert.Inconclusive("Catalogue database does not exist, run 'rdmp.exe install ...' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
@@ -175,7 +176,8 @@ namespace Tests.Common
 
             if(DataExportRepository is TableRepository tblRepo)
             {
-                Console.WriteLine("Expecting Unit Test Data Export To Be At Server=" + tblRepo.DiscoveredServer.Name + " Database= " + tblRepo.DiscoveredServer.GetCurrentDatabase());
+                Console.WriteLine(
+                    $"Expecting Unit Test Data Export To Be At Server={tblRepo.DiscoveredServer.Name} Database= {tblRepo.DiscoveredServer.GetCurrentDatabase()}");
                 Assert.IsTrue(tblRepo.DiscoveredServer.Exists(), "Data Export database does not exist, run 'rdmp.exe install ...' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
             }
                 
@@ -281,16 +283,14 @@ namespace Tests.Common
                 }
             }
 
-            if (!(CatalogueRepository is TableRepository cataTblRepo))
+            if (CatalogueRepository is not TableRepository cataTblRepo)
                 return;
 
-            using (var con = cataTblRepo.GetConnection())
-            {
-                var catalogueDatabaseName = ((TableRepository) repositoryLocator.CatalogueRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
-                var dataExportDatabaseName = ((TableRepository) repositoryLocator.DataExportRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
+            using var con = cataTblRepo.GetConnection();
+            var catalogueDatabaseName = ((TableRepository) repositoryLocator.CatalogueRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
+            var dataExportDatabaseName = ((TableRepository) repositoryLocator.DataExportRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
 
-                UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabases, catalogueDatabaseName, dataExportDatabaseName),con.Connection);
-            }
+            UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabases, catalogueDatabaseName, dataExportDatabaseName),con.Connection);
         }
 
         /// <summary>
@@ -304,16 +304,14 @@ namespace Tests.Common
                 BlitzMainDataTables(y);
             }
 
-            if (!(CatalogueRepository is TableRepository cataTblRepo))
+            if (CatalogueRepository is not TableRepository cataTblRepo)
                 return;
 
-            using (var con = cataTblRepo.GetConnection())
-            {
-                var catalogueDatabaseName = ((TableRepository)RepositoryLocator.CatalogueRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
-                var dataExportDatabaseName = ((TableRepository)RepositoryLocator.DataExportRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
+            using var con = cataTblRepo.GetConnection();
+            var catalogueDatabaseName = ((TableRepository)RepositoryLocator.CatalogueRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
+            var dataExportDatabaseName = ((TableRepository)RepositoryLocator.DataExportRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
 
-                UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabasesLite, catalogueDatabaseName, dataExportDatabaseName), con.Connection);
-            }
+            UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabasesLite, catalogueDatabaseName, dataExportDatabaseName), con.Connection);
         }
 
         private void BlitzMainDataTables(YamlRepository y)
@@ -799,7 +797,8 @@ delete from {1}..Project
         protected void VerifyRowExist(DataTable resultTable, params object[] rowObjects)
         {
             if (resultTable.Columns.Count != rowObjects.Length)
-                Assert.Fail("VerifyRowExist failed, resultTable had " + resultTable.Columns.Count + " while you expected " + rowObjects.Length + " columns");
+                Assert.Fail(
+                    $"VerifyRowExist failed, resultTable had {resultTable.Columns.Count} while you expected {rowObjects.Length} columns");
 
             foreach (DataRow r in resultTable.Rows)
             {
@@ -815,7 +814,8 @@ delete from {1}..Project
                     return;
             }
 
-            Assert.Fail("VerifyRowExist failed, did not find expected rowObjects (" + string.Join(",", rowObjects.Select(o => "'" + o + "'")) + ") in the resultTable");
+            Assert.Fail(
+                $"VerifyRowExist failed, did not find expected rowObjects ({string.Join(",", rowObjects.Select(o => $"'{o}'"))}) in the resultTable");
         }
 
         public static bool AreBasicallyEquals(object o, object o2, bool handleSlashRSlashN = true)
