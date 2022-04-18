@@ -38,7 +38,7 @@ namespace Rdmp.Core.Tests.DataExport.Data
         {
             ExtractionProgress progress = null; ;
             Assert.DoesNotThrow(()=> progress = CreateAnExtractionProgress());
-            progress.DeleteInDatabase();
+            progress?.DeleteInDatabase();
         }
 
         [Test]

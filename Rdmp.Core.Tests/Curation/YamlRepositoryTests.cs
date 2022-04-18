@@ -172,7 +172,6 @@ namespace Rdmp.Core.Tests.Curation
 
             var ac = UnitTests.WhenIHaveA<AggregateConfiguration>(repo1);
             ac.CreateRootContainerIfNotExists();
-            var root = ac.RootFilterContainer;
 
             var f = new AggregateFilter(repo1, "my filter");
             ac.RootFilterContainer.AddChild(f);
@@ -278,7 +277,6 @@ namespace Rdmp.Core.Tests.Curation
             File.WriteAllBytes(fi.FullName, new byte[] { 0x1, 0x2 });
 
             var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
-            var tripart = new Version(version);
 
             var lma1 = UnitTests.WhenIHaveA<LoadModuleAssembly>(repo1);
             var lma2 = UnitTests.WhenIHaveA<LoadModuleAssembly>(repo1);
