@@ -130,11 +130,15 @@ public class YamlRepository : MemoryDataExportRepository
     {
         obj.Repository = this;
 
-        if (obj is DataAccessCredentials creds)
-            creds.SetEncryptedPasswordHost(new EncryptedPasswordHost(this));
-
-        if (obj is ConcreteContainer container)
-            container.SetManager(this);
+        switch (obj)
+        {
+            case DataAccessCredentials creds:
+                creds.SetEncryptedPasswordHost(new EncryptedPasswordHost(this));
+                break;
+            case ConcreteContainer container:
+                container.SetManager(this);
+                break;
+        }
     }
 
     public override void InsertAndHydrate<T>(T toCreate, Dictionary<string, object> constructorParameters)
@@ -177,7 +181,7 @@ public class YamlRepository : MemoryDataExportRepository
     /// <returns></returns>
     private string GetPath(IMapsDirectlyToDatabaseTable o)
     {
-        return Path.Combine(Directory.FullName, o.GetType().Name, o.ID + ".yaml");
+        return Path.Combine(Directory.FullName, o.GetType().Name, $"{o.ID}.yaml");
     }
 
     public override void DeleteEncryptionKeyPath()
