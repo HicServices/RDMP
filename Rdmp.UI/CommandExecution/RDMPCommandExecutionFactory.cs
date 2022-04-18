@@ -76,31 +76,26 @@ namespace Rdmp.UI.CommandExecution
         private ICommandExecution CreateNoCache(ICombineToMakeCommand cmd, object targetModel,InsertOption insertOption = InsertOption.Default)
         {
             ///////////////Catalogue or ambiguous Drop Targets ////////////////////////
-            var targetCatalogueFolder = targetModel as string;
-            if (targetCatalogueFolder != null)
+            if (targetModel is string targetCatalogueFolder)
                 return CreateWhenTargetIsFolder(cmd, targetCatalogueFolder);
             
             /////////////Table Info Drop Targets///////////////////////////////////
-            var targetTableInfo = targetModel as TableInfo;
-            if (targetTableInfo != null)
+            if (targetModel is TableInfo targetTableInfo)
                 return CreateWhenTargetIsATableInfo(cmd, targetTableInfo);
 
             //////////////////////Cohort Drop Targets//////////////////
-            
-            var targetJoinableCollectionNode = targetModel as JoinableCollectionNode;
-            if (targetJoinableCollectionNode != null)
+
+            if (targetModel is JoinableCollectionNode targetJoinableCollectionNode)
                 return CreateWhenTargetIsJoinableCollectionNode(cmd,targetJoinableCollectionNode);
 
             ///////////////Data Loading Drop Targets ///////////////////
 
-            var targetProcessTask = targetModel as ProcessTask;
-            if (targetProcessTask != null)
+            if (targetModel is ProcessTask targetProcessTask)
                 return CreateWhenTargetIsProcessTask(cmd, targetProcessTask, insertOption);
             
             /////////////Table Info Collection Drop Targets////////////////////
 
-            var targetPreLoadDiscardedColumnsNode = targetModel as PreLoadDiscardedColumnsNode;
-            if (targetPreLoadDiscardedColumnsNode != null)
+            if (targetModel is PreLoadDiscardedColumnsNode targetPreLoadDiscardedColumnsNode)
                 return CreateWhenTargetIsPreLoadDiscardedColumnsNode(cmd, targetPreLoadDiscardedColumnsNode);
 
             foreach (ICommandExecutionProposal proposals in _proposers.Where(p => p.IsCompatibleTarget(targetModel)))
@@ -128,8 +123,7 @@ namespace Rdmp.UI.CommandExecution
         
         private ICommandExecution CreateWhenTargetIsProcessTask(ICombineToMakeCommand cmd, ProcessTask targetProcessTask, InsertOption insertOption)
         {
-            var sourceProcessTaskCommand = cmd as ProcessTaskCombineable;
-            if (sourceProcessTaskCommand != null)
+            if (cmd is ProcessTaskCombineable sourceProcessTaskCommand)
                 return new ExecuteCommandReOrderProcessTask(_activator,sourceProcessTaskCommand, targetProcessTask, insertOption);
 
             return null;
@@ -138,11 +132,10 @@ namespace Rdmp.UI.CommandExecution
 
         private ICommandExecution CreateWhenTargetIsFolder(ICombineToMakeCommand cmd, string targetCatalogueFolder)
         {
-            var sourceCatalogue = cmd as CatalogueCombineable;
             var sourceManyCatalogues = cmd as ManyCataloguesCombineable;
             var file = cmd as FileCollectionCombineable;
 
-            if (sourceCatalogue != null)
+            if (cmd is CatalogueCombineable sourceCatalogue)
                 return new ExecuteCommandPutCatalogueIntoCatalogueFolder(_activator, sourceCatalogue, targetCatalogueFolder);
             
             if (sourceManyCatalogues != null)
