@@ -100,10 +100,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         {
             var mutilator = new StagingBackfillMutilator
             {
-                TimePeriodicityField = CatalogueRepository.GetAllObjectsWhere<ColumnInfo>("WHERE Name=@Name", new Dictionary<string, object>
-                {
-                    {"Name", timeColumnName}
-                }).Single(),
+                TimePeriodicityField = CatalogueRepository.GetAllObjects<ColumnInfo>().Single(c=>c.Name.Equals(timeColumnName)),
                 TestContext = true,
                 TableNamingScheme = new IdentityTableNamingScheme()
             };
@@ -948,10 +945,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             // databases are now represent state after push to From and before migration
             var mutilator = new StagingBackfillMutilator
             {
-                TimePeriodicityField = CatalogueRepository.GetAllObjectsWhere<ColumnInfo>("WHERE Name=@Name", new Dictionary<string, object>
-                {
-                    {"Name", "[" + DatabaseName + "]..[Samples].[SampleDate]"}
-                }).Single(),
+                TimePeriodicityField = CatalogueRepository.GetAllObjects<ColumnInfo>().Single(ci=>ci.Name == "[" + DatabaseName + "]..[Samples].[SampleDate]"),
                 TestContext = true,
                 TableNamingScheme = new IdentityTableNamingScheme()
             };

@@ -41,7 +41,7 @@ namespace Tests.Common.Scenarios
             IdentifierDump_ExternalDatabaseServer = new ExternalDatabaseServer(CatalogueRepository,IdentifierDump_DatabaseName,p);
             IdentifierDump_ExternalDatabaseServer.SetProperties(IdentifierDump_Database);
 
-            CatalogueRepository.GetServerDefaults().SetDefault(PermissableDefaults.IdentifierDumpServer_ID, IdentifierDump_ExternalDatabaseServer);
+            CatalogueRepository.SetDefault(PermissableDefaults.IdentifierDumpServer_ID, IdentifierDump_ExternalDatabaseServer);
 
         }
 

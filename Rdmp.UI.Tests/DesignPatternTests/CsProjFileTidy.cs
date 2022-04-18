@@ -26,7 +26,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
         private string[] Ignorelist = new[]
         {
             "Attributes.cs", "AssemblyInfo.cs", "Annotations.cs", "StageArgs.cs" ,"ICustomUI.cs","MapsDirectlyToDatabaseTableStatelessDefinition.cs",
-            "IObjectUsedByOtherObjectNode.cs", "IInjectKnown.cs", "Themes.cs","TableView.cs","TreeView.cs"
+            "IObjectUsedByOtherObjectNode.cs", "IInjectKnown.cs", "Themes.cs","TableView.cs","TreeView.cs", "MemoryCatalogueRepository.cs"
         };
 
         public CsProjFileTidy(FileInfo csProjFile)

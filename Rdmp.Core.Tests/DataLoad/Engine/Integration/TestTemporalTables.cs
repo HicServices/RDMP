@@ -60,7 +60,7 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
 
             var tbl = db.ExpectTable("Employee");
 
-            var defaults = new ServerDefaults(CatalogueRepository);
+            var defaults = CatalogueRepository;
             var logServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
             var logManager = new LogManager(logServer);
             

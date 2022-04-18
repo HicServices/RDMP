@@ -14,7 +14,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
     {
         protected IProject ProjectSpecific;
         
-        public CatalogueFolder TargetFolder {get;set; }
+        public string TargetFolder {get;set; }
 
         protected const string Desc_ProjectSpecificParameter = "Optionally associate the Catalogue created with a specific Project, otherwise Null";
         protected const string Desc_TargetFolder = "Optionally create the Catalogue in a virtual subdirectory e.g. /mycatalogues/, otherwise Null";
@@ -28,7 +28,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
 
         }
 
-        protected CatalogueCreationCommandExecution(IBasicActivateItems activator, IProject projectSpecific, CatalogueFolder targetFolder) :base(activator)
+        protected CatalogueCreationCommandExecution(IBasicActivateItems activator, IProject projectSpecific, string targetFolder) :base(activator)
         {
             ProjectSpecific = projectSpecific;
             TargetFolder = targetFolder;

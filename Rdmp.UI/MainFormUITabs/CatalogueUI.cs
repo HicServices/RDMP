@@ -103,7 +103,7 @@ namespace Rdmp.UI.MainFormUITabs
         {
             try
             {
-                _catalogue.Folder = new CatalogueFolder(_catalogue, tbFolder.Text);
+                _catalogue.Folder = tbFolder.Text;
                 tbFolder.ForeColor = Color.Black;
             }
             catch (Exception )
@@ -193,7 +193,7 @@ namespace Rdmp.UI.MainFormUITabs
 
             ticketingControl1.TicketText = _catalogue.Ticket;
             
-            tbFolder.Text = _catalogue.Folder.Path;
+            tbFolder.Text = _catalogue.Folder;
 
             if (_catalogue.Explicit_consent == null)
                 ddExplicitConsent.Text = "";

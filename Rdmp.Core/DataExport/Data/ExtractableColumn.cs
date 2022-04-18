@@ -104,6 +104,11 @@ namespace Rdmp.Core.DataExport.Data
 
         #endregion
 
+        public ExtractableColumn()
+        {
+            ClearAllInjections();
+        }
+
         /// <summary>
         /// Creates a new line of SELECT Sql for the given <paramref name="dataset"/> as it is extracted in the provided <paramref name="configuration"/>.  The new object will
         /// be created in the <paramref name="repository"/> database.

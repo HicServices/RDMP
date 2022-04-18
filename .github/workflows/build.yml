@@ -64,14 +64,38 @@ jobs:
       - name: Rename UI lcov
         shell: bash
         run: mv `find coverage -type f` ui.lcov
+     
+      - name: Test with local file system
+        run:  |
+              cd Tests.Common
+              echo "UseFileSystemRepo: true" >> TestDatabases.txt
+              type TestDatabases.txt
+              cd ..
+      - name: Test Reusable (with file system repo)
+        run: dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+      - name: Rename Reusable lcov
+        shell: bash
+        run: mv `find coverage -type f` recodefs.lcov
+      - name: Test Core (with file system repo)
+        run: dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+      - name: Rename core lcov
+        shell: bash
+        run: mv `find coverage -type f` corefs.lcov
+      - name: Test UI (with file system repo)
+        run: dotnet test "./Rdmp.UI.Tests/Rdmp.UI.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+      - name: Rename UI lcov
+        shell: bash
+        run: mv `find coverage -type f` uifs.lcov
+      
       - name: Merge LCovs
-        run: lcov-result-merger "{ui,core,recode}.lcov" all.lcov
+        run: lcov-result-merger "{ui,core,recode}{,fs}.lcov" all.lcov
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.github_token }}
           path-to-lcov: all.lcov
           flag-name: unit tests
+      
       - name: Package
         run: |
           dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 -c Release -o PublishWinForms --verbosity minimal --nologo

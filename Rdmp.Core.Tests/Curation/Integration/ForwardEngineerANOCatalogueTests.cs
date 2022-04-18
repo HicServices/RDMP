@@ -116,7 +116,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             var engine = new ForwardEngineerANOCatalogueEngine(RepositoryLocator, planManager);
             engine.Execute();
 
-            var anoCatalogue = CatalogueRepository.GetAllObjects<Catalogue>().Single(c => c.Folder.Path.StartsWith("\\ano"));
+            var anoCatalogue = CatalogueRepository.GetAllObjects<Catalogue>().Single(c => c.Folder.StartsWith("\\ano"));
             Assert.IsTrue(anoCatalogue.Exists());
 
             db.Drop();
@@ -161,7 +161,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             var engine = new ForwardEngineerANOCatalogueEngine(RepositoryLocator, planManager);
             engine.Execute();
 
-            var anoCatalogue = CatalogueRepository.GetAllObjects<Catalogue>().Single(c => c.Folder.Path.StartsWith("\\ano"));
+            var anoCatalogue = CatalogueRepository.GetAllObjects<Catalogue>().Single(c => c.Folder.StartsWith("\\ano"));
             Assert.IsTrue(anoCatalogue.Exists());
 
             //should only be one (the id column
@@ -411,13 +411,13 @@ namespace Rdmp.Core.Tests.Curation.Integration
             engine.Execute();
             //////////////////////////////////////////////////////////////////////////////////////End The Actual Bit Being Tested////////////////////////////////////////////////////
 
-            var anoCatalogue = CatalogueRepository.GetAllObjects<Catalogue>().Single(c => c.Folder.Path.StartsWith("\\ano"));
+            var anoCatalogue = CatalogueRepository.GetAllObjects<Catalogue>().Single(c => c.Folder.StartsWith("\\ano"));
             Assert.IsTrue(anoCatalogue.Exists());
 
             //The new Catalogue should have the same number of ExtractionInformations
             var eiSource = bulk.catalogue.GetAllExtractionInformation(ExtractionCategory.Any).OrderBy(ei=>ei.Order).ToArray();
             var eiDestination = anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).OrderBy(ei=>ei.Order).ToArray();
-
+            
             Assert.AreEqual(eiSource.Length,eiDestination.Length,"Both the new and the ANO catalogue should have the same number of ExtractionInformations (extractable columns)");
 
             for (int i = 0; i < eiSource.Length; i++)

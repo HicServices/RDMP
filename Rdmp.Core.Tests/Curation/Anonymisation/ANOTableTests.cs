@@ -81,8 +81,8 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation
             var anoTable = GetANOTable();
             try
             {
-                var ex = Assert.Throws<SqlException>(()=>new ANOTable(CatalogueRepository, anoTable.Server, "DuplicateSuffix", anoTable.Suffix));
-                StringAssert.Contains("ix_suffixMustBeUnique", ex.Message);
+                var ex = Assert.Throws<Exception>(()=>new ANOTable(CatalogueRepository, anoTable.Server, "DuplicateSuffix", anoTable.Suffix));
+                Assert.AreEqual("There is already another ANOTable with the suffix 'A'", ex.Message);
             }
             finally
             {

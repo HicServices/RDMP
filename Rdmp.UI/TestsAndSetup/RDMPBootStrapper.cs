@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
@@ -81,12 +82,19 @@ namespace Rdmp.UI.TestsAndSetup
             {
                 //show the startup dialog
                 Startup startup = new Startup(_environmentInfo);
+
+                if(!string.IsNullOrWhiteSpace(_args.Dir))
+                {
+                    startup.RepositoryLocator = _args.GetRepositoryLocator();
+                }
+                else
                 if (!String.IsNullOrWhiteSpace(catalogueConnection) && !String.IsNullOrWhiteSpace(dataExportConnection))
                 {
                     startup.RepositoryLocator = new LinkedRepositoryProvider(catalogueConnection, dataExportConnection);
                     startup.RepositoryLocator.CatalogueRepository.TestConnection();
                     startup.RepositoryLocator.DataExportRepository.TestConnection();
                 }
+
                 var startupUI = new StartupUI(startup);
                 startupUI.ShowDialog();
 

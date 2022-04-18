@@ -160,11 +160,11 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
  group by Operation order by count(*) desc))");            
             
             //group these all into the same folder
-            admissions.Folder = new CatalogueFolder(admissions,@"\admissions");
+            admissions.Folder = @"\admissions";
             admissions.SaveToDatabase();
-            vConditions.Folder = new CatalogueFolder(vConditions,@"\admissions");
+            vConditions.Folder = @"\admissions";
             vConditions.SaveToDatabase();
-            vOperations.Folder = new CatalogueFolder(vOperations,@"\admissions");
+            vOperations.Folder = @"\admissions";
             vOperations.SaveToDatabase();
 
 

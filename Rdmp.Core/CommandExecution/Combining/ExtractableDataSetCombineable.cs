@@ -29,7 +29,7 @@ namespace Rdmp.Core.CommandExecution.Combining
         public ExtractableDataSetCombineable(ExtractableDataSetPackage extractableDataSetPackage)
         {
             var repository = (IDataExportRepository) extractableDataSetPackage.Repository;
-            ExtractableDataSets = repository.PackageManager.GetAllDataSets(extractableDataSetPackage, repository.GetAllObjects<ExtractableDataSet>());
+            ExtractableDataSets = repository.GetAllDataSets(extractableDataSetPackage, repository.GetAllObjects<ExtractableDataSet>());
         }
 
         public string GetSqlString()

@@ -18,6 +18,9 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void TestPerformance()
         {
+            if (TestDatabaseSettings.UseFileSystemRepo)
+                Assert.Inconclusive("No queries are run when using file back repository");
+
             var pCounter =  new ComprehensiveQueryPerformanceCounter();
             //enable performance counting
             DatabaseCommandHelper.PerformanceCounter = pCounter;

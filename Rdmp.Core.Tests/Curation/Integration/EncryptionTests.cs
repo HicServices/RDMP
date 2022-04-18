@@ -93,7 +93,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             
                 //save it
                 creds.SaveToDatabase();
-                using (var con = CatalogueRepository.GetConnection())
+                using (var con = CatalogueTableRepository.GetConnection())
                 {
                     string value;
                     using(var cmd = DatabaseCommandHelper.GetCommand("Select Password from DataAccessCredentials where Name='frankieFran'", con.Connection, con.Transaction))
@@ -141,7 +141,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
                 //save it
                 creds.SaveToDatabase();
-                using (var con = CatalogueRepository.GetConnection())
+                using (var con = CatalogueTableRepository.GetConnection())
                 {
                     string value;
                     using(var cmd = DatabaseCommandHelper.GetCommand("Select Password from DataAccessCredentials where Name='frankieFran'", con.Connection, con.Transaction))
@@ -182,7 +182,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             try
             {
                 //update the database to an unencrypted password (like would be the case before software patch)
-                using (var con = CatalogueRepository.GetConnection())
+                using (var con = CatalogueTableRepository.GetConnection())
                 {
                     using (var cmd = DatabaseCommandHelper.GetCommand(
                         "UPDATE DataAccessCredentials set Password = 'fish' where Name='frankieFran'", con.Connection,

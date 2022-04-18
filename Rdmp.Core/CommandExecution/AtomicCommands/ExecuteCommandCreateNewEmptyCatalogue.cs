@@ -14,7 +14,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandCreateNewEmptyCatalogue : BasicCommandExecution, IAtomicCommand
     {
-        public CatalogueFolder TargetFolder { get; set; }
+        public string TargetFolder { get; set; }
 
         public ExecuteCommandCreateNewEmptyCatalogue(IBasicActivateItems activator) : base(activator)
         {

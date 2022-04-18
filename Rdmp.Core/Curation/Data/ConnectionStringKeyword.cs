@@ -60,6 +60,11 @@ namespace Rdmp.Core.Curation.Data
             set { SetField(ref _value, value); }
         }
 
+        public ConnectionStringKeyword()
+        {
+
+        }
+
         /// <summary>
         /// Defines a new keyword that should be set on all connections to databases of <see cref="DatabaseType"/> when making new connections
         /// </summary>

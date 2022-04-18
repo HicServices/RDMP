@@ -38,7 +38,7 @@ namespace Rdmp.Core.CommandLine.Runners
             CacheProgress cp = repositoryLocator.CatalogueRepository.GetObjectByID<CacheProgress>(_options.CacheProgress);
             string dataLoadTask = cp.GetDistinctLoggingTask();
 
-            var defaults = repositoryLocator.CatalogueRepository.GetServerDefaults();
+            var defaults = repositoryLocator.CatalogueRepository;
             var loggingServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
             if (loggingServer == null)

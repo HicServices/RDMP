@@ -450,7 +450,7 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="targetFolder">Optional virtual folder into which to put the <see cref="ICatalogue"/> or null.  This is not a file system folder only a visual display to the user in the RDMP client</param>
         /// <param name="extractionIdentifierColumns">Optional, which column(s) should be <see cref="ConcreteColumn.IsExtractionIdentifier"/></param>
         /// <returns>A fully configured ready to go Catalogue or null if user cancelled process e.g. if <see cref="IsInteractive"/></returns>
-        ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo,ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, CatalogueFolder targetFolder);
+        ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo,ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, string targetFolder);
 
         /// <summary>
         /// Returns true if creating a cohort through an interactive wizard is supported.  If a wizard was shown and suitable input received then <paramref name="cic"/> should be populated with the result

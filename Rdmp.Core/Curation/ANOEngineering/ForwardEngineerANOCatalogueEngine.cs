@@ -30,7 +30,7 @@ namespace Rdmp.Core.Curation.ANOEngineering
     /// </summary>
     public class ForwardEngineerANOCatalogueEngine
     {
-        private readonly CatalogueRepository _catalogueRepository;
+        private readonly ICatalogueRepository _catalogueRepository;
         private readonly ForwardEngineerANOCataloguePlanManager _planManager;
         public ICatalogue NewCatalogue { get; private set; }
         public LoadMetadata LoadMetadata { get; private set; }
@@ -45,7 +45,7 @@ namespace Rdmp.Core.Curation.ANOEngineering
 
         public ForwardEngineerANOCatalogueEngine(IRDMPPlatformRepositoryServiceLocator repositoryLocator,ForwardEngineerANOCataloguePlanManager planManager)
         {
-            _catalogueRepository = (CatalogueRepository) repositoryLocator.CatalogueRepository;
+            _catalogueRepository = repositoryLocator.CatalogueRepository;
             _shareManager = new ShareManager(repositoryLocator);
             _planManager = planManager;
             _allColumnsInfos = _catalogueRepository.GetAllObjects<ColumnInfo>();
@@ -59,7 +59,7 @@ namespace Rdmp.Core.Curation.ANOEngineering
 
             var memoryRepo = new MemoryCatalogueRepository();
 
-            using (_catalogueRepository.BeginNewTransactedConnection())
+            using (_catalogueRepository.BeginNewTransaction())
             {
                 try
                 {
@@ -152,7 +152,7 @@ namespace Rdmp.Core.Curation.ANOEngineering
 
                     NewCatalogue = _planManager.Catalogue.ShallowClone();
                     NewCatalogue.Name = "ANO" + _planManager.Catalogue.Name;
-                    NewCatalogue.Folder = new CatalogueFolder(NewCatalogue, "\\anonymous" + NewCatalogue.Folder.Path);
+                    NewCatalogue.Folder = "\\anonymous" + NewCatalogue.Folder;
                     NewCatalogue.SaveToDatabase();
 
                     AuditParenthood(_planManager.Catalogue, NewCatalogue);
@@ -311,11 +311,11 @@ namespace Rdmp.Core.Curation.ANOEngineering
                         throw new Exception("Failed to generate migration SQL",e);
                     }
 
-                    _catalogueRepository.EndTransactedConnection(true);
+                    _catalogueRepository.EndTransaction(true);
                 }
                 catch (Exception ex)
                 {
-                    _catalogueRepository.EndTransactedConnection(false);
+                    _catalogueRepository.EndTransaction(false);
                     throw new Exception("Failed to create ANO version, transaction rolled back succesfully",ex);
                 }
             }

@@ -18,7 +18,7 @@ namespace Rdmp.Core.Curation.Data
     /// </summary>
     public abstract class ConcreteContainer:DatabaseEntity, IContainer
     {
-        private readonly IFilterManager _manager;
+        private IFilterManager _manager;
         private FilterContainerOperation _operation;
         /// <inheritdoc/>
         public FilterContainerOperation Operation
@@ -27,6 +27,15 @@ namespace Rdmp.Core.Curation.Data
             set { SetField(ref  _operation, value); }
         }
 
+        public ConcreteContainer()
+        {
+
+        }
+
+        public void SetManager(IFilterManager manager)
+        {
+            _manager = manager;
+        }
         protected ConcreteContainer(IFilterManager manager,IRepository repository, DbDataReader r):base(repository,r)
         {
             _manager = manager;

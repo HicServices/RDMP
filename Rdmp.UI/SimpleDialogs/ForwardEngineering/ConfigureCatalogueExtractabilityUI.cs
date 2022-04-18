@@ -73,7 +73,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
         public ICatalogue CatalogueCreatedIfAny { get { return _catalogue; }}
         public ITableInfo TableInfoCreated{get { return _tableInfo; }}
         public DiscoveredTable TableCreated { get; set; }
-        public CatalogueFolder TargetFolder { get; set; }
+        public string TargetFolder { get; set; }
 
         private BinderWithErrorProviderFactory _binder;
         

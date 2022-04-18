@@ -54,7 +54,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         internal void SetDefaultIfNotExists(ExternalDatabaseServer newServer, PermissableDefaults permissableDefault, bool askYesNo)
         {
-            var defaults = Activator.RepositoryLocator.CatalogueRepository.GetServerDefaults();
+            var defaults = Activator.RepositoryLocator.CatalogueRepository;
 
             var current = defaults.GetDefaultFor(permissableDefault);
             

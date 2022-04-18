@@ -14,6 +14,7 @@ using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
+using MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Tests.Curation.Integration
 {
@@ -30,6 +31,9 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void TestCreatingGovernance_ChangeName()
         {
+            if (CatalogueRepository is not TableRepository)
+                Assert.Inconclusive("This test for stale objects only applies to database repositories");
+
             var gov = GetGov();
             gov.Name = "Fish";
             GovernancePeriod freshCopy = CatalogueRepository.GetObjectByID<GovernancePeriod>(gov.ID);
@@ -59,8 +63,13 @@ namespace Rdmp.Core.Tests.Curation.Integration
             gov1.SaveToDatabase();
 
             gov2.Name = "HiDuplicate";
-            var ex = Assert.Throws<SqlException>(gov2.SaveToDatabase);
-            StringAssert.StartsWith("Cannot insert duplicate key row in object 'dbo.GovernancePeriod' with unique index 'idxGovernancePeriodNameMustBeUnique'. The duplicate key value is (HiDuplicate)",ex.Message);
+
+            if(CatalogueRepository is TableRepository)
+            {
+                var ex = Assert.Throws<SqlException>(gov2.SaveToDatabase);
+                StringAssert.StartsWith("Cannot insert duplicate key row in object 'dbo.GovernancePeriod' with unique index 'idxGovernancePeriodNameMustBeUnique'. The duplicate key value is (HiDuplicate)", ex.Message);
+            }
+
         }
 
         [Test]
@@ -126,9 +135,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             Assert.AreEqual(gov.GovernedCatalogues.Count(), 0);//should be no governanced catalogues for this governancer yet
 
             gov.CreateGovernanceRelationshipTo(c);
-            var ex = Assert.Throws<SqlException>(()=>gov.CreateGovernanceRelationshipTo(c));
-            StringAssert.Contains("Cannot insert duplicate key in object 'dbo.GovernancePeriod_Catalogue'",ex.Message);
-            
+            gov.CreateGovernanceRelationshipTo(c);            
         }
 
                 

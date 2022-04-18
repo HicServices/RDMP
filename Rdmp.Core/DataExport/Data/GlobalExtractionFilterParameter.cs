@@ -83,6 +83,11 @@ namespace Rdmp.Core.DataExport.Data
 
         #endregion
 
+        public GlobalExtractionFilterParameter()
+        {
+            ClearAllInjections();
+        }
+
         /// <summary>
         /// Creates a new parameter into the <paramref name="repository"/> database acting as a global parameter for all <see cref="ISelectedDataSets"/> in the <paramref name="configuration"/>
         /// </summary>

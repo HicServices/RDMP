@@ -38,6 +38,11 @@ namespace Rdmp.Core.Curation.Data.Aggregation
 
         #endregion
 
+        public AggregateFilterContainer()
+        {
+
+        }
+
         /// <summary>
         /// Creates a new IContainer in the dtabase for use with an <see cref="AggregateConfiguration"/>
         /// </summary>
@@ -151,6 +156,17 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         public override IFilterFactory GetFilterFactory()
         {
             return new AggregateFilterFactory(CatalogueRepository);
+        }
+
+        public override void DeleteInDatabase()
+        {
+            base.DeleteInDatabase();
+
+            foreach(var ac in Repository.GetAllObjectsWhere<AggregateConfiguration>(nameof(AggregateConfiguration.RootFilterContainer_ID),ID))
+            {
+                ac.RootFilterContainer_ID = null;
+                ac.SaveToDatabase();
+            }
         }
     }
 }

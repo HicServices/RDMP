@@ -96,7 +96,7 @@ namespace Rdmp.Core.Curation.ANOEngineering
 
         public IExternalDatabaseServer GetIdentifierDumpServer()
         {
-            return Catalogue.CatalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.IdentifierDumpServer_ID);
+            return Catalogue.CatalogueRepository.GetDefaultFor(PermissableDefaults.IdentifierDumpServer_ID);
         }
 
         

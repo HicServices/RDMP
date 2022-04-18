@@ -46,7 +46,7 @@ namespace Rdmp.Core.Repositories
         {
             CatalogueRepository = catalogueRepository;
 
-            var server = CatalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.DQE);
+            var server = CatalogueRepository.GetDefaultFor(PermissableDefaults.DQE);
 
             if (server == null)
                 throw new NotSupportedException("There is no DataQualityEngine Reporting Server (ExternalDatabaseServer).  You will need to create/set one in CatalogueManager by using 'Locations=>Manage External Servers...'");

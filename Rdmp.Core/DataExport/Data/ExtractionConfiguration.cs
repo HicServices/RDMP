@@ -245,7 +245,7 @@ namespace Rdmp.Core.DataExport.Data
                     return null;
 
                 return
-                    ((DataExportRepository) Repository).CatalogueRepository.GetObjectByID<Pipeline>(DefaultPipeline_ID.Value);
+                    ((IDataExportRepository) Repository).CatalogueRepository.GetObjectByID<Pipeline>(DefaultPipeline_ID.Value);
             }}
 
 
@@ -259,7 +259,7 @@ namespace Rdmp.Core.DataExport.Data
                     return null;
 
                 return
-                    ((DataExportRepository)Repository).CatalogueRepository.GetObjectByID<CohortIdentificationConfiguration>(CohortIdentificationConfiguration_ID.Value);
+                    ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<CohortIdentificationConfiguration>(CohortIdentificationConfiguration_ID.Value);
             }
         }
 
@@ -273,7 +273,7 @@ namespace Rdmp.Core.DataExport.Data
                     return null;
 
                 return
-                    ((DataExportRepository)Repository).CatalogueRepository.GetObjectByID<Pipeline>(CohortRefreshPipeline_ID.Value);
+                    ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<Pipeline>(CohortRefreshPipeline_ID.Value);
             }
         }
 
@@ -301,6 +301,12 @@ namespace Rdmp.Core.DataExport.Data
         [UsefulProperty]
         public string ProjectName{ get=>Project.Name;}
 
+        public ExtractionConfiguration()
+        {
+            // Default (also default in db)
+            Separator = ",";
+        }
+
         /// <summary>
         /// Creates a new extraction configuration in the <paramref name="repository"/> database for the provided <paramref name="project"/>.
         /// </summary>
@@ -316,7 +322,8 @@ namespace Rdmp.Core.DataExport.Data
                 {"Project_ID", project.ID},
                 {"Username", Environment.UserName},
                 {"Description", "Initial Configuration"},
-                {"Name","New ExtractionConfiguration" + Guid.NewGuid() }
+                {"Name","New ExtractionConfiguration" + Guid.NewGuid() },
+                {"Separator",","}
             });
         }
         /// <summary>
@@ -411,8 +418,8 @@ namespace Rdmp.Core.DataExport.Data
         /// <returns></returns>
         public ExtractionConfiguration DeepCloneWithNewIDs()
         {
-            var repo = (DataExportRepository)Repository;
-            using (repo.BeginNewTransactedConnection())
+            var repo = (IDataExportRepository)Repository;
+            using (repo.BeginNewTransaction())
             {
                 try
                 {
@@ -479,13 +486,13 @@ namespace Rdmp.Core.DataExport.Data
                     clone.ClonedFrom_ID = this.ID;
                     clone.SaveToDatabase();
 
-                    repo.EndTransactedConnection(true);
+                    repo.EndTransaction(true);
 
                     return clone;
                 }
                 catch (Exception)
                 {
-                    repo.EndTransactedConnection(false);
+                    repo.EndTransaction(false);
                     throw;
                 }
             }
@@ -526,7 +533,7 @@ namespace Rdmp.Core.DataExport.Data
         {
             int uniqueLoggingServerID = -1;
 
-            var repo = ((DataExportRepository) Repository);
+            var repo = ((IDataExportRepository) Repository);
 
             foreach (int? catalogueID in GetAllExtractableDataSets().Select(ds=>ds.Catalogue_ID))
             {
@@ -671,7 +678,7 @@ namespace Rdmp.Core.DataExport.Data
                 //failed to get a logging server correctly
 
                 //see if there is a default
-                var defaultGetter = Project.DataExportRepository.CatalogueRepository.GetServerDefaults();
+                var defaultGetter = Project.DataExportRepository.CatalogueRepository;
                 var defaultLoggingServer = defaultGetter.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
                 //there is a default?

@@ -142,7 +142,13 @@ namespace Rdmp.Core.Curation.Data
 
         #endregion
 
-        
+        public ExternalDatabaseServer()
+        {
+            _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint()
+            {
+                DatabaseType = DatabaseType.MicrosoftSQLServer
+            };
+        }
         /// <summary>
         /// Creates a new persistent server reference in RDMP platform database that allows it to connect to a (usually database) server.
         /// 

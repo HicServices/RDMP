@@ -45,6 +45,11 @@ namespace Rdmp.Core.Curation.Data.ImportExport
         [NoMappingToDatabase]
         public Guid SharingUIDAsGuid { get { return Guid.Parse(SharingUID); } }
 
+        public ObjectImport()
+        {
+
+        }
+
         /// <summary>
         /// Use GetImportAs to access this
         /// </summary>

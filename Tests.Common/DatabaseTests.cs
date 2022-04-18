@@ -36,6 +36,16 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using YamlDotNet.Serialization;
 using FAnsi.Discovery.ConnectionStringDefaults;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Governance;
+using Rdmp.Core.Curation.Data.Cache;
+using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.ImportExport;
+using Rdmp.Core.DataExport.DataRelease.Audit;
+using Rdmp.Core.DataExport.Data;
 
 namespace Tests.Common
 {
@@ -47,18 +57,48 @@ namespace Tests.Common
     public class DatabaseTests
     {
         protected readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
-        private static TestDatabasesSettings TestDatabaseSettings;
+        protected static TestDatabasesSettings TestDatabaseSettings;
 
-        public CatalogueRepository CatalogueRepository
+        public ICatalogueRepository CatalogueRepository
         {
-            get { return (CatalogueRepository) RepositoryLocator.CatalogueRepository; }
+            get { return RepositoryLocator.CatalogueRepository; }
         }
-        
-        public DataExportRepository DataExportRepository 
+
+        /// <summary>
+        /// Gets an <see cref="ICatalogueRepository"/> that points to a 
+        /// database server or throws with <see cref="Assert.Inconclusive()"/>
+        /// </summary>
+        public CatalogueRepository CatalogueTableRepository
         {
-            get { return (DataExportRepository) RepositoryLocator.DataExportRepository; }
+            get {
+
+                if (RepositoryLocator.CatalogueRepository is CatalogueRepository tableRepository)
+                    return tableRepository;
+
+                Assert.Inconclusive("CatalogueRepository is not a TableRepository");
+                return null;
+            }
         }
-        
+        public IDataExportRepository DataExportRepository 
+        {
+            get { return RepositoryLocator.DataExportRepository; }
+        }
+        /// <summary>
+        /// Gets an <see cref="IDataExportRepository"/> that points to a 
+        /// database server or throws with <see cref="Assert.Inconclusive()"/>
+        /// </summary>
+        public DataExportRepository DataExportTableRepository
+        {
+            get
+            {
+
+                if (RepositoryLocator.DataExportRepository is DataExportRepository tableRepository)
+                    return tableRepository;
+
+                Assert.Inconclusive("DataExportRepository is not a TableRepository");
+                return null;
+            }
+        }
         protected SqlConnectionStringBuilder UnitTestLoggingConnectionString;
         protected SqlConnectionStringBuilder DataQualityEngineConnectionString;
         
@@ -74,7 +114,7 @@ namespace Tests.Common
 
         static DatabaseTests()
         {
-            CatalogueRepository.SuppressHelpLoading = true;
+            Rdmp.Core.Repositories.CatalogueRepository.SuppressHelpLoading = true;
 
             // Always ignore SSL when running tests
             DiscoveredServerHelper.AddConnectionStringKeyword(DatabaseType.MicrosoftSQLServer, "TrustServerCertificate", "true", ConnectionStringKeywordPriority.ApiRule);
@@ -95,7 +135,7 @@ namespace Tests.Common
             var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,settingsFile));
 
             if (!f.Exists) 
-                throw new FileNotFoundException("Could not find file '" + f.FullName + "'");
+                throw new FileNotFoundException($"Could not find file '{f.FullName}'");
 
             using StreamReader s = new StreamReader(f.OpenRead());
             var deserializer = new DeserializerBuilder()
@@ -116,29 +156,39 @@ namespace Tests.Common
                 ValidateCertificate = false
             };
 
-            
-            RepositoryLocator = new PlatformDatabaseCreationRepositoryFinder(opts);
-
-            
-            Console.WriteLine("Expecting Unit Test Catalogue To Be At Server=" + CatalogueRepository.DiscoveredServer.Name + " Database=" + CatalogueRepository.DiscoveredServer.GetCurrentDatabase());
-            
-            if(!CatalogueRepository.DiscoveredServer.Exists())
+            RepositoryLocator = TestDatabaseSettings.UseFileSystemRepo ? 
+                new RepositoryProvider(GetFreshYamlRepository()) :
+                new PlatformDatabaseCreationRepositoryFinder(opts);
+                    
+            if(CatalogueRepository is TableRepository cataRepo)
             {
-                Assert.Inconclusive("Catalogue database does not exist, run 'rdmp.exe install ...' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
+                Console.WriteLine(
+                    $"Expecting Unit Test Catalogue To Be At Server={cataRepo.DiscoveredServer.Name} Database={cataRepo.DiscoveredServer.GetCurrentDatabase()}");
+
+                if(!cataRepo.DiscoveredServer.Exists())
+                    Assert.Inconclusive("Catalogue database does not exist, run 'rdmp.exe install ...' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
             }
                 
 
             Console.WriteLine("Found Catalogue");
 
-            Console.WriteLine("Expecting Unit Test Data Export To Be At Server=" + DataExportRepository.DiscoveredServer.Name + " Database= " + DataExportRepository.DiscoveredServer.GetCurrentDatabase());
-            Assert.IsTrue(DataExportRepository.DiscoveredServer.Exists(), "Data Export database does not exist, run 'rdmp.exe install ...' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
+            
+
+            if(DataExportRepository is TableRepository tblRepo)
+            {
+                Console.WriteLine(
+                    $"Expecting Unit Test Data Export To Be At Server={tblRepo.DiscoveredServer.Name} Database= {tblRepo.DiscoveredServer.GetCurrentDatabase()}");
+                Assert.IsTrue(tblRepo.DiscoveredServer.Exists(), "Data Export database does not exist, run 'rdmp.exe install ...' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
+            }
+                
+
             Console.WriteLine("Found DataExport");
             
             Console.Write(Environment.NewLine + Environment.NewLine + Environment.NewLine);
 
             RunBlitzDatabases(RepositoryLocator);
 
-            var defaults = CatalogueRepository.GetServerDefaults();
+            var defaults = CatalogueRepository;
 
             DataQualityEngineConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, PlatformDatabaseCreation.DefaultDQEDatabaseName, PermissableDefaults.DQE,new DataQualityEnginePatcher());
             UnitTestLoggingConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, PlatformDatabaseCreation.DefaultLoggingDatabaseName, PermissableDefaults.LiveLoggingServer_ID, new LoggingDatabasePatcher());
@@ -173,6 +223,17 @@ namespace Tests.Common
 
             if(TestDatabaseSettings.PostgreSql != null)
                 _discoveredPostgresServer = new DiscoveredServer(TestDatabaseSettings.PostgreSql, DatabaseType.PostgreSql);
+        }
+
+        private IDataExportRepository GetFreshYamlRepository()
+        {
+            var dir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "Repo"));
+            
+            // clear out any test remnants
+            if (dir.Exists)
+                dir.Delete(true);
+
+            return new YamlRepository(dir);
         }
 
         private SqlConnectionStringBuilder CreateServerPointerInCatalogue(IServerDefaults defaults, string prefix, string databaseName, PermissableDefaults defaultToSet,IPatcher patcher)
@@ -214,13 +275,22 @@ namespace Tests.Common
         /// <param name="repositoryLocator"></param>
         protected void RunBlitzDatabases(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
-            using (var con = CatalogueRepository.GetConnection())
+            if(CatalogueRepository is YamlRepository y)
             {
-                var catalogueDatabaseName = ((TableRepository) repositoryLocator.CatalogueRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
-                var dataExportDatabaseName = ((TableRepository) repositoryLocator.DataExportRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
-
-                UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabases, catalogueDatabaseName, dataExportDatabaseName),con.Connection);
+                foreach(var o in y.AllObjects)
+                {
+                    o.DeleteInDatabase();
+                }
             }
+
+            if (CatalogueRepository is not TableRepository cataTblRepo)
+                return;
+
+            using var con = cataTblRepo.GetConnection();
+            var catalogueDatabaseName = ((TableRepository) repositoryLocator.CatalogueRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
+            var dataExportDatabaseName = ((TableRepository) repositoryLocator.DataExportRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
+
+            UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabases, catalogueDatabaseName, dataExportDatabaseName),con.Connection);
         }
 
         /// <summary>
@@ -229,12 +299,113 @@ namespace Tests.Common
         /// </summary>
         protected void BlitzMainDataTables()
         {
-            using (var con = CatalogueRepository.GetConnection())
+            if (CatalogueRepository is YamlRepository y)
             {
-                var catalogueDatabaseName = ((TableRepository)RepositoryLocator.CatalogueRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
-                var dataExportDatabaseName = ((TableRepository)RepositoryLocator.DataExportRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
+                BlitzMainDataTables(y);
+            }
 
-                UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabasesLite, catalogueDatabaseName, dataExportDatabaseName), con.Connection);
+            if (CatalogueRepository is not TableRepository cataTblRepo)
+                return;
+
+            using var con = cataTblRepo.GetConnection();
+            var catalogueDatabaseName = ((TableRepository)RepositoryLocator.CatalogueRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
+            var dataExportDatabaseName = ((TableRepository)RepositoryLocator.DataExportRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
+
+            UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabasesLite, catalogueDatabaseName, dataExportDatabaseName), con.Connection);
+        }
+
+        private void BlitzMainDataTables(YamlRepository y)
+        {
+            DeleteAll<ConnectionStringKeyword>(y);
+            DeleteAll<JoinableCohortAggregateConfigurationUse>(y);
+            DeleteAll<JoinableCohortAggregateConfiguration>(y);
+            DeleteAll<CohortIdentificationConfiguration>(y);
+            DeleteAll<CohortAggregateContainer>(y);
+
+            DeleteAll<ObjectExport>(y);
+            DeleteAll<ObjectImport>(y);
+
+            DeleteAll<AggregateTopX>(y);
+            DeleteAll<AggregateContinuousDateAxis>(y);
+            DeleteAll<AggregateDimension>(y);
+            DeleteAll<AggregateConfiguration>(y);
+            DeleteAll<AggregateFilter>(y);
+            DeleteAll<AggregateFilterContainer>(y);
+            DeleteAll<AggregateFilterParameter>(y);
+
+            DeleteAll<AnyTableSqlParameter>(y);
+
+            DeleteAll<Lookup>(y);
+            DeleteAll<JoinInfo>(y);
+
+            DeleteAll<ColumnInfo>(y);
+            DeleteAll<ANOTable>(y);
+
+            DeleteAll<PreLoadDiscardedColumn>(y);
+            DeleteAll<TableInfo>(y);
+            DeleteAll<DataAccessCredentials>(y);
+
+            foreach(var c in CatalogueRepository.GetAllObjects<Catalogue>())
+            {
+                c.PivotCategory_ExtractionInformation_ID = null;
+                c.TimeCoverage_ExtractionInformation_ID = null;
+
+            }
+
+            DeleteAll<ExtractionFilterParameterSetValue>(y);
+            DeleteAll<ExtractionFilterParameterSet>(y);
+
+            DeleteAll<ExtractionInformation>(y);
+
+            DeleteAll<SupportingDocument>(y);
+            DeleteAll<SupportingSQLTable>(y);
+
+            DeleteAll<GovernanceDocument>(y);
+            DeleteAll<GovernancePeriod>(y);
+
+            DeleteAll<Favourite>(y);
+
+            DeleteAll<PipelineComponentArgument>(y);
+            DeleteAll<Pipeline>(y);
+            DeleteAll<PipelineComponent>(y);
+
+            DeleteAll<LoadModuleAssembly>(y);
+            DeleteAll<Rdmp.Core.Curation.Data.Plugin>(y);
+
+            DeleteAll<ReleaseLog>(y);
+            DeleteAll<SupplementalExtractionResults>(y);
+            DeleteAll<CumulativeExtractionResults>(y);
+            DeleteAll<ExtractableColumn>(y);
+            DeleteAll<SelectedDataSets>(y);
+
+            DeleteAll<GlobalExtractionFilterParameter>(y);
+            DeleteAll<ExtractionConfiguration>(y);
+
+            DeleteAll<DeployedExtractionFilterParameter>(y);
+            DeleteAll<DeployedExtractionFilter>(y);
+            DeleteAll<FilterContainer>(y);
+
+            DeleteAll<ExtractableCohort>(y);
+            DeleteAll<ExternalCohortTable>(y);
+
+            DeleteAll<ExtractableDataSetPackage>(y);
+
+            DeleteAll<ExtractableDataSet>(y);
+            DeleteAll<Project>(y);
+
+            DeleteAll<CatalogueItem>(y);
+            DeleteAll<Catalogue>(y);
+
+            DeleteAll<CacheProgress>(y);
+            DeleteAll<LoadProgress>(y);
+            DeleteAll<LoadMetadata>(y);
+        }
+
+        private void DeleteAll<T>(YamlRepository y) where T : IMapsDirectlyToDatabaseTable
+        {
+            foreach (var o in y.GetAllObjects<T>())
+            {
+                o.DeleteInDatabase();
             }
         }
 
@@ -626,7 +797,8 @@ delete from {1}..Project
         protected void VerifyRowExist(DataTable resultTable, params object[] rowObjects)
         {
             if (resultTable.Columns.Count != rowObjects.Length)
-                Assert.Fail("VerifyRowExist failed, resultTable had " + resultTable.Columns.Count + " while you expected " + rowObjects.Length + " columns");
+                Assert.Fail(
+                    $"VerifyRowExist failed, resultTable had {resultTable.Columns.Count} while you expected {rowObjects.Length} columns");
 
             foreach (DataRow r in resultTable.Rows)
             {
@@ -642,7 +814,8 @@ delete from {1}..Project
                     return;
             }
 
-            Assert.Fail("VerifyRowExist failed, did not find expected rowObjects (" + string.Join(",", rowObjects.Select(o => "'" + o + "'")) + ") in the resultTable");
+            Assert.Fail(
+                $"VerifyRowExist failed, did not find expected rowObjects ({string.Join(",", rowObjects.Select(o => $"'{o}'"))}) in the resultTable");
         }
 
         public static bool AreBasicallyEquals(object o, object o2, bool handleSlashRSlashN = true)

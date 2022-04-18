@@ -69,6 +69,10 @@ namespace Rdmp.Core.DataQualityEngine.Data
         [NoMappingToDatabase]
         public DQERepository DQERepository { get; set; }
 
+        public Evaluation()
+        {
+
+        }
         public IEnumerable<DQEGraphAnnotation> GetAllDQEGraphAnnotations(string pivotCategory = null)
         {
             return DQERepository.GetAllObjects<DQEGraphAnnotation>().
@@ -114,13 +118,6 @@ namespace Rdmp.Core.DataQualityEngine.Data
                 });
         }
         
-        /// <summary>
-        /// Constructor for mocks and testing
-        /// </summary>
-        protected Evaluation()
-        {
-
-        }
 
         internal void AddRowState( int dataLoadRunID, int correct, int missing, int wrong, int invalid, string validatorXml,string pivotCategory,DbConnection con, DbTransaction transaction)
         {

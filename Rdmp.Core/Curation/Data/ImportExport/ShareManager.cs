@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Text;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Repositories;
@@ -56,7 +57,7 @@ namespace Rdmp.Core.Curation.Data.ImportExport
 
         private int? DefaultLocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipattribute, ShareDefinition sharedefinition)
         {
-            var defaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
+            var defaults = RepositoryLocator.CatalogueRepository;
 
 
             if(property.Name == "LiveLoggingServer_ID" || property.Name == "TestLoggingServer_ID")
@@ -186,7 +187,7 @@ namespace Rdmp.Core.Curation.Data.ImportExport
             
             if (existingImport != null)
                 return new ObjectExport(_catalogueRepository, o, existingImport.SharingUIDAsGuid);
-            
+
             return new ObjectExport(_catalogueRepository, o,Guid.NewGuid());
         }
 
@@ -587,12 +588,7 @@ namespace Rdmp.Core.Curation.Data.ImportExport
                 propertyType = propertyType.GetGenericArguments()[0]; //lets pretend it's just int / whatever
 
             if (value != null && value != DBNull.Value && !propertyType.IsInstanceOfType(value))
-                if (propertyType == typeof(CatalogueFolder))
-                {
-                    //will be passed as a string
-                    value = value is string ? new CatalogueFolder((Catalogue)onObject, (string)value):(CatalogueFolder) value;
-                }
-                else if (propertyType == typeof(Uri))
+                if (propertyType == typeof(Uri))
                     value = value is string ? new Uri((string)value):(Uri) value;
                 else
                 if (typeof(Enum).IsAssignableFrom(propertyType))

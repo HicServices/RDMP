@@ -107,7 +107,7 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
                 else
                 {
                     
-                    var defaults = _loadMetadata.CatalogueRepository.GetServerDefaults();
+                    var defaults = _loadMetadata.CatalogueRepository;
                     var defaultLoggingServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
                     if(defaultLoggingServer != null)
@@ -188,7 +188,7 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
             }
             else
             {
-                loggingServer = catarepo.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+                loggingServer = catarepo.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
                 
                 if(loggingServer == null)
                     throw new Exception("There is no default logging server!");

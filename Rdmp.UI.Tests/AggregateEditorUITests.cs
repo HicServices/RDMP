@@ -127,7 +127,7 @@ namespace Rdmp.UI.Tests
 
         private AggregateConfiguration GetAggregateConfigurationWithNoDimensions(out ExtractionInformation dateEi, out ExtractionInformation otherEi)
         {
-            var config = WhenIHaveA<AggregateConfiguration>(out dateEi, out otherEi);
+            var config = WhenIHaveA<AggregateConfiguration>(Repository,out dateEi, out otherEi);
 
             //remove any existing dimensions
             foreach (var d in config.AggregateDimensions)

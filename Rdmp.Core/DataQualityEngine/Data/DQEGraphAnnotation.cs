@@ -33,6 +33,11 @@ namespace Rdmp.Core.DataQualityEngine.Data
         
         public string PivotCategory { get; set; }
 
+        public DQEGraphAnnotation()
+        {
+
+        }
+
         public DQEGraphAnnotation(DQERepository repository, double startX, double startY, double endX, double endY, string text, Evaluation evaluation, DQEGraphType annotationIsForGraphType, string pivotCategory)
         {
             Repository = repository;

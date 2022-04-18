@@ -88,7 +88,10 @@ namespace Rdmp.Core.Curation.Data.Pipelines
         }
 
         #endregion
-
+        public Pipeline()
+        {
+            ClearAllInjections();
+        }
         /// <summary>
         /// Creates a new empty <see cref="Pipeline"/> in the database, this is a sequence of <see cref="PipelineComponent"/> which when combined
         /// with an <see cref="IPipelineUseCase"/> achieve a specific goal (e.g. loading records into the database from a flat file).

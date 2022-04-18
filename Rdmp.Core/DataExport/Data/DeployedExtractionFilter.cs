@@ -108,6 +108,11 @@ namespace Rdmp.Core.DataExport.Data
 
         }
 
+        public DeployedExtractionFilter()
+        {
+
+        }
+
         /// <summary>
         /// Creates a new empty WHERE filter in the given <paramref name="container"/> that will be used when 
         /// extracting the dataset.
@@ -166,7 +171,7 @@ namespace Rdmp.Core.DataExport.Data
         {
             base.Check(notifier);
 
-            var checker = new ClonedFilterChecker(this, this.ClonedFromExtractionFilter_ID, ((DataExportRepository)Repository).CatalogueRepository);
+            var checker = new ClonedFilterChecker(this, this.ClonedFromExtractionFilter_ID, ((IDataExportRepository)Repository).CatalogueRepository);
             checker.Check(notifier);
         }
 

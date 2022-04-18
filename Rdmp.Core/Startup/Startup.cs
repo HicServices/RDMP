@@ -83,7 +83,7 @@ namespace Rdmp.Core.Startup
 
             try
             {
-                foundCatalogue = Find((ITableRepository) RepositoryLocator.CatalogueRepository,cataloguePatcher,notifier);
+                foundCatalogue = Find(RepositoryLocator.CatalogueRepository,cataloguePatcher,notifier);
             }
             catch (Exception e)
             {
@@ -131,7 +131,7 @@ namespace Rdmp.Core.Startup
                     if(dataExportRepository == null)
                         return;
 
-                    Find((ITableRepository) dataExportRepository, new DataExportPatcher(),notifier);
+                    Find(dataExportRepository, new DataExportPatcher(),notifier);
                 }
                 catch (Exception e)
                 {
@@ -151,14 +151,18 @@ namespace Rdmp.Core.Startup
                 FindWithPatcher(patcher,notifier);
         }
 
-        private bool Find(ITableRepository tableRepository, IPatcher patcher,ICheckNotifier notifier)
+        private bool Find(IRepository repository, IPatcher patcher,ICheckNotifier notifier)
         {
             //if it's not configured
-            if (tableRepository == null)
+            if (repository == null)
             {
                 DatabaseFound(this, new PlatformDatabaseFoundEventArgs(null, patcher, RDMPPlatformDatabaseStatus.Unreachable));
                 return false;
             }
+
+            // it's not a database we are getting this data from then assume its good to go
+            if (repository is not ITableRepository tableRepository)
+                return true;
                 
             //check we can reach it
             var db = tableRepository.DiscoveredServer.GetCurrentDatabase();

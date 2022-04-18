@@ -62,6 +62,11 @@ namespace Rdmp.Core.DataExport.Data
 
         #endregion
 
+        public ProjectCohortIdentificationConfigurationAssociation()
+        {
+            ClearAllInjections();
+        }
+
         /// <summary>
         /// Declares in the <paramref name="repository"/> database that the given <paramref name="cic"/> cohort query is associated with the supplied <paramref name="project"/>.
         /// This is usually done after using the query to build an <see cref="IExtractableCohort"/> (But it can be done manually by the user too).

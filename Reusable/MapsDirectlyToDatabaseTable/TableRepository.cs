@@ -305,6 +305,10 @@ namespace MapsDirectlyToDatabaseTable
             return result;
         }
 
+        public T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
+        {
+            return GetAllObjects(typeof(T), whereSQL, parameters).Cast<T>().ToArray();
+        }
         public T[] GetAllObjectsWhere<T>(string property, object value1) where T : IMapsDirectlyToDatabaseTable
         {
             return GetAllObjectsWhere<T>("WHERE " + property + " = @val",new Dictionary<string, object>(){{"@val",value1}} );
@@ -335,11 +339,6 @@ namespace MapsDirectlyToDatabaseTable
 
                 
                 });
-        }
-
-        public T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
-        {
-            return GetAllObjects(typeof (T), whereSQL, parameters).Cast<T>().ToArray();
         }
 
         public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t, string whereSQL, Dictionary<string, object> parameters = null)
@@ -951,6 +950,16 @@ namespace MapsDirectlyToDatabaseTable
         public virtual T[] GetAllObjectsNoCache<T>() where T : IMapsDirectlyToDatabaseTable
         {
             return GetAllObjects<T>();
+        }
+
+        public IDisposable BeginNewTransaction()
+        {
+            return BeginNewTransactedConnection();
+        }
+
+        public void EndTransaction(bool commit)
+        {
+            EndTransactedConnection(commit);
         }
     }
 }

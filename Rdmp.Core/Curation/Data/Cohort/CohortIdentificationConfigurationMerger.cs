@@ -20,9 +20,9 @@ namespace Rdmp.Core.Curation.Data.Cohort
     /// </summary>
     public class CohortIdentificationConfigurationMerger
     {
-        private readonly CatalogueRepository _repository;
+        private readonly ICatalogueRepository _repository;
 
-        public CohortIdentificationConfigurationMerger(CatalogueRepository repository)
+        public CohortIdentificationConfigurationMerger(ICatalogueRepository repository)
         {
             this._repository = repository;
         }
@@ -51,9 +51,8 @@ namespace Rdmp.Core.Curation.Data.Cohort
             {
                 throw new Exception("Error during pre merge cloning stage, no merge will be attempted",ex);
             }
-            
 
-            using(_repository.BeginNewTransactedConnection())
+            using(_repository.BeginNewTransaction())
             {
                 // Create a new master configuration
                 var cicMaster = new CohortIdentificationConfiguration(_repository,$"Merged cics (IDs {string.Join(",",cics.Select(c=>c.ID))})" );
@@ -85,7 +84,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
                 }                
                 
                 //finish transaction
-                _repository.EndTransactedConnection(true);
+                _repository.EndTransaction(true);
 
                 return cicMaster;
             }
@@ -118,7 +117,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
             }
             
 
-            using(_repository.BeginNewTransactedConnection())
+            using(_repository.BeginNewTransaction())
             {
                 //Grab the root container of each of the input cics
                 foreach(CohortIdentificationConfiguration cic in cicClones)
@@ -141,7 +140,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
                 }                
                 
                 //finish transaction                
-                _repository.EndTransactedConnection(true);
+                _repository.EndTransaction(true);
             }
         }
 
@@ -189,7 +188,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
                 throw new Exception("Error during pre merge cloning stage, no UnMerge will be attempted",ex);
             }
                         
-            using(_repository.BeginNewTransactedConnection())
+            using(_repository.BeginNewTransaction())
             {
                 // For each of these
                 foreach(var subContainer in rootContainer.GetSubContainers().OrderBy(c=>c.Order))
@@ -215,7 +214,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
                 cic.DeleteInDatabase();
 
                 //finish transaction
-                _repository.EndTransactedConnection(true);
+                _repository.EndTransaction(true);
             }
 
             return toReturn.ToArray();

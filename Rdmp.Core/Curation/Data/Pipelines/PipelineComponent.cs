@@ -70,6 +70,11 @@ namespace Rdmp.Core.Curation.Data.Pipelines
 
         #endregion
 
+        public PipelineComponent()
+        {
+
+        }
+
         /// <inheritdoc/>
         public override string ToString()
         {
@@ -142,7 +147,18 @@ namespace Rdmp.Core.Curation.Data.Pipelines
         {
             var cataRepo = (ICatalogueRepository) intoTargetPipeline.Repository;
 
-            var clone = new PipelineComponent(cataRepo, intoTargetPipeline, GetClassAsSystemType(), Order);
+            var type = GetClassAsSystemType();
+
+            var clone = new PipelineComponent(cataRepo, intoTargetPipeline,type ?? typeof(object) , Order);
+    
+            // the Type for the PipelineComponent could not be resolved
+            // Maybe the user created this pipe with a Plugin and then uninstalled
+            // the plugin.  So tell the API its an Object then update the Class
+            // to the name of it even though it doesnt exist (its just cloning afterall)
+
+            if(type == null)
+                clone.Class = Class;
+
             foreach (var argument in PipelineComponentArguments)
             {
                 argument.Clone(clone);

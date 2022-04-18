@@ -123,7 +123,7 @@ namespace Rdmp.Core.CommandExecution
             RepositoryLocator = repositoryLocator;
             GlobalErrorCheckNotifier = globalErrorCheckNotifier;
 
-            ServerDefaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
+            ServerDefaults = RepositoryLocator.CatalogueRepository;
             
             //Shouldn't ever change externally to your session so doesn't need constantly refreshed
             FavouritesProvider = new FavouritesProvider(this);
@@ -411,6 +411,8 @@ namespace Rdmp.Core.CommandExecution
                         child.DeleteInDatabase();
                     }
 
+                    f.ClearAllInjections();
+
                     f.DeleteInDatabase();
                     return true;
                 }
@@ -670,7 +672,7 @@ namespace Rdmp.Core.CommandExecution
         }
         
         /// <inheritdoc/>
-        public virtual ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo, ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, CatalogueFolder catalogueFolder)
+        public virtual ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo, ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, string catalogueFolder)
         {
             // Create a new Catalogue based on the table info
             var engineer = new ForwardEngineerCatalogue(tableInfo,tableInfo.ColumnInfos,true);

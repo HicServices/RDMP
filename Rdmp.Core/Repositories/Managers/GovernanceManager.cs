@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
+using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Governance;
 
@@ -26,6 +27,10 @@ namespace Rdmp.Core.Repositories.Managers
 
         public void Link(GovernancePeriod governancePeriod, ICatalogue catalogue)
         {
+            // do not insert the same link twice
+            if (governancePeriod.GovernedCatalogues.Contains(catalogue))
+                return;
+
             _catalogueRepository.Insert(string.Format(
                 @"INSERT INTO GovernancePeriod_Catalogue (Catalogue_ID,GovernancePeriod_ID) VALUES ({0},{1})",catalogue.ID, governancePeriod.ID), null);
         }

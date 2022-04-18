@@ -93,6 +93,11 @@ namespace Rdmp.Core.DataExport.Data
         [NoMappingToDatabase]
         public bool IsGlobal { get; private set; }
 
+        public SupplementalExtractionResults()
+        {
+
+        }
+
         /// <summary>
         /// Starts a new audit in the database of a supplemental artifact (<paramref name="extractedObject"/>).  This is a GLOBAL artifact that is not associated
         /// with any one dataset but with the extraction as a whole.
@@ -175,7 +180,7 @@ namespace Rdmp.Core.DataExport.Data
         /// <inheritdoc/>
         public Type GetDestinationType()
         {
-            return ((DataExportRepository)Repository).CatalogueRepository.MEF.GetType(DestinationType);
+            return ((IDataExportRepository)Repository).CatalogueRepository.MEF.GetType(DestinationType);
         }
 
         /// <inheritdoc/>

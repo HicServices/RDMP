@@ -90,6 +90,11 @@ namespace Rdmp.Core.DataExport.Data
 
         #endregion
 
+        public SelectedDataSets()
+        {
+            ClearAllInjections(); 
+        }
+
         internal SelectedDataSets(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
@@ -141,14 +146,14 @@ namespace Rdmp.Core.DataExport.Data
         /// <inheritdoc/>
         public string GetDeleteMessage()
         {
-            return "remove '" + ExtractableDataSet + "' from ExtractionConfiguration '" + ExtractionConfiguration + "'";
+            return $"remove '{ExtractableDataSet}' from ExtractionConfiguration '{ExtractionConfiguration}'";
         }
 
         /// <inheritdoc/>
         public void InjectKnown(IExtractableDataSet instance)
         {
             if(instance.ID != ExtractableDataSet_ID)
-                throw new ArgumentException("That is not our dataset, our dataset has ID " +ExtractableDataSet_ID,"ds");
+                throw new ArgumentException($"That is not our dataset, our dataset has ID {ExtractableDataSet_ID}","ds");
 
             _extractableDataSet = new Lazy<IExtractableDataSet>(()=>instance);
         }
@@ -199,17 +204,21 @@ namespace Rdmp.Core.DataExport.Data
 
         public void CreateRootContainerIfNotExists()
         {
-            if (RootFilterContainer_ID == null)
-            {
-                var container = new FilterContainer(DataExportRepository, FilterContainerOperation.AND);
-                RootFilterContainer_ID = container.ID;
-                SaveToDatabase();
-            }
+            if (RootFilterContainer_ID != null) return;
+            var container = new FilterContainer(DataExportRepository, FilterContainerOperation.AND);
+            RootFilterContainer_ID = container.ID;
+            SaveToDatabase();
         }
 
         public IFilterFactory GetFilterFactory()
         {
             return new DeployedExtractionFilterFactory(DataExportRepository);
+        }
+
+        public override void DeleteInDatabase()
+        {
+            ExtractionProgressIfAny?.DeleteInDatabase();
+            base.DeleteInDatabase();
         }
     }
 }

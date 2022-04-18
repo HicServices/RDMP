@@ -10,6 +10,7 @@ using System.Data;
 using System.Linq;
 using System.Threading;
 using FAnsi.Connections;
+using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
@@ -49,8 +50,12 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
         {
             IManagedConnection c= null;
 
+
+            if (CatalogueRepository is not TableRepository && useTransactions)
+                Assert.Inconclusive("YamlRepository does not support transactions so don't test this");
+
             if (useTransactions)
-                c = CatalogueRepository.BeginNewTransactedConnection();
+                c = CatalogueTableRepository.BeginNewTransactedConnection();
 
             using (c)
             {
@@ -72,7 +77,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
                     CatalogueRepository.GetAllObjects<Catalogue>();
 
                 if (useTransactions)
-                    CatalogueRepository.EndTransactedConnection(false);
+                    CatalogueTableRepository.EndTransactedConnection(false);
             }
             
             
@@ -92,19 +97,19 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
         [TestCase(false)]
         public void SimpleCaseSingleThreaded(bool useTransaction)
         {
-            
+
 
             using (
                 var con = useTransaction
-                    ? CatalogueRepository.BeginNewTransactedConnection()
-                    : CatalogueRepository.GetConnection())
+                    ? CatalogueTableRepository.BeginNewTransactedConnection()
+                    : CatalogueTableRepository.GetConnection())
             {
 
                 Assert.AreEqual(ConnectionState.Open, con.Connection.State);
                 Thread.Sleep(1000);
 
                 if (useTransaction)
-                    CatalogueRepository.EndTransactedConnection(false);
+                    CatalogueTableRepository.EndTransactedConnection(false);
                 else
                     con.Connection.Close();
 
@@ -125,6 +130,9 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
 
         private void FireMultiThreaded(Action<bool> method, int numberToFire, bool useTransactions)
         {
+            if (CatalogueRepository is not TableRepository)
+                Assert.Inconclusive("We dont have to test this for yaml repos");
+
             
             List<Exception> exes = new List<Exception>();
             

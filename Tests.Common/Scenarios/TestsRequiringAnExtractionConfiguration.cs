@@ -62,10 +62,10 @@ namespace Tests.Common.Scenarios
         /// </summary>
         public DiscoveredDatabase Database { get; private set; }
 
-        [OneTimeSetUp]
-        protected override void OneTimeSetUp()
+        [SetUp]
+        protected override void SetUp()
         {
-            base.OneTimeSetUp();
+            base.SetUp();
 
             Reset();
         }

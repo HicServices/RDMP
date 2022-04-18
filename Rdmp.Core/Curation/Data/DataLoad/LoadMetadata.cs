@@ -148,6 +148,11 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         }
         #endregion
 
+        public LoadMetadata()
+        {
+
+        }
+
         /// <summary>
         /// Create a new DLE load.  This load will not have any <see cref="ProcessTask"/> and will not load any <see cref="TableInfo"/> yet.
         /// 
@@ -331,7 +336,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
 
             if (catalogue.LiveLoggingServer_ID == null)
             {
-                loggingServer = CatalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+                loggingServer = CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
                 if (loggingServer != null)
                     catalogue.LiveLoggingServer_ID = loggingServer.ID;

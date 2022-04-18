@@ -69,7 +69,7 @@ namespace Rdmp.Core.DataQualityEngine.Reports
             if (_loggingServer != null && _logManager != null && _loggingTask != null)
                 return;
 
-            _loggingServer = repository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+            _loggingServer = repository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
             if (_loggingServer != null)
             {

@@ -92,7 +92,7 @@ namespace Rdmp.Core.Curation.Data
         /// A user defined hierarchical category which designates the role of the dataset e.g. '\datasets\extractable\labdata\'
         /// <para>Should always start and end with a '\' even if it is the root (i.e. '\')</para>
         /// </summary>
-        CatalogueFolder Folder {get;set; }
+        string Folder {get;set; }
 
         
         /// <summary>

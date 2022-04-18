@@ -24,7 +24,7 @@ namespace Rdmp.Core.Repositories.Managers
     /// </summary>
     public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
     {
-        private readonly CatalogueRepository _catalogueRepository;
+        private readonly ICatalogueRepository _catalogueRepository;
 
         public const string RDMP_KEY_LOCATION = "RDMP_KEY_LOCATION";
 
@@ -32,7 +32,7 @@ namespace Rdmp.Core.Repositories.Managers
         /// Prepares to retrieve/create the key file for the given platform database
         /// </summary>
         /// <param name="catalogueRepository"></param>
-        public PasswordEncryptionKeyLocation(CatalogueRepository catalogueRepository)
+        public PasswordEncryptionKeyLocation(ICatalogueRepository catalogueRepository)
         {
             _catalogueRepository = catalogueRepository;
 
@@ -66,14 +66,7 @@ namespace Rdmp.Core.Repositories.Managers
             if (fromEnvVar != null)
                 return fromEnvVar;
 
-            //otherwise use the database
-            using (var con = _catalogueRepository.DiscoveredServer.GetConnection())
-            {
-                con.Open();
-                //Table can only ever have 1 record
-                using(DbCommand cmd = DatabaseCommandHelper.GetCommand("SELECT Path from PasswordEncryptionKeyLocation", con))
-                    return cmd.ExecuteScalar() as string;
-            }
+            return _catalogueRepository.GetEncryptionKeyPath();
         }
 
 
@@ -150,17 +143,7 @@ namespace Rdmp.Core.Repositories.Managers
             if (!fileInfo.Exists)
                 throw new Exception("Created file but somehow it didn't exist!?!");
 
-            using (var con = _catalogueRepository.GetConnection())
-            {
-                using (DbCommand cmd = DatabaseCommandHelper.GetCommand(
-                    "INSERT INTO PasswordEncryptionKeyLocation(Path,Lock) VALUES (@Path,'X')", con.Connection,
-                    con.Transaction))
-                {
-                    DatabaseCommandHelper.AddParameterWithValueToCommand("@Path", cmd, fileInfo.FullName);
-                    cmd.ExecuteNonQuery();
-                }
-                
-            }
+            _catalogueRepository.SetEncryptionKeyPath(fileInfo.FullName);
 
             ClearAllInjections();
             
@@ -181,20 +164,7 @@ namespace Rdmp.Core.Repositories.Managers
             //confirms that it is accessible and deserializable
             DeserializeFromLocation(newLocation);
 
-            using (var con = _catalogueRepository.GetConnection())
-            {
-                //Table can only ever have 1 record
-                using (DbCommand cmd = DatabaseCommandHelper.GetCommand(
-                    @"if exists (select 1 from PasswordEncryptionKeyLocation)
-    UPDATE PasswordEncryptionKeyLocation SET Path = @Path
-  else
-  INSERT INTO PasswordEncryptionKeyLocation(Path,Lock) VALUES (@Path,'X')
-  ", con.Connection, con.Transaction))
-                {
-                    DatabaseCommandHelper.AddParameterWithValueToCommand("@Path", cmd, newLocation);
-                    cmd.ExecuteNonQuery();
-                }
-            }
+            _catalogueRepository.SetEncryptionKeyPath(newLocation);
 
             ClearAllInjections();
         }
@@ -212,19 +182,7 @@ namespace Rdmp.Core.Repositories.Managers
             if (existingKey == null)
                 throw new NotSupportedException("Cannot delete key because there is no key file configured");
 
-            using (var con = _catalogueRepository.GetConnection())
-            {
-                //Table can only ever have 1 record
-                using (DbCommand cmd = DatabaseCommandHelper.GetCommand("DELETE FROM PasswordEncryptionKeyLocation",
-                    con.Connection, con.Transaction))
-                {
-                    int affectedRows = cmd.ExecuteNonQuery();
-                    if (affectedRows != 1)
-                        throw new Exception("Delete from PasswordEncryptionKeyLocation resulted in " + affectedRows + ", expected 1");
-                }
-
-                
-            }
+            _catalogueRepository.DeleteEncryptionKeyPath();
 
             ClearAllInjections();
         }

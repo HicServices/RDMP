@@ -26,7 +26,7 @@ namespace Rdmp.UI.Menus.MenuItems
         {
             _catalogue = catalogue;
 
-            _dqeServer = activator.RepositoryLocator.CatalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.DQE);
+            _dqeServer = activator.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults.DQE);
 
             Image = activator.CoreIconProvider.GetImage(RDMPConcept.DQE);
 

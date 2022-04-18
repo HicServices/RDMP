@@ -88,7 +88,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
             var migrationHost = new MigrationHost(From, To, configuration, new HICDatabaseConfiguration(lmd));
 
             //set SetUp a logging task
-            var logServer = new ServerDefaults(CatalogueRepository).GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+            var logServer = CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
             var logManager = new LogManager(logServer);
             logManager.CreateNewLoggingTaskIfNotExists("CrossDatabaseMergeCommandTest");
             var dli = logManager.CreateDataLoadInfo("CrossDatabaseMergeCommandTest", "tests", "running test", "", true);

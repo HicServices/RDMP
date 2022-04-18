@@ -150,8 +150,7 @@ namespace Rdmp.Core.Repositories
         /// <inheritdoc/>
         public LogManager GetDefaultLogManager()
         {
-            ServerDefaults defaults = new ServerDefaults(this);
-            return new LogManager(defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
+            return new LogManager(GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
         }
 
         /// <inheritdoc/>
@@ -214,12 +213,8 @@ namespace Rdmp.Core.Repositories
         /// <returns></returns>
         public T[] GetReferencesTo<T>(IMapsDirectlyToDatabaseTable o) where T : ReferenceOtherObjectDatabaseEntity
         {
-            return GetAllObjects<T>("WHERE ReferencedObjectID = " + o.ID + " AND ReferencedObjectType = '" + o.GetType().Name + "' AND ReferencedObjectRepositoryType = '" + o.Repository.GetType().Name + "'");
-        }
-
-        public IServerDefaults GetServerDefaults()
-        {
-            return new ServerDefaults(this);
+            return GetAllObjects<T>(
+                $"WHERE ReferencedObjectID = {o.ID} AND ReferencedObjectType = '{o.GetType().Name}' AND ReferencedObjectRepositoryType = '{o.Repository.GetType().Name}'");
         }
 
         public bool IsLookupTable(ITableInfo tableInfo)
@@ -248,6 +243,121 @@ select 0", con.Connection, con.Transaction))
   ColumnInfo on ColumnInfo_ID = ColumnInfo.ID
   where
   TableInfo_ID = {0} )", tableInfo.ID)).ToArray();
+        }
+
+        public IExternalDatabaseServer GetDefaultFor(PermissableDefaults field)
+        {
+
+            if (field == PermissableDefaults.None)
+                return null;
+
+            using var con = GetConnection();
+            using var cmd = DatabaseCommandHelper.GetCommand(
+                "SELECT ExternalDatabaseServer_ID FROM ServerDefaults WHERE DefaultType = @type", con.Connection,
+                con.Transaction);
+            var p = cmd.CreateParameter();
+
+            p.ParameterName = "@type";
+            p.Value = ServerDefaults.StringExpansionDictionary[field];
+            cmd.Parameters.Add(p);
+
+            var executeScalar = cmd.ExecuteScalar();
+
+            return executeScalar == DBNull.Value ? null : GetObjectByID<ExternalDatabaseServer>(Convert.ToInt32(executeScalar));
+        }
+
+        public void ClearDefault(PermissableDefaults toDelete)
+        {
+            if (toDelete == PermissableDefaults.None)
+                return;
+
+            Delete("DELETE FROM ServerDefaults WHERE DefaultType=@DefaultType",
+                new Dictionary<string, object>()
+                {
+                    {"DefaultType",ServerDefaults.StringExpansionDictionary[toDelete]}
+                });
+        }
+               
+
+        /// <inheritdoc/>
+        public void SetDefault(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
+        {
+            if (toChange == PermissableDefaults.None)
+                throw new ArgumentException("toChange cannot be None", "toChange");
+
+            var oldValue = GetDefaultFor(toChange);
+
+            if (oldValue == null)
+                InsertNewValue(toChange, externalDatabaseServer);
+            else
+                UpdateExistingValue(toChange, externalDatabaseServer);
+        }
+
+        private void UpdateExistingValue(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
+        {
+            if (toChange == PermissableDefaults.None)
+                throw new ArgumentException("toChange cannot be None", "toChange");
+
+            string sql =
+                "UPDATE ServerDefaults set ExternalDatabaseServer_ID  = @ExternalDatabaseServer_ID where DefaultType=@DefaultType";
+
+            int affectedRows = Update(sql, new Dictionary<string, object>()
+                {
+                    {"DefaultType",ServerDefaults.StringExpansionDictionary[toChange]},
+                    {"ExternalDatabaseServer_ID",externalDatabaseServer.ID}
+                });
+
+            if (affectedRows != 1)
+                throw new Exception("We were asked to update default for " + toChange + " but the query '" + sql + "' did not result in 1 affected rows (it resulted in " + affectedRows + ")");
+        }
+
+        private void InsertNewValue(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
+        {
+            if (toChange == PermissableDefaults.None)
+                throw new ArgumentException("toChange cannot be None", "toChange");
+
+            Insert(
+                "INSERT INTO ServerDefaults(DefaultType,ExternalDatabaseServer_ID) VALUES (@DefaultType,@ExternalDatabaseServer_ID)",
+                new Dictionary<string, object>()
+                {
+                    {"DefaultType",ServerDefaults.StringExpansionDictionary[toChange]},
+                    {"ExternalDatabaseServer_ID",externalDatabaseServer.ID}
+                });
+        }
+
+        public void SetEncryptionKeyPath(string path)
+        {
+            using var con = GetConnection();
+            //Table can only ever have 1 record
+            using var cmd = DatabaseCommandHelper.GetCommand(
+                @"if exists (select 1 from PasswordEncryptionKeyLocation)
+    UPDATE PasswordEncryptionKeyLocation SET Path = @Path
+  else
+  INSERT INTO PasswordEncryptionKeyLocation(Path,Lock) VALUES (@Path,'X')
+  ", con.Connection, con.Transaction);
+            DatabaseCommandHelper.AddParameterWithValueToCommand("@Path", cmd, path);
+            cmd.ExecuteNonQuery();
+        }
+
+        public string GetEncryptionKeyPath()
+        {
+            //otherwise use the database
+            using var con = DiscoveredServer.GetConnection();
+            con.Open();
+            //Table can only ever have 1 record
+            using var cmd = DatabaseCommandHelper.GetCommand("SELECT Path from PasswordEncryptionKeyLocation", con);
+            return cmd.ExecuteScalar() as string;
+        }
+
+        public void DeleteEncryptionKeyPath()
+        {
+            using var con = GetConnection();
+            //Table can only ever have 1 record
+            using DbCommand cmd = DatabaseCommandHelper.GetCommand("DELETE FROM PasswordEncryptionKeyLocation",
+                con.Connection, con.Transaction);
+            var affectedRows = cmd.ExecuteNonQuery();
+            if (affectedRows != 1)
+                throw new Exception($"Delete from PasswordEncryptionKeyLocation resulted in {affectedRows}, expected 1");
         }
     }
 }

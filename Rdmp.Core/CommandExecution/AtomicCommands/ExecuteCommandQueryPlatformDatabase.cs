@@ -58,15 +58,17 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if(patcherType == typeof(DataExportPatcher))
             {
                 db = GetDatabase(BasicActivator.RepositoryLocator.DataExportRepository);
+                
                 _query = _query ?? "Select * from Project";
-                _table = db.ExpectTable("Project");
+                _table = db?.ExpectTable("Project");
                 return;
             }
             else if (patcherType == typeof(CataloguePatcher))
             {
                 db = GetDatabase(BasicActivator.RepositoryLocator.CatalogueRepository);
+
                 _query = _query ?? "Select * from Catalogue";
-                _table = db.ExpectTable("Catalogue");
+                _table = db?.ExpectTable("Catalogue");
                 return;
             }
             else

@@ -82,7 +82,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             newCredentials.Password = "mypassword";
             newCredentials.SaveToDatabase();
 
-            var newCopy = CatalogueRepository.GetAllObjects<DataAccessCredentials>("WHERE Username='myusername'").SingleOrDefault();
+            var newCopy = CatalogueRepository.GetAllObjects<DataAccessCredentials>().SingleOrDefault(c=>c.Username == "myusername");
             Assert.IsNotNull(newCopy);
             
             try
@@ -293,8 +293,8 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             ITableInfo[] TablesThatUseCredential = creds.GetAllTableInfosThatUseThis()[DataAccessContext.InternalDataProcessing].ToArray();
 
-            Assert.AreEqual(TablesThatUseCredential[0], tableInfo1);
-            Assert.AreEqual(TablesThatUseCredential[1], tableInfo2); 
+            Assert.Contains(tableInfo1, TablesThatUseCredential);
+            Assert.Contains(tableInfo2, TablesThatUseCredential); 
 
             tableInfo1.DeleteInDatabase();
             tableInfo2.DeleteInDatabase();
@@ -358,7 +358,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             creds.SaveToDatabase();
 
 
-            var manager = new TableInfoCredentialsManager(CatalogueRepository);
+            var manager = new TableInfoCredentialsManager(CatalogueTableRepository);
             Assert.AreEqual(creds,manager.GetCredentialByUsernameAndPasswordIfExists("Root",null));
             Assert.AreEqual(creds,manager.GetCredentialByUsernameAndPasswordIfExists("Root",""));
         }

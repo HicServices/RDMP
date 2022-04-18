@@ -26,6 +26,8 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void Test_MultipleLookupReferences()
         {
+            BlitzMainDataTables();
+
             var tiHeader = new TableInfo(CatalogueRepository,"Head");
             var tiHeader_Code = new ColumnInfo(CatalogueRepository,"code","",tiHeader);
                        
@@ -218,7 +220,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
         {
              
             //this only works for MSSQL Servers
-            if (CatalogueRepository.DiscoveredServer.DatabaseType != DatabaseType.MicrosoftSQLServer)
+            if (CatalogueTableRepository.DiscoveredServer.DatabaseType != DatabaseType.MicrosoftSQLServer)
                 Assert.Ignore("This test only targets Microsft SQL Servers");
 
             TableInfo fkTable = null;

@@ -177,5 +177,20 @@ namespace MapsDirectlyToDatabaseTable
         /// </summary>
         /// <returns></returns>
         Type[] GetCompatibleTypes();
+
+
+        /// <summary>
+        /// If this repository supports transactions with rollback return
+        /// the appropriate <see cref="IDisposable"/> otherwise return a proxy
+        /// </summary>
+        /// <returns></returns>
+        IDisposable BeginNewTransaction();
+
+        /// <summary>
+        /// If this repository supports transactions with rollback finish the
+        /// current transaction (started by <see cref="BeginNewTransaction"/>)
+        /// </summary>
+        /// <param name="commit">True to accept the changes,  False to try and rollback (if supported)</param>
+        void EndTransaction(bool commit);
     }
 }

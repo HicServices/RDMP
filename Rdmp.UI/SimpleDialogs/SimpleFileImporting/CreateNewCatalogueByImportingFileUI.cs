@@ -49,7 +49,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
         private DataFlowPipelineContext<DataTable> _context;
 
         public HelpWorkflow HelpWorkflow { get; set; }
-        public CatalogueFolder TargetFolder { get; set; }
+        public string TargetFolder { get; set; }
 
         public CreateNewCatalogueByImportingFileUI(IActivateItems activator, ExecuteCommandCreateNewCatalogueByImportingFile command):base(activator)
         {

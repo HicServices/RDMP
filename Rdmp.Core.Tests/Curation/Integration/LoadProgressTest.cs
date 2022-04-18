@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -27,11 +28,18 @@ namespace Rdmp.Core.Tests.Curation.Integration
             loadMetadata.DeleteInDatabase();
         }
 
+        /// <summary>
+        /// This tests that when fetching 2 copies (references) to the same database
+        /// record that the instances are considered 'Equal' (for purposes of <see cref="object.Equals(object?)"/>)
+        /// </summary>
         [Test]
         public void LoadProgress_Equals()
         {
-            var loadMetadata = new LoadMetadata(CatalogueRepository);
+            // only applies to databases
+            if (CatalogueRepository is not TableRepository)
+                return;
 
+            var loadMetadata = new LoadMetadata(CatalogueRepository);
 
             LoadProgress progress = new LoadProgress(CatalogueRepository, loadMetadata);
             LoadProgress progressCopy = CatalogueRepository.GetObjectByID<LoadProgress>(progress.ID);

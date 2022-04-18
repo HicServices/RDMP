@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
@@ -19,6 +20,9 @@ namespace Rdmp.Core.Tests.Providers
         [Test]
         public void Test_RowVer()
         {
+            if (CatalogueRepository is not TableRepository)
+                throw new InconclusiveException("RowVer system only applies when using Database back repository");
+
             var cata = new Catalogue(CatalogueRepository, "FFFF");
 
             //When we get all the Catalogues we should include cata
@@ -27,7 +31,7 @@ namespace Rdmp.Core.Tests.Providers
             Assert.AreNotSame(cata,CatalogueRepository.GetAllObjects<Catalogue>()[0]);
 
             //create a cache
-            var rowVerCache = new RowVerCache<Catalogue>(CatalogueRepository);
+            var rowVerCache = new RowVerCache<Catalogue>(CatalogueTableRepository);
 
             //should fill the cache
             cata = rowVerCache.GetAllObjects()[0];

@@ -100,7 +100,6 @@ namespace Tests.Common
         {
         }
 
-
         /// <summary>
         /// Creates a minimum viable object of Type T.  This includes the object and any dependencies e.g. a 
         /// <see cref="ColumnInfo"/> cannot exist without a <see cref="TableInfo"/>.  
@@ -110,42 +109,55 @@ namespace Tests.Common
         /// <exception cref="NotSupportedException">If there is not yet an implementation for the given T.  Feel free to write one.</exception>
         protected T WhenIHaveA<T>() where T : DatabaseEntity
         {
+            return WhenIHaveA<T>(Repository);
+        }
+
+
+        /// <summary>
+        /// Creates a minimum viable object of Type T.  This includes the object and any dependencies e.g. a 
+        /// <see cref="ColumnInfo"/> cannot exist without a <see cref="TableInfo"/>.  
+        /// </summary>
+        /// <typeparam name="T">Type of object you want to create</typeparam>
+        /// <returns></returns>
+        /// <exception cref="NotSupportedException">If there is not yet an implementation for the given T.  Feel free to write one.</exception>
+        public static T WhenIHaveA<T>(MemoryDataExportRepository repository) where T : DatabaseEntity
+        {
             if (typeof(T) == typeof(Catalogue))
-                return (T)(object)Save(new Catalogue(Repository, "Mycata"));
+                return (T)(object)Save(new Catalogue(repository, "Mycata"));
 
             
             if (typeof(T) == typeof(ExtendedProperty))
             {
-                return (T)(object)new ExtendedProperty(Repository,Save(new Catalogue(Repository, "Mycata")),"TestProp",0);
+                return (T)(object)new ExtendedProperty(repository,Save(new Catalogue(repository, "Mycata")),"TestProp",0);
             }
                 
 
             if (typeof(T) == typeof(CatalogueItem))
             {
-                var cata = new Catalogue(Repository, "Mycata");
-                return (T)(object)new CatalogueItem(Repository, cata, "MyCataItem");
+                var cata = new Catalogue(repository, "Mycata");
+                return (T)(object)new CatalogueItem(repository, cata, "MyCataItem");
             }
 
             if (typeof(T) == typeof(ExtractionInformation))
             {
-                var col = WhenIHaveA<ColumnInfo>();
+                var col = WhenIHaveA<ColumnInfo>(repository);
 
-                var cata = new Catalogue(Repository, "Mycata");
-                var ci = new CatalogueItem(Repository, cata, "MyCataItem");
-                var ei = new ExtractionInformation(Repository, ci, col, "MyCataItem");
+                var cata = new Catalogue(repository, "Mycata");
+                var ci = new CatalogueItem(repository, cata, "MyCataItem");
+                var ei = new ExtractionInformation(repository, ci, col, "MyCataItem");
                 return (T)(object)Save(ei);
             }
 
             if (typeof(T) == typeof(TableInfo))
             {
-                var table = new TableInfo(Repository, "My_Table"){DatabaseType = DatabaseType.MicrosoftSQLServer};
+                var table = new TableInfo(repository, "My_Table"){DatabaseType = DatabaseType.MicrosoftSQLServer};
                 return (T)(object)table;
             }
 
             if (typeof(T) == typeof(ColumnInfo))
             {
-                var ti = WhenIHaveA<TableInfo>();
-                var col = new ColumnInfo(Repository, "My_Col", "varchar(10)", ti);
+                var ti = WhenIHaveA<TableInfo>(repository);
+                var col = new ColumnInfo(repository, "My_Col", "varchar(10)", ti);
                 return (T)(object)col;
             }
 
@@ -153,24 +165,24 @@ namespace Tests.Common
             {
                 ExtractionInformation dateEi;
                 ExtractionInformation otherEi;
-                return (T)(object)WhenIHaveA<AggregateConfiguration>(out dateEi, out otherEi);
+                return (T)(object)WhenIHaveA<AggregateConfiguration>(repository,out dateEi, out otherEi);
             }
 
             if (typeof(T) == typeof(ExternalDatabaseServer))
             {
-                return (T)(object)Save(new ExternalDatabaseServer(Repository, "My Server",null));
+                return (T)(object)Save(new ExternalDatabaseServer(repository, "My Server",null));
             }
 
             if (typeof(T) == typeof(ANOTable))
             {
                 ExternalDatabaseServer server;
-                return (T)(object)WhenIHaveA<ANOTable>(out server);
+                return (T)(object)WhenIHaveA<ANOTable>(repository, out server);
             }
 
             if (typeof(T) == typeof(LoadMetadata))
             {
                 //creates the table, column, catalogue, catalogue item and extraction information
-                var ei = WhenIHaveA<ExtractionInformation>();
+                var ei = WhenIHaveA<ExtractionInformation>(repository);
                 var cata = ei.CatalogueItem.Catalogue;
 
                 var ti = ei.ColumnInfo.TableInfo;
@@ -178,7 +190,7 @@ namespace Tests.Common
                 ti.Database = "mydb";
                 ti.SaveToDatabase();
 
-                var lmd = new LoadMetadata(Repository, "MyLoad");
+                var lmd = new LoadMetadata(repository, "MyLoad");
                 cata.LoadMetadata_ID = lmd.ID;
                 cata.SaveToDatabase();
                 return (T)(object)lmd;
@@ -186,143 +198,143 @@ namespace Tests.Common
 
             if (typeof (T) == typeof (AggregateTopX))
             {
-                var agg = WhenIHaveA<AggregateConfiguration>();
-                return (T)(object) new AggregateTopX(Repository, agg, 10);
+                var agg = WhenIHaveA<AggregateConfiguration>(repository);
+                return (T)(object) new AggregateTopX(repository, agg, 10);
             }
 
             if (typeof (T) == typeof (ConnectionStringKeyword))
             {
-                return (T)(object)new ConnectionStringKeyword(Repository, DatabaseType.MicrosoftSQLServer, "MultipleActiveResultSets", "true");
+                return (T)(object)new ConnectionStringKeyword(repository, DatabaseType.MicrosoftSQLServer, "MultipleActiveResultSets", "true");
             }
 
             if (typeof (T) == typeof (DashboardLayout))
-                return (T)(object)new DashboardLayout(Repository, "My Layout");
+                return (T)(object)new DashboardLayout(repository, "My Layout");
 
             if (typeof(T) == typeof(DashboardControl))
             {
-                var layout = WhenIHaveA<DashboardLayout>();
-                return (T)(object)Save(new DashboardControl(Repository, layout, typeof(int), 0, 0, 100, 100, "") { ControlType = "GoodBadCataloguePieChart" });
+                var layout = WhenIHaveA<DashboardLayout>(repository);
+                return (T)(object)Save(new DashboardControl(repository, layout, typeof(int), 0, 0, 100, 100, "") { ControlType = "GoodBadCataloguePieChart" });
             }
 
             if (typeof(T) == typeof(DashboardObjectUse))
             {
-                var layout = WhenIHaveA<DashboardLayout>();
-                var control = Save(new DashboardControl(Repository, layout, typeof(int), 0, 0, 100, 100, "") { ControlType = "GoodBadCataloguePieChart" });
-                var use = new DashboardObjectUse(Repository, control, WhenIHaveA<Catalogue>());
+                var layout = WhenIHaveA<DashboardLayout>(repository);
+                var control = Save(new DashboardControl(repository, layout, typeof(int), 0, 0, 100, 100, "") { ControlType = "GoodBadCataloguePieChart" });
+                var use = new DashboardObjectUse(repository, control, WhenIHaveA<Catalogue>(repository));
                 return (T)(object)use;
             }
 
             if (typeof(T) == typeof(ExtractionFilter))
             {
-                var ei = WhenIHaveA<ExtractionInformation>();
-                return (T)(object)new ExtractionFilter(Repository, "My Filter", ei);
+                var ei = WhenIHaveA<ExtractionInformation>(repository);
+                return (T)(object)new ExtractionFilter(repository, "My Filter", ei);
             }
 
             if (typeof(T) == typeof(ExtractionFilterParameter))
             {
-                var filter = WhenIHaveA<ExtractionFilter>();
+                var filter = WhenIHaveA<ExtractionFilter>(repository);
                 filter.WhereSQL = "@myParam = 'T'";
 
-                return (T)(object)new ExtractionFilterParameter(Repository,"DECLARE @myParam varchar(10)",filter);
+                return (T)(object)new ExtractionFilterParameter(repository,"DECLARE @myParam varchar(10)",filter);
             }
 
             if (typeof(T) == typeof(ExtractionFilterParameterSetValue))
             {
-                var parameter = WhenIHaveA<ExtractionFilterParameter>();
-                var set = new ExtractionFilterParameterSet(Repository, parameter.ExtractionFilter, "Parameter Set");
-                return (T)(object)new ExtractionFilterParameterSetValue(Repository, set, parameter);
+                var parameter = WhenIHaveA<ExtractionFilterParameter>(repository);
+                var set = new ExtractionFilterParameterSet(repository, parameter.ExtractionFilter, "Parameter Set");
+                return (T)(object)new ExtractionFilterParameterSetValue(repository, set, parameter);
             }
 
             if (typeof (T) == typeof(ExtractionFilterParameterSet))
             {
-                return (T)(object)WhenIHaveA<ExtractionFilterParameterSetValue>().ExtractionFilterParameterSet;
+                return (T)(object)WhenIHaveA<ExtractionFilterParameterSetValue>(repository).ExtractionFilterParameterSet;
             }
 
             if (typeof (T) == typeof (Favourite))
-                return (T) (object) new Favourite(Repository, WhenIHaveA<Catalogue>());
+                return (T) (object) new Favourite(repository, WhenIHaveA<Catalogue>(repository));
 
             if (typeof (T) == typeof(ObjectExport))
             {
                 ShareManager sm;
-                return (T)(object)WhenIHaveA<ObjectExport>(out sm);
+                return (T)(object)WhenIHaveA<ObjectExport>(repository, out sm);
             }
             
             if (typeof (T) == typeof(ObjectImport))
             {
                 ShareManager sm;
-                ObjectExport export = WhenIHaveA<ObjectExport>(out sm);
-                return (T)(object)sm.GetImportAs(export.SharingUID, WhenIHaveA<Catalogue>());
+                ObjectExport export = WhenIHaveA<ObjectExport>(repository, out sm);
+                return (T)(object)sm.GetImportAs(export.SharingUID, WhenIHaveA<Catalogue>(repository));
             }
             
             if (typeof (T) == typeof(WindowLayout))
-                return (T)(object)new WindowLayout(Repository,"My window arrangement","<html><body>ignore this</body></html>");
+                return (T)(object)new WindowLayout(repository,"My window arrangement","<html><body>ignore this</body></html>");
 
             if (typeof (T) == typeof(RemoteRDMP))
-                return (T)(object)new RemoteRDMP(Repository);
+                return (T)(object)new RemoteRDMP(repository);
             
             if (typeof (T) == typeof(CohortIdentificationConfiguration))
-                return (T)(object)new CohortIdentificationConfiguration(Repository,"My cic");
+                return (T)(object)new CohortIdentificationConfiguration(repository,"My cic");
 
             if (typeof (T) == typeof(JoinableCohortAggregateConfiguration))
             {
-                var config = WhenIHaveCohortAggregateConfiguration("PatientIndexTable");
-                var cic = WhenIHaveA<CohortIdentificationConfiguration>();
+                var config = WhenIHaveCohortAggregateConfiguration(repository, "PatientIndexTable");
+                var cic = WhenIHaveA<CohortIdentificationConfiguration>(repository);
                 cic.EnsureNamingConvention(config);
-                return (T)(object)new JoinableCohortAggregateConfiguration(Repository,cic,config);
+                return (T)(object)new JoinableCohortAggregateConfiguration(repository,cic,config);
             }
             
             if (typeof (T) == typeof(JoinableCohortAggregateConfigurationUse))
             {
-                var joinable = WhenIHaveA<JoinableCohortAggregateConfiguration>();
-                var config = WhenIHaveCohortAggregateConfiguration("Aggregate");
+                var joinable = WhenIHaveA<JoinableCohortAggregateConfiguration>(repository);
+                var config = WhenIHaveCohortAggregateConfiguration(repository, "Aggregate");
                 return (T)(object)joinable.AddUser(config);
             }
             
             if (typeof (T) == typeof(Rdmp.Core.Curation.Data.Plugin))
-                return (T)(object)new Rdmp.Core.Curation.Data.Plugin(Repository,new FileInfo("bob.nupkg"),new Version(1,1,1),new Version(1,1,1));
+                return (T)(object)new Rdmp.Core.Curation.Data.Plugin(repository,new FileInfo("bob.nupkg"),new Version(1,1,1),new Version(1,1,1));
             
             if (typeof (T) == typeof(LoadModuleAssembly))
             {
                 var dll = Path.Combine(TestContext.CurrentContext.TestDirectory,"a.nupkg");
                 File.WriteAllBytes(dll,new byte[] {0x11});
 
-                return (T)(object)new LoadModuleAssembly(Repository,new FileInfo(dll),WhenIHaveA<Rdmp.Core.Curation.Data.Plugin>());
+                return (T)(object)new LoadModuleAssembly(repository,new FileInfo(dll),WhenIHaveA<Rdmp.Core.Curation.Data.Plugin>(repository));
             }
             
             if (typeof (T) == typeof(AggregateContinuousDateAxis))
             {
                 ExtractionInformation dateEi;
                 ExtractionInformation otherEi;
-                var config = WhenIHaveA<AggregateConfiguration>(out dateEi,out otherEi);
+                var config = WhenIHaveA<AggregateConfiguration>(repository, out dateEi,out otherEi);
                 
                 //remove the other Ei
                 config.AggregateDimensions[0].DeleteInDatabase();
                 //add the date one
-                var dim = new AggregateDimension(Repository, dateEi, config);
+                var dim = new AggregateDimension(repository, dateEi, config);
 
-                return (T)(object)new AggregateContinuousDateAxis(Repository,dim);
+                return (T)(object)new AggregateContinuousDateAxis(repository,dim);
             }
             
             if (typeof (T) == typeof(AggregateDimension))
-                return (T)(object) WhenIHaveA<AggregateConfiguration>().AggregateDimensions[0];
+                return (T)(object) WhenIHaveA<AggregateConfiguration>(repository).AggregateDimensions[0];
             
             if (typeof (T) == typeof(AggregateFilterContainer))
             {
-                var config = WhenIHaveA<AggregateConfiguration>();
-                var container = new AggregateFilterContainer(Repository,FilterContainerOperation.AND);
+                var config = WhenIHaveA<AggregateConfiguration>(repository);
+                var container = new AggregateFilterContainer(repository,FilterContainerOperation.AND);
                 config.RootFilterContainer_ID = container.ID;
                 config.SaveToDatabase();
                 return (T) (object) container;
             }
             if (typeof (T) == typeof(AggregateFilter))
             {
-                var container = WhenIHaveA<AggregateFilterContainer>();
-                return (T)(object)new AggregateFilter(Repository,"My Filter",container);
+                var container = WhenIHaveA<AggregateFilterContainer>(repository);
+                return (T)(object)new AggregateFilter(repository,"My Filter",container);
             }
             
             if (typeof (T) == typeof(AggregateFilterParameter))
             {
-                var filter = WhenIHaveA<AggregateFilter>();
+                var filter = WhenIHaveA<AggregateFilter>(repository);
                 filter.WhereSQL = "@MyP = 'mnnn apples'";
                 filter.SaveToDatabase();
 
@@ -330,41 +342,41 @@ namespace Tests.Common
             }
 
             if (typeof (T) == typeof (LoadProgress))
-                return (T) (object) new LoadProgress(Repository, WhenIHaveA<LoadMetadata>());
+                return (T) (object) new LoadProgress(repository, WhenIHaveA<LoadMetadata>(repository));
 
             if (typeof (T) == typeof(CacheProgress))
-                return (T)(object)new CacheProgress(Repository,WhenIHaveA<LoadProgress>());
+                return (T)(object)new CacheProgress(repository,WhenIHaveA<LoadProgress>(repository));
 
             if (typeof (T) == typeof(CacheFetchFailure))
-                return (T)(object)new CacheFetchFailure(Repository,WhenIHaveA<CacheProgress>(),DateTime.Now.Subtract(new TimeSpan(1,0,0,0)),DateTime.Now,new Exception("It didn't work"));
+                return (T)(object)new CacheFetchFailure(repository,WhenIHaveA<CacheProgress>(repository),DateTime.Now.Subtract(new TimeSpan(1,0,0,0)),DateTime.Now,new Exception("It didn't work"));
             
             if (typeof (T) == typeof(CohortAggregateContainer))
             {
-                var cic = WhenIHaveA<CohortIdentificationConfiguration>();
+                var cic = WhenIHaveA<CohortIdentificationConfiguration>(repository);
                 cic.CreateRootContainerIfNotExists();
                 return (T)(object)cic.RootCohortAggregateContainer;
             }
             
             if (typeof (T) == typeof(AnyTableSqlParameter))
             {
-                var cic = WhenIHaveA<CohortIdentificationConfiguration>();
-                return (T)(object)new AnyTableSqlParameter(Repository,cic,"DECLARE @myGlobal as varchar(10)");
+                var cic = WhenIHaveA<CohortIdentificationConfiguration>(repository);
+                return (T)(object)new AnyTableSqlParameter(repository,cic,"DECLARE @myGlobal as varchar(10)");
             }
 
             if (typeof (T) == typeof(DataAccessCredentials))
-                return (T)(object)new DataAccessCredentials(Repository,"My credentials");
+                return (T)(object)new DataAccessCredentials(repository,"My credentials");
             
             if (typeof (T) == typeof(GovernancePeriod))
-                return (T)(object)new GovernancePeriod(Repository);
+                return (T)(object)new GovernancePeriod(repository);
             
             if (typeof (T) == typeof(GovernanceDocument))
             {
                 var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "myfile.txt"));
-                return (T)(object)new GovernanceDocument(Repository,WhenIHaveA<GovernancePeriod>(),fi);
+                return (T)(object)new GovernanceDocument(repository,WhenIHaveA<GovernancePeriod>(repository),fi);
             }
 
             if (typeof (T) == typeof(PermissionWindow))
-                return (T)(object)new PermissionWindow(Repository);
+                return (T)(object)new PermissionWindow(repository);
             
 
             if (typeof (T) == typeof(JoinInfo))
@@ -372,98 +384,98 @@ namespace Tests.Common
                 ColumnInfo col1;
                 ColumnInfo col2;
                 ColumnInfo col3;
-                WhenIHaveTwoTables(out col1,out col2,out col3);
+                WhenIHaveTwoTables(repository, out col1,out col2,out col3);
                 
-                return (T)(object)new JoinInfo(Repository,col1,col2,ExtractionJoinType.Left, null);
+                return (T)(object)new JoinInfo(repository,col1,col2,ExtractionJoinType.Left, null);
             }
             if (typeof (T) == typeof(Lookup))
             {
                 ColumnInfo col1;
                 ColumnInfo col2;
                 ColumnInfo col3;
-                WhenIHaveTwoTables(out col1,out col2,out col3);
+                WhenIHaveTwoTables(repository, out col1,out col2,out col3);
                 
-                return (T)(object)new Lookup(Repository,col3,col1,col2,ExtractionJoinType.Left, null);
+                return (T)(object)new Lookup(repository,col3,col1,col2,ExtractionJoinType.Left, null);
             }
             if (typeof (T) == typeof(LookupCompositeJoinInfo))
             {
-                var lookup = WhenIHaveA<Lookup>();
+                var lookup = WhenIHaveA<Lookup>(repository);
 
-                var otherJoinFk = new ColumnInfo(Repository,"otherJoinKeyForeign","int",lookup.ForeignKey.TableInfo);
-                var otherJoinPk = new ColumnInfo(Repository,"otherJoinKeyPrimary","int",lookup.PrimaryKey.TableInfo);
+                var otherJoinFk = new ColumnInfo(repository,"otherJoinKeyForeign","int",lookup.ForeignKey.TableInfo);
+                var otherJoinPk = new ColumnInfo(repository,"otherJoinKeyPrimary","int",lookup.PrimaryKey.TableInfo);
                 
-                return (T)(object)new LookupCompositeJoinInfo(Repository,lookup,otherJoinFk,otherJoinPk);
+                return (T)(object)new LookupCompositeJoinInfo(repository,lookup,otherJoinFk,otherJoinPk);
             }
             if (typeof (T) == typeof(Pipeline))
-                return (T)(object)new Pipeline(Repository,"My Pipeline");
+                return (T)(object)new Pipeline(repository,"My Pipeline");
 
             if (typeof (T) == typeof(PipelineComponent))
-                return (T)(object)new PipelineComponent(Repository, WhenIHaveA<Pipeline>(), typeof(ColumnForbidder),0,"My Component");
+                return (T)(object)new PipelineComponent(repository, WhenIHaveA<Pipeline>(repository), typeof(ColumnForbidder),0,"My Component");
             
             if (typeof (T) == typeof(PipelineComponentArgument))
             {
-                var comp = WhenIHaveA<PipelineComponent>();
+                var comp = WhenIHaveA<PipelineComponent>(repository);
                 return (T)comp.CreateArgumentsForClassIfNotExists<ColumnForbidder>().First();
             }
 
             if (typeof (T) == typeof(PreLoadDiscardedColumn))
-                return (T)(object)new PreLoadDiscardedColumn(Repository,WhenIHaveA<TableInfo>(),"MyDiscardedColum");
+                return (T)(object)new PreLoadDiscardedColumn(repository,WhenIHaveA<TableInfo>(repository),"MyDiscardedColum");
                         
                        
             if (typeof (T) == typeof(ProcessTask))
-                return (T)(object)new ProcessTask(Repository,WhenIHaveA<LoadMetadata>(),LoadStage.AdjustRaw);
+                return (T)(object)new ProcessTask(repository,WhenIHaveA<LoadMetadata>(repository),LoadStage.AdjustRaw);
 
             if (typeof (T) == typeof(ProcessTaskArgument))
-                return (T)(object)new ProcessTaskArgument(Repository,WhenIHaveA<ProcessTask>());
+                return (T)(object)new ProcessTaskArgument(repository,WhenIHaveA<ProcessTask>(repository));
 
                 
             if (typeof (T) == typeof(StandardRegex))
-                return (T)(object)new StandardRegex(Repository);
+                return (T)(object)new StandardRegex(repository);
 
             if (typeof (T) == typeof(SupportingSQLTable))
-                return (T)(object)new SupportingSQLTable(Repository,WhenIHaveA<Catalogue>(),"Some Handy Query");
+                return (T)(object)new SupportingSQLTable(repository,WhenIHaveA<Catalogue>(repository),"Some Handy Query");
 
             if (typeof (T) == typeof(TicketingSystemConfiguration))
-                return (T)(object)new TicketingSystemConfiguration(Repository,"My Ticketing System");
+                return (T)(object)new TicketingSystemConfiguration(repository,"My Ticketing System");
 
             if (typeof (T) == typeof(SupportingDocument))
-                return (T)(object)new SupportingDocument(Repository,WhenIHaveA<Catalogue>(),"HelpFile.docx");
+                return (T)(object)new SupportingDocument(repository,WhenIHaveA<Catalogue>(repository),"HelpFile.docx");
 
             if (typeof (T) == typeof(Project))
-                return (T)(object)new Project(Repository,"My Project");
+                return (T)(object)new Project(repository,"My Project");
             
             if (typeof (T) == typeof(ExtractionConfiguration))
-                return (T)(object)new ExtractionConfiguration(Repository,WhenIHaveA<Project>());
+                return (T)(object)new ExtractionConfiguration(repository,WhenIHaveA<Project>(repository));
             
             if (typeof (T) == typeof(ExtractableDataSet))
             {
                 //To make an extractable dataset we need an extraction identifier (e.g. chi) that will be linked in the cohort
-                var ei = WhenIHaveA<ExtractionInformation>();
+                var ei = WhenIHaveA<ExtractionInformation>(repository);
                 ei.IsExtractionIdentifier = true;
                 ei.SaveToDatabase();
 
                 //And we need another column too just for sanity sakes (in the same table)
-                var ci2 = new CatalogueItem(Repository,ei.CatalogueItem.Catalogue,"ci2");
-                var col2 = new ColumnInfo(Repository, "My_Col2", "varchar(10)", ei.ColumnInfo.TableInfo);
-                var ei2 = new ExtractionInformation(Repository,ci2,col2,col2.GetFullyQualifiedName());
+                var ci2 = new CatalogueItem(repository,ei.CatalogueItem.Catalogue,"ci2");
+                var col2 = new ColumnInfo(repository, "My_Col2", "varchar(10)", ei.ColumnInfo.TableInfo);
+                var ei2 = new ExtractionInformation(repository,ci2,col2,col2.GetFullyQualifiedName());
 
-                return (T)(object)new ExtractableDataSet(Repository,ei.CatalogueItem.Catalogue);
+                return (T)(object)new ExtractableDataSet(repository,ei.CatalogueItem.Catalogue);
             }
             
             if (typeof (T) == typeof(CumulativeExtractionResults))
-                return (T)(object)new CumulativeExtractionResults(Repository,WhenIHaveA<ExtractionConfiguration>(),WhenIHaveA<ExtractableDataSet>(),"SELECT * FROM Anywhere");
+                return (T)(object)new CumulativeExtractionResults(repository,WhenIHaveA<ExtractionConfiguration>(repository),WhenIHaveA<ExtractableDataSet>(repository),"SELECT * FROM Anywhere");
             
             if (typeof (T) == typeof(SelectedDataSets))
             {
-                var eds = WhenIHaveA<ExtractableDataSet>();
-                var config = WhenIHaveA<ExtractionConfiguration>();
+                var eds = WhenIHaveA<ExtractableDataSet>(repository);
+                var config = WhenIHaveA<ExtractionConfiguration>(repository);
 
                 foreach (var ei in eds.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
                 {
-                    var ec = new ExtractableColumn(Repository, eds, config,ei,ei.Order,ei.SelectSQL);
+                    var ec = new ExtractableColumn(repository, eds, config,ei,ei.Order,ei.SelectSQL);
                 }
 
-                return (T)(object)new SelectedDataSets(Repository,config,eds, null);
+                return (T)(object)new SelectedDataSets(repository,config,eds, null);
             }
                 
 
@@ -472,11 +484,11 @@ namespace Tests.Common
                 var file = Path.Combine(TestContext.CurrentContext.TestDirectory,"myDataset.csv");
                 File.WriteAllText(file,"omg rows");
                 
-                var sds = WhenIHaveA<SelectedDataSets>();
-                new CumulativeExtractionResults(Repository,sds.ExtractionConfiguration,sds.ExtractableDataSet,"SELECT * FROM ANYWHERE");
-                var potential = new FlatFileReleasePotential(new RepositoryProvider(Repository), sds);
+                var sds = WhenIHaveA<SelectedDataSets>(repository);
+                new CumulativeExtractionResults(repository,sds.ExtractionConfiguration,sds.ExtractableDataSet,"SELECT * FROM ANYWHERE");
+                var potential = new FlatFileReleasePotential(new RepositoryProvider(repository), sds);
 
-                return (T)(object)new ReleaseLog(Repository,
+                return (T)(object)new ReleaseLog(repository,
                     potential,
                     new ReleaseEnvironmentPotential(sds.ExtractionConfiguration),
                     false,
@@ -486,22 +498,22 @@ namespace Tests.Common
             }
 
             if (typeof (T) == typeof(ExtractableDataSetPackage))
-                return (T)(object)new ExtractableDataSetPackage(Repository,"My Cool Package");
+                return (T)(object)new ExtractableDataSetPackage(repository,"My Cool Package");
             
             
             if (typeof (T) == typeof(SupplementalExtractionResults))
             {
-                return (T)(object)new SupplementalExtractionResults(Repository,WhenIHaveA<CumulativeExtractionResults>(),"Select * from Lookup",WhenIHaveA<SupportingSQLTable>());
+                return (T)(object)new SupplementalExtractionResults(repository,WhenIHaveA<CumulativeExtractionResults>(repository),"Select * from Lookup",WhenIHaveA<SupportingSQLTable>(repository));
             }
 
             if (typeof (T) == typeof(SelectedDataSetsForcedJoin))
-                return (T)(object)new SelectedDataSetsForcedJoin(Repository,WhenIHaveA<SelectedDataSets>(),WhenIHaveA<TableInfo>());
+                return (T)(object)new SelectedDataSetsForcedJoin(repository,WhenIHaveA<SelectedDataSets>(repository),WhenIHaveA<TableInfo>(repository));
             
             if (typeof (T) == typeof(ProjectCohortIdentificationConfigurationAssociation))
-                return (T)(object)new ProjectCohortIdentificationConfigurationAssociation(Repository,WhenIHaveA<Project>(),WhenIHaveA<CohortIdentificationConfiguration>());
+                return (T)(object)new ProjectCohortIdentificationConfigurationAssociation(repository,WhenIHaveA<Project>(repository),WhenIHaveA<CohortIdentificationConfiguration>(repository));
             
             if (typeof (T) == typeof(ExternalCohortTable))
-                return Save((T)(object)new ExternalCohortTable(Repository,"My cohorts",DatabaseType.MicrosoftSQLServer)
+                return Save((T)(object)new ExternalCohortTable(repository,"My cohorts",DatabaseType.MicrosoftSQLServer)
                 {
                     Database="MyCohortsDb",
                     DefinitionTableForeignKeyField = "c_id",
@@ -516,15 +528,15 @@ namespace Tests.Common
                 throw new NotSupportedException("You should inherit from TestsRequiringACohort instead, cohorts have to exist to be constructed");
 
             if (typeof (T) == typeof(GlobalExtractionFilterParameter))
-                return (T)(object)new GlobalExtractionFilterParameter(Repository,WhenIHaveA<ExtractionConfiguration>(),"DECLARE @ExtractionGlobal as varchar(100)");
+                return (T)(object)new GlobalExtractionFilterParameter(repository,WhenIHaveA<ExtractionConfiguration>(repository),"DECLARE @ExtractionGlobal as varchar(100)");
 
 
             if (typeof (T) == typeof(ExtractableColumn))
             {
-                var ei = WhenIHaveA<ExtractionInformation>();
+                var ei = WhenIHaveA<ExtractionInformation>(repository);
 
-                var eds = new ExtractableDataSet(Repository, ei.CatalogueItem.Catalogue);
-                var config  = WhenIHaveA<ExtractionConfiguration>();
+                var eds = new ExtractableDataSet(repository, ei.CatalogueItem.Catalogue);
+                var config  = WhenIHaveA<ExtractionConfiguration>(repository);
                 config.AddDatasetToConfiguration(eds);
 
                 return (T)(object) config.GetAllExtractableColumnsFor(eds).Single();
@@ -532,8 +544,8 @@ namespace Tests.Common
             
             if (typeof (T) == typeof(FilterContainer))
             {
-                var sds = WhenIHaveA<SelectedDataSets>();
-                var container = new FilterContainer(Repository, FilterContainerOperation.AND);
+                var sds = WhenIHaveA<SelectedDataSets>(repository);
+                var container = new FilterContainer(repository, FilterContainerOperation.AND);
                 sds.RootFilterContainer_ID = container.ID;
                 sds.SaveToDatabase();
 
@@ -543,61 +555,61 @@ namespace Tests.Common
             
             if (typeof (T) == typeof(DeployedExtractionFilter))
             {
-                var container = WhenIHaveA<FilterContainer>();
-                return (T)(object)new DeployedExtractionFilter(Repository,"Fish = 'haddock'",container);
+                var container = WhenIHaveA<FilterContainer>(repository);
+                return (T)(object)new DeployedExtractionFilter(repository,"Fish = 'haddock'",container);
             }
             if (typeof (T) == typeof(DeployedExtractionFilterParameter))
             {
-                var filter = WhenIHaveA<DeployedExtractionFilter>();
+                var filter = WhenIHaveA<DeployedExtractionFilter>(repository);
                 filter.WhereSQL = "@had = 'enough'";
                 return (T)(object)filter.GetFilterFactory().CreateNewParameter(filter, "DECLARE @had as varchar(100)");
             }
 
             if(typeof(T)== typeof(ExtractionProgress))
             {
-                var cata = new Catalogue(Repository, "MyCata");
-                var cataItem = new CatalogueItem(Repository, cata, "MyCol");
-                var table = new TableInfo(Repository, "MyTable");
-                var col = new ColumnInfo(Repository, "mycol", "datetime", table);
+                var cata = new Catalogue(repository, "MyCata");
+                var cataItem = new CatalogueItem(repository, cata, "MyCol");
+                var table = new TableInfo(repository, "MyTable");
+                var col = new ColumnInfo(repository, "mycol", "datetime", table);
 
-                var ei = new ExtractionInformation(Repository, cataItem, col, "mycol");
+                var ei = new ExtractionInformation(repository, cataItem, col, "mycol");
                 cata.TimeCoverage_ExtractionInformation_ID = ei.ID;
                 cata.SaveToDatabase();
 
-                var eds = new ExtractableDataSet(Repository, cata);
-                var project = new Project(Repository, "My Proj");
-                var config = new ExtractionConfiguration(Repository, project);
-                var sds = new SelectedDataSets(Repository, config, eds, null);
+                var eds = new ExtractableDataSet(repository, cata);
+                var project = new Project(repository, "My Proj");
+                var config = new ExtractionConfiguration(repository, project);
+                var sds = new SelectedDataSets(repository, config, eds, null);
 
-                return (T)(object)new ExtractionProgress(Repository, sds);
+                return (T)(object)new ExtractionProgress(repository, sds);
             }
             
             throw new TestCaseNotWrittenYetException(typeof(T));
         }
 
-        private void WhenIHaveTwoTables(out ColumnInfo col1, out ColumnInfo col2, out ColumnInfo col3)
+        private static void WhenIHaveTwoTables(MemoryDataExportRepository repository,out ColumnInfo col1, out ColumnInfo col2, out ColumnInfo col3)
         {
             TableInfo ti1;
             TableInfo ti2;
-            WhenIHaveTwoTables(out ti1, out ti2, out col1, out col2, out col3);
+            WhenIHaveTwoTables(repository, out ti1, out ti2, out col1, out col2, out col3);
         }
 
-        private void WhenIHaveTwoTables(out TableInfo ti1, out TableInfo ti2, out ColumnInfo col1, out ColumnInfo col2, out ColumnInfo col3)
+        private static void WhenIHaveTwoTables(MemoryDataExportRepository repository,out TableInfo ti1, out TableInfo ti2, out ColumnInfo col1, out ColumnInfo col2, out ColumnInfo col3)
         {
-            ti1 = WhenIHaveA<TableInfo>();
+            ti1 = WhenIHaveA<TableInfo>(repository);
             ti1.Name = "ParentTable";
             ti1.SaveToDatabase();
-            col1 = new ColumnInfo(Repository, "ParentCol", "varchar(10)", ti1);
+            col1 = new ColumnInfo(repository, "ParentCol", "varchar(10)", ti1);
          
-            ti2 = WhenIHaveA<TableInfo>();
+            ti2 = WhenIHaveA<TableInfo>(repository);
             ti2.Name = "Child Table";
-            col2 = new ColumnInfo(Repository, "ChildCol", "varchar(10)", ti2);
-            col3 = new ColumnInfo(Repository, "Desc", "varchar(10)", ti2);
+            col2 = new ColumnInfo(repository, "ChildCol", "varchar(10)", ti2);
+            col3 = new ColumnInfo(repository, "Desc", "varchar(10)", ti2);
         }
 
-        private AggregateConfiguration WhenIHaveCohortAggregateConfiguration(string name)
+        private static AggregateConfiguration WhenIHaveCohortAggregateConfiguration(MemoryDataExportRepository repository, string name)
         {
-            var config = WhenIHaveA<AggregateConfiguration>();
+            var config = WhenIHaveA<AggregateConfiguration>(repository);
             config.Name = name;
             config.SaveToDatabase();
 
@@ -608,39 +620,39 @@ namespace Tests.Common
         }
 
         /// <inheritdoc cref="WhenIHaveA{T}()"/>
-        protected AggregateConfiguration WhenIHaveA<T>(out ExtractionInformation dateEi, out ExtractionInformation otherEi) where T : AggregateConfiguration
+        protected static AggregateConfiguration WhenIHaveA<T>(MemoryDataExportRepository repository, out ExtractionInformation dateEi, out ExtractionInformation otherEi) where T : AggregateConfiguration
         {
-            var ti = WhenIHaveA<TableInfo>();
-            var dateCol = new ColumnInfo(Repository, "MyDateCol", "datetime2", ti);
-            var otherCol = new ColumnInfo(Repository, "MyOtherCol", "varchar(10)", ti);
+            var ti = WhenIHaveA<TableInfo>(repository);
+            var dateCol = new ColumnInfo(repository, "MyDateCol", "datetime2", ti);
+            var otherCol = new ColumnInfo(repository, "MyOtherCol", "varchar(10)", ti);
 
-            var cata = WhenIHaveA<Catalogue>();
-            var dateCi = new CatalogueItem(Repository, cata, dateCol.Name);
-            dateEi = new ExtractionInformation(Repository, dateCi, dateCol, dateCol.Name);
-            var otherCi = new CatalogueItem(Repository, cata, otherCol.Name);
-            otherEi = new ExtractionInformation(Repository, otherCi, otherCol, otherCol.Name);
+            var cata = WhenIHaveA<Catalogue>(repository);
+            var dateCi = new CatalogueItem(repository, cata, dateCol.Name);
+            dateEi = new ExtractionInformation(repository, dateCi, dateCol, dateCol.Name);
+            var otherCi = new CatalogueItem(repository, cata, otherCol.Name);
+            otherEi = new ExtractionInformation(repository, otherCi, otherCol, otherCol.Name);
 
-            var config = new AggregateConfiguration(Repository, cata, "My graph");
-            new AggregateDimension(Repository, otherEi, config);
+            var config = new AggregateConfiguration(repository, cata, "My graph");
+            new AggregateDimension(repository, otherEi, config);
             return config;
         }
 
         /// <inheritdoc cref="WhenIHaveA{T}()"/>
-        protected ANOTable WhenIHaveA<T>(out ExternalDatabaseServer server) where T : ANOTable
+        protected static ANOTable WhenIHaveA<T>(MemoryDataExportRepository repository, out ExternalDatabaseServer server) where T : ANOTable
         {
-            server = new ExternalDatabaseServer(Repository, "ANO Server", new ANOStorePatcher());
-            var anoTable = new ANOTable(Repository, server, "ANOFish", "F");
+            server = new ExternalDatabaseServer(repository, "ANO Server", new ANOStorePatcher());
+            var anoTable = new ANOTable(repository, server, "ANOFish", "F");
             return anoTable;
         }
 
         /// <inheritdoc cref="WhenIHaveA{T}()"/>
-        protected ObjectExport WhenIHaveA<T>(out ShareManager shareManager) where T : ObjectExport
+        protected static ObjectExport WhenIHaveA<T>(MemoryDataExportRepository repository, out ShareManager shareManager) where T : ObjectExport
         {
-            shareManager = new ShareManager(new RepositoryProvider(Repository));
-            return shareManager.GetNewOrExistingExportFor(WhenIHaveA<Catalogue>());
+            shareManager = new ShareManager(new RepositoryProvider(repository));
+            return shareManager.GetNewOrExistingExportFor(WhenIHaveA<Catalogue>(repository));
         }
 
-        private T Save<T>(T s) where T : ISaveable
+        private static T Save<T>(T s) where T : ISaveable
         {
             s.SaveToDatabase();
             return s;

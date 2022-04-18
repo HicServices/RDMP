@@ -4,8 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using FAnsi.Connections;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Curation.Data;
@@ -29,12 +31,12 @@ namespace Rdmp.Core.Repositories
     /// 
     /// <para>It also includes helper properties for setting up relationships and controling records in the non DatabaseEntity tables in the database e.g. <see cref="AggregateForcedJoinManager"/></para>
     /// </summary>
-    public interface ICatalogueRepository : IRepository
+    public interface ICatalogueRepository : IRepository, IServerDefaults
     {
         /// <summary>
         /// Allows creation/discover/deletion of <see cref="AggregateForcedJoin"/> objects
         /// </summary>
-        IAggregateForcedJoinManager AggregateForcedJoinManager { get;}
+        IAggregateForcedJoinManager AggregateForcedJoinManager { get; }
 
         IGovernanceManager GovernanceManager { get; }
 
@@ -42,26 +44,31 @@ namespace Rdmp.Core.Repositories
         /// Allows linking/unlinking <see cref="DataAccessCredentials"/> to <see cref="TableInfo"/>
         /// </summary>
         ITableInfoCredentialsManager TableInfoCredentialsManager { get; }
-        
+
+
         /// <summary>
         /// Allows creation/discover of <see cref="JoinInfo"/> objects which describe how to join two <see cref="TableInfo"/> together in SQL
         /// </summary>
-        IJoinManager JoinManager { get;}
+        IJoinManager JoinManager { get; }
+
 
         /// <summary>
         /// Supports creation of objects using Reflection and discovery of Types based on Managed Extensibility Framework Export attributes.
         /// </summary>
         MEF MEF { get; set; }
 
+
         /// <summary>
         /// Stores class comments discovered at startup
         /// </summary>
         CommentStore CommentStore { get; set; }
 
+        string GetEncryptionKeyPath();
+
         /// <summary>
         /// Manages information about what set containers / subcontainers exist under a <see cref="CohortIdentificationConfiguration"/>
         /// </summary>
-        ICohortContainerManager CohortContainerManager { get;}
+        ICohortContainerManager CohortContainerManager { get; }
 
         /// <summary>
         /// Handles encrypting/decrypting strings with private/public key encryption
@@ -76,7 +83,7 @@ namespace Rdmp.Core.Repositories
         /// <summary>
         /// Manager for AND/OR WHERE containers and filters
         /// </summary>
-        IFilterManager FilterManager {get;}
+        IFilterManager FilterManager { get; }
 
         /// <summary>
         /// Manager for identifying current active <see cref="Plugin"/>s
@@ -106,21 +113,18 @@ namespace Rdmp.Core.Repositories
         /// </summary>
         /// <returns></returns>
         TicketingSystemConfiguration GetTicketingSystem();
-        
-        T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null)
-            where T : IMapsDirectlyToDatabaseTable;
-        
+
         DbCommand PrepareCommand(string sql, Dictionary<string, object> parameters, DbConnection con, DbTransaction transaction = null);
 
         T[] GetReferencesTo<T>(IMapsDirectlyToDatabaseTable o) where T : ReferenceOtherObjectDatabaseEntity;
 
-        IServerDefaults GetServerDefaults();
 
         /// <summary>
         /// True if the <paramref name="tableInfo"/> has <see cref="Lookup"/> relationships declared which make it a linkable lookup table in queries.
         /// </summary>
         /// <returns></returns>
         bool IsLookupTable(ITableInfo tableInfo);
+        void SetEncryptionKeyPath(string fullName);
 
         /// <summary>
         /// Returns all Catalogues which have any CatalogueItems which are associated with any of the ColumnInfos of this TableInfo.  If this is a lookup table then expect to get back 
@@ -134,7 +138,8 @@ namespace Rdmp.Core.Repositories
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        ExternalDatabaseServer[] GetAllDatabases<T>()where T:IPatcher,new();
-        
+        ExternalDatabaseServer[] GetAllDatabases<T>() where T : IPatcher, new();
+        void DeleteEncryptionKeyPath();
+
     }
 }

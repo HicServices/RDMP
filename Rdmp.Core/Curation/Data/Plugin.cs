@@ -85,6 +85,11 @@ namespace Rdmp.Core.Curation.Data
 
         #endregion
 
+        public Plugin()
+        {
+
+        }
+
         /// <summary>
         /// Defines a new collection of dlls that provide plugin functionality for RDMP
         /// </summary>

@@ -7,6 +7,7 @@
 using Microsoft.Data.SqlClient;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
+using System;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration
@@ -17,8 +18,8 @@ namespace Rdmp.Core.Tests.Curation.Integration
         public void TestExtractionFilterDeleting_WhenItHas_ExtractionFilterParameterSet_DirectlyFails()
         {
             var filter = GetFilterWithParameterSet();
-            var ex = Assert.Throws<SqlException>(()=>filter.DeleteInDatabase());
-            StringAssert.Contains("The DELETE statement conflicted with the REFERENCE constraint", ex.Message);
+            var ex = Assert.Throws<Exception>(()=>filter.DeleteInDatabase());
+            Assert.AreEqual("Cannot delete 'Age' because there are one or more ExtractionFilterParameterSet declared on it", ex.Message);
         }
 
         private ExtractionFilter GetFilterWithParameterSet()
