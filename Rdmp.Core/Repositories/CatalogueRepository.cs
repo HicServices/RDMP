@@ -213,7 +213,8 @@ namespace Rdmp.Core.Repositories
         /// <returns></returns>
         public T[] GetReferencesTo<T>(IMapsDirectlyToDatabaseTable o) where T : ReferenceOtherObjectDatabaseEntity
         {
-            return GetAllObjects<T>("WHERE ReferencedObjectID = " + o.ID + " AND ReferencedObjectType = '" + o.GetType().Name + "' AND ReferencedObjectRepositoryType = '" + o.Repository.GetType().Name + "'");
+            return GetAllObjects<T>(
+                $"WHERE ReferencedObjectID = {o.ID} AND ReferencedObjectType = '{o.GetType().Name}' AND ReferencedObjectRepositoryType = '{o.Repository.GetType().Name}'");
         }
 
         public bool IsLookupTable(ITableInfo tableInfo)
@@ -250,26 +251,19 @@ select 0", con.Connection, con.Transaction))
             if (field == PermissableDefaults.None)
                 return null;
 
-            using (var con = GetConnection())
-            {
-                using (var cmd = DatabaseCommandHelper.GetCommand(
-                    "SELECT ExternalDatabaseServer_ID FROM ServerDefaults WHERE DefaultType = @type", con.Connection,
-                    con.Transaction))
-                {
-                    var p = cmd.CreateParameter();
+            using var con = GetConnection();
+            using var cmd = DatabaseCommandHelper.GetCommand(
+                "SELECT ExternalDatabaseServer_ID FROM ServerDefaults WHERE DefaultType = @type", con.Connection,
+                con.Transaction);
+            var p = cmd.CreateParameter();
 
-                    p.ParameterName = "@type";
-                    p.Value = ServerDefaults.StringExpansionDictionary[field];
-                    cmd.Parameters.Add(p);
+            p.ParameterName = "@type";
+            p.Value = ServerDefaults.StringExpansionDictionary[field];
+            cmd.Parameters.Add(p);
 
-                    var executeScalar = cmd.ExecuteScalar();
+            var executeScalar = cmd.ExecuteScalar();
 
-                    if (executeScalar == DBNull.Value)
-                        return null;
-
-                    return GetObjectByID<ExternalDatabaseServer>(Convert.ToInt32(executeScalar));
-                }
-            }
+            return executeScalar == DBNull.Value ? null : GetObjectByID<ExternalDatabaseServer>(Convert.ToInt32(executeScalar));
         }
 
         public void ClearDefault(PermissableDefaults toDelete)
@@ -333,47 +327,37 @@ select 0", con.Connection, con.Transaction))
 
         public void SetEncryptionKeyPath(string path)
         {
-            using (var con = GetConnection())
-            {
-                //Table can only ever have 1 record
-                using (DbCommand cmd = DatabaseCommandHelper.GetCommand(
-                    @"if exists (select 1 from PasswordEncryptionKeyLocation)
+            using var con = GetConnection();
+            //Table can only ever have 1 record
+            using var cmd = DatabaseCommandHelper.GetCommand(
+                @"if exists (select 1 from PasswordEncryptionKeyLocation)
     UPDATE PasswordEncryptionKeyLocation SET Path = @Path
   else
   INSERT INTO PasswordEncryptionKeyLocation(Path,Lock) VALUES (@Path,'X')
-  ", con.Connection, con.Transaction))
-                {
-                    DatabaseCommandHelper.AddParameterWithValueToCommand("@Path", cmd, path);
-                    cmd.ExecuteNonQuery();
-                }
-            }
+  ", con.Connection, con.Transaction);
+            DatabaseCommandHelper.AddParameterWithValueToCommand("@Path", cmd, path);
+            cmd.ExecuteNonQuery();
         }
 
         public string GetEncryptionKeyPath()
         {
             //otherwise use the database
-            using (var con = DiscoveredServer.GetConnection())
-            {
-                con.Open();
-                //Table can only ever have 1 record
-                using (DbCommand cmd = DatabaseCommandHelper.GetCommand("SELECT Path from PasswordEncryptionKeyLocation", con))
-                    return cmd.ExecuteScalar() as string;
-            }
+            using var con = DiscoveredServer.GetConnection();
+            con.Open();
+            //Table can only ever have 1 record
+            using var cmd = DatabaseCommandHelper.GetCommand("SELECT Path from PasswordEncryptionKeyLocation", con);
+            return cmd.ExecuteScalar() as string;
         }
 
         public void DeleteEncryptionKeyPath()
         {
-            using (var con = GetConnection())
-            {
-                //Table can only ever have 1 record
-                using (DbCommand cmd = DatabaseCommandHelper.GetCommand("DELETE FROM PasswordEncryptionKeyLocation",
-                    con.Connection, con.Transaction))
-                {
-                    int affectedRows = cmd.ExecuteNonQuery();
-                    if (affectedRows != 1)
-                        throw new Exception("Delete from PasswordEncryptionKeyLocation resulted in " + affectedRows + ", expected 1");
-                }
-            }
+            using var con = GetConnection();
+            //Table can only ever have 1 record
+            using DbCommand cmd = DatabaseCommandHelper.GetCommand("DELETE FROM PasswordEncryptionKeyLocation",
+                con.Connection, con.Transaction);
+            var affectedRows = cmd.ExecuteNonQuery();
+            if (affectedRows != 1)
+                throw new Exception($"Delete from PasswordEncryptionKeyLocation resulted in {affectedRows}, expected 1");
         }
     }
 }
