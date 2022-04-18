@@ -45,6 +45,7 @@ public class YamlRepository : MemoryDataExportRepository
 
         // Build the serializer
         var builder = new SerializerBuilder();
+        builder.WithTypeConverter(new VersionYamlTypeConverter());
 
         foreach(var type in GetCompatibleTypes())
         {
@@ -75,7 +76,10 @@ public class YamlRepository : MemoryDataExportRepository
     private void LoadObjects()
     {
         var subdirs = Directory.GetDirectories();
-        var deserializer = new Deserializer();
+        var builder = new DeserializerBuilder();
+        builder.WithTypeConverter(new VersionYamlTypeConverter());
+
+        var deserializer = builder.Build();
 
         foreach (var t in GetCompatibleTypes())
         {

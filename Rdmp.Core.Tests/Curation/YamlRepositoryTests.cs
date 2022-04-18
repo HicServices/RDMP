@@ -14,8 +14,10 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Managers;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Tests.Common;
 
@@ -262,6 +264,46 @@ namespace Rdmp.Core.Tests.Curation
             Assert.IsNull(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
 
 
+        }
+
+
+
+        [Test]
+        public void YamlRepository_LoadSavePluginClass()
+        {
+            var dir = GetUniqueDirectory();
+
+            var repo1 = new YamlRepository(dir);
+            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Blah.zip"));
+            File.WriteAllBytes(fi.FullName, new byte[] { 0x1, 0x2 });
+
+            var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
+            var tripart = new Version(version);
+
+            var lma1 = UnitTests.WhenIHaveA<LoadModuleAssembly>(repo1);
+            var lma2 = UnitTests.WhenIHaveA<LoadModuleAssembly>(repo1);
+
+
+            lma1.Plugin.Name = "MyPlugin";
+            lma1.Plugin.RdmpVersion = new Version(version); //the version of Rdmp.Core targetted
+            lma1.Plugin.PluginVersion = new Version(1, 1, 1, 1); //the version of the plugin
+            lma1.Plugin.SaveToDatabase();
+
+            lma2.Plugin.Name = "MyPlugin";
+            lma2.Plugin.RdmpVersion = new Version(version);//the version of Rdmp.Core targetted (same as above)
+            lma2.Plugin.PluginVersion = new Version(1, 1, 1, 2);//the version of the plugin (higher)
+            lma2.Plugin.SaveToDatabase();
+
+            var plugins = repo1.PluginManager.GetCompatiblePlugins();
+            Assert.That(plugins, Has.Length.EqualTo(1));
+            Assert.That(plugins[0], Is.EqualTo(lma2.Plugin));
+
+
+            // A fresh repo loaded from the same directory should have persisted object relationships
+            var repo2 = new YamlRepository(dir);
+            plugins = repo2.PluginManager.GetCompatiblePlugins();
+            Assert.That(plugins, Has.Length.EqualTo(1));
+            Assert.That(plugins.Single(), Is.EqualTo(lma2.Plugin));
         }
 
         [Test]
