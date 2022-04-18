@@ -29,10 +29,9 @@ namespace Rdmp.Core.Repositories
         {
             var eds = GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault();
 
-            if(eds == null)
-                return new CatalogueExtractabilityStatus(false,false);
-
-            return new CatalogueExtractabilityStatus(true, eds.Project_ID != null);
+            return eds == null
+                ? new CatalogueExtractabilityStatus(false, false)
+                : new CatalogueExtractabilityStatus(true, eds.Project_ID != null);
         }
 
         public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers()
@@ -51,10 +50,7 @@ namespace Rdmp.Core.Repositories
         
         public virtual string GetValue(DataExportProperty property)
         {
-            if (PropertiesDictionary.ContainsKey(property))
-                return PropertiesDictionary[property];
-
-            return null;
+            return PropertiesDictionary.ContainsKey(property) ? PropertiesDictionary[property] : null;
         }
 
         public virtual void SetValue(DataExportProperty property, string value)
@@ -94,7 +90,7 @@ namespace Rdmp.Core.Repositories
                 PackageDictionary.Add(package, new HashSet<IExtractableDataSet>());
 
             if (!PackageDictionary[package].Contains(dataSet))
-                throw new ArgumentException("dataSet " + dataSet + " is not part of package " + package + " so cannot be removed", "dataSet");
+                throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed", "dataSet");
 
             PackageDictionary[package].Remove(dataSet);
         }
