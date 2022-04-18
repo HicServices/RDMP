@@ -277,7 +277,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
             }
             catch (KeyNotFoundException)
             {
-                // its gone already, must be a bad reference
+                // it's gone already, must be a bad reference
             }
             
             if(ac != null)
