@@ -501,7 +501,7 @@ namespace Rdmp.Core.Providers
             AllAggregateFilterParameters = GetAllObjects<AggregateFilterParameter>(_catalogueRepository);
 
             var cataRepo = _catalogueRepository as CatalogueRepository;
-            _aggregateFilterManager = cataRepo != null ? new FilterManagerFromChildProvider(cataRepo, this) : cataRepo.FilterManager;
+            _aggregateFilterManager = cataRepo != null ? new FilterManagerFromChildProvider(cataRepo, this) : _catalogueRepository.FilterManager;
         }
 
         private void InjectCohortIdentificationConfigurations()
