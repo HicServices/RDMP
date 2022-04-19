@@ -15,10 +15,10 @@ namespace Rdmp.Core.Providers.Nodes
     /// </summary>
     public class LinkedCohortNode : Node,IMasqueradeAs, IDeletableWithCustomMessage
     {
-        public ExtractionConfiguration Configuration { get; set; }
+        public IExtractionConfiguration Configuration { get; set; }
         public IExtractableCohort Cohort { get; set; }
 
-        public LinkedCohortNode(ExtractionConfiguration configuration, IExtractableCohort cohort)
+        public LinkedCohortNode(IExtractionConfiguration configuration, IExtractableCohort cohort)
         {
             Configuration = configuration;
             Cohort = cohort;

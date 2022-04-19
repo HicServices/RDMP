@@ -1688,7 +1688,7 @@ namespace Rdmp.Core.Providers
             OrphanAggregateConfigurations = otherCat.OrphanAggregateConfigurations;
         }
 
-        public bool SelectiveRefresh(IMapsDirectlyToDatabaseTable databaseEntity)
+        public virtual bool SelectiveRefresh(IMapsDirectlyToDatabaseTable databaseEntity)
         {
             if(databaseEntity is AggregateFilterParameter afp)
             {
@@ -1756,12 +1756,13 @@ namespace Rdmp.Core.Providers
         public bool SelectiveRefresh(AggregateFilterContainer container)
         {
             var aggregate = container.GetAggregate();
-            var descendancy = GetDescendancyListIfAnyFor(container.GetAggregate());
+            var descendancy = GetDescendancyListIfAnyFor(aggregate);
 
             if (descendancy != null)
             {
-                // update the AllAggregateConfigurations just incase we became a root filter for someone 
-                AllAggregateConfigurations = GetAllObjects<AggregateConfiguration>(_catalogueRepository);
+                // update just incase we became a root filter for someone 
+                aggregate.RevertToDatabaseState();
+                
                 BuildAggregateFilterContainers();
 
                 AddChildren(aggregate, descendancy.Add(aggregate));

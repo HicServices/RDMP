@@ -17,6 +17,7 @@ using System.Text.RegularExpressions;
 using FAnsi;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
@@ -148,6 +149,9 @@ namespace Rdmp.Core.Curation.Data
         public virtual void RevertToDatabaseState()
         {
             Repository.RevertToDatabaseState(this);
+
+            if (this is IInjectKnown ii)
+                ii.ClearAllInjections();
         }
 
         /// <inheritdoc/>

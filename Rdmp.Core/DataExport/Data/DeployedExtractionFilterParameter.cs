@@ -70,6 +70,12 @@ namespace Rdmp.Core.DataExport.Data
             get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
         }
 
+        #region Relationship Properties
+        [NoMappingToDatabase]
+        public DeployedExtractionFilter ExtractionFilter { get { 
+                return Repository.GetObjectByID<DeployedExtractionFilter>(ExtractionFilter_ID); }  }
+        #endregion
+
         public DeployedExtractionFilterParameter()
         {
 
