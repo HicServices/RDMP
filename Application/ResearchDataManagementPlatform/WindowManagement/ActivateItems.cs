@@ -66,8 +66,7 @@ using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
-
-
+using ReusableLibraryCode.Settings;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement
@@ -442,8 +441,13 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
-            //update the child provider
-            GetChildProvider();
+            // if we don't want to do selective refresh or can't (because partial refreshes are not supported on the type)
+            if(HardRefresh || !UserSettings.SelectiveRefresh || !CoreChildProvider.SelectiveRefresh(e.Object))
+            {
+                //update the child provider with a full refresh
+                GetChildProvider();
+                HardRefresh = false;
+            }
             RefreshProblemProviders();
         }
 

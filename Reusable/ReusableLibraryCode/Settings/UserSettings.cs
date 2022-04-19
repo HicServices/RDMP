@@ -323,6 +323,17 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("FindWindowHeight", value); }
         }
 
+        /// <summary>
+        /// Enable to refresh only objects which you make changes to instead of 
+        /// fetching all database changes since your last edit.  This improves 
+        /// performance in large RDMP deployments with thousands of Projects configured.
+        /// </summary>
+        public static bool SelectiveRefresh
+        {
+            get { return AppSettings.GetValueOrDefault("SelectiveRefresh", true); }
+            set { AppSettings.AddOrUpdateValue("SelectiveRefresh", value); }
+        }
+
 
         #endregion
 

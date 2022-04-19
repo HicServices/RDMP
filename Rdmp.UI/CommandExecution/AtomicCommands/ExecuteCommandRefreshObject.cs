@@ -37,6 +37,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             base.Execute();
 
             _databaseEntity.RevertToDatabaseState();
+            BasicActivator.HardRefresh = true;
             Publish(_databaseEntity);
         }
 

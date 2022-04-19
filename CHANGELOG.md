@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - "parameter description" and "property name" have been added to the "set value" option for filters - https://github.com/HicServices/RDMP/issues/1034
 - Filter parameter values are now prompted for the user when adding existing filter without known good value sets - https://github.com/HicServices/RDMP/issues/1030
 - "Set Parameter Value(s)" option added to filter menus so you can more easily change the parameter values - https://github.com/HicServices/RDMP/issues/1035
+- Added 'SelectiveRefresh' user setting
 
 ### Fixed
 

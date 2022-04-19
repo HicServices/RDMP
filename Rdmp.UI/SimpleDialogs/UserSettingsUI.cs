@@ -85,6 +85,7 @@ namespace Rdmp.UI.SimpleDialogs
             cbScoreZeroForCohortAggregateContainers.Checked = UserSettings.ScoreZeroForCohortAggregateContainers;
             cbAdvancedFindFilters.Checked = UserSettings.AdvancedFindFilters;
             cbIncludeZeroSeriesInGraphs.Checked = UserSettings.IncludeZeroSeriesInGraphs;
+            cbSelectiveRefresh.Checked = UserSettings.SelectiveRefresh;
             tbCreateDatabaseTimeout.Text = UserSettings.CreateDatabaseTimeout.ToString();
             tbArchiveTriggerTimeout.Text = UserSettings.ArchiveTriggerTimeout.ToString();
             tbTooltipAppearDelay.Text = UserSettings.TooltipAppearDelay.ToString();
@@ -104,6 +105,7 @@ namespace Rdmp.UI.SimpleDialogs
             AddTooltip(cbScoreZeroForCohortAggregateContainers,nameof(UserSettings.ScoreZeroForCohortAggregateContainers));
             AddTooltip(cbAdvancedFindFilters,nameof(UserSettings.AdvancedFindFilters));
             AddTooltip(cbIncludeZeroSeriesInGraphs,nameof(UserSettings.IncludeZeroSeriesInGraphs));
+            AddTooltip(cbSelectiveRefresh, nameof(UserSettings.SelectiveRefresh));
             AddTooltip(label7, nameof(UserSettings.CreateDatabaseTimeout));
             AddTooltip(tbCreateDatabaseTimeout, nameof(UserSettings.CreateDatabaseTimeout));
             AddTooltip(label13, nameof(UserSettings.ArchiveTriggerTimeout));
@@ -217,6 +219,9 @@ namespace Rdmp.UI.SimpleDialogs
 
             if (cb == cbIncludeZeroSeriesInGraphs)
                 UserSettings.IncludeZeroSeriesInGraphs = cb.Checked;
+
+            if(cb == cbSelectiveRefresh)
+                UserSettings.SelectiveRefresh = cb.Checked;
         }
 
         private void ddTheme_SelectedIndexChanged(object sender, EventArgs e)

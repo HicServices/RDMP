@@ -29,6 +29,7 @@ using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.CommandExecution
 {
@@ -507,6 +508,14 @@ namespace Rdmp.Core.CommandExecution
         /// Component for auditing errors that should be brought to the users attention subtly (e.g. if a plugin crashes while attempting to create menu items)
         /// </summary>
         ICheckNotifier GlobalErrorCheckNotifier { get; }
+
+        /// <summary>
+        /// Set to true to force the next <see cref="Publish(IMapsDirectlyToDatabaseTable)"/>
+        /// to be a hard refresh that ignores users <see cref="UserSettings.SelectiveRefresh"/>
+        /// settings
+        /// </summary>
+        bool HardRefresh { get; set; }
+
         /// <summary>
         /// Called when <see cref="BasicCommandExecution.Publish"/> is invoked.  Allows you to respond to publish events outside of UI code.  UI code
         /// should invoke the RefreshBus system in Rdmp.UI
