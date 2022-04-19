@@ -464,7 +464,7 @@ namespace Rdmp.Core.Providers
         private void BuildCohortCohortAggregateContainers()
         {
             AllCohortAggregateContainers = GetAllObjects<CohortAggregateContainer>(_catalogueRepository);
-
+            
 
             //if we have a database repository then we should get asnwers from the caching version CohortContainerManagerFromChildProvider otherwise
             //just use the one that is configured on the repository.
@@ -1380,13 +1380,8 @@ namespace Rdmp.Core.Providers
             if (oldRoute.BetterRouteExists)
                 return newRoute;
 
-            
-            //there was a horrible problem with 
-            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(
-                "Could not add '" + key + "' to Ascendancy Tree with parents " + newRoute +
-                " because it is already listed under hierarchy " + oldRoute, CheckResult.Warning));
-            
-            return oldRoute;
+            // If in doubt use the newest one
+            return newRoute;
         
         }
         
@@ -1717,6 +1712,8 @@ namespace Rdmp.Core.Providers
 
                 if(descendancy != null)
                 {
+                    BuildAggregateConfigurations();
+
                     BuildCohortCohortAggregateContainers();
                     AddChildren(parentContainer, descendancy.Add(parentContainer));
                     return true;
@@ -1731,6 +1728,7 @@ namespace Rdmp.Core.Providers
 
                 if (descendancy != null)
                 {
+                    BuildAggregateConfigurations();
                     BuildCohortCohortAggregateContainers();
                     AddChildren(cic);
                     return true;
