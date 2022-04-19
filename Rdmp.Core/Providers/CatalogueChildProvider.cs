@@ -163,7 +163,7 @@ namespace Rdmp.Core.Providers
         public ExtractionFilterParameterSet[] AllCatalogueValueSets;
         public ExtractionFilterParameterSetValue[] AllCatalogueValueSetValues;
         
-        private readonly ICohortContainerManager _cohortContainerManager;
+        private ICohortContainerManager _cohortContainerManager;
         
         public CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; private set; }
         public CohortAggregateContainer[] AllCohortAggregateContainers { get; set; }
@@ -325,7 +325,8 @@ namespace Rdmp.Core.Providers
 
             BuildAggregateConfigurations();
 
-            AllCohortAggregateContainers = GetAllObjects<CohortAggregateContainer>(repository);
+            BuildCohortCohortAggregateContainers();
+
             AllJoinables = GetAllObjects<JoinableCohortAggregateConfiguration>(repository);
             AllJoinUses = GetAllObjects<JoinableCohortAggregateConfigurationUse>(repository);
 
@@ -336,11 +337,6 @@ namespace Rdmp.Core.Providers
                                     
             ReportProgress("After Filter and Joinable fetching");
 
-            //if we have a database repository then we should get asnwers from the caching version CohortContainerManagerFromChildProvider otherwise
-            //just use the one that is configured on the repository.
-            var cataRepo = repository as CatalogueRepository;
-            
-            _cohortContainerManager = cataRepo != null ? new CohortContainerManagerFromChildProvider(cataRepo, this) : repository.CohortContainerManager;
 
             AllLookups = GetAllObjects<Lookup>(repository);
 
@@ -403,7 +399,8 @@ namespace Rdmp.Core.Providers
             AllLoadMetadatasNode = new AllLoadMetadatasNode();
             AddChildren(AllLoadMetadatasNode);
 
-            InjectCohortIdentificationConfigurations();
+            foreach (CohortIdentificationConfiguration cic in AllCohortIdentificationConfigurations)
+                AddChildren(cic);
 
             //add the orphans under the orphan folder
             AddToDictionaries(new HashSet<object>(OrphanAggregateConfigurations),new DescendancyList(OrphanAggregateConfigurationsNode));
@@ -464,6 +461,18 @@ namespace Rdmp.Core.Providers
             ReportProgress("After building exports");
         }
 
+        private void BuildCohortCohortAggregateContainers()
+        {
+            AllCohortAggregateContainers = GetAllObjects<CohortAggregateContainer>(_catalogueRepository);
+
+
+            //if we have a database repository then we should get asnwers from the caching version CohortContainerManagerFromChildProvider otherwise
+            //just use the one that is configured on the repository.
+            var cataRepo = _catalogueRepository as CatalogueRepository;
+
+            _cohortContainerManager = cataRepo != null ? new CohortContainerManagerFromChildProvider(cataRepo, this) : _catalogueRepository.CohortContainerManager;
+        }
+
         private void BuildAggregateConfigurations()
         {
             AllJoinableCohortAggregateConfigurationUse = GetAllObjects<JoinableCohortAggregateConfigurationUse>(_catalogueRepository);
@@ -504,11 +513,6 @@ namespace Rdmp.Core.Providers
             _aggregateFilterManager = cataRepo != null ? new FilterManagerFromChildProvider(cataRepo, this) : _catalogueRepository.FilterManager;
         }
 
-        private void InjectCohortIdentificationConfigurations()
-        {
-            foreach (CohortIdentificationConfiguration cic in AllCohortIdentificationConfigurations)
-                AddChildren(cic);
-        }
 
         protected void ReportProgress(string desc)
         {
@@ -1686,20 +1690,57 @@ namespace Rdmp.Core.Providers
 
         public bool SelectiveRefresh(IMapsDirectlyToDatabaseTable databaseEntity)
         {
+            if(databaseEntity is AggregateFilterParameter afp)
+            {
+                return SelectiveRefresh(afp.AggregateFilter);
+            }
             if(databaseEntity is AggregateFilter af)
             {
                 return SelectiveRefresh(af);
             }
-
             if (databaseEntity is AggregateFilterContainer afc)
             {
                 return SelectiveRefresh(afc);
             }
+            if (databaseEntity is CohortAggregateContainer cac)
+            {
+                return SelectiveRefresh(cac);
+            }
+            return false;
+        }
+        public bool SelectiveRefresh(CohortAggregateContainer container)
+        {
+            var parentContainer = container.GetParentContainerIfAny();
+            if(parentContainer != null)
+            {
+                var descendancy = GetDescendancyListIfAnyFor(parentContainer);
+
+                if(descendancy != null)
+                {
+                    BuildCohortCohortAggregateContainers();
+                    AddChildren(parentContainer, descendancy.Add(parentContainer));
+                    return true;
+                }
+            }
+
+            var cic = container.GetCohortIdentificationConfiguration();
+
+            if (cic != null)
+            {
+                var descendancy = GetDescendancyListIfAnyFor(cic);
+
+                if (descendancy != null)
+                {
+                    BuildCohortCohortAggregateContainers();
+                    AddChildren(cic);
+                    return true;
+                }
+            }
+
             return false;
         }
         public bool SelectiveRefresh(AggregateFilter f)
         {
-
             var knownContainer = GetDescendancyListIfAnyFor(f.FilterContainer);
 
             if (knownContainer != null)
