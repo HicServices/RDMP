@@ -52,7 +52,7 @@ namespace Rdmp.Core.DataQualityEngine.Reports
 
         /// <summary>
         /// Set this property to use an explicit DQE results store database instead of the
-        /// default DQE database indicated by the <see cref="ICatalogueRepository.GetServerDefaults"/>
+        /// default DQE database indicated by the <see cref="IServerDefaults.GetDefaultFor(PermissableDefaults)"/>
         /// </summary>
         public DQERepository ExplicitDQERepository { get; set; }
 
