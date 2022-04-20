@@ -19,15 +19,15 @@ namespace Rdmp.Core.Tests.CommandExecution
         [Test]
         public void Test_CatalogueDescription_Normal()
         {
-            UserSettings.AllowIdentifiableExtractions = false;
+            UserSettings.Wait5SecondsAfterStartupUI = false;
 
-            GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetUserSetting),new CommandLineObjectPicker(new []{"AllowIdentifiableExtractions","true"}, GetActivator()));
+            GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetUserSetting),new CommandLineObjectPicker(new []{ "Wait5SecondsAfterStartupUI", "true"}, GetActivator()));
 
-            Assert.IsTrue(UserSettings.AllowIdentifiableExtractions);
+            Assert.IsTrue(UserSettings.Wait5SecondsAfterStartupUI);
 
-            GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetUserSetting),new CommandLineObjectPicker(new []{"AllowIdentifiableExtractions","false"}, GetActivator()));
+            GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetUserSetting),new CommandLineObjectPicker(new []{ "Wait5SecondsAfterStartupUI", "false"}, GetActivator()));
             
-            Assert.IsFalse(UserSettings.AllowIdentifiableExtractions);
+            Assert.IsFalse(UserSettings.Wait5SecondsAfterStartupUI);
 
         }
     }

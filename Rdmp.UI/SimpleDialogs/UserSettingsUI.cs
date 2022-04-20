@@ -79,7 +79,6 @@ namespace Rdmp.UI.SimpleDialogs
             cbShowCohortWizard.Checked = UserSettings.ShowCohortWizard;
             cbDoubleClickToExpand.Checked = UserSettings.DoubleClickToExpand;
             cbDebugPerformance.Checked = UserSettings.DebugPerformance;
-            cbAllowIdentifiableExtractions.Checked = UserSettings.AllowIdentifiableExtractions;
             cbShowPipelineCompletedPopup.Checked = UserSettings.ShowPipelineCompletedPopup;
             cbHideEmptyTableLoadRunAudits.Checked = UserSettings.HideEmptyTableLoadRunAudits;
             cbScoreZeroForCohortAggregateContainers.Checked = UserSettings.ScoreZeroForCohortAggregateContainers;
@@ -98,7 +97,6 @@ namespace Rdmp.UI.SimpleDialogs
             AddTooltip(cbShowCohortWizard,nameof(UserSettings.ShowCohortWizard));
             AddTooltip(cbDoubleClickToExpand,nameof(UserSettings.DoubleClickToExpand));
             AddTooltip(cbDebugPerformance,nameof(UserSettings.DebugPerformance));
-            AddTooltip(cbAllowIdentifiableExtractions,nameof(UserSettings.AllowIdentifiableExtractions));
             AddTooltip(cbShowPipelineCompletedPopup,nameof(UserSettings.ShowPipelineCompletedPopup));
             AddTooltip(cbHideEmptyTableLoadRunAudits,nameof(UserSettings.HideEmptyTableLoadRunAudits));
             AddTooltip(cbScoreZeroForCohortAggregateContainers,nameof(UserSettings.ScoreZeroForCohortAggregateContainers));
@@ -199,10 +197,7 @@ namespace Rdmp.UI.SimpleDialogs
 
             if(cb == cbDebugPerformance)
                 UserSettings.DebugPerformance = cb.Checked;
-
-            if(cb == cbAllowIdentifiableExtractions)
-                UserSettings.AllowIdentifiableExtractions = cb.Checked;
-            
+                        
             if(cb == cbShowPipelineCompletedPopup)
                 UserSettings.ShowPipelineCompletedPopup = cb.Checked;
 

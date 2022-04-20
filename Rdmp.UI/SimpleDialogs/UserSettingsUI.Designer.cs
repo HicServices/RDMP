@@ -48,7 +48,6 @@
             this.btnClearFavourites = new System.Windows.Forms.Button();
             this.cbDoubleClickToExpand = new System.Windows.Forms.CheckBox();
             this.cbDebugPerformance = new System.Windows.Forms.CheckBox();
-            this.cbAllowIdentifiableExtractions = new System.Windows.Forms.CheckBox();
             this.cbShowPipelineCompletedPopup = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.olvErrorCodes = new BrightIdeasSoftware.ObjectListView();
@@ -69,14 +68,14 @@
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.tbArchiveTriggerTimeout = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.tbTooltipAppearDelay = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.userSettingsToolTips = new System.Windows.Forms.ToolTip(this.components);
-            this.label12 = new System.Windows.Forms.Label();
-            this.tbArchiveTriggerTimeout = new System.Windows.Forms.TextBox();
-            this.label13 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvErrorCodes)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -300,22 +299,10 @@
             this.cbDebugPerformance.UseVisualStyleBackColor = true;
             this.cbDebugPerformance.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
-            // cbAllowIdentifiableExtractions
-            // 
-            this.cbAllowIdentifiableExtractions.AutoSize = true;
-            this.cbAllowIdentifiableExtractions.Location = new System.Drawing.Point(7, 20);
-            this.cbAllowIdentifiableExtractions.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.cbAllowIdentifiableExtractions.Name = "cbAllowIdentifiableExtractions";
-            this.cbAllowIdentifiableExtractions.Size = new System.Drawing.Size(179, 19);
-            this.cbAllowIdentifiableExtractions.TabIndex = 13;
-            this.cbAllowIdentifiableExtractions.Text = "Allow Identifiable Extractions";
-            this.cbAllowIdentifiableExtractions.UseVisualStyleBackColor = true;
-            this.cbAllowIdentifiableExtractions.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
-            // 
             // cbShowPipelineCompletedPopup
             // 
             this.cbShowPipelineCompletedPopup.AutoSize = true;
-            this.cbShowPipelineCompletedPopup.Location = new System.Drawing.Point(7, 72);
+            this.cbShowPipelineCompletedPopup.Location = new System.Drawing.Point(4, 43);
             this.cbShowPipelineCompletedPopup.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbShowPipelineCompletedPopup.Name = "cbShowPipelineCompletedPopup";
             this.cbShowPipelineCompletedPopup.Size = new System.Drawing.Size(200, 19);
@@ -345,7 +332,6 @@
             this.olvErrorCodes.CellEditUseWholeCell = false;
             this.olvErrorCodes.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvErrorCodes.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.olvErrorCodes.HideSelection = false;
             this.olvErrorCodes.Location = new System.Drawing.Point(3, 19);
             this.olvErrorCodes.Name = "olvErrorCodes";
             this.olvErrorCodes.Size = new System.Drawing.Size(370, 298);
@@ -355,7 +341,7 @@
             // cbHideEmptyTableLoadRunAudits
             // 
             this.cbHideEmptyTableLoadRunAudits.AutoSize = true;
-            this.cbHideEmptyTableLoadRunAudits.Location = new System.Drawing.Point(7, 47);
+            this.cbHideEmptyTableLoadRunAudits.Location = new System.Drawing.Point(4, 22);
             this.cbHideEmptyTableLoadRunAudits.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbHideEmptyTableLoadRunAudits.Name = "cbHideEmptyTableLoadRunAudits";
             this.cbHideEmptyTableLoadRunAudits.Size = new System.Drawing.Size(208, 19);
@@ -502,7 +488,6 @@
             // 
             // groupBox6
             // 
-            this.groupBox6.Controls.Add(this.cbAllowIdentifiableExtractions);
             this.groupBox6.Controls.Add(this.cbShowPipelineCompletedPopup);
             this.groupBox6.Controls.Add(this.cbHideEmptyTableLoadRunAudits);
             this.groupBox6.Location = new System.Drawing.Point(249, 174);
@@ -533,6 +518,35 @@
             this.groupBox7.TabIndex = 25;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Miscellaneous";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(260, 101);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(50, 15);
+            this.label12.TabIndex = 25;
+            this.label12.Text = "seconds";
+            // 
+            // tbArchiveTriggerTimeout
+            // 
+            this.tbArchiveTriggerTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbArchiveTriggerTimeout.Location = new System.Drawing.Point(153, 97);
+            this.tbArchiveTriggerTimeout.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.tbArchiveTriggerTimeout.Name = "tbArchiveTriggerTimeout";
+            this.tbArchiveTriggerTimeout.Size = new System.Drawing.Size(100, 23);
+            this.tbArchiveTriggerTimeout.TabIndex = 24;
+            this.tbArchiveTriggerTimeout.TextChanged += new System.EventHandler(this.tbArchiveTriggerTimeout_TextChanged);
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(10, 101);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(136, 15);
+            this.label13.TabIndex = 23;
+            this.label13.Text = "Archive Trigger Timeout:";
             // 
             // label11
             // 
@@ -576,35 +590,6 @@
             this.userSettingsToolTips.InitialDelay = 250;
             this.userSettingsToolTips.IsBalloon = true;
             this.userSettingsToolTips.ReshowDelay = 50;
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(260, 101);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(50, 15);
-            this.label12.TabIndex = 25;
-            this.label12.Text = "seconds";
-            // 
-            // tbArchiveTriggerTimeout
-            // 
-            this.tbArchiveTriggerTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbArchiveTriggerTimeout.Location = new System.Drawing.Point(153, 97);
-            this.tbArchiveTriggerTimeout.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.tbArchiveTriggerTimeout.Name = "tbArchiveTriggerTimeout";
-            this.tbArchiveTriggerTimeout.Size = new System.Drawing.Size(100, 23);
-            this.tbArchiveTriggerTimeout.TabIndex = 24;
-            this.tbArchiveTriggerTimeout.TextChanged += new System.EventHandler(this.tbArchiveTriggerTimeout_TextChanged);
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(10, 101);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(136, 15);
-            this.label13.TabIndex = 23;
-            this.label13.Text = "Archive Trigger Timeout:";
             // 
             // UserSettingsFileUI
             // 
@@ -661,7 +646,6 @@
         private System.Windows.Forms.Button btnClearFavourites;
         private System.Windows.Forms.CheckBox cbDoubleClickToExpand;
         private System.Windows.Forms.CheckBox cbDebugPerformance;
-        private System.Windows.Forms.CheckBox cbAllowIdentifiableExtractions;
         private System.Windows.Forms.CheckBox cbShowPipelineCompletedPopup;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.CheckBox cbHideEmptyTableLoadRunAudits;
