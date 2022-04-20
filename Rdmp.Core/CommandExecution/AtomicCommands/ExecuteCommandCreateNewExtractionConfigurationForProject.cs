@@ -124,8 +124,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     WindowTitle = "New Extraction Configuration",
                     TaskDescription = "Enter a name for the new Extraction Configuration",
                     EntryLabel = "Name",
-                    //Add default project name "PROJ_NUMBER YYYY/MM Extraction"
-                }, 255, null, out name, false))
+                }, 255, $"{p.ProjectNumber} {DateTime.Now.ToString("MMM yyyy")} Extraction".Trim(), out name, false))
                     return;
             }
 
