@@ -330,7 +330,7 @@ namespace ReusableLibraryCode.Settings
         /// </summary>
         public static bool SelectiveRefresh
         {
-            get { return AppSettings.GetValueOrDefault("SelectiveRefresh", true); }
+            get { return AppSettings.GetValueOrDefault("SelectiveRefresh", false); }
             set { AppSettings.AddOrUpdateValue("SelectiveRefresh", value); }
         }
 
