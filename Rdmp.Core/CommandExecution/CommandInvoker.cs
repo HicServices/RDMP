@@ -52,20 +52,36 @@ namespace Rdmp.Core.CommandExecution
 
             _argumentDelegates = _basicActivator.GetDelegates();
 
-            
-            AddDelegate(typeof(ICatalogueRepository),true,(p)=>_repositoryLocator.CatalogueRepository);
-            AddDelegate(typeof(IDataExportRepository),true,(p)=>_repositoryLocator.DataExportRepository);
-            AddDelegate(typeof(IBasicActivateItems),true,(p)=>_basicActivator);
-            AddDelegate(typeof(IRDMPPlatformRepositoryServiceLocator),true,(p)=>_repositoryLocator);
-            AddDelegate(typeof(DirectoryInfo), false,(p) => _basicActivator.SelectDirectory($"Enter Directory for '{p.Name}'"));
-            AddDelegate(typeof(FileInfo), false,(p) => _basicActivator.SelectFile($"Enter File for '{p.Name}'"));
-            
+
+            AddDelegate(typeof(ICatalogueRepository), true, (p) => _repositoryLocator.CatalogueRepository);
+            AddDelegate(typeof(IDataExportRepository), true, (p) => _repositoryLocator.DataExportRepository);
+            AddDelegate(typeof(IBasicActivateItems), true, (p) => _basicActivator);
+            AddDelegate(typeof(IRDMPPlatformRepositoryServiceLocator), true, (p) => _repositoryLocator);
+            AddDelegate(typeof(DirectoryInfo), false, (p) => _basicActivator.SelectDirectory($"Enter Directory for '{p.Name}'"));
+            AddDelegate(typeof(FileInfo), false, (p) => _basicActivator.SelectFile($"Enter File for '{p.Name}'"));
+
             // Is the Global Check Notifier the best here? 
-            AddDelegate(typeof(ICheckNotifier),true,(p) => _basicActivator.GlobalErrorCheckNotifier);
-            
+            AddDelegate(typeof(ICheckNotifier), true, (p) => _basicActivator.GlobalErrorCheckNotifier);
+
+            AddDelegate(typeof(Uri), false, (p) =>
+                _basicActivator.TypeText(
+                    new DialogArgs
+                    {
+                        WindowTitle = "Value needed for parameter",
+                        EntryLabel = GetPromptFor(p),
+                    }
+                    , 1000, p.DefaultValue?.ToString(), out string result, false)
+                ? new Uri(result)
+                : throw new OperationCanceledException());
+
             AddDelegate(typeof(string), false,(p) =>
-            
-                _basicActivator.TypeText("Value needed for parameter", GetPromptFor(p), 1000, null, out string result, false)
+                _basicActivator.TypeText(
+                    new DialogArgs
+                    {
+                        WindowTitle = "Value needed for parameter",
+                        EntryLabel = GetPromptFor(p),
+                    }
+                    , 1000, p.DefaultValue?.ToString(), out string result, false)
                 ? result
                 : throw new OperationCanceledException());
 
@@ -77,7 +93,14 @@ namespace Rdmp.Core.CommandExecution
             AddDelegate(typeof(DiscoveredDatabase),false,(p)=>_basicActivator.SelectDatabase(true,GetPromptFor(p)));
             AddDelegate(typeof(DiscoveredTable),false,(p)=>_basicActivator.SelectTable(true,GetPromptFor(p)));
 
-            AddDelegate(typeof(DatabaseEntity),false, (p) =>_basicActivator.SelectOne(GetPromptFor(p), GetAllObjectsOfType(p.Type)));
+            AddDelegate(typeof(DatabaseEntity), false, (p) => 
+                _basicActivator.SelectOne(
+                 new DialogArgs
+                 {
+                     WindowTitle = GetPromptFor(p),
+                     InitialObjectSelection = p.DefaultValue is IMapsDirectlyToDatabaseTable m ? new IMapsDirectlyToDatabaseTable[] { m } : null
+                 }, GetAllObjectsOfType(p.Type))); ;
+
             AddDelegate(typeof(IPipeline), false, SelectPipeline);
             AddDelegate(typeof(IMightBeDeprecated),false, SelectOne<IMightBeDeprecated>);
             AddDelegate(typeof(IDisableable),false, SelectOne<IDisableable>);
@@ -262,14 +285,27 @@ namespace Rdmp.Core.CommandExecution
             return GetDelegate(a)?.Run(a);
         }
 
-        private T SelectOne<T>(RequiredArgument parameterInfo)
+        private T SelectOne<T>(RequiredArgument p)
         {
-            return (T)_basicActivator.SelectOne(parameterInfo.Name,_basicActivator.GetAll<T>().Cast<IMapsDirectlyToDatabaseTable>().ToArray());
+            return (T)_basicActivator.SelectOne(
+                 new DialogArgs
+                 {
+                     WindowTitle = GetPromptFor(p),
+                     InitialObjectSelection = p.DefaultValue is IMapsDirectlyToDatabaseTable m ? new IMapsDirectlyToDatabaseTable[] { m } : null
+                 }
+                , _basicActivator.GetAll<T>().Cast<IMapsDirectlyToDatabaseTable>().ToArray());
         }
         private T[] SelectMany<T>(RequiredArgument parameterInfo) 
         {
             return
-                _basicActivator.SelectMany(parameterInfo.Name, typeof(T), _basicActivator.GetAll<T>().Cast<IMapsDirectlyToDatabaseTable>().ToArray())
+                _basicActivator.SelectMany(
+                    new DialogArgs
+                    {
+                        WindowTitle = parameterInfo.Name,
+                        InitialObjectSelection = parameterInfo.DefaultValue == null ? null :
+                                ((IEnumerable<T>)parameterInfo.DefaultValue).Cast<IMapsDirectlyToDatabaseTable>().ToArray()
+
+                    }, typeof(T), _basicActivator.GetAll<T>().Cast<IMapsDirectlyToDatabaseTable>().ToArray())
                 .Cast<T>().ToArray();
         }
 
