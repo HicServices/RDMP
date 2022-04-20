@@ -323,7 +323,7 @@ namespace Rdmp.Core.DataExport.Data
                 {"Project_ID", project.ID},
                 {"Username", Environment.UserName},
                 {"Description", "Initial Configuration"},
-                {"Name",name ?? "New ExtractionConfiguration" + Guid.NewGuid() }
+                {"Name",string.IsNullOrWhiteSpace(name) ? "New ExtractionConfiguration" + Guid.NewGuid() : name },
                 {"Separator",","}
             });
         }

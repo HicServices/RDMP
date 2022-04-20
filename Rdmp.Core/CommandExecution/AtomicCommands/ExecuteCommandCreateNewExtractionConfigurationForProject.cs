@@ -6,19 +6,42 @@
 
 using System.Drawing;
 using System.Linq;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
+    /// <summary>
+    /// Creates a new <see cref="ExtractionConfiguration"/> under a given <see cref="Project"/>
+    /// </summary>
     public class ExecuteCommandCreateNewExtractionConfigurationForProject:BasicCommandExecution,IAtomicCommand
     {
         private readonly Project _project;
+        private readonly string _name;
 
-        public ExecuteCommandCreateNewExtractionConfigurationForProject(IBasicActivateItems activator,Project project) : base(activator)
+        /// <summary>
+        /// True to prompt the user to pick an <see cref="ExtractableCohort"/> after creating the <see cref="ExtractionConfiguration"/>
+        /// </summary>
+        public bool PromptForCohort { get; set; } = true;
+
+        /// <summary>
+        /// True to prompt the user to pick some <see cref="ExtractableDataSet"/> after creating the <see cref="ExtractionConfiguration"/>
+        /// </summary>
+        public bool PromptForDatasets { get; set; } = true;
+
+        [UseWithObjectConstructor]
+        public ExecuteCommandCreateNewExtractionConfigurationForProject(IBasicActivateItems activator,
+
+            [DemandsInitialization("The Project under which to create the new ExtractionConfiguration")]
+            Project project,
+            [DemandsInitialization("The name for the new ExtractionConfiguration")]
+            string name = "") : base(activator)
         {
             _project = project;
+            this._name = name;
         }
         
         public ExecuteCommandCreateNewExtractionConfigurationForProject(IBasicActivateItems activator) : base(activator)
@@ -46,26 +69,36 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if(p == null)
                 return;
 
-            string name = "";
-            if (!BasicActivator.TypeText(new DialogArgs
+            string name = _name;
+            
+            // if we don't have a name and we are running in interactive mode
+            if(string.IsNullOrWhiteSpace(name) && BasicActivator.IsInteractive)
             {
-                WindowTitle = "New Extraction Configuration",
-                TaskDescription = "Enter a name for the new Extraction Configuration",
-                EntryLabel = "Name",
-                //Add default project name "PROJ_NUMBER YYYY/MM Extraction"
-            }, 255, null, out name, false))
-                return;
-
-            var newConfig = new ExtractionConfiguration(BasicActivator.RepositoryLocator.DataExportRepository, p, name);
-
-            if (p.GetAssociatedCohortIdentificationConfigurations().Any())
-            {
-                var chooseCohortCommand = new ExecuteCommandChooseCohort(BasicActivator, newConfig);
-                chooseCohortCommand.Execute();
+                if (!BasicActivator.TypeText(new DialogArgs
+                {
+                    WindowTitle = "New Extraction Configuration",
+                    TaskDescription = "Enter a name for the new Extraction Configuration",
+                    EntryLabel = "Name",
+                    //Add default project name "PROJ_NUMBER YYYY/MM Extraction"
+                }, 255, null, out name, false))
+                    return;
             }
 
+            // create the new config
+            var newConfig = new ExtractionConfiguration(BasicActivator.RepositoryLocator.DataExportRepository, p, name);
+
+            var chooseCohort = new ExecuteCommandChooseCohort(BasicActivator, newConfig);
+            if (PromptForCohort && BasicActivator.IsInteractive && !chooseCohort.IsImpossible)
+            {
+                chooseCohort.Execute();
+            }
+            
             var chooseDatasetsCommand = new ExecuteCommandAddDatasetsToConfiguration(BasicActivator, newConfig);
-            chooseDatasetsCommand.Execute();
+
+            if (PromptForDatasets && BasicActivator.IsInteractive && !chooseDatasetsCommand.IsImpossible)
+            {
+                chooseDatasetsCommand.Execute();
+            }
 
             //refresh the project
             Publish(p);
