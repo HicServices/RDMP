@@ -17,6 +17,7 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
+using Rdmp.Core.Repositories;
 using Tests.Common;
 using Tests.Common.Scenarios;
 
@@ -30,9 +31,8 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
         private ColumnInfo _columnToTransform;
         private Pipeline _pipeline;
 
-        [TestCase(true)]
-        [TestCase(false)]
-        public void SQLServerDestination(bool lookupsEtc)
+        [Test]
+        public void SQLServerDestination()
         {
             DiscoveredDatabase dbToExtractTo = null;
 
@@ -56,9 +56,8 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
 
                 _extractableColumns.Add(newColumn);
             }
-
-            if (lookupsEtc) 
-                CreateLookupsEtc();
+            
+            CreateLookupsEtc();
 
             try
             {
@@ -85,8 +84,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
                 Assert.AreEqual(_columnToTransform.Data_type, destinationTable.DiscoverColumn("DateOfBirth").DataType.SQLType);
                 Assert.AreEqual("int",destinationTable.DiscoverColumn("YearOfBirth").DataType.SQLType);
                 
-                if (lookupsEtc)
-                    AssertLookupsEtcExist(dbToExtractTo);
+                AssertLookupsEtcExist(dbToExtractTo);
             }
             finally
             {

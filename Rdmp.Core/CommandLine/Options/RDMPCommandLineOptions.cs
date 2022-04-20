@@ -22,7 +22,7 @@ namespace Rdmp.Core.CommandLine.Options
     /// </summary>
     public abstract class RDMPCommandLineOptions
     {
-        private LinkedRepositoryProvider _repositoryLocator;
+        private IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
 
         [Option(Required = false, HelpText = @"Name of the Metadata server (where Catalogue and Data Export are stored) e.g. localhost\sqlexpress")]
         public string ServerName { get; set; }
@@ -51,6 +51,9 @@ namespace Rdmp.Core.CommandLine.Options
         [Option(Required = false, Default = false, HelpText = "Process returns errorcode '1' (instead of 0) if there are warnings")]
         public bool FailOnWarnings { get; set; }
 
+        [Option(Required = false, HelpText = "Connect to an RDMP platform 'database' stored on the file system at this folder")]
+        public string Dir { get; set; }
+
         /// <summary>
         /// If <see cref="ConnectionStringsFile"/> was specified and that file existed and was succesfully loaded
         /// using <see cref="PopulateConnectionStringsFromYamlIfMissing()"/> then this property will store the
@@ -72,8 +75,15 @@ namespace Rdmp.Core.CommandLine.Options
         {
             if(_repositoryLocator == null)
             {
-                GetConnectionStrings(out var c, out var d);
-                _repositoryLocator = new LinkedRepositoryProvider(c?.ConnectionString, d?.ConnectionString);
+                if (!string.IsNullOrWhiteSpace(Dir))
+                {
+                    return _repositoryLocator = new RepositoryProvider(new YamlRepository(new DirectoryInfo(Dir)));
+                }
+                else
+                {
+                    GetConnectionStrings(out var c, out var d);
+                    _repositoryLocator = new LinkedRepositoryProvider(c?.ConnectionString, d?.ConnectionString);
+                }
             }
 
             return _repositoryLocator;

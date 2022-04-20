@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using FAnsi.Discovery;
+using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
@@ -181,6 +182,13 @@ namespace Rdmp.Core.Tests.Curation.Integration.TableValuedFunctionTests
 
             //sync should have proposed to adjusting the datatype
             Assert.IsTrue(syncer.Synchronize(new AcceptAllCheckNotifier()));
+
+            if(CatalogueRepository is not TableRepository)
+            {
+                // with a Yaml repository there is only one copy of the object so no need
+                // to check for differences in db
+                return;
+            }
 
             //now parameter should have the correct datatype
             Assert.IsTrue(parameter.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent);

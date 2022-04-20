@@ -36,7 +36,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
             IProject projectSpecific,
             
             [DemandsInitialization(CatalogueCreationCommandExecution.Desc_TargetFolder)]
-            string targetFolder) : base(activator,projectSpecific,string.IsNullOrEmpty(targetFolder) ? null : new CatalogueFolder(targetFolder))
+            string targetFolder) : base(activator,projectSpecific, targetFolder)
         {
             _importTable = existingTable;
         }

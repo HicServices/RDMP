@@ -80,9 +80,6 @@ namespace Rdmp.Core.Curation.Data.Serialization
             //remove null arguments they won't help us here
             foreach (string key in newDictionary.Keys.ToArray())
             {
-                if (newDictionary[key] is CatalogueFolder)
-                    newDictionary[key] = newDictionary[key].ToString();
-
                 if (newDictionary[key] == null)
                     newDictionary.Remove(key);
             }

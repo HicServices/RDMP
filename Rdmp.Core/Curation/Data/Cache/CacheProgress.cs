@@ -162,6 +162,11 @@ namespace Rdmp.Core.Curation.Data.Cache
             CacheLagPeriodLoadDelay = (cacheLagLoadDelayPeriod == null) ? "" : cacheLagLoadDelayPeriod.ToString();
         }
 
+        public CacheProgress()
+        {
+
+        }
+
         /// <summary>
         /// Defines that the given <see cref="LoadProgress"/> is a DLE data load that is driven by reading data from a cache.  The instance created can be used
         /// to describe which pipeline should be run to fill that cache, the period that has been fetched from the remote endpoint so far etc.
@@ -267,7 +272,7 @@ FETCH NEXT " + batchSize + @" ROWS ONLY", conn.Connection,conn.Transaction))
 
         public DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen)
         {
-            serverChosen = CatalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+            serverChosen = CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
             return GetDistinctLoggingDatabase();
         }
 

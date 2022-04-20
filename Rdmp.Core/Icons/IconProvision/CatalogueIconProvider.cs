@@ -82,12 +82,18 @@ namespace Rdmp.Core.Icons.IconProvision
         {
             if (concept == null)
                 return null;
-
+             
             //the only valid strings are "Catalogue" etc where the value exactly maps to an RDMPConcept
-            if (concept is string)
+            if (concept is string str)
             {
+                // or strings that are CatalogueFolders, they are allowed to
+                if(str.Contains('\\'))
+                {
+                    return GetImage(RDMPConcept.CatalogueFolder,kind);
+                }
+
                 RDMPConcept result;
-                if (Enum.TryParse((string)concept, true, out result))
+                if (Enum.TryParse(str, true, out result))
                     concept = result;
                 else
                     return null; //it's a string but an unhandled one so give them null back

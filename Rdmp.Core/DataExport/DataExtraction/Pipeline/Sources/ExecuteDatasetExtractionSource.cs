@@ -432,7 +432,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         
         private void StartAudit(string sql)
         {
-            var dataExportRepo = ((DataExportRepository) Request.DataExportRepository);
+            var dataExportRepo = Request.DataExportRepository;
 
             var previousAudit = dataExportRepo.GetAllCumulativeExtractionResultsFor(Request.Configuration, Request.DatasetBundle.DataSet).ToArray();
 
@@ -464,9 +464,10 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         private void StartAuditGlobals()
         {
-            var dataExportRepo = ((DataExportRepository)GlobalsRequest.RepositoryLocator.DataExportRepository);
+            var repo = GlobalsRequest.RepositoryLocator.DataExportRepository;
 
-            var previousAudit = dataExportRepo.GetAllGlobalExtractionResultsFor(GlobalsRequest.Configuration);
+            var previousAudit = repo.GetAllObjectsWhere<SupplementalExtractionResults>("ExtractionConfiguration_ID", GlobalsRequest.Configuration.ID)
+                .Where(c => c.CumulativeExtractionResults_ID == null);
 
             //delete old audit records
             foreach (var audit in previousAudit)

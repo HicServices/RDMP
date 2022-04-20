@@ -54,6 +54,11 @@ namespace Rdmp.Core.DataExport.Data
         #endregion
 
 
+        public ExtractableDataSetPackage()
+        {
+
+        }
+
         /// <summary>
         /// Reads an <see cref="ExtractableDataSetPackage"/> out of the data export database
         /// </summary>

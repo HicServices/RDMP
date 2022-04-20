@@ -80,6 +80,11 @@ namespace Rdmp.Core.Curation.Data
 
         #endregion
 
+        public LoadModuleAssembly()
+        {
+            ClearAllInjections();
+        }
+
         /// <summary>
         /// Uploads the given dll file to the catalogue database ready for use as a plugin within RDMP (also uploads any pdb file in the same dir)
         /// </summary>

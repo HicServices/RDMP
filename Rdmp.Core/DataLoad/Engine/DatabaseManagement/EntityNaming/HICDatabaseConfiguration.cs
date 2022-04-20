@@ -59,7 +59,7 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming
         /// <param name="lmd"></param>
         /// <param name="namer"></param>
         public HICDatabaseConfiguration(ILoadMetadata lmd, INameDatabasesAndTablesDuringLoads namer = null):
-            this(lmd.GetDistinctLiveDatabaseServer(), namer, lmd.CatalogueRepository.GetServerDefaults(),lmd.OverrideRAWServer)
+            this(lmd.GetDistinctLiveDatabaseServer(), namer, lmd.CatalogueRepository,lmd.OverrideRAWServer)
         {
             var globalIgnorePattern = GetGlobalIgnorePatternIfAny(lmd.CatalogueRepository);
             

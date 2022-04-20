@@ -52,7 +52,7 @@ namespace Rdmp.Core.DataQualityEngine.Reports
 
         /// <summary>
         /// Set this property to use an explicit DQE results store database instead of the
-        /// default DQE database indicated by the <see cref="ICatalogueRepository.GetServerDefaults"/>
+        /// default DQE database indicated by the <see cref="IServerDefaults.GetDefaultFor(PermissableDefaults)"/>
         /// </summary>
         public DQERepository ExplicitDQERepository { get; set; }
 
@@ -69,7 +69,7 @@ namespace Rdmp.Core.DataQualityEngine.Reports
             if (_loggingServer != null && _logManager != null && _loggingTask != null)
                 return;
 
-            _loggingServer = repository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+            _loggingServer = repository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
             if (_loggingServer != null)
             {

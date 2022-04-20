@@ -762,11 +762,11 @@ namespace Rdmp.Core.Providers
             AddToDictionaries(new HashSet<object>(AllANOTables), new DescendancyList(anoTablesNode));
         }
 
-        private void AddChildren(CatalogueFolder folder, DescendancyList descendancy)
+        private void AddChildren(string folder, DescendancyList descendancy)
         {
             ConcurrentBag<object> childObjects = new ConcurrentBag<object>();
 
-            Parallel.ForEach(folder.GetImmediateSubFoldersUsing(AllCatalogues), (f) =>
+            Parallel.ForEach(CatalogueFolder.GetImmediateSubFoldersUsing(folder,AllCatalogues), (f) =>
             {
                 //add subfolders
                 childObjects.Add(f);

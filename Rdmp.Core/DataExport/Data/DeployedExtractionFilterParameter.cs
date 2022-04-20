@@ -70,6 +70,11 @@ namespace Rdmp.Core.DataExport.Data
             get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
         }
 
+        public DeployedExtractionFilterParameter()
+        {
+
+        }
+
         /// <summary>
         /// Creates a new parameter in the metadata database.
         /// </summary>

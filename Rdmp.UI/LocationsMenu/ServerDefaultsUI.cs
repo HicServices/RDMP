@@ -52,7 +52,7 @@ namespace Rdmp.UI.LocationsMenu
         {
             try
             {
-                defaults = Activator.RepositoryLocator.CatalogueRepository.GetServerDefaults();
+                defaults = Activator.RepositoryLocator.CatalogueRepository;
 
                 var allServers = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().ToArray();
                 

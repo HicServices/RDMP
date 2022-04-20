@@ -236,8 +236,8 @@ namespace Rdmp.Core.Providers
 
         private void AddChildren(IExtractableDataSetPackage package, DescendancyList descendancy)
         {
-            var children = new HashSet<object>(dataExportRepository.PackageManager.GetAllDataSets(package, ExtractableDataSets)
-                .Select(ds => new PackageContentNode(package, ds, dataExportRepository.PackageManager)));
+            var children = new HashSet<object>(dataExportRepository.GetAllDataSets(package, ExtractableDataSets)
+                .Select(ds => new PackageContentNode(package, ds, dataExportRepository)));
 
             AddToDictionaries(children, descendancy);
 
@@ -653,7 +653,7 @@ namespace Rdmp.Core.Providers
         {
             lock(WriteLock)
             {
-                return dataExportRepository.PackageManager.GetAllDataSets(package, ExtractableDataSets);
+                return dataExportRepository.GetAllDataSets(package, ExtractableDataSets);
             }
         }
         

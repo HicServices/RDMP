@@ -23,6 +23,13 @@ namespace Rdmp.Core.Curation.Data
     /// </summary>
     public class SelfCertifyingDataAccessPoint : EncryptedPasswordHost, IDataAccessCredentials, IDataAccessPoint
     {
+        /// <summary>
+        /// Blank constructor for use with serializers
+        /// </summary>
+        public SelfCertifyingDataAccessPoint()
+        {
+
+        }
 
         /// <inheritdoc cref="SelfCertifyingDataAccessPoint"/>
         public SelfCertifyingDataAccessPoint(ICatalogueRepository repository, DatabaseType databaseType) : base(repository)

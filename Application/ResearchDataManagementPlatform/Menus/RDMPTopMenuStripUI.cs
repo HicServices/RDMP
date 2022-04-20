@@ -523,12 +523,25 @@ namespace ResearchDataManagementPlatform.Menus
         private void queryDataExport_Click(object sender, EventArgs e)
         {
             var cmd = new ExecuteCommandQueryPlatformDatabase(Activator, nameof(DataExportPatcher));
+
+            if (cmd.IsImpossible)
+            {
+                Activator.Show("Cannot Query Database", cmd.ReasonCommandImpossible);
+                return;
+            }
+                
             cmd.Execute();
         }
 
         private void queryCatalogue_Click(object sender, EventArgs e)
         {
             var cmd = new ExecuteCommandQueryPlatformDatabase(Activator, nameof(CataloguePatcher));
+
+            if (cmd.IsImpossible)
+            {
+                Activator.Show("Cannot Query Database",cmd.ReasonCommandImpossible);
+                return;
+            }
             cmd.Execute();
         }
 

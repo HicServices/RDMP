@@ -20,80 +20,45 @@ namespace Rdmp.Core.Curation.Data
     /// <para>CatalogueFolder is persisted as a string but has methods to help prevent illegal paths and to calculate hierarchy based on multiple Catalogues 
     /// (See <see cref="GetImmediateSubFoldersUsing"/>)</para>
     /// </summary>
-    public class CatalogueFolder : IConvertible
-    {
-        private readonly ICatalogue _parent;
-        private string _path;
-         
+    public static class CatalogueFolder
+    {         
         /// <summary>
-        /// The topmost folder under which all <see cref="CatalogueFolder"/> reside
+        /// The topmost folder under which all other folders reside
         /// </summary>
-        public static CatalogueFolder Root = new CatalogueFolder("\\");
+        public const string Root = "\\";
 
 
-        /// <summary>
-        /// The full path of the folder (starts and ends with a slash).  Throws if you try to set property to an invalid path 
-        /// <seealso cref="IsValidPath(string)"/> 
-        /// </summary>
-        public string Path
+        public static string Adjust(string candidate)
         {
-            get { return _path; }
-            set
+            if (IsValidPath(candidate, out var reason))
             {
-                string reason;
+                candidate = candidate.ToLower();
 
-                if (IsValidPath(value, out reason))
-                {
-                    _path = value.ToLower();
-                    
-                    //ensure it ends with a slash
-                    if (!_path.EndsWith("\\"))
-                        _path += "\\";
-                }
-                else
-                    throw new NotSupportedException(reason);
+                //ensure it ends with a slash
+                if (!candidate.EndsWith("\\"))
+                    candidate += "\\";
             }
+            else
+                throw new NotSupportedException(reason);
+
+            return candidate;
         }
 
-        /// <summary>
-        /// Creates a new folder that the Catalogue should now reside in.
-        /// <para><remarks>After calling this you should use <code>parent.Folder = instance; parent.SaveToDatabase();</code></remarks></para>
-        /// </summary>
-        /// <param name="parent"></param>
-        /// <param name="folder"></param>
-        public CatalogueFolder(ICatalogue parent, string folder)
-        {
-            //always Lower everything!
-            folder = folder.ToLower();
-
-            _parent = parent;
-            Path = folder;
-        }
-
-        /// <summary>
-        /// Creates a folder that does not know who it's associated Catalogues are (and indeed there might not even be any e.g. if user has \2001\Research\ then probably the \2001\ folder is empty, certainly the root is probably empty)
-        /// </summary>
-        /// <param name="path"></param>
-        public CatalogueFolder(string path)
-        {
-            Path = path;
-        }
-
-        private bool IsValidPath(string candidatePath, out string reason)
+        public static bool IsValidPath(string candidatePath, out string reason)
         {
             reason = null;
 
             if (string.IsNullOrWhiteSpace(candidatePath))
-                reason = "An attempt was made to set Catalogue " +_parent+ " Folder to null, every Catalogue must have a folder, set it to \\ if you want the root";
+                reason = "An attempt was made to set Catalogue Folder to null, every Catalogue must have a folder, set it to \\ if you want the root";
             else
             if (!candidatePath.StartsWith("\\"))
-                reason = "All catalogue paths must start with \\ but Catalogue " + _parent + " had an attempt to set it's folder to :" + candidatePath;
+                reason = "All catalogue paths must start with \\.  Invalid path was:" + candidatePath;
             else
             if (candidatePath.Contains("\\\\"))//if it contains double slash
-                reason = "Catalogue paths cannot contain double slashes '\\\\', Catalogue " + _parent + " had an attempt to set it's folder to :" + candidatePath;
+                reason = "Catalogue paths cannot contain double slashes '\\\\', Invalid path was:" + candidatePath;
             else
             if (candidatePath.Contains("/"))//if it contains double slash
-                reason = "Catalogue paths must use backwards slashes not forward slashes, Catalogue " + _parent + " had an attempt to set it's folder to :" + candidatePath;
+                reason = "Catalogue paths must use backwards slashes not forward slashes, Invalid path was:" + candidatePath;
 
             return reason == null;
         }
@@ -105,182 +70,29 @@ namespace Rdmp.Core.Curation.Data
         /// <returns></returns>
         public static bool IsValidPath(string candidatePath)
         {
-            string whoCares;
-            return new CatalogueFolder(candidatePath).IsValidPath(candidatePath, out whoCares);
-        }
-
-        /// <inheritdoc/>
-        public override string ToString()
-        {
-            return Path;
-        }
-
-        /// <inheritdoc/>
-        public override bool Equals(object obj)
-        {
-            var other = obj as CatalogueFolder;
-            if (other != null)
-                return other.Path.Equals(this.Path);
-
-            return base.Equals(obj);
-        }
-        /// <inheritdoc/>
-        public override int GetHashCode()
-        {
-            return Path.GetHashCode();
+            return IsValidPath(candidatePath, out _);
         }
 
         /// <summary>
-        /// Makes this class behave as a string for IConvertible
+        /// Returns true if the <paramref name="candidate"/> is in a subfolder of
+        /// <paramref name="potentialParent"/>.
         /// </summary>
-        /// <returns></returns>
-        public TypeCode GetTypeCode()
-        {
-            return TypeCode.String;
-        }
-
-        /// <summary>
-        /// Not supported
-        /// </summary>
-        public bool ToBoolean(IFormatProvider provider)
-        {
-            throw new InvalidCastException();
-        }
-
-        /// <summary>
-        /// Not supported
-        /// </summary>
-        public char ToChar(IFormatProvider provider)
-        {
-            throw new InvalidCastException();
-        }
-
-        /// <summary>
-        /// Not supported
-        /// </summary>
-        public sbyte ToSByte(IFormatProvider provider)
-        {
-            throw new InvalidCastException();
-        }
-
-        /// <summary>
-        /// Not supported
-        /// </summary>
-        public byte ToByte(IFormatProvider provider)
-        {
-            throw new InvalidCastException();
-        }
-
-        /// <summary>
-        /// Not supported
-        /// </summary>
-        public short ToInt16(IFormatProvider provider)
-        {
-            throw new InvalidCastException();
-        }
-
-        /// <summary>
-        /// Not supported
-        /// </summary>
-        public ushort ToUInt16(IFormatProvider provider)
-        {
-            throw new InvalidCastException();
-        }
-
-        /// <summary>
-        /// Not supported
-        /// </summary>
-        public int ToInt32(IFormatProvider provider)
-        {
-            throw new InvalidCastException();
-        }
-        /// <summary>
-        /// Not supported
-        /// </summary>
-        public uint ToUInt32(IFormatProvider provider)
-        {
-            throw new InvalidCastException();
-        }
-        /// <summary>
-        /// Not supported
-        /// </summary>
-        public long ToInt64(IFormatProvider provider)
-        {
-            throw new InvalidCastException();
-        }
-        /// <summary>
-        /// Not supported
-        /// </summary>
-        public ulong ToUInt64(IFormatProvider provider)
-        {
-            throw new InvalidCastException();
-        }
-        /// <summary>
-        /// Not supported
-        /// </summary>
-        public float ToSingle(IFormatProvider provider)
-        {
-            throw new InvalidCastException();
-        }
-        /// <summary>
-        /// Not supported
-        /// </summary>
-        public double ToDouble(IFormatProvider provider)
-        {
-            throw new InvalidCastException();
-        }
-        /// <summary>
-        /// Not supported
-        /// </summary>
-        public decimal ToDecimal(IFormatProvider provider)
-        {
-            throw new InvalidCastException();
-        }
-        /// <summary>
-        /// Not supported
-        /// </summary>
-        public DateTime ToDateTime(IFormatProvider provider)
-        {
-            throw new InvalidCastException();
-        }
-        /// <summary>
-        /// Returns the Path
-        /// </summary>
-        /// <param name="provider"></param>
-        /// <returns></returns>
-        public string ToString(IFormatProvider provider)
-        {
-            return Path;
-        }
-
-        /// <inheritdoc/>
-        public object ToType(Type conversionType, IFormatProvider provider)
-        {
-            //if it is a string or subtype of string?
-            if (typeof (string).IsAssignableFrom(conversionType))
-                return Path;//return path
-
-            throw new InvalidCastException();
-        }
-
-        /// <summary>
-        /// Returns true if the passed value is resident in a subfolder of this one.
-        /// </summary>
+        /// <param name="candidate"></param>
         /// <param name="potentialParent"></param>
         /// <returns></returns>
-        public bool IsSubFolderOf(CatalogueFolder potentialParent)
+        public static bool IsSubFolderOf(string candidate, string potentialParent)
         {
             if (potentialParent == null)
                 return false;
 
             //they are the same folder so not subfoldres
-            if (Path.Equals(potentialParent.Path))
+            if (candidate.Equals(potentialParent))
                 return false;
 
             //we contain the potential parents path therefore we are a child of them
-            return Path.StartsWith(potentialParent.Path);
+            return candidate.StartsWith(potentialParent);
         }
-        
+
         /// <summary>
         /// Returns the next level of folder down towards the Catalogues in collection - note that the next folder down might be empty 
         /// e.g.
@@ -298,28 +110,28 @@ namespace Rdmp.Core.Curation.Data
         /// Returns :
         /// \2005\Research\ - containing CatalogueA</para>
         /// </summary>
+        /// <param name="currentFolder"></param>
         /// <param name="collection"></param>
-        [Pure]
-        public CatalogueFolder[] GetImmediateSubFoldersUsing(IEnumerable<Catalogue> collection)
+        public static string[] GetImmediateSubFoldersUsing(string currentFolder,IEnumerable<Catalogue> collection)
         {
-            List<CatalogueFolder> toReturn = new List<CatalogueFolder>();
+            List<string> toReturn = new List<string>();
 
 
-            var remoteChildren = collection.Where(c => c.Folder.IsSubFolderOf(this)).Select(c=>c.Folder).ToArray();
+            var remoteChildren = collection.Where(c => IsSubFolderOf(c.Folder, currentFolder)).Select(c=>c.Folder).ToArray();
 
             //no subfolders exist
             if (!remoteChildren.Any())
                 return toReturn.ToArray();//empty
             
 
-            foreach (CatalogueFolder child in remoteChildren)
+            foreach (string child in remoteChildren)
             {
                 // We are \bob\
 
                 //we are looking at \bob\fish\smith\harry\
 
                 //chop off \bob\
-                string trimmed = child.Path.Substring(Path.Length);
+                string trimmed = child.Substring(currentFolder.Length);
 
                 //trimmed = fish\smith\harry\
 
@@ -328,7 +140,7 @@ namespace Rdmp.Core.Curation.Data
                 //nextFolder = fish\
 
                 //add 
-                toReturn.Add(new CatalogueFolder(Path + nextFolder));
+                toReturn.Add(currentFolder + nextFolder);
             }
 
             return toReturn.Distinct().ToArray();

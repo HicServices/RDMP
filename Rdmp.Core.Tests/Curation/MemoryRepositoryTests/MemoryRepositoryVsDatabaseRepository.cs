@@ -24,7 +24,7 @@ namespace Rdmp.Core.Tests.Curation.MemoryRepositoryTests
         [Test]
         public void TestMemoryVsDatabaseRepository_CatalogueConstructor()
         {
-            var memoryRepository = new MemoryCatalogueRepository(CatalogueRepository.GetServerDefaults());
+            var memoryRepository = new MemoryCatalogueRepository(CatalogueRepository);
 
             Catalogue memCatalogue = new Catalogue(memoryRepository, "My New Catalogue");
             Catalogue dbCatalogue = new Catalogue(CatalogueRepository,"My New Catalogue");
@@ -35,7 +35,7 @@ namespace Rdmp.Core.Tests.Curation.MemoryRepositoryTests
         [Test]
         public void TestMemoryVsDatabaseRepository_ProcessTaskConstructor()
         {
-            var memoryRepository = new MemoryCatalogueRepository(CatalogueRepository.GetServerDefaults());
+            var memoryRepository = new MemoryCatalogueRepository(CatalogueRepository);
 
             var memLmd = new LoadMetadata(memoryRepository, "My New Load");
             var dbLmd = new LoadMetadata(CatalogueRepository, "My New Load");
@@ -52,7 +52,7 @@ namespace Rdmp.Core.Tests.Curation.MemoryRepositoryTests
         [Test]
         public void TestMemoryRepository_AggregateConfigurationConstructor()
         {
-            var memoryRepository = new MemoryCatalogueRepository(CatalogueRepository.GetServerDefaults());
+            var memoryRepository = new MemoryCatalogueRepository(CatalogueRepository);
 
             Catalogue memCatalogue = new Catalogue(memoryRepository, "My New Catalogue");
             Catalogue dbCatalogue = new Catalogue(CatalogueRepository, "My New Catalogue");
@@ -89,7 +89,7 @@ namespace Rdmp.Core.Tests.Curation.MemoryRepositoryTests
             var db = GetCleanedServer(dbType);
             var tbl = db.CreateTable("OmgTables",dt);
 
-            var memoryRepository = new MemoryCatalogueRepository(CatalogueRepository.GetServerDefaults());
+            var memoryRepository = new MemoryCatalogueRepository(CatalogueRepository);
             
             var importer1 = new TableInfoImporter(memoryRepository, tbl, DataAccessContext.Any);
 

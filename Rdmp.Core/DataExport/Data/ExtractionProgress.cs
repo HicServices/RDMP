@@ -129,6 +129,11 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
 
     #endregion
 
+    public ExtractionProgress()
+    {
+
+    }
+
     public ExtractionProgress(IDataExportRepository repository, ISelectedDataSets sds, DateTime? startDate, DateTime? endDate,int numberOfDaysPerBatch,string name, int extractionInformation_ID)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
@@ -149,6 +154,11 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
     {
         var cata = sds.GetCatalogue();
         var coverageColId = cata?.TimeCoverage_ExtractionInformation_ID;
+
+        if(sds.ExtractionProgressIfAny != null)
+        {
+            throw new Exception($"There is already an ExtractionProgress associated with {sds}");
+        }
 
         if (!coverageColId.HasValue)
         {

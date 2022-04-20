@@ -6,6 +6,7 @@
 
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using System.Collections.Generic;
 
 namespace Rdmp.Core.Repositories.Managers
 {
@@ -21,6 +22,8 @@ namespace Rdmp.Core.Repositories.Managers
         /// <param name="allDataSets"></param>
         /// <returns></returns>
         IExtractableDataSet[] GetAllDataSets(IExtractableDataSetPackage package, IExtractableDataSet[] allDataSets);
+
+        Dictionary<int, List<int>> GetPackageContentsDictionary();
 
         /// <summary>
         /// Adds the given <paramref name="dataSet"/> to the <paramref name="package"/>

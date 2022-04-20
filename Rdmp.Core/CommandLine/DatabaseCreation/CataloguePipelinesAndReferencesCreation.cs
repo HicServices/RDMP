@@ -50,7 +50,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
         }
         private void CreateServers()
         {
-            var defaults = _repositoryLocator.CatalogueRepository.GetServerDefaults();
+            var defaults = _repositoryLocator.CatalogueRepository;
 
             _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging",new LoggingDatabasePatcher());
 

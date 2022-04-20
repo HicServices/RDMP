@@ -70,6 +70,11 @@ namespace Rdmp.Core.Curation.Data
         }
         #endregion
 
+        public LookupCompositeJoinInfo()
+        {
+
+        }
+
         /// <inheritdoc cref="LookupCompositeJoinInfo"/>
         public LookupCompositeJoinInfo(ICatalogueRepository repository, Lookup parent, ColumnInfo foreignKey,
             ColumnInfo primaryKey, string collation = null)

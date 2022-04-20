@@ -81,6 +81,11 @@ namespace Rdmp.Core.Curation.Data
         }
         #endregion
 
+        public ExtractionFilterParameter()
+        {
+
+        }
+
         /// <summary>
         /// Creates a new parameter on the given <paramref name="parent"/>
         /// <para>It is better to use <see cref="ParameterCreator"/> to automatically generate parameters based on the WHERE Sql</para>

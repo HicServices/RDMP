@@ -95,7 +95,12 @@ namespace Rdmp.Core.Curation.Data
                 return Repository.GetAllObjectsWithParent<CacheProgress>(this).SingleOrDefault();
             }
         }
-#endregion
+        #endregion
+
+        public LoadProgress()
+        {
+
+        }
 
         /// <inheritdoc cref="ILoadProgress"/>
         public LoadProgress(ICatalogueRepository repository, LoadMetadata parent)

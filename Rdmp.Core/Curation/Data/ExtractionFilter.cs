@@ -111,6 +111,11 @@ namespace Rdmp.Core.Curation.Data
 
         #endregion
 
+        public ExtractionFilter()
+        {
+            ClearAllInjections();
+        }
+
         /// <summary>
         /// Creates a new WHERE SQL block for reuse with the <see cref="Catalogue"/> in which the <paramref name="parent"/> resides.  This is a top level master filter and can be
         /// copied out in <see cref="CohortIdentificationConfiguration"/>, ExtractionConfiguration etc.  This ensures a single curated block of
@@ -190,6 +195,14 @@ namespace Rdmp.Core.Curation.Data
         public void ClearAllInjections()
         {
             _knownExtractionFilterParameterSets = new Lazy<ExtractionFilterParameterSet[]>(() => CatalogueRepository.GetAllObjectsWithParent<ExtractionFilterParameterSet>(this));
+        }
+
+        public override void DeleteInDatabase()
+        {
+            if (ExtractionFilterParameterSets.Any())
+                throw new Exception($"Cannot delete '{this}' because there are one or more {nameof(ExtractionFilterParameterSet)} declared on it");
+
+            base.DeleteInDatabase();
         }
     }
 }

@@ -135,6 +135,10 @@ namespace Rdmp.Core.DataExport.Data
             return Name;
         }
 
+        public ExternalCohortTable()
+        {
+            SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint();
+        }
         /// <summary>
         /// Creates a new blank pointer to a cohort database.
         /// </summary>
@@ -163,7 +167,7 @@ namespace Rdmp.Core.DataExport.Data
             Name = r["Name"] as string;
             var databaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), r["DatabaseType"].ToString());
 
-            SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(((DataExportRepository)repository).CatalogueRepository,databaseType);
+            SelfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository.CatalogueRepository,databaseType);
 
             Server = r["Server"] as string;
             Username = r["Username"] as string;

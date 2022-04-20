@@ -41,6 +41,11 @@ namespace Rdmp.Core.Curation.Data.ImportExport
         [NoMappingToDatabase]
         public Guid SharingUIDAsGuid { get { return Guid.Parse(SharingUID); }}
 
+        public ObjectExport()
+        {
+            ClearAllInjections();
+        }
+
         /// <summary>
         /// use <see cref="ShareManager.GetNewOrExistingExportFor"/> for easier access to this constructor
         /// </summary>

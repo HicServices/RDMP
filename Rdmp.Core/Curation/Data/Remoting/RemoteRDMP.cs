@@ -83,7 +83,10 @@ namespace Rdmp.Core.Curation.Data.Remoting
         {
             return _encryptedPasswordHost.GetDecryptedPassword()?? "";
         }
+        public RemoteRDMP()
+        {
 
+        }
 
         /// <inheritdoc/>
         public RemoteRDMP(ICatalogueRepository repository):base()

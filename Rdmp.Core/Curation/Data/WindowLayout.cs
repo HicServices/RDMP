@@ -43,6 +43,11 @@ namespace Rdmp.Core.Curation.Data
             set { SetField(ref _layoutData, value);}
         }
 
+        public WindowLayout()
+        {
+
+        }
+
         /// <summary>
         /// Record the new layout in the database
         /// </summary>

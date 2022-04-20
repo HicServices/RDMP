@@ -6,6 +6,7 @@
 
 using System;
 using System.Linq;
+using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
@@ -93,9 +94,14 @@ namespace Rdmp.Core.Tests.Curation.Integration
             Assert.AreEqual("My Pipe (Clone3) (Clone2)",cloneOfClone2.Name);
         }
 
-        [TestCase(true)]
-        [TestCase(false)]
-        public void CloneAPipeline(bool revertAfterClone)
+
+        /// <summary>
+        /// Tests the ability to clone a <see cref="Pipeline"/> including all
+        /// components and arguments.
+        /// </summary>
+        /// <exception cref="InconclusiveException"></exception>
+        [Test]
+        public void CloneAPipeline()
         {
             Pipeline p = new Pipeline(CatalogueRepository);
 
@@ -124,9 +130,6 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             //Execute the cloning process
             var p2 = p.Clone();
-
-            if(revertAfterClone)
-                p2.RevertToDatabaseState();
 
             Assert.AreNotEqual(p2, p);
             Assert.AreNotEqual(p2.ID,p.ID);
@@ -168,6 +171,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             //Setup a pipeline with a source component type that doesn't exist
             var source = new PipelineComponent(CatalogueRepository, p, typeof (DelimitedFlatFileAttacher), 0);
             source.Class = "Trollololol";
+            source.SaveToDatabase();
 
             var arg = source.CreateNewArgument();
 

@@ -30,7 +30,7 @@ namespace Rdmp.Core.Tests.DataExport.DataAccess
                 package.SaveToDatabase();
 
 
-                var packageContents = new ExtractableDataSetPackageManager(DataExportRepository);
+                var packageContents = DataExportRepository;
 
                 var results = packageContents.GetAllDataSets(package, null);
                 Assert.AreEqual(0,results.Length);

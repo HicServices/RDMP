@@ -25,13 +25,15 @@ namespace Rdmp.UI.Tests
             //but form was not killed and server is not in error
             AssertNoErrors(ExpectedErrorType.KilledForm);
             AssertNoErrors(ExpectedErrorType.ErrorProvider);
+
+            anoTable.DeleteInDatabase();
         }
 
         [Test, UITimeout(50000)]
         public void Test_ANOTableUI_ServerWrongType()
         {
             ExternalDatabaseServer srv;
-            var anoTable = WhenIHaveA<ANOTable>(out srv);
+            var anoTable = WhenIHaveA<ANOTable>(Repository, out srv);
             srv.CreatedByAssembly = null;
             srv.SaveToDatabase();
 
@@ -43,6 +45,8 @@ namespace Rdmp.UI.Tests
             
             //but form was not killed
             AssertNoErrors(ExpectedErrorType.KilledForm);
+
+            anoTable.DeleteInDatabase();
         }
 
         

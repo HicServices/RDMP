@@ -110,6 +110,10 @@ namespace Rdmp.Core.Curation.Data
         }
         #endregion
 
+        public ExtractionInformation()
+        {
+            ClearAllInjections();
+        }
 
         /// <summary>
         /// Makes the given <see cref="CatalogueItem"/> which has an underlying column <see cref="ColumnInfo"/> in the data repository database extractable using the
@@ -128,6 +132,8 @@ namespace Rdmp.Core.Curation.Data
                 {"ExtractionCategory", ExtractionCategory.Core.ToString()},
                 {"CatalogueItem_ID",catalogueItem.ID}
             });
+            
+            catalogueItem.ClearAllInjections();
 
             if (catalogueItem.ColumnInfo_ID == null)
                 repository.SaveSpecificPropertyOnlyToDatabase(catalogueItem, "ColumnInfo_ID", column.ID);

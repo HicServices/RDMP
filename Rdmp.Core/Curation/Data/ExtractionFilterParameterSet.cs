@@ -70,6 +70,11 @@ namespace Rdmp.Core.Curation.Data
 
         #endregion
 
+        public ExtractionFilterParameterSet()
+        {
+
+        }
+
         internal ExtractionFilterParameterSet(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {

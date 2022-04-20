@@ -170,10 +170,14 @@ namespace Rdmp.Core.Curation.Data.Cohort
             }
         }
 
-        
+
 
         #endregion
-        
+
+        public CohortIdentificationConfiguration()
+        {
+
+        }
 
         /// <summary>
         /// Declares a new configuration for identifying patient lists matching a study requirements based on the results of cohort sets / patient index tables and set operations
@@ -183,7 +187,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
         /// <param name="name"></param>
         public CohortIdentificationConfiguration(ICatalogueRepository repository, string name)
         {
-            var queryCache = repository.GetServerDefaults().GetDefaultFor(PermissableDefaults.CohortIdentificationQueryCachingServer_ID);
+            var queryCache = repository.GetDefaultFor(PermissableDefaults.CohortIdentificationQueryCachingServer_ID);
 
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
@@ -340,9 +344,9 @@ namespace Rdmp.Core.Curation.Data.Cohort
         public CohortIdentificationConfiguration CreateClone(ICheckNotifier notifier)
         {
             //todo this would be nice if it was ICatalogueRepository but transaction is super SQLy
-            var cataRepo = ((CatalogueRepository) Repository);
+            var cataRepo = ((ICatalogueRepository) Repository);
             //start a new super transaction
-            using (cataRepo.BeginNewTransactedConnection())
+            using (cataRepo.BeginNewTransaction())
             {
                 try
                 {
@@ -382,14 +386,14 @@ namespace Rdmp.Core.Curation.Data.Cohort
                     clone.SaveToDatabase();
 
                     notifier.OnCheckPerformed(new CheckEventArgs("Clone creation successful, about to commit Super Transaction", CheckResult.Success));
-                    cataRepo.EndTransactedConnection(true);
+                    cataRepo.EndTransaction(true);
                     notifier.OnCheckPerformed(new CheckEventArgs("Super Transaction committed successfully", CheckResult.Success));
 
                     return clone;
                 }
                 catch (Exception e)
                 {
-                    cataRepo.EndTransactedConnection(false);
+                    cataRepo.EndTransaction(false);
                     notifier.OnCheckPerformed(new CheckEventArgs("Cloning failed, See Exception for details, the Super Transaction was rolled back successfully though", CheckResult.Fail,e));
                 }
             }

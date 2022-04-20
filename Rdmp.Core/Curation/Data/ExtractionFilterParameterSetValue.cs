@@ -117,6 +117,11 @@ namespace Rdmp.Core.Curation.Data
         #endregion
 
 
+        public ExtractionFilterParameterSetValue()
+        {
+            ClearAllInjections();
+        }
+
         internal ExtractionFilterParameterSetValue(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {

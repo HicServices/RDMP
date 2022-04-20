@@ -8,6 +8,7 @@ using Microsoft.Data.SqlClient;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
+using System;
 
 namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuilderTests
 {
@@ -102,9 +103,9 @@ Col2"), CollapseWhitespace(builder.SQL));
         public void TwoTopXObjects()
         {
             var topX1 = new AggregateTopX(CatalogueRepository, _configuration, 10);
-            var ex = Assert.Throws<SqlException>(() => new AggregateTopX(CatalogueRepository, _configuration, 10));
+            var ex = Assert.Throws<Exception>(() => new AggregateTopX(CatalogueRepository, _configuration, 10));
 
-            Assert.IsTrue(ex.Message.Contains("ix_OneTopXPerAggregateConfiguration"));
+            Assert.AreEqual("AggregateConfiguration MyConfig already has a TopX",ex.Message);
             topX1.DeleteInDatabase();
         }
 

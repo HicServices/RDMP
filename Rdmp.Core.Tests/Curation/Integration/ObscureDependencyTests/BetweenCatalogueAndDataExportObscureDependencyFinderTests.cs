@@ -54,7 +54,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.ObscureDependencyTests
         [Test]
         public void AllowDeletingWhenDataExportManagerIsNotSet()
         {
-            var noDataExportManagerExists = new LinkedRepositoryProvider(CatalogueRepository.ConnectionString,null);
+            var noDataExportManagerExists = new LinkedRepositoryProvider(CatalogueTableRepository.ConnectionString,null);
 
             var obscura1 = new BetweenCatalogueAndDataExportObscureDependencyFinder(RepositoryLocator);
             var obscura2 = new BetweenCatalogueAndDataExportObscureDependencyFinder(noDataExportManagerExists);

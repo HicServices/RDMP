@@ -60,8 +60,8 @@ namespace Rdmp.Core.Tests.Curation.Integration
             //ensures the DQERepository gets a chance to add it's help text
             new DQERepository(CatalogueRepository);
 
-            allKeys.AddRange(GetForeignKeys(CatalogueRepository.DiscoveredServer));
-            allKeys.AddRange(GetForeignKeys(DataExportRepository.DiscoveredServer));
+            allKeys.AddRange(GetForeignKeys(CatalogueTableRepository.DiscoveredServer));
+            allKeys.AddRange(GetForeignKeys(DataExportTableRepository.DiscoveredServer));
             allKeys.AddRange(GetForeignKeys(new DiscoveredServer(DataQualityEngineConnectionString)));
 
             List<string> problems = new List<string>();
@@ -85,8 +85,8 @@ namespace Rdmp.Core.Tests.Curation.Integration
             //ensures the DQERepository gets a chance to add it's help text
             new DQERepository(CatalogueRepository);
 
-            allIndexes.AddRange(GetIndexes(CatalogueRepository.DiscoveredServer));
-            allIndexes.AddRange(GetIndexes(DataExportRepository.DiscoveredServer));
+            allIndexes.AddRange(GetIndexes(CatalogueTableRepository.DiscoveredServer));
+            allIndexes.AddRange(GetIndexes(DataExportTableRepository.DiscoveredServer));
             allIndexes.AddRange(GetIndexes(new DiscoveredServer(DataQualityEngineConnectionString)));
 
             List<string> problems = new List<string>();

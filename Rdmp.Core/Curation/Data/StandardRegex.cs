@@ -60,6 +60,11 @@ namespace Rdmp.Core.Curation.Data
 
         #endregion
 
+        public StandardRegex()
+        {
+
+        }
+
         /// <summary>
         /// Creates a new standardised reusable regular expression in the database that can be referenced by pipeline components (this helps centralise patterns
         /// rather than having replication between components/pipelines)

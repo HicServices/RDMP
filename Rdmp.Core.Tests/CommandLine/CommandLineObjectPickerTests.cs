@@ -273,9 +273,9 @@ namespace Rdmp.Core.Tests.CommandLine
             var c2 = WhenIHaveA<Catalogue>();
             var c3 = WhenIHaveA<Catalogue>();
 
-            c1.Folder = new CatalogueFolder("\\datasets\\hi\\");
-            c2.Folder = new CatalogueFolder("\\datasets\\no\\");
-            c3.Folder = new CatalogueFolder("\\datasets\\hi\\");
+            c1.Folder = "\\datasets\\hi\\";
+            c2.Folder = "\\datasets\\no\\";
+            c3.Folder = "\\datasets\\hi\\";
 
             var picker = new CommandLineObjectPicker(new[] { $"Catalogue?Folder:*hi*" }, GetActivator());
 

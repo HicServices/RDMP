@@ -80,7 +80,11 @@ namespace Rdmp.Core.Curation.Data.Cohort
 
         #endregion
 
-        private ICohortContainerManager _manager;
+        
+        public CohortAggregateContainer()
+        {
+
+        }
 
         internal CohortAggregateContainer(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
@@ -91,8 +95,6 @@ namespace Rdmp.Core.Curation.Data.Cohort
             Operation = op;
             Name = r["Name"].ToString();
             IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
-
-            _manager = repository.CohortContainerManager;
         }
 
         /// <summary>
@@ -110,9 +112,8 @@ namespace Rdmp.Core.Curation.Data.Cohort
                 {"Order", 0},
                 {"Name", operation.ToString()}
             });
-
-            _manager = repository.CohortContainerManager;
         }
+
 
         /// <summary>
         /// Gets all the subcontainers of the current container (if any)
@@ -121,7 +122,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
         /// <returns></returns>
         public CohortAggregateContainer[] GetSubContainers()
         {
-            return _manager.GetChildren(this).OfType<CohortAggregateContainer>().ToArray();
+            return CatalogueRepository.CohortContainerManager.GetChildren(this).OfType<CohortAggregateContainer>().ToArray();
         }
 
         /// <summary>
@@ -130,7 +131,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
         /// <returns></returns>
         public CohortAggregateContainer GetParentContainerIfAny()
         {
-            return _manager.GetParent(this);
+            return CatalogueRepository.CohortContainerManager.GetParent(this);
         }
 
         /// <summary>
@@ -141,7 +142,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
         /// <returns></returns>
         public AggregateConfiguration[] GetAggregateConfigurations()
         {
-            return _manager.GetChildren(this).OfType<AggregateConfiguration>().ToArray();
+            return CatalogueRepository.CohortContainerManager.GetChildren(this).OfType<AggregateConfiguration>().ToArray();
         }
 
         /// <summary>
@@ -152,7 +153,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
         public void AddChild(AggregateConfiguration configuration, int order)
         {
             CreateInsertionPointAtOrder(configuration,configuration.Order,true);
-            _manager.Add(this, configuration, order);
+            CatalogueRepository.CohortContainerManager.Add(this, configuration, order);
             configuration.ReFetchOrder();
         }
 
@@ -164,7 +165,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
         /// <param name="configuration"></param>
         public void RemoveChild(AggregateConfiguration configuration)
         {
-            _manager.Remove(this, configuration);
+            CatalogueRepository.CohortContainerManager.Remove(this, configuration);
         }
 
         
@@ -175,7 +176,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
         {
             var parent = GetParentContainerIfAny();
             if(parent != null)
-                _manager.Remove(parent,this);
+                CatalogueRepository.CohortContainerManager.Remove(parent,this);
         }
 
 
@@ -189,13 +190,15 @@ namespace Rdmp.Core.Curation.Data.Cohort
                 throw new InvalidOperationException("Root containers cannot be added as subcontainers");
 
             CreateInsertionPointAtOrder(child,child.Order,true);
-            _manager.Add(this,child);
+            CatalogueRepository.CohortContainerManager.Add(this,child);
         }
 
         /// <inheritdoc/>
         /// <remarks>Also deletes subcontainers to avoid leaving orphans in the database</remarks>
         public override void DeleteInDatabase()
         {
+            MakeIntoAnOrphan();
+
             var children = GetSubContainers();
 
             //delete the children
@@ -269,7 +272,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
         /// <returns></returns>
         public IOrderedEnumerable<IOrderable> GetOrderedContents()
         {
-            return _manager.GetChildren(this).OrderBy(o => o.Order);
+            return CatalogueRepository.CohortContainerManager.GetChildren(this).OrderBy(o => o.Order);
         }
 
         /// <summary>

@@ -6,6 +6,7 @@
 
 using System;
 using System.Drawing;
+using System.Runtime.Versioning;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
@@ -15,6 +16,7 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.Tests
 {
+    [SupportedOSPlatform("windows7.0")]
     class CatalogueIconProviderTests: UITests
     {
 

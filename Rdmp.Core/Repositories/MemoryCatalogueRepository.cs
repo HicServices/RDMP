@@ -29,6 +29,7 @@ using Rdmp.Core.Sharing.Dependency;
 using Rdmp.Core.Validation.Dependency;
 using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.DataAccess;
+using YamlDotNet.Serialization;
 using IContainer = Rdmp.Core.Curation.Data.IContainer;
 
 namespace Rdmp.Core.Repositories
@@ -37,13 +38,13 @@ namespace Rdmp.Core.Repositories
     /// Memory only implementation of <see cref="ICatalogueRepository"/> in which all objects are created in 
     /// dictionaries and arrays in memory instead of the database.
     /// </summary>
-    public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, IServerDefaults,ITableInfoCredentialsManager, IAggregateForcedJoinManager, ICohortContainerManager, IFilterManager, IGovernanceManager, IEncryptionManager
+    public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, IServerDefaults,ITableInfoCredentialsManager, IAggregateForcedJoinManager, ICohortContainerManager, IFilterManager, IGovernanceManager
     {
         public IAggregateForcedJoinManager AggregateForcedJoinManager { get { return this; } }
         public IGovernanceManager GovernanceManager { get { return this; }}
         public ITableInfoCredentialsManager TableInfoCredentialsManager { get { return this; }}
         public ICohortContainerManager CohortContainerManager { get { return this; }}
-        public IEncryptionManager EncryptionManager { get { return this; }}
+        public IEncryptionManager EncryptionManager { get; private set; }
 
         public IFilterManager FilterManager { get { return this; }}
         public IPluginManager PluginManager { get; private set; }
@@ -71,18 +72,24 @@ namespace Rdmp.Core.Repositories
         public DbConnectionStringBuilder ConnectionStringBuilder { get { return null; } }
         public DiscoveredServer DiscoveredServer { get { return null; }}
 
-        readonly Dictionary<PermissableDefaults, IExternalDatabaseServer> _defaults = new Dictionary<PermissableDefaults, IExternalDatabaseServer>();
+        /// <summary>
+        /// Path to RSA private key encryption certificate for decrypting encrypted credentials.
+        /// </summary>
+        public string EncryptionKeyPath { get; protected set; }
+
+        protected virtual Dictionary<PermissableDefaults, IExternalDatabaseServer> Defaults { get; set; } = new ();
 
         public MemoryCatalogueRepository(IServerDefaults currentDefaults = null)
         {
             JoinManager = new JoinManager(this);
             PluginManager = new PluginManager(this);
             CommentStore = new CommentStoreWithKeywords();
+            EncryptionManager = new PasswordEncryptionKeyLocation(this);
 
             //we need to know what the default servers for stuff are
             foreach (PermissableDefaults value in Enum.GetValues(typeof (PermissableDefaults)))
                 if(currentDefaults == null)
-                    _defaults.Add(value, null); //we have no defaults to import
+                    Defaults.Add(value, null); //we have no defaults to import
                 else
                 {
                     //we have defaults to import so get the default
@@ -90,14 +97,14 @@ namespace Rdmp.Core.Repositories
 
                     //if it's not null we must be able to return it with GetObjectByID
                     if (defaultServer != null)
-                        Objects.Add(defaultServer);
+                        Objects.TryAdd(defaultServer,0);
 
-                    _defaults.Add(value,defaultServer);
+                    Defaults.Add(value,defaultServer);
                 }
 
             //start IDs with the maximum id of any default to avoid collisions
             if (Objects.Any())
-                NextObjectId = Objects.Max(o => o.ID);
+                NextObjectId = Objects.Keys.Max(o => o.ID);
 
 
             var dependencyFinder = new CatalogueObscureDependencyFinder(this);
@@ -134,25 +141,13 @@ namespace Rdmp.Core.Repositories
         }
 
 
-        protected override void SetValue<T>(T toCreate, PropertyInfo prop, string strVal, object val)
-        {
-            if(prop.PropertyType == typeof(CatalogueFolder) && val is string)
-                base.SetValue(toCreate,prop,strVal,new CatalogueFolder((Catalogue)(object)toCreate,strVal));
-            else
-                base.SetValue(toCreate,prop,strVal,val);
-        }
-
         public override void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
             ObscureDependencyFinder.ThrowIfDeleteDisallowed(oTableWrapperObject);
+
+
             base.DeleteFromDatabase(oTableWrapperObject);
             ObscureDependencyFinder.HandleCascadeDeletesForDeletedObject(oTableWrapperObject);
-        }
-
-
-        public T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
-        {
-            throw new NotImplementedException();
         }
 
         public DbCommand PrepareCommand(string sql, Dictionary<string, object> parameters, DbConnection con, DbTransaction transaction = null)
@@ -162,12 +157,7 @@ namespace Rdmp.Core.Repositories
 
         public T[] GetReferencesTo<T>(IMapsDirectlyToDatabaseTable o) where T : ReferenceOtherObjectDatabaseEntity
         {
-            return Objects.OfType<T>().Where(r => r.IsReferenceTo(o)).ToArray();
-        }
-
-        public IServerDefaults GetServerDefaults()
-        {
-            return this;
+            return Objects.Keys.OfType<T>().Where(r => r.IsReferenceTo(o)).ToArray();
         }
 
         public bool IsLookupTable(ITableInfo tableInfo)
@@ -185,16 +175,6 @@ namespace Rdmp.Core.Repositories
                                 ci => ci.ColumnInfo_ID != null && ci.ColumnInfo.TableInfo_ID == tableInfo.ID)).ToArray();
         }
 
-        public void UpsertAndHydrate<T>(T toCreate, ShareManager shareManager, ShareDefinition shareDefinition) where T : class, IMapsDirectlyToDatabaseTable
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetValue(PropertyInfo prop, object value, IMapsDirectlyToDatabaseTable onObject)
-        {
-            prop.SetValue(onObject,value);
-        }
-
         public ExternalDatabaseServer[] GetAllDatabases<T>() where T:IPatcher,new()
         {
             IPatcher p = new T();
@@ -203,28 +183,28 @@ namespace Rdmp.Core.Repositories
 
         public IExternalDatabaseServer GetDefaultFor(PermissableDefaults field)
         {
-            return _defaults[field];
+            return Defaults[field];
         }
 
         public void ClearDefault(PermissableDefaults toDelete)
         {
-            _defaults[toDelete] = null;
+            Defaults[toDelete] = null;
         }
 
-        public void SetDefault(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
+        public virtual void SetDefault(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
         {
-            _defaults[toChange] = externalDatabaseServer;
+            Defaults[toChange] = externalDatabaseServer;
         }
         
         public override void Clear()
         {
             base.Clear();
 
-            _cohortContainerContents.Clear();
-            _credentialsDictionary.Clear();
-            _forcedJoins.Clear();
-            _whereSubContainers.Clear();
-            _defaults.Clear();
+            CohortContainerContents.Clear();
+            CredentialsDictionary.Clear();
+            ForcedJoins.Clear();
+            WhereSubContainers.Clear();
+            Defaults.Clear();
         }
 
         #region ITableInfoToCredentialsLinker
@@ -232,48 +212,58 @@ namespace Rdmp.Core.Repositories
         /// <summary>
         /// records which credentials can be used to access the table under which contexts
         /// </summary>
-        readonly Dictionary<ITableInfo,Dictionary<DataAccessContext, DataAccessCredentials>> _credentialsDictionary = new Dictionary<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>>();
+        protected Dictionary<ITableInfo,Dictionary<DataAccessContext, DataAccessCredentials>> CredentialsDictionary { get; set; } = new ();
 
-        public void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
+        public virtual void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
         {
-            if(!_credentialsDictionary.ContainsKey(tableInfo))
-                _credentialsDictionary.Add(tableInfo,new Dictionary<DataAccessContext, DataAccessCredentials>());
+            if(!CredentialsDictionary.ContainsKey(tableInfo))
+                CredentialsDictionary.Add(tableInfo,new Dictionary<DataAccessContext, DataAccessCredentials>());
 
-            _credentialsDictionary[tableInfo].Add(context,credentials);
+            CredentialsDictionary[tableInfo].Add(context,credentials);
+
+            tableInfo.ClearAllInjections();
         }
 
-        public void BreakLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
+        public virtual void BreakLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
         {
-            if (!_credentialsDictionary.ContainsKey(tableInfo))
+            if (!CredentialsDictionary.ContainsKey(tableInfo))
                 return;
 
-            _credentialsDictionary[tableInfo].Remove(context);
+            CredentialsDictionary[tableInfo].Remove(context);
+
+            tableInfo.ClearAllInjections();
         }
 
-        public void BreakAllLinksBetween(DataAccessCredentials credentials, ITableInfo tableInfo)
+        public virtual void BreakAllLinksBetween(DataAccessCredentials credentials, ITableInfo tableInfo)
         {
-            if(!_credentialsDictionary.ContainsKey(tableInfo))
+            if(!CredentialsDictionary.ContainsKey(tableInfo))
                 return;
 
-            var toRemove = _credentialsDictionary[tableInfo].Where(v=>Equals(v.Value ,credentials)).Select(k=>k.Key).ToArray();
+            var toRemove = CredentialsDictionary[tableInfo].Where(v=>Equals(v.Value ,credentials)).Select(k=>k.Key).ToArray();
 
             foreach (DataAccessContext context in toRemove)
-                _credentialsDictionary[tableInfo].Remove(context);
+                CredentialsDictionary[tableInfo].Remove(context);
         }
 
         public DataAccessCredentials GetCredentialsIfExistsFor(ITableInfo tableInfo, DataAccessContext context)
         {
-            if(_credentialsDictionary.ContainsKey(tableInfo))
-                if (_credentialsDictionary[tableInfo].ContainsKey(context))
-                    return _credentialsDictionary[tableInfo][context];
+            if(CredentialsDictionary.ContainsKey(tableInfo))
+            {
+                if (CredentialsDictionary[tableInfo].ContainsKey(context))
+                    return CredentialsDictionary[tableInfo][context];
+
+                if (CredentialsDictionary[tableInfo].ContainsKey(DataAccessContext.Any))
+                    return CredentialsDictionary[tableInfo][DataAccessContext.Any];
+            }
+                
 
             return null;
         }
 
         public Dictionary<DataAccessContext, DataAccessCredentials> GetCredentialsIfExistsFor(ITableInfo tableInfo)
         {
-            if (_credentialsDictionary.ContainsKey(tableInfo))
-                return _credentialsDictionary[tableInfo];
+            if (CredentialsDictionary.ContainsKey(tableInfo))
+                return CredentialsDictionary[tableInfo];
 
             return null;
         }
@@ -282,7 +272,7 @@ namespace Rdmp.Core.Repositories
         {
             var toreturn = new Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>>();
 
-            foreach (KeyValuePair<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>> kvp in _credentialsDictionary)
+            foreach (KeyValuePair<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>> kvp in CredentialsDictionary)
             {
                 toreturn.Add(kvp.Key, new List<DataAccessCredentialUsageNode>());
 
@@ -301,7 +291,7 @@ namespace Rdmp.Core.Repositories
             foreach (DataAccessContext context in Enum.GetValues(typeof (DataAccessContext)))
                 toreturn.Add(context, new List<ITableInfo>());
 
-            foreach (KeyValuePair<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>> kvp in _credentialsDictionary)
+            foreach (KeyValuePair<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>> kvp in CredentialsDictionary)
                 foreach (KeyValuePair<DataAccessContext, DataAccessCredentials> forNode in kvp.Value)
                     toreturn[forNode.Key].Add(kvp.Key);
             
@@ -316,63 +306,64 @@ namespace Rdmp.Core.Repositories
         #endregion
 
         #region IAggregateForcedJoin
-        readonly Dictionary<AggregateConfiguration,List<ITableInfo>> _forcedJoins = new Dictionary<AggregateConfiguration, List<ITableInfo>>();
+        protected Dictionary<AggregateConfiguration,HashSet<ITableInfo>> ForcedJoins { get; set; } = new ();
 
         public ITableInfo[] GetAllForcedJoinsFor(AggregateConfiguration configuration)
         {
-            if (!_forcedJoins.ContainsKey(configuration))
+            if (!ForcedJoins.ContainsKey(configuration))
                 return new TableInfo[0];
 
-            return _forcedJoins[configuration].ToArray();
+            return ForcedJoins[configuration].ToArray();
         }
 
-        public void BreakLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)
+        public virtual void BreakLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)
         {
-            if (!_forcedJoins.ContainsKey(configuration))
+            if (!ForcedJoins.ContainsKey(configuration))
                 return;
 
-            _forcedJoins[configuration].Remove(tableInfo);
+            ForcedJoins[configuration].Remove(tableInfo);
         }
 
-        public void CreateLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)
+        public virtual void CreateLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)
         {
-            if (!_forcedJoins.ContainsKey(configuration))
-                _forcedJoins.Add(configuration,new List<ITableInfo>());
+            if (!ForcedJoins.ContainsKey(configuration))
+                ForcedJoins.Add(configuration,new HashSet<ITableInfo>());
 
-            _forcedJoins[configuration].Add(tableInfo);
+            ForcedJoins[configuration].Add(tableInfo);
         }
         #endregion
 
         #region ICohortContainerLinker
-        readonly Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>> _cohortContainerContents = new Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>>(); 
+        protected Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>> CohortContainerContents = new (); 
 
         public CohortAggregateContainer GetParent(AggregateConfiguration child)
         {
             //if it is in the contents of a container
-            if (_cohortContainerContents.Any(kvp => kvp.Value.Select(c=>c.Orderable).Contains(child)))
-                return _cohortContainerContents.Single(kvp => kvp.Value.Select(c => c.Orderable).Contains(child)).Key;
+            if (CohortContainerContents.Any(kvp => kvp.Value.Select(c=>c.Orderable).Contains(child)))
+                return CohortContainerContents.Single(kvp => kvp.Value.Select(c => c.Orderable).Contains(child)).Key;
 
             return null;
         }
 
-        public void Add(CohortAggregateContainer parent,AggregateConfiguration child,int order)
+        public virtual void Add(CohortAggregateContainer parent,AggregateConfiguration child,int order)
         {
             //make sure we know about the container
-            if(!_cohortContainerContents.ContainsKey(parent))
-                _cohortContainerContents.Add(parent, new HashSet<CohortContainerContent>());
+            if(!CohortContainerContents.ContainsKey(parent))
+                CohortContainerContents.Add(parent, new HashSet<CohortContainerContent>());
 
-            _cohortContainerContents[parent].Add(new CohortContainerContent(child, order));
+            CohortContainerContents[parent].Add(new CohortContainerContent(child, order));
         }
 
-        public void Remove(CohortAggregateContainer parent, AggregateConfiguration child)
+        public virtual void Remove(CohortAggregateContainer parent, AggregateConfiguration child)
         {
-            var toRemove = _cohortContainerContents[parent].Single(c => c.Orderable.Equals(child));
-            _cohortContainerContents[parent].Remove(toRemove);
+            var toRemove = CohortContainerContents[parent].Single(c => c.Orderable.Equals(child));
+            CohortContainerContents[parent].Remove(toRemove);
         }
 
-        private class CohortContainerContent
+        public class CohortContainerContent
         {
             public IOrderable Orderable { get; private set; }
+
             public int Order { get; set; }
 
             public CohortContainerContent(IOrderable orderable, int order)
@@ -384,7 +375,7 @@ namespace Rdmp.Core.Repositories
         
         public int? GetOrderIfExistsFor(AggregateConfiguration configuration)
         {
-            var o = _cohortContainerContents.SelectMany(kvp => kvp.Value).SingleOrDefault(c => c.Orderable.Equals(configuration));
+            var o = CohortContainerContents.SelectMany(kvp => kvp.Value).SingleOrDefault(c => c.Orderable.Equals(configuration));
             if (o == null)
                 return null;
 
@@ -393,44 +384,44 @@ namespace Rdmp.Core.Repositories
 
         public IOrderable[] GetChildren(CohortAggregateContainer parent)
         {
-            if (!_cohortContainerContents.ContainsKey(parent))
+            if (!CohortContainerContents.ContainsKey(parent))
                 return new IOrderable[0];
 
-            return _cohortContainerContents[parent].OrderBy(o => o.Order).Select(o => o.Orderable).ToArray();
+            return CohortContainerContents[parent].OrderBy(o => o.Order).Select(o => o.Orderable).ToArray();
         }
         
         public CohortAggregateContainer GetParent(CohortAggregateContainer child)
         {
-            var match = _cohortContainerContents.Where(k => k.Value.Any(hs => Equals(hs.Orderable, child))).Select(kvp=>kvp.Key).ToArray();
+            var match = CohortContainerContents.Where(k => k.Value.Any(hs => Equals(hs.Orderable, child))).Select(kvp=>kvp.Key).ToArray();
             if (match.Length > 0)
                 return match.Single();
             
             return null;
         }
 
-        public void Remove(CohortAggregateContainer parent, CohortAggregateContainer child)
+        public virtual void Remove(CohortAggregateContainer parent, CohortAggregateContainer child)
         {
-            _cohortContainerContents[parent].RemoveWhere(c => Equals(c.Orderable, child));
+            CohortContainerContents[parent].RemoveWhere(c => Equals(c.Orderable, child));
         }
 
-        public void SetOrder(AggregateConfiguration child, int newOrder)
+        public virtual void SetOrder(AggregateConfiguration child, int newOrder)
         {
             var parent = GetParent(child);
 
-            if (parent != null && _cohortContainerContents.ContainsKey(parent))
+            if (parent != null && CohortContainerContents.ContainsKey(parent))
             {
-                var record = _cohortContainerContents[parent].SingleOrDefault(o => o.Orderable.Equals(child));
+                var record = CohortContainerContents[parent].SingleOrDefault(o => o.Orderable.Equals(child));
                 if (record != null)
                     record.Order = newOrder;
             }
         }
 
-        public void Add(CohortAggregateContainer parent, CohortAggregateContainer child)
+        public virtual void Add(CohortAggregateContainer parent, CohortAggregateContainer child)
         {
-            if(!_cohortContainerContents.ContainsKey(parent))
-                _cohortContainerContents.Add(parent,new HashSet<CohortContainerContent>());
+            if(!CohortContainerContents.ContainsKey(parent))
+                CohortContainerContents.Add(parent,new HashSet<CohortContainerContent>());
 
-            _cohortContainerContents[parent].Add(new CohortContainerContent(child, child.Order));
+            CohortContainerContents[parent].Add(new CohortContainerContent(child, child.Order));
         }
 
 
@@ -439,26 +430,26 @@ namespace Rdmp.Core.Repositories
 
         #region IFilterContainerManager
 
-        readonly Dictionary<IContainer, HashSet<IContainer>> _whereSubContainers = new Dictionary<IContainer, HashSet<IContainer>>();
+        protected Dictionary<IContainer, HashSet<IContainer>> WhereSubContainers { get; set; } = new ();
         
         public IContainer[] GetSubContainers(IContainer container)
         {
-            if(!_whereSubContainers.ContainsKey(container))
+            if(!WhereSubContainers.ContainsKey(container))
                 return new IContainer[0];
 
-            return _whereSubContainers[container].ToArray();
+            return WhereSubContainers[container].ToArray();
         }
 
-        public void MakeIntoAnOrphan(IContainer container)
+        public virtual void MakeIntoAnOrphan(IContainer container)
         {
-            foreach (var contents in _whereSubContainers)
+            foreach (var contents in WhereSubContainers)
                 if (contents.Value.Contains(container))
                     contents.Value.Remove(container);
         }
 
         public IContainer GetParentContainerIfAny(IContainer container)
         {
-            var match = _whereSubContainers.Where(k => k.Value.Contains(container)).ToArray();
+            var match = WhereSubContainers.Where(k => k.Value.Contains(container)).ToArray();
             if (match.Length != 0)
                 return match[0].Key;
 
@@ -473,50 +464,51 @@ namespace Rdmp.Core.Repositories
         public void AddChild(IContainer container, IFilter filter)
         {
             filter.FilterContainer_ID = container.ID;
+            filter.SaveToDatabase();
         }
 
-        public void AddSubContainer(IContainer parent, IContainer child)
+        public virtual void AddSubContainer(IContainer parent, IContainer child)
         {
-            if (!_whereSubContainers.ContainsKey(parent))
-                _whereSubContainers.Add(parent, new HashSet<IContainer>());
+            if (!WhereSubContainers.ContainsKey(parent))
+                WhereSubContainers.Add(parent, new HashSet<IContainer>());
             
-            _whereSubContainers[parent].Add(child);
+            WhereSubContainers[parent].Add(child);
         }
 
         #endregion
 
         #region IGovernanceManager
 
-        readonly Dictionary<GovernancePeriod,HashSet<ICatalogue>> _governanceCoverage = new Dictionary<GovernancePeriod, HashSet<ICatalogue>>();
+        protected Dictionary<GovernancePeriod,HashSet<ICatalogue>> GovernanceCoverage { get; set; } = new ();
         private MEF _mef;
 
-        public void Unlink(GovernancePeriod governancePeriod, ICatalogue catalogue)
+        public virtual void Unlink(GovernancePeriod governancePeriod, ICatalogue catalogue)
         {
-            if(!_governanceCoverage.ContainsKey(governancePeriod))
-                _governanceCoverage.Add(governancePeriod,new HashSet<ICatalogue>());
+            if(!GovernanceCoverage.ContainsKey(governancePeriod))
+                GovernanceCoverage.Add(governancePeriod,new HashSet<ICatalogue>());
 
-            _governanceCoverage[governancePeriod].Remove(catalogue);
+            GovernanceCoverage[governancePeriod].Remove(catalogue);
         }
 
-        public void Link(GovernancePeriod governancePeriod, ICatalogue catalogue)
+        public virtual void Link(GovernancePeriod governancePeriod, ICatalogue catalogue)
         {
-            if (!_governanceCoverage.ContainsKey(governancePeriod))
-                _governanceCoverage.Add(governancePeriod, new HashSet<ICatalogue>());
+            if (!GovernanceCoverage.ContainsKey(governancePeriod))
+                GovernanceCoverage.Add(governancePeriod, new HashSet<ICatalogue>());
 
-            _governanceCoverage[governancePeriod].Add(catalogue);
+            GovernanceCoverage[governancePeriod].Add(catalogue);
         }
 
         public Dictionary<int, HashSet<int>> GetAllGovernedCataloguesForAllGovernancePeriods()
         {
-            return  _governanceCoverage.ToDictionary(k => k.Key.ID, v => new HashSet<int>(v.Value.Select(c => c.ID)));
+            return  GovernanceCoverage.ToDictionary(k => k.Key.ID, v => new HashSet<int>(v.Value.Select(c => c.ID)));
         }
 
         public IEnumerable<ICatalogue> GetAllGovernedCatalogues(GovernancePeriod governancePeriod)
         {
-            if (!_governanceCoverage.ContainsKey(governancePeriod))
+            if (!GovernanceCoverage.ContainsKey(governancePeriod))
                 return Enumerable.Empty<ICatalogue>();
 
-            return _governanceCoverage[governancePeriod];
+            return GovernanceCoverage[governancePeriod];
         }
 
         #endregion
@@ -530,7 +522,66 @@ namespace Rdmp.Core.Repositories
         {
 
         }
-        #endregion
 
+        public virtual void SetEncryptionKeyPath(string fullName)
+        {
+            EncryptionKeyPath = fullName;
+        }
+
+        public string GetEncryptionKeyPath()
+        {
+            return EncryptionKeyPath;
+        }
+
+        public virtual void DeleteEncryptionKeyPath()
+        {
+            EncryptionKeyPath = null;
+        }
+        #endregion
+        protected override void CascadeDeletes(IMapsDirectlyToDatabaseTable oTableWrapperObject)
+        {
+            base.CascadeDeletes(oTableWrapperObject);
+
+            if (oTableWrapperObject is Catalogue catalogue)
+            {
+                foreach (var ci in catalogue.CatalogueItems)
+                {
+                    ci.DeleteInDatabase();
+                }
+            }
+
+            if (oTableWrapperObject is ExtractionInformation extractionInformation)
+            {
+                extractionInformation.CatalogueItem.ClearAllInjections();
+            }
+
+            // when deleting a TableInfo
+            if (oTableWrapperObject is TableInfo t)
+            {
+                // forget about its credentials usages
+                CredentialsDictionary.Remove(t);
+
+                foreach(var c in t.ColumnInfos)
+                {
+                    c.DeleteInDatabase();
+                }
+            }
+
+            // when deleting a ColumnInfo
+            if (oTableWrapperObject is ColumnInfo columnInfo)
+            {
+                foreach(var ci in Objects.Keys.OfType<CatalogueItem>().Where(ci=>ci.ColumnInfo_ID == columnInfo.ID))
+                {
+                    ci.ColumnInfo_ID = null;
+                    ci.ClearAllInjections();
+                    ci.SaveToDatabase();
+                }
+            }
+
+            if (oTableWrapperObject is CatalogueItem catalogueItem)
+            {
+                catalogueItem.ExtractionInformation?.DeleteInDatabase();
+            }
+        }
     }
 }

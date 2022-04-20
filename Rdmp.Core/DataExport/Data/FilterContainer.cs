@@ -20,6 +20,11 @@ namespace Rdmp.Core.DataExport.Data
     /// </summary>
     public class FilterContainer : ConcreteContainer, IContainer
     {
+
+        public FilterContainer()
+        {
+
+        }
         /// <summary>
         /// Creates a new instance with the given <paramref name="operation"/>
         /// </summary>
@@ -157,6 +162,17 @@ namespace Rdmp.Core.DataExport.Data
         public override IFilterFactory GetFilterFactory()
         {
             return new DeployedExtractionFilterFactory(DataExportRepository);
+        }
+
+        public override void DeleteInDatabase()
+        {
+            base.DeleteInDatabase();
+
+            foreach (var sds in Repository.GetAllObjectsWhere<SelectedDataSets>(nameof(SelectedDataSets.RootFilterContainer_ID), ID))
+            {
+                sds.RootFilterContainer_ID = null;
+                sds.SaveToDatabase();
+            }
         }
     }
 }

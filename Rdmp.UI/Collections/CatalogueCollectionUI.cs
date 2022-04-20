@@ -143,12 +143,8 @@ namespace Rdmp.UI.Collections
 
                 CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
 
-
                 CommonFunctionality.Add(new ExecuteCommandCreateNewGovernancePeriod(Activator), "Governance Period", null, NewMenu);
                 CommonFunctionality.Add(new ExecuteCommandAddNewGovernanceDocument(Activator,null), "Governance Document", null, NewMenu);
-
-
-
             }
 
             if (isFirstTime || Equals(oRefreshFrom, CatalogueFolder.Root))
@@ -157,8 +153,6 @@ namespace Rdmp.UI.Collections
                 tlvCatalogues.Expand(CatalogueFolder.Root);
                 isFirstTime = false;
             }
-
-            
         }
         
         public void ApplyFilters()
@@ -272,10 +266,10 @@ namespace Rdmp.UI.Collections
 
             if (cata != null)
             {
-                var oldFolder = tlvCatalogues.GetParent(cata) as CatalogueFolder;
+                var oldFolder = tlvCatalogues.GetParent(cata) as string;
 
                 //if there's a change to the folder of the catalogue or it is a new Catalogue (no parent folder) we have to rebuild the entire tree
-                if (oldFolder == null || !oldFolder.Path.Equals(cata.Folder.Path))
+                if (oldFolder == null || !oldFolder.Equals(cata.Folder))
                     RefreshUIFromDatabase(CatalogueFolder.Root);
                 else
                     RefreshUIFromDatabase(o);

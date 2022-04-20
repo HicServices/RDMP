@@ -572,7 +572,7 @@ namespace Rdmp.UI.AggregationUIs
             lblLoadStage.Visible = false;
 
             //set publish enabledness to the enabledness of 
-            btnCache.Enabled =Activator.RepositoryLocator.CatalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.WebServiceQueryCachingServer_ID) != null;
+            btnCache.Enabled =Activator.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults.WebServiceQueryCachingServer_ID) != null;
             btnClearFromCache.Enabled = false;
 
             //Make publish button enabledness be dependant on cache
@@ -705,7 +705,7 @@ namespace Rdmp.UI.AggregationUIs
         private CachedAggregateConfigurationResultsManager GetCacheManager()
         {
             return new CachedAggregateConfigurationResultsManager(
-                Activator.RepositoryLocator.CatalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.WebServiceQueryCachingServer_ID)
+                Activator.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults.WebServiceQueryCachingServer_ID)
                 );
         }
 

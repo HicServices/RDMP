@@ -53,7 +53,7 @@ namespace Tests.Common.Scenarios
             ANOStore_ExternalDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, ANOStore_DatabaseName,new ANOStorePatcher());
             ANOStore_ExternalDatabaseServer.SetProperties(ANOStore_Database);
 
-            CatalogueRepository.GetServerDefaults().SetDefault(PermissableDefaults.ANOStore, ANOStore_ExternalDatabaseServer);
+            CatalogueRepository.SetDefault(PermissableDefaults.ANOStore, ANOStore_ExternalDatabaseServer);
         }
 
         private void RemovePreExistingReference()

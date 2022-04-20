@@ -57,7 +57,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 InitialCatalog = testLiveDatabaseName
             };
             
-            var dbConfiguration = new HICDatabaseConfiguration(new DiscoveredServer(builder),null,new ServerDefaults(CatalogueRepository));
+            var dbConfiguration = new HICDatabaseConfiguration(new DiscoveredServer(builder),null,CatalogueRepository);
             
             var cloner = new DatabaseCloner(dbConfiguration);
             try

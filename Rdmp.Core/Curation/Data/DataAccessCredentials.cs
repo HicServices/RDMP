@@ -24,11 +24,12 @@ namespace Rdmp.Core.Curation.Data
     /// </summary>
     public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials,INamed,IHasDependencies
     {
-        private readonly EncryptedPasswordHost _encryptedPasswordHost;
+        private EncryptedPasswordHost _encryptedPasswordHost;
 
         #region Database Properties
         private string _name;
         private string _username;
+        private string _tempPassword;
 
         /// <inheritdoc/>
         [Unique]
@@ -52,6 +53,12 @@ namespace Rdmp.Core.Curation.Data
             get { return _encryptedPasswordHost.Password; }
             set
             {
+                if(_encryptedPasswordHost == null)
+                {
+                    _tempPassword = value;
+                    return;
+                }
+
                 if (Equals(_encryptedPasswordHost.Password,value))
                     return;
 
@@ -60,9 +67,21 @@ namespace Rdmp.Core.Curation.Data
                 OnPropertyChanged(old, value);
             }
         }
-        
+
         #endregion
 
+        public DataAccessCredentials()
+        {
+
+        }
+        internal void SetEncryptedPasswordHost(EncryptedPasswordHost host)
+        {
+            _encryptedPasswordHost = host;
+            if(_tempPassword != null)
+            {
+                Password = _tempPassword;
+            }
+        }
         /// <summary>
         /// Records a new (initially blank) set of credentials that can be used to access a <see cref="TableInfo"/> or other object requiring authentication.
         /// <para>A single <see cref="DataAccessCredentials"/> can be shared by multiple tables</para>
@@ -96,6 +115,12 @@ namespace Rdmp.Core.Curation.Data
         /// <inheritdoc/>
         public override void DeleteInDatabase()
         {
+            var users = CatalogueRepository.TableInfoCredentialsManager.GetAllTablesUsingCredentials(this);
+
+            // if there are any contexts where there are any associated tables using this credentials
+            if (users.Any(k => k.Value.Any()))
+                throw new CredentialsInUseException($"Cannot delete credentials {Name} because it is in use by one or more TableInfo objects({string.Join(",", users.SelectMany(u => u.Value).Distinct().Select(t => t.Name))})");
+
             try
             {
                 base.DeleteInDatabase();

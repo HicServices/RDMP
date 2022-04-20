@@ -136,6 +136,11 @@ namespace Rdmp.Core.Curation.Data.Aggregation
 
         #endregion
 
+        public AggregateDimension()
+        {
+            ClearAllInjections();
+        }
+
         /// <summary>
         /// Declares a new column in an <see cref="AggregateConfiguration"/> (GROUP BY query).  The new column will be based on the master Catalogue column
         /// (<see cref="ExtractionInformation"/>).
@@ -265,8 +270,16 @@ namespace Rdmp.Core.Curation.Data.Aggregation
 
         public override void DeleteInDatabase()
         {
-            var ac = AggregateConfiguration;
-
+            AggregateConfiguration ac = null;
+            try
+            {
+                ac = AggregateConfiguration;
+            }
+            catch (KeyNotFoundException)
+            {
+                // it's gone already, must be a bad reference
+            }
+            
             if(ac != null)
             {
                 if(ac.PivotOnDimensionID == ID)

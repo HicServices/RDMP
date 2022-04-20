@@ -19,7 +19,7 @@ namespace Rdmp.Core.Tests.DataExport
         public void TestNoIsExtractionIdentifierFinding()
         {
             //nothing in database means no dodgy datasets
-            Assert.IsEmpty(((DataExportRepository)DataExportRepository).GetSelectedDatasetsWithNoExtractionIdentifiers());
+            Assert.IsEmpty(DataExportRepository.GetSelectedDatasetsWithNoExtractionIdentifiers());
 
             var cata = new Catalogue(CatalogueRepository, "ommn");
             var ds = new ExtractableDataSet(DataExportRepository, cata);
@@ -28,7 +28,7 @@ namespace Rdmp.Core.Tests.DataExport
             var sds = new SelectedDataSets(DataExportRepository, config, ds, null);
 
             //only one selected dataset
-            var dodgy = ((DataExportRepository) DataExportRepository).GetSelectedDatasetsWithNoExtractionIdentifiers().ToArray();
+            var dodgy = DataExportRepository.GetSelectedDatasetsWithNoExtractionIdentifiers().ToArray();
             Assert.AreEqual(1,dodgy.Count());
             Assert.AreEqual(sds,dodgy[0]);
 
@@ -39,7 +39,7 @@ namespace Rdmp.Core.Tests.DataExport
             var ec = new ExtractableColumn(DataExportRepository, ds, config, ei, 0, col.Name);
             
             //still shouldn't be dodgy
-            dodgy = ((DataExportRepository)DataExportRepository).GetSelectedDatasetsWithNoExtractionIdentifiers().ToArray();
+            dodgy = DataExportRepository.GetSelectedDatasetsWithNoExtractionIdentifiers().ToArray();
             Assert.AreEqual(1, dodgy.Count());
             Assert.AreEqual(sds, dodgy[0]);
 
@@ -48,7 +48,7 @@ namespace Rdmp.Core.Tests.DataExport
             ec.SaveToDatabase();
 
             //no longer dodgy because there is an extraction identifier
-            dodgy = ((DataExportRepository)DataExportRepository).GetSelectedDatasetsWithNoExtractionIdentifiers().ToArray();
+            dodgy = DataExportRepository.GetSelectedDatasetsWithNoExtractionIdentifiers().ToArray();
             Assert.AreEqual(0, dodgy.Count());
 
         }

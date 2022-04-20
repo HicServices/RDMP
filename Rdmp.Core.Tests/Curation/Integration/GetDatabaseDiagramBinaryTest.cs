@@ -18,7 +18,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void GetBinaryText()
         {
-            using (var con = CatalogueRepository.GetConnection())
+            using (var con = CatalogueTableRepository.GetConnection())
             {
                 using(DbCommand cmd = DatabaseCommandHelper.GetCommand(
                     "SELECT definition  FROM sysdiagrams where name = 'Catalogue_Data_Diagram' ",

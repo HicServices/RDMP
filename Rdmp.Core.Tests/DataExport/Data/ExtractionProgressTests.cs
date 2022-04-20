@@ -36,7 +36,9 @@ namespace Rdmp.Core.Tests.DataExport.Data
         [Test]
         public void ExtractionProgressConstructor_Normal()
         {
-            Assert.DoesNotThrow(()=>CreateAnExtractionProgress());
+            ExtractionProgress progress = null; ;
+            Assert.DoesNotThrow(()=> progress = CreateAnExtractionProgress());
+            progress?.DeleteInDatabase();
         }
 
         [Test]
@@ -47,13 +49,16 @@ namespace Rdmp.Core.Tests.DataExport.Data
             var sds = progress.SelectedDataSets;
 
             // try to create a second progress for the same dataset being extracted
-            var ex = Assert.Throws<SqlException>(() => new ExtractionProgress(DataExportRepository, sds));
+            var ex = Assert.Throws<Exception>(() => new ExtractionProgress(DataExportRepository, sds));
 
-            StringAssert.Contains("ix_OneExtractionProgressPerDataset", ex.Message);
+            Assert.AreEqual("There is already an ExtractionProgress associated with MyCata", ex.Message);
 
             // now delete the original and make sure we can recreate it ok
             progress.DeleteInDatabase();
-            Assert.DoesNotThrow(() => new ExtractionProgress(DataExportRepository, sds));
+            Assert.DoesNotThrow(() => progress = new ExtractionProgress(DataExportRepository, sds));
+
+            // yeah we can great, lets cleanup the test now
+            progress.DeleteInDatabase();
         }
 
         [Test]
@@ -80,6 +85,8 @@ namespace Rdmp.Core.Tests.DataExport.Data
 
             var freshCopy = progress.Repository.GetObjectByID<ExtractionProgress>(progress.ID);
             Assert.AreEqual(freshCopy.Retry, RetryStrategy.IterativeBackoff1Hour);
+
+            progress.DeleteInDatabase();
 
         }
         [Test]

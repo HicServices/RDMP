@@ -59,7 +59,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             attacher.LoadRawColumnsOnly = scenario == Scenario.AllRawColumns || scenario == Scenario.MissingPreLoadDiscardedColumn;
             attacher.RemoteSource = externalServer;
             
-            var lm = new LogManager(new ServerDefaults(CatalogueRepository).GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
+            var lm = new LogManager(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
             lm.CreateNewLoggingTaskIfNotExists("amagad");
             var dli = lm.CreateDataLoadInfo("amagad", "p", "a", "", true);
 

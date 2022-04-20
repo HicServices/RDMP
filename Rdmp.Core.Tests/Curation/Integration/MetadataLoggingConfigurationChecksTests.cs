@@ -93,7 +93,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             cata2.LoggingDataTask = "OMG YEAGH";
             cata2.LiveLoggingServer_ID = null;
 
-            var defaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
+            var defaults = RepositoryLocator.CatalogueRepository;
             defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID,eds);
 
             Assert.AreEqual(2,lmd.GetAllCatalogues().Count());

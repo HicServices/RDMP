@@ -16,7 +16,7 @@ namespace Rdmp.UI.Menus
     [System.ComponentModel.DesignerCategory("")]
     internal class CatalogueFolderMenu : RDMPContextMenuStrip
     {
-        public CatalogueFolderMenu(RDMPContextMenuStripArgs args, CatalogueFolder folder) : base(args, folder)
+        public CatalogueFolderMenu(RDMPContextMenuStripArgs args, string folder) : base(args, folder)
         {
 
             //Things that are always visible regardless

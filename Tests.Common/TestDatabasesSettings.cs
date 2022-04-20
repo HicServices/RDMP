@@ -9,7 +9,7 @@ using FAnsi;
 
 namespace Tests.Common
 {
-    class TestDatabasesSettings
+    public class TestDatabasesSettings
     {
         public string Prefix { get { return TestDatabaseNames.Prefix; } set { TestDatabaseNames.Prefix = value; } }
 
@@ -31,6 +31,9 @@ namespace Tests.Common
         public string PostgreSql { get; set; }
         public string PostgreSqlLowPrivilegeUsername { get; set; }
         public string PostgreSqlLowPrivilegePassword { get; set; }
+
+
+        public bool UseFileSystemRepo { get; set; }
 
         public string GetLowPrivilegeUsername(DatabaseType databaseType)
         {

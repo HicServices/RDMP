@@ -70,6 +70,11 @@ namespace Rdmp.Core.Curation.Data.Governance
 
         #endregion
 
+        public GovernanceDocument()
+        {
+
+        }
+
         /// <summary>
         /// Marks a given <paramref name="file"/> as being important in the obtaining of the <paramref name="parent"/> <see cref="GovernancePeriod"/>
         /// </summary>

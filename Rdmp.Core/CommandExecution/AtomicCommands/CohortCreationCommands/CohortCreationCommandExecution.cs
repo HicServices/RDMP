@@ -156,7 +156,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
             pipelineRunner.PipelineExecutionFinishedsuccessfully += (o, args) => OnCohortCreatedSuccessfully(pipelineRunner, request);
 
             //add in the logging server
-            var loggingServer = catalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+            var loggingServer = catalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
             if (loggingServer != null)
             {

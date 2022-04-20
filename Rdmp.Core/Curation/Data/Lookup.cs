@@ -134,6 +134,10 @@ namespace Rdmp.Core.Curation.Data
         }
         #endregion
 
+        public Lookup()
+        {
+
+        }
 
         /// <summary>
         /// Declares that the columns provide form a foreign key join to lookup table relationship

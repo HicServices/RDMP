@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.QueryBuilding;
+using MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Tests.CohortCreation
 {
@@ -134,7 +135,10 @@ namespace Rdmp.Core.Tests.CohortCreation
             Assert.IsTrue(shortcutAggregate.GetQueryBuilder().SQL.Contains("folk=2"));
 
             //shouldnt work because of the dependency of the child - should give a foreign key error
-            Assert.Throws<SqlException>(aggregate1.DeleteInDatabase);
+            if(CatalogueRepository is TableRepository)
+            {
+                Assert.Throws<SqlException>(aggregate1.DeleteInDatabase);
+            }   
 
             //delete the child
             shortcutAggregate.DeleteInDatabase();

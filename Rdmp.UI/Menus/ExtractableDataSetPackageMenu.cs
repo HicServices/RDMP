@@ -33,7 +33,7 @@ namespace Rdmp.UI.Menus
 
         private void AddExtractableDatasetToPackage(object sender, EventArgs e)
         {
-            var packageManager = _activator.RepositoryLocator.DataExportRepository.PackageManager;
+            var packageManager = _activator.RepositoryLocator.DataExportRepository;
             var notInPackage = _childProvider.ExtractableDataSets.Except(packageManager.GetAllDataSets(_package, _childProvider.ExtractableDataSets));
 
             if(_activator.SelectObjects(new DialogArgs

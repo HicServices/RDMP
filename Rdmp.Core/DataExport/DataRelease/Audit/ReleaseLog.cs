@@ -110,7 +110,10 @@ namespace Rdmp.Core.DataExport.DataRelease.Audit
                     DateOfRelease,
                     Username);
         }
+        public ReleaseLog()
+        {
 
+        }
         public ReleaseLog(IDataExportRepository repository,ReleasePotential dataset, ReleaseEnvironmentPotential environment,bool isPatch,DirectoryInfo releaseDirectory,FileInfo datasetFileBeingReleased)
         {
             repository.InsertAndHydrate(this,

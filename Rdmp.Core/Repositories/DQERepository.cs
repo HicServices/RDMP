@@ -46,7 +46,7 @@ namespace Rdmp.Core.Repositories
         {
             CatalogueRepository = catalogueRepository;
 
-            var server = CatalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.DQE);
+            var server = CatalogueRepository.GetDefaultFor(PermissableDefaults.DQE);
 
             if (server == null)
                 throw new NotSupportedException("There is no DataQualityEngine Reporting Server (ExternalDatabaseServer).  You will need to create/set one in CatalogueManager by using 'Locations=>Manage External Servers...'");
@@ -58,7 +58,7 @@ namespace Rdmp.Core.Repositories
         /// <summary>
         /// Creates a new DQERepository storing/reading data from <paramref name="db"/> instead of the default
         /// (if any) listed in the <paramref name="catalogueRepository"/>.  Use this constructor if you do not
-        /// want to use <see cref="ICatalogueRepository.GetServerDefaults"/> to find the DQE but instead want to
+        /// want to use <see cref="IServerDefaults.GetDefaultFor(PermissableDefaults)"/> to find the DQE but instead want to
         /// use an explicit database (<paramref name="db"/>)
         /// </summary>
         /// <param name="catalogueRepository"></param>

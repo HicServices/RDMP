@@ -133,6 +133,11 @@ namespace Rdmp.Core.Curation.Data
         }
         #endregion
 
+        public JoinInfo()
+        {
+
+        }
+
         /// <summary>
         /// Constructor to be used to create already existing JoinInfos out of the database only.
         /// </summary>

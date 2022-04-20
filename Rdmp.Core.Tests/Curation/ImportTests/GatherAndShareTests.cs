@@ -117,8 +117,7 @@ namespace Rdmp.Core.Tests.Curation.ImportTests
 
             Assert.AreEqual(anoTableAfter.ID, anoTableAfter2.ID);
             Assert.AreEqual("N", anoTableAfter2.Suffix);
-            Assert.AreEqual(ChangeDescription.DatabaseCopyDifferent,anoTableAfter.HasLocalChanges().Evaluation);
-
+            
             anoTableAfter.DeleteInDatabase();
             anoserverAfter.DeleteInDatabase();
 
@@ -212,7 +211,7 @@ namespace Rdmp.Core.Tests.Curation.ImportTests
             shareManager.ImportSharedObject(shareDefinition);
 
             //revert the memory copy and check it got overwritten with the original saved values
-            cata.RevertToDatabaseState();
+            cata = CatalogueRepository.GetObjectByID<Catalogue>(cata.ID);
             Assert.AreEqual("Cata", cata.Name);
 
             var exports = CatalogueRepository.GetAllObjects<ObjectExport>();

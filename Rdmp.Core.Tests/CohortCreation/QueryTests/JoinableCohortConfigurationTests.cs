@@ -76,8 +76,11 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests
             var join1 = new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate1);
             try
             {
-                var ex = Assert.Throws<SqlException>(() => new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate1));
-                Assert.IsTrue(ex.Message.Contains("ix_eachAggregateCanOnlyBeJoinableOnOneProject"));
+                if(CatalogueRepository is TableRepository)
+                {
+                    var ex = Assert.Throws<SqlException>(() => new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate1));
+                    Assert.IsTrue(ex.Message.Contains("ix_eachAggregateCanOnlyBeJoinableOnOneProject"));
+                }
             }
             finally
             {
@@ -111,7 +114,8 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests
             try
             {
                 joinable.AddUser(aggregate2);
-                Assert.Throws<SqlException>(()=>joinable.AddUser(aggregate2));
+                var ex = Assert.Throws<Exception>(()=>joinable.AddUser(aggregate2));
+                Assert.AreEqual($"AggregateConfiguration 'UnitTestAggregate2' already uses 'Patient Index Table:cic_{cohortIdentificationConfiguration.ID}_UnitTestAggregate1'. Only one patient index table join is permitted.", ex.Message);
             }
             finally
             {

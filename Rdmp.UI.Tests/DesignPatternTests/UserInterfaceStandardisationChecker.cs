@@ -111,7 +111,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
             //All Menus should correspond to a data class
             foreach (Type menuClass in mef.GetAllTypes().Where(t => typeof (RDMPContextMenuStrip).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
             {
-                if(menuClass == typeof(RDMPContextMenuStrip)) //the basic class from which all are inherited
+                if(menuClass == typeof(RDMPContextMenuStrip) || menuClass == typeof(CatalogueFolderMenu)) //the basic class from which all are inherited
                     continue;
                 
                 //We are looking at something like AutomationServerSlotsMenu

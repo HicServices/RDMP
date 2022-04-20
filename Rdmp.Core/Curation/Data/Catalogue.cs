@@ -30,6 +30,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using YamlDotNet.Serialization;
 
 namespace Rdmp.Core.Curation.Data
 {
@@ -40,7 +41,7 @@ namespace Rdmp.Core.Curation.Data
         
         private string _acronym;
         private string _name;
-        private CatalogueFolder _folder;
+        private string _folder = CatalogueFolder.Root;
         private string _description;
         private Uri _detailPageUrl;
         private CatalogueType _type;
@@ -113,10 +114,10 @@ namespace Rdmp.Core.Curation.Data
         /// <inheritdoc/>
         [DoNotImportDescriptions]
         [UsefulProperty]
-        public CatalogueFolder Folder
+        public string Folder
         {
             get { return _folder; }
-            set { SetField(ref  _folder, value); }
+            set { SetField(ref  _folder, CatalogueFolder.Adjust(value)); }
         }
          
         /// <inheritdoc/>
@@ -681,6 +682,16 @@ namespace Rdmp.Core.Curation.Data
         #endregion
 
         /// <summary>
+        /// Creates a new instance from an unknown repository (for use with serialization).  You must set
+        /// <see cref="IMapsDirectlyToDatabaseTable.Repository"/> before Methods that retrieve other objects or
+        /// save state can be called (e.g. <see cref="ISaveable.SaveToDatabase"/>)
+        /// </summary>
+        public Catalogue()
+        {
+            ClearAllInjections();
+        }
+
+        /// <summary>
         /// Declares a new empty virtual dataset with the given Name.  This will not have any virtual columns and will not be tied to any underlying tables.  
         /// 
         /// <para>The preferred method of getting a Catalogue is to use <see cref="TableInfoImporter"/> and <see cref="ForwardEngineerCatalogue"/></para>
@@ -689,25 +700,21 @@ namespace Rdmp.Core.Curation.Data
         /// <param name="name"></param>
         public Catalogue(ICatalogueRepository repository, string name)
         {
-            var loggingServer = repository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+            var loggingServer = repository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
             repository.InsertAndHydrate(this,new Dictionary<string, object>()
             {
                 {"Name",name},
-                {"LiveLoggingServer_ID",loggingServer == null ? (object) DBNull.Value:loggingServer.ID}
+                {"LiveLoggingServer_ID",loggingServer == null ? DBNull.Value:loggingServer.ID}
             });
 
             if (ID == 0 || string.IsNullOrWhiteSpace(Name) || Repository != repository)
                 throw new ArgumentException("Repository failed to properly hydrate this class");
-
-            //default values
-            if(Folder == null)
-                Folder = new CatalogueFolder(this, "\\");
-            
+                        
             //if there is a default logging server
             if (LiveLoggingServer_ID == null)
             {
-                var liveLoggingServer = repository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+                var liveLoggingServer = repository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
                 
                 if(liveLoggingServer != null)
                     LiveLoggingServer_ID = liveLoggingServer.ID;
@@ -842,7 +849,7 @@ namespace Rdmp.Core.Curation.Data
             IsInternalDataset = (bool)r["IsInternalDataset"];
             IsColdStorageDataset = (bool) r["IsColdStorageDataset"];
 
-            Folder = new CatalogueFolder(this,r["Folder"].ToString());
+            Folder = r["Folder"].ToString();
 
             ClearAllInjections();
         }

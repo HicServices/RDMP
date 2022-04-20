@@ -4,10 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataExport.DataRelease.Audit;
 using Rdmp.Core.Repositories.Managers;
 
 namespace Rdmp.Core.Repositories
@@ -27,10 +29,9 @@ namespace Rdmp.Core.Repositories
         {
             var eds = GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault();
 
-            if(eds == null)
-                return new CatalogueExtractabilityStatus(false,false);
-
-            return new CatalogueExtractabilityStatus(true, eds.Project_ID != null);
+            return eds == null
+                ? new CatalogueExtractabilityStatus(false, false)
+                : new CatalogueExtractabilityStatus(true, eds.Project_ID != null);
         }
 
         public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers()
@@ -45,22 +46,19 @@ namespace Rdmp.Core.Repositories
 
         #region IDataExportPropertyManager
 
-        Dictionary<DataExportProperty,string>  _propertiesDictionary = new Dictionary<DataExportProperty, string>();
+        protected Dictionary<DataExportProperty,string>  PropertiesDictionary = new Dictionary<DataExportProperty, string>();
         
-        public string GetValue(DataExportProperty property)
+        public virtual string GetValue(DataExportProperty property)
         {
-            if (_propertiesDictionary.ContainsKey(property))
-                return _propertiesDictionary[property];
-
-            return null;
+            return PropertiesDictionary.ContainsKey(property) ? PropertiesDictionary[property] : null;
         }
 
-        public void SetValue(DataExportProperty property, string value)
+        public virtual void SetValue(DataExportProperty property, string value)
         {
-            if (!_propertiesDictionary.ContainsKey(property))
-                _propertiesDictionary.Add(property,value);
+            if (!PropertiesDictionary.ContainsKey(property))
+                PropertiesDictionary.Add(property,value);
             else
-                _propertiesDictionary[property] = value;
+                PropertiesDictionary[property] = value;
         }
         #endregion
 
@@ -68,30 +66,49 @@ namespace Rdmp.Core.Repositories
 
         #region IExtractableDataSetPackageManager
 
-        readonly Dictionary<IExtractableDataSetPackage,HashSet<IExtractableDataSet>> _packageDictionary = new Dictionary<IExtractableDataSetPackage, HashSet<IExtractableDataSet>>();
+        protected Dictionary<IExtractableDataSetPackage,HashSet<IExtractableDataSet>> PackageDictionary { get; set; } = new ();
 
         public IExtractableDataSet[] GetAllDataSets(IExtractableDataSetPackage package, IExtractableDataSet[] allDataSets)
         {
-            if (!_packageDictionary.ContainsKey(package))
-                _packageDictionary.Add(package, new HashSet<IExtractableDataSet>());
+            if (!PackageDictionary.ContainsKey(package))
+                PackageDictionary.Add(package, new HashSet<IExtractableDataSet>());
 
-            return _packageDictionary[package].ToArray();
+            return PackageDictionary[package].ToArray();
         }
 
-        public void AddDataSetToPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
+        public virtual void AddDataSetToPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
         {
-            if(!_packageDictionary.ContainsKey(package))
-                _packageDictionary.Add(package,new HashSet<IExtractableDataSet>());
+            if(!PackageDictionary.ContainsKey(package))
+                PackageDictionary.Add(package,new HashSet<IExtractableDataSet>());
 
-            _packageDictionary[package].Add(dataSet);
+            PackageDictionary[package].Add(dataSet);
         }
 
-        public void RemoveDataSetFromPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
+        public virtual void RemoveDataSetFromPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
         {
-            if (!_packageDictionary.ContainsKey(package))
-                _packageDictionary.Add(package, new HashSet<IExtractableDataSet>());
+            if (!PackageDictionary.ContainsKey(package))
+                PackageDictionary.Add(package, new HashSet<IExtractableDataSet>());
 
-            _packageDictionary[package].Remove(dataSet);
+            if (!PackageDictionary[package].Contains(dataSet))
+                throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed", "dataSet");
+
+            PackageDictionary[package].Remove(dataSet);
+        }
+
+        public Dictionary<int, List<int>> GetPackageContentsDictionary()
+        {
+            return PackageDictionary.ToDictionary(k=>k.Key.ID,v=>v.Value.Select(o=>o.ID).ToList());
+        }
+
+        public IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(IExtractionConfiguration configuration, IExtractableDataSet dataset)
+        {
+            return GetAllObjects<CumulativeExtractionResults>().Where(e=>
+            (e.ExtractionConfiguration_ID == configuration.ID) && (e.ExtractableDataSet_ID == dataset.ID));
+        }
+
+        public IReleaseLog GetReleaseLogEntryIfAny(CumulativeExtractionResults cumulativeExtractionResults)
+        {
+            throw new System.NotImplementedException();
         }
         #endregion
     }

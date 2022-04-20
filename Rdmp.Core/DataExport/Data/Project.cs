@@ -89,6 +89,10 @@ namespace Rdmp.Core.DataExport.Data
         }
         #endregion
 
+        public Project()
+        {
+
+        }
 
         /// <summary>
         /// Defines a new extraction project this is stored in the Data Export database

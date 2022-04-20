@@ -32,10 +32,15 @@ namespace Rdmp.Core.Curation.Data.Dashboarding
             get { return _dashboardControlID; }
             set { SetField(ref _dashboardControlID , value); }
         }
-        
-        
+
+
 
         #endregion
+
+        public DashboardObjectUse()
+        {
+
+        }
 
         internal DashboardObjectUse(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
         {
