@@ -229,7 +229,7 @@ namespace Rdmp.Core.Tests.CohortCommitting
             UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExtractionIsIdentifiable,CheckResult.Fail);
 
             var ex = Assert.Throws<Exception>(()=>ect.Check(new ThrowImmediatelyCheckNotifier()));
-            StringAssert.Contains("cohort will extract IDENTIFIABLE data",ex.Message);
+            Assert.AreEqual("R004 PrivateIdentifierField and ReleaseIdentifierField are the same, this means your cohort will extract identifiable data (no cohort identifier substitution takes place)", ex.Message);
 
             UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExtractionIsIdentifiable, CheckResult.Warning);
 
