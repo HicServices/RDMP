@@ -161,6 +161,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
             Assert.AreEqual("2\" length of wood", dt.Rows[1][1]);
             Assert.AreEqual("\"\"The bends\"\"", dt.Rows[2][1]);
 
+            source.Dispose(new ThrowImmediatelyDataLoadEventListener(),null);
         }
 
 
