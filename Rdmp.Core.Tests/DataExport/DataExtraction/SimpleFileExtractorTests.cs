@@ -9,6 +9,7 @@ using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.Core.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
+using System;
 using System.IO;
 using System.Linq;
 
@@ -200,7 +201,14 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
 
             _extractor.MovePatient("Sub1","Rel1",_outDir,new ThrowImmediatelyDataLoadEventListener(){ThrowOnWarning=true},new GracefulCancellationToken());
             _extractor.MovePatient("Sub2","Rel2",_outDir,new ThrowImmediatelyDataLoadEventListener(){ThrowOnWarning=true},new GracefulCancellationToken());
+
+            // does not exist
+            var ex = Assert.Throws<Exception>(()=>_extractor.MovePatient("Sub3", "Rel3", _outDir, new ThrowImmediatelyDataLoadEventListener() { ThrowOnWarning = true }, new GracefulCancellationToken()));
+            Assert.AreEqual($"No Directories were found matching Pattern Sub3 in {_inDir.FullName}.  For private identifier 'Sub3'", ex.Message);
             
+            // if not throwing on warnings then a missing sub just passes through and is ignored
+            _extractor.MovePatient("Sub3", "Rel3", _outDir, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+
             FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
             FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
             DirectoryAssert.Exists(Path.Combine(_outDir.FullName,"Rel1"));
