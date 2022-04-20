@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
+using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
@@ -63,30 +65,18 @@ namespace Rdmp.Core.CommandExecution
             // Is the Global Check Notifier the best here? 
             AddDelegate(typeof(ICheckNotifier), true, (p) => _basicActivator.GlobalErrorCheckNotifier);
 
-            AddDelegate(typeof(Uri), false, (p) =>
-                _basicActivator.TypeText(
-                    new DialogArgs
-                    {
-                        WindowTitle = "Value needed for parameter",
-                        EntryLabel = GetPromptFor(p),
-                    }
-                    , 1000, p.DefaultValue?.ToString(), out string result, false)
-                ? new Uri(result)
-                : throw new OperationCanceledException());
+            AddDelegate(typeof(Uri), false, (p) => new Uri(SelectText(p)));
+            AddDelegate(typeof(Regex), false, (p) => new Regex(SelectText(p)));
 
-            AddDelegate(typeof(string), false,(p) =>
-                _basicActivator.TypeText(
-                    new DialogArgs
-                    {
-                        WindowTitle = "Value needed for parameter",
-                        EntryLabel = GetPromptFor(p),
-                    }
-                    , 1000, p.DefaultValue?.ToString(), out string result, false)
-                ? result
-                : throw new OperationCanceledException());
+            AddDelegate(typeof(string), false,SelectText);
 
             AddDelegate(typeof(Type), false,(p) => 
-                _basicActivator.SelectType($"Type needed for {p.Name} ", p.DemandIfAny?.TypeOf, out Type chosen)
+                _basicActivator.SelectType(
+                    new DialogArgs
+                    {
+                        WindowTitle = $"Type needed for {p.Name}",
+                        InitialSearchText = p.DefaultValue?.ToString(),
+                    }, p.DemandIfAny?.TypeOf, out Type chosen)
                     ? chosen 
                     : throw new OperationCanceledException());
 
@@ -98,7 +88,8 @@ namespace Rdmp.Core.CommandExecution
                  new DialogArgs
                  {
                      WindowTitle = GetPromptFor(p),
-                     InitialObjectSelection = p.DefaultValue is IMapsDirectlyToDatabaseTable m ? new IMapsDirectlyToDatabaseTable[] { m } : null
+                     InitialObjectSelection = p.DefaultValue is IMapsDirectlyToDatabaseTable m ? new IMapsDirectlyToDatabaseTable[] { m } : null,
+                     InitialSearchText = p.DefaultValue?.ToString(),
                  }, GetAllObjectsOfType(p.Type))); ;
 
             AddDelegate(typeof(IPipeline), false, SelectPipeline);
@@ -111,13 +102,23 @@ namespace Rdmp.Core.CommandExecution
             AddDelegate(typeof(ICollectSqlParameters), false, SelectOne<ICollectSqlParameters>);
             AddDelegate(typeof(IRootFilterContainerHost),false, SelectOne<IRootFilterContainerHost>);            
 
-            AddDelegate(typeof(Enum),false,(p)=>_basicActivator.SelectEnum(GetPromptFor(p) , p.Type, out Enum chosen)?chosen:null);
+            AddDelegate(typeof(Enum),false,(p)=>_basicActivator.SelectEnum(
+                new DialogArgs { 
+                    WindowTitle = GetPromptFor(p),
+                    InitialSearchText = p.DefaultValue?.ToString(),
+                } , p.Type, out Enum chosen)?chosen:null);
 
 
             _argumentDelegates.Add(new CommandInvokerArrayDelegate(typeof(IMapsDirectlyToDatabaseTable),false,(p)=>
             {
                 IMapsDirectlyToDatabaseTable[] available = GetAllObjectsOfType(p.Type.GetElementType());                
-                var result = _basicActivator.SelectMany(GetPromptFor(p),p.Type.GetElementType(), available);
+                var result = _basicActivator.SelectMany(
+                    new DialogArgs
+                    {
+                        WindowTitle = GetPromptFor(p),
+                        InitialObjectSelection = p.DefaultValue == null ? null :
+                                ((IEnumerable<IMapsDirectlyToDatabaseTable>)p.DefaultValue).ToArray()
+                    },p.Type.GetElementType(), available);
                 
                 if(result == null)
                     return null;
@@ -158,10 +159,24 @@ namespace Rdmp.Core.CommandExecution
             );
 
             _argumentDelegates.Add(new CommandInvokerValueTypeDelegate((p)=>
-                _basicActivator.SelectValueType(GetPromptFor(p), p.Type, null, out object chosen) 
+                _basicActivator.SelectValueType(GetPromptFor(p), p.Type, p.DefaultValue, out object chosen) 
                     ? chosen 
                     : throw new OperationCanceledException()));
 
+        }
+
+        private string SelectText(RequiredArgument p)
+        {
+            return
+                _basicActivator.TypeText(
+                    new DialogArgs
+                    {
+                        WindowTitle = "Value needed for parameter",
+                        EntryLabel = GetPromptFor(p),
+                    }
+                    , 1000, p.DefaultValue?.ToString(), out string result, false)
+                ? result
+                : throw new OperationCanceledException();
         }
 
         private IPipeline SelectPipeline(RequiredArgument arg)
@@ -291,7 +306,8 @@ namespace Rdmp.Core.CommandExecution
                  new DialogArgs
                  {
                      WindowTitle = GetPromptFor(p),
-                     InitialObjectSelection = p.DefaultValue is IMapsDirectlyToDatabaseTable m ? new IMapsDirectlyToDatabaseTable[] { m } : null
+                     InitialObjectSelection = p.DefaultValue is IMapsDirectlyToDatabaseTable m ? new IMapsDirectlyToDatabaseTable[] { m } : null,
+                     InitialSearchText = p.DefaultValue?.ToString(),
                  }
                 , _basicActivator.GetAll<T>().Cast<IMapsDirectlyToDatabaseTable>().ToArray());
         }
