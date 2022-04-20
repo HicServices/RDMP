@@ -11,13 +11,21 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
 {
     /// <summary>
-    /// Component for copying directory trees or top level files from a location on disk to the output directory of a project extraction.  Supports substituting private identifiers for release identifiers in top level file/directory names
+    /// <para>
+    /// Component for copying directory trees or top level files from a location on disk to the output directory
+    /// of a project extraction.  Supports substituting private identifiers for release identifiers in top level
+    /// file/directory names.
+    /// </para>
+    /// <para>IMPORTANT: File extractor operates as part of the 'Extract Globals' section of the extraction pipeline.
+    /// This means that you must enable globals in the extraction for the component to operate.</para>
     /// </summary>
     public class SimpleFileExtractor : FileExtractor
     {
@@ -124,7 +132,24 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
         {
             bool atLeastOne = false;
 
-            foreach(var e in LocationOfFiles.EnumerateFileSystemInfos(Pattern))
+            var infos = new List<FileSystemInfo>();
+            
+            if(Pattern.Contains('*'))
+                infos.AddRange(LocationOfFiles.EnumerateFileSystemInfos(Pattern));
+            else
+            {
+                var f = LocationOfFiles.GetFiles().FirstOrDefault(f=>f.Name.Equals(Pattern, StringComparison.OrdinalIgnoreCase));
+                
+                if (f != null)
+                    infos.Add(f);
+
+                var d = LocationOfFiles.GetDirectories().FirstOrDefault(d => d.Name.Equals(Pattern, StringComparison.OrdinalIgnoreCase));
+
+                if (d != null)
+                    infos.Add(d);
+            }
+
+            foreach (var e in infos)
             {
                 if(Directories && e is DirectoryInfo dir)
                 {
