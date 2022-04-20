@@ -663,6 +663,11 @@ namespace Rdmp.Core.CommandExecution
                     OverrideIcon = FamFamFamIcons.disk,
                     Weight = -99.8f
                 };
+                yield return new ExecuteCommandCreateNewExtractionConfigurationForProject(_activator)
+                {
+                    CohortIfAny = cohort,
+                    OverrideCommandName = "New Extraction Configuration using Cohort",
+                };
                 yield return new ExecuteCommandDeprecate(_activator, cohort, !cohort.IsDeprecated)
                 {
                     OverrideCommandName = cohort.IsDeprecated ? "Undeprecate Cohort": "Deprecate Cohort",
