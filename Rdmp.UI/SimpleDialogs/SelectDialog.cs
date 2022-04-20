@@ -26,6 +26,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -159,6 +160,8 @@ namespace Rdmp.UI.SimpleDialogs
                 _searchables = _allObjects.Cast<IMapsDirectlyToDatabaseTable>().ToDictionary(k => k, activator.CoreChildProvider.GetDescendancyListIfAnyFor);
                 _usefulPropertyFinder = new AttributePropertyFinder<UsefulPropertyAttribute>(_searchables.Keys);
 
+                AddUsefulPropertiesIfHomogeneousTypes(_allObjects);
+
                 BuildToolStripForDatabaseObjects(focusedCollection);
             }
             else
@@ -282,6 +285,38 @@ namespace Rdmp.UI.SimpleDialogs
                 olv.CellToolTipShowing += (s, e) => RDMPCollectionCommonFunctionality.Tree_CellToolTipShowing(activator, e);
             }
         }
+
+        private void AddUsefulPropertiesIfHomogeneousTypes(T[] mapsDirectlyToDatabaseTables)
+        {
+            // no objects
+            if (mapsDirectlyToDatabaseTables.Length == 0)
+                return;
+
+            var type = mapsDirectlyToDatabaseTables.First().GetType();
+
+            // types differ (use All to jump out ASAP if theres a billion objects)
+            if (!mapsDirectlyToDatabaseTables.All(m => m.GetType() == type))
+                return;
+
+            //all objects are the same Type
+
+            //look for useful properties
+            foreach (PropertyInfo propertyInfo in type.GetProperties())
+            {
+                var useful = _usefulPropertyFinder.GetAttribute(propertyInfo);
+                if (useful != null)
+                {
+                    //add a column
+                    var newCol = new OLVColumn(propertyInfo.Name, propertyInfo.Name);
+                    olv.AllColumns.Add(newCol);
+
+
+                    RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, newCol, "Useful_" + propertyInfo.Name);
+                }
+            }
+            
+        }
+
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);

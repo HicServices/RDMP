@@ -62,6 +62,7 @@ namespace Rdmp.Core.Curation.Data
         }
 
         /// <inheritdoc/>
+        [UsefulProperty]
         public string Description
         {
             get { return _description; }
