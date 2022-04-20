@@ -6,6 +6,7 @@
 
 using NUnit.Framework;
 using Rdmp.Core.DataExport.Data;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
 using System;
 using System.Collections.Generic;
@@ -29,17 +30,17 @@ namespace Rdmp.Core.Tests.DataExport.Data
             ect.ReleaseIdentifierField = ect.PrivateIdentifierField;
             ect.SaveToDatabase();
 
-            UserSettings.AllowIdentifiableExtractions = false;
+            UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExtractionIsIdentifiable, CheckResult.Fail);
 
             var ex = Assert.Throws<Exception>(()=>cohort.GetReleaseIdentifier());
 
             StringAssert.Contains("is the same as the PrivateIdentifierSQL",ex.Message);
 
-            UserSettings.AllowIdentifiableExtractions = true;
-                        
+            UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExtractionIsIdentifiable, CheckResult.Warning);
+
             Assert.AreEqual(cohort.GetReleaseIdentifier(),cohort.GetPrivateIdentifier());
 
-            UserSettings.AllowIdentifiableExtractions = false;
+            UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExtractionIsIdentifiable, CheckResult.Fail);
         }
     }
 }
