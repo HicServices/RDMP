@@ -9,11 +9,8 @@ using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.Core.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Rdmp.Core.Tests.DataExport.DataExtraction
 {
@@ -60,6 +57,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
         {
             _extractor.Directories = false;
             _extractor.Pattern = "*";
+            _extractor.OutputDirectoryName = _outDir.FullName;
             _extractor.Check(new ThrowImmediatelyCheckNotifier());
 
             FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
@@ -75,6 +73,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
         {
             _extractor.Directories = false;
             _extractor.Pattern = "blah.*";
+            _extractor.OutputDirectoryName = _outDir.FullName;
             _extractor.Check(new ThrowImmediatelyCheckNotifier());
 
             FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
@@ -92,6 +91,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
         {
             _extractor.Directories = true;
             _extractor.Pattern = "*";
+            _extractor.OutputDirectoryName = _outDir.FullName;
             _extractor.Check(new ThrowImmediatelyCheckNotifier());
 
             FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
@@ -109,6 +109,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
         {
             _extractor.Directories = true;
             _extractor.Pattern = "*1";
+            _extractor.OutputDirectoryName = _outDir.FullName;
             _extractor.Check(new ThrowImmediatelyCheckNotifier());
 
             FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
@@ -127,6 +128,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             _extractor.PerPatient = true;
             _extractor.Directories = false;
             _extractor.Pattern = "$p.txt";
+            _extractor.OutputDirectoryName = _outDir.FullName;
             _extractor.Check(new ThrowImmediatelyCheckNotifier());
 
             FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
@@ -144,6 +146,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             _extractor.PerPatient = true;
             _extractor.Directories = false;
             _extractor.Pattern = "$p.txt";
+            _extractor.OutputDirectoryName = _outDir.FullName;
             _extractor.Check(new ThrowImmediatelyCheckNotifier());
 
             FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
@@ -168,6 +171,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             _extractor.PerPatient = true;
             _extractor.Directories = true;
             _extractor.Pattern = "$p";
+            _extractor.OutputDirectoryName = _outDir.FullName;
             _extractor.Check(new ThrowImmediatelyCheckNotifier());
 
             FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
@@ -188,6 +192,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             _extractor.PerPatient = true;
             _extractor.Directories = true;
             _extractor.Pattern = "$p";
+            _extractor.OutputDirectoryName = _outDir.FullName;
             _extractor.Check(new ThrowImmediatelyCheckNotifier());
 
             FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
