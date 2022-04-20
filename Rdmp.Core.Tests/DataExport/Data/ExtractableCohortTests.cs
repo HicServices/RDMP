@@ -34,7 +34,7 @@ namespace Rdmp.Core.Tests.DataExport.Data
 
             var ex = Assert.Throws<Exception>(()=>cohort.GetReleaseIdentifier());
 
-            StringAssert.Contains("is the same as the PrivateIdentifierSQL",ex.Message);
+            Assert.AreEqual("R004 PrivateIdentifierField and ReleaseIdentifierField are the same, this means your cohort will extract identifiable data (no cohort identifier substitution takes place)", ex.Message);
 
             UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExtractionIsIdentifiable, CheckResult.Warning);
 
