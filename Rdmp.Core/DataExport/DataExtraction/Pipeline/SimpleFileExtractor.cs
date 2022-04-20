@@ -11,13 +11,21 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
 {
     /// <summary>
-    /// Component for copying directory trees or top level files from a location on disk to the output directory of a project extraction.  Supports substituting private identifiers for release identifiers in top level file/directory names
+    /// <para>
+    /// Component for copying directory trees or top level files from a location on disk to the output directory
+    /// of a project extraction.  Supports substituting private identifiers for release identifiers in top level
+    /// file/directory names.
+    /// </para>
+    /// <para>IMPORTANT: File extractor operates as part of the 'Extract Globals' section of the extraction pipeline.
+    /// This means that you must enable globals in the extraction for the component to operate.</para>
     /// </summary>
     public class SimpleFileExtractor : FileExtractor
     {
@@ -33,8 +41,15 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
         [DemandsInitialization("Expected naming pattern of files to be moved.  If PerPatient is true then this should include the symbol $p to indicate the private identifier value of each patient to be moved e.g. $p.txt.  This symbol will be replaced in the file/path names (but not file body)", Mandatory = true)]
         public string Pattern {get;set;} = "$p";
 
-        [DemandsInitialization("The name of the subdirectory to create in the extraction directory where files should be put (in the extraction) e.g. 'Files'", Mandatory = true, DefaultValue = "Files")]
-        public string OutputDirectoryName {get;set;}
+        [DemandsInitialization(@"Directory where files should be put 
+$p - Project Extraction Directory (e.g. c:\MyProject\)
+$n - Project Number (e.g. 234)
+$c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
+", Mandatory = true, DefaultValue = "$c\\Files\\")]
+        public string OutputDirectoryName { get; set; } = "$c\\Files\\";
+
+        [DemandsInitialization("Determines behaviour when the destination file already exists either due to an old run or cohort private identifier aliases.  Set to true to overwrite or false to crash.", DefaultValue = true)]
+        public bool Overwrite { get; set; } = true;
 
         public override void Check(ICheckNotifier notifier)
         {
@@ -45,16 +60,28 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
 
             if(!PerPatient && Pattern.IndexOf("$p") != -1)
                 notifier.OnCheckPerformed(new CheckEventArgs($"PerPatient is false but Pattern {Pattern} contains token $p.  This token will never be matched in MoveAll mode",CheckResult.Fail));
+
+            try
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Output path is:" + GetDestinationDirectory(), CheckResult.Success));
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unable to to determine output directory from 'OutputDirectoryName'.  Perhaps pattern is bad", ex);
+            }
         }
 
         protected override void MoveFiles(ExtractGlobalsCommand command, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             if(!LocationOfFiles.Exists)
-                throw new System.Exception($"LocationOfFiles {LocationOfFiles} did not exist");
-            
-            var destinationDirectory = new DirectoryInfo(Path.Combine(command.Project.ExtractionDirectory, OutputDirectoryName));
+                throw new Exception($"LocationOfFiles {LocationOfFiles} did not exist");
 
-            if(PerPatient)
+            var destinationDirectory = GetDestinationDirectory();
+
+            if (!destinationDirectory.Exists)
+                destinationDirectory.Create();
+
+            if (PerPatient)
             {
                 var cohort = command.Configuration.Cohort;
                 var cohortData = cohort.FetchEntireCohort();
@@ -74,13 +101,55 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
         }
 
         /// <summary>
+        /// Resolves tokens (if any) in OutputDirectoryName into a single path
+        /// </summary>
+        /// <returns></returns>
+        public DirectoryInfo GetDestinationDirectory()
+        {
+            var path = OutputDirectoryName;
+            
+            if (path.Contains("$p"))
+            {
+                path = path.Replace("$p", _command.Project.ExtractionDirectory);
+            }
+            if (path.Contains("$n"))
+            {
+                path = path.Replace("$n", _command.Project.ProjectNumber.ToString());
+            }
+            
+            if (path.Contains("$c"))
+            {
+                path = path.Replace("$c", new ExtractionDirectory(_command.Project.ExtractionDirectory, _command.Configuration).ExtractionDirectoryInfo.FullName);
+            }
+
+            return new DirectoryInfo(path);
+        }
+
+        /// <summary>
         /// Called when <see cref="PerPatient"/> is false.  Called once per extraction
         /// </summary>
         public virtual void MoveAll(DirectoryInfo destinationDirectory, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             bool atLeastOne = false;
 
-            foreach(var e in LocationOfFiles.EnumerateFileSystemInfos(Pattern))
+            var infos = new List<FileSystemInfo>();
+            
+            if(Pattern.Contains('*'))
+                infos.AddRange(LocationOfFiles.EnumerateFileSystemInfos(Pattern));
+            else
+            {
+                var f = LocationOfFiles.GetFiles().FirstOrDefault(f=>f.Name.Equals(Pattern, StringComparison.OrdinalIgnoreCase));
+                
+                if (f != null)
+                    infos.Add(f);
+
+                var d = LocationOfFiles.GetDirectories().FirstOrDefault(d => d.Name.Equals(Pattern, StringComparison.OrdinalIgnoreCase));
+
+                if (d != null)
+                    infos.Add(d);
+            }
+
+            foreach (var e in infos)
             {
                 if(Directories && e is DirectoryInfo dir)
                 {
@@ -96,7 +165,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
                 {
                     var dest = Path.Combine(destinationDirectory.FullName,f.Name);
                     listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,($"Copying file '{f.FullName}' to '{dest}'")));
-                    File.Copy(f.FullName,dest);
+                    File.Copy(f.FullName,dest,Overwrite);
                     atLeastOne = true;
                 }
             }
@@ -150,7 +219,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
                         f.Name.Replace(privateIdentifier.ToString(),releaseSub));
 
                     listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,($"Copying file '{f.FullName}' to '{dest}'")));
-                    File.Copy(f.FullName,dest);
+                    File.Copy(f.FullName,dest,Overwrite);
                     atLeastOne = true;
                 }
             }
@@ -167,7 +236,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
             {
                 string name = Path.GetFileName( file );
                 string dest = Path.Combine( destFolder, name );
-                File.Copy( file, dest );
+                File.Copy( file, dest,Overwrite );
             }
             string[] folders = Directory.GetDirectories( sourceFolder );
             foreach (string folder in folders)
