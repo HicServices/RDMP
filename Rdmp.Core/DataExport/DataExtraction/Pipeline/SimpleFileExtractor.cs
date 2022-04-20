@@ -36,6 +36,9 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
         [DemandsInitialization("The name of the subdirectory to create in the extraction directory where files should be put (in the extraction) e.g. 'Files'", Mandatory = true, DefaultValue = "Files")]
         public string OutputDirectoryName {get;set;}
 
+        [DemandsInitialization("Determines behaviour when the destination file already exists either due to an old run or cohort private identifier aliases.  Set to true to overwrite or false to crash.", DefaultValue = true)]
+        public bool Overwrite { get; set; } = true;
+
         public override void Check(ICheckNotifier notifier)
         {
             base.Check(notifier);
@@ -96,7 +99,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
                 {
                     var dest = Path.Combine(destinationDirectory.FullName,f.Name);
                     listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,($"Copying file '{f.FullName}' to '{dest}'")));
-                    File.Copy(f.FullName,dest);
+                    File.Copy(f.FullName,dest,Overwrite);
                     atLeastOne = true;
                 }
             }
@@ -150,7 +153,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
                         f.Name.Replace(privateIdentifier.ToString(),releaseSub));
 
                     listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,($"Copying file '{f.FullName}' to '{dest}'")));
-                    File.Copy(f.FullName,dest);
+                    File.Copy(f.FullName,dest,Overwrite);
                     atLeastOne = true;
                 }
             }
@@ -167,7 +170,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
             {
                 string name = Path.GetFileName( file );
                 string dest = Path.Combine( destFolder, name );
-                File.Copy( file, dest );
+                File.Copy( file, dest,Overwrite );
             }
             string[] folders = Directory.GetDirectories( sourceFolder );
             foreach (string folder in folders)
