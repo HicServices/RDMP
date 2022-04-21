@@ -59,7 +59,7 @@ namespace Rdmp.Core.Providers
         public ExtractionConfiguration[] ExtractionConfigurations { get; private set; }
         public Dictionary<int, List<ExtractionConfiguration>> ExtractionConfigurationsByProject { get; set; }
 
-        private Dictionary<ExtractionConfiguration, List<SelectedDataSets>> _configurationToDatasetMapping;
+        private Dictionary<IExtractionConfiguration, List<SelectedDataSets>> _configurationToDatasetMapping;
         private IFilterManager _dataExportFilterManager;
 
         public List<ExternalCohortTable> ForbidListedSources { get; private set; }
@@ -113,19 +113,6 @@ namespace Rdmp.Core.Providers
             AddToDictionaries(new HashSet<object>(AllCohortIdentificationConfigurations.Where(cic => _cicAssociations.Contains(cic.ID))), new DescendancyList(AllProjectCohortIdentificationConfigurationsNode));
             AddToDictionaries(new HashSet<object>(AllCohortIdentificationConfigurations.Where(cic => !_cicAssociations.Contains(cic.ID))), new DescendancyList(AllFreeCohortIdentificationConfigurationsNode));
 
-            _selectedDataSetsWithNoIsExtractionIdentifier = new HashSet<ISelectedDataSets>(dataExportRepository.GetSelectedDatasetsWithNoExtractionIdentifiers());
-
-            SelectedDataSets = GetAllObjects<SelectedDataSets>(dataExportRepository);
-            ReportProgress("Fetching data export objects");
-
-            _extractionProgressesBySelectedDataSetID = GetAllObjects<ExtractionProgress>(dataExportRepository).ToDictionary(ds => ds.SelectedDataSets_ID, d => d); ;
-
-            var dsDictionary = ExtractableDataSets.ToDictionary(ds => ds.ID, d => d);
-            foreach (SelectedDataSets s in SelectedDataSets)
-                s.InjectKnown(dsDictionary[s.ExtractableDataSet_ID]);
-            
-            ReportProgress("Injecting SelectedDataSets");
-
             //This means that the ToString method in ExtractableDataSet doesn't need to go lookup catalogue info
             var catalogueIdDict = AllCatalogues.ToDictionary(c => c.ID, c2 => c2);
             foreach (ExtractableDataSet ds in ExtractableDataSets)
@@ -145,19 +132,12 @@ namespace Rdmp.Core.Providers
 
             ReportProgress("Grouping Extractions by Project");
 
+            BuildSelectedDatasets();
+
             AllGlobalExtractionFilterParameters = GetAllObjects<GlobalExtractionFilterParameter>(dataExportRepository);
-
-            AllContainers = GetAllObjects<FilterContainer>(dataExportRepository).ToDictionary(o => o.ID, o => o);
-            AllDeployedExtractionFilters = GetAllObjects<DeployedExtractionFilter>(dataExportRepository);
-            _allParameters = GetAllObjects<DeployedExtractionFilterParameter>(dataExportRepository);
-            
-            ReportProgress("Getting Filters");
-
-            //if we are using a database repository then we can make use of the caching class DataExportFilterManagerFromChildProvider to speed up
-            //filter contents
-            var dbRepo = dataExportRepository as DataExportRepository;
-            _dataExportFilterManager = dbRepo == null ? dataExportRepository.FilterManager : new DataExportFilterManagerFromChildProvider(dbRepo, this);
                         
+            BuildExtractionFilters();
+             
             ReportProgress("Building FilterManager");
 
             Cohorts = GetAllObjects<ExtractableCohort>(dataExportRepository);
@@ -171,19 +151,13 @@ namespace Rdmp.Core.Providers
                 _cohortsByOriginId[c.OriginID].Add(c);
             }
 
-            _configurationToDatasetMapping = new Dictionary<ExtractionConfiguration, List<SelectedDataSets>>();
-            
+
             ReportProgress("Fetching Cohorts");
 
             GetCohortAvailability();
 
             ReportProgress("GetCohortAvailability");
             
-            var configToSds = SelectedDataSets.GroupBy(k => k.ExtractionConfiguration_ID).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
-            
-            foreach (ExtractionConfiguration configuration in ExtractionConfigurations)
-                if(configToSds.TryGetValue(configuration.ID, out List<SelectedDataSets> result))
-                    _configurationToDatasetMapping.Add(configuration,result);
             
             ReportProgress("Mapping configurations to datasets");
 
@@ -232,6 +206,45 @@ namespace Rdmp.Core.Providers
             ReportProgress("Pipeline adding");
 
             GetPluginChildren();
+        }
+
+        private void BuildSelectedDatasets()
+        {
+            _selectedDataSetsWithNoIsExtractionIdentifier = new HashSet<ISelectedDataSets>(dataExportRepository.GetSelectedDatasetsWithNoExtractionIdentifiers());
+
+            SelectedDataSets = GetAllObjects<SelectedDataSets>(dataExportRepository);
+            ReportProgress("Fetching data export objects");
+
+            _extractionProgressesBySelectedDataSetID = GetAllObjects<ExtractionProgress>(dataExportRepository).ToDictionary(ds => ds.SelectedDataSets_ID, d => d); ;
+
+            var dsDictionary = ExtractableDataSets.ToDictionary(ds => ds.ID, d => d);
+            foreach (SelectedDataSets s in SelectedDataSets)
+                s.InjectKnown(dsDictionary[s.ExtractableDataSet_ID]);
+
+            ReportProgress("Injecting SelectedDataSets");
+
+            _configurationToDatasetMapping = new();
+
+            var configToSds = SelectedDataSets.GroupBy(k => k.ExtractionConfiguration_ID).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
+
+            foreach (ExtractionConfiguration configuration in ExtractionConfigurations)
+                if (configToSds.TryGetValue(configuration.ID, out List<SelectedDataSets> result))
+                    _configurationToDatasetMapping.Add(configuration, result);
+        }
+
+        private void BuildExtractionFilters()
+        {
+            AllContainers = GetAllObjects<FilterContainer>(dataExportRepository).ToDictionary(o => o.ID, o => o);
+            AllDeployedExtractionFilters = GetAllObjects<DeployedExtractionFilter>(dataExportRepository);
+            _allParameters = GetAllObjects<DeployedExtractionFilterParameter>(dataExportRepository);
+
+            ReportProgress("Getting Filters");
+
+            //if we are using a database repository then we can make use of the caching class DataExportFilterManagerFromChildProvider to speed up
+            //filter contents
+            _dataExportFilterManager = dataExportRepository is not DataExportRepository dbRepo
+                ? dataExportRepository.FilterManager
+                : new DataExportFilterManagerFromChildProvider(dbRepo, this);
         }
 
         private void AddChildren(IExtractableDataSetPackage package, DescendancyList descendancy)
@@ -381,7 +394,7 @@ namespace Rdmp.Core.Providers
             AddToDictionaries(children,descendancy);
         }
 
-        private void AddChildren(ExtractionConfiguration extractionConfiguration, DescendancyList descendancy)
+        private void AddChildren(IExtractionConfiguration extractionConfiguration, DescendancyList descendancy)
         {
             HashSet<object> children = new HashSet<object>();
 
@@ -426,11 +439,7 @@ namespace Rdmp.Core.Providers
                 AddChildren(rootContainer,descendancy.Add(rootContainer));
             }
 
-            if(children.Any())
-            {
-                AddToDictionaries(children, descendancy);
-            }
-
+            AddToDictionaries(children, descendancy);
         }
         
 
@@ -626,7 +635,7 @@ namespace Rdmp.Core.Providers
             }
         }
 
-        public IEnumerable<SelectedDataSets> GetDatasets(ExtractionConfiguration extractionConfiguration)
+        public IEnumerable<SelectedDataSets> GetDatasets(IExtractionConfiguration extractionConfiguration)
         {
             lock(WriteLock)
             {
@@ -635,7 +644,7 @@ namespace Rdmp.Core.Providers
             }
         }
 
-        public IEnumerable<ExtractionConfiguration> GetConfigurations(Project project)
+        public IEnumerable<ExtractionConfiguration> GetConfigurations(IProject project)
         {
             lock(WriteLock)
             {
@@ -759,6 +768,90 @@ namespace Rdmp.Core.Providers
                 _extractionProgressesBySelectedDataSetID = dxOther._extractionProgressesBySelectedDataSetID;
             }
             
+        }
+
+        public override bool SelectiveRefresh(IMapsDirectlyToDatabaseTable databaseEntity)
+        {
+            return databaseEntity switch
+            {
+                DeployedExtractionFilterParameter defp => SelectiveRefresh(defp.ExtractionFilter),
+                DeployedExtractionFilter def => SelectiveRefresh(def),
+                FilterContainer fc => SelectiveRefresh(fc),
+                SelectedDataSets sds => SelectiveRefresh(sds),
+                IExtractionConfiguration ec => SelectiveRefresh(ec),
+                _ => base.SelectiveRefresh(databaseEntity)
+            };
+        }
+
+        private bool SelectiveRefresh(DeployedExtractionFilter f)
+        {
+            var knownContainer = GetDescendancyListIfAnyFor(f.FilterContainer);
+            if (knownContainer == null) return false;
+
+            BuildExtractionFilters();
+            AddChildren((FilterContainer)f.FilterContainer, knownContainer.Add(f.FilterContainer));
+            return true;
+        }
+        public bool SelectiveRefresh(FilterContainer container)
+        {
+            var descendancy = GetDescendancyListIfAnyFor(container);
+            
+            if (descendancy == null)
+                return false;
+
+            var sds = descendancy.Parents.OfType<SelectedDataSets>().Last();
+
+            descendancy = GetDescendancyListIfAnyFor(sds);
+
+            if (descendancy != null)
+            {
+                // update it to the latest state (e.g. if a root filter container is being added)
+                sds.RevertToDatabaseState();
+                
+                BuildExtractionFilters();
+
+                // rebuild descendency from here
+                AddChildren(sds, descendancy.Add(sds));
+                return true;
+            }
+
+
+            return false;
+        }
+        public bool SelectiveRefresh(SelectedDataSets sds)
+        {
+            var ec = sds.ExtractionConfiguration;
+            var descendancy = GetDescendancyListIfAnyFor(ec);
+
+            if (descendancy != null)
+            {
+                // update it to the latest state (e.g. if a root filter container is being added)
+                ec.RevertToDatabaseState();
+                
+                BuildExtractionFilters();
+
+                BuildSelectedDatasets();
+
+                // rebuild descendency from here
+                AddChildren(ec, descendancy.Add(ec));
+                return true;
+            }
+
+            return false;
+        }
+        public bool SelectiveRefresh(IExtractionConfiguration ec)
+        {
+            var project = ec.Project;
+            // update it to the latest state
+            project.RevertToDatabaseState();
+
+            AllGlobalExtractionFilterParameters = GetAllObjects<GlobalExtractionFilterParameter>(dataExportRepository);
+
+            BuildSelectedDatasets();
+
+            // rebuild descendency from here
+            AddChildren((Project)project, new DescendancyList(project));
+            return true;
         }
     }
 }

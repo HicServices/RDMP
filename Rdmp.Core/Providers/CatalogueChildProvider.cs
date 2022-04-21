@@ -148,7 +148,7 @@ namespace Rdmp.Core.Providers
         protected Dictionary<int,ExtractionInformation> AllExtractionInformationsDictionary;
         protected Dictionary<int, ExtractionInformation> _extractionInformationsByCatalogueItem;
 
-        private readonly IFilterManager _aggregateFilterManager;
+        private IFilterManager _aggregateFilterManager;
 
         //Filters for Aggregates (includes filter containers (AND/OR)
         public Dictionary<int, AggregateFilterContainer> AllAggregateContainersDictionary { get; private set; }
@@ -163,7 +163,7 @@ namespace Rdmp.Core.Providers
         public ExtractionFilterParameterSet[] AllCatalogueValueSets;
         public ExtractionFilterParameterSetValue[] AllCatalogueValueSetValues;
         
-        private readonly ICohortContainerManager _cohortContainerManager;
+        private ICohortContainerManager _cohortContainerManager;
         
         public CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; private set; }
         public CohortAggregateContainer[] AllCohortAggregateContainers { get; set; }
@@ -286,8 +286,7 @@ namespace Rdmp.Core.Providers
             AllSupportingSQL = GetAllObjects<SupportingSQLTable>(repository);
 
             AllCohortIdentificationConfigurations = GetAllObjects<CohortIdentificationConfiguration>(repository);
-            AllJoinableCohortAggregateConfigurationUse = GetAllObjects<JoinableCohortAggregateConfigurationUse>(repository);
-
+            
             AllCatalogueItemsDictionary = GetAllObjects<CatalogueItem>(repository).ToDictionary(i => i.ID, o => o);
             
             ReportProgress("After CatalogueItem getting");
@@ -324,31 +323,12 @@ namespace Rdmp.Core.Providers
 
             ReportProgress("After ExtractionInformation injection");
 
-            AllAggregateConfigurations = GetAllObjects<AggregateConfiguration>(repository);
-            AllAggregateDimensions = GetAllObjects<AggregateDimension>(repository);
-            AllAggregateContinuousDateAxis = GetAllObjects<AggregateContinuousDateAxis>(repository);
+            BuildAggregateConfigurations();
 
-            //to start with all aggregates are orphans (we prune this as we determine descendency in AddChildren methods
-            OrphanAggregateConfigurations = new HashSet<AggregateConfiguration>(AllAggregateConfigurations.Where(ac=>ac.IsCohortIdentificationAggregate));
+            BuildCohortCohortAggregateContainers();
 
-            foreach (AggregateConfiguration configuration in AllAggregateConfigurations)
-            {
-                configuration.InjectKnown(AllCataloguesDictionary[configuration.Catalogue_ID]);
-                configuration.InjectKnown(AllAggregateDimensions.Where(d=>d.AggregateConfiguration_ID == configuration.ID).ToArray());
-            }
-            
-            foreach (AggregateDimension d in AllAggregateDimensions)
-                d.InjectKnown(AllExtractionInformationsDictionary[d.ExtractionInformation_ID]);
-            
-            ReportProgress("AggregateDimension injections");
-
-            AllCohortAggregateContainers = GetAllObjects<CohortAggregateContainer>(repository);
             AllJoinables = GetAllObjects<JoinableCohortAggregateConfiguration>(repository);
             AllJoinUses = GetAllObjects<JoinableCohortAggregateConfigurationUse>(repository);
-
-            AllAggregateContainersDictionary = GetAllObjects<AggregateFilterContainer>(repository).ToDictionary(o => o.ID, o2 => o2);
-            AllAggregateFilters = GetAllObjects<AggregateFilter>(repository);
-            AllAggregateFilterParameters = GetAllObjects<AggregateFilterParameter>(repository);
 
             AllCatalogueFilters = GetAllObjects<ExtractionFilter>(repository);
             AllCatalogueParameters = GetAllObjects<ExtractionFilterParameter>(repository);
@@ -357,12 +337,6 @@ namespace Rdmp.Core.Providers
                                     
             ReportProgress("After Filter and Joinable fetching");
 
-            //if we have a database repository then we should get asnwers from the caching version CohortContainerManagerFromChildProvider otherwise
-            //just use the one that is configured on the repository.
-            var cataRepo = repository as CatalogueRepository;
-            _aggregateFilterManager = cataRepo != null ? new FilterManagerFromChildProvider(cataRepo, this) : repository.FilterManager;
-            
-            _cohortContainerManager = cataRepo != null ? new CohortContainerManagerFromChildProvider(cataRepo, this) : repository.CohortContainerManager;
 
             AllLookups = GetAllObjects<Lookup>(repository);
 
@@ -486,6 +460,61 @@ namespace Rdmp.Core.Providers
 
             ReportProgress("After building exports");
         }
+
+        private void BuildCohortCohortAggregateContainers()
+        {
+            AllCohortAggregateContainers = GetAllObjects<CohortAggregateContainer>(_catalogueRepository);
+            
+
+            //if we have a database repository then we should get answers from the caching version CohortContainerManagerFromChildProvider otherwise
+            //just use the one that is configured on the repository.
+
+            _cohortContainerManager = _catalogueRepository is CatalogueRepository cataRepo
+                ? new CohortContainerManagerFromChildProvider(cataRepo, this)
+                : _catalogueRepository.CohortContainerManager;
+        }
+
+        private void BuildAggregateConfigurations()
+        {
+            AllJoinableCohortAggregateConfigurationUse = GetAllObjects<JoinableCohortAggregateConfigurationUse>(_catalogueRepository);
+            AllAggregateConfigurations = GetAllObjects<AggregateConfiguration>(_catalogueRepository);
+
+            BuildAggregateDimensions();
+            
+            //to start with all aggregates are orphans (we prune this as we determine descendency in AddChildren methods
+            OrphanAggregateConfigurations = new HashSet<AggregateConfiguration>(AllAggregateConfigurations.Where(ac => ac.IsCohortIdentificationAggregate));
+
+            foreach (AggregateConfiguration configuration in AllAggregateConfigurations)
+            {
+                configuration.InjectKnown(AllCataloguesDictionary[configuration.Catalogue_ID]);
+                configuration.InjectKnown(AllAggregateDimensions.Where(d => d.AggregateConfiguration_ID == configuration.ID).ToArray());
+            }
+
+            foreach (AggregateDimension d in AllAggregateDimensions)
+                d.InjectKnown(AllExtractionInformationsDictionary[d.ExtractionInformation_ID]);
+
+            ReportProgress("AggregateDimension injections");
+
+            BuildAggregateFilterContainers();
+        }
+
+        private void BuildAggregateDimensions()
+        {
+            AllAggregateDimensions = GetAllObjects<AggregateDimension>(_catalogueRepository);
+            AllAggregateContinuousDateAxis = GetAllObjects<AggregateContinuousDateAxis>(_catalogueRepository);
+        }
+
+        private void BuildAggregateFilterContainers()
+        {
+            AllAggregateContainersDictionary = GetAllObjects<AggregateFilterContainer>(_catalogueRepository).ToDictionary(o => o.ID, o2 => o2);
+            AllAggregateFilters = GetAllObjects<AggregateFilter>(_catalogueRepository);
+            AllAggregateFilterParameters = GetAllObjects<AggregateFilterParameter>(_catalogueRepository);
+
+            _aggregateFilterManager = _catalogueRepository is CatalogueRepository cataRepo
+                ? new FilterManagerFromChildProvider(cataRepo, this)
+                : _catalogueRepository.FilterManager;
+        }
+
 
         protected void ReportProgress(string desc)
         {
@@ -1309,19 +1338,13 @@ namespace Rdmp.Core.Providers
         protected void AddToDictionaries(HashSet<object> children, DescendancyList list)
         {
             if(list.IsEmpty)
-                throw new ArgumentException("DescendancyList cannot be empty","list");
+                throw new ArgumentException("DescendancyList cannot be empty",nameof(list));
          
             //document that the last parent has these as children
             var parent = list.Last();
 
             _childDictionary.AddOrUpdate(parent,
-                children, (p, s) =>
-                {
-                    if (!s.SetEquals(children))
-                        throw new Exception("Ambiguous children collections for object '" + parent + "'");
-
-                    return s;
-                });
+                children, (p, s) => children);
             
             //now document the entire parent order to reach each child object i.e. 'Root=>Grandparent=>Parent'  is how you get to 'Child'
             foreach (object o in children)
@@ -1347,22 +1370,9 @@ namespace Rdmp.Core.Providers
             if (newRoute.NewBestRoute && !oldRoute.NewBestRoute)
                 return newRoute;
 
-            //the new one is marked BetterRouteExists so just throw away the new one
-            if (newRoute.BetterRouteExists)
-                return oldRoute;
-            
-            //the new one is marked as the NewBestRoute so we can get rid of the old one and replace it
-            if (oldRoute.BetterRouteExists)
-                return newRoute;
-
-            
-            //there was a horrible problem with 
-            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(
-                "Could not add '" + key + "' to Ascendancy Tree with parents " + newRoute +
-                " because it is already listed under hierarchy " + oldRoute, CheckResult.Warning));
-            
-            return oldRoute;
-        
+            // If the new one is marked BetterRouteExists just throw away the new one
+            return newRoute.BetterRouteExists ? oldRoute : newRoute;
+            // If in doubt use the newest one
         }
         
         private HashSet<object> GetAllObjects()
@@ -1661,6 +1671,77 @@ namespace Rdmp.Core.Providers
             AllCatalogueValueSets = otherCat.AllCatalogueValueSets;
             AllCatalogueValueSetValues = otherCat.AllCatalogueValueSetValues ;
             OrphanAggregateConfigurations = otherCat.OrphanAggregateConfigurations;
+        }
+
+        public virtual bool SelectiveRefresh(IMapsDirectlyToDatabaseTable databaseEntity)
+        {
+            return databaseEntity switch
+            {
+                AggregateFilterParameter afp => SelectiveRefresh(afp.AggregateFilter),
+                AggregateFilter af => SelectiveRefresh(af),
+                AggregateFilterContainer afc => SelectiveRefresh(afc),
+                CohortAggregateContainer cac => SelectiveRefresh(cac),
+                _ => false
+            };
+        }
+        public bool SelectiveRefresh(CohortAggregateContainer container)
+        {
+            var parentContainer = container.GetParentContainerIfAny();
+            if(parentContainer != null)
+            {
+                var descendancy = GetDescendancyListIfAnyFor(parentContainer);
+
+                if(descendancy != null)
+                {
+                    BuildAggregateConfigurations();
+
+                    BuildCohortCohortAggregateContainers();
+                    AddChildren(parentContainer, descendancy.Add(parentContainer));
+                    return true;
+                }
+            }
+
+            var cic = container.GetCohortIdentificationConfiguration();
+
+            if (cic != null)
+            {
+                var descendancy = GetDescendancyListIfAnyFor(cic);
+
+                if (descendancy != null)
+                {
+                    BuildAggregateConfigurations();
+                    BuildCohortCohortAggregateContainers();
+                    AddChildren(cic);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        public bool SelectiveRefresh(AggregateFilter f)
+        {
+            var knownContainer = GetDescendancyListIfAnyFor(f.FilterContainer);
+            if (knownContainer == null) return false;
+
+            BuildAggregateFilterContainers();
+            AddChildren((AggregateFilterContainer)f.FilterContainer, knownContainer.Add(f.FilterContainer));
+            return true;
+
+        }
+        public bool SelectiveRefresh(AggregateFilterContainer container)
+        {
+            var aggregate = container.GetAggregate();
+            var descendancy = GetDescendancyListIfAnyFor(aggregate);
+
+            if (descendancy == null) return false;
+
+            // update just in case we became a root filter for someone 
+            aggregate.RevertToDatabaseState();
+                
+            BuildAggregateFilterContainers();
+
+            AddChildren(aggregate, descendancy.Add(aggregate));
+            return true;
         }
     }
 }

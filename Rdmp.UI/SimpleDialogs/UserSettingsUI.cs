@@ -84,6 +84,7 @@ namespace Rdmp.UI.SimpleDialogs
             cbScoreZeroForCohortAggregateContainers.Checked = UserSettings.ScoreZeroForCohortAggregateContainers;
             cbAdvancedFindFilters.Checked = UserSettings.AdvancedFindFilters;
             cbIncludeZeroSeriesInGraphs.Checked = UserSettings.IncludeZeroSeriesInGraphs;
+            cbSelectiveRefresh.Checked = UserSettings.SelectiveRefresh;
             cbAlwaysJoinEverything.Checked = UserSettings.AlwaysJoinEverything;
             tbCreateDatabaseTimeout.Text = UserSettings.CreateDatabaseTimeout.ToString();
             tbArchiveTriggerTimeout.Text = UserSettings.ArchiveTriggerTimeout.ToString();
@@ -103,6 +104,7 @@ namespace Rdmp.UI.SimpleDialogs
             AddTooltip(cbScoreZeroForCohortAggregateContainers,nameof(UserSettings.ScoreZeroForCohortAggregateContainers));
             AddTooltip(cbAdvancedFindFilters,nameof(UserSettings.AdvancedFindFilters));
             AddTooltip(cbIncludeZeroSeriesInGraphs,nameof(UserSettings.IncludeZeroSeriesInGraphs));
+            AddTooltip(cbSelectiveRefresh, nameof(UserSettings.SelectiveRefresh));
             AddTooltip(cbAlwaysJoinEverything,nameof(UserSettings.AlwaysJoinEverything));
             AddTooltip(label7, nameof(UserSettings.CreateDatabaseTimeout));
             AddTooltip(tbCreateDatabaseTimeout, nameof(UserSettings.CreateDatabaseTimeout));
@@ -215,6 +217,8 @@ namespace Rdmp.UI.SimpleDialogs
             if (cb == cbIncludeZeroSeriesInGraphs)
                 UserSettings.IncludeZeroSeriesInGraphs = cb.Checked;
 
+            if(cb == cbSelectiveRefresh)
+                UserSettings.SelectiveRefresh = cb.Checked;
             if (cb == cbAlwaysJoinEverything)
                 UserSettings.AlwaysJoinEverything = cb.Checked;
         }

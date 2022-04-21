@@ -313,6 +313,17 @@ namespace ReusableLibraryCode.Settings
         }
 
         /// <summary>
+        /// Enable to refresh only objects which you make changes to instead of 
+        /// fetching all database changes since your last edit.  This improves 
+        /// performance in large RDMP deployments with thousands of Projects configured.
+        /// </summary>
+        public static bool SelectiveRefresh
+        {
+            get { return AppSettings.GetValueOrDefault("SelectiveRefresh", false); }
+            set { AppSettings.AddOrUpdateValue("SelectiveRefresh", value); }
+        }
+
+        /// <summary>
         /// Set to true to always attempt to force joins on all tables under a Catalogue
         /// when building queries (in Cohort Builder).  This makes it impossible to untick
         /// force joins.

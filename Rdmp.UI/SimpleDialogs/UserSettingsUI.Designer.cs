@@ -76,6 +76,8 @@
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.userSettingsToolTips = new System.Windows.Forms.ToolTip(this.components);
+            this.cbSelectiveRefresh = new System.Windows.Forms.CheckBox();
+          
             this.cbAlwaysJoinEverything = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvErrorCodes)).BeginInit();
@@ -507,6 +509,7 @@
             this.groupBox7.Controls.Add(this.tbTooltipAppearDelay);
             this.groupBox7.Controls.Add(this.label10);
             this.groupBox7.Controls.Add(this.label9);
+            this.groupBox7.Controls.Add(this.cbSelectiveRefresh);
             this.groupBox7.Controls.Add(this.cbDebugPerformance);
             this.groupBox7.Controls.Add(this.tbCreateDatabaseTimeout);
             this.groupBox7.Controls.Add(this.ddWordWrap);
@@ -593,6 +596,18 @@
             this.userSettingsToolTips.IsBalloon = true;
             this.userSettingsToolTips.ReshowDelay = 50;
             // 
+            // cbSelectiveRefresh
+            // 
+            this.cbSelectiveRefresh.AutoSize = true;
+            this.cbSelectiveRefresh.Location = new System.Drawing.Point(8, 182);
+            this.cbSelectiveRefresh.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.cbSelectiveRefresh.Name = "cbSelectiveRefresh";
+            this.cbSelectiveRefresh.Size = new System.Drawing.Size(114, 19);
+            this.cbSelectiveRefresh.TabIndex = 11;
+            this.cbSelectiveRefresh.Text = "Selective Refresh";
+            this.cbSelectiveRefresh.UseVisualStyleBackColor = true;
+            this.cbSelectiveRefresh.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
+            //
             // cbAlwaysJoinEverything
             // 
             this.cbAlwaysJoinEverything.AutoSize = true;
@@ -688,6 +703,7 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TextBox tbArchiveTriggerTimeout;
         private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.CheckBox cbSelectiveRefresh;
         private System.Windows.Forms.CheckBox cbAlwaysJoinEverything;
     }
 }

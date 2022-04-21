@@ -145,5 +145,13 @@ namespace Rdmp.Core.Providers
         /// <param name="unwrapMasqueraders">true to unwrap and return matching underlying objects from <see cref="IMasqueradeAs"/> objects</param>
         /// <returns></returns>
         IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type type,bool unwrapMasqueraders);
+
+        /// <summary>
+        /// Performs a partial refresh assuming that only the hierarchy of <paramref name="databaseEntity"/> has
+        /// changed
+        /// </summary>
+        /// <returns>True if it was possible to selectively refresh part of the child provider</returns>
+        /// <param name="databaseEntity"></param>
+        bool SelectiveRefresh(IMapsDirectlyToDatabaseTable databaseEntity);
     }
 }

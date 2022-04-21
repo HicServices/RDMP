@@ -37,6 +37,7 @@ using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.CommandExecution
 {
@@ -117,6 +118,9 @@ namespace Rdmp.Core.CommandExecution
         
         /// <inheritdoc/>
         public List<IPluginUserInterface> PluginUserInterfaces { get; private set; } = new List<IPluginUserInterface>();
+
+        /// <inheritdoc/>
+        public bool HardRefresh { get; set; }
 
         public BasicActivateItems(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
         {
@@ -530,8 +534,14 @@ namespace Rdmp.Core.CommandExecution
         /// <inheritdoc/>
         public virtual void Publish(IMapsDirectlyToDatabaseTable databaseEntity)
         {
+            if(!HardRefresh && UserSettings.SelectiveRefresh && CoreChildProvider.SelectiveRefresh(databaseEntity))
+            {
+                return;
+            }
+
             var fresh = GetChildProvider();
             CoreChildProvider.UpdateTo(fresh);
+            HardRefresh = false;
         }
 
         /// <inheritdoc/>
