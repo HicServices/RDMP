@@ -76,6 +76,7 @@
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.userSettingsToolTips = new System.Windows.Forms.ToolTip(this.components);
+            this.cbAlwaysJoinEverything = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvErrorCodes)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -511,6 +512,7 @@
             this.groupBox7.Controls.Add(this.ddWordWrap);
             this.groupBox7.Controls.Add(this.label4);
             this.groupBox7.Controls.Add(this.label7);
+            this.groupBox7.Controls.Add(this.cbAlwaysJoinEverything);
             this.groupBox7.Controls.Add(this.cbShowCohortWizard);
             this.groupBox7.Location = new System.Drawing.Point(3, 345);
             this.groupBox7.Name = "groupBox7";
@@ -590,6 +592,18 @@
             this.userSettingsToolTips.InitialDelay = 250;
             this.userSettingsToolTips.IsBalloon = true;
             this.userSettingsToolTips.ReshowDelay = 50;
+            // 
+            // cbAlwaysJoinEverything
+            // 
+            this.cbAlwaysJoinEverything.AutoSize = true;
+            this.cbAlwaysJoinEverything.Location = new System.Drawing.Point(8, 184);
+            this.cbAlwaysJoinEverything.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.cbAlwaysJoinEverything.Name = "cbAlwaysJoinEverything";
+            this.cbAlwaysJoinEverything.Size = new System.Drawing.Size(146, 19);
+            this.cbAlwaysJoinEverything.TabIndex = 2;
+            this.cbAlwaysJoinEverything.Text = "Always Join Everything";
+            this.cbAlwaysJoinEverything.UseVisualStyleBackColor = true;
+            this.cbAlwaysJoinEverything.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // UserSettingsFileUI
             // 
@@ -674,5 +688,6 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TextBox tbArchiveTriggerTimeout;
         private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.CheckBox cbAlwaysJoinEverything;
     }
 }

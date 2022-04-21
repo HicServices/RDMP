@@ -15,7 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - "Set Parameter Value(s)" option added to filter menus so you can more easily change the parameter values - https://github.com/HicServices/RDMP/issues/1035
 - Add options to create an extraction from a Cohorts right click menu and main userinterface - https://github.com/HicServices/RDMP/issues/1039
 - Warnings are now shown if "non core" column are used for an extraction/release - https://github.com/HicServices/RDMP/issues/1024
-
+- Added AlwaysJoinEverything user setting for always forcing joins in CohortBuilder - https://github.com/HicServices/RDMP/issues/1032
+- Added UsefulProperty columns back into Find/Select dialog - https://github.com/HicServices/RDMP/issues/1033
+- Added Extraction/Release warnings for extractions that contain Internal/Deprecated/SpecialApproval fields - https://github.com/HicServices/RDMP/issues/1024
 
 ### Fixed
 
@@ -43,8 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ability to select multiple objects at once when adding to a Session
 - Ability to find multiple objects at once (ctrl+shift+f)
 - Added new pipeline component CohortSampler
-- Added UsefulProperty columns back into Find/Select dialog
-- Added Extraction/Release warnings for extractions that contain Internal/Deprecated/SpecialApproval fields
+
 
 ### Fixed
 
