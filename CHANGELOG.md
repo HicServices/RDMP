@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Creating a new Extracion Configuration will now ask the user for Name, Cohort and Datasets to be included for the extraction - https://github.com/HicServices/RDMP/issues/983
 - AllowIdentifiableExtractions is now an ErrorCode so can be set to Success instead of always being Fail or Warning (i.e. to completley ignore it).
 - The extractability of columns are no longer saved if a Dataset is removed from an Extraction Configuration - https://github.com/HicServices/RDMP/issues/1023
+- "Show Pipeline Completed Popup" now enabled by default - https://github.com/HicServices/RDMP/issues/1069
 
 
 ## [7.0.9] - 2022-03-29
