@@ -342,6 +342,8 @@ namespace Rdmp.Core.CommandLine.Gui
         {
             var commands = GetCommands().ToArray();
 
+            var order = new Dictionary<MenuItem, float>();
+
             // Build subcategories
             var categories = commands
                 .OrderBy(c => c.Weight)
@@ -360,8 +362,9 @@ namespace Rdmp.Core.CommandLine.Gui
             foreach(var cmd in commands.OrderBy(c=>c.Weight))
             {
                 var item = new MenuItem(cmd.GetCommandName(),null,()=>ExecuteWithCatch(cmd));
+                order.Add(item, cmd.Weight);
 
-                if(cmd.SuggestedCategory != null)
+                if (cmd.SuggestedCategory != null)
                 {
                     miCategories[cmd.SuggestedCategory].Add(item);
                 }
@@ -373,14 +376,18 @@ namespace Rdmp.Core.CommandLine.Gui
 
             foreach(var kvp in miCategories)
             {
-                items.Add(new MenuBarItem(kvp.Key,kvp.Value.ToArray()));
+                // menu bar order is the minimum of the menu items in it
+                var bar = new MenuBarItem(kvp.Key, kvp.Value.ToArray());
+                order.Add(bar, kvp.Value.Select(m => order[m]).Min());
+                items.Add(bar);
             }
 
             
 
             var menu = new ContextMenu();
             menu.Position = DateTime.Now.Subtract(_lastMouseMove).TotalSeconds<1 ? _lastMousePos: new Point(10, 5);
-            menu.MenuItens = new MenuBarItem(items.ToArray());
+            menu.MenuItens = new MenuBarItem(
+                items.OrderBy(m=>order[m]).ToArray());
             menu.Show();
         }
 
