@@ -19,7 +19,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline
     /// </summary>
     public abstract class FileExtractor : IPluginDataFlowComponent<DataTable>,  IPipelineRequirement<IExtractCommand>
     {
-        private ExtractGlobalsCommand _command {get;set;}
+        protected ExtractGlobalsCommand _command {get;set;}
 
         private bool _isFirstTime = true;
 

@@ -18,6 +18,7 @@ namespace ReusableLibraryCode.Checks
         public static ErrorCode ExistingExtractionTableInDatabase = new ErrorCode("R001", "Table {0} already exists in the extraction database {1}", CheckResult.Fail);
         public static ErrorCode ExtractTimeoutChecking = new ErrorCode("R002", "Failed to read rows after {0}s", CheckResult.Warning);
         public static ErrorCode ExtractionProgressColumnProbablyNotADate = new ErrorCode("R003","Data type for column '{0}' is '{1}' which is not a date.  If the SelectSQL is a transform to then this is ok",CheckResult.Warning);
+        public static ErrorCode ExtractionIsIdentifiable = new ErrorCode("R004", "PrivateIdentifierField and ReleaseIdentifierField are the same, this means your cohort will extract identifiable data (no cohort identifier substitution takes place)", CheckResult.Fail);
 
         static ErrorCodes()
         {
@@ -33,5 +34,7 @@ namespace ReusableLibraryCode.Checks
         /// Collection of all known error codes.  Plugins are free to add to these if desired but must do so pre startup
         /// </summary>
         public static List<ErrorCode> KnownCodes = new List<ErrorCode>();
+
+        
     }
 }

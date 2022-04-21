@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - New filters are now highlighted correctly when added to a CIC - https://github.com/HicServices/RDMP/issues/1031
 - Creating a new Extracion Configuration will now ask the user for Name, Cohort and Datasets to be included for the extraction - https://github.com/HicServices/RDMP/issues/983
+- AllowIdentifiableExtractions is now an ErrorCode so can be set to Success instead of always being Fail or Warning (i.e. to completley ignore it).
 
 
 ## [7.0.9] - 2022-03-29

@@ -20,6 +20,7 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Progress;
 using ReusableLibraryCode.Settings;
+using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.DataExport.Data
 {
@@ -444,15 +445,15 @@ where
                 ? ExternalCohortTable.ReleaseIdentifierField
                 : OverrideReleaseIdentifierSQL;
 
-            if (toReturn.Equals(ExternalCohortTable.PrivateIdentifierField) && !UserSettings.AllowIdentifiableExtractions)
-                throw new Exception("ReleaseIdentifier for cohort " + ID +
-                                    " is the same as the PrivateIdentifierSQL, this is forbidden");
+            if (toReturn.Equals(ExternalCohortTable.PrivateIdentifierField))
+                new ThrowImmediatelyCheckNotifier()
+                    .OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractionIsIdentifiable));
 
             var syntaxHelper = GetQuerySyntaxHelper();
 
-            if (syntaxHelper.GetRuntimeName(toReturn).Equals(syntaxHelper.GetRuntimeName(ExternalCohortTable.PrivateIdentifierField)) && !UserSettings.AllowIdentifiableExtractions)
-                throw new Exception("ReleaseIdentifier for cohort " + ID +
-                                    " is the same as the PrivateIdentifierSQL, this is forbidden");
+            if (syntaxHelper.GetRuntimeName(toReturn).Equals(syntaxHelper.GetRuntimeName(ExternalCohortTable.PrivateIdentifierField)))
+                new ThrowImmediatelyCheckNotifier()
+                    .OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractionIsIdentifiable));
 
             return runtimeName ? GetQuerySyntaxHelper().GetRuntimeName(toReturn) : toReturn;
         }
