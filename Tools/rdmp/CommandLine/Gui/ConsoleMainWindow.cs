@@ -377,18 +377,45 @@ namespace Rdmp.Core.CommandLine.Gui
             foreach(var kvp in miCategories)
             {
                 // menu bar order is the minimum of the menu items in it
-                var bar = new MenuBarItem(kvp.Key, kvp.Value.ToArray());
+                var bar = new MenuBarItem(kvp.Key,AddSpacers(kvp.Value,order));
                 order.Add(bar, kvp.Value.Select(m => order[m]).Min());
                 items.Add(bar);
             }
 
-            
+            // we can do nothing if theres no menu items
+            if (items.Count == 0)
+                return;
 
+            var withSpacers = AddSpacers(items, order);
+            
             var menu = new ContextMenu();
             menu.Position = DateTime.Now.Subtract(_lastMouseMove).TotalSeconds<1 ? _lastMousePos: new Point(10, 5);
-            menu.MenuItens = new MenuBarItem(
-                items.OrderBy(m=>order[m]).ToArray());
+            menu.MenuItens = new MenuBarItem(withSpacers);
             menu.Show();
+        }
+
+        private MenuItem[] AddSpacers(List<MenuItem> items, Dictionary<MenuItem, float> order)
+        {
+            // sort it                
+            items.OrderBy(m => order[m]).ToList();
+
+            // add spacers when the Weight differs by more than 1 whole number
+            var withSpacers = new List<MenuItem>();
+            int lastWeightSeen = (int)order[items.First()];
+
+            foreach (var item in items)
+            {
+                if (lastWeightSeen != (int)order[item])
+                {
+                    // add a spacer
+                    withSpacers.Add(null);
+                    lastWeightSeen = (int)order[item];
+                }
+
+                withSpacers.Add(item);
+            }
+
+            return withSpacers.ToArray();
         }
 
         private void ExecuteWithCatch(IAtomicCommand cmd)
