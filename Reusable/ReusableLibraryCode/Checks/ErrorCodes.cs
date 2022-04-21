@@ -20,6 +20,10 @@ namespace ReusableLibraryCode.Checks
         public static ErrorCode ExtractionProgressColumnProbablyNotADate = new ErrorCode("R003","Data type for column '{0}' is '{1}' which is not a date.  If the SelectSQL is a transform to then this is ok",CheckResult.Warning);
         public static ErrorCode ExtractionIsIdentifiable = new ErrorCode("R004", "PrivateIdentifierField and ReleaseIdentifierField are the same, this means your cohort will extract identifiable data (no cohort identifier substitution takes place)", CheckResult.Fail);
 
+        public static ErrorCode ExtractionContainsSpecialApprovalRequired = new ErrorCode("R005", "ExtractionConfiguration '{0}' dataset '{1}' contains SpecialApprovalRequired columns: {2}", CheckResult.Warning);
+        public static ErrorCode ExtractionContainsInternal = new ErrorCode("R006", "ExtractionConfiguration '{0}' dataset '{1}' contains Internal columns: {2}", CheckResult.Warning);
+        public static ErrorCode ExtractionContainsDeprecated = new ErrorCode("R007", "ExtractionConfiguration '{0}' dataset '{1}' contains Deprecated columns: {2}", CheckResult.Fail);
+
         static ErrorCodes()
         {
             var fields = typeof(ErrorCodes).GetFields(BindingFlags.Public | BindingFlags.Static).Where(p => p.FieldType == typeof(ErrorCode));
