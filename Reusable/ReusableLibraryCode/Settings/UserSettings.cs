@@ -111,17 +111,6 @@ namespace ReusableLibraryCode.Settings
         }
 
         /// <summary>
-        /// <para>Controls whether RDMP permits cohorts to be created where the release ID and private ID are the same (i.e. the linkage ids are not anonymised).</para>
-        /// 
-        /// <para>Changing this setting will not affect how cohorts are currently configured or extracted, it only supresses a specific error message that is generated when a cohort source is configured where the private and release identifiers reference the same column</para>
-        /// </summary>
-        public static bool AllowIdentifiableExtractions
-        {
-            get { return AppSettings.GetValueOrDefault("AllowIdentifiableExtractions", false); }
-            set { AppSettings.AddOrUpdateValue("AllowIdentifiableExtractions", value); }
-        }
-
-        /// <summary>
         /// The colour scheme and format for the RDMP gui client application
         /// </summary>
         public static string Theme

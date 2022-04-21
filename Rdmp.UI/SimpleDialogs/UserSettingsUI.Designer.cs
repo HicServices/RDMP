@@ -48,7 +48,6 @@
             this.btnClearFavourites = new System.Windows.Forms.Button();
             this.cbDoubleClickToExpand = new System.Windows.Forms.CheckBox();
             this.cbDebugPerformance = new System.Windows.Forms.CheckBox();
-            this.cbAllowIdentifiableExtractions = new System.Windows.Forms.CheckBox();
             this.cbShowPipelineCompletedPopup = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.olvErrorCodes = new BrightIdeasSoftware.ObjectListView();
@@ -78,6 +77,7 @@
             this.label9 = new System.Windows.Forms.Label();
             this.userSettingsToolTips = new System.Windows.Forms.ToolTip(this.components);
             this.cbSelectiveRefresh = new System.Windows.Forms.CheckBox();
+          
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvErrorCodes)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -301,22 +301,10 @@
             this.cbDebugPerformance.UseVisualStyleBackColor = true;
             this.cbDebugPerformance.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
-            // cbAllowIdentifiableExtractions
-            // 
-            this.cbAllowIdentifiableExtractions.AutoSize = true;
-            this.cbAllowIdentifiableExtractions.Location = new System.Drawing.Point(7, 20);
-            this.cbAllowIdentifiableExtractions.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.cbAllowIdentifiableExtractions.Name = "cbAllowIdentifiableExtractions";
-            this.cbAllowIdentifiableExtractions.Size = new System.Drawing.Size(179, 19);
-            this.cbAllowIdentifiableExtractions.TabIndex = 13;
-            this.cbAllowIdentifiableExtractions.Text = "Allow Identifiable Extractions";
-            this.cbAllowIdentifiableExtractions.UseVisualStyleBackColor = true;
-            this.cbAllowIdentifiableExtractions.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
-            // 
             // cbShowPipelineCompletedPopup
             // 
             this.cbShowPipelineCompletedPopup.AutoSize = true;
-            this.cbShowPipelineCompletedPopup.Location = new System.Drawing.Point(7, 72);
+            this.cbShowPipelineCompletedPopup.Location = new System.Drawing.Point(4, 43);
             this.cbShowPipelineCompletedPopup.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbShowPipelineCompletedPopup.Name = "cbShowPipelineCompletedPopup";
             this.cbShowPipelineCompletedPopup.Size = new System.Drawing.Size(200, 19);
@@ -355,7 +343,7 @@
             // cbHideEmptyTableLoadRunAudits
             // 
             this.cbHideEmptyTableLoadRunAudits.AutoSize = true;
-            this.cbHideEmptyTableLoadRunAudits.Location = new System.Drawing.Point(7, 47);
+            this.cbHideEmptyTableLoadRunAudits.Location = new System.Drawing.Point(4, 22);
             this.cbHideEmptyTableLoadRunAudits.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbHideEmptyTableLoadRunAudits.Name = "cbHideEmptyTableLoadRunAudits";
             this.cbHideEmptyTableLoadRunAudits.Size = new System.Drawing.Size(208, 19);
@@ -502,7 +490,6 @@
             // 
             // groupBox6
             // 
-            this.groupBox6.Controls.Add(this.cbAllowIdentifiableExtractions);
             this.groupBox6.Controls.Add(this.cbShowPipelineCompletedPopup);
             this.groupBox6.Controls.Add(this.cbHideEmptyTableLoadRunAudits);
             this.groupBox6.Location = new System.Drawing.Point(249, 174);
@@ -674,7 +661,6 @@
         private System.Windows.Forms.Button btnClearFavourites;
         private System.Windows.Forms.CheckBox cbDoubleClickToExpand;
         private System.Windows.Forms.CheckBox cbDebugPerformance;
-        private System.Windows.Forms.CheckBox cbAllowIdentifiableExtractions;
         private System.Windows.Forms.CheckBox cbShowPipelineCompletedPopup;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.CheckBox cbHideEmptyTableLoadRunAudits;

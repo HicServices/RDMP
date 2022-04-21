@@ -243,9 +243,7 @@ namespace Rdmp.Core.DataExport.Data
 
             if (string.Equals(PrivateIdentifierField, ReleaseIdentifierField))
                 notifier.OnCheckPerformed(
-                    new CheckEventArgs(
-                        "PrivateIdentifierField and ReleaseIdentifierField are the same, this means your cohort will extract IDENTIFIABLE data (no cohort identifier substitution takes place)",
-                        UserSettings.AllowIdentifiableExtractions ? CheckResult.Warning : CheckResult.Fail));
+                    new CheckEventArgs(ErrorCodes.ExtractionIsIdentifiable));
         }
 
         #region Stuff for checking the remote (not data export manager) table where the cohort is allegedly stored
