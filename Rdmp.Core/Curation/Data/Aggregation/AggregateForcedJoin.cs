@@ -7,6 +7,7 @@
 using System.Linq;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Curation.Data.Aggregation
 {
@@ -27,10 +28,16 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         /// <inheritdoc/>
         public ITableInfo[] GetAllForcedJoinsFor(AggregateConfiguration configuration)
         {
+            var everyone = Enumerable.Empty<ITableInfo>();
+
+            // join with everyone? .... what do you mean everyone? EVERYONE!!!!
+            if (UserSettings.AlwaysJoinEverything)
+                everyone = configuration.Catalogue.GetTableInfosIdeallyJustFromMainTables();
+
             return
                 _repository.SelectAllWhere<TableInfo>(
                     "Select TableInfo_ID from AggregateForcedJoin where AggregateConfiguration_ID = " + configuration.ID,
-                    "TableInfo_ID").ToArray();
+                    "TableInfo_ID").Union(everyone).ToArray();
         }
 
         /// <inheritdoc/>

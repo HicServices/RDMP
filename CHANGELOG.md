@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added new pipeline component CohortSampler
 - Added UsefulProperty columns back into Find/Select dialog
 - Added Extraction/Release warnings for extractions that contain Internal/Deprecated/SpecialApproval fields
+- Added AlwaysJoinEverything user setting for always forcing joins in CohortBuilder
 
 ### Fixed
 

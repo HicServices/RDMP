@@ -312,6 +312,17 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("FindWindowHeight", value); }
         }
 
+        /// <summary>
+        /// Set to true to always attempt to force joins on all tables under a Catalogue
+        /// when building queries (in Cohort Builder).  This makes it impossible to untick
+        /// force joins.
+        /// </summary>
+        public static bool AlwaysJoinEverything
+        {
+            get { return AppSettings.GetValueOrDefault("AlwaysJoinEverything", false); }
+            set { AppSettings.AddOrUpdateValue("AlwaysJoinEverything", value); }
+        }
+
 
         #endregion
 
