@@ -83,6 +83,15 @@ namespace Rdmp.Core.DataExport.Checks
                 return;
             }
 
+            var eis = selectedcols
+                .OfType<ExtractableColumn>()
+                .Select(c => c.CatalogueExtractionInformation)
+                .ToArray();
+
+            WarnAboutExtractionCategory(notifier, config, ds,eis, ErrorCodes.ExtractionContainsSpecialApprovalRequired, ExtractionCategory.SpecialApprovalRequired);
+            WarnAboutExtractionCategory(notifier, config, ds, eis, ErrorCodes.ExtractionContainsInternal, ExtractionCategory.Internal);
+            WarnAboutExtractionCategory(notifier, config, ds, eis, ErrorCodes.ExtractionContainsDeprecated, ExtractionCategory.Deprecated);
+
             ICatalogue cata;
             try
             {
@@ -233,6 +242,26 @@ namespace Rdmp.Core.DataExport.Checks
                 var engine = new ExtractionPipelineUseCase(_activator,request.Project, request, _alsoCheckPipeline, DataLoadInfo.Empty)
                                     .GetEngine(_alsoCheckPipeline, new FromCheckNotifierToDataLoadEventListener(notifier));
                 engine.Check(notifier);
+            }
+        }
+
+        /// <summary>
+        /// Warns the <paramref name="notifier"/> that one or more of the <paramref name="cols"/> have the sensitive <paramref name="category"/>
+        /// and should be warned/failed about (depending on user settings).
+        /// </summary>
+        /// <param name="notifier"></param>
+        /// <param name="configuration"></param>
+        /// <param name="dataset"></param>
+        /// <param name="cols"></param>
+        /// <param name="errorCode"></param>
+        /// <param name="category"></param>
+        public static void WarnAboutExtractionCategory(ICheckNotifier notifier, IExtractionConfiguration configuration, IExtractableDataSet dataset, ExtractionInformation[] cols, ErrorCode errorCode, ExtractionCategory category)
+        {
+            if (cols.Any(c => c.ExtractionCategory == category))
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(errorCode, configuration, dataset,
+                    String.Join(",", cols.Where(c => c.ExtractionCategory == category)
+                        .Select(c => c.GetRuntimeName()))));
             }
         }
     }
