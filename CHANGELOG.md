@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed bug preventing example datasets being created from the RDMP UI client because checkbox was disabled
 - "Exisiting" filter typo corrected - https://github.com/HicServices/RDMP/issues/1029
+- Fixed refreshes sometimes changing selection in Data Export tree - https://github.com/HicServices/RDMP/issues/1008
 
 ### Changed
 
