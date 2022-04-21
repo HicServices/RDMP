@@ -511,7 +511,7 @@ namespace Rdmp.Core.CommandExecution
 
         /// <summary>
         /// Set to true to force the next <see cref="Publish(IMapsDirectlyToDatabaseTable)"/>
-        /// to be a hard refresh that ignores users <see cref="UserSettings.SelectiveRefresh"/>
+        /// to be a hard refresh that ignores the user's <see cref="UserSettings.SelectiveRefresh"/>
         /// settings
         /// </summary>
         bool HardRefresh { get; set; }

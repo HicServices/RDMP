@@ -466,11 +466,12 @@ namespace Rdmp.Core.Providers
             AllCohortAggregateContainers = GetAllObjects<CohortAggregateContainer>(_catalogueRepository);
             
 
-            //if we have a database repository then we should get asnwers from the caching version CohortContainerManagerFromChildProvider otherwise
+            //if we have a database repository then we should get answers from the caching version CohortContainerManagerFromChildProvider otherwise
             //just use the one that is configured on the repository.
-            var cataRepo = _catalogueRepository as CatalogueRepository;
 
-            _cohortContainerManager = cataRepo != null ? new CohortContainerManagerFromChildProvider(cataRepo, this) : _catalogueRepository.CohortContainerManager;
+            _cohortContainerManager = _catalogueRepository is CatalogueRepository cataRepo
+                ? new CohortContainerManagerFromChildProvider(cataRepo, this)
+                : _catalogueRepository.CohortContainerManager;
         }
 
         private void BuildAggregateConfigurations()
@@ -509,8 +510,9 @@ namespace Rdmp.Core.Providers
             AllAggregateFilters = GetAllObjects<AggregateFilter>(_catalogueRepository);
             AllAggregateFilterParameters = GetAllObjects<AggregateFilterParameter>(_catalogueRepository);
 
-            var cataRepo = _catalogueRepository as CatalogueRepository;
-            _aggregateFilterManager = cataRepo != null ? new FilterManagerFromChildProvider(cataRepo, this) : _catalogueRepository.FilterManager;
+            _aggregateFilterManager = _catalogueRepository is CatalogueRepository cataRepo
+                ? new FilterManagerFromChildProvider(cataRepo, this)
+                : _catalogueRepository.FilterManager;
         }
 
 
@@ -1336,17 +1338,13 @@ namespace Rdmp.Core.Providers
         protected void AddToDictionaries(HashSet<object> children, DescendancyList list)
         {
             if(list.IsEmpty)
-                throw new ArgumentException("DescendancyList cannot be empty","list");
+                throw new ArgumentException("DescendancyList cannot be empty",nameof(list));
          
             //document that the last parent has these as children
             var parent = list.Last();
 
             _childDictionary.AddOrUpdate(parent,
-                children, (p, s) =>
-                {
-                    // newer is always better
-                    return children;
-                });
+                children, (p, s) => children);
             
             //now document the entire parent order to reach each child object i.e. 'Root=>Grandparent=>Parent'  is how you get to 'Child'
             foreach (object o in children)
@@ -1372,17 +1370,9 @@ namespace Rdmp.Core.Providers
             if (newRoute.NewBestRoute && !oldRoute.NewBestRoute)
                 return newRoute;
 
-            //the new one is marked BetterRouteExists so just throw away the new one
-            if (newRoute.BetterRouteExists)
-                return oldRoute;
-            
-            //the new one is marked as the NewBestRoute so we can get rid of the old one and replace it
-            if (oldRoute.BetterRouteExists)
-                return newRoute;
-
+            // If the new one is marked BetterRouteExists just throw away the new one
+            return newRoute.BetterRouteExists ? oldRoute : newRoute;
             // If in doubt use the newest one
-            return newRoute;
-        
         }
         
         private HashSet<object> GetAllObjects()
@@ -1685,23 +1675,14 @@ namespace Rdmp.Core.Providers
 
         public virtual bool SelectiveRefresh(IMapsDirectlyToDatabaseTable databaseEntity)
         {
-            if(databaseEntity is AggregateFilterParameter afp)
+            return databaseEntity switch
             {
-                return SelectiveRefresh(afp.AggregateFilter);
-            }
-            if(databaseEntity is AggregateFilter af)
-            {
-                return SelectiveRefresh(af);
-            }
-            if (databaseEntity is AggregateFilterContainer afc)
-            {
-                return SelectiveRefresh(afc);
-            }
-            if (databaseEntity is CohortAggregateContainer cac)
-            {
-                return SelectiveRefresh(cac);
-            }
-            return false;
+                AggregateFilterParameter afp => SelectiveRefresh(afp.AggregateFilter),
+                AggregateFilter af => SelectiveRefresh(af),
+                AggregateFilterContainer afc => SelectiveRefresh(afc),
+                CohortAggregateContainer cac => SelectiveRefresh(cac),
+                _ => false
+            };
         }
         public bool SelectiveRefresh(CohortAggregateContainer container)
         {
@@ -1740,35 +1721,27 @@ namespace Rdmp.Core.Providers
         public bool SelectiveRefresh(AggregateFilter f)
         {
             var knownContainer = GetDescendancyListIfAnyFor(f.FilterContainer);
+            if (knownContainer == null) return false;
 
-            if (knownContainer != null)
-            {
-                BuildAggregateFilterContainers();
+            BuildAggregateFilterContainers();
+            AddChildren((AggregateFilterContainer)f.FilterContainer, knownContainer.Add(f.FilterContainer));
+            return true;
 
-                AddChildren((AggregateFilterContainer)f.FilterContainer, knownContainer.Add(f.FilterContainer));
-                return true;
-            }
-            
-            return false;
         }
         public bool SelectiveRefresh(AggregateFilterContainer container)
         {
             var aggregate = container.GetAggregate();
             var descendancy = GetDescendancyListIfAnyFor(aggregate);
 
-            if (descendancy != null)
-            {
-                // update just incase we became a root filter for someone 
-                aggregate.RevertToDatabaseState();
-                
-                BuildAggregateFilterContainers();
+            if (descendancy == null) return false;
 
-                AddChildren(aggregate, descendancy.Add(aggregate));
-                return true;
-            }
+            // update just in case we became a root filter for someone 
+            aggregate.RevertToDatabaseState();
                 
+            BuildAggregateFilterContainers();
 
-            return false;
+            AddChildren(aggregate, descendancy.Add(aggregate));
+            return true;
         }
     }
 }

@@ -242,8 +242,9 @@ namespace Rdmp.Core.Providers
 
             //if we are using a database repository then we can make use of the caching class DataExportFilterManagerFromChildProvider to speed up
             //filter contents
-            var dbRepo = dataExportRepository as DataExportRepository;
-            _dataExportFilterManager = dbRepo == null ? dataExportRepository.FilterManager : new DataExportFilterManagerFromChildProvider(dbRepo, this);
+            _dataExportFilterManager = dataExportRepository is not DataExportRepository dbRepo
+                ? dataExportRepository.FilterManager
+                : new DataExportFilterManagerFromChildProvider(dbRepo, this);
         }
 
         private void AddChildren(IExtractableDataSetPackage package, DescendancyList descendancy)
@@ -771,42 +772,25 @@ namespace Rdmp.Core.Providers
 
         public override bool SelectiveRefresh(IMapsDirectlyToDatabaseTable databaseEntity)
         {
-            if (databaseEntity is DeployedExtractionFilterParameter defp)
-                return SelectiveRefresh(defp.ExtractionFilter);
-
-            if (databaseEntity is DeployedExtractionFilter def)
-                return SelectiveRefresh(def);
-
-            if (databaseEntity is FilterContainer fc)
+            return databaseEntity switch
             {
-                return SelectiveRefresh(fc);
-            }
-            if (databaseEntity is SelectedDataSets sds)
-            {
-                return SelectiveRefresh(sds);
-            }
-            if (databaseEntity is IExtractionConfiguration ec)
-            {
-                return SelectiveRefresh(ec);
-            }
-
-
-            return base.SelectiveRefresh(databaseEntity);
+                DeployedExtractionFilterParameter defp => SelectiveRefresh(defp.ExtractionFilter),
+                DeployedExtractionFilter def => SelectiveRefresh(def),
+                FilterContainer fc => SelectiveRefresh(fc),
+                SelectedDataSets sds => SelectiveRefresh(sds),
+                IExtractionConfiguration ec => SelectiveRefresh(ec),
+                _ => base.SelectiveRefresh(databaseEntity)
+            };
         }
 
         private bool SelectiveRefresh(DeployedExtractionFilter f)
         {
             var knownContainer = GetDescendancyListIfAnyFor(f.FilterContainer);
+            if (knownContainer == null) return false;
 
-            if (knownContainer != null)
-            {
-                BuildExtractionFilters();
-
-                AddChildren((FilterContainer)f.FilterContainer, knownContainer.Add(f.FilterContainer));
-                return true;
-            }
-
-            return false;
+            BuildExtractionFilters();
+            AddChildren((FilterContainer)f.FilterContainer, knownContainer.Add(f.FilterContainer));
+            return true;
         }
         public bool SelectiveRefresh(FilterContainer container)
         {
