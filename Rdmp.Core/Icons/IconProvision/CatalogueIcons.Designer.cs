@@ -2111,5 +2111,39 @@ namespace Rdmp.Core.Icons.IconProvision {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Attacher
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Attacher", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap DataProvider
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("DataProvider", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap MutilateDataTables
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("MutilateDataTables", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

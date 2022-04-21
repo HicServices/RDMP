@@ -11,6 +11,7 @@ using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataExport.Checks;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
@@ -265,6 +266,15 @@ namespace Rdmp.Core.DataExport.DataRelease.Potential
                     existingReleaseLog.DeleteInDatabase();
             }
 
+            var cols = Configuration.GetAllExtractableColumnsFor(DataSet)
+                .OfType<ExtractableColumn>()
+                .Select(c => c.CatalogueExtractionInformation)
+                .ToArray();
+
+            SelectedDataSetsChecker.WarnAboutExtractionCategory(notifier,Configuration, DataSet, cols,ErrorCodes.ExtractionContainsSpecialApprovalRequired, ExtractionCategory.SpecialApprovalRequired);
+            SelectedDataSetsChecker.WarnAboutExtractionCategory(notifier, Configuration, DataSet, cols, ErrorCodes.ExtractionContainsInternal, ExtractionCategory.Internal);
+            SelectedDataSetsChecker.WarnAboutExtractionCategory(notifier, Configuration, DataSet, cols, ErrorCodes.ExtractionContainsDeprecated, ExtractionCategory.Deprecated);
+
             if (!Assessments.ContainsKey(DatasetExtractionResult))
                 try
                 {
@@ -309,5 +319,6 @@ namespace Rdmp.Core.DataExport.DataRelease.Potential
                 notifier.OnCheckPerformed(new CheckEventArgs(kvp.Key + " is " + kvp.Value, checkResult));
             }
         }
+
     }
 }

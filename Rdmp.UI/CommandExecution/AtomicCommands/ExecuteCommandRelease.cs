@@ -85,20 +85,24 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            if (_project == null)
-                _project = SelectOne(Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>());
+            var p = _project;
 
-            var releaseUI = Activator.Activate<DataReleaseUI, Project>(_project);
+            if (p == null)
+                p = SelectOne(Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>());
+
+            if(p == null)
+            {
+                // user cancelled picking a Project
+                return;
+            }
+
+            var releaseUI = Activator.Activate<DataReleaseUI, Project>(p);
             
             if(_configuration != null)
                 if (_selectedDataSet == null)
                     releaseUI.TickAllFor(_configuration);
                 else
-                    releaseUI.Tick(_selectedDataSet);
-
-
-            _project = null;
-            
+                    releaseUI.Tick(_selectedDataSet);            
         }
     }
 }

@@ -29,6 +29,7 @@ using Rdmp.Core.Sharing.Dependency;
 using Rdmp.Core.Validation.Dependency;
 using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Settings;
 using YamlDotNet.Serialization;
 using IContainer = Rdmp.Core.Curation.Data.IContainer;
 
@@ -310,10 +311,16 @@ namespace Rdmp.Core.Repositories
 
         public ITableInfo[] GetAllForcedJoinsFor(AggregateConfiguration configuration)
         {
-            if (!ForcedJoins.ContainsKey(configuration))
-                return new TableInfo[0];
+            var everyone = Enumerable.Empty<ITableInfo>();
 
-            return ForcedJoins[configuration].ToArray();
+            // join with everyone? .... what do you mean everyone? EVERYONE!!!!
+            if (UserSettings.AlwaysJoinEverything)
+                everyone = configuration.Catalogue.GetTableInfosIdeallyJustFromMainTables();
+
+            if (!ForcedJoins.ContainsKey(configuration))
+                return everyone.ToArray();
+
+            return ForcedJoins[configuration].Union(everyone).ToArray();
         }
 
         public virtual void BreakLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)

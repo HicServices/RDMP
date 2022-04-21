@@ -15,18 +15,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - "Set Parameter Value(s)" option added to filter menus so you can more easily change the parameter values - https://github.com/HicServices/RDMP/issues/1035
 - Added 'SelectiveRefresh' user setting
 - Add options to create an extraction from a Cohorts right click menu and main userinterface - https://github.com/HicServices/RDMP/issues/1039
-
+- Warnings are now shown if "non core" column are used for an extraction/release - https://github.com/HicServices/RDMP/issues/1024
+- Added AlwaysJoinEverything user setting for always forcing joins in CohortBuilder - https://github.com/HicServices/RDMP/issues/1032
+- Added UsefulProperty columns back into Find/Select dialog - https://github.com/HicServices/RDMP/issues/1033
+- Added Extraction/Release warnings for extractions that contain Internal/Deprecated/SpecialApproval fields - https://github.com/HicServices/RDMP/issues/1024
 
 ### Fixed
 
 - Fixed bug preventing example datasets being created from the RDMP UI client because checkbox was disabled
 - "Exisiting" filter typo corrected - https://github.com/HicServices/RDMP/issues/1029
+- Fixed refreshes sometimes changing selection in Data Export tree - https://github.com/HicServices/RDMP/issues/1008
+
 
 ### Changed
 
 - New filters are now highlighted correctly when added to a CIC - https://github.com/HicServices/RDMP/issues/1031
 - Creating a new Extracion Configuration will now ask the user for Name, Cohort and Datasets to be included for the extraction - https://github.com/HicServices/RDMP/issues/983
 - AllowIdentifiableExtractions is now an ErrorCode so can be set to Success instead of always being Fail or Warning (i.e. to completley ignore it).
+- The extractability of columns are no longer saved if a Dataset is removed from an Extraction Configuration - https://github.com/HicServices/RDMP/issues/1023
+- "Show Pipeline Completed Popup" now enabled by default - https://github.com/HicServices/RDMP/issues/1069
 
 
 ## [7.0.9] - 2022-03-29
@@ -41,12 +48,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ability to find multiple objects at once (ctrl+shift+f)
 - Added new pipeline component CohortSampler
 
+
 ### Fixed
 
 - Fixed newlines in CatalogueItem descriptions not being output correctly in docx metadata report
 - Fixed iterative data loads run on the CLI throwing and returning non zero when caught up to date with load progress (when running in iterative mode)
 - Pipeline component order is now "correct" and will list more important variables at the top rather than at the bottom - https://github.com/HicServices/RDMP/issues/996
 - Fixed bug where Pipeline objects could not be deleted from the `Tables (Advanced)` tree
+- Removing a datset from an [ExtractionConfiguration] now deletes any extraction specific column changes (i.e. changes are not persisted if the dataset is added back in again)
+- Fixed Release button prompting to pick [Project] when clicked in the ExecuteExtractionUI [#963](https://github.com/HicServices/RDMP/issues/963)
 
 ### Changed
 

@@ -98,9 +98,11 @@ namespace Rdmp.Core.Curation.Data
             set { SetField(ref _Research_relevance , value);}
         }
 
+
         /// <summary>
         /// User supplied description of what is in the column
         /// </summary>
+        [UsefulProperty]
         public string Description
         {
             get { return _Description; }

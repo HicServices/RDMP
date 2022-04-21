@@ -164,8 +164,11 @@ namespace Rdmp.Core.CommandExecution
                     .Where(a=>a != null).Distinct()
                 ){OverrideCommandName = "Usages (in Cohort Builder)" };
 
+
                 yield return new ExecuteCommandShow(_activator, () =>
-                 _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<DeployedExtractionFilter>("ClonedFromExtractionFilter_ID", masterFilter.ID).Select(f => f.GetDataset().ExtractionConfiguration).Distinct()
+                 _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<DeployedExtractionFilter>("ClonedFromExtractionFilter_ID", masterFilter.ID)
+                 .Select(f => f.GetDataset()?.ExtractionConfiguration)
+                 .Where(c => c != null).Distinct()
                 ){OverrideCommandName = "Usages (in Extractions)" };
             }
 

@@ -263,7 +263,7 @@ namespace ReusableLibraryCode.Settings
         /// Show a popup confirmation dialog at the end of a pipeline completing execution
         /// </summary>
         public static bool ShowPipelineCompletedPopup { 
-            get { return AppSettings.GetValueOrDefault("ShowPipelineCompletedPopup", false); }
+            get { return AppSettings.GetValueOrDefault("ShowPipelineCompletedPopup", true); }
             set { AppSettings.AddOrUpdateValue("ShowPipelineCompletedPopup", value); } }
 
         public static string ConsoleColorScheme
@@ -323,6 +323,17 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("SelectiveRefresh", value); }
         }
 
+        /// <summary>
+        /// Set to true to always attempt to force joins on all tables under a Catalogue
+        /// when building queries (in Cohort Builder).  This makes it impossible to untick
+        /// force joins.
+        /// </summary>
+        public static bool AlwaysJoinEverything
+        {
+            get { return AppSettings.GetValueOrDefault("AlwaysJoinEverything", false); }
+            set { AppSettings.AddOrUpdateValue("AlwaysJoinEverything", value); }
+        }
+
 
         #endregion
 
@@ -369,31 +380,53 @@ namespace ReusableLibraryCode.Settings
         {
             if (columnGuid == Guid.Empty)
                 return;
+            SetColumnWidth(columnGuid.ToString("N"), width);
 
-            AppSettings.AddOrUpdateValue("ColW_" + columnGuid.ToString("N"), width);
+        }
+
+        public static void SetColumnWidth(string colIdentifier, int width)
+        {
+            AppSettings.AddOrUpdateValue("ColW_" + colIdentifier, width);
         }
 
         public static void SetColumnVisible(Guid columnGuid, bool visible)
         {
             if (columnGuid == Guid.Empty)
                 return;
-
-            AppSettings.AddOrUpdateValue("ColV_" + columnGuid.ToString("N"), visible);
+            
+            SetColumnVisible(columnGuid.ToString("N"),visible);
         }
+
+        public static void SetColumnVisible(string colIdentifier,bool visible)
+        {
+            AppSettings.AddOrUpdateValue("ColV_" + colIdentifier, visible);
+        }
+
         public static int GetColumnWidth(Guid columnGuid)
         {
             if (columnGuid == Guid.Empty)
                 return 100;
 
-            return AppSettings.GetValueOrDefault("ColW_" + columnGuid.ToString("N"), 100);
+            return GetColumnWidth(columnGuid.ToString("N"));
         }
+        public static int GetColumnWidth(string colIdentifier)
+        {
+            return AppSettings.GetValueOrDefault("ColW_" + colIdentifier, 100);
+        }
+
         public static bool GetColumnVisible(Guid columnGuid)
         {
             if (columnGuid == Guid.Empty)
                 return true;
 
-            return AppSettings.GetValueOrDefault("ColV_" + columnGuid.ToString("N"), true);
+            return GetColumnVisible(columnGuid.ToString("N"));
         }
+
+        public static bool GetColumnVisible(string colIdentifier)
+        {
+            return AppSettings.GetValueOrDefault("ColV_" + colIdentifier, true);
+        }
+
         public static string[] GetHistoryForControl(Guid controlGuid)
         {
             return AppSettings.GetValueOrDefault("A_" +controlGuid.ToString("N"), "").Split(new []{"#!#"},StringSplitOptions.None);
