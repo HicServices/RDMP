@@ -217,8 +217,18 @@ namespace Rdmp.Core.DataExport.Data
 
         public override void DeleteInDatabase()
         {
+            var cols = ExtractionConfiguration.GetAllExtractableColumnsFor(ExtractableDataSet);
+
             ExtractionProgressIfAny?.DeleteInDatabase();
             base.DeleteInDatabase();
+            
+            foreach(var col in cols)
+            {
+                if(col.Exists())
+                {
+                    col.DeleteInDatabase();
+                }
+            }
         }
     }
 }
