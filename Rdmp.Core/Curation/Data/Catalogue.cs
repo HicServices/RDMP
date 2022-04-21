@@ -119,8 +119,10 @@ namespace Rdmp.Core.Curation.Data
             get { return _folder; }
             set { SetField(ref  _folder, CatalogueFolder.Adjust(value)); }
         }
-         
+
+
         /// <inheritdoc/>
+        [UsefulProperty]
         public string Description
         {
             get { return _description; }

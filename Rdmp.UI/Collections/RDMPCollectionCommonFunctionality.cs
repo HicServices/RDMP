@@ -110,6 +110,10 @@ namespace Rdmp.UI.Collections
         {
             SetupColumnTracking(Tree, col, g);
         }
+        public void SetupColumnTracking(OLVColumn col, string columnUniqueIdentifier)
+        {
+            SetupColumnTracking(Tree, col, columnUniqueIdentifier);
+        }
 
         /// <inheritdoc cref="SetupColumnTracking(OLVColumn, Guid)"/>
         public static void SetupColumnTracking(ObjectListView view, OLVColumn col, Guid g)
@@ -119,6 +123,16 @@ namespace Rdmp.UI.Collections
 
             col.IsVisible = UserSettings.GetColumnVisible(g);
             col.VisibilityChanged += (s, e) => UserSettings.SetColumnVisible(g, ((OLVColumn)s).IsVisible);
+
+            view.RebuildColumns();
+        }
+        public static void SetupColumnTracking(ObjectListView view, OLVColumn col,string columnUniqueIdentifier)
+        {
+            col.Width = UserSettings.GetColumnWidth(columnUniqueIdentifier);
+            view.ColumnWidthChanged += (s, e) => UserSettings.SetColumnWidth(columnUniqueIdentifier, col.Width);
+
+            col.IsVisible = UserSettings.GetColumnVisible(columnUniqueIdentifier);
+            col.VisibilityChanged += (s, e) => UserSettings.SetColumnVisible(columnUniqueIdentifier, ((OLVColumn)s).IsVisible);
 
             view.RebuildColumns();
         }
@@ -276,11 +290,6 @@ namespace Rdmp.UI.Collections
             else
                 foreach (OLVColumn c in Tree.AllColumns)
                     c.Sortable = false;
-        }
-
-        internal static void SetupColumnTracking(object olvObjects, OLVColumn olvID, Guid guid)
-        {
-            throw new NotImplementedException();
         }
 
         public static void Tree_CellToolTipShowing(IActivateItems activator, ToolTipShowingEventArgs e)

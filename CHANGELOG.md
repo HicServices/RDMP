@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ability to select multiple objects at once when adding to a Session
 - Ability to find multiple objects at once (ctrl+shift+f)
 - Added new pipeline component CohortSampler
+- Added UsefulProperty columns back into Find/Select dialog
 
 ### Fixed
 
