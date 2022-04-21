@@ -263,7 +263,7 @@ namespace ReusableLibraryCode.Settings
         /// Show a popup confirmation dialog at the end of a pipeline completing execution
         /// </summary>
         public static bool ShowPipelineCompletedPopup { 
-            get { return AppSettings.GetValueOrDefault("ShowPipelineCompletedPopup", false); }
+            get { return AppSettings.GetValueOrDefault("ShowPipelineCompletedPopup", true); }
             set { AppSettings.AddOrUpdateValue("ShowPipelineCompletedPopup", value); } }
 
         public static string ConsoleColorScheme
