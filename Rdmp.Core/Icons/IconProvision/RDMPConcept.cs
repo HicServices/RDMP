@@ -198,6 +198,9 @@ namespace Rdmp.Core.Icons.IconProvision
         ProcessTaskArgument,
         CacheFetchFailure,
         AllDashboardsNode,
-        ExtractionProgress
+        ExtractionProgress,
+        Attacher,
+        DataProvider,
+        MutilateDataTables
     }
 }

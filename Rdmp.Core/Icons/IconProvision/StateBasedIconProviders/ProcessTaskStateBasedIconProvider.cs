@@ -16,6 +16,9 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
         private Bitmap _exe;
         private Bitmap _sql;
         private Bitmap _plugin;
+        private Bitmap _attacher;
+        private Bitmap _dataProvider;
+        private Bitmap _mutilateDataTables;
 
         public ProcessTaskStateBasedIconProvider()
         {
@@ -23,6 +26,9 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             _sql = CatalogueIcons.SQL;
             _plugin = CatalogueIcons.ProcessTask;
 
+            _attacher = CatalogueIcons.Attacher;
+            _dataProvider = CatalogueIcons.DataProvider;
+            _mutilateDataTables = CatalogueIcons.MutilateDataTables;
         }
 
         public Bitmap GetImageIfSupportedObject(object o)
@@ -42,11 +48,11 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
                 case ProcessTaskType.SQLFile:
                     return _sql;
                 case ProcessTaskType.Attacher:
-                    return _plugin;
+                    return _attacher;
                 case ProcessTaskType.DataProvider:
-                    return _plugin;
+                    return _dataProvider;
                 case ProcessTaskType.MutilateDataTable:
-                    return _plugin;
+                    return _mutilateDataTables;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
