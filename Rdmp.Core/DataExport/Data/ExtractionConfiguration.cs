@@ -312,7 +312,8 @@ namespace Rdmp.Core.DataExport.Data
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="project"></param>
-        public ExtractionConfiguration(IDataExportRepository repository, IProject project)
+        /// <param name="name"></param>
+        public ExtractionConfiguration(IDataExportRepository repository, IProject project, string name = null)
         {
             Repository = repository;
 
@@ -322,7 +323,7 @@ namespace Rdmp.Core.DataExport.Data
                 {"Project_ID", project.ID},
                 {"Username", Environment.UserName},
                 {"Description", "Initial Configuration"},
-                {"Name","New ExtractionConfiguration" + Guid.NewGuid() },
+                {"Name",string.IsNullOrWhiteSpace(name) ? "New ExtractionConfiguration" + Guid.NewGuid() : name },
                 {"Separator",","}
             });
         }

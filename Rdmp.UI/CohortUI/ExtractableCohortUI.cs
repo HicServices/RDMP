@@ -13,6 +13,7 @@ using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.UI.Collections;
@@ -193,6 +194,12 @@ namespace Rdmp.UI.CohortUI
                             c.ExternalProjectNumber == _extractableCohort.ExternalProjectNumber).ToArray());
             }
             
+            CommonFunctionality.Add(new ExecuteCommandCreateNewExtractionConfigurationForProject(activator, null)
+            {
+                CohortIfAny = databaseObject,
+                OverrideCommandName = "New Extraction Configuration using Cohort",
+            });
+
             AssociatedCollection = RDMPCollection.SavedCohorts;
         }
 

@@ -67,7 +67,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            if (SelectOne(_compatibleCohorts.Where(c => c.ID != _extractionConfiguration.Cohort_ID).ToList(), out ExtractableCohort selected))
+            if (SelectOne(new DialogArgs() {
+                WindowTitle = "Select Saved Cohort",
+                TaskDescription = "Select the existing Cohort you would like to be used for your Extraction Configuration."
+            }, _compatibleCohorts.Where(c => c.ID != _extractionConfiguration.Cohort_ID).ToList(), out ExtractableCohort selected))
             {
                 //clear current one
                 _extractionConfiguration.Cohort_ID = selected.ID;

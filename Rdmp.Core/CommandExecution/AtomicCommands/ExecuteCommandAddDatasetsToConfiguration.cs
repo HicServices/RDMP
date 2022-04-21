@@ -81,7 +81,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if (_userMustPick)
             {
                 ExtractableDataSet[] selected;
-                if (!SelectMany(_toadd.Cast<ExtractableDataSet>().ToArray(),out selected))
+                if (!SelectMany(new DialogArgs()
+                {
+                    WindowTitle = "Select Datasets",
+                    TaskDescription = "Select the Datasets you would like to be exported as part of your Extraction Configuration."
+                }, _toadd.Cast<ExtractableDataSet>().ToArray(),out selected))
                     return;
 
                 foreach (var ds in selected)
