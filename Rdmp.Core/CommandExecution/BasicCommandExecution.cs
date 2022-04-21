@@ -382,9 +382,16 @@ namespace Rdmp.Core.CommandExecution
             selected = (T)BasicActivator.SelectOne(args, repository.GetAllObjects<T>().ToArray());
             return selected != null;
         }
+
         protected bool SelectMany<T>(T[] available, out T[] selected, string initialSearchText = null) where T : DatabaseEntity
         {
             selected = BasicActivator.SelectMany("Select Objects", typeof(T), available,initialSearchText)?.Cast<T>()?.ToArray();
+            return selected != null && selected.Any();
+        }
+
+        protected bool SelectMany<T>(DialogArgs dialogArgs, T[] available, out T[] selected) where T : DatabaseEntity
+        {
+            selected = BasicActivator.SelectMany(dialogArgs, typeof(T), available)?.Cast<T>()?.ToArray();
             return selected != null && selected.Any();
         }
 

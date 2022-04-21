@@ -584,7 +584,6 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandCreateNewCohortFromFile(_activator, null) { OverrideCommandName = "New Cohort From File", SuggestedCategory = Add, Weight = -4.8f }.SetTarget(proj);
                 yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, (Catalogue)null) { OverrideCommandName = "New Cohort From Catalogue", SuggestedCategory = Add, Weight = -4.7f }.SetTarget(proj);
                 yield return new ExecuteCommandCreateNewCohortFromTable(_activator,null) { OverrideCommandName = "New Cohort From Table", SuggestedCategory = Add, Weight = -4.6f }.SetTarget(proj);
-
                 yield return new ExecuteCommandCreateNewExtractionConfigurationForProject(_activator,proj) { OverrideCommandName = "New Extraction Configuration", SuggestedCategory = Add, Weight = -2f };
                 yield return new ExecuteCommandCreateNewCatalogueByImportingFile(_activator) { OverrideCommandName = "New Project Specific Catalogue From File...", SuggestedCategory = Add, Weight = -1.9f }.SetTarget(proj);
                 yield return new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator) { OverrideCommandName = "New Project Specific Catalogue From Database...", SuggestedCategory = Add, Weight = -1.8f }.SetTarget(proj);
@@ -662,6 +661,11 @@ namespace Rdmp.Core.CommandExecution
                     OverrideCommandName = "Save Cohort To File...",
                     OverrideIcon = FamFamFamIcons.disk,
                     Weight = -99.8f
+                };
+                yield return new ExecuteCommandCreateNewExtractionConfigurationForProject(_activator)
+                {
+                    CohortIfAny = cohort,
+                    OverrideCommandName = "New Extraction Configuration using Cohort",
                 };
                 yield return new ExecuteCommandDeprecate(_activator, cohort, !cohort.IsDeprecated)
                 {

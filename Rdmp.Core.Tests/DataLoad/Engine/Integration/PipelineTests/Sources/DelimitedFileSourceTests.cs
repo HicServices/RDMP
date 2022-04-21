@@ -132,7 +132,40 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
             source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
         }
 
-        [TestCase(BadDataHandlingStrategy.DivertRows)]
+        [Test]
+        public void TestIgnoreQuotes()
+        {
+            if (File.Exists(filename))
+                File.Delete(filename);
+
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("Number,Field");
+            sb.AppendLine("1,\"Sick\" headaches");
+            sb.AppendLine("2,2\" length of wood");
+            sb.AppendLine("3,\"\"The bends\"\"");
+
+            File.WriteAllText(filename, sb.ToString());
+
+            var testFile = new FileInfo(filename);
+
+            DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+            source.PreInitialize(new FlatFileToLoad(testFile), new ThrowImmediatelyDataLoadEventListener());
+            source.Separator = ",";
+            source.IgnoreQuotes = true;
+            source.MaxBatchSize = 10000;
+            source.StronglyTypeInput = true;//makes the source interpret the file types properly
+            var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+            Assert.AreEqual(3, dt.Rows.Count);
+            Assert.AreEqual("\"Sick\" headaches", dt.Rows[0][1]);
+            Assert.AreEqual("2\" length of wood", dt.Rows[1][1]);
+            Assert.AreEqual("\"\"The bends\"\"", dt.Rows[2][1]);
+
+            source.Dispose(new ThrowImmediatelyDataLoadEventListener(),null);
+        }
+
+
+            [TestCase(BadDataHandlingStrategy.DivertRows)]
         [TestCase(BadDataHandlingStrategy.IgnoreRows)]
         [TestCase(BadDataHandlingStrategy.ThrowException)]
         public void BadDataTestExtraColumns(BadDataHandlingStrategy strategy)
