@@ -22,7 +22,7 @@ namespace Rdmp.UI.Refreshing
         {
             _activator = activator;
             User = user;
-            OriginalObject = originalObject;
+            OriginalObject = originalObject ?? throw new System.Exception($"Could not construct tab for a null object. Control was '{User?.GetType()}'");
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
