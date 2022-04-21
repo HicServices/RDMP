@@ -139,13 +139,6 @@ namespace Rdmp.UI.Collections
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
-            if (Activator.CoreChildProvider is DataExportChildProvider dataExportChildProvider)
-            {
-                // remove packages and projects which don't exist any more according to child provider
-                tlvDataExport.RemoveObjects(tlvDataExport.Objects.OfType<ExtractableDataSetPackage>().Except(dataExportChildProvider.AllPackages).ToArray());
-                tlvDataExport.RemoveObjects(tlvDataExport.Objects.OfType<Project>().Except(dataExportChildProvider.Projects).ToArray());
-            }
-
             SetupToolStrip();
         }
 
