@@ -736,4 +736,13 @@
   <data name="ExtractionProgress" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ExtractionProgress.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Attacher" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Attacher.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DataProvider" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\DataProvider.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="MutilateDataTables" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\MutilateDataTables.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>
