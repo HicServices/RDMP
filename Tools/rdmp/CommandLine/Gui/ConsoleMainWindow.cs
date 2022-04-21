@@ -40,6 +40,11 @@ namespace Rdmp.Core.CommandLine.Gui
         private ColorScheme _defaultColorScheme;
         private MenuItem mi_green;
         private ColorScheme _greenColorScheme;
+        private MouseFlags _rightClick = MouseFlags.Button3Clicked;
+        
+        // Last time the mouse moved and where it moved to
+        private Point _lastMousePos = new Point(0,0);
+        private DateTime _lastMouseMove = DateTime.Now;
 
         const string Catalogues = "Catalogues";
         const string Projects = "Projects";
@@ -133,11 +138,14 @@ namespace Rdmp.Core.CommandLine.Gui
             _win.Add(_treeView);
             top.Add(_win);
 
+            Application.RootMouseEvent = OnRootMouseEvent;
+
+            _treeView.ObjectActivationButton = _rightClick;
             _treeView.ObjectActivated += _treeView_ObjectActivated;
             _treeView.KeyPress += treeView_KeyPress;
             _treeView.SelectionChanged += _treeView_SelectionChanged;
             _treeView.AspectGetter = AspectGetter;
-
+            
             var statusBar = new StatusBar (new StatusItem [] {
                 new StatusItem(Key.Q | Key.CtrlMask, "~^Q~ Quit", () => Quit()),
                 new StatusItem(Key.R | Key.CtrlMask, "~^R~ Run", () => Run()),
@@ -154,6 +162,12 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 SetColorScheme(mi_green);
             }
+        }
+
+        private void OnRootMouseEvent(MouseEvent obj)
+        {
+            _lastMousePos = new Point(obj.X, obj.Y);
+            _lastMouseMove = DateTime.Now;
         }
 
         private void Query(string toQuery)
@@ -193,7 +207,14 @@ namespace Rdmp.Core.CommandLine.Gui
 
         private void _treeView_ObjectActivated(ObjectActivatedEventArgs<object> obj)
         {
-            Menu();
+            try
+            {
+                Menu();
+            }
+            catch (Exception ex)
+            {
+                _activator.ShowException("Failed to build menu", ex);
+            }
         }
 
         private string AspectGetter(object model)
@@ -321,59 +342,59 @@ namespace Rdmp.Core.CommandLine.Gui
         {
             var commands = GetCommands().ToArray();
 
-            foreach(var gotoCommands in commands.OfType<ExecuteCommandShow>())
-            {
-                gotoCommands.FetchDestinationObjects();
-                gotoCommands.OverrideCommandName = "Go To:" + gotoCommands.OverrideCommandName;
-            }
+            // Build subcategories
+            var categories = commands
+                .OrderBy(c => c.Weight)
+                .Select(c => c.SuggestedCategory)
+                .Where(c=> !string.IsNullOrWhiteSpace(c))
+                .Distinct();
+
+            Dictionary<string, List<MenuItem>> miCategories = new ();
             
-            // only show viable commands
-            commands = commands.Where(c=>!c.IsImpossible).ToArray();
+            foreach (var category in categories)
+                miCategories.Add(category, new List<MenuItem>());
 
-            if(!commands.Any())
-                return;
-            
-            var maxWidth = commands.Max(c=>c.GetCommandName().Length + 4);
-            var windowWidth = maxWidth + 8;
-            var windowHeight = commands.Length + 5;
+            List<MenuItem> items = new();
 
-            var btnCancel = new Button("Cancel");
-            btnCancel.Clicked += ()=>Application.RequestStop();
-
-            var dlg = new Dialog("Menu",windowWidth,windowHeight,btnCancel);
-                    
-            for(int i=0 ; i < commands.Length;i++)
+            // Build commands into menu items
+            foreach(var cmd in commands.OrderBy(c=>c.Weight))
             {
-                var cmd = commands[i];
-                var btn = new Button(cmd.GetCommandName());
-                
-                btn.Clicked += ()=>{
-                    Application.RequestStop();
-                    try
-                    {
-                        if(cmd.IsImpossible)
-                            _activator.Show("Cannot run command because:" + Environment.NewLine + cmd.ReasonCommandImpossible);
-                        else
-                            cmd.Execute();
-                    }
-                    catch (Exception ex)
-                    {
-                        _activator.ShowException("Command Failed",ex);
-                    }
-                    
-                    };
+                var item = new MenuItem(cmd.GetCommandName(),null,()=>ExecuteWithCatch(cmd));
 
-                var buttonWidth = maxWidth + 4;
-
-                btn.X = (windowWidth/2) - (buttonWidth/2) - 1 /*window border*/;
-                btn.Y = i;
-                btn.Width = buttonWidth;
-                btn.TextAlignment = TextAlignment.Centered;
-                
-                dlg.Add(btn);
+                if(cmd.SuggestedCategory != null)
+                {
+                    miCategories[cmd.SuggestedCategory].Add(item);
+                }
+                else
+                {
+                    items.Add(item);
+                }
             }
 
-            Application.Run(dlg);
+            foreach(var kvp in miCategories)
+            {
+                items.Add(new MenuBarItem(kvp.Key,kvp.Value.ToArray()));
+            }
+
+            
+
+            var menu = new ContextMenu();
+            menu.Position = DateTime.Now.Subtract(_lastMouseMove).TotalSeconds<1 ? _lastMousePos: new Point(10, 5);
+            menu.MenuItens = new MenuBarItem(items.ToArray());
+            menu.Show();
+        }
+
+        private void ExecuteWithCatch(IAtomicCommand cmd)
+        {
+            try
+            {
+                cmd.Execute();
+            }
+            catch (Exception ex)
+            {
+
+                _activator.ShowException($"Error running command '{cmd.GetCommandName()}'", ex);
+            }
         }
 
         private IEnumerable<IAtomicCommand> GetCommands()
