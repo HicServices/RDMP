@@ -179,7 +179,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
         private void OnCohortCreatedSuccessfully(IPipelineRunner runner, ICohortCreationRequest request)
         {
             if (request.CohortCreatedIfAny != null)
+            {
                 Publish(request.CohortCreatedIfAny);
+                Emphasise(request.CohortCreatedIfAny);
+            }
         }
     }
 }
