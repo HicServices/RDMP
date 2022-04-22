@@ -315,7 +315,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
             RefreshDisabledObjectStatus();
             SortSelectedByOrder();
 
-            Publish(_config);
+            Publish(SelectedDataSet);
         }
 
         /// <summary>
@@ -357,7 +357,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
             RefreshDisabledObjectStatus();
             SortSelectedByOrder();
 
-            Publish(_config);
+            Publish(SelectedDataSet);
         }
         public override void SetDatabaseObject(IActivateItems activator, SelectedDataSets databaseObject)
         {
