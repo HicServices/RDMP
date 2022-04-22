@@ -24,6 +24,9 @@ namespace Rdmp.Core.CommandLine.Gui
             _args = args;
             this._initialValue = initialValue;
         }
+
+        public int? MaxLength { get; set; }
+
         public bool ShowDialog()
         {
             bool okClicked = false;
@@ -62,7 +65,8 @@ namespace Rdmp.Core.CommandLine.Gui
                 Height = Dim.Fill(2),
                 Width = Dim.Fill(2),
                 Text = _initialValue ?? "",
-                AllowsTab = false
+                AllowsTab = false,
+                AllowsReturn = MaxLength.HasValue ? MaxLength > BasicActivateItems.MultiLineLengthThreshold : false,
             };
 
             win.Add(textField);
@@ -87,7 +91,8 @@ namespace Rdmp.Core.CommandLine.Gui
                 X = Pos.Right(btnOk),
                 Y = Pos.Bottom(textField),
                 Width = 13,
-                Height = 1
+                Height = 1,
+                IsDefault = false
             };
             btnCancel.Clicked += () =>
             {
@@ -95,12 +100,13 @@ namespace Rdmp.Core.CommandLine.Gui
                 Application.RequestStop();
             };
 
-            var btnClear = new Button("Clear",true)
+            var btnClear = new Button("C_lear", true)
             {
                 X = Pos.Right(btnCancel),
                 Y = Pos.Bottom(textField),
                 Width = 13,
                 Height = 1,
+                IsDefault = false
             };
             btnClear.Clicked += () =>
             {

@@ -114,7 +114,7 @@ namespace Rdmp.Core.CommandLine.Gui
         public override bool TypeText(DialogArgs args, int maxLength, string initialText, out string text,
             bool requireSaneHeaderText)
         {
-            var dlg = new ConsoleGuiTextDialog(args, initialText);
+            var dlg = new ConsoleGuiTextDialog(args, initialText) { MaxLength = maxLength};
             if (dlg.ShowDialog())
             {
                 text = dlg.ResultText;

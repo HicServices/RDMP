@@ -75,8 +75,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if (_container != null)
                 _container.AddChild((IFilter)f);
-            
-            Publish((DatabaseEntity) _container ?? f);
+
+            if (f is ExtractionFilter ef)
+                Publish(ef.ExtractionInformation);
+            else
+                Publish((DatabaseEntity) _container ?? f);
+
             Emphasise(f);
             Activate(f);
         }

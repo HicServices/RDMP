@@ -81,7 +81,7 @@ namespace Rdmp.Core.CommandLine.Gui
             btnCancel.Clicked += BtnCancel_Clicked;
             Add(btnCancel);
 
-            var btnClose = new Button("Close") { Y = 1, X = Pos.Right(btnCancel) };
+            var btnClose = new Button("C_lose") { Y = 1, X = Pos.Right(btnCancel) };
             btnClose.Clicked += () => Application.RequestStop();
             Add(btnClose);
 
@@ -162,6 +162,7 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 runner.AdditionalListeners.Add(l);
             }
+
             runner.PipelineExecutionFinishedsuccessfully += Runner_PipelineExecutionFinishedsuccessfully;
             
             // clear old results
@@ -210,7 +211,7 @@ namespace Rdmp.Core.CommandLine.Gui
             lock(notifyEventArgs)
             {
                 notifyEventArgs.Insert(0,e);
-                _results.SetNeedsDisplay();
+                Application.MainLoop.Invoke(() => _results.SetNeedsDisplay());
             }
         }
 
@@ -231,7 +232,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 }
             }
 
-            _tableView.Update();
+            Application.MainLoop.Invoke(() => _tableView.Update());
         }
 
         public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
