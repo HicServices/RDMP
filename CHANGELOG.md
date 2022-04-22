@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added AlwaysJoinEverything user setting for always forcing joins in CohortBuilder - https://github.com/HicServices/RDMP/issues/1032
 - Added UsefulProperty columns back into Find/Select dialog - https://github.com/HicServices/RDMP/issues/1033
 - Added Extraction/Release warnings for extractions that contain Internal/Deprecated/SpecialApproval fields - https://github.com/HicServices/RDMP/issues/1024
+- Added right click context menu support for console gui
 
 ### Fixed
 
