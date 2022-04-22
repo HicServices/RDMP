@@ -322,7 +322,7 @@ namespace Rdmp.Core.CommandExecution
                                 ((IEnumerable<T>)parameterInfo.DefaultValue).Cast<IMapsDirectlyToDatabaseTable>().ToArray()
 
                     }, typeof(T), _basicActivator.GetAll<T>().Cast<IMapsDirectlyToDatabaseTable>().ToArray())
-                .Cast<T>().ToArray();
+                ?.Cast<T>()?.ToArray() ?? throw new OperationCanceledException();
         }
 
         public bool IsSupported(ConstructorInfo c)
