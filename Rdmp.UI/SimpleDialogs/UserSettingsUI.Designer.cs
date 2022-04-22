@@ -75,10 +75,9 @@
             this.tbTooltipAppearDelay = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
-            this.userSettingsToolTips = new System.Windows.Forms.ToolTip(this.components);
             this.cbSelectiveRefresh = new System.Windows.Forms.CheckBox();
-          
             this.cbAlwaysJoinEverything = new System.Windows.Forms.CheckBox();
+            this.userSettingsToolTips = new System.Windows.Forms.ToolTip(this.components);
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvErrorCodes)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -588,18 +587,10 @@
             this.label9.TabIndex = 19;
             this.label9.Text = "seconds";
             // 
-            // userSettingsToolTips
-            // 
-            this.userSettingsToolTips.AutomaticDelay = 250;
-            this.userSettingsToolTips.AutoPopDelay = 30000;
-            this.userSettingsToolTips.InitialDelay = 250;
-            this.userSettingsToolTips.IsBalloon = true;
-            this.userSettingsToolTips.ReshowDelay = 50;
-            // 
             // cbSelectiveRefresh
             // 
             this.cbSelectiveRefresh.AutoSize = true;
-            this.cbSelectiveRefresh.Location = new System.Drawing.Point(8, 182);
+            this.cbSelectiveRefresh.Location = new System.Drawing.Point(8, 208);
             this.cbSelectiveRefresh.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbSelectiveRefresh.Name = "cbSelectiveRefresh";
             this.cbSelectiveRefresh.Size = new System.Drawing.Size(114, 19);
@@ -607,7 +598,7 @@
             this.cbSelectiveRefresh.Text = "Selective Refresh";
             this.cbSelectiveRefresh.UseVisualStyleBackColor = true;
             this.cbSelectiveRefresh.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
-            //
+            // 
             // cbAlwaysJoinEverything
             // 
             this.cbAlwaysJoinEverything.AutoSize = true;
@@ -619,6 +610,14 @@
             this.cbAlwaysJoinEverything.Text = "Always Join Everything";
             this.cbAlwaysJoinEverything.UseVisualStyleBackColor = true;
             this.cbAlwaysJoinEverything.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
+            // 
+            // userSettingsToolTips
+            // 
+            this.userSettingsToolTips.AutomaticDelay = 250;
+            this.userSettingsToolTips.AutoPopDelay = 30000;
+            this.userSettingsToolTips.InitialDelay = 250;
+            this.userSettingsToolTips.IsBalloon = true;
+            this.userSettingsToolTips.ReshowDelay = 50;
             // 
             // UserSettingsFileUI
             // 
