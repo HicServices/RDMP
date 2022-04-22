@@ -691,13 +691,6 @@ namespace Rdmp.Core.CommandExecution
 
             }
 
-
-            if (Is(o, out IArgument a))
-            {
-                yield return new ExecuteCommandSetArgument(_activator,a);
-
-            }
-
             if(Is(o,out IDisableable disable))
                 yield return new ExecuteCommandDisableOrEnable(_activator, disable);
 
