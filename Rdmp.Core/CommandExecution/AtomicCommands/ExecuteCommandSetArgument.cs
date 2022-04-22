@@ -130,7 +130,15 @@ argValue    New value for argument e.g. Null, True, Catalogue:5 etc")]
             if(_promptUser)
             {
                 var invoker = new CommandInvoker(BasicActivator);
-                value = invoker.GetValueForParameterOfType(new RequiredArgument(_arg));
+                try
+                {
+                    value = invoker.GetValueForParameterOfType(new RequiredArgument(_arg));
+                }
+                catch(OperationCanceledException)
+                {
+                    return;
+                }
+                
             }
 
             _arg.SetValue(value);
