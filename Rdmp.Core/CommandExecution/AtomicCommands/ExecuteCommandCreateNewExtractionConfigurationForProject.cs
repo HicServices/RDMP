@@ -138,23 +138,22 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
             else
             {
-                var chooseCohort = new ExecuteCommandChooseCohort(BasicActivator, newConfig);
+                var chooseCohort = new ExecuteCommandChooseCohort(BasicActivator, newConfig) { NoPublish = true };
                 if (PromptForCohort && BasicActivator.IsInteractive && !chooseCohort.IsImpossible)
                 {
                     chooseCohort.Execute();
-
-                    // user cancelled picking a cohort
-                    if (newConfig.Cohort_ID == null)
-                        return;
                 }
             }
 
-
-            var chooseDatasetsCommand = new ExecuteCommandAddDatasetsToConfiguration(BasicActivator, newConfig);
-
-            if (PromptForDatasets && BasicActivator.IsInteractive && !chooseDatasetsCommand.IsImpossible)
+            // user didn't cancel picking a cohort so get them to pick datasets too.
+            if (newConfig.Cohort_ID != null)
             {
-                chooseDatasetsCommand.Execute();
+                var chooseDatasetsCommand = new ExecuteCommandAddDatasetsToConfiguration(BasicActivator, newConfig) { NoPublish = true};
+
+                if (PromptForDatasets && BasicActivator.IsInteractive && !chooseDatasetsCommand.IsImpossible)
+                {
+                    chooseDatasetsCommand.Execute();
+                }
             }
 
             //refresh the project
