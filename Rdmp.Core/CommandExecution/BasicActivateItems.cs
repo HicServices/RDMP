@@ -43,6 +43,12 @@ namespace Rdmp.Core.CommandExecution
 {
     public abstract class BasicActivateItems : IBasicActivateItems
     {
+        /// <summary>
+        /// The maximum number of characters (exclusive) at which text input UI
+        /// controls should assume single line only (i.e. no newlines allowed).
+        /// </summary>
+        public const int MultiLineLengthThreshold = 1000;
+
         /// <inheritdoc/>
         public virtual bool IsInteractive => true;
 
