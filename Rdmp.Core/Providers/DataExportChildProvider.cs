@@ -66,7 +66,8 @@ namespace Rdmp.Core.Providers
         
         public List<IObjectUsedByOtherObjectNode<Project,IMapsDirectlyToDatabaseTable>> DuplicatesByProject = new List<IObjectUsedByOtherObjectNode<Project,IMapsDirectlyToDatabaseTable>>();
         public List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>> DuplicatesByCohortSourceUsedByProjectNode = new List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>>();
-        
+
+
         private readonly object _oProjectNumberToCohortsDictionary = new object();
         public Dictionary<int,List<ExtractableCohort>> ProjectNumberToCohortsDictionary = new Dictionary<int, List<ExtractableCohort>>();
 
@@ -587,7 +588,13 @@ namespace Rdmp.Core.Providers
                 cohort.InjectKnown((ExternalCohortDefinitionData)null);
         }
 
-        private List<CohortSourceUsedByProjectNode> GetAllCohortProjectUsageNodesFor(Project project)
+        /// <summary>
+        /// Returns all cohort sources used by a <see cref="Project"/>.  Returned object
+        /// contains references to the cohorts being used.
+        /// </summary>
+        /// <param name="project"></param>
+        /// <returns></returns>
+        public List<CohortSourceUsedByProjectNode> GetAllCohortProjectUsageNodesFor(Project project)
         {
             //if the current project does not have a number or there are no cohorts associated with it
             if (project.ProjectNumber == null || !ProjectNumberToCohortsDictionary.ContainsKey(project.ProjectNumber.Value))

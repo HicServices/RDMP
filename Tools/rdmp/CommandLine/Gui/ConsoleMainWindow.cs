@@ -295,7 +295,7 @@ namespace Rdmp.Core.CommandLine.Gui
             }
         }
 
-        private void Show(IMapsDirectlyToDatabaseTable selected)
+        private void Show(object selected)
         {
             var desc = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(selected);
             

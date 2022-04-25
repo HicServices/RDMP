@@ -177,6 +177,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 
         public override void RequestItemEmphasis(object sender, EmphasiseRequest request)
         {
+            AdjustEmphasiseRequest(request);
+
             //ensure a relevant Toolbox is available
             var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(request.ObjectToEmphasise);
             object root = null;
@@ -202,7 +204,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 content.Activate();
 
             //user is being shown the given object so track it as a recent (e.g. GoTo etc)
-            HistoryProvider.Add(args.Request.ObjectToEmphasise);
+            if(args.Request.ObjectToEmphasise is IMapsDirectlyToDatabaseTable m)
+                HistoryProvider.Add(m);
         }
 
         public override bool SelectEnum(DialogArgs args, Type enumType, out Enum chosen)

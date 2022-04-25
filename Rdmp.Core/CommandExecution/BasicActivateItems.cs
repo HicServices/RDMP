@@ -221,7 +221,39 @@ namespace Rdmp.Core.CommandExecution
         /// <inheritdoc/>
         public virtual void RequestItemEmphasis(object sender, EmphasiseRequest emphasiseRequest)
         {
+            AdjustEmphasiseRequest(emphasiseRequest);
+
             OnEmphasise(sender, new EmphasiseEventArgs(emphasiseRequest));
+        }
+
+        /// <summary>
+        /// Changes what object should be emphasised based on system state for specific types
+        /// of objects.  For example if a request is to emphasise an <see cref="ExtractableCohort"/>
+        /// then we might instead emphasise it under a <see cref="Project"/> (if it is only
+        /// associated with a single Project).
+        /// </summary>
+        /// <param name="emphasiseRequest"></param>
+        protected void AdjustEmphasiseRequest(EmphasiseRequest emphasiseRequest)
+        {
+            if(emphasiseRequest.ObjectToEmphasise is ExtractableCohort ec)
+            {
+                if(CoreChildProvider is DataExportChildProvider dx)
+                {
+                    var projects = dx.Projects.Where(p => p.ProjectNumber == ec.ExternalProjectNumber).ToArray();
+
+                    // If there is only one Project with the number of this cohort
+                    if(projects.Length == 1)
+                    {
+                        // we can emphasise the cohort under that Project
+                        var usage = dx.GetAllCohortProjectUsageNodesFor(projects[0])
+                                    .SelectMany(s=>s.CohortsUsed)
+                                    .FirstOrDefault(k => k.ObjectBeingUsed.Equals(ec));
+
+                        if(usage != null)
+                            emphasiseRequest.ObjectToEmphasise = usage;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -230,7 +262,7 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         /// <param name="objectToEmphasise"></param>
         /// <returns></returns>
-        public object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise)
+        public object GetRootObjectOrSelf(object objectToEmphasise)
         {
             return CoreChildProvider?.GetRootObjectOrSelf(objectToEmphasise) ?? objectToEmphasise;
         }

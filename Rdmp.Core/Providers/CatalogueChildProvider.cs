@@ -1437,7 +1437,7 @@ namespace Rdmp.Core.Providers
         }
         
         
-        public object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise)
+        public object GetRootObjectOrSelf(object objectToEmphasise)
         {
             lock(WriteLock)
             {

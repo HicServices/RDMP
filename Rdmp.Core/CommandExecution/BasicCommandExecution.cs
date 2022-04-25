@@ -399,7 +399,7 @@ namespace Rdmp.Core.CommandExecution
         {
             BasicActivator.Wait(title,task,cts);
         }
-        protected void Emphasise(IMapsDirectlyToDatabaseTable o, int expansionDepth = 0)
+        protected void Emphasise(object o, int expansionDepth = 0)
         {
             BasicActivator.RequestItemEmphasis(this, new EmphasiseRequest(o, expansionDepth));
         }

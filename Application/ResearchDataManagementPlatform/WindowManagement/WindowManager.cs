@@ -80,7 +80,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         private void RecordEmphasis(object sender, EmphasiseEventArgs args)
         {
-            Navigation.Append(new CollectionNavigation(args.Request.ObjectToEmphasise));
+            if(args.Request.ObjectToEmphasise is IMapsDirectlyToDatabaseTable m)
+                Navigation.Append(new CollectionNavigation(m));
         }
 
         /// <summary>
