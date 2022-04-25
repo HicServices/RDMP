@@ -13,11 +13,11 @@ namespace Rdmp.Core.CommandExecution
     /// </summary>
     public class EmphasiseRequest
     {
-        public IMapsDirectlyToDatabaseTable ObjectToEmphasise { get; set; }
+        public object ObjectToEmphasise { get; set; }
         public int ExpansionDepth { get; set; }
         public bool Pin { get; set; }
 
-        public EmphasiseRequest(IMapsDirectlyToDatabaseTable objectToEmphasise, int expansionDepth = 0)
+        public EmphasiseRequest(object objectToEmphasise, int expansionDepth = 0)
         {
             ObjectToEmphasise = objectToEmphasise;
             ExpansionDepth = expansionDepth;

@@ -60,7 +60,7 @@ namespace Rdmp.Core.Providers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable model);
+        object GetRootObjectOrSelf(object model);
 
         PermissionWindow[] AllPermissionWindows { get;}
         IEnumerable<CatalogueItem> AllCatalogueItems { get; }

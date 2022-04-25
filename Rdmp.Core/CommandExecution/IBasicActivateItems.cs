@@ -471,7 +471,7 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         /// <param name="objectToEmphasise"></param>
         /// <returns></returns>
-        object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise);
+        object GetRootObjectOrSelf(object objectToEmphasise);
 
 
         /// <summary>

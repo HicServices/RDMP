@@ -558,8 +558,8 @@ namespace Rdmp.UI.Collections
                     Tree.EndUpdate();
                 }
                 
-            if (args.Request.Pin && Settings.AllowPinning)
-                Pin(args.Request.ObjectToEmphasise, decendancyList);
+            if (args.Request.Pin && Settings.AllowPinning && args.Request.ObjectToEmphasise is IMapsDirectlyToDatabaseTable m)
+                Pin(m, decendancyList);
 
             //update index now pin filter is applied
             index = Tree.IndexOf(args.Request.ObjectToEmphasise);
