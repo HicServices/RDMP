@@ -254,16 +254,31 @@ namespace Rdmp.Core.CommandExecution
             }
 
             if (Is(forObject, out ExtractableCohort cohort))
+            {
                 yield return new ExecuteCommandShow(_activator, () =>
                      {
                          if (_activator.CoreChildProvider is DataExportChildProvider dx)
                              return dx.ExtractionConfigurations.Where(ec => ec.Cohort_ID == cohort.ID);
 
                          return new ExtractionConfiguration[0];
-                     }){
-                    OverrideCommandName = "Extraction Configurations",
+                     })
+                {
+                    OverrideCommandName = "Extraction Configuration(s)",
                     OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration)
                 };
+
+                yield return new ExecuteCommandShow(_activator, () =>
+                {
+                    if (_activator.CoreChildProvider is DataExportChildProvider dx)
+                        return dx.Projects.Where(p => p.ProjectNumber == cohort.ExternalProjectNumber);
+
+                    return new Project[0];
+                })
+                {
+                    OverrideCommandName = "Project(s)",
+                    OverrideIcon = GetImage(RDMPConcept.Project)
+                };
+            }
 
             //if it is a masquerader and masquerading as a DatabaseEntity then add a goto the object
             if (forObject is IMasqueradeAs masqueraderIfAny)
