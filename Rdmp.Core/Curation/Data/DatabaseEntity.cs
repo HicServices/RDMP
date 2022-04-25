@@ -19,6 +19,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
@@ -319,6 +320,10 @@ namespace Rdmp.Core.Curation.Data
                 return;
 
             if (prop.Name.Contains("Password"))
+                return;
+            if (prop.Name.Equals(nameof(ExtractableCohort.Count)))
+                return;
+            if (prop.Name.Equals(nameof(ExtractableCohort.CountDistinct)))
                 return;
 
             // don't show foreign key ID properties
