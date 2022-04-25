@@ -460,7 +460,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         /// <inheritdoc/>
         public override bool YesNo(DialogArgs args,out bool chosen)
         {
-            var dr = MessageBox.Show(args.TaskDescription, args.WindowTitle, MessageBoxButtons.YesNo);
+            var dr = MessageBox.Show(args.TaskDescription ?? args.EntryLabel, args.WindowTitle, MessageBoxButtons.YesNo);
 
             if (dr == DialogResult.Yes)
             {
