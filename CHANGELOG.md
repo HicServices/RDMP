@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [7.0.10] - 2022-04-25
+
 ### Added
 
 - "parameter description" and "property name" have been added to the "set value" option for filters - https://github.com/HicServices/RDMP/issues/1034
@@ -1155,7 +1157,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.9...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.10...develop
+[7.0.9]: https://github.com/HicServices/RDMP/compare/v7.0.9...v7.0.10
 [7.0.9]: https://github.com/HicServices/RDMP/compare/v7.0.8...v7.0.9
 [7.0.8]: https://github.com/HicServices/RDMP/compare/v7.0.7...v7.0.8
 [7.0.7]: https://github.com/HicServices/RDMP/compare/v7.0.6...v7.0.7
