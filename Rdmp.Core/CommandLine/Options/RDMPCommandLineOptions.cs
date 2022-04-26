@@ -56,7 +56,7 @@ namespace Rdmp.Core.CommandLine.Options
 
         /// <summary>
         /// If <see cref="ConnectionStringsFile"/> was specified and that file existed and was succesfully loaded
-        /// using <see cref="PopulateConnectionStringsFromYamlIfMissing()"/> then this property will store the
+        /// using <see cref="PopulateConnectionStringsFromYamlIfMissing"/> then this property will store the
         /// file used including name and description
         /// </summary>
         public ConnectionStringsYamlFile ConnectionStringsFileLoaded { get; private set; }
@@ -158,7 +158,7 @@ namespace Rdmp.Core.CommandLine.Options
             string.IsNullOrWhiteSpace(DataExportConnectionString);
         }
 
-        public void PopulateConnectionStringsFromYamlIfMissing()
+        public void PopulateConnectionStringsFromYamlIfMissing(ICheckNotifier notifier)
         {
             var logger = LogManager.GetCurrentClassLogger();
 
@@ -183,7 +183,7 @@ namespace Rdmp.Core.CommandLine.Options
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(ex, "Failed to read yaml file '" + yaml + "'");
+                    notifier.OnCheckPerformed(new CheckEventArgs("Failed to read yaml file '" + yaml + "'", CheckResult.Fail,ex));
                 }
             }
         }

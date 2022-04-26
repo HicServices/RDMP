@@ -11,8 +11,10 @@ using System.Runtime.InteropServices;
 using CommandLine;
 using Rdmp.Core.Startup;
 using Rdmp.UI;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 
 namespace ResearchDataManagementPlatform
 {
@@ -46,7 +48,15 @@ namespace ResearchDataManagementPlatform
 
         private static object RunApp(ResearchDataManagementPlatformOptions arg)
         {
-            arg.PopulateConnectionStringsFromYamlIfMissing();
+            try
+            {
+                arg.PopulateConnectionStringsFromYamlIfMissing(new ThrowImmediatelyCheckNotifier());
+            }
+            catch(Exception ex)
+            {
+                ExceptionViewer.Show(ex);
+                return -500;
+            }
 
             RDMPBootStrapper<RDMPMainForm> bootStrapper =
                 new RDMPBootStrapper<RDMPMainForm>(

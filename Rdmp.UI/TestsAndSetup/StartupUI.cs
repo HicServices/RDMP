@@ -32,6 +32,11 @@ namespace Rdmp.UI.TestsAndSetup
     /// </summary>
     public partial class StartupUI : Form, ICheckNotifier
     {
+        /// <summary>
+        /// True if we failed to reach the catalogue database
+        /// </summary>
+        public bool CouldNotReachTier1Database { get; private set; }
+
         private readonly Startup _startup;
         //Constructor
         public StartupUI(Startup startup)
@@ -115,7 +120,7 @@ namespace Rdmp.UI.TestsAndSetup
                 WideMessageBox.CommentStore = _startup.RepositoryLocator.CatalogueRepository.CommentStore;
             
             //when things go badly leave the form
-            if(ragSmiley1.IsFatal())
+            if(ragSmiley1.IsFatal() || CouldNotReachTier1Database)
                 return;
 
             Timer t = new Timer
@@ -210,7 +215,6 @@ namespace Rdmp.UI.TestsAndSetup
         }
 
         RDMPPlatformDatabaseStatus lastStatus = RDMPPlatformDatabaseStatus.Healthy;
-        private bool _couldNotReachTier1Database;
         private ChoosePlatformDatabasesUI _choosePlatformsUI;
         private bool _haveWarnedAboutOutOfDate = false;
 
@@ -221,7 +225,7 @@ namespace Rdmp.UI.TestsAndSetup
                 lastStatus = eventArgs.Status;
 
             //if we are unable to reach a tier 1 database don't report anything else
-            if(_couldNotReachTier1Database)
+            if(CouldNotReachTier1Database)
                 return;
 
             lblProgress.Text = eventArgs.Patcher.Name + " database status was " + eventArgs.Status;
@@ -239,7 +243,7 @@ namespace Rdmp.UI.TestsAndSetup
                         else
                             lblProgress.Text = "Could not reach " + eventArgs.Patcher.Name;
 
-                        _couldNotReachTier1Database = true;
+                        CouldNotReachTier1Database = true;
 
                         ragSmiley1.Fatal(new Exception(string.Format("Core Platform Database was {0} ({1})",eventArgs.Status , eventArgs.Patcher.Name), eventArgs.Exception));
                     }
@@ -348,5 +352,9 @@ namespace Rdmp.UI.TestsAndSetup
             
         }
 
+        private void pbDisconnected_Click(object sender, EventArgs e)
+        {
+            ragSmiley1.ShowMessagesIfAny();
+        }
     }
 }

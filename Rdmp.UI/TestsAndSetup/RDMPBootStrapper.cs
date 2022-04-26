@@ -11,7 +11,7 @@ using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-
+using ReusableLibraryCode;
 using ScintillaNET;
 
 namespace Rdmp.UI.TestsAndSetup
@@ -74,7 +74,13 @@ namespace Rdmp.UI.TestsAndSetup
             }
             catch (Exception ex)
             {
-                ExceptionViewer.Show("Failed to get connection strings", ex);
+                if(!string.IsNullOrWhiteSpace(_args.ConnectionStringsFile))
+                {
+                    var viewer = new ExceptionViewer("Failed to get connection strings", $"ConnectionStringsFile was '{_args.ConnectionStringsFile}'{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(ex)}", ex);
+                    viewer.ShowDialog();
+                }
+                else
+                    ExceptionViewer.Show("Failed to get connection strings", ex);
                 return;
             }
 
@@ -98,9 +104,9 @@ namespace Rdmp.UI.TestsAndSetup
                 var startupUI = new StartupUI(startup);
                 startupUI.ShowDialog();
 
-                if (startup.RepositoryLocator == null)
+                if (startupUI.CouldNotReachTier1Database)
                 {
-                    MessageBox.Show("Platform databases could not be reached.  Application will exit");
+                    MessageBox.Show("Platform databases could not be reached.");
                     return;
                 }
 
@@ -116,7 +122,13 @@ namespace Rdmp.UI.TestsAndSetup
             }
             catch (Exception e)
             {
-                ExceptionViewer.Show(e);
+                if (!string.IsNullOrWhiteSpace(_args.ConnectionStringsFile))
+                {
+                    ExceptionViewer.Show($"Startup failed for '{_args.ConnectionStringsFile}'",e);
+                }
+                else
+                    ExceptionViewer.Show(e);
+                return;
             }
         }
     }
