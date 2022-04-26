@@ -21,7 +21,7 @@ namespace Rdmp.UI.SimpleDialogs
     {
         private readonly Exception _exception;
         
-        private ExceptionViewer(string title, string message, Exception exception):base(new WideMessageBoxArgs(title,message,GetStackTrace(exception,Environment.StackTrace),null,WideMessageBoxTheme.Exception))
+        public ExceptionViewer(string title, string message, Exception exception):base(new WideMessageBoxArgs(title,message,GetStackTrace(exception,Environment.StackTrace),null,WideMessageBoxTheme.Exception))
         {
             _exception = exception;
 

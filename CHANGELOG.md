@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Fixed
+
+- Fixed various startup errors when connection strings are invalid.
+
 ## [7.0.10] - 2022-04-25
 
 ### Added
