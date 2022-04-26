@@ -23,6 +23,9 @@ namespace ReusableLibraryCode.Checks
         public static ErrorCode ExtractionContainsSpecialApprovalRequired = new ErrorCode("R005", "ExtractionConfiguration '{0}' dataset '{1}' contains SpecialApprovalRequired columns: {2}", CheckResult.Warning);
         public static ErrorCode ExtractionContainsInternal = new ErrorCode("R006", "ExtractionConfiguration '{0}' dataset '{1}' contains Internal columns: {2}", CheckResult.Warning);
         public static ErrorCode ExtractionContainsDeprecated = new ErrorCode("R007", "ExtractionConfiguration '{0}' dataset '{1}' contains Deprecated columns: {2}", CheckResult.Fail);
+        
+        public static ErrorCode CouldNotLoadDll = new ErrorCode("R008", "Encountered Bad Assembly loading {0} into memory", CheckResult.Success);
+        public static ErrorCode CouldOnlyHalfLoadDll = new ErrorCode("R009", "Loaded {0}/{1} Types from {2}", CheckResult.Success);
 
         static ErrorCodes()
         {

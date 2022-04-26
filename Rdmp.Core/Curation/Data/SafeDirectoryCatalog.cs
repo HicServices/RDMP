@@ -142,7 +142,12 @@ namespace Rdmp.Core.Curation.Data
                 if (ex.Types.Any() && ass != null)
                 {
                     listener?.OnCheckPerformed(new CheckEventArgs(
-                        $"Loaded {ex.Types.Count(t => t != null)}/{ex.Types.Length} Types from {f.Name}", CheckResult.Warning, ex));
+                        ErrorCodes.CouldOnlyHalfLoadDll,
+                        ex,null,
+                        ex.Types.Count(t => t != null),
+                        ex.Types.Length,
+                        f.Name));
+
                     AddTypes(f, ass, ex.Types, listener); //the assembly is bad but at least some of the Types were legit
                 }
                 else
@@ -204,7 +209,8 @@ namespace Rdmp.Core.Curation.Data
             if (!BadAssembliesDictionary.ContainsKey(f.FullName)) //couldn't load anything out of it
             {
                 BadAssembliesDictionary.Add(f.FullName, ex);
-                listener?.OnCheckPerformed(new CheckEventArgs($"Encountered Bad Assembly loading {f.FullName} into memory", CheckResult.Fail, ex));
+
+                listener?.OnCheckPerformed(new CheckEventArgs(ErrorCodes.CouldNotLoadDll, null,ex,f.FullName));
             }
         }
 
