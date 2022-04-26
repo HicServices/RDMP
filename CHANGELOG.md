@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Fixed
+
+- Fixed connection strings dialog 'Save as yaml...' producing invalid entry for 'DataExportConnectionString' - [#1086](https://github.com/HicServices/RDMP/issues/1086)
+
 ## [7.0.10] - 2022-04-25
 
 ### Added
