@@ -133,5 +133,18 @@ namespace Rdmp.UI.Wizard
         {
 
         }
+
+        private void CreateNewCohortIdentificationConfigurationUI_Load(object sender, EventArgs e)
+        {
+            tbName.Focus();
+        }
+
+        private void tbName_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                btnGo_Click(this, new EventArgs());
+            }
+        }
     }
 }

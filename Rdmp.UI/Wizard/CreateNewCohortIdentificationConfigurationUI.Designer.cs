@@ -97,7 +97,8 @@
             this.tbName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbName.Name = "tbName";
             this.tbName.Size = new System.Drawing.Size(294, 23);
-            this.tbName.TabIndex = 20;
+            this.tbName.TabIndex = 0;
+            this.tbName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbName_KeyDown);
             // 
             // label1
             // 
@@ -159,7 +160,7 @@
             this.inclusionCriteria1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.inclusionCriteria1.Name = "inclusionCriteria1";
             this.inclusionCriteria1.Size = new System.Drawing.Size(672, 332);
-            this.inclusionCriteria1.TabIndex = 13;
+            this.inclusionCriteria1.TabIndex = 1;
             // 
             // setOperationInclude
             // 
@@ -218,6 +219,7 @@
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "CreateNewCohortIdentificationConfigurationUI";
             this.Text = "Cohort Builder Wizard";
+            this.Load += new System.EventHandler(this.CreateNewCohortIdentificationConfigurationUI_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);
