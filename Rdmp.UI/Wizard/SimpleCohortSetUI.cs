@@ -223,7 +223,7 @@ namespace Rdmp.UI.Wizard
             cbxCatalogues.SelectedItem = null;
         }
 
-        public void CreateCohortSet(CohortIdentificationConfiguration cic, CohortAggregateContainer targetContainer, int order)
+        public void CreateCohortSet(CohortAggregateContainer targetContainer)
         {
             var cata = cbxCatalogues.SelectedItem as Catalogue;
 
@@ -253,7 +253,7 @@ namespace Rdmp.UI.Wizard
             else
                 filterContainer = new AggregateFilterContainer(_activator.RepositoryLocator.CatalogueRepository, filterOp);
 
-            aggregate.Order = order;
+            aggregate.RevertToDatabaseState();
             aggregate.RootFilterContainer_ID = filterContainer.ID;
             aggregate.SaveToDatabase();
 

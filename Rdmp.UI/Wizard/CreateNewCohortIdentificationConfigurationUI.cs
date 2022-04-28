@@ -128,10 +128,10 @@ namespace Rdmp.UI.Wizard
             {
                 var includeContainer = setOperationInclude.CreateCohortAggregateContainer(root);
 
-                inclusionCriteria1.CreateCohortSet(cic, includeContainer, 1);
+                inclusionCriteria1.CreateCohortSet(includeContainer);
 
                 if (cbInclusion2.Checked)
-                    inclusionCriteria2.CreateCohortSet(cic, includeContainer, 2);
+                    inclusionCriteria2.CreateCohortSet(includeContainer);
             }
             else
             {
@@ -145,10 +145,10 @@ namespace Rdmp.UI.Wizard
                 var excludeContainer = setOperationExclude.CreateCohortAggregateContainer(root);
 
                 if (cbExclusion1.Checked)
-                    exclusionCriteria1.CreateCohortSet(cic, excludeContainer, 1);
+                    exclusionCriteria1.CreateCohortSet(excludeContainer);
 
                 if (cbExclusion2.Checked)
-                    exclusionCriteria2.CreateCohortSet(cic, excludeContainer, 2);
+                    exclusionCriteria2.CreateCohortSet(excludeContainer);
             }
 
             return cic;
