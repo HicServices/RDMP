@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed various startup errors when Databases.yaml strings are invalid.
 - Fixed bug with the 'unreachable' picturebox icon not being clickable
 - Fixed unreachable catalogue database resulting in the Startup form immediately closing
+- Fixed being able to drag filters/containers onto API calls in Cohort Builder
 
 ## [7.0.10] - 2022-04-25
 
