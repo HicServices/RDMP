@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed various startup errors when Databases.yaml strings are invalid.
 - Fixed bug with the 'unreachable' picturebox icon not being clickable
 - Fixed unreachable catalogue database resulting in the Startup form immediately closing
+- Fixed regression in 7.0.10 where calling `public void ClearDefault(PermissableDefaults toDelete)` multiple times caused an Exception
 
 ## [7.0.10] - 2022-04-25
 
