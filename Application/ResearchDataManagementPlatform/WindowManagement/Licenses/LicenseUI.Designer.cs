@@ -49,8 +49,9 @@
             this.rtLicense.Location = new System.Drawing.Point(0, 15);
             this.rtLicense.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.rtLicense.Name = "rtLicense";
+            this.rtLicense.ReadOnly = true;
             this.rtLicense.Size = new System.Drawing.Size(980, 346);
-            this.rtLicense.TabIndex = 0;
+            this.rtLicense.TabIndex = 7;
             this.rtLicense.Text = "";
             // 
             // rtThirdPartyLicense
@@ -59,8 +60,9 @@
             this.rtThirdPartyLicense.Location = new System.Drawing.Point(0, 15);
             this.rtThirdPartyLicense.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.rtThirdPartyLicense.Name = "rtThirdPartyLicense";
+            this.rtThirdPartyLicense.ReadOnly = true;
             this.rtThirdPartyLicense.Size = new System.Drawing.Size(980, 345);
-            this.rtThirdPartyLicense.TabIndex = 0;
+            this.rtThirdPartyLicense.TabIndex = 6;
             this.rtThirdPartyLicense.Text = "";
             // 
             // label1
@@ -71,7 +73,7 @@
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(82, 15);
-            this.label1.TabIndex = 1;
+            this.label1.TabIndex = 5;
             this.label1.Text = "RDMP License";
             // 
             // label2
@@ -82,7 +84,7 @@
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(245, 15);
-            this.label2.TabIndex = 1;
+            this.label2.TabIndex = 4;
             this.label2.Text = "Third Party Licenses (Libraries and Resources)";
             // 
             // btnAccept
@@ -92,7 +94,7 @@
             this.btnAccept.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnAccept.Name = "btnAccept";
             this.btnAccept.Size = new System.Drawing.Size(164, 27);
-            this.btnAccept.TabIndex = 2;
+            this.btnAccept.TabIndex = 0;
             this.btnAccept.Text = "Accept";
             this.btnAccept.UseVisualStyleBackColor = true;
             this.btnAccept.Click += new System.EventHandler(this.btnAccept_Click);
@@ -104,7 +106,7 @@
             this.btnDecline.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnDecline.Name = "btnDecline";
             this.btnDecline.Size = new System.Drawing.Size(170, 27);
-            this.btnDecline.TabIndex = 2;
+            this.btnDecline.TabIndex = 1;
             this.btnDecline.Text = "Decline (Close software)";
             this.btnDecline.UseVisualStyleBackColor = true;
             this.btnDecline.Click += new System.EventHandler(this.btnDecline_Click);
@@ -128,7 +130,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.label2);
             this.splitContainer1.Size = new System.Drawing.Size(980, 725);
             this.splitContainer1.SplitterDistance = 361;
-            this.splitContainer1.TabIndex = 3;
+            this.splitContainer1.TabIndex = 2;
             // 
             // panel1
             // 
@@ -138,7 +140,7 @@
             this.panel1.Location = new System.Drawing.Point(0, 725);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(980, 35);
-            this.panel1.TabIndex = 4;
+            this.panel1.TabIndex = 3;
             // 
             // LicenseUI
             // 
