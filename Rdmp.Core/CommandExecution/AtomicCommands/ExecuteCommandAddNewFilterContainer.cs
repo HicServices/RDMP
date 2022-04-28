@@ -27,9 +27,15 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if(host.RootFilterContainer_ID != null)
                 SetImpossible("There is already a root filter container on this object");
-            
-            if(host is AggregateConfiguration ac && ac.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
-                SetImpossible("Aggregate is set to use another's filter container tree");
+
+            if (host is AggregateConfiguration ac)
+            {
+                if(ac.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
+                    SetImpossible("Aggregate is set to use another's filter container tree");
+
+                if (ac.Catalogue.IsApiCall())
+                    SetImpossible("Filters cannot be added to API calls");
+            }
 
             _host = host;
         }
