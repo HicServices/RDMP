@@ -32,6 +32,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public bool PromptToPickAProject { get; set; } = false;
 
         /// <summary>
+        /// Name to give the root component of new cics created by this command (usually an EXCEPT but not always - see Cohort Configuration Wizard)
+        /// </summary>
+        public static string RootContainerName = "Root Container";
+        /// <summary>
         /// Name to give the inclusion component of new cics created by this command
         /// </summary>
         public static string InclusionCriteriaName = "Inclusion Criteria";
@@ -135,7 +139,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             var cic = new CohortIdentificationConfiguration(BasicActivator.RepositoryLocator.CatalogueRepository, name);
             cic.CreateRootContainerIfNotExists();
             var root = cic.RootCohortAggregateContainer;
-            root.Name = "Root Container";
+            root.Name = RootContainerName;
             root.Operation = SetOperation.EXCEPT;
             root.SaveToDatabase();
 

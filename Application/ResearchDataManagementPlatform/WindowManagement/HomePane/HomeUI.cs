@@ -56,7 +56,9 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             boxCohort.SetUp(Activator,"Cohort Builder", typeof(CohortIdentificationConfiguration),_uiFactory,
                 new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator)
                 {
-                    OverrideCommandName = "Query"
+                    OverrideCommandName = "Cohort Builder Query",
+                    PromptToPickAProject = true
+
                 },
                 new ExecuteCommandCreateNewCohortFromFile(_activator,null,null)
                 {

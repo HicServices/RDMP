@@ -7,6 +7,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
@@ -55,6 +56,8 @@ namespace Rdmp.UI.Wizard
 
         private void CheckBoxChanged(object sender, EventArgs e)
         {
+            var cb = (CheckBox)sender;
+
             SimpleCohortSetUI target = null;
 
             if (sender == cbExclusion1)
@@ -62,12 +65,19 @@ namespace Rdmp.UI.Wizard
             if (sender == cbExclusion2)
                 target = exclusionCriteria2;
             if (sender == cbInclusion2)
+            {
+                if (inclusionCriteria1.Catalogue == null && cb.Checked)
+                {
+                    cb.Checked = false;
+                    return;
+                }
                 target = inclusionCriteria2;
+            }
 
             if(target == null)
                 throw new ArgumentException("sender");
 
-            if(((CheckBox)sender).Checked)
+            if(cb.Checked)
             {
                 target.SetupFor(Activator);
                 target.Enabled = true;
@@ -94,23 +104,43 @@ namespace Rdmp.UI.Wizard
             if(!Activator.YesNo("Are you sure you are happy with your configuration, this wizard will close after creating?","Confirm"))
                 return;
 
+            var cic = CreateCohortIdentificationConfiguration();
+
+            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(cic));
+
+            CohortIdentificationCriteriaCreatedIfAny = cic;
+            DialogResult = DialogResult.OK;
+
+            Close();
+        }
+
+        private CohortIdentificationConfiguration CreateCohortIdentificationConfiguration()
+        {
             var cic = new CohortIdentificationConfiguration(Activator.RepositoryLocator.CatalogueRepository, tbName.Text);
-            
+
             cic.CreateRootContainerIfNotExists();
             var root = cic.RootCohortAggregateContainer;
             root.Operation = SetOperation.EXCEPT;
             root.Name = "EXCEPT";
             root.SaveToDatabase();
-            
-            var includeContainer = setOperationInclude.CreateCohortAggregateContainer(root);
-            
 
-            inclusionCriteria1.CreateCohortSet(cic,includeContainer, 1);
-            
-            if (cbInclusion2.Checked)
-                inclusionCriteria2.CreateCohortSet(cic, includeContainer, 2);
+            if (inclusionCriteria1.Catalogue != null || cbExclusion1.Checked || cbExclusion2.Checked)
+            {
+                var includeContainer = setOperationInclude.CreateCohortAggregateContainer(root);
 
-            if(cbExclusion1.Checked || cbExclusion2.Checked)
+                inclusionCriteria1.CreateCohortSet(cic, includeContainer, 1);
+
+                if (cbInclusion2.Checked)
+                    inclusionCriteria2.CreateCohortSet(cic, includeContainer, 2);
+            }
+            else
+            {
+                root.Operation = SetOperation.UNION;
+                root.Name = ExecuteCommandCreateNewCohortIdentificationConfiguration.RootContainerName;
+                root.SaveToDatabase();
+            }
+
+            if (cbExclusion1.Checked || cbExclusion2.Checked)
             {
                 var excludeContainer = setOperationExclude.CreateCohortAggregateContainer(root);
 
@@ -121,12 +151,7 @@ namespace Rdmp.UI.Wizard
                     exclusionCriteria2.CreateCohortSet(cic, excludeContainer, 2);
             }
 
-            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(cic));
-
-            CohortIdentificationCriteriaCreatedIfAny = cic;
-            DialogResult = DialogResult.OK;
-
-            Close();
+            return cic;
         }
 
         private void label1_Click(object sender, EventArgs e)

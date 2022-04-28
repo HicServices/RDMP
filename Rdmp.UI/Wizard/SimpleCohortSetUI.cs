@@ -48,7 +48,7 @@ namespace Rdmp.UI.Wizard
             cbxColumns.PropertySelector = collection => collection.Cast<ExtractionInformation>().Select(i => i.ToString());
 
             btnLockExtractionIdentifier.Image = _linkImage;
-            ddAndOr.DataSource = Enum.GetValues(typeof (FilterContainerOperation));
+            ddAndOr.DataSource = Enum.GetValues(typeof(FilterContainerOperation));
 
             btnDelete.Visible = false;
         }
@@ -64,6 +64,9 @@ namespace Rdmp.UI.Wizard
         }
 
         private Catalogue _lastCatalogue = null;
+
+        public ICatalogue Catalogue => cbxCatalogues.SelectedItem as Catalogue;
+
         private void cbxCatalogues_SelectedIndexChanged(object sender, EventArgs e)
         {
             var cata = cbxCatalogues.SelectedItem as Catalogue;
@@ -223,9 +226,9 @@ namespace Rdmp.UI.Wizard
         public void CreateCohortSet(CohortIdentificationConfiguration cic, CohortAggregateContainer targetContainer, int order)
         {
             var cata = cbxCatalogues.SelectedItem as Catalogue;
-            
-            if(cata == null)
-                throw new Exception("Catalogue has not been picked!");
+
+            if (cata == null)
+                return;
 
             var cataCommand = new CatalogueCombineable(cata);
             //use this one
