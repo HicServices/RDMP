@@ -160,12 +160,12 @@ namespace Rdmp.UI.Wizard
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(4, 36);
+            this.label2.Location = new System.Drawing.Point(32, 36);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(85, 15);
+            this.label2.Size = new System.Drawing.Size(57, 15);
             this.label2.TabIndex = 0;
-            this.label2.Text = "Identifier Field:";
+            this.label2.Text = "Identifier:";
             // 
             // cbxColumns
             // 
@@ -205,12 +205,12 @@ namespace Rdmp.UI.Wizard
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(36, 8);
+            this.label1.Location = new System.Drawing.Point(24, 8);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(53, 15);
+            this.label1.Size = new System.Drawing.Size(64, 15);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Data Set:";
+            this.label1.Text = "Catalogue:";
             // 
             // pbExtractionIdentifier
             // 
