@@ -14,6 +14,16 @@ namespace Rdmp.Core.Tests.Curation.Integration
     public class ServerDefaultsTests : DatabaseTests
     {
         [Test]
+        public void TestClearSameDefaultTwice()
+        {
+            Assert.IsNotNull(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
+            CatalogueRepository.ClearDefault(PermissableDefaults.LiveLoggingServer_ID);
+            CatalogueRepository.ClearDefault(PermissableDefaults.LiveLoggingServer_ID);
+            CatalogueRepository.ClearDefault(PermissableDefaults.LiveLoggingServer_ID);
+            Assert.IsNull(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
+        }
+
+        [Test]
         public void CreateNewExternalServerAndConfigureItAsDefault()
         {
             var databaseServer = new ExternalDatabaseServer(CatalogueRepository, "Deleteme",null);
