@@ -118,9 +118,14 @@ namespace Rdmp.UI.ChecksUI
             pbGrey.Visible = !Enabled;
         }
 
+        public void ShowMessagesIfAny()
+        {
+            pb_Click(this, new EventArgs());
+        }
+
         private void pb_Click(object sender, EventArgs e)
         {
-            Exception tag = ((Control)sender).Tag as Exception;
+            Exception tag = ((Control)sender).Tag as Exception ?? _exception;
             
             if (PopupMessagesIfAny(tag))
                 return;
