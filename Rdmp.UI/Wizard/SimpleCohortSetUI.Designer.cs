@@ -40,12 +40,12 @@ namespace Rdmp.UI.Wizard
             this.pbFilters = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label2 = new System.Windows.Forms.Label();
-            this.cbxColumns = new SuggestComboBox();
+            this.cbxColumns = new Rdmp.UI.SuggestComboBox();
             this.btnLockExtractionIdentifier = new System.Windows.Forms.Button();
             this.pbCatalogue = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
             this.pbExtractionIdentifier = new System.Windows.Forms.PictureBox();
-            this.cbxCatalogues = new SelectIMapsDirectlyToDatabaseTableComboBox();
+            this.cbxCatalogues = new Rdmp.UI.SimpleControls.SelectIMapsDirectlyToDatabaseTableComboBox();
             this.gbFilters.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbFilters)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbCatalogue)).BeginInit();
@@ -56,7 +56,8 @@ namespace Rdmp.UI.Wizard
             // 
             this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDelete.Image = ((System.Drawing.Image)(resources.GetObject("btnDelete.Image")));
-            this.btnDelete.Location = new System.Drawing.Point(518, 7);
+            this.btnDelete.Location = new System.Drawing.Point(611, 3);
+            this.btnDelete.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnDelete.Name = "btnDelete";
             this.btnDelete.Size = new System.Drawing.Size(25, 25);
             this.btnDelete.TabIndex = 3;
@@ -66,7 +67,8 @@ namespace Rdmp.UI.Wizard
             // 
             this.btnAddFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAddFilter.Image = ((System.Drawing.Image)(resources.GetObject("btnAddFilter.Image")));
-            this.btnAddFilter.Location = new System.Drawing.Point(423, 16);
+            this.btnAddFilter.Location = new System.Drawing.Point(501, 21);
+            this.btnAddFilter.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnAddFilter.Name = "btnAddFilter";
             this.btnAddFilter.Size = new System.Drawing.Size(25, 25);
             this.btnAddFilter.TabIndex = 6;
@@ -79,17 +81,19 @@ namespace Rdmp.UI.Wizard
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ddAvailableFilters.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddAvailableFilters.FormattingEnabled = true;
-            this.ddAvailableFilters.Location = new System.Drawing.Point(69, 19);
+            this.ddAvailableFilters.Location = new System.Drawing.Point(68, 22);
+            this.ddAvailableFilters.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ddAvailableFilters.Name = "ddAvailableFilters";
-            this.ddAvailableFilters.Size = new System.Drawing.Size(348, 21);
+            this.ddAvailableFilters.Size = new System.Drawing.Size(430, 23);
             this.ddAvailableFilters.TabIndex = 7;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(35, 22);
+            this.label3.Location = new System.Drawing.Point(36, 26);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(29, 13);
+            this.label3.Size = new System.Drawing.Size(32, 15);
             this.label3.TabIndex = 4;
             this.label3.Text = "Add:";
             // 
@@ -104,9 +108,11 @@ namespace Rdmp.UI.Wizard
             this.gbFilters.Controls.Add(this.ddAvailableFilters);
             this.gbFilters.Controls.Add(this.btnAddFilter);
             this.gbFilters.Controls.Add(this.label3);
-            this.gbFilters.Location = new System.Drawing.Point(21, 75);
+            this.gbFilters.Location = new System.Drawing.Point(4, 65);
+            this.gbFilters.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.gbFilters.Name = "gbFilters";
-            this.gbFilters.Size = new System.Drawing.Size(511, 267);
+            this.gbFilters.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.gbFilters.Size = new System.Drawing.Size(604, 208);
             this.gbFilters.TabIndex = 8;
             this.gbFilters.TabStop = false;
             this.gbFilters.Text = "Filters";
@@ -117,17 +123,19 @@ namespace Rdmp.UI.Wizard
             this.ddAndOr.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddAndOr.Enabled = false;
             this.ddAndOr.FormattingEnabled = true;
-            this.ddAndOr.Location = new System.Drawing.Point(453, 19);
+            this.ddAndOr.Location = new System.Drawing.Point(529, 22);
+            this.ddAndOr.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ddAndOr.Name = "ddAndOr";
-            this.ddAndOr.Size = new System.Drawing.Size(52, 21);
+            this.ddAndOr.Size = new System.Drawing.Size(67, 23);
             this.ddAndOr.TabIndex = 16;
             this.ddAndOr.SelectedIndexChanged += new System.EventHandler(this.ddAndOr_SelectedIndexChanged);
             // 
             // pbFilters
             // 
-            this.pbFilters.Location = new System.Drawing.Point(9, 20);
+            this.pbFilters.Location = new System.Drawing.Point(10, 23);
+            this.pbFilters.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbFilters.Name = "pbFilters";
-            this.pbFilters.Size = new System.Drawing.Size(20, 20);
+            this.pbFilters.Size = new System.Drawing.Size(23, 23);
             this.pbFilters.TabIndex = 15;
             this.pbFilters.TabStop = false;
             // 
@@ -136,22 +144,26 @@ namespace Rdmp.UI.Wizard
             this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel1.AutoScroll = true;
+            this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanel1.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Inset;
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(9, 46);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(10, 53);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(496, 215);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(587, 149);
             this.tableLayoutPanel1.TabIndex = 8;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 40);
+            this.label2.Location = new System.Drawing.Point(4, 36);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 13);
+            this.label2.Size = new System.Drawing.Size(85, 15);
             this.label2.TabIndex = 0;
             this.label2.Text = "Identifier Field:";
             // 
@@ -161,18 +173,20 @@ namespace Rdmp.UI.Wizard
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbxColumns.FilterRule = null;
             this.cbxColumns.FormattingEnabled = true;
-            this.cbxColumns.Location = new System.Drawing.Point(116, 36);
+            this.cbxColumns.Location = new System.Drawing.Point(117, 36);
+            this.cbxColumns.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbxColumns.Name = "cbxColumns";
             this.cbxColumns.PropertySelector = null;
-            this.cbxColumns.Size = new System.Drawing.Size(367, 21);
-            this.cbxColumns.SuggestBoxHeight = 96;
+            this.cbxColumns.Size = new System.Drawing.Size(465, 23);
+            this.cbxColumns.SuggestBoxHeight = 126;
             this.cbxColumns.SuggestListOrderRule = null;
             this.cbxColumns.TabIndex = 1;
             // 
             // btnLockExtractionIdentifier
             // 
             this.btnLockExtractionIdentifier.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnLockExtractionIdentifier.Location = new System.Drawing.Point(489, 33);
+            this.btnLockExtractionIdentifier.Location = new System.Drawing.Point(584, 35);
+            this.btnLockExtractionIdentifier.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnLockExtractionIdentifier.Name = "btnLockExtractionIdentifier";
             this.btnLockExtractionIdentifier.Size = new System.Drawing.Size(25, 25);
             this.btnLockExtractionIdentifier.TabIndex = 11;
@@ -181,26 +195,29 @@ namespace Rdmp.UI.Wizard
             // 
             // pbCatalogue
             // 
-            this.pbCatalogue.Location = new System.Drawing.Point(90, 9);
+            this.pbCatalogue.Location = new System.Drawing.Point(91, 5);
+            this.pbCatalogue.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbCatalogue.Name = "pbCatalogue";
-            this.pbCatalogue.Size = new System.Drawing.Size(20, 20);
+            this.pbCatalogue.Size = new System.Drawing.Size(23, 23);
             this.pbCatalogue.TabIndex = 14;
             this.pbCatalogue.TabStop = false;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(26, 13);
+            this.label1.Location = new System.Drawing.Point(36, 8);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(49, 13);
+            this.label1.Size = new System.Drawing.Size(53, 15);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Data Set";
+            this.label1.Text = "Data Set:";
             // 
             // pbExtractionIdentifier
             // 
-            this.pbExtractionIdentifier.Location = new System.Drawing.Point(90, 35);
+            this.pbExtractionIdentifier.Location = new System.Drawing.Point(91, 34);
+            this.pbExtractionIdentifier.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbExtractionIdentifier.Name = "pbExtractionIdentifier";
-            this.pbExtractionIdentifier.Size = new System.Drawing.Size(20, 20);
+            this.pbExtractionIdentifier.Size = new System.Drawing.Size(23, 23);
             this.pbExtractionIdentifier.TabIndex = 14;
             this.pbExtractionIdentifier.TabStop = false;
             // 
@@ -208,16 +225,17 @@ namespace Rdmp.UI.Wizard
             // 
             this.cbxCatalogues.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbxCatalogues.Location = new System.Drawing.Point(116, 8);
+            this.cbxCatalogues.Location = new System.Drawing.Point(116, 3);
+            this.cbxCatalogues.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.cbxCatalogues.Name = "cbxCatalogues";
             this.cbxCatalogues.SelectedItem = null;
-            this.cbxCatalogues.Size = new System.Drawing.Size(396, 24);
+            this.cbxCatalogues.Size = new System.Drawing.Size(493, 28);
             this.cbxCatalogues.TabIndex = 17;
             this.cbxCatalogues.SelectedItemChanged += new System.EventHandler<System.EventArgs>(this.cbxCatalogues_SelectedIndexChanged);
             // 
             // SimpleCohortSetUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.cbxCatalogues);
             this.Controls.Add(this.pbExtractionIdentifier);
@@ -228,8 +246,9 @@ namespace Rdmp.UI.Wizard
             this.Controls.Add(this.label2);
             this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.label1);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "SimpleCohortSetUI";
-            this.Size = new System.Drawing.Size(546, 345);
+            this.Size = new System.Drawing.Size(642, 284);
             this.gbFilters.ResumeLayout(false);
             this.gbFilters.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbFilters)).EndInit();

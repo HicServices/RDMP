@@ -34,8 +34,6 @@ namespace Rdmp.UI.Wizard
             if(VisualStudioDesignMode)
                 return;
 
-            pbBigImageTopLeft.Image = CatalogueIcons.BigCohort;
-
             inclusionCriteria1.SetupFor(Activator);
 
             setOperationInclude.SetupFor(Activator, true);
@@ -48,11 +46,11 @@ namespace Rdmp.UI.Wizard
         {
             base.OnPaint(e);
 
-            var mid = lblInclusionCriteria.Right + ((lblExclusionCriteria.Left - lblInclusionCriteria.Right) * 0.888f);
+            /*var mid = lblInclusionCriteria.Right + ((lblExclusionCriteria.Left - lblInclusionCriteria.Right) * 0.888f);
 
             var top = Math.Max(lblExclusionCriteria.Top, lblInclusionCriteria.Top);
 
-            e.Graphics.DrawLine(Pens.Black, mid, top, mid, top + 200);
+            e.Graphics.DrawLine(Pens.Black, mid, top, mid, top + 200);*/
         }
 
         private void CheckBoxChanged(object sender, EventArgs e)

@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.lPick = new System.Windows.Forms.Label();
-            this.suggestComboBox1 = new SuggestComboBox();
+            this.suggestComboBox1 = new Rdmp.UI.SuggestComboBox();
             this.SuspendLayout();
             // 
             // lPick
@@ -37,12 +37,13 @@
             this.lPick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lPick.BackColor = System.Drawing.Color.White;
             this.lPick.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lPick.Location = new System.Drawing.Point(377, 1);
+            this.lPick.Location = new System.Drawing.Point(440, 1);
             this.lPick.Margin = new System.Windows.Forms.Padding(0);
             this.lPick.Name = "lPick";
-            this.lPick.Size = new System.Drawing.Size(18, 21);
+            this.lPick.Size = new System.Drawing.Size(23, 23);
             this.lPick.TabIndex = 11;
             this.lPick.Text = "...";
+            this.lPick.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.lPick.Click += new System.EventHandler(this.lPick_Click);
             // 
             // suggestComboBox1
@@ -51,23 +52,25 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.suggestComboBox1.FilterRule = null;
             this.suggestComboBox1.FormattingEnabled = true;
-            this.suggestComboBox1.Location = new System.Drawing.Point(2, 1);
+            this.suggestComboBox1.Location = new System.Drawing.Point(1, 1);
+            this.suggestComboBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.suggestComboBox1.Name = "suggestComboBox1";
             this.suggestComboBox1.PropertySelector = null;
-            this.suggestComboBox1.Size = new System.Drawing.Size(373, 21);
-            this.suggestComboBox1.SuggestBoxHeight = 96;
+            this.suggestComboBox1.Size = new System.Drawing.Size(436, 23);
+            this.suggestComboBox1.SuggestBoxHeight = 126;
             this.suggestComboBox1.SuggestListOrderRule = null;
             this.suggestComboBox1.TabIndex = 10;
             this.suggestComboBox1.TextUpdate += new System.EventHandler(this.suggestComboBox1_TextUpdate);
             // 
             // SelectIMapsDirectlyToDatabaseTableComboBox
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.lPick);
             this.Controls.Add(this.suggestComboBox1);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "SelectIMapsDirectlyToDatabaseTableComboBox";
-            this.Size = new System.Drawing.Size(397, 24);
+            this.Size = new System.Drawing.Size(464, 25);
             this.ResumeLayout(false);
 
         }

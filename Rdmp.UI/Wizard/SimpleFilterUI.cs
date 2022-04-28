@@ -101,7 +101,7 @@ namespace Rdmp.UI.Wizard
                 tableLayoutPanel1.CellBorderStyle = TableLayoutPanelCellBorderStyle.Inset;
             }
 
-            Height = 35 + (parameters.Length*rowHeight);
+            Height = 50 + (parameters.Length*rowHeight);
         }
 
         private void SetupKnownGoodValues()
