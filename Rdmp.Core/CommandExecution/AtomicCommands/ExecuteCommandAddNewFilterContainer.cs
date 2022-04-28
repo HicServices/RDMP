@@ -19,6 +19,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     {
         private IRootFilterContainerHost _host;
         private IContainer _container;
+        public const string FiltersCannotBeAddedToApiCalls = "Filters cannot be added to API calls";
         private const float DEFAULT_WEIGHT = 1.1f;
 
         public ExecuteCommandAddNewFilterContainer(IBasicActivateItems activator, IRootFilterContainerHost host):base(activator)
@@ -34,7 +35,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     SetImpossible("Aggregate is set to use another's filter container tree");
 
                 if (ac.Catalogue.IsApiCall())
-                    SetImpossible("Filters cannot be added to API calls");
+                    SetImpossible(FiltersCannotBeAddedToApiCalls);
             }
 
             _host = host;

@@ -41,6 +41,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if(_setOn.RootFilterContainer_ID != null)
                 SetImpossible($"Aggregate already has a root filter container");
 
+            if (_setOn.Catalogue.IsApiCall())
+                SetImpossible(ExecuteCommandAddNewFilterContainer.FiltersCannotBeAddedToApiCalls);
         }
 
         /// <summary>
@@ -62,7 +64,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if(_setOn.RootFilterContainer_ID != null)
                 SetImpossible($"{_setOn} already has a root filter container");
 
-            if(_pointTo != null && _pointTo.RootFilterContainer_ID == null)
+            if (_setOn.Catalogue.IsApiCall())
+                SetImpossible(ExecuteCommandAddNewFilterContainer.FiltersCannotBeAddedToApiCalls);
+
+            if (_pointTo != null && _pointTo.RootFilterContainer_ID == null)
                 SetImpossible($"{_pointTo} does not have a filter container tree to link to");
 
             if(_pointTo == null && setOn.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID == null)
