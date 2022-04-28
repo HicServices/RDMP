@@ -7,6 +7,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
@@ -34,8 +35,6 @@ namespace Rdmp.UI.Wizard
             if(VisualStudioDesignMode)
                 return;
 
-            pbBigImageTopLeft.Image = CatalogueIcons.BigCohort;
-
             inclusionCriteria1.SetupFor(Activator);
 
             setOperationInclude.SetupFor(Activator, true);
@@ -48,15 +47,17 @@ namespace Rdmp.UI.Wizard
         {
             base.OnPaint(e);
 
-            var mid = lblInclusionCriteria.Right + ((lblExclusionCriteria.Left - lblInclusionCriteria.Right) * 0.888f);
+            /*var mid = lblInclusionCriteria.Right + ((lblExclusionCriteria.Left - lblInclusionCriteria.Right) * 0.888f);
 
             var top = Math.Max(lblExclusionCriteria.Top, lblInclusionCriteria.Top);
 
-            e.Graphics.DrawLine(Pens.Black, mid, top, mid, top + 200);
+            e.Graphics.DrawLine(Pens.Black, mid, top, mid, top + 200);*/
         }
 
         private void CheckBoxChanged(object sender, EventArgs e)
         {
+            var cb = (CheckBox)sender;
+
             SimpleCohortSetUI target = null;
 
             if (sender == cbExclusion1)
@@ -64,12 +65,19 @@ namespace Rdmp.UI.Wizard
             if (sender == cbExclusion2)
                 target = exclusionCriteria2;
             if (sender == cbInclusion2)
+            {
+                if (inclusionCriteria1.Catalogue == null && cb.Checked)
+                {
+                    cb.Checked = false;
+                    return;
+                }
                 target = inclusionCriteria2;
+            }
 
             if(target == null)
                 throw new ArgumentException("sender");
 
-            if(((CheckBox)sender).Checked)
+            if(cb.Checked)
             {
                 target.SetupFor(Activator);
                 target.Enabled = true;
@@ -96,32 +104,7 @@ namespace Rdmp.UI.Wizard
             if(!Activator.YesNo("Are you sure you are happy with your configuration, this wizard will close after creating?","Confirm"))
                 return;
 
-            var cic = new CohortIdentificationConfiguration(Activator.RepositoryLocator.CatalogueRepository, tbName.Text);
-            
-            cic.CreateRootContainerIfNotExists();
-            var root = cic.RootCohortAggregateContainer;
-            root.Operation = SetOperation.EXCEPT;
-            root.Name = "EXCEPT";
-            root.SaveToDatabase();
-            
-            var includeContainer = setOperationInclude.CreateCohortAggregateContainer(root);
-            
-
-            inclusionCriteria1.CreateCohortSet(cic,includeContainer, 1);
-            
-            if (cbInclusion2.Checked)
-                inclusionCriteria2.CreateCohortSet(cic, includeContainer, 2);
-
-            if(cbExclusion1.Checked || cbExclusion2.Checked)
-            {
-                var excludeContainer = setOperationExclude.CreateCohortAggregateContainer(root);
-
-                if (cbExclusion1.Checked)
-                    exclusionCriteria1.CreateCohortSet(cic, excludeContainer, 1);
-
-                if (cbExclusion2.Checked)
-                    exclusionCriteria2.CreateCohortSet(cic, excludeContainer, 2);
-            }
+            var cic = CreateCohortIdentificationConfiguration();
 
             Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(cic));
 
@@ -131,9 +114,62 @@ namespace Rdmp.UI.Wizard
             Close();
         }
 
+        private CohortIdentificationConfiguration CreateCohortIdentificationConfiguration()
+        {
+            var cic = new CohortIdentificationConfiguration(Activator.RepositoryLocator.CatalogueRepository, tbName.Text);
+
+            cic.CreateRootContainerIfNotExists();
+            var root = cic.RootCohortAggregateContainer;
+            root.Operation = SetOperation.EXCEPT;
+            root.Name = "EXCEPT";
+            root.SaveToDatabase();
+
+            if (inclusionCriteria1.Catalogue != null || cbExclusion1.Checked || cbExclusion2.Checked)
+            {
+                var includeContainer = setOperationInclude.CreateCohortAggregateContainer(root);
+
+                inclusionCriteria1.CreateCohortSet(includeContainer);
+
+                if (cbInclusion2.Checked)
+                    inclusionCriteria2.CreateCohortSet(includeContainer);
+            }
+            else
+            {
+                root.Operation = SetOperation.UNION;
+                root.Name = ExecuteCommandCreateNewCohortIdentificationConfiguration.RootContainerName;
+                root.SaveToDatabase();
+            }
+
+            if (cbExclusion1.Checked || cbExclusion2.Checked)
+            {
+                var excludeContainer = setOperationExclude.CreateCohortAggregateContainer(root);
+
+                if (cbExclusion1.Checked)
+                    exclusionCriteria1.CreateCohortSet(excludeContainer);
+
+                if (cbExclusion2.Checked)
+                    exclusionCriteria2.CreateCohortSet(excludeContainer);
+            }
+
+            return cic;
+        }
+
         private void label1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void CreateNewCohortIdentificationConfigurationUI_Load(object sender, EventArgs e)
+        {
+            tbName.Focus();
+        }
+
+        private void tbName_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                btnGo_Click(this, new EventArgs());
+            }
         }
     }
 }

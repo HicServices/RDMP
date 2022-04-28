@@ -36,38 +36,42 @@
             // 
             // pbParameter
             // 
-            this.pbParameter.Location = new System.Drawing.Point(2, 0);
+            this.pbParameter.Location = new System.Drawing.Point(9, 3);
+            this.pbParameter.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbParameter.Name = "pbParameter";
-            this.pbParameter.Size = new System.Drawing.Size(20, 20);
+            this.pbParameter.Size = new System.Drawing.Size(23, 23);
             this.pbParameter.TabIndex = 4;
             this.pbParameter.TabStop = false;
             // 
             // lblParameterName
             // 
             this.lblParameterName.AutoSize = true;
-            this.lblParameterName.Location = new System.Drawing.Point(28, 4);
+            this.lblParameterName.Location = new System.Drawing.Point(38, 6);
+            this.lblParameterName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblParameterName.Name = "lblParameterName";
-            this.lblParameterName.Size = new System.Drawing.Size(83, 13);
+            this.lblParameterName.Size = new System.Drawing.Size(93, 15);
             this.lblParameterName.TabIndex = 3;
             this.lblParameterName.Text = "ParameterName";
             // 
             // tbValue
             // 
-            this.tbValue.Location = new System.Drawing.Point(167, 1);
+            this.tbValue.Location = new System.Drawing.Point(199, 3);
+            this.tbValue.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbValue.Name = "tbValue";
-            this.tbValue.Size = new System.Drawing.Size(100, 20);
+            this.tbValue.Size = new System.Drawing.Size(116, 23);
             this.tbValue.TabIndex = 5;
             this.tbValue.TextChanged += new System.EventHandler(this.tbValue_TextChanged);
             // 
             // SimpleParameterUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tbValue);
             this.Controls.Add(this.pbParameter);
             this.Controls.Add(this.lblParameterName);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "SimpleParameterUI";
-            this.Size = new System.Drawing.Size(270, 21);
+            this.Size = new System.Drawing.Size(315, 31);
             ((System.ComponentModel.ISupportInitialize)(this.pbParameter)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
