@@ -26,6 +26,9 @@ namespace Rdmp.UI.Collections.Providers
 
         public const string ChecksColumnName = "Checks";
 
+        public int DefaultColumnWidth = 68;
+        public bool IsFixedWidth = false;
+
         public CheckColumnProvider(TreeListView tree, ICoreIconProvider iconProvider)
         {
             _tree = tree;
@@ -38,6 +41,8 @@ namespace Rdmp.UI.Collections.Providers
             toReturn.Text = ChecksColumnName;
             toReturn.ImageGetter = CheckImageGetter;
             toReturn.IsEditable = false;
+            toReturn.TextAlign = HorizontalAlignment.Center;
+            toReturn.MinimumWidth = 33;
 
             return toReturn;
         }

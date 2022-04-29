@@ -106,20 +106,31 @@ namespace Rdmp.UI.Collections
         /// </summary>
         /// <param name="col"></param>
         /// <param name="g"></param>
-        public void SetupColumnTracking(OLVColumn col, Guid g)
+        /// <param name="defaultWidth"></param>
+        /// <param name="isFixedWidth"></param>
+        public void SetupColumnTracking(OLVColumn col, Guid g, int? defaultWidth = null, bool isFixedWidth = false)
         {
-            SetupColumnTracking(Tree, col, g);
+            SetupColumnTracking(Tree, col, g, defaultWidth, isFixedWidth);
         }
         public void SetupColumnTracking(OLVColumn col, string columnUniqueIdentifier)
         {
             SetupColumnTracking(Tree, col, columnUniqueIdentifier);
         }
 
-        /// <inheritdoc cref="SetupColumnTracking(OLVColumn, Guid)"/>
-        public static void SetupColumnTracking(ObjectListView view, OLVColumn col, Guid g)
+        /// <inheritdoc cref="SetupColumnTracking(OLVColumn, Guid, int?, bool)"/>
+        public static void SetupColumnTracking(ObjectListView view, OLVColumn col, Guid g, int? defaultWidth = null, bool isFixedWidth = false)
         {
-            col.Width = UserSettings.GetColumnWidth(g);
-            view.ColumnWidthChanged += (s, e) => UserSettings.SetColumnWidth(g, col.Width);
+            if (isFixedWidth)
+            {
+                col.Width = defaultWidth.Value;
+                col.MinimumWidth = defaultWidth.Value;
+                col.MaximumWidth = defaultWidth.Value;
+            }
+            else
+            {
+                col.Width = UserSettings.GetColumnWidth(g, defaultWidth);
+                view.ColumnWidthChanged += (s, e) => UserSettings.SetColumnWidth(g, col.Width);
+            }
 
             col.IsVisible = UserSettings.GetColumnVisible(g);
             col.VisibilityChanged += (s, e) => UserSettings.SetColumnVisible(g, ((OLVColumn)s).IsVisible);
@@ -245,7 +256,7 @@ namespace Rdmp.UI.Collections
                 FavouriteColumnProvider = new FavouriteColumnProvider(_activator, tree);
                 FavouriteColumn = FavouriteColumnProvider.CreateColumn();
 
-                SetupColumnTracking(FavouriteColumn, new Guid("ab25aa56-957c-4d1b-b395-48299be8e467"));
+                SetupColumnTracking(FavouriteColumn, new Guid("ab25aa56-957c-4d1b-b395-48299be8e467"), FavouriteColumnProvider.DefaultColumnWidth, FavouriteColumnProvider.IsFixedWidth);
             }
 
             if (settings.AddIDColumn)
@@ -254,7 +265,7 @@ namespace Rdmp.UI.Collections
                 IDColumn = IDColumnProvider.CreateColumn();
 
                 Tree.AllColumns.Add(IDColumn);
-                SetupColumnTracking(IDColumn, new Guid("9d567d9c-06f5-41b6-9f0d-e630a0e23f3a"));
+                SetupColumnTracking(IDColumn, new Guid("9d567d9c-06f5-41b6-9f0d-e630a0e23f3a"), IDColumnProvider.DefaultColumnWidth, IDColumnProvider.IsFixedWidth);
                 Tree.RebuildColumns();
             }
 
@@ -263,7 +274,7 @@ namespace Rdmp.UI.Collections
                 CheckColumnProvider = new CheckColumnProvider(tree, _activator.CoreIconProvider);
                 CheckColumn = CheckColumnProvider.CreateColumn();
 
-                SetupColumnTracking(CheckColumn, new Guid("8d9c6a0f-82a8-4f4e-b058-e3017d8d60e0"));
+                SetupColumnTracking(CheckColumn, new Guid("8d9c6a0f-82a8-4f4e-b058-e3017d8d60e0"), CheckColumnProvider.DefaultColumnWidth, CheckColumnProvider.IsFixedWidth);
 
                 Tree.AllColumns.Add(CheckColumn);
                 Tree.RebuildColumns();

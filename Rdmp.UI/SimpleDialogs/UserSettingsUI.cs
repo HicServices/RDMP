@@ -285,5 +285,9 @@ namespace Rdmp.UI.SimpleDialogs
             }
         }
 
+        private void btnClearSettings_Click(object sender, EventArgs e)
+        {
+            UserSettings.ClearAppSettings();
+        }
     }
 }

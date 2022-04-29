@@ -95,11 +95,14 @@ namespace Rdmp.UI.SubComponents
 
             olvExecute.IsButton = true;
             olvExecute.ButtonSizing = OLVColumn.ButtonSizingMode.CellBounds;
+            olvExecute.ShowTextInHeader = false;
             tlvCic.RowHeight = 19;
             olvExecute.AspectGetter += ExecuteAspectGetter;
             tlvCic.ButtonClick += tlvCic_ButtonClick;
             olvOrder.AspectGetter += (o)=> o is JoinableCollectionNode ? null : o is ISqlParameter ? null : (o as IOrderable)?.Order;
             olvOrder.IsEditable = false;
+            olvOrder.TextAlign = HorizontalAlignment.Right;
+            olvOrder.IsVisible = false;
             tlvCic.ItemActivate += TlvCic_ItemActivate;
             AssociatedCollection = RDMPCollection.Cohort;
 
@@ -109,10 +112,14 @@ namespace Rdmp.UI.SubComponents
             timer.Start();
             
             olvCount.AspectGetter = Count_AspectGetter;
+            olvCount.TextAlign = HorizontalAlignment.Right;
             olvCached.AspectGetter = Cached_AspectGetter;
+            olvCached.TextAlign = HorizontalAlignment.Center;
             olvCumulativeTotal.AspectGetter = CumulativeTotal_AspectGetter;
+            olvCumulativeTotal.TextAlign = HorizontalAlignment.Right;
             olvTime.AspectGetter = Time_AspectGetter;
             olvWorking.AspectGetter = Working_AspectGetter;
+            olvWorking.TextAlign = HorizontalAlignment.Center;
             olvCatalogue.AspectGetter = Catalogue_AspectGetter;
 
             cbIncludeCumulative.CheckedChanged += (s, e) =>
@@ -126,15 +133,15 @@ namespace Rdmp.UI.SubComponents
             olvNameCol.Sortable = true;
             tlvCic.Sort(olvNameCol);
 
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvCached, new Guid("59c6eda9-dcf3-4a24-801f-4c5467c76f94"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvCatalogue, new Guid("59c6f9a6-4a93-4167-a268-9ea755d0ad94"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvCount, new Guid("4ca6588f-2511-4082-addd-ec42e9d75b39"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvCumulativeTotal, new Guid("a3e901e2-c6b8-4365-bea8-5666b9b74821"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvExecute, new Guid("f8ad1751-b273-42d7-a6d1-0c580099ceee"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvNameCol, new Guid("63db1af5-061c-42b9-873c-7d3d3ac21cd8"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvOrder, new Guid("5be4e6e7-bad6-4bd5-821c-a235bc056053"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvTime, new Guid("88f88d4a-6204-4f83-b9a7-5421186808b7"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvWorking, new Guid("cfe55a4f-9e17-4205-9016-ae506667f22d"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvCached, new Guid("59c6eda9-dcf3-4a24-801f-4c5467c76f94"), 60);
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvCatalogue, new Guid("59c6f9a6-4a93-4167-a268-9ea755d0ad94"), 100);
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvCount, new Guid("4ca6588f-2511-4082-addd-ec42e9d75b39"), 102);
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvCumulativeTotal, new Guid("a3e901e2-c6b8-4365-bea8-5666b9b74821"), 102);
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvExecute, new Guid("f8ad1751-b273-42d7-a6d1-0c580099ceee"), 62);
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvNameCol, new Guid("63db1af5-061c-42b9-873c-7d3d3ac21cd8"), 300);
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvOrder, new Guid("5be4e6e7-bad6-4bd5-821c-a235bc056053"), 44);
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvTime, new Guid("88f88d4a-6204-4f83-b9a7-5421186808b7"), 52);
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvCic, olvWorking, new Guid("cfe55a4f-9e17-4205-9016-ae506667f22d"), 90);
 
             tt.SetToolTip(btnExecute, "Starts running and caches all cohort sets and containers");
             tt.SetToolTip(btnAbortLoad, "Cancells execution of any running cohort sets");
@@ -142,7 +149,7 @@ namespace Rdmp.UI.SubComponents
 
         private object Working_AspectGetter(object rowobject)
         {
-            return GetKey(rowobject)?.State;
+            return UsefulStuff.PascalCaseStringToHumanReadable(GetKey(rowobject)?.State.ToString());
         }
 
         private object Time_AspectGetter(object rowobject)
