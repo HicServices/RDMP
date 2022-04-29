@@ -39,6 +39,8 @@ namespace Rdmp.UI.Wizard
 
             setOperationInclude.SetupFor(Activator, true);
             setOperationExclude.SetupFor(Activator, false);
+
+            taskDescriptionLabel.SetupFor(new Core.CommandExecution.DialogArgs() { TaskDescription = "Enter a name for the Cohort Builder Query" });
         }
 
 
@@ -63,7 +65,14 @@ namespace Rdmp.UI.Wizard
             if (sender == cbExclusion1)
                 target = exclusionCriteria1;
             if (sender == cbExclusion2)
+            {
+                if (exclusionCriteria1.Catalogue == null && cb.Checked)
+                {
+                    cb.Checked = false;
+                    return;
+                }
                 target = exclusionCriteria2;
+            }
             if (sender == cbInclusion2)
             {
                 if (inclusionCriteria1.Catalogue == null && cb.Checked)
@@ -120,30 +129,34 @@ namespace Rdmp.UI.Wizard
 
             cic.CreateRootContainerIfNotExists();
             var root = cic.RootCohortAggregateContainer;
+            root.Name = ExecuteCommandCreateNewCohortIdentificationConfiguration.RootContainerName;
+
+            //If we're not using the wizard then just return an empty CIC
+            if(!cbUseWizard.Checked)
+            {
+                root.Operation = SetOperation.UNION;
+                root.SaveToDatabase();
+                return cic;
+            }
+
+            //We're using the wizard, so this builds a framework
             root.Operation = SetOperation.EXCEPT;
-            root.Name = "EXCEPT";
             root.SaveToDatabase();
+
+            //Create include and exclude containers
+            var includeContainer = setOperationInclude.CreateCohortAggregateContainer(root);
+            var excludeContainer = setOperationExclude.CreateCohortAggregateContainer(root);
 
             if (inclusionCriteria1.Catalogue != null || cbExclusion1.Checked || cbExclusion2.Checked)
             {
-                var includeContainer = setOperationInclude.CreateCohortAggregateContainer(root);
-
                 inclusionCriteria1.CreateCohortSet(includeContainer);
 
                 if (cbInclusion2.Checked)
                     inclusionCriteria2.CreateCohortSet(includeContainer);
             }
-            else
-            {
-                root.Operation = SetOperation.UNION;
-                root.Name = ExecuteCommandCreateNewCohortIdentificationConfiguration.RootContainerName;
-                root.SaveToDatabase();
-            }
 
             if (cbExclusion1.Checked || cbExclusion2.Checked)
             {
-                var excludeContainer = setOperationExclude.CreateCohortAggregateContainer(root);
-
                 if (cbExclusion1.Checked)
                     exclusionCriteria1.CreateCohortSet(excludeContainer);
 
@@ -170,6 +183,12 @@ namespace Rdmp.UI.Wizard
             {
                 btnGo_Click(this, new EventArgs());
             }
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            pnlWizard.Enabled = cbUseWizard.Checked;
+            this.OnSizeChanged(e);
         }
     }
 }
