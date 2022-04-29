@@ -650,6 +650,8 @@ namespace Rdmp.Core.CommandExecution
 
                 yield return new ExecuteCommandImportAlreadyExistingCohort(_activator, ect, null) 
                 { OverrideCommandName = "Existing Cohort", Weight = -4.6f,SuggestedCategory = "Add" };
+
+                yield return new ExecuteCommandRefreshBrokenCohorts(_activator, ect) { Weight = 1};
             }
 
             if(Is(o,out ExtractableCohort cohort))
