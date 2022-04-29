@@ -522,6 +522,8 @@ namespace ReusableLibraryCode
 
         public static string PascalCaseStringToHumanReadable(string pascalCaseString)
         {
+            if (pascalCaseString == null) return null;
+
             //Deal with legacy property names by replacing underscore with a space
             pascalCaseString = pascalCaseString.Replace("_", " ");
 

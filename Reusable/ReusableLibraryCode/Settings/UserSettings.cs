@@ -412,16 +412,22 @@ namespace ReusableLibraryCode.Settings
             AppSettings.AddOrUpdateValue("ColV_" + colIdentifier, visible);
         }
 
-        public static int GetColumnWidth(Guid columnGuid)
+        public static int GetColumnWidth(Guid columnGuid, int? defaultColumnWidth = null)
         {
-            if (columnGuid == Guid.Empty)
-                return 100;
+            //If we have a GUID then return it
+            if (columnGuid != Guid.Empty)
+                return GetColumnWidth(columnGuid.ToString("N"), defaultColumnWidth);
 
-            return GetColumnWidth(columnGuid.ToString("N"));
+            //If the columnGuid is empty then check if we have a default width and return that
+            if (defaultColumnWidth != null)
+                return defaultColumnWidth.Value;
+             
+            //else return default value
+            return 150; 
         }
-        public static int GetColumnWidth(string colIdentifier)
+        public static int GetColumnWidth(string colIdentifier, int? defaultColumnWidth = null)
         {
-            return AppSettings.GetValueOrDefault("ColW_" + colIdentifier, 100);
+            return AppSettings.GetValueOrDefault("ColW_" + colIdentifier, defaultColumnWidth ?? 150);
         }
 
         public static bool GetColumnVisible(Guid columnGuid)
@@ -487,6 +493,11 @@ namespace ReusableLibraryCode.Settings
         static ISettings CreateSettings()
         {
             return new RDMPApplicationSettings();
+        }
+
+        public static void ClearAppSettings()
+        {
+            AppSettings.Clear();
         }
 
     }

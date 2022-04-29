@@ -27,7 +27,8 @@ namespace Rdmp.UI.Collections.Providers
         private Bitmap _starFull;
         private Bitmap _starHollow;
 
-
+        public int DefaultColumnWidth = 21;
+        public bool IsFixedWidth = true;
 
         public FavouriteColumnProvider(IActivateItems activator,TreeListView tlv)
         {
@@ -41,7 +42,8 @@ namespace Rdmp.UI.Collections.Providers
         public OLVColumn CreateColumn()
         {
             _olvFavourite = new OLVColumn("Favourite", null);
-            _olvFavourite.Text = "Favourite";
+            _olvFavourite.Text = "Favourites";
+            _olvFavourite.ShowTextInHeader = false;
             _olvFavourite.ImageGetter += FavouriteImageGetter;
             _olvFavourite.IsEditable = false;
             _olvFavourite.Sortable = true;

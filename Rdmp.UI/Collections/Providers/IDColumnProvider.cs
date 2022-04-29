@@ -7,6 +7,7 @@
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using System.Windows.Forms;
 
 namespace Rdmp.UI.Collections.Providers
 {
@@ -17,6 +18,9 @@ namespace Rdmp.UI.Collections.Providers
     public class IDColumnProvider
     {
         private readonly TreeListView _tree;
+
+        public int DefaultColumnWidth = 40;
+        public bool IsFixedWidth = false;
 
         public IDColumnProvider(TreeListView tree)
         {
@@ -46,6 +50,8 @@ namespace Rdmp.UI.Collections.Providers
             toReturn.IsVisible = false;
             toReturn.AspectGetter += IDColumnAspectGetter;
             toReturn.IsEditable = false;
+            toReturn.TextAlign = HorizontalAlignment.Right;
+            toReturn.MinimumWidth = 40;
             return toReturn;
         }
     }

@@ -80,6 +80,7 @@
             this.cbSelectiveRefresh = new System.Windows.Forms.CheckBox();
             this.cbAlwaysJoinEverything = new System.Windows.Forms.CheckBox();
             this.userSettingsToolTips = new System.Windows.Forms.ToolTip(this.components);
+            this.btnClearSettings = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvErrorCodes)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -644,11 +645,23 @@
             this.userSettingsToolTips.IsBalloon = true;
             this.userSettingsToolTips.ReshowDelay = 50;
             // 
+            // btnClearSettings
+            // 
+            this.btnClearSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClearSettings.Location = new System.Drawing.Point(877, 9);
+            this.btnClearSettings.Name = "btnClearSettings";
+            this.btnClearSettings.Size = new System.Drawing.Size(123, 23);
+            this.btnClearSettings.TabIndex = 25;
+            this.btnClearSettings.Text = "Clear User Settings";
+            this.btnClearSettings.UseVisualStyleBackColor = true;
+            this.btnClearSettings.Click += new System.EventHandler(this.btnClearSettings_Click);
+            // 
             // UserSettingsFileUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1012, 758);
+            this.Controls.Add(this.btnClearSettings);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.ddTheme);
             this.Controls.Add(this.cbThemeMenus);
@@ -733,5 +746,6 @@
         private System.Windows.Forms.CheckBox cbAlwaysJoinEverything;
         private System.Windows.Forms.GroupBox groupBox8;
         private System.Windows.Forms.CheckBox cbStrictValidationForCohortBuilderContainers;
+        private System.Windows.Forms.Button btnClearSettings;
     }
 }

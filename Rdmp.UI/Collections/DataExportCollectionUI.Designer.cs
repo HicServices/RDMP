@@ -32,10 +32,10 @@ namespace Rdmp.UI.Collections
         {
             this.components = new System.ComponentModel.Container();
             this.tlvDataExport = new BrightIdeasSoftware.TreeListView();
-            this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvProjectNumber = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvCohortSource = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvCohortVersion = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvName = new BrightIdeasSoftware.OLVColumn();
+            this.olvProjectNumber = new BrightIdeasSoftware.OLVColumn();
+            this.olvCohortSource = new BrightIdeasSoftware.OLVColumn();
+            this.olvCohortVersion = new BrightIdeasSoftware.OLVColumn();
             ((System.ComponentModel.ISupportInitialize)(this.tlvDataExport)).BeginInit();
             this.SuspendLayout();
             // 
@@ -53,11 +53,11 @@ namespace Rdmp.UI.Collections
             this.tlvDataExport.Cursor = System.Windows.Forms.Cursors.Default;
             this.tlvDataExport.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlvDataExport.FullRowSelect = true;
-            this.tlvDataExport.HideSelection = false;
             this.tlvDataExport.Location = new System.Drawing.Point(0, 0);
+            this.tlvDataExport.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tlvDataExport.Name = "tlvDataExport";
             this.tlvDataExport.ShowGroups = false;
-            this.tlvDataExport.Size = new System.Drawing.Size(385, 694);
+            this.tlvDataExport.Size = new System.Drawing.Size(449, 801);
             this.tlvDataExport.TabIndex = 0;
             this.tlvDataExport.UseCompatibleStateImageBehavior = false;
             this.tlvDataExport.View = System.Windows.Forms.View.Details;
@@ -67,12 +67,14 @@ namespace Rdmp.UI.Collections
             // 
             this.olvName.AspectName = "ToString";
             this.olvName.CellEditUseWholeCell = true;
-            this.olvName.Text = "Projects";
             this.olvName.MinimumWidth = 100;
+            this.olvName.Text = "Projects";
+            this.olvName.Width = 100;
             // 
             // olvProjectNumber
             // 
-            this.olvProjectNumber.Text = "ProjectNumber";
+            this.olvProjectNumber.Text = "Project Number";
+            this.olvProjectNumber.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.olvProjectNumber.Width = 89;
             // 
             // olvCohortSource
@@ -86,11 +88,12 @@ namespace Rdmp.UI.Collections
             // 
             // DataExportCollectionUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tlvDataExport);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "DataExportCollectionUI";
-            this.Size = new System.Drawing.Size(385, 694);
+            this.Size = new System.Drawing.Size(449, 801);
             ((System.ComponentModel.ISupportInitialize)(this.tlvDataExport)).EndInit();
             this.ResumeLayout(false);
 

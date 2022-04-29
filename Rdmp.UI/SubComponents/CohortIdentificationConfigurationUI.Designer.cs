@@ -55,8 +55,8 @@ namespace Rdmp.UI.SubComponents
             this.tbDescription = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.lblExecuteAllPhase = new System.Windows.Forms.Label();
             this.btnClearCache = new System.Windows.Forms.Button();
+            this.lblExecuteAllPhase = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.tlvCic)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
@@ -90,7 +90,6 @@ namespace Rdmp.UI.SubComponents
             this.olvCatalogue});
             this.tlvCic.Cursor = System.Windows.Forms.Cursors.Default;
             this.tlvCic.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlvCic.HideSelection = false;
             this.tlvCic.Location = new System.Drawing.Point(0, 0);
             this.tlvCic.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tlvCic.Name = "tlvCic";
@@ -142,7 +141,7 @@ namespace Rdmp.UI.SubComponents
             // 
             this.olvWorking.IsEditable = false;
             this.olvWorking.Sortable = false;
-            this.olvWorking.Text = "Working";
+            this.olvWorking.Text = "Status";
             // 
             // olvTime
             // 
@@ -271,6 +270,17 @@ namespace Rdmp.UI.SubComponents
             this.panel1.Size = new System.Drawing.Size(247, 36);
             this.panel1.TabIndex = 70;
             // 
+            // btnClearCache
+            // 
+            this.btnClearCache.Image = ((System.Drawing.Image)(resources.GetObject("btnClearCache.Image")));
+            this.btnClearCache.Location = new System.Drawing.Point(212, 0);
+            this.btnClearCache.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btnClearCache.Name = "btnClearCache";
+            this.btnClearCache.Size = new System.Drawing.Size(34, 36);
+            this.btnClearCache.TabIndex = 67;
+            this.btnClearCache.UseVisualStyleBackColor = true;
+            this.btnClearCache.Click += new System.EventHandler(this.btnClearCache_Click);
+            // 
             // lblExecuteAllPhase
             // 
             this.lblExecuteAllPhase.Enabled = false;
@@ -282,17 +292,6 @@ namespace Rdmp.UI.SubComponents
             this.lblExecuteAllPhase.TabIndex = 70;
             this.lblExecuteAllPhase.Text = "Execution status...";
             this.lblExecuteAllPhase.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // btnClearCache
-            // 
-            this.btnClearCache.Image = ((System.Drawing.Image)(resources.GetObject("btnClearCache.Image")));
-            this.btnClearCache.Location = new System.Drawing.Point(212, 0);
-            this.btnClearCache.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.btnClearCache.Name = "btnClearCache";
-            this.btnClearCache.Size = new System.Drawing.Size(34, 36);
-            this.btnClearCache.TabIndex = 67;
-            this.btnClearCache.UseVisualStyleBackColor = true;
-            this.btnClearCache.Click += new System.EventHandler(this.btnClearCache_Click);
             // 
             // CohortIdentificationConfigurationUI
             // 
