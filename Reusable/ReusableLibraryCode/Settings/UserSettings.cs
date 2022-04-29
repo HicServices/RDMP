@@ -235,6 +235,17 @@ namespace ReusableLibraryCode.Settings
         }
 
         /// <summary>
+        /// <para>True to enable "stirct validation" for containers in Cohort Builder Queries.</para>
+        ///
+        /// <para>Will not allow empty sets, or sets that only have one item.</para>
+        /// </summary>
+        public static bool StrictValidationForCohortBuilderContainers
+        {
+            get { return AppSettings.GetValueOrDefault("StrictValidationForCohortBuilderContainers", true); }
+            set { AppSettings.AddOrUpdateValue("StrictValidationForCohortBuilderContainers", value); }
+        }
+
+        /// <summary>
         /// Changes the behaviour of mouse double clicks in tree views.  When enabled double
         /// click expands nodes instead of opening the double clicked object (the default behaviour).
         /// </summary>

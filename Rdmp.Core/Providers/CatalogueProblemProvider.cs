@@ -15,6 +15,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Providers
 {
@@ -268,12 +269,16 @@ namespace Rdmp.Core.Providers
             }
             else
             {
-                //if it's not a root, then there should be at least 2
-                if (enabledChildren.Length == 0)
-                    return "SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required";
+                if (UserSettings.StrictValidationForCohortBuilderContainers)
+                {
+                    //if it's not a root, then there should be at least 2
+                    if (enabledChildren.Length == 0)
+                        return "SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required";
 
-                if (enabledChildren.Length == 1)
-                    return "SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required";
+
+                    if (enabledChildren.Length == 1)
+                        return "SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required";
+                }
             }
 
             return null;

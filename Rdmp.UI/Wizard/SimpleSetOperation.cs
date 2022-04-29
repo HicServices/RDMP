@@ -22,7 +22,7 @@ namespace Rdmp.UI.Wizard
     {
         private IActivateItems _activator;
         private string _unionText ;
-        private string _intersectText = "Patients Must Appear In BOTH Datasets To Match ";
+        private string _intersectText = "Records Must Appear In BOTH Datasets To Match ";
         private bool _isInclusionCriteria;
 
         public SimpleSetOperation()
@@ -36,18 +36,18 @@ namespace Rdmp.UI.Wizard
             _isInclusionCriteria = isInclusionCriteria;
             if (isInclusionCriteria)
             {
-                _unionText = "Patients Are Included If they Appear In EITHER Dataset";
-                _intersectText = "Patients Are Included ONLY If they Appear In BOTH Dataset";
+                _unionText = "Records Are Included If they Appear In EITHER Dataset";
+                _intersectText = "Records Are Included ONLY If they Appear In BOTH Dataset";
             }
             else
             {
-                _unionText = "Patients Are Excluded If they Appear In EITHER Dataset";
-                _intersectText = "Patients Are Excluded ONLY If they Appear In BOTH Dataset";
+                _unionText = "Records Are Excluded If they Appear In EITHER Dataset";
+                _intersectText = "Records Are Excluded ONLY If they Appear In BOTH Dataset";
             }
 
             ddSetOperation.Items.Clear();
-            ddSetOperation.Items.Add(_intersectText);
             ddSetOperation.Items.Add(_unionText);
+            ddSetOperation.Items.Add(_intersectText);
             ddSetOperation.SelectedIndex = 0;
         }
 
@@ -79,12 +79,12 @@ namespace Rdmp.UI.Wizard
             if (_isInclusionCriteria)
             {
                 container.Order = 1;
-                container.Name = operation + " - Inclusion Criteria";
+                container.Name = "Inclusion Criteria";
             }
             else
             {
                 container.Order = 2;
-                container.Name = operation + " - Exclusion Criteria";    
+                container.Name = "Exclusion Criteria";    
             }
 
             container.SaveToDatabase();

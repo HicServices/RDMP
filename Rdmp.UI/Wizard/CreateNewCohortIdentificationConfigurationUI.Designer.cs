@@ -34,7 +34,7 @@
             this.btnGo = new System.Windows.Forms.Button();
             this.tbName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.pnlWizard = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.inclusionCriteria1 = new Rdmp.UI.Wizard.SimpleCohortSetUI();
@@ -43,7 +43,11 @@
             this.setOperationExclude = new Rdmp.UI.Wizard.SimpleSetOperation();
             this.exclusionCriteria1 = new Rdmp.UI.Wizard.SimpleCohortSetUI();
             this.exclusionCriteria2 = new Rdmp.UI.Wizard.SimpleCohortSetUI();
-            this.panel1.SuspendLayout();
+            this.cbUseWizard = new System.Windows.Forms.CheckBox();
+            this.taskDescriptionLabel = new Rdmp.UI.SimpleDialogs.TaskDescriptionLabel();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.pnlWizard.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // cbInclusion2
@@ -82,7 +86,7 @@
             // btnGo
             // 
             this.btnGo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGo.Location = new System.Drawing.Point(1224, 769);
+            this.btnGo.Location = new System.Drawing.Point(1173, 814);
             this.btnGo.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnGo.Name = "btnGo";
             this.btnGo.Size = new System.Drawing.Size(145, 27);
@@ -93,17 +97,17 @@
             // 
             // tbName
             // 
-            this.tbName.Location = new System.Drawing.Point(69, 18);
+            this.tbName.Location = new System.Drawing.Point(54, 3);
             this.tbName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbName.Name = "tbName";
-            this.tbName.Size = new System.Drawing.Size(294, 23);
+            this.tbName.Size = new System.Drawing.Size(500, 23);
             this.tbName.TabIndex = 0;
             this.tbName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tbName_KeyDown);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(19, 21);
+            this.label1.Location = new System.Drawing.Point(4, 6);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(42, 15);
@@ -111,28 +115,29 @@
             this.label1.Text = "Name:";
             this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
-            // panel1
+            // pnlWizard
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.pnlWizard.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.AutoScroll = true;
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.cbInclusion2);
-            this.panel1.Controls.Add(this.label3);
-            this.panel1.Controls.Add(this.cbExclusion1);
-            this.panel1.Controls.Add(this.inclusionCriteria1);
-            this.panel1.Controls.Add(this.setOperationInclude);
-            this.panel1.Controls.Add(this.cbExclusion2);
-            this.panel1.Controls.Add(this.inclusionCriteria2);
-            this.panel1.Controls.Add(this.setOperationExclude);
-            this.panel1.Controls.Add(this.exclusionCriteria1);
-            this.panel1.Controls.Add(this.exclusionCriteria2);
-            this.panel1.Location = new System.Drawing.Point(16, 49);
-            this.panel1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1348, 714);
-            this.panel1.TabIndex = 22;
+            this.pnlWizard.AutoScroll = true;
+            this.pnlWizard.Controls.Add(this.label2);
+            this.pnlWizard.Controls.Add(this.cbInclusion2);
+            this.pnlWizard.Controls.Add(this.label3);
+            this.pnlWizard.Controls.Add(this.cbExclusion1);
+            this.pnlWizard.Controls.Add(this.inclusionCriteria1);
+            this.pnlWizard.Controls.Add(this.setOperationInclude);
+            this.pnlWizard.Controls.Add(this.cbExclusion2);
+            this.pnlWizard.Controls.Add(this.inclusionCriteria2);
+            this.pnlWizard.Controls.Add(this.setOperationExclude);
+            this.pnlWizard.Controls.Add(this.exclusionCriteria1);
+            this.pnlWizard.Controls.Add(this.exclusionCriteria2);
+            this.pnlWizard.Enabled = false;
+            this.pnlWizard.Location = new System.Drawing.Point(6, 91);
+            this.pnlWizard.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.pnlWizard.Name = "pnlWizard";
+            this.pnlWizard.Size = new System.Drawing.Size(1349, 722);
+            this.pnlWizard.TabIndex = 22;
             // 
             // label2
             // 
@@ -207,23 +212,56 @@
             this.exclusionCriteria2.Size = new System.Drawing.Size(672, 309);
             this.exclusionCriteria2.TabIndex = 16;
             // 
+            // cbUseWizard
+            // 
+            this.cbUseWizard.AutoSize = true;
+            this.cbUseWizard.Location = new System.Drawing.Point(561, 5);
+            this.cbUseWizard.Name = "cbUseWizard";
+            this.cbUseWizard.Size = new System.Drawing.Size(164, 19);
+            this.cbUseWizard.TabIndex = 24;
+            this.cbUseWizard.Text = "Use Cohort Builder Wizard";
+            this.cbUseWizard.UseVisualStyleBackColor = true;
+            this.cbUseWizard.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
+            // taskDescriptionLabel
+            // 
+            this.taskDescriptionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.taskDescriptionLabel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.taskDescriptionLabel.Location = new System.Drawing.Point(2, 2);
+            this.taskDescriptionLabel.Name = "taskDescriptionLabel";
+            this.taskDescriptionLabel.Size = new System.Drawing.Size(734, 39);
+            this.taskDescriptionLabel.TabIndex = 27;
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.label1);
+            this.panel2.Controls.Add(this.tbName);
+            this.panel2.Controls.Add(this.cbUseWizard);
+            this.panel2.Location = new System.Drawing.Point(6, 57);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(730, 28);
+            this.panel2.TabIndex = 26;
+            // 
             // CreateNewCohortIdentificationConfigurationUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1377, 804);
-            this.Controls.Add(this.panel1);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.tbName);
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ClientSize = new System.Drawing.Size(1355, 853);
             this.Controls.Add(this.btnGo);
+            this.Controls.Add(this.pnlWizard);
+            this.Controls.Add(this.panel2);
+            this.Controls.Add(this.taskDescriptionLabel);
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "CreateNewCohortIdentificationConfigurationUI";
-            this.Text = "Cohort Builder Wizard";
+            this.Text = "New Cohort Builder Query";
             this.Load += new System.EventHandler(this.CreateNewCohortIdentificationConfigurationUI_Load);
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
+            this.pnlWizard.ResumeLayout(false);
+            this.pnlWizard.PerformLayout();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -242,7 +280,10 @@
         private System.Windows.Forms.Button btnGo;
         private System.Windows.Forms.TextBox tbName;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel pnlWizard;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.CheckBox cbUseWizard;
+        private System.Windows.Forms.Panel panel2;
+        private SimpleDialogs.TaskDescriptionLabel taskDescriptionLabel;
     }
 }

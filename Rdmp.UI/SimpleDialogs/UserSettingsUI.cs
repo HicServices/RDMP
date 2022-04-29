@@ -53,22 +53,26 @@ namespace Rdmp.UI.SimpleDialogs
             olvCode.AspectName = nameof(ErrorCode.Code);
             olvCode.Text = "Code";
             olvCode.IsEditable = false;
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvErrorCodes, olvCode, new Guid("bba20a20-ffa2-4db6-b4fe-a5dcc5a03727"));
-
-            olvMessage.AspectName = nameof(ErrorCode.Message);
-            olvMessage.Text = "Error Message";
-            olvMessage.IsEditable = false;
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvErrorCodes, olvMessage, new Guid("21a785e9-52f4-494b-89d0-6ccc68689ce9"));
 
             olvTreatment.Text = "Treatment";
-            olvTreatment.Width = 20;
             olvTreatment.AspectGetter += Treatment_Getter;
             olvTreatment.AspectPutter += Treatment_Putter;
             olvTreatment.CellEditUseWholeCell = true;
             olvTreatment.IsEditable = true;
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvErrorCodes, olvTreatment, new Guid("75d54469-f870-4870-86cf-2dd782a27f57"));
+
+            olvMessage.AspectName = nameof(ErrorCode.Message);
+            olvMessage.Text = "Error Message";
+            olvMessage.IsEditable = false;
 
             olvErrorCodes.RebuildColumns();
+
+            //Resize known columns
+            olvCode.AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
+            olvCode.MaximumWidth = olvCode.Width;
+            olvCode.MinimumWidth = olvCode.Width;
+            olvTreatment.AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
+            olvTreatment.MaximumWidth = olvTreatment.Width;
+            olvTreatment.MinimumWidth = olvTreatment.Width;
 
             cbShowHomeOnStartup.Checked = UserSettings.ShowHomeOnStartup;
             cbEmphasiseOnTabChanged.Checked = UserSettings.EmphasiseOnTabChanged;
@@ -77,6 +81,7 @@ namespace Rdmp.UI.SimpleDialogs
             cbThemeMenus.Checked = UserSettings.ApplyThemeToMenus;
             cbWait5Seconds.Checked = UserSettings.Wait5SecondsAfterStartupUI;
             cbShowCohortWizard.Checked = UserSettings.ShowCohortWizard;
+            cbStrictValidationForCohortBuilderContainers.Checked = UserSettings.StrictValidationForCohortBuilderContainers;
             cbDoubleClickToExpand.Checked = UserSettings.DoubleClickToExpand;
             cbDebugPerformance.Checked = UserSettings.DebugPerformance;
             cbShowPipelineCompletedPopup.Checked = UserSettings.ShowPipelineCompletedPopup;
@@ -97,6 +102,7 @@ namespace Rdmp.UI.SimpleDialogs
             AddTooltip(cbThemeMenus,nameof(UserSettings.ApplyThemeToMenus));
             AddTooltip(cbWait5Seconds,nameof(UserSettings.Wait5SecondsAfterStartupUI));
             AddTooltip(cbShowCohortWizard,nameof(UserSettings.ShowCohortWizard));
+            AddTooltip(cbStrictValidationForCohortBuilderContainers, nameof(UserSettings.StrictValidationForCohortBuilderContainers));
             AddTooltip(cbDoubleClickToExpand,nameof(UserSettings.DoubleClickToExpand));
             AddTooltip(cbDebugPerformance,nameof(UserSettings.DebugPerformance));
             AddTooltip(cbShowPipelineCompletedPopup,nameof(UserSettings.ShowPipelineCompletedPopup));
@@ -118,8 +124,13 @@ namespace Rdmp.UI.SimpleDialogs
             AddTooltip(label5, nameof(UserSettings.HeatMapColours));
             AddTooltip(tbHeatmapColours, nameof(UserSettings.HeatMapColours));
 
-
+            //Add error codes
             olvErrorCodes.AddObjects(ErrorCodes.KnownCodes);
+
+            //Once added we know what width we'd like to make the columns
+            olvMessage.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+            olvMessage.MaximumWidth = olvMessage.Width;
+            olvMessage.MinimumWidth = olvMessage.Width;
 
             ddTheme.DataSource = new []
             {
@@ -195,6 +206,9 @@ namespace Rdmp.UI.SimpleDialogs
 
             if(cb == cbShowCohortWizard)
                 UserSettings.ShowCohortWizard = cb.Checked;
+
+            if (cb == cbStrictValidationForCohortBuilderContainers)
+                UserSettings.StrictValidationForCohortBuilderContainers = cb.Checked;
 
             if (cb == cbDoubleClickToExpand)
                 UserSettings.DoubleClickToExpand = cb.Checked;
