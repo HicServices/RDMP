@@ -235,9 +235,9 @@ namespace ReusableLibraryCode.Settings
         }
 
         /// <summary>
-        /// True to enable "stirct validation" for containers in Cohort Builder Queries.
+        /// <para>True to enable "stirct validation" for containers in Cohort Builder Queries.</para>
         ///
-        /// Will not allow empty sets, or sets that only have one item.
+        /// <para>Will not allow empty sets, or sets that only have one item.</para>
         /// </summary>
         public static bool StrictValidationForCohortBuilderContainers
         {
