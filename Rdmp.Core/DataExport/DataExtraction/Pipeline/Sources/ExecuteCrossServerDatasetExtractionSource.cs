@@ -100,7 +100,11 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
 
             //Swaps the given entity for the same entity but in _tempDb
             AddReplacement(replacementStrings, sourceDb, sourceTable, sourcePrivateId, sourceSyntax, destinationSyntax);
-            AddReplacement(replacementStrings, sourceDb, sourceTable, sourceReleaseId, sourceSyntax, destinationSyntax);
+
+            // If it is not an identifiable extraction (private and release are different)
+            if(!string.Equals(sourcePrivateId,sourceReleaseId))
+                AddReplacement(replacementStrings, sourceDb, sourceTable, sourceReleaseId, sourceSyntax, destinationSyntax);
+
             AddReplacement(replacementStrings, sourceDb, sourceTable, sourceCohortDefinitionId, sourceSyntax, destinationSyntax);
             AddReplacement(replacementStrings, sourceDb, sourceTable, sourceSyntax, destinationSyntax);
             

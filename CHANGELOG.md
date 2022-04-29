@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed unreachable catalogue database resulting in the Startup form immediately closing
 - Fixed being able to drag filters/containers onto API calls in Cohort Builder -[#1101](https://github.com/HicServices/RDMP/issues/1101)
 - Fixed regression in 7.0.10 where calling `public void ClearDefault(PermissableDefaults toDelete)` multiple times caused an Exception
+- Fixed `ExecuteCrossServerDatasetExtractionSource` to work properly with identifiable extractions - [#1097](https://github.com/HicServices/RDMP/issues/1097)
 
 ## [7.0.10] - 2022-04-25
 
