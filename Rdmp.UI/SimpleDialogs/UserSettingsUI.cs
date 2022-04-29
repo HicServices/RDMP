@@ -77,6 +77,7 @@ namespace Rdmp.UI.SimpleDialogs
             cbThemeMenus.Checked = UserSettings.ApplyThemeToMenus;
             cbWait5Seconds.Checked = UserSettings.Wait5SecondsAfterStartupUI;
             cbShowCohortWizard.Checked = UserSettings.ShowCohortWizard;
+            cbStrictValidationForCohortBuilderContainers.Checked = UserSettings.StrictValidationForCohortBuilderContainers;
             cbDoubleClickToExpand.Checked = UserSettings.DoubleClickToExpand;
             cbDebugPerformance.Checked = UserSettings.DebugPerformance;
             cbShowPipelineCompletedPopup.Checked = UserSettings.ShowPipelineCompletedPopup;
@@ -97,6 +98,7 @@ namespace Rdmp.UI.SimpleDialogs
             AddTooltip(cbThemeMenus,nameof(UserSettings.ApplyThemeToMenus));
             AddTooltip(cbWait5Seconds,nameof(UserSettings.Wait5SecondsAfterStartupUI));
             AddTooltip(cbShowCohortWizard,nameof(UserSettings.ShowCohortWizard));
+            AddTooltip(cbStrictValidationForCohortBuilderContainers, nameof(UserSettings.StrictValidationForCohortBuilderContainers));
             AddTooltip(cbDoubleClickToExpand,nameof(UserSettings.DoubleClickToExpand));
             AddTooltip(cbDebugPerformance,nameof(UserSettings.DebugPerformance));
             AddTooltip(cbShowPipelineCompletedPopup,nameof(UserSettings.ShowPipelineCompletedPopup));
@@ -195,6 +197,9 @@ namespace Rdmp.UI.SimpleDialogs
 
             if(cb == cbShowCohortWizard)
                 UserSettings.ShowCohortWizard = cb.Checked;
+
+            if (cb == cbStrictValidationForCohortBuilderContainers)
+                UserSettings.StrictValidationForCohortBuilderContainers = cb.Checked;
 
             if (cb == cbDoubleClickToExpand)
                 UserSettings.DoubleClickToExpand = cb.Checked;

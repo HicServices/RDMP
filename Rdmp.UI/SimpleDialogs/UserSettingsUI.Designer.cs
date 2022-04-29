@@ -66,6 +66,8 @@
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.cbStrictValidationForCohortBuilderContainers = new System.Windows.Forms.CheckBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.label12 = new System.Windows.Forms.Label();
@@ -85,6 +87,7 @@
             this.groupBox4.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
+            this.groupBox8.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox7.SuspendLayout();
             this.SuspendLayout();
@@ -172,7 +175,7 @@
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 750);
+            this.label3.Location = new System.Drawing.Point(12, 740);
             this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(93, 15);
@@ -256,7 +259,7 @@
             // cbShowCohortWizard
             // 
             this.cbShowCohortWizard.AutoSize = true;
-            this.cbShowCohortWizard.Location = new System.Drawing.Point(7, 45);
+            this.cbShowCohortWizard.Location = new System.Drawing.Point(7, 22);
             this.cbShowCohortWizard.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.cbShowCohortWizard.Name = "cbShowCohortWizard";
             this.cbShowCohortWizard.Size = new System.Drawing.Size(134, 19);
@@ -317,9 +320,9 @@
             // 
             this.groupBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.groupBox1.Controls.Add(this.olvErrorCodes);
-            this.groupBox1.Location = new System.Drawing.Point(359, 345);
+            this.groupBox1.Location = new System.Drawing.Point(3, 413);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(376, 320);
+            this.groupBox1.Size = new System.Drawing.Size(978, 249);
             this.groupBox1.TabIndex = 16;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Warnings";
@@ -336,7 +339,7 @@
             this.olvErrorCodes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.olvErrorCodes.Location = new System.Drawing.Point(3, 19);
             this.olvErrorCodes.Name = "olvErrorCodes";
-            this.olvErrorCodes.Size = new System.Drawing.Size(370, 298);
+            this.olvErrorCodes.Size = new System.Drawing.Size(972, 227);
             this.olvErrorCodes.TabIndex = 0;
             this.olvErrorCodes.View = System.Windows.Forms.View.Details;
             // 
@@ -463,7 +466,7 @@
             this.groupBox5.Controls.Add(this.label5);
             this.groupBox5.Controls.Add(this.tbHeatmapColours);
             this.groupBox5.Controls.Add(this.label6);
-            this.groupBox5.Location = new System.Drawing.Point(3, 174);
+            this.groupBox5.Location = new System.Drawing.Point(741, 3);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(240, 165);
             this.groupBox5.TabIndex = 23;
@@ -480,13 +483,36 @@
             this.flowLayoutPanel1.Controls.Add(this.groupBox3);
             this.flowLayoutPanel1.Controls.Add(this.groupBox4);
             this.flowLayoutPanel1.Controls.Add(this.groupBox5);
+            this.flowLayoutPanel1.Controls.Add(this.groupBox8);
             this.flowLayoutPanel1.Controls.Add(this.groupBox6);
             this.flowLayoutPanel1.Controls.Add(this.groupBox7);
             this.flowLayoutPanel1.Controls.Add(this.groupBox1);
             this.flowLayoutPanel1.Location = new System.Drawing.Point(13, 69);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(756, 681);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(987, 671);
             this.flowLayoutPanel1.TabIndex = 24;
+            // 
+            // groupBox8
+            // 
+            this.groupBox8.Controls.Add(this.cbStrictValidationForCohortBuilderContainers);
+            this.groupBox8.Controls.Add(this.cbShowCohortWizard);
+            this.groupBox8.Location = new System.Drawing.Point(3, 174);
+            this.groupBox8.Name = "groupBox8";
+            this.groupBox8.Size = new System.Drawing.Size(240, 165);
+            this.groupBox8.TabIndex = 26;
+            this.groupBox8.TabStop = false;
+            this.groupBox8.Text = "Cohort Building";
+            // 
+            // cbStrictValidationForCohortBuilderContainers
+            // 
+            this.cbStrictValidationForCohortBuilderContainers.AutoSize = true;
+            this.cbStrictValidationForCohortBuilderContainers.Location = new System.Drawing.Point(6, 43);
+            this.cbStrictValidationForCohortBuilderContainers.Name = "cbStrictValidationForCohortBuilderContainers";
+            this.cbStrictValidationForCohortBuilderContainers.Size = new System.Drawing.Size(186, 19);
+            this.cbStrictValidationForCohortBuilderContainers.TabIndex = 3;
+            this.cbStrictValidationForCohortBuilderContainers.Text = "Strict Validation for Containers";
+            this.cbStrictValidationForCohortBuilderContainers.UseVisualStyleBackColor = true;
+            this.cbStrictValidationForCohortBuilderContainers.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // groupBox6
             // 
@@ -515,8 +541,7 @@
             this.groupBox7.Controls.Add(this.label4);
             this.groupBox7.Controls.Add(this.label7);
             this.groupBox7.Controls.Add(this.cbAlwaysJoinEverything);
-            this.groupBox7.Controls.Add(this.cbShowCohortWizard);
-            this.groupBox7.Location = new System.Drawing.Point(3, 345);
+            this.groupBox7.Location = new System.Drawing.Point(495, 174);
             this.groupBox7.Name = "groupBox7";
             this.groupBox7.Size = new System.Drawing.Size(350, 233);
             this.groupBox7.TabIndex = 25;
@@ -623,7 +648,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(781, 768);
+            this.ClientSize = new System.Drawing.Size(1012, 758);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.ddTheme);
             this.Controls.Add(this.cbThemeMenus);
@@ -644,6 +669,8 @@
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
+            this.groupBox8.ResumeLayout(false);
+            this.groupBox8.PerformLayout();
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
             this.groupBox7.ResumeLayout(false);
@@ -704,5 +731,7 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.CheckBox cbSelectiveRefresh;
         private System.Windows.Forms.CheckBox cbAlwaysJoinEverything;
+        private System.Windows.Forms.GroupBox groupBox8;
+        private System.Windows.Forms.CheckBox cbStrictValidationForCohortBuilderContainers;
     }
 }
