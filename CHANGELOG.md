@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug with the 'unreachable' picturebox icon not being clickable
 - Fixed unreachable catalogue database resulting in the Startup form immediately closing
 - Fixed regression in 7.0.10 where calling `public void ClearDefault(PermissableDefaults toDelete)` multiple times caused an Exception
-- Fixed `ExecuteCrossServerDatasetExtractionSource` to work properly with identifiable extractions
+- Fixed `ExecuteCrossServerDatasetExtractionSource` to work properly with identifiable extractions - [#1097](https://github.com/HicServices/RDMP/issues/1097)
 
 ## [7.0.10] - 2022-04-25
 
