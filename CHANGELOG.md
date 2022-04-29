@@ -12,6 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Dll load warnings must now be enabled otherwise the information is reported as Success (see user settings error codes R008 and R009)
 
+### Fixed
+
+- Fixed resizing issue on License UI when using very low resolution
+- Fixed connection strings dialog 'Save as yaml...' producing invalid entry for 'DataExportConnectionString' - [#1086](https://github.com/HicServices/RDMP/issues/1086)
+- Fixed various startup errors when Databases.yaml strings are invalid.
+- Fixed bug with the 'unreachable' picturebox icon not being clickable
+- Fixed unreachable catalogue database resulting in the Startup form immediately closing
+- Fixed being able to drag filters/containers onto API calls in Cohort Builder -[#1101](https://github.com/HicServices/RDMP/issues/1101)
+- Fixed regression in 7.0.10 where calling `public void ClearDefault(PermissableDefaults toDelete)` multiple times caused an Exception
+
 ## [7.0.10] - 2022-04-25
 
 ### Added

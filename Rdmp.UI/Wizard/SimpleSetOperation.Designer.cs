@@ -35,9 +35,10 @@
             // 
             // pbSetOperation
             // 
-            this.pbSetOperation.Location = new System.Drawing.Point(3, 3);
+            this.pbSetOperation.Location = new System.Drawing.Point(4, 3);
+            this.pbSetOperation.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pbSetOperation.Name = "pbSetOperation";
-            this.pbSetOperation.Size = new System.Drawing.Size(20, 20);
+            this.pbSetOperation.Size = new System.Drawing.Size(23, 23);
             this.pbSetOperation.TabIndex = 0;
             this.pbSetOperation.TabStop = false;
             // 
@@ -47,20 +48,22 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ddSetOperation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddSetOperation.FormattingEnabled = true;
-            this.ddSetOperation.Location = new System.Drawing.Point(29, 3);
+            this.ddSetOperation.Location = new System.Drawing.Point(34, 3);
+            this.ddSetOperation.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.ddSetOperation.Name = "ddSetOperation";
-            this.ddSetOperation.Size = new System.Drawing.Size(296, 21);
+            this.ddSetOperation.Size = new System.Drawing.Size(345, 23);
             this.ddSetOperation.TabIndex = 1;
             this.ddSetOperation.SelectedIndexChanged += new System.EventHandler(this.ddSetOperation_SelectedIndexChanged);
             // 
             // SimpleSetOperation
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.ddSetOperation);
             this.Controls.Add(this.pbSetOperation);
+            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "SimpleSetOperation";
-            this.Size = new System.Drawing.Size(328, 30);
+            this.Size = new System.Drawing.Size(383, 30);
             ((System.ComponentModel.ISupportInitialize)(this.pbSetOperation)).EndInit();
             this.ResumeLayout(false);
 

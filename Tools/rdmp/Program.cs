@@ -163,7 +163,7 @@ namespace Rdmp.Core
 
         private static int Run(RDMPCommandLineOptions opts)
         {
-            opts.PopulateConnectionStringsFromYamlIfMissing();
+            opts.PopulateConnectionStringsFromYamlIfMissing(new ThrowImmediatelyCheckNotifier());
 
             // where RDMP objects are stored
             var repositoryLocator = opts.GetRepositoryLocator();
@@ -214,7 +214,7 @@ namespace Rdmp.Core
         
         private static int Run(PatchDatabaseOptions opts)
         {
-            opts.PopulateConnectionStringsFromYamlIfMissing();
+            opts.PopulateConnectionStringsFromYamlIfMissing(new ThrowImmediatelyCheckNotifier());
 
             var repo = opts.GetRepositoryLocator();
 

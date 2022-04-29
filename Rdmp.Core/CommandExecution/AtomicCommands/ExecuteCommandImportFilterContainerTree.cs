@@ -60,7 +60,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if(into.RootFilterContainer_ID != null)
                 SetImpossible("Dataset already has a root container");
-            
+
+
+            if (into is AggregateConfiguration ac && ac.Catalogue.IsApiCall())
+                SetImpossible(ExecuteCommandAddNewFilterContainer.FiltersCannotBeAddedToApiCalls);
 
             _catalogue = _into.GetCatalogue();
 

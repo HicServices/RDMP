@@ -422,7 +422,7 @@ namespace Rdmp.UI.LocationsMenu
                 var toSerialize = new ConnectionStringsYamlFile()
                 {
                     CatalogueConnectionString = tbCatalogueConnectionString.Text,
-                    DataExportConnectionString = tbDatabasePrefix.Text,
+                    DataExportConnectionString = tbDataExportManagerConnectionString.Text,
                 };
 
                 var serializer = new Serializer();

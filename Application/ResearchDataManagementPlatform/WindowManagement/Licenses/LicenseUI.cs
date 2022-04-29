@@ -30,6 +30,16 @@ namespace ResearchDataManagementPlatform.WindowManagement.Licenses
                 _thirdParth = new License("LIBRARYLICENSES");
 
                 rtLicense.Text = _main.GetLicenseText();
+                rtLicense.KeyDown += (s, e) =>
+                {
+                    if (e.KeyCode == Keys.Enter)
+                        btnAccept_Click(btnAccept, new EventArgs());
+
+                    // prevents it going BONG!
+                    e.SuppressKeyPress = true;
+                };
+
+
                 rtThirdPartyLicense.Text = _thirdParth.GetLicenseText();
             }
             catch (Exception ex)
@@ -38,7 +48,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.Licenses
             }
         }
 
-        
         private bool allowClose = false;
 
         private License _main;
