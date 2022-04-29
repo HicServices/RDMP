@@ -48,7 +48,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             //find cohorts that match the project number
             if (_childProvider.ProjectNumberToCohortsDictionary.ContainsKey(project.ProjectNumber.Value))
-                _compatibleCohorts = (_childProvider.ProjectNumberToCohortsDictionary[project.ProjectNumber.Value]).ToList();
+                _compatibleCohorts = _childProvider.ProjectNumberToCohortsDictionary[project.ProjectNumber.Value].Where(c=>!c.IsDeprecated).ToList();
 
             //if there's only one compatible cohort and that one is already selected
             if (_compatibleCohorts.Count == 1 && _compatibleCohorts.Single().ID == _extractionConfiguration.Cohort_ID)
@@ -70,7 +70,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if (SelectOne(new DialogArgs() {
                 WindowTitle = "Select Saved Cohort",
                 TaskDescription = "Select the existing Cohort you would like to be used for your Extraction Configuration."
-            }, _compatibleCohorts.Where(c => c.ID != _extractionConfiguration.Cohort_ID).ToList(), out ExtractableCohort selected))
+            }, _compatibleCohorts.Where(c => c.ID != _extractionConfiguration.Cohort_ID && !c.IsDeprecated).ToList(), out ExtractableCohort selected))
             {
                 //clear current one
                 _extractionConfiguration.Cohort_ID = selected.ID;
