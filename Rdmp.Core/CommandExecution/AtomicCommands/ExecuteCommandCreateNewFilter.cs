@@ -30,8 +30,16 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _container = host.RootFilterContainer;
             _host = host;
 
-            if(_container == null && _host is AggregateConfiguration ac && ac.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
-                SetImpossible("Aggregate is set to use another's filter container tree");
+
+
+            if (_container == null && _host is AggregateConfiguration ac)
+            {
+                if (ac.Catalogue.IsApiCall())
+                    SetImpossible(ExecuteCommandAddNewFilterContainer.FiltersCannotBeAddedToApiCalls);
+
+                if(ac.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
+                   SetImpossible("Aggregate is set to use another's filter container tree");
+            }
         }
 
         public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, CatalogueItem ci) : base(activator)

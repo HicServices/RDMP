@@ -61,6 +61,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         private void ValidateCanAdd(AggregateConfiguration aggregate)
         {
+            if(aggregate.Catalogue.IsApiCall())
+            {
+                SetImpossible("API calls cannot have AggregateDimensions");
+            }
+
             if (aggregate.IsCohortIdentificationAggregate && !aggregate.IsJoinablePatientIndexTable())
             {
                 if (aggregate.AggregateDimensions.Any())
