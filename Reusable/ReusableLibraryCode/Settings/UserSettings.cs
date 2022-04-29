@@ -155,7 +155,6 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("ScoreZeroForCohortAggregateContainers", value); }
         }
 
-        
 
         #region Catalogue flag visibility settings
         public static bool ShowInternalCatalogues

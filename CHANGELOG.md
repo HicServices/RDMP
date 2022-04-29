@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Changed
+
+- Dll load warnings must now be enabled otherwise the information is reported as Success (see user settings error codes R008 and R009)
+
 ### Fixed
 
 - Fixed resizing issue on License UI when using very low resolution
