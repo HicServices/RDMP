@@ -233,9 +233,8 @@ namespace Rdmp.UI.SimpleDialogs
 
             MultiSelected = new HashSet<T>();
 
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, olvName, new Guid("298cda00-5ec8-423c-9230-71d78bec6bc4"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, olvID, new Guid("bb0fe2f0-1e73-4b00-a5b7-4b6ce3510bab"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, olvHierarchy, new Guid("9393c6f0-b2c5-4bf8-8675-3a0117a2c850"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, olvName, new Guid("298cda00-5ec8-423c-9230-71d78bec6bc4"), 300);
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, olvID, new Guid("fd3741b9-a20a-4782-afe4-4b0c5e648e9c"), 30);
 
             btnCancel.KeyPress += BtnKeypress;
             btnSelect.KeyPress += BtnKeypress;
@@ -689,6 +688,18 @@ namespace Rdmp.UI.SimpleDialogs
                                     // updates the list
                                     _matches = _tempMatches;
                                     StateChanged();
+
+                                   if (_matches.Count > 0)
+                                    {
+                                        olvHierarchy.MaximumWidth = -1;
+                                        olvHierarchy.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                                        olvHierarchy.Width = olvHierarchy.Width + 15;
+                                        olvHierarchy.MaximumWidth = olvHierarchy.Width;
+                                    }
+                                    else
+                                    {
+                                        olvHierarchy.AutoResize(ColumnHeaderAutoResizeStyle.HeaderSize);
+                                    }
                                 }
                             }
 
@@ -698,7 +709,6 @@ namespace Rdmp.UI.SimpleDialogs
 
                         }
                     }, TaskScheduler.FromCurrentSynchronizationContext());
-            
         }
 
         public void AddObjects(ICollection modelObjects)

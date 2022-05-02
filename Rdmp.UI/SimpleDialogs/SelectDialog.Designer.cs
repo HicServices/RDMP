@@ -81,13 +81,20 @@ namespace Rdmp.UI.SimpleDialogs
             // 
             // olvSelected
             // 
+            this.olvSelected.MaximumWidth = 58;
+            this.olvSelected.MinimumWidth = 58;
             this.olvSelected.Text = "Selected";
             this.olvSelected.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.olvSelected.Width = 58;
             // 
             // olvID
             // 
             this.olvID.AspectName = "";
+            this.olvID.MaximumWidth = 90;
+            this.olvID.MinimumWidth = 30;
             this.olvID.Text = "ID";
+            this.olvID.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.olvID.Width = 30;
             // 
             // olvName
             // 

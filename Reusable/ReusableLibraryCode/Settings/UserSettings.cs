@@ -313,12 +313,12 @@ namespace ReusableLibraryCode.Settings
 
         public static int FindWindowWidth
         {
-            get { return AppSettings.GetValueOrDefault("FindWindowWidth", 300); }
+            get { return AppSettings.GetValueOrDefault("FindWindowWidth", 730); }
             set { AppSettings.AddOrUpdateValue("FindWindowWidth", value); }
         }
         public static int FindWindowHeight
         {
-            get { return AppSettings.GetValueOrDefault("FindWindowHeight", 500); }
+            get { return AppSettings.GetValueOrDefault("FindWindowHeight", 460); }
             set { AppSettings.AddOrUpdateValue("FindWindowHeight", value); }
         }
 
