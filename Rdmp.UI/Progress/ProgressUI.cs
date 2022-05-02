@@ -53,6 +53,7 @@ namespace Rdmp.UI.Progress
         private Bitmap _warningEx;
         private Bitmap _fail;
         private Bitmap _failEx;
+        private Bitmap _success;
 
         public ProgressUI()
         {
@@ -83,6 +84,7 @@ namespace Rdmp.UI.Progress
             _warningEx = ChecksAndProgressIcons.WarningEx;
             _fail = ChecksAndProgressIcons.Fail;
             _failEx = ChecksAndProgressIcons.FailEx;
+            _success = ChecksAndProgressIcons.Tick;
 
             olvMessage.ImageGetter += ImageGetter;
             olvProgressEvents.ItemActivate += olvProgressEvents_ItemActivate;
@@ -116,6 +118,8 @@ namespace Rdmp.UI.Progress
                         return o.Exception == null ? _warning : _warningEx;
                     case ProgressEventType.Error:
                         return o.Exception == null ? _fail : _failEx;
+                    case ProgressEventType.Success:
+                        return _success;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }

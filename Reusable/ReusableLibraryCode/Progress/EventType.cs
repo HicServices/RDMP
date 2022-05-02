@@ -12,6 +12,7 @@ namespace ReusableLibraryCode.Progress
         Debug,
         Information,
         Warning,
-        Error
+        Error,
+        Success
     }
 }

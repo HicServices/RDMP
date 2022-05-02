@@ -68,6 +68,7 @@ namespace Rdmp.Core.Logging.Listeners
                 case ProgressEventType.Debug:
                     break;
                 case ProgressEventType.Information:
+                case ProgressEventType.Success:
                     DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation, sender.ToString(), e.Message);
                     break;
                 case ProgressEventType.Warning:
