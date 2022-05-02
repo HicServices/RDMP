@@ -143,12 +143,6 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             Refresh();
         }
 
-        
-        private void ConfigureAndExecutePipeline_Load(object sender, EventArgs e)
-        {
-            RefreshDiagram();
-        }
-
         private void RefreshDiagram()
         {
             //not ready to refresh diagram yet

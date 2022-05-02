@@ -174,7 +174,6 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             this.MinimumSize = new System.Drawing.Size(0, 692);
             this.Name = "ConfigureAndExecutePipelineUI";
             this.Size = new System.Drawing.Size(910, 923);
-            this.Load += new System.EventHandler(this.ConfigureAndExecutePipeline_Load);
             this.panel3.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();

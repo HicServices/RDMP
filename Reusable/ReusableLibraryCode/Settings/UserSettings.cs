@@ -276,6 +276,16 @@ namespace ReusableLibraryCode.Settings
             get { return AppSettings.GetValueOrDefault("ShowPipelineCompletedPopup", true); }
             set { AppSettings.AddOrUpdateValue("ShowPipelineCompletedPopup", value); } }
 
+        /// <summary>
+        /// <para>Enable to skip the checking stage of pipeline source component CohortIdentificationConfigurationSource.</para>
+        /// <para>In slow computer, or contesest databases this can take a while to compile. This option lets you disable it.</para>
+        /// </summary>
+        public static bool SkipCohortBuilderValidationOnCommit
+        {
+            get { return AppSettings.GetValueOrDefault("SkipCohortBuilderValidationOnCommit", false); }
+            set { AppSettings.AddOrUpdateValue("SkipCohortBuilderValidationOnCommit", value); }
+        }
+
         public static string ConsoleColorScheme
         {
             get { return AppSettings.GetValueOrDefault("ConsoleColorScheme", "default"); }
