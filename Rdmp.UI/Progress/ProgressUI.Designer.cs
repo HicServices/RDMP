@@ -146,13 +146,12 @@ namespace Rdmp.UI.Progress
             this.olvProgressEvents.AllColumns.Add(this.olvMessage);
             this.olvProgressEvents.CellEditUseWholeCell = false;
             this.olvProgressEvents.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvSender,
             this.olvEventDate,
+            this.olvSender,
             this.olvMessage});
             this.olvProgressEvents.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvProgressEvents.Dock = System.Windows.Forms.DockStyle.Fill;
             this.olvProgressEvents.FullRowSelect = true;
-            this.olvProgressEvents.HideSelection = false;
             this.olvProgressEvents.Location = new System.Drawing.Point(0, 15);
             this.olvProgressEvents.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.olvProgressEvents.Name = "olvProgressEvents";
@@ -173,8 +172,11 @@ namespace Rdmp.UI.Progress
             // 
             this.olvEventDate.AspectName = "EventDate";
             this.olvEventDate.Groupable = false;
+            this.olvEventDate.MaximumWidth = 112;
+            this.olvEventDate.MinimumWidth = 112;
             this.olvEventDate.Text = "Event Date";
-            this.olvEventDate.Width = 140;
+            this.olvEventDate.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.olvEventDate.Width = 112;
             // 
             // olvMessage
             // 
