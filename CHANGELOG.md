@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added new command 'RefreshBrokenCohorts' for clearing the 'forbid list' of unreachable cohort sources - [#1094](https://github.com/HicServices/RDMP/issues/1094)
 - Added new command 'SetAggregateDimension' for changing the linkage column in cohort builder for an [AggregateConfiguration]
+- Added abilty to skip CIC validation checks when opening the commit cohort dialogue - [#1118](https://github.com/HicServices/RDMP/issues/1118)
 
 ### Changed
 
