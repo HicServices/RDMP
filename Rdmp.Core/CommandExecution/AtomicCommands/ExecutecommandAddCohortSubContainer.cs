@@ -39,6 +39,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             var newContainer = new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueRepository, SetOperation.UNION);
             _container.AddChild(newContainer);
             Publish(_container);
+            Emphasise(newContainer);
         }
     }
 }
