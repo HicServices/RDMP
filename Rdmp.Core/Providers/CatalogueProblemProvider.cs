@@ -123,7 +123,7 @@ namespace Rdmp.Core.Providers
 
             if(!aggregateConfiguration.AggregateDimensions.Any())
             {
-                return "Aggregate has no dimensions.  Add an AggregateDimension to specify which column is fetched by the query.";
+                return "Aggregate has no dimensions.  Set an AggregateDimension to specify which column is fetched by the query.";
             }
 
             return null;
