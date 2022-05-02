@@ -25,6 +25,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations
     {
         private string _privateIdentifier;
         private string _releaseIdentifier;
+        private bool _initialized = false;
         
         /// <summary>
         /// The cohort blueprint we are trying to create.
@@ -203,7 +204,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations
 
             int id = Request.ImportAsExtractableCohort(DeprecateOldCohortOnSuccess, MigrateUsages);
 
-            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Cohort successfully comitted to destination and imported as an RDMP ExtractableCohort (ID="+id+" <- this is the ID of the reference pointer, the cohortDefinitionID of the actual cohort remains as you specified:"+Request.NewCohortDefinition.ID+")"));
+            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Success, "Cohort successfully comitted to destination and imported as an RDMP ExtractableCohort (ID="+id+" <- this is the ID of the reference pointer, the cohortDefinitionID of the actual cohort remains as you specified:"+Request.NewCohortDefinition.ID+")"));
         }
 
         /// <summary>
@@ -222,18 +223,24 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations
         /// <param name="listener"></param>
         public virtual void PreInitialize(ICohortCreationRequest value, IDataLoadEventListener listener)
         {
-            Request = value;
-            
-            var target = Request.NewCohortDefinition.LocationOfCohort;
+            if (_initialized == false)
+            {
+                Request = value;
 
-            var syntax = target.GetQuerySyntaxHelper();
-            _privateIdentifier = syntax.GetRuntimeName(target.PrivateIdentifierField);
-            _releaseIdentifier = syntax.GetRuntimeName(target.ReleaseIdentifierField);
+                var target = Request.NewCohortDefinition.LocationOfCohort;
 
-            _fk = syntax.GetRuntimeName(Request.NewCohortDefinition.LocationOfCohort.DefinitionTableForeignKeyField);
+                var syntax = target.GetQuerySyntaxHelper();
+                _privateIdentifier = syntax.GetRuntimeName(target.PrivateIdentifierField);
+                _releaseIdentifier = syntax.GetRuntimeName(target.ReleaseIdentifierField);
 
-            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "CohortCreationRequest spotted, we will look for columns " + _privateIdentifier + " and " + _releaseIdentifier + " (both of which must be in the pipeline before we will allow the cohort to be submitted)"));
-            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "id column in table " + Request.NewCohortDefinition.LocationOfCohort.TableName + " is " + Request.NewCohortDefinition.LocationOfCohort.DefinitionTableForeignKeyField));
+                _fk = syntax.GetRuntimeName(Request.NewCohortDefinition.LocationOfCohort.DefinitionTableForeignKeyField);
+
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "CohortCreationRequest spotted, we will look for columns " + _privateIdentifier + " and " + _releaseIdentifier + " (both of which must be in the pipeline before we will allow the cohort to be submitted)"));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "id column in table " + Request.NewCohortDefinition.LocationOfCohort.TableName + " is " + Request.NewCohortDefinition.LocationOfCohort.DefinitionTableForeignKeyField));
+
+                _initialized = true;
+            }
+
         }
 
         /// <summary>
