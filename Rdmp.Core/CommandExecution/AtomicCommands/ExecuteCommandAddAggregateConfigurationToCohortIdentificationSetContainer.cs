@@ -142,6 +142,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 Execute(_aggregateConfigurationCombineable,true);
             }
+
+            if (AggregateCreatedIfAny != null)
+                Emphasise(AggregateCreatedIfAny);
         }
 
         private void Execute(AggregateConfigurationCombineable toAdd, bool publish)

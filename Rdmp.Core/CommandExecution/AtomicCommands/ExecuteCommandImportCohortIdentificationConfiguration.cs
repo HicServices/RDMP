@@ -70,6 +70,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             merger.Import(import,IntoContainer);
 
             Publish(IntoContainer);
+            Emphasise(IntoContainer,int.MaxValue);
         }
 
     }
