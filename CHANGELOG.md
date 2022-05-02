@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added new command 'RefreshBrokenCohorts' for clearing the 'forbid list' of unreachable cohort sources - [#1094](https://github.com/HicServices/RDMP/issues/1094)
+- Added new command 'SetAggregateDimension' for changing the linkage column in cohort builder for an [AggregateConfiguration]
 
 ### Changed
 
@@ -1250,7 +1251,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [CacheProgress]: ./Documentation/CodeTutorials/Glossary.md#CacheProgress
 
 [JoinInfo]: ./Documentation/CodeTutorials/Glossary.md#JoinInfo
-
+[AggregateConfiguration]: ./Documentation/CodeTutorials/Glossary.md#AggregateConfiguration
 [PipelineComponent]: ./Documentation/CodeTutorials/Glossary.md#PipelineComponent
 [Pipeline]: ./Documentation/CodeTutorials/Glossary.md#Pipeline
 [Pipelines]: ./Documentation/CodeTutorials/Glossary.md#Pipeline
