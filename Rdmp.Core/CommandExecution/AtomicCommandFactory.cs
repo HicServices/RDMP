@@ -210,6 +210,11 @@ namespace Rdmp.Core.CommandExecution
 
                 yield return new ExecuteCommandViewSample(_activator, ac) { OverrideCommandName = "View Sample SQL/Data" };
 
+                if(ac.IsCohortIdentificationAggregate)
+                {
+                    yield return new ExecuteCommandSetAggregateDimension(_activator, ac);
+                }
+
                 // graph options
                 yield return new ExecuteCommandAddDimension(_activator, ac) { SuggestedCategory = Dimensions };
                 yield return new ExecuteCommandSetPivot(_activator, ac) { SuggestedCategory = Dimensions };
