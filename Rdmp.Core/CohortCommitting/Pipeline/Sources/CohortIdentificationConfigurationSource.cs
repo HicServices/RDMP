@@ -19,6 +19,7 @@ using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.QueryCaching.Aggregation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.CohortCommitting.Pipeline.Sources
 {
@@ -185,7 +186,6 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Sources
 
         public void Check(ICheckNotifier notifier)
         {
-
             var container = _cohortIdentificationConfiguration.RootCohortAggregateContainer;
             if (container != null)
             {
@@ -212,11 +212,13 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Sources
                             " is Frozen (By " + _cohortIdentificationConfiguration.FrozenBy + " on " +
                             _cohortIdentificationConfiguration.FrozenDate + ").  It might have already been imported once before.", CheckResult.Warning));
 
-                
-                var result = TryGetPreview();
-                
-                if(result.Rows.Count == 0)
-                    throw new Exception("No Identifiers were returned by the cohort query");
+                if (!UserSettings.SkipCohortBuilderValidationOnCommit)
+                {
+                    var result = TryGetPreview();
+
+                    if (result.Rows.Count == 0)
+                        throw new Exception("No Identifiers were returned by the cohort query");
+                }
             }
             catch (Exception e)
             {

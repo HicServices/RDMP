@@ -85,6 +85,7 @@ namespace Rdmp.UI.SimpleDialogs
             cbDoubleClickToExpand.Checked = UserSettings.DoubleClickToExpand;
             cbDebugPerformance.Checked = UserSettings.DebugPerformance;
             cbShowPipelineCompletedPopup.Checked = UserSettings.ShowPipelineCompletedPopup;
+            cbSkipCohortBuilderValidationOnCommit.Checked = UserSettings.SkipCohortBuilderValidationOnCommit;
             cbHideEmptyTableLoadRunAudits.Checked = UserSettings.HideEmptyTableLoadRunAudits;
             cbScoreZeroForCohortAggregateContainers.Checked = UserSettings.ScoreZeroForCohortAggregateContainers;
             cbAdvancedFindFilters.Checked = UserSettings.AdvancedFindFilters;
@@ -106,6 +107,7 @@ namespace Rdmp.UI.SimpleDialogs
             AddTooltip(cbDoubleClickToExpand,nameof(UserSettings.DoubleClickToExpand));
             AddTooltip(cbDebugPerformance,nameof(UserSettings.DebugPerformance));
             AddTooltip(cbShowPipelineCompletedPopup,nameof(UserSettings.ShowPipelineCompletedPopup));
+            AddTooltip(cbSkipCohortBuilderValidationOnCommit, nameof(UserSettings.SkipCohortBuilderValidationOnCommit));
             AddTooltip(cbHideEmptyTableLoadRunAudits,nameof(UserSettings.HideEmptyTableLoadRunAudits));
             AddTooltip(cbScoreZeroForCohortAggregateContainers,nameof(UserSettings.ScoreZeroForCohortAggregateContainers));
             AddTooltip(cbAdvancedFindFilters,nameof(UserSettings.AdvancedFindFilters));
@@ -219,6 +221,9 @@ namespace Rdmp.UI.SimpleDialogs
             if(cb == cbShowPipelineCompletedPopup)
                 UserSettings.ShowPipelineCompletedPopup = cb.Checked;
 
+            if (cb == cbSkipCohortBuilderValidationOnCommit)
+                UserSettings.SkipCohortBuilderValidationOnCommit = cb.Checked;
+            
             if (cb == cbHideEmptyTableLoadRunAudits)
                 UserSettings.HideEmptyTableLoadRunAudits = cb.Checked;
 

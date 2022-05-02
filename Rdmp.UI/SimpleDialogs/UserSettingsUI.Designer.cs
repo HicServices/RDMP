@@ -69,6 +69,7 @@
             this.groupBox8 = new System.Windows.Forms.GroupBox();
             this.cbStrictValidationForCohortBuilderContainers = new System.Windows.Forms.CheckBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.cbSkipCohortBuilderValidationOnCommit = new System.Windows.Forms.CheckBox();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.label12 = new System.Windows.Forms.Label();
             this.tbArchiveTriggerTimeout = new System.Windows.Forms.TextBox();
@@ -371,7 +372,7 @@
             this.tbCreateDatabaseTimeout.Location = new System.Drawing.Point(153, 68);
             this.tbCreateDatabaseTimeout.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbCreateDatabaseTimeout.Name = "tbCreateDatabaseTimeout";
-            this.tbCreateDatabaseTimeout.Size = new System.Drawing.Size(100, 23);
+            this.tbCreateDatabaseTimeout.Size = new System.Drawing.Size(110, 23);
             this.tbCreateDatabaseTimeout.TabIndex = 18;
             this.tbCreateDatabaseTimeout.TextChanged += new System.EventHandler(this.tbCreateDatabaseTimeout_TextChanged);
             // 
@@ -516,14 +517,26 @@
             // 
             // groupBox6
             // 
+            this.groupBox6.Controls.Add(this.cbSkipCohortBuilderValidationOnCommit);
             this.groupBox6.Controls.Add(this.cbShowPipelineCompletedPopup);
             this.groupBox6.Controls.Add(this.cbHideEmptyTableLoadRunAudits);
             this.groupBox6.Location = new System.Drawing.Point(249, 174);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(240, 165);
+            this.groupBox6.Size = new System.Drawing.Size(360, 165);
             this.groupBox6.TabIndex = 24;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Pipeline Components";
+            // 
+            // cbSkipCohortBuilderValidationOnCommit
+            // 
+            this.cbSkipCohortBuilderValidationOnCommit.AutoSize = true;
+            this.cbSkipCohortBuilderValidationOnCommit.Location = new System.Drawing.Point(4, 64);
+            this.cbSkipCohortBuilderValidationOnCommit.Name = "cbSkipCohortBuilderValidationOnCommit";
+            this.cbSkipCohortBuilderValidationOnCommit.Size = new System.Drawing.Size(247, 19);
+            this.cbSkipCohortBuilderValidationOnCommit.TabIndex = 16;
+            this.cbSkipCohortBuilderValidationOnCommit.Text = "Skip Cohort Builder validation on Commit";
+            this.cbSkipCohortBuilderValidationOnCommit.UseVisualStyleBackColor = true;
+            this.cbSkipCohortBuilderValidationOnCommit.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // groupBox7
             // 
@@ -541,9 +554,9 @@
             this.groupBox7.Controls.Add(this.label4);
             this.groupBox7.Controls.Add(this.label7);
             this.groupBox7.Controls.Add(this.cbAlwaysJoinEverything);
-            this.groupBox7.Location = new System.Drawing.Point(495, 174);
+            this.groupBox7.Location = new System.Drawing.Point(615, 174);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(350, 233);
+            this.groupBox7.Size = new System.Drawing.Size(360, 233);
             this.groupBox7.TabIndex = 25;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Miscellaneous";
@@ -564,7 +577,7 @@
             this.tbArchiveTriggerTimeout.Location = new System.Drawing.Point(153, 97);
             this.tbArchiveTriggerTimeout.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tbArchiveTriggerTimeout.Name = "tbArchiveTriggerTimeout";
-            this.tbArchiveTriggerTimeout.Size = new System.Drawing.Size(100, 23);
+            this.tbArchiveTriggerTimeout.Size = new System.Drawing.Size(110, 23);
             this.tbArchiveTriggerTimeout.TabIndex = 24;
             this.tbArchiveTriggerTimeout.TextChanged += new System.EventHandler(this.tbArchiveTriggerTimeout_TextChanged);
             // 
@@ -733,5 +746,6 @@
         private System.Windows.Forms.CheckBox cbAlwaysJoinEverything;
         private System.Windows.Forms.GroupBox groupBox8;
         private System.Windows.Forms.CheckBox cbStrictValidationForCohortBuilderContainers;
+        private System.Windows.Forms.CheckBox cbSkipCohortBuilderValidationOnCommit;
     }
 }
