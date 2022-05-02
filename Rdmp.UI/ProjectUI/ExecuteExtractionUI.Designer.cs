@@ -119,7 +119,6 @@ namespace Rdmp.UI.ProjectUI
             this.olvName,
             this.olvState});
             this.tlvDatasets.Cursor = System.Windows.Forms.Cursors.Default;
-            this.tlvDatasets.HideSelection = false;
             this.tlvDatasets.Location = new System.Drawing.Point(-2, -2);
             this.tlvDatasets.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.tlvDatasets.Name = "tlvDatasets";
@@ -145,7 +144,7 @@ namespace Rdmp.UI.ProjectUI
             // olvState
             // 
             this.olvState.Groupable = false;
-            this.olvState.Text = "Extraction State";
+            this.olvState.Text = "Status";
             this.olvState.Width = 160;
             // 
             // helpIcon1
@@ -154,7 +153,7 @@ namespace Rdmp.UI.ProjectUI
             this.helpIcon1.BackColor = System.Drawing.Color.Transparent;
             this.helpIcon1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIcon1.BackgroundImage")));
             this.helpIcon1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.helpIcon1.Location = new System.Drawing.Point(781, 9);
+            this.helpIcon1.Location = new System.Drawing.Point(780, 9);
             this.helpIcon1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.helpIcon1.MaximumSize = new System.Drawing.Size(26, 25);
             this.helpIcon1.MinimumSize = new System.Drawing.Size(26, 25);
@@ -172,7 +171,7 @@ namespace Rdmp.UI.ProjectUI
             this.checkAndExecuteUI1.Location = new System.Drawing.Point(5, 0);
             this.checkAndExecuteUI1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             this.checkAndExecuteUI1.Name = "checkAndExecuteUI1";
-            this.checkAndExecuteUI1.Size = new System.Drawing.Size(803, 745);
+            this.checkAndExecuteUI1.Size = new System.Drawing.Size(802, 745);
             this.checkAndExecuteUI1.TabIndex = 28;
             // 
             // ExecuteExtractionUI

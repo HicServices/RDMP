@@ -99,8 +99,8 @@ namespace Rdmp.UI.ProjectUI
                     new ExecuteCommandAddPackageToConfiguration(Activator,_extractionConfiguration),
                 };
             
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvDatasets, olvName, new Guid("57c60bc1-9935-49b2-bb32-58e4c20ad666"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvDatasets, olvState, new Guid("22642c7d-342b-4a6c-b2c4-7ca581877cb2"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvDatasets, olvName, new Guid("57c60bc1-9935-49b2-bb32-58e4c20ad666"), 250);
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvDatasets, olvState, new Guid("22642c7d-342b-4a6c-b2c4-7ca581877cb2"), 95, true);
         }
 
         private void TlvDatasets_ItemActivate(object sender, EventArgs e)

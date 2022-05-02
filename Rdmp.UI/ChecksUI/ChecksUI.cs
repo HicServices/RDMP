@@ -68,9 +68,8 @@ namespace Rdmp.UI.ChecksUI
             _timer.Tick += _timer_Tick;
             _timer.Start();
 
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvChecks, olvMessage, new Guid("5d62580d-2bee-420b-ab43-f40317769514"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvChecks, olvResult, new Guid("18b26ae1-c35d-4e73-9dc5-88f15910c1f9"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvChecks, olvEventDate, new Guid("28c13822-b4c0-4fa5-b20d-af612b076716"));
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvChecks, olvResult, new Guid("18b26ae1-c35d-4e73-9dc5-88f15910c1f9"), 75, true);
+            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvChecks, olvEventDate, new Guid("28c13822-b4c0-4fa5-b20d-af612b076716"), 115, true);
         }
 
         private void _timer_Tick(object sender, EventArgs e)
@@ -88,6 +87,10 @@ namespace Rdmp.UI.ChecksUI
                 olvChecks.AddObjects(_results);
                 outOfDate = false;
             }
+
+            olvMessage.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+            olvMessage.MinimumWidth = olvMessage.Width;
+            olvMessage.MinimumWidth = olvMessage.Width;
         }
 
         private object ImageGetter(object rowObject)

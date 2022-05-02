@@ -83,13 +83,12 @@ namespace Rdmp.UI.ChecksUI
             this.olvChecks.AllColumns.Add(this.olvMessage);
             this.olvChecks.CellEditUseWholeCell = false;
             this.olvChecks.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvResult,
             this.olvEventDate,
+            this.olvResult,
             this.olvMessage});
             this.olvChecks.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvChecks.Dock = System.Windows.Forms.DockStyle.Fill;
             this.olvChecks.FullRowSelect = true;
-            this.olvChecks.HideSelection = false;
             this.olvChecks.Location = new System.Drawing.Point(0, 0);
             this.olvChecks.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.olvChecks.Name = "olvChecks";
