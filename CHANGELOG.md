@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added new command 'SetAggregateDimension' for changing the linkage column in cohort builder for an [AggregateConfiguration] - [#1102](https://github.com/HicServices/RDMP/issues/1102)
 - Added abilty to skip CIC validation checks when opening the commit cohort dialogue - [#1118](https://github.com/HicServices/RDMP/issues/1118)
 - Ability to change cohort table name when using ExecuteCrossServerDatasetExtractionSource - [#1099](https://github.com/HicServices/RDMP/issues/1099)
+- Added Success bar to ProgressUI
 
 ### Changed
 
@@ -30,6 +31,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed being able to drag filters/containers onto API calls in Cohort Builder -[#1101](https://github.com/HicServices/RDMP/issues/1101)
 - Fixed regression in 7.0.10 where calling `public void ClearDefault(PermissableDefaults toDelete)` multiple times caused an Exception
 - Fixed `ExecuteCrossServerDatasetExtractionSource` to work properly with identifiable extractions - [#1097](https://github.com/HicServices/RDMP/issues/1097)
+- Fixed bug in cohort builder where dragging into the Execute button would turn it into an editable dropdown menu [#1098](https://github.com/HicServices/RDMP/issues/1098)
+- Fixed RemoteTableAttacher logging only the database name and not the table name in RDMP DLE - [#1110](https://github.com/HicServices/RDMP/issues/1110)
+- Fixed a bug in SelectiveRefresh mode where deleting a root container of an aggregate or extractable dataset would result in an error
+- Fixed Error bar in ProgressUI not showing when committing a cohort - [#1124](https://github.com/HicServices/RDMP/issues/1124)
 
 ## [7.0.10] - 2022-04-25
 

@@ -1731,6 +1731,12 @@ namespace Rdmp.Core.Providers
         public bool SelectiveRefresh(AggregateFilterContainer container)
         {
             var aggregate = container.GetAggregate();
+
+            if(aggregate == null)
+            {
+                return false;
+            }
+
             var descendancy = GetDescendancyListIfAnyFor(aggregate);
 
             if (descendancy == null) return false;
