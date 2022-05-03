@@ -250,18 +250,19 @@ namespace Rdmp.UI.Wizard
                 filterContainer.Operation = filterOp;
                 filterContainer.SaveToDatabase();
             }
-            else
-                filterContainer = new AggregateFilterContainer(_activator.RepositoryLocator.CatalogueRepository, filterOp);
-
-            aggregate.RevertToDatabaseState();
-            aggregate.RootFilterContainer_ID = filterContainer.ID;
-            aggregate.SaveToDatabase();
-
-            List<IFilter> filtersAddedSoFar = new List<IFilter>();
-            foreach (var ui in _filterUIs)
+            else if (_filterUIs.Count > 0)
             {
-                var f = ui.CreateFilter(new AggregateFilterFactory(_activator.RepositoryLocator.CatalogueRepository), filterContainer, filtersAddedSoFar.ToArray());
-                filtersAddedSoFar.Add(f);
+                filterContainer = new AggregateFilterContainer(_activator.RepositoryLocator.CatalogueRepository, filterOp);
+                aggregate.RevertToDatabaseState();
+                aggregate.RootFilterContainer_ID = filterContainer.ID;
+                aggregate.SaveToDatabase();
+
+                List<IFilter> filtersAddedSoFar = new List<IFilter>();
+                foreach (var ui in _filterUIs)
+                {
+                    var f = ui.CreateFilter(new AggregateFilterFactory(_activator.RepositoryLocator.CatalogueRepository), filterContainer, filtersAddedSoFar.ToArray());
+                    filtersAddedSoFar.Add(f);
+                }
             }
         }
 
