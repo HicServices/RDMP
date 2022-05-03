@@ -270,6 +270,15 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("DebugPerformance", value); } }
 
         /// <summary>
+        /// <para>Automatically resize columns in the RDMP user interface with fit contents.</para>
+        /// <para>Can be disabled if problems arrise with column content or header visibility</para>
+        /// </summary>
+        public static bool AutoResizeColumns {
+            get { return AppSettings.GetValueOrDefault("AutoResizeColumns", true); }
+            set { AppSettings.AddOrUpdateValue("AutoResizeColumns", value); } }
+        
+
+        /// <summary>
         /// Show a popup confirmation dialog at the end of a pipeline completing execution
         /// </summary>
         public static bool ShowPipelineCompletedPopup { 
@@ -323,12 +332,12 @@ namespace ReusableLibraryCode.Settings
 
         public static int FindWindowWidth
         {
-            get { return AppSettings.GetValueOrDefault("FindWindowWidth", 300); }
+            get { return AppSettings.GetValueOrDefault("FindWindowWidth", 730); }
             set { AppSettings.AddOrUpdateValue("FindWindowWidth", value); }
         }
         public static int FindWindowHeight
         {
-            get { return AppSettings.GetValueOrDefault("FindWindowHeight", 500); }
+            get { return AppSettings.GetValueOrDefault("FindWindowHeight", 400); }
             set { AppSettings.AddOrUpdateValue("FindWindowHeight", value); }
         }
 

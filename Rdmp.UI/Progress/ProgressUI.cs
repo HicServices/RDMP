@@ -16,6 +16,7 @@ using Rdmp.UI.Collections;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.Theme;
 using ReusableLibraryCode.Progress;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.Progress
 {
@@ -84,16 +85,20 @@ namespace Rdmp.UI.Progress
             _fail = ChecksAndProgressIcons.Fail;
             _failEx = ChecksAndProgressIcons.FailEx;
 
-            olvSender.ImageGetter += ImageGetter;
+            olvMessage.ImageGetter += ImageGetter;
             olvProgressEvents.ItemActivate += olvProgressEvents_ItemActivate;
             olvProgressEvents.UseFiltering = true;
+            olvProgressEvents.Sorting = SortOrder.Descending;
 
             ddGroupBy.Items.Add("None");
             ddGroupBy.Items.Add(olvSender.Text);
 
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvProgressEvents, olvSender, new Guid("2731d3cb-703c-4743-96d9-f16abff1dbbf"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvProgressEvents, olvEventDate, new Guid("f3580392-e5b5-41d0-a1da-2751172d5517"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvProgressEvents, olvMessage, new Guid("d698faf6-2ff1-4f71-96e2-9a889c2e3f13"));
+            if (!UserSettings.AutoResizeColumns)
+            {
+                RDMPCollectionCommonFunctionality.SetupColumnTracking(olvProgressEvents, olvSender, new Guid("2731d3cb-703c-4743-96d9-f16abff1dbbf"));
+                RDMPCollectionCommonFunctionality.SetupColumnTracking(olvProgressEvents, olvEventDate, new Guid("f3580392-e5b5-41d0-a1da-2751172d5517"));
+                RDMPCollectionCommonFunctionality.SetupColumnTracking(olvProgressEvents, olvMessage, new Guid("d698faf6-2ff1-4f71-96e2-9a889c2e3f13"));
+            }
         }
 
         public void ApplyTheme(ITheme theme)
@@ -242,6 +247,8 @@ namespace Rdmp.UI.Progress
                         }
 
                     ProgressQueue.Remove(message.Key);
+
+                    AutoReizeColumns();
                 }
             }
 
@@ -251,10 +258,23 @@ namespace Rdmp.UI.Progress
                 {
                     olvProgressEvents.AddObjects(NotificationQueue);
                     NotificationQueue.Clear();
+
+                    AutoReizeColumns();
                 }
             }
+
+            olvProgressEvents.Sort();
         }
 
+        private void AutoReizeColumns()
+        {
+            if (UserSettings.AutoResizeColumns)
+            {
+                olvSender.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                olvMessage.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                olvMessage.Width = olvMessage.Width + 15; //add room for icon
+            }
+        }
 
         private bool HandleFloodOfMessagesFromJob(object sender, string job,int progressAmount,string label)
         {

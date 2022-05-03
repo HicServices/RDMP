@@ -32,10 +32,10 @@ namespace Rdmp.UI.Progress
         {
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.label1 = new System.Windows.Forms.Label();
             this.lblSuccess = new System.Windows.Forms.Label();
             this.lblCrashed = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.label1 = new System.Windows.Forms.Label();
             this.olvProgressEvents = new BrightIdeasSoftware.ObjectListView();
             this.olvSender = new BrightIdeasSoftware.OLVColumn();
             this.olvEventDate = new BrightIdeasSoftware.OLVColumn();
@@ -104,6 +104,17 @@ namespace Rdmp.UI.Progress
             this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 3;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.label1.Location = new System.Drawing.Point(0, 0);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(137, 15);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "Progress of transfer jobs:";
+            // 
             // lblSuccess
             // 
             this.lblSuccess.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -148,17 +159,6 @@ namespace Rdmp.UI.Progress
             this.progressBar1.Size = new System.Drawing.Size(1027, 20);
             this.progressBar1.TabIndex = 4;
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.label1.Location = new System.Drawing.Point(0, 0);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(137, 15);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Progress of transfer jobs:";
-            // 
             // olvProgressEvents
             // 
             this.olvProgressEvents.AllColumns.Add(this.olvSender);
@@ -166,8 +166,8 @@ namespace Rdmp.UI.Progress
             this.olvProgressEvents.AllColumns.Add(this.olvMessage);
             this.olvProgressEvents.CellEditUseWholeCell = false;
             this.olvProgressEvents.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvSender,
             this.olvEventDate,
+            this.olvSender,
             this.olvMessage});
             this.olvProgressEvents.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvProgressEvents.Dock = System.Windows.Forms.DockStyle.Fill;

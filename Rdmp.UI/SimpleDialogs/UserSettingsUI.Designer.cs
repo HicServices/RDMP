@@ -71,6 +71,7 @@
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.cbSkipCohortBuilderValidationOnCommit = new System.Windows.Forms.CheckBox();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.cbAutoResizeColumns = new System.Windows.Forms.CheckBox();
             this.label12 = new System.Windows.Forms.Label();
             this.tbArchiveTriggerTimeout = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
@@ -540,6 +541,7 @@
             // 
             // groupBox7
             // 
+            this.groupBox7.Controls.Add(this.cbAutoResizeColumns);
             this.groupBox7.Controls.Add(this.label12);
             this.groupBox7.Controls.Add(this.tbArchiveTriggerTimeout);
             this.groupBox7.Controls.Add(this.label13);
@@ -561,10 +563,22 @@
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Miscellaneous";
             // 
+            // cbAutoResizeColumns
+            // 
+            this.cbAutoResizeColumns.AutoSize = true;
+            this.cbAutoResizeColumns.Location = new System.Drawing.Point(7, 45);
+            this.cbAutoResizeColumns.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.cbAutoResizeColumns.Name = "cbAutoResizeColumns";
+            this.cbAutoResizeColumns.Size = new System.Drawing.Size(138, 19);
+            this.cbAutoResizeColumns.TabIndex = 25;
+            this.cbAutoResizeColumns.Text = "Auto Resize Columns";
+            this.cbAutoResizeColumns.UseVisualStyleBackColor = true;
+            this.cbAutoResizeColumns.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
+            // 
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(260, 101);
+            this.label12.Location = new System.Drawing.Point(263, 101);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(50, 15);
             this.label12.TabIndex = 25;
@@ -593,7 +607,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(260, 156);
+            this.label11.Location = new System.Drawing.Point(263, 156);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(73, 15);
             this.label11.TabIndex = 22;
@@ -603,7 +617,7 @@
             // 
             this.tbTooltipAppearDelay.Location = new System.Drawing.Point(153, 153);
             this.tbTooltipAppearDelay.Name = "tbTooltipAppearDelay";
-            this.tbTooltipAppearDelay.Size = new System.Drawing.Size(100, 23);
+            this.tbTooltipAppearDelay.Size = new System.Drawing.Size(110, 23);
             this.tbTooltipAppearDelay.TabIndex = 21;
             this.tbTooltipAppearDelay.TextChanged += new System.EventHandler(this.tbTooltipAppearDelay_TextChanged);
             // 
@@ -619,7 +633,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(260, 72);
+            this.label9.Location = new System.Drawing.Point(263, 72);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(50, 15);
             this.label9.TabIndex = 19;
@@ -747,5 +761,6 @@
         private System.Windows.Forms.GroupBox groupBox8;
         private System.Windows.Forms.CheckBox cbStrictValidationForCohortBuilderContainers;
         private System.Windows.Forms.CheckBox cbSkipCohortBuilderValidationOnCommit;
+        private System.Windows.Forms.CheckBox cbAutoResizeColumns;
     }
 }
