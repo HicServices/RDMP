@@ -98,7 +98,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
 
             var sourceDb = sourceSyntax.GetRuntimeName(extractableCohortSource.Database);
             var sourceTable = sourceSyntax.GetRuntimeName(extractableCohortSource.TableName);
-            var destinationTable = GetTableName();
+            var destinationTable = GetTableName() ?? sourceTable;
             var sourcePrivateId = sourceSyntax.GetRuntimeName(extractableCohort.GetPrivateIdentifier());
             var sourceReleaseId = sourceSyntax.GetRuntimeName(extractableCohort.GetReleaseIdentifier());
             var sourceCohortDefinitionId = sourceSyntax.GetRuntimeName(extractableCohortSource.DefinitionTableForeignKeyField);
@@ -248,6 +248,9 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "'" + _tempDb + "' contains a table called '" + tbl + "' and DropExistingCohortTableIfExists is false"));
                 }
             }
+
+            // ensures the uploaded table has the correct name
+            cohortDataTable.TableName = tbl.GetRuntimeName();
 
             var destination = new DataTableUploadDestination();
             destination.PreInitialize(_tempDb, listener);
