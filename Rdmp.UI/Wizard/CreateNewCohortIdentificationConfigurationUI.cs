@@ -26,6 +26,9 @@ namespace Rdmp.UI.Wizard
     /// </summary>
     public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
     {
+        private Size _smallSize = new Size(755, 140);
+        private Size _bigSize = new Size(1368, 876);
+
         public CohortIdentificationConfiguration CohortIdentificationCriteriaCreatedIfAny { get;private set; }
 
         public CreateNewCohortIdentificationConfigurationUI(IActivateItems activator):base(activator)
@@ -40,20 +43,7 @@ namespace Rdmp.UI.Wizard
             setOperationInclude.SetupFor(Activator, true);
             setOperationExclude.SetupFor(Activator, false);
 
-            taskDescriptionLabel.SetupFor(new Core.CommandExecution.DialogArgs() { TaskDescription = "Enter a name for the Cohort Builder Query" });
-        }
-
-
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
-
-            /*var mid = lblInclusionCriteria.Right + ((lblExclusionCriteria.Left - lblInclusionCriteria.Right) * 0.888f);
-
-            var top = Math.Max(lblExclusionCriteria.Top, lblInclusionCriteria.Top);
-
-            e.Graphics.DrawLine(Pens.Black, mid, top, mid, top + 200);*/
+            this.Size = _smallSize;
         }
 
         private void CheckBoxChanged(object sender, EventArgs e)
@@ -167,11 +157,6 @@ namespace Rdmp.UI.Wizard
             return cic;
         }
 
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void CreateNewCohortIdentificationConfigurationUI_Load(object sender, EventArgs e)
         {
             tbName.Focus();
@@ -185,10 +170,20 @@ namespace Rdmp.UI.Wizard
             }
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void cbUseWizard_CheckedChanged(object sender, EventArgs e)
         {
+            pnlWizard.Visible = cbUseWizard.Checked;
             pnlWizard.Enabled = cbUseWizard.Checked;
-            this.OnSizeChanged(e);
+
+            if (cbUseWizard.Checked)
+                this.Size = _bigSize;
+            else
+                this.Size = _smallSize;
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }
