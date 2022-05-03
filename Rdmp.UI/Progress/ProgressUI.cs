@@ -247,6 +247,8 @@ namespace Rdmp.UI.Progress
                         }
 
                     ProgressQueue.Remove(message.Key);
+
+                    AutoReizeColumns();
                 }
             }
 
@@ -256,12 +258,23 @@ namespace Rdmp.UI.Progress
                 {
                     olvProgressEvents.AddObjects(NotificationQueue);
                     NotificationQueue.Clear();
+
+                    AutoReizeColumns();
                 }
             }
 
             olvProgressEvents.Sort();
         }
 
+        private void AutoReizeColumns()
+        {
+            if (UserSettings.AutoResizeColumns)
+            {
+                olvSender.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                olvMessage.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                olvMessage.Width = olvMessage.Width + 15; //add room for icon
+            }
+        }
 
         private bool HandleFloodOfMessagesFromJob(object sender, string job,int progressAmount,string label)
         {
