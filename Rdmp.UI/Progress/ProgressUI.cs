@@ -145,6 +145,7 @@ namespace Rdmp.UI.Progress
             progressBar1.Value = 0;
 
             lblCrashed.Visible = false;
+            lblSuccess.Visible = false;
         }
         
         Dictionary<object, HashSet<string>> JobsreceivedFromSender = new Dictionary<object, HashSet<string>>();
@@ -253,6 +254,8 @@ namespace Rdmp.UI.Progress
                 }
             }
         }
+
+
         private bool HandleFloodOfMessagesFromJob(object sender, string job,int progressAmount,string label)
         {
             
@@ -412,7 +415,12 @@ namespace Rdmp.UI.Progress
             lblCrashed.BringToFront();
         }
 
-        
+        internal void SetSuccess()
+        {
+            lblSuccess.Visible = true;
+            lblSuccess.BringToFront();
+        }
+
         /// <summary>
         /// Returns the worst message recorded in the UI
         /// </summary>

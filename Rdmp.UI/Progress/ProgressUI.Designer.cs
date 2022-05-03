@@ -32,6 +32,7 @@ namespace Rdmp.UI.Progress
         {
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.lblSuccess = new System.Windows.Forms.Label();
             this.lblCrashed = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label1 = new System.Windows.Forms.Label();
@@ -87,6 +88,7 @@ namespace Rdmp.UI.Progress
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.lblSuccess);
             this.splitContainer1.Panel1.Controls.Add(this.lblCrashed);
             this.splitContainer1.Panel1.Controls.Add(this.progressBar1);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
@@ -101,6 +103,22 @@ namespace Rdmp.UI.Progress
             this.splitContainer1.SplitterDistance = 214;
             this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 3;
+            // 
+            // lblSuccess
+            // 
+            this.lblSuccess.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblSuccess.BackColor = System.Drawing.Color.ForestGreen;
+            this.lblSuccess.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.lblSuccess.ForeColor = System.Drawing.Color.LemonChiffon;
+            this.lblSuccess.Location = new System.Drawing.Point(0, 191);
+            this.lblSuccess.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblSuccess.Name = "lblSuccess";
+            this.lblSuccess.Size = new System.Drawing.Size(1027, 20);
+            this.lblSuccess.TabIndex = 8;
+            this.lblSuccess.Text = "Success";
+            this.lblSuccess.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblSuccess.Visible = false;
             // 
             // lblCrashed
             // 
@@ -152,7 +170,6 @@ namespace Rdmp.UI.Progress
             this.olvProgressEvents.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvProgressEvents.Dock = System.Windows.Forms.DockStyle.Fill;
             this.olvProgressEvents.FullRowSelect = true;
-            this.olvProgressEvents.HideSelection = false;
             this.olvProgressEvents.Location = new System.Drawing.Point(0, 15);
             this.olvProgressEvents.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.olvProgressEvents.Name = "olvProgressEvents";
@@ -320,5 +337,6 @@ namespace Rdmp.UI.Progress
         private System.Windows.Forms.ToolStripLabel toolStripLabel3;
         private System.Windows.Forms.ToolStripComboBox ddGroupBy;
         private System.Windows.Forms.Label lblCrashed;
+        private System.Windows.Forms.Label lblSuccess;
     }
 }

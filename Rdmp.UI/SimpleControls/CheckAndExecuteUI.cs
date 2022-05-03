@@ -195,7 +195,13 @@ namespace Rdmp.UI.SimpleControls
                     loadProgressUI1.ShowRunning(false);
 
                     if (exitCode != 0)
+                    {
                         loadProgressUI1.SetFatal();
+                    }
+                    else
+                    {
+                        loadProgressUI1.SetSuccess();
+                    }
 
                     if(ExecutionFinished != null)
                         ExecutionFinished(this, new ExecutionEventArgs(exitCode));

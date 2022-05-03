@@ -227,24 +227,29 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
                 btnExecute.Text = "Execute"; //make it so user can execute again
 
-                if(UserSettings.ShowPipelineCompletedPopup)
+                if (success)
                 {
-                    if(success)
-                        WideMessageBox.Show("Pipeline Completed","Pipeline execution completed",WideMessageBoxTheme.Help);
-                    else
+                    if (UserSettings.ShowPipelineCompletedPopup)
                     {
-                        var worst = progressUI1.GetWorst();
+                        WideMessageBox.Show("Pipeline Completed", "Pipeline execution completed", WideMessageBoxTheme.Help);
 
-                        if(UserSettings.ShowPipelineCompletedPopup)
-                            ExceptionViewer.Show("Pipeline crashed",exception ?? worst?.Exception);
+                    }
+                    progressUI1.SetSuccess();
+                }
+                else
+                {
+                    var worst = progressUI1.GetWorst();
+                    progressUI1.SetFatal();
+
+                    if (UserSettings.ShowPipelineCompletedPopup)
+                    {
+                        ExceptionViewer.Show("Pipeline crashed", exception ?? worst?.Exception);
                     }
                 }
 
             }, TaskScheduler.FromCurrentSynchronizationContext());
 
             t.Start();
-            
-           
         }
 
         
