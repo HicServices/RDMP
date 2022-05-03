@@ -32,6 +32,7 @@ namespace Rdmp.UI.Progress
         {
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.lblSuccess = new System.Windows.Forms.Label();
             this.lblCrashed = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label1 = new System.Windows.Forms.Label();
@@ -87,10 +88,11 @@ namespace Rdmp.UI.Progress
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.lblCrashed);
-            this.splitContainer1.Panel1.Controls.Add(this.progressBar1);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
             this.splitContainer1.Panel1.Controls.Add(this.dataGridView1);
+            this.splitContainer1.Panel1.Controls.Add(this.lblSuccess);
+            this.splitContainer1.Panel1.Controls.Add(this.lblCrashed);
+            this.splitContainer1.Panel1.Controls.Add(this.progressBar1);
             // 
             // splitContainer1.Panel2
             // 
@@ -102,19 +104,37 @@ namespace Rdmp.UI.Progress
             this.splitContainer1.SplitterWidth = 5;
             this.splitContainer1.TabIndex = 3;
             // 
+            // lblSuccess
+            // 
+            this.lblSuccess.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblSuccess.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(169)))), ((int)(((byte)(43)))));
+            this.lblSuccess.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lblSuccess.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.lblSuccess.ForeColor = System.Drawing.Color.White;
+            this.lblSuccess.Location = new System.Drawing.Point(0, 191);
+            this.lblSuccess.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblSuccess.Name = "lblSuccess";
+            this.lblSuccess.Size = new System.Drawing.Size(1027, 20);
+            this.lblSuccess.TabIndex = 8;
+            this.lblSuccess.Text = "Success";
+            this.lblSuccess.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblSuccess.Visible = false;
+            // 
             // lblCrashed
             // 
             this.lblCrashed.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblCrashed.BackColor = System.Drawing.Color.IndianRed;
+            this.lblCrashed.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(206)))), ((int)(((byte)(10)))), ((int)(((byte)(36)))));
+            this.lblCrashed.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lblCrashed.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.lblCrashed.ForeColor = System.Drawing.Color.Orange;
+            this.lblCrashed.ForeColor = System.Drawing.Color.White;
             this.lblCrashed.Location = new System.Drawing.Point(0, 191);
             this.lblCrashed.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblCrashed.Name = "lblCrashed";
             this.lblCrashed.Size = new System.Drawing.Size(1027, 20);
             this.lblCrashed.TabIndex = 7;
-            this.lblCrashed.Text = "Crashed";
+            this.lblCrashed.Text = "Failed";
             this.lblCrashed.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblCrashed.Visible = false;
             // 
@@ -122,10 +142,10 @@ namespace Rdmp.UI.Progress
             // 
             this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar1.Location = new System.Drawing.Point(4, 193);
+            this.progressBar1.Location = new System.Drawing.Point(0, 191);
             this.progressBar1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(1020, 17);
+            this.progressBar1.Size = new System.Drawing.Size(1027, 20);
             this.progressBar1.TabIndex = 4;
             // 
             // label1
@@ -152,7 +172,6 @@ namespace Rdmp.UI.Progress
             this.olvProgressEvents.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvProgressEvents.Dock = System.Windows.Forms.DockStyle.Fill;
             this.olvProgressEvents.FullRowSelect = true;
-            this.olvProgressEvents.HideSelection = false;
             this.olvProgressEvents.Location = new System.Drawing.Point(0, 15);
             this.olvProgressEvents.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.olvProgressEvents.Name = "olvProgressEvents";
@@ -320,5 +339,6 @@ namespace Rdmp.UI.Progress
         private System.Windows.Forms.ToolStripLabel toolStripLabel3;
         private System.Windows.Forms.ToolStripComboBox ddGroupBy;
         private System.Windows.Forms.Label lblCrashed;
+        private System.Windows.Forms.Label lblSuccess;
     }
 }
