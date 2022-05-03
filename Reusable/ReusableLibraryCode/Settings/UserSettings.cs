@@ -270,6 +270,15 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("DebugPerformance", value); } }
 
         /// <summary>
+        /// <para>Automatically resize columns in the RDMP user interface with fit contents.</para>
+        /// <para>Can be disabled if problems arrise with column content or header visibility</para>
+        /// </summary>
+        public static bool AutoResizeColumns {
+            get { return AppSettings.GetValueOrDefault("AutoResizeColumns", true); }
+            set { AppSettings.AddOrUpdateValue("AutoResizeColumns", value); } }
+        
+
+        /// <summary>
         /// Show a popup confirmation dialog at the end of a pipeline completing execution
         /// </summary>
         public static bool ShowPipelineCompletedPopup { 

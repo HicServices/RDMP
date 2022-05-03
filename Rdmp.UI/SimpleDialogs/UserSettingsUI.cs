@@ -84,6 +84,7 @@ namespace Rdmp.UI.SimpleDialogs
             cbStrictValidationForCohortBuilderContainers.Checked = UserSettings.StrictValidationForCohortBuilderContainers;
             cbDoubleClickToExpand.Checked = UserSettings.DoubleClickToExpand;
             cbDebugPerformance.Checked = UserSettings.DebugPerformance;
+            cbAutoResizeColumns.Checked = UserSettings.AutoResizeColumns;
             cbShowPipelineCompletedPopup.Checked = UserSettings.ShowPipelineCompletedPopup;
             cbSkipCohortBuilderValidationOnCommit.Checked = UserSettings.SkipCohortBuilderValidationOnCommit;
             cbHideEmptyTableLoadRunAudits.Checked = UserSettings.HideEmptyTableLoadRunAudits;
@@ -106,6 +107,7 @@ namespace Rdmp.UI.SimpleDialogs
             AddTooltip(cbStrictValidationForCohortBuilderContainers, nameof(UserSettings.StrictValidationForCohortBuilderContainers));
             AddTooltip(cbDoubleClickToExpand,nameof(UserSettings.DoubleClickToExpand));
             AddTooltip(cbDebugPerformance,nameof(UserSettings.DebugPerformance));
+            AddTooltip(cbAutoResizeColumns, nameof(UserSettings.AutoResizeColumns));
             AddTooltip(cbShowPipelineCompletedPopup,nameof(UserSettings.ShowPipelineCompletedPopup));
             AddTooltip(cbSkipCohortBuilderValidationOnCommit, nameof(UserSettings.SkipCohortBuilderValidationOnCommit));
             AddTooltip(cbHideEmptyTableLoadRunAudits,nameof(UserSettings.HideEmptyTableLoadRunAudits));
@@ -217,8 +219,11 @@ namespace Rdmp.UI.SimpleDialogs
 
             if(cb == cbDebugPerformance)
                 UserSettings.DebugPerformance = cb.Checked;
-                        
-            if(cb == cbShowPipelineCompletedPopup)
+
+            if (cb == cbAutoResizeColumns)
+                UserSettings.AutoResizeColumns = cb.Checked;
+
+            if (cb == cbShowPipelineCompletedPopup)
                 UserSettings.ShowPipelineCompletedPopup = cb.Checked;
 
             if (cb == cbSkipCohortBuilderValidationOnCommit)
