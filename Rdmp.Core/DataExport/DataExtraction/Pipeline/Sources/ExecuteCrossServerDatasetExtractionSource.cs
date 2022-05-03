@@ -252,6 +252,17 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
             // ensures the uploaded table has the correct name
             cohortDataTable.TableName = tbl.GetRuntimeName();
 
+            try
+            {
+                // attempt to set primary key of the private identifier to improve
+                // query performance. e.g. chi
+                cohortDataTable.PrimaryKey = new[] { cohortDataTable.Columns[Request.ExtractableCohort.GetPrivateIdentifier(true)]};
+            }
+            catch (Exception ex)
+            {
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Failed to set primary key on cross server copied cohort.  Query performance may be slow",ex));
+            }
+
             var destination = new DataTableUploadDestination();
             destination.PreInitialize(_tempDb, listener);
             destination.ProcessPipelineData(cohortDataTable, listener, cancellationToken);
