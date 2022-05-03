@@ -243,7 +243,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
                     if (UserSettings.ShowPipelineCompletedPopup)
                     {
-                        ExceptionViewer.Show("Pipeline crashed", exception ?? worst?.Exception);
+                        ExceptionViewer.Show("Pipeline Failed", exception ?? worst?.Exception);
                     }
                 }
 
