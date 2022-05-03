@@ -605,8 +605,7 @@ where
         /// <inheritdoc/>
         public void InjectKnown(IExternalCohortDefinitionData instance)
         {
-            if (instance == null)
-                _broken = true;
+            _broken = instance == null;
 
             _cacheData = new Lazy<IExternalCohortDefinitionData>(() => instance);
         }
@@ -621,6 +620,7 @@ where
         {
             _cacheData = new Lazy<IExternalCohortDefinitionData>(()=>GetExternalData());
             _knownExternalCohortTable = new Lazy<IExternalCohortTable>(()=>Repository.GetObjectByID<ExternalCohortTable>(ExternalCohortTable_ID));
+            _broken = false;
         }
 
         /// <inheritdoc/>
