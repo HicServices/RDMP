@@ -368,9 +368,11 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
             var context = contextFactory.Create(PipelineUsage.LogsToTableLoadInfo | PipelineUsage.FixedDestination);
 
             var engine = new DataFlowPipelineEngine<DataTable>(context, source, destination, job);
-            
+
+            var rawSyntax = _dbInfo.Server.GetQuerySyntaxHelper();
+
             ITableLoadInfo loadInfo = job.DataLoadInfo.CreateTableLoadInfo("Truncate RAW table " + RAWTableName,
-                $"{syntax.EnsureFullyQualified(_dbInfo.GetRuntimeName(), null, RAWTableName)} ({_dbInfo.Server.Name})",
+                $"{rawSyntax.EnsureFullyQualified(_dbInfo.GetRuntimeName(), null, RAWTableName)} ({_dbInfo.Server.Name})",
                 new []
                 {
                     new DataSource(
