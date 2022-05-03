@@ -15,6 +15,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.Collections;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Settings;
 using Timer = System.Windows.Forms.Timer;
 
 namespace Rdmp.UI.ChecksUI
@@ -68,9 +69,12 @@ namespace Rdmp.UI.ChecksUI
             _timer.Tick += _timer_Tick;
             _timer.Start();
 
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvChecks, olvMessage, new Guid("5d62580d-2bee-420b-ab43-f40317769514"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvChecks, olvResult, new Guid("18b26ae1-c35d-4e73-9dc5-88f15910c1f9"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvChecks, olvEventDate, new Guid("28c13822-b4c0-4fa5-b20d-af612b076716"));
+            if (!UserSettings.AutoResizeColumns)
+            {
+                RDMPCollectionCommonFunctionality.SetupColumnTracking(olvChecks, olvMessage, new Guid("5d62580d-2bee-420b-ab43-f40317769514"));
+                RDMPCollectionCommonFunctionality.SetupColumnTracking(olvChecks, olvResult, new Guid("18b26ae1-c35d-4e73-9dc5-88f15910c1f9"));
+                RDMPCollectionCommonFunctionality.SetupColumnTracking(olvChecks, olvEventDate, new Guid("28c13822-b4c0-4fa5-b20d-af612b076716"));
+            }
         }
 
         private void _timer_Tick(object sender, EventArgs e)
@@ -87,6 +91,18 @@ namespace Rdmp.UI.ChecksUI
                 olvChecks.ClearObjects();
                 olvChecks.AddObjects(_results);
                 outOfDate = false;
+
+                AutoResizeColumns();
+            }
+        }
+
+        private void AutoResizeColumns()
+        {
+            if(UserSettings.AutoResizeColumns)
+            {
+                olvResult.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                olvEventDate.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+                olvMessage.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
             }
         }
 
