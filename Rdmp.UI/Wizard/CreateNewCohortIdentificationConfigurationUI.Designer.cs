@@ -44,10 +44,14 @@
             this.exclusionCriteria1 = new Rdmp.UI.Wizard.SimpleCohortSetUI();
             this.exclusionCriteria2 = new Rdmp.UI.Wizard.SimpleCohortSetUI();
             this.cbUseWizard = new System.Windows.Forms.CheckBox();
-            this.taskDescriptionLabel = new Rdmp.UI.SimpleDialogs.TaskDescriptionLabel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.btnCancel = new System.Windows.Forms.Button();
             this.pnlWizard.SuspendLayout();
             this.panel2.SuspendLayout();
+            this.panel1.SuspendLayout();
+            this.panel3.SuspendLayout();
             this.SuspendLayout();
             // 
             // cbInclusion2
@@ -86,12 +90,12 @@
             // btnGo
             // 
             this.btnGo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGo.Location = new System.Drawing.Point(1173, 814);
+            this.btnGo.Location = new System.Drawing.Point(1194, 5);
             this.btnGo.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.btnGo.Name = "btnGo";
             this.btnGo.Size = new System.Drawing.Size(145, 27);
             this.btnGo.TabIndex = 19;
-            this.btnGo.Text = "Create Configuration ";
+            this.btnGo.Text = "OK";
             this.btnGo.UseVisualStyleBackColor = true;
             this.btnGo.Click += new System.EventHandler(this.btnGo_Click);
             // 
@@ -113,13 +117,9 @@
             this.label1.Size = new System.Drawing.Size(42, 15);
             this.label1.TabIndex = 21;
             this.label1.Text = "Name:";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // pnlWizard
             // 
-            this.pnlWizard.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlWizard.AutoScroll = true;
             this.pnlWizard.Controls.Add(this.label2);
             this.pnlWizard.Controls.Add(this.cbInclusion2);
@@ -132,11 +132,12 @@
             this.pnlWizard.Controls.Add(this.setOperationExclude);
             this.pnlWizard.Controls.Add(this.exclusionCriteria1);
             this.pnlWizard.Controls.Add(this.exclusionCriteria2);
+            this.pnlWizard.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlWizard.Enabled = false;
-            this.pnlWizard.Location = new System.Drawing.Point(6, 91);
+            this.pnlWizard.Location = new System.Drawing.Point(0, 56);
             this.pnlWizard.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.pnlWizard.Name = "pnlWizard";
-            this.pnlWizard.Size = new System.Drawing.Size(1349, 722);
+            this.pnlWizard.Size = new System.Drawing.Size(1352, 718);
             this.pnlWizard.TabIndex = 22;
             // 
             // label2
@@ -221,46 +222,69 @@
             this.cbUseWizard.TabIndex = 24;
             this.cbUseWizard.Text = "Use Cohort Builder Wizard";
             this.cbUseWizard.UseVisualStyleBackColor = true;
-            this.cbUseWizard.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
-            // 
-            // taskDescriptionLabel
-            // 
-            this.taskDescriptionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.taskDescriptionLabel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.taskDescriptionLabel.Location = new System.Drawing.Point(2, 2);
-            this.taskDescriptionLabel.Name = "taskDescriptionLabel";
-            this.taskDescriptionLabel.Size = new System.Drawing.Size(734, 39);
-            this.taskDescriptionLabel.TabIndex = 27;
+            this.cbUseWizard.CheckedChanged += new System.EventHandler(this.cbUseWizard_CheckedChanged);
             // 
             // panel2
             // 
             this.panel2.Controls.Add(this.label1);
             this.panel2.Controls.Add(this.tbName);
             this.panel2.Controls.Add(this.cbUseWizard);
-            this.panel2.Location = new System.Drawing.Point(6, 57);
+            this.panel2.Location = new System.Drawing.Point(7, 12);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(730, 28);
             this.panel2.TabIndex = 26;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.panel2);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(1352, 56);
+            this.panel1.TabIndex = 28;
+            // 
+            // panel3
+            // 
+            this.panel3.Controls.Add(this.btnCancel);
+            this.panel3.Controls.Add(this.btnGo);
+            this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel3.Location = new System.Drawing.Point(0, 774);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(1352, 44);
+            this.panel3.TabIndex = 29;
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.Location = new System.Drawing.Point(1041, 5);
+            this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(145, 27);
+            this.btnCancel.TabIndex = 20;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // CreateNewCohortIdentificationConfigurationUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.ClientSize = new System.Drawing.Size(1355, 853);
-            this.Controls.Add(this.btnGo);
+            this.ClientSize = new System.Drawing.Size(1352, 818);
             this.Controls.Add(this.pnlWizard);
-            this.Controls.Add(this.panel2);
-            this.Controls.Add(this.taskDescriptionLabel);
+            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.panel3);
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.Name = "CreateNewCohortIdentificationConfigurationUI";
+            this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.Text = "New Cohort Builder Query";
             this.Load += new System.EventHandler(this.CreateNewCohortIdentificationConfigurationUI_Load);
             this.pnlWizard.ResumeLayout(false);
             this.pnlWizard.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -284,6 +308,8 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox cbUseWizard;
         private System.Windows.Forms.Panel panel2;
-        private SimpleDialogs.TaskDescriptionLabel taskDescriptionLabel;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Button btnCancel;
     }
 }
