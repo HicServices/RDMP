@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added abilty to skip CIC validation checks when opening the commit cohort dialogue - [#1118](https://github.com/HicServices/RDMP/issues/1118)
 - Ability to change cohort table name when using ExecuteCrossServerDatasetExtractionSource - [#1099](https://github.com/HicServices/RDMP/issues/1099)
 - Added Success bar to ProgressUI
+- Added new user setting Auto Resize Columns which will automatically resize columns within the RDMP interface where it makes sense to. E.g. the execute pipeline window and "checks" ui. More changes to be implemneted over time.
 
 ### Changed
 
