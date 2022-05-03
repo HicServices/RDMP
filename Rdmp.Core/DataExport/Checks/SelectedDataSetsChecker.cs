@@ -165,9 +165,8 @@ namespace Rdmp.Core.DataExport.Checks
             //Make sure cohort and dataset are on same server before checking (can still get around this at runtime by using ExecuteCrossServerDatasetExtractionSource)
             if (!cohortServer.Server.Name.Equals(server.Name,StringComparison.CurrentCultureIgnoreCase) || !cohortServer.Server.DatabaseType.Equals(server.DatabaseType))
             {
-                notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Cohort is on server '{cohortServer.Server.Name}' ({cohortServer.Server.DatabaseType}) but dataset '{request.DatasetBundle?.DataSet}' is on '{server.Name}' ({server.DatabaseType})"
-                    , CheckResult.Warning));
+                notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.CohortAndExtractableDatasetsAreOnDifferentServers,
+                    cohortServer.Server.Name, cohortServer.Server.DatabaseType, request.DatasetBundle?.DataSet, server.Name, server.DatabaseType));
             }
             else
             {

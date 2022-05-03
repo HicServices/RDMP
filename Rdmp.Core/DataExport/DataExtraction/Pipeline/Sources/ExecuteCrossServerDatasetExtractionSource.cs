@@ -14,9 +14,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
-using Rdmp.Core.QueryBuilding;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
@@ -40,6 +38,9 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
         [DemandsInitialization("Determines behaviour if TemporaryDatabaseName already contains a Cohort table.  True to drop it, False to crash", defaultValue: true)]
         public bool DropExistingCohortTableIfExists { get; set; }
 
+        [DemandsInitialization("Naming pattern for the temporary cohort database table created on the data server(s) for extraction. Use $g for a guid.")]
+        public string TemporaryTableName { get; set; } = "$g";
+
         public override DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             SetServer();
@@ -61,6 +62,9 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
         /// True if we decided not to move the cohort after all (e.g. if one or more datasets being extracted are already on the same server).
         /// </summary>
         private bool _doNotMigrate;
+
+        private string _tablename = null;
+        private object _tableName = new object();
 
         public override string HackExtractionSQL(string sql, IDataLoadEventListener listener)
         {
@@ -94,19 +98,20 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
 
             var sourceDb = sourceSyntax.GetRuntimeName(extractableCohortSource.Database);
             var sourceTable = sourceSyntax.GetRuntimeName(extractableCohortSource.TableName);
+            var destinationTable = GetTableName();
             var sourcePrivateId = sourceSyntax.GetRuntimeName(extractableCohort.GetPrivateIdentifier());
             var sourceReleaseId = sourceSyntax.GetRuntimeName(extractableCohort.GetReleaseIdentifier());
             var sourceCohortDefinitionId = sourceSyntax.GetRuntimeName(extractableCohortSource.DefinitionTableForeignKeyField);
 
             //Swaps the given entity for the same entity but in _tempDb
-            AddReplacement(replacementStrings, sourceDb, sourceTable, sourcePrivateId, sourceSyntax, destinationSyntax);
+            AddReplacement(replacementStrings, sourceDb, sourceTable, destinationTable, sourcePrivateId, sourceSyntax, destinationSyntax);
 
             // If it is not an identifiable extraction (private and release are different)
             if(!string.Equals(sourcePrivateId,sourceReleaseId))
-                AddReplacement(replacementStrings, sourceDb, sourceTable, sourceReleaseId, sourceSyntax, destinationSyntax);
+                AddReplacement(replacementStrings, sourceDb, sourceTable, destinationTable, sourceReleaseId, sourceSyntax, destinationSyntax);
 
-            AddReplacement(replacementStrings, sourceDb, sourceTable, sourceCohortDefinitionId, sourceSyntax, destinationSyntax);
-            AddReplacement(replacementStrings, sourceDb, sourceTable, sourceSyntax, destinationSyntax);
+            AddReplacement(replacementStrings, sourceDb, sourceTable, destinationTable, sourceCohortDefinitionId, sourceSyntax, destinationSyntax);
+            AddReplacement(replacementStrings, sourceDb, sourceTable, destinationTable, sourceSyntax, destinationSyntax);
             
             foreach (KeyValuePair<string, string> r in replacementStrings)
             {
@@ -124,18 +129,34 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
             return sql;
         }
 
-        private void AddReplacement(Dictionary<string, string> replacementStrings, string sourceDb, string sourceTable, string col, IQuerySyntaxHelper sourceSyntax, IQuerySyntaxHelper destinationSyntax)
+        private string GetTableName()
+        {
+            lock(_tableName)
+            {
+                if (_tablename != null)
+                    return _tablename;
+
+                if (string.IsNullOrWhiteSpace(TemporaryTableName))
+                    return null;
+
+                var guid = Guid.NewGuid();
+
+                return _tablename = TemporaryTableName.Replace("$g", guid.ToString("N"));
+            }
+        }
+
+        private void AddReplacement(Dictionary<string, string> replacementStrings, string sourceDb, string sourceTable,string destinationTable, string col, IQuerySyntaxHelper sourceSyntax, IQuerySyntaxHelper destinationSyntax)
         {
             replacementStrings.Add(
          sourceSyntax.EnsureFullyQualified(sourceDb, null, sourceTable, col),
-         destinationSyntax.EnsureFullyQualified(_tempDb.GetRuntimeName(), null, sourceTable, col)
+         destinationSyntax.EnsureFullyQualified(_tempDb.GetRuntimeName(), null, destinationTable, col)
          );
         }
-        private void AddReplacement(Dictionary<string, string> replacementStrings, string sourceDb, string sourceTable, IQuerySyntaxHelper sourceSyntax, IQuerySyntaxHelper destinationSyntax)
+        private void AddReplacement(Dictionary<string, string> replacementStrings, string sourceDb, string sourceTable, string destinationTable, IQuerySyntaxHelper sourceSyntax, IQuerySyntaxHelper destinationSyntax)
         {
             replacementStrings.Add(
          sourceSyntax.EnsureFullyQualified(sourceDb, null, sourceTable),
-         destinationSyntax.EnsureFullyQualified(_tempDb.GetRuntimeName(), null, sourceTable)
+         destinationSyntax.EnsureFullyQualified(_tempDb.GetRuntimeName(), null, destinationTable)
          );
         }
 
@@ -200,7 +221,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
                     throw new Exception("Database '" + _tempDb + "' did not exist on server '" + _server + "' and CreateAndDestroyTemporaryDatabaseIfNotExists was false");
   
 
-            var tbl = _tempDb.ExpectTable(cohortDataTable.TableName);
+            var tbl = _tempDb.ExpectTable(GetTableName() ?? cohortDataTable.TableName);
             
             if(tbl.Exists())
             {
@@ -264,7 +285,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
 
         public override void Check(ICheckNotifier notifier)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Checking not supported for Cross Server extraction since it involves shipping off the cohort into tempdb.",CheckResult.Warning));
+            
         }
 
         public override DataTable TryGetPreview()

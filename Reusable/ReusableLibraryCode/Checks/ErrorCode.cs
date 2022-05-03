@@ -14,6 +14,7 @@ namespace ReusableLibraryCode.Checks
     /// </summary>
     public class ErrorCode
     {
+
         /// <summary>
         /// A fixed code for uniquely identifying this error type
         /// </summary>
