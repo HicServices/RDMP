@@ -94,8 +94,6 @@ namespace Rdmp.Core.Curation.Data
         {
             var children = GetAllFiltersIncludingInSubContainersRecursively();
 
-            MakeIntoAnOrphan();
-
             //then delete any children it has itself
             foreach (IContainer subContainer in this.GetAllSubContainersRecursively())
                 if(subContainer.Exists())
@@ -108,6 +106,9 @@ namespace Rdmp.Core.Curation.Data
 
             // then delete the actual component
             base.DeleteInDatabase();
+
+            // remove any lingering references
+            MakeIntoAnOrphan();
         }
 
         /// <inheritdoc/>
