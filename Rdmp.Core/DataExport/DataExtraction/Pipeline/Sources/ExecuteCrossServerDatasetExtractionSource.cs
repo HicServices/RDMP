@@ -38,8 +38,8 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
         [DemandsInitialization("Determines behaviour if TemporaryDatabaseName already contains a Cohort table.  True to drop it, False to crash", defaultValue: true)]
         public bool DropExistingCohortTableIfExists { get; set; }
 
-        [DemandsInitialization("Naming pattern for the temporary cohort database table created on the data server(s) for extraction. Use $g for a guid.")]
-        public string TemporaryTableName { get; set; } = "$g";
+        [DemandsInitialization("Naming pattern for the temporary cohort database table created on the data server(s) for extraction. Use $g for a guid.",defaultValue: "$g")]
+        public string TemporaryTableName { get; set; }
 
         public override DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
