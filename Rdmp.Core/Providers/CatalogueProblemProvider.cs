@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -121,7 +122,7 @@ namespace Rdmp.Core.Providers
                 if (!_usedJoinables.Contains(aggregateConfiguration.JoinableCohortAggregateConfiguration.ID))
                     return "Patient Index Table is not joined to any cohort sets";
 
-            if(!aggregateConfiguration.AggregateDimensions.Any())
+            if(!aggregateConfiguration.Catalogue.IsApiCall() && !aggregateConfiguration.AggregateDimensions.Any())
             {
                 return "Aggregate has no dimensions.  Set an AggregateDimension to specify which column is fetched by the query.";
             }
