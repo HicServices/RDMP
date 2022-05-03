@@ -369,8 +369,10 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
 
             var engine = new DataFlowPipelineEngine<DataTable>(context, source, destination, job);
 
+            var rawSyntax = _dbInfo.Server.GetQuerySyntaxHelper();
+
             ITableLoadInfo loadInfo = job.DataLoadInfo.CreateTableLoadInfo("Truncate RAW table " + RAWTableName,
-                _dbInfo.Server.Name + "." + _dbInfo.GetRuntimeName(),
+                $"{rawSyntax.EnsureFullyQualified(_dbInfo.GetRuntimeName(), null, RAWTableName)} ({_dbInfo.Server.Name})",
                 new []
                 {
                     new DataSource(
