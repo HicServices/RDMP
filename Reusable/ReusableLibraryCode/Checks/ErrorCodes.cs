@@ -26,7 +26,8 @@ namespace ReusableLibraryCode.Checks
         
         public static ErrorCode CouldNotLoadDll = new ErrorCode("R008", "Encountered Bad Assembly loading {0} into memory", CheckResult.Success);
         public static ErrorCode CouldOnlyHalfLoadDll = new ErrorCode("R009", "Loaded {0}/{1} Types from {2}", CheckResult.Success);
-
+        public static ErrorCode CohortAndExtractableDatasetsAreOnDifferentServers = new ErrorCode("R010","Cohort is on server '{0}' ({1}) but dataset '{2}' is on '{3}' ({4})", CheckResult.Warning);
+        
         static ErrorCodes()
         {
             var fields = typeof(ErrorCodes).GetFields(BindingFlags.Public | BindingFlags.Static).Where(p => p.FieldType == typeof(ErrorCode));
@@ -41,7 +42,5 @@ namespace ReusableLibraryCode.Checks
         /// Collection of all known error codes.  Plugins are free to add to these if desired but must do so pre startup
         /// </summary>
         public static List<ErrorCode> KnownCodes = new List<ErrorCode>();
-
-        
     }
 }
