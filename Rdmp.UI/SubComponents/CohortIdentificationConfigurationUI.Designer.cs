@@ -112,6 +112,7 @@ namespace Rdmp.UI.SubComponents
             // 
             this.olvExecute.Sortable = false;
             this.olvExecute.Text = "Execute";
+            this.olvExecute.IsEditable = false;
             // 
             // olvOrder
             // 

@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed being able to drag filters/containers onto API calls in Cohort Builder -[#1101](https://github.com/HicServices/RDMP/issues/1101)
 - Fixed regression in 7.0.10 where calling `public void ClearDefault(PermissableDefaults toDelete)` multiple times caused an Exception
 - Fixed `ExecuteCrossServerDatasetExtractionSource` to work properly with identifiable extractions - [#1097](https://github.com/HicServices/RDMP/issues/1097)
+- Fixed bug in cohort builder where dragging into the Execute button would turn it into an editable dropdown menu [#1098](https://github.com/HicServices/RDMP/issues/1098)
 
 ## [7.0.10] - 2022-04-25
 
