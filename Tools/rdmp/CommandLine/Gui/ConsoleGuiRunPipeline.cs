@@ -72,8 +72,8 @@ namespace Rdmp.Core.CommandLine.Gui
             combobox1.Source = new ListWrapper(_compatiblePipelines);
             combobox1.AddKeyBinding(Key.CursorDown, Command.Expand);
 
-            if (pipeline != null)
-                combobox1.Text = _pipeline.ToString();
+            if (_pipeline != null)
+                combobox1.SelectedItem = combobox1.Source.ToList().IndexOf(_pipeline);
 
             progressDataTable = this._tableView.Table;
             progressDataTable.Columns["Progress"].DataType = typeof(int);
