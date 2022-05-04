@@ -6,6 +6,8 @@
 
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.Cohort;
+using System;
+using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -42,7 +44,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 oldContainer.RemoveChild(_sourceAggregateCommand.Aggregate);
 
             //add  it to the new container
-            _targetCohortAggregateContainer.AddChild(_sourceAggregateCommand.Aggregate,0);
+            _targetCohortAggregateContainer.AddChild(_sourceAggregateCommand.Aggregate);
             
             
             //refresh the entire configuration
