@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Added optional argument to 'ExecuteCommandConfirmLogs' that requires rows were loaded by the DLE to pass
+
 ### Fixed
 
 - Empty cohort builder containers are now treated as disabled by query builder when StrictValidationForCohortBuilderContainers is off [#1131](https://github.com/HicServices/RDMP/issues/1131)
