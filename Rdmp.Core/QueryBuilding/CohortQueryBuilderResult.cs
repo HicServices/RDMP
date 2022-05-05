@@ -21,6 +21,7 @@ using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.QueryCaching.Aggregation;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.QueryBuilding
 {
@@ -262,9 +263,7 @@ namespace Rdmp.Core.QueryBuilding
                 sql += Environment.NewLine + TabIn(")",tabs) + Environment.NewLine ;
 
             return sql;
-        }
-
-        
+        }      
 
         /// <summary>
         /// Objects are enabled if they do not support disabling (<see cref="IDisableable"/>) or are <see cref="IDisableable.IsDisabled"/> = false
@@ -277,6 +276,14 @@ namespace Rdmp.Core.QueryBuilding
             //if a parent is disabled
             if (parentDisabled.HasValue && parentDisabled.Value)
                 return false;
+
+            // skip empty containers unless strict validation is enabled
+            if(arg is CohortAggregateContainer container &&
+                !UserSettings.StrictValidationForCohortBuilderContainers)
+            {
+                if (!container.GetOrderedContents().Any())
+                    return false;
+            }
 
             //or you yourself are disabled
             var dis = arg as IDisableable;
