@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Fixed
+
+- Empty cohort builder containers are now treated as disabled by query builder when StrictValidationForCohortBuilderContainers is off [#1131](https://github.com/HicServices/RDMP/issues/1131)
+
 ## [7.0.11] - 2022-05-03
 
 ### Added
