@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Added 'RAWTableToLoad' dropdown property to RemoteTableAttacher to prevent mispellings when typing table names - [#1134](https://github.com/HicServices/RDMP/issues/1134)
+
 ## [7.0.11] - 2022-05-03
 
 ### Added
