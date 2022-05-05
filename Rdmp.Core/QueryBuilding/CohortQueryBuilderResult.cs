@@ -263,15 +263,20 @@ namespace Rdmp.Core.QueryBuilding
                 sql += Environment.NewLine + TabIn(")",tabs) + Environment.NewLine ;
 
             return sql;
-        }      
+        }
+
+        private bool IsEnabled(IOrderable arg)
+        {
+            return IsEnabled(arg, ChildProvider);
+        }
 
         /// <summary>
         /// Objects are enabled if they do not support disabling (<see cref="IDisableable"/>) or are <see cref="IDisableable.IsDisabled"/> = false
         /// </summary>
         /// <returns></returns>
-        private bool IsEnabled(IOrderable arg)
+        public static bool IsEnabled(IOrderable arg, ICoreChildProvider childProvider)
         {
-            var parentDisabled = ChildProvider.GetDescendancyListIfAnyFor(arg)?.Parents.Any(p => p is IDisableable d && d.IsDisabled);
+            var parentDisabled = childProvider.GetDescendancyListIfAnyFor(arg)?.Parents.Any(p => p is IDisableable d && d.IsDisabled);
 
             //if a parent is disabled
             if (parentDisabled.HasValue && parentDisabled.Value)

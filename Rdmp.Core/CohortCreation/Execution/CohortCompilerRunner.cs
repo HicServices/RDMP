@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Rdmp.Core.CohortCreation.Execution.Joinables;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.Core.CohortCreation.Execution
 {
@@ -111,7 +112,8 @@ namespace Rdmp.Core.CohortCreation.Execution
                 if(RunSubcontainers)
                 {
                     Parallel.ForEach(
-                        _cic.RootCohortAggregateContainer.GetAllSubContainersRecursively().Where(c => !c.IsDisabled),
+                        _cic.RootCohortAggregateContainer.GetAllSubContainersRecursively().Where(
+                            c=>CohortQueryBuilderResult.IsEnabled(c,Compiler.CoreChildProvider)),
                         (a)=>Compiler.AddTask(a, globals));
                 }
                         
