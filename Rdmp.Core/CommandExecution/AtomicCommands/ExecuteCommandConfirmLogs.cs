@@ -94,12 +94,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                                       .Where(a=>!checkInclusionCriteria || Include(a))
                                       .FirstOrDefault();
 
-            string messageClarrification = checkInclusionCriteria ? " (where rows were loaded)" : "";
+            string messageClarification = checkInclusionCriteria ? " (where rows were loaded)" : "";
 
             // if no logs
             if (latest == null)
             {
-                throw new LogsNotConfirmedException($"There are no log entries for {LogRootObject}{messageClarrification}");
+                throw new LogsNotConfirmedException($"There are no log entries for {LogRootObject}{messageClarification}");
             }
 
             // we have logs but are they in the time period we are interested in
@@ -111,20 +111,20 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 // if the latest log entry is older than the time period the user indicated
                 if (startTime < thresholdDate)
                 {
-                    throw new LogsNotConfirmedException($"Latest logged activity for {LogRootObject}{messageClarrification} is {startTime}.  This is older than the requested date threshold:{thresholdDate}");
+                    throw new LogsNotConfirmedException($"Latest logged activity for {LogRootObject}{messageClarification} is {startTime}.  This is older than the requested date threshold:{thresholdDate}");
                 }
             }
 
             // we have an acceptably recent log entry
             if (latest.HasErrors)
             {
-                throw new LogsNotConfirmedException($"Latest logs for {LogRootObject}{messageClarrification} ({latest.StartTime}) indicate that it failed");
+                throw new LogsNotConfirmedException($"Latest logs for {LogRootObject}{messageClarification} ({latest.StartTime}) indicate that it failed");
             }
 
             // most recent log entry did not complete
             if (!latest.EndTime.HasValue)
             {
-                throw new LogsNotConfirmedException($"Latest logs for {LogRootObject}{messageClarrification} ({latest.StartTime}) indicate that it did not complete");
+                throw new LogsNotConfirmedException($"Latest logs for {LogRootObject}{messageClarification} ({latest.StartTime}) indicate that it did not complete");
             }
             // latest log entry is passing yay!
         }
