@@ -82,7 +82,9 @@ namespace Rdmp.Core.CommandLine.Gui
                     Height = Dim.Fill(1),
                     Text = message.Replace("\r\n", "\n"),
                     ReadOnly = true,
-                    AllowsTab = false
+                    AllowsTab = false,
+                    WordWrap = true,
+
             });
                 Application.Run(dlg);
             }
@@ -296,7 +298,8 @@ namespace Rdmp.Core.CommandLine.Gui
                 Width = Dim.Fill(),
                 Height = Dim.Fill() - 2,
                 ReadOnly = true,
-                AllowsTab = false
+                AllowsTab = false,
+                WordWrap = true,
             };
 
             bool toggleStack = true;
