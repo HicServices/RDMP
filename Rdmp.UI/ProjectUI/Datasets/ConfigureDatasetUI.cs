@@ -214,7 +214,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
 
             //on the left
             
-            HashSet<IColumn> toAdd = new HashSet<IColumn>();
+            HashSet<ExtractionInformation> toAdd = new ();
 
             //add all the extractable columns from the current Catalogue
             foreach (ExtractionInformation e in cata.GetAllExtractionInformation(ExtractionCategory.Any))
@@ -224,13 +224,51 @@ namespace Rdmp.UI.ProjectUI.Datasets
             foreach (ExtractionInformation e in _config.Project.GetAllProjectCatalogueColumns(ExtractionCategory.ProjectSpecific))
                 toAdd.Add(e);
 
+
+            // Tell our columns about their CatalogueItems/ColumnInfos by using CoreChildProvider
+            // Prevents later queries to db to figure out things like column name etc
+            foreach (var ei in toAdd)
+            {
+                var ci = Activator.CoreChildProvider.AllCatalogueItemsDictionary[ei.CatalogueItem_ID];
+                
+                ei.InjectKnown(ci);
+                if (ci.ColumnInfo_ID != null)
+                    ei.InjectKnown(ci.ColumnInfo);
+            }
+
             //add the stuff that is in Project Catalogues so they can pick these too
             olvAvailable.AddObjects(toAdd.ToArray());
-            
+
             //on the right
 
             //add the already included ones on the right
-            ConcreteColumn[] allExtractableColumns = _config.GetAllExtractableColumnsFor(_dataSet);
+            ExtractableColumn[] allExtractableColumns = _config.GetAllExtractableColumnsFor(_dataSet);
+
+            // Tell our columns about their CatalogueItems by using CoreChildProvider
+            // Prevents later queries to db to figure out things like column name etc
+            foreach (var ec in allExtractableColumns)
+            {
+                if(ec.CatalogueExtractionInformation_ID != null)
+                {
+                    var eiDict = Activator.CoreChildProvider.AllExtractionInformationsDictionary;
+                    var ciDict = Activator.CoreChildProvider.AllCatalogueItemsDictionary;
+
+                    if (eiDict.ContainsKey(ec.CatalogueExtractionInformation_ID.Value))
+                    {
+                        var ei = eiDict[ec.CatalogueExtractionInformation_ID.Value];
+                        ec.InjectKnown(ei);
+                        ec.InjectKnown(ei.ColumnInfo);
+
+                        if(ciDict.ContainsKey(ei.CatalogueItem_ID))
+                        {
+                            ec.InjectKnown(ciDict[ei.CatalogueItem_ID]);
+                        }
+                    }
+
+                        
+                }
+            }
+
 
             //now get all the ExtractableColumns that are already configured for this configuration (previously)
             olvSelected.AddObjects(allExtractableColumns);

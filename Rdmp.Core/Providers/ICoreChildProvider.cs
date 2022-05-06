@@ -65,6 +65,7 @@ namespace Rdmp.Core.Providers
 
         PermissionWindow[] AllPermissionWindows { get;}
         IEnumerable<CatalogueItem> AllCatalogueItems { get; }
+        Dictionary<int, CatalogueItem> AllCatalogueItemsDictionary { get; }
         AggregateConfiguration[] AllAggregateConfigurations { get;}
         AllRDMPRemotesNode AllRDMPRemotesNode { get; }
 
