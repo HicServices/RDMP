@@ -145,7 +145,7 @@ namespace Rdmp.Core.Providers
         public AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
         public ConnectionStringKeyword[] AllConnectionStringKeywords { get; set; }
 
-        protected Dictionary<int,ExtractionInformation> AllExtractionInformationsDictionary;
+        public Dictionary<int,ExtractionInformation> AllExtractionInformationsDictionary { get; private set; }
         protected Dictionary<int, ExtractionInformation> _extractionInformationsByCatalogueItem;
 
         private IFilterManager _aggregateFilterManager;

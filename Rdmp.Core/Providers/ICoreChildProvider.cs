@@ -50,7 +50,8 @@ namespace Rdmp.Core.Providers
         ANOTable[] AllANOTables { get; }
         AllDataAccessCredentialsNode AllDataAccessCredentialsNode { get; }
         AllServersNode AllServersNode { get;}
-        ColumnInfo[] AllColumnInfos { get;}
+        ColumnInfo[] AllColumnInfos { get; }
+        Lookup[] AllLookups { get; }
         AllExternalServersNode AllExternalServersNode { get; }
         DescendancyList GetDescendancyListIfAnyFor(object model);
 
@@ -79,7 +80,9 @@ namespace Rdmp.Core.Providers
         Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables();
         IEnumerable<object> GetAllChildrenRecursively(object o);
         IEnumerable<ExtractionInformation> AllExtractionInformations { get; }
-        
+
+        Dictionary<int, ExtractionInformation> AllExtractionInformationsDictionary { get; }
+
         AllPermissionWindowsNode AllPermissionWindowsNode { get; set; }
         AllLoadMetadatasNode AllLoadMetadatasNode { get; set; }
         AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }

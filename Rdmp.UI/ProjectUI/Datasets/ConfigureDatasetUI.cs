@@ -577,11 +577,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
             var nodes = new HashSet<AvailableForceJoinNode>();
 
             //identify those we are already joining to based on the columns selected
-            var tablesInQuery = olvSelected.Objects.OfType<ExtractableColumn>()
-                .Where(c => c.ColumnInfo != null)
-                .Select(c => c.ColumnInfo.TableInfo)
-                .Distinct()
-                .Where(t=>!t.IsLookupTable()); //except lookup tables
+            var tablesInQuery = GetTablesUsedInQuery();
             
             //add those as readonly (you cant unjoin from those)
             foreach (TableInfo tableInfo in tablesInQuery)
@@ -633,7 +629,20 @@ namespace Rdmp.UI.ProjectUI.Datasets
             
             olvJoin.AddObjects(nodes.ToArray());
         }
-        
+
+        private IEnumerable<ITableInfo> GetTablesUsedInQuery()
+        {
+            var eis = Activator.CoreChildProvider.AllExtractionInformationsDictionary;
+
+            return olvSelected.Objects.OfType<ExtractableColumn>()
+                .Where(ec => ec.CatalogueExtractionInformation_ID != null)
+                .Select(ec => eis.ContainsKey(ec.CatalogueExtractionInformation_ID.Value) ? eis[ec.CatalogueExtractionInformation_ID.Value] : null)
+                .Where(ei => ei != null)
+                .Select(ei => ei.ColumnInfo.TableInfo)
+                .Distinct()
+                .Where(t => !t.IsLookupTable(Activator.CoreChildProvider));
+        }
+
         void olvJoin_ButtonClick(object sender, CellClickEventArgs e)
         {
             var node = (AvailableForceJoinNode) e.Model;
