@@ -33,10 +33,13 @@ namespace Rdmp.Core.Providers
     /// </summary>
     public interface ICoreChildProvider:IChildProvider
     {
+
+        JoinInfo[] AllJoinInfos { get;}
         LoadMetadata[] AllLoadMetadatas { get; }
         TableInfoServerNode[] AllServers { get; }
         TableInfo[] AllTableInfos { get;}
-        CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; }
+        Dictionary<int, List<ColumnInfo>> TableInfosToColumnInfos { get; }
+        CohortIdentificationConfiguration [] AllCohortIdentificationConfigurations { get; }
         CohortAggregateContainer[] AllCohortAggregateContainers { get; set; }
         JoinableCohortAggregateConfiguration[] AllJoinables { get; set; }
         JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; set; }

@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Providers;
 using ReusableLibraryCode.Annotations;
 
 namespace Rdmp.UI.ProjectUI.Datasets.Node
@@ -62,9 +63,15 @@ namespace Rdmp.UI.ProjectUI.Datasets.Node
 
         #endregion
 
-        public void FindJoinsBetween(HashSet<AvailableForceJoinNode> otherNodes)
+        /// <summary>
+        /// Populates <see cref="JoinInfos"/> by finding all potential joins to <paramref name="otherNodes"/>
+        /// </summary>
+        /// <param name="coreChildProvider"></param>
+        /// <param name="otherNodes"></param>
+        public void FindJoinsBetween(ICoreChildProvider coreChildProvider, HashSet<AvailableForceJoinNode> otherNodes)
         {
-            var mycols = TableInfo.ColumnInfos;
+            var allJoins = coreChildProvider.AllJoinInfos;
+            var mycols = coreChildProvider.TableInfosToColumnInfos[TableInfo.ID].ToArray();
 
             List<JoinInfo> foundJoinInfos = new List<JoinInfo>();
 
@@ -73,9 +80,11 @@ namespace Rdmp.UI.ProjectUI.Datasets.Node
                 //don't look for self joins
                 if(Equals(otherNode , this))
                     continue;
+                
+                var theirCols = coreChildProvider.TableInfosToColumnInfos[otherNode.TableInfo.ID].ToArray();
 
-                var theirCols = otherNode.TableInfo.ColumnInfos;
-                foundJoinInfos.AddRange(TableInfo.CatalogueRepository.JoinManager.GetAllJoinInfosBetweenColumnInfoSets(mycols, theirCols));
+
+                foundJoinInfos.AddRange(TableInfo.CatalogueRepository.JoinManager.GetAllJoinInfosBetweenColumnInfoSets(allJoins, mycols, theirCols));
             }
 
             JoinInfos = foundJoinInfos.ToArray();

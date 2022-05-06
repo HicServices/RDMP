@@ -203,7 +203,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
             ICatalogue cata;
             try
             {
-                cata = _dataSet.Catalogue;
+                cata = Activator.CoreChildProvider.AllCataloguesDictionary[_dataSet.Catalogue_ID];
             }
             catch (Exception e)
             {
@@ -221,7 +221,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
                 toAdd.Add(e);
 
             //plus all the Project Specific columns
-            foreach (ExtractionInformation e in _config.Project.GetAllProjectCatalogueColumns(ExtractionCategory.ProjectSpecific))
+            foreach (ExtractionInformation e in _config.Project.GetAllProjectCatalogueColumns(Activator.CoreChildProvider,ExtractionCategory.ProjectSpecific))
                 toAdd.Add(e);
 
 
@@ -621,8 +621,10 @@ namespace Rdmp.UI.ProjectUI.Datasets
             foreach (TableInfo tableInfo in tablesInQuery)
                 nodes.Add(new AvailableForceJoinNode(tableInfo, true));
 
+            SelectedDataSet.GetCatalogue().GetTableInfos(Activator.CoreChildProvider, out var normal, out _);
+            
             // Add all tables as optional joins that the Catalogue has
-            foreach (var t in SelectedDataSet.GetCatalogue().GetTableInfoList(false))
+            foreach (var t in normal)
             {
                 var node = new AvailableForceJoinNode((TableInfo)t, false);
 
@@ -632,14 +634,22 @@ namespace Rdmp.UI.ProjectUI.Datasets
 
             // Add all tables under other ProjectSpecific Catalogues that are associated with this Project
             foreach (var projectCatalogue in SelectedDataSet.ExtractionConfiguration.Project.GetAllProjectCatalogues())
-                foreach (TableInfo projectSpecificTables in projectCatalogue.GetTableInfoList(false))
+            {
+                // find tables
+                projectCatalogue.GetTableInfos(Activator.CoreChildProvider,out var projNormal, out _);
+
+                // that are not lookups
+                foreach (TableInfo projectSpecificTables in projNormal)
                 {
+                    // add the potential to join to them
                     var node = new AvailableForceJoinNode(projectSpecificTables, false);
 
                     //.Equals works on TableInfo so we avoid double adding
                     if (!nodes.Contains(node))
                         nodes.Add(node);
                 }
+            }
+                
 
             //identify the existing force joins
             var existingForceJoins = new HashSet<SelectedDataSetsForcedJoin>(SelectedDataSet.Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(SelectedDataSet));
@@ -658,7 +668,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
                 redundantForcedJoin.DeleteInDatabase();
 
             foreach (var node in nodes)
-                node.FindJoinsBetween(nodes);
+                node.FindJoinsBetween(Activator.CoreChildProvider, nodes);
 
             //highlight to user the fact that there are unlinkable tables
             

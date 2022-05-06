@@ -24,7 +24,7 @@ namespace Rdmp.Core.Repositories.Managers
             _repository = repository;
         }
 
-        public JoinInfo[] GetAllJoinInfosBetweenColumnInfoSets(ColumnInfo[] set1, ColumnInfo[] set2)
+        public JoinInfo[] GetAllJoinInfosBetweenColumnInfoSets(JoinInfo[] joinInfos, ColumnInfo[] set1, ColumnInfo[] set2)
         {
             //assemble the IN SQL arrays
             if (set1.Length == 0)
@@ -36,12 +36,16 @@ namespace Rdmp.Core.Repositories.Managers
             var idSet2 = new HashSet<int>(set2.Select(o => o.ID));
 
             return
-                _repository.GetAllObjects<JoinInfo>()
-                    .Where(j => 
+                joinInfos
+                    .Where(j =>
                         (idSet1.Contains(j.ForeignKey_ID) && idSet2.Contains(j.PrimaryKey_ID))
                         ||
                         (idSet1.Contains(j.PrimaryKey_ID) && idSet2.Contains(j.ForeignKey_ID)))
                     .ToArray();
+        }
+        public JoinInfo[] GetAllJoinInfosBetweenColumnInfoSets(ColumnInfo[] set1, ColumnInfo[] set2)
+        {
+            return GetAllJoinInfosBetweenColumnInfoSets(_repository.GetAllObjects<JoinInfo>(), set1, set2);
         }
 
         public JoinInfo[] GetAllJoinInfosWhereTableContains(ITableInfo tableInfo,JoinInfoType type)

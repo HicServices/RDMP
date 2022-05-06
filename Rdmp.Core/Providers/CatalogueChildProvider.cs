@@ -123,7 +123,7 @@ namespace Rdmp.Core.Providers
         public DataAccessCredentials[] AllDataAccessCredentials { get; set; }
         public Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>> AllDataAccessCredentialUsages { get; set; }
 
-        private Dictionary<int, List<ColumnInfo>> _tableInfosToColumnInfos;
+        public  Dictionary<int, List<ColumnInfo>> TableInfosToColumnInfos { get; private set; }
         public ColumnInfo[] AllColumnInfos { get; private set; }
         public PreLoadDiscardedColumn[] AllPreLoadDiscardedColumns { get; private set; }
 
@@ -276,7 +276,7 @@ namespace Rdmp.Core.Providers
             
             ReportProgress("After credentials");
 
-            _tableInfosToColumnInfos = AllColumnInfos.GroupBy(c => c.TableInfo_ID).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
+            TableInfosToColumnInfos = AllColumnInfos.GroupBy(c => c.TableInfo_ID).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
             
             ReportProgress("After TableInfo to ColumnInfo mapping");
 
@@ -1301,7 +1301,7 @@ namespace Rdmp.Core.Providers
             }
 
             //next add the column infos
-            if( _tableInfosToColumnInfos.TryGetValue(tableInfo.ID,out List<ColumnInfo> result))
+            if( TableInfosToColumnInfos.TryGetValue(tableInfo.ID,out List<ColumnInfo> result))
                 foreach (ColumnInfo c in result)
                 {
                     children.Add(c);
@@ -1637,7 +1637,7 @@ namespace Rdmp.Core.Providers
             AllServersNode= otherCat.AllServersNode;
             AllDataAccessCredentials = otherCat.AllDataAccessCredentials;
             AllDataAccessCredentialUsages = otherCat.AllDataAccessCredentialUsages;
-            _tableInfosToColumnInfos = otherCat._tableInfosToColumnInfos;
+            TableInfosToColumnInfos = otherCat.TableInfosToColumnInfos;
             AllColumnInfos= otherCat.AllColumnInfos;
             AllPreLoadDiscardedColumns= otherCat.AllPreLoadDiscardedColumns;
             AllLookups = otherCat.AllLookups;
