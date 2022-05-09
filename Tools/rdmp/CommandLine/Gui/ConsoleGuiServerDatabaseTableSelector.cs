@@ -4,266 +4,164 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using FAnsi;
-using FAnsi.Discovery;
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.Curation.Data;
-using Terminal.Gui;
+namespace Rdmp.Core.CommandLine.Gui {
+    using FAnsi;
+    using FAnsi.Discovery;
+    using Rdmp.Core.CommandExecution;
+    using Rdmp.Core.Curation.Data;
+    using ReusableLibraryCode;
+    using ReusableLibraryCode.Settings;
+    using System;
+    using System.Data.Common;
+    using System.Linq;
+    using Terminal.Gui;
 
-namespace Rdmp.Core.CommandLine.Gui
-{
-    class ConsoleGuiServerDatabaseTableSelector
-    {
+
+    public partial class ConsoleGuiServerDatabaseTableSelector {
+
         private readonly IBasicActivateItems _activator;
-        private readonly string _prompt;
-        private readonly string _okText;
-        private readonly bool _showTableComponents;
+        public string Username => tbUsername.Text.ToString();
 
+        public string Password => tbPassword.Text.ToString();
 
-        public string Username { get; private set; }
+        // TODO: check this works
+        public string Server => cbxServer.Text.ToString();
+        public string Database => cbxDatabase.Text.ToString();
+        public string Schema => tbSchema.Text.ToString();
+        public string Table => cbxTable.Text.ToString();
 
-        public string Password { get; private set; }
-
-        public string Server { get; private set; }
-        public string Database { get; private set; }
-        public string Schema { get;private set; }
-        public string Table { get; private set; }
+        /// <summary>
+        /// Returns the DatabaseType that is selected in the dropdown or 
+        /// <see cref="DatabaseType.MicrosoftSQLServer"/> if none selected
+        /// </summary>
+        public DatabaseType DatabaseType => cbxDatabaseType.SelectedItem < 0 ? DatabaseType.MicrosoftSQLServer :
+            (DatabaseType)cbxDatabaseType.Source.ToList()[cbxDatabaseType.SelectedItem];
         
-        public DatabaseType DatabaseType { get; private set; } = DatabaseType.MicrosoftSQLServer;
-        public TableType TableType => CbIsView != null && CbIsView.Checked ? TableType.View : TableType.Table;
+        /// <summary>
+        /// Returns the table type selected in the radio group or <see cref="TableType.Table"/> if none selected
+        /// </summary>
+        public TableType TableType { get {
+                switch (rgTableType.SelectedItem)
+                {
+                    case 0: return TableType.Table;
+                    case 1: return TableType.View;
+                    case 2: return TableType.TableValuedFunction;
+                    default: return TableType.View;
+                }
+            } }
 
         public bool OkClicked { get; private set; }
 
-        private CheckBox CbIsView;
-        private CheckBox CbIsTableValuedFunc;
-        private TextField tbuser;
-        private TextField tbPassword;
-
-        public ConsoleGuiServerDatabaseTableSelector(IBasicActivateItems activator,string prompt, string okText, bool showTableComponents)
+        
+        public ConsoleGuiServerDatabaseTableSelector(IBasicActivateItems activator, string prompt, string okText, bool showTableComponents)
         {
             _activator = activator;
-            _prompt = prompt;
-            _okText = okText;
-            _showTableComponents = showTableComponents;
-        }
 
-        public bool ShowDialog()
-        {
-            var win = new Window (_prompt) {
-                X = 0,
-                Y = 0,
+            InitializeComponent();
+            btnUseExisting.Clicked += BtnPickCredentials_Clicked;
 
-                // By using Dim.Fill(), it will automatically resize without manual intervention
-                Width = Dim.Fill (),
-                Height = Dim.Fill (),
-                Modal = true,
-                ColorScheme = ConsoleMainWindow.ColorScheme
+            // Fix frame view color scheme going dodgy when focused
+            frameview1.ColorScheme = new ColorScheme
+            {
+                Normal = ColorScheme.Normal,
+                Focus = ColorScheme.Normal,
+                Disabled = ColorScheme.Disabled,
+                HotFocus = ColorScheme.Normal,
             };
+            tbUsername.ColorScheme = ColorScheme;
+            tbPassword.ColorScheme = ColorScheme;
+            btnUseExisting.ColorScheme = ColorScheme;
 
-            //////////////////////////////////////////////// Username //////////////////////
+            cbxDatabaseType.Source = new ListWrapper(Enum.GetValues<DatabaseType>());
             
-            var lbluser = new Label("Username:")
-            {
-                X = 0,
-                Y = 0,
-                Height = 1,
-            };
-            win.Add(lbluser);
+            cbxDatabase.Leave += CbxDatabase_Leave;
 
-            tbuser = new TextField(string.Empty)
-            {
-                X = Pos.Right(lbluser),
-                Y = 0,
-                Width = 15,
-            };
-            tbuser.TextChanged += (s) => Username = tbuser.Text.ToString();
-            win.Add(tbuser);
+            cbxDatabaseType.AddKeyBinding(Key.CursorDown, Command.Expand);
+            cbxTable.AddKeyBinding(Key.CursorDown, Command.Expand);
 
-            //////////////////////////////////////////////// Password  //////////////////////
+            // Same guid as used by the windows client but probably the apps have different UserSettings files
+            // so sadly won't share one anothers recent histories
+            cbxServer.Source = new ListWrapper(UserSettings.GetHistoryForControl(new Guid("01ccc304-0686-4145-86a5-cc0468d40027")));
 
-            var lblPassword = new Label("Password:")
-            {
-                X = 0,
-                Y = Pos.Bottom(lbluser),
-                Height = 1,
-            };
-            win.Add(lblPassword);
-
-            tbPassword = new TextField(string.Empty){
-                X = Pos.Right(lblPassword),
-                Y = Pos.Bottom(lbluser),
-                Width = 15,
-                Secret = true
-            };
-
-            tbPassword.TextChanged += (s) => Password = tbPassword.Text.ToString();
-            win.Add(tbPassword);
-
-            var btnPickCredentials = new Button("Use Credentials")
-            {
-                X = Pos.Right(tbPassword),
-                Y = Pos.Bottom(lbluser),
-            };
-
-            btnPickCredentials.Clicked += BtnPickCredentials_Clicked;
-            win.Add(btnPickCredentials);
-
-
-
-            //////////////////////// Database Type /////////////
-
-            var btnDatabaseType = new Button($"Database Type ({DatabaseType})")
-            {
-                X = 0,
-                Y = Pos.Bottom(lblPassword),
-                Height = 1
-            };
-            win.Add(btnDatabaseType);
-
-            btnDatabaseType.Clicked += () =>
-            {
-                if (_activator.SelectEnum("Database Type", typeof(DatabaseType), out Enum chosen))
-                {
-                    DatabaseType = (DatabaseType) chosen;
-                    btnDatabaseType.Text = $"Database Type ({chosen})";
-                    win.SetNeedsDisplay();
-                }
-            };
-
-            //////////////////////////////////////////////// Server  //////////////////////
-
-            var lblServer = new Label("Server:")
-            {
-                X = 0,
-                Y = Pos.Bottom(btnDatabaseType),
-                Height = 1,
-            };
-            win.Add(lblServer);
-
-            var tbServer = new TextField(string.Empty){
-                X = Pos.Right(lblServer),
-                Y = Pos.Bottom(btnDatabaseType),
-                Width = 17
-            };
-            tbServer.TextChanged += (s) => Server = tbServer.Text.ToString();
-
-            win.Add(tbServer);
-
-            //////////////////////////////////////////////// Database  //////////////////////
-
-            var lblDatabase = new Label("Database:")
-            {
-                X = 0,
-                Y = Pos.Bottom(lblServer),
-                Height = 1,
-            };
-            win.Add(lblDatabase);
-
-            var tbDatabase = new TextField(string.Empty){
-                X = Pos.Right(lblDatabase),
-                Y = Pos.Bottom(lblServer),
-                Width = 15
-            };
-            win.Add(tbDatabase);
-            tbDatabase.TextChanged += (s) => Database = tbDatabase.Text.ToString();
-
-            var btnCreateDatabase = new Button("Create Da_tabase")
-            {
-                X = Pos.Right(tbDatabase) + 1,
-                Y = Pos.Bottom(lblServer)
-            };
+            cbxDatabaseType.SelectedItem = cbxDatabaseType.Source.ToList().IndexOf(DatabaseType.MicrosoftSQLServer);
             btnCreateDatabase.Clicked += CreateDatabase;
-            win.Add(btnCreateDatabase);
 
-            //////////////////////////////////////////////// Schema  //////////////////////
+            lblDescription.Text = prompt;
 
-            var lblSchema = new Label("Schema:")
-            {
-                X = 0,
-                Y = Pos.Bottom(lblDatabase),
-                Height = 1
-            };
+            btnOk.Text = okText;
 
-            var tbSchema = new TextField(string.Empty)
-            {
-                X = Pos.Right(lblSchema),
-                Y = Pos.Bottom(lblDatabase),
-                Width = Dim.Fill()
-            };
-
-            tbSchema.TextChanged += (s) => Schema = tbSchema.Text.ToString();
-
-
-            //////////////////////////////////////////////// Table  //////////////////////
-             
-            CbIsView = new CheckBox("Is View")
-            {
-                X = 0,
-                Y = Pos.Bottom(lblSchema),
-            };
-            
-            CbIsTableValuedFunc = new CheckBox("Is Func")
-            {
-                X = Pos.Right(CbIsView) + 5,
-                Y = Pos.Bottom(lblSchema),
-            };
-            
-
-            var lblTable = new Label("Table:")
-            {
-                X = 0,
-                Y = Pos.Bottom(CbIsView),
-                Height = 1,
-            };
-
-            var tbTable = new TextField(string.Empty)
-            {
-                X = Pos.Right(lblTable),
-                Y = Pos.Bottom(CbIsView),
-                Width = Dim.Fill()
-            };
-            
-            tbTable.TextChanged += (s) => Table = tbTable.Text.ToString();
-            
-
-            if (_showTableComponents)
-            {
-                win.Add(lblSchema);
-                win.Add(tbSchema);
-                win.Add(CbIsView);
-                win.Add(CbIsTableValuedFunc);
-                win.Add(lblTable);
-                win.Add(tbTable);
-            }
-
-            var btnOk = new Button(_okText,true)
-            {
-                X = 0,
-                Y = _showTableComponents ? Pos.Bottom(lblTable) : Pos.Bottom(lblDatabase),
-                Height = 1
-            };
             btnOk.Clicked += () =>
             {
                 OkClicked = true;
                 Application.RequestStop();
             };
 
-            var btnCancel = new Button("Cancel",true)
+            btnCancel.X = Pos.Right(btnOk) + 1;
+            btnCancel.Clicked += () => Application.RequestStop();
+
+            btnRefresh.Clicked += RefreshDatabaseList;
+
+            if (!showTableComponents)
             {
-                X = Pos.Right(btnOk)+10,
-                Y = _showTableComponents ? Pos.Bottom(lblTable) : Pos.Bottom(lblDatabase),
-                Height = 1
-            };
-            btnCancel.Clicked += ()=>Application.RequestStop();
+                lblSchema.Visible = false;
+                tbSchema.Visible = false;
+                lblTable.Visible = false;
+                cbxTable.Visible = false;
+                rgTableType.Visible = false;
+            }
 
-            win.Add(btnOk);
-            win.Add(btnCancel);
+        }
 
-            Application.Run(win);
+        private void CbxDatabase_Leave(FocusEventArgs obj)
+        {
+            UpdateTableList();
+        }
 
+        private void UpdateTableList()
+        {
+            try
+            {
+                var db = new DiscoveredServer(GetBuilder()).ExpectDatabase(Database);
+
+                cbxTable.Source = new ListWrapper(
+                    db.DiscoverTables(true)
+                    .Union(db.DiscoverTableValuedFunctions())
+                    .Select(t=>t.GetRuntimeName())
+                    .ToList());
+            }
+            catch (Exception)
+            {
+                // could not find any tables nevermind
+                return;
+            }
+        }
+
+        private void RefreshDatabaseList()
+        {
+            try
+            {
+                var server = new DiscoveredServer(GetBuilder());
+
+                cbxDatabase.Source = new ListWrapper(
+                    server.DiscoverDatabases()
+                    .Select(d=>d.GetRuntimeName())
+                    .ToList());
+            }
+            catch (Exception ex)
+            {
+                _activator.ShowException("Could not fetch databases", ex);
+            }
+        }
+
+        public DbConnectionStringBuilder GetBuilder()
+        {
+            var helper = DatabaseCommandHelper.For(DatabaseType);
+            return helper.GetConnectionStringBuilder(Server, Database, Username, Password);
+        }
+
+        public bool ShowDialog()
+        {
+            Application.Run(this);
             return OkClicked;
         }
 
@@ -273,10 +171,10 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 var db = GetDiscoveredDatabase(true);
 
-                if(db == null)
+                if (db == null)
                     _activator.Show("Enter all database details before trying to create");
                 else
-                if(db.Exists())
+                if (db.Exists())
                     _activator.Show("Database already exists");
                 else
                 {
@@ -286,12 +184,12 @@ namespace Rdmp.Core.CommandLine.Gui
             }
             catch (Exception e)
             {
-                _activator.ShowException("Create Database Failed",e);
+                _activator.ShowException("Create Database Failed", e);
             }
         }
 
 
-        public DiscoveredDatabase GetDiscoveredDatabase(bool ignoreOk=false)
+        public DiscoveredDatabase GetDiscoveredDatabase(bool ignoreOk = false)
         {
             if (!OkClicked && !ignoreOk)
                 return null;
@@ -302,7 +200,7 @@ namespace Rdmp.Core.CommandLine.Gui
             if (string.IsNullOrWhiteSpace(Database))
                 return null;
 
-            return new DiscoveredServer(Server,Database,DatabaseType,Username,Password).ExpectDatabase(Database);
+            return new DiscoveredServer(Server, Database, DatabaseType, Username, Password).ExpectDatabase(Database);
         }
 
 
@@ -317,10 +215,10 @@ namespace Rdmp.Core.CommandLine.Gui
             if (string.IsNullOrWhiteSpace(Database))
                 return null;
 
-            if(CbIsTableValuedFunc.Checked)
-                return new DiscoveredServer(Server,Database,DatabaseType,Username,Password).ExpectDatabase(Database).ExpectTableValuedFunction(Table,Schema);
+            if (TableType == TableType.TableValuedFunction)
+                return new DiscoveredServer(Server, Database, DatabaseType, Username, Password).ExpectDatabase(Database).ExpectTableValuedFunction(Table, Schema);
 
-            return new DiscoveredServer(Server,Database,DatabaseType,Username,Password).ExpectDatabase(Database).ExpectTable(Table,Schema,TableType);
+            return new DiscoveredServer(Server, Database, DatabaseType, Username, Password).ExpectDatabase(Database).ExpectTable(Table, Schema, TableType);
         }
 
 
@@ -344,7 +242,7 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 try
                 {
-                    tbuser.Text = cred.Username;
+                    tbUsername.Text = cred.Username;
                     tbPassword.Text = cred.GetDecryptedPassword();
                 }
                 catch (Exception ex)
