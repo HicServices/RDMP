@@ -125,11 +125,8 @@ namespace Rdmp.Core.CommandLine.Gui {
         {
             combo.AddKeyBinding(Key.CursorDown, Command.Expand);
 
-            var expand = typeof(ComboBox).GetMethod("Expand");
-            var collapse = typeof(ComboBox).GetMethod("Collapse");
-
-            expand.Invoke(combo, new object[0]);
-            collapse.Invoke(combo,new object[0]);
+            combo.Expand();
+            combo.Collapse();
         }
 
         private void CbxDatabase_Leave(FocusEventArgs obj)
