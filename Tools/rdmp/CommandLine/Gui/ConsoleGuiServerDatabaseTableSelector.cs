@@ -40,15 +40,14 @@ namespace Rdmp.Core.CommandLine.Gui {
         /// <summary>
         /// Returns the table type selected in the radio group or <see cref="TableType.Table"/> if none selected
         /// </summary>
-        public TableType TableType { get {
-                switch (rgTableType.SelectedItem)
-                {
-                    case 0: return TableType.Table;
-                    case 1: return TableType.View;
-                    case 2: return TableType.TableValuedFunction;
-                    default: return TableType.View;
-                }
-            } }
+        public TableType TableType =>
+            rgTableType.SelectedItem switch
+            {
+                0 => TableType.Table,
+                1 => TableType.View,
+                2 => TableType.TableValuedFunction,
+                _ => TableType.View
+            };
 
         public bool OkClicked { get; private set; }
 
