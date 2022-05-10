@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using FAnsi.Discovery;
 using Plugin.Settings.Abstractions;
 using ReusableLibraryCode.Checks;
@@ -465,6 +466,22 @@ namespace ReusableLibraryCode.Settings
         {
             AppSettings.AddOrUpdateValue("A_" + controlGuid.ToString("N"), string.Join("#!#", history));
         }
+
+        public static void AddHistoryForControl(Guid guid, string v)
+        {
+            if (string.IsNullOrWhiteSpace(v))
+                return;
+
+            var l = GetHistoryForControl(guid).ToList();
+            
+            if (l.Contains(v))
+                return;
+
+            l.Add(v);            
+
+            SetHistoryForControl(guid, l.Distinct().ToList());
+        }
+
         public static Tuple<string,bool> GetLastColumnSortForCollection(Guid controlGuid)
         {
             lock (_oLockUserSettings)
