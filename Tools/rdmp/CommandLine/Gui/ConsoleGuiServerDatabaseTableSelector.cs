@@ -12,6 +12,7 @@ namespace Rdmp.Core.CommandLine.Gui {
     using ReusableLibraryCode;
     using ReusableLibraryCode.Settings;
     using System;
+    using System.Collections.Generic;
     using System.Data.Common;
     using System.Linq;
     using Terminal.Gui;
@@ -72,7 +73,7 @@ namespace Rdmp.Core.CommandLine.Gui {
             tbPassword.ColorScheme = ColorScheme;
             btnUseExisting.ColorScheme = ColorScheme;
 
-            cbxDatabaseType.Source = new ListWrapper(Enum.GetValues<DatabaseType>());
+            cbxDatabaseType.SetSource(Enum.GetValues<DatabaseType>());
             
             cbxDatabase.Leave += CbxDatabase_Leave;
 
@@ -81,7 +82,14 @@ namespace Rdmp.Core.CommandLine.Gui {
 
             // Same guid as used by the windows client but probably the apps have different UserSettings files
             // so sadly won't share one anothers recent histories
-            cbxServer.Source = new ListWrapper(UserSettings.GetHistoryForControl(new Guid("01ccc304-0686-4145-86a5-cc0468d40027")));
+            cbxServer.SetSource(UserSettings.GetHistoryForControl(new Guid("01ccc304-0686-4145-86a5-cc0468d40027"))
+                .Where(e=>!string.IsNullOrWhiteSpace(e))
+                .ToList());
+
+            SetupComboBox(cbxDatabase);
+            SetupComboBox(cbxTable);
+            // do this last so that it gets focus in the UI (yes I know thats hacky)
+            SetupComboBox(cbxServer);  
 
             cbxDatabaseType.SelectedItem = cbxDatabaseType.Source.ToList().IndexOf(DatabaseType.MicrosoftSQLServer);
             btnCreateDatabase.Clicked += CreateDatabase;
@@ -112,6 +120,17 @@ namespace Rdmp.Core.CommandLine.Gui {
 
         }
 
+        private void SetupComboBox(ComboBox combo)
+        {
+            combo.AddKeyBinding(Key.CursorDown, Command.Expand);
+
+            var expand = typeof(ComboBox).GetMethod("Expand");
+            var collapse = typeof(ComboBox).GetMethod("Collapse");
+
+            expand.Invoke(combo, new object[0]);
+            collapse.Invoke(combo,new object[0]);
+        }
+
         private void CbxDatabase_Leave(FocusEventArgs obj)
         {
             UpdateTableList();
@@ -123,7 +142,7 @@ namespace Rdmp.Core.CommandLine.Gui {
             {
                 var db = new DiscoveredServer(GetBuilder()).ExpectDatabase(Database);
 
-                cbxTable.Source = new ListWrapper(
+                cbxTable.SetSource(
                     db.DiscoverTables(true)
                     .Union(db.DiscoverTableValuedFunctions())
                     .Select(t=>t.GetRuntimeName())
@@ -142,7 +161,7 @@ namespace Rdmp.Core.CommandLine.Gui {
             {
                 var server = new DiscoveredServer(GetBuilder());
 
-                cbxDatabase.Source = new ListWrapper(
+                cbxDatabase.SetSource(
                     server.DiscoverDatabases()
                     .Select(d=>d.GetRuntimeName())
                     .ToList());
