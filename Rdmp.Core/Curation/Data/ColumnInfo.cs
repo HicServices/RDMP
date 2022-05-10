@@ -32,7 +32,7 @@ namespace Rdmp.Core.Curation.Data
     /// <para>ColumnInfo ensures a cached representation of the underlying database so that RDMP can rationalize and inform the system user of disappearing
     /// columns etc and let the user make decisions about how to resolve it.</para>
     /// </summary>
-    public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo, ISupplementalColumnInformation, IInjectKnown<TableInfo>
+    public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo, ISupplementalColumnInformation, IInjectKnown<TableInfo>, INamed
     {
         
         #region Database Properties
