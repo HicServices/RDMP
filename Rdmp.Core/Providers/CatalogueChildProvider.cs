@@ -286,40 +286,12 @@ namespace Rdmp.Core.Providers
             AllSupportingSQL = GetAllObjects<SupportingSQLTable>(repository);
 
             AllCohortIdentificationConfigurations = GetAllObjects<CohortIdentificationConfiguration>(repository);
-            
-            AllCatalogueItemsDictionary = GetAllObjects<CatalogueItem>(repository).ToDictionary(i => i.ID, o => o);
-            
-            ReportProgress("After CatalogueItem getting");
 
-            _catalogueToCatalogueItems = AllCatalogueItems.GroupBy(c=>c.Catalogue_ID).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
-            _allColumnInfos = AllColumnInfos.ToDictionary(i=>i.ID,o=>o);
-            
-            ReportProgress("After CatalogueItem Dictionary building");
-
-            //Inject known ColumnInfos into CatalogueItems
-            Parallel.ForEach(AllCatalogueItems, (ci) =>
-            {
-                if (ci.ColumnInfo_ID != null && _allColumnInfos.TryGetValue(ci.ColumnInfo_ID.Value, out ColumnInfo col))
-                    ci.InjectKnown(col);
-                else
-                    ci.InjectKnown((ColumnInfo)null);
-            });
-            
+            FetchCatalogueItems();
 
             ReportProgress("After CatalogueItem injection");
 
-            AllExtractionInformationsDictionary = GetAllObjects<ExtractionInformation>(repository).ToDictionary(i => i.ID, o => o);
-            _extractionInformationsByCatalogueItem = AllExtractionInformationsDictionary.Values.ToDictionary(k=>k.CatalogueItem_ID,v=>v);
-
-            //Inject known CatalogueItems into ExtractionInformations
-            foreach (ExtractionInformation ei in AllExtractionInformationsDictionary.Values)
-            {
-                if (AllCatalogueItemsDictionary.TryGetValue(ei.CatalogueItem_ID, out CatalogueItem ci))
-                {
-                    ei.InjectKnown(ci.ColumnInfo);
-                    ei.InjectKnown(ci);
-                }
-            }
+            FetchExtractionInformations();
 
             ReportProgress("After ExtractionInformation injection");
 
@@ -459,6 +431,44 @@ namespace Rdmp.Core.Providers
             }
 
             ReportProgress("After building exports");
+        }
+
+        private void FetchCatalogueItems()
+        {
+            AllCatalogueItemsDictionary = GetAllObjects<CatalogueItem>(_catalogueRepository).ToDictionary(i => i.ID, o => o);
+
+            ReportProgress("After CatalogueItem getting");
+
+            _catalogueToCatalogueItems = AllCatalogueItems.GroupBy(c => c.Catalogue_ID).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
+            _allColumnInfos = AllColumnInfos.ToDictionary(i => i.ID, o => o);
+
+            ReportProgress("After CatalogueItem Dictionary building");
+
+            //Inject known ColumnInfos into CatalogueItems
+            Parallel.ForEach(AllCatalogueItems, (ci) =>
+            {
+                if (ci.ColumnInfo_ID != null && _allColumnInfos.TryGetValue(ci.ColumnInfo_ID.Value, out ColumnInfo col))
+                    ci.InjectKnown(col);
+                else
+                    ci.InjectKnown((ColumnInfo)null);
+            });
+
+        }
+
+        private void FetchExtractionInformations()
+        {
+            AllExtractionInformationsDictionary = GetAllObjects<ExtractionInformation>(_catalogueRepository).ToDictionary(i => i.ID, o => o);
+            _extractionInformationsByCatalogueItem = AllExtractionInformationsDictionary.Values.ToDictionary(k => k.CatalogueItem_ID, v => v);
+
+            //Inject known CatalogueItems into ExtractionInformations
+            foreach (ExtractionInformation ei in AllExtractionInformationsDictionary.Values)
+            {
+                if (AllCatalogueItemsDictionary.TryGetValue(ei.CatalogueItem_ID, out CatalogueItem ci))
+                {
+                    ei.InjectKnown(ci.ColumnInfo);
+                    ei.InjectKnown(ci);
+                }
+            }
         }
 
         private void BuildCohortCohortAggregateContainers()
@@ -1681,8 +1691,42 @@ namespace Rdmp.Core.Providers
                 AggregateFilter af => SelectiveRefresh(af),
                 AggregateFilterContainer afc => SelectiveRefresh(afc),
                 CohortAggregateContainer cac => SelectiveRefresh(cac),
+                ExtractionInformation ei => SelectiveRefresh(ei),
+                CatalogueItem ci => SelectiveRefresh(ci),
                 _ => false
             };
+        }
+
+
+        public bool SelectiveRefresh(CatalogueItem ci)
+        {
+            var descendancy = GetDescendancyListIfAnyFor(ci.Catalogue);
+
+            if (descendancy != null)
+            {
+                FetchCatalogueItems();
+                FetchExtractionInformations();
+                AddChildren(ci.Catalogue, descendancy.Add(ci.Catalogue));
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool SelectiveRefresh(ExtractionInformation ei)
+        {
+            var descendancy = GetDescendancyListIfAnyFor(ei);
+            var last = (CatalogueItem)descendancy?.Last();
+
+            if (last != null)
+            {
+                // property changes or deleting the ExtractionInformation
+                FetchExtractionInformations();
+                AddChildren(last, descendancy);
+                return true;
+            }
+
+            return false;
         }
         public bool SelectiveRefresh(CohortAggregateContainer container)
         {

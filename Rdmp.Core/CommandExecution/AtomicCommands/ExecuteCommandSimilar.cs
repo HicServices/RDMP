@@ -7,6 +7,7 @@
 using FAnsi.Naming;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.QueryBuilding;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     public class ExecuteCommandSimilar : BasicCommandExecution
     {
         private readonly IMapsDirectlyToDatabaseTable _to;
-        private readonly bool _butDifferent;
+        private bool _butDifferent;
 
         /// <summary>
         /// Collection of all Types where finding differences between instances is supported by 
@@ -28,10 +29,21 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// </summary>
         private readonly Type[] _diffSupportedTypes = new Type[]{ typeof(ColumnInfo) };
 
+        ReadOnlyCollection<IMapsDirectlyToDatabaseTable> _matched;
         /// <summary>
         /// The objects matched by the command (similar or different objects)
         /// </summary>
-        public readonly ReadOnlyCollection<IMapsDirectlyToDatabaseTable> Matched;
+        public ReadOnlyCollection<IMapsDirectlyToDatabaseTable> Matched {
+            get {
+                if (_matched == null)
+                    FetchMatches();
+                
+                return _matched;
+            }
+            set {
+                _matched = value;
+            }
+        }
 
         /// <summary>
         /// Set to true to make command show similar objects in interactive 
@@ -52,9 +64,43 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 SetImpossible($"Differencing is not supported on {_to.GetType().Name}");
             }
 
+            Weight = 50.3f;
+        }
+
+        public override void Execute()
+        {
+            FetchMatches();
+
+            if (IsImpossible)
+            {
+                BasicActivator.Show("No Matches", ReasonCommandImpossible);
+                return;
+            }
+
+            if (!BasicActivator.IsInteractive && GoTo)
+            {
+                throw new Exception($"GoTo property is true on {nameof(ExecuteCommandSimilar)} but activator is not interactive");
+            }
+
+            if(GoTo)
+            {
+                var selected = BasicActivator.SelectOne("Similar Objects", Matched.ToArray(), null, true);
+                if(selected != null)
+                {
+                    Emphasise(selected);
+                }
+            }
+            else
+            {
+                BasicActivator.Show(string.Join(Environment.NewLine, Matched.ToArray().Select(ExecuteCommandDescribe.Describe)));
+            }
+        }
+
+        public void FetchMatches()
+        {
             try
             {
-                var others = BasicActivator.GetAll(_to.GetType());
+                var others = BasicActivator.CoreChildProvider.GetAllObjects(_to.GetType(), true);
                 Matched = others.Where(IsSimilar).Where(Include).ToList().AsReadOnly();
 
                 if (Matched.Count == 0)
@@ -72,29 +118,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             catch (Exception ex)
             {
                 SetImpossible("Error finding Similar:" + ex.Message);
-            }
-
-            Weight = 50.3f;
-        }
-
-        public override void Execute()
-        {
-            if(!BasicActivator.IsInteractive && GoTo)
-            {
-                throw new Exception($"GoTo property is true on {nameof(ExecuteCommandSimilar)} but activator is not interactive");
-            }
-
-            if(GoTo)
-            {
-                var selected = BasicActivator.SelectOne("Similar Objects", Matched.ToArray(), null, true);
-                if(selected != null)
-                {
-                    Emphasise(selected);
-                }
-            }
-            else
-            {
-                BasicActivator.Show(string.Join(Environment.NewLine, Matched.ToArray().Select(ExecuteCommandDescribe.Describe)));
             }
         }
 
@@ -120,16 +143,30 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if(_to is INamed named && other is INamed otherNamed)
             {
-                return string.Equals(named.Name, otherNamed.Name,StringComparison.CurrentCultureIgnoreCase);
+                return SimilarWord(named.Name, otherNamed.Name, StringComparison.CurrentCultureIgnoreCase);
             }
-            if (_to is IHasRuntimeName runtimeNamed && other is IHasRuntimeName otherRuntimeNamed)
+
+            if (_to is IColumn col && other is IColumn otherCol)
             {
-                return string.Equals(runtimeNamed.GetRuntimeName(), otherRuntimeNamed.GetRuntimeName(), StringComparison.CurrentCultureIgnoreCase);
+                return SimilarWord(col.SelectSQL, otherCol.SelectSQL, StringComparison.CurrentCultureIgnoreCase)
+                    || string.Equals(col.Alias, otherCol.Alias, StringComparison.CurrentCultureIgnoreCase);
             }
 
             return false;
         }
 
+        static readonly char[] trimChars = new char[] { ' ', '[', ']', '\'', '"', '`' };
+
+        private bool SimilarWord(string name1, string name2, StringComparison comparisonType)
+        {
+            if (string.IsNullOrWhiteSpace(name1) || string.IsNullOrWhiteSpace(name2))
+                return false;
+
+            return string.Equals(
+                name1.Substring(Math.Max(0,name1.LastIndexOf('.'))).Trim(trimChars),
+                name2.Substring(Math.Max(0,name2.LastIndexOf('.'))).Trim(trimChars),
+                comparisonType);
+        }
 
         private bool Include(IMapsDirectlyToDatabaseTable arg)
         {
