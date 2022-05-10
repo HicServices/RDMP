@@ -40,9 +40,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 
                 return _matched;
             }
-            set {
-                _matched = value;
-            }
+            set => _matched = value;
         }
 
         /// <summary>
@@ -105,32 +103,22 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
                 if (Matched.Count == 0)
                 {
-                    if (_butDifferent)
-                    {
-                        SetImpossible("There are no alternate column specifications of this column");
-                    }
-                    else
-                    {
-                        SetImpossible("There are no Similar objects");
-                    }
+                    SetImpossible(_butDifferent
+                        ? "There are no alternate column specifications of this column"
+                        : "There are no Similar objects");
                 }
             }
             catch (Exception ex)
             {
-                SetImpossible("Error finding Similar:" + ex.Message);
+                SetImpossible($"Error finding Similar:{ex.Message}");
             }
         }
 
         public override string GetCommandHelp()
         {
-            if (_butDifferent)
-            {
-                return "Find objects with the same name but different implementation (e.g. different column data type)";
-            }
-            else
-            {
-                return "Find other objects with the same or similar name to this";
-            }
+            return _butDifferent
+                ? "Find objects with the same name but different implementation (e.g. different column data type)"
+                : "Find other objects with the same or similar name to this";
         }
 
         private bool IsSimilar(IMapsDirectlyToDatabaseTable other)
@@ -141,18 +129,15 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 return false;
             }
 
-            if(_to is INamed named && other is INamed otherNamed)
+            return _to switch
             {
-                return SimilarWord(named.Name, otherNamed.Name, StringComparison.CurrentCultureIgnoreCase);
-            }
-
-            if (_to is IColumn col && other is IColumn otherCol)
-            {
-                return SimilarWord(col.SelectSQL, otherCol.SelectSQL, StringComparison.CurrentCultureIgnoreCase)
-                    || string.Equals(col.Alias, otherCol.Alias, StringComparison.CurrentCultureIgnoreCase);
-            }
-
-            return false;
+                INamed named when other is INamed otherNamed => SimilarWord(named.Name, otherNamed.Name,
+                    StringComparison.CurrentCultureIgnoreCase),
+                IColumn col when other is IColumn otherCol => SimilarWord(col.SelectSQL, otherCol.SelectSQL,
+                    StringComparison.CurrentCultureIgnoreCase) || string.Equals(col.Alias, otherCol.Alias,
+                    StringComparison.CurrentCultureIgnoreCase),
+                _ => false
+            };
         }
 
         static readonly char[] trimChars = new char[] { ' ', '[', ']', '\'', '"', '`' };
