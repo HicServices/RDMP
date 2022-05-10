@@ -30,7 +30,7 @@ namespace Rdmp.Core.CommandLine.Gui {
         
         private Terminal.Gui.Label label1;
         
-        private Terminal.Gui.Label label2;
+        private Terminal.Gui.Label lblServer;
         
         private Terminal.Gui.ComboBox cbxServer;
         
@@ -38,7 +38,7 @@ namespace Rdmp.Core.CommandLine.Gui {
         
         private Terminal.Gui.ComboBox cbxDatabaseType;
         
-        private Terminal.Gui.Label label3;
+        private Terminal.Gui.Label lblDatabase;
         
         private Terminal.Gui.ComboBox cbxDatabase;
         
@@ -62,7 +62,7 @@ namespace Rdmp.Core.CommandLine.Gui {
         
         private void InitializeComponent() {
             this.Width = 80;
-            this.Height = 25;
+            this.Height = 17;
             this.X = Pos.Center();
             this.Y = Pos.Center();
             this.Text = "";
@@ -84,7 +84,7 @@ namespace Rdmp.Core.CommandLine.Gui {
             this.frameview1.Width = 50;
             this.frameview1.Height = 5;
             this.frameview1.X = 1;
-            this.frameview1.Y = 4;
+            this.frameview1.Y = 1;
             this.frameview1.Data = "frameview1";
             this.frameview1.Text = "H";
             this.frameview1.Border.BorderStyle = Terminal.Gui.BorderStyle.Single;
@@ -142,26 +142,26 @@ namespace Rdmp.Core.CommandLine.Gui {
             this.label1.Width = 22;
             this.label1.Height = 1;
             this.label1.X = 2;
-            this.label1.Y = 4;
+            this.label1.Y = 1;
             this.label1.Data = "label1";
             this.label1.Text = "Credentials (Optional)";
             this.label1.TextAlignment = Terminal.Gui.TextAlignment.Left;
             this.Add(this.label1);
-            this.label2 = new Terminal.Gui.Label();
-            this.label2.Width = 7;
-            this.label2.Height = 1;
-            this.label2.X = 1;
-            this.label2.Y = 10;
-            this.label2.Data = "label2";
-            this.label2.Text = "Server:";
-            this.label2.TextAlignment = Terminal.Gui.TextAlignment.Left;
-            this.Add(this.label2);
+            this.lblServer = new Terminal.Gui.Label();
+            this.lblServer.Width = 7;
+            this.lblServer.Height = 1;
+            this.lblServer.X = 2;
+            this.lblServer.Y = 6;
+            this.lblServer.Data = "lblServer";
+            this.lblServer.Text = "Server:";
+            this.lblServer.TextAlignment = Terminal.Gui.TextAlignment.Left;
+            this.Add(this.lblServer);
             this.cbxServer = new Terminal.Gui.ComboBox();
             this.cbxServer.Width = 32;
             this.cbxServer.Height = 5;
             this.cbxServer.X = 11;
-            this.cbxServer.Y = 10;
-            this.cbxServer.Data = "tbServer";
+            this.cbxServer.Y = 6;
+            this.cbxServer.Data = "cbxServer";
             this.cbxServer.Text = "";
             this.cbxServer.TextAlignment = Terminal.Gui.TextAlignment.Left;
             this.Add(this.cbxServer);
@@ -169,7 +169,7 @@ namespace Rdmp.Core.CommandLine.Gui {
             this.label4.Width = 5;
             this.label4.Height = 1;
             this.label4.X = 47;
-            this.label4.Y = 10;
+            this.label4.Y = 6;
             this.label4.Data = "label4";
             this.label4.Text = "Type:";
             this.label4.TextAlignment = Terminal.Gui.TextAlignment.Left;
@@ -178,34 +178,34 @@ namespace Rdmp.Core.CommandLine.Gui {
             this.cbxDatabaseType.Width = 20;
             this.cbxDatabaseType.Height = 6;
             this.cbxDatabaseType.X = 53;
-            this.cbxDatabaseType.Y = 10;
+            this.cbxDatabaseType.Y = 6;
             this.cbxDatabaseType.Data = "cbxDatabaseType";
             this.cbxDatabaseType.Text = "";
             this.cbxDatabaseType.TextAlignment = Terminal.Gui.TextAlignment.Left;
             this.Add(this.cbxDatabaseType);
-            this.label3 = new Terminal.Gui.Label();
-            this.label3.Width = 9;
-            this.label3.Height = 1;
-            this.label3.X = 1;
-            this.label3.Y = 13;
-            this.label3.Data = "label3";
-            this.label3.Text = "Database:";
-            this.label3.TextAlignment = Terminal.Gui.TextAlignment.Left;
-            this.Add(this.label3);
+            this.lblDatabase = new Terminal.Gui.Label();
+            this.lblDatabase.Width = 9;
+            this.lblDatabase.Height = 1;
+            this.lblDatabase.X = 0;
+            this.lblDatabase.Y = 8;
+            this.lblDatabase.Data = "lblDatabase";
+            this.lblDatabase.Text = "Database:";
+            this.lblDatabase.TextAlignment = Terminal.Gui.TextAlignment.Left;
+            this.Add(this.lblDatabase);
             this.cbxDatabase = new Terminal.Gui.ComboBox();
             this.cbxDatabase.Width = 32;
             this.cbxDatabase.Height = 5;
             this.cbxDatabase.X = 11;
-            this.cbxDatabase.Y = 13;
-            this.cbxDatabase.Data = "tbDatabase";
+            this.cbxDatabase.Y = 8;
+            this.cbxDatabase.Data = "cbxDatabase";
             this.cbxDatabase.Text = "";
             this.cbxDatabase.TextAlignment = Terminal.Gui.TextAlignment.Left;
             this.Add(this.cbxDatabase);
             this.btnRefresh = new Terminal.Gui.Button();
             this.btnRefresh.Width = 11;
             this.btnRefresh.Height = 1;
-            this.btnRefresh.X = 46;
-            this.btnRefresh.Y = 13;
+            this.btnRefresh.X = 47;
+            this.btnRefresh.Y = 8;
             this.btnRefresh.Data = "btnRefresh";
             this.btnRefresh.Text = "Refresh";
             this.btnRefresh.TextAlignment = Terminal.Gui.TextAlignment.Centered;
@@ -214,8 +214,8 @@ namespace Rdmp.Core.CommandLine.Gui {
             this.btnCreateDatabase = new Terminal.Gui.Button();
             this.btnCreateDatabase.Width = 19;
             this.btnCreateDatabase.Height = 1;
-            this.btnCreateDatabase.X = 46;
-            this.btnCreateDatabase.Y = 14;
+            this.btnCreateDatabase.X = 47;
+            this.btnCreateDatabase.Y = 9;
             this.btnCreateDatabase.Data = "btnCreateDatabase";
             this.btnCreateDatabase.Text = "Create Database";
             this.btnCreateDatabase.TextAlignment = Terminal.Gui.TextAlignment.Centered;
@@ -224,8 +224,8 @@ namespace Rdmp.Core.CommandLine.Gui {
             this.lblTable = new Terminal.Gui.Label();
             this.lblTable.Width = 6;
             this.lblTable.Height = 1;
-            this.lblTable.X = 1;
-            this.lblTable.Y = 16;
+            this.lblTable.X = 3;
+            this.lblTable.Y = 10;
             this.lblTable.Data = "lblTable";
             this.lblTable.Text = "Table:";
             this.lblTable.TextAlignment = Terminal.Gui.TextAlignment.Left;
@@ -234,16 +234,16 @@ namespace Rdmp.Core.CommandLine.Gui {
             this.cbxTable.Width = 32;
             this.cbxTable.Height = 5;
             this.cbxTable.X = 11;
-            this.cbxTable.Y = 16;
-            this.cbxTable.Data = "tbTable";
+            this.cbxTable.Y = Pos.Top(lblTable);
+            this.cbxTable.Data = "cbxTable";
             this.cbxTable.Text = "";
             this.cbxTable.TextAlignment = Terminal.Gui.TextAlignment.Left;
             this.Add(this.cbxTable);
             this.rgTableType = new Terminal.Gui.RadioGroup();
             this.rgTableType.Width = 24;
             this.rgTableType.Height = 3;
-            this.rgTableType.X = 46;
-            this.rgTableType.Y = 16;
+            this.rgTableType.X = 47;
+            this.rgTableType.Y = 11;
             this.rgTableType.Data = "rgTableType";
             this.rgTableType.Text = "";
             this.rgTableType.TextAlignment = Terminal.Gui.TextAlignment.Left;
@@ -255,8 +255,8 @@ namespace Rdmp.Core.CommandLine.Gui {
             this.lblSchema = new Terminal.Gui.Label();
             this.lblSchema.Width = 7;
             this.lblSchema.Height = 1;
-            this.lblSchema.X = 1;
-            this.lblSchema.Y = 19;
+            this.lblSchema.X = 2;
+            this.lblSchema.Y = 12;
             this.lblSchema.Data = "lblSchema";
             this.lblSchema.Text = "Schema:";
             this.lblSchema.TextAlignment = Terminal.Gui.TextAlignment.Left;
@@ -265,7 +265,7 @@ namespace Rdmp.Core.CommandLine.Gui {
             this.tbSchema.Width = 32;
             this.tbSchema.Height = 1;
             this.tbSchema.X = 11;
-            this.tbSchema.Y = 19;
+            this.tbSchema.Y = 12;
             this.tbSchema.Data = "tbSchema";
             this.tbSchema.Text = "";
             this.tbSchema.TextAlignment = Terminal.Gui.TextAlignment.Left;
@@ -274,7 +274,7 @@ namespace Rdmp.Core.CommandLine.Gui {
             this.btnOk.Width = 8;
             this.btnOk.Height = 1;
             this.btnOk.X = 1;
-            this.btnOk.Y = 21;
+            this.btnOk.Y = 14;
             this.btnOk.Data = "btnOk";
             this.btnOk.Text = "Ok";
             this.btnOk.TextAlignment = Terminal.Gui.TextAlignment.Centered;
@@ -283,8 +283,8 @@ namespace Rdmp.Core.CommandLine.Gui {
             this.btnCancel = new Terminal.Gui.Button();
             this.btnCancel.Width = 11;
             this.btnCancel.Height = 1;
-            this.btnCancel.X = 10;
-            this.btnCancel.Y = 21;
+            this.btnCancel.X = 11;
+            this.btnCancel.Y = 14;
             this.btnCancel.Data = "btnCancel";
             this.btnCancel.Text = "C_ancel";
             this.btnCancel.TextAlignment = Terminal.Gui.TextAlignment.Centered;

@@ -25,7 +25,6 @@ namespace Rdmp.Core.CommandLine.Gui {
 
         public string Password => tbPassword.Text.ToString();
 
-        // TODO: check this works
         public string Server => cbxServer.Text.ToString();
         public string Database => cbxDatabase.Text.ToString();
         public string Schema => tbSchema.Text.ToString();
@@ -116,6 +115,9 @@ namespace Rdmp.Core.CommandLine.Gui {
                 lblTable.Visible = false;
                 cbxTable.Visible = false;
                 rgTableType.Visible = false;
+                btnOk.Y -= 5;
+                btnCancel.Y -= 5;
+                Height -= 5;
             }
 
         }
