@@ -267,29 +267,17 @@ namespace Rdmp.Core.CommandLine.Gui
                 return;
             }
 
-            var str = notifyEventArgs[item].ProgressEventType + " " + notifyEventArgs[item].Message;
+            var str = $"{notifyEventArgs[item].ProgressEventType} {notifyEventArgs[item].Message}";
 
-            if (str.Length > width)
-            {
-                str = str.Substring(0, width);
-            }
-            else
-            {
-                str = str.PadRight(width, ' ');
-            }
+            str = str.Length > width ? str[..width] : str.PadRight(width, ' ');
 
-            switch (notifyEventArgs[item].ProgressEventType)
+            var colour = notifyEventArgs[item].ProgressEventType switch
             {
-                case ProgressEventType.Error:
-                    driver.SetAttribute(selected ? _red.Focus : _red.Normal);
-                    break;
-                case ProgressEventType.Warning:
-                    driver.SetAttribute(selected ? _yellow.Focus : _yellow.Normal);
-                    break;
-                default:
-                    driver.SetAttribute(selected ? _white.Focus : _white.Normal);
-                    break;
-            }
+                ProgressEventType.Error => _red,
+                ProgressEventType.Warning => _yellow,
+                _ => _white
+            };
+            driver.SetAttribute(selected?colour.Focus:colour.Normal);
 
             _results.Move(col, line);
             driver.AddStr(str);

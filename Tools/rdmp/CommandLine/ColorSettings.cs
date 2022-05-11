@@ -28,26 +28,23 @@ public class ColorSettings
         {
             lock (oLockInstance)
             {
-                // if first time
-                if (_instance == null)
+                // if not first time, return existing value
+                if (_instance != null) return _instance;
+                if (File.Exists("ColorSettings.yaml"))
                 {
-                    if (File.Exists("ColorSettings.yaml"))
+                    try
                     {
-                        try
-                        {
-                            var d = new Deserializer();
-                            _instance = d.Deserialize<ColorSettings>(File.ReadAllText("ColorSettings.yaml"));
-                            return _instance;
-                        }
-                        catch (Exception)
-                        {
-                            // could not load the yaml color settings, just use the default
-                        }
+                        var d = new Deserializer();
+                        _instance = d.Deserialize<ColorSettings>(File.ReadAllText("ColorSettings.yaml"));
+                        return _instance;
                     }
-
-                    _instance = new ColorSettings();
+                    catch (Exception)
+                    {
+                        // could not load the yaml color settings, just use the default
+                    }
                 }
-                
+
+                _instance = new ColorSettings();
                 return _instance;
             }
         }
