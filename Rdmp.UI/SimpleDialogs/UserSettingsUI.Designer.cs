@@ -82,6 +82,8 @@
             this.cbSelectiveRefresh = new System.Windows.Forms.CheckBox();
             this.cbAlwaysJoinEverything = new System.Windows.Forms.CheckBox();
             this.userSettingsToolTips = new System.Windows.Forms.ToolTip(this.components);
+            this.tbFind = new System.Windows.Forms.TextBox();
+            this.label14 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvErrorCodes)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -104,7 +106,6 @@
             this.cbShowHomeOnStartup.TabIndex = 0;
             this.cbShowHomeOnStartup.Text = "Show Home on Startup";
             this.cbShowHomeOnStartup.UseVisualStyleBackColor = true;
-            this.cbShowHomeOnStartup.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // label1
             // 
@@ -126,7 +127,6 @@
             this.cbEmphasiseOnTabChanged.TabIndex = 2;
             this.cbEmphasiseOnTabChanged.Text = "Show Object Collection on Tab Change";
             this.cbEmphasiseOnTabChanged.UseVisualStyleBackColor = true;
-            this.cbEmphasiseOnTabChanged.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // cbConfirmExit
             // 
@@ -138,7 +138,6 @@
             this.cbConfirmExit.TabIndex = 2;
             this.cbConfirmExit.Text = "Confirm Application Exit";
             this.cbConfirmExit.UseVisualStyleBackColor = true;
-            this.cbConfirmExit.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // label2
             // 
@@ -160,7 +159,6 @@
             this.cbThemeMenus.TabIndex = 4;
             this.cbThemeMenus.Text = "Apply Theme To Menus";
             this.cbThemeMenus.UseVisualStyleBackColor = true;
-            this.cbThemeMenus.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // ddTheme
             // 
@@ -215,7 +213,6 @@
             this.cbFindShouldPin.TabIndex = 2;
             this.cbFindShouldPin.Text = "Find should Pin";
             this.cbFindShouldPin.UseVisualStyleBackColor = true;
-            this.cbFindShouldPin.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // label5
             // 
@@ -256,7 +253,6 @@
             this.cbWait5Seconds.TabIndex = 2;
             this.cbWait5Seconds.Text = "Wait 5 seconds after Startup";
             this.cbWait5Seconds.UseVisualStyleBackColor = true;
-            this.cbWait5Seconds.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // cbShowCohortWizard
             // 
@@ -268,7 +264,6 @@
             this.cbShowCohortWizard.TabIndex = 2;
             this.cbShowCohortWizard.Text = "Show Cohort Wizard";
             this.cbShowCohortWizard.UseVisualStyleBackColor = true;
-            this.cbShowCohortWizard.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // btnClearFavourites
             // 
@@ -292,7 +287,6 @@
             this.cbDoubleClickToExpand.TabIndex = 0;
             this.cbDoubleClickToExpand.Text = "Double Click to Expand";
             this.cbDoubleClickToExpand.UseVisualStyleBackColor = true;
-            this.cbDoubleClickToExpand.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // cbDebugPerformance
             // 
@@ -304,7 +298,6 @@
             this.cbDebugPerformance.TabIndex = 11;
             this.cbDebugPerformance.Text = "Record Performance Metrics (local data collection only)";
             this.cbDebugPerformance.UseVisualStyleBackColor = true;
-            this.cbDebugPerformance.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // cbShowPipelineCompletedPopup
             // 
@@ -316,7 +309,6 @@
             this.cbShowPipelineCompletedPopup.TabIndex = 15;
             this.cbShowPipelineCompletedPopup.Text = "Show Pipeline Completed Popup";
             this.cbShowPipelineCompletedPopup.UseVisualStyleBackColor = true;
-            this.cbShowPipelineCompletedPopup.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // groupBox1
             // 
@@ -355,7 +347,6 @@
             this.cbHideEmptyTableLoadRunAudits.TabIndex = 15;
             this.cbHideEmptyTableLoadRunAudits.Text = "Hide Empty Table Load Run Audits";
             this.cbHideEmptyTableLoadRunAudits.UseVisualStyleBackColor = true;
-            this.cbHideEmptyTableLoadRunAudits.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // label7
             // 
@@ -387,7 +378,6 @@
             this.cbScoreZeroForCohortAggregateContainers.TabIndex = 15;
             this.cbScoreZeroForCohortAggregateContainers.Text = "Hide Cohort Builder Containers in Find";
             this.cbScoreZeroForCohortAggregateContainers.UseVisualStyleBackColor = true;
-            this.cbScoreZeroForCohortAggregateContainers.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // cbAdvancedFindFilters
             // 
@@ -399,7 +389,6 @@
             this.cbAdvancedFindFilters.TabIndex = 19;
             this.cbAdvancedFindFilters.Text = "Show Advanced Find Filters";
             this.cbAdvancedFindFilters.UseVisualStyleBackColor = true;
-            this.cbAdvancedFindFilters.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // cbIncludeZeroSeriesInGraphs
             // 
@@ -411,7 +400,6 @@
             this.cbIncludeZeroSeriesInGraphs.TabIndex = 19;
             this.cbIncludeZeroSeriesInGraphs.Text = "Include Zero Series in Graphs";
             this.cbIncludeZeroSeriesInGraphs.UseVisualStyleBackColor = true;
-            this.cbIncludeZeroSeriesInGraphs.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // groupBox2
             // 
@@ -514,7 +502,6 @@
             this.cbStrictValidationForCohortBuilderContainers.TabIndex = 3;
             this.cbStrictValidationForCohortBuilderContainers.Text = "Strict Validation for Containers";
             this.cbStrictValidationForCohortBuilderContainers.UseVisualStyleBackColor = true;
-            this.cbStrictValidationForCohortBuilderContainers.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // groupBox6
             // 
@@ -537,7 +524,6 @@
             this.cbSkipCohortBuilderValidationOnCommit.TabIndex = 16;
             this.cbSkipCohortBuilderValidationOnCommit.Text = "Skip Cohort Builder validation on Commit";
             this.cbSkipCohortBuilderValidationOnCommit.UseVisualStyleBackColor = true;
-            this.cbSkipCohortBuilderValidationOnCommit.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // groupBox7
             // 
@@ -573,7 +559,6 @@
             this.cbAutoResizeColumns.TabIndex = 25;
             this.cbAutoResizeColumns.Text = "Auto Resize Columns";
             this.cbAutoResizeColumns.UseVisualStyleBackColor = true;
-            this.cbAutoResizeColumns.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // label12
             // 
@@ -649,7 +634,6 @@
             this.cbSelectiveRefresh.TabIndex = 11;
             this.cbSelectiveRefresh.Text = "Selective Refresh";
             this.cbSelectiveRefresh.UseVisualStyleBackColor = true;
-            this.cbSelectiveRefresh.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // cbAlwaysJoinEverything
             // 
@@ -661,7 +645,6 @@
             this.cbAlwaysJoinEverything.TabIndex = 2;
             this.cbAlwaysJoinEverything.Text = "Always Join Everything";
             this.cbAlwaysJoinEverything.UseVisualStyleBackColor = true;
-            this.cbAlwaysJoinEverything.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // userSettingsToolTips
             // 
@@ -671,11 +654,32 @@
             this.userSettingsToolTips.IsBalloon = true;
             this.userSettingsToolTips.ReshowDelay = 50;
             // 
+            // tbFind
+            // 
+            this.tbFind.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbFind.Location = new System.Drawing.Point(900, 13);
+            this.tbFind.Name = "tbFind";
+            this.tbFind.Size = new System.Drawing.Size(100, 23);
+            this.tbFind.TabIndex = 25;
+            this.tbFind.TextChanged += new System.EventHandler(this.tbFind_TextChanged);
+            // 
+            // label14
+            // 
+            this.label14.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(821, 16);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(73, 15);
+            this.label14.TabIndex = 26;
+            this.label14.Text = "Find Setting:";
+            // 
             // UserSettingsFileUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1012, 758);
+            this.Controls.Add(this.label14);
+            this.Controls.Add(this.tbFind);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.ddTheme);
             this.Controls.Add(this.cbThemeMenus);
@@ -762,5 +766,7 @@
         private System.Windows.Forms.CheckBox cbStrictValidationForCohortBuilderContainers;
         private System.Windows.Forms.CheckBox cbSkipCohortBuilderValidationOnCommit;
         private System.Windows.Forms.CheckBox cbAutoResizeColumns;
+        private System.Windows.Forms.TextBox tbFind;
+        private System.Windows.Forms.Label label14;
     }
 }

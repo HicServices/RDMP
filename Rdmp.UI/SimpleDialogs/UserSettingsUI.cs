@@ -5,6 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 using System.Windows.Forms;
 using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -74,48 +76,30 @@ namespace Rdmp.UI.SimpleDialogs
             olvTreatment.MaximumWidth = olvTreatment.Width;
             olvTreatment.MinimumWidth = olvTreatment.Width;
 
-            cbShowHomeOnStartup.Checked = UserSettings.ShowHomeOnStartup;
-            cbEmphasiseOnTabChanged.Checked = UserSettings.EmphasiseOnTabChanged;
-            cbConfirmExit.Checked = UserSettings.ConfirmApplicationExiting;
-            cbFindShouldPin.Checked = UserSettings.FindShouldPin;
-            cbThemeMenus.Checked = UserSettings.ApplyThemeToMenus;
-            cbWait5Seconds.Checked = UserSettings.Wait5SecondsAfterStartupUI;
-            cbShowCohortWizard.Checked = UserSettings.ShowCohortWizard;
-            cbStrictValidationForCohortBuilderContainers.Checked = UserSettings.StrictValidationForCohortBuilderContainers;
-            cbDoubleClickToExpand.Checked = UserSettings.DoubleClickToExpand;
-            cbDebugPerformance.Checked = UserSettings.DebugPerformance;
-            cbAutoResizeColumns.Checked = UserSettings.AutoResizeColumns;
-            cbShowPipelineCompletedPopup.Checked = UserSettings.ShowPipelineCompletedPopup;
-            cbSkipCohortBuilderValidationOnCommit.Checked = UserSettings.SkipCohortBuilderValidationOnCommit;
-            cbHideEmptyTableLoadRunAudits.Checked = UserSettings.HideEmptyTableLoadRunAudits;
-            cbScoreZeroForCohortAggregateContainers.Checked = UserSettings.ScoreZeroForCohortAggregateContainers;
-            cbAdvancedFindFilters.Checked = UserSettings.AdvancedFindFilters;
-            cbIncludeZeroSeriesInGraphs.Checked = UserSettings.IncludeZeroSeriesInGraphs;
-            cbSelectiveRefresh.Checked = UserSettings.SelectiveRefresh;
-            cbAlwaysJoinEverything.Checked = UserSettings.AlwaysJoinEverything;
             tbCreateDatabaseTimeout.Text = UserSettings.CreateDatabaseTimeout.ToString();
             tbArchiveTriggerTimeout.Text = UserSettings.ArchiveTriggerTimeout.ToString();
             tbTooltipAppearDelay.Text = UserSettings.TooltipAppearDelay.ToString();
 
-            AddTooltip(cbShowHomeOnStartup,nameof(UserSettings.ShowHomeOnStartup));
-            AddTooltip(cbEmphasiseOnTabChanged,nameof(UserSettings.EmphasiseOnTabChanged));
-            AddTooltip(cbConfirmExit,nameof(UserSettings.ConfirmApplicationExiting));
-            AddTooltip(cbFindShouldPin,nameof(UserSettings.FindShouldPin));
-            AddTooltip(cbThemeMenus,nameof(UserSettings.ApplyThemeToMenus));
-            AddTooltip(cbWait5Seconds,nameof(UserSettings.Wait5SecondsAfterStartupUI));
-            AddTooltip(cbShowCohortWizard,nameof(UserSettings.ShowCohortWizard));
-            AddTooltip(cbStrictValidationForCohortBuilderContainers, nameof(UserSettings.StrictValidationForCohortBuilderContainers));
-            AddTooltip(cbDoubleClickToExpand,nameof(UserSettings.DoubleClickToExpand));
-            AddTooltip(cbDebugPerformance,nameof(UserSettings.DebugPerformance));
-            AddTooltip(cbAutoResizeColumns, nameof(UserSettings.AutoResizeColumns));
-            AddTooltip(cbShowPipelineCompletedPopup,nameof(UserSettings.ShowPipelineCompletedPopup));
-            AddTooltip(cbSkipCohortBuilderValidationOnCommit, nameof(UserSettings.SkipCohortBuilderValidationOnCommit));
-            AddTooltip(cbHideEmptyTableLoadRunAudits,nameof(UserSettings.HideEmptyTableLoadRunAudits));
-            AddTooltip(cbScoreZeroForCohortAggregateContainers,nameof(UserSettings.ScoreZeroForCohortAggregateContainers));
-            AddTooltip(cbAdvancedFindFilters,nameof(UserSettings.AdvancedFindFilters));
-            AddTooltip(cbIncludeZeroSeriesInGraphs,nameof(UserSettings.IncludeZeroSeriesInGraphs));
-            AddTooltip(cbSelectiveRefresh, nameof(UserSettings.SelectiveRefresh));
-            AddTooltip(cbAlwaysJoinEverything,nameof(UserSettings.AlwaysJoinEverything));
+            RegisterCheckbox(cbShowHomeOnStartup,nameof(UserSettings.ShowHomeOnStartup));
+            RegisterCheckbox(cbEmphasiseOnTabChanged,nameof(UserSettings.EmphasiseOnTabChanged));
+            RegisterCheckbox(cbConfirmExit,nameof(UserSettings.ConfirmApplicationExiting));
+            RegisterCheckbox(cbFindShouldPin,nameof(UserSettings.FindShouldPin));
+            RegisterCheckbox(cbThemeMenus,nameof(UserSettings.ApplyThemeToMenus));
+            RegisterCheckbox(cbWait5Seconds,nameof(UserSettings.Wait5SecondsAfterStartupUI));
+            RegisterCheckbox(cbShowCohortWizard,nameof(UserSettings.ShowCohortWizard));
+            RegisterCheckbox(cbStrictValidationForCohortBuilderContainers, nameof(UserSettings.StrictValidationForCohortBuilderContainers));
+            RegisterCheckbox(cbDoubleClickToExpand,nameof(UserSettings.DoubleClickToExpand));
+            RegisterCheckbox(cbDebugPerformance,nameof(UserSettings.DebugPerformance));
+            RegisterCheckbox(cbAutoResizeColumns, nameof(UserSettings.AutoResizeColumns));
+            RegisterCheckbox(cbShowPipelineCompletedPopup,nameof(UserSettings.ShowPipelineCompletedPopup));
+            RegisterCheckbox(cbSkipCohortBuilderValidationOnCommit, nameof(UserSettings.SkipCohortBuilderValidationOnCommit));
+            RegisterCheckbox(cbHideEmptyTableLoadRunAudits,nameof(UserSettings.HideEmptyTableLoadRunAudits));
+            RegisterCheckbox(cbScoreZeroForCohortAggregateContainers,nameof(UserSettings.ScoreZeroForCohortAggregateContainers));
+            RegisterCheckbox(cbAdvancedFindFilters,nameof(UserSettings.AdvancedFindFilters));
+            RegisterCheckbox(cbIncludeZeroSeriesInGraphs,nameof(UserSettings.IncludeZeroSeriesInGraphs));
+            RegisterCheckbox(cbSelectiveRefresh, nameof(UserSettings.SelectiveRefresh));
+            RegisterCheckbox(cbAlwaysJoinEverything,nameof(UserSettings.AlwaysJoinEverything));
+
             AddTooltip(label7, nameof(UserSettings.CreateDatabaseTimeout));
             AddTooltip(tbCreateDatabaseTimeout, nameof(UserSettings.CreateDatabaseTimeout));
             AddTooltip(label13, nameof(UserSettings.ArchiveTriggerTimeout));
@@ -162,6 +146,24 @@ namespace Rdmp.UI.SimpleDialogs
             };
         }
 
+        Dictionary<CheckBox, PropertyInfo> checkboxDictionary = new();
+
+        private void RegisterCheckbox(CheckBox cb, string propertyName)
+        {
+            // remember about this checkbox for later
+            var prop = typeof(UserSettings).GetProperty(propertyName,BindingFlags.Static | BindingFlags.Public);
+            checkboxDictionary.Add(cb, prop);
+
+            // set initial value from UserSettings
+            cb.Checked = (bool)prop.GetValue(null);
+
+            // register callback
+            cb.CheckedChanged += CheckboxCheckedChanged;
+
+            // add help
+            AddTooltip(cbShowHomeOnStartup, propertyName);
+        }
+
         private void AddTooltip(Control c, string propertyName)
         {
             string helpText = _activator.CommentStore.GetDocumentationIfExists($"{ nameof(UserSettings)}.{propertyName}", false);
@@ -183,68 +185,13 @@ namespace Rdmp.UI.SimpleDialogs
             return UserSettings.GetErrorReportingLevelFor((ErrorCode)rowObject);
         }
 
-        private void cb_CheckedChanged(object sender, EventArgs e)
+        private void CheckboxCheckedChanged(object sender, EventArgs e)
         {
             if (!_bLoaded)
                 return;
             
             var cb = (CheckBox)sender;
-
-            if (cb == cbShowHomeOnStartup)
-                UserSettings.ShowHomeOnStartup = cb.Checked;
-
-            if (cb == cbEmphasiseOnTabChanged)
-                UserSettings.EmphasiseOnTabChanged = cb.Checked;
-
-            if(cb == cbConfirmExit)
-                UserSettings.ConfirmApplicationExiting = cb.Checked;
-            
-            if (cb == cbThemeMenus)
-                UserSettings.ApplyThemeToMenus = cb.Checked;
-
-            if(cb == cbFindShouldPin)
-                UserSettings.FindShouldPin = cb.Checked;
-
-            if(cb == cbWait5Seconds)
-                UserSettings.Wait5SecondsAfterStartupUI = cb.Checked;
-
-            if(cb == cbShowCohortWizard)
-                UserSettings.ShowCohortWizard = cb.Checked;
-
-            if (cb == cbStrictValidationForCohortBuilderContainers)
-                UserSettings.StrictValidationForCohortBuilderContainers = cb.Checked;
-
-            if (cb == cbDoubleClickToExpand)
-                UserSettings.DoubleClickToExpand = cb.Checked;
-
-            if(cb == cbDebugPerformance)
-                UserSettings.DebugPerformance = cb.Checked;
-
-            if (cb == cbAutoResizeColumns)
-                UserSettings.AutoResizeColumns = cb.Checked;
-
-            if (cb == cbShowPipelineCompletedPopup)
-                UserSettings.ShowPipelineCompletedPopup = cb.Checked;
-
-            if (cb == cbSkipCohortBuilderValidationOnCommit)
-                UserSettings.SkipCohortBuilderValidationOnCommit = cb.Checked;
-            
-            if (cb == cbHideEmptyTableLoadRunAudits)
-                UserSettings.HideEmptyTableLoadRunAudits = cb.Checked;
-
-            if (cb == cbScoreZeroForCohortAggregateContainers)
-                UserSettings.ScoreZeroForCohortAggregateContainers = cb.Checked;
-
-            if (cb == cbAdvancedFindFilters)
-                UserSettings.AdvancedFindFilters = cb.Checked;
-
-            if (cb == cbIncludeZeroSeriesInGraphs)
-                UserSettings.IncludeZeroSeriesInGraphs = cb.Checked;
-
-            if(cb == cbSelectiveRefresh)
-                UserSettings.SelectiveRefresh = cb.Checked;
-            if (cb == cbAlwaysJoinEverything)
-                UserSettings.AlwaysJoinEverything = cb.Checked;
+            checkboxDictionary[cb].SetValue(null,cb.Checked);
         }
 
         private void ddTheme_SelectedIndexChanged(object sender, EventArgs e)
@@ -295,5 +242,19 @@ namespace Rdmp.UI.SimpleDialogs
             }
         }
 
+        private void tbFind_TextChanged(object sender, EventArgs e)
+        {
+            Find(tbFind.Text);
+        }
+
+        private void Find(string text)
+        {
+            foreach(var cb in checkboxDictionary)
+            {
+                cb.Key.Visible = string.IsNullOrWhiteSpace(text) ||
+                    cb.Key.Text.Contains(text,StringComparison.CurrentCultureIgnoreCase) ||
+                    cb.Value.Name.Contains(text, StringComparison.CurrentCultureIgnoreCase);
+            }
+        }
     }
 }
