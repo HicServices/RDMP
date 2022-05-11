@@ -47,10 +47,17 @@ namespace Rdmp.Core.CommandLine.Gui
         public int Length => notifyEventArgs.Count;
 
         private Pipeline[] _compatiblePipelines;
+        private ColorScheme _red;
+        private ColorScheme _yellow;
+        private ColorScheme _white;
 
         public ConsoleGuiRunPipeline(IBasicActivateItems activator, IPipelineUseCase useCase, IPipeline pipeline)
         {
             Modal = true;
+
+            _red = ColorSettings.Instance.Red;
+            _yellow = ColorSettings.Instance.Yellow;
+            _white = ColorSettings.Instance.White;
 
             InitializeComponent();
 
@@ -260,16 +267,17 @@ namespace Rdmp.Core.CommandLine.Gui
                 return;
             }
 
-            var str = notifyEventArgs[item].ProgressEventType + " " + notifyEventArgs[item].Message;
+            var str = $"{notifyEventArgs[item].ProgressEventType} {notifyEventArgs[item].Message}";
 
-            if (str.Length > width)
+            str = str.Length > width ? str[..width] : str.PadRight(width, ' ');
+
+            var colour = notifyEventArgs[item].ProgressEventType switch
             {
-                str = str.Substring(0, width);
-            }
-            else
-            {
-                str = str.PadRight(width, ' ');
-            }
+                ProgressEventType.Error => _red,
+                ProgressEventType.Warning => _yellow,
+                _ => _white
+            };
+            driver.SetAttribute(selected?colour.Focus:colour.Normal);
 
             _results.Move(col, line);
             driver.AddStr(str);

@@ -49,6 +49,10 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         public const int MultiLineLengthThreshold = 1000;
 
+
+        /// <inheritdoc/>
+        public bool IsWinForms {get; protected set;}
+
         /// <inheritdoc/>
         public virtual bool IsInteractive => true;
 

@@ -517,6 +517,11 @@ namespace Rdmp.Core.CommandExecution
         bool HardRefresh { get; set; }
 
         /// <summary>
+        /// True if this is the winforms client otherwise false
+        /// </summary>
+        bool IsWinForms { get; }
+
+        /// <summary>
         /// Called when <see cref="BasicCommandExecution.Publish"/> is invoked.  Allows you to respond to publish events outside of UI code.  UI code
         /// should invoke the RefreshBus system in Rdmp.UI
         /// </summary>

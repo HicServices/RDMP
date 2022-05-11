@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added Error/Warn highlighting in console gui run/check windows
 - Added 'RAWTableToLoad' dropdown property to RemoteTableAttacher to prevent mispellings when typing table names - [#1134](https://github.com/HicServices/RDMP/issues/1134)
 - Added optional argument to 'ExecuteCommandConfirmLogs' that requires rows were loaded by the DLE to pass
 - Added ability to search the UserSettings UI 

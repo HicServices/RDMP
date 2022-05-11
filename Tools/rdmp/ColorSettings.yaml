@@ -1,0 +1,26 @@
+﻿RedForegroundNormal: Red
+RedBackgroundNormal: Black
+RedForegroundFocus: Red
+RedBackgroundFocus: DarkGray
+RedForegroundDisabled: Red
+RedBackgroundDisabled: Black
+RedForegroundHotFocus: Red
+RedBackgroundHotFocus: Black
+
+YellowForegroundNormal: BrightYellow
+YellowBackgroundNormal: Black
+YellowForegroundFocus: BrightYellow
+YellowBackgroundFocus: DarkGray
+YellowForegroundDisabled: BrightYellow
+YellowBackgroundDisabled: Black
+YellowForegroundHotFocus: BrightYellow
+YellowBackgroundHotFocus: Black
+
+WhiteForegroundNormal: Green
+WhiteBackgroundNormal: Black
+WhiteForegroundFocus: White
+WhiteBackgroundFocus: DarkGray
+WhiteForegroundDisabled: White
+WhiteBackgroundDisabled: Black
+WhiteForegroundHotFocus: White
+WhiteBackgroundHotFocus: Black

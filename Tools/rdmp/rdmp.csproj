@@ -18,10 +18,14 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="CommandLine\ColorSettings.yaml" />
     <None Remove="Databases.yaml" />
     <None Remove="NLog.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ColorSettings.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Databases.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
