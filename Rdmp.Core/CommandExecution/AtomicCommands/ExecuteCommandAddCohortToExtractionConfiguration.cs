@@ -20,6 +20,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _sourceExtractableCohortComand = sourceExtractableCohortComand;
             _targetExtractionConfiguration = targetExtractionConfiguration;
 
+            if(_sourceExtractableCohortComand.Cohort.IsDeprecated)
+            {
+                SetImpossible("Cohort is deprecated");
+                return;
+            }
+
             if(_sourceExtractableCohortComand.ErrorGettingCohortData != null)
             {
                 SetImpossible("Could not fetch Cohort data:" + _sourceExtractableCohortComand.ErrorGettingCohortData.Message);
