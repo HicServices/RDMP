@@ -111,6 +111,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public ActivateItems(ITheme theme,RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowFactory windowFactory, WindowManager windowManager, ICheckNotifier globalErrorCheckNotifier):base(repositoryLocator,globalErrorCheckNotifier)
         {
             Theme = theme;
+            IsWinForms = true;
             InteractiveDeletes = true;
             WindowFactory = windowFactory;
             _mainDockPanel = mainDockPanel;
