@@ -14,7 +14,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using Terminal.Gui;
 
@@ -30,10 +29,18 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
 
         private object lockList = new object();
         private List<string> consoleOutput = new List<string>();
+        private ColorScheme _red;
+        private ColorScheme _yellow;
+        private ColorScheme _white;
+
         public int Count => consoleOutput.Count;
         public int Length => consoleOutput.Count;
         public RunEngineWindow(IBasicActivateItems activator, Func<T> commandGetter)
         {
+            _red = ColorSettings.Instance.Red;
+            _yellow = ColorSettings.Instance.Yellow;
+            _white = ColorSettings.Instance.White;
+
             Modal = true;
             ColorScheme = ConsoleMainWindow.ColorScheme;
 
@@ -226,6 +233,20 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
                 }
 
                 _results.Move(col, line);
+
+                ColorScheme scheme;
+                if (str.Contains("ERROR"))
+                {
+                    scheme = _red;
+                }
+                else if (str.Contains("WARN"))
+                {
+                    scheme = _yellow;
+                }
+                else
+                    scheme = _white;
+
+                driver.SetAttribute(selected ? scheme.Focus : scheme.Normal);
                 driver.AddStr(str);
             }                
         }
