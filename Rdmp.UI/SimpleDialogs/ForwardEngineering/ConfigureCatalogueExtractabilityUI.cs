@@ -446,6 +446,8 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 
         private void AddToExistingCatalogue(Catalogue addToInstead, ExtractionInformation[] eis)
         {
+            var existingTables = addToInstead.GetTableInfosIdeallyJustFromMainTables();
+
             //move all the CatalogueItems to the other Catalogue instead
             foreach (ExtractionInformation ei in eis)
             {
@@ -456,11 +458,61 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             
             _choicesFinalised = true;
             _catalogue.DeleteInDatabase();
-            _catalogue = null;
+
+            // prevents wrappers thinking no Catalogue was created and offering to drop the TableInfo!
+            _catalogue = addToInstead;
 
             Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(addToInstead));
 
             Close();
+
+            ITableInfo joinFrom;
+
+            // if user is adding a second table and theres currently only 1 TableInfo
+            // associated with the Catalogue
+            if (existingTables.Length == 1)
+            {
+                // mark the TableInfo as primary
+                existingTables[0].IsPrimaryExtractionTable = true;
+                existingTables[0].SaveToDatabase();
+
+                // let the user configure how to join to the second table
+                joinFrom = existingTables[0];
+            }
+            else
+            {
+                joinFrom = (ITableInfo)Activator.SelectOne(new DialogArgs {
+                    WindowTitle = "Pick Table for Join",
+                    TaskDescription = $"Your Catalogue '{addToInstead}' has {existingTables.Length} tables alreayd associated with it.  Which of these can be joined to your new table '{TableInfoCreated}'"
+                },existingTables);
+
+                // user cancelled joining
+                if (joinFrom == null)
+                    return;
+
+            }
+
+            var existingJoins = Activator.RepositoryLocator.CatalogueRepository.JoinManager
+                .GetAllJoinInfosBetweenColumnInfoSets(joinFrom.ColumnInfos,
+                TableInfoCreated.ColumnInfos);
+
+            // we already know how to join these tables
+            if (existingJoins.Any())
+                return;
+
+            // let the user configure how to join to the second table
+            var cmdAddJoin = new ExecuteCommandAddJoinInfo(Activator, (TableInfo)joinFrom);
+            cmdAddJoin.SetInitialJoinToTableInfo((TableInfo)TableInfoCreated);
+
+            if(!cmdAddJoin.IsImpossible)
+            {
+                Activator.Show("Configure Join", "You will now be taken to the join configuration screen to define how your new table is linked to in SQL queries");
+                cmdAddJoin.Execute();
+            }
+            else
+            {
+                Activator.Show("Could not generate JoinInfo screen", "Failed to show JoinInfo configuration screen:" + cmdAddJoin.ReasonCommandImpossible);
+            }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
