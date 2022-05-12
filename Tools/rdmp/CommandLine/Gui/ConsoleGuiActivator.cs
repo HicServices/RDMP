@@ -319,8 +319,10 @@ namespace Rdmp.Core.CommandLine.Gui
 
             var dlg = new Dialog("Error",w,h,btnOk,btnStack);            
             dlg.Add(textView);
-            
-            Application.Run(dlg);
+
+            Application.MainLoop.Invoke(() =>
+                Application.Run(dlg)
+            );
         }
 
         private ustring GetExceptionText(string errorText, Exception exception, bool includeStackTrace)

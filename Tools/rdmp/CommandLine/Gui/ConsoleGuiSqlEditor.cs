@@ -300,15 +300,18 @@ namespace Rdmp.Core.CommandLine.Gui
                         var dt = new DataTable();
                         da.Fill(dt);
 
-                        tableView.Table = dt;
-
-                        // if query resulted in some data show it
-                        if (dt.Columns.Count > 0)
-                        {
-                            TabView.SelectedTab = resultTab;
-                            TabView.SetNeedsDisplay();
-                        }
+                        Application.MainLoop.Invoke(() => { 
                             
+                            tableView.Table = dt;
+
+                            // if query resulted in some data show it
+                            if (dt.Columns.Count > 0)
+                            {
+                                TabView.SelectedTab = resultTab;
+                                TabView.SetNeedsDisplay();
+                            }
+                        });
+
 
                         OnQueryCompleted(dt);
                     }   
