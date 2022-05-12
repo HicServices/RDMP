@@ -67,7 +67,8 @@ namespace Rdmp.UI.DataViewing
 
             btnExecuteSql.Click += (s,e) => RunQuery();
             btnResetSql.Click += btnResetSql_Click;
-            
+
+            dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
             dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
 
             _serverHeader = new ToolStripLabel("Server:");

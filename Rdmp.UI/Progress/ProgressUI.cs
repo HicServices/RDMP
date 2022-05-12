@@ -58,6 +58,7 @@ namespace Rdmp.UI.Progress
         public ProgressUI()
         {
             InitializeComponent();
+            dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
             dataGridView1.DataSource = progress;
 
             progress.Columns.Add("Job");

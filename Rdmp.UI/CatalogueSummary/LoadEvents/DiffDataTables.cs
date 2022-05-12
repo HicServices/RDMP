@@ -24,6 +24,8 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
         public DiffDataTables()
         {
             InitializeComponent();
+
+            dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
         }
 
         public void PopulateWith(DataTable dt1, DataTable dt2)

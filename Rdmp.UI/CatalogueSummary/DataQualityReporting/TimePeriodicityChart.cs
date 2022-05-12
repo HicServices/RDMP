@@ -41,6 +41,8 @@ namespace Rdmp.UI.CatalogueSummary.DataQualityReporting
             };
             chart1.Palette = ChartColorPalette.None;
             chart1.KeyUp += chart1_KeyUp;
+
+            dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
         }
 
 
