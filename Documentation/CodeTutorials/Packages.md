@@ -24,7 +24,7 @@
 | HIC.FAnsiSql |[GitHub](https://github.com/HicServices/FAnsiSql) | [2.0.4](https://www.nuget.org/packages/HIC.FansiSql/2.0.4) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | [DBMS] abstraction layer |
 | HIC.BadMedicine | [GitHub](https://github.com/HicServices/BadMedicine) | [1.0.1](https://www.nuget.org/packages/HIC.BadMedicine/1.0.1) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | Generate Test Datasets for tests/exericses |
 | SSH.NET  | [GitHub](https://github.com/sshnet/SSH.NET)  | [2020.0.1](https://www.nuget.org/packages/SSH.NET/2020.0.1) | [MIT](https://github.com/sshnet/SSH.NET/blob/develop/LICENSE) | Enables fetching files from SFTP servers |
-| Moq 4 | [GitHub](https://github.com/moq/moq4) | [4.17.2](https://www.nuget.org/packages/Moq/4.17.2) |[BSD 3](https://github.com/moq/moq4/blob/master/License.txt)  | Mock objects during unit testing |
+| Moq 4 | [GitHub](https://github.com/moq/moq4) | [4.18.0](https://www.nuget.org/packages/Moq/4.18.0) |[BSD 3](https://github.com/moq/moq4/blob/master/License.txt)  | Mock objects during unit testing |
 | [Nunit](https://nunit.org/) |[GitHub](https://github.com/nunit/nunit) | [3.13.3](https://www.nuget.org/packages/NUnit/3.13.3) | [MIT](https://opensource.org/licenses/MIT) | Unit testing |
 | Microsoft.NET.Test.Sdk | [GitHub](https://github.com/microsoft/vstest/) | [17.2.0](https://www.nuget.org/packages/Microsoft.NET.Test.Sdk/17.2.0) | [MIT](https://opensource.org/licenses/MIT) | Required for running tests| |
 | NUnit3TestAdapter | [GitHub](https://github.com/nunit/nunit3-vs-adapter)| [3.13.3](https://www.nuget.org/packages/NUnit3TestAdapter/3.13.3) | [MIT](https://opensource.org/licenses/MIT) | Run unit tests from within Visual Studio |
