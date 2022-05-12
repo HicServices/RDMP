@@ -54,6 +54,8 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
             _batchSizeToGet = 20;//technically redundant since text changed will fire but nvm
             tbTimeout.Text = "30";
             _timeout = 30;
+
+            dgInserts.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
         }
 
 

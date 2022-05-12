@@ -118,9 +118,10 @@ namespace Rdmp.UI.AggregationUIs
             tpCode.Controls.Add(QueryEditor);
             #endregion QueryEditor
 
-            SetToolbarButtonsEnabled(true);
-
+            SetToolbarButtonsEnabled(true); 
             
+            dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
+
             Timeout = 300;
 
             miCopyToClipboard.DropDownItems.Add(miClipboardWord);
