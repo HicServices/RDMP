@@ -483,7 +483,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             {
                 joinFrom = (ITableInfo)Activator.SelectOne(new DialogArgs {
                     WindowTitle = "Pick Table for Join",
-                    TaskDescription = $"Your Catalogue '{addToInstead}' has {existingTables.Length} tables alreayd associated with it.  Which of these can be joined to your new table '{TableInfoCreated}'"
+                    TaskDescription = $"Your Catalogue '{addToInstead}' has {existingTables.Length} tables already associated with it.  Which of these can be joined to your new table '{TableInfoCreated}'"
                 },existingTables);
 
                 // user cancelled joining
