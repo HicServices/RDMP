@@ -161,7 +161,7 @@ namespace Rdmp.UI.SimpleDialogs
             cb.CheckedChanged += CheckboxCheckedChanged;
 
             // add help
-            AddTooltip(cbShowHomeOnStartup, propertyName);
+            AddTooltip(cb, propertyName);
         }
 
         private void AddTooltip(Control c, string propertyName)
