@@ -364,6 +364,20 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("AlwaysJoinEverything", value); }
         }
 
+        /// <summary>
+        /// <para>
+        /// Determines whether queries are automatically sent and results displayed in
+        /// data tabs in RDMP (e.g. View top 100 etc).  Enable to automatically send the
+        /// queries.  Disable to show the SQL but require the user to press F5 or click Run
+        /// to execute. 
+        /// </para>
+        /// </summary>
+        public static bool AutoRunSqlQueries
+        {
+            get { return AppSettings.GetValueOrDefault("AutoRunSqlQueries", false); }
+            set { AppSettings.AddOrUpdateValue("AutoRunSqlQueries", value); }
+        }
+
 
         #endregion
 

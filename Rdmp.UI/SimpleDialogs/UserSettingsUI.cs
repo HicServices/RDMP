@@ -99,6 +99,7 @@ namespace Rdmp.UI.SimpleDialogs
             RegisterCheckbox(cbIncludeZeroSeriesInGraphs,nameof(UserSettings.IncludeZeroSeriesInGraphs));
             RegisterCheckbox(cbSelectiveRefresh, nameof(UserSettings.SelectiveRefresh));
             RegisterCheckbox(cbAlwaysJoinEverything,nameof(UserSettings.AlwaysJoinEverything));
+            RegisterCheckbox(cbAutoRunSqlQueries, nameof(UserSettings.AutoRunSqlQueries));
 
             AddTooltip(label7, nameof(UserSettings.CreateDatabaseTimeout));
             AddTooltip(tbCreateDatabaseTimeout, nameof(UserSettings.CreateDatabaseTimeout));
