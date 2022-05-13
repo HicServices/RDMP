@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Empty cohort builder containers are now treated as disabled by query builder when StrictValidationForCohortBuilderContainers is off [#1131](https://github.com/HicServices/RDMP/issues/1131)
+- Fixed line numbers being clipped when greater than 99 [#1162](https://github.com/HicServices/RDMP/issues/1162)
 
 ### Changed
 

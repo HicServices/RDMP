@@ -56,7 +56,10 @@ namespace Rdmp.UI.ScintillaHelper
             toReturn.VScrollBar = true;
 
             if (lineNumbers)
-                toReturn.Margins[0].Width = 40; //allows display of line numbers
+            {
+                toReturn.Margins[0].Type = MarginType.Text;
+                toReturn.Margins[1].Type = MarginType.Number;
+            }
             else
                 foreach (var margin in toReturn.Margins)
                     margin.Width = 0;
