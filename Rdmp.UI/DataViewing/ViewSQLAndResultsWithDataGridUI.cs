@@ -29,8 +29,7 @@ using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Icons.IconProvision;
-
-
+using ReusableLibraryCode.Settings;
 using ScintillaNET;
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
@@ -73,6 +72,8 @@ namespace Rdmp.UI.DataViewing
 
             _serverHeader = new ToolStripLabel("Server:");
             _databaseTypeIconProvider = new DatabaseTypeIconProvider();
+
+            lblHelp.Visible = !UserSettings.AutoRunSqlQueries;
         }
 
         private void ScintillaOnKeyUp(object sender, KeyEventArgs keyEventArgs)
@@ -163,7 +164,10 @@ namespace Rdmp.UI.DataViewing
                 
                 _server.TestConnection();
 
-                LoadDataTableAsync(_server, sql);
+                if(UserSettings.AutoRunSqlQueries)
+                {
+                    LoadDataTableAsync(_server, sql);
+                }
             }
             catch (Exception ex)
             {
@@ -204,6 +208,8 @@ namespace Rdmp.UI.DataViewing
 
         private void LoadDataTableAsync(DiscoveredServer server, string sql)
         {
+            lblHelp.Visible = false;
+
             //it is already running and not completed
             if (_task != null && !_task.IsCompleted)
                 return;

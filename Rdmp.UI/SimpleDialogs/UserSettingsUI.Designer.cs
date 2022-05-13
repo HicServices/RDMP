@@ -62,6 +62,7 @@
             this.cbIncludeZeroSeriesInGraphs = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.cbAutoRunSqlQueries = new System.Windows.Forms.CheckBox();
             this.label8 = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
@@ -415,6 +416,7 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.cbAutoRunSqlQueries);
             this.groupBox3.Controls.Add(this.label8);
             this.groupBox3.Controls.Add(this.cbDoubleClickToExpand);
             this.groupBox3.Controls.Add(this.cbEmphasiseOnTabChanged);
@@ -425,6 +427,17 @@
             this.groupBox3.TabIndex = 21;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Tabbed UI Options";
+            // 
+            // cbAutoRunQueries
+            // 
+            this.cbAutoRunSqlQueries.AutoSize = true;
+            this.cbAutoRunSqlQueries.Location = new System.Drawing.Point(4, 102);
+            this.cbAutoRunSqlQueries.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.cbAutoRunSqlQueries.Name = "cbAutoRunQueries";
+            this.cbAutoRunSqlQueries.Size = new System.Drawing.Size(138, 19);
+            this.cbAutoRunSqlQueries.TabIndex = 20;
+            this.cbAutoRunSqlQueries.Text = "Auto Run Sql Queries";
+            this.cbAutoRunSqlQueries.UseVisualStyleBackColor = true;
             // 
             // label8
             // 
@@ -768,5 +781,6 @@
         private System.Windows.Forms.CheckBox cbAutoResizeColumns;
         private System.Windows.Forms.TextBox tbFind;
         private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.CheckBox cbAutoRunSqlQueries;
     }
 }
