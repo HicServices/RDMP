@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Added UserSettings editing UI to Console Gui
+
 ## [7.0.12] - 2022-05-16
 
 ### Added

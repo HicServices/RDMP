@@ -178,7 +178,7 @@ namespace Rdmp.Core.CommandLine.Gui {
 
         public bool ShowDialog()
         {
-            Application.Run(this);
+            Application.Run(this, ConsoleMainWindow.ExceptionPopup);
             return OkClicked;
         }
 
