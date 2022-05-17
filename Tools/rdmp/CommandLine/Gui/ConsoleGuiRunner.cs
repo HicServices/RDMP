@@ -33,7 +33,7 @@ namespace Rdmp.Core.CommandLine.Gui
         public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
         {
             _activator = new ConsoleGuiActivator(repositoryLocator,checkNotifier);
-
+            ConsoleMainWindow.StaticActivator = _activator;
             
             LogManager.DisableLogging();
 

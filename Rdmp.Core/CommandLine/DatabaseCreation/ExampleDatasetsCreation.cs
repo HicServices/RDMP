@@ -581,7 +581,7 @@ UNPIVOT
         }
         private ICatalogue ImportCatalogue(ITableInfo ti)
         {
-            var forwardEngineer = new ForwardEngineerCatalogue(ti,ti.ColumnInfos,true);
+            var forwardEngineer = new ForwardEngineerCatalogue(ti,ti.ColumnInfos);
             forwardEngineer.ExecuteForwardEngineering(out var cata, out _,out ExtractionInformation[] eis);
             
             //get descriptions of the columns from BadMedicine

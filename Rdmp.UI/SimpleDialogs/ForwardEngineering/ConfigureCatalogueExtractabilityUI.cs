@@ -114,7 +114,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             CommonFunctionality.SetItemActivator(activator);
             var cols = _tableInfo.ColumnInfos;
             
-            var forwardEngineer = new ForwardEngineerCatalogue(_tableInfo, cols, false);
+            var forwardEngineer = new ForwardEngineerCatalogue(_tableInfo, cols);
             ExtractionInformation[] eis;
             forwardEngineer.ExecuteForwardEngineering(out _catalogue, out _catalogueItems, out eis);
 
@@ -133,7 +133,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 
             //Every CatalogueItem is either mapped to a ColumnInfo (not extractable) or a ExtractionInformation (extractable).  To start out with they are not extractable
             foreach (CatalogueItem ci in _catalogueItems)
-                olvColumnExtractability.AddObject(new ColPair(ci, cols.Single(col => ci.ColumnInfo_ID == col.ID)));
+                olvColumnExtractability.AddObject(new ColPair(ci, cols.Single(col => ci.ColumnInfo_ID == col.ID), eis.SingleOrDefault(e=>e.CatalogueItem_ID == ci.ID)));
 
             _extractionCategories = new object[]
             {
@@ -627,10 +627,11 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             public ColumnInfo ColumnInfo;
             public ExtractionInformation ExtractionInformation;
             
-            public ColPair(CatalogueItem ci, ColumnInfo col)
+            public ColPair(CatalogueItem ci, ColumnInfo col, ExtractionInformation ei)
             {
                 CatalogueItem = ci;
                 ColumnInfo = col;
+                ExtractionInformation = ei;
             }
 
             public override string ToString()

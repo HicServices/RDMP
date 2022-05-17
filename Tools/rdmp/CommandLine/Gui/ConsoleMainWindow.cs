@@ -36,6 +36,13 @@ namespace Rdmp.Core.CommandLine.Gui
         private TreeView<object> _treeView;
         private IBasicActivateItems _activator;
 
+        /// <summary>
+        /// The last <see cref="IBasicActivateItems"/> passed to this UI.
+        /// Typically the same throughout the process lifetime.  This may
+        /// be null if no main window/activator has been created yet
+        /// </summary>
+        public static ConsoleGuiActivator StaticActivator { get; set; }
+
         private MenuItem mi_default;
         private ColorScheme _defaultColorScheme;
         private MenuItem mi_green;
@@ -63,6 +70,7 @@ namespace Rdmp.Core.CommandLine.Gui
         public ConsoleMainWindow(ConsoleGuiActivator activator)
         {
             _activator = activator;
+            StaticActivator = activator;
             activator.Published += Activator_Published;
             activator.Emphasise += (s,e)=>Show(e.Request.ObjectToEmphasise);
         }
@@ -83,6 +91,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 new MenuBarItem ("_File (F9)", new MenuItem [] {
                     new MenuItem ("_New...", "", () => New()),
                     new MenuItem ("_Find...", "", () => Find()),
+                    new MenuItem ("_User Settings...", "", () => ShowUserSettings()),
                     new MenuItem ("_Run...", "", () => Run()),
                     new MenuItem ("_Refresh...", "", () => Publish()),
                     new MenuItem ("_Quit", "", () => Quit()),
@@ -136,7 +145,7 @@ namespace Rdmp.Core.CommandLine.Gui
                     Other});
 
             _win.Add(_treeView);
-            top.Add(_win);
+            top.Add(_win); 
 
             Application.RootMouseEvent = OnRootMouseEvent;
 
@@ -162,6 +171,26 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 SetColorScheme(mi_green);
             }
+        }
+
+        private void ShowUserSettings()
+        {
+            try
+            {
+                var dlg = new ConsoleGuiUserSettings(_activator);
+
+                Application.Run(dlg, ExceptionPopup);
+            }
+            catch (Exception e)
+            {
+                _activator.ShowException("Unexpected error in open/edit tree", e);
+            }
+        }
+
+        public static bool ExceptionPopup(Exception ex)
+        {
+            StaticActivator.ShowException("Error", ex);
+            return true;
         }
 
         private void OnRootMouseEvent(MouseEvent obj)

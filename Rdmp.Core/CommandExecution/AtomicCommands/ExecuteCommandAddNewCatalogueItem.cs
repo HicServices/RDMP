@@ -60,7 +60,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             var c = _catalogue;
             var existingColumnInfos = _existingColumnInfos;
 
-            if(c == null)
+            var repo = BasicActivator.RepositoryLocator.CatalogueRepository;
+
+            if (c == null)
             {
                 if (BasicActivator.SelectObject(new DialogArgs() {
                     WindowTitle = "Add CatalogueItem",
@@ -102,7 +104,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
                     //set the associated column if they did pick it
                     if(columnInfo != null)
+                    {
                         ci.SetColumnInfo(columnInfo);
+                        // also make extractable
+                        new ExtractionInformation(repo, ci, columnInfo, columnInfo.GetFullyQualifiedName());
+                    }
 
                     ci.SaveToDatabase();
 
@@ -117,9 +123,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     if(AlreadyInCatalogue(columnInfo, existingColumnInfos))
                         continue;
 
-                    var ci = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, c, columnInfo.GetRuntimeName());
+                    var ci = new CatalogueItem(repo, c, columnInfo.GetRuntimeName());
                     ci.SetColumnInfo(columnInfo);
                     ci.SaveToDatabase();
+
+                    // also make extractable
+                    new ExtractionInformation(repo, ci, columnInfo, columnInfo.GetFullyQualifiedName());
                 }
 
                 Publish(c);

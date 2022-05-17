@@ -31,7 +31,7 @@ namespace Rdmp.Core.CommandLine.Gui
             
             var window = windowConstructor();
 
-            Application.Run(window);
+            Application.Run(window, ConsoleMainWindow.ExceptionPopup);
         }
     }
 }
