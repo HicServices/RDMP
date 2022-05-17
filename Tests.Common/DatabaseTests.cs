@@ -775,7 +775,7 @@ delete from {1}..Project
             var importer = new TableInfoImporter(CatalogueRepository, tbl);
             importer.DoImport(out tableInfoCreated,out columnInfosCreated);
 
-            var forwardEngineer = new ForwardEngineerCatalogue(tableInfoCreated, columnInfosCreated,true);
+            var forwardEngineer = new ForwardEngineerCatalogue(tableInfoCreated, columnInfosCreated);
             forwardEngineer.ExecuteForwardEngineering(out var catalogue,out catalogueItems,out extractionInformations);
 
             return catalogue;

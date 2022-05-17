@@ -43,6 +43,10 @@ namespace Rdmp.Core.DataLoad.Engine.Job
         public HICDatabaseConfiguration Configuration { get; set; }
         public object Payload { get; set; }
 
+        private List<NotifyEventArgs> _crashAtEnd = new();
+
+        public IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages => _crashAtEnd.AsReadOnly();
+
 
         private string _loggingTask;
 
@@ -201,6 +205,11 @@ namespace Rdmp.Core.DataLoad.Engine.Job
         public ColumnInfo[] GetAllColumns()
         {
             return RegularTablesToLoad.SelectMany(t=>t.ColumnInfos).Union(LookupTablesToLoad.SelectMany(t=>t.ColumnInfos)).Distinct().ToArray();
+        }
+
+        public void CrashAtEnd(NotifyEventArgs because)
+        {
+            _crashAtEnd.Add(because);
         }
     }
 }

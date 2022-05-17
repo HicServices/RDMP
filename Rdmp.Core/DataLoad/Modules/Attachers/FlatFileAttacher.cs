@@ -40,6 +40,9 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
         [DemandsInitialization("Determines the behaviour of the system when no files are matched by FilePattern.  If true the entire data load process immediately stops with exit code LoadNotRequired, if false then the load proceeds as normal (useful if for example if you have multiple Attachers and some files are optional)")]
         public bool SendLoadNotRequiredIfFileNotFound { get; set; }
 
+        [DemandsInitialization("If enabled then file(s) that could not be loaded are reported as warnings and the load only marked as failed after completion (including archiving etc)")]
+        public bool DelayLoadFailures { get; set; }
+
         public FlatFileAttacher() : base(true)
         {
             
@@ -94,8 +97,25 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
             }
 
             foreach (var fileToLoad in filesToLoad)
-                LoadFile(table, fileToLoad, _dbInfo, timer, job,cancellationToken);
+            {
+                if(DelayLoadFailures)
+                {
+                    try
+                    {
+                        LoadFile(table, fileToLoad, _dbInfo, timer, job, cancellationToken);
+                    }
+                    catch (Exception ex)
+                    {
+                        job.CrashAtEnd(new NotifyEventArgs(ProgressEventType.Warning, $"Failed to load {fileToLoad}", ex));
+                    }
 
+                }
+                else
+                {
+                    LoadFile(table, fileToLoad, _dbInfo, timer, job, cancellationToken);
+                }
+            }
+            
             timer.Stop();
 
             return ExitCodeType.Success;
