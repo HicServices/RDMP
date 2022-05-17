@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Added `CrashAtEnd` system for DLE that allows Attachers to flag a load as a failure without halting execution [#1157](https://github.com/HicServices/RDMP/issues/1157)
+
 ## [7.0.12] - 2022-05-16
 
 ### Added
