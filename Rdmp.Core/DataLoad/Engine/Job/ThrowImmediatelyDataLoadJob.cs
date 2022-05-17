@@ -70,6 +70,12 @@ namespace Rdmp.Core.DataLoad.Engine.Job
 
         public object Payload { get; set; }
 
+        private List<NotifyEventArgs> _crashAtEnd = new();
+
+        /// <inheritdoc/>
+        public IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages => _crashAtEnd.AsReadOnly();
+
+
         public void AddForDisposalAfterCompletion(IDisposeAfterDataLoad disposable)
         {
         }
@@ -98,6 +104,12 @@ namespace Rdmp.Core.DataLoad.Engine.Job
         public ColumnInfo[] GetAllColumns()
         {
             return RegularTablesToLoad.SelectMany(t=>t.ColumnInfos).Union(LookupTablesToLoad.SelectMany(t=>t.ColumnInfos)).Distinct().ToArray();
+        }
+
+        /// <inheritdoc/>
+        public void CrashAtEnd(NotifyEventArgs because)
+        {
+            _crashAtEnd.Add(because);
         }
     }
 }
