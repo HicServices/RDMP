@@ -200,7 +200,7 @@ namespace Rdmp.Core.Curation
                         "Also make columns Extractable?")))
                     {
                         //Create CatalogueItems for the new columns
-                        ForwardEngineerCatalogue c = new ForwardEngineerCatalogue(_tableToSync, added.ToArray(), true);
+                        ForwardEngineerCatalogue c = new ForwardEngineerCatalogue(_tableToSync, added.ToArray());
 
                         //In the Catalogue
                         c.ExecuteForwardEngineering(relatedCatalogues[0],out var cata,out var cis, out var eis);

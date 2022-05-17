@@ -76,7 +76,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             importer.DoImport(out var ti, out var cis);
 
             //create Catalogue
-            var forwardEngineer = new ForwardEngineerCatalogue(ti, cis, true);
+            var forwardEngineer = new ForwardEngineerCatalogue(ti, cis);
             forwardEngineer.ExecuteForwardEngineering(out var cata, out var cataItems, out var eis);
 
             //make the catalogue use the load configuration

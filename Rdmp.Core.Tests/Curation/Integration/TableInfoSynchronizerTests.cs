@@ -115,7 +115,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [TestCase(false)]
         public void SynchronizationTests_ColumnAddedWithCatalogue(bool acceptChanges)
         {
-            ForwardEngineerCatalogue cataEngineer = new ForwardEngineerCatalogue(tableInfoCreated,columnInfosCreated,true);            
+            ForwardEngineerCatalogue cataEngineer = new ForwardEngineerCatalogue(tableInfoCreated, columnInfosCreated);
             cataEngineer.ExecuteForwardEngineering(out var cata, out var cataItems, out var extractionInformations);
 
             try

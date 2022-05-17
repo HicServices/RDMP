@@ -68,7 +68,7 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests
             var importer = new TableInfoImporter(CatalogueRepository,rTbl);
             importer.DoImport(out var rTi,out ColumnInfo[] rColInfos);
 
-            var fe = new ForwardEngineerCatalogue(rTi,rColInfos,true);
+            var fe = new ForwardEngineerCatalogue(rTi,rColInfos);
             fe.ExecuteForwardEngineering(cata);
             
             //Should now be 1 Catalogue with all the columns (tables will have to be joined to build the query though)
