@@ -35,7 +35,7 @@ namespace Rdmp.Core.CommandLine.Gui
             _activator = new ConsoleGuiActivator(repositoryLocator,checkNotifier);
             ConsoleMainWindow.StaticActivator = _activator;
             
-            LogManager.DisableLogging();
+            LogManager.SuspendLogging();
 
             if (options.UseSystemConsole)
             {
@@ -55,7 +55,7 @@ namespace Rdmp.Core.CommandLine.Gui
             }
             catch (Exception e)
             {
-                LogManager.EnableLogging();
+                LogManager.ResumeLogging();
                 LogManager.GetCurrentClassLogger().Error(e, "Application Crashed");
                 top.Running = false;
                 return -1;
