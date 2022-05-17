@@ -23,6 +23,9 @@
     <None Remove="NLog.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\BundleUpSourceIntoZip\output\SourceCodeForSelfAwareness.zip" Link="SourceCodeForSelfAwareness.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="ColorSettings.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
