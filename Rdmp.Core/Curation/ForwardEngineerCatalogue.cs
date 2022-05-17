@@ -17,19 +17,16 @@ namespace Rdmp.Core.Curation
     {
         private readonly ITableInfo _tableInfo;
         private readonly ColumnInfo[] _columnInfos;
-        private readonly bool _markAllExtractable;
 
         /// <summary>
         /// Sets up the class to create a new <see cref="Catalogue"/> from the supplied table reference
         /// </summary>
         /// <param name="tableInfo"></param>
         /// <param name="columnInfos"></param>
-        /// <param name="markAllExtractable"></param>
-        public ForwardEngineerCatalogue(ITableInfo tableInfo, ColumnInfo[] columnInfos, bool markAllExtractable = false)
+        public ForwardEngineerCatalogue(ITableInfo tableInfo, ColumnInfo[] columnInfos)
         {
             _tableInfo = tableInfo;
             _columnInfos = columnInfos;
-            _markAllExtractable = markAllExtractable;
         }
 
 
@@ -84,19 +81,11 @@ namespace Rdmp.Core.Curation
                 //create it with the same name
                 CatalogueItem cataItem = new CatalogueItem(repo, intoExistingCatalogue, col.Name.Substring(col.Name.LastIndexOf(".") + 1).Trim('[', ']', '`','"'));
                 catalogueItemsCreated.Add(cataItem);
-
-                if (_markAllExtractable)
-                {
-                    var newExtractionInfo = new ExtractionInformation(repo, cataItem, col, col.Name);
-                    newExtractionInfo.Order = order;
-                    newExtractionInfo.SaveToDatabase();
-                    extractionInformationsCreated.Add(newExtractionInfo);
-                }
-                else
-                {
-                    cataItem.ColumnInfo_ID =  col.ID;
-                    cataItem.SaveToDatabase();
-                }
+                                
+                var newExtractionInfo = new ExtractionInformation(repo, cataItem, col, col.Name);
+                newExtractionInfo.Order = order;
+                newExtractionInfo.SaveToDatabase();
+                extractionInformationsCreated.Add(newExtractionInfo);
             }
 
             extractionInformations = extractionInformationsCreated.ToArray();

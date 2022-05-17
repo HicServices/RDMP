@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Changed
+
+- New CatalogueItems are now always marked Core (affects drag and drop and new Catalogue creation) - [#1165](https://github.com/HicServices/RDMP/issues/1165),[#1164](https://github.com/HicServices/RDMP/issues/1164)
+
 ## [7.0.12] - 2022-05-16
 
 ### Added
