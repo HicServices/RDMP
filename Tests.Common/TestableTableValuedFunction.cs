@@ -79,7 +79,7 @@ END
             importer.ParametersCreated[2].SaveToDatabase();
 
 
-            ForwardEngineerCatalogue forwardEngineerCatalogue = new ForwardEngineerCatalogue(TableInfoCreated, ColumnInfosCreated, true);
+            ForwardEngineerCatalogue forwardEngineerCatalogue = new ForwardEngineerCatalogue(TableInfoCreated, ColumnInfosCreated);
             forwardEngineerCatalogue.ExecuteForwardEngineering(out Cata, out CataItems, out ExtractionInformations);
         }
 

@@ -175,7 +175,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 }
 
                 var sfd = new SaveDialog("Save","Pick file location to save");
-                Application.Run(sfd);
+                Application.Run(sfd, ConsoleMainWindow.ExceptionPopup);
 
                 if(sfd.Canceled)
                     return;

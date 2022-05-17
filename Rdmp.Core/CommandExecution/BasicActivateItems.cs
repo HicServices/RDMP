@@ -727,7 +727,7 @@ namespace Rdmp.Core.CommandExecution
         public virtual ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo, ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, string catalogueFolder)
         {
             // Create a new Catalogue based on the table info
-            var engineer = new ForwardEngineerCatalogue(tableInfo,tableInfo.ColumnInfos,true);
+            var engineer = new ForwardEngineerCatalogue(tableInfo,tableInfo.ColumnInfos);
             engineer.ExecuteForwardEngineering(out ICatalogue cata, out _, out ExtractionInformation[] eis);
 
             // if we know the linkable private identifier column(s)

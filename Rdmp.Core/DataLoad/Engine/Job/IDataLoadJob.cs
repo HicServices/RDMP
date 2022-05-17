@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -35,9 +36,15 @@ namespace Rdmp.Core.DataLoad.Engine.Job
         /// </summary>
         object Payload { get; set; }
 
+        /// <summary>
+        /// Collection of all calls to <see cref="CrashAtEnd"/>.  If there are any
+        /// of these at the end of the load they will be notified and a crash exit code will be 
+        /// returned (but otherwise the load will complete normally).
+        /// </summary>
+        IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages { get; }
         List<ITableInfo> RegularTablesToLoad { get; }
         List<ITableInfo> LookupTablesToLoad { get; }
-        
+
         IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; }
 
         void StartLogging();
@@ -60,5 +67,14 @@ namespace Rdmp.Core.DataLoad.Engine.Job
         /// </summary>
         /// <returns></returns>
         ColumnInfo[] GetAllColumns();
+
+        /// <summary>
+        /// Call you see that something has gone horribly wrong but want to keep going
+        /// with the load anyway.  Once the load has been completed these will crash
+        /// the process and result in a non 0 exit code.  Archiving and postload operations
+        /// will still occur.
+        /// </summary>
+        /// <param name="because"></param>
+        void CrashAtEnd(NotifyEventArgs because);
     }
 }

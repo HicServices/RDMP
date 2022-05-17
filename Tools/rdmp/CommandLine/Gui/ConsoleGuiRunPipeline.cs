@@ -237,7 +237,7 @@ namespace Rdmp.Core.CommandLine.Gui
         public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
         {
             // this blocks while the window is run
-            Application.Run(this);
+            Application.Run(this, ConsoleMainWindow.ExceptionPopup);
 
             // run the event after the window has closed
             if (successArgs != null)

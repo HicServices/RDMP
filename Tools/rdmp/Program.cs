@@ -19,6 +19,7 @@ using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Logging.Listeners.NLogListeners;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -175,6 +176,8 @@ namespace Rdmp.Core
 
             var listener = new NLogIDataLoadEventListener(false);
             var checker = new NLogICheckNotifier(true, false);
+
+            CatalogueRepository.SuppressHelpLoading = false;
 
             var factory = new RunnerFactory();
             opts.DoStartup(GetEnvironmentInfo(),opts.LogStartup ? (ICheckNotifier)checker: new IgnoreAllErrorsCheckNotifier());
