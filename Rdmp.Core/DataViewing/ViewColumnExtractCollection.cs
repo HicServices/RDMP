@@ -154,7 +154,10 @@ namespace Rdmp.Core.DataViewing
             var sql = qb.SQL;
 
             if (ViewType == ViewType.Aggregate)
-                sql += " GROUP BY " + GetColumnSelectSql();
+                sql += Environment.NewLine + " GROUP BY " + GetColumnSelectSql();
+
+            if (ViewType == ViewType.Aggregate)
+                sql += Environment.NewLine + " ORDER BY count(*) DESC";
 
             return sql;
         }
