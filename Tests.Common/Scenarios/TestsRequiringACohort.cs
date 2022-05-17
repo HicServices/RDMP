@@ -208,7 +208,7 @@ GO
             
             CatalogueItem[] cis;
             ExtractionInformation[] eis;
-            new ForwardEngineerCatalogue(CustomTableInfo, cols, true).ExecuteForwardEngineering(out CustomCatalogue, out cis, out eis);
+            new ForwardEngineerCatalogue(CustomTableInfo, cols).ExecuteForwardEngineering(out CustomCatalogue, out cis, out eis);
 
             CustomExtractableDataSet = new ExtractableDataSet(DataExportRepository, CustomCatalogue);
             
