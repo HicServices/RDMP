@@ -15,6 +15,7 @@ namespace Rdmp.Core.CommandLine.Gui {
     using System.Collections.Generic;
     using System.Data.Common;
     using System.Linq;
+    using System.Reflection;
     using Terminal.Gui;
 
 
@@ -124,10 +125,26 @@ namespace Rdmp.Core.CommandLine.Gui {
 
         private void SetupComboBox(ComboBox combo)
         {
-            combo.AddKeyBinding(Key.CursorDown, Command.Expand);
+            var search = 
+                (TextField)
+                typeof(ComboBox).GetField("search", BindingFlags.NonPublic | BindingFlags.Instance)
+                .GetValue(combo);
+            
+            string last = "";
 
-            combo.Expand();
-            combo.Collapse();
+            search.TextChanging += (e) =>
+            {
+                // user or API is clearing our search
+                if (string.IsNullOrWhiteSpace(e.NewText.ToString())
+                    // prevent clearing unless user is deleting a character at a time
+                    && last.Length != 1)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+
+                last = e.NewText.ToString();
+            };
         }
 
         private void CbxDatabase_Leave(FocusEventArgs obj)
