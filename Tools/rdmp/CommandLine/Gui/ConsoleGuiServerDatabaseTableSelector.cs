@@ -26,10 +26,10 @@ namespace Rdmp.Core.CommandLine.Gui {
 
         public string Password => tbPassword.Text.ToString();
 
-        public string Server => cbxServer.Text.ToString();
-        public string Database => cbxDatabase.Text.ToString();
+        public string Server => GetComboBoxValue(cbxServer);
+        public string Database => GetComboBoxValue(cbxDatabase);
         public string Schema => tbSchema.Text.ToString();
-        public string Table => cbxTable.Text.ToString();
+        public string Table => GetComboBoxValue(cbxTable);
 
         /// <summary>
         /// Returns the DatabaseType that is selected in the dropdown or 
@@ -125,6 +125,8 @@ namespace Rdmp.Core.CommandLine.Gui {
 
         private void SetupComboBox(ComboBox combo)
         {
+            combo.AddKeyBinding(Key.CursorDown, Command.Expand);
+
             var search = 
                 (TextField)
                 typeof(ComboBox).GetField("search", BindingFlags.NonPublic | BindingFlags.Instance)
@@ -147,6 +149,16 @@ namespace Rdmp.Core.CommandLine.Gui {
             };
         }
 
+        private string GetComboBoxValue(ComboBox cbx)
+        {
+            var search =
+                   (TextField)
+                   typeof(ComboBox).GetField("search", BindingFlags.NonPublic | BindingFlags.Instance)
+                   .GetValue(cbx);
+
+            return search.Text.ToString();
+
+        }
         private void CbxDatabase_Leave(FocusEventArgs obj)
         {
             UpdateTableList();
