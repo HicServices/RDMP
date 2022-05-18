@@ -8,6 +8,7 @@ using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
+using Rdmp.Core.QueryBuilding;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration
@@ -52,6 +53,17 @@ SELECT
 ChildCol
 FROM 
 ChildTable", bundle.GetDataTableFetchSql());
+
+
+            // ei 0 is marked IsExtractionIdentifier - so is also not a valid
+            // lookup extractable column (Lookups shouldn't have patient linkage
+            // identifiers in them so)
+            eis[0].IsExtractionIdentifier = true;
+            eis[0].SaveToDatabase();
+
+            // so now there are no columns at all that are extractable
+            var ex = Assert.Throws<QueryBuildingException>(() => bundle.GetDataTableFetchSql());
+            Assert.AreEqual("Lookup table 'ChildTable' has a Catalogue defined 'ChildTable' but it has no Core extractable columns", ex.Message);
         }
     }
 }

@@ -6,6 +6,7 @@
 
 using System;
 using System.Data;
+using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
 using ReusableLibraryCode.DataAccess;
@@ -65,14 +66,20 @@ namespace Rdmp.Core.DataExport.DataExtraction.UserPicks
             {
                 // if there is a Catalogue associated with this TableInfo use its extraction instead
                 var cata = catas[0];
-                var eis = cata.GetAllExtractionInformation(ExtractionCategory.Core);
                 
-                if(eis.Length > 0)
+                // Extract core columns only (and definetly not extraction identifiers) 
+                var eis = cata.GetAllExtractionInformation(ExtractionCategory.Core)
+                    .Where(e=>!e.IsExtractionIdentifier)
+                    .ToArray();
+
+                if (eis.Length > 0)
                 {
                     qb = new QueryBuilder(null, null, new[] { TableInfo });
                     qb.AddColumnRange(eis);
                     return qb.SQL;
                 }
+                else
+                    throw new QueryBuildingException($"Lookup table '{TableInfo}' has a Catalogue defined '{cata}' but it has no Core extractable columns");
             }
 
             return $"select * from {TableInfo.GetFullyQualifiedName()}";
