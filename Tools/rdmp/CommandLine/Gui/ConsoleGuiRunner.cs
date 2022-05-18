@@ -60,6 +60,10 @@ namespace Rdmp.Core.CommandLine.Gui
                 top.Running = false;
                 return -1;
             }
+            finally
+            {
+                Application.Shutdown();
+            }
 
             return 0;
         }

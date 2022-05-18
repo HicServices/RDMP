@@ -69,6 +69,7 @@ namespace Rdmp.Core.CommandLine.Gui {
             };
             tbUsername.ColorScheme = ColorScheme;
             tbPassword.ColorScheme = ColorScheme;
+            tbPassword.Secret = true;
             btnUseExisting.ColorScheme = ColorScheme;
 
             cbxDatabaseType.SetSource(Enum.GetValues<DatabaseType>());
