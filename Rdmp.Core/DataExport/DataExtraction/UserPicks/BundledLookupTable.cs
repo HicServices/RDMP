@@ -59,7 +59,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.UserPicks
 
         public string GetDataTableFetchSql()
         {
-            var catas = TableInfo.GetAllRelatedCatalogues();
+            var catas = TableInfo.GetAllRelatedCatalogues().Where(IsLookupOnlyCatalogue).ToArray();
             QueryBuilder qb;
 
             if (catas.Length == 1)
@@ -83,6 +83,19 @@ namespace Rdmp.Core.DataExport.DataExtraction.UserPicks
             }
 
             return $"select * from {TableInfo.GetFullyQualifiedName()}";
+        }
+
+        /// <summary>
+        /// We only want Catalogues where all <see cref="CatalogueItem"/>
+        /// are us (i.e. we don't want to pick up Catalogues where we are 
+        /// Description column slotted in amongst the other columns).
+        /// </summary>
+        /// <param name="arg"></param>
+        /// <returns></returns>
+        private bool IsLookupOnlyCatalogue(Catalogue arg)
+        {
+            var tables = arg.GetTableInfoList(true);
+            return tables.Length == 1 && tables[0].ID == TableInfo.ID;
         }
     }
 }
