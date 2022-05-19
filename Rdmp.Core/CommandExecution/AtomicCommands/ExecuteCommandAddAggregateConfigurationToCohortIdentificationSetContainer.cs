@@ -11,6 +11,7 @@ using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
@@ -55,6 +56,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _aggregateConfigurationCombineable = aggregateConfigurationCommand;
 
             SetCommandWeight();
+        }
+
+        [UseWithObjectConstructor]
+        public ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(IBasicActivateItems activator, AggregateConfiguration aggregateConfiguration, CohortAggregateContainer targetCohortAggregateContainer)
+            : this(activator, new AggregateConfigurationCombineable(aggregateConfiguration), targetCohortAggregateContainer)
+        {
         }
 
         /// <summary>
