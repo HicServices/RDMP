@@ -471,7 +471,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         protected override void TryExtractLookupTableImpl(BundledLookupTable lookup, DirectoryInfo lookupDir,
             IExtractionConfiguration requestConfiguration,IDataLoadEventListener listener, out int linesWritten, out string destinationDescription)
         {
-            var dt = lookup.GetDataTable();
+            using var dt = lookup.GetDataTable();
                 
             dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleEntityNameFromString(lookup.TableInfo.Name));
 
@@ -489,8 +489,6 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             }
 
             destinationDb.CreateTable(dt.TableName, dt);
-            
-            dt.Dispose();
         }
 
         private DiscoveredDatabase GetDestinationDatabase(IDataLoadEventListener listener)
