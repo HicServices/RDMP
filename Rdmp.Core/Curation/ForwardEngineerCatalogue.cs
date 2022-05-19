@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using Rdmp.Core.Curation.Data;
 
@@ -17,6 +18,14 @@ namespace Rdmp.Core.Curation
     {
         private readonly ITableInfo _tableInfo;
         private readonly ColumnInfo[] _columnInfos;
+
+
+        [Obsolete("markAllExtractable is ignored, this constructor is included for API backwards compatibility only.")]
+        public ForwardEngineerCatalogue(ITableInfo tableInfo, ColumnInfo[] columnInfos, bool markAllExtractable)
+            : this(tableInfo, columnInfos)
+        {
+
+        }
 
         /// <summary>
         /// Sets up the class to create a new <see cref="Catalogue"/> from the supplied table reference
