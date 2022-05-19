@@ -69,7 +69,6 @@ namespace Rdmp.Core.CommandLine.Gui {
             cbxDatabaseType.SetSource(Enum.GetValues<DatabaseType>());
             
             cbxDatabaseType.AddKeyBinding(Key.CursorDown, Command.Expand);
-            tbTable.AddKeyBinding(Key.CursorDown, Command.Expand);
 
             AddNoWordMeansShowAllAutocomplete(tbServer);
             AddNoWordMeansShowAllAutocomplete(tbDatabase);

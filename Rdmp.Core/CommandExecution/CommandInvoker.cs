@@ -93,11 +93,11 @@ namespace Rdmp.Core.CommandExecution
                  }, GetAllObjectsOfType(p.Type))); ;
 
             AddDelegate(typeof(IPipeline), false, SelectPipeline);
-            AddDelegate(typeof(IMightBeDeprecated),false, SelectOne<IMightBeDeprecated>);
-            AddDelegate(typeof(IDisableable),false, SelectOne<IDisableable>);
-            AddDelegate(typeof(INamed),false, SelectOne<INamed>);
-            AddDelegate(typeof(IDeleteable[]), false, SelectMany<IDeleteable>);
-            AddDelegate(typeof(IDeleteable),false, SelectOne<IDeleteable>);
+            AddDelegate(typeof(IMightBeDeprecated),false, SelectOne<IMightBeDeprecated>, true);
+            AddDelegate(typeof(IDisableable),false, SelectOne<IDisableable>, true);
+            AddDelegate(typeof(INamed),false, SelectOne<INamed>, true);
+            AddDelegate(typeof(IDeleteable[]), false, SelectMany<IDeleteable>,true);
+            AddDelegate(typeof(IDeleteable),false, SelectOne<IDeleteable>, true);
             AddDelegate(typeof(ILoggedActivityRootObject),false, SelectOne<ILoggedActivityRootObject>);
             AddDelegate(typeof(ICollectSqlParameters), false, SelectOne<ICollectSqlParameters>);
             AddDelegate(typeof(IRootFilterContainerHost),false, SelectOne<IRootFilterContainerHost>);            
@@ -136,8 +136,16 @@ namespace Rdmp.Core.CommandExecution
                     _basicActivator.GetAll<ICheckable>()
                         .Where(p.Type.IsInstanceOfType)
                         .Cast<IMapsDirectlyToDatabaseTable>()
-                        .ToArray())
-                );
+                        .ToArray()), true);
+
+            // if we aren't asking for any of the above explicit interfaces (e.g. get user to pick an IDeletable)
+            // then we might be something like IProject so let them pick any 
+            AddDelegate(typeof(IMapsDirectlyToDatabaseTable), false,
+                (p) => _basicActivator.SelectOne(GetPromptFor(p),
+                    _basicActivator.GetAll<IMapsDirectlyToDatabaseTable>()
+                        .Where(p.Type.IsInstanceOfType)
+                        .Cast<IMapsDirectlyToDatabaseTable>()
+                        .ToArray()));
 
             AddDelegate(typeof(IPatcher),false, (p) =>
                 {
@@ -189,9 +197,12 @@ namespace Rdmp.Core.CommandExecution
             return $"Value needed for {p.Name} ({p.Type.Name})";
         }
 
-        private void AddDelegate(Type type,bool isAuto, Func<RequiredArgument, object> func)
+        private void AddDelegate(Type type,bool isAuto, Func<RequiredArgument, object> func, bool requireExactMatch = false)
         {
-            _argumentDelegates.Add(new CommandInvokerDelegate(type,isAuto,func));
+            _argumentDelegates.Add(new CommandInvokerDelegate(type, isAuto, func)
+            {
+                RequireExactMatch = requireExactMatch
+            });
         }
 
         
@@ -309,19 +320,19 @@ namespace Rdmp.Core.CommandExecution
                      InitialObjectSelection = p.DefaultValue is IMapsDirectlyToDatabaseTable m ? new IMapsDirectlyToDatabaseTable[] { m } : null,
                      InitialSearchText = p.DefaultValue?.ToString(),
                  }
-                , _basicActivator.GetAll<T>().Cast<IMapsDirectlyToDatabaseTable>().ToArray());
+                , _basicActivator.GetAll(p.Type).Cast<IMapsDirectlyToDatabaseTable>().ToArray());
         }
-        private T[] SelectMany<T>(RequiredArgument parameterInfo) 
+        private T[] SelectMany<T>(RequiredArgument p) 
         {
             return
                 _basicActivator.SelectMany(
                     new DialogArgs
                     {
-                        WindowTitle = parameterInfo.Name,
-                        InitialObjectSelection = parameterInfo.DefaultValue == null ? null :
-                                ((IEnumerable<T>)parameterInfo.DefaultValue).Cast<IMapsDirectlyToDatabaseTable>().ToArray()
+                        WindowTitle = p.Name,
+                        InitialObjectSelection = p.DefaultValue == null ? null :
+                                ((IEnumerable<T>)p.DefaultValue).Cast<IMapsDirectlyToDatabaseTable>().ToArray()
 
-                    }, typeof(T), _basicActivator.GetAll<T>().Cast<IMapsDirectlyToDatabaseTable>().ToArray())
+                    }, typeof(T), _basicActivator.GetAll(p.Type).Cast<IMapsDirectlyToDatabaseTable>().ToArray())
                 ?.Cast<T>()?.ToArray() ?? throw new OperationCanceledException();
         }
 
