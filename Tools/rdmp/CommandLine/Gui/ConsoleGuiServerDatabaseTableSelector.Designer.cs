@@ -16,7 +16,7 @@ namespace Rdmp.Core.CommandLine.Gui {
         
         private Terminal.Gui.Label lblDescription;
         
-        private Terminal.Gui.FrameView frameview1;
+        private Terminal.Gui.Label label1;
         
         private Terminal.Gui.Label lblUsername;
         
@@ -28,11 +28,9 @@ namespace Rdmp.Core.CommandLine.Gui {
         
         private Terminal.Gui.Button btnUseExisting;
         
-        private Terminal.Gui.Label label1;
-        
         private Terminal.Gui.Label lblServer;
         
-        private Terminal.Gui.ComboBox cbxServer;
+        private Terminal.Gui.TextField tbServer;
         
         private Terminal.Gui.Label label4;
         
@@ -40,21 +38,23 @@ namespace Rdmp.Core.CommandLine.Gui {
         
         private Terminal.Gui.Label lblDatabase;
         
-        private Terminal.Gui.ComboBox cbxDatabase;
+        private Terminal.Gui.TextField tbDatabase;
         
-        private Terminal.Gui.Button btnRefresh;
+        private Terminal.Gui.Button btnListDatabases;
         
         private Terminal.Gui.Button btnCreateDatabase;
         
         private Terminal.Gui.Label lblTable;
         
-        private Terminal.Gui.ComboBox cbxTable;
+        private Terminal.Gui.TextField tbTable;
         
-        private Terminal.Gui.RadioGroup rgTableType;
+        private Terminal.Gui.Button btnListTables;
         
         private Terminal.Gui.Label lblSchema;
         
         private Terminal.Gui.TextField tbSchema;
+        
+        private Terminal.Gui.RadioGroup rgTableType;
         
         private Terminal.Gui.Button btnOk;
         
@@ -80,73 +80,61 @@ namespace Rdmp.Core.CommandLine.Gui {
             this.lblDescription.Text = "lblDescription";
             this.lblDescription.TextAlignment = Terminal.Gui.TextAlignment.Left;
             this.Add(this.lblDescription);
-            this.frameview1 = new Terminal.Gui.FrameView();
-            this.frameview1.Width = 50;
-            this.frameview1.Height = 5;
-            this.frameview1.X = 1;
-            this.frameview1.Y = 1;
-            this.frameview1.Data = "frameview1";
-            this.frameview1.Text = "H";
-            this.frameview1.Border.BorderStyle = Terminal.Gui.BorderStyle.Single;
-            this.frameview1.Border.BorderBrush = Terminal.Gui.Color.Black;
-            this.frameview1.Border.Effect3D = false;
-            this.frameview1.TextAlignment = Terminal.Gui.TextAlignment.Left;
-            this.Add(this.frameview1);
-            this.lblUsername = new Terminal.Gui.Label();
-            this.lblUsername.Width = 7;
-            this.lblUsername.Height = 1;
-            this.lblUsername.X = 0;
-            this.lblUsername.Y = 0;
-            this.lblUsername.Data = "lblUsername";
-            this.lblUsername.Text = "UserID:";
-            this.lblUsername.TextAlignment = Terminal.Gui.TextAlignment.Left;
-            this.frameview1.Add(this.lblUsername);
-            this.tbUsername = new Terminal.Gui.TextField();
-            this.tbUsername.Width = Dim.Fill(0);
-            this.tbUsername.Height = 1;
-            this.tbUsername.X = 10;
-            this.tbUsername.Y = 0;
-            this.tbUsername.Data = "tbUsername";
-            this.tbUsername.Text = "";
-            this.tbUsername.TextAlignment = Terminal.Gui.TextAlignment.Left;
-            this.frameview1.Add(this.tbUsername);
-            this.lblPassword = new Terminal.Gui.Label();
-            this.lblPassword.Width = 8;
-            this.lblPassword.Height = 1;
-            this.lblPassword.X = 0;
-            this.lblPassword.Y = 1;
-            this.lblPassword.Data = "lblPassword";
-            this.lblPassword.Text = "Password";
-            this.lblPassword.TextAlignment = Terminal.Gui.TextAlignment.Left;
-            this.frameview1.Add(this.lblPassword);
-            this.tbPassword = new Terminal.Gui.TextField();
-            this.tbPassword.Width = Dim.Fill(0);
-            this.tbPassword.Height = 1;
-            this.tbPassword.X = 10;
-            this.tbPassword.Y = 1;
-            this.tbPassword.Data = "tbPassword";
-            this.tbPassword.Text = "";
-            this.tbPassword.TextAlignment = Terminal.Gui.TextAlignment.Left;
-            this.frameview1.Add(this.tbPassword);
-            this.btnUseExisting = new Terminal.Gui.Button();
-            this.btnUseExisting.Width = 16;
-            this.btnUseExisting.Height = 1;
-            this.btnUseExisting.X = 32;
-            this.btnUseExisting.Y = 2;
-            this.btnUseExisting.Data = "btnUseExisting";
-            this.btnUseExisting.Text = "Use Existing";
-            this.btnUseExisting.TextAlignment = Terminal.Gui.TextAlignment.Centered;
-            this.btnUseExisting.IsDefault = false;
-            this.frameview1.Add(this.btnUseExisting);
             this.label1 = new Terminal.Gui.Label();
             this.label1.Width = 22;
             this.label1.Height = 1;
-            this.label1.X = 2;
+            this.label1.X = 27;
             this.label1.Y = 1;
             this.label1.Data = "label1";
             this.label1.Text = "Credentials (Optional)";
             this.label1.TextAlignment = Terminal.Gui.TextAlignment.Left;
             this.Add(this.label1);
+            this.lblUsername = new Terminal.Gui.Label();
+            this.lblUsername.Width = 7;
+            this.lblUsername.Height = 1;
+            this.lblUsername.X = 3;
+            this.lblUsername.Y = 2;
+            this.lblUsername.Data = "lblUsername";
+            this.lblUsername.Text = "UserID:";
+            this.lblUsername.TextAlignment = Terminal.Gui.TextAlignment.Left;
+            this.Add(this.lblUsername);
+            this.tbUsername = new Terminal.Gui.TextField();
+            this.tbUsername.Width = Dim.Fill(20);
+            this.tbUsername.Height = 1;
+            this.tbUsername.X = 11;
+            this.tbUsername.Y = 2;
+            this.tbUsername.Data = "tbUsername";
+            this.tbUsername.Text = "";
+            this.tbUsername.TextAlignment = Terminal.Gui.TextAlignment.Left;
+            this.Add(this.tbUsername);
+            this.lblPassword = new Terminal.Gui.Label();
+            this.lblPassword.Width = 9;
+            this.lblPassword.Height = 1;
+            this.lblPassword.X = 1;
+            this.lblPassword.Y = 3;
+            this.lblPassword.Data = "lblPassword";
+            this.lblPassword.Text = "Password:";
+            this.lblPassword.TextAlignment = Terminal.Gui.TextAlignment.Left;
+            this.Add(this.lblPassword);
+            this.tbPassword = new Terminal.Gui.TextField();
+            this.tbPassword.Width = Dim.Fill(20);
+            this.tbPassword.Height = 1;
+            this.tbPassword.X = 11;
+            this.tbPassword.Y = 3;
+            this.tbPassword.Data = "tbPassword";
+            this.tbPassword.Text = "";
+            this.tbPassword.TextAlignment = Terminal.Gui.TextAlignment.Left;
+            this.Add(this.tbPassword);
+            this.btnUseExisting = new Terminal.Gui.Button();
+            this.btnUseExisting.Width = 28;
+            this.btnUseExisting.Height = 1;
+            this.btnUseExisting.X = 22;
+            this.btnUseExisting.Y = 4;
+            this.btnUseExisting.Data = "btnUseExisting";
+            this.btnUseExisting.Text = "Use Existing Credentials";
+            this.btnUseExisting.TextAlignment = Terminal.Gui.TextAlignment.Centered;
+            this.btnUseExisting.IsDefault = false;
+            this.Add(this.btnUseExisting);
             this.lblServer = new Terminal.Gui.Label();
             this.lblServer.Width = 7;
             this.lblServer.Height = 1;
@@ -156,15 +144,15 @@ namespace Rdmp.Core.CommandLine.Gui {
             this.lblServer.Text = "Server:";
             this.lblServer.TextAlignment = Terminal.Gui.TextAlignment.Left;
             this.Add(this.lblServer);
-            this.cbxServer = new Terminal.Gui.ComboBox();
-            this.cbxServer.Width = 32;
-            this.cbxServer.Height = 5;
-            this.cbxServer.X = 11;
-            this.cbxServer.Y = 6;
-            this.cbxServer.Data = "cbxServer";
-            this.cbxServer.Text = "";
-            this.cbxServer.TextAlignment = Terminal.Gui.TextAlignment.Left;
-            this.Add(this.cbxServer);
+            this.tbServer = new Terminal.Gui.TextField();
+            this.tbServer.Width = 32;
+            this.tbServer.Height = 1;
+            this.tbServer.X = 11;
+            this.tbServer.Y = 6;
+            this.tbServer.Data = "tbServer";
+            this.tbServer.Text = "";
+            this.tbServer.TextAlignment = Terminal.Gui.TextAlignment.Left;
+            this.Add(this.tbServer);
             this.label4 = new Terminal.Gui.Label();
             this.label4.Width = 5;
             this.label4.Height = 1;
@@ -192,29 +180,29 @@ namespace Rdmp.Core.CommandLine.Gui {
             this.lblDatabase.Text = "Database:";
             this.lblDatabase.TextAlignment = Terminal.Gui.TextAlignment.Left;
             this.Add(this.lblDatabase);
-            this.cbxDatabase = new Terminal.Gui.ComboBox();
-            this.cbxDatabase.Width = 32;
-            this.cbxDatabase.Height = 5;
-            this.cbxDatabase.X = 11;
-            this.cbxDatabase.Y = 8;
-            this.cbxDatabase.Data = "cbxDatabase";
-            this.cbxDatabase.Text = "";
-            this.cbxDatabase.TextAlignment = Terminal.Gui.TextAlignment.Left;
-            this.Add(this.cbxDatabase);
-            this.btnRefresh = new Terminal.Gui.Button();
-            this.btnRefresh.Width = 11;
-            this.btnRefresh.Height = 1;
-            this.btnRefresh.X = 47;
-            this.btnRefresh.Y = 8;
-            this.btnRefresh.Data = "btnRefresh";
-            this.btnRefresh.Text = "Refresh";
-            this.btnRefresh.TextAlignment = Terminal.Gui.TextAlignment.Centered;
-            this.btnRefresh.IsDefault = false;
-            this.Add(this.btnRefresh);
+            this.tbDatabase = new Terminal.Gui.TextField();
+            this.tbDatabase.Width = 32;
+            this.tbDatabase.Height = 1;
+            this.tbDatabase.X = 11;
+            this.tbDatabase.Y = 8;
+            this.tbDatabase.Data = "tbDatabase";
+            this.tbDatabase.Text = "";
+            this.tbDatabase.TextAlignment = Terminal.Gui.TextAlignment.Left;
+            this.Add(this.tbDatabase);
+            this.btnListDatabases = new Terminal.Gui.Button();
+            this.btnListDatabases.Width = 18;
+            this.btnListDatabases.Height = 1;
+            this.btnListDatabases.X = 44;
+            this.btnListDatabases.Y = 8;
+            this.btnListDatabases.Data = "btnListDatabases";
+            this.btnListDatabases.Text = "List Databases";
+            this.btnListDatabases.TextAlignment = Terminal.Gui.TextAlignment.Centered;
+            this.btnListDatabases.IsDefault = false;
+            this.Add(this.btnListDatabases);
             this.btnCreateDatabase = new Terminal.Gui.Button();
             this.btnCreateDatabase.Width = 19;
             this.btnCreateDatabase.Height = 1;
-            this.btnCreateDatabase.X = 47;
+            this.btnCreateDatabase.X = 44;
             this.btnCreateDatabase.Y = 9;
             this.btnCreateDatabase.Data = "btnCreateDatabase";
             this.btnCreateDatabase.Text = "Create Database";
@@ -230,28 +218,25 @@ namespace Rdmp.Core.CommandLine.Gui {
             this.lblTable.Text = "Table:";
             this.lblTable.TextAlignment = Terminal.Gui.TextAlignment.Left;
             this.Add(this.lblTable);
-            this.cbxTable = new Terminal.Gui.ComboBox();
-            this.cbxTable.Width = 32;
-            this.cbxTable.Height = 5;
-            this.cbxTable.X = 11;
-            this.cbxTable.Y = Pos.Top(lblTable);
-            this.cbxTable.Data = "cbxTable";
-            this.cbxTable.Text = "";
-            this.cbxTable.TextAlignment = Terminal.Gui.TextAlignment.Left;
-            this.Add(this.cbxTable);
-            this.rgTableType = new Terminal.Gui.RadioGroup();
-            this.rgTableType.Width = 24;
-            this.rgTableType.Height = 3;
-            this.rgTableType.X = 47;
-            this.rgTableType.Y = 11;
-            this.rgTableType.Data = "rgTableType";
-            this.rgTableType.Text = "";
-            this.rgTableType.TextAlignment = Terminal.Gui.TextAlignment.Left;
-            this.rgTableType.RadioLabels = new NStack.ustring[] {
-                    "Regular Table",
-                    "View",
-                    "Table Valued Function"};
-            this.Add(this.rgTableType);
+            this.tbTable = new Terminal.Gui.TextField();
+            this.tbTable.Width = 32;
+            this.tbTable.Height = 1;
+            this.tbTable.X = 11;
+            this.tbTable.Y = Pos.Top(lblTable);
+            this.tbTable.Data = "tbTable";
+            this.tbTable.Text = "";
+            this.tbTable.TextAlignment = Terminal.Gui.TextAlignment.Left;
+            this.Add(this.tbTable);
+            this.btnListTables = new Terminal.Gui.Button();
+            this.btnListTables.Width = 15;
+            this.btnListTables.Height = 1;
+            this.btnListTables.X = 44;
+            this.btnListTables.Y = 10;
+            this.btnListTables.Data = "btnListTables";
+            this.btnListTables.Text = "List Tables";
+            this.btnListTables.TextAlignment = Terminal.Gui.TextAlignment.Centered;
+            this.btnListTables.IsDefault = false;
+            this.Add(this.btnListTables);
             this.lblSchema = new Terminal.Gui.Label();
             this.lblSchema.Width = 7;
             this.lblSchema.Height = 1;
@@ -270,6 +255,19 @@ namespace Rdmp.Core.CommandLine.Gui {
             this.tbSchema.Text = "";
             this.tbSchema.TextAlignment = Terminal.Gui.TextAlignment.Left;
             this.Add(this.tbSchema);
+            this.rgTableType = new Terminal.Gui.RadioGroup();
+            this.rgTableType.Width = 24;
+            this.rgTableType.Height = 3;
+            this.rgTableType.X = 44;
+            this.rgTableType.Y = 12;
+            this.rgTableType.Data = "rgTableType";
+            this.rgTableType.Text = "";
+            this.rgTableType.TextAlignment = Terminal.Gui.TextAlignment.Left;
+            this.rgTableType.RadioLabels = new NStack.ustring[] {
+                    "Regular Table",
+                    "View",
+                    "Table Valued Function"};
+            this.Add(this.rgTableType);
             this.btnOk = new Terminal.Gui.Button();
             this.btnOk.Width = 8;
             this.btnOk.Height = 1;
