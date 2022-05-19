@@ -6,7 +6,9 @@
 
 using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -14,6 +16,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     {
         private readonly AggregateConfigurationCombineable _sourceAggregateCommand;
         private readonly CohortAggregateContainer _targetCohortAggregateContainer;
+
+        [UseWithObjectConstructor]
+        public ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(IBasicActivateItems activator, AggregateConfiguration aggregate, CohortAggregateContainer targetCohortAggregateContainer) 
+            : this (activator,new AggregateConfigurationCombineable(aggregate), targetCohortAggregateContainer)
+        {
+
+        }
 
         public ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(IBasicActivateItems activator, AggregateConfigurationCombineable sourceAggregateCommand, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
         {

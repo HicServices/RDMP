@@ -117,10 +117,9 @@ namespace Rdmp.Core.Tests.CommandExecution
          [TestCase(typeof(ExecuteCommandMoveContainerIntoContainer))]
          [TestCase(typeof(ExecuteCommandMoveFilterIntoContainer))]
          [TestCase(typeof(ExecuteCommandNewObject))]
-        [TestCase(typeof(ExecuteCommandOverrideRawServer))]
+         [TestCase(typeof(ExecuteCommandOverrideRawServer))]
          [TestCase(typeof(ExecuteCommandPrunePlugin))]
-         [TestCase(typeof(ExecuteCommandPutCatalogueIntoCatalogueFolder))]
-        [TestCase(typeof(ExecuteCommandQueryPlatformDatabase))]
+         [TestCase(typeof(ExecuteCommandQueryPlatformDatabase))]
          [TestCase(typeof(ExecuteCommandRefreshBrokenCohorts))]
          [TestCase(typeof(ExecuteCommandRename))]
          [TestCase(typeof(ExecuteCommandResetExtractionProgress))]
@@ -128,11 +127,10 @@ namespace Rdmp.Core.Tests.CommandExecution
          [TestCase(typeof(ExecuteCommandScriptTable))]
          [TestCase(typeof(ExecuteCommandScriptTables))]
          [TestCase(typeof(ExecuteCommandSet))]
-        [TestCase(typeof(ExecuteCommandSetAggregateDimension))]
+         [TestCase(typeof(ExecuteCommandSetAggregateDimension))]
          [TestCase(typeof(ExecuteCommandSetArgument))]
          [TestCase(typeof(ExecuteCommandSetAxis))]
          [TestCase(typeof(ExecuteCommandSetContainerOperation))]
-         [TestCase(typeof(ExecuteCommandSetDataAccessContextForCredentials))]
          [TestCase(typeof(ExecuteCommandSetExtractionIdentifier))]
          [TestCase(typeof(ExecuteCommandSetFilterTreeShortcut))]
          [TestCase(typeof(ExecuteCommandSetGlobalDleIgnorePattern))]
@@ -162,6 +160,7 @@ namespace Rdmp.Core.Tests.CommandExecution
          [TestCase(typeof(ExecuteCommandImportDublinCoreFormat))]
          [TestCase(typeof(ExecuteCommandImportFilterDescriptionsFromShare))]
          [TestCase(typeof(ExecuteCommandImportShareDefinitionList))]
+        // [TestCase(typeof(ExecuteCommandSetDataAccessContextForCredentials))] // Not currently CLI compatible
         public void TestIsSupported(Type t)
         {
             var activator = GetActivator();

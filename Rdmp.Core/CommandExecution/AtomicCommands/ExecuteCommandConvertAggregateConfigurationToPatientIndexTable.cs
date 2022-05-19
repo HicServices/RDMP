@@ -5,8 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution.Combining;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -14,7 +16,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     {
         private readonly AggregateConfigurationCombineable _sourceAggregateConfigurationCombineable;
         private readonly CohortIdentificationConfiguration _cohortIdentificationConfiguration;
-        
+
+        [UseWithObjectConstructor]
+        public ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(IBasicActivateItems activator, AggregateConfiguration aggregate, CohortIdentificationConfiguration cic) 
+            : this(activator,new AggregateConfigurationCombineable(aggregate),cic)
+        {
+
+        }
+
         public ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(IBasicActivateItems activator, AggregateConfigurationCombineable sourceAggregateConfigurationCommand,CohortIdentificationConfiguration cohortIdentificationConfiguration) : base(activator)
         {
             _sourceAggregateConfigurationCombineable = sourceAggregateConfigurationCommand;
