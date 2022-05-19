@@ -276,7 +276,7 @@ namespace Rdmp.Core.CommandLine.Gui {
             this.btnOk.Data = "btnOk";
             this.btnOk.Text = "Ok";
             this.btnOk.TextAlignment = Terminal.Gui.TextAlignment.Centered;
-            this.btnOk.IsDefault = true;
+            this.btnOk.IsDefault = false;
             this.Add(this.btnOk);
             this.btnCancel = new Terminal.Gui.Button();
             this.btnCancel.Width = 11;

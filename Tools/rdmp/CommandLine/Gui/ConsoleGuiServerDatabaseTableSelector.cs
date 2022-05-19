@@ -71,12 +71,16 @@ namespace Rdmp.Core.CommandLine.Gui {
             cbxDatabaseType.AddKeyBinding(Key.CursorDown, Command.Expand);
             tbTable.AddKeyBinding(Key.CursorDown, Command.Expand);
 
+            AddNoWordMeansShowAllAutocomplete(tbServer);
+            AddNoWordMeansShowAllAutocomplete(tbDatabase);
+            AddNoWordMeansShowAllAutocomplete(tbTable);
+
             // Same guid as used by the windows client but probably the apps have different UserSettings files
             // so sadly won't share one anothers recent histories
             tbServer.Autocomplete.AllSuggestions = UserSettings.GetHistoryForControl(new Guid("01ccc304-0686-4145-86a5-cc0468d40027"))
                 .Where(e=>!string.IsNullOrWhiteSpace(e))
                 .ToList();
-
+            
             cbxDatabaseType.SelectedItem = cbxDatabaseType.Source.ToList().IndexOf(DatabaseType.MicrosoftSQLServer);
             btnCreateDatabase.Clicked += CreateDatabase;
 
@@ -108,6 +112,40 @@ namespace Rdmp.Core.CommandLine.Gui {
                 btnCancel.Y -= 5;
                 Height -= 5;
             }
+        }
+
+        class NoWordMeansShowAllAutocomplete : TextFieldAutocomplete
+        {
+            public NoWordMeansShowAllAutocomplete(TextField tb)
+            {
+                HostControl = tb;
+                PopupInsideContainer = false;
+            }
+            public override void GenerateSuggestions()
+            {
+                // if there is something to pick
+                if (AllSuggestions.Count > 0)
+                {
+                    // and no current word
+                    var currentWord = GetCurrentWord();
+                    if (string.IsNullOrWhiteSpace(currentWord))
+                    {
+                        Suggestions = AllSuggestions.AsReadOnly();
+                        return;
+                    }
+                }
+
+                // otherwise let the default implementation run
+                base.GenerateSuggestions();
+            }
+        }
+
+        private void AddNoWordMeansShowAllAutocomplete(TextField tb)
+        {
+            var prop = typeof(TextField).GetProperty(nameof(TextField.Autocomplete));
+            prop.SetValue(tb, new NoWordMeansShowAllAutocomplete(tb));
+
+            tb.Autocomplete.MaxWidth = tb.Frame.Width;
         }
 
         private void UpdateTableList()
@@ -153,7 +191,7 @@ namespace Rdmp.Core.CommandLine.Gui {
             Task.Run(() => {
 
                 var server = new DiscoveredServer(GetBuilder());
-                server.DiscoverDatabases()
+                databases = server.DiscoverDatabases()
                     .Select(d => d.GetRuntimeName())
                     .ToList();
             }).ContinueWith((t, o) =>
