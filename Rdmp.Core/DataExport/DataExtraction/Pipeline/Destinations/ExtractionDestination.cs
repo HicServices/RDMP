@@ -473,9 +473,14 @@ e.g. /$i/$a")]
         }
 
         protected virtual void TryExtractLookupTableImpl( BundledLookupTable lookup, DirectoryInfo lookupDir, IExtractionConfiguration requestConfiguration,IDataLoadEventListener listener, out int linesWritten, out string destinationDescription)
-        {            
-            //extracts all of them
-            var extractTableVerbatim = new ExtractTableVerbatim(lookupDir, _request.Configuration.Separator, DateFormat,lookup.TableInfo.Discover(DataAccessContext.DataExport));
+        {
+            //extract the lookup table SQL
+            var sql = lookup.GetDataTableFetchSql();
+
+            var extractTableVerbatim = new ExtractTableVerbatim(
+                lookup.TableInfo.Discover(DataAccessContext.DataExport).Database.Server,
+                sql,lookup.TableInfo.GetRuntimeName(), lookupDir, _request.Configuration.Separator, DateFormat);
+
             linesWritten = extractTableVerbatim.DoExtraction();
             destinationDescription = extractTableVerbatim.OutputFilename;
         }

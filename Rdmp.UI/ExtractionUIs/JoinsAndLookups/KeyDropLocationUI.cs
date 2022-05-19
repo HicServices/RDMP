@@ -61,6 +61,9 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
 
             var col = GetColumnInfoOrNullFromDrag(e);
 
+            if (col == null)
+                return;
+
             if(IsValidGetter != null && !IsValidGetter(col))
                 return;
             

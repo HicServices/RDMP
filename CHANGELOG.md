@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - 'View Aggregate' now explicitly applies an ORDER BY count descending.
 - New CatalogueItems are now always marked Core (affects drag and drop and new Catalogue creation) - [#1165](https://github.com/HicServices/RDMP/issues/1165),[#1164](https://github.com/HicServices/RDMP/issues/1164)
+- If a Catalogue is defined for a Lookup TableInfo then only Core extractable columns will be released (previously all columns were released) [#692](https://github.com/HicServices/RDMP/issues/692)
 
 ### Added
 

@@ -598,11 +598,13 @@ namespace Tests.Common
         {
             ti1 = WhenIHaveA<TableInfo>(repository);
             ti1.Name = "ParentTable";
+            ti1.Database = "MyDb";
             ti1.SaveToDatabase();
             col1 = new ColumnInfo(repository, "ParentCol", "varchar(10)", ti1);
          
             ti2 = WhenIHaveA<TableInfo>(repository);
-            ti2.Name = "Child Table";
+            ti2.Name = "ChildTable";
+            ti2.Database = "MyDb";
             col2 = new ColumnInfo(repository, "ChildCol", "varchar(10)", ti2);
             col3 = new ColumnInfo(repository, "Desc", "varchar(10)", ti2);
         }

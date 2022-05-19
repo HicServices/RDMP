@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.DataExport.DataExtraction.FileOutputFormats;
+using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.DataViewing;
 using ReusableLibraryCode.DataAccess;
 
