@@ -74,6 +74,26 @@ namespace Rdmp.UI.DataViewing
             _databaseTypeIconProvider = new DatabaseTypeIconProvider();
 
             lblHelp.Visible = !UserSettings.AutoRunSqlQueries;
+
+
+            Guid splitterGuid = new Guid("f48582bd-2698-423a-bb86-5e91b91129bb");
+
+            var distance = UserSettings.GetSplitterDistance(splitterGuid);
+
+            if (distance == -1)
+            {
+                splitContainer1.SplitterDistance = (int)(splitContainer1.Height * 0.75f);
+            }
+            else
+            {
+                // don't let them set the distance to greater/less than the control size
+                splitContainer1.SplitterDistance = Math.Max(5,Math.Min(distance ,(int)(splitContainer1.Height * 0.99f)));
+            }
+
+            splitContainer1.SplitterMoved += (s,e)=>
+            {
+                UserSettings.SetSplitterDistance(splitterGuid,splitContainer1.SplitterDistance);
+            };
         }
 
         private void ScintillaOnKeyUp(object sender, KeyEventArgs keyEventArgs)
