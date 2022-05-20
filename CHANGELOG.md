@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added tracking of SQL/Datagrid splitter distance in user settings.  This allows users to resize how much SQL vs results they see and automatically persist the change.
 - Added `CrashAtEnd` system for DLE that allows Attachers to flag a load as a failure without halting execution [#1157](https://github.com/HicServices/RDMP/issues/1157)
+- Added `SimpleTicketingSystem` which simply opens the given URL+ticket [#775](https://github.com/HicServices/RDMP/issues/775)
 - Added UserSettings editing UI to Console Gui
 
 ## [7.0.12] - 2022-05-16
