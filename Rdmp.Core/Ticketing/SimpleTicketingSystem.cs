@@ -11,6 +11,11 @@ using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.Ticketing
 {
+    /// <summary>
+    /// Simple implementation of an RDMP ticketing system.  Opens a browser
+    /// at the Url + ticket name.  Has no validation restrictions based on 
+    /// ticket states.
+    /// </summary>
     public class SimpleTicketingSystem : ICheckable, ITicketingSystem
     {
         protected IDataAccessCredentials Credentials { get; set; }
