@@ -10,6 +10,7 @@ using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
@@ -32,6 +33,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             SetExtractableDataSets(false,sourceExtractableDataSetCombineable.ExtractableDataSets);
         }
 
+        [UseWithObjectConstructor]
         public ExecuteCommandAddDatasetsToConfiguration(IBasicActivateItems itemActivator, ExtractableDataSet extractableDataSet, ExtractionConfiguration targetExtractionConfiguration)
             : this(itemActivator,targetExtractionConfiguration)
         {

@@ -6,6 +6,7 @@
 
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -13,7 +14,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     {
         private readonly CohortAggregateContainerCombineable _sourceCohortAggregateContainer;
         private readonly CohortAggregateContainer _targetCohortAggregateContainer;
+        
+        [UseWithObjectConstructor]
+        public ExecuteCommandMoveCohortAggregateContainerIntoSubContainer(IBasicActivateItems activator, CohortAggregateContainer toMove, CohortAggregateContainer into) 
+            : this(activator,new CohortAggregateContainerCombineable(toMove),into)
+        {
 
+        }
         public ExecuteCommandMoveCohortAggregateContainerIntoSubContainer(IBasicActivateItems activator, CohortAggregateContainerCombineable sourceCohortAggregateContainer, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
         {    
             _sourceCohortAggregateContainer = sourceCohortAggregateContainer;

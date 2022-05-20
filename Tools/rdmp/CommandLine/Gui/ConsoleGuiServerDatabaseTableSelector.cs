@@ -16,6 +16,7 @@ namespace Rdmp.Core.CommandLine.Gui {
     using System.Data.Common;
     using System.Linq;
     using System.Reflection;
+    using System.Threading.Tasks;
     using Terminal.Gui;
 
 
@@ -26,10 +27,10 @@ namespace Rdmp.Core.CommandLine.Gui {
 
         public string Password => tbPassword.Text.ToString();
 
-        public string Server => GetComboBoxValue(cbxServer);
-        public string Database => GetComboBoxValue(cbxDatabase);
+        public string Server => tbServer.Text.ToString();
+        public string Database => tbDatabase.Text.ToString();
         public string Schema => tbSchema.Text.ToString();
-        public string Table => GetComboBoxValue(cbxTable);
+        public string Table => tbTable.Text.ToString();
 
         /// <summary>
         /// Returns the DatabaseType that is selected in the dropdown or 
@@ -60,14 +61,6 @@ namespace Rdmp.Core.CommandLine.Gui {
             InitializeComponent();
             btnUseExisting.Clicked += BtnPickCredentials_Clicked;
 
-            // Fix frame view color scheme going dodgy when focused
-            frameview1.ColorScheme = new ColorScheme
-            {
-                Normal = ColorScheme.Normal,
-                Focus = ColorScheme.Normal,
-                Disabled = ColorScheme.Disabled,
-                HotFocus = ColorScheme.Normal,
-            };
             tbUsername.ColorScheme = ColorScheme;
             tbPassword.ColorScheme = ColorScheme;
             tbPassword.Secret = true;
@@ -75,22 +68,18 @@ namespace Rdmp.Core.CommandLine.Gui {
 
             cbxDatabaseType.SetSource(Enum.GetValues<DatabaseType>());
             
-            cbxDatabase.Leave += CbxDatabase_Leave;
-
             cbxDatabaseType.AddKeyBinding(Key.CursorDown, Command.Expand);
-            cbxTable.AddKeyBinding(Key.CursorDown, Command.Expand);
+
+            AddNoWordMeansShowAllAutocomplete(tbServer);
+            AddNoWordMeansShowAllAutocomplete(tbDatabase);
+            AddNoWordMeansShowAllAutocomplete(tbTable);
 
             // Same guid as used by the windows client but probably the apps have different UserSettings files
             // so sadly won't share one anothers recent histories
-            cbxServer.SetSource(UserSettings.GetHistoryForControl(new Guid("01ccc304-0686-4145-86a5-cc0468d40027"))
+            tbServer.Autocomplete.AllSuggestions = UserSettings.GetHistoryForControl(new Guid("01ccc304-0686-4145-86a5-cc0468d40027"))
                 .Where(e=>!string.IsNullOrWhiteSpace(e))
-                .ToList());
-
-            SetupComboBox(cbxDatabase);
-            SetupComboBox(cbxTable);
-            // do this last so that it gets focus in the UI (yes I know thats hacky)
-            SetupComboBox(cbxServer);  
-
+                .ToList();
+            
             cbxDatabaseType.SelectedItem = cbxDatabaseType.Source.ToList().IndexOf(DatabaseType.MicrosoftSQLServer);
             btnCreateDatabase.Clicked += CreateDatabase;
 
@@ -107,97 +96,126 @@ namespace Rdmp.Core.CommandLine.Gui {
             btnCancel.X = Pos.Right(btnOk) + 1;
             btnCancel.Clicked += () => Application.RequestStop();
 
-            btnRefresh.Clicked += RefreshDatabaseList;
+            btnListDatabases.Clicked += RefreshDatabaseList;
+            btnListTables.Clicked += UpdateTableList;
 
             if (!showTableComponents)
             {
                 lblSchema.Visible = false;
                 tbSchema.Visible = false;
                 lblTable.Visible = false;
-                cbxTable.Visible = false;
+                tbTable.Visible = false;
                 rgTableType.Visible = false;
+                btnListTables.Visible = false;
                 btnOk.Y -= 5;
                 btnCancel.Y -= 5;
                 Height -= 5;
             }
-
         }
 
-        private void SetupComboBox(ComboBox combo)
+        class NoWordMeansShowAllAutocomplete : TextFieldAutocomplete
         {
-            combo.AddKeyBinding(Key.CursorDown, Command.Expand);
-
-            var search = 
-                (TextField)
-                typeof(ComboBox).GetField("search", BindingFlags.NonPublic | BindingFlags.Instance)
-                .GetValue(combo);
-            
-            string last = "";
-
-            search.TextChanging += (e) =>
+            public NoWordMeansShowAllAutocomplete(TextField tb)
             {
-                // user or API is clearing our search
-                if (string.IsNullOrWhiteSpace(e.NewText.ToString())
-                    // prevent clearing unless user is deleting a character at a time
-                    && last.Length != 1)
+                HostControl = tb;
+                PopupInsideContainer = false;
+            }
+            public override void GenerateSuggestions()
+            {
+                // if there is something to pick
+                if (AllSuggestions.Count > 0)
                 {
-                    e.Cancel = true;
-                    return;
+                    // and no current word
+                    var currentWord = GetCurrentWord();
+                    if (string.IsNullOrWhiteSpace(currentWord))
+                    {
+                        Suggestions = AllSuggestions.AsReadOnly();
+                        return;
+                    }
                 }
 
-                last = e.NewText.ToString();
-            };
+                // otherwise let the default implementation run
+                base.GenerateSuggestions();
+            }
         }
 
-        private string GetComboBoxValue(ComboBox cbx)
+        private void AddNoWordMeansShowAllAutocomplete(TextField tb)
         {
-            var search =
-                   (TextField)
-                   typeof(ComboBox).GetField("search", BindingFlags.NonPublic | BindingFlags.Instance)
-                   .GetValue(cbx);
+            var prop = typeof(TextField).GetProperty(nameof(TextField.Autocomplete));
+            prop.SetValue(tb, new NoWordMeansShowAllAutocomplete(tb));
 
-            return search.Text.ToString();
-
-        }
-        private void CbxDatabase_Leave(FocusEventArgs obj)
-        {
-            UpdateTableList();
+            tb.Autocomplete.MaxWidth = tb.Frame.Width;
         }
 
         private void UpdateTableList()
         {
-            try
-            {
-                var db = new DiscoveredServer(GetBuilder()).ExpectDatabase(Database);
+            var open = new LoadingDialog("Fetching Tables...");
+            List<string> tables = null;
 
-                cbxTable.SetSource(
-                    db.DiscoverTables(true)
-                    .Union(db.DiscoverTableValuedFunctions())
-                    .Select(t=>t.GetRuntimeName())
-                    .ToList());
-            }
-            catch (Exception)
+            Task.Run(() => {
+
+                var db = new DiscoveredServer(GetBuilder()).ExpectDatabase(Database);
+                tables = db.DiscoverTables(true).Union(db.DiscoverTableValuedFunctions())
+                        .Select(t => t.GetRuntimeName())
+                        .ToList();
+            }).ContinueWith((t, o) =>
             {
-                // could not find any tables nevermind
-                return;
-            }
+
+                // no longer loading
+                Application.MainLoop.Invoke(() => Application.RequestStop());
+
+                if (t.Exception != null)
+                {
+                    Application.MainLoop.Invoke(() =>
+                        _activator.ShowException($"Failed to list tables", t.Exception));
+                    return;
+                }
+
+                // if loaded correctly then 
+                if (tables != null)
+                {
+                    Application.MainLoop.Invoke(() =>
+                    tbTable.Autocomplete.AllSuggestions = tables);
+                }
+            }, TaskScheduler.FromCurrentSynchronizationContext());
+
+            Application.Run(open, ConsoleMainWindow.ExceptionPopup);
         }
 
         private void RefreshDatabaseList()
         {
-            try
-            {
-                var server = new DiscoveredServer(GetBuilder());
+            var open = new LoadingDialog("Fetching Databases...");
+            List<string> databases = null;
 
-                cbxDatabase.SetSource(
-                    server.DiscoverDatabases()
-                    .Select(d=>d.GetRuntimeName())
-                    .ToList());
-            }
-            catch (Exception ex)
+            Task.Run(() => {
+
+                var server = new DiscoveredServer(GetBuilder());
+                databases = server.DiscoverDatabases()
+                    .Select(d => d.GetRuntimeName())
+                    .ToList();
+            }).ContinueWith((t, o) =>
             {
-                _activator.ShowException("Could not fetch databases", ex);
+
+            // no longer loading
+            Application.MainLoop.Invoke(() => Application.RequestStop());
+
+            if (t.Exception != null)
+            {
+                Application.MainLoop.Invoke(() =>
+                    _activator.ShowException($"Failed to list databases", t.Exception));
+                return;
             }
+
+            // if loaded correctly then 
+            if (databases != null)
+            {
+                Application.MainLoop.Invoke(() =>
+                    tbDatabase.Autocomplete.AllSuggestions = databases
+                    );
+                }
+            }, TaskScheduler.FromCurrentSynchronizationContext());
+
+            Application.Run(open, ConsoleMainWindow.ExceptionPopup);
         }
 
         public DbConnectionStringBuilder GetBuilder()
@@ -214,25 +232,47 @@ namespace Rdmp.Core.CommandLine.Gui {
 
         private void CreateDatabase()
         {
-            try
-            {
-                var db = GetDiscoveredDatabase(true);
+            var db = GetDiscoveredDatabase(true);
 
-                if (db == null)
-                    _activator.Show("Enter all database details before trying to create");
-                else
+            if (db == null)
+            {
+                _activator.Show("Enter all database details before trying to create");
+                return;
+            }
+               
+            var open = new LoadingDialog($"Creating Database '{db}'");
+            string message = null;
+
+            Task.Run(() => {
+
                 if (db.Exists())
-                    _activator.Show("Database already exists");
+                    message = "Database already exists";
                 else
                 {
                     db.Create();
-                    _activator.Show("Database Created Successfully");
+                    message = "Database Created Successfully";
                 }
-            }
-            catch (Exception e)
+            }).ContinueWith((t, o) =>
             {
-                _activator.ShowException("Create Database Failed", e);
-            }
+                // no longer loading
+                Application.MainLoop.Invoke(() => Application.RequestStop());
+
+                if (t.Exception != null)
+                {
+                    Application.MainLoop.Invoke(() =>
+                        _activator.ShowException($"Failed to create database", t.Exception));
+                    return;
+                }
+
+                // if loaded correctly then 
+                if (message != null)
+                {
+                    Application.MainLoop.Invoke(() =>
+                    _activator.Show("Create Database",message));
+                }
+            }, TaskScheduler.FromCurrentSynchronizationContext());
+
+            Application.Run(open, ConsoleMainWindow.ExceptionPopup);
         }
 
 

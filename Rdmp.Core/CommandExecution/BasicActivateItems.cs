@@ -755,7 +755,7 @@ namespace Rdmp.Core.CommandExecution
                 }
             }
 
-            if(catalogueFolder != null)
+            if(!string.IsNullOrWhiteSpace(catalogueFolder))
             {
                 cata.Folder = catalogueFolder;
                 cata.SaveToDatabase();

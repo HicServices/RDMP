@@ -190,7 +190,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
         {
             base.OnLoad(e);
             
-            if (TargetFolder != null)
+            if (!string.IsNullOrWhiteSpace(TargetFolder))
             {
                 _catalogue.Folder = TargetFolder;
                 _catalogue.SaveToDatabase();

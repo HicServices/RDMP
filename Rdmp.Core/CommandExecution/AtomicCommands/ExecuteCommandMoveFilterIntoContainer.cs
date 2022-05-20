@@ -6,6 +6,7 @@
 
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -14,6 +15,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private readonly FilterCombineable _filterCombineable;
         private readonly IContainer _targetContainer;
 
+        [UseWithObjectConstructor]
+        public ExecuteCommandMoveFilterIntoContainer(IBasicActivateItems activator, IFilter toMove, IContainer into) 
+            : this(activator,new FilterCombineable(toMove),into)
+        {
+
+        }
         public ExecuteCommandMoveFilterIntoContainer(IBasicActivateItems activator,FilterCombineable filterCombineable, IContainer targetContainer) : base(activator)
         {
             _filterCombineable = filterCombineable;
