@@ -94,13 +94,6 @@ namespace Rdmp.UI.DataViewing
             {
                 UserSettings.SetSplitterDistance(splitterGuid,splitContainer1.SplitterDistance);
             };
-            
-            
-        }
-
-        private void SplitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
-        {
-            
         }
 
         private void ScintillaOnKeyUp(object sender, KeyEventArgs keyEventArgs)
