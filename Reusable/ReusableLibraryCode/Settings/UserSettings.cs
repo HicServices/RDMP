@@ -532,7 +532,32 @@ namespace ReusableLibraryCode.Settings
                 AppSettings.AddOrUpdateValue("LastColumnSort_" + controlGuid.ToString("N"), columnName +"#!#" + ascending);    
             }
         }
-        
+
+
+        /// <summary>
+        /// Returns the last known manually set splitter distance for the Control who is 
+        /// identified by <paramref name="controlGuid"/> or -1 if none set yet
+        /// </summary>
+        /// <param name="controlGuid"></param>
+        /// <returns></returns>
+        public static int GetSplitterDistance(Guid controlGuid)
+        {
+            return AppSettings.GetValueOrDefault("SplitterDistance_" + controlGuid.ToString("N"),-1);
+        }
+
+        /// <summary>
+        /// Records that the user has manaully changed the splitter distance of the Control
+        /// who is identified by <paramref name="controlGuid"/>
+        /// </summary>
+        /// <param name="controlGuid"></param>
+        /// <param name="splitterDistance"></param>
+        public static void SetSplitterDistance(Guid controlGuid, int splitterDistance)
+        {
+            lock (_oLockUserSettings)
+            {
+                AppSettings.AddOrUpdateValue("SplitterDistance_" + controlGuid.ToString("N"), splitterDistance);
+            }
+        }
 
         static ISettings CreateSettings()
         {
