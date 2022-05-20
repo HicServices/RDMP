@@ -34,6 +34,7 @@ using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
+using ReusableLibraryCode.Settings;
 using Timer = System.Windows.Forms.Timer;
 
 
@@ -247,7 +248,9 @@ namespace Rdmp.UI.SubComponents
                 });
                 _commonFunctionality.MenuBuilt += MenuBuilt;
                 tlvCic.AddObject(_configuration);
-                tlvCic.ExpandAll();
+
+                if(UserSettings.ExpandAllInCohortBuilder)
+                    tlvCic.ExpandAll();
             }
 
             CommonFunctionality.AddToMenu(cbIncludeCumulative);

@@ -100,6 +100,7 @@ namespace Rdmp.UI.SimpleDialogs
             RegisterCheckbox(cbSelectiveRefresh, nameof(UserSettings.SelectiveRefresh));
             RegisterCheckbox(cbAlwaysJoinEverything,nameof(UserSettings.AlwaysJoinEverything));
             RegisterCheckbox(cbAutoRunSqlQueries, nameof(UserSettings.AutoRunSqlQueries));
+            RegisterCheckbox(cbExpandAllInCohortBuilder, nameof(UserSettings.ExpandAllInCohortBuilder));
 
             AddTooltip(label7, nameof(UserSettings.CreateDatabaseTimeout));
             AddTooltip(tbCreateDatabaseTimeout, nameof(UserSettings.CreateDatabaseTimeout));
@@ -190,9 +191,9 @@ namespace Rdmp.UI.SimpleDialogs
         {
             if (!_bLoaded)
                 return;
-            
+
             var cb = (CheckBox)sender;
-            checkboxDictionary[cb].SetValue(null,cb.Checked);
+            checkboxDictionary[cb].SetValue(null, cb.Checked);
         }
 
         private void ddTheme_SelectedIndexChanged(object sender, EventArgs e)
