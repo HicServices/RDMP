@@ -85,6 +85,7 @@
             this.userSettingsToolTips = new System.Windows.Forms.ToolTip(this.components);
             this.tbFind = new System.Windows.Forms.TextBox();
             this.label14 = new System.Windows.Forms.Label();
+            this.cbExpandAllInCohortBuilder = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.olvErrorCodes)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -428,12 +429,12 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Tabbed UI Options";
             // 
-            // cbAutoRunQueries
+            // cbAutoRunSqlQueries
             // 
             this.cbAutoRunSqlQueries.AutoSize = true;
             this.cbAutoRunSqlQueries.Location = new System.Drawing.Point(4, 102);
             this.cbAutoRunSqlQueries.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.cbAutoRunSqlQueries.Name = "cbAutoRunQueries";
+            this.cbAutoRunSqlQueries.Name = "cbAutoRunSqlQueries";
             this.cbAutoRunSqlQueries.Size = new System.Drawing.Size(138, 19);
             this.cbAutoRunSqlQueries.TabIndex = 20;
             this.cbAutoRunSqlQueries.Text = "Auto Run Sql Queries";
@@ -497,6 +498,7 @@
             // 
             // groupBox8
             // 
+            this.groupBox8.Controls.Add(this.cbExpandAllInCohortBuilder);
             this.groupBox8.Controls.Add(this.cbStrictValidationForCohortBuilderContainers);
             this.groupBox8.Controls.Add(this.cbShowCohortWizard);
             this.groupBox8.Location = new System.Drawing.Point(3, 174);
@@ -686,6 +688,16 @@
             this.label14.TabIndex = 26;
             this.label14.Text = "Find Setting:";
             // 
+            // cbAutoExpandInCohortBuilder
+            // 
+            this.cbExpandAllInCohortBuilder.AutoSize = true;
+            this.cbExpandAllInCohortBuilder.Location = new System.Drawing.Point(6, 64);
+            this.cbExpandAllInCohortBuilder.Name = "cbAutoExpandInCohortBuilder";
+            this.cbExpandAllInCohortBuilder.Size = new System.Drawing.Size(175, 19);
+            this.cbExpandAllInCohortBuilder.TabIndex = 3;
+            this.cbExpandAllInCohortBuilder.Text = "Expand All in Cohort Builder";
+            this.cbExpandAllInCohortBuilder.UseVisualStyleBackColor = true;
+            // 
             // UserSettingsFileUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -782,5 +794,6 @@
         private System.Windows.Forms.TextBox tbFind;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.CheckBox cbAutoRunSqlQueries;
+        private System.Windows.Forms.CheckBox cbExpandAllInCohortBuilder;
     }
 }

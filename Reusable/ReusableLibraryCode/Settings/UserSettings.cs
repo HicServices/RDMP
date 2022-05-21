@@ -378,6 +378,16 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("AutoRunSqlQueries", value); }
         }
 
+        /// <summary>
+        /// Enable to automatically expand the tree when opening or creating cohorts in
+        /// Cohort Builder
+        /// </summary>
+        public static bool ExpandAllInCohortBuilder
+        {
+            get { return AppSettings.GetValueOrDefault("ExpandAllInCohortBuilder", true); }
+            set { AppSettings.AddOrUpdateValue("ExpandAllInCohortBuilder", value); }
+        }
+
 
         #endregion
 
