@@ -23,6 +23,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ability to suppress tree expansion when opening Cohort Builder configurations
 - Added a loading spinner for when find is still searching
 
+### Removed
+
+- Removed Pin system (anchoring an object to the top of a collection tree).
+
 ## [7.0.12] - 2022-05-16
 
 ### Added

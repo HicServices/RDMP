@@ -266,16 +266,6 @@ namespace Rdmp.UI.Menus
 
         private void PopulateTreeMenu(RDMPCollectionCommonFunctionality commonFunctionality, ToolStripMenuItem treeMenuItem)
         {
-            var databaseEntity = _o as DatabaseEntity;
-
-            if (databaseEntity != null)
-            {
-                if (databaseEntity.Equals(_args.CurrentlyPinnedObject))
-                    Add(new ExecuteCommandUnpin(_activator, databaseEntity), Keys.None, treeMenuItem);
-                else
-                    Add(new ExecuteCommandPin(_activator, databaseEntity), Keys.None, treeMenuItem);
-            }
-
             if (_args.Tree != null && !commonFunctionality.Settings.SuppressChildrenAdder)
             {
                 Add(new ExecuteCommandExpandAllNodes(_activator, commonFunctionality, _args.Model), Keys.None, treeMenuItem);

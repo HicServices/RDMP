@@ -39,43 +39,17 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
         {
             CollectionType = collectionType;
         }
-
         protected override string GetPersistString()
         {
-            var ui = Controls.OfType<RDMPCollectionUI>().Single();
 
-            var pin = ui.CommonTreeFunctionality.CurrentlyPinned as IMapsDirectlyToDatabaseTable;
+            
 
             var args = new Dictionary<string, string>();
-            args.Add("Toolbox",CollectionType.ToString());
-            
-            if(pin != null)
-                args.Add("Pin",persistStringHelper.GetObjectCollectionPersistString(pin));
+            args.Add("Toolbox", CollectionType.ToString());
 
+         
             return Prefix + PersistStringHelper.Separator + persistStringHelper.SaveDictionaryToString(args);
         }
-
-        public void LoadPersistString(IActivateItems activator, string persistString)
-        {
-            try
-            {
-                var s = persistString.Substring(Prefix.Length + 1);
-                var pinValue = persistStringHelper.GetValueIfExistsFromPersistString("Pin", s);
-
-                if (pinValue != null)
-                {
-                    var toPin = persistStringHelper.GetObjectCollectionFromPersistString(pinValue, activator.RepositoryLocator).SingleOrDefault();
-
-                    if(toPin != null)
-                        activator.RequestItemEmphasis(this,new EmphasiseRequest(toPin){Pin = true,ExpansionDepth = 2});
-                }
-            }
-            catch (Exception e)
-            {
-                activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to LoadPersistString '" + persistString + "' for collection " + CollectionType, CheckResult.Fail, e));
-            }
-        }
-
         public RDMPCollectionUI GetCollection()
         {
             return Controls.OfType<RDMPCollectionUI>().SingleOrDefault();

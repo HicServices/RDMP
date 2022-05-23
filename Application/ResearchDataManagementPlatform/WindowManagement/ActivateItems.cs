@@ -531,8 +531,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override IEnumerable<Type> GetIgnoredCommands()
         {
-            yield return typeof(ExecuteCommandPin);
-            yield return typeof(ExecuteCommandUnpin);
             yield return typeof(ExecuteCommandRefreshObject);
             yield return typeof(ExecuteCommandChangeExtractability);
             yield return typeof (ExecuteCommandOpenInExplorer);

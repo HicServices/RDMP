@@ -321,7 +321,6 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
                 {
                     AddFavouriteColumn = false,
                     AddIDColumn = false,
-                    AllowPinning = false,
                     SuppressChildrenAdder = true,
                     SuppressActivate = true,
                     AddCheckColumn = false
