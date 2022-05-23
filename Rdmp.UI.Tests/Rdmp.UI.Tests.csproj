@@ -28,4 +28,7 @@
     <ProjectReference Include="..\Rdmp.UI\Rdmp.UI.csproj" />
     <ProjectReference Include="..\Tests.Common\Tests.Common.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CollectionUIs\" />
+  </ItemGroup>
 </Project>

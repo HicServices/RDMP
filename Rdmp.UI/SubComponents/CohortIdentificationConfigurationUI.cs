@@ -243,7 +243,6 @@ namespace Rdmp.UI.SubComponents
                     SuppressActivate = true,
                     AddFavouriteColumn = false,
                     AddCheckColumn = false,
-                    AllowPinning = false,
                     AllowSorting =  true, //important, we need sorting on so that we can override sort order with our OrderableComparer
                 });
                 _commonFunctionality.MenuBuilt += MenuBuilt;

@@ -94,12 +94,6 @@
     <Compile Update="Collections\CatalogueCollectionUI.Designer.cs">
       <DependentUpon>CatalogueCollectionUI.cs</DependentUpon>
     </Compile>
-    <Compile Update="Collections\CollectionPinFilterUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Collections\CollectionPinFilterUI.Designer.cs">
-      <DependentUpon>CollectionPinFilterUI.cs</DependentUpon>
-    </Compile>
     <Compile Update="Collections\FavouritesCollectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -372,9 +366,6 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Collections\CatalogueCollectionUI.resx">
       <DependentUpon>CatalogueCollectionUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Collections\CollectionPinFilterUI.resx">
-      <DependentUpon>CollectionPinFilterUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Collections\FavouritesCollectionUI.resx">
       <DependentUpon>FavouritesCollectionUI.cs</DependentUpon>

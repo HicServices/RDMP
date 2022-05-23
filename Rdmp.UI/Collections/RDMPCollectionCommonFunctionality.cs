@@ -67,9 +67,6 @@ namespace Rdmp.UI.Collections
         
         public Func<IActivateItems,IAtomicCommand[]> WhitespaceRightClickMenuCommandsGetter { get; set; }
         
-        private CollectionPinFilterUI _pinFilter;
-        public object CurrentlyPinned { get; private set; }
-
         public IDColumnProvider IDColumnProvider { get; set; }
         public OLVColumn IDColumn { get; set; }
         public CheckColumnProvider CheckColumnProvider { get; set; }
@@ -519,11 +516,7 @@ namespace Rdmp.UI.Collections
         void _activator_Emphasise(object sender, EmphasiseEventArgs args)
         {
             var rootObject = _activator.GetRootObjectOrSelf(args.Request.ObjectToEmphasise);
-
-            // unpin first if there is somthing pinned, so we find our object!
-            if (_pinFilter != null && _activator.IsRootObjectOfCollection(_collection,rootObject))
-                _pinFilter.UnApplyToTree();
-            
+                        
             //get the parental hierarchy
             var decendancyList = CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
             
@@ -558,9 +551,6 @@ namespace Rdmp.UI.Collections
                     Tree.EndUpdate();
                 }
                 
-            if (args.Request.Pin && Settings.AllowPinning && args.Request.ObjectToEmphasise is IMapsDirectlyToDatabaseTable m)
-                Pin(m, decendancyList);
-
             //update index now pin filter is applied
             index = Tree.IndexOf(args.Request.ObjectToEmphasise);
 
@@ -570,22 +560,6 @@ namespace Rdmp.UI.Collections
 
             
             args.Sender = Tree.FindForm();
-        }
-
-        private void Pin(IMapsDirectlyToDatabaseTable objectToPin, DescendancyList descendancy)
-        {
-            if (_pinFilter != null)
-                _pinFilter.UnApplyToTree();
-            
-            _pinFilter = new CollectionPinFilterUI();
-            _pinFilter.ApplyToTree(_activator, Tree, objectToPin, descendancy);
-            CurrentlyPinned = objectToPin;
-
-            _pinFilter.UnApplied += (s, e) =>
-            {
-                _pinFilter = null;
-                CurrentlyPinned = null;
-            };
         }
 
         /// <summary>
@@ -681,18 +655,7 @@ namespace Rdmp.UI.Collections
 
                     //found a menu with compatible constructor arguments
                     if (menu != null)
-                    {
-                        if (!Settings.AllowPinning)
-                        {
-                            var miPin = menu.Items.OfType<AtomicCommandMenuItem>().SingleOrDefault(mi => mi.Tag is ExecuteCommandPin);
-
-                            if (miPin != null)
-                            {
-                                miPin.Enabled = false;
-                                miPin.ToolTipText = "Pinning is disabled in this collection";
-                            }
-                        }
-                        
+                    {                        
                         MenuBuilt?.Invoke(this,new MenuBuiltEventArgs(menu,o));
                         return Sort(menu);
                     }
@@ -743,7 +706,6 @@ namespace Rdmp.UI.Collections
         private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, IMasqueradeAs oMasquerader = null)
         {
             RDMPContextMenuStripArgs args = new RDMPContextMenuStripArgs(_activator,Tree,o);
-            args.CurrentlyPinnedObject = CurrentlyPinned;
             args.Masquerader = oMasquerader ?? o as IMasqueradeAs;
 
             var objectConstructor = new ObjectConstructor();
@@ -911,11 +873,6 @@ namespace Rdmp.UI.Collections
 
             //now tell tree view to refresh the object
             
-            //if the descendancy is known 
-            if (_pinFilter != null)
-                _pinFilter.OnRefreshObject(_activator.CoreChildProvider,e);
-
-
             RefreshContextMenuStrip();
 
             //also refresh anyone who is masquerading as e.Object
@@ -938,9 +895,6 @@ namespace Rdmp.UI.Collections
                     Tree.AddObject(o); //add it
                     return;
                 }
-
-            if(ShouldClearPinFilterOnRefresh(o,exists))
-                _pinFilter.UnApplyToTree();
 
             if (!exists)
             {
@@ -974,23 +928,6 @@ namespace Rdmp.UI.Collections
                 //if we have the object
                     if (Tree.IndexOf(o) != -1 && exists)
                         Tree.RefreshObject(o); //it exists so refresh it!
-        }
-
-        private bool ShouldClearPinFilterOnRefresh(object o, bool exists)
-        {
-            //there is no current pin
-            if(_pinFilter == null)
-                return false;
-
-            //the current pin is the object being deleted
-            if(!exists && Equals(CurrentlyPinned, o))
-                return true;
-
-            //the current pin does not exist anymore (e.g. if you pinned something low down and deleted something above it)
-            if (CurrentlyPinned is DatabaseEntity e && !e.Exists())
-                return true;
-
-            return false;
         }
 
         private bool IsHiddenByFilter(object o)
