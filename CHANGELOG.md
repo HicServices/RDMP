@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `SimpleTicketingSystem` which simply opens the given URL+ticket [#775](https://github.com/HicServices/RDMP/issues/775)
 - Added UserSettings editing UI to Console Gui
 - Added ability to suppress tree expansion when opening Cohort Builder configurations
+- Added a loading spinner for when find is still searching
 
 ## [7.0.12] - 2022-05-16
 

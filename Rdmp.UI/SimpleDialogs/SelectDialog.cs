@@ -34,6 +34,8 @@ using System.Windows.Forms;
 
 namespace Rdmp.UI.SimpleDialogs
 {
+    // IMPORTANT: To edit this in Designer rename 'SelectDialog`1.resx' to 'SelectDialog.resx'
+
     public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : class
     {
         private readonly Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> _searchables;
@@ -664,7 +666,7 @@ namespace Rdmp.UI.SimpleDialogs
                 _lastCancellationToken.Cancel();
 
             _lastCancellationToken = new CancellationTokenSource();
-
+            pbLoading.Visible = true;
             var toFind = tbFilter.Text;
 
             _lastFetchTask = Task.Run(() => FetchMatches(toFind, _lastCancellationToken.Token))
@@ -690,6 +692,8 @@ namespace Rdmp.UI.SimpleDialogs
                                     _matches = _tempMatches;
                                     StateChanged();
                                 }
+
+                                pbLoading.Visible = false;
                             }
 
                         }
