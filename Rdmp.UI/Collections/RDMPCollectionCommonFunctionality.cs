@@ -41,8 +41,7 @@ namespace Rdmp.UI.Collections
 {
     /// <summary>
     /// Provides centralised functionality for all RDMPCollectionUI classes.  This includes configuring TreeListView to use the correct icons, have the correct row 
-    /// height, child nodes etc.  Also centralises functionality like applying a CollectionPinFilterUI to an RDMPCollectionUI, keeping trees up to date during object
-    /// refreshes / deletes etc.
+    /// height, child nodes etc.
     /// </summary>
     public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     {
