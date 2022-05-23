@@ -98,12 +98,25 @@ namespace Rdmp.Core.Providers
 
         public string DescribeProblem(ISqlParameter parameter)
         {
-            if (string.IsNullOrWhiteSpace(parameter.Value) || parameter.Value == AnyTableSqlParameter.DefaultValue)
-                return "No value defined";
-
-            
             if (AnyTableSqlParameter.HasProhibitedName(parameter))
                 return "Parameter name is a reserved name for the RDMP software";
+
+            // if parameter has no value thats a problem
+            if (string.IsNullOrWhiteSpace(parameter.Value) || parameter.Value == AnyTableSqlParameter.DefaultValue)
+            {
+                // unless it has ExtractionFilterParameterSets defined on it
+                var desc = _childProvider.GetDescendancyListIfAnyFor(parameter);
+                if (desc != null && parameter is ExtractionFilterParameter)
+                {
+                    var filter = desc.Parents.OfType<ExtractionFilter>().FirstOrDefault();
+                    if (filter != null && filter.ExtractionFilterParameterSets.Any())
+                    {
+                        return null;
+                    }
+                }
+
+                return "No value defined";
+            }
 
             return null;
         }
