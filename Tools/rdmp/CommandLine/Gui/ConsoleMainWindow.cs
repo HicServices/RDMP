@@ -680,8 +680,9 @@ namespace Rdmp.Core.CommandLine.Gui
         {
             var type = o.GetType();
 
-            if(type == typeof(CatalogueFolder))
+            if(type == typeof(string) || type == typeof(CatalogueFolder))
                 return Catalogues;
+
             if(type == typeof(Project))
                 return Projects;
             if(type == typeof(LoadMetadata))	
