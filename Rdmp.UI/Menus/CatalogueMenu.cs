@@ -63,7 +63,6 @@ namespace Rdmp.UI.Menus
 
             ////////////////// UI Commands for the CatalogueItems submenu of the Catalogue context menu ///////////////////
             Add(new ExecuteCommandBulkProcessCatalogueItems(_activator, catalogue) { SuggestedCategory = CatalogueItems , Weight = -99.049f, });
-            Add(new ExecuteCommandAddNewCatalogueItem(_activator, catalogue) { SuggestedCategory = CatalogueItems, Weight = -99.048f, });
             Add(new ExecuteCommandPasteClipboardAsNewCatalogueItems(_activator, catalogue,()=> Clipboard.GetText()) { SuggestedCategory = CatalogueItems, Weight = -99.047f, });
             Add(new ExecuteCommandReOrderColumns(_activator, catalogue) { SuggestedCategory = CatalogueItems, Weight = -99.046f, });
             Add(new ExecuteCommandGuessAssociatedColumns(_activator, catalogue,null) { SuggestedCategory = CatalogueItems, Weight = -99.045f, });

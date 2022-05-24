@@ -747,6 +747,13 @@ namespace Rdmp.Core.CommandExecution
             {
                 yield return new ExecuteCommandScriptTables(_activator, many.Cast<TableInfo>().ToArray(), null, null, null);
             }
+            if (many.Cast<object>().All(t => t is CatalogueItem))
+            {
+                yield return new ExecuteCommandChangeExtractionCategory(_activator, 
+                    many.Cast<CatalogueItem>()
+                    .Select(ci=>ci.ExtractionInformation)
+                    .Where(ei=>ei != null).ToArray(),null);
+            }
 
             if (many.Cast<object>().All(d => d is IDeleteable))
             {
