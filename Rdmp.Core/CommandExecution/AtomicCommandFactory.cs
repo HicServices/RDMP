@@ -158,7 +158,7 @@ namespace Rdmp.Core.CommandExecution
             {
                 yield return new ExecuteCommandCreateNewFilter(_activator, new ExtractionFilterFactory(ei)) { OverrideCommandName = "Add New Filter"};
                 yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, ei);
-                yield return new ExecuteCommandChangeExtractionCategory(_activator, ei);
+                yield return new ExecuteCommandChangeExtractionCategory(_activator, new[] { ei });
 
                 yield return new ExecuteCommandViewData(_activator, ViewType.TOP_100, ei) { SuggestedCategory = View };
                 yield return new ExecuteCommandViewData(_activator, ViewType.Aggregate, ei) { SuggestedCategory = View };
@@ -186,7 +186,7 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandCreateNewFilter(_activator, ci) { OverrideCommandName = "Add New Filter" };
                 yield return new ExecuteCommandLinkCatalogueItemToColumnInfo(_activator, ci);
                 yield return new ExecuteCommandMakeCatalogueItemExtractable(_activator, ci);
-                yield return new ExecuteCommandChangeExtractionCategory(_activator, ci.ExtractionInformation);
+                yield return new ExecuteCommandChangeExtractionCategory(_activator, new[] { ci.ExtractionInformation });
                 yield return new ExecuteCommandImportCatalogueItemDescription(_activator, ci){SuggestedShortcut= "I",Ctrl=true };
 
                 var ciExtractionInfo = ci.ExtractionInformation;

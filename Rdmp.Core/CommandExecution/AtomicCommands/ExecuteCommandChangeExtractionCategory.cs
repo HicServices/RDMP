@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
@@ -16,8 +17,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     public class ExecuteCommandChangeExtractionCategory : BasicCommandExecution
     {
         ExtractionInformation[] _extractionInformations;
-        
-        public ExecuteCommandChangeExtractionCategory(IBasicActivateItems activator,params ExtractionInformation[] eis) : base(activator)
+        private readonly ExtractionCategory? _category;
+
+        [UseWithObjectConstructor]
+        public ExecuteCommandChangeExtractionCategory(IBasicActivateItems activator,ExtractionInformation[] eis, ExtractionCategory? category = null) : base(activator)
         {
             eis = (eis??new ExtractionInformation[0]).Where(e => e != null).ToArray();
 
@@ -25,6 +28,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 SetImpossible("No ExtractionInformations found");
 
             _extractionInformations = eis;
+            this._category = category;
         }
 
         public override string GetCommandName()
@@ -44,14 +48,19 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            if(BasicActivator.SelectValueType("New Extraction Category", typeof(ExtractionCategory), ExtractionCategory.Core, out object category))
+            var c = _category;
+
+            if (c == null && BasicActivator.SelectValueType("New Extraction Category", typeof(ExtractionCategory), ExtractionCategory.Core, out object category))
+                c = (ExtractionCategory)category;
+
+            if (c == null)
+                return;
+                        
+            foreach (var ei in _extractionInformations)
             {
-                foreach (var ei in _extractionInformations)
-                {
-                    ei.ExtractionCategory = (ExtractionCategory) category;
-                    ei.SaveToDatabase();
-                }
-            }
+                ei.ExtractionCategory = c.Value;
+                ei.SaveToDatabase();
+            }            
 
             //publish the root Catalogue
             Publish(_extractionInformations.First());

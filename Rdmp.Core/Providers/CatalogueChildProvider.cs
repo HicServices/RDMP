@@ -1740,12 +1740,23 @@ namespace Rdmp.Core.Providers
         public bool SelectiveRefresh(ExtractionInformation ei)
         {
             var descendancy = GetDescendancyListIfAnyFor(ei);
-            var last = (CatalogueItem)descendancy?.Last();
-            if (last == null) return false;
+            var cata = descendancy?.Parents.OfType<Catalogue>().LastOrDefault() ?? ei.CatalogueItem.Catalogue;
+
+            if (cata == null)
+                return false;
+
+            var cataDescendancy = GetDescendancyListIfAnyFor(cata);
+
+            if (cataDescendancy == null)
+                return false;
+            
+            FetchCatalogueItems();
 
             // property changes or deleting the ExtractionInformation
             FetchExtractionInformations();
-            AddChildren(last, descendancy);
+
+            // refresh the Catalogue
+            AddChildren(cata, cataDescendancy.Add(cata));
             return true;
         }
         public bool SelectiveRefresh(CohortAggregateContainer container)
