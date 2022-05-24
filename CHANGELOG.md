@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed order of Sql Parameters not always being first in tree
 - Prevented Find/Select columns showing sort indicator when it is not supported
+- Fixed `DistinctStrategy.OrderByAndDistinctInMemory` in batch processing retries [#1194](https://github.com/HicServices/RDMP/issues/1194)
 - Fixed GoTo where path includes CatalogueFolder in CLI gui
 
 ## [7.0.12] - 2022-05-16
