@@ -11,6 +11,7 @@ using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 
@@ -112,18 +113,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     if(columnInfo != null)
                     {
                         ci.SetColumnInfo(columnInfo);
-                        // also make extractable
-                        if(Category != null)
-                        {
-                            var ei = new ExtractionInformation(repo, ci, columnInfo, columnInfo.GetFullyQualifiedName());
-                            
-                            if(ei.ExtractionCategory != Category)
-                            {
-                                ei.ExtractionCategory = Category.Value;
-                                ei.SaveToDatabase();
-                            }
-                        }
-                        
+                        CreateExtractionInformation(repo,ci,columnInfo);                        
                     }
 
                     ci.SaveToDatabase();
@@ -144,10 +134,25 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     ci.SaveToDatabase();
 
                     // also make extractable
-                    new ExtractionInformation(repo, ci, columnInfo, columnInfo.GetFullyQualifiedName());
+                    CreateExtractionInformation(repo, ci, columnInfo);
                 }
 
                 Publish(c);
+            }
+        }
+
+        private void CreateExtractionInformation(ICatalogueRepository repo, CatalogueItem ci, ColumnInfo columnInfo)
+        {
+            // also make extractable
+            if (Category != null)
+            {
+                var ei = new ExtractionInformation(repo, ci, columnInfo, columnInfo.GetFullyQualifiedName());
+
+                if (ei.ExtractionCategory != Category)
+                {
+                    ei.ExtractionCategory = Category.Value;
+                    ei.SaveToDatabase();
+                }
             }
         }
 
