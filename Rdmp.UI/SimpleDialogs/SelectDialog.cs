@@ -46,6 +46,8 @@ namespace Rdmp.UI.SimpleDialogs
 
         private Task _lastFetchTask = null;
         private CancellationTokenSource _lastCancellationToken;
+        private int _runCount;
+
         private Type[] _types;
         private HashSet<string> _typeNames;
 
@@ -667,12 +669,19 @@ namespace Rdmp.UI.SimpleDialogs
 
             _lastCancellationToken = new CancellationTokenSource();
             pbLoading.Visible = true;
+            Interlocked.Increment(ref _runCount);
             var toFind = tbFilter.Text;
 
             _lastFetchTask = Task.Run(() => FetchMatches(toFind, _lastCancellationToken.Token))
                 .ContinueWith(
                     (s) =>
                     {
+
+                        if(Interlocked.Decrement(ref _runCount) == 0)
+                        {
+                            pbLoading.Visible = false;
+                        }
+
                         if (_isClosed)
                             return;
 
@@ -692,10 +701,7 @@ namespace Rdmp.UI.SimpleDialogs
                                     _matches = _tempMatches;
                                     StateChanged();
                                 }
-
-                                pbLoading.Visible = false;
                             }
-
                         }
                         catch (ObjectDisposedException)
                         {
