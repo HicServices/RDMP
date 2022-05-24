@@ -15,12 +15,14 @@ using Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Menus.MenuItems;
+using ReusableLibraryCode;
 
 namespace Rdmp.UI.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
     class CatalogueMenu:RDMPContextMenuStrip
     {
+        const string CatalogueItems = "Catalogue Items";
 
         public CatalogueMenu(RDMPContextMenuStripArgs args, Catalogue catalogue):base(args,catalogue)
         {
@@ -59,6 +61,16 @@ namespace Rdmp.UI.Menus
                 SuggestedCategory = AtomicCommandFactory.View}.SetTarget(catalogue));
             }
 
+            ////////////////// UI Commands for the CatalogueItems submenu of the Catalogue context menu ///////////////////
+            Add(new ExecuteCommandBulkProcessCatalogueItems(_activator, catalogue) { SuggestedCategory = CatalogueItems });
+            Add(new ExecuteCommandAddNewCatalogueItem(_activator, catalogue) { SuggestedCategory = CatalogueItems });
+            Add(new ExecuteCommandPasteClipboardAsNewCatalogueItems(_activator, catalogue,()=> Clipboard.GetText()) { SuggestedCategory = CatalogueItems});
+            Add(new ExecuteCommandReOrderColumns(_activator, catalogue) { SuggestedCategory = CatalogueItems});
+            Add(new ExecuteCommandGuessAssociatedColumns(_activator, catalogue,null) { SuggestedCategory = CatalogueItems });
+            Add(new ExecuteCommandChangeExtractionCategory(_activator,catalogue.GetAllExtractionInformation(ExtractionCategory.Any)) { SuggestedCategory = CatalogueItems });
+            Add(new ExecuteCommandImportCatalogueItemDescriptions(_activator,catalogue, null/*pick at runtime*/) { SuggestedCategory = CatalogueItems });
+        
+
             if (catalogue.LoadMetadata_ID != null)
             {
                 var dir = catalogue.LoadMetadata.LocationOfFlatFiles;
@@ -77,8 +89,6 @@ namespace Rdmp.UI.Menus
                     Add(new ExecuteCommandOpenInExplorer(_activator, dirReal) { OverrideCommandName = "Open Load Directory"});
                 }
             }
-            
         }
-
     }
 }

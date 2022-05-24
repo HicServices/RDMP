@@ -22,13 +22,11 @@ namespace Rdmp.UI.CommandExecution.Proposals
 
         public override bool CanActivate(CatalogueItemsNode target)
         {
-            return true;
+            return false;
         }
 
         public override void Activate(CatalogueItemsNode target)
         {
-            var cmd = new ExecuteCommandBulkProcessCatalogueItems(ItemActivator, target.Catalogue);
-            cmd.Execute();
         }
 
         public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CatalogueItemsNode target, InsertOption insertOption = InsertOption.Default)
