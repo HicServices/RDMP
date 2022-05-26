@@ -56,7 +56,7 @@ namespace Rdmp.Core.CommandLine.Gui
         public const string Catalogues = "Catalogues";
         public const string Projects = "Projects";
         public const string Loads = "Data Loads";
-        public const string CohortConfigs = "Cohort Configurations";
+        public const string CohortConfigs = "Cohort Builder";
         public const string BuiltCohorts = "Built Cohorts";
         public const string Other = "Other";
 
@@ -475,6 +475,10 @@ namespace Rdmp.Core.CommandLine.Gui
 
                 if(ReferenceEquals(model,Other))
                     return GetOtherCategoryChildren();
+
+                // don't show cic children (this is consistent with 'AxeChildren' in main collection RDMP client for Cohort Builder)
+                if (model is CohortIdentificationConfiguration)
+                    return new object[0];
 
                 //sub brackets
                 return _activator.CoreChildProvider.GetChildren(model) ?? new object[0];

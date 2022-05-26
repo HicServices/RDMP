@@ -69,6 +69,15 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 Common.StartAll(() => { }, RunnerOnPhaseChanged);
             };
+            btnClose.Clicked += () =>
+            {
+                if (!Common.ConsultAboutClosing())
+                    Application.RequestStop();
+            };
+            btnAbort.Clicked += () =>
+            {
+                Common.CancelAll();
+            };
 
             Application.MainLoop.AddTimeout(TimeSpan.FromSeconds(2), RefreshTableCallback);
 
@@ -137,7 +146,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 return;
             var col = tableview1.Table.Columns[obj.Col];
 
-            if (col.ColumnName.Equals("Name") && o is not CohortIdentificationConfiguration) // don't reopen another copy of this UI!
+            if (col.ColumnName.Equals("Name"))
             {
                 var factory = new ConsoleGuiContextMenuFactory(_activator);
                 var menu = factory.Create(new object[0], o);
