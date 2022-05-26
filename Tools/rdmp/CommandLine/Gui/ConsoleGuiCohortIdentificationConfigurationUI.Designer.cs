@@ -23,6 +23,10 @@ namespace Rdmp.Core.CommandLine.Gui {
         
         private Terminal.Gui.Button btnCommitCohort;
         
+        private Terminal.Gui.Label lblTimeout;
+        
+        private Terminal.Gui.TextField tbTimeout;
+        
         private Terminal.Gui.Label lblState;
         
         private Terminal.Gui.Button btnClose;
@@ -83,6 +87,25 @@ namespace Rdmp.Core.CommandLine.Gui {
             this.btnCommitCohort.TextAlignment = Terminal.Gui.TextAlignment.Centered;
             this.btnCommitCohort.IsDefault = false;
             this.Add(this.btnCommitCohort);
+            this.lblTimeout = new Terminal.Gui.Label();
+            this.lblTimeout.Width = 8;
+            this.lblTimeout.Height = 1;
+            this.lblTimeout.X = 55;
+            this.lblTimeout.Y = 0;
+            this.lblTimeout.Data = "lblTimeout";
+            this.lblTimeout.Text = "Timeout:";
+            this.lblTimeout.TextAlignment = Terminal.Gui.TextAlignment.Left;
+            this.Add(this.lblTimeout);
+            this.tbTimeout = new Terminal.Gui.TextField();
+            this.tbTimeout.Width = 10;
+            this.tbTimeout.Height = 1;
+            this.tbTimeout.X = 64;
+            this.tbTimeout.Y = 0;
+            this.tbTimeout.Secret = false;
+            this.tbTimeout.Data = "tbTimeout";
+            this.tbTimeout.Text = "3000";
+            this.tbTimeout.TextAlignment = Terminal.Gui.TextAlignment.Left;
+            this.Add(this.tbTimeout);
             this.lblState = new Terminal.Gui.Label();
             this.lblState.Width = 6;
             this.lblState.Height = 1;
