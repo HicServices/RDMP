@@ -19,6 +19,7 @@ using Rdmp.Core.CommandLine.Gui.Windows;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataViewing;
@@ -358,6 +359,12 @@ namespace Rdmp.Core.CommandLine.Gui
                 }
             }
 
+            if(m is CohortIdentificationConfiguration cic)
+            {
+                var view = new ConsoleGuiCohortIdentificationConfigurationUI(this, cic);
+                Application.Run(view, ConsoleMainWindow.ExceptionPopup);
+            }
+            else
             if(m != null)
             {
                 var view = new ConsoleGuiEdit(this,m){Modal = true };

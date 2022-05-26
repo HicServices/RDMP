@@ -35,6 +35,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Settings;
+using static Rdmp.Core.CohortCreation.CohortIdentificationConfigurationUICommon;
 using Timer = System.Windows.Forms.Timer;
 
 
@@ -71,33 +72,28 @@ namespace Rdmp.UI.SubComponents
     /// </summary>
     public partial class CohortIdentificationConfigurationUI : CohortIdentificationConfigurationUI_Design,IRefreshBusSubscriber
     {
-        private CohortIdentificationConfiguration _configuration;
-        private ExecuteCommandClearQueryCache _clearCacheCommand;
         ToolStripMenuItem cbIncludeCumulative = new ToolStripMenuItem("Calculate Cumulative Totals") { CheckOnClick = true };
         ToolTip tt = new ToolTip();
-
-        private RDMPCollectionCommonFunctionality _commonFunctionality;
-        private ExternalDatabaseServer _queryCachingServer;
-        private CohortAggregateContainer _root;
-        CancellationTokenSource _cancelGlobalOperations;
-        private ISqlParameter[] _globals;
-        private CohortCompilerRunner _runner;
-        
+                
         readonly ToolStripTimeout _timeoutControls = new ToolStripTimeout() { Timeout = 3000 };
+        RDMPCollectionCommonFunctionality _commonFunctionality;
 
-        public CohortCompiler Compiler { get; }
         Timer timer = new Timer();
+
+        private ExecuteCommandClearQueryCache _clearCacheCommand;
+
+        CohortIdentificationConfigurationUICommon Common = new ();
 
         public CohortIdentificationConfigurationUI()
         {
             InitializeComponent();
 
-            Compiler = new CohortCompiler(null);
+            Common = new CohortIdentificationConfigurationUICommon();
 
             olvExecute.IsButton = true;
             olvExecute.ButtonSizing = OLVColumn.ButtonSizingMode.CellBounds;
             tlvCic.RowHeight = 19;
-            olvExecute.AspectGetter += ExecuteAspectGetter;
+            olvExecute.AspectGetter += Common.ExecuteAspectGetter;
             tlvCic.ButtonClick += tlvCic_ButtonClick;
             olvOrder.AspectGetter += (o)=> o is JoinableCollectionNode ? null : o is ISqlParameter ? null : (o as IOrderable)?.Order;
             olvOrder.IsEditable = false;
@@ -109,17 +105,16 @@ namespace Rdmp.UI.SubComponents
             timer.Interval = 2000;
             timer.Start();
             
-            olvCount.AspectGetter = Count_AspectGetter;
-            olvCached.AspectGetter = Cached_AspectGetter;
-            olvCumulativeTotal.AspectGetter = CumulativeTotal_AspectGetter;
-            olvTime.AspectGetter = Time_AspectGetter;
-            olvWorking.AspectGetter = Working_AspectGetter;
-            olvCatalogue.AspectGetter = Catalogue_AspectGetter;
+            olvCount.AspectGetter = Common.Count_AspectGetter;
+            olvCached.AspectGetter = Common.Cached_AspectGetter;
+            olvCumulativeTotal.AspectGetter = Common.CumulativeTotal_AspectGetter;
+            olvTime.AspectGetter = Common.Time_AspectGetter;
+            olvWorking.AspectGetter = Common.Working_AspectGetter;
+            olvCatalogue.AspectGetter = Common.Catalogue_AspectGetter;
 
             cbIncludeCumulative.CheckedChanged += (s, e) =>
             {
-                Compiler.IncludeCumulativeTotals = cbIncludeCumulative.Checked;
-                RecreateAllTasks();
+                Common.SetShowCumulativeTotals(cbIncludeCumulative.Checked);
             };
 
             //This is important, OrderableComparer ensures IOrderable objects appear in the correct order but the comparator
@@ -141,78 +136,26 @@ namespace Rdmp.UI.SubComponents
             tt.SetToolTip(btnAbortLoad, "Cancells execution of any running cohort sets");
         }
 
-        private object Working_AspectGetter(object rowobject)
-        {
-            return GetKey(rowobject)?.State;
-        }
-
-        private object Time_AspectGetter(object rowobject)
-        {
-            return GetKey(rowobject)?.ElapsedTime?.ToString( @"hh\:mm\:ss");
-        }
-
-        private object CumulativeTotal_AspectGetter(object rowobject)
-        {
-            return GetKey(rowobject)?.CumulativeRowCount?.ToString("N0");
-        }
-
-        private ICompileable GetKey(object rowobject)
-        {
-            lock(Compiler.Tasks)
-            {
-                return
-                    Compiler?.Tasks?.Keys.FirstOrDefault(k =>
-
-                        (rowobject is AggregateConfiguration ac && k.Child is JoinableCohortAggregateConfiguration j
-                                                                && j.AggregateConfiguration_ID == ac.ID)
-                        || k.Child.Equals(rowobject));
-            }
-        }
-
-        private object Cached_AspectGetter(object rowobject)
-        {
-            var key = GetKey(rowobject);
-            
-            if (key != null)
-                return _configuration.QueryCachingServer_ID == null ? "No Cache" : key.GetCachedQueryUseCount();
-            
-            return null;
-        }
-
-        private object Count_AspectGetter(object rowobject)
-        {
-            var key = GetKey(rowobject);
-            
-            if (key != null && key.State == CompilationState.Finished)
-                return key.FinalRowCount.ToString("N0");
-
-            return null;
-        }
-        private object Catalogue_AspectGetter(object rowobject)
-        {
-            return
-                rowobject is AggregateConfiguration ac ? ac.Catalogue.Name : null;
-        }
-
         
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
+            Common.Activator = Activator;
             var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
 
             
             //if publish event was for a child of the cic (_cic is in the objects descendancy i.e. it sits below our cic)
-            if (descendancy != null && descendancy.Parents.Contains(_configuration))
+            if (descendancy != null && descendancy.Parents.Contains(Common.Configuration))
             {
 
                 //Go up descendency list clearing out the tasks above (and including) e.Object because it has changed
                 foreach (var o in descendancy.Parents.Union(new[] {e.Object}))
                 {
-                    var key = GetKey(o);
+                    var key = Common.GetKey(o);
                     if(key != null)
-                        Compiler.CancelTask(key,true);
+                        Common.Compiler.CancelTask(key,true);
                 }
                 //TODO: this doesn't clear the compiler
-                RecreateAllTasks();
+                Common.RecreateAllTasks();
             }
         }
         
@@ -225,13 +168,14 @@ namespace Rdmp.UI.SubComponents
         public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
-            _configuration = databaseObject;
+            Common.Configuration = databaseObject;
+            Common.Compiler.CohortIdentificationConfiguration = databaseObject;
 
             RebuildClearCacheCommand();
 
-            gbCicInfo.Text = $"Name: {_configuration.Name}";
-            tbDescription.Text = $"Description: {_configuration.Description}";
-            ticket.TicketText = _configuration.Ticket;
+            gbCicInfo.Text = $"Name: {databaseObject.Name}";
+            tbDescription.Text = $"Description: {databaseObject.Description}";
+            ticket.TicketText = databaseObject.Ticket;
 
             if (_commonFunctionality == null)
             {
@@ -246,7 +190,7 @@ namespace Rdmp.UI.SubComponents
                     AllowSorting =  true, //important, we need sorting on so that we can override sort order with our OrderableComparer
                 });
                 _commonFunctionality.MenuBuilt += MenuBuilt;
-                tlvCic.AddObject(_configuration);
+                tlvCic.AddObject(databaseObject);
 
                 if(UserSettings.ExpandAllInCohortBuilder)
                     tlvCic.ExpandAll();
@@ -254,28 +198,27 @@ namespace Rdmp.UI.SubComponents
 
             CommonFunctionality.AddToMenu(cbIncludeCumulative);
             CommonFunctionality.AddToMenu(new ToolStripSeparator());
-            CommonFunctionality.AddToMenu(new ExecuteCommandSetQueryCachingDatabase(Activator, _configuration));
-            CommonFunctionality.AddToMenu(new ExecuteCommandClearQueryCache(Activator, _configuration));
-            CommonFunctionality.AddToMenu(new ExecuteCommandCreateNewQueryCacheDatabase(activator, _configuration));
+            CommonFunctionality.AddToMenu(new ExecuteCommandSetQueryCachingDatabase(Activator, databaseObject));
+            CommonFunctionality.AddToMenu(new ExecuteCommandClearQueryCache(Activator, databaseObject));
+            CommonFunctionality.AddToMenu(new ExecuteCommandCreateNewQueryCacheDatabase(activator, databaseObject));
             CommonFunctionality.AddToMenu(
-                new ExecuteCommandSet(activator, _configuration, _configuration.GetType().GetProperty("Description"))
+                new ExecuteCommandSet(activator, databaseObject, databaseObject.GetType().GetProperty("Description"))
                 {
                     OverrideIcon =
                         Activator.CoreIconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Edit)
                 });
             CommonFunctionality.AddToMenu(new ToolStripSeparator());
             CommonFunctionality.AddToMenu(new ExecuteCommandShowXmlDoc(activator, "CohortIdentificationConfiguration.QueryCachingServer_ID", "Query Caching"), "Help (What is Query Caching)");
-            CommonFunctionality.Add(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(activator, null).SetTarget(_configuration),
+            CommonFunctionality.Add(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(activator, null).SetTarget(databaseObject),
                 "Commit Cohort",
                 activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableCohort,OverlayKind.Add));
             
             foreach (var c in _timeoutControls.GetControls())
                 CommonFunctionality.Add(c);
 
-            _queryCachingServer = _configuration.QueryCachingServer;
-            Compiler.CohortIdentificationConfiguration = _configuration;
-            Compiler.CoreChildProvider = activator.CoreChildProvider;
-            RecreateAllTasks();
+            Common.QueryCachingServer = databaseObject.QueryCachingServer;
+            Common.Compiler.CoreChildProvider = activator.CoreChildProvider;
+            Common.RecreateAllTasks();
         }
 
         /// <summary>
@@ -289,7 +232,7 @@ namespace Rdmp.UI.SubComponents
                 return;
             }
 
-            _clearCacheCommand = new ExecuteCommandClearQueryCache(Activator, _configuration);
+            _clearCacheCommand = new ExecuteCommandClearQueryCache(Activator, Common.Configuration);
             btnClearCache.Enabled = !_clearCacheCommand.IsImpossible;
             btnClearCache.Image = _clearCacheCommand.GetImage(Activator.CoreIconProvider);
 
@@ -302,7 +245,7 @@ namespace Rdmp.UI.SubComponents
             var o = tlvCic.SelectedObject;
             if (o != null)
             {
-                var key = GetKey(o);
+                var key = Common.GetKey(o);
                 if (key?.CrashMessage != null)
                 {
                     ViewCrashMessage(key);
@@ -326,277 +269,26 @@ namespace Rdmp.UI.SubComponents
         
         private void ticket_TicketTextChanged(object sender, EventArgs e)
         {
-            _configuration.Ticket = ticket.TicketText;
+            Common.Configuration.Ticket = ticket.TicketText;
         }
 
-        private object ExecuteAspectGetter(object rowObject)
-        {
-            //don't expose any buttons if global execution is in progress
-            if (IsExecutingGlobalOperations())
-                return null;
-
-            if (rowObject is AggregateConfiguration || rowObject is CohortAggregateContainer)
-            {
-                var plannedOp = GetNextOperation(GetState((IMapsDirectlyToDatabaseTable)rowObject));
-
-                if (plannedOp == Operation.None)
-                    return null;
-
-                return plannedOp;
-            }
-
-            return null;
-        }
-        public bool IsExecutingGlobalOperations()
-        {
-            return _runner != null && _runner.ExecutionPhase != CohortCompilerRunner.Phase.None && _runner.ExecutionPhase != CohortCompilerRunner.Phase.Finished;
-        }
-
-
-        /// <summary>
-        /// Rebuilds the CohortCompiler diagram which shows all the currently configured tasks
-        /// </summary>
-        /// <param name="cancelTasks"></param>
-        private void RecreateAllTasks(bool cancelTasks = true)
-        {
-            if (cancelTasks)
-                Compiler.CancelAllTasks(false);
-            
-            _configuration.CreateRootContainerIfNotExists();
-            //if there is no root container,create one
-            _root = _configuration.RootCohortAggregateContainer;
-            _globals = _configuration.GetAllParameters();
-
-            //Could have configured/unconfigured a joinable state
-            foreach (var j in Compiler.Tasks.Keys.OfType<JoinableTask>())
-                j.RefreshIsUsedState();
-
-        }
-        private Operation GetNextOperation(CompilationState currentState)
-        {
-            return currentState switch
-            {
-                CompilationState.NotScheduled => Operation.Execute,
-                CompilationState.Building => Operation.Cancel,
-                CompilationState.Scheduled => Operation.None,
-                CompilationState.Executing => Operation.Cancel,
-                CompilationState.Finished => Operation.Execute,
-                CompilationState.Crashed => Operation.Execute,
-                _ => throw new ArgumentOutOfRangeException("currentState")
-            };
-        }
-
-        #region Job control
-        private enum Operation
-        {
-            Execute,
-            Cancel,
-            Clear,
-            None
-        }
 
         public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
         {
-            if (Compiler != null)
-            {
-                var aliveCount = Compiler.GetAliveThreadCount();
-                if (aliveCount > 0)
-                {
-                    MessageBox.Show("There are " + aliveCount +
-                                    " Tasks currently executing, you must cancel them before closing");
-                    e.Cancel = true;
-                }
-                else
-                {
-                    Compiler.CancelAllTasks(true);
-                }
-            }
-        }
-
-        private CompilationState GetState(IMapsDirectlyToDatabaseTable o)
-        {
-            lock(Compiler.Tasks)
-            {
-                var task = GetTaskIfExists(o);
-
-                if (task == null)
-                    return CompilationState.NotScheduled;
-
-                return task.State;
-            }
-        }
-
-        public ICompileable GetTaskIfExists(IMapsDirectlyToDatabaseTable o)
-        {
-            lock (Compiler.Tasks)
-            {
-                var kvps = Compiler.Tasks.Where(t => t.Key.Child.Equals(o)).ToArray();
-
-                if(kvps.Length == 0)
-                {
-                    return null;
-                }
-                
-                if(kvps.Length == 1)
-                {
-                    return kvps[0].Key;
-                }
-
-                var running = kvps.FirstOrDefault(k => k.Value != null).Key;
-
-                return running ?? kvps[0].Key;
-            }
+            e.Cancel = Common.ConsultAboutClosing();
         }
 
 
         void tlvCic_ButtonClick(object sender, CellClickEventArgs e)
         {
-            var o = e.Model;
-            var aggregate = o as AggregateConfiguration;
-            var container = o as CohortAggregateContainer;
-
-            Task.Run(() =>
-            {
-                if (aggregate != null)
-                {
-                    var joinable = aggregate.JoinableCohortAggregateConfiguration;
-
-                    if (joinable != null)
-                        OrderActivity(GetNextOperation(GetState(joinable)), joinable);
-                    else
-                        OrderActivity(GetNextOperation(GetState(aggregate)), aggregate);
-                }
-                if (container != null)
-                {
-                    OrderActivity(GetNextOperation(GetState(container)), container);
-                }
-            });
-        }
-
-        private void OrderActivity(Operation operation, IMapsDirectlyToDatabaseTable o)
-        {
-            switch (operation)
-            {
-                case Operation.Execute:
-                    StartThisTaskOnly(o);
-                    break;
-                case Operation.Cancel:
-                    Cancel(o);
-                    break;
-                case Operation.Clear:
-                    Clear(o);
-                    break;
-                case Operation.None:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("operation");
-            }
-        }
-
-        private void StartThisTaskOnly(IMapsDirectlyToDatabaseTable configOrContainer)
-        {
-            var task = Compiler.AddTask(configOrContainer, _globals);
-            if (task.State == CompilationState.Crashed)
-            {
-                Invoke(new MethodInvoker(()=>ExceptionViewer.Show("Task failed to build", task.CrashMessage)));
-                return;
-            }
-            //Cancel the task and remove it from the Compilers task list - so it no longer knows about it
-            Compiler.CancelTask(task, true);
-            
-            RecreateAllTasks(false);
-
-            task = Compiler.AddTask(configOrContainer, _globals);
-
-            //Task is now in state NotScheduled so we can start it
-            Compiler.LaunchSingleTask(task, _timeoutControls.Timeout,true);
-        }
-        
-        public void Cancel(IMapsDirectlyToDatabaseTable o)
-        {
-            var task = Compiler.Tasks.Single(t=>t.Key.Child.Equals(o));
-            Compiler.CancelTask(task.Key,true);
-        }
-
-        public void CancelAll()
-        {
-            //don't start any more global operations if your midway through
-            if(_cancelGlobalOperations != null)
-                _cancelGlobalOperations.Cancel();
-
-            Compiler.CancelAllTasks(true);
-            RecreateAllTasks();
-        }
-        
-        public void Clear(IMapsDirectlyToDatabaseTable o)
-        {
-            lock(Compiler.Tasks)
-            {
-                var task = GetTaskIfExists(o);
-
-                if (task == null)
-                    return;
-
-                var c = task as CacheableTask;
-                if (c != null)
-                    ClearCacheFor(new ICacheableTask[] { c });
-
-                Compiler.CancelTask(task, true);
-            }
-        }
-        
-        public void ClearAllCaches()
-        {
-            ClearCacheFor(Compiler.Tasks.Keys.OfType<ICacheableTask>().Where(t => !t.IsCacheableWhenFinished()).ToArray());
-        }
-        
-        private void ClearCacheFor(ICacheableTask[] tasks)
-        {
-            var manager = new CachedAggregateConfigurationResultsManager(_queryCachingServer);
-
-            int successes = 0;
-            foreach (ICacheableTask t in tasks)
-                try
-                {
-                    t.ClearYourselfFromCache(manager);
-                    Compiler.CancelTask(t, true);
-                    successes++;
-                }
-                catch (Exception exception)
-                {
-                    ExceptionViewer.Show("Could not clear cache for task " + t, exception);
-                }
-
-            RecreateAllTasks();
+            Common.ExecuteOrCancel(e.Model);
         }
 
         public void StartAll()
         {
             lblExecuteAllPhase.Enabled = true;
 
-            //only allow starting all if we are not mid execution already
-            if (IsExecutingGlobalOperations())
-                return;
-
-            _cancelGlobalOperations = new CancellationTokenSource();
-
-
-            _runner = new CohortCompilerRunner(Compiler, _timeoutControls.Timeout);
-            _runner.PhaseChanged += RunnerOnPhaseChanged;
-            Task.Run(() =>
-            {
-                try
-                {
-                    _runner.Run(_cancelGlobalOperations.Token);
-                }
-                catch (Exception e)
-                {
-                    ExceptionViewer.Show(e);
-                }
-
-            }).ContinueWith((s, e) => {
-                RebuildClearCacheCommand();
-            }, TaskScheduler.FromCurrentSynchronizationContext());
+            Common.StartAll(RebuildClearCacheCommand, RunnerOnPhaseChanged);
         }
         private void RunnerOnPhaseChanged(object sender, EventArgs eventArgs)
         {
@@ -606,8 +298,8 @@ namespace Rdmp.UI.SubComponents
                 return;
             }
 
-            lblExecuteAllPhase.Text = UsefulStuff.PascalCaseStringToHumanReadable(_runner.ExecutionPhase.ToString());
-            RecreateAllTasks(false);
+            lblExecuteAllPhase.Text = UsefulStuff.PascalCaseStringToHumanReadable(Common.Runner.ExecutionPhase.ToString());
+            Common.RecreateAllTasks(false);
         }
 
         private void btnExecute_Click(object sender, EventArgs e)
@@ -622,38 +314,21 @@ namespace Rdmp.UI.SubComponents
 
         private void UpdateButtonStates()
         {
-            var plan = PlanGlobalOperation();
+            var plan = Common.PlanGlobalOperation();
 
             btnExecute.Enabled = plan == Operation.Execute;
             btnAbortLoad.Enabled = plan == Operation.Cancel;
         }
 
-        private Operation PlanGlobalOperation()
-        {
-            var allTasks = GetAllTasks();
-
-            //if any are still executing or scheduled for execution
-            if (allTasks.Any(t => t.State == CompilationState.Executing || t.State == CompilationState.Building || t.State == CompilationState.Scheduled))
-                return Operation.Cancel;
-
-            //if all are complete
-            return Operation.Execute;
-        }
-        #endregion
-        
-        public ICompileable[] GetAllTasks()
-        {
-            return Compiler.Tasks.Keys.ToArray();
-        }
 
         private void MiClearCacheClick(object sender, EventArgs e)
         {
-            ClearAllCaches();
+            Common.ClearAllCaches();
         }
 
         private void btnAbortLoad_Click(object sender, EventArgs e)
         {
-            CancelAll();
+            Common.CancelAll();
         }
         private void btnClearCache_Click(object sender, EventArgs e)
         {
@@ -671,7 +346,7 @@ namespace Rdmp.UI.SubComponents
 
         private void MenuBuilt(object sender, MenuBuiltEventArgs e)
         {
-            var c = GetKey(e.Obj);
+            var c = Common.GetKey(e.Obj);
 
             if (c != null)
             {
@@ -703,7 +378,7 @@ namespace Rdmp.UI.SubComponents
                         a =>
                         {
                             if (c is ICacheableTask cacheable)
-                                ClearCacheFor(new[] {cacheable});
+                                Common.ClearCacheFor(new[] {cacheable});
                         })
                 );
             }
@@ -713,9 +388,9 @@ namespace Rdmp.UI.SubComponents
         {
             var menuItem = new ToolStripMenuItem(title);
 
-            if (Compiler.Tasks.ContainsKey(c))
+            if (Common.Compiler.Tasks.ContainsKey(c))
             {
-                var exe = Compiler.Tasks[c];
+                var exe = Common.Compiler.Tasks[c];
                 if (exe != null && enabledFunc(exe))
                     menuItem.Click += (s, e) => action(exe);
                 else
