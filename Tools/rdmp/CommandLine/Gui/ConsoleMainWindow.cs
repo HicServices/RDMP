@@ -53,12 +53,12 @@ namespace Rdmp.Core.CommandLine.Gui
         private Point _lastMousePos = new Point(0,0);
         private DateTime _lastMouseMove = DateTime.Now;
 
-        const string Catalogues = "Catalogues";
-        const string Projects = "Projects";
-        const string Loads = "Data Loads";
-        const string CohortConfigs = "Cohort Configurations";
-        const string BuiltCohorts = "Built Cohorts";
-        const string Other = "Other";
+        public const string Catalogues = "Catalogues";
+        public const string Projects = "Projects";
+        public const string Loads = "Data Loads";
+        public const string CohortConfigs = "Cohort Builder";
+        public const string BuiltCohorts = "Built Cohorts";
+        public const string Other = "Other";
 
         public View CurrentWindow {get;set;}
 
@@ -369,186 +369,17 @@ namespace Rdmp.Core.CommandLine.Gui
 
         private void Menu()
         {
-            var commands = GetCommands().ToArray();
-
-            var order = new Dictionary<MenuItem, float>();
-
-            // Build subcategories
-            var categories = commands
-                .OrderBy(c => c.Weight)
-                .Select(c => c.SuggestedCategory)
-                .Where(c=> !string.IsNullOrWhiteSpace(c))
-                .Distinct();
-
-            Dictionary<string, List<MenuItem>> miCategories = new ();
-            
-            foreach (var category in categories)
-                miCategories.Add(category, new List<MenuItem>());
-
-            List<MenuItem> items = new();
-
-            // Build commands into menu items
-            foreach(var cmd in commands.OrderBy(c=>c.Weight))
-            {
-                var item = new MenuItem(cmd.GetCommandName(),null,()=>ExecuteWithCatch(cmd));
-                order.Add(item, cmd.Weight);
-
-                if (cmd.SuggestedCategory != null)
-                {
-                    miCategories[cmd.SuggestedCategory].Add(item);
-                }
-                else
-                {
-                    items.Add(item);
-                }
-            }
-
-            foreach(var kvp in miCategories)
-            {
-                // menu bar order is the minimum of the menu items in it
-                var bar = new MenuBarItem(kvp.Key,AddSpacers(kvp.Value,order));
-                order.Add(bar, kvp.Value.Select(m => order[m]).Min());
-                items.Add(bar);
-            }
-
-            // we can do nothing if theres no menu items
-            if (items.Count == 0)
+            var factory = new ConsoleGuiContextMenuFactory(_activator);
+            var menu = factory.Create(_treeView.GetAllSelectedObjects().ToArray(), _treeView.SelectedObject);
+           
+            if (menu == null)
                 return;
-
-            var withSpacers = AddSpacers(items, order);
             
-            var menu = new ContextMenu();
             menu.Position = DateTime.Now.Subtract(_lastMouseMove).TotalSeconds<1 ? _lastMousePos: new Point(10, 5);
-            menu.MenuItens = new MenuBarItem(withSpacers);
             menu.Show();
         }
 
-        private MenuItem[] AddSpacers(List<MenuItem> items, Dictionary<MenuItem, float> order)
-        {
-            // sort it                
-            items.OrderBy(m => order[m]).ToList();
-
-            // add spacers when the Weight differs by more than 1 whole number
-            var withSpacers = new List<MenuItem>();
-            int lastWeightSeen = (int)order[items.First()];
-
-            foreach (var item in items)
-            {
-                if (lastWeightSeen != (int)order[item])
-                {
-                    // add a spacer
-                    withSpacers.Add(null);
-                    lastWeightSeen = (int)order[item];
-                }
-
-                withSpacers.Add(item);
-            }
-
-            return withSpacers.ToArray();
-        }
-
-        private void ExecuteWithCatch(IAtomicCommand cmd)
-        {
-            try
-            {
-                cmd.Execute();
-            }
-            catch (Exception ex)
-            {
-
-                _activator.ShowException($"Error running command '{cmd.GetCommandName()}'", ex);
-            }
-        }
-
-        private IEnumerable<IAtomicCommand> GetCommands()
-        {
-            var factory = new AtomicCommandFactory(_activator);
-
-            var many = _treeView.GetAllSelectedObjects().ToArray();
-
-            if(many.Length > 1)
-            {
-                return factory.CreateManyObjectCommands(many).ToArray();
-            }
-
-            var o = _treeView.SelectedObject;
-
-            if(ReferenceEquals(o,  Catalogues))
-            {
-                return new IAtomicCommand[] {
-                    new ExecuteCommandCreateNewCatalogueByImportingFile(_activator),
-                    new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator),
-                };
-            }
-            if (ReferenceEquals(o, Loads))
-            {
-                return new IAtomicCommand[] {
-                    new ExecuteCommandCreateNewLoadMetadata(_activator),
-                };
-            }
-            if (ReferenceEquals(o, Projects))
-            {
-                return new IAtomicCommand[] {
-                    new ExecuteCommandNewObject(_activator,typeof(Project)){OverrideCommandName = "New Project" }
-                };
-            }
-            if (ReferenceEquals(o, CohortConfigs))
-            {
-                return new IAtomicCommand[] {
-                    new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator)
-                };
-            }
-
-            if (o == null)
-                return new IAtomicCommand[0];
-
-            return
-                GetExtraCommands(o)
-                .Union(factory.CreateCommands(o))
-                .Union(_activator.PluginUserInterfaces.SelectMany(p=>p.GetAdditionalRightClickMenuItems(o)))
-                .OrderBy(c=>c.Weight);
-        }
-
-        private IEnumerable<IAtomicCommand> GetExtraCommands(object o)
-        {
-            if(CommandFactoryBase.Is(o, out LoadMetadata lmd))
-            {
-                yield return new ExecuteCommandRunConsoleGuiView(_activator, 
-                    () => new RunDleWindow(_activator, lmd)){ OverrideCommandName = "Execute Load..." };
-            }
-
-            if (CommandFactoryBase.Is(o, out Project p))
-            {
-                yield return new ExecuteCommandRunConsoleGuiView(_activator,
-                    () => new RunReleaseWindow(_activator,p))
-                { OverrideCommandName = "Release..." };
-            }
-            if (CommandFactoryBase.Is(o, out ExtractionConfiguration ec))
-            {
-                yield return new ExecuteCommandRunConsoleGuiView(_activator,
-                    () => new RunReleaseWindow(_activator, ec))
-                { OverrideCommandName = "Release..." };
-
-                yield return new ExecuteCommandRunConsoleGuiView(_activator,
-                    () => new RunExtractionWindow(_activator, ec))
-                { OverrideCommandName = "Extract..." };
-            }
-
-            if(CommandFactoryBase.Is(o, out CacheProgress cp))
-            {
-                yield return new ExecuteCommandRunConsoleGuiView(_activator,
-                    () => new RunCacheWindow(_activator, cp))
-                { OverrideCommandName = "Run Cache..." };
-            }
-
-            if(CommandFactoryBase.Is(o, out Catalogue c) && !c.IsApiCall())
-            {
-                yield return new ExecuteCommandRunConsoleGuiView(_activator,
-                    () => new RunDataQualityEngineWindow(_activator, c))
-                { OverrideCommandName = "Run DQE..." };
-            }
-        }
-
+        
         private void treeView_KeyPress(View.KeyEventEventArgs obj)
         {
             if(!_treeView.CanFocus || !_treeView.HasFocus)
@@ -644,6 +475,10 @@ namespace Rdmp.Core.CommandLine.Gui
 
                 if(ReferenceEquals(model,Other))
                     return GetOtherCategoryChildren();
+
+                // don't show cic children (this is consistent with 'AxeChildren' in main collection RDMP client for Cohort Builder)
+                if (model is CohortIdentificationConfiguration)
+                    return new object[0];
 
                 //sub brackets
                 return _activator.CoreChildProvider.GetChildren(model) ?? new object[0];
