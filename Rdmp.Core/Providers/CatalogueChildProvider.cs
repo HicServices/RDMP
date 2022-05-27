@@ -1752,6 +1752,11 @@ namespace Rdmp.Core.Providers
             
             FetchCatalogueItems();
 
+            foreach(var ci in AllCatalogueItems.Where(ci=>ci.ID == ei.CatalogueItem_ID))
+            {
+                ci.ClearAllInjections();
+            }
+
             // property changes or deleting the ExtractionInformation
             FetchExtractionInformations();
 

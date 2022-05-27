@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added UserSettings editing UI to Console Gui
 - Added ability to suppress tree expansion when opening Cohort Builder configurations
 - Added a loading spinner for when find is still searching
+- Adding a parameter to a filter now shows its initial value [#1201](https://github.com/HicServices/RDMP/issues/1201)
 
 ### Removed
 
