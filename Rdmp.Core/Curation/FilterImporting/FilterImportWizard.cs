@@ -90,7 +90,13 @@ namespace Rdmp.Core.Curation.FilterImporting
                 string param;
                 foreach (var parameter in newFilter.GetAllParameters())
                 {
-                    if (_activator.TypeText(AnyTableSqlParameter.GetValuePromptDialogArgs(newFilter, parameter), 255, null, out param, false))
+                    var initialText = parameter.Value;
+                    if(initialText == AnyTableSqlParameter.DefaultValue)
+                    {
+                        initialText = null;
+                    }
+
+                    if (_activator.IsInteractive && _activator.TypeText(AnyTableSqlParameter.GetValuePromptDialogArgs(newFilter, parameter), 255, initialText, out param, false))
                     {
                         parameter.Value = param;
                         parameter.SaveToDatabase();
