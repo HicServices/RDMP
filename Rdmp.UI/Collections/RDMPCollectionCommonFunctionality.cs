@@ -882,6 +882,30 @@ namespace Rdmp.UI.Collections
 
         private void RefreshObject(object o, bool exists)
         {
+            //if it is a root object maintained by this tree and it exists
+            if (MaintainRootObjects != null && MaintainRootObjects.Contains(o.GetType()))
+            {
+                if (exists)
+                {
+                    //if tree doesn't yet contain the object
+                    if (!Tree.Objects.Cast<object>().Contains(o))
+                    {
+                        Tree.AddObject(o); //add it
+                        return;
+                    }
+                }
+                else
+                {
+                    //if tree contains the object remove it
+                    if (Tree.Objects.Cast<object>().Contains(o))
+                    {
+                        Tree.RemoveObject(o); //remove it
+                        return;
+                    }
+                }
+            }
+                
+
             Tree.RebuildAll(true);
         }
 
