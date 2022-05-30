@@ -23,69 +23,73 @@ jobs:
         uses: actions/setup-node@v3.2.0
         with:
           node-version: '16.x'
+          cache: 'npm'
       - name: LCov merger tool
-        run: |
-          npm install -g lcov-result-merger
+        run: npm install -g lcov-result-merger
       - name: Checkout code
         uses: actions/checkout@v3
+      - uses: actions/cache@v1
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: 6.0.x
       - name: Install MS SQL 2019
-        run: Choco-Install -PackageName sql-server-2019 --params="'/IgnorePendingReboot'"
+        uses: crazy-max/ghaction-chocolatey@v2
+        with:
+          args: install sql-server-2019
       - uses: shogo82148/actions-setup-mysql@v1
         with:
           mysql-version: '8.0'
           root-password: 'YourStrong!Passw0rd'
           auto-start: true
       - name: Build
-        run: |
-          dotnet clean --configuration Release --nologo --verbosity minimal
-          dotnet nuget locals all --clear
-          dotnet restore -v:q
-          dotnet build --configuration Release --nologo --verbosity minimal
+        run: dotnet build --configuration Release --nologo --verbosity minimal
       - name: Initialise RDMP
         run: dotnet Tools/rdmp/bin/Release/net6.0/rdmp.dll install localhost TEST_
-      - name: Clean coverage output directory
-        run: Remove-Item coverage -Recurse -ErrorAction Ignore
       - name: Test Reusable code
-        run: dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-      - name: Rename Reusable lcov
         shell: bash
-        run: mv `find coverage -type f` recode.lcov
+        run: |
+          rm -rf coverage
+          dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          mv `find coverage -type f` recode.lcov
       - name: Test Core code
-        run: dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-      - name: Rename core lcov
         shell: bash
-        run: mv `find coverage -type f` core.lcov
+        run: |
+          dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          mv `find coverage -type f` core.lcov
       - name: Test UI code
-        run: dotnet test "./Rdmp.UI.Tests/Rdmp.UI.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-      - name: Rename UI lcov
         shell: bash
-        run: mv `find coverage -type f` ui.lcov
-     
+        run: |
+          dotnet test "./Rdmp.UI.Tests/Rdmp.UI.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          mv `find coverage -type f` ui.lcov
+
       - name: Test with local file system
+        shell: bash
         run:  |
               cd Tests.Common
               echo "UseFileSystemRepo: true" >> TestDatabases.txt
               type TestDatabases.txt
               cd ..
       - name: Test Reusable (with file system repo)
-        run: dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-      - name: Rename Reusable lcov
         shell: bash
-        run: mv `find coverage -type f` recodefs.lcov
+        run: |
+          dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          mv `find coverage -type f` recodefs.lcov
       - name: Test Core (with file system repo)
-        run: dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-      - name: Rename core lcov
         shell: bash
-        run: mv `find coverage -type f` corefs.lcov
+        run: |
+          dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          mv `find coverage -type f` corefs.lcov
       - name: Test UI (with file system repo)
-        run: dotnet test "./Rdmp.UI.Tests/Rdmp.UI.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-      - name: Rename UI lcov
         shell: bash
-        run: mv `find coverage -type f` uifs.lcov
+        run: |
+          dotnet test "./Rdmp.UI.Tests/Rdmp.UI.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          mv `find coverage -type f` uifs.lcov
       
       - name: Merge LCovs
         run: lcov-result-merger "{ui,core,recode}{,fs}.lcov" all.lcov
