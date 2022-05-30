@@ -79,7 +79,7 @@ namespace Rdmp.Core.CommandLine.Gui
             var withSpacers = AddSpacers(items, order);
 
             var menu = new ContextMenu();
-            menu.MenuItens = new MenuBarItem(withSpacers);
+            menu.MenuItems = new MenuBarItem(withSpacers);
 
             return menu;
         }
