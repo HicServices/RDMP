@@ -24,7 +24,7 @@ jobs:
         run: |
           signtool=(/c/Program\ Files\ \(x86\)/Windows\ Kits/10/bin/*/x64/signtool.exe)
           signtool=${signtool[${#signtool[@]}-1]}
-          ls -lh signtool
+          ls -lh $signtool
           touch package-lock.json
       - name: Install Node for coverage reporting
         uses: actions/setup-node@v3.2.0
