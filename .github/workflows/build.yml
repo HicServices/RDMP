@@ -53,7 +53,7 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --nologo --verbosity minimal
       - name: Initialise RDMP
-        run: dotnet Tools/rdmp/bin/Release/net6.0/rdmp.dll install localhost TEST_
+        run: dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- install localhost TEST_
       - name: Test Reusable code
         shell: bash
         run: |
@@ -79,17 +79,17 @@ jobs:
       - name: Test Reusable (with file system repo)
         shell: bash
         run: |
-          dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           mv `find coverage -type f` recodefs.lcov
       - name: Test Core (with file system repo)
         shell: bash
         run: |
-          dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           mv `find coverage -type f` corefs.lcov
       - name: Test UI (with file system repo)
         shell: bash
         run: |
-          dotnet test "./Rdmp.UI.Tests/Rdmp.UI.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          dotnet test "./Rdmp.UI.Tests/Rdmp.UI.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           mv `find coverage -type f` uifs.lcov
       
       - name: Merge LCovs
@@ -114,6 +114,18 @@ jobs:
         # Get the tag name e.g. v5.0.0 but skip the 'v'
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
         shell: bash
+
+      - name: Sign
+        shell: bash
+        run: |
+          echo ${{ secrets.DIGICERT_PFX }} | base64 --decode > GitHubActionsWorkflow.pfx
+          "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\x64\\signtool.exe" Sign /f GitHubActionsWorkflow.pfx /p ${{ secrets.DIGICERT_PASSWORD }} /fd sha256 /tr http://timestamp.digicert.com /td sha256 PublishWindows/*.dll PublishWindows/*.exe  PublishLinux/*.dll PublishWinForms/*.exe PublishWinForms/*.dll
+          mkdir -p dist
+          (cd PublishWindows ; zip -9r ../dist/rdmp-cli-win-x64.zip .)
+          (cd PublishLinux ; zip -9r ../dist/rdmp-cli-linux-x64.zip .)
+          mv PublishLinux rdmp-cli-linux
+          tar cf - rdmp-cli-linux | pixz -9e > dist/rdmp-cli-linux-x64.tar.xz
+          (cd PublishWinForms ; zip -9r ../dist/rdmp-client.zip .)
 
       - name: Sign
         if: contains(github.ref, 'refs/tags/v')
