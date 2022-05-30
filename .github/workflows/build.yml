@@ -21,7 +21,9 @@ jobs:
     steps:
       - name: Stub Node dependencies
         shell: bash
-        run: touch package-lock.json
+        run: |
+          echo /mnt/c/Program\ Files\ \(x86\)/Windows\ Kits/10/bin/*/x64/signtool.exe
+          touch package-lock.json
       - name: Install Node for coverage reporting
         uses: actions/setup-node@v3.2.0
         with:
@@ -119,7 +121,7 @@ jobs:
         shell: bash
         run: |
           echo ${{ secrets.DIGICERT_PFX }} | base64 --decode > GitHubActionsWorkflow.pfx
-          "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\x64\\signtool.exe" Sign /f GitHubActionsWorkflow.pfx /p ${{ secrets.DIGICERT_PASSWORD }} /fd sha256 /tr http://timestamp.digicert.com /td sha256 PublishWindows/*.dll PublishWindows/*.exe  PublishLinux/*.dll PublishWinForms/*.exe PublishWinForms/*.dll
+          /mnt/c/Program\ Files\ \(x86\)/Windows\ Kits/10/bin/*/x64/signtool.exe Sign /f GitHubActionsWorkflow.pfx /p ${{ secrets.DIGICERT_PASSWORD }} /fd sha256 /tr http://timestamp.digicert.com /td sha256 PublishWindows/*.dll PublishWindows/*.exe  PublishLinux/*.dll PublishWinForms/*.exe PublishWinForms/*.dll
           mkdir -p dist
           (cd PublishWindows ; zip -9r ../dist/rdmp-cli-win-x64.zip .)
           (cd PublishLinux ; zip -9r ../dist/rdmp-cli-linux-x64.zip .)
