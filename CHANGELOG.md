@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [7.0.13] - 2022-05-30
+
 ### Changed
 
 - 'View Aggregate' now explicitly applies an ORDER BY count descending.
@@ -1235,7 +1237,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.12...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.13...develop
+[7.0.13]: https://github.com/HicServices/RDMP/compare/v7.0.12...v7.0.13
 [7.0.12]: https://github.com/HicServices/RDMP/compare/v7.0.11...v7.0.12
 [7.0.11]: https://github.com/HicServices/RDMP/compare/v7.0.10...v7.0.11
 [7.0.10]: https://github.com/HicServices/RDMP/compare/v7.0.9...v7.0.10

@@ -8,6 +8,7 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CohortCreation;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Providers;
 using ReusableLibraryCode;
@@ -75,7 +76,20 @@ namespace Rdmp.Core.CommandLine.Gui
             {
                 Common.CancelAll();
             };
-
+            btnCommitCohort.Clicked += () =>
+            {
+                var cmd = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(activator, null)
+                    .SetTarget(cic);
+                if(!cmd.IsImpossible)
+                {
+                    cmd.Execute();
+                }
+                else
+                {
+                    MessageBox.ErrorQuery("Cannot Commit", cmd.ReasonCommandImpossible);
+                }
+                
+            };
             Application.MainLoop.AddTimeout(TimeSpan.FromSeconds(2), RefreshTableCallback);
 
             // don't wait 2s for first build of the table
