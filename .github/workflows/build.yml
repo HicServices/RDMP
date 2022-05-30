@@ -22,7 +22,7 @@ jobs:
       - name: Stub Node dependencies
         shell: bash
         run: |
-          echo /mnt/c/Program\ Files\ \(x86\)/Windows\ Kits/10/bin/*/x64/signtool.exe
+          ls -lh /mnt/c/Program\ Files\ \(x86\)/Windows\ Kits/10/bin/*/x64/signtool.exe
           touch package-lock.json
       - name: Install Node for coverage reporting
         uses: actions/setup-node@v3.2.0
