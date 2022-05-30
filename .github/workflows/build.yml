@@ -19,6 +19,9 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      - name: Stub Node dependencies
+        shell: bash
+        run: touch package-lock.json
       - name: Install Node for coverage reporting
         uses: actions/setup-node@v3.2.0
         with:
