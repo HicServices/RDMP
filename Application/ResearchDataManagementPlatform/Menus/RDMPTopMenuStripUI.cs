@@ -467,7 +467,7 @@ namespace ResearchDataManagementPlatform.Menus
             if (!OperatingSystem.IsWindowsVersionAtLeast(7))
                 return;
 
-            var url = "https://raw.githubusercontent.com/HicServices/RDMP/master/rdmp-client.xml";
+            var url = "https://raw.githubusercontent.com/HicServices/RDMP/main/rdmp-client.xml";
 
             // Give user a chance to change the URL that is updating from
             if(!Activator.TypeText("Update Location","Url:",int.MaxValue,url,out url,false))
