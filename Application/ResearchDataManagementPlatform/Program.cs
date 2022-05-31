@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using CommandLine;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Startup;
 using Rdmp.UI;
 using Rdmp.UI.SimpleDialogs;
@@ -30,6 +31,10 @@ namespace ResearchDataManagementPlatform
         [STAThread]
         static void Main(string[] args)
         {
+            // if user has the command line built and runnable from the windows
+            // client then don't load the dlls (or we end up with 2 copies!).
+            SafeDirectoryCatalog.IgnoreDll = (f) => Path.GetFileName(f.DirectoryName).Equals("cli");
+
             try
             {
                 AttachConsole(-1);
