@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -435,6 +436,11 @@ namespace Rdmp.Core.CommandLine.Interactive
 
             selected = available.Where((e, idx) => selectIdx.Contains(idx)).ToArray();
             return true;
+        }
+
+        public override void LaunchSubprocess(ProcessStartInfo startInfo)
+        {
+            throw new NotSupportedException();
         }
     }
 }

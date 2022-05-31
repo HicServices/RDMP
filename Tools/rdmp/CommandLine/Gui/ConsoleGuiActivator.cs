@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -388,6 +389,11 @@ namespace Rdmp.Core.CommandLine.Gui
         public override IPipelineRunner GetPipelineRunner(DialogArgs args, IPipelineUseCase useCase, IPipeline pipeline)
         {
             return new ConsoleGuiRunPipeline(this,useCase, pipeline);
+        }
+
+        public override void LaunchSubprocess(ProcessStartInfo startInfo)
+        {
+            throw new NotSupportedException();
         }
     }
 }
