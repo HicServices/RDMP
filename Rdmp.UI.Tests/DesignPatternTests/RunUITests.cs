@@ -51,7 +51,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests
 
                 typeof(ExecuteCommandExportLoggedDataToCsv),
                 typeof(ExecuteCommandGenerateRunCommand),
-                                
+                typeof(ExecuteCommandRunDetached),
+
+
                 typeof(ExecuteCommandShowXmlDoc),
                 typeof(ImpossibleCommand),
      
