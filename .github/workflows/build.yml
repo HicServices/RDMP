@@ -44,7 +44,7 @@ jobs:
       - name: Install MS SQL 2019
         uses: crazy-max/ghaction-chocolatey@v2
         with:
-          args: install sql-server-2019
+          args: install -r sql-server-2019
       - uses: shogo82148/actions-setup-mysql@v1
         with:
           mysql-version: '8.0'
