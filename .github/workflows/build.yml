@@ -118,14 +118,11 @@ jobs:
       - name: Sign
         shell: bash
         run: |
-          echo listing
           signtool=(/c/Program\ Files\ \(x86\)/Windows\ Kits/10/bin/*/x64/signtool.exe)
-          echo slicing
           signtool=${signtool[${#signtool[@]}-1]}
-          echo decoding
           echo ${{ secrets.DIGICERT_PFX }} | base64 --decode > GitHubActionsWorkflow.pfx
-          echo running
-          "$signtool" Sign /f GitHubActionsWorkflow.pfx /p ${{ secrets.DIGICERT_PASSWORD }} /fd sha256 /tr http://timestamp.digicert.com /td sha256 "PublishWindows/*.dll" "PublishWindows/*.exe" "PublishLinux/*.dll" "PublishWinForms/*.exe" "PublishWinForms/*.dll"
+          echo "$signtool" Sign /f GitHubActionsWorkflow.pfx /p ${{ secrets.DIGICERT_PASSWORD }} /fd sha256 /tr http://timestamp.digicert.com /td sha256 "PublishWindows/*.dll" "PublishWindows/*.exe" "PublishLinux/*.dll" "PublishWinForms/*.exe" "PublishWinForms/*.dll"
+          cmd /c "$signtool" Sign /f GitHubActionsWorkflow.pfx /p ${{ secrets.DIGICERT_PASSWORD }} /fd sha256 /tr http://timestamp.digicert.com /td sha256 "PublishWindows/*.dll" "PublishWindows/*.exe" "PublishLinux/*.dll" "PublishWinForms/*.exe" "PublishWinForms/*.dll"
           echo packing
           mkdir -p dist
           (cd PublishWindows ; zip -9r ../dist/rdmp-cli-win-x64.zip .)
