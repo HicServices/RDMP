@@ -44,7 +44,7 @@ jobs:
         shell: bash
         run: |
           SqlLocalDB.exe create MSSQLLocalDB -s
-          sqlcmd -l 180 -S (localdb)\MSSQLLocalDB -Q "SELECT @@VERSION;"
+          sqlcmd -l 180 -S '(localdb)\MSSQLLocalDB' -Q "SELECT @@VERSION;"
           sed -i'' -e 's/localhost/\(localdb\)\\MSSQLLocalDB/' Tests.Common/TestDatabases.txt
       - uses: shogo82148/actions-setup-mysql@v1
         with:
