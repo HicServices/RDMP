@@ -59,17 +59,17 @@ jobs:
         run: |
           rm -rf coverage
           echo dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` recode.lcov
+          echo mv `find coverage -type f` recode.lcov
       - name: Test Core code
         shell: bash
         run: |
           echo dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` core.lcov
+          echo mv `find coverage -type f` core.lcov
       - name: Test UI code
         shell: bash
         run: |
           echo dotnet test "./Rdmp.UI.Tests/Rdmp.UI.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` ui.lcov
+          echo mv `find coverage -type f` ui.lcov
 
       - name: Test with local file system
         shell: bash
@@ -80,21 +80,22 @@ jobs:
         shell: bash
         run: |
           echo dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` recodefs.lcov
+          echo mv `find coverage -type f` recodefs.lcov
       - name: Test Core (with file system repo)
         shell: bash
         run: |
           echo dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` corefs.lcov
+          echo mv `find coverage -type f` corefs.lcov
       - name: Test UI (with file system repo)
         shell: bash
         run: |
           echo dotnet test "./Rdmp.UI.Tests/Rdmp.UI.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` uifs.lcov
+          echo mv `find coverage -type f` uifs.lcov
       
       - name: Merge LCovs
-        run: lcov-result-merger "{ui,core,recode}{,fs}.lcov" all.lcov
+        run: echo lcov-result-merger "{ui,core,recode}{,fs}.lcov" all.lcov
       - name: Coveralls
+        if: ${{ false }}
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.github_token }}
