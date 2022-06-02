@@ -54,7 +54,7 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --nologo --verbosity minimal
       - name: Initialise RDMP
-        run: dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- install "(localdb)\MSSQLLocalDB" TEST_
+        run: dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- install --createdatabasetimeout 180 "(localdb)\MSSQLLocalDB" TEST_
       - name: Test Reusable code
         shell: bash
         run: |
