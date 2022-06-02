@@ -3,11 +3,6 @@ name: Build
 # Run this workflow every time a new commit pushed to your repository
 
 on: push
-env:
-  MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
-  ACCEPT_EULA: "Y"
-  MSSQL_PID: "developer"
-  DOTNET_NOLOGO: 1
 
 jobs:
   # Set the job key. The key is displayed as the job name
@@ -41,11 +36,14 @@ jobs:
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: 6.0.x
-      - name: Install MS SQL 2019
-        if: ${{ false }}
+      - name: Install MS SQL 2010 Express LocalDB
         uses: crazy-max/ghaction-chocolatey@v2
         with:
-          args: install -r sql-server-2019 --no-progress
+          args: install -r sqllocaldb --no-progress
+      - name: Initialise LocalDB
+        run: |
+          SqlLocalDB.exe create MSSQLLocalDB -s
+          sqlcmd -l 180 -S "$db" -Q "SELECT @@VERSION;"
       - uses: shogo82148/actions-setup-mysql@v1
         with:
           mysql-version: '8.0'
@@ -54,7 +52,7 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release --nologo --verbosity minimal
       - name: Initialise RDMP
-        run: dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- install localhost TEST_
+        run: dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- install (localdb)\MSSQLLocalDB TEST_
       - name: Test Reusable code
         shell: bash
         run: |
@@ -122,7 +120,7 @@ jobs:
         run: |
           signtool=(/c/Program\ Files\ \(x86\)/Windows\ Kits/10/bin/*/x64/signtool.exe)
           signtool=${signtool[${#signtool[@]}-1]}
-          signtool=`echo $foo | tr / \\ | sed -e s/^\/c/\:/`
+          signtool=`echo $foo | tr / \\ | sed -e 's/^\\c/c:/'`
           echo ${{ secrets.DIGICERT_PFX }} | base64 --decode > GitHubActionsWorkflow.pfx
           echo cmd /c \"$signtool Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p '${{ secrets.DIGICERT_PASSWORD }}' PublishWindows/*.dll PublishWindows/*.exe PublishLinux/*.dll PublishWinForms/*.exe PublishWinForms/*.dll\"
           cmd /c \"$signtool Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p '${{ secrets.DIGICERT_PASSWORD }}' PublishWindows/*.dll PublishWindows/*.exe PublishLinux/*.dll PublishWinForms/*.exe PublishWinForms/*.dll\"
