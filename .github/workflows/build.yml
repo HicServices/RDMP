@@ -42,6 +42,7 @@ jobs:
         with:
           dotnet-version: 6.0.x
       - name: Install MS SQL 2019
+        if: ${{ false }}
         uses: crazy-max/ghaction-chocolatey@v2
         with:
           args: install -r sql-server-2019 --no-progress
