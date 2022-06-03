@@ -139,16 +139,15 @@ jobs:
           signtool=${signtool[${#signtool[@]}-1]}
           signtool=`echo $signtool | sed -e 's#^/c#c:#' | tr / \\\\`
           echo ${{ secrets.DIGICERT_PFX }} | base64 --decode > GitHubActionsWorkflow.pfx
-          echo '"'$signtool'"' 'Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p ${{ secrets.DIGICERT_PASSWORD }} PublishWindows/*.dll PublishWindows/*.exe PublishLinux/*.dll PublishWinForms/*.exe PublishWinForms/*.dll'
           echo '"'$signtool'"' 'Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p ${{ secrets.DIGICERT_PASSWORD }} PublishWindows/*.dll PublishWindows/*.exe PublishLinux/*.dll PublishWinForms/*.exe PublishWinForms/*.dll' | cmd
-          echo packing
           mkdir -p dist
-          (cd PublishWindows ; zip -9r ../dist/rdmp-cli-win-x64.zip .)
-          (cd PublishLinux ; zip -9r ../dist/rdmp-cli-linux-x64.zip .)
+          (cd PublishWindows ; cmd /c 7z a -mx=9 ../dist/rdmp-cli-win-x64.zip .)
+          (cd PublishLinux ; cmd /c 7z a -mx=9 ../dist/rdmp-cli-linux-x64.zip .)
           mv PublishLinux rdmp-cli-linux
-          tar cf - rdmp-cli-linux | pixz -9e > dist/rdmp-cli-linux-x64.tar.xz
-          (cd PublishWinForms ; zip -9r ../dist/rdmp-client.zip .)
-          echo done
+          cmd /c 7z a dist/rdmp-cli-linux-x64.tar rdmp-cli-linux
+          cmd /c 7z a dist/rdmp-cli-linux-x64.tar.gz dist/rdmp-cli-linux-x64.tar
+          rm dist/rdmp-cli-linux-x64.tar
+          (cd PublishWinForms ; cmd /c 7z a -mx=9 ../dist/rdmp-client.zip .)
 
       - name: Nuget packages
         if: contains(github.ref, 'refs/tags/v')
