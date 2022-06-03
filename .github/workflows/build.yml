@@ -38,7 +38,7 @@ jobs:
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: 6.0.x
-      - name: Install MS SQL 2010 Express LocalDB
+      - name: Install MS SQL 2019 Express LocalDB
         if: ${{ false }}
         uses: crazy-max/ghaction-chocolatey@v2
         with:
@@ -125,7 +125,7 @@ jobs:
       - name: BundleSource
         shell: bash
         run:
-          echo "dir /s/b *.cs *.xml" | cmd | rev | sort -t'\' -k1,1 -u | rev > srcbits.txt
+          echo "dir /s/b *.cs *.xml" | cmd | perl -pe '$_=reverse' | sort -t'\' -k1,1 -u | perl -pe '$_=reverse' > srcbits.txt
           echo 7z a Tools/BundleUpSourceIntoZip/output/SourceCodeForSelfAwareness.zip @srcbits.zip | cmd
       - name: Get the version
         id: get_version
