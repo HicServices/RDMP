@@ -122,7 +122,7 @@ jobs:
         run: |
           signtool=(/c/Program\ Files\ \(x86\)/Windows\ Kits/10/bin/*/x64/signtool.exe)
           signtool=${signtool[${#signtool[@]}-1]}
-          signtool=`echo $foo | tr / \\ | sed -e 's/^\\c/c:/'`
+          signtool=`echo $foo | sed -e 's#^/c#c:#' | tr / \\`
           echo ${{ secrets.DIGICERT_PFX }} | base64 --decode > GitHubActionsWorkflow.pfx
           echo cmd /c \"$signtool Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p '${{ secrets.DIGICERT_PASSWORD }}' PublishWindows/*.dll PublishWindows/*.exe PublishLinux/*.dll PublishWinForms/*.exe PublishWinForms/*.dll\"
           cmd /c \"$signtool Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p '${{ secrets.DIGICERT_PASSWORD }}' PublishWindows/*.dll PublishWindows/*.exe PublishLinux/*.dll PublishWinForms/*.exe PublishWinForms/*.dll\"
