@@ -141,7 +141,7 @@ jobs:
           echo ${{ secrets.DIGICERT_PFX }} | base64 --decode > GitHubActionsWorkflow.pfx
           echo '"'$signtool'"' 'Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p ${{ secrets.DIGICERT_PASSWORD }} PublishWindows/*.dll PublishWindows/*.exe PublishLinux/*.dll PublishWinForms/*.exe PublishWinForms/*.dll' | cmd
           mkdir -p dist
-          (cd PublishWindows ; cmd /c 7z a -mx=9 ../dist/rdmp-cli-win-x64.zip .)
+          (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-cli-win-x64.zip . | cmd)
           (cd PublishLinux ; cmd /c 7z a -mx=9 ../dist/rdmp-cli-linux-x64.zip .)
           mv PublishLinux rdmp-cli-linux
           cmd /c 7z a dist/rdmp-cli-linux-x64.tar rdmp-cli-linux
