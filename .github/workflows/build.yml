@@ -124,7 +124,7 @@ jobs:
           dotnet publish Tools/rdmp/rdmp.csproj -r linux-x64 --self-contained -c Release -o PublishLinux --verbosity minimal --nologo
       - name: BundleSource
         shell: bash
-        run:
+        run: |
           echo "dir /s/b *.cs *.xml" | cmd | perl -pe '$_=reverse' | sort -t'\' -k1,1 -u | perl -pe '$_=reverse' > srcbits.txt
           echo 7z a Tools/BundleUpSourceIntoZip/output/SourceCodeForSelfAwareness.zip @srcbits.zip | cmd
       - name: Get the version
