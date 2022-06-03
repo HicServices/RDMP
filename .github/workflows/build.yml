@@ -142,12 +142,12 @@ jobs:
           echo '"'$signtool'"' 'Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p ${{ secrets.DIGICERT_PASSWORD }} PublishWindows/*.dll PublishWindows/*.exe PublishLinux/*.dll PublishWinForms/*.exe PublishWinForms/*.dll' | cmd
           mkdir -p dist
           (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-cli-win-x64.zip . | cmd)
-          (cd PublishLinux ; cmd /c 7z a -mx=9 ../dist/rdmp-cli-linux-x64.zip .)
+          (cd PublishLinux ; echo 7z a -mx=9 ../dist/rdmp-cli-linux-x64.zip . | cmd)
           mv PublishLinux rdmp-cli-linux
-          cmd /c 7z a dist/rdmp-cli-linux-x64.tar rdmp-cli-linux
-          cmd /c 7z a dist/rdmp-cli-linux-x64.tar.gz dist/rdmp-cli-linux-x64.tar
+          echo 7z a dist/rdmp-cli-linux-x64.tar rdmp-cli-linux | cmd
+          echo 7z a dist/rdmp-cli-linux-x64.tar.gz dist/rdmp-cli-linux-x64.tar | cmd
           rm dist/rdmp-cli-linux-x64.tar
-          (cd PublishWinForms ; cmd /c 7z a -mx=9 ../dist/rdmp-client.zip .)
+          (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-client.zip . | cmd)
 
       - name: Nuget packages
         if: contains(github.ref, 'refs/tags/v')
