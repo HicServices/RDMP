@@ -138,7 +138,7 @@ jobs:
           path: |
             dist
       - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@2.2.1
+        uses: svenstaro/upload-release-action@2.3.0
         if: contains(github.ref, 'refs/tags/v')
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
