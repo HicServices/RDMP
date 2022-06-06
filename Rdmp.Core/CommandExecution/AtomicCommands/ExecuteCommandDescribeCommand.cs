@@ -195,7 +195,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             sb.AppendLine("USAGE: ");
                 
             sb.Append(EnvironmentInfo.IsLinux ? "./rdmp" : "./rdmp.exe");
-            sb.Append(" cmd ");
+            sb.Append(" ");
 
             sb.Append(BasicCommandExecution.GetCommandName(_commandType.Name));
             sb.Append(" ");
