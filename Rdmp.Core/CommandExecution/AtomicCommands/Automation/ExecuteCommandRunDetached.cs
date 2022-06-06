@@ -29,6 +29,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation
 
             if (!BasicActivator.IsAbleToLaunchSubprocesses)
             {
+                SetImpossible($"Client does not support launching subprocesses");
             }
         }
 
