@@ -12,13 +12,12 @@ using Rdmp.Core.Repositories.Construction;
 using System;
 using System.IO;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
 {
-    public class ExecuteCommandViewData : BasicCommandExecution, IAtomicCommand
+    public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
     {
         private readonly IViewSQLAndResultsCollection _collection;
         private readonly ViewType _viewType;
-        public FileInfo ToFile { get; set; }
 
         #region Constructors
 
@@ -36,11 +35,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             IMapsDirectlyToDatabaseTable obj,
             [DemandsInitialization("Optional. The view mode you want to see.  Options include 'TOP_100', 'Aggregate' and 'Distribution'",DefaultValue = ViewType.TOP_100)]
             ViewType viewType = ViewType.TOP_100,
-            [DemandsInitialization("Optional. A file to write the records to instead of the console")]
-            FileInfo toFile = null) :base(activator)
+            [DemandsInitialization(ToFileDescription)]
+            FileInfo toFile = null) :base(activator,toFile)
         {
             _viewType = viewType;
-            ToFile = toFile;
 
             if (obj is TableInfo ti)
             {
@@ -69,13 +67,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// <param name="activator"></param>
         /// <param name="viewType"></param>
         /// <param name="c"></param>
-        public ExecuteCommandViewData(IBasicActivateItems activator, ViewType viewType, ColumnInfo c) : base(activator)
+        public ExecuteCommandViewData(IBasicActivateItems activator, ViewType viewType, ColumnInfo c) : base(activator,null)
         {
             _viewType = viewType;
             _collection = CreateCollection(c);
         }
 
-        public ExecuteCommandViewData(IBasicActivateItems activator, ViewType viewType, ExtractionInformation ei) : base(activator)
+        public ExecuteCommandViewData(IBasicActivateItems activator, ViewType viewType, ExtractionInformation ei) : base(activator,null)
         {
             _viewType = viewType;
             _collection = CreateCollection(ei);
@@ -86,7 +84,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// </summary>
         /// <param name="activator"></param>
         /// <param name="tableInfo"></param>
-        public ExecuteCommandViewData(IBasicActivateItems activator, TableInfo tableInfo) : base(activator)
+        public ExecuteCommandViewData(IBasicActivateItems activator, TableInfo tableInfo) : base(activator,null)
         {
             _viewType = ViewType.TOP_100;
             _collection = new ViewTableInfoExtractUICollection(tableInfo, _viewType);
@@ -116,18 +114,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             return "View " + _viewType.ToString().Replace("_", " ");
         }
-
-
-        public override void Execute()
+        protected override IViewSQLAndResultsCollection GetCollection()
         {
-            if (ToFile == null)
-            {
-                BasicActivator.ShowData(_collection);
-            }
-            else
-            {
-                ExtractTableVerbatim.ExtractDataToFile(_collection, ToFile);
-            }
+            return _collection;
         }
     }
 }

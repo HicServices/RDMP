@@ -6,20 +6,30 @@
 
 using System;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
 {
-    public class ExecuteCommandViewSample : BasicCommandExecution, IAtomicCommand
+    public class ExecuteCommandViewSample : ExecuteCommandViewDataBase, IAtomicCommand
     {
         private readonly AggregateConfiguration _aggregate;
         private float DEFAULT_WEIGHT = 2.5f;
 
-        public ExecuteCommandViewSample(IBasicActivateItems activator, AggregateConfiguration aggregate) : base(activator)
+        [UseWithObjectConstructor]
+        public ExecuteCommandViewSample(IBasicActivateItems activator,
+            [DemandsInitialization("The graph/cohort set you want to generate query SQL for")]
+            AggregateConfiguration aggregate,
+
+            [DemandsInitialization(ToFileDescription)]
+            FileInfo toFile = null
+            ) : base(activator,toFile)
         {
             Weight = DEFAULT_WEIGHT;
             _aggregate = aggregate;
@@ -30,10 +40,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             UseTripleDotSuffix = true;
         }
 
-        public override void Execute()
+        protected override IViewSQLAndResultsCollection GetCollection()
         {
-            base.Execute();
-
             var cic = _aggregate.GetCohortIdentificationConfigurationIfAny();
 
             var collection = new ViewAggregateExtractUICollection(_aggregate);
@@ -41,13 +49,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             //if it has a cic with a query cache AND it uses joinables.  Since this is a TOP 100 select * from dataset the cache on CHI is useless only patient index tables used by this query are useful if cached
             if (cic != null && cic.QueryCachingServer_ID != null && _aggregate.PatientIndexJoinablesUsed.Any())
             {
-                if(!BasicActivator.YesNo("Use Query Cache when building query?", "Use Configured Cache",out bool chosen))
-                        return;
+                if (!BasicActivator.YesNo("Use Query Cache when building query?", "Use Configured Cache", out bool chosen))
+                    return null; // user cancelled the yes/no dialog
 
                 collection.UseQueryCache = chosen;
             }
 
-            BasicActivator.ShowData(collection);
+            return collection;
         }
 
         public override Image GetImage(IIconProvider iconProvider)

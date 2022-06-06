@@ -11,6 +11,7 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.DataViewing;
 using Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -200,7 +201,7 @@ namespace Rdmp.Core.CommandExecution
 
             if(Is(o, out SupportingSQLTable sqlTable))
             {
-                yield return new ExecuteCommandRunSupportingSql(_activator,sqlTable);
+                yield return new ExecuteCommandRunSupportingSql(_activator,sqlTable,null);
             }
 
             if(Is(o,out  AggregateConfiguration ac) && !ac.Catalogue.IsApiCall())

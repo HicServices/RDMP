@@ -7,34 +7,42 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 using System.Drawing;
+using System.IO;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
 {
     /// <summary>
     /// View data referenced by a <see cref="Catalogue"/>.  This may be all extractable columns from the underlying table; a subset; or aggregate of multiple tables
     /// </summary>
-    public class ExecuteCommandViewCatalogueData : BasicCommandExecution
+    public class ExecuteCommandViewCatalogueData : ExecuteCommandViewDataBase
     {
         private readonly Catalogue _catalogue;
         private readonly int numberToFetch;
 
-        public ExecuteCommandViewCatalogueData(IBasicActivateItems activator, Catalogue catalogue,int numberToFetch):base(activator)
+        [UseWithObjectConstructor]
+        public ExecuteCommandViewCatalogueData(IBasicActivateItems activator,
+
+            [DemandsInitialization("The dataset to read data from")]
+            Catalogue catalogue,
+
+            [DemandsInitialization("The number of records to fetch or <= 0 to fetch all",DefaultValue = -1)]
+            int numberToFetch = -1,
+
+            [DemandsInitialization(ToFileDescription)]
+            FileInfo toFile = null) :base(activator,toFile)
         {
             this._catalogue = catalogue;
             this.numberToFetch = numberToFetch;
         }
-
-        public override void Execute()
+        protected override IViewSQLAndResultsCollection GetCollection()
         {
-            base.Execute();
-            var collection = new ViewCatalogueDataCollection(_catalogue);
-
-            if(numberToFetch > 0)
-                collection.TopX = numberToFetch;
-
-            BasicActivator.ShowData(collection);
+            return new ViewCatalogueDataCollection(_catalogue)
+            {
+                TopX = numberToFetch > 0 ? numberToFetch : null
+            };
         }
 
         public override Image GetImage(IIconProvider iconProvider)

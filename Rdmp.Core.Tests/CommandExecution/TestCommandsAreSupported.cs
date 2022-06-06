@@ -10,6 +10,7 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands.DataViewing;
 using Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 using System;
 using Tests.Common;

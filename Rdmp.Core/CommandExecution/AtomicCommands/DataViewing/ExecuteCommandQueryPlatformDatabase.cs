@@ -9,7 +9,6 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
-using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.DataAccess;
@@ -17,12 +16,13 @@ using System;
 using System.IO;
 using System.Linq;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
 {
+
     /// <summary>
     /// Runs a query on a one of the RDMP platform databases and returns the results
     /// </summary>
-    public class ExecuteCommandQueryPlatformDatabase : BasicCommandExecution
+    public class ExecuteCommandQueryPlatformDatabase : ExecuteCommandViewDataBase
     {
         private string _query;
         private readonly FileInfo _toFile;
@@ -37,8 +37,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             [DemandsInitialization("Optional SQL query to execute on the database.  Or null to query the first table in the db.")]
             string query = null,
 
-            [DemandsInitialization("Optional file to output the results of the query to.  Or null")]
-            FileInfo toFile = null):base(activator)
+            [DemandsInitialization(ToFileDescription)]
+            FileInfo toFile = null):base(activator,toFile)
         {
             _query = query;
             _toFile = toFile;
@@ -87,7 +87,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             SetTargetDatabase(db);
         }
-        public ExecuteCommandQueryPlatformDatabase(IBasicActivateItems activator,ExternalDatabaseServer eds) : base(activator)
+        public ExecuteCommandQueryPlatformDatabase(IBasicActivateItems activator,
+            ExternalDatabaseServer eds) : base(activator, null)
         {
             DiscoveredDatabase db;
 
@@ -143,22 +144,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 SetImpossible("Database was empty");
             }
         }
-        public override void Execute()
+
+
+        protected override IViewSQLAndResultsCollection GetCollection()
         {
-            base.Execute();
-
-            var collection = new ArbitraryTableExtractionUICollection(_table){
-                OverrideSql = _query 
+            return new ArbitraryTableExtractionUICollection(_table)
+            {
+                OverrideSql = _query
             };
-
-            if (_toFile != null)
-            {
-                ExtractTableVerbatim.ExtractDataToFile(collection, _toFile);
-            }
-            else
-            {
-                BasicActivator.ShowData(collection);
-            }
         }
     }
 }
