@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -522,10 +523,21 @@ namespace Rdmp.Core.CommandExecution
         bool IsWinForms { get; }
 
         /// <summary>
+        /// True if <see cref="LaunchSubprocess"/> is supported.
+        /// </summary>
+        bool IsAbleToLaunchSubprocesses { get; }
+
+        /// <summary>
         /// Called when <see cref="BasicCommandExecution.Publish"/> is invoked.  Allows you to respond to publish events outside of UI code.  UI code
         /// should invoke the RefreshBus system in Rdmp.UI
         /// </summary>
         /// <param name="databaseEntity"></param>
         void Publish(IMapsDirectlyToDatabaseTable databaseEntity);
+
+        /// <summary>
+        /// Launches a new process running <paramref name="startInfo"/>
+        /// </summary>
+        /// <param name="startInfo"></param>
+        public void LaunchSubprocess(ProcessStartInfo startInfo);
     }
 }
