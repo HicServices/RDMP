@@ -8,6 +8,7 @@ using MapsDirectlyToDatabaseTable;
 using NLog;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Repositories.Construction;
@@ -72,9 +73,24 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
                 ThrowNotBasicSelectViewType();
                 _collection = CreateCollection(cic, useCache);
             }
+            else if (obj is ExtractableCohort ec)
+            {
+                ThrowNotBasicSelectViewType();
+                _collection = CreateCollection(ec);
+            }
             else
                 throw new ArgumentException($"Object '{obj}' was not an object type compatible with this command");
             
+        }
+
+        private IViewSQLAndResultsCollection CreateCollection(ExtractableCohort ec)
+        {
+            
+            return new ViewCohortExtractionUICollection(ec)
+            {
+                Top = _viewType == ViewType.TOP_100 ? 100 : -1,
+                IncludeCohortID = false
+            };
         }
 
         private IViewSQLAndResultsCollection CreateCollection(CohortIdentificationConfiguration cic, bool useCache)
