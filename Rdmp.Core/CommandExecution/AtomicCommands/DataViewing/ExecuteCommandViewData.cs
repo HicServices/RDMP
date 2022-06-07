@@ -5,7 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using MapsDirectlyToDatabaseTable;
+using NLog;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Repositories.Construction;
@@ -18,6 +20,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
     {
         private readonly IViewSQLAndResultsCollection _collection;
         private readonly ViewType _viewType;
+        private readonly IMapsDirectlyToDatabaseTable _obj;
+        private readonly bool _useCache;
 
         #region Constructors
 
@@ -27,6 +31,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
         /// <param name="activator"></param>
         /// <param name="viewType"></param>
         /// <param name="toFile"></param>
+        /// <param name="useCache"></param>
         /// <param name="obj"></param>
         /// <exception cref="ArgumentException"></exception>
         [UseWithObjectConstructor]
@@ -36,9 +41,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
             [DemandsInitialization("Optional. The view mode you want to see.  Options include 'TOP_100', 'Aggregate', 'Distribution' or 'All'",DefaultValue = ViewType.TOP_100)]
             ViewType viewType = ViewType.TOP_100,
             [DemandsInitialization(ToFileDescription)]
-            FileInfo toFile = null) :base(activator,toFile)
+            FileInfo toFile = null,
+            [DemandsInitialization("Applies only to CohortIdentificationConfigurations.  Defaults to true.  Set to false to disable query cache use.")]
+            bool useCache = true) :base(activator,toFile)
         {
             _viewType = viewType;
+            _obj = obj;
+            _useCache = useCache;
 
             if (obj is TableInfo ti)
             {
@@ -58,9 +67,27 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
                 ThrowNotBasicSelectViewType();
                 _collection = CreateCollection(cata);
             }
+            else if (obj is CohortIdentificationConfiguration cic)
+            {
+                ThrowNotBasicSelectViewType();
+                _collection = CreateCollection(cic, useCache);
+            }
             else
                 throw new ArgumentException($"Object '{obj}' was not an object type compatible with this command");
             
+        }
+
+        private IViewSQLAndResultsCollection CreateCollection(CohortIdentificationConfiguration cic, bool useCache)
+        {
+            if (_viewType == ViewType.TOP_100)
+            {
+                LogManager.GetCurrentClassLogger().Warn($"'{ViewType.TOP_100}' is not supported on '{nameof(CohortIdentificationConfiguration)}', '{ViewType.All}' will be used");
+            }
+
+            return new ViewCohortIdentificationConfigurationSqlCollection(cic)
+            {
+                UseQueryCache = useCache
+            };
         }
 
         private void ThrowNotBasicSelectViewType()
@@ -130,6 +157,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
 
         public override string GetCommandName()
         {
+            if (_obj is CohortIdentificationConfiguration)
+            {
+                return _useCache ? 
+                    "Query Builder SQL/Results":
+                    "Query Builder SQL/Results (No Cache)";
+
+            }
+
             return "View " + _viewType.ToString().Replace("_", " ");
         }
         protected override IViewSQLAndResultsCollection GetCollection()

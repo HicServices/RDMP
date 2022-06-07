@@ -365,8 +365,8 @@ namespace Rdmp.Core.CommandExecution
 
                 yield return commit;
 
-                yield return new ExecuteCommandViewCohortIdentificationConfiguration(_activator, cic, true) { Weight = -99.7f};
-                yield return new ExecuteCommandViewCohortIdentificationConfiguration(_activator, cic, false) { Weight = -99.6f };
+                yield return new ExecuteCommandViewData(_activator, cic,ViewType.All,null, true) { Weight = -99.7f};
+                yield return new ExecuteCommandViewData(_activator, cic,ViewType.All,null, false) { Weight = -99.6f };
 
                 yield return new ExecuteCommandFreezeCohortIdentificationConfiguration(_activator, cic, !cic.Frozen) { Weight = -50.5f };
 
