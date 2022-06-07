@@ -7,6 +7,7 @@
 using MapsDirectlyToDatabaseTable;
 using NLog;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction;
@@ -14,6 +15,7 @@ using Rdmp.Core.DataViewing;
 using Rdmp.Core.Repositories.Construction;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
 {
@@ -71,16 +73,38 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
             else if (obj is CohortIdentificationConfiguration cic)
             {
                 ThrowNotBasicSelectViewType();
-                _collection = CreateCollection(cic, useCache);
+                _collection = CreateCollection(cic);
             }
             else if (obj is ExtractableCohort ec)
             {
                 ThrowNotBasicSelectViewType();
                 _collection = CreateCollection(ec);
             }
+            else if (obj is AggregateConfiguration ac)
+            {
+                ThrowNotBasicSelectViewType();
+                _collection = CreateCollection(ac);
+            }
             else
                 throw new ArgumentException($"Object '{obj}' was not an object type compatible with this command");
             
+        }
+
+        private IViewSQLAndResultsCollection CreateCollection(AggregateConfiguration ac)
+        {
+            var cic = ac.GetCohortIdentificationConfigurationIfAny();
+
+            var collection = new ViewAggregateExtractUICollection(ac);
+
+            //if it has a cic with a query cache AND it uses joinables.  Since this is a TOP 100 select * from dataset the cache on CHI is useless only patient index tables used by this query are useful if cached
+            if (cic != null && cic.QueryCachingServer_ID != null && ac.PatientIndexJoinablesUsed.Any())
+            {
+                collection.UseQueryCache = _useCache;
+            }
+
+            collection.TopX = _viewType == ViewType.TOP_100 ? 100 : null;
+
+            return collection;
         }
 
         private IViewSQLAndResultsCollection CreateCollection(ExtractableCohort ec)
@@ -93,7 +117,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
             };
         }
 
-        private IViewSQLAndResultsCollection CreateCollection(CohortIdentificationConfiguration cic, bool useCache)
+        private IViewSQLAndResultsCollection CreateCollection(CohortIdentificationConfiguration cic)
         {
             if (_viewType == ViewType.TOP_100)
             {
@@ -102,7 +126,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
 
             return new ViewCohortIdentificationConfigurationSqlCollection(cic)
             {
-                UseQueryCache = useCache
+                UseQueryCache = _useCache
             };
         }
 

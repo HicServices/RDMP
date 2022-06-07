@@ -214,7 +214,7 @@ namespace Rdmp.Core.CommandExecution
 
                 yield return new ExecuteCommandAddParameter(_activator, ac, null, null, null) { SuggestedCategory = Add, OverrideCommandName = "New Catalogue Filter Parameter" };
 
-                yield return new ExecuteCommandViewSample(_activator, ac) { OverrideCommandName = "View Sample SQL/Data" };
+                yield return new ExecuteCommandViewData(_activator, ac) { OverrideCommandName = "View Sample SQL/Data" };
 
                 if(ac.IsCohortIdentificationAggregate)
                 {
