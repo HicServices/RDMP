@@ -163,8 +163,6 @@ namespace Rdmp.Core.Tests.CommandExecution
         [TestCase(typeof(ExecuteCommandUnfreezeExtractionConfiguration))]
         [TestCase(typeof(ExecuteCommandUnMergeCohortIdentificationConfiguration))]
         [TestCase(typeof(ExecuteCommandUseCredentialsToAccessTableInfoData))]
-        [TestCase(typeof(ExecuteCommandViewCatalogueData))]
-        [TestCase(typeof(ExecuteCommandViewCohortIdentificationConfiguration))]
         [TestCase(typeof(ExecuteCommandViewCohortSample))]
         [TestCase(typeof(ExecuteCommandViewData))]
         [TestCase(typeof(ExecuteCommandViewExtractionSql))]
