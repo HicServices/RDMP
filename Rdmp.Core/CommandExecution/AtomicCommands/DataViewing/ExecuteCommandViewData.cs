@@ -31,9 +31,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
         /// <exception cref="ArgumentException"></exception>
         [UseWithObjectConstructor]
         public ExecuteCommandViewData(IBasicActivateItems activator,
-            [DemandsInitialization("The ColumnInfo, TableInfo or ExtractionInformation you want to view a sample of")]
+            [DemandsInitialization("The object (ColumnInfo, TableInfo etc) you want to view a sample of")]
             IMapsDirectlyToDatabaseTable obj,
-            [DemandsInitialization("Optional. The view mode you want to see.  Options include 'TOP_100', 'Aggregate' and 'Distribution'",DefaultValue = ViewType.TOP_100)]
+            [DemandsInitialization("Optional. The view mode you want to see.  Options include 'TOP_100', 'Aggregate', 'Distribution' or 'All'",DefaultValue = ViewType.TOP_100)]
             ViewType viewType = ViewType.TOP_100,
             [DemandsInitialization(ToFileDescription)]
             FileInfo toFile = null) :base(activator,toFile)
@@ -42,11 +42,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
 
             if (obj is TableInfo ti)
             {
+                ThrowNotBasicSelectViewType();
                 _collection = new ViewTableInfoExtractUICollection(ti, _viewType);
-                if(_viewType != ViewType.TOP_100)
-                {
-                    throw new ArgumentException($"Only '{nameof(ViewType.TOP_100)}' can be used for TableInfos");
-                }
             }
             else if (obj is ColumnInfo col)
             {
@@ -56,9 +53,30 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
             {
                 _collection = CreateCollection(ei);
             }
+            else if (obj is Catalogue cata)
+            {
+                ThrowNotBasicSelectViewType();
+                _collection = CreateCollection(cata);
+            }
             else
-                throw new ArgumentException($"Object '{obj}' was not a table or column compatible with this command");
+                throw new ArgumentException($"Object '{obj}' was not an object type compatible with this command");
             
+        }
+
+        private void ThrowNotBasicSelectViewType()
+        {
+            if(_viewType != ViewType.TOP_100 && _viewType != ViewType.All)
+            {
+                throw new ArgumentException($"Only '{nameof(ViewType.TOP_100)}' or '{nameof(ViewType.All)}' can be used for this object Type");
+            }
+        }
+
+        private IViewSQLAndResultsCollection CreateCollection(Catalogue cata)
+        {
+            return new ViewCatalogueDataCollection(cata)
+            {
+                TopX = _viewType == ViewType.All ? null : 100
+            };
         }
 
         /// <summary>

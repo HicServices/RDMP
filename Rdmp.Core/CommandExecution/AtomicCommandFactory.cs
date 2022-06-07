@@ -100,7 +100,7 @@ namespace Rdmp.Core.CommandExecution
 
                 if (!isApiCall)
                 {
-                    yield return new ExecuteCommandViewCatalogueData(_activator, c, -1)
+                    yield return new ExecuteCommandViewData(_activator, c,ViewType.TOP_100)
                     {
                         Weight = -99.2f,
                         OverrideCommandName = "Catalogue SQL/Data",
