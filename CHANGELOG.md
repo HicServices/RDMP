@@ -12,8 +12,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added 'Run Detached' (run task in subprocess).  Uses [ConsoleControl](https://github.com/dwmkerr/consolecontrol).
 - Added toFile option to all CLI 'View Data' commands
-- 'cmd' is now the default verb for RDMP cli so you can type e.g. `./rdmp list Catalogue` without having to always type cmd first
+- When calling commands on the RDMP command line the 'cmd' verb is now optional e.g. you can now enter just `./rdmp list Catalogue`
 - Added `-q` option to suppress console logging.  Allows better piping of commands e.g. to file etc
+
+### Changed
+
+- The following commands have been removed and are now supported with `ViewData` directly e.g. `./rdmp ViewData Catalogue:1`
+  - ViewCatalogueData
+  - ViewCohortIdentificationConfiguration
+  - ViewCohortSample
+  - ViewSample
 
 ## [7.0.13] - 2022-05-30
 
