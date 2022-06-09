@@ -7,6 +7,7 @@
 using BadMedicine;
 using BadMedicine.Datasets;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 using System;
@@ -35,6 +36,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
         {
             var catalogues = new BucketList<Catalogue>();
             var extractableDatasets = new BucketList<ExtractableDataSet>();
+            var projects = new BucketList<Project>();
 
             // Based on DLS figures see: https://github.com/HicServices/RDMP/issues/1224
             for (int i = 0; i < 1000; i++)
@@ -78,11 +80,12 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             {
                 // each project
                 Project p = new Project(_repos.DataExportRepository, $"Project {i}");
+                projects.Add(1, p);
 
                 // has an average of 5 ExtractionConfigurations but could have 0 to 10
-                var configs = GetGaussianInt(0, 10);
+                var numberOfConfigs = GetGaussianInt(0, 10);
 
-                for(int c = 0;c<configs;c++)
+                for(int c = 0;c< numberOfConfigs; c++)
                 {
                     var config = new ExtractionConfiguration(_repos.DataExportRepository, p, "Extraction " + GetRandomGPCode(r));
                     if (r.Next(2) == 0)
@@ -91,7 +94,29 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                         config.ReleaseTicket = GetRandomGPCode(r); // some have release tickets
                     config.SaveToDatabase();
 
+
+                    // average of 8 Catalogues per extraction
+                    var numberOfsds = GetGaussianInt(0, 16);
+                    for (int s = 0; s < numberOfsds; s++)
+                    {
+                        var sds = new SelectedDataSets(_repos.DataExportRepository, config,extractableDatasets.GetRandom(r), null);
+                    }
+                    
+
                 }
+            }
+
+            // 200 cics
+            for (int i = 0; i < 200; i++)
+            {
+                var cic = new CohortIdentificationConfiguration(_repos.CatalogueRepository, "Cohort Query " + GetRandomGPCode(r));
+                
+                // 25% of cics are associated with a specific project
+                if(r.Next(4) == 0)
+                {
+                    var projSpecific = new ProjectCohortIdentificationConfigurationAssociation(_repos.DataExportRepository, projects.GetRandom(r), cic);
+                }
+                
             }
         }
 
