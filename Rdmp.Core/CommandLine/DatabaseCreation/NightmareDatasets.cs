@@ -27,6 +27,12 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
         private string _databaseNameWrapped;
         private string _databaseNameRuntime;
 
+        /// <summary>
+        /// Defaults to 1, set to 2 to double the amount of objects generated.
+        /// Set to 10 to produce 10 times the amount etc
+        /// </summary>
+        public int Factor = 1;
+
         public NightmareDatasets(IRDMPPlatformRepositoryServiceLocator repos, DiscoveredDatabase db) :base(new Random(123))
         {
             _repos = repos;
@@ -65,7 +71,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
 
 
             // Based on DLS figures see: https://github.com/HicServices/RDMP/issues/1224
-            for (int i = 0; i < 500; i++)
+            for (int i = 0; i < 500 * Factor; i++)
             {
                 var cata = new Catalogue(_repos.CatalogueRepository, $"Catalogue {GetRandomGPCode(r)}");
                 cata.Description = GetRandomSentence(r);
@@ -112,13 +118,13 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             
             // There are 500 tables associated with Catalogues
             // but also 250 tables that are not linked to any Catalogues
-            for (int i = 0; i < 250; i++)
+            for (int i = 0; i < 250 * Factor; i++)
             {
                 CreateTable();
             }
 
             
-            for (int i = 0; i < 200; i++)
+            for (int i = 0; i < 200 * Factor; i++)
             {
                 // each project
                 Project p = new Project(_repos.DataExportRepository, $"Project {i}");
@@ -148,7 +154,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             }
 
             // 200 cics
-            for (int i = 0; i < 200; i++)
+            for (int i = 0; i < 200 * Factor; i++)
             {
                 var cic = new CohortIdentificationConfiguration(_repos.CatalogueRepository, "Cohort Query " + GetRandomGPCode(r));
                 
