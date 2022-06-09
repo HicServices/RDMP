@@ -34,7 +34,7 @@ namespace Rdmp.UI.Wizard
         public CreateNewCohortIdentificationConfigurationUI(IActivateItems activator):base(activator)
         {
             InitializeComponent();
-
+            
             if(VisualStudioDesignMode)
                 return;
 
@@ -100,7 +100,7 @@ namespace Rdmp.UI.Wizard
                 return;
             }
             
-            if(!Activator.YesNo("Are you sure you are happy with your configuration, this wizard will close after creating?","Confirm"))
+            if(cbUseWizard.Checked && !Activator.YesNo("Are you sure you are happy with your configuration, this wizard will close after creating?","Confirm"))
                 return;
 
             var cic = CreateCohortIdentificationConfiguration();

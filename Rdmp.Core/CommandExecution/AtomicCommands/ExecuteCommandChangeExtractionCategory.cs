@@ -54,7 +54,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
 
             //publish the root Catalogue
-            Publish(_extractionInformations.First().CatalogueItem.Catalogue);
+            Publish(_extractionInformations.First());
         }
     }
 }

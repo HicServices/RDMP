@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -331,6 +332,11 @@ namespace Rdmp.UI.Tests
         public override bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected)
         {
             throw new NotImplementedException();
+        }
+
+        public override void LaunchSubprocess(ProcessStartInfo startInfo)
+        {
+            throw new NotSupportedException();
         }
     }
 

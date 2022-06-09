@@ -59,7 +59,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if (_createCatalogue)
             {
-                var forwardEngineer = new ForwardEngineerCatalogue(ti, cis, true);
+                var forwardEngineer = new ForwardEngineerCatalogue(ti, cis);
                 forwardEngineer.ExecuteForwardEngineering(out c, out _, out _);
 
                 BasicActivator.Show($"Successfully imported new Catalogue { c.Name} with ID {c.ID}");

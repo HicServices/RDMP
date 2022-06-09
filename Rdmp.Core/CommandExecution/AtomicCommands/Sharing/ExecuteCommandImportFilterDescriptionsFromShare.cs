@@ -6,11 +6,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing
 {
@@ -18,6 +20,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing
     {
         private readonly IFilter _toPopulate;
 
+        [UseWithObjectConstructor]
+        public ExecuteCommandImportFilterDescriptionsFromShare(IBasicActivateItems activator, IFilter toPopulate, FileInfo file) 
+            : this(activator, toPopulate, new FileCollectionCombineable(new[] { file}))
+        {
+
+        }
         public ExecuteCommandImportFilterDescriptionsFromShare(IBasicActivateItems activator, IFilter toPopulate, FileCollectionCombineable cmd = null) : base(activator, cmd)
         {
             _toPopulate = toPopulate;

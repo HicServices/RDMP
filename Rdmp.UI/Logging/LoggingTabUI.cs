@@ -183,6 +183,8 @@ namespace Rdmp.UI.Logging
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoggingTabUI));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
+
             this.pbRemoveFilter = new System.Windows.Forms.PictureBox();
             this.lblCurrentFilter = new System.Windows.Forms.Label();
             this.pFilter = new System.Windows.Forms.Panel();

@@ -29,8 +29,7 @@ using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Icons.IconProvision;
-
-
+using ReusableLibraryCode.Settings;
 using ScintillaNET;
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
@@ -67,11 +66,34 @@ namespace Rdmp.UI.DataViewing
 
             btnExecuteSql.Click += (s,e) => RunQuery();
             btnResetSql.Click += btnResetSql_Click;
-            
+
+            dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
             dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
 
             _serverHeader = new ToolStripLabel("Server:");
             _databaseTypeIconProvider = new DatabaseTypeIconProvider();
+
+            lblHelp.Visible = !UserSettings.AutoRunSqlQueries;
+
+
+            Guid splitterGuid = new Guid("f48582bd-2698-423a-bb86-5e91b91129bb");
+
+            var distance = UserSettings.GetSplitterDistance(splitterGuid);
+
+            if (distance == -1)
+            {
+                splitContainer1.SplitterDistance = (int)(splitContainer1.Height * 0.75f);
+            }
+            else
+            {
+                // don't let them set the distance to greater/less than the control size
+                splitContainer1.SplitterDistance = Math.Max(5,Math.Min(distance ,(int)(splitContainer1.Height * 0.99f)));
+            }
+
+            splitContainer1.SplitterMoved += (s,e)=>
+            {
+                UserSettings.SetSplitterDistance(splitterGuid,splitContainer1.SplitterDistance);
+            };
         }
 
         private void ScintillaOnKeyUp(object sender, KeyEventArgs keyEventArgs)
@@ -162,7 +184,10 @@ namespace Rdmp.UI.DataViewing
                 
                 _server.TestConnection();
 
-                LoadDataTableAsync(_server, sql);
+                if(UserSettings.AutoRunSqlQueries)
+                {
+                    LoadDataTableAsync(_server, sql);
+                }
             }
             catch (Exception ex)
             {
@@ -203,6 +228,8 @@ namespace Rdmp.UI.DataViewing
 
         private void LoadDataTableAsync(DiscoveredServer server, string sql)
         {
+            lblHelp.Visible = false;
+
             //it is already running and not completed
             if (_task != null && !_task.IsCompleted)
                 return;

@@ -229,10 +229,10 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 fromNeckColumnInfo.Single(c => c.GetRuntimeName().Equals("Vertebrae")), ExtractionJoinType.Inner, null
                 );
 
-            var cataEngineer = new ForwardEngineerCatalogue(fromHeadsTableInfo, fromHeadsColumnInfo, true);
+            var cataEngineer = new ForwardEngineerCatalogue(fromHeadsTableInfo, fromHeadsColumnInfo);
             cataEngineer.ExecuteForwardEngineering(out var cata,out var cataItems,out var extractionInformations);
 
-            var cataEngineer2 = new ForwardEngineerCatalogue(fromNeckTableInfo, fromNeckColumnInfo, true);
+            var cataEngineer2 = new ForwardEngineerCatalogue(fromNeckTableInfo, fromNeckColumnInfo);
             cataEngineer2.ExecuteForwardEngineering(cata);
 
             //4 extraction informations in from Catalogue (2 from Heads and 2 from Necks)

@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using FAnsi.Discovery;
 using Plugin.Settings.Abstractions;
 using ReusableLibraryCode.Checks;
@@ -363,6 +364,30 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("AlwaysJoinEverything", value); }
         }
 
+        /// <summary>
+        /// <para>
+        /// Determines whether queries are automatically sent and results displayed in
+        /// data tabs in RDMP (e.g. View top 100 etc).  Enable to automatically send the
+        /// queries.  Disable to show the SQL but require the user to press F5 or click Run
+        /// to execute. 
+        /// </para>
+        /// </summary>
+        public static bool AutoRunSqlQueries
+        {
+            get { return AppSettings.GetValueOrDefault("AutoRunSqlQueries", false); }
+            set { AppSettings.AddOrUpdateValue("AutoRunSqlQueries", value); }
+        }
+
+        /// <summary>
+        /// Enable to automatically expand the tree when opening or creating cohorts in
+        /// Cohort Builder
+        /// </summary>
+        public static bool ExpandAllInCohortBuilder
+        {
+            get { return AppSettings.GetValueOrDefault("ExpandAllInCohortBuilder", true); }
+            set { AppSettings.AddOrUpdateValue("ExpandAllInCohortBuilder", value); }
+        }
+
 
         #endregion
 
@@ -465,6 +490,22 @@ namespace ReusableLibraryCode.Settings
         {
             AppSettings.AddOrUpdateValue("A_" + controlGuid.ToString("N"), string.Join("#!#", history));
         }
+
+        public static void AddHistoryForControl(Guid guid, string v)
+        {
+            if (string.IsNullOrWhiteSpace(v))
+                return;
+
+            var l = GetHistoryForControl(guid).ToList();
+            
+            if (l.Contains(v))
+                return;
+
+            l.Add(v);            
+
+            SetHistoryForControl(guid, l.Distinct().ToList());
+        }
+
         public static Tuple<string,bool> GetLastColumnSortForCollection(Guid controlGuid)
         {
             lock (_oLockUserSettings)
@@ -501,7 +542,32 @@ namespace ReusableLibraryCode.Settings
                 AppSettings.AddOrUpdateValue("LastColumnSort_" + controlGuid.ToString("N"), columnName +"#!#" + ascending);    
             }
         }
-        
+
+
+        /// <summary>
+        /// Returns the last known manually set splitter distance for the Control who is 
+        /// identified by <paramref name="controlGuid"/> or -1 if none set yet
+        /// </summary>
+        /// <param name="controlGuid"></param>
+        /// <returns></returns>
+        public static int GetSplitterDistance(Guid controlGuid)
+        {
+            return AppSettings.GetValueOrDefault("SplitterDistance_" + controlGuid.ToString("N"),-1);
+        }
+
+        /// <summary>
+        /// Records that the user has manaully changed the splitter distance of the Control
+        /// who is identified by <paramref name="controlGuid"/>
+        /// </summary>
+        /// <param name="controlGuid"></param>
+        /// <param name="splitterDistance"></param>
+        public static void SetSplitterDistance(Guid controlGuid, int splitterDistance)
+        {
+            lock (_oLockUserSettings)
+            {
+                AppSettings.AddOrUpdateValue("SplitterDistance_" + controlGuid.ToString("N"), splitterDistance);
+            }
+        }
 
         static ISettings CreateSettings()
         {

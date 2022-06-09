@@ -21,7 +21,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     /// Checks the RDMP logs for the latest log entry of a given object.  Throws (returns exit code non zero) if
     /// the top log entry is failing or if there are no log entries within the expected time span.
     /// </summary>
-    public partial class ExecuteCommandConfirmLogs : BasicCommandExecution {
+    public class ExecuteCommandConfirmLogs : BasicCommandExecution {
 
         /// <summary>
         /// Optional time period in which to expect successful logs

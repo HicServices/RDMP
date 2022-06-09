@@ -58,6 +58,11 @@ namespace Rdmp.Core.Curation.Data
         public Dictionary<string,Exception> BadAssembliesDictionary { get; set; }
         
         /// <summary>
+        /// Delegate for skipping certain dlls
+        /// </summary>
+        public static Func<FileInfo,bool> IgnoreDll { get; set; }
+
+        /// <summary>
         /// Creates a new list of MEF plugin classes from the dlls/files in the directory list provided
         /// </summary>
         /// <param name="directories"></param>
@@ -83,6 +88,10 @@ namespace Rdmp.Core.Curation.Data
                 {
                     var newOne = new FileInfo(f);
                     var existing = files.SingleOrDefault(d => d.Name.Equals(newOne.Name));
+
+                    // don't load the cli dir
+                    if (IgnoreDll != null && IgnoreDll(newOne))
+                        continue;
 
                     if (existing != null)
                     {

@@ -89,9 +89,6 @@ namespace Rdmp.Core.DataViewing
             if (filter != null)
                 qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(memoryRepository, null, new[] { filter }, FilterContainerOperation.AND);
 
-            if (ViewType == ViewType.Aggregate)
-                qb.AddCustomLine("count(*),", QueryComponent.QueryTimeColumn);
-
             var sql = qb.SQL;
 
             if (ViewType == ViewType.Aggregate)

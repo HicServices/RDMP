@@ -30,6 +30,12 @@ namespace Rdmp.Core.CommandExecution
         public Func<RequiredArgument,object> Run { get; }
 
         /// <summary>
+        /// Set to true to require <see cref="HandledType"/> to exactly match candidates.  False to identify
+        /// compatible objects using <see cref="Type.IsAssignableFrom(Type?)"/>.  Defaults to false.
+        /// </summary>
+        public bool RequireExactMatch { get; internal set; }
+
+        /// <summary>
         /// Defines a new <see cref="Type"/> which we know how to get instances at runtime to fulfill
         /// </summary>
         /// <param name="handledType"></param>
@@ -49,6 +55,9 @@ namespace Rdmp.Core.CommandExecution
         /// <returns></returns>
         public virtual bool CanHandle(Type t)
         {
+            if (RequireExactMatch)
+                return HandledType == t;
+
             return HandledType.IsAssignableFrom(t);
         }
     }

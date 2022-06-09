@@ -212,7 +212,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
             var callback = Application.MainLoop.AddTimeout(TimeSpan.FromMilliseconds (500), Timer);
 
-            Application.Run(win);
+            Application.Run(win,ConsoleMainWindow.ExceptionPopup);
 
             Application.MainLoop.RemoveTimeout(callback);
 

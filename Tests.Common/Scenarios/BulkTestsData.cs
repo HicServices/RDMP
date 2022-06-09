@@ -146,7 +146,7 @@ namespace Tests.Common.Scenarios
             TableInfoImporter f = new TableInfoImporter(_repository, BulkDataDatabase.ExpectTable(BulkDataTable));
             f.DoImport(out tableInfo,out columnInfos);
 
-            ForwardEngineerCatalogue forwardEngineer = new ForwardEngineerCatalogue(tableInfo,columnInfos,true);
+            ForwardEngineerCatalogue forwardEngineer = new ForwardEngineerCatalogue(tableInfo,columnInfos);
             forwardEngineer.ExecuteForwardEngineering(out var c,out catalogueItems, out extractionInformations);
             this.catalogue = c;
 

@@ -34,7 +34,7 @@ namespace Rdmp.UI.Collections
         {
             base.SetItemActivator(activator);
 
-            CommonTreeFunctionality.SetUp(RDMPCollection.Favourites,tlvFavourites,Activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings {AllowPinning = false});
+            CommonTreeFunctionality.SetUp(RDMPCollection.Favourites,tlvFavourites,Activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings());
             CommonTreeFunctionality.AxeChildren = new Type[] { typeof(CohortIdentificationConfiguration) };
             CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter =
                 (a) => new IAtomicCommand[]

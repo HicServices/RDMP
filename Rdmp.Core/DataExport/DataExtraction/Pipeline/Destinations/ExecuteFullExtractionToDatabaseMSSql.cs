@@ -471,8 +471,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         protected override void TryExtractLookupTableImpl(BundledLookupTable lookup, DirectoryInfo lookupDir,
             IExtractionConfiguration requestConfiguration,IDataLoadEventListener listener, out int linesWritten, out string destinationDescription)
         {
-            var tbl = lookup.TableInfo.Discover(DataAccessContext.DataExport);
-            var dt = tbl.GetDataTable();
+            using var dt = lookup.GetDataTable();
                 
             dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleEntityNameFromString(lookup.TableInfo.Name));
 

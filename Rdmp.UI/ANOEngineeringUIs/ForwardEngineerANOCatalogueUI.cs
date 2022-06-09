@@ -346,7 +346,7 @@ namespace Rdmp.UI.ANOEngineeringUIs
 
             if (!_setup)
             {
-                var settings = new RDMPCollectionCommonFunctionalitySettings {AddFavouriteColumn = false, AllowPinning = false, AddCheckColumn = false};
+                var settings = new RDMPCollectionCommonFunctionalitySettings {AddFavouriteColumn = false, AddCheckColumn = false};
 
                 //Set up tree view to show ANO Tables that are usable
                 tlvANOTablesCommonFunctionality = new RDMPCollectionCommonFunctionality();

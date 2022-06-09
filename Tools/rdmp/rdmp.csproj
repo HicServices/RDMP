@@ -18,10 +18,17 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="CommandLine\ColorSettings.yaml" />
     <None Remove="Databases.yaml" />
     <None Remove="NLog.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\BundleUpSourceIntoZip\output\SourceCodeForSelfAwareness.zip" Link="SourceCodeForSelfAwareness.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ColorSettings.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Databases.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -30,11 +37,11 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="SecurityCodeScan.VS2019" Version="5.6.2">
+    <PackageReference Include="SecurityCodeScan.VS2019" Version="5.6.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Terminal.Gui" Version="1.5.0" />
+    <PackageReference Include="Terminal.Gui" Version="1.6.4" />
     <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
     <PackageReference Include="YamlDotNet" Version="11.2.1" />
   </ItemGroup>

@@ -51,7 +51,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests
 
                 typeof(ExecuteCommandExportLoggedDataToCsv),
                 typeof(ExecuteCommandGenerateRunCommand),
-                                
+                typeof(ExecuteCommandRunDetached),
+
+
                 typeof(ExecuteCommandShowXmlDoc),
                 typeof(ImpossibleCommand),
      
@@ -84,7 +86,7 @@ typeof(ExecuteCommandAddToSession)
         {
             Console.WriteLine("Looking in" + typeof (ExecuteCommandCreateNewExtractableDataSetPackage).Assembly);
             Console.WriteLine("Looking in" + typeof(ExecuteCommandViewCohortAggregateGraph).Assembly);
-            Console.WriteLine("Looking in" + typeof(ExecuteCommandUnpin).Assembly);
+            Console.WriteLine("Looking in" + typeof(ExecuteCommandAddToSession).Assembly);
 
             var uiTests = new UITests();
             var activator = new TestActivateItems(uiTests, new MemoryDataExportRepository());

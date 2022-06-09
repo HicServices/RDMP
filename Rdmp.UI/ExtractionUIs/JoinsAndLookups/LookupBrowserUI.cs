@@ -25,6 +25,8 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
         public LookupBrowserUI()
         {
             InitializeComponent();
+
+            dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
         }
 
         private ColumnInfo _keyColumn;

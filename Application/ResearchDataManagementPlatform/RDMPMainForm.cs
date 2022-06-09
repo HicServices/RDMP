@@ -294,7 +294,6 @@ namespace ResearchDataManagementPlatform
                 if (toolbox.HasValue)
                 {
                     var toolboxInstance = _windowManager.Create(toolbox.Value);
-                    toolboxInstance.LoadPersistString(_windowManager.ActivateItems,persiststring);
                     return toolboxInstance;
                 }
 

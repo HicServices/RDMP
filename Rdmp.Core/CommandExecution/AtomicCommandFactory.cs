@@ -88,7 +88,12 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandViewLogs(_activator,root);
             }
 
-            if(Is(o,out Catalogue c))
+            if (Is(o, out IArgument a))
+            {
+                if(!_activator.IsWinForms)
+                    yield return new ExecuteCommandSetArgument(_activator, a);
+            }
+            if (Is(o,out Catalogue c))
             {
                 bool isApiCall = c.IsApiCall();
 

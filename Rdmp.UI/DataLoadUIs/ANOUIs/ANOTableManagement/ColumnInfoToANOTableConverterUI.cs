@@ -105,6 +105,8 @@ namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement
             InitializeComponent();
 
             AssociatedCollection = RDMPCollection.Catalogue;
+
+            dgPreview.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, ColumnInfo databaseObject)

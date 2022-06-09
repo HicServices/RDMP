@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -48,6 +49,10 @@ namespace Rdmp.Core.CommandExecution
         /// controls should assume single line only (i.e. no newlines allowed).
         /// </summary>
         public const int MultiLineLengthThreshold = 1000;
+
+
+        /// <inheritdoc/>
+        public bool IsWinForms {get; protected set;}
 
         /// <inheritdoc/>
         public virtual bool IsInteractive => true;
@@ -127,6 +132,8 @@ namespace Rdmp.Core.CommandExecution
 
         /// <inheritdoc/>
         public bool HardRefresh { get; set; }
+
+        public bool IsAbleToLaunchSubprocesses { get; protected set; }
 
         public BasicActivateItems(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
         {
@@ -723,7 +730,7 @@ namespace Rdmp.Core.CommandExecution
         public virtual ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo, ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, string catalogueFolder)
         {
             // Create a new Catalogue based on the table info
-            var engineer = new ForwardEngineerCatalogue(tableInfo,tableInfo.ColumnInfos,true);
+            var engineer = new ForwardEngineerCatalogue(tableInfo,tableInfo.ColumnInfos);
             engineer.ExecuteForwardEngineering(out ICatalogue cata, out _, out ExtractionInformation[] eis);
 
             // if we know the linkable private identifier column(s)
@@ -751,7 +758,7 @@ namespace Rdmp.Core.CommandExecution
                 }
             }
 
-            if(catalogueFolder != null)
+            if(!string.IsNullOrWhiteSpace(catalogueFolder))
             {
                 cata.Folder = catalogueFolder;
                 cata.SaveToDatabase();
@@ -840,5 +847,7 @@ namespace Rdmp.Core.CommandExecution
 
             throw new ArgumentException("Did not know what repository to use to fetch objects of Type '" + type + "'");
         }
+
+        public abstract void LaunchSubprocess(ProcessStartInfo startInfo);
     }
 }

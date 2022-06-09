@@ -260,7 +260,6 @@ namespace Rdmp.UI.ProjectUI
                 _commonFunctionality.SetUp(RDMPCollection.None, tlvDatasets,activator,olvName,null,new RDMPCollectionCommonFunctionalitySettings()
                 {
                     AddFavouriteColumn = false,
-                    AllowPinning=false,
                     SuppressChildrenAdder=true,
                     SuppressActivate = true,
                     AddCheckColumn = false

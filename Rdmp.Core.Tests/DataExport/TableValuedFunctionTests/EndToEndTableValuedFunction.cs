@@ -207,7 +207,7 @@ end
             var importer = new TableValuedFunctionImporter(CatalogueRepository, tblvf);
             importer.DoImport(out var tbl,out var cols);
 
-            var engineer = new ForwardEngineerCatalogue(tbl, cols, true);
+            var engineer = new ForwardEngineerCatalogue(tbl, cols);
             engineer.ExecuteForwardEngineering(out var cata, out var cis, out var eis);
 
             Assert.AreEqual("chi", eis[0].GetRuntimeName());
@@ -238,7 +238,7 @@ end
 
             importer.DoImport(out var tbl,out var cols);
 
-            var engineer = new ForwardEngineerCatalogue(tbl, cols, true);
+            var engineer = new ForwardEngineerCatalogue(tbl, cols);
             engineer.ExecuteForwardEngineering(out var cata,out var cis, out var eis);
             
             _nonTvfExtractionIdentifier  = eis.Single();

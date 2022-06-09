@@ -190,7 +190,6 @@ namespace Rdmp.UI.DataRelease
                 _commonFunctionality.SetUp(RDMPCollection.None, tlvReleasePotentials, Activator, olvName, null, new RDMPCollectionCommonFunctionalitySettings
                 {
                     AddFavouriteColumn = false,
-                    AllowPinning = false,
                     SuppressChildrenAdder = true,
                     AddCheckColumn = false
                 });

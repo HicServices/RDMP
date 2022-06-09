@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -70,6 +71,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// <param name="collation">Optional - the collation to use when linking the columns</param>
         /// <param name="alsoCreateExtractionInformations">True to create a new virtual column in the main dataset so that the code description appears inline with the rest of 
         /// the columns in the dataset (when the SELECT query is built)</param>
+        [UseWithObjectConstructor]
         public ExecuteCommandCreateLookup(ICatalogueRepository catalogueRepository, ExtractionInformation foreignKeyExtractionInformation, ColumnInfo lookupDescriptionColumn, ColumnInfo lookupTablePrimaryKey, string collation, bool alsoCreateExtractionInformations)
             : this(catalogueRepository, foreignKeyExtractionInformation, new[] { lookupDescriptionColumn }, new List<Tuple<ColumnInfo, ColumnInfo>> { Tuple.Create(foreignKeyExtractionInformation.ColumnInfo, lookupTablePrimaryKey) }, collation, alsoCreateExtractionInformations)
         {

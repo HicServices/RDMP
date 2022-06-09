@@ -22,14 +22,6 @@ namespace Rdmp.UI.Collections
         public bool AddFavouriteColumn { get; set; }
 
         /// <summary>
-        /// True if the collection should allow the user to hide all objects but the pinned one (and it's parental hierarchy).  False
-        /// to prevent the user doing so.  Set this to false if you have a collection that only really shows one object hierarchy and
-        /// hiding stuff doesn't make sense.
-        ///  <para>Defaults to true</para>
-        /// </summary>
-        public bool AllowPinning { get; set; }
-
-        /// <summary>
         /// True to add an extra column (not visible by default) to the tree view which the ID property of objects that are
         ///  <see cref="MapsDirectlyToDatabaseTable.IMapsDirectlyToDatabaseTable"/>
         ///  <para>Defaults to true</para>
@@ -65,7 +57,6 @@ namespace Rdmp.UI.Collections
         public RDMPCollectionCommonFunctionalitySettings()
         {
             AddFavouriteColumn = true;
-            AllowPinning = true;
             AddIDColumn = true;
             SuppressChildrenAdder = false;
             SuppressActivate = false;

@@ -6,6 +6,7 @@
 
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -14,6 +15,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private readonly ContainerCombineable _containerCombineable;
         private readonly IContainer _targetContainer;
 
+        [UseWithObjectConstructor]
+        public ExecuteCommandMoveContainerIntoContainer(IBasicActivateItems activator, IContainer toMove, IContainer into) 
+            : this(activator,new ContainerCombineable(toMove),into)
+        {
+
+        }
         public ExecuteCommandMoveContainerIntoContainer(IBasicActivateItems activator, ContainerCombineable containerCombineable, IContainer targetContainer) : base(activator)
         {
             _containerCombineable = containerCombineable;
