@@ -203,7 +203,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
 
             if (options.Nightmare)
             {
-                var nightmare = new NightmareDatasets(_repos);
+                var nightmare = new NightmareDatasets(_repos,db);
                 nightmare.Create();
             }
         }
