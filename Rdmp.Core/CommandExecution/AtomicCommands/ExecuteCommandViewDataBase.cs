@@ -8,7 +8,7 @@ using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataViewing;
 using System.IO;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
     /// <summary>
     /// Abstract base class for all 'view data' style CLI compatible commands
@@ -24,7 +24,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
         /// </summary>
         public bool AskForFile { get; set; }
 
-        public ExecuteCommandViewDataBase(IBasicActivateItems activator, FileInfo toFile):base(activator)
+        public ExecuteCommandViewDataBase(IBasicActivateItems activator, FileInfo toFile) : base(activator)
         {
             ToFile = toFile;
         }

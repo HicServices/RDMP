@@ -14,7 +14,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
     /// <summary>
     /// View/run the extraction SQL for a given <see cref="Catalogue"/> in a given <see cref="ExtractionConfiguration"/>
@@ -26,7 +26,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
 
         [UseWithObjectConstructor]
         public ExecuteCommandViewExtractionSql(IBasicActivateItems activator,
-            
+
             [DemandsInitialization("The extraction configuration you want to know about")]
             ExtractionConfiguration ec,
 
@@ -34,13 +34,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
             Catalogue c,
 
             [DemandsInitialization(ToFileDescription)]
-            FileInfo toFile = null) : base(activator,toFile)
+            FileInfo toFile = null) : base(activator, toFile)
         {
             _extractionConfiguration = ec;
 
             _selectedDataSet = ec.SelectedDataSets.FirstOrDefault(sds => sds.GetCatalogue().Equals(c));
 
-            if(_selectedDataSet == null)
+            if (_selectedDataSet == null)
             {
                 SetImpossible($"Catalogue '{c}' is not listed as a selected dataset in '{ec}'");
             }
@@ -48,19 +48,19 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
 
         public ExecuteCommandViewExtractionSql(IBasicActivateItems activator,
             ExtractionConfiguration extractionConfiguration)
-            : base(activator,null)
+            : base(activator, null)
         {
             _extractionConfiguration = extractionConfiguration;
         }
 
         public ExecuteCommandViewExtractionSql(IBasicActivateItems activator,
             SelectedDataSets sds)
-            : base(activator,null)
+            : base(activator, null)
         {
             _extractionConfiguration = sds.ExtractionConfiguration;
             _selectedDataSet = sds;
         }
-        public ExecuteCommandViewExtractionSql(IBasicActivateItems activator) : base(activator,null)
+        public ExecuteCommandViewExtractionSql(IBasicActivateItems activator) : base(activator, null)
         {
         }
 

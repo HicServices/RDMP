@@ -9,7 +9,6 @@ using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
-using Rdmp.Core.CommandExecution.AtomicCommands.DataViewing;
 using Rdmp.Core.CommandLine.Gui.Windows;
 using Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
 using Rdmp.Core.CommandLine.Options;

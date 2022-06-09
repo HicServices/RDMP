@@ -17,7 +17,7 @@ using System;
 using System.IO;
 using System.Linq;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
     {
@@ -46,7 +46,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
             [DemandsInitialization(ToFileDescription)]
             FileInfo toFile = null,
             [DemandsInitialization("Applies only to CohortIdentificationConfigurations.  Defaults to true.  Set to false to disable query cache use.")]
-            bool useCache = true) :base(activator,toFile)
+            bool useCache = true) : base(activator, toFile)
         {
             _viewType = viewType;
             _obj = obj;
@@ -87,7 +87,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
             }
             else
                 throw new ArgumentException($"Object '{obj}' was not an object type compatible with this command");
-            
+
         }
 
         private IViewSQLAndResultsCollection CreateCollection(AggregateConfiguration ac)
@@ -109,7 +109,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
 
         private IViewSQLAndResultsCollection CreateCollection(ExtractableCohort ec)
         {
-            
+
             return new ViewCohortExtractionUICollection(ec)
             {
                 Top = _viewType == ViewType.TOP_100 ? 100 : -1,
@@ -132,7 +132,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
 
         private void ThrowNotBasicSelectViewType()
         {
-            if(_viewType != ViewType.TOP_100 && _viewType != ViewType.All)
+            if (_viewType != ViewType.TOP_100 && _viewType != ViewType.All)
             {
                 throw new ArgumentException($"Only '{nameof(ViewType.TOP_100)}' or '{nameof(ViewType.All)}' can be used for this object Type");
             }
@@ -152,13 +152,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
         /// <param name="activator"></param>
         /// <param name="viewType"></param>
         /// <param name="c"></param>
-        public ExecuteCommandViewData(IBasicActivateItems activator, ViewType viewType, ColumnInfo c) : base(activator,null)
+        public ExecuteCommandViewData(IBasicActivateItems activator, ViewType viewType, ColumnInfo c) : base(activator, null)
         {
             _viewType = viewType;
             _collection = CreateCollection(c);
         }
 
-        public ExecuteCommandViewData(IBasicActivateItems activator, ViewType viewType, ExtractionInformation ei) : base(activator,null)
+        public ExecuteCommandViewData(IBasicActivateItems activator, ViewType viewType, ExtractionInformation ei) : base(activator, null)
         {
             _viewType = viewType;
             _collection = CreateCollection(ei);
@@ -169,7 +169,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
         /// </summary>
         /// <param name="activator"></param>
         /// <param name="tableInfo"></param>
-        public ExecuteCommandViewData(IBasicActivateItems activator, TableInfo tableInfo) : base(activator,null)
+        public ExecuteCommandViewData(IBasicActivateItems activator, TableInfo tableInfo) : base(activator, null)
         {
             _viewType = ViewType.TOP_100;
             _collection = new ViewTableInfoExtractUICollection(tableInfo, _viewType);
@@ -199,8 +199,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
         {
             if (_obj is CohortIdentificationConfiguration)
             {
-                return _useCache ? 
-                    "Query Builder SQL/Results":
+                return _useCache ?
+                    "Query Builder SQL/Results" :
                     "Query Builder SQL/Results (No Cache)";
 
             }

@@ -10,7 +10,7 @@ using Rdmp.Core.Repositories.Construction;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
     /// <summary>
     /// Runs the SQL in <see cref="SupportingSQLTable"/> and displays output (if a single table is returned)
@@ -22,12 +22,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
             [DemandsInitialization("RDMP object storing the sql to run and where to run it (including credentials if any)")]
             SupportingSQLTable supportingSQLTable,
             [DemandsInitialization(ToFileDescription)]
-            FileInfo toFile = null) 
-            : base(activator,toFile)
+            FileInfo toFile = null)
+            : base(activator, toFile)
         {
             SupportingSQLTable = supportingSQLTable;
 
-            if(SupportingSQLTable.ExternalDatabaseServer_ID == null)
+            if (SupportingSQLTable.ExternalDatabaseServer_ID == null)
             {
                 SetImpossible("No server is configured on SupportingSQLTable");
                 return;

@@ -16,7 +16,7 @@ using System;
 using System.IO;
 using System.Linq;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
 
     /// <summary>
@@ -30,24 +30,24 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
 
         [UseWithObjectConstructor]
         public ExecuteCommandQueryPlatformDatabase(IBasicActivateItems activator,
-            
+
             [DemandsInitialization("Database type e.g. DataExport, Catalogue, QueryCaching, LoggingDatabase etc (See all IPatcher implementations)")]
             string databaseType,
-            
+
             [DemandsInitialization("Optional SQL query to execute on the database.  Or null to query the first table in the db.")]
             string query = null,
 
             [DemandsInitialization(ToFileDescription)]
-            FileInfo toFile = null):base(activator,toFile)
+            FileInfo toFile = null) : base(activator, toFile)
         {
             _query = query;
             _toFile = toFile;
 
             var patcherType = activator.RepositoryLocator.CatalogueRepository.MEF.
             // find the database type the user wants to query (the Patcher suffix is optional)
-                GetTypes<IPatcher>().FirstOrDefault(t=>t.Name.Equals(databaseType) || t.Name.Equals(databaseType + "Patcher"));
-            
-            if(patcherType == null)
+                GetTypes<IPatcher>().FirstOrDefault(t => t.Name.Equals(databaseType) || t.Name.Equals(databaseType + "Patcher"));
+
+            if (patcherType == null)
             {
                 SetImpossible($"Could not find Type called {databaseType} or {databaseType}Patcher");
                 return;
@@ -55,10 +55,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
 
             DiscoveredDatabase db;
 
-            if(patcherType == typeof(DataExportPatcher))
+            if (patcherType == typeof(DataExportPatcher))
             {
                 db = GetDatabase(BasicActivator.RepositoryLocator.DataExportRepository);
-                
+
                 _query = _query ?? "Select * from Project";
                 _table = db?.ExpectTable("Project");
                 return;
@@ -77,10 +77,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
 
                 var patcher = (IPatcher)Activator.CreateInstance(patcherType);
                 db = GetDatabase(eds.Where(e => e.WasCreatedBy(patcher)).ToArray());
-                
+
             }
 
-            if(db == null)
+            if (db == null)
             {
                 return;
             }
@@ -108,18 +108,18 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
 
         private DiscoveredDatabase GetDatabase(IRepository repository)
         {
-                if (repository is TableRepository tableRepo)
-                {
-                    return tableRepo.DiscoveredServer?.GetCurrentDatabase();
-                }
+            if (repository is TableRepository tableRepo)
+            {
+                return tableRepo.DiscoveredServer?.GetCurrentDatabase();
+            }
 
-                SetImpossible("Repository was not a database repo");
-                return null;
+            SetImpossible("Repository was not a database repo");
+            return null;
         }
 
         private DiscoveredDatabase GetDatabase(ExternalDatabaseServer[] eds)
         {
-            if(eds.Length == 0)
+            if (eds.Length == 0)
             {
                 SetImpossible("Could not find any databases of the requested Type");
                 return null;

@@ -13,7 +13,7 @@ using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAtomicCommand
     {
@@ -44,18 +44,18 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
             string columnName = null,
 
             [DemandsInitialization(ToFileDescription)]
-            FileInfo toFile = null) : this(activator, viewType,toFile)
+            FileInfo toFile = null) : this(activator, viewType, toFile)
         {
             _filter = filter;
 
-            if(!string.IsNullOrWhiteSpace(columnName))
+            if (!string.IsNullOrWhiteSpace(columnName))
             {
                 var c = filter.GetCatalogue();
                 var candidates = GetCandidates(c);
-                
+
                 // match on exact name?
-                _columnInfo = candidates.FirstOrDefault(c => c.GetRuntimeName().Equals(columnName,StringComparison.CurrentCultureIgnoreCase));
-                if(_columnInfo == null)
+                _columnInfo = candidates.FirstOrDefault(c => c.GetRuntimeName().Equals(columnName, StringComparison.CurrentCultureIgnoreCase));
+                if (_columnInfo == null)
                 {
                     throw new Exception($"Could not find a ColumnInfo called '{columnName}' in Catalogue '{c}'");
                 }
@@ -72,7 +72,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
             // there is no single column associated with the filter so get user to pick one of them
             PopulateCandidates(filter.GetCatalogue(), filter);
         }
-        public ExecuteCommandViewFilterMatchData(IBasicActivateItems activator, IContainer container, ViewType viewType = ViewType.TOP_100) : this(activator, viewType,null)
+        public ExecuteCommandViewFilterMatchData(IBasicActivateItems activator, IContainer container, ViewType viewType = ViewType.TOP_100) : this(activator, viewType, null)
         {
             _container = container;
 
@@ -82,7 +82,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
         private void PopulateCandidates(Catalogue catalogue, object rootObj)
         {
             _candidates = GetCandidates(catalogue);
-            
+
             if (!_candidates.Any())
                 SetImpossible("No ColumnInfo is associated with '" + rootObj + "'");
         }
@@ -98,7 +98,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.DataViewing
             return catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Select(e => e.ColumnInfo).Where(c => c != null).Distinct().ToArray();
         }
 
-        protected ExecuteCommandViewFilterMatchData(IBasicActivateItems activator, ViewType viewType,FileInfo toFile) : base(activator,toFile)
+        protected ExecuteCommandViewFilterMatchData(IBasicActivateItems activator, ViewType viewType, FileInfo toFile) : base(activator, toFile)
         {
             _viewType = viewType;
         }
