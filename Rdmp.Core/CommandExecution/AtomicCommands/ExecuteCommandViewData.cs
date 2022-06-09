@@ -54,7 +54,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if (obj is TableInfo ti)
             {
-                ThrowNotBasicSelectViewType();
+                ThrowIfNotSimpleSelectViewType();
                 _collection = new ViewTableInfoExtractUICollection(ti, _viewType);
             }
             else if (obj is ColumnInfo col)
@@ -67,22 +67,22 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
             else if (obj is Catalogue cata)
             {
-                ThrowNotBasicSelectViewType();
+                ThrowIfNotSimpleSelectViewType();
                 _collection = CreateCollection(cata);
             }
             else if (obj is CohortIdentificationConfiguration cic)
             {
-                ThrowNotBasicSelectViewType();
+                ThrowIfNotSimpleSelectViewType();
                 _collection = CreateCollection(cic);
             }
             else if (obj is ExtractableCohort ec)
             {
-                ThrowNotBasicSelectViewType();
+                ThrowIfNotSimpleSelectViewType();
                 _collection = CreateCollection(ec);
             }
             else if (obj is AggregateConfiguration ac)
             {
-                ThrowNotBasicSelectViewType();
+                ThrowIfNotSimpleSelectViewType();
                 _collection = CreateCollection(ac);
             }
             else
@@ -130,7 +130,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             };
         }
 
-        private void ThrowNotBasicSelectViewType()
+        private void ThrowIfNotSimpleSelectViewType()
         {
             if (_viewType != ViewType.TOP_100 && _viewType != ViewType.All)
             {
