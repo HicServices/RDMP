@@ -10,6 +10,7 @@ namespace Rdmp.Core.DataViewing
     {
         TOP_100,
         Aggregate,
-        Distribution
+        Distribution,
+        All
     }
 }

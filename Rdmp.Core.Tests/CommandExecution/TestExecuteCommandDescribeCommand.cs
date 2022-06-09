@@ -37,7 +37,7 @@ namespace Rdmp.Core.Tests.CommandExecution
         public void Test_DescribeDeleteCommand()
         {
             AssertHelpIs(@"USAGE: 
-./rdmp.exe cmd Delete <deletables> <deleteMany> 
+./rdmp.exe Delete <deletables> <deleteMany> 
 
 PARAMETERS:
 deletables	IDeleteable[]	The object(s) you want to delete.  If multiple you must set deleteMany to true", typeof(ExecuteCommandDelete));
@@ -48,7 +48,7 @@ deletables	IDeleteable[]	The object(s) you want to delete.  If multiple you must
         public void Test_ImportTableInfo_CommandHelp()
         {
             AssertHelpIs( 
-@"cmd ImportTableInfo <table> <createCatalogue> 
+@" ImportTableInfo <table> <createCatalogue> 
 
 PARAMETERS:
 table	DiscoveredTable	The table or view you want to reference from RDMP.  See PickTable for syntax
@@ -60,7 +60,7 @@ createCatalogue	Boolean	True to create a Catalogue as well as a TableInfo"
         [Test]
         public void Test_DescribeCommand_ExecuteCommandNewObject()
         {
-            AssertHelpIs( @"cmd NewObject <type> <arg1> <arg2> <etc>
+            AssertHelpIs( @" NewObject <type> <arg1> <arg2> <etc>
 
 PARAMETERS:
 type	The object to create e.g. Catalogue
@@ -70,7 +70,7 @@ args    Dynamic list of values to satisfy the types constructor",typeof(ExecuteC
         [Test]
         public void Test_DescribeCommand_ExecuteCommandSetArgument()
         {
-            AssertHelpIs( @"cmd SetArgument <component> <argName> <argValue>
+            AssertHelpIs( @" SetArgument <component> <argName> <argValue>
 
 PARAMETERS:
 component    Module to set value on e.g. ProcessTask:1
