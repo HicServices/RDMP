@@ -204,7 +204,7 @@ namespace Rdmp.Core.Providers
 
         public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
 
-        private Stopwatch _progressStopwatch = Stopwatch.StartNew();
+        protected Stopwatch ProgressStopwatch = Stopwatch.StartNew();
         private int _progress = 0;
 
         /// <summary>
@@ -530,8 +530,8 @@ namespace Rdmp.Core.Providers
         {
             if(UserSettings.DebugPerformance)
             {
-                _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs($"ChildProvider Stage {_progress++} ({desc}):{  _progressStopwatch.ElapsedMilliseconds }ms",CheckResult.Success));
-                _progressStopwatch.Restart();
+                _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs($"ChildProvider Stage {_progress++} ({desc}):{  ProgressStopwatch.ElapsedMilliseconds }ms",CheckResult.Success));
+                ProgressStopwatch.Restart();
             }
 
         }
@@ -1685,6 +1685,8 @@ namespace Rdmp.Core.Providers
 
         public virtual bool SelectiveRefresh(IMapsDirectlyToDatabaseTable databaseEntity)
         {
+            ProgressStopwatch.Restart();
+
             return databaseEntity switch
             {
                 AggregateFilterParameter afp => SelectiveRefresh(afp.AggregateFilter),

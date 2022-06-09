@@ -779,6 +779,8 @@ namespace Rdmp.Core.Providers
 
         public override bool SelectiveRefresh(IMapsDirectlyToDatabaseTable databaseEntity)
         {
+            ProgressStopwatch.Restart();
+
             return databaseEntity switch
             {
                 DeployedExtractionFilterParameter defp => SelectiveRefresh(defp.ExtractionFilter),

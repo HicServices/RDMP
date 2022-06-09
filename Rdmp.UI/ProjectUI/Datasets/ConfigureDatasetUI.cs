@@ -236,8 +236,12 @@ namespace Rdmp.UI.ProjectUI.Datasets
                     ei.InjectKnown(ci.ColumnInfo);
             }
 
+            olvAvailable.BeginUpdate();
+
             //add the stuff that is in Project Catalogues so they can pick these too
             olvAvailable.AddObjects(toAdd.ToArray());
+            
+            olvAvailable.EndUpdate();
 
             //on the right
 
@@ -279,7 +283,8 @@ namespace Rdmp.UI.ProjectUI.Datasets
         private void RefreshDisabledObjectStatus()
         {
             olvAvailable.DisabledObjects = olvAvailable.Objects.OfType<IColumn>().Where(IsAlreadySelected).ToArray();
-            olvAvailable.RefreshObjects(olvAvailable.Objects.OfType<IColumn>().ToArray());
+            // TN: Seems that this is not required and just updating DisabledObjects is sufficient
+            // olvAvailable.RefreshObjects(olvAvailable.Objects.OfType<IColumn>().ToArray());
 
             UpdateJoins();
             
