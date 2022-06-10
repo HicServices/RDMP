@@ -15,6 +15,7 @@ using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Logging;
+using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -169,6 +170,12 @@ namespace Rdmp.Core.Curation.Data
         /// <param name="lookupTables">Unique TableInfos amongst all CatalogueItems in the Catalogue where there is at least
         ///  one <see cref="Lookup"/> declarations of <see cref="LookupType.Description"/> on the referencing ColumnInfo.</param>
         void GetTableInfos(out List<ITableInfo> normalTables, out List<ITableInfo> lookupTables);
+
+        /// <inheritdoc cref="GetTableInfos(out List{ITableInfo}, out List{ITableInfo})"/>
+        /// <remarks>
+        /// <para>High performance overload where you have a <see cref="ICoreChildProvider"/></para>
+        /// </remarks>
+        void GetTableInfos(ICoreChildProvider provider, out List<ITableInfo> normalTables, out List<ITableInfo> lookupTables);
 
         /// <summary>
         /// Returns the unique <see cref="DiscoveredServer"/> from which to access connect to in order to run queries generated from the <see cref="Catalogue"/>.  This is 

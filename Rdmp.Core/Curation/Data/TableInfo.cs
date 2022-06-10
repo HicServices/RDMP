@@ -21,6 +21,7 @@ using Rdmp.Core.Curation.Data.DataLoad.Extensions;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.EntityNaming;
 using Rdmp.Core.DataLoad.Triggers;
+using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
@@ -386,6 +387,19 @@ namespace Rdmp.Core.Curation.Data
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("Synchronization failed on TableInfo " + this,CheckResult.Fail, e));
             }
+        }
+
+        /// <summary>
+        /// Higher performance version of <see cref="IsLookupTable()"/> when you have
+        /// a <see cref="ICoreChildProvider"/> around for rapid in memory answers
+        /// </summary>
+        /// <param name="childProvider"></param>
+        /// <returns></returns>
+        public bool IsLookupTable(ICoreChildProvider childProvider)
+        {
+            // we are a lookup if 
+            var lookupDescriptionColumnInfoIds = new HashSet<int>(childProvider.AllLookups.Select(l => l.Description_ID));
+            return ColumnInfos.Any(c => lookupDescriptionColumnInfoIds.Contains(c.ID));
         }
 
         /// <inheritdoc/>
