@@ -6,6 +6,7 @@
 
 using System;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataViewing;
@@ -14,7 +15,7 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandViewFilterMatchData : BasicCommandExecution, IAtomicCommand
+    public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAtomicCommand
     {
         private readonly IFilter _filter;
         private readonly IContainer _container;
@@ -29,20 +30,49 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// <param name="activator"></param>
         /// <param name="filter"></param>
         /// <param name="viewType"></param>
-        public ExecuteCommandViewFilterMatchData(IBasicActivateItems activator, IFilter filter, ViewType viewType = ViewType.TOP_100) : this(activator, viewType)
+        /// <param name="columnName"></param>
+        /// <param name="toFile"></param>
+        public ExecuteCommandViewFilterMatchData(IBasicActivateItems activator,
+
+            [DemandsInitialization("The filter you want to view matching data on (e.g. an AggregateFilter)")]
+            IFilter filter,
+
+            [DemandsInitialization("What kind of data do you want to fetch")]
+            ViewType viewType = ViewType.TOP_100,
+
+            [DemandsInitialization("If filter is not implicitly tied to a specific column, pass the name of the column for whom you want to view data.")]
+            string columnName = null,
+
+            [DemandsInitialization(ToFileDescription)]
+            FileInfo toFile = null) : this(activator, viewType, toFile)
         {
             _filter = filter;
 
-            _columnInfo = filter.GetColumnInfoIfExists();
+            if (!string.IsNullOrWhiteSpace(columnName))
+            {
+                var c = filter.GetCatalogue();
+                var candidates = GetCandidates(c);
 
-            //there is a single column associated with the filter?
-            if (_columnInfo != null)
-                return;
+                // match on exact name?
+                _columnInfo = candidates.FirstOrDefault(c => c.GetRuntimeName().Equals(columnName, StringComparison.CurrentCultureIgnoreCase));
+                if (_columnInfo == null)
+                {
+                    throw new Exception($"Could not find a ColumnInfo called '{columnName}' in Catalogue '{c}'");
+                }
+            }
+            else
+            {
+                _columnInfo = filter.GetColumnInfoIfExists();
+
+                //there is a single column associated with the filter?
+                if (_columnInfo != null)
+                    return;
+            }
 
             // there is no single column associated with the filter so get user to pick one of them
             PopulateCandidates(filter.GetCatalogue(), filter);
         }
-        public ExecuteCommandViewFilterMatchData(IBasicActivateItems activator, IContainer container, ViewType viewType = ViewType.TOP_100) : this(activator, viewType)
+        public ExecuteCommandViewFilterMatchData(IBasicActivateItems activator, IContainer container, ViewType viewType = ViewType.TOP_100) : this(activator, viewType, null)
         {
             _container = container;
 
@@ -51,45 +81,26 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         private void PopulateCandidates(Catalogue catalogue, object rootObj)
         {
-            if (catalogue == null)
-            {
-                SetImpossible("Filter has no Catalogue");
-                return;
-            }
-
-            _candidates = catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Select(e => e.ColumnInfo).Where(c => c != null).Distinct().ToArray();
+            _candidates = GetCandidates(catalogue);
 
             if (!_candidates.Any())
                 SetImpossible("No ColumnInfo is associated with '" + rootObj + "'");
         }
 
-
-        protected ExecuteCommandViewFilterMatchData(IBasicActivateItems activator, ViewType viewType) : base(activator)
+        private ColumnInfo[] GetCandidates(Catalogue catalogue)
         {
-            _viewType = viewType;
+            if (catalogue == null)
+            {
+                SetImpossible("Filter has no Catalogue");
+                return null;
+            }
+
+            return catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Select(e => e.ColumnInfo).Where(c => c != null).Distinct().ToArray();
         }
 
-        public override void Execute()
+        protected ExecuteCommandViewFilterMatchData(IBasicActivateItems activator, ViewType viewType, FileInfo toFile) : base(activator, toFile)
         {
-            base.Execute();
-
-            if (_columnInfo == null)
-                _columnInfo = SelectOne(_candidates, _columnInfo != null ? _columnInfo.Name : "");
-
-            if (_columnInfo == null)
-                return;
-
-            ViewColumnExtractCollection collection = null;
-
-            if (_filter != null)
-                collection = new ViewColumnExtractCollection(_columnInfo, _viewType, _filter);
-            if (_container != null)
-                collection = new ViewColumnExtractCollection(_columnInfo, _viewType, _container);
-
-            if (collection == null)
-                throw new Exception("ViewFilterMatchData Command had no filter or container");
-
-            BasicActivator.ShowData(collection);
+            _viewType = viewType;
         }
 
         public override string GetCommandName()
@@ -104,7 +115,27 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     throw new ArgumentOutOfRangeException();
             }
         }
+        protected override IViewSQLAndResultsCollection GetCollection()
+        {
 
+            if (_columnInfo == null)
+                _columnInfo = SelectOne(_candidates, _columnInfo != null ? _columnInfo.Name : "");
+
+            if (_columnInfo == null)
+                return null;
+
+            ViewColumnExtractCollection collection = null;
+
+            if (_filter != null)
+                collection = new ViewColumnExtractCollection(_columnInfo, _viewType, _filter);
+            if (_container != null)
+                collection = new ViewColumnExtractCollection(_columnInfo, _viewType, _container);
+
+            if (collection == null)
+                throw new Exception("ViewFilterMatchData Command had no filter or container");
+
+            return collection;
+        }
         public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Filter);

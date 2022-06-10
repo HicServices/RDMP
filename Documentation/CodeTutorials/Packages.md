@@ -23,14 +23,14 @@
 | [NLog](https://nlog-project.org/) | [GitHub](https://github.com/NLog/NLog) | [5.0.0](https://www.nuget.org/packages/NLog/5.0.0) | [BSD 3-Clause](https://github.com/NLog/NLog/blob/dev/LICENSE.txt) | Flexible user configurable logging | |
 | HIC.FAnsiSql |[GitHub](https://github.com/HicServices/FAnsiSql) | [2.0.4](https://www.nuget.org/packages/HIC.FansiSql/2.0.4) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | [DBMS] abstraction layer |
 | HIC.BadMedicine | [GitHub](https://github.com/HicServices/BadMedicine) | [1.0.1](https://www.nuget.org/packages/HIC.BadMedicine/1.0.1) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | Generate Test Datasets for tests/exericses |
-| SSH.NET  | [GitHub](https://github.com/sshnet/SSH.NET)  | [2020.0.1](https://www.nuget.org/packages/SSH.NET/2020.0.1) | [MIT](https://github.com/sshnet/SSH.NET/blob/develop/LICENSE) | Enables fetching files from SFTP servers |
+| SSH.NET  | [GitHub](https://github.com/sshnet/SSH.NET)  | [2020.0.2](https://www.nuget.org/packages/SSH.NET/2020.0.2) | [MIT](https://github.com/sshnet/SSH.NET/blob/develop/LICENSE) | Enables fetching files from SFTP servers |
 | Moq 4 | [GitHub](https://github.com/moq/moq4) | [4.18.1](https://www.nuget.org/packages/Moq/4.18.1) |[BSD 3](https://github.com/moq/moq4/blob/master/License.txt)  | Mock objects during unit testing |
 | [Nunit](https://nunit.org/) |[GitHub](https://github.com/nunit/nunit) | [3.13.3](https://www.nuget.org/packages/NUnit/3.13.3) | [MIT](https://opensource.org/licenses/MIT) | Unit testing |
 | Microsoft.NET.Test.Sdk | [GitHub](https://github.com/microsoft/vstest/) | [17.2.0](https://www.nuget.org/packages/Microsoft.NET.Test.Sdk/17.2.0) | [MIT](https://opensource.org/licenses/MIT) | Required for running tests| |
 | NUnit3TestAdapter | [GitHub](https://github.com/nunit/nunit3-vs-adapter)| [3.13.3](https://www.nuget.org/packages/NUnit3TestAdapter/3.13.3) | [MIT](https://opensource.org/licenses/MIT) | Run unit tests from within Visual Studio |
 | [Newtonsoft.Json](https://www.newtonsoft.com/json) | [GitHub](https://github.com/JamesNK/Newtonsoft.Json) | [13.0.1](https://www.nuget.org/packages/Newtonsoft.Json/13.0.1) | [MIT](https://opensource.org/licenses/MIT) | Serialization of objects for sharing/transmission |
 | YamlDotNet | [GitHub](https://github.com/aaubry/YamlDotNet)  | [11.2.1](https://www.nuget.org/packages/YamlDotNet/11.2.1) | [MIT](https://opensource.org/licenses/MIT) |Loading configuration files|
-| [SecurityCodeScan.VS2019](https://security-code-scan.github.io/) | [GitHub](https://github.com/security-code-scan/security-code-scan) | [5.6.2](https://www.nuget.org/packages/SecurityCodeScan.VS2019/5.6.2) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html)| Performs static build time analysis for vulnerabilities in the codebase (e.g. Sql injection)| |
+| [SecurityCodeScan.VS2019](https://security-code-scan.github.io/) | [GitHub](https://github.com/security-code-scan/security-code-scan) | [5.6.3](https://www.nuget.org/packages/SecurityCodeScan.VS2019/5.6.3) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html)| Performs static build time analysis for vulnerabilities in the codebase (e.g. Sql injection)| |
 | System.Runtime.Loader | [GitHub](https://github.com/dotnet/corefx) | [4.3.0](https://www.nuget.org/packages/System.Runtime.Loader/4.3.0) |[MIT](https://opensource.org/licenses/MIT)  | Allows loading assemblies in dot net core| |
 | System.Diagnostics.Debug | [GitHub](https://github.com/dotnet/corefx)  | [4.3.0](https://www.nuget.org/packages/System.Diagnostics.Debug/4.3.0) |[MIT](https://opensource.org/licenses/MIT) | Interact with Processes / Debug / Console |  |
 | System.IO.FileSystem.Primitives | [GitHub](https://github.com/dotnet/corefx) | [4.3.0](https://www.nuget.org/packages/System.IO.FileSystem.Primitives/4.3.0) |[MIT](https://opensource.org/licenses/MIT) | Provides common enumerations and exceptions for path-based I/O libraries |  |
@@ -49,5 +49,7 @@
 | HIC.System.Windows.Forms.DataVisualization | [GitHub](https://github.com/HicServices/winforms-datavisualization) | [1.0.1](https://www.nuget.org/packages/HIC.System.Windows.Forms.DataVisualization/1.0.1) |[MIT](https://opensource.org/licenses/MIT) | Dotnet core support for DQE charts |  |
 | System.DirectoryServices.Protocols | [GitHub](https://github.com/dotnet/runtime) | [6.0.1](https://www.nuget.org/packages/System.DirectoryServices.Protocols/6.0.1) | MIT | Required dependency of Oracle when using LDAP auth |
 | Autoupdater.NET | [GitHub](https://github.com/ravibpatel/AutoUpdater.NET) | [1.7.0](https://github.com/ravibpatel/AutoUpdater.NET) | MIT | Manages updating of the RDMP windows client directly from the RDMP GitHub Releases|
+| ConsoleControl | [GitHub](https://github.com/dwmkerr/consolecontrol)  | [1.3.0](https://www.nuget.org/packages/ConsoleControl/) | MIT | Runs RDMP cli subprocesses|
+
 
 [DBMS]: ./Glossary.md#DBMS

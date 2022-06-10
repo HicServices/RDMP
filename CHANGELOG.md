@@ -8,6 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Added 'Run Detached' (run task in subprocess).  Uses [ConsoleControl](https://github.com/dwmkerr/consolecontrol).
+- Added toFile option to all CLI 'View Data' commands
+- When calling commands on the RDMP command line the 'cmd' verb is now optional e.g. you can now enter just `./rdmp list Catalogue`
+- Added `-q` option to suppress console logging.  Allows better piping of commands e.g. to file etc
+
+### Changed
+
+- The following commands have been removed and are now supported with `ViewData` directly e.g. `./rdmp ViewData Catalogue:1`
+  - ViewCatalogueData
+  - ViewCohortIdentificationConfiguration
+  - ViewCohortSample
+  - ViewSample
+
+## [7.0.13] - 2022-05-30
+
 ### Changed
 
 - 'View Aggregate' now explicitly applies an ORDER BY count descending.
@@ -34,6 +51,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed order of Sql Parameters not always being first in tree
 - Prevented Find/Select columns showing sort indicator when it is not supported
+- Fixed `DistinctStrategy.OrderByAndDistinctInMemory` in batch processing retries [#1194](https://github.com/HicServices/RDMP/issues/1194)
+- Fixed GoTo where path includes CatalogueFolder in CLI gui
 
 ## [7.0.12] - 2022-05-16
 
@@ -1235,7 +1254,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.12...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.13...develop
+[7.0.13]: https://github.com/HicServices/RDMP/compare/v7.0.12...v7.0.13
 [7.0.12]: https://github.com/HicServices/RDMP/compare/v7.0.11...v7.0.12
 [7.0.11]: https://github.com/HicServices/RDMP/compare/v7.0.10...v7.0.11
 [7.0.10]: https://github.com/HicServices/RDMP/compare/v7.0.9...v7.0.10

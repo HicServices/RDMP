@@ -59,7 +59,8 @@ namespace Rdmp.UI.SimpleControls
             _factory = new RunnerFactory();
 
             CommonFunctionality.AddToMenu(new ExecuteCommandGenerateRunCommand(activator, Detatch_CommandGetter));
-            
+            CommonFunctionality.AddToMenu(new ExecuteCommandRunDetached(activator, Detatch_CommandGetter));
+
             loadProgressUI1.ApplyTheme(activator.Theme);
         }
 

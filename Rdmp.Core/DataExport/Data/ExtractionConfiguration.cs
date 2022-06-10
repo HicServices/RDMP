@@ -516,7 +516,7 @@ namespace Rdmp.Core.DataExport.Data
         }
 
         /// <inheritdoc/>
-        public ConcreteColumn[] GetAllExtractableColumnsFor(IExtractableDataSet dataset)
+        public ExtractableColumn[] GetAllExtractableColumnsFor(IExtractableDataSet dataset)
         {
             return
                 Repository.GetAllObjectsWhere<ExtractableColumn>("ExtractionConfiguration_ID", ID)

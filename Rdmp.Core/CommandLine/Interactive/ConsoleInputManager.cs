@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -363,8 +364,13 @@ namespace Rdmp.Core.CommandLine.Interactive
         {
             var point = collection.GetDataAccessPoint();
             var db = DataAccessPortal.GetInstance().ExpectDatabase(point,DataAccessContext.InternalDataProcessing);
+
+            var sql = collection.GetSql();
+
+            var logger = NLog.LogManager.GetCurrentClassLogger();
+            logger.Trace($"About to ShowData from Query:{Environment.NewLine}" + sql);
             
-            var toRun = new ExtractTableVerbatim(db.Server,collection.GetSql(),Console.OpenStandardOutput(),",",null);
+            var toRun = new ExtractTableVerbatim(db.Server,sql,Console.OpenStandardOutput(),",",null);
             toRun.DoExtraction();
         }
 
@@ -435,6 +441,11 @@ namespace Rdmp.Core.CommandLine.Interactive
 
             selected = available.Where((e, idx) => selectIdx.Contains(idx)).ToArray();
             return true;
+        }
+
+        public override void LaunchSubprocess(ProcessStartInfo startInfo)
+        {
+            throw new NotSupportedException();
         }
     }
 }

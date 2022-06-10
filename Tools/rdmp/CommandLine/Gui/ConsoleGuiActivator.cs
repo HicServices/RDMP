@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -19,6 +20,7 @@ using Rdmp.Core.CommandLine.Gui.Windows;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataViewing;
@@ -358,6 +360,12 @@ namespace Rdmp.Core.CommandLine.Gui
                 }
             }
 
+            if(m is CohortIdentificationConfiguration cic)
+            {
+                var view = new ConsoleGuiCohortIdentificationConfigurationUI(this, cic);
+                Application.Run(view, ConsoleMainWindow.ExceptionPopup);
+            }
+            else
             if(m != null)
             {
                 var view = new ConsoleGuiEdit(this,m){Modal = true };
@@ -381,6 +389,11 @@ namespace Rdmp.Core.CommandLine.Gui
         public override IPipelineRunner GetPipelineRunner(DialogArgs args, IPipelineUseCase useCase, IPipeline pipeline)
         {
             return new ConsoleGuiRunPipeline(this,useCase, pipeline);
+        }
+
+        public override void LaunchSubprocess(ProcessStartInfo startInfo)
+        {
+            throw new NotSupportedException();
         }
     }
 }
