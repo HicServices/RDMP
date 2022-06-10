@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CohortCreation.Execution;
@@ -17,6 +18,8 @@ using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using ReusableLibraryCode.Settings;
+using TypeGuesser;
+using TypeGuesser.Deciders;
 
 namespace Rdmp.Core.Providers
 {
@@ -95,7 +98,7 @@ namespace Rdmp.Core.Providers
             
             return null;
         }
-
+        
         public string DescribeProblem(ISqlParameter parameter)
         {
             if (AnyTableSqlParameter.HasProhibitedName(parameter))
@@ -116,6 +119,23 @@ namespace Rdmp.Core.Providers
                 }
 
                 return "No value defined";
+            }
+            else
+            {
+                var v = parameter.Value;
+
+                var g = new Guesser();
+                g.AdjustToCompensateForValue(v);
+
+                // if user has entered a date as the value
+                if (g.Guess.CSharpType == typeof(DateTime))
+                {
+                    // and there are no delimiters
+                    if(v.All(c=>c != '\'' && c != '"'))
+                    {
+                        return "Parameter value looks like a date but is not surrounded by quotes";
+                    }
+                }
             }
 
             return null;
