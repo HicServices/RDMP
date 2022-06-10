@@ -32,6 +32,12 @@ namespace Rdmp.Core.Providers
         private HashSet<int> _orphanCatalogueItems = new HashSet<int>();
         private HashSet<int> _usedJoinables;
 
+        /// <summary>
+        /// Set the culture for problem provision which is culture sensitive
+        /// e.g. detecting date values or leave null for the default system culture
+        /// </summary>
+        public CultureInfo Culture;
+
         /// <inheritdoc/>
         public override void RefreshProblems(ICoreChildProvider childProvider)
         {
@@ -125,6 +131,10 @@ namespace Rdmp.Core.Providers
                 var v = parameter.Value;
 
                 var g = new Guesser();
+                
+                if(Culture != null)
+                    g.Culture = Culture;
+
                 g.AdjustToCompensateForValue(v);
 
                 // if user has entered a date as the value

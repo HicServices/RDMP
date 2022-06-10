@@ -10,6 +10,7 @@ using Rdmp.Core.Providers;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 using Rdmp.Core.Curation.Data.Aggregation;
+using System.Globalization;
 
 namespace Rdmp.Core.Tests.Providers
 {
@@ -348,5 +349,35 @@ namespace Rdmp.Core.Tests.Providers
 
         #endregion
 
+
+        #region Parameters
+
+        [TestCase("2001/01/01", true)]
+        [TestCase("2001/01/01",true)]
+        [TestCase("'2001/01/01", false)] // This is currently fine, we are only detecting bad dates.  SQL syntax will pick this up for them anyway
+        [TestCase("'2001/01/01'", false)]
+        [TestCase("\"2001/01/01\"", false)]
+        public void TestParameterIsDate(string val, bool expectProblem)
+        {
+            var param = WhenIHaveA<AggregateFilterParameter>();
+            param.Value = val;
+            param.SaveToDatabase();
+
+            var pp = new CatalogueProblemProvider { Culture = new CultureInfo("en-GB") };
+            pp.RefreshProblems(new CatalogueChildProvider(Repository, null, new ThrowImmediatelyCheckNotifier(), null));
+            var problem = pp.DescribeProblem(param);
+
+            if(expectProblem)
+            {
+                Assert.AreEqual("Parameter value looks like a date but is not surrounded by quotes", problem);
+            }
+            else
+            {
+                Assert.IsNull(problem);
+            }
+
+        }
+
+        #endregion
     }
 }
