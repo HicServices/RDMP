@@ -353,7 +353,6 @@ namespace Rdmp.Core.Tests.Providers
         #region Parameters
 
         [TestCase("2001/01/01", true)]
-        [TestCase("2001/01/01",true)]
         [TestCase("'2001/01/01", false)] // This is currently fine, we are only detecting bad dates.  SQL syntax will pick this up for them anyway
         [TestCase("'2001/01/01'", false)]
         [TestCase("\"2001/01/01\"", false)]
