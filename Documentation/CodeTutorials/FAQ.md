@@ -605,9 +605,9 @@ You can check that you have configured the join correctly by right clicking the 
 
 RDMP audits extractions, cohort creation, ETL etc to the secure platform logging database.  This can be configured to use integrated (windows authentication) or encrypted username/password (e.g. sql authentication). 
 
-The RDMP windows client supports more comprehensive diagnostic logging with NLog.  To enable this feature locate the `NLog.template.config` file in your RDMP install directory.  Rename the file `NLog.config` (i.e. remove the word tempate).  This template generates file logs to a `./logs/` sub-directory but you can adjust it to log anywhere including to databases/central server etc by [following the NLog targets guide](https://nlog-project.org/config/).  Logs may contain identifiable or sensitive information so should be secured appropriately if enabled. 
+The RDMP windows client supports more comprehensive diagnostic logging with NLog.  To enable this feature locate the `NLog.template.config` file in your RDMP install directory.  Rename the file `NLog.config` (i.e. remove the word template).  This template generates file logs to a `./logs/` sub-directory but you can adjust it to log anywhere including to databases/central server etc by [following the NLog targets guide](https://nlog-project.org/config/).  Logs may contain identifiable or sensitive information so should be secured appropriately if enabled. 
 
-The RDMP CLI (command line) is supplied pre-configured for file and color console logging.
+The RDMP CLI (command line) is supplied pre-configured for file and colour console logging.
 
 ## User Interface Programming
 
