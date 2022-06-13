@@ -101,17 +101,17 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
         {
-            if (target is Project)
-                _project = (Project)target;
-
-            if (target is CohortIdentificationConfiguration)
+            switch (target)
             {
-                _cic = (CohortIdentificationConfiguration)target;
-
-                SetImpossibleIfReadonly(_cic);
+                case Project project:
+                    _project = project;
+                    break;
+                case CohortIdentificationConfiguration configuration:
+                    _cic = configuration;
+                    SetImpossibleIfReadonly(_cic);
+                    break;
             }
-                
-
+            
             if (_project != null && _cic != null)
             {
                 if(_project.GetAssociatedCohortIdentificationConfigurations().Contains(_cic))
