@@ -41,10 +41,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                    SetImpossible("Aggregate is set to use another's filter container tree");
             }
 
-            if (host.ShouldBeReadOnly(out string reason))
-            {
-                SetImpossible($"'{host}' is readonly beacause:{reason}");
-            }
+            SetImpossibleIfReadonly(host);
         }
 
         public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, CatalogueItem ci) : base(activator)
@@ -66,10 +63,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _factory = factory;
             _container = container;
 
-            if (container != null && container.ShouldBeReadOnly(out string reason))
-            {
-                SetImpossible($"Container is readonly beacause:{reason}");
-            }
+            SetImpossibleIfReadonly(container);
             
         }
 

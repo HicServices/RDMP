@@ -38,11 +38,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     SetImpossible(FiltersCannotBeAddedToApiCalls);
             }
 
-            if(host.ShouldBeReadOnly(out string reason))
-            {
-                SetImpossible($"'{host}' is readonly beacause:{reason}");
-            }
-
+            SetImpossibleIfReadonly(host);
 
             _host = host;
         }
@@ -59,10 +55,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             _container = container;
 
-            if (container != null && container.ShouldBeReadOnly(out string reason))
-            {
-                SetImpossible($"Container is readonly beacause:{reason}");
-            }
+            SetImpossibleIfReadonly(container);
         }
         public override void Execute()
         {

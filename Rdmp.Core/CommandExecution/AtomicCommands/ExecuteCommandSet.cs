@@ -62,10 +62,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if(_setOn is IMightBeReadOnly m)
             {
-                if (m.ShouldBeReadOnly(out string reason))
-                {
-                    SetImpossible($"'{m}' is readonly beacause:{reason}");
-                }
+                SetImpossibleIfReadonly(m);
             }
 
             if (_property == null)
