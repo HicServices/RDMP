@@ -5,6 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
+using System.IO;
+using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataViewing;
@@ -14,25 +16,51 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandViewExtractionSql : BasicCommandExecution, IAtomicCommandWithTarget
+    /// <summary>
+    /// View/run the extraction SQL for a given <see cref="Catalogue"/> in a given <see cref="ExtractionConfiguration"/>
+    /// </summary>
+    public class ExecuteCommandViewExtractionSql : ExecuteCommandViewDataBase, IAtomicCommandWithTarget
     {
         private IExtractionConfiguration _extractionConfiguration;
         private ISelectedDataSets _selectedDataSet;
-        
+
         [UseWithObjectConstructor]
-        public ExecuteCommandViewExtractionSql(IBasicActivateItems activator, ExtractionConfiguration extractionConfiguration)
-            : base(activator)
+        public ExecuteCommandViewExtractionSql(IBasicActivateItems activator,
+
+            [DemandsInitialization("The extraction configuration you want to know about")]
+            ExtractionConfiguration ec,
+
+            [DemandsInitialization("The dataset for whom you want to see the extraction SQL")]
+            Catalogue c,
+
+            [DemandsInitialization(ToFileDescription)]
+            FileInfo toFile = null) : base(activator, toFile)
+        {
+            _extractionConfiguration = ec;
+
+            _selectedDataSet = ec.SelectedDataSets.FirstOrDefault(sds => sds.GetCatalogue().Equals(c));
+
+            if (_selectedDataSet == null)
+            {
+                SetImpossible($"Catalogue '{c}' is not listed as a selected dataset in '{ec}'");
+            }
+        }
+
+        public ExecuteCommandViewExtractionSql(IBasicActivateItems activator,
+            ExtractionConfiguration extractionConfiguration)
+            : base(activator, null)
         {
             _extractionConfiguration = extractionConfiguration;
         }
 
-        public ExecuteCommandViewExtractionSql(IBasicActivateItems activator, SelectedDataSets sds)
-            : base(activator)
+        public ExecuteCommandViewExtractionSql(IBasicActivateItems activator,
+            SelectedDataSets sds)
+            : base(activator, null)
         {
             _extractionConfiguration = sds.ExtractionConfiguration;
             _selectedDataSet = sds;
         }
-        public ExecuteCommandViewExtractionSql(IBasicActivateItems activator) : base(activator)
+        public ExecuteCommandViewExtractionSql(IBasicActivateItems activator) : base(activator, null)
         {
         }
 
@@ -64,17 +92,17 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             return this;
         }
 
-        public override void Execute()
+        protected override IViewSQLAndResultsCollection GetCollection()
         {
-            base.Execute();
+            var sds = _selectedDataSet;
 
-            if (_selectedDataSet == null && _extractionConfiguration != null)
-                _selectedDataSet = SelectOne(BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<SelectedDataSets>(_extractionConfiguration));
+            if (sds == null && _extractionConfiguration != null)
+                sds = SelectOne(BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<SelectedDataSets>(_extractionConfiguration));
 
             if (_selectedDataSet == null)
-                return;
+                return null;
 
-            BasicActivator.ShowData(new ViewSelectedDatasetExtractionUICollection(_selectedDataSet));
+            return new ViewSelectedDatasetExtractionUICollection(sds);
         }
     }
 }

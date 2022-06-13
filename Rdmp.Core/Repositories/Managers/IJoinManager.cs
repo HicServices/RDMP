@@ -14,6 +14,7 @@ namespace Rdmp.Core.Repositories.Managers
     /// </summary>
     public interface IJoinManager
     {
+        JoinInfo[] GetAllJoinInfosBetweenColumnInfoSets(JoinInfo[] joinInfos, ColumnInfo[] set1, ColumnInfo[] set2);
         JoinInfo[] GetAllJoinInfosBetweenColumnInfoSets(ColumnInfo[] set1, ColumnInfo[] set2);
         JoinInfo[] GetAllJoinInfosWhereTableContains(ITableInfo tableInfo,JoinInfoType type);
     }

@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using MapsDirectlyToDatabaseTable;
+using NLog;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
@@ -43,10 +44,12 @@ namespace Rdmp.Core.CommandLine.Runners
             // but allow it if the input is ./rdmp cmd (i.e. run in a loop prompting for commands)
             _input.DisallowInput = !string.IsNullOrWhiteSpace(_options.CommandName);
 
+            var log = LogManager.GetCurrentClassLogger();
+
             _listener = listener;
             _invoker = new CommandInvoker(_input);
-            _invoker.CommandImpossible += (s,c)=>Console.WriteLine($"Command Impossible:{c.Command.ReasonCommandImpossible}");
-            _invoker.CommandCompleted += (s,c)=>Console.WriteLine("Command Completed");
+            _invoker.CommandImpossible += (s,c)=>log.Error($"Command Impossible:{c.Command.ReasonCommandImpossible}");
+            _invoker.CommandCompleted += (s,c)=>log.Info("Command Completed");
 
             _commands = _invoker.GetSupportedCommands().ToDictionary(
                 k=>BasicCommandExecution.GetCommandName(k.Name),

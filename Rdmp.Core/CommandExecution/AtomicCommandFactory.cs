@@ -99,7 +99,7 @@ namespace Rdmp.Core.CommandExecution
 
                 if (!isApiCall)
                 {
-                    yield return new ExecuteCommandViewCatalogueData(_activator, c, -1)
+                    yield return new ExecuteCommandViewData(_activator, c,ViewType.TOP_100)
                     {
                         Weight = -99.2f,
                         OverrideCommandName = "Catalogue SQL/Data",
@@ -200,7 +200,7 @@ namespace Rdmp.Core.CommandExecution
 
             if(Is(o, out SupportingSQLTable sqlTable))
             {
-                yield return new ExecuteCommandRunSupportingSql(_activator,sqlTable);
+                yield return new ExecuteCommandRunSupportingSql(_activator,sqlTable,null);
             }
 
             if(Is(o,out  AggregateConfiguration ac) && !ac.Catalogue.IsApiCall())
@@ -213,7 +213,7 @@ namespace Rdmp.Core.CommandExecution
 
                 yield return new ExecuteCommandAddParameter(_activator, ac, null, null, null) { SuggestedCategory = Add, OverrideCommandName = "New Catalogue Filter Parameter" };
 
-                yield return new ExecuteCommandViewSample(_activator, ac) { OverrideCommandName = "View Sample SQL/Data" };
+                yield return new ExecuteCommandViewData(_activator, ac) { OverrideCommandName = "View Sample SQL/Data" };
 
                 if(ac.IsCohortIdentificationAggregate)
                 {
@@ -364,8 +364,8 @@ namespace Rdmp.Core.CommandExecution
 
                 yield return commit;
 
-                yield return new ExecuteCommandViewCohortIdentificationConfiguration(_activator, cic, true) { Weight = -99.7f};
-                yield return new ExecuteCommandViewCohortIdentificationConfiguration(_activator, cic, false) { Weight = -99.6f };
+                yield return new ExecuteCommandViewData(_activator, cic,ViewType.All,null, true) { Weight = -99.7f};
+                yield return new ExecuteCommandViewData(_activator, cic,ViewType.All,null, false) { Weight = -99.6f };
 
                 yield return new ExecuteCommandFreezeCohortIdentificationConfiguration(_activator, cic, !cic.Frozen) { Weight = -50.5f };
 
@@ -666,8 +666,8 @@ namespace Rdmp.Core.CommandExecution
 
             if(Is(o,out ExtractableCohort cohort))
             {
-                yield return new ExecuteCommandViewCohortSample(_activator, cohort, 100) { Weight = -99.9f};
-                yield return new ExecuteCommandViewCohortSample(_activator, cohort, int.MaxValue,null,false) 
+                yield return new ExecuteCommandViewData(_activator, cohort,ViewType.TOP_100) { Weight = -99.9f};
+                yield return new ExecuteCommandViewData(_activator, cohort,ViewType.All) 
                 {
                     AskForFile = true,
                     OverrideCommandName = "Save Cohort To File...",

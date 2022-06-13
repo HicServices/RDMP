@@ -85,6 +85,12 @@ namespace Rdmp.Core.DataViewing
 
             var selectSql = GetSelectList(ect);
 
+            // Don't bother with top/limit SQL if theres none set
+            if (Top <= 0)
+            {
+                response.SQL = "";
+            }
+
             return response.Location switch
             {
                 QueryComponent.SELECT  => $"Select {response.SQL} {selectSql} from {tableName} WHERE {Cohort.WhereSQL()}",
