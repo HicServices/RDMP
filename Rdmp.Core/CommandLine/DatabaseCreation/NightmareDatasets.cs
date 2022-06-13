@@ -153,6 +153,10 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                         // FilterContainer     4370
                         // most selected datasets have filters
 
+                        // we picked the same dataset twice, oh well
+                        if (sds == null)
+                            continue;
+
                         // just add a single root container
                         if (sds.RootFilterContainer_ID == null)
                         {
@@ -165,9 +169,9 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                         // 5% have subcontainers
                         if (r.Next(20) == 0)
                         {
-                            var subContainer = new FilterContainer();
-                            AddExtractionFiltersTo(subContainer);
+                            var subContainer = new FilterContainer(_repos.DataExportRepository);
                             sds.RootFilterContainer.AddChild(subContainer);
+                            AddExtractionFiltersTo(subContainer);
                         }
                     }
                 }
