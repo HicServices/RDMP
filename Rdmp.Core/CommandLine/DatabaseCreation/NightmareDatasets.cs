@@ -146,10 +146,30 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                     var numberOfsds = GetGaussianInt(0, 16);
                     for (int s = 0; s < numberOfsds; s++)
                     {
-                        var sds = new SelectedDataSets(_repos.DataExportRepository, config,ExtractableDatasets.GetRandom(r), null);
-                    }
-                    
+                        var ds = ExtractableDatasets.GetRandom(r);
+                        config.AddDatasetToConfiguration(ds, out var sds);
 
+
+                        // FilterContainer     4370
+                        // most selected datasets have filters
+
+                        // just add a single root container
+                        if (sds.RootFilterContainer_ID == null)
+                        {
+                            sds.CreateRootContainerIfNotExists();
+                            AddExtractionFiltersTo(sds.RootFilterContainer);
+                        }
+
+                        // 	FilterContainerSubcontainers 	271
+
+                        // 5% have subcontainers
+                        if (r.Next(20) == 0)
+                        {
+                            var subContainer = new FilterContainer();
+                            AddExtractionFiltersTo(subContainer);
+                            sds.RootFilterContainer.AddChild(subContainer);
+                        }
+                    }
                 }
             }
 
@@ -164,6 +184,23 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                     var projSpecific = new ProjectCohortIdentificationConfigurationAssociation(_repos.DataExportRepository, Projects.GetRandom(r), cic);
                 }
                 
+            }
+        }
+
+        private void AddExtractionFiltersTo(IContainer container)
+        {
+
+            var numberOfFilters = GetGaussianInt(0, 2);
+            for (int f = 0; f < numberOfFilters; f++)
+            {
+                var filter = new DeployedExtractionFilter(_repos.DataExportRepository,
+                    $"Filter {Guid.NewGuid()}", null)
+                {
+                    WhereSQL = "ColX > 0"
+                };
+                filter.SaveToDatabase();
+
+                container.AddChild(filter);
             }
         }
 
