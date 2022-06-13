@@ -60,7 +60,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             _property = _setOn.GetType().GetProperty(property);
 
-            if(_property == null)
+            if(_setOn is IMightBeReadOnly m)
+            {
+                SetImpossibleIfReadonly(m);
+            }
+
+            if (_property == null)
             {
                 SetImpossible($"Unknown Property '{property}'");
 
