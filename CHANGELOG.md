@@ -24,6 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - ViewCohortSample
   - ViewSample
 
+### Fixed
+
+- Fixed user being able to edit filters of a frozen [ExtractionConfiguration]/[CohortIdentificationConfiguration]
+
 ## [7.0.13] - 2022-05-30
 
 ### Changed

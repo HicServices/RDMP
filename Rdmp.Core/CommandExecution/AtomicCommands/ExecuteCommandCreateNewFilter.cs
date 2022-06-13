@@ -40,6 +40,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 if(ac.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
                    SetImpossible("Aggregate is set to use another's filter container tree");
             }
+
+            if (host.ShouldBeReadOnly(out string reason))
+            {
+                SetImpossible($"'{host}' is readonly beacause:{reason}");
+            }
         }
 
         public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, CatalogueItem ci) : base(activator)
@@ -60,6 +65,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             _factory = factory;
             _container = container;
+
+            if (container != null && container.ShouldBeReadOnly(out string reason))
+            {
+                SetImpossible($"Container is readonly beacause:{reason}");
+            }
+            
         }
 
         public override Image GetImage(IIconProvider iconProvider)

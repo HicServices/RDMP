@@ -67,6 +67,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             _catalogue = _into.GetCatalogue();
 
+            if (into.ShouldBeReadOnly(out string reason))
+            {
+                SetImpossible($"'{into}' is readonly beacause:{reason}");
+            }
         }
 
         /// <summary>
