@@ -7,6 +7,7 @@
 using BadMedicine;
 using BadMedicine.Datasets;
 using FAnsi.Discovery;
+using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
@@ -58,7 +59,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
         /// <remarks>We use <see cref="DataGenerator.GetRandomGPCode(Random)"/> a lot, this is just because it is a nice
         /// short string of letter and numbers not because we are actually using GP codes</remarks>
         /// </summary>
-        public void Create()
+        public void Create(ExternalCohortTable ect)
         {
             // how likely is a given ExtractionInformation to be each of these
             // categories
@@ -123,11 +124,15 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                 CreateTable();
             }
 
+            // open a connection to the cohort db for creating external cohorts
+            using var con = ect.Discover().Server.GetManagedConnection();
             
             for (int i = 0; i < 200 * Factor; i++)
             {
                 // each project
                 Project p = new Project(_repos.DataExportRepository, $"Project {i}");
+                p.ProjectNumber = r.Next(50) == 0 ? 5:i;  // its ok for some projects to have the same number
+                p.SaveToDatabase();
                 Projects.Add(1, p);
 
                 // has an average of 5 ExtractionConfigurations but could have 0 to 10
@@ -149,6 +154,16 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                         var ds = ExtractableDatasets.GetRandom(r);
                         config.AddDatasetToConfiguration(ds, out var sds);
 
+                        var request = new CohortCreationRequest(p,
+                            new CohortDefinition(null,"Created by NightmareDatasets",1, p.ProjectNumber.Value, ect),
+                            _repos.DataExportRepository,
+                            $"Nightmare dreamed on {DateTime.Now}");
+
+                        request.PushToServer(con);
+
+                        var cohort = new ExtractableCohort(_repos.DataExportRepository, ect, request.NewCohortDefinition.ID.Value);
+                        config.Cohort_ID = cohort.ID;
+                        config.SaveToDatabase();
 
                         // FilterContainer     4370
                         // most selected datasets have filters

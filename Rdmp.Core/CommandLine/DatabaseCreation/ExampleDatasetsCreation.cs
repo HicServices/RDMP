@@ -207,7 +207,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                 {
                     Factor = options.NightmareFactor
                 };
-                nightmare.Create();
+                nightmare.Create(externalCohortTable);
             }
         }
 
