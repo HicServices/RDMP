@@ -345,7 +345,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
 
         private UploadFileUseCase GetUseCase()
         {
-            return new UploadFileUseCase(_selectedFile, serverDatabaseTableSelector1.GetDiscoveredDatabase());
+            return new UploadFileUseCase(_selectedFile, serverDatabaseTableSelector1.GetDiscoveredDatabase(),Activator);
         }
 
         private DataFlowPipelineEngineFactory GetFactory()

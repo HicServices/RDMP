@@ -7,6 +7,7 @@
 using System.Data;
 using System.IO;
 using FAnsi.Discovery;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
@@ -19,10 +20,11 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline
     /// </summary>
     public sealed class UploadFileUseCase:PipelineUseCase
     {
-        public UploadFileUseCase(FileInfo file, DiscoveredDatabase targetDatabase)
+        public UploadFileUseCase(FileInfo file, DiscoveredDatabase targetDatabase, IBasicActivateItems activator)
         {
             AddInitializationObject(new FlatFileToLoad(file));
             AddInitializationObject(targetDatabase);
+            AddInitializationObject(activator);
 
             GenerateContext();
         }
@@ -37,7 +39,8 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline
         private UploadFileUseCase():base(new []
         {
             typeof (FlatFileToLoad),
-                typeof (DiscoveredDatabase)
+                typeof (DiscoveredDatabase),
+                typeof (IBasicActivateItems),
         })
         {
             GenerateContext();
