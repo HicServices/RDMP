@@ -38,7 +38,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
         
         public void SetupEditAnything(object sender, IMapsDirectlyToDatabaseTable o)
         {            
-            _activator.RequestItemEmphasis(this, new EmphasiseRequest(o, int.MaxValue));
+            _activator.RequestItemEmphasis(this, new EmphasiseRequest(o));
 
             var activate = new ExecuteCommandActivate(_activator, o);
 
