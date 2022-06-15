@@ -15,6 +15,7 @@ using Rdmp.Core.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation
@@ -70,6 +71,8 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             extractionCategories.Add(10, ExtractionCategory.SpecialApprovalRequired);
             extractionCategories.Add(4, ExtractionCategory.Deprecated);
 
+            var extractionDir = Path.GetTempPath();
+
 
             // Based on DLS figures see: https://github.com/HicServices/RDMP/issues/1224
             for (int i = 0; i < 500 * Factor; i++)
@@ -80,7 +83,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                 Catalogues.Add(1,cata);
 
                 // half of datasets have linkage identifiers
-                bool hasExtractionIdentifier = r.Next(2) == 0;
+                bool hasExtractionIdentifier = false;
                 bool first = true;
 
                 // 14497 CatalogueItem
@@ -95,16 +98,23 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                     if (r.Next(10) < 6)
                     {
                         var ei = new ExtractionInformation(_repos.CatalogueRepository, ci, col, col.Name);
+                        ei.ExtractionCategory = extractionCategories.GetRandom(r);
 
-                        // make the first field the linkage identifier
-                        // if we are doing that
-                        if (first && hasExtractionIdentifier)
+                        if (first)
                         {
-                            ei.ExtractionCategory = extractionCategories.GetRandom(r);
-                            ei.IsExtractionIdentifier = true;
-                            ei.SaveToDatabase();
-                            first = false;
+                            hasExtractionIdentifier = r.Next(2) == 0;
+
+                            // make the first field the linkage identifier
+                            // if we are doing that
+                            if (hasExtractionIdentifier)
+                            {
+                                ei.IsExtractionIdentifier = true;
+                                ei.ExtractionCategory = ExtractionCategory.Core;
+                                ei.SaveToDatabase();
+                            }
                         }
+
+                        first = false;
                     }           
                 }
 
@@ -132,6 +142,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                 // each project
                 Project p = new Project(_repos.DataExportRepository, $"Project {i}");
                 p.ProjectNumber = r.Next(50) == 0 ? 5:i;  // its ok for some projects to have the same number
+                p.ExtractionDirectory = extractionDir;
                 p.SaveToDatabase();
                 Projects.Add(1, p);
 
