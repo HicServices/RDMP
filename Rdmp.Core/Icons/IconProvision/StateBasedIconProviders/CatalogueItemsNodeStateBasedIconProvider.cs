@@ -38,21 +38,15 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             if (cin.Category == null)
                 return _basic;
 
-            switch (cin.Category.Value)
+            return cin.Category.Value switch
             {
-                case Curation.Data.ExtractionCategory.Core:
-                    return _core;
-                case Curation.Data.ExtractionCategory.Supplemental:
-                    return _supplemental;
-                case Curation.Data.ExtractionCategory.SpecialApprovalRequired:
-                    return _special;
-                case Curation.Data.ExtractionCategory.Internal:
-                    return _internal;
-                case Curation.Data.ExtractionCategory.Deprecated:
-                    return _deprecated;
-            }
-
-            return _basic;
+                Curation.Data.ExtractionCategory.Core => _core,
+                Curation.Data.ExtractionCategory.Supplemental => _supplemental,
+                Curation.Data.ExtractionCategory.SpecialApprovalRequired => _special,
+                Curation.Data.ExtractionCategory.Internal => _internal,
+                Curation.Data.ExtractionCategory.Deprecated => _deprecated,
+                _ => _basic
+            };
         }
     }
 }
