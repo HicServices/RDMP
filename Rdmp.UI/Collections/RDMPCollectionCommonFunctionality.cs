@@ -882,56 +882,32 @@ namespace Rdmp.UI.Collections
 
         private void RefreshObject(object o, bool exists)
         {
-
-            //or from known descendancy
-            var knownDescendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(o);
-
             //if it is a root object maintained by this tree and it exists
-            if (MaintainRootObjects != null && MaintainRootObjects.Contains(o.GetType()) && exists)
-                //if tree doesn't yet contain the object
-                if (!Tree.Objects.Cast<object>().Contains(o))
-                {
-                    Tree.AddObject(o); //add it
-                    return;
-                }
-
-            if (!exists)
+            if (MaintainRootObjects != null && MaintainRootObjects.Contains(o.GetType()))
             {
-                //clear the current selection (if the object to be deleted is selected)
-                if(Tree.IsSelected(o))
+                if (exists)
                 {
-                    Tree.SelectedObject = null;
-                    Tree.SelectedObjects = null;
-                }                   
-
-                //remove it from tree
-                Tree.RemoveObject(o);
+                    //if tree doesn't yet contain the object
+                    if (!Tree.Objects.Cast<object>().Contains(o))
+                    {
+                        Tree.AddObject(o); //add it
+                        return;
+                    }
+                }
+                else
+                {
+                    //if tree contains the object remove it
+                    if (Tree.Objects.Cast<object>().Contains(o))
+                    {
+                        Tree.RemoveObject(o); //remove it
+                        return;
+                    }
+                }
             }
                 
 
-            if(!IsHiddenByFilter(o))
-                //By preference refresh the parent that way we deal with hierarchy changes
-                if (knownDescendancy != null)
-                {
-                    var lastParent = knownDescendancy.Parents.LastOrDefault(p => Tree.IndexOf(p) != -1);
-
-                    //does tree have parent?
-                    if (lastParent != null)
-                        Tree.RefreshObject(lastParent); //refresh parent
-                    else
-                        if(Tree.IndexOf(o) != -1)
-                            //Tree has object but not parent, bad times, maybe BetterRouteExists? 
-                            Tree.RebuildAll(true);
-                }
-                else
-                //if we have the object
-                    if (Tree.IndexOf(o) != -1 && exists)
-                        Tree.RefreshObject(o); //it exists so refresh it!
-        }
-
-        private bool IsHiddenByFilter(object o)
-        {
-            return Tree.IsFiltering && !Tree.FilteredObjects.Cast<object>().Contains(o);
+            Tree.RebuildAll(true);
+            Tree.Sort();
         }
 
         public void TearDown()

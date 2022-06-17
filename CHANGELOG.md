@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New CatalogueItems are now always marked Core (affects drag and drop and new Catalogue creation) - [#1165](https://github.com/HicServices/RDMP/issues/1165),[#1164](https://github.com/HicServices/RDMP/issues/1164)
 - If a Catalogue is defined for a Lookup TableInfo then only Core extractable columns will be released (previously all columns were released) [#692](https://github.com/HicServices/RDMP/issues/692)
 - Sql Parameters with no value defined are no longer flagged as Problem by ProblemProvider if they have value sets defined [#1180](https://github.com/HicServices/RDMP/issues/1180)
+- CatalogueItems now appear in specific folders by Extraction Category [#1112](https://github.com/HicServices/RDMP/issues/1112).
 
 ### Added
 
@@ -48,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added UserSettings editing UI to Console Gui
 - Added ability to suppress tree expansion when opening Cohort Builder configurations
 - Added a loading spinner for when find is still searching
+- Adding a parameter to a filter now shows its initial value [#1201](https://github.com/HicServices/RDMP/issues/1201)
 
 ### Removed
 

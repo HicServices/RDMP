@@ -15,12 +15,14 @@ using Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Menus.MenuItems;
+using ReusableLibraryCode;
 
 namespace Rdmp.UI.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
     class CatalogueMenu:RDMPContextMenuStrip
     {
+        const string CatalogueItems = "Catalogue Items";
 
         public CatalogueMenu(RDMPContextMenuStripArgs args, Catalogue catalogue):base(args,catalogue)
         {
@@ -59,6 +61,15 @@ namespace Rdmp.UI.Menus
                 SuggestedCategory = AtomicCommandFactory.View}.SetTarget(catalogue));
             }
 
+            ////////////////// UI Commands for the CatalogueItems submenu of the Catalogue context menu ///////////////////
+            Add(new ExecuteCommandBulkProcessCatalogueItems(_activator, catalogue) { SuggestedCategory = CatalogueItems , Weight = -99.049f, });
+            Add(new ExecuteCommandPasteClipboardAsNewCatalogueItems(_activator, catalogue,()=> Clipboard.GetText()) { SuggestedCategory = CatalogueItems, Weight = -99.047f, });
+            Add(new ExecuteCommandReOrderColumns(_activator, catalogue) { SuggestedCategory = CatalogueItems, Weight = -99.046f, });
+            Add(new ExecuteCommandGuessAssociatedColumns(_activator, catalogue,null) { SuggestedCategory = CatalogueItems, Weight = -99.045f, });
+            Add(new ExecuteCommandChangeExtractionCategory(_activator,catalogue.GetAllExtractionInformation(ExtractionCategory.Any)) { SuggestedCategory = CatalogueItems, Weight = -99.044f, });
+            Add(new ExecuteCommandImportCatalogueItemDescriptions(_activator,catalogue, null/*pick at runtime*/) { SuggestedCategory = CatalogueItems, Weight = -99.043f, });
+        
+
             if (catalogue.LoadMetadata_ID != null)
             {
                 var dir = catalogue.LoadMetadata.LocationOfFlatFiles;
@@ -77,8 +88,6 @@ namespace Rdmp.UI.Menus
                     Add(new ExecuteCommandOpenInExplorer(_activator, dirReal) { OverrideCommandName = "Open Load Directory"});
                 }
             }
-            
         }
-
     }
 }
