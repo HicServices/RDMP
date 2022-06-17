@@ -907,6 +907,7 @@ namespace Rdmp.UI.Collections
                 
 
             Tree.RebuildAll(true);
+            Tree.Sort();
         }
 
         public void TearDown()
