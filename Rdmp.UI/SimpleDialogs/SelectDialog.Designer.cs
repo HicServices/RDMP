@@ -49,10 +49,12 @@ namespace Rdmp.UI.SimpleDialogs
             this.tbFilter = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.pbLoading = new System.Windows.Forms.PictureBox();
+            this.panel1 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.olv)).BeginInit();
             this.toolStrip1.SuspendLayout();
             this.pFilter.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // olv
@@ -67,10 +69,9 @@ namespace Rdmp.UI.SimpleDialogs
             this.olvID,
             this.olvName,
             this.olvHierarchy});
-            this.olv.Cursor = System.Windows.Forms.Cursors.Default;
             this.olv.Dock = System.Windows.Forms.DockStyle.Fill;
             this.olv.FullRowSelect = true;
-            this.olv.Location = new System.Drawing.Point(0, 67);
+            this.olv.Location = new System.Drawing.Point(0, 0);
             this.olv.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             this.olv.Name = "olv";
             this.olv.ShowGroups = false;
@@ -172,7 +173,6 @@ namespace Rdmp.UI.SimpleDialogs
             // pFilter
             // 
             this.pFilter.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.pFilter.Controls.Add(this.pbLoading);
             this.pFilter.Controls.Add(this.tbFilter);
             this.pFilter.Controls.Add(this.label1);
             this.pFilter.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -205,21 +205,31 @@ namespace Rdmp.UI.SimpleDialogs
             // 
             // pbLoading
             // 
-            this.pbLoading.Dock = System.Windows.Forms.DockStyle.Right;
+            this.pbLoading.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.pbLoading.Location = new System.Drawing.Point(219, 85);
             this.pbLoading.Image = ((System.Drawing.Image)(resources.GetObject("pbLoading.Image")));
-            this.pbLoading.Location = new System.Drawing.Point(562, 0);
             this.pbLoading.Name = "pbLoading";
-            this.pbLoading.Size = new System.Drawing.Size(25, 25);
+            this.pbLoading.Size = new System.Drawing.Size(125, 125);
             this.pbLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pbLoading.TabIndex = 4;
             this.pbLoading.TabStop = false;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.pbLoading);
+            this.panel1.Controls.Add(this.olv);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 67);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(587, 270);
+            this.panel1.TabIndex = 10;
             // 
             // SelectDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(587, 443);
-            this.Controls.Add(this.olv);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.pFilter);
             this.Controls.Add(this.taskDescriptionLabel1);
             this.Controls.Add(this.btnSelect);
@@ -234,6 +244,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.pFilter.ResumeLayout(false);
             this.pFilter.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).EndInit();
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -256,5 +267,6 @@ namespace Rdmp.UI.SimpleDialogs
         private OLVColumn olvSelected;
         private Panel pFilter;
         private PictureBox pbLoading;
+        private Panel panel1;
     }
 }
