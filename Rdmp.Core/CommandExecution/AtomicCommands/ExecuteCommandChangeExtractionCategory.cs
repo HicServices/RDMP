@@ -17,6 +17,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     public class ExecuteCommandChangeExtractionCategory : BasicCommandExecution
     {
         ExtractionInformation[] _extractionInformations;
+        private bool _isProjectSpecific;
         private readonly ExtractionCategory? _category;
 
         [UseWithObjectConstructor]
@@ -29,6 +30,29 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             _extractionInformations = eis;
             this._category = category;
+
+            _isProjectSpecific = false;
+
+            var cata = _extractionInformations.Select(ei => ei.CatalogueItem.Catalogue).Distinct().ToArray();
+            if (cata.Length == 1)
+            {
+                _isProjectSpecific = cata[0].IsProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository);
+            }
+
+            // if project specific only let them set to project specific
+            if (_category != null && _isProjectSpecific && _category != ExtractionCategory.ProjectSpecific)
+            {
+                // user is trying to set to Core
+                if (_category == ExtractionCategory.Core)
+                {
+                    // surely they meant project specific!
+                    _category = ExtractionCategory.ProjectSpecific;
+                }
+                else
+                {
+                    SetImpossible("CatalogueItems can only be ProjectSpecific extraction category");
+                }
+            }
         }
 
         public override string GetCommandName()
@@ -47,7 +71,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-
+                                    
             var c = _category;
 
             if (c == null && BasicActivator.SelectValueType("New Extraction Category", typeof(ExtractionCategory), ExtractionCategory.Core, out object category))
@@ -55,11 +79,18 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if (c == null)
                 return;
-                        
+
+            // if project specific only let them set to project specific
+            if (_isProjectSpecific && c != ExtractionCategory.ProjectSpecific)
+            {
+                throw new Exception("All CatalogueItems in a ProjectSpecific Catalogues must have ExtractionCategory of 'ProjectSpecific'");
+            }
+
             foreach (var ei in _extractionInformations)
             {
                 ei.ExtractionCategory = c.Value;
                 ei.SaveToDatabase();
+                
             }            
 
             //publish the root Catalogue
@@ -67,3 +98,4 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         }
     }
 }
+
