@@ -38,21 +38,15 @@ namespace Rdmp.Core.Providers.Nodes
             if(Category == null)
                 return "Non Extractable";
 
-            switch (Category)
+            return Category switch
             {
-                case ExtractionCategory.Core:
-                    return "Core Items";
-                case ExtractionCategory.Supplemental:
-                    return "Supplemental Items";
-                case ExtractionCategory.SpecialApprovalRequired:
-                    return "Special Approval Items";
-                case ExtractionCategory.Internal:
-                    return "Internal Items";
-                case ExtractionCategory.Deprecated:
-                    return "Deprecated Items";
-            }
-
-            return "Catalogue Items";
+                ExtractionCategory.Core => "Core Items",
+                ExtractionCategory.Supplemental => "Supplemental Items",
+                ExtractionCategory.SpecialApprovalRequired => "Special Approval Items",
+                ExtractionCategory.Internal => "Internal Items",
+                ExtractionCategory.Deprecated => "Deprecated Items",
+                _ => "Catalogue Items"
+            };
         }
 
         protected bool Equals(CatalogueItemsNode other)
