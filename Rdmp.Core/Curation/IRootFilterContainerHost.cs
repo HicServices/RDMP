@@ -13,7 +13,7 @@ namespace Rdmp.Core.Curation
     /// <summary>
     /// Interface for objects with <see cref="IContainer"/> (WHERE) logic defined for them
     /// </summary>
-    public interface IRootFilterContainerHost: ISaveable, IMapsDirectlyToDatabaseTable
+    public interface IRootFilterContainerHost: ISaveable, IMapsDirectlyToDatabaseTable, IMightBeReadOnly
     {
         
         /// <summary>

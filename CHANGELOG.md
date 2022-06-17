@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - When calling commands on the RDMP command line the 'cmd' verb is now optional e.g. you can now enter just `./rdmp list Catalogue`
 - Added `-q` option to suppress console logging.  Allows better piping of commands e.g. to file etc
 - ProblemProvider can now detect unquoted dates in parameter values [#1197](https://github.com/HicServices/RDMP/issues/1197)
+- Added a `NLog.template.config` file to releases for easily enabling diagnostics logging to disk (NLog logging is still disabled by default for the windows client)
+- Performance metrics (refresh time, menu building times) are now passed to NLog logging when enabled in windows client [#1227](https://github.com/HicServices/RDMP/issues/1227)
+- Plugin UploadFileUseCase pipeline components can now declare `IPipelineRequirement<IBasicActivateItems>`
 
 ### Changed
 
@@ -23,6 +26,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - ViewCohortIdentificationConfiguration
   - ViewCohortSample
   - ViewSample
+
+### Fixed
+
+- Fixed user being able to edit filters of a frozen [ExtractionConfiguration]/[CohortIdentificationConfiguration]
 
 ## [7.0.13] - 2022-05-30
 

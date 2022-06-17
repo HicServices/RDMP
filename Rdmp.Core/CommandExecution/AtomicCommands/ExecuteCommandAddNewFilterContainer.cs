@@ -38,6 +38,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     SetImpossible(FiltersCannotBeAddedToApiCalls);
             }
 
+            SetImpossibleIfReadonly(host);
+
             _host = host;
         }
 
@@ -52,6 +54,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             Weight = DEFAULT_WEIGHT;
 
             _container = container;
+
+            SetImpossibleIfReadonly(container);
         }
         public override void Execute()
         {
