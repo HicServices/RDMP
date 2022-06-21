@@ -31,7 +31,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         [UseWithCommandLine(
             ParameterHelpList = "<command,type or object>", 
-            ParameterHelpBreakdown = @"type An object to describe (e.g. Catalogue:bob) or Type name, or the name of a command")]
+            ParameterHelpBreakdown = @"An object (or array of objects) to describe (e.g. Catalogue:bob) or Type name, or the name of a command")]
         public ExecuteCommandDescribe(IBasicActivateItems activator,CommandLineObjectPicker picker):base(activator)
         {
             if(picker.Length != 1)
