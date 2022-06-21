@@ -252,7 +252,6 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             "MSBuild15CMD",
             "SetupLazy",
             "TestCaseSourceAttribute",
-            "DescribeCommand", //aka ExecuteCommandDescribeCommand
             "MySqlConnector",
             "DoSomething",
             "MyTest",

@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - ViewCohortIdentificationConfiguration
   - ViewCohortSample
   - ViewSample
+- Removed the DescribeCommand CLI command.  Now you can just use 'Describe' e.g. `./rdmp describe Deprecate`
 
 ### Fixed
 
