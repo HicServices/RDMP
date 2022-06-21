@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -15,7 +16,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     /// Records as an ExtendedProperty that a given object is replaced by another.
     /// Typically used to forward users of Deprecated items to the new live version
     /// </summary>
-    public class ExecuteCommandIsReplacedBy : BasicCommandExecution, IAtomicCommand
+    public class ExecuteCommandReplacedBy : BasicCommandExecution, IAtomicCommand
     {
         /// <summary>
         /// Key for ExtendedProperty that indicates an object is replaced by another
@@ -27,7 +28,18 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         private Type _type;
 
-        public ExecuteCommandIsReplacedBy(IBasicActivateItems activator, IMapsDirectlyToDatabaseTable deprecated, IMapsDirectlyToDatabaseTable replacement) 
+
+        /// <summary>
+        /// True to prompt user to pick and replacement at execute time
+        /// </summary>
+        public bool PromptToPickReplacement {get;set;}
+
+        [UseWithObjectConstructor]
+        public ExecuteCommandReplacedBy(IBasicActivateItems activator, 
+            [DemandsInitialization("The object that is being retired.  If its Type supports being marked IsDeprecated then it must be true")]
+            IMapsDirectlyToDatabaseTable deprecated, 
+            [DemandsInitialization("The object that replaces the retired one.  Pass null to clear the replacement relationship")]
+            IMapsDirectlyToDatabaseTable replacement) 
             : base(activator)
         {
             
@@ -53,7 +65,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             var rep = Replacement;
 
-            if(rep == null)
+            if(PromptToPickReplacement && rep == null)
             {
                 if(!BasicActivator.SelectObject(new DialogArgs{
                     AllowSelectingNull = true
