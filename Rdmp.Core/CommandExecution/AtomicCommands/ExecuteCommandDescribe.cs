@@ -37,6 +37,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if(picker.Length != 1)
             {
                 SetImpossible($"Expected only a single parameter but there were {picker.Length}");
+                return;
             }
 
             if(picker[0].HasValueOfType(typeof(Type)))
