@@ -184,7 +184,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 return true;
             }
 
-            var dlg = new ConsoleGuiBigListBox<T>(args.WindowTitle,"Ok",true,available,t=>t.ToString(),true);
+            var dlg = new ConsoleGuiBigListBox<T>(args.WindowTitle ?? "","Ok",true,available,t=>t.ToString(),true);
 
             if (dlg.ShowDialog())
             {

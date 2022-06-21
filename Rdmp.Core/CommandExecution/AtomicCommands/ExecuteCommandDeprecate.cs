@@ -43,6 +43,17 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             _o.IsDeprecated = _desiredState;
             _o.SaveToDatabase();
+
+            if(BasicActivator.IsInteractive && _o is Catalogue)
+            {
+                if(_desiredState == true && BasicActivator.YesNo("Do you have a replacement Catalogue you want to link?","Replacement"))
+                {
+                    var cmd = new ExecuteCommandReplacedBy(BasicActivator,_o,null)
+                        {PromptToPickReplacement = true};
+                    cmd.Execute();
+                }
+            }
+
             Publish((DatabaseEntity)_o);
         }
     }
