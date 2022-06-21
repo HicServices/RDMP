@@ -9,6 +9,7 @@ using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
+
     public class ExecuteCommandDeprecate : BasicCommandExecution, IAtomicCommand
     {
         private readonly IMightBeDeprecated _o;
@@ -36,6 +37,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
+
+            if(_o == null)
+                return;
 
             _o.IsDeprecated = _desiredState;
             _o.SaveToDatabase();
