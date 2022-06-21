@@ -85,8 +85,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     existing.DeleteInDatabase();
                 }
 
+            // null means delete relationship and dont create a new one
+            if(rep != null)
+            {
                 // store the ID of the thing that replaces us
                 new ExtendedProperty(cataRepo,Deprecated,ReplacedBy,rep.ID);
+            }
         }
     }
 }
