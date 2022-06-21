@@ -26,16 +26,22 @@ namespace Rdmp.Core.CommandLine.Gui
         /// The maximum number of objects to show in the list box
         /// </summary>
         public const int MaxMatches = 100;
-
-        private ConsoleGuiSelectOne():base("Open","Ok",true,null)
-        {
-            
-        }
         
-        public ConsoleGuiSelectOne(IBasicActivateItems activator):this()
+        public ConsoleGuiSelectOne(IBasicActivateItems activator, IEnumerable<IMapsDirectlyToDatabaseTable> available):base("Open","Ok",
+            true,null)
         {
             _activator = activator;
-            _masterCollection = _activator.CoreChildProvider.GetAllSearchables();
+            
+            if(available != null)
+            {
+                _masterCollection = available.ToDictionary(k=>k,v=>activator.CoreChildProvider.GetDescendancyListIfAnyFor(v));
+            }
+            else
+            {
+                _masterCollection = _activator.CoreChildProvider.GetAllSearchables();
+            }
+            
+            _publicCollection = _masterCollection.Select(v=>v.Key).ToList();
             SetAspectGet(_activator.CoreChildProvider);
         }
 
@@ -75,11 +81,6 @@ namespace Rdmp.Core.CommandLine.Gui
             win.Add(txtId);
         }
 
-        public ConsoleGuiSelectOne(ICoreChildProvider coreChildProvider, IMapsDirectlyToDatabaseTable[] availableObjects):this()
-        {
-            _masterCollection = availableObjects.ToDictionary(k=>k,v=>coreChildProvider.GetDescendancyListIfAnyFor(v));
-            SetAspectGet(coreChildProvider);
-        }
 
         protected override IList<IMapsDirectlyToDatabaseTable> GetListAfterSearch(string searchText, CancellationToken token)
         {
@@ -98,11 +99,6 @@ namespace Rdmp.Core.CommandLine.Gui
                 return new List<IMapsDirectlyToDatabaseTable>();
 
             return _scorer.ShortList(dict, MaxMatches,_activator);
-        }
-
-        protected override IList<IMapsDirectlyToDatabaseTable> GetInitialSource()
-        {
-            return _masterCollection.Keys.ToList();
         }
     }
 }
