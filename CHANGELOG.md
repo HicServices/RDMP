@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added a `NLog.template.config` file to releases for easily enabling diagnostics logging to disk (NLog logging is still disabled by default for the windows client)
 - Performance metrics (refresh time, menu building times) are now passed to NLog logging when enabled in windows client [#1227](https://github.com/HicServices/RDMP/issues/1227)
 - Plugin UploadFileUseCase pipeline components can now declare `IPipelineRequirement<IBasicActivateItems>`
+- Added ability to link deprecated objects to a new version [#949](https://github.com/HicServices/RDMP/issues/949)
+
 
 ### Changed
 
