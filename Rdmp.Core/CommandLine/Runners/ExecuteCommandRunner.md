@@ -103,7 +103,7 @@ Command Completed
 
 ## Running Without Arguments
 
-If you only know the name of a command (but not it's arguments) you can run `Describe`
+If you only know the name of a command (but not its arguments) you can run `Describe`
 
 ```
 > rdmp.exe cmd Describe Set
