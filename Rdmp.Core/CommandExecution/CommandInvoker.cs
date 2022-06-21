@@ -116,7 +116,7 @@ namespace Rdmp.Core.CommandExecution
                     new DialogArgs
                     {
                         WindowTitle = GetPromptFor(p),
-                        InitialObjectSelection = p.DefaultValue == null ? null :
+                        InitialObjectSelection = p.DefaultValue == null || p.DefaultValue == DBNull.Value ? null :
                                 ((IEnumerable<IMapsDirectlyToDatabaseTable>)p.DefaultValue).ToArray()
                     },p.Type.GetElementType(), available);
                 

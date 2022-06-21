@@ -6,21 +6,22 @@
 
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
 
     public class ExecuteCommandDeprecate : BasicCommandExecution, IAtomicCommand
     {
-        private readonly IMightBeDeprecated _o;
+        private readonly IMightBeDeprecated[] _o;
         private bool _desiredState;
-
-        public ExecuteCommandDeprecate(IBasicActivateItems itemActivator, IMightBeDeprecated o) : this(itemActivator, o, true)
-        {
-
-        }
-
-        public ExecuteCommandDeprecate(IBasicActivateItems itemActivator, IMightBeDeprecated o, bool desiredState) : base(itemActivator)
+      
+        [UseWithObjectConstructor]
+        public ExecuteCommandDeprecate(IBasicActivateItems itemActivator, 
+            [DemandsInitialization("The object you want to deprecate/undeprecate")]
+            IMightBeDeprecated[] o, 
+            [DemandsInitialization("True to deprecate.  False to undeprecate",DefaultValue = true)]
+            bool desiredState = true) : base(itemActivator)
         {
             _o = o;
             _desiredState = desiredState;
@@ -38,23 +39,27 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            if(_o == null)
+            if(_o == null || _o.Length == 0)
                 return;
 
-            _o.IsDeprecated = _desiredState;
-            _o.SaveToDatabase();
+            foreach(var o in _o)
+            {
+                o.IsDeprecated = _desiredState;
+                o.SaveToDatabase();
+            }
 
-            if(BasicActivator.IsInteractive && _o is Catalogue)
+
+            if(BasicActivator.IsInteractive && _o.Length == 1 && _o[0] is Catalogue)
             {
                 if(_desiredState == true && BasicActivator.YesNo("Do you have a replacement Catalogue you want to link?","Replacement"))
                 {
-                    var cmd = new ExecuteCommandReplacedBy(BasicActivator,_o,null)
+                    var cmd = new ExecuteCommandReplacedBy(BasicActivator,_o[0],null)
                         {PromptToPickReplacement = true};
                     cmd.Execute();
                 }
             }
 
-            Publish((DatabaseEntity)_o);
+            Publish((DatabaseEntity)_o[0]);
         }
     }
 }
