@@ -102,7 +102,6 @@ namespace Rdmp.Core.Tests.CommandExecution
         [TestCase(typeof(ExecuteCommandDelete))]
         [TestCase(typeof(ExecuteCommandDeprecate))]
         [TestCase(typeof(ExecuteCommandDescribe))]
-        [TestCase(typeof(ExecuteCommandDescribeCommand))]
         [TestCase(typeof(ExecuteCommandDisableOrEnable))]
         [TestCase(typeof(ExecuteCommandExecuteAggregateGraph))]
         [TestCase(typeof(ExecuteCommandExportLoggedDataToCsv))]

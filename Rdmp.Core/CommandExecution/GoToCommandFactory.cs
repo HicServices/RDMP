@@ -54,6 +54,8 @@ namespace Rdmp.Core.CommandExecution
                 if (import != null)
                     yield return new ExecuteCommandShow(_activator, import, 0) { OverrideCommandName = "Show Import Definition" };
 
+                yield return new ExecuteCommandShow(_activator,()=>GetReplacementIfAny(mt)){OverrideCommandName = "Replacement"};
+
                 yield return new ExecuteCommandSimilar(_activator, mt, false) { GoTo = true };
             }
 
@@ -286,6 +288,18 @@ namespace Rdmp.Core.CommandExecution
                 if (masqueraderIfAny.MasqueradingAs() is DatabaseEntity m)
                     yield return new ExecuteCommandShow(_activator, m, 0, true) { OverrideIcon = _activator.CoreIconProvider.GetImage(m) };
             }
+        }
+
+        private IEnumerable<IMapsDirectlyToDatabaseTable> GetReplacementIfAny(IMapsDirectlyToDatabaseTable mt)
+        {
+            var replacement = _activator.RepositoryLocator.CatalogueRepository
+                    .GetAllObjectsWhere<ExtendedProperty>("Name",ExecuteCommandReplacedBy.ReplacedBy)
+                    .FirstOrDefault(r=>r.IsReferenceTo(mt));
+
+            if(replacement == null)
+                return Enumerable.Empty<IMapsDirectlyToDatabaseTable>();
+
+            return new []{mt.Repository.GetObjectByID(mt.GetType(),int.Parse(replacement.Value))};
         }
 
         private Bitmap GetImage(RDMPConcept concept)

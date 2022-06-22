@@ -679,7 +679,7 @@ namespace Rdmp.Core.CommandExecution
                     CohortIfAny = cohort,
                     OverrideCommandName = "New Extraction Configuration using Cohort",
                 };
-                yield return new ExecuteCommandDeprecate(_activator, cohort, !cohort.IsDeprecated)
+                yield return new ExecuteCommandDeprecate(_activator, new []{cohort}, !cohort.IsDeprecated)
                 {
                     OverrideCommandName = cohort.IsDeprecated ? "Undeprecate Cohort": "Deprecate Cohort",
                     Weight = -99.7f
