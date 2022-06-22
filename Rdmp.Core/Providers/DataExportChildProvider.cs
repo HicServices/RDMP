@@ -28,6 +28,7 @@ using Rdmp.Core.Repositories.Managers;
 using Rdmp.Core.Repositories.Managers.HighPerformance;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Providers
 {
@@ -581,7 +582,9 @@ namespace Rdmp.Core.Providers
         {
             ForbidListedSources.Add(source);
 
-            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not reach cohort '" + source + "' (it may be slow responding or inaccessible due to user permissions)", CheckResult.Warning, ex));
+            // notify being unable to reach cohorts unless user has supressed this
+            if(UserSettings.GetErrorReportingLevelFor(ErrorCodes.CouldNotReachCohort) != CheckResult.Success)
+                _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.CouldNotReachCohort, ex));
 
             //tell them not to bother looking for the cohort data because its inaccessible
             foreach (ExtractableCohort cohort in Cohorts.Where(c => c.ExternalCohortTable_ID == source.ID).ToArray())
