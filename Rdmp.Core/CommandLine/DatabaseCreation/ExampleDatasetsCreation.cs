@@ -6,7 +6,10 @@
 
 using BadMedicine;
 using BadMedicine.Datasets;
+using FAnsi;
 using FAnsi.Discovery;
+using FAnsi.Discovery.ConnectionStringDefaults;
+using Microsoft.Data.SqlClient;
 using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
@@ -29,6 +32,7 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -61,6 +65,16 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                 else
                     throw new Exception("Database " + db.GetRuntimeName() + " already exists and allowDrop option was not specified");
             
+            if(db.Server.Builder is SqlConnectionStringBuilder b)
+            {
+                var keywords = _repos.CatalogueRepository
+                    .GetAllObjects<ConnectionStringKeyword>()
+                    .Where(k=>k.DatabaseType == DatabaseType.MicrosoftSQLServer)
+                    .ToArray();
+
+                AddKeywordIfSpecified(b.TrustServerCertificate, nameof(b.TrustServerCertificate),keywords);
+            }
+
             notifier.OnCheckPerformed(new CheckEventArgs("About to create "+ db.GetRuntimeName(),CheckResult.Success));
             //create a new database for the datasets
             db.Create();
@@ -226,6 +240,18 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                     }
                 }
 
+            }
+        }
+
+        private void AddKeywordIfSpecified(bool isEnabled, string name, ConnectionStringKeyword[] alreadyDeclared)
+        {
+            if (isEnabled && !alreadyDeclared.Any(k => k.Name.Equals(name)))
+            {
+                var keyword = new ConnectionStringKeyword(_activator.RepositoryLocator.CatalogueRepository,
+                    DatabaseType.MicrosoftSQLServer, name, "true");
+
+                //pass it into the system wide static keyword collection for use with all databases of this type all the time
+                DiscoveredServerHelper.AddConnectionStringKeyword(keyword.DatabaseType, keyword.Name, keyword.Value, ConnectionStringKeywordPriority.SystemDefaultMedium);
             }
         }
 
