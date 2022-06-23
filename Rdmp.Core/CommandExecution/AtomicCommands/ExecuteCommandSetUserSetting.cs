@@ -8,6 +8,7 @@ using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Repositories.Construction;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -23,7 +25,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     {
         
         private readonly PropertyInfo _property;
-        
+        private ErrorCode _errorCode;
+        private CheckResult _errorCodeValue;
+
         /// <summary>
         /// The new value chosen by the user during command execution
         /// </summary>
@@ -42,7 +46,26 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             [DemandsInitialization("New value to assign, this will be parsed into a valid Type if property is not a string")]
             string value) : base(activator)
         {
-            _property = typeof(UserSettings).GetProperty(property, BindingFlags.Public | BindingFlags.Static);
+            // if user is calling to set an error code e.g. 'rdmp SetUserSetting R001 Success'
+            var isCode = ErrorCodes.KnownCodes.FirstOrDefault(e => e.Code.Equals(property));
+
+            if(isCode != null)
+            {
+                _errorCode = isCode;
+                if(!Enum.TryParse<CheckResult>(value,out var result))
+                {
+                    SetImpossible($"Invalid enum value.  When setting an error code you must supply a value of one of :{string.Join(',', Enum.GetNames<CheckResult>())}");
+                }
+                else
+                {
+                    _errorCodeValue = result;
+                    NewValue = _errorCodeValue;
+                }
+
+                return;
+            }
+
+             _property = typeof(UserSettings).GetProperty(property, BindingFlags.Public | BindingFlags.Static);
 
             if(_property == null)
             {
@@ -79,6 +102,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
+
+            if(_errorCode != null)
+            {
+                UserSettings.SetErrorReportingLevelFor(_errorCode, _errorCodeValue);
+                Success = true;
+                return;
+            }
 
             if(_property == null)
                 return;

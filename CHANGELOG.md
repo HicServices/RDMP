@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ability to link deprecated objects to a new version [#949](https://github.com/HicServices/RDMP/issues/949)
 - Deprecate command now supports deprecating multiple objects at once on CLI
 - Made "Could not reach cohort..." warning suppressible [#1243](https://github.com/HicServices/RDMP/issues/1243)
+- SetUserSetting now works for error codes e.g. `SetUserSetting R011 Success` [#1242](https://github.com/HicServices/RDMP/issues/1242)
 
 ### Changed
 
