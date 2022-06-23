@@ -31,12 +31,12 @@ namespace Rdmp.Core.DataFlowPipeline.Requirements
     {
 
         /// <summary>
-        /// Optional.  Specifies that in order for an <see cref="IPipeline"/> to be compatible with the context, it's <see cref="IPipeline.Source"/> must inherit/implement the given Type
+        /// Optional.  Specifies that in order for an <see cref="IPipeline"/> to be compatible with the context, its <see cref="IPipeline.Source"/> must inherit/implement the given Type
         /// </summary>
         public Type MustHaveSource { get; set; }
 
         /// <summary>
-        /// Optional.  Specifies that in order for an <see cref="IPipeline"/> to be compatible with the context, it's <see cref="IPipeline.Destination"/> must inherit/implement the given Type
+        /// Optional.  Specifies that in order for an <see cref="IPipeline"/> to be compatible with the context, its <see cref="IPipeline.Destination"/> must inherit/implement the given Type
         /// </summary>
         public Type MustHaveDestination { get; set; }
 

@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Deprecate command now supports deprecating multiple objects at once on CLI
 - Made "Could not reach cohort..." warning suppressible [#1243](https://github.com/HicServices/RDMP/issues/1243)
 - SetUserSetting now works for error codes e.g. `SetUserSetting R011 Success` [#1242](https://github.com/HicServices/RDMP/issues/1242)
+- Describe command now shows syntaxes that should be used to satisfy parameters on command line
 
 ### Changed
 
@@ -1125,7 +1126,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Orphan cohort sets (do not belong to any Cohort Identification Configuration) now appear under a top level folder in 'Cohort Builder' collection
 - Extraction Category can now be changed directly from a CatalogueItem, [ExtractionInformation] 
 - Extraction Category can be changed for all columns in a [Catalogue] at once by right clicking the or the CatalogueItemsNode (folder under a Catalogue)
-- Right clicking a column allows you to Alter it's type e.g. increase the size of a varchar field
+- Right clicking a column allows you to Alter its type e.g. increase the size of a varchar field
 
 ### Changed
 
@@ -1133,13 +1134,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Extraction source component `ExecuteCrossServerDatasetExtractionSource` now never drops the temporary cohort database (previously it would drop it if it created it and CreateTemporaryDatabaseIfNotExists was true)
 - Updated to latest version of [FAnsiSql] (0.10.4) for better Oracle, localization and type estimation
 - Dashboards now appear in tree view instead of application tool strip and are searchable
-- [CatalogueItem] descriptions pie chart has flags for including internal/project specific etc in it's counts
+- [CatalogueItem] descriptions pie chart has flags for including internal/project specific etc in its counts
 - [CatalogueItem] descriptions pie chart now lets you navigate directly to problem objects rather than showing a data table
 
 ### Fixed 
 - Deleting an object now clears the selection in tree views (previously selection would become an arbitrary object).
 - Fixed bug where adding/moving cohort sets between containers ([INTERSECT]/[UNION]/[EXCEPT]) could result in 2 objects with the same Order in the same container (resulting in ambiguous order of execution).
-- Fixed UI bug where selecting an extractable [Catalogue] would hide it's extractable (small green e) icon overlay
+- Fixed UI bug where selecting an extractable [Catalogue] would hide its extractable (small green e) icon overlay
 - Fixed bug where deleting a Pinned object would not unpin the object
 - Fixed bug where database tables with brackets in the name could break synchronization (these tables are now ignored by RDMP and cannot be imported).
 - Fixed bug deleting multiple objects at once when some objects are parents of others (and cause implicit delete).

@@ -54,7 +54,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             var cata = new Catalogue(Repository, "fishing");
             int expectedID = cata.ID;
 
-            //find it and change it's name
+            //find it and change its name
             Catalogue[] catas = Repository.GetAllObjects<Catalogue>().ToArray();
 
             foreach (var catalogue in catas)
@@ -66,7 +66,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 }
             }
 
-            //find it again and see if it's name has changed - then delete it so we don't polute the db
+            //find it again and see if its name has changed - then delete it so we don't polute the db
             Catalogue[] catasAfter = Repository.GetAllObjects<Catalogue>().ToArray();
 
             foreach (var catalogue in catasAfter)
@@ -86,7 +86,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             var cata = new Catalogue(Repository, "fishing");
             int expectedID = cata.ID;
 
-            //find it and change it's name
+            //find it and change its name
             Catalogue[] catas = Repository.GetAllObjects<Catalogue>().ToArray();
 
             foreach (var catalogue in catas)

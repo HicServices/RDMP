@@ -27,7 +27,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _targetCohortAggregateContainer = targetCohortAggregateContainer;
 
             if(_sourceCohortAggregateContainer.AllSubContainersRecursively.Contains(_targetCohortAggregateContainer))
-                SetImpossible("Cannot move a container into one of it's own subcontainers");
+                SetImpossible("Cannot move a container into one of its own subcontainers");
 
             if(_sourceCohortAggregateContainer.AggregateContainer.Equals(_targetCohortAggregateContainer))
                 SetImpossible("Cannot move a container into itself");

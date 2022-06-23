@@ -22,7 +22,7 @@ using ReusableLibraryCode.DataAccess;
 namespace Rdmp.UI.SimpleDialogs
 {
     /// <summary>
-    /// Every dataset (Catalogue) can have it's own Logging task and Logging server.  If you have multiple logging servers (e.g. a test logging server and a live logging server). You 
+    /// Every dataset (Catalogue) can have its own Logging task and Logging server.  If you have multiple logging servers (e.g. a test logging server and a live logging server). You 
     /// can configure each of these independently.  If you only have one logging server then just set the live logging server. 
     /// 
     /// <para>Once you have set the logging server you should create or select an existing task (e.g. 'Loading Biochemistry' might be a good logging task for Biochemistry dataset).  All datasets
@@ -65,7 +65,7 @@ namespace Rdmp.UI.SimpleDialogs
                     .SingleOrDefault(i => i.ID == (int)_catalogue.LiveLoggingServer_ID);
 
                 if(liveserver == null)
-                    throw new Exception("Catalogue '" + _catalogue + "' lists it's Live Logging Server as '" + _catalogue.LiveLoggingServer + "' did not appear in combo box, possibly it is not marked as a '" + expectedDatabaseTypeString + "' server? Try editting it in Locations=>Manage External Servers");
+                    throw new Exception("Catalogue '" + _catalogue + "' lists its Live Logging Server as '" + _catalogue.LiveLoggingServer + "' did not appear in combo box, possibly it is not marked as a '" + expectedDatabaseTypeString + "' server? Try editting it in Locations=>Manage External Servers");
 
                 ddLoggingServer.SelectedItem = liveserver;
             }

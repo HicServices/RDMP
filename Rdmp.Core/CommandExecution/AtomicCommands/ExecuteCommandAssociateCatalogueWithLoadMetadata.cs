@@ -83,7 +83,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                                 if (string.IsNullOrWhiteSpace(cata.LoggingDataTask)
 
                                 //or if the user wants to switch to the new one
-                                || YesNo("Do you want to set Catalogue '" + cata.Name + "' to use shared logging task '" + task + "' instead of it's current Logging Task '" + cata.LoggingDataTask + "' (All Catalogues in a load must share the same task and logging servers)?", "Synchronise Logging Tasks"))
+                                || YesNo("Do you want to set Catalogue '" + cata.Name + "' to use shared logging task '" + task + "' instead of its current Logging Task '" + cata.LoggingDataTask + "' (All Catalogues in a load must share the same task and logging servers)?", "Synchronise Logging Tasks"))
                                 {
                                     //switch Catalogue to use that logging task (including servers)
                                     cata.LoggingDataTask = task;

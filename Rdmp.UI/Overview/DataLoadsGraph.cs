@@ -132,7 +132,7 @@ namespace Rdmp.UI.Overview
                             }
                             catch (NotSupportedException e)
                             {
-                                //sometimes a load metadata won't have any catalogues so we can't process it's log history
+                                //sometimes a load metadata won't have any catalogues so we can't process its log history
                                 if(e.Message.Contains("does not have any Catalogues associated with it"))
                                     continue;
                                 

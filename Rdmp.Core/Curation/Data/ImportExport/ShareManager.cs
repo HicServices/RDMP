@@ -74,7 +74,7 @@ namespace Rdmp.Core.Curation.Data.ImportExport
         }
 
         /// <summary>
-        /// Gets a serializated representation of the object, this is a reference to the object by ID / SharingUID (if it has one) not a list of all it's property values.
+        /// Gets a serializated representation of the object, this is a reference to the object by ID / SharingUID (if it has one) not a list of all its property values.
         /// </summary>
         /// <param name="o"></param>
         /// <returns></returns>
@@ -157,7 +157,7 @@ namespace Rdmp.Core.Curation.Data.ImportExport
         }
 
         /// <summary>
-        /// Returns true if an <see cref="ObjectImport"/> has been declared for the given shared object identified by it's <paramref name="sharingUID"/>
+        /// Returns true if an <see cref="ObjectImport"/> has been declared for the given shared object identified by its <paramref name="sharingUID"/>
         /// </summary>
         /// <param name="sharingUID"></param>
         /// <returns></returns>
@@ -270,7 +270,7 @@ namespace Rdmp.Core.Curation.Data.ImportExport
         }
 
         /// <summary>
-        /// Marks the given local object <paramref name="o"/> as an imported instance of a shared object (identified by it's <paramref name="sharingUID"/>)
+        /// Marks the given local object <paramref name="o"/> as an imported instance of a shared object (identified by its <paramref name="sharingUID"/>)
         /// </summary>
         /// <param name="sharingUID"></param>
         /// <param name="o"></param>

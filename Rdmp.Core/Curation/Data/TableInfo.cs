@@ -368,7 +368,7 @@ namespace Rdmp.Core.Curation.Data
 
 
         /// <summary>
-        /// Checks that the table referenced exists on the database server and that it's properties and <see cref="ColumnInfo"/> etc are synchronized with the live
+        /// Checks that the table referenced exists on the database server and that its properties and <see cref="ColumnInfo"/> etc are synchronized with the live
         /// table as it exists on the server.
         /// </summary>
         /// <param name="notifier"></param>

@@ -75,7 +75,7 @@ namespace Rdmp.Core
         }
 
         /// <summary>
-        /// Return true if the object should never be reordered and always ordered alphabetically based on it's <see cref="INamed.Name"/>
+        /// Return true if the object should never be reordered and always ordered alphabetically based on its <see cref="INamed.Name"/>
         /// </summary>
         /// <param name="x"></param>
         /// <returns></returns>

@@ -47,7 +47,7 @@ namespace Rdmp.Core.Providers
     /// 2. Create a method overload AddChildren that takes the object
     /// 3. Create a new HashSet containing all the child objects (regardless of mixed Type)
     /// 4. Call AddToDictionaries with a new DescendancyList containing the parent object
-    /// 5. For each of the objects added that has children of it's own repeat the above (Except call DescendancyList.Add instead of creating a new one)</para>
+    /// 5. For each of the objects added that has children of its own repeat the above (Except call DescendancyList.Add instead of creating a new one)</para>
     ///  
     /// </summary>
     public class CatalogueChildProvider : ICoreChildProvider
@@ -1544,7 +1544,7 @@ namespace Rdmp.Core.Providers
                             try
                             {
                                 sw.Restart();
-                                //otherwise ask plugin what it's children are
+                                //otherwise ask plugin what its children are
                                 var pluginChildren = plugin.GetChildren(o);
 
                                 //if the plugin takes too long to respond we need to stop

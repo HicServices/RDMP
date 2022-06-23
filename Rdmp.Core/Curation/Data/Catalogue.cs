@@ -1107,7 +1107,7 @@ namespace Rdmp.Core.Curation.Data
         }
 
         /// <summary>
-        /// Gets the <see cref="LogManager"/> for logging load events related to this Catalogue / it's LoadMetadata (if it has one).  This will throw if no
+        /// Gets the <see cref="LogManager"/> for logging load events related to this Catalogue / its LoadMetadata (if it has one).  This will throw if no
         /// logging server has been configured.
         /// </summary>
         /// <returns></returns>

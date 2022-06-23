@@ -13,7 +13,7 @@ using ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.FilterImporting
 {
     /// <summary>
-    /// Handles renaming a parameter in the WHERE SQL of it's parent (if it has one).  Use this when you want the user to be able to change the name of a parameter and for this
+    /// Handles renaming a parameter in the WHERE SQL of its parent (if it has one).  Use this when you want the user to be able to change the name of a parameter and for this
     /// to be carried through to the parent without having any knowledge available to what that parent is or even if it has one
     /// </summary>
     public class ParameterRefactorer : IParameterRefactorer
@@ -38,7 +38,7 @@ namespace Rdmp.Core.Curation.FilterImporting
                 return false;
 
             if (!parameter.ParameterName.Equals(newName))
-                throw new ArgumentException("Expected parameter " + parameter + " to have name '" + newName + "' but it's value was " + parameter.ParameterName + ", this means someone was lying about the rename event");
+                throw new ArgumentException("Expected parameter " + parameter + " to have name '" + newName + "' but its value was " + parameter.ParameterName + ", this means someone was lying about the rename event");
 
             var owner = parameter.GetOwnerIfAny();
 

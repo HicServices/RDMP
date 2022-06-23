@@ -47,7 +47,7 @@ namespace ReusableLibraryCode
                 Directory.CreateDirectory(target.FullName);
             }
 
-            // Copy each file into it's new directory.
+            // Copy each file into its new directory.
             foreach (FileInfo fi in source.GetFiles())
             {
                 fi.CopyTo(Path.Combine(target.ToString(), fi.Name), true);

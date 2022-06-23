@@ -143,7 +143,7 @@ GO";
             var testIdHeadPlan = plan1.GetPlanForColumnInfo(c1.Single(c => c.GetRuntimeName().Equals("TestId")));
             plan1.TargetDatabase = _destinationDatabase;
 
-            //the plan is that the column TestId should be anonymised - where it's name will become ANOTestId
+            //the plan is that the column TestId should be anonymised - where its name will become ANOTestId
             testIdHeadPlan.Plan = Plan.ANO;
             testIdHeadPlan.ANOTable = _anoTable;
 

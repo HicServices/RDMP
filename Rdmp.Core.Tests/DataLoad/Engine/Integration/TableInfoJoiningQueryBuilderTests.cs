@@ -86,7 +86,7 @@ FROM
             //set the filter
             queryBuilder.RootFilterContainer = spontContainer;
 
-            //this is super sneaky but makes the queryBuilder populate it's Filters property... basically your not supposed to use SqlQueryBuilderHelper for this kind of thing
+            //this is super sneaky but makes the queryBuilder populate its Filters property... basically your not supposed to use SqlQueryBuilderHelper for this kind of thing
             Console.WriteLine(queryBuilder.SQL);
             queryBuilder.ParameterManager.ClearNonGlobals();
 

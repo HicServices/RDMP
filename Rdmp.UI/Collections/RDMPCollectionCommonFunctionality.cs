@@ -97,7 +97,7 @@ namespace Rdmp.UI.Collections
 
         /// <summary>
         /// Sets up width and visibility tracking on the given <paramref name="col"/>.  Each logically different
-        /// column should have it's own unique Guid.  But it is ok for the same column (e.g. ID) in two different
+        /// column should have its own unique Guid.  But it is ok for the same column (e.g. ID) in two different
         /// collection windows to share the same Guid in order to persist user preference of visibility of the concept.
         /// </summary>
         /// <param name="col"></param>

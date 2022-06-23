@@ -127,7 +127,7 @@ Drag and drop in tree views is handled through the `RDMPCommandExecutionProposal
 1. ICombineToMakeCommand created
 1. ICombineToMakeCommand loaded with relevant facts about object being dragged
 1. User drags object around and hovers over various other objects
-1. Each object hovered over has it's `RDMPCommandExecutionProposal<T>.ProposeExecution` consulted for drop legality
+1. Each object hovered over has its `RDMPCommandExecutionProposal<T>.ProposeExecution` consulted for drop legality
 1. User drops object
 1. If the ``RDMPCommandExecutionProposal<T>.ProposeExecution` returned a command that was not `IsImpossible` then command is executed
 
@@ -169,7 +169,7 @@ public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pr
 }
 ```
 
-Adding support for dragging a new object (not currently draggable) involves creating a new `ICombineToMakeCommand` and implementing it's construction logic in `RDMPCombineableFactory`
+Adding support for dragging a new object (not currently draggable) involves creating a new `ICombineToMakeCommand` and implementing its construction logic in `RDMPCombineableFactory`
 
 ## Menus
 

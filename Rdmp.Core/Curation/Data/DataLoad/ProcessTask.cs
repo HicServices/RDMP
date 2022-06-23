@@ -310,7 +310,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         }
 
         /// <summary>
-        /// Creates a new copy of the processTask and all it's arguments in the database, this clone is then hooked up to the
+        /// Creates a new copy of the processTask and all its arguments in the database, this clone is then hooked up to the
         /// new LoadMetadata at the specified stage
         /// </summary>
         /// <param name="loadMetadata">The new LoadMetadata parent for the clone</param>

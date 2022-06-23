@@ -330,7 +330,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
 
             foreach(var c in catalogues)
             {
-                //Get it's extractableness
+                //Get its extractableness
                 var eds = _repos.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault() 
                             ?? new ExtractableDataSet(_repos.DataExportRepository,c); //or make it extractable
                 

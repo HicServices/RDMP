@@ -15,7 +15,7 @@ namespace ReusableLibraryCode.Checks
     /// is a string that suggests how a problem can be resolved but where the resolution might be undesireable under certain circumstances (hence the choice).
     /// 
     /// <para>The workflow is:
-    /// 1. ICheckable has it's Check method called with an ICheckNotifier
+    /// 1. ICheckable has its Check method called with an ICheckNotifier
     /// 2. Check logic performed
     /// 3. CheckEventArgs created and ICheckNotifier.OnCheckPerformed called
     /// 4. ICheckNotifier decides how to respond to the message (which can include throwing an Exception - which you should not catch/suppress).

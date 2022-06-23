@@ -128,7 +128,7 @@ namespace MapsDirectlyToDatabaseTable
         bool AreEqual(IMapsDirectlyToDatabaseTable obj1, object obj2);
 
         /// <summary>
-        /// Returns a hash of the objects Type and it's <see cref="IMapsDirectlyToDatabaseTable.ID"/>
+        /// Returns a hash of the objects Type and its <see cref="IMapsDirectlyToDatabaseTable.ID"/>
         /// </summary>
         /// <param name="obj1"></param>
         /// <returns></returns>

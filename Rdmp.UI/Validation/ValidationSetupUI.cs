@@ -59,7 +59,7 @@ namespace Rdmp.UI.Validation
 
             var c = ei.GetRuntimeName();
 
-            //The validator can contains all the columns in the Catalogue (Dataset) but columns which don't have any validation on them yet might not be in it's ItemValidators collection
+            //The validator can contains all the columns in the Catalogue (Dataset) but columns which don't have any validation on them yet might not be in its ItemValidators collection
             if (!Validator.ItemValidators.Any(iv => iv.TargetProperty.Equals(c)))
                 Validator.ItemValidators.Add(new ItemValidator(c));//It's a novel column, so create an empty ItemValidator for the column name so the user can configure new validation
 

@@ -149,7 +149,7 @@ namespace ReusableLibraryCode.Annotations
   /// <item>Output   ::= [ParameterName: Value]* {halt|stop|void|nothing|Value}</item>
   /// <item>Value    ::= true | false | null | notnull | canbenull</item>
   /// </list>
-  /// If method has single input parameter, it's name could be omitted.<br/>
+  /// If method has single input parameter, its name could be omitted.<br/>
   /// Using <c>halt</c> (or <c>void</c>/<c>nothing</c>, which is the same)
   /// for method output means that the methos doesn't return normally.<br/>
   /// <c>canbenull</c> annotation is only applicable for output parameters.<br/>

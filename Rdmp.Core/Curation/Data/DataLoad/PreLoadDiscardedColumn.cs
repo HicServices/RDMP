@@ -172,7 +172,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
                         string.Format(
-                            "Column is set to {0}  which means it's value should be stored in the IdentifierDump but the parent table '{1}'  doesn't have a dump server configured",
+                            "Column is set to {0}  which means its value should be stored in the IdentifierDump but the parent table '{1}'  doesn't have a dump server configured",
                             Destination,
                             TableInfo),
                         CheckResult.Fail));

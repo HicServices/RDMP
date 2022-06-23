@@ -72,7 +72,7 @@ _Example User Interface Test_
 
 ## Database Tests
 
-The RDMP client requires an Sql Server instance for storing platform metadata objects (`Catalogue`, `Project` etc).  It's primary purpose is to query / manage SQL datasets (for linkage, extraction etc).  Database tests exist to test this functionality.
+The RDMP client requires an Sql Server instance for storing platform metadata objects (`Catalogue`, `Project` etc).  its primary purpose is to query / manage SQL datasets (for linkage, extraction etc).  Database tests exist to test this functionality.
 
 Before running DatabaseTests you must create a set of RDMP platform databases for testing.  This can be done through the [RDMP command line tool](https://github.com/HicServices/RDMP/releases):
 

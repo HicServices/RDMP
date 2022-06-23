@@ -56,14 +56,14 @@ namespace Rdmp.Core.Repositories.Managers
         IOrderable[] GetChildren(CohortAggregateContainer parent);
         
         /// <summary>
-        /// Removes the given <paramref name="child"/> container from it's host parent container
+        /// Removes the given <paramref name="child"/> container from its host parent container
         /// </summary>
         /// <param name="parent"></param>
         /// <param name="child"></param>
         void Remove(CohortAggregateContainer parent, CohortAggregateContainer child);
 
         /// <summary>
-        /// Reorders the <paramref name="child"/> to appear in the new location within it's parent container (relative to other things in the container).
+        /// Reorders the <paramref name="child"/> to appear in the new location within its parent container (relative to other things in the container).
         /// </summary>
         /// <param name="child"></param>
         /// <param name="newOrder"></param>

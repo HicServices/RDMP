@@ -64,7 +64,7 @@ namespace Rdmp.Core.Tests.CohortCreation
             
                 //they are not the same object
                 Assert.AreNotEqual(filter, importedFilters[0]);
-                //the deployed filter knows it's parent it was cloned from
+                //the deployed filter knows its parent it was cloned from
                 Assert.AreEqual(filter.ID, importedFilters[0].ClonedFromExtractionFilter_ID);
                 //the WHERE SQL of the filters should be the same
                 Assert.AreEqual(filter.WhereSQL, importedFilters[0].WhereSQL);

@@ -37,7 +37,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
     /// be included.  This UI handles column selection / editting for both regular Aggregate Graphs, Cohort Sets and Patient Index Tables (because they are all actually just AggregateConfiguration
     /// objects anyway). 
     /// 
-    /// <para>Ticking a column includes it in the configuration, unticking it deletes it.  If you have ticked an ExtractionInformation it will become an AggregateDimension which means when you change it's
+    /// <para>Ticking a column includes it in the configuration, unticking it deletes it.  If you have ticked an ExtractionInformation it will become an AggregateDimension which means when you change its
     /// SQL implementation it will not affect the main extraction implementation.  This means that if you tick a column and modify it then untick it you will loose the changes.</para>
     /// 
     /// <para>The count column appears in Wheat background color and can be modified to any GROUP BY aggregate function e.g. max(dt)</para>
@@ -200,7 +200,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
         {
             var col = (IColumn) cellEditEventArgs.RowObject;
 
-            //user deleted it's value
+            //user deleted its value
             if (string.IsNullOrWhiteSpace(col.SelectSQL) && col.ColumnInfo != null)
             {
                 col.SelectSQL = col.ColumnInfo.Name;

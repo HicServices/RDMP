@@ -113,7 +113,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.FilterImportingTests
                 );
 
             Mock.Get(master).Setup(m=> m.GetAllParameters()).Returns(new[] {masterParameter});
-            //We expect that the filter we are cloning will be asked what it's parameters are once (and we tell them the param above)
+            //We expect that the filter we are cloning will be asked what its parameters are once (and we tell them the param above)
             
             
             //The return values for our Mock factory
@@ -130,7 +130,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.FilterImportingTests
             var filterCreator = new FilterImporter(factory, null);
             filterCreator.ImportFilter(WhenIHaveA<AggregateFilterContainer>(), master, null);//Import it brah
             
-            //Master filter should have been asked what it's parameters are
+            //Master filter should have been asked what its parameters are
             Mock.Get(master).Verify();
 
             //factory should have been asked to create a new filter called "Space Odyssey" and a parameter with a declaration that matches the master filter SQL (i.e. 'AS int')
@@ -172,7 +172,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.FilterImportingTests
             var filterCreator = new FilterImporter(factory.Object, null);
             filterCreator.ImportFilter(WhenIHaveA<AggregateFilterContainer>(), master, new []{existing});
 
-            //Existing filter in the scope should have been asked what it's parameters are
+            //Existing filter in the scope should have been asked what its parameters are
             Mock.Get(existing).Verify(x=>x.GetAllParameters(),Times.Once);
 
             //The factory should have been asked to create a filter called "Copy of Space Odyssey" and a parameter "@hall2" (because @hall already exists in the import into scope)
@@ -193,7 +193,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.FilterImportingTests
             masterParameter.Value = "500";
             masterParameter.ParameterSQL = "DECLARE @hall AS int";
 
-            //We expect that the filter we are cloning will be asked what it's parameters are once (and we tell them the param above)
+            //We expect that the filter we are cloning will be asked what its parameters are once (and we tell them the param above)
             Mock.Get(master).Setup(m => m.GetAllParameters()).Returns(new[] { masterParameter });
             
             //An existing parameter that is in the scope that is being imported into
@@ -220,10 +220,10 @@ namespace Rdmp.Core.Tests.Curation.Integration.FilterImportingTests
 
             Assert.AreEqual("@hall2 = 'active'",constructed.WhereSQL);
 
-            //Master filter should have been asked what it's parameters are
+            //Master filter should have been asked what its parameters are
             Mock.Get(master).Verify(m => m.GetAllParameters(),Times.Once);
 
-            //Existing filter in the scope should have been asked what it's parameters are
+            //Existing filter in the scope should have been asked what its parameters are
             Mock.Get(existing).Verify();
 
             //The factory should have been asked to create a filter called "Copy of Space Odyssey" and a parameter "@hall2" (because @hall already exists in the import into scope) with type int because master parameter is type int

@@ -159,7 +159,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             var liveNewRow = _table.GetDataTable().Rows.Cast<DataRow>().Single(r=>r["bubbles"] as int? ==99);
             Assert.AreEqual(DateTime.Now.Date,((DateTime)liveNewRow[SpecialFieldNames.ValidFrom]).Date);
 
-            // Archived row should not have had it's validFrom field broken
+            // Archived row should not have had its validFrom field broken
             var archivedRow = _archiveTable.GetDataTable().Rows.Cast<DataRow>().Single(r=>r["bubbles"] as int? ==3);
             Assert.AreEqual(new DateTime(2001,1,2),((DateTime)archivedRow[SpecialFieldNames.ValidFrom]));
         }

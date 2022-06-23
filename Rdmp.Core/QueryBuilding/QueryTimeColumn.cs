@@ -259,7 +259,7 @@ namespace Rdmp.Core.QueryBuilding
                 string tableName = LookupTable.PrimaryKey.TableInfo.Name;
 
                 if (!toReturn.Contains(tableName))
-                    throw new Exception("Column \"" + toReturn + "\" is a Lookup Description but it's SELECT SQL does not include the Lookup table name \"" + tableName + "\"");
+                    throw new Exception("Column \"" + toReturn + "\" is a Lookup Description but its SELECT SQL does not include the Lookup table name \"" + tableName + "\"");
 
                 toReturn = toReturn.Replace(tableName, JoinHelper.GetLookupTableAlias(LookupTableAlias));
             }

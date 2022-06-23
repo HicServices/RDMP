@@ -40,7 +40,7 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             
             var ei = col.CatalogueExtractionInformation;
 
-            //it's parent ExtractionInformation still exists then we can determine it's category
+            //its parent ExtractionInformation still exists then we can determine its category
             if (ei != null)
             {
                 switch (ei.ExtractionCategory)

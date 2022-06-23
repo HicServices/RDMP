@@ -26,7 +26,7 @@ namespace Rdmp.Core.Curation.FilterImporting
         /// <summary>
         /// Specifies overriding definitions for <see cref="ISqlParameter"/> which should be used with all <see cref="IFilter"/> built by this class.  When you import
         /// a master filter that has parameters then this array will be consulted.  If a matching parameter name is found then the imported parameter will have that value
-        /// rather than it's default.
+        /// rather than its default.
         /// 
         /// <para><seealso cref="ExtractionFilterParameterSet"/></para>
         /// </summary>

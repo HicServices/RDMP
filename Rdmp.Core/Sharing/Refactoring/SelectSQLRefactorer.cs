@@ -35,7 +35,7 @@ namespace Rdmp.Core.Sharing.Refactoring
             var ci = column.ColumnInfo;
 
             if(ci == null)
-                throw new RefactoringException("Cannot refactor '"+column+"' because it's ColumnInfo was null");
+                throw new RefactoringException("Cannot refactor '"+column+"' because its ColumnInfo was null");
 
             string fullyQualifiedName = tableName.GetFullyQualifiedName();
             
@@ -125,10 +125,10 @@ namespace Rdmp.Core.Sharing.Refactoring
             var ci = column.ColumnInfo;
 
             if (ci == null)
-                return "Cannot refactor '" + column + "' because it's ColumnInfo was null";
+                return "Cannot refactor '" + column + "' because its ColumnInfo was null";
 
             if (!column.SelectSQL.Contains(ci.Name))
-                return "IColumn '" + column + "' did not contain the fully specified column name of it's underlying ColumnInfo ('"+ci.Name+"') during refactoring";
+                return "IColumn '" + column + "' did not contain the fully specified column name of its underlying ColumnInfo ('"+ci.Name+"') during refactoring";
             
             string fullyQualifiedName = ci.TableInfo.GetFullyQualifiedName();
 
@@ -150,7 +150,7 @@ namespace Rdmp.Core.Sharing.Refactoring
         }
 
         /// <summary>
-        /// Returns the reason why <paramref name="table"/> is not refactorable e.g. if it's name is not properly qualified
+        /// Returns the reason why <paramref name="table"/> is not refactorable e.g. if its name is not properly qualified
         /// with database.  Returns null if it is refactorable
         /// </summary>
         /// <param name="table"></param>
@@ -161,7 +161,7 @@ namespace Rdmp.Core.Sharing.Refactoring
                 return "Table has no Name property, this should be the fully qualified database table name";
 
             if(string.IsNullOrWhiteSpace(table.Database))
-                return "Table does not have it's Database property set";
+                return "Table does not have its Database property set";
 
             //ensure database and Name match correctly
             var syntaxHelper = table.GetQuerySyntaxHelper();

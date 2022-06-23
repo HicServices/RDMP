@@ -1,5 +1,5 @@
 ﻿--Version:1.8.0.0
---Description: Changes [FK_Project_DataUser_Project] from 'NO ACTION' to 'CASCADE' on delete (allows you to delete a project and have it's users m-m relationships deleted)
+--Description: Changes [FK_Project_DataUser_Project] from 'NO ACTION' to 'CASCADE' on delete (allows you to delete a project and have its users m-m relationships deleted)
 if exists (select * from sys.foreign_keys where name='FK_Project_DataUser_Project' and delete_referential_action = 0 /*NO_ACTION*/)
 begin
 

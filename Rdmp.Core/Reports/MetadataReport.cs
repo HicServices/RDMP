@@ -448,7 +448,7 @@ namespace Rdmp.Core.Reports
 
             }
             else
-                tableToQuery = bestExtractionInformation[0].ColumnInfo.TableInfo;//there is an extraction identifier so use it's table to query
+                tableToQuery = bestExtractionInformation[0].ColumnInfo.TableInfo;//there is an extraction identifier so use its table to query
 
             bool hasExtractionIdentifier = bestExtractionInformation.Any();
 

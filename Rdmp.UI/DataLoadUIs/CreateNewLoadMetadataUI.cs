@@ -15,7 +15,7 @@ namespace Rdmp.UI.DataLoadUIs
 {
     /// <summary>
     /// There is a M-1 relationship between Catalogues (datasets) and LoadMetadata (data load recipes).  This window is accessed by right clicking a Catalogue and choosing
-    /// to configure it's LoadMetadata (how data is loaded).  You can either select an existing LoadMetadata (which will probably need modifying such that it correctly loads
+    /// to configure its LoadMetadata (how data is loaded).  You can either select an existing LoadMetadata (which will probably need modifying such that it correctly loads
     /// the new table in addition to what other datasets it already loaded.  Or you can create a new LoadMetadata and create a load from scratch.
     /// 
     /// <para>Once selected you will be taken to the dataset load configuration screen (See LoadMetadataUI)</para>
