@@ -38,12 +38,16 @@ namespace Rdmp.Core.Tests.CommandExecution
             var cmd = new ExecuteCommandSetUserSetting(GetActivator(), "R001", "foo");
             Assert.IsTrue(cmd.IsImpossible);
             Assert.AreEqual(cmd.ReasonCommandImpossible, "Invalid enum value.  When setting an error code you must supply a value of one of :Success,Warning,Fail");
+        }
 
+        [Test]
+        public void TestSettingErrorCodeValue_Success()
+        {
             Assert.AreEqual("R001", ErrorCodes.ExistingExtractionTableInDatabase.Code);
             var before = UserSettings.GetErrorReportingLevelFor(ErrorCodes.ExistingExtractionTableInDatabase);
             Assert.AreNotEqual(CheckResult.Success, before);
 
-            cmd = new ExecuteCommandSetUserSetting(GetActivator(), "R001", "Success");
+            var cmd = new ExecuteCommandSetUserSetting(GetActivator(), "R001", "Success");
             Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
             cmd.Execute();
 
