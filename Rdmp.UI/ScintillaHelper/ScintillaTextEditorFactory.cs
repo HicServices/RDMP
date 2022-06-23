@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -50,7 +51,17 @@ namespace Rdmp.UI.ScintillaHelper
         /// <returns></returns>
         public Scintilla Create(ICombineableFactory commandFactory = null, SyntaxLanguage language = SyntaxLanguage.SQL, IQuerySyntaxHelper syntaxHelper = null, bool spellCheck = false, bool lineNumbers = true, string currentDirectory = null)
         {
-            var toReturn =  new Scintilla();
+            Scintilla toReturn = null;
+
+            try
+            {
+                toReturn = new Scintilla();
+            }
+            catch (Win32Exception ex)
+            {
+                throw new Exception("Could not load Scintilla.  Check that the latest Visual C++ 2015 Redistributable is installed",ex);
+            }
+            
             toReturn.Dock = DockStyle.Fill;
             toReturn.HScrollBar = true;
             toReturn.VScrollBar = true;
