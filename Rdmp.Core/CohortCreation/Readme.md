@@ -21,7 +21,7 @@ Cohorts are always created by performing set operations and/or joins on distinct
 
 ### Background
 
-A complicated cohort can easily include 10 or more criteria (prescribed drug X; never prescribed drug y etc).  Each criteria can involve querying a large number of records and can take some time.  The traditional approach to this problem is to use temporary tables (e.g. `tempdb`) or a scratch area (e.g. MyWorkingDb) to create tables that store results for subsections of the overall query.  RDMP automates this practice through it's query caching subsystem.
+A complicated cohort can easily include 10 or more criteria (prescribed drug X; never prescribed drug y etc).  Each criteria can involve querying a large number of records and can take some time.  The traditional approach to this problem is to use temporary tables (e.g. `tempdb`) or a scratch area (e.g. MyWorkingDb) to create tables that store results for subsections of the overall query.  RDMP automates this practice through its query caching subsystem.
 
 The RDMP query cache also get's around [DBMS] limitations e.g. MySql not supporting Set operations ([UNION] / [INTERSECT] / [EXCEPT]) and enables cross server (and [DBMS]) query generation.
 

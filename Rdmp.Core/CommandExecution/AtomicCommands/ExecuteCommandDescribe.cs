@@ -187,7 +187,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             // Usage
             if (dynamicCtorAttribute != null)
             {
-                //is it a dynamic command (one that processes it's own CommandLinePicker)
+                //is it a dynamic command (one that processes its own CommandLinePicker)
 
                 // Added to the call line e.g. "./rdmp cmd MyCall <param1> <someotherParam>"
                 sb.Append(dynamicCtorAttribute.ParameterHelpList);

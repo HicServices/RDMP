@@ -353,7 +353,7 @@ namespace Rdmp.Core.Curation.Data
         public CatalogueItem CloneCatalogueItemWithIDIntoCatalogue(Catalogue cataToImportTo)
         {
             if(this.Catalogue_ID == cataToImportTo.ID)
-                throw new ArgumentException("Cannot clone a CatalogueItem into it's own parent, specify a different catalogue to clone into");
+                throw new ArgumentException("Cannot clone a CatalogueItem into its own parent, specify a different catalogue to clone into");
 
             var clone = new CatalogueItem((ICatalogueRepository)cataToImportTo.Repository, cataToImportTo, this.Name);
             
@@ -434,7 +434,7 @@ namespace Rdmp.Core.Curation.Data
 
         /// <summary>
         /// Changes the CatalogueItem in the database to be based off of the specified ColumnInfo (or none if null is specified).  This will
-        /// likely result in the ExtractionInformation being corrupt / out of sync in terms of the SQL appearing in it's
+        /// likely result in the ExtractionInformation being corrupt / out of sync in terms of the SQL appearing in its
         /// <see cref="IColumn.SelectSQL"/>.
         /// </summary>
         /// <param name="columnInfo"></param>

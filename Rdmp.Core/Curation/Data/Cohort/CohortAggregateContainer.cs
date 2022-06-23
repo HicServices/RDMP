@@ -247,7 +247,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
         }
 
         /// <summary>
-        /// Returns true if the supplied <seealso cref="AggregateConfiguration"/> is a child of this container or any of it's subcontainers (recursively)
+        /// Returns true if the supplied <seealso cref="AggregateConfiguration"/> is a child of this container or any of its subcontainers (recursively)
         /// </summary>
         /// <param name="configuration"></param>
         /// <returns></returns>
@@ -397,7 +397,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
                 if (toReturn != null)
                     return toReturn;
 
-                //it is not a root container, either the container is an orphan (very bad) or it's parent is a root container (or it's parent and so on)
+                //it is not a root container, either the container is an orphan (very bad) or its parent is a root container (or its parent and so on)
                 //either way get the parent
                 container = container.GetParentContainerIfAny();
             }

@@ -148,7 +148,7 @@ namespace Rdmp.Core.Tests.QueryCaching
             
             AssertNoErrors(compiler);
             
-            //each container on it's own ran with the normal SQL
+            //each container on its own ran with the normal SQL
             AssertNoErrors(compiler,ac1,"@date_of_max='2001-01-01'");
             AssertNoErrors(compiler,ac2,"@date_of_max='2005-01-01'");
 
@@ -399,7 +399,7 @@ namespace Rdmp.Core.Tests.QueryCaching
             //get the data database
             var db = GetCleanedServer(dbType);
 
-            //create the cache on the other server type (doesn't matter what type just as long as it's different).
+            //create the cache on the other server type (doesn't matter what type just as long as its different).
             var dbCache =
                 GetCleanedServer(Enum.GetValues(typeof(DatabaseType)).Cast<DatabaseType>().First(t => t != dbType));
 
@@ -797,7 +797,7 @@ namespace Rdmp.Core.Tests.QueryCaching
         }
 
         /// <summary>
-        /// Asserts that the given <paramref name="task"/> (when run on it's own) crashed with the given
+        /// Asserts that the given <paramref name="task"/> (when run on its own) crashed with the given
         /// <see cref="expectedErrorMessageToContain"/>
         /// </summary>
         private void AssertCrashed(CohortCompiler compiler, AggregateConfiguration task, string expectedErrorMessageToContain)
@@ -808,7 +808,7 @@ namespace Rdmp.Core.Tests.QueryCaching
         }
 
         /// <summary>
-        /// Asserts that the given <paramref name="task"/> (when run on it's own) completed successfully and that the SQL executed
+        /// Asserts that the given <paramref name="task"/> (when run on its own) completed successfully and that the SQL executed
         /// included all the regex patterns <see cref="expectedSqlBits"/>
         /// </summary>
         /// <param name="compiler"></param>
@@ -829,7 +829,7 @@ namespace Rdmp.Core.Tests.QueryCaching
         }
 
         /// <summary>
-        /// Asserts that the given <paramref name="task"/> (when run on it's own) completed successfully and that the SQL executed
+        /// Asserts that the given <paramref name="task"/> (when run on its own) completed successfully and that the SQL executed
         /// included all the regex patterns <see cref="expectedSqlBits"/>
         /// </summary>
         /// <param name="compiler"></param>
@@ -846,7 +846,7 @@ namespace Rdmp.Core.Tests.QueryCaching
         }
 
         /// <summary>
-        /// Asserts that the given <paramref name="container"/> ran successfully and fetched it's results from the cache (if any) with the
+        /// Asserts that the given <paramref name="container"/> ran successfully and fetched its results from the cache (if any) with the
         /// given <paramref name="expectedCacheUsageCount"/>
         /// </summary>
         /// <param name="compiler"></param>

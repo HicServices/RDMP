@@ -15,7 +15,7 @@ using NPOI.XWPF.UserModel;
 namespace Rdmp.Core.Reports.ExtractionTime
 {
     /// <summary>
-    /// Generates tables in a Microsoft Word document describing a Catalogue, it's CatalogueItems and any Issues associated with it.  This is used in data extraction 
+    /// Generates tables in a Microsoft Word document describing a Catalogue, its CatalogueItems and any Issues associated with it.  This is used in data extraction 
     /// to generate metadata documents for the researchers to read (See WordDataWriter)
     /// </summary>
     public class WordCatalogueExtractor: DocXHelper

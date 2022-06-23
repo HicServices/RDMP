@@ -212,7 +212,7 @@ namespace MapsDirectlyToDatabaseTable
         }
 
         /// <summary>
-        /// Get's all the objects of type T that have the parent 'parent' (which will be interrogated by it's ID).  Note that for this to work the type T must have a property which is EXACTLY the Parent objects name with _ID afterwards
+        /// Get's all the objects of type T that have the parent 'parent' (which will be interrogated by its ID).  Note that for this to work the type T must have a property which is EXACTLY the Parent objects name with _ID afterwards
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="parent"></param>
@@ -697,7 +697,7 @@ namespace MapsDirectlyToDatabaseTable
                 if (!cmd.Parameters.Contains(paramName))
                     cmd.Parameters.Add(DatabaseCommandHelper.GetParameter(paramName, cmd));
 
-                //set it's value
+                //set its value
                 SetParameterToValue(cmd.Parameters[paramName], kvp.Value);
             }
             return cmd;

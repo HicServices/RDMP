@@ -7,7 +7,7 @@
 namespace Rdmp.Core.Curation.Data.Defaults
 {
     /// <summary>
-    /// Server defaults let you identify a role a server plays (e.g. IdentifierDumpServer) and make it the default one of it's type for all rows created which have an IdentifierDump.
+    /// Server defaults let you identify a role a server plays (e.g. IdentifierDumpServer) and make it the default one of its type for all rows created which have an IdentifierDump.
     /// For example TableInfo.IdentifierDumpServer_ID defaults to whichever IdentifierDump ExternalDatabaseServer is configured (can be DBNull.Value).
     /// </summary>
     public interface IServerDefaults

@@ -64,7 +64,7 @@ namespace Rdmp.Core.Validation
                 foreach (var subException in rootValidationFailure.GetExceptionList())
                 {
                     if (!subException.SourceConstraint.Consequence.HasValue)
-                        throw new NullReferenceException("ItemValidator of type " + subException.SourceItemValidator.GetType().Name + " on column " + subException.SourceItemValidator.TargetProperty + " has not had it's Consequence configured");
+                        throw new NullReferenceException("ItemValidator of type " + subException.SourceItemValidator.GetType().Name + " on column " + subException.SourceItemValidator.TargetProperty + " has not had its Consequence configured");
 
                     //we have encountered a rule that will invalidate the entire row, it's a good idea to keep a track of each of these since it would be rubbish to get a report out the other side that simply says 100% of rows invalid!
                     if (subException.SourceConstraint.Consequence == Consequence.InvalidatesRow)

@@ -14,7 +14,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
     public interface IAggregateForcedJoinManager
     {
         /// <summary>
-        /// Returns all the TableInfos that the provided <see cref="AggregateConfiguration"/> has been explicitly requested (by the user) to join to in it's FROM section (See 
+        /// Returns all the TableInfos that the provided <see cref="AggregateConfiguration"/> has been explicitly requested (by the user) to join to in its FROM section (See 
         /// <see cref="QueryBuilding.AggregateBuilder"/>. 
         /// 
         /// <para>This set will be combined with those that would already be joined against because of the <see cref="AggregateDimension"/> configured.  Note that your query results

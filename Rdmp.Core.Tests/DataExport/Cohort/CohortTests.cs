@@ -21,7 +21,7 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
             //get cohort without override
             Assert.IsNull(_extractableCohort.OverrideReleaseIdentifierSQL);
 
-            //should match global release identifier (from it's source because there is no override)
+            //should match global release identifier (from its source because there is no override)
             Assert.AreEqual("ReleaseID", _extractableCohort.GetReleaseIdentifier(true));
             
             //appy override

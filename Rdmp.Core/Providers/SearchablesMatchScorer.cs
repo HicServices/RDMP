@@ -109,7 +109,7 @@ namespace Rdmp.Core.Providers
 
         /// <summary>
         /// Performs a free text search on all <paramref name="searchables"/>.  The <paramref name="searchText"/> will match on both the object
-        /// and it's parental hierarchy e.g. "chi" "biochemistry" matches column "chi" in Catalogue "biochemistry" strongly.
+        /// and its parental hierarchy e.g. "chi" "biochemistry" matches column "chi" in Catalogue "biochemistry" strongly.
         /// </summary>
         /// <param name="searchables">All available objects that can be searched (see <see cref="ICoreChildProvider.GetAllSearchables"/>)</param>
         /// <param name="searchText">Tokens to use separated by space e.g. "chi biochemistry CatalogueItem"</param>

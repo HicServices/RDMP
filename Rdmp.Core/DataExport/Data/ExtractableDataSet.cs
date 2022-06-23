@@ -168,7 +168,7 @@ namespace Rdmp.Core.DataExport.Data
         public void InjectKnown(ICatalogue instance)
         {
             if(instance.ID != Catalogue_ID)
-                throw new ArgumentOutOfRangeException("You told us our Catalogue was '" + instance +"' but it's ID didn't match so that is NOT our Catalogue","c");
+                throw new ArgumentOutOfRangeException("You told us our Catalogue was '" + instance +"' but its ID didn't match so that is NOT our Catalogue","c");
             _catalogue = new Lazy<ICatalogue>(() => instance);
         }
 

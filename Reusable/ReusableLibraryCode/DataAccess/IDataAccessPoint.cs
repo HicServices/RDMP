@@ -11,7 +11,7 @@ namespace ReusableLibraryCode.DataAccess
 {
     /// <summary>
     /// Stores the location and credentials to access a database.  There can be multiple credentials available for use with a given IDataAccessPoint depending
-    /// on the usage context e.g. DataAccessContext.DataLoad might know credentials for a user account with write permission while it's Credentials for use
+    /// on the usage context e.g. DataAccessContext.DataLoad might know credentials for a user account with write permission while its Credentials for use
     /// under DataAccessContext.DataExport are for a readonly user account.
     /// 
     /// <para>You can translate an IDataAccessPoint into a connection string / DiscoveredServer by using DataAccessPortal.GetInstance().ExpectDatabase(...)</para>

@@ -27,7 +27,7 @@ namespace Rdmp.Core.DataExport.Checks
         }
 
         /// <summary>
-        /// Checks that the table can be reached on it's listed server and that at least one row can be read from it.
+        /// Checks that the table can be reached on its listed server and that at least one row can be read from it.
         /// </summary>
         /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)

@@ -241,7 +241,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
             //if it doesn't have one
             if (RootCohortAggregateContainer_ID == null)
             {
-                //create a new one and record it's ID
+                //create a new one and record its ID
                 RootCohortAggregateContainer_ID = new CohortAggregateContainer((ICatalogueRepository) Repository,SetOperation.UNION).ID;
 
                 //save us to database to cement the object
@@ -444,10 +444,10 @@ namespace Rdmp.Core.Curation.Data.Cohort
             //clone will not have axis or pivot or dimensions other than extraction identifier
             var newConfiguration = toClone.ShallowClone();
 
-            //make it's name follow the naming convention e.g. cic_105_LINK103_MyAggregate 
+            //make its name follow the naming convention e.g. cic_105_LINK103_MyAggregate 
             EnsureNamingConvention(newConfiguration);
 
-            //now clear it's pivot dimension, make it not extratcable and make it's countSQL basic/sane
+            //now clear its pivot dimension, make it not extratcable and make its countSQL basic/sane
             newConfiguration.PivotOnDimensionID = null;
             newConfiguration.IsExtractable = false;
             newConfiguration.CountSQL = null;//clear the count sql
@@ -463,13 +463,13 @@ namespace Rdmp.Core.Curation.Data.Cohort
             }
 
 
-            //now clone it's AggregateForcedJoins
+            //now clone its AggregateForcedJoins
             foreach (var t in cataRepo.AggregateForcedJoinManager.GetAllForcedJoinsFor(toClone))
                 cataRepo.AggregateForcedJoinManager.CreateLinkBetween(newConfiguration, t);
 
             if (!toClone.Catalogue.IsApiCall())
             {
-                //two cases here either the import has a custom freaky CHI column (dimension) or it doesn't reference CHI at all if it is freaky we want to preserve it's freakyness
+                //two cases here either the import has a custom freaky CHI column (dimension) or it doesn't reference CHI at all if it is freaky we want to preserve its freakyness
                 var extractionIdentifier = GetExtractionIdentifierFrom(toClone, out ExtractionInformation underlyingExtractionInformation, resolveMultipleExtractionIdentifiers);
 
                 //now give it 1 dimension which is the only IsExtractionIdentifier column 
@@ -478,7 +478,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
                 //the thing we were cloning had a freaky CHI column (probably had a collate or something involved in it or a masterchi) 
                 if (extractionIdentifier is AggregateDimension)
                 {
-                    //preserve it's freakyness
+                    //preserve its freakyness
                     newDimension.Alias = extractionIdentifier.Alias;
                     newDimension.SelectSQL = extractionIdentifier.SelectSQL;
                     newDimension.Order = extractionIdentifier.Order;
@@ -486,7 +486,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
                 }
             }
 
-            //now rewire all it's filters
+            //now rewire all its filters
             if (toClone.RootFilterContainer_ID != null) //if it has any filters
             {
                 //get the tree

@@ -88,7 +88,7 @@ namespace Rdmp.Core.Tests.CohortCreation
             new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(_filter, null);
             var parameter = _filter.GetAllParameters().Single();
             parameter.Comment = "It's coconut time!";
-            parameter.Value = null;//clear it's value
+            parameter.Value = null;//clear its value
             parameter.SaveToDatabase();
 
             var ex = Assert.Throws<Exception>(()=>new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation),null).ImportFilter(_container, _filter,null));
@@ -122,7 +122,7 @@ namespace Rdmp.Core.Tests.CohortCreation
 
             string sqlShortcut = shortcutAggregate.GetQueryBuilder().SQL;
             
-            //shortcut should have it's own dimensions
+            //shortcut should have its own dimensions
             Assert.IsTrue(sqlShortcut.Contains("[sex]"));
             Assert.IsFalse(sqlShortcut.Contains("[chi]"));
             
@@ -170,7 +170,7 @@ namespace Rdmp.Core.Tests.CohortCreation
             Assert.DoesNotThrow(() => { aggregate1.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID = null; }); // is ok
             Assert.DoesNotThrow(() => { aggregate1.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID = -19; }); // is ok
             var ex = Assert.Throws<NotSupportedException>(()=>aggregate1.RootFilterContainer_ID = 123);
-            Assert.AreEqual("This AggregateConfiguration has a shortcut to another AggregateConfiguration's Filters (It's OverrideFiltersByUsingParentAggregateConfigurationInstead_ID is -19) which means it cannot be assigned it's own RootFilterContainerID",ex.Message);
+            Assert.AreEqual("This AggregateConfiguration has a shortcut to another AggregateConfiguration's Filters (its OverrideFiltersByUsingParentAggregateConfigurationInstead_ID is -19) which means it cannot be assigned its own RootFilterContainerID",ex.Message);
         }
 
         [Test]

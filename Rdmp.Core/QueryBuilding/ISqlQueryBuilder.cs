@@ -36,7 +36,7 @@ namespace Rdmp.Core.QueryBuilding
 
         /// <summary>
         /// Wrapper class for the columns you added to the query with <see cref="AddColumn(Rdmp.Core.QueryBuilding.IColumn)"/>).  After fetching the query (See <see cref="SQL"/>) this will be populated with 
-        /// facts about the <see cref="IColumn"/> including it's status in lookup joins etc 
+        /// facts about the <see cref="IColumn"/> including its status in lookup joins etc 
         /// </summary>
         List<QueryTimeColumn> SelectColumns { get; }
 
@@ -108,7 +108,7 @@ namespace Rdmp.Core.QueryBuilding
         /// <summary>
         /// Returns all the <see cref="Lookup"/> classes found and used in the query.
         /// 
-        /// <para>This only happens if you have a <see cref="Lookup"/> configured and your query has both the code column and the description column in it's SELECT columns</para>
+        /// <para>This only happens if you have a <see cref="Lookup"/> configured and your query has both the code column and the description column in its SELECT columns</para>
         /// </summary>
         /// <returns></returns>
         IEnumerable<Lookup> GetDistinctRequiredLookups();
@@ -128,7 +128,7 @@ namespace Rdmp.Core.QueryBuilding
         CustomLine AddCustomLine(string text, QueryComponent positionToInsert);
 
         /// <summary>
-        /// The line of SQL code and it's position in the query which results in result limiting (e.g. LIMIT X in MySql and TOP X in SqlServer)
+        /// The line of SQL code and its position in the query which results in result limiting (e.g. LIMIT X in MySql and TOP X in SqlServer)
         /// 
         /// <para>Changing this manually is not recommended, specify it in the <see cref="ISqlQueryBuilder"/> constructor instead</para>
         /// </summary>

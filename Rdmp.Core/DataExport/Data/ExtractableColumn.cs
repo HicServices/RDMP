@@ -211,7 +211,7 @@ namespace Rdmp.Core.DataExport.Data
         }
         
         /// <summary>
-        /// Returns true if the underlying column (<see cref="Curation.Data.ColumnInfo"/>) referenced by this class has disapeared since it's creation.
+        /// Returns true if the underlying column (<see cref="Curation.Data.ColumnInfo"/>) referenced by this class has disapeared since its creation.
         /// </summary>
         /// <returns></returns>
         public bool HasOriginalExtractionInformationVanished()

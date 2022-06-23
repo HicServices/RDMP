@@ -25,7 +25,7 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
 {
     /// <summary>
     /// This control offers the preferred method of telling RDMP about your existing datasets.  It lets you select a table on your server and then forward engineer an RDMP Catalogue
-    /// which lets you build a data load for the table, document it's columns, configure extraction logic etc.  
+    /// which lets you build a data load for the table, document its columns, configure extraction logic etc.  
     /// 
     /// <para>Start by entering the details of your table (server, database, table etc).  If you specify username/password then SQL Authentication will be used and the credentials will be
     /// stored along with the table (See PasswordEncryptionKeyLocationUI for details), if you do not enter username/password then Windows Authentication will be used (preferred).  </para>

@@ -29,7 +29,7 @@ namespace Rdmp.Core.QueryBuilding
     /// unique values that will appear in the final query only.  Then the final query is run with a PIVOT command over the column values found.  Since data can be a mile 
     /// wide and full of punctuation etc there is an adjustment operation on the values to qualify them as valid column names.</para>
     /// 
-    /// <para>AggregateBuilder is cross database compatible.  This is achieved by assembling all the lines it thinks it needs for it's query and then passing off the exact 
+    /// <para>AggregateBuilder is cross database compatible.  This is achieved by assembling all the lines it thinks it needs for its query and then passing off the exact 
     /// implementation into IAggregateHelper.BuildAggregate.  The implementation of the calendars/dynamic pivots vary wildly by database engine (See MySqlAggregateHelper vs
     /// MicrosoftSQLAggregateHelper).  </para>
     /// 

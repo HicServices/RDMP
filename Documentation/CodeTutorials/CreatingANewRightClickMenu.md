@@ -79,7 +79,7 @@ If you want to create a new command then you should
 3. Override `GetImage` returning null for no image or using the `IIconProvider` to provide a suitable `RDMPConcept` / `OverlayKind`
 4. Override `Execute` to perform the command logic (make sure to still call `base.Execute` so that `IsImpossible` is respected)
 
-In your constructor you can decide that the arguments are not compatible with the command.  In this case you should call `SetImpossible` to indicate that the command cannot be run with it's current arguments / environment state.  This will result in the command being greyed out in menus (and the user will be able to hover over to see why).  This is the preferred approach rather than not adding the command in the first place.
+In your constructor you can decide that the arguments are not compatible with the command.  In this case you should call `SetImpossible` to indicate that the command cannot be run with its current arguments / environment state.  This will result in the command being greyed out in menus (and the user will be able to hover over to see why).  This is the preferred approach rather than not adding the command in the first place.
 
 ![ExampleMenu](Images/CreatingANewRightClickMenu/IsImpossible.png)
 

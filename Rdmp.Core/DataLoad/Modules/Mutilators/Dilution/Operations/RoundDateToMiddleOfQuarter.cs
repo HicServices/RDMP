@@ -31,7 +31,7 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations
             if (!ColumnToDilute.SqlDataType.ToLower().Contains("date"))
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     "ColumnToDilute '" + ColumnToDilute.RuntimeColumnName +
-                    "' has operation RoundDateToMiddleOfQuarter configured but it's datatype is " +
+                    "' has operation RoundDateToMiddleOfQuarter configured but its datatype is " +
                     ColumnToDilute.SqlDataType, CheckResult.Fail, null));
         }
         

@@ -126,7 +126,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
         }
 
         /// <summary>
-        /// Describes the state of a database schema when compared to the <see cref="IPatcher"/> which manages it's schema
+        /// Describes the state of a database schema when compared to the <see cref="IPatcher"/> which manages its schema
         /// </summary>
         public enum PatchingState
         {

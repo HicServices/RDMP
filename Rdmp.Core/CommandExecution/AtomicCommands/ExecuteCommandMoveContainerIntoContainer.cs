@@ -27,7 +27,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _targetContainer = targetContainer;
 
             if(containerCombineable.AllSubContainersRecursive.Contains(targetContainer))
-                SetImpossible("You cannot move a container (AND/OR) into one of it's own subcontainers");
+                SetImpossible("You cannot move a container (AND/OR) into one of its own subcontainers");
 
             if(targetContainer.ShouldBeReadOnly(out string reason))
                 SetImpossible(reason);

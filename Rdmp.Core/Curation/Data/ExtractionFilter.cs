@@ -24,7 +24,7 @@ namespace Rdmp.Core.Curation.Data
     /// you to define a more versatile filter e.g. 'Only prescriptions for drug @bnfCode'
     /// 
     /// <para>Typically an ExtractionFilter is cloned out as either a DeployedExtractionFilter or an AggregateFilter and either used as is or
-    /// customised in it's new state (where it's parameters might have values populated into them).</para>
+    /// customised in its new state (where its parameters might have values populated into them).</para>
     /// 
     /// <para>It is not uncommon for an extraction to involve multiple customised copies of the same Extraction filter for example a user might
     /// take the filter 'Prescriptions of drug @Drugname' and make 3 copies in a given project in DataExportManager (this would result in

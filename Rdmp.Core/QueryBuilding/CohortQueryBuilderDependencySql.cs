@@ -16,7 +16,7 @@ namespace Rdmp.Core.QueryBuilding
     /// Describes a block of sql built using a <see cref="AggregateBuilder"/> which may need to be slotted into a larger query e.g.
     /// as a subsection of a large <see cref="CohortIdentificationConfiguration"/>.  The <see cref="Sql"/> is built without considering
     /// parameters that exist in any larger query.  Use method <see cref="Use"/> to deploy the <see cref="Sql"/> into a larger query
-    /// or use it on it's own for cache hit checking / running in isolation.
+    /// or use it on its own for cache hit checking / running in isolation.
     /// </summary>
     public class CohortQueryBuilderDependencySql
     {
