@@ -40,15 +40,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 SetImpossible($"Expected only a single parameter but there were {picker.Length}");
                 return;
             }
-
-            if(picker[0].HasValueOfType(typeof(Type)))
-            {
-                _nonDatabaseObjectToDescribe = picker[0].GetValueForParameterOfType(typeof(Type));                
-            }
-            else
             if(picker[0].HasValueOfType(typeof(IMapsDirectlyToDatabaseTable[])))
             {
                 _databaseObjectToDescribe = (IMapsDirectlyToDatabaseTable[])picker[0].GetValueForParameterOfType(typeof(IMapsDirectlyToDatabaseTable[]));
+            }
+            else
+            if (picker[0].HasValueOfType(typeof(Type)))
+            {
+                _nonDatabaseObjectToDescribe = picker[0].GetValueForParameterOfType(typeof(Type));
             }
             else
             {
@@ -155,7 +154,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 title = t.Name;
                 var docs = BasicActivator.CommentStore.GetTypeDocumentationIfExists(t, true, true);
-                return $"A {t.Name} will be available for reading by components when the pipeline is run.{Environment.NewLine}{Environment.NewLine}{docs}".Trim();
+                return docs?.Trim() ?? "";
             }
 
             // its an actual object so give them a summary of it
