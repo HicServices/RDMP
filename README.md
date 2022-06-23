@@ -25,7 +25,7 @@ Signed release binaries for the RDMP client and Command Line Interface (CLI) are
 
 ### Building on Windows
 
-You can build RDMP from the command line using `dotnet build` or through an IDE e.g. Visual Studio or Visual Studio Code (Requires [dotnet5 SDK](https://dotnet.microsoft.com/download/dotnet/5.0)).
+You can build RDMP from the command line using `dotnet build` or through an IDE e.g. Visual Studio or Visual Studio Code (Requires [latest dotnet SDK](https://dotnet.microsoft.com/download/dotnet/)).
 
 The Windows client:
 
