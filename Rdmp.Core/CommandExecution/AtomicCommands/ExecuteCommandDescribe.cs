@@ -182,8 +182,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             var sbSyntaxes = new StringBuilder();
             sbSyntaxes.AppendLine();
-            sbSyntaxes.AppendLine("The following syntaxes may be used for parameters in this query.");
-            sbSyntaxes.AppendLine();
+            sbSyntaxes.AppendLine("The following syntaxes may be used for parameters in this query:");
+            bool anySyntaxes = false;
 
             // Usage
             if (dynamicCtorAttribute != null)
@@ -227,26 +227,28 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     sbParameters.AppendLine(FormatParameterDescription(req, commandCtor));
                 }
 
-                ShowSyntax("Pick Database",sbSyntaxes, parameters ,(p) => typeof(DiscoveredDatabase).IsAssignableFrom(p.ParameterType), new PickDatabase());
-                ShowSyntax("Pick Table",sbSyntaxes, parameters, (p) => typeof(DiscoveredTable).IsAssignableFrom(p.ParameterType), new PickTable());
+                anySyntaxes = ShowSyntax("Pick Database",sbSyntaxes, parameters ,(p) => typeof(DiscoveredDatabase).IsAssignableFrom(p.ParameterType), new PickDatabase()) || anySyntaxes;
+                anySyntaxes = ShowSyntax("Pick Table",sbSyntaxes, parameters, (p) => typeof(DiscoveredTable).IsAssignableFrom(p.ParameterType), new PickTable()) || anySyntaxes;
 
-                ShowSyntax("Pick RDMP Object",sbSyntaxes, parameters, (p) => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(p.ParameterType),
+                anySyntaxes = ShowSyntax("Pick RDMP Object",sbSyntaxes, parameters, (p) => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(p.ParameterType) || anySyntaxes,
                     new PickObjectByID(BasicActivator),
                     new PickObjectByName(BasicActivator),
-                    new PickObjectByQuery(BasicActivator));
+                    new PickObjectByQuery(BasicActivator)) || anySyntaxes;
 
             };
 
 
             sb.AppendLine();
             sb.AppendLine(sbParameters.ToString());            
-            sb.AppendLine(sbSyntaxes.ToString());
+
+            if(anySyntaxes)
+                sb.AppendLine(sbSyntaxes.ToString());
 
             BasicActivator.Show(HelpShown = sb.ToString());
 
         }
 
-        private void ShowSyntax(string title, StringBuilder sbSyntaxes, ParameterInfo[] parameters, Func<ParameterInfo, bool> selector, params PickObjectBase[] pickers)
+        private bool ShowSyntax(string title, StringBuilder sbSyntaxes, ParameterInfo[] parameters, Func<ParameterInfo, bool> selector, params PickObjectBase[] pickers)
         {
             if(parameters.Any(selector))
             {
@@ -259,7 +261,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 foreach (var p in pickers)
                     foreach(var e in p.Examples)
                         sbSyntaxes.AppendLine(e);
+
+                return true;
             }
+
+            return false;
         }
 
         private string FormatParameterDescription(RequiredArgument req,ConstructorInfo ctor)
