@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.CommandLine.Interactive.Picking;
@@ -179,55 +180,86 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             sbParameters.AppendLine();
             sbParameters.AppendLine("PARAMETERS:");
 
+            var sbSyntaxes = new StringBuilder();
+            sbSyntaxes.AppendLine();
+            sbSyntaxes.AppendLine("The following syntaxes may be used for parameters in this query.");
+            sbSyntaxes.AppendLine();
+
             // Usage
-            if(dynamicCtorAttribute != null)
+            if (dynamicCtorAttribute != null)
             {
                 //is it a dynamic command (one that processes it's own CommandLinePicker)
-                
+
                 // Added to the call line e.g. "./rdmp cmd MyCall <param1> <someotherParam>"
                 sb.Append(dynamicCtorAttribute.ParameterHelpList);
                 sbParameters.Append(dynamicCtorAttribute.ParameterHelpBreakdown);
             }
             else
-            if(commandCtor == null || !invoker.IsSupported(commandCtor))
+            if (commandCtor == null || !invoker.IsSupported(commandCtor))
             {
                 sb.AppendLine($"Command '{commandType.Name}' is not supported by the current input type ({BasicActivator.GetType().Name})");
-                
-                if(commandCtor != null)
-                {
-                    var unsupported = commandCtor.GetParameters().Where(p=>!invoker.IsSupported(p)).ToArray();
 
-                    if(unsupported.Any())
-                        sb.AppendLine("The following parameter types (required by the command's constructor) were not supported:" + Environment.NewLine + string.Join(Environment.NewLine,unsupported.Select(p=> $"{p.Name }({p.ParameterType})")));
+                if (commandCtor != null)
+                {
+                    var unsupported = commandCtor.GetParameters().Where(p => !invoker.IsSupported(p)).ToArray();
+
+                    if (unsupported.Any())
+                        sb.AppendLine("The following parameter types (required by the command's constructor) were not supported:" + Environment.NewLine + string.Join(Environment.NewLine, unsupported.Select(p => $"{p.Name}({p.ParameterType})")));
                 }
-                
             }
-                
             else
             {
                 // For each thing the constructor takes
-                foreach(ParameterInfo p in commandCtor.GetParameters())
+                var parameters = commandCtor.GetParameters();
+
+                foreach (ParameterInfo p in parameters)
                 {
                     var req = new RequiredArgument(p);
 
                     //automatic delegates require no user input or CLI entry (e.g. IActivateItems)                
-                    if(invoker.GetDelegate(req).IsAuto)
+                    if (invoker.GetDelegate(req).IsAuto)
                         continue;
 
                     // Added to the call line e.g. "./rdmp cmd MyCall <param1> <someotherParam>"
                     sb.Append($"<{req.Name}> ");
 
                     //document it for the breakdown table
-                    sbParameters.AppendLine(FormatParameterDescription(req,commandCtor));
+                    sbParameters.AppendLine(FormatParameterDescription(req, commandCtor));
                 }
 
-            }
+                ShowSyntax("Pick Database",sbSyntaxes, parameters ,(p) => typeof(DiscoveredDatabase).IsAssignableFrom(p.ParameterType), new PickDatabase());
+                ShowSyntax("Pick Table",sbSyntaxes, parameters, (p) => typeof(DiscoveredTable).IsAssignableFrom(p.ParameterType), new PickTable());
+
+                ShowSyntax("Pick RDMP Object",sbSyntaxes, parameters, (p) => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(p.ParameterType),
+                    new PickObjectByID(BasicActivator),
+                    new PickObjectByName(BasicActivator),
+                    new PickObjectByQuery(BasicActivator));
+
+            };
+
 
             sb.AppendLine();
-            sb.AppendLine(sbParameters.ToString());
-                
+            sb.AppendLine(sbParameters.ToString());            
+            sb.AppendLine(sbSyntaxes.ToString());
+
             BasicActivator.Show(HelpShown = sb.ToString());
 
+        }
+
+        private void ShowSyntax(string title, StringBuilder sbSyntaxes, ParameterInfo[] parameters, Func<ParameterInfo, bool> selector, params PickObjectBase[] pickers)
+        {
+            if(parameters.Any(selector))
+            {
+                sbSyntaxes.AppendLine(Environment.NewLine + title + ":");
+                sbSyntaxes.AppendLine("Formats:");
+                foreach (var p in pickers)
+                    sbSyntaxes.AppendLine(p.Format);
+
+                sbSyntaxes.AppendLine("Examples:");
+                foreach (var p in pickers)
+                    foreach(var e in p.Examples)
+                        sbSyntaxes.AppendLine(e);
+            }
         }
 
         private string FormatParameterDescription(RequiredArgument req,ConstructorInfo ctor)
