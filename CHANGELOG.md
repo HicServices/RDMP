@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Made "Could not reach cohort..." warning suppressible [#1243](https://github.com/HicServices/RDMP/issues/1243)
 - SetUserSetting now works for error codes e.g. `SetUserSetting R011 Success` [#1242](https://github.com/HicServices/RDMP/issues/1242)
 - Describe command now shows syntaxes that should be used to satisfy parameters on command line
-- Made 'Failed to execute Top 1' error when checking a dataset extraction a user configureable error (i.e. user can now set that to ignore)
+- Made 'Failed to execute Top 1' error when checking a dataset extraction a user configurable error (i.e. user can now set that to ignore)
 - Added a warning for when columns in an [ExtractionConfiguration] are 'text' or 'ntext' [#1255](https://github.com/HicServices/RDMP/issues/1255)
 
 ### Changed
