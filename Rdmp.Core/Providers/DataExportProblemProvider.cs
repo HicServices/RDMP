@@ -28,28 +28,17 @@ namespace Rdmp.Core.Providers
         /// <inheritdoc/>
         protected override string DescribeProblemImpl(object o)
         {
-            if (o is Project)
-                return DescribeProblem((Project) o);
-
-            if (o is ProjectSavedCohortsNode)
-                return DescribeProblem((ProjectSavedCohortsNode)o);
-
-            if (o is ExtractionConfigurationsNode)
-                return DescribeProblem((ExtractionConfigurationsNode) o);
-
-            if (o is SelectedDataSets)
-                return DescribeProblem((SelectedDataSets)o);
-
-            if (o is ExtractionConfiguration)
-                return DescribeProblem((ExtractionConfiguration) o);
-
-            if (o is ExternalCohortTable)
-                return DescribeProblem((ExternalCohortTable) o);
-
-            if (o is ExtractionDirectoryNode)
-                return DescribeProblem((ExtractionDirectoryNode)o);
-
-            return null;
+            return o switch
+            {
+                Project project => DescribeProblem(project),
+                ProjectSavedCohortsNode node => DescribeProblem(node),
+                ExtractionConfigurationsNode node => DescribeProblem(node),
+                SelectedDataSets sets => DescribeProblem(sets),
+                ExtractionConfiguration configuration => DescribeProblem(configuration),
+                ExternalCohortTable table => DescribeProblem(table),
+                ExtractionDirectoryNode node => DescribeProblem(node),
+                _ => null
+            };
         }
 
         private string DescribeProblem(ExternalCohortTable externalCohortTable)
