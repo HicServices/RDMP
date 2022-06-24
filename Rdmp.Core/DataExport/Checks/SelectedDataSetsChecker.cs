@@ -142,6 +142,14 @@ namespace Rdmp.Core.DataExport.Checks
             foreach (IGrouping<string, IColumn> grouping in request.ColumnsToExtract.GroupBy(c=>c.GetRuntimeName()).Where(g=>g.Count()>1))
                 notifier.OnCheckPerformed(new CheckEventArgs($"There are { grouping.Count() } columns in the extract ({request.DatasetBundle?.DataSet}) called '{ grouping.Key }'",CheckResult.Fail));
 
+
+            // ntext and text columns don't play nicely with DISTINCT, so warn user
+            var textCols = request.ColumnsToExtract.Where(IsTextDatatype).ToArray();
+            if(textCols.Any())
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.TextColumnsInExtraction, string.Join(",", textCols.Select(c=>c.GetRuntimeName()).ToArray())));
+            }
+
             //when 2+ columns have the same Order it's a problem because
             foreach (IGrouping<int, IColumn> grouping in request.ColumnsToExtract.GroupBy(c=>c.Order).Where(g=>g.Count()>1))
                 notifier.OnCheckPerformed(new CheckEventArgs($"There are { grouping.Count() } columns in the extract ({request.DatasetBundle?.DataSet}) that share the same Order '{ grouping.Key }'",CheckResult.Fail));
@@ -242,6 +250,26 @@ namespace Rdmp.Core.DataExport.Checks
                                     .GetEngine(_alsoCheckPipeline, new FromCheckNotifierToDataLoadEventListener(notifier));
                 engine.Check(notifier);
             }
+        }
+
+        /// <summary>
+        /// Returns true if the <paramref name="arg"/> column is ntext or text
+        /// </summary>
+        /// <param name="arg"></param>
+        /// <returns></returns>
+        private bool IsTextDatatype(IColumn arg)
+        {
+            if (arg.ColumnInfo == null)
+                return false;
+
+            var type = arg.ColumnInfo.Data_type;
+
+            if (string.IsNullOrEmpty(type))
+                return false;
+
+            type = type.Trim();
+
+            return type.Equals("text", StringComparison.CurrentCultureIgnoreCase) || type.Equals("ntext", StringComparison.CurrentCultureIgnoreCase);
         }
 
         /// <summary>
