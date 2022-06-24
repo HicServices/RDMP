@@ -59,6 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added ability to suppress tree expansion when opening Cohort Builder configurations
 - Added a loading spinner for when find is still searching
 - Adding a parameter to a filter now shows its initial value [#1201](https://github.com/HicServices/RDMP/issues/1201)
+- ProblemProvider now indicates a problem when no ExtractionDirectory is set on a Project in its directory node [#1254](https://github.com/HicServices/RDMP/issues/1254)
 
 ### Removed
 
