@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed user being able to edit filters of a frozen [ExtractionConfiguration]/[CohortIdentificationConfiguration]
+- Fixed bug with `ExecuteCrossServerDatasetExtractionSource` guid table name pattern [#1256](https://github.com/HicServices/RDMP/issues/1256)
 
 ## [7.0.13] - 2022-05-30
 
