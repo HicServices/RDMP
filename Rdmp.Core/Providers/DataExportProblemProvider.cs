@@ -46,6 +46,9 @@ namespace Rdmp.Core.Providers
             if (o is ExternalCohortTable)
                 return DescribeProblem((ExternalCohortTable) o);
 
+            if (o is ExtractionDirectoryNode)
+                return DescribeProblem((ExtractionDirectoryNode)o);
+
             return null;
         }
 
@@ -95,6 +98,15 @@ namespace Rdmp.Core.Providers
         }
 
 
+        private string DescribeProblem(ExtractionDirectoryNode edn)
+        {
+            if(edn.GetDirectoryInfoIfAny() == null)
+            {
+                return "No Extraction Directory has been specified";
+            }
+
+            return null;
+        }
         private string DescribeProblem(Project project)
         {
             if (project.ProjectNumber == null)
