@@ -215,7 +215,7 @@ namespace Rdmp.Core.DataExport.Checks
                                 notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractTimeoutChecking,e,timeout));
                             }
                             else
-                                notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute the query (See below for query)", CheckResult.Fail, e));
+                                notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractionFailedToExecuteTop1, e,ds));
                         }
 
                         con.ManagedTransaction.AbandonAndCloseConnection();
@@ -223,7 +223,7 @@ namespace Rdmp.Core.DataExport.Checks
                 }
                 catch (Exception e)
                 {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute Top 1 on dataset " + ds, CheckResult.Fail, e));
+                    notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractionFailedToExecuteTop1,e,ds));
                 }
             }
 
