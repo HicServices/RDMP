@@ -197,6 +197,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public override string GetCommandName()
         {
+            // if user has set an override, respect it
+            if (!string.IsNullOrWhiteSpace(OverrideCommandName))
+                return OverrideCommandName;
+
             if (_obj is CohortIdentificationConfiguration)
             {
                 return _useCache ?

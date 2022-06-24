@@ -58,7 +58,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 SetImpossible($"'{replacement}' cannot replace '{deprecated}' because it is a different object Type");
             }
         }
-
         public override void Execute()
         {
             base.Execute();

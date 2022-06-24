@@ -61,6 +61,7 @@ namespace Rdmp.Core.CommandExecution
         public const string Dimensions = "Dimensions";
         public const string Advanced = "Advanced";
         public const string View = "View";
+        public const string Deprecation = "Deprecation";
 
         public AtomicCommandFactory(IBasicActivateItems activator)
         {
@@ -679,10 +680,22 @@ namespace Rdmp.Core.CommandExecution
                     CohortIfAny = cohort,
                     OverrideCommandName = "New Extraction Configuration using Cohort",
                 };
-                yield return new ExecuteCommandDeprecate(_activator, new []{cohort}, !cohort.IsDeprecated)
+            }
+
+            if (Is(o, out IMightBeDeprecated d))
+            {
+                yield return new ExecuteCommandDeprecate(_activator, new[] { d }, !d.IsDeprecated)
                 {
-                    OverrideCommandName = cohort.IsDeprecated ? "Undeprecate Cohort": "Deprecate Cohort",
+                    OverrideCommandName = d.IsDeprecated ? "Un Deprecate" : "Deprecate",
+                    SuggestedCategory = Deprecation,
                     Weight = -99.7f
+                };
+                yield return new ExecuteCommandReplacedBy(_activator, d, null)
+                {
+                    PromptToPickReplacement = true,
+                    SuggestedCategory = Deprecation,
+                    Weight = -99.6f,
+                    OverrideCommandName = "Set Replaced By"
                 };
             }
 
