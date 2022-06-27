@@ -30,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- The following commands have been removed and are now supported with `ViewData` directly e.g. `./rdmp ViewData Catalogue:1`
+- The following console commands have been removed and __are instead now supported with `ViewData` command directly__ e.g. `./rdmp ViewData Catalogue:1`
   - ViewCatalogueData
   - ViewCohortIdentificationConfiguration
   - ViewCohortSample
