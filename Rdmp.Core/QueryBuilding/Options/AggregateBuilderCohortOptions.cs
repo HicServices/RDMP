@@ -122,7 +122,7 @@ namespace Rdmp.Core.QueryBuilding.Options
 
             //If this returns null then it means someone deleted it out of the configuration while you were editing it?
             if(config == null)
-                throw new NotSupportedException("Aggregate " + aggregate + " did not return it's CohortIdentificationConfiguration correctly, did someone delete the configuration or Orphan this AggregateConfiguration while you weren't looking?");
+                throw new NotSupportedException("Aggregate " + aggregate + " did not return its CohortIdentificationConfiguration correctly, did someone delete the configuration or Orphan this AggregateConfiguration while you weren't looking?");
 
             //find those that are already referenced
             var existingJoinables = aggregate.PatientIndexJoinablesUsed.Select(u=>u.JoinableCohortAggregateConfiguration);

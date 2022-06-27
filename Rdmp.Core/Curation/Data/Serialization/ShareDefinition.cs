@@ -17,7 +17,7 @@ namespace Rdmp.Core.Curation.Data.Serialization
     /// <summary>
     /// Describes a DatabaseEntity which has been made exportable from RDMP via <see cref="ObjectExport"/>.  This class includes the properties that are
     /// directly recorded for the object e.g. Name, SelectSQL etc.  For Foreign Key columns (See <see cref="RelationshipAttribute"/>) e.g. <see cref="CatalogueItem.Catalogue_ID"/> the Guid 
-    /// of another <see cref="ShareDefinition"/> is given (e.g. of the <see cref="Catalogue"/>).  This means that a <see cref="ShareDefinition"/> is only valid when all it's dependencies are
+    /// of another <see cref="ShareDefinition"/> is given (e.g. of the <see cref="Catalogue"/>).  This means that a <see cref="ShareDefinition"/> is only valid when all its dependencies are
     /// also available (See Sharing.Dependency.Gathering.Gatherer for how to do this)
     /// </summary>
     [Serializable]

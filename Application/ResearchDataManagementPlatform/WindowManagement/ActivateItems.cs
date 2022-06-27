@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -133,6 +134,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
             RefreshProblemProviders();
 
             RefreshBus.Subscribe(this);
+            
+            // We can run subprocesses
+            IsAbleToLaunchSubprocesses = true;
         }
 
         protected override ICoreChildProvider GetChildProvider()
@@ -310,7 +314,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             //if the window is already open
             if (PopExisting(typeof(T), collection, out var existingHostedControlInstance))
             {
-                //just update it's state
+                //just update its state
                 var existing = (T) existingHostedControlInstance;
                 existing.SetCollection(this,collection);
 
@@ -800,6 +804,13 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             var graph = Activate<AggregateGraphUI, AggregateConfiguration>(aggregate);
             graph.LoadGraphAsync();
+        }
+
+        public override void LaunchSubprocess(ProcessStartInfo startInfo)
+        {
+            var ctrl = new ConsoleControl.ConsoleControl();
+            ShowWindow(ctrl, true);
+            ctrl.StartProcess(startInfo);
         }
     }
 }

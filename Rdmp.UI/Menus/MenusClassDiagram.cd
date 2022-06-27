@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Comment CommentText="Right click menus are entirely constructed and assigned via reflection.  When a tree object is right clicked all RDMPContextMenuStrip classes are evaluated for those with a compatible constructor (taking the object being right clicked or one of it's interfaces).  Once one menu with a good compatible constructor has been found it is constructed and displayed.&#xD;&#xA;&#xD;&#xA;NOTE: Even if no menu is found a menu is still created and common items added based on the class interfaces e.g. IDeleteable classes will get the ExecuteCommandDelete added (this is handled by AtomicCommandFactory)">
+  <Comment CommentText="Right click menus are entirely constructed and assigned via reflection.  When a tree object is right clicked all RDMPContextMenuStrip classes are evaluated for those with a compatible constructor (taking the object being right clicked or one of its interfaces).  Once one menu with a good compatible constructor has been found it is constructed and displayed.&#xD;&#xA;&#xD;&#xA;NOTE: Even if no menu is found a menu is still created and common items added based on the class interfaces e.g. IDeleteable classes will get the ExecuteCommandDelete added (this is handled by AtomicCommandFactory)">
     <Position X="0.5" Y="0.5" Height="2.472" Width="3.353" />
   </Comment>
   <Comment CommentText="Handles all commands (menu items) that are available in both Command Line and Gui Client(s)">

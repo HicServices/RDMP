@@ -23,7 +23,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs
     /// <para>To create a new directory with all the appropriate folders and example configuration files enter the path to an empty folder.  If the folder does not exist yet it will be created
     /// when you click Ok.</para>
     /// 
-    /// <para>Alternatively if you want to reuse an existing directory (for example if you have accidentally deleted your old data load configuration and lost the reference to it's folder) then
+    /// <para>Alternatively if you want to reuse an existing directory (for example if you have accidentally deleted your old data load configuration and lost the reference to its folder) then
     /// you can select the 'use existing' checkbox and enter the path to the existing folder (this should be the root folder i.e. not the Data folder).  This will run Checks on the folder
     /// to confirm that it is has an intact structure and then use it for your load.</para>
     /// 

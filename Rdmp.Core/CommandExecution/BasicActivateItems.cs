@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -131,6 +132,8 @@ namespace Rdmp.Core.CommandExecution
 
         /// <inheritdoc/>
         public bool HardRefresh { get; set; }
+
+        public bool IsAbleToLaunchSubprocesses { get; protected set; }
 
         public BasicActivateItems(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
         {
@@ -525,7 +528,7 @@ namespace Rdmp.Core.CommandExecution
 
                 if (databaseObject == null)
                     throw new NotSupportedException("IDeletable " + deleteable +
-                                                    " was not a DatabaseObject and it did not have a Parent in it's tree which was a DatabaseObject (DescendancyList)");
+                                                    " was not a DatabaseObject and it did not have a Parent in its tree which was a DatabaseObject (DescendancyList)");
                 return true;
             }
 
@@ -844,5 +847,7 @@ namespace Rdmp.Core.CommandExecution
 
             throw new ArgumentException("Did not know what repository to use to fetch objects of Type '" + type + "'");
         }
+
+        public abstract void LaunchSubprocess(ProcessStartInfo startInfo);
     }
 }

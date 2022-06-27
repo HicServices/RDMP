@@ -11,7 +11,7 @@ using ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Checks
 {
     /// <summary>
-    /// Checks an IPipeline (persisted data flow pipeline configuration) to see if all it's components are constructable (using MEFChecker)
+    /// Checks an IPipeline (persisted data flow pipeline configuration) to see if all its components are constructable (using MEFChecker)
     /// </summary>
     public class PipelineChecker : ICheckable
     {

@@ -22,7 +22,7 @@ namespace Rdmp.Core.Caching.Requests.FetchRequestProvider
         /// <summary>
         /// Sets up the class to generate <see cref="ICacheFetchRequest"/> for the given <see cref="ICacheProgress"/>
         /// </summary>
-        /// <param name="cacheProgress">The cache which the request is for, this must have either an <see cref="ICacheProgress.CacheFillProgress"/> or it's
+        /// <param name="cacheProgress">The cache which the request is for, this must have either an <see cref="ICacheProgress.CacheFillProgress"/> or its
         /// <see cref="ILoadProgress"/> parent must have a populated <see cref="ILoadProgress.OriginDate"/></param>
         public CacheFetchRequestProvider(ICacheProgress cacheProgress)
         {

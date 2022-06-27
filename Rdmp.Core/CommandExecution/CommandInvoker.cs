@@ -116,7 +116,7 @@ namespace Rdmp.Core.CommandExecution
                     new DialogArgs
                     {
                         WindowTitle = GetPromptFor(p),
-                        InitialObjectSelection = p.DefaultValue == null ? null :
+                        InitialObjectSelection = p.DefaultValue == null || p.DefaultValue == DBNull.Value ? null :
                                 ((IEnumerable<IMapsDirectlyToDatabaseTable>)p.DefaultValue).ToArray()
                     },p.Type.GetElementType(), available);
                 
@@ -247,7 +247,7 @@ namespace Rdmp.Core.CommandExecution
 
                     parameterValues.Add(picker);
                     
-                    //the parameters are expected to be consumed by the target constructors so it's not really a problem if there are extra
+                    //the parameters are expected to be consumed by the target constructors so its not really a problem if there are extra
                     complainAboutExtraParameters = false;
                     continue;
                 }

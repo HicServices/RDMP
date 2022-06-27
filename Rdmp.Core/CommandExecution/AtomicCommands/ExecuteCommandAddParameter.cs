@@ -32,6 +32,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _datatype = datatype;
             _value = value;
             UseTripleDotSuffix = true;
+
+            if (collector is IMightBeReadOnly r)
+            {
+                SetImpossibleIfReadonly(r);
+            }
         }
 
         public override Image GetImage(IIconProvider iconProvider)

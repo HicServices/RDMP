@@ -124,7 +124,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
                 _topX = new AggregateTopX(Activator.RepositoryLocator.CatalogueRepository, _aggregate, i);
             else
             {
-                //there is one so change it's topX
+                //there is one so change its topX
                 _topX.TopX = i;
                 _topX.SaveToDatabase();
             }

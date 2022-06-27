@@ -156,7 +156,7 @@ namespace Rdmp.Core.DataQualityEngine.Reports
                                 forker.OnNotify(this,
                                     new NotifyEventArgs(ProgressEventType.Warning,
                                         "Found a null/empty value for pivot category '" + _pivotCategory +
-                                        "', this record will ONLY be recorded under ALL and not it's specific category, you will not be warned of further nulls because there are likely to be many if there are any"));
+                                        "', this record will ONLY be recorded under ALL and not its specific category, you will not be warned of further nulls because there are likely to be many if there are any"));
                                 haveComplainedAboutNullCategories = true;
                                 pivotValue = null;
                             }
@@ -434,7 +434,7 @@ namespace Rdmp.Core.DataQualityEngine.Reports
             if (tblValuedFunctions.Any())
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Catalogue contains 1+ table valued function in it's TableInfos (" +
+                        "Catalogue contains 1+ table valued function in its TableInfos (" +
                         string.Join(",", tblValuedFunctions.Select(t => t.ToString())), CheckResult.Fail));
 
             if (_catalogue.TimeCoverage_ExtractionInformation_ID == null)

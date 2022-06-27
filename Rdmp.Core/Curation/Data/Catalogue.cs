@@ -23,6 +23,7 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Logging;
+using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Ticketing;
@@ -1011,10 +1012,21 @@ namespace Rdmp.Core.Curation.Data
         /// <inheritdoc/>
         public void GetTableInfos(out List<ITableInfo> normalTables, out List<ITableInfo> lookupTables)
         {
-            var tables = GetColumnInfos().GroupBy(c=>c.TableInfo_ID).Select(c => c.First().TableInfo).ToArray();
+            GetAllTableInfos((t) => t.IsLookupTable(), out normalTables, out lookupTables);
+        }
 
-            normalTables = new List<ITableInfo>(tables.Where(t=>!t.IsLookupTable()));
-            lookupTables = new List<ITableInfo>(tables.Where(t=>t.IsLookupTable()));
+        /// <inheritdoc/>
+        public void GetTableInfos(ICoreChildProvider provider, out List<ITableInfo> normalTables, out List<ITableInfo> lookupTables)
+        {
+            GetAllTableInfos((t) => t.IsLookupTable(provider), out normalTables, out lookupTables);
+        }
+
+        private void GetAllTableInfos(Func<ITableInfo, bool> isLookupTableDelegate, out List<ITableInfo> normalTables, out List<ITableInfo> lookupTables)
+        {
+            var tables = GetColumnInfos().GroupBy(c => c.TableInfo_ID).Select(c => c.First().TableInfo).ToArray();
+
+            normalTables = new List<ITableInfo>(tables.Where(t => !isLookupTableDelegate(t)));
+            lookupTables = tables.Except(normalTables).ToList();
         }
 
         private IEnumerable<ColumnInfo> GetColumnInfos()
@@ -1095,7 +1107,7 @@ namespace Rdmp.Core.Curation.Data
         }
 
         /// <summary>
-        /// Gets the <see cref="LogManager"/> for logging load events related to this Catalogue / it's LoadMetadata (if it has one).  This will throw if no
+        /// Gets the <see cref="LogManager"/> for logging load events related to this Catalogue / its LoadMetadata (if it has one).  This will throw if no
         /// logging server has been configured.
         /// </summary>
         /// <returns></returns>

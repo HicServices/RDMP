@@ -38,7 +38,7 @@ namespace Rdmp.UI.Tests
         [Test]
         public void TestUpTo()
         {
-            string[] skip = {"AllAggregateContainers","_dataExportFilterManager","dataExportRepository","WriteLock","_oProjectNumberToCohortsDictionary","_errorsCheckNotifier"};
+            string[] skip = {"AllAggregateContainers","_dataExportFilterManager","dataExportRepository","WriteLock","_oProjectNumberToCohortsDictionary","_errorsCheckNotifier", "ProgressStopwatch" };
 
             // We have 2 providers and want to suck all the data out of one into the other
             var cp1 = new DataExportChildProvider(RepositoryLocator,null,new ThrowImmediatelyCheckNotifier(),null);

@@ -14,6 +14,7 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Checks;
+using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
@@ -201,6 +202,18 @@ namespace Rdmp.Core.DataExport.Data
             return GetAllProjectCatalogues().SelectMany(pc => pc.GetAllExtractionInformation(c)).ToArray();
         }
 
+        /// <inheritdoc/>
+        public ExtractionInformation[] GetAllProjectCatalogueColumns(ICoreChildProvider childProvider, ExtractionCategory c)
+        {
+            if(childProvider is DataExportChildProvider dx)
+            {
+                return dx.ExtractableDataSets.Where(eds => eds.Project_ID == this.ID)
+                    .Select(e => dx.AllCataloguesDictionary[e.Catalogue_ID])
+                    .SelectMany(cata=>cata.GetAllExtractionInformation(c)).ToArray();
+            }
+
+            return GetAllProjectCatalogueColumns(c);
+        }
         /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {

@@ -31,7 +31,7 @@ namespace Rdmp.Core
         /// <summary>
         /// Implement to provide a custom user interface that should be shown when a given object 
         /// <paramref name="o"/> is activated.  Return false if you do not want to respond to the object
-        ///  or it's Type.
+        ///  or its Type.
         /// </summary>
         /// <param name="o">The object being activated</param>
         /// <returns></returns>

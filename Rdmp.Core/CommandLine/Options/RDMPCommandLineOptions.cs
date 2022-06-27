@@ -54,6 +54,9 @@ namespace Rdmp.Core.CommandLine.Options
         [Option(Required = false, HelpText = "Connect to an RDMP platform 'database' stored on the file system at this folder")]
         public string Dir { get; set; }
 
+        [Option('q',"quiet",Required = false, HelpText = "Suppress all console logging not directly tied to show/get value etc")]
+        public bool Quiet { get; set; }
+
         /// <summary>
         /// If <see cref="ConnectionStringsFile"/> was specified and that file existed and was succesfully loaded
         /// using <see cref="PopulateConnectionStringsFromYamlIfMissing"/> then this property will store the

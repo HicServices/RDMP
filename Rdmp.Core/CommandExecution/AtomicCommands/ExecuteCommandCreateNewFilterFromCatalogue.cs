@@ -26,12 +26,16 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             Weight = DEFAULT_WEIGHT;
             _container = container;
+
+            SetImpossibleIfReadonly(container);
         }
 
         public ExecuteCommandCreateNewFilterFromCatalogue(IBasicActivateItems itemActivator, IRootFilterContainerHost host) : this(itemActivator, host.GetCatalogue())
         {
             Weight = DEFAULT_WEIGHT;
             _host = host;
+
+            SetImpossibleIfReadonly(host);
         }
 
         private ExecuteCommandCreateNewFilterFromCatalogue(IBasicActivateItems itemActivator, ICatalogue catalogue) : base(itemActivator)

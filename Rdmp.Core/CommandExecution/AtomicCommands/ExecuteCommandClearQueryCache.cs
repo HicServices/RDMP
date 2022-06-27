@@ -65,13 +65,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             foreach(var ag in _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively())
             {
-                // just incase they changed the role or something wierd we should nuke all it's roles
+                // just incase they changed the role or something wierd we should nuke all its roles
                 deleted += cacheManager.DeleteCacheEntryIfAny(ag, AggregateOperation.IndexedExtractionIdentifierList) ? 1 : 0;
                 deleted += cacheManager.DeleteCacheEntryIfAny(ag, AggregateOperation.JoinableInceptionQuery) ? 1:0;
             }
             foreach(var joinable in _cic.GetAllJoinables())
             {
-                // just incase they changed the role or something wierd we should nuke all it's roles
+                // just incase they changed the role or something wierd we should nuke all its roles
                 deleted += cacheManager.DeleteCacheEntryIfAny(joinable.AggregateConfiguration, AggregateOperation.IndexedExtractionIdentifierList) ? 1 : 0;
                 deleted += cacheManager.DeleteCacheEntryIfAny(joinable.AggregateConfiguration, AggregateOperation.JoinableInceptionQuery) ? 1 : 0;
             }
@@ -87,13 +87,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             foreach (var ag in _cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively())
             {
-                // just incase they changed the role or something wierd we should nuke all it's roles
+                // just incase they changed the role or something wierd we should nuke all its roles
                 found += cacheManager.GetLatestResultsTableUnsafe(ag, AggregateOperation.IndexedExtractionIdentifierList) != null ? 1 : 0;
                 found += cacheManager.GetLatestResultsTableUnsafe(ag, AggregateOperation.JoinableInceptionQuery) != null ? 1 : 0;
             }
             foreach (var joinable in _cic.GetAllJoinables())
             {
-                // just incase they changed the role or something wierd we should nuke all it's roles
+                // just incase they changed the role or something wierd we should nuke all its roles
                 found += cacheManager.GetLatestResultsTableUnsafe(joinable.AggregateConfiguration, AggregateOperation.IndexedExtractionIdentifierList) != null ? 1 : 0;
                 found += cacheManager.GetLatestResultsTableUnsafe(joinable.AggregateConfiguration, AggregateOperation.JoinableInceptionQuery) != null ? 1 : 0;
             }

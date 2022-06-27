@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -86,7 +87,7 @@ namespace Rdmp.Core.CommandExecution
         bool InteractiveDeletes {get;set;}
 
         /// <summary>
-        /// Finds the nearest database object to <paramref name="publish"/> in it's hierarchy and issues a publish
+        /// Finds the nearest database object to <paramref name="publish"/> in its hierarchy and issues a publish
         /// </summary>
         /// <param name="publish"></param>
         void PublishNearest(object publish);
@@ -478,7 +479,7 @@ namespace Rdmp.Core.CommandExecution
         /// Prompts user or directly creates a new satelite database (e.g. logging / dqe etc) and returns a persistent reference to it
         /// </summary>
         /// <param name="catalogueRepository">The main catalogue database</param>
-        /// <param name="defaultToSet">If the created database is to become the new default database of it's type provide this</param>
+        /// <param name="defaultToSet">If the created database is to become the new default database of its type provide this</param>
         /// <param name="db">The server in which the database should be created or null if the user is expected to pick themselves as part of the method e.g. through a UI</param>
         /// <param name="patcher">The schema and patches to run to create the database</param>
         /// <returns></returns>
@@ -522,10 +523,21 @@ namespace Rdmp.Core.CommandExecution
         bool IsWinForms { get; }
 
         /// <summary>
+        /// True if <see cref="LaunchSubprocess"/> is supported.
+        /// </summary>
+        bool IsAbleToLaunchSubprocesses { get; }
+
+        /// <summary>
         /// Called when <see cref="BasicCommandExecution.Publish"/> is invoked.  Allows you to respond to publish events outside of UI code.  UI code
         /// should invoke the RefreshBus system in Rdmp.UI
         /// </summary>
         /// <param name="databaseEntity"></param>
         void Publish(IMapsDirectlyToDatabaseTable databaseEntity);
+
+        /// <summary>
+        /// Launches a new process running <paramref name="startInfo"/>
+        /// </summary>
+        /// <param name="startInfo"></param>
+        public void LaunchSubprocess(ProcessStartInfo startInfo);
     }
 }

@@ -19,7 +19,7 @@ namespace Rdmp.Core.Providers
     /// object will have a DescendancyList.  Normally any DatabaseEntity (or node class) has only one DescendancyList (path to reach it) however you can flag BetterRouteExists
     /// on a DescendancyList to indicate that if another DescendancyList is found for the object then that one is to be considered 'better' and used instead.  For example
     /// AggregateConfigurations which are modelling a cohort apper both under their respective Catalogue and their CohortIdentificationConfiguration but sometimes one is an
-    /// orphan (it's CohortIdentificationConfiguration has been deleted or it has been removed from it) in which case the only path is the 'less goood' one.
+    /// orphan (its CohortIdentificationConfiguration has been deleted or it has been removed from it) in which case the only path is the 'less goood' one.
     /// 
     /// <para>It is not allowed to have duplicate objects in Parents.  All objects and parents must have appropriate implements of GetHashCode.</para>
     /// </summary>
@@ -51,7 +51,7 @@ namespace Rdmp.Core.Providers
 
 
         /// <summary>
-        /// Set to true to indicate that this route should be considered better than any you have seen before for the given object and it's children.  This will cause
+        /// Set to true to indicate that this route should be considered better than any you have seen before for the given object and its children.  This will cause
         /// other colliding <see cref="DescendancyList"/> paths for the same object to be marked BetterRouteExists
         /// </summary>
         public bool NewBestRoute { get; private set; }

@@ -125,7 +125,7 @@ namespace Rdmp.Core.DataFlowPipeline
 
 
         /// <summary>
-        /// Attempts to construct an instance of the class described by <see cref="IPipelineComponent.Class"/> and fulfil it's <see cref="DemandsInitializationAttribute"/>.
+        /// Attempts to construct an instance of the class described by <see cref="IPipelineComponent.Class"/> and fulfil its <see cref="DemandsInitializationAttribute"/>.
         /// Returns null and populates <paramref name="ex"/> if this is not possible/errors.
         /// </summary>
         /// <param name="component"></param>

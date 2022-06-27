@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -166,7 +167,7 @@ namespace Rdmp.Core.CommandLine.Gui
             if (args.AllowAutoSelect && availableObjects.Length == 1)
                 return availableObjects[0];
 
-            var dlg = new ConsoleGuiSelectOne(CoreChildProvider, availableObjects);
+            var dlg = new ConsoleGuiSelectOne(this, availableObjects);
             if (dlg.ShowDialog())
                 return dlg.Selected;
 
@@ -183,7 +184,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 return true;
             }
 
-            var dlg = new ConsoleGuiBigListBox<T>(args.WindowTitle,"Ok",true,available,t=>t.ToString(),true);
+            var dlg = new ConsoleGuiBigListBox<T>(args.WindowTitle ?? "","Ok",true,available,t=>t.ToString(),true);
 
             if (dlg.ShowDialog())
             {
@@ -388,6 +389,11 @@ namespace Rdmp.Core.CommandLine.Gui
         public override IPipelineRunner GetPipelineRunner(DialogArgs args, IPipelineUseCase useCase, IPipeline pipeline)
         {
             return new ConsoleGuiRunPipeline(this,useCase, pipeline);
+        }
+
+        public override void LaunchSubprocess(ProcessStartInfo startInfo)
+        {
+            throw new NotSupportedException();
         }
     }
 }

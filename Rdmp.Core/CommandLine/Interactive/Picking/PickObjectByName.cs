@@ -24,7 +24,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         public override string Format => "{Type}:{NamePattern}[,{NamePattern2},{NamePattern3}...]";
         public override string Help => 
             @"Type: must be an RDMP object type e.g. Catalogue, Project etc.
-NamePattern: must be a string that matches 1 (or more if selecting multiple objects) object based on it's name (ToString).  Can include the wild card '*'.  Cannot include the ':' character.
+NamePattern: must be a string that matches 1 (or more if selecting multiple objects) object based on its name (ToString).  Can include the wild card '*'.  Cannot include the ':' character.
 NamePattern2+: (optional) only allowed if you are being prompted for multiple objects, allows you to specify multiple objects of the same Type using comma separator";
         
         public override IEnumerable<string> Examples => new []

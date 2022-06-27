@@ -43,7 +43,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            //remove it from it's old container (really shouldn't be in any!) 
+            //remove it from its old container (really shouldn't be in any!) 
             if(_sourceAggregateCommand.ContainerIfAny != null)
                 _sourceAggregateCommand.ContainerIfAny.RemoveChild(_sourceAggregateCommand.Aggregate);
 

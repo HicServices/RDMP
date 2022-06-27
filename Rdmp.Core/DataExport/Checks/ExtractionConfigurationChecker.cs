@@ -134,7 +134,7 @@ namespace Rdmp.Core.DataExport.Checks
                 return;
             }
 
-            //make sure that it's cohort is retrievable
+            //make sure that its cohort is retrievable
             var cohort = repo.GetObjectByID<ExtractableCohort>((int)_config.Cohort_ID);
             if(cohort.IsDeprecated)
             {

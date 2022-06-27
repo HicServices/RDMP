@@ -144,7 +144,7 @@ namespace Rdmp.Core.Validation
 
             _domainObject = domainObject;
 
-            //first time initialize the results by calling it's constructor (with all the ivs)
+            //first time initialize the results by calling its constructor (with all the ivs)
             if(currentResults == null)
                 currentResults = new VerboseValidationResults(ItemValidators.ToArray());
 

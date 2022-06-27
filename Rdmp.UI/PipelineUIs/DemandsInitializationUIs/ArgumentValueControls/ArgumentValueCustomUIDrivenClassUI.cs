@@ -44,7 +44,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 
                 _uiType = _args.CatalogueRepository.MEF.GetType(expectedUIClassName);
 
-                //if we did not find one with the exact name (including namespace), try getting it just by the end of it's name (omit namespace)
+                //if we did not find one with the exact name (including namespace), try getting it just by the end of its name (omit namespace)
                 if (_uiType == null)
                 {
                     string shortUIClassName = t.Name + "UI";

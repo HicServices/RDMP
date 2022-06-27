@@ -3,11 +3,6 @@ name: Build
 # Run this workflow every time a new commit pushed to your repository
 
 on: push
-env:
-  MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
-  ACCEPT_EULA: "Y"
-  MSSQL_PID: "developer"
-  DOTNET_NOLOGO: 1
 
 jobs:
   # Set the job key. The key is displayed as the job name
@@ -19,73 +14,84 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      - name: Stub Node dependencies
+        shell: bash
+        run: touch package-lock.json
       - name: Install Node for coverage reporting
-        uses: actions/setup-node@v3.2.0
+        uses: actions/setup-node@v3.3.0
         with:
           node-version: '16.x'
+          cache: 'npm'
       - name: LCov merger tool
-        run: |
-          npm install -g lcov-result-merger
+        run: npm install -g lcov-result-merger
       - name: Checkout code
         uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: 6.0.x
-      - name: Install MS SQL 2019
-        run: Choco-Install -PackageName sql-server-2019 --params="'/IgnorePendingReboot'"
+      - name: Install MS SQL 2019 Express LocalDB
+        uses: crazy-max/ghaction-chocolatey@v2
+        with:
+          args: install -r sqllocaldb --no-progress
+      - name: Initialise LocalDB
+        shell: bash
+        run: |
+          SqlLocalDB.exe create MSSQLLocalDB -s
+          sqlcmd -l 180 -S '(localdb)\MSSQLLocalDB' -Q "SELECT @@VERSION;"
+          sed -i'' -e 's/localhost/\(localdb\)\\MSSQLLocalDB/' Tests.Common/TestDatabases.txt
       - uses: shogo82148/actions-setup-mysql@v1
         with:
           mysql-version: '8.0'
           root-password: 'YourStrong!Passw0rd'
           auto-start: true
       - name: Build
-        run: |
-          dotnet clean --configuration Release --nologo --verbosity minimal
-          dotnet nuget locals all --clear
-          dotnet restore -v:q
-          dotnet build --configuration Release --nologo --verbosity minimal
+        run: dotnet build --configuration Release --nologo --verbosity minimal
       - name: Initialise RDMP
-        run: dotnet Tools/rdmp/bin/Release/net6.0/rdmp.dll install localhost TEST_
-      - name: Clean coverage output directory
-        run: Remove-Item coverage -Recurse -ErrorAction Ignore
+        run: dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- install --createdatabasetimeout 180 "(localdb)\MSSQLLocalDB" TEST_ -e
       - name: Test Reusable code
-        run: dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-      - name: Rename Reusable lcov
         shell: bash
-        run: mv `find coverage -type f` recode.lcov
+        run: |
+          rm -rf coverage
+          dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          mv `find coverage -type f` recode.lcov
       - name: Test Core code
-        run: dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-      - name: Rename core lcov
         shell: bash
-        run: mv `find coverage -type f` core.lcov
+        run: |
+          dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          mv `find coverage -type f` core.lcov
       - name: Test UI code
-        run: dotnet test "./Rdmp.UI.Tests/Rdmp.UI.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-      - name: Rename UI lcov
         shell: bash
-        run: mv `find coverage -type f` ui.lcov
-     
+        run: |
+          dotnet test "./Rdmp.UI.Tests/Rdmp.UI.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          mv `find coverage -type f` ui.lcov
+
       - name: Test with local file system
+        shell: bash
         run:  |
-              cd Tests.Common
-              echo "UseFileSystemRepo: true" >> TestDatabases.txt
-              type TestDatabases.txt
-              cd ..
+              echo "UseFileSystemRepo: true" >> Tests.Common/TestDatabases.txt
+              cat Tests.Common/TestDatabases.txt
       - name: Test Reusable (with file system repo)
-        run: dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-      - name: Rename Reusable lcov
         shell: bash
-        run: mv `find coverage -type f` recodefs.lcov
+        run: |
+          dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          mv `find coverage -type f` recodefs.lcov
       - name: Test Core (with file system repo)
-        run: dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-      - name: Rename core lcov
         shell: bash
-        run: mv `find coverage -type f` corefs.lcov
+        run: |
+          dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          mv `find coverage -type f` corefs.lcov
       - name: Test UI (with file system repo)
-        run: dotnet test "./Rdmp.UI.Tests/Rdmp.UI.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=  -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-      - name: Rename UI lcov
         shell: bash
-        run: mv `find coverage -type f` uifs.lcov
+        run: |
+          dotnet test "./Rdmp.UI.Tests/Rdmp.UI.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          mv `find coverage -type f` uifs.lcov
       
       - name: Merge LCovs
         run: lcov-result-merger "{ui,core,recode}{,fs}.lcov" all.lcov
@@ -98,12 +104,16 @@ jobs:
       
       - name: Package
         run: |
-          dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 -c Release -o PublishWinForms --verbosity minimal --nologo
-          dotnet publish Tools/rdmp/rdmp.csproj -r win-x64 -c Release -o PublishWindows --verbosity minimal --nologo
-          dotnet publish Tools/rdmp/rdmp.csproj -r linux-x64 -c Release -o PublishLinux --verbosity minimal --nologo
+          dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 --self-contained -c Release -o PublishWinForms --verbosity minimal --nologo
+          dotnet publish Tools/rdmp/rdmp.csproj -r win-x64 --self-contained -c Release -o PublishWindows --verbosity minimal --nologo
+          dotnet publish Tools/rdmp/rdmp.csproj -r linux-x64 --self-contained -c Release -o PublishLinux --verbosity minimal --nologo
       - name: BundleSource
-        shell: cmd
-        run: powershell -noexit -executionpolicy bypass "& ./BundleSourceIntoZipFile.ps1"
+        shell: bash
+        run: |
+          mkdir -p Tools/BundleUpSourceIntoZip/output
+          echo "dir /s/b *.cs *.xml > srcbitsa.txt" | cmd
+          perl -pe '$_=reverse' < srcbitsa.txt | sort -t'\' -k1,1 -u | perl -pe '$_=reverse' > srcbits.txt
+          echo 7z a -mx=9 Tools/BundleUpSourceIntoZip/output/SourceCodeForSelfAwareness.zip @srcbits.txt | cmd
       - name: Get the version
         id: get_version
         # Get the tag name e.g. v5.0.0 but skip the 'v'
@@ -112,13 +122,22 @@ jobs:
 
       - name: Sign
         if: contains(github.ref, 'refs/tags/v')
-        shell: cmd
+        shell: bash
         run: |
-            powershell.exe -nologo -noprofile -command "& { [IO.File]::WriteAllBytes(\"GitHubActionsWorkflow.pfx\", [System.Convert]::FromBase64String(\"${{ secrets.DIGICERT_PFX }}\")); }"
-            "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\x86\\signtool.exe" Sign /f GitHubActionsWorkflow.pfx /p ${{ secrets.DIGICERT_PASSWORD }} /fd sha256 /tr http://timestamp.digicert.com /td sha256 PublishWindows/*.dll PublishWindows/*.exe  PublishLinux/*.dll PublishWinForms/*.exe PublishWinForms/*.dll
-            mkdir dist
-            powershell.exe -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('PublishWindows', 'dist/rdmp-cli-win-x64.zip'); [IO.Compression.ZipFile]::CreateFromDirectory('PublishLinux', 'dist/rdmp-cli-linux-x64.zip'); [IO.Compression.ZipFile]::CreateFromDirectory('PublishWinForms', 'dist/rdmp-client.zip');}"
-      
+          signtool=(/c/Program\ Files\ \(x86\)/Windows\ Kits/10/bin/*/x64/signtool.exe)
+          signtool=${signtool[${#signtool[@]}-1]}
+          signtool=`echo $signtool | sed -e 's#^/c#c:#' | tr / \\\\`
+          echo ${{ secrets.DIGICERT_PFX }} | base64 --decode > GitHubActionsWorkflow.pfx
+          echo '"'$signtool'"' 'Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p ${{ secrets.DIGICERT_PASSWORD }} PublishWindows/*.dll PublishWindows/*.exe PublishLinux/*.dll PublishWinForms/*.exe PublishWinForms/*.dll' | cmd
+          mkdir -p dist
+          (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-cli-win-x64.zip . | cmd)
+          (cd PublishLinux ; echo 7z a -mx=9 ../dist/rdmp-cli-linux-x64.zip . | cmd)
+          mv PublishLinux rdmp-cli-linux
+          echo 7z a dist/rdmp-cli-linux-x64.tar rdmp-cli-linux | cmd
+          echo 7z a dist/rdmp-cli-linux-x64.tar.gz dist/rdmp-cli-linux-x64.tar | cmd
+          rm dist/rdmp-cli-linux-x64.tar
+          (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-client.zip . | cmd)
+
       - name: Nuget packages
         if: contains(github.ref, 'refs/tags/v')
         run: |
@@ -138,7 +157,7 @@ jobs:
           path: |
             dist
       - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@2.2.1
+        uses: svenstaro/upload-release-action@2.3.0
         if: contains(github.ref, 'refs/tags/v')
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}

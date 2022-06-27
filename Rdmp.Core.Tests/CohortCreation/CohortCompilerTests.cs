@@ -166,7 +166,7 @@ namespace Rdmp.Core.Tests.CohortCreation
                         break;
                     case TestCompilerAddAllTasksTestCase.Subcontainer:
                         tasks = compiler.AddTasksRecursively(new ISqlParameter[0], container1, includeSubcontainers);
-                        Assert.AreEqual(includeSubcontainers?3:2,tasks.Count); //subcontainer and it's aggregates
+                        Assert.AreEqual(includeSubcontainers?3:2,tasks.Count); //subcontainer and its aggregates
                         break;
                     default:
                         throw new ArgumentOutOfRangeException("testCase");

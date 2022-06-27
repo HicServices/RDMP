@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Drawing;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
@@ -100,12 +101,17 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
         {
-            if (target is Project)
-                _project = (Project)target;
-
-            if (target is CohortIdentificationConfiguration)
-                _cic = (CohortIdentificationConfiguration)target;
-
+            switch (target)
+            {
+                case Project project:
+                    _project = project;
+                    break;
+                case CohortIdentificationConfiguration configuration:
+                    _cic = configuration;
+                    SetImpossibleIfReadonly(_cic);
+                    break;
+            }
+            
             if (_project != null && _cic != null)
             {
                 if(_project.GetAssociatedCohortIdentificationConfigurations().Contains(_cic))

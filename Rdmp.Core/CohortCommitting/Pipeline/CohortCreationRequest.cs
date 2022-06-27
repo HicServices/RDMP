@@ -22,7 +22,7 @@ using ReusableLibraryCode.Checks;
 namespace Rdmp.Core.CohortCommitting.Pipeline
 {
     /// <summary>
-    /// All metadata details nessesary to create a cohort including which project it goes into, it's name, version etc.  There are no identifiers for the cohort.
+    /// All metadata details nessesary to create a cohort including which project it goes into, its name, version etc.  There are no identifiers for the cohort.
     /// Also functions as the use case for cohort creation (to which it passes itself as an input object).
     /// </summary>
     public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationRequest, ICanBeSummarised
@@ -200,7 +200,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline
         public int ImportAsExtractableCohort(bool deprecateOldCohortOnSuccess, bool migrateUsages)
         {
             if(NewCohortDefinition.ID == null)
-                throw new NotSupportedException("CohortCreationRequest cannot be imported because it's ID is null, it is likely that it has not been pushed to the server yet");
+                throw new NotSupportedException("CohortCreationRequest cannot be imported because its ID is null, it is likely that it has not been pushed to the server yet");
 
             var cohort = new ExtractableCohort(_repository, (ExternalCohortTable) NewCohortDefinition.LocationOfCohort, (int)NewCohortDefinition.ID);
             cohort.AppendToAuditLog(DescriptionForAuditLog);

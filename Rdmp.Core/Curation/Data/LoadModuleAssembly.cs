@@ -61,7 +61,7 @@ namespace Rdmp.Core.Curation.Data
         }
         
         /// <summary>
-        /// The plugin this file forms a part of (each <see cref="Plugin"/> will usually have multiple dlls as part of it's dependencies)
+        /// The plugin this file forms a part of (each <see cref="Plugin"/> will usually have multiple dlls as part of its dependencies)
         /// </summary>
         [Relationship(typeof(Plugin), RelationshipType.SharedObject)]
         public int Plugin_ID

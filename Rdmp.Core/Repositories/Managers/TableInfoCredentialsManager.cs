@@ -114,7 +114,7 @@ namespace Rdmp.Core.Repositories.Managers
                         if(r.Read())
                         {
                             //there is one 
-                            //get it by it's id
+                            //get it by its id
                             toReturn = Convert.ToInt32(r["DataAccessCredentials_ID"]);
 
                             //if the first record is liscenced for Any

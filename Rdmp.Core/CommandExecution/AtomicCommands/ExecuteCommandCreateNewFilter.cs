@@ -40,6 +40,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 if(ac.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
                    SetImpossible("Aggregate is set to use another's filter container tree");
             }
+
+            SetImpossibleIfReadonly(host);
         }
 
         public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, CatalogueItem ci) : base(activator)
@@ -60,6 +62,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             _factory = factory;
             _container = container;
+
+            SetImpossibleIfReadonly(container);
+            
         }
 
         public override Image GetImage(IIconProvider iconProvider)

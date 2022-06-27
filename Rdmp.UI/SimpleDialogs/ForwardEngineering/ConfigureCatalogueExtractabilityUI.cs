@@ -523,6 +523,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
         private void btnOk_Click(object sender, EventArgs e)
         {
             var eis = GetExtractionInformations();
+            objectSaverButton1.Save();
 
             if (!eis.Any())
             {

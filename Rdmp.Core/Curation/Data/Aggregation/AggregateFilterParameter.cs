@@ -31,7 +31,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
 
         /// <summary>
         /// The ID of the <see cref="AggregateFilter"/> to which this parameter should be used with.  The filter should have a reference to the parameter name (e.g. @startDate)
-        /// in it's WhereSQL.
+        /// in its WhereSQL.
         /// </summary>
         [Relationship(typeof(AggregateFilter),RelationshipType.SharedObject)]
         public int AggregateFilter_ID

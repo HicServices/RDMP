@@ -405,7 +405,7 @@ namespace ReusableLibraryCode.Settings
         }
 
         /// <summary>
-        /// Changes the reporting level of the given error to <paramref name="value"/> instead of it's <see cref="ErrorCode.DefaultTreatment"/>
+        /// Changes the reporting level of the given error to <paramref name="value"/> instead of its <see cref="ErrorCode.DefaultTreatment"/>
         /// </summary>
         /// <param name="errorCode"></param>
         /// <param name="value"></param>

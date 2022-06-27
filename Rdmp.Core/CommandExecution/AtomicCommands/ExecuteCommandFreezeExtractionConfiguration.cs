@@ -34,6 +34,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _extractionConfiguration.IsReleased = true;
             _extractionConfiguration.SaveToDatabase();
             Publish(_extractionConfiguration);
+            Emphasise(_extractionConfiguration);
         }
     }
 }

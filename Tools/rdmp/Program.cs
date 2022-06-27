@@ -6,6 +6,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using CommandLine;
 using MapsDirectlyToDatabaseTable;
@@ -55,6 +56,15 @@ namespace Rdmp.Core
                 Console.WriteLine("Could not load NLog.config:" + ex.Message);
             }
             
+            if(args.Any(a=>a.Equals("-q")) || args.Any(a=>a.Equals("--quiet",StringComparison.CurrentCultureIgnoreCase)))
+            {
+                foreach(var t in LogManager.Configuration.AllTargets.ToArray())
+                {
+                    if(t.GetType().Name.Contains("Console",StringComparison.CurrentCultureIgnoreCase))
+                        LogManager.Configuration.RemoveTarget(t.Name);
+                }
+            }
+
             var logger = LogManager.GetCurrentClassLogger();
 
             logger.Info("Dotnet Version:" + Environment.Version);

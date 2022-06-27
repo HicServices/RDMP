@@ -202,7 +202,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
                 {
                     peekedLine = new FlatFileLine(reader.Context);
 
-                    //peeked line was 'valid' on it's own
+                    //peeked line was 'valid' on its own
                     if (peekedLine.Cells.Length >= _headers.Length)
                     {
                         //queue it for reprocessing

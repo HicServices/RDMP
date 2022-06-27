@@ -25,7 +25,7 @@ namespace Rdmp.Core.CommandLine.Gui
         /// <summary>
         /// If the public constructor was used then this is the fixed list we were initialized with
         /// </summary>
-        private IList<T> _publicCollection;
+        protected IList<T> _publicCollection;
 
         private bool _addNull;
 
@@ -263,6 +263,8 @@ namespace Rdmp.Core.CommandLine.Gui
         protected void RestartFiltering(string searchTerm)
         {
             
+            var cts = new CancellationTokenSource();
+
             lock(_taskCancellationLock)
             {
                 //cancel any previous searches
@@ -270,10 +272,9 @@ namespace Rdmp.Core.CommandLine.Gui
                     c.Cancel();
             
                 _cancelFiltering.Clear();
+
+                _cancelFiltering.Add(cts);
             }
-            
-            var cts = new CancellationTokenSource();
-            _cancelFiltering.Add(cts);
 
             _currentFilterTask = Task.Run(()=>
             {

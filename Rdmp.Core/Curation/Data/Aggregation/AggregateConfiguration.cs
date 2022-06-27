@@ -154,7 +154,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
                 if (OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null && value != null)
                     throw new NotSupportedException(
                         string.Format(
-                            "This AggregateConfiguration has a shortcut to another AggregateConfiguration's Filters (It's OverrideFiltersByUsingParentAggregateConfigurationInstead_ID is {0}) which means it cannot be assigned it's own RootFilterContainerID",
+                            "This AggregateConfiguration has a shortcut to another AggregateConfiguration's Filters (its OverrideFiltersByUsingParentAggregateConfigurationInstead_ID is {0}) which means it cannot be assigned its own RootFilterContainerID",
                             OverrideFiltersByUsingParentAggregateConfigurationInstead_ID));
 
                 SetField(ref _rootFilterContainerID ,value);
@@ -280,7 +280,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         /// a join is done against the secondary dataset. 
         /// 
         /// <para>This property returns all such 'patient index table' AggregateConfigurations which are currently being used by this AggregateConfiguration
-        /// for building it's join.</para>
+        /// for building its join.</para>
         /// </summary>
         [NoMappingToDatabase]
         public JoinableCohortAggregateConfigurationUse[] PatientIndexJoinablesUsed {
@@ -339,7 +339,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         /// <summary>
         /// Only relevant for AggregateConfigurations that are being used in a cohort identification capacity (See <see cref="IsCohortIdentificationAggregate"/>).
         /// 
-        /// <para>The order location of an AggregateConfiguration within it's parent <see cref="CohortAggregateContainer"/> (if it has one).  This is mostly irrelevant for UNION /
+        /// <para>The order location of an AggregateConfiguration within its parent <see cref="CohortAggregateContainer"/> (if it has one).  This is mostly irrelevant for UNION /
         /// INTERSECT operations (other than helping the user viewing the system) but is vital for EXCEPT containers where the first AggregateConfiguration in the container is
         /// run producing a dataset and all subsequent AggregateConfigurations are then removed from that patient set.</para>
         /// </summary>
@@ -711,7 +711,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
                     throw new NotImplementedException("Cannot clone due to AXIS");
             }
 
-            //now clone it's AggregateForcedJoins
+            //now clone its AggregateForcedJoins
             foreach (var t in cataRepo.AggregateForcedJoinManager.GetAllForcedJoinsFor(this))
                 cataRepo.AggregateForcedJoinManager.CreateLinkBetween(clone, t);
             
@@ -735,7 +735,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
             return clone;
         }
         /// <summary>
-        /// Using the set; on Order property changes the Order. if you want to informt his object of it's Order because you already know what it is but this object doesn't know yet
+        /// Using the set; on Order property changes the Order. if you want to informt his object of its Order because you already know what it is but this object doesn't know yet
         /// then you can use this method to force a specific known order onto the object in memory.
         /// </summary>
         /// <param name="currentOrder"></param>
@@ -746,7 +746,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         }
 
         /// <summary>
-        /// Deletes the AggregateConfiguration.  This includes removing it from it's <see cref="CohortAggregateContainer"/> if it is part of one.  Also includes deleting it's 
+        /// Deletes the AggregateConfiguration.  This includes removing it from its <see cref="CohortAggregateContainer"/> if it is part of one.  Also includes deleting its 
         /// <see cref="JoinableCohortAggregateConfiguration"/> if it is a 'patient index table'.
         /// </summary>
         /// <exception cref="NotSupportedException">Thrown if the AggregateConfiguration is a patient index table that is being used by other AggregateConfigurations</exception>
@@ -800,14 +800,14 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         {
             if (IsJoinablePatientIndexTable())
                 return
-                    @"This is an AggregateConfiguration running as a 'Joinable PatientIndex Table'.  It's role is to produce a patient identifier fact table for joining to other Cohort Aggregates during cohort building (See JoinableCohortAggregateConfiguration)";
+                    @"This is an AggregateConfiguration running as a 'Joinable PatientIndex Table'.  its role is to produce a patient identifier fact table for joining to other Cohort Aggregates during cohort building (See JoinableCohortAggregateConfiguration)";
 
             if (IsCohortIdentificationAggregate)
                 return
-                    @"This is an AggregateConfiguration running as a 'Cohort Aggregate'.  It's role is to produce a list of unique patient identifiers from a single dataset (e.g. 'all patients with HBA1c test code > 50 in biochemistry')";
+                    @"This is an AggregateConfiguration running as a 'Cohort Aggregate'.  its role is to produce a list of unique patient identifiers from a single dataset (e.g. 'all patients with HBA1c test code > 50 in biochemistry')";
 
             return
-                @"This is an AggregateConfiguration running as an 'Aggregate Graph'.  It's role is to produce summary information about a dataset designed to be displayed in a graph e.g. number of records each year by healthboard";
+                @"This is an AggregateConfiguration running as an 'Aggregate Graph'.  its role is to produce summary information about a dataset designed to be displayed in a graph e.g. number of records each year by healthboard";
 
         }
 

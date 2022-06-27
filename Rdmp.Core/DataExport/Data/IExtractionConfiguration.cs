@@ -148,7 +148,7 @@ namespace Rdmp.Core.DataExport.Data
         /// </summary>
         /// <param name="dataset"></param>
         /// <returns></returns>
-        ConcreteColumn[] GetAllExtractableColumnsFor(IExtractableDataSet dataset);
+        ExtractableColumn[] GetAllExtractableColumnsFor(IExtractableDataSet dataset);
 
         /// <summary>
         /// Returns the root AND/OR container (if any) that provides WHERE logic to restrict which records are extracted

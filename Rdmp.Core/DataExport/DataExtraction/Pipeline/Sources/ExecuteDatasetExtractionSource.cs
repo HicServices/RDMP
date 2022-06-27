@@ -202,7 +202,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                 {
                     var releaseIdentifierColumn =  Request.ReleaseIdentifierSubstitutions.First().GetRuntimeName();
 
-                    if(chunk != null)
+                    if(chunk != null && chunk.Rows.Count > 0)
                     {
                         //last release id in the current chunk
                         var lastReleaseId = chunk.Rows[chunk.Rows.Count-1][releaseIdentifierColumn];

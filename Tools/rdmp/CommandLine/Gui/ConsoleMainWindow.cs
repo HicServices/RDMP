@@ -311,7 +311,7 @@ namespace Rdmp.Core.CommandLine.Gui
         {
             try
             {
-                var dlg = new ConsoleGuiSelectOne(_activator);
+                var dlg = new ConsoleGuiSelectOne(_activator,null);
                 
                 if (dlg.ShowDialog())
                 {

@@ -86,6 +86,16 @@ namespace Rdmp.Core.CommandExecution
         /// <inheritdoc/>
         public float Weight { get; set; }
 
+        protected void SetImpossibleIfReadonly(IMightBeReadOnly m)
+        {
+            if (m == null)
+                return;
+
+            if (m.ShouldBeReadOnly(out string reason))
+            {
+                SetImpossible($"{(m is IContainer ? "Container" : ('\'' + m.ToString() + '\''))} is readonly beacause:{reason}");
+            }
+        }
         public BasicCommandExecution()
         {
 

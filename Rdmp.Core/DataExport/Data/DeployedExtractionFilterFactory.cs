@@ -13,7 +13,7 @@ namespace Rdmp.Core.DataExport.Data
 {
     /// <summary>
     ///  Constructs IFilters etc for data extraction via SelectedDataSets (See IFilterFactory).  Each SelectedDataSets in an ExtractionConfiguration has (optionally)
-    ///  it's own root container IFilters, subcontainers etc.
+    ///  its own root container IFilters, subcontainers etc.
     /// </summary>
     public class DeployedExtractionFilterFactory : IFilterFactory
     {
