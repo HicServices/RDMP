@@ -242,6 +242,9 @@ namespace Rdmp.Core.Startup
 
         private void LoadMEF(ICatalogueRepository catalogueRepository, ICheckNotifier notifier)
         {
+            if(catalogueRepository.MEF == null)
+                catalogueRepository.MEF = new MEF();
+
             DirectoryInfo downloadDirectory = catalogueRepository.MEF.DownloadDirectory;
              
             //make sure the MEF directory exists
