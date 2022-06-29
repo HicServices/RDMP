@@ -20,8 +20,11 @@ RDMP does not require your data be moved or transformed prior to processing and 
 
 Signed release binaries for the RDMP client and Command Line Interface (CLI) are in the available in the [GitHub releases section](https://github.com/HicServices/RDMP/releases).
 
+### Windows Install Guide
 
-### Linux CLI Quickstart Guide
+Download and unzip `rdmp-client.zip` from the [GitHub releases section](https://github.com/HicServices/RDMP/releases) and run `ResearchDataManagementPlatform.exe`.  This will take you to an installation/setup screen which will guide you through the rest of the initial setup process.
+
+### Linux CLI Install Guide
 
 The following steps can be used to install the RDMP CLI and start an SqlServer docker container to install into. __Make sure to set the version (e.g. 7.0.14) to the latest and set a custom password if desired__.
 
