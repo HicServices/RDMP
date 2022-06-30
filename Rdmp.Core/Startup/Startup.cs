@@ -242,10 +242,9 @@ namespace Rdmp.Core.Startup
 
         private void LoadMEF(ICatalogueRepository catalogueRepository, ICheckNotifier notifier)
         {
-            if(catalogueRepository.MEF == null)
-                catalogueRepository.MEF = new MEF();
+            catalogueRepository.MEF ??= new MEF();
 
-            DirectoryInfo downloadDirectory = catalogueRepository.MEF.DownloadDirectory;
+            var downloadDirectory = catalogueRepository.MEF.DownloadDirectory;
              
             //make sure the MEF directory exists
             if(!downloadDirectory.Exists)
@@ -253,11 +252,11 @@ namespace Rdmp.Core.Startup
 
             var compatiblePlugins = catalogueRepository.PluginManager.GetCompatiblePlugins();
 
-            List<DirectoryInfo> dirs = new List<DirectoryInfo>();
-            List<DirectoryInfo> toLoad = new List<DirectoryInfo>();
-            
-            //always load the current application directory
-            toLoad.Add(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory));
+            var dirs = new List<DirectoryInfo>();
+            var toLoad = new List<DirectoryInfo> {
+                //always load the current application directory
+                new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory)
+            };
 
             for (int i = 0; i < compatiblePlugins.Length; i++)
             {
@@ -282,7 +281,7 @@ namespace Rdmp.Core.Startup
                     bool mustUnzip = true;
 
                     //if there's already an unpacked version
-                    if(outDir != null && outDir.Exists)
+                    if(outDir is { Exists: true })
                     {
                         //if the directory has no files we have to unzip - otherwise it has an unzipped version already yay
                         mustUnzip = !outDir.GetFiles("*.dll",SearchOption.AllDirectories).Any();
