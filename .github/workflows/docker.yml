@@ -32,7 +32,7 @@ jobs:
           curl -sL https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl3.py > /usr/bin/systemctl
           chmod +x /usr/bin/systemctl 
           MSSQL_PID=Express ACCEPT_EULA=Y MSSQL_SA_PASSWORD='YourStrong#Passw0rd' /opt/mssql/bin/mssql-conf -n setup
-          /rdmp/rdmp install -u sa -p 'YourStrong#Passw0rd' -e RDMPDock_
+          /rdmp/rdmp install -u sa -p 'YourStrong#Passw0rd' -e localhost RDMPDock_
           cat <<EOT > /rdmp/Databases.yaml
           CatalogueConnectionString: Server=localhost;user=SA;password=YourStrong#Passw0rd;Database=RDMPDock_Catalogue;
           DataExportConnectionString: Server=localhost;user=SA;password=YourStrong#Passw0rd;Database=RDMPDock_DataExport;
