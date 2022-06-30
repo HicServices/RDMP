@@ -171,7 +171,7 @@ namespace Rdmp.Core.CommandLine.Options
                 return;
             }
 
-            string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var assemblyFolder = AppContext.BaseDirectory;
             var yaml = Path.Combine(assemblyFolder, ConnectionStringsFile);
 
             if (File.Exists(yaml))
@@ -186,7 +186,7 @@ namespace Rdmp.Core.CommandLine.Options
                 }
                 catch (Exception ex)
                 {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Failed to read yaml file '" + yaml + "'", CheckResult.Fail,ex));
+                    notifier.OnCheckPerformed(new CheckEventArgs($"Failed to read yaml file '{yaml}'", CheckResult.Fail,ex));
                 }
             }
         }

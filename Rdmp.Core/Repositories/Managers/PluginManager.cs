@@ -30,7 +30,7 @@ namespace Rdmp.Core.Repositories.Managers
         /// <returns></returns>
         public Curation.Data.Plugin[] GetCompatiblePlugins()
         {
-            var location = Assembly.GetExecutingAssembly().Location;
+            var location = Process.GetCurrentProcess().MainModule.FileName;
             if(location == null)
                 throw new Exception("Assembly had no listed Location");
 
