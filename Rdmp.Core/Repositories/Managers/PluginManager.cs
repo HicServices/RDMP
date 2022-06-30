@@ -6,8 +6,8 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
-using System.Reflection;
 using ReusableLibraryCode.Extensions;
 
 namespace Rdmp.Core.Repositories.Managers
@@ -30,7 +30,9 @@ namespace Rdmp.Core.Repositories.Managers
         /// <returns></returns>
         public Curation.Data.Plugin[] GetCompatiblePlugins()
         {
-            var location = Process.GetCurrentProcess().MainModule.FileName;
+            var location=Path.Combine(AppContext.BaseDirectory,"Rdmp.Core.dll");
+            if (!File.Exists(location))
+                location = Process.GetCurrentProcess()?.MainModule?.FileName;
             if(location == null)
                 throw new Exception("Assembly had no listed Location");
 
