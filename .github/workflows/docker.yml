@@ -23,7 +23,7 @@ jobs:
           buildah run "$ctr" sh << EOS
           set -e
           apt-get update -qq
-          apt-get install -qqy curl gnupg2 python3 ca-certificates libicu66 --no-install-recommends
+          apt-get install -qqy curl gnupg2 python3 ca-certificates libgdiplus libicu66 --no-install-recommends
           curl -sL https://packages.microsoft.com/keys/microsoft.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
           curl -sL https://packages.microsoft.com/config/ubuntu/20.04/mssql-server-preview.list >> /etc/apt/sources.list
           echo  >> /etc/apt/sources.list
