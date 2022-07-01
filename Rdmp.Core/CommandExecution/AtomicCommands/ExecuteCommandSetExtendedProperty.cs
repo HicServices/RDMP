@@ -5,6 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories.Construction;
@@ -16,15 +18,15 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     /// </summary>
     public class ExecuteCommandSetExtendedProperty : BasicCommandExecution, IAtomicCommand
     {
-        public IMapsDirectlyToDatabaseTable SetOn { get; }
+        public IMapsDirectlyToDatabaseTable[] SetOn { get; }
         public string PropertyName { get; }
         public object Value { get; }
         public bool Strict { get; }
 
         [UseWithObjectConstructor]
         public ExecuteCommandSetExtendedProperty(IBasicActivateItems activator,
-            [DemandsInitialization("The object that you want to set the property on")]
-            IMapsDirectlyToDatabaseTable setOn,
+            [DemandsInitialization("The object(s) that you want to set the property on")]
+            IMapsDirectlyToDatabaseTable[] setOn,
             [DemandsInitialization("The property you want to set")]
             string propertyName,
             [DemandsInitialization("The value to store")]
@@ -57,16 +59,22 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             base.Execute();
 
             var cataRepo = BasicActivator.RepositoryLocator.CatalogueRepository;
+            var created = new List<ExtendedProperty>();
             
-            // delete any old versions
-            foreach(var d in cataRepo.GetExtendedProperties(PropertyName, SetOn))
+            foreach(var o in SetOn)
             {
-                d.DeleteInDatabase();
+                // delete any old versions
+                foreach (var d in cataRepo.GetExtendedProperties(PropertyName, o))
+                {
+                    d.DeleteInDatabase();
+                }
+
+                // Creates the new property into the db
+                created.Add(new ExtendedProperty(cataRepo, o, PropertyName, Value));
             }
-            
-            // Creates the new property into the db
-            var prop = new ExtendedProperty(cataRepo, SetOn, PropertyName, Value);
-            Publish(prop);
+
+            if(created.Any())
+                Publish(created.First());
         }
     }
 }

@@ -54,7 +54,7 @@ namespace Rdmp.Core.Tests.CommandExecution
             cmd.Execute();
 
             var replacement = RepositoryLocator.CatalogueRepository
-                    .GetAllObjectsWhere<ExtendedProperty>("Name",ExecuteCommandReplacedBy.ReplacedBy)
+                    .GetAllObjectsWhere<ExtendedProperty>("Name",ExtendedProperty.ReplacedBy)
                     .Single(r=>r.IsReferenceTo(c1));
 
             Assert.IsTrue(replacement.IsReferenceTo(c1));
@@ -67,14 +67,14 @@ namespace Rdmp.Core.Tests.CommandExecution
             cmd.Execute();
 
             Assert.AreEqual(1,RepositoryLocator.CatalogueRepository
-                    .GetAllObjectsWhere<ExtendedProperty>("Name",ExecuteCommandReplacedBy.ReplacedBy)
+                    .GetAllObjectsWhere<ExtendedProperty>("Name", ExtendedProperty.ReplacedBy)
                     .Count(r=>r.IsReferenceTo(c1)));
 
             cmd = new ExecuteCommandReplacedBy(GetMockActivator().Object,c1,null);
             cmd.Execute();
 
             Assert.IsEmpty(RepositoryLocator.CatalogueRepository
-                    .GetAllObjectsWhere<ExtendedProperty>("Name",ExecuteCommandReplacedBy.ReplacedBy)
+                    .GetAllObjectsWhere<ExtendedProperty>("Name", ExtendedProperty.ReplacedBy)
                     .Where(r=>r.IsReferenceTo(c1)));
            
         }
