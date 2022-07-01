@@ -223,7 +223,7 @@ namespace Rdmp.Core.CommandExecution
                     if(_activator.RepositoryLocator.CatalogueRepository.GetExtendedProperties(ExtendedProperty.IsTemplate)
                         .Any(v=>v.Value.Equals("true")))
                     {
-                        yield return new ExecuteCommandSetExtendedProperty(_activator, new[] { ac }, ExtendedProperty.IsTemplate, "false")
+                        yield return new ExecuteCommandSetExtendedProperty(_activator, new[] { ac }, ExtendedProperty.IsTemplate, null)
                         {
                             OverrideCommandName = "Make Non Template"
                         };

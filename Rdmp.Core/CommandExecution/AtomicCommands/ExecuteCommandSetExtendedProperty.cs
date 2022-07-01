@@ -20,7 +20,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     {
         public IMapsDirectlyToDatabaseTable[] SetOn { get; }
         public string PropertyName { get; }
-        public object Value { get; }
+        public string Value { get; }
         public bool Strict { get; }
 
         [UseWithObjectConstructor]
@@ -70,7 +70,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 }
 
                 // Creates the new property into the db
-                created.Add(new ExtendedProperty(cataRepo, o, PropertyName, Value));
+                // If the Value passed was null just leave it deleted
+                if(!string.IsNullOrWhiteSpace(Value))
+                {
+                    created.Add(new ExtendedProperty(cataRepo, o, PropertyName, Value));
+                }
+                    
             }
 
             if(created.Any())
