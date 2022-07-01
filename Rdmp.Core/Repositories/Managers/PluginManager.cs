@@ -30,14 +30,7 @@ namespace Rdmp.Core.Repositories.Managers
         /// <returns></returns>
         public Curation.Data.Plugin[] GetCompatiblePlugins()
         {
-            var location=Path.Combine(AppContext.BaseDirectory,"Rdmp.Core.dll");
-            if (!File.Exists(location))
-                location = Process.GetCurrentProcess()?.MainModule?.FileName;
-            if(location == null)
-                throw new Exception("Assembly had no listed Location");
-
-            var fileVersion = FileVersionInfo.GetVersionInfo(location).FileVersion;
-            var runningSoftwareVersion = new Version(fileVersion);
+            var runningSoftwareVersion = typeof(PluginManager).Assembly.GetName().Version;
 
             //nupkg that are compatible with the running software
             var plugins = _repository.GetAllObjects<Curation.Data.Plugin>().Where(a=>a.RdmpVersion.IsCompatibleWith(runningSoftwareVersion,2));

@@ -89,11 +89,7 @@ namespace Rdmp.Core.CommandLine.Runners
                 }
             }
 
-            var selfExe = Path.Combine(AppContext.BaseDirectory, "Rdmp.Core.dll");
-            if (!File.Exists(selfExe))
-                selfExe = Environment.ProcessPath;
-            var runningSoftwareVersion = new Version(FileVersionInfo.GetVersionInfo(selfExe).FileVersion);
-
+            var runningSoftwareVersion = typeof(PackPluginRunner).Assembly.GetName().Version;
             if (!rdmpDependencyVersion.IsCompatibleWith(runningSoftwareVersion, 2))
                 throw new NotSupportedException(string.Format("Plugin version {0} is incompatible with current running version of RDMP ({1}).", pluginVersion, runningSoftwareVersion));
 
