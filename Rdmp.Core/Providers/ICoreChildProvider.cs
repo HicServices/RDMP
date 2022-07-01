@@ -121,6 +121,7 @@ namespace Rdmp.Core.Providers
 
         
         AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get; }
+        AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; }
 
         /// <summary>
         /// All standard (i.e. not plugin) use cases for editting <see cref="IPipeline"/> under.
