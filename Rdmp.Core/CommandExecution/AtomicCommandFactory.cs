@@ -220,7 +220,7 @@ namespace Rdmp.Core.CommandExecution
                 {
                     yield return new ExecuteCommandSetAggregateDimension(_activator, ac);
                     
-                    if(_activator.RepositoryLocator.CatalogueRepository.GetExtendedProperties(ExtendedProperty.IsTemplate)
+                    if(_activator.RepositoryLocator.CatalogueRepository.GetExtendedProperties(ExtendedProperty.IsTemplate,ac)
                         .Any(v=>v.Value.Equals("true")))
                     {
                         yield return new ExecuteCommandSetExtendedProperty(_activator, new[] { ac }, ExtendedProperty.IsTemplate, null)

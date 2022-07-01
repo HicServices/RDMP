@@ -199,10 +199,12 @@ namespace Rdmp.Core.Providers
         /// </summary>
         protected object WriteLock = new object();
 
-        public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get;set; } = new AllOrphanAggregateConfigurationsNode();
-        
+        public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get;set; } = new ();
+        public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; set; } = new ();
 
         public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
+        public AggregateConfiguration[] TemplateAggregateConfigurations;
+
 
         protected Stopwatch ProgressStopwatch = Stopwatch.StartNew();
         private int _progress = 0;
@@ -377,8 +379,18 @@ namespace Rdmp.Core.Providers
             foreach (CohortIdentificationConfiguration cic in AllCohortIdentificationConfigurations)
                 AddChildren(cic);
 
+            var templateAggregateConfigurationIds =
+                new HashSet<int>(
+                    repository.GetExtendedProperties(ExtendedProperty.IsTemplate)
+                    .Where(p => p.ReferencedObjectType.Equals(nameof(AggregateConfiguration)))
+                         .Select(r => r.ReferencedObjectID));
+
+            TemplateAggregateConfigurations = AllAggregateConfigurations.Where(ac => templateAggregateConfigurationIds.Contains(ac.ID)).ToArray();
+
             //add the orphans under the orphan folder
             AddToDictionaries(new HashSet<object>(OrphanAggregateConfigurations),new DescendancyList(OrphanAggregateConfigurationsNode));
+            AddToDictionaries(new HashSet<object>(TemplateAggregateConfigurations), new DescendancyList(TemplateAggregateConfigurationsNode));
+            
 
             //Some AggregateConfigurations are 'Patient Index Tables', this happens when there is an existing JoinableCohortAggregateConfiguration declared where
             //the AggregateConfiguration_ID is the AggregateConfiguration.ID.  We can inject this knowledge now so to avoid database lookups later (e.g. at icon provision time)
@@ -1705,6 +1717,7 @@ namespace Rdmp.Core.Providers
             AllCompatiblePlugins = otherCat.AllCompatiblePlugins;
             PipelineUseCases = otherCat.PipelineUseCases;
             OrphanAggregateConfigurationsNode = otherCat.OrphanAggregateConfigurationsNode;
+            TemplateAggregateConfigurationsNode = otherCat.TemplateAggregateConfigurationsNode;
             AllCatalogueParameters = otherCat.AllCatalogueParameters;  
             AllCatalogueValueSets = otherCat.AllCatalogueValueSets;
             AllCatalogueValueSetValues = otherCat.AllCatalogueValueSetValues ;
