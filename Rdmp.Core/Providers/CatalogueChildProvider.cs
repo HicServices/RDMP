@@ -389,7 +389,10 @@ namespace Rdmp.Core.Providers
 
             //add the orphans under the orphan folder
             AddToDictionaries(new HashSet<object>(OrphanAggregateConfigurations),new DescendancyList(OrphanAggregateConfigurationsNode));
-            AddToDictionaries(new HashSet<object>(TemplateAggregateConfigurations), new DescendancyList(TemplateAggregateConfigurationsNode));
+
+            var dec = new DescendancyList(TemplateAggregateConfigurationsNode);
+            dec.SetBetterRouteExists();
+            AddToDictionaries(new HashSet<object>(TemplateAggregateConfigurations), dec);
             
 
             //Some AggregateConfigurations are 'Patient Index Tables', this happens when there is an existing JoinableCohortAggregateConfiguration declared where

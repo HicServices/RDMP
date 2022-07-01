@@ -59,8 +59,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             base.Execute();
 
             var cataRepo = BasicActivator.RepositoryLocator.CatalogueRepository;
-            var created = new List<ExtendedProperty>();
-            
+                        
             foreach(var o in SetOn)
             {
                 // delete any old versions
@@ -73,13 +72,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 // If the Value passed was null just leave it deleted
                 if(!string.IsNullOrWhiteSpace(Value))
                 {
-                    created.Add(new ExtendedProperty(cataRepo, o, PropertyName, Value));
+                    new ExtendedProperty(cataRepo, o, PropertyName, Value);
                 }
                     
             }
 
-            if(created.Any())
-                Publish(created.First());
+            if(SetOn.Any())
+                Publish(SetOn.First());
         }
     }
 }
