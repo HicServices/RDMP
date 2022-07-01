@@ -18,10 +18,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     /// </summary>
     public class ExecuteCommandReplacedBy : BasicCommandExecution, IAtomicCommand
     {
-        /// <summary>
-        /// Key for ExtendedProperty that indicates an object is replaced by another
-        /// </summary>
-        public const string ReplacedBy = "ReplacedBy";
 
         public IMapsDirectlyToDatabaseTable Deprecated { get; }
         public IMapsDirectlyToDatabaseTable Replacement { get; }
@@ -76,19 +72,18 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
 
             var cataRepo = BasicActivator.RepositoryLocator.CatalogueRepository;
-            foreach(var existing in 
-                cataRepo.GetAllObjectsWhere<ExtendedProperty>("Name",ReplacedBy)
-                .Where(r=>r.IsReferenceTo(Deprecated)))
-                {
-                    // delete any old references to who we are replaced by
-                    existing.DeleteInDatabase();
-                }
+            foreach (var existing in 
+                cataRepo.GetExtendedProperties(ExtendedProperty.ReplacedBy, Deprecated))
+            {
+                // delete any old references to who we are replaced by
+                existing.DeleteInDatabase();
+            }
 
             // null means delete relationship and dont create a new one
             if(rep != null)
             {
                 // store the ID of the thing that replaces us
-                new ExtendedProperty(cataRepo,Deprecated,ReplacedBy,rep.ID);
+                new ExtendedProperty(cataRepo,Deprecated, ExtendedProperty.ReplacedBy, rep.ID);
             }
         }
     }

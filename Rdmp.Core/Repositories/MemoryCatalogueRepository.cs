@@ -590,5 +590,24 @@ namespace Rdmp.Core.Repositories
                 catalogueItem.ExtractionInformation?.DeleteInDatabase();
             }
         }
+        /// <inheritdoc/>
+        public IEnumerable<ExtendedProperty> GetExtendedProperties(string propertyName, IMapsDirectlyToDatabaseTable obj)
+        {
+            return GetAllObjectsWhere<ExtendedProperty>("Name", propertyName)
+            .Where(r => r.IsReferenceTo(obj));
+        }
+        /// <inheritdoc/>
+        public IEnumerable<ExtendedProperty> GetExtendedProperties(string propertyName)
+        {
+            return GetAllObjectsWhere<ExtendedProperty>("Name", propertyName);
+        }
+        /// <inheritdoc/>
+        public IEnumerable<ExtendedProperty> GetExtendedProperties(IMapsDirectlyToDatabaseTable obj)
+        {
+            // First pass use SQL to pull only those with ReferencedObjectID ID that match our object
+            return GetAllObjectsWhere<ExtendedProperty>("ReferencedObjectID", obj.ID)
+                // Second pass make sure the object/repo match
+                .Where(r => r.IsReferenceTo(obj));
+        }
     }
 }

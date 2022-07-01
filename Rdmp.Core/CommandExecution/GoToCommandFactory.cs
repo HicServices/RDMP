@@ -293,7 +293,7 @@ namespace Rdmp.Core.CommandExecution
         private IEnumerable<IMapsDirectlyToDatabaseTable> GetReplacementIfAny(IMapsDirectlyToDatabaseTable mt)
         {
             var replacement = _activator.RepositoryLocator.CatalogueRepository
-                    .GetAllObjectsWhere<ExtendedProperty>("Name",ExecuteCommandReplacedBy.ReplacedBy)
+                    .GetAllObjectsWhere<ExtendedProperty>("Name",ExtendedProperty.ReplacedBy)
                     .FirstOrDefault(r=>r.IsReferenceTo(mt));
 
             if(replacement == null)

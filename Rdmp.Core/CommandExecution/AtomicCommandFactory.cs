@@ -219,6 +219,23 @@ namespace Rdmp.Core.CommandExecution
                 if(ac.IsCohortIdentificationAggregate)
                 {
                     yield return new ExecuteCommandSetAggregateDimension(_activator, ac);
+                    
+                    if(_activator.RepositoryLocator.CatalogueRepository.GetExtendedProperties(ExtendedProperty.IsTemplate)
+                        .Any(v=>v.Value.Equals("true")))
+                    {
+                        yield return new ExecuteCommandSetExtendedProperty(_activator, ac, ExtendedProperty.IsTemplate, "false")
+                        {
+                            OverrideCommandName = "Make Non Template"
+                        };
+                    }
+                    else
+                    {
+                        yield return new ExecuteCommandSetExtendedProperty(_activator, ac, ExtendedProperty.IsTemplate, "true")
+                        {
+                            OverrideCommandName = "Make Reusable Template"
+                        };
+                    }
+                    
                 }
 
                 // graph options
