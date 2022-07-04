@@ -123,8 +123,10 @@ namespace Rdmp.UI.ExtractionUIs
             this.lbDesiredOrder.Name = "lbDesiredOrder";
             this.lbDesiredOrder.Size = new System.Drawing.Size(316, 641);
             this.lbDesiredOrder.TabIndex = 2;
+            this.lbDesiredOrder.ItemHeight = 19;
             this.lbDesiredOrder.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lbDesiredOrder_DrawItem);
             this.lbDesiredOrder.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lbDesiredOrder_KeyUp);
+            this.lbDesiredOrder.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             // 
             // label2
             // 
@@ -192,6 +194,7 @@ namespace Rdmp.UI.ExtractionUIs
             this.lbNewOrder.Name = "lbNewOrder";
             this.lbNewOrder.Size = new System.Drawing.Size(288, 563);
             this.lbNewOrder.TabIndex = 8;
+            this.lbNewOrder.ItemHeight = 19;
             this.lbNewOrder.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lbCurrentOrder_DrawItem);
             // 
             // label8

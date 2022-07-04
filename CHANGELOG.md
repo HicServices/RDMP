@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Fixed
+
+- Fixed issues with Advanced column reorder dialog [#1273](https://github.com/HicServices/RDMP/issues/1273)
+  - Row size no longer cuts off bottom pixels of column name(s)
+  - Multi delete is now supported
+  - Pasted column name(s) with spaces e.g. `[my cool col]` now work
+
+
 ## [7.0.14] - 2022-06-27
 
 ### Added
