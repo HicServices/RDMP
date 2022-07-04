@@ -46,7 +46,7 @@ jobs:
       - name: Log in to the GitHub Container registry
         uses: redhat-actions/podman-login@v1
         with:
-          registry: ghcr.io/jas88
+          registry: ghcr.io/${{ github.repository_owner }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -56,4 +56,4 @@ jobs:
         with:
           image: rdmpcli
           tags: latest
-          registry: ghcr.io/hicservices
+          registry: ghcr.io
