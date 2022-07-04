@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+- Fixed multiple calls to Refresh in DataExportPropertyManager causing Exception in extraction checks [#1274](https://github.com/HicServices/RDMP/issues/1274)
+
 ## [7.0.14] - 2022-06-27
 
 ### Added
