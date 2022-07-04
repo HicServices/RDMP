@@ -118,8 +118,14 @@ namespace ReusableLibraryCode
 
         public IEnumerable<string> GetArrayOfColumnNamesFromStringPastedInByUser(string text)
         {
-            
-            if (String.IsNullOrWhiteSpace(text))
+            // find quoted field names at end of line
+            var rDoubleQuotes = new Regex("\"([^\"]+)\"$"); 
+            var rSingleQuotes = new Regex("'([^']+)'$");
+            var rBacktickQuotes = new Regex("`([^']+)`$");
+            var rSquareBrackets = new Regex(@"\[([^[]+)]$");
+            var rNoPunctuation = new Regex(@"^([\w\s]+)$");
+
+            if (string.IsNullOrWhiteSpace(text))
                 yield break;
 
             string[] split = text.Split(new char[] { '\r', '\n', ',' }, StringSplitOptions.RemoveEmptyEntries);
@@ -138,6 +144,26 @@ namespace ReusableLibraryCode
                 string toAdd = s.Trim();
                 if (toAdd.Contains("."))
                     toAdd = toAdd.Substring(toAdd.LastIndexOf(".") + 1);
+                
+                bool gotDelimitedMatch = false;
+
+                // if user has really horrible names like with spaces and stuff
+                // then try expect them to have quoted them and pull out the capture
+                // groups.  Remember different DBMS have different quoting symbols
+                foreach (var r in new[] { rDoubleQuotes, rSingleQuotes, 
+                    rSquareBrackets, rBacktickQuotes, rNoPunctuation})
+                {
+                    var m = r.Matches(toAdd);
+                    if (m.Any())
+                    {
+                        yield return m.Last().Groups[1].Value;
+                        gotDelimitedMatch = true;
+                        break;
+                    }
+                }
+
+                if (gotDelimitedMatch)
+                    continue;
 
                 toAdd = toAdd.Replace("]", "");
                 toAdd = toAdd.Replace("[", "");
