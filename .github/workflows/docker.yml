@@ -15,6 +15,11 @@ jobs:
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: 6.0.x
+      - name: Cache Nuget
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
       - name: Build RDMP and container
         run: |
           dotnet publish Tools/rdmp/rdmp.csproj  -c Release --nologo -o rdmp-cli -r linux-x64 --sc true -v q -p:PublishReadyToRun=true -p:PublishSingleFile=true
@@ -49,11 +54,13 @@ jobs:
           registry: ghcr.io/hicservices
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
       - name: Push mini-container to GitHub Container Repository
         id: push-mini-to-ghcr
         uses: redhat-actions/push-to-registry@v2
         with:
-          image: hicservices/rdmpcli
-          tags: latest
-          registry: ghcr.io
+          image: rdmpcli
+          tags: latest ${{ steps.meta.outputs.tags }}
+          registry: ghcr.io/hicservices
