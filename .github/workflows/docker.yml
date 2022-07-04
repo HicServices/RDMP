@@ -54,6 +54,6 @@ jobs:
         id: push-mini-to-ghcr
         uses: redhat-actions/push-to-registry@v2
         with:
-          image: rdmpcli
+          image: hicservices/rdmpcli
           tags: latest
           registry: ghcr.io
