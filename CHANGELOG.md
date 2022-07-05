@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Row size no longer cuts off bottom pixels of column name(s)
   - Multi delete is now supported
   - Pasted column name(s) with spaces e.g. `[my cool col]` now work
+- Fixed null reference in extraction checks when extracting a dataset where the original [ExtractionInformation] has been deleted [#1253](https://github.com/HicServices/RDMP/issues/1253)
 
 ## [7.0.14] - 2022-06-27
 
