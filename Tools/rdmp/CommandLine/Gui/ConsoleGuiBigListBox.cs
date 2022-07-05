@@ -304,9 +304,13 @@ namespace Rdmp.Core.CommandLine.Gui
             if(_publicCollection == null)
                 throw new InvalidOperationException("When using the protected constructor derived classes must override this method ");
 
+            var searchTerms = searchString.Split(' ');
+
             //stop the Contains searching when the user cancels the search
             return _publicCollection.Where(o => !token.IsCancellationRequested &&
-                AspectGetter(o).Contains(searchString, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                // must have all search terms
+                searchTerms.All(t=>AspectGetter(o).Contains(t, StringComparison.CurrentCultureIgnoreCase))
+                ).ToList();
         }
 
         protected virtual IList<T> GetInitialSource()
