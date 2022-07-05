@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.Common;
 using MapsDirectlyToDatabaseTable;
@@ -22,7 +23,7 @@ namespace Rdmp.Core.Repositories.Managers
         private readonly bool _allowCaching;
         private readonly DataExportRepository _repository;
         private bool _cacheOutOfDate = true;
-        private readonly Dictionary<string,string> _cacheDictionary = new Dictionary<string, string>();
+        private readonly ConcurrentDictionary<string,string> _cacheDictionary = new ();
 
         /// <summary>
         /// Creates a new instance ready to read values out of the <paramref name="repository"/> database
@@ -142,7 +143,11 @@ namespace Rdmp.Core.Repositories.Managers
 
                         //get cache of all answers
                         while (reader.Read())
-                            _cacheDictionary.Add(reader["Property"].ToString(), reader["Value"] as string);
+                        {
+                            var val = reader["Value"] as string;
+                            _cacheDictionary.AddOrUpdate(reader["Property"].ToString(),
+                                val, (k, o) => val);
+                        }
                     }
                 }
                 
