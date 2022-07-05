@@ -51,10 +51,11 @@ jobs:
           EOS
           buildah config --cmd "/usr/bin/systemctl" "$ctr"
           buildah commit "$ctr" "rdmpcli"
+          buildah commit "$ctr" "hicservices/rdmpcli"
       - name: Log in to the GitHub Container registry
         uses: redhat-actions/podman-login@v1
         with:
-          registry: ghcr.io/hicservices
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Docker meta
@@ -66,6 +67,4 @@ jobs:
         id: push-mini-to-ghcr
         uses: redhat-actions/push-to-registry@v2
         with:
-          image: rdmpcli
-          tags: rdmpcli:latest
-          registry: ghcr.io/hicservices
+          tags: hicservices/rdmpcli:latest
