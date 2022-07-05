@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Added checkbox for show/hide ProjectSpecific Catalogue columns in extraction configuration UI [#1265](https://github.com/HicServices/RDMP/issues/1265)
+
 ### Fixed
 
 - Fixed multiple calls to Refresh in DataExportPropertyManager causing Exception in extraction checks [#1274](https://github.com/HicServices/RDMP/issues/1274)

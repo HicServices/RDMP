@@ -388,6 +388,15 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("ExpandAllInCohortBuilder", value); }
         }
 
+        /// <summary>
+        /// True to show ProjectSpecific Catalogues' columns in extraction configuration user interface
+        /// </summary>
+        public static bool ShowProjectSpecificColumns
+        {
+            get { return AppSettings.GetValueOrDefault("ShowProjectSpecificColumns", true); }
+            set { AppSettings.AddOrUpdateValue("ShowProjectSpecificColumns", value); }
+        }
+
 
         #endregion
 
