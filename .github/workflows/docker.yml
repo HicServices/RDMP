@@ -64,5 +64,5 @@ jobs:
         uses: redhat-actions/push-to-registry@v2
         with:
           image: rdmpcli
-          tags: rdmpcli:latest ${{ steps.meta.outputs.tags }}
+          tags: rdmpcli:latest
           registry: ghcr.io/hicservices
