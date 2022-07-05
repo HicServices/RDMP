@@ -63,6 +63,8 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: rdmpcli
+      - name: Setup upterm session
+        uses: lhotari/action-upterm@v1
       - name: Push mini-container to GitHub Container Repository
         id: push-mini-to-ghcr
         uses: redhat-actions/push-to-registry@v2
