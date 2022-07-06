@@ -718,7 +718,7 @@ namespace Rdmp.Core.CommandExecution
 
             if (Is(o, out CohortAggregateContainer cohortAggregateContainer))
             {
-                yield return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator, cohortAggregateContainer) { SuggestedCategory = Add, OverrideCommandName = "Catalogue" };
+                yield return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator, cohortAggregateContainer,null,null) { SuggestedCategory = Add, OverrideCommandName = "Catalogue" };
                 yield return new ExecuteCommandAddCohortSubContainer(_activator, cohortAggregateContainer) { SuggestedCategory = Add,  OverrideCommandName = "Sub Container" };
                 yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator, cohortAggregateContainer, true) { SuggestedCategory = Add, OverrideCommandName = "Existing Cohort Set (copy of)" };
                 yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator, cohortAggregateContainer, false) { SuggestedCategory = Add, OverrideCommandName = "Aggregate" };

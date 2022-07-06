@@ -9,12 +9,19 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 using System.Drawing;
 using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
+    /// <summary>
+    /// Adds a new cohort set to <see cref="CohortAggregateContainer"/> (A UNION/INETERSECT/EXCEPT container).
+    /// The cohort set will return all identifiers in the <see cref="ConcreteColumn.IsExtractionIdentifier"/>
+    /// column of the dataset constrained by any <see cref="ConcreteFilter.IsMandatory"/> filters.  More filters
+    /// can be added later to further restrict the identifiers matched.
+    /// </summary>
     public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : BasicCommandExecution
     {
         private readonly CatalogueCombineable _catalogueCombineable;
@@ -34,8 +41,17 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 return _postImportCommand.AggregateCreatedIfAny;
             }
         }
+        
+        [UseWithObjectConstructor]
+        public ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(IBasicActivateItems activator,
 
-        public ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(IBasicActivateItems activator, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
+            [DemandsInitialization("The container you want to add the set into")]
+            CohortAggregateContainer targetCohortAggregateContainer,
+            [DemandsInitialization("The dataset to add, must have ")]
+            Catalogue catalogue,
+            [DemandsInitialization("Typically optional.  But if Catalogue has multiple columns marked IsExtractionIdentifier then you must indicate which to use here.")]
+            ExtractionInformation identifierColumn = null
+            ) : base(activator)
         {
             Weight = 0.11f;
 
@@ -44,16 +60,40 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if (targetCohortAggregateContainer.ShouldBeReadOnly(out string reason))
                 SetImpossible(reason);
 
+            if(catalogue != null)
+            {
+                _catalogueCombineable = new CatalogueCombineable(catalogue);
+
+                if (identifierColumn != null)
+                {
+                    if(!identifierColumn.IsExtractionIdentifier)
+                    {
+                        SetImpossible($"Column '{identifierColumn}' is not marked {nameof(ConcreteColumn.IsExtractionIdentifier)}");
+                        return;
+                    }
+                    if(identifierColumn.CatalogueItem_ID != catalogue.ID)
+                    {
+                        SetImpossible($"Column '{identifierColumn}'(ID={identifierColumn.ID}) is not from the same Catalogue as '{catalogue}'(ID={catalogue.ID})");
+                        return;
+                    }
+
+                    // when/if it comes time to pick which extraction identifier to add pick the one the user said
+                    _catalogueCombineable.ResolveMultipleExtractionIdentifiers = (c, e) => identifierColumn;
+                }
+
+                UpdateIsImpossibleFor(_catalogueCombineable);
+            }
+
             UseTripleDotSuffix = true;
         }
-        public ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(IBasicActivateItems activator,CatalogueCombineable catalogueCombineable, CohortAggregateContainer targetCohortAggregateContainer) : this(activator,targetCohortAggregateContainer)
+
+        public ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(IBasicActivateItems activator, CatalogueCombineable catalogueCombineable, CohortAggregateContainer targetCohortAggregateContainer) : this(activator, targetCohortAggregateContainer,null)
         {
             _catalogueCombineable = catalogueCombineable;
             _targetCohortAggregateContainer = targetCohortAggregateContainer;
 
             UpdateIsImpossibleFor(catalogueCombineable);
         }
-
         private void UpdateIsImpossibleFor(CatalogueCombineable catalogueCombineable)
         {
             if(catalogueCombineable.Catalogue.IsApiCall())

@@ -220,6 +220,12 @@ namespace Rdmp.Core.DataExport.DataExtraction
         {
             var point = collection.GetDataAccessPoint();
             var db = DataAccessPortal.GetInstance().ExpectDatabase(point,context);
+
+            if(!toFile.Directory.Exists)
+            {
+                toFile.Directory.Create();
+            }
+
             using (var fs = File.OpenWrite(toFile.FullName))
             {
                 var toRun = new ExtractTableVerbatim(db.Server, collection.GetSql(), fs, ",", null);
