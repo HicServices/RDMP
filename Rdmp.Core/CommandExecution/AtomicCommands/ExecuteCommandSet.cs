@@ -101,7 +101,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             var props = setOn.GetType().GetProperties();
             
             return props.FirstOrDefault(p => string.Equals(p.Name, property)) ??
-                   props.FirstOrDefault(p => string.Equals(p.Name, property,StringComparison.CurrentCultureIgnoreCase));
+                   props.FirstOrDefault(p => string.Equals(p.Name, property,StringComparison.InvariantCultureIgnoreCase));
 
         }
 
