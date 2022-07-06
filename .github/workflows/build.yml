@@ -56,8 +56,9 @@ jobs:
       - name: Initialise RDMP
         run: dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- install --createdatabasetimeout 180 "(localdb)\MSSQLLocalDB" TEST_ -e
       - name: Populate Databases.yaml 
+        shell: bash
         run: |
-          cat > Databases.yaml << EOF
+          cat > ./Tools/rdmp/Databases.yaml << EOF
           CatalogueConnectionString: Server=(localdb)\MSSQLLocalDB;Database=TEST_Catalogue;Trusted_Connection=True;Trust     Server        Certificate=true;
           DataExportConnectionString: Server=(localdb)\MSSQLLocalDB;Database=TEST_DataExport;Trusted_Connection=True;Trust       Server      Certificate=true;
           EOF
