@@ -76,6 +76,14 @@ namespace Rdmp.Core.CohortCommitting
 
         public ExternalCohortTable CreateDatabase(PrivateIdentifierPrototype privateIdentifierPrototype, ICheckNotifier notifier)
         {
+            var tt = _targetDatabase.Server.GetQuerySyntaxHelper().TypeTranslater;
+            
+
+            if(tt.GetLengthIfString(privateIdentifierPrototype.DataType) == int.MaxValue)
+            {
+                throw new Exception("Private identifier datatype cannot be varchar(max) style as this prevents Primary Key creation on the table");
+            }
+
             if (!_targetDatabase.Exists())
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("Did not find database "+_targetDatabase +" on server so creating it",CheckResult.Success));
