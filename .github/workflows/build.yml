@@ -59,11 +59,11 @@ jobs:
         shell: bash
         run: |
           cat > ./Tools/rdmp/Databases.yaml << EOF
-          CatalogueConnectionString: Server=(localdb)\MSSQLLocalDB;Database=TEST_Catalogue;Trusted_Connection=True;Trust     Server        Certificate=true;
-          DataExportConnectionString: Server=(localdb)\MSSQLLocalDB;Database=TEST_DataExport;Trusted_Connection=True;Trust       Server      Certificate=true;
+          CatalogueConnectionString: Server=(localdb)\MSSQLLocalDB;Database=TEST_Catalogue;Trusted_Connection=True;TrustServerCertificate=true;
+          DataExportConnectionString: Server=(localdb)\MSSQLLocalDB;Database=TEST_DataExport;Trusted_Connection=True;TrustServerCertificate=true;
           EOF
       - name: Run integration test scripts
-        run: dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_list_destroy_catalogue.yaml
+        run: dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_list_destroy_catalogue.yaml
       - name: Test Reusable code
         shell: bash
         run: |
