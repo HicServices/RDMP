@@ -3,11 +3,14 @@ Commands:
   - CreateNewCohortIdentificationConfiguration "My cic"
   - AddCatalogueToCohortIdentificationSetContainer "CohortAggregateContainer:Inclusion Criteria" Catalogue:Biochemistry
   
+  # Ignore this warning
+  - SetUserSetting StrictValidationForCohortBuilderContainers false
+
   # Create a filter on Healthboard='T'
   - CreateNewFilter AggregateConfiguration:*Biochemistry
   - Set AggregateFilter Name "Tayside Patients Only"
   - Set AggregateFilter WhereSql "Healthboard='T'"
-  - ViewData "CohortIdentificationConfiguration:My cic"
+  - ViewData "CohortIdentificationConfiguration:My cic" All
 
   # Create a Project for extracting data/storing cohort lists
   - NewObject Project "Example Project"
