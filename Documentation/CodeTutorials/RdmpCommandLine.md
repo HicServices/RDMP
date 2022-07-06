@@ -102,7 +102,14 @@ rdmp gui
 
 ## Scripting
 
-You can run a sequence of commands all at once by using the 
+You can run a sequence of commands all at once by using the `-f` option of RDMP command line:
+
+```
+./rdmp -f Z:\Repos\RDMP\scripts\create_list_destroy_catalogue.yaml
+```
+*Run all commands in the file 'create_list_destroy_catalogue.yaml'*
+
+For a selection of example scripts see the [scripts folder](../../scripts/)
 
 
 [Pipeline]: ./Glossary.md#Pipeline
