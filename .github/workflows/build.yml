@@ -64,6 +64,8 @@ jobs:
           EOF
       - name: Run integration test scripts
         run: dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_list_destroy_catalogue.yaml
+      - name: Run integration script create_cohort.yaml
+        run: dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_cohort.yaml
       - name: Test Reusable code
         shell: bash
         run: |
