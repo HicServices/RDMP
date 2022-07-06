@@ -100,9 +100,20 @@ You can access an interactive terminal similar to the RDMP gui client by running
 rdmp gui
 ```
 
+![image](https://user-images.githubusercontent.com/31306100/177525106-145436a9-f9fd-4e7d-8d12-1c816e7eba30.png)
+
+*RDMP Terminal.Gui running in Powershell*
+
 ## Scripting
 
-You can run a sequence of commands all at once by using the 
+You can run a sequence of commands all at once by using the `-f` option of RDMP command line:
+
+```
+./rdmp -f Z:\Repos\RDMP\scripts\create_list_destroy_catalogue.yaml
+```
+*Run all commands in the file 'create_list_destroy_catalogue.yaml'*
+
+For a selection of example scripts see the [scripts folder](../../scripts/)
 
 
 [Pipeline]: ./Glossary.md#Pipeline
