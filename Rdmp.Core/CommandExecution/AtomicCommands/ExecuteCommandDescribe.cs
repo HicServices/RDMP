@@ -340,8 +340,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         private void PopulateBasicCommandInfo(StringBuilder sb,Type commandType)
         {
-            var help = new CommentStore();
-            help.ReadComments(Environment.CurrentDirectory);
+            var help = BasicActivator.CommentStore;
 
             // Basic info about command
             sb.AppendLine("Name: " + commandType.Name);

@@ -60,15 +60,22 @@ DataExportConnectionString: Server=<yourserver>;Database=RDMP_DataExport;Trusted
 In addition to running engines, many commands can be run from the CLI.  To see what commands are available use
 
 ```
-./rdmp cmd ListSupportedCommands
+./rdmp ListSupportedCommands
 ```
 *Listing commands requires valid connection settings, see [installation](#install)*
 
 For example you can view a list of what Catalogues you have by running:
 
 ```
-./rdmp cmd list Catalogue
+./rdmp list Catalogue
 ```
+*Lists all Catalogues in RDMP along with their IDs*
+
+To see the arguments of a command use 'describe' e.g.:
+```
+./rdmp describe confirmlogs
+```
+*Displays help for the command 'ConfirmLogs'*
 
 Some commands require specifying a database (e.g. `CreateNewCatalogueByImportingFile`).  The following table shows the syntax for such parameters
 
@@ -92,6 +99,11 @@ You can access an interactive terminal similar to the RDMP gui client by running
 ```
 rdmp gui
 ```
+
+## Scripting
+
+You can run a sequence of commands all at once by using the 
+
 
 [Pipeline]: ./Glossary.md#Pipeline
 [Catalogue]: ./Glossary.md#Catalogue

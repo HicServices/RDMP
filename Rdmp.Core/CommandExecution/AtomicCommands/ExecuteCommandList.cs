@@ -9,11 +9,16 @@ using MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
+    /// <summary>
+    /// Lists all the objects in RDMP that match search term.
+    /// </summary>
     public class ExecuteCommandList : BasicCommandExecution
     {
         private IMapsDirectlyToDatabaseTable[] _toList;
 
-        public ExecuteCommandList(IBasicActivateItems activator,IMapsDirectlyToDatabaseTable[] toList):base(activator)
+        public ExecuteCommandList(IBasicActivateItems activator,
+            
+            IMapsDirectlyToDatabaseTable[] toList):base(activator)
         {
             _toList = toList;
         }
