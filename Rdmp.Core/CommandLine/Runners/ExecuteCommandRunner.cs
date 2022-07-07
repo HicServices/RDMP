@@ -107,7 +107,10 @@ namespace Rdmp.Core.CommandLine.Runners
         private void RunCommand(string command)
         {
             if(_commands.ContainsKey(command))
+            {
+                _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Trace,$"Running Command '{_commands[command].Name}'"));
                 _invoker.ExecuteCommand(_commands[command],_picker);
+            }
             else
             {
                 var suggestions =
