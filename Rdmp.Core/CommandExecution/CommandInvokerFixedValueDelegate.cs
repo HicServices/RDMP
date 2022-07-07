@@ -14,9 +14,14 @@ namespace Rdmp.Core.CommandExecution
     /// </summary>
     class CommandInvokerFixedValueDelegate : CommandInvokerDelegate
     {
-        public CommandInvokerFixedValueDelegate(object o):base(o.GetType(),true,(p)=>o)
+        public CommandInvokerFixedValueDelegate(Type type,object o):base(type,true,(p)=>o)
         {
             
+        }
+
+        public override bool CanHandle(Type t)
+        {
+            return true;
         }
     }
 }
