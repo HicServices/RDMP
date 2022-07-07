@@ -51,7 +51,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
             else
             {
-                SetImpossible("Did not recognise parameter as a valid command");
+                // Maybe they typed the alias or name of a command
+                _nonDatabaseObjectToDescribe = new CommandInvoker(BasicActivator).GetSupportedCommands()
+                .FirstOrDefault(t=>BasicCommandExecution.HasCommandNameOrAlias(t,picker[0].RawValue));
+                
+                    
+                if(_nonDatabaseObjectToDescribe == null)
+                    SetImpossible("Did not recognise parameter as a valid command");
             }
         }
 
@@ -345,6 +351,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             // Basic info about command
             sb.AppendLine("Name: " + commandType.Name);
+
+
+            var aliases = commandType.GetCustomAttributes(false).OfType<AliasAttribute>().ToArray();
+            if(aliases.Any())
+            {
+                sb.AppendLine("Aliases:" + string.Join(',',aliases.Select(a=>a.Name).ToArray()));
+            }
                 
             var helpText = help.GetTypeDocumentationIfExists(commandType);
 
