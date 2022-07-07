@@ -365,11 +365,5 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         }
 
-        private CommentStore CreateCommentStore()
-        {
-            var help = new CommentStore();
-            help.ReadComments(Environment.CurrentDirectory);
-            return help;
-        }
     }
 }

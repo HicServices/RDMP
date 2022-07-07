@@ -22,6 +22,7 @@ using Rdmp.Core.DataViewing;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Icons.IconProvision;
 
@@ -508,6 +509,13 @@ namespace Rdmp.Core.CommandExecution
         public override string ToString()
         {
             return GetCommandName();
+        }
+
+        protected CommentStore CreateCommentStore()
+        {
+            var help = new CommentStore();
+            help.ReadComments(Environment.CurrentDirectory);
+            return help;
         }
     }
 }
