@@ -79,7 +79,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 }
             }
 
-            var sb = new StringBuilder();
             bool showAll = onlyShowIndexes.Count == 0;
             var outputCommandDictionary = new Dictionary<string,string>();
 
