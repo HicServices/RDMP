@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added checkbox for show/hide ProjectSpecific Catalogue columns in extraction configuration UI [#1265](https://github.com/HicServices/RDMP/issues/1265)
+- Integration tests and example scripts that can be run using RDMP command line `-f` option
+- The `Set` command no longer cares about property capitalization
 
 ### Fixed
 
@@ -21,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Pasted column name(s) with spaces e.g. `[my cool col]` now work
 - Fixed null reference in extraction checks when extracting a dataset where the original [ExtractionInformation] has been deleted [#1253](https://github.com/HicServices/RDMP/issues/1253)
 - Added an error provider message for when too many characters are entered in UIs with databindings [#1268](https://github.com/HicServices/RDMP/issues/1268).
+- Fixed running on command line with `-f somefile.yaml` being considered 'interactive' (i.e. RDMP would pause to ask you questions like 'are you sure?')
 
 ## [7.0.14] - 2022-06-27
 

@@ -153,7 +153,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             if (o is Type t)
             {
                 title = t.Name;
-                var docs = BasicActivator.CommentStore.GetTypeDocumentationIfExists(t, true, true);
+                var help = BasicActivator.CommentStore ?? CreateCommentStore();
+                var docs = help.GetTypeDocumentationIfExists(t, true, true);
                 return docs?.Trim() ?? "";
             }
 
@@ -340,8 +341,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         private void PopulateBasicCommandInfo(StringBuilder sb,Type commandType)
         {
-            var help = new CommentStore();
-            help.ReadComments(Environment.CurrentDirectory);
+            var help = BasicActivator.CommentStore ?? CreateCommentStore();
 
             // Basic info about command
             sb.AppendLine("Name: " + commandType.Name);
@@ -363,6 +363,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             sb.Append(BasicCommandExecution.GetCommandName(commandType.Name));
             sb.Append(" ");
 
+        }
+
+        private CommentStore CreateCommentStore()
+        {
+            var help = new CommentStore();
+            help.ReadComments(Environment.CurrentDirectory);
+            return help;
         }
     }
 }

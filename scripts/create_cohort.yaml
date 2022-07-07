@@ -1,0 +1,25 @@
+Commands:
+  # Create a new cohort builder query with a single inclusion criteria
+  - CreateNewCohortIdentificationConfiguration "My cic"
+  - AddCatalogueToCohortIdentificationSetContainer "CohortAggregateContainer:Inclusion Criteria" Catalogue:Biochemistry
+  
+  # Ignore this warning
+  - SetUserSetting StrictValidationForCohortBuilderContainers false
+
+  # Create a filter on Healthboard='T'
+  - CreateNewFilter AggregateConfiguration:*Biochemistry
+  - Set AggregateFilter Name "Tayside Patients Only"
+  - Set AggregateFilter WhereSql "Healthboard='T'"
+  - ViewData "CohortIdentificationConfiguration:My cic" All
+
+  # Create a Project for extracting data/storing cohort lists
+  - NewObject Project "Example Project"
+  - Set Project ProjectNumber 23
+  - Set Project ExtractionDirectory "./out/"
+
+  # Commit the cohort identifier list
+  - CreateNewCohortByExecutingACohortIdentificationConfiguration "CohortIdentificationConfiguration:My cic" ExternalCohortTable "Test cohort of Biochemistry Tayside Patients" "Project:Example Project" "Pipeline:CREATE COHORT*Cohort Identification Configuration"
+  - ViewData ExtractableCohort All ./out/cohort.csv
+  # Clean up
+  - delete "CohortIdentificationConfiguration:My cic" true
+  - delete "Project:Example Project" true

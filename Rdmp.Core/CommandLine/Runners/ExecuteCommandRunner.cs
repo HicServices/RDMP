@@ -44,6 +44,12 @@ namespace Rdmp.Core.CommandLine.Runners
             // but allow it if the input is ./rdmp cmd (i.e. run in a loop prompting for commands)
             _input.DisallowInput = !string.IsNullOrWhiteSpace(_options.CommandName);
 
+            // prevent user input if we are running a script file
+            if(!string.IsNullOrWhiteSpace(_options.File))
+            {
+                _input.DisallowInput = true;
+            }
+
             var log = LogManager.GetCurrentClassLogger();
 
             _listener = listener;
