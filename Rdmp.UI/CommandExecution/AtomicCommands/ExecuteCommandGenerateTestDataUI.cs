@@ -9,9 +9,9 @@ using Rdmp.UI.SimpleDialogs.Reports;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandGenerateTestData : BasicUICommandExecution
+    public class ExecuteCommandGenerateTestDataUI : BasicUICommandExecution
     {
-        public ExecuteCommandGenerateTestData(IActivateItems activator) : base(activator)
+        public ExecuteCommandGenerateTestDataUI(IActivateItems activator) : base(activator)
         {
         }
 
