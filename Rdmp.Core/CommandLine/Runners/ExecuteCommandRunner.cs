@@ -57,9 +57,31 @@ namespace Rdmp.Core.CommandLine.Runners
             _invoker.CommandImpossible += (s,c)=>log.Error($"Command Impossible:{c.Command.ReasonCommandImpossible}");
             _invoker.CommandCompleted += (s,c)=>log.Info("Command Completed");
 
-            _commands = _invoker.GetSupportedCommands().ToDictionary(
-                k=>BasicCommandExecution.GetCommandName(k.Name),
-                v=>v,StringComparer.CurrentCultureIgnoreCase);
+            var commandTypes = _invoker.GetSupportedCommands();
+            _commands = new Dictionary<string, Type>(StringComparer.InvariantCultureIgnoreCase);
+
+            foreach(var type in commandTypes)
+            {
+                var name = BasicCommandExecution.GetCommandName(type.Name);
+                if(!_commands.TryAdd(name,type))
+                {
+                    _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,
+                        $"Found duplicate commands both called '{name}'.  They were '{type.FullName}' and '{_commands[name].FullName}'"));
+                }
+            }
+
+            // add Aliases (commands that can be invoked with an alternate shorthand)
+            foreach(var type in commandTypes)
+            {
+                foreach(var alias in type.GetCustomAttributes(false).OfType<AliasAttribute>())
+                {
+                    if(!_commands.TryAdd(alias.Name,type))
+                    {
+                        _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,$"Bad command alias '{alias.Name}', it is already in use by '{_commands[alias.Name].FullName}' so cannot be used for '{type.FullName}'"));
+                    }
+                }
+            }
+
 
             _picker = 
                 _options.CommandArgs != null && _options.CommandArgs.Any() ?

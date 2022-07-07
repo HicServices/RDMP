@@ -4,35 +4,23 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Text;
-using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using System;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution
 {
     /// <summary>
-    /// Lists all the objects in RDMP that match search term.
+    /// Defines an alternative name for <see cref="IAtomicCommand"/> that can be used
+    /// e.g. "ls" instead of "List"
     /// </summary>
-    [Alias("ls")]
-    public class ExecuteCommandList : BasicCommandExecution
+    [System.AttributeUsage(AttributeTargets.Class)]
+    public class AliasAttribute : System.Attribute
     {
-        private IMapsDirectlyToDatabaseTable[] _toList;
 
-        public ExecuteCommandList(IBasicActivateItems activator,
-            
-            IMapsDirectlyToDatabaseTable[] toList):base(activator)
+        public string Name { get; }
+        public AliasAttribute(string name)
         {
-            _toList = toList;
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            StringBuilder sb = new StringBuilder();
-            foreach (var m in _toList)
-                sb.AppendLine(m.ID + ":" + m);
-
-            BasicActivator.Show(sb.ToString());
+            Name = name;
         }
     }
 }
