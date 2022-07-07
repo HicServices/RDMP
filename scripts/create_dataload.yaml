@@ -1,0 +1,7 @@
+Commands:
+  # One off bulk insert of data into the TEST_ExampleData database
+  - GenerateTestData biochemistry 100 100 100 ./Biochemistry2.csv
+  - CreateNewCatalogueByImportingFile ./Biochemistry2.csv chi "DatabaseType:MicrosoftSQLServer:Server=(localdb)\MSSQLLocalDB;Database=TEST_ExampleData;Trusted_Connection=True;TrustServerCertificate=true" "Pipeline:BULK INSERT*automated" false
+  
+  # Create a repeatable load in RDMP to load updates to the dataset
+  - CreateNewLoadMetadata Catalogue:Biochemistry2
