@@ -20,5 +20,5 @@ Commands:
   # Add CSV data reading component
   - CreateNewClassBasedProcessTask LoadMetadata:*Biochemistry Mounting AnySeparatorFileAttacher
   - SetArgument ProcessTask Separator ","
-  - SetArgument ProcessTask FilePattern ","
+  - SetArgument ProcessTask FilePattern "*.csv"
   - SetArgument ProcessTask TableToLoad TableInfo:*Biochemistry*
