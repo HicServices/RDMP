@@ -409,7 +409,7 @@ This will not help you avoid bad data as the full file structure must still be r
                 && !string.IsNullOrWhiteSpace(ForceHeaders) //and we are forcing headers
                 && ForceHeadersReplacesFirstLineInFile) //and those headers replace the first line of the file
             {
-                Headers.ShowForceHeadersAsciiArt(args.Record, _listener);
+                Headers.ShowForceHeadersAsciiArt(args.Row, _listener);
 
                 //skip the line
                 return true;
