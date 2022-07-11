@@ -13,11 +13,11 @@ Commands:
   
   # Add file copy component (from landing to ForLoading dir)
   - CreateNewClassBasedProcessTask LoadMetadata:*Biochemistry GetFiles ImportFilesDataProvider
-  - SetArgument ProcessTask ProcessTaskArgument:DirectoryPath ./loadme
-  - SetArgument ProcessTask ProcessTaskArgument:FilePattern *.csv
+  - SetArgument ProcessTask DirectoryPath ./loadme
+  - SetArgument ProcessTask FilePattern *.csv
 
   # Add CSV data reading component
   - CreateNewClassBasedProcessTask LoadMetadata:*Biochemistry Mounting AnySeparatorFileAttacher
-  - SetArgument ProcessTask ProcessTaskArgument:Separator ","
-  - SetArgument ProcessTask ProcessTaskArgument:FilePattern ","
-  - SetArgument ProcessTask ProcessTaskArgument:TableToLoad TableInfo:Biochemistry2
+  - SetArgument ProcessTask Separator ","
+  - SetArgument ProcessTask FilePattern ","
+  - SetArgument ProcessTask TableToLoad TableInfo:Biochemistry2
