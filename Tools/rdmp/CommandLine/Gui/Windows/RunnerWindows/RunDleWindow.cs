@@ -28,7 +28,7 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
         {
             return new DleOptions()
             {
-                LoadMetadata = lmd.ID,
+                LoadMetadata = lmd.ID.ToString(),
                 Iterative = false,
             };
         }

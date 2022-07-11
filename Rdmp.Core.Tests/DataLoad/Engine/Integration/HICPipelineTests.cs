@@ -256,7 +256,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 }
 
                 var options = new DleOptions();
-                options.LoadMetadata = catalogueEntities.LoadMetadata.ID;
+                options.LoadMetadata = catalogueEntities.LoadMetadata.ID.ToString();
                 options.Command = CommandLineActivity.check;
 
                 //run checks (with ignore errors if we are sending dodgy credentials)
