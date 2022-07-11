@@ -20,4 +20,4 @@ Commands:
   - CreateNewClassBasedProcessTask LoadMetadata:*Biochemistry Mounting AnySeparatorFileAttacher
   - SetArgument ProcessTask Separator ","
   - SetArgument ProcessTask FilePattern ","
-  - SetArgument ProcessTask TableToLoad TableInfo:Biochemistry2
+  - SetArgument ProcessTask TableToLoad TableInfo:*Biochemistry*
