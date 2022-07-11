@@ -57,7 +57,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="HIC.BadMedicine" Version="1.0.1" />
+    <PackageReference Include="HIC.BadMedicine" Version="1.1.0" />
     <PackageReference Include="System.Security.Permissions" Version="6.0.0" />
     <PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
     <PackageReference Include="System.Threading.AccessControl" Version="6.0.0" />
