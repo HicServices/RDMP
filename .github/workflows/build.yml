@@ -128,7 +128,7 @@ jobs:
           signtool=${signtool[${#signtool[@]}-1]}
           signtool=`echo $signtool | sed -e 's#^/c#c:#' | tr / \\\\`
           echo ${{ secrets.DIGICERT_PFX }} | base64 --decode > GitHubActionsWorkflow.pfx
-          echo '"'$signtool'"' 'Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p ${{ secrets.DIGICERT_PASSWORD }} PublishWindows/*.dll PublishWindows/*.exe PublishLinux/*.dll PublishWinForms/*.exe PublishWinForms/*.dll' | cmd
+          echo '"'$signtool'"' 'Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p ${{ secrets.DIGICERT_PASSWORD }} PublishWindows/*.exe PublishLinux/rdmp PublishWinForms/*.exe PublishWinForms/Hunspell*.dll' | cmd
           mkdir -p dist
           (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-cli-win-x64.zip . | cmd)
           (cd PublishLinux ; echo 7z a -mx=9 ../dist/rdmp-cli-linux-x64.zip . | cmd)
