@@ -129,7 +129,7 @@ namespace Rdmp.UI.LoadExecutionUIs
             var options = new DleOptions
             {
                 Command = activityRequested,
-                LoadMetadata = _loadMetadata.ID,
+                LoadMetadata = _loadMetadata.ID.ToString(),
                 Iterative = cbRunIteratively.Checked,
                 DaysToLoad = Convert.ToInt32(udDaysPerJob.Value),
                 DoNotArchiveData = debugOpts != DebugOptions.RunNormally,
