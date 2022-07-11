@@ -4,24 +4,23 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.SimpleDialogs.Reports;
 
-namespace Rdmp.Core.CommandExecution
+namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
-    /// <summary>
-    /// <see cref="CommandInvokerDelegate"/> that only ever returns a single object (in <see cref="CommandInvokerDelegate.Run"/>)
-    /// and claims only to handle that object's exact <see cref="Type"/>.
-    /// </summary>
-    class CommandInvokerFixedValueDelegate : CommandInvokerDelegate
+    public class ExecuteCommandGenerateTestDataUI : BasicUICommandExecution
     {
-        public CommandInvokerFixedValueDelegate(Type type,object o):base(type,false,(p)=>o)
+        public ExecuteCommandGenerateTestDataUI(IActivateItems activator) : base(activator)
         {
-            
         }
 
-        public override bool CanHandle(Type t)
+        public override void Execute()
         {
-            return true;
+            base.Execute();
+
+            var dialog = new GenerateTestDataUI(Activator,this);
+            dialog.Show();
         }
     }
 }

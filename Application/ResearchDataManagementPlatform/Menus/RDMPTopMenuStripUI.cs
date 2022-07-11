@@ -211,7 +211,7 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void generateTestDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new ExecuteCommandGenerateTestData(Activator).Execute();
+            new ExecuteCommandGenerateTestDataUI(Activator).Execute();
         }
         
         private void showPerformanceCounterToolStripMenuItem_Click(object sender, EventArgs e)

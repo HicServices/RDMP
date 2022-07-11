@@ -4,23 +4,23 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs.Reports;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using System;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution
 {
-    public class ExecuteCommandGenerateTestData : BasicUICommandExecution
+    /// <summary>
+    /// Defines an alternative name for <see cref="IAtomicCommand"/> that can be used
+    /// e.g. "ls" instead of "List"
+    /// </summary>
+    [System.AttributeUsage(AttributeTargets.Class,AllowMultiple = true)]
+    public class AliasAttribute : System.Attribute
     {
-        public ExecuteCommandGenerateTestData(IActivateItems activator) : base(activator)
-        {
-        }
 
-        public override void Execute()
+        public string Name { get; }
+        public AliasAttribute(string name)
         {
-            base.Execute();
-
-            var dialog = new GenerateTestDataUI(Activator,this);
-            dialog.Show();
+            Name = name;
         }
     }
 }
