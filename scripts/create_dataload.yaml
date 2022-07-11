@@ -10,6 +10,7 @@ Commands:
   # Create a repeatable load in RDMP to load updates to the dataset
   - CreateNewLoadMetadata Catalogue:Biochemistry2
   - Set LoadMetadata Name "Loading Biochemistry"
+  - CreateNewDataLoadDirectory LoadMetadata ./Loading
   
   # Add file copy component (from landing to ForLoading dir)
   - CreateNewClassBasedProcessTask LoadMetadata:*Biochemistry GetFiles ImportFilesDataProvider
