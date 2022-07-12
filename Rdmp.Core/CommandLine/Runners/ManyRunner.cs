@@ -18,7 +18,7 @@ using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.CommandLine.Runners
 {
-    public abstract class ManyRunner:IRunner
+    public abstract class ManyRunner: Runner
     {
         private readonly ConcurrentRDMPCommandLineOptions _options;
 
@@ -37,7 +37,7 @@ namespace Rdmp.Core.CommandLine.Runners
             _options = options;
         }
 
-        public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,ICheckNotifier checkNotifier, GracefulCancellationToken token)
+        public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,ICheckNotifier checkNotifier, GracefulCancellationToken token)
         {
             RepositoryLocator = repositoryLocator;
             Token = token;

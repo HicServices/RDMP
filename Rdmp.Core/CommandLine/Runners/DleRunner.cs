@@ -40,7 +40,7 @@ namespace Rdmp.Core.CommandLine.Runners
         
         public override int Run(IRDMPPlatformRepositoryServiceLocator locator, IDataLoadEventListener listener, ICheckNotifier checkNotifier,GracefulCancellationToken token)
         {
-            ILoadProgress loadProgress = locator.CatalogueRepository.GetObjectByID<LoadProgress>(_options.LoadProgress);
+            ILoadProgress loadProgress = GetObjectFromCommandLineString<LoadProgress>(locator, _options.LoadProgress);
             ILoadMetadata loadMetadata = GetObjectFromCommandLineString<LoadMetadata>(locator,_options.LoadMetadata);
 
             if (loadMetadata == null && loadProgress != null)

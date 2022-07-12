@@ -22,3 +22,6 @@ Commands:
   - SetArgument ProcessTask Separator ","
   - SetArgument ProcessTask FilePattern "*.csv"
   - SetArgument ProcessTask TableToLoad TableInfo:*Biochemistry*
+
+  # this load can be run using the following (see build.yml):
+  # dle -l "LoadMetadata:*Biochemistry" --command run

@@ -19,7 +19,7 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
 
         private static CacheOptions GetCommand(ICacheProgress cp)
         {
-            return new CacheOptions() { CacheProgress = cp.ID };
+            return new CacheOptions() { CacheProgress = cp.ID.ToString() };
         }
     }
 }

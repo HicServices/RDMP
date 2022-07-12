@@ -281,8 +281,8 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                 {
                     var optsRelease = new ReleaseOptions()
                     {
-                        Configurations = extractionConfigurations.Select(ec=>ec.ID).Distinct().ToArray(),
-                        Pipeline = releasePipeline.ID
+                        Configurations = string.Join(",",extractionConfigurations.Select(ec=>ec.ID.ToString()).Distinct().ToArray()),
+                        Pipeline = releasePipeline.ID.ToString()
                     };
 
                     var runnerRelease = new ReleaseRunner(optsRelease);
@@ -343,8 +343,8 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             {
                 var optsExtract = new ExtractionOptions()
                 {
-                    Pipeline = extractionPipeline.ID,
-                    ExtractionConfiguration = extractionConfiguration.ID
+                    Pipeline = extractionPipeline.ID.ToString(),
+                    ExtractionConfiguration = extractionConfiguration.ID.ToString()
                 };
                 var runnerExtract = new ExtractionRunner(_activator,optsExtract);
                 try

@@ -53,9 +53,10 @@ namespace Rdmp.Core.CommandLine.Runners
 
         protected override void Initialize()
         {
-            _configuration = RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_options.ExtractionConfiguration);
+            
+            _configuration = GetObjectFromCommandLineString<ExtractionConfiguration>(RepositoryLocator,_options.ExtractionConfiguration);
             _project = _configuration.Project;
-            _pipeline = RepositoryLocator.CatalogueRepository.GetObjectByID<Pipeline>(_options.Pipeline);
+            _pipeline = GetObjectFromCommandLineString<Pipeline>(RepositoryLocator, _options.Pipeline);
 
             if (HasConfigurationPreviouslyBeenReleased())
                 throw new Exception("Extraction Configuration has already been released");
@@ -166,7 +167,10 @@ namespace Rdmp.Core.CommandLine.Runners
             if (_options.Datasets == null || !_options.Datasets.Any())
                 return _configuration.SelectedDataSets;
 
-            return _configuration.SelectedDataSets.Where(ds => _options.Datasets.Contains(ds.ExtractableDataSet_ID)).ToArray();
+            var eds = GetObjectsFromCommandLineString<ExtractableDataSet>(RepositoryLocator, _options.Datasets);
+            var datasetIds = eds.Select(e => e.ID).ToArray();
+
+            return _configuration.SelectedDataSets.Where(ds => datasetIds.Contains(ds.ExtractableDataSet_ID)).ToArray();
         }
 
         public ToMemoryCheckNotifier GetGlobalCheckNotifier()
