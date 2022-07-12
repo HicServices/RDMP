@@ -138,7 +138,7 @@ namespace Rdmp.UI.LoadExecutionUIs
             };
 
             if (lp != null)
-                options.LoadProgress = lp.ID;
+                options.LoadProgress = lp.ID.ToString();
             
             return options;
         }

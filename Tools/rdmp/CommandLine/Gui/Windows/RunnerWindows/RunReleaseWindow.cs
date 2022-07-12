@@ -49,8 +49,8 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
                 throw new OperationCanceledException();
             }
 
-            opts.Pipeline = pipe.ID;
-            opts.Configurations = configs.Select(c=>c.ID).ToArray();
+            opts.Pipeline = pipe.ID.ToString();
+            opts.Configurations = string.Join(",",configs.Select(c=>c.ID.ToString()).ToArray());
             opts.ReleaseGlobals = true;
 
             // all datasets

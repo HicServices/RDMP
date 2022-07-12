@@ -167,7 +167,10 @@ namespace Rdmp.Core.CommandLine.Runners
             if (_options.Datasets == null || !_options.Datasets.Any())
                 return _configuration.SelectedDataSets;
 
-            return _configuration.SelectedDataSets.Where(ds => _options.Datasets.Contains(ds.ExtractableDataSet_ID)).ToArray();
+            var eds = GetObjectsFromCommandLineString<ExtractableDataSet>(RepositoryLocator, _options.Datasets);
+            var datasetIds = eds.Select(e => e.ID).ToArray();
+
+            return _configuration.SelectedDataSets.Where(ds => datasetIds.Contains(ds.ExtractableDataSet_ID)).ToArray();
         }
 
         public ToMemoryCheckNotifier GetGlobalCheckNotifier()

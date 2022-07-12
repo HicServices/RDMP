@@ -22,7 +22,7 @@ namespace Rdmp.Core.CommandLine.Runners
     /// <summary>
     /// Automation task that runs a single CacheProgress until it is up-to-date (all available data read) or crashes.
     /// </summary>
-    public class CacheRunner : IRunner
+    public class CacheRunner : Runner
     {
         private readonly CacheOptions _options;
         
@@ -31,11 +31,11 @@ namespace Rdmp.Core.CommandLine.Runners
             _options = options;
         }
 
-        public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,ICheckNotifier checkNotifier, GracefulCancellationToken token)
+        public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,ICheckNotifier checkNotifier, GracefulCancellationToken token)
         {
             
 
-            CacheProgress cp = repositoryLocator.CatalogueRepository.GetObjectByID<CacheProgress>(_options.CacheProgress);
+            CacheProgress cp = GetObjectFromCommandLineString<CacheProgress>(repositoryLocator,_options.CacheProgress);
             string dataLoadTask = cp.GetDistinctLoggingTask();
 
             var defaults = repositoryLocator.CatalogueRepository;

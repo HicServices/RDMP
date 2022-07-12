@@ -5,6 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Interactive.Picking;
@@ -34,13 +37,32 @@ namespace Rdmp.Core.CommandLine.Runners
         protected T GetObjectFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T : IMapsDirectlyToDatabaseTable
         {
             if (int.TryParse(arg, out var id))
-                return locator.CatalogueRepository.GetObjectByID<T>(id);
-
+            {
+                var repo = locator.GetAllRepositories().FirstOrDefault(r => r.SupportsObjectType(typeof(T)));
+                return repo.GetObjectByID<T>(id);
+            }
+                
             var picker = new CommandLineObjectPicker(new[] { arg }, new ThrowImmediatelyActivator(locator));
             if (!picker[0].HasValueOfType(typeof(T)))
                 throw new ArgumentException($"Could not translate '{arg}' into a valid object of Type '{typeof(T).Name}'.  The referenced object may not exist or has been renamed.");
 
             return (T)picker[0].GetValueForParameterOfType(typeof(T));
+        }
+
+        protected IEnumerable<T> GetObjectsFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T: IMapsDirectlyToDatabaseTable
+        {
+            // if it is IDs only
+            if (Regex.IsMatch(arg,"[0-9, ]+"))
+            {
+                var repo = locator.GetAllRepositories().FirstOrDefault(r => r.SupportsObjectType(typeof(T)));
+                return repo.GetAllObjectsInIDList<T>(arg.Split(",", StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray());
+            }
+
+            var picker = new CommandLineObjectPicker(new[] { arg }, new ThrowImmediatelyActivator(locator));
+            if (!picker[0].HasValueOfType(typeof(T[])))
+                throw new ArgumentException($"Could not translate '{arg}' into a valid objects of Type '{typeof(T).Name}'.  The referenced object may not exist or has been renamed.");
+
+            return (T[])picker[0].GetValueForParameterOfType(typeof(T[]));
         }
     }
 }

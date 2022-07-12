@@ -150,12 +150,21 @@ namespace Rdmp.UI.DataRelease
         {
             return new ReleaseOptions()
             {
-                Pipeline = _pipelineSelectionUI1.Pipeline == null ? 0 : _pipelineSelectionUI1.Pipeline.ID,
-                Configurations = _configurations.Where(c=>tlvReleasePotentials.IsChecked(c) || tlvReleasePotentials.IsCheckedIndeterminate(c)).Select(ec => ec.ID).ToArray(),
-                SelectedDataSets = _selectedDataSets.All(tlvReleasePotentials.IsChecked)?new int[0]: tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray(),
+                Pipeline = _pipelineSelectionUI1.Pipeline == null ? "0" : _pipelineSelectionUI1.Pipeline.ID.ToString(),
+                Configurations = ToIdList(
+                    _configurations.Where(c => tlvReleasePotentials.IsChecked(c) || tlvReleasePotentials.IsCheckedIndeterminate(c)).Select(ec => ec.ID).ToArray()
+                    ),
+                SelectedDataSets = ToIdList(
+                    _selectedDataSets.All(tlvReleasePotentials.IsChecked) ? new int[0] : tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray()
+                    ),
                 Command = activityRequested,
                 ReleaseGlobals = tlvReleasePotentials.IsChecked(_globalsNode),
             };
+        }
+
+        private string ToIdList(int[] ints)
+        {
+            return string.Join(",", ints.Select(i => i.ToString()).ToArray());
         }
 
         private IEnumerable ChildrenGetter(object model)

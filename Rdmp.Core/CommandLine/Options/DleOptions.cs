@@ -20,7 +20,7 @@ namespace Rdmp.Core.CommandLine.Options
         public string LoadMetadata { get; set; }
 
         [Option('p', "LoadProgress", HelpText = "If your LoadMetadata has multiple LoadProgresses, you can run only one of them by specifying the ID of the LoadProgress to run here", Required = false, Default = 0)]
-        public int LoadProgress { get; set; }
+        public string LoadProgress { get; set; }
 
         [Option('i', "Iterative", HelpText = "If the LoadMetadata has LoadProgress(es) then they will be run until available data is exhausted (if false then only one batch will be loaded e.g. 5 days)",Required = false,Default = false)]
         public bool Iterative { get; set; }

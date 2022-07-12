@@ -26,7 +26,7 @@ namespace Rdmp.Core.CommandLine.Options
         public string Pipeline { get; set; }
 
         [Option('s', "Datasets", HelpText = "Restrict extraction to only those ExtractableDatasets that have the provided list of IDs (must be part of the ExtractionConfiguration)")]
-        public IEnumerable<int> Datasets { get; set; }
+        public string Datasets { get; set; }
         
         [Usage]
         public static IEnumerable<Example> Examples
@@ -39,7 +39,7 @@ namespace Rdmp.Core.CommandLine.Options
                         Command = CommandLineActivity.check,
                         ExtractionConfiguration =  "32",
                         Pipeline =  "2",
-                        Datasets = new [] { 123,124}
+                        Datasets = "123,124"
                     }
                     );
                 
