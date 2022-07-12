@@ -28,4 +28,4 @@ Commands:
   - AddDatasetsToConfiguration ExtractableDataSet:Prescribing ExtractionConfiguration  
 
   # this extraction can be run using the following (see build.yml):
-  # rdmp extract -e "ExtractionConfiguration:*Biochemistry" -p "Pipeline:DATA EXPORT*CSV" --command run
+  # rdmp extract -e "ExtractionConfiguration:My First Extraction" -p "Pipeline:DATA EXPORT*CSV" --command run

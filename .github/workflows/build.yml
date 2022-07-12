@@ -66,8 +66,8 @@ jobs:
         run: dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_list_destroy_catalogue.yaml
       - name: Run integration script create_cohort.yaml
         run: dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_cohort.yaml&&
-           dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- extract -e "ExtractionConfiguration:*Biochemistry" -p "Pipeline:DATA EXPORT*CSV" --command check &&
-           dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- extract -e "ExtractionConfiguration:*Biochemistry" -p "Pipeline:DATA EXPORT*CSV" --command run
+           dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- extract -e "ExtractionConfiguration:My First Extraction" -p "Pipeline:DATA EXPORT*CSV" --command check &&
+           dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- extract -e "ExtractionConfiguration:My First Extraction" -p "Pipeline:DATA EXPORT*CSV" --command run
       - name: Run integration script create_dataload.yaml
         run: |
            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_dataload.yaml &&
