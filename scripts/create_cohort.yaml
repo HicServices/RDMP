@@ -20,6 +20,12 @@ Commands:
   # Commit the cohort identifier list
   - CreateNewCohortByExecutingACohortIdentificationConfiguration "CohortIdentificationConfiguration:My cic" ExternalCohortTable "Test cohort of Biochemistry Tayside Patients" "Project:Example Project" "Pipeline:CREATE COHORT*Cohort Identification Configuration"
   - ViewData ExtractableCohort All ./out/cohort.csv
-  # Clean up
-  - delete "CohortIdentificationConfiguration:My cic" true
-  - delete "Project:Example Project" true
+  
+  # Create extraction (note that terms like "Project" refer to the last one created in the script)
+  - NewObject ExtractionConfiguration Project "My First Extraction"
+  - AddCohortToExtractionConfiguration ExtractableCohort  ExtractionConfiguration
+  - AddDatasetsToConfiguration ExtractableDataSet:Biochemistry ExtractionConfiguration
+  - AddDatasetsToConfiguration ExtractableDataSet:Prescribing ExtractionConfiguration  
+
+  # this extraction can be run using the following (see build.yml):
+  # rdmp extract -e "ExtractionConfiguration:*Biochemistry" -p "Pipeline:DATA EXPORT*CSV" --command run

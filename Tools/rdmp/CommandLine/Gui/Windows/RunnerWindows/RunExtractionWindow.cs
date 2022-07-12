@@ -25,7 +25,7 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
         {
             return new ExtractionOptions()
             {
-                ExtractionConfiguration = ec.ID,
+                ExtractionConfiguration = ec.ID.ToString(),
                 ExtractGlobals = true,
             };
         }
@@ -51,7 +51,7 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
                 throw new OperationCanceledException();
             }
 
-            opts.Pipeline = pipe.ID;
+            opts.Pipeline = pipe.ID.ToString();
         }
     }
 }

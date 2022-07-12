@@ -343,8 +343,8 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             {
                 var optsExtract = new ExtractionOptions()
                 {
-                    Pipeline = extractionPipeline.ID,
-                    ExtractionConfiguration = extractionConfiguration.ID
+                    Pipeline = extractionPipeline.ID.ToString(),
+                    ExtractionConfiguration = extractionConfiguration.ID.ToString()
                 };
                 var runnerExtract = new ExtractionRunner(_activator,optsExtract);
                 try

@@ -53,9 +53,10 @@ namespace Rdmp.Core.CommandLine.Runners
 
         protected override void Initialize()
         {
-            _configuration = RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_options.ExtractionConfiguration);
+            
+            _configuration = GetObjectFromCommandLineString<ExtractionConfiguration>(RepositoryLocator,_options.ExtractionConfiguration);
             _project = _configuration.Project;
-            _pipeline = RepositoryLocator.CatalogueRepository.GetObjectByID<Pipeline>(_options.Pipeline);
+            _pipeline = GetObjectFromCommandLineString<Pipeline>(RepositoryLocator, _options.Pipeline);
 
             if (HasConfigurationPreviouslyBeenReleased())
                 throw new Exception("Extraction Configuration has already been released");
