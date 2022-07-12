@@ -36,6 +36,11 @@ namespace Rdmp.Core.CommandLine.Runners
         /// <exception cref="ArgumentException">Thrown if it is not possible to parse <paramref name="arg"/> into an existing object</exception>
         protected T GetObjectFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T : IMapsDirectlyToDatabaseTable
         {
+            if(string.IsNullOrWhiteSpace(arg) || arg.Trim().Equals("0"))
+            {
+                return default(T);
+            }
+
             if (int.TryParse(arg, out var id))
             {
                 var repo = locator.GetAllRepositories().FirstOrDefault(r => r.SupportsObjectType(typeof(T)));
@@ -51,6 +56,11 @@ namespace Rdmp.Core.CommandLine.Runners
 
         protected IEnumerable<T> GetObjectsFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T: IMapsDirectlyToDatabaseTable
         {
+            if (string.IsNullOrWhiteSpace(arg) || arg.Trim().Equals("0"))
+            {
+                return Enumerable.Empty<T>();
+            }
+
             // if it is IDs only
             if (Regex.IsMatch(arg,"[0-9, ]+"))
             {
@@ -62,7 +72,7 @@ namespace Rdmp.Core.CommandLine.Runners
             if (!picker[0].HasValueOfType(typeof(T[])))
                 throw new ArgumentException($"Could not translate '{arg}' into a valid objects of Type '{typeof(T).Name}'.  The referenced object may not exist or has been renamed.");
 
-            return (T[])picker[0].GetValueForParameterOfType(typeof(T[]));
+            return (T[])picker[0].GetValueForParameterOfType(typeof(T[])) ?? Enumerable.Empty<T>();
         }
     }
 }

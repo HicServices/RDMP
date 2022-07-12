@@ -16,7 +16,7 @@ namespace Rdmp.Core.CommandLine.Options
     [Verb("cache",HelpText ="Run the Caching engine which fetches data by date from a remote endpoint in batches of a given size (independently from loading it to any relational databases)")]
     public class CacheOptions:RDMPCommandLineOptions
     {
-        [Option('c', "CacheProgress", HelpText = "The ID of the CacheProgress you want to run", Required = true, Default = 0)]
+        [Option('c', "CacheProgress", HelpText = "The ID of the CacheProgress you want to run", Required = true, Default = "0")]
         public string CacheProgress { get; set; }
 
         [Option('r',"RetryMode",HelpText = "True to attempt to process archival CacheFetchFailure dates instead of new (uncached) dates.")]
