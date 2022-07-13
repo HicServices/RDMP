@@ -4,7 +4,7 @@
 1. Compatibility
    1. [What System Requirements does RDMP have?](#reqs)
    1. [Does RDMP have a Command Line Interface?](#cli)
-   1. [Does RDMP run under Linux](#linux)
+   1. [Does RDMP run under Linux?](#linux)
    1. [Does RDMP have an API?](#api)
    1. [Does RDMP Support Plugins?](#plugins)
    4. [How is RDMP versioned?](#how-is-rdmp-versioned)
@@ -12,7 +12,7 @@
 1. Database Compatibility
    1. [What databases does RDMP support?](#databases)
    1. [What database permissions does RDMP need?](#database-permissions)
-   1. [How does RDMP RSA encryption work](#encryption)
+   1. [How does RDMP RSA encryption work?](#encryption)
    1. [How do I set a custom port / SSL certificate / connection string option?](#connectionStringKeywords)
    1. [When I connect to MySql it says 'The host localhost does not support SSL connections'](#disableSSL)
    1. [Does RDMP Support Schemas?](#schemas)
@@ -94,11 +94,11 @@ The RDMP command line client can be used to run unattended jobs (such as overnig
 
    
 <a name="cli"></a>
-### Does RDMP have a Command Line Interface (CLI)
+### Does RDMP have a Command Line Interface? (CLI)
 Yes, read all about it in [CommandLine](./RdmpCommandLine.md)
 
 <a name="linux"></a>
-### Does RDMP run under Linux
+### Does RDMP run under Linux?
 
 The [RDMP CLI](#cli) runs natively under linux.
 
@@ -186,7 +186,7 @@ Ensure all your plugins are uptodate, you can check compatiblity with:
 ## Database Compatibility
 
 <a name="databases"></a>
-### What databases does RDMP support
+### What databases does RDMP support?
 RDMP uses [FAnsiSql](https://github.com/HicServices/FAnsiSql) to discover, query and connect to databases.  Currently this includes support for Sql Server, MySql, PostgreSQL and Oracle.
 
 <a name="database-permissions"></a>
@@ -253,7 +253,7 @@ The final stage of DLE execution requires a database called `DLE_STAGING`.  This
 The [Data Load Engine] supports loading other DBMS than sql server (e.g. MySql, Postgress, Oracle).  When loading an alternate DBMS you will need to translate the above roles (e.g. `db_datawriter`) into the appropriate permissions for the DBMS you are targetting.
 
 <a name="encryption"></a>
-### How does RDMP RSA encryption work
+### How does RDMP RSA encryption work?
 
 The recommended approach to managing permissions is to use domain authentication (integrated security) where possible.  However sometimes credentials need to be stored (e.g. for a remote web service) or sql authentication is desired.  In these cases RDMP supports storing encrypted credentials.
 
