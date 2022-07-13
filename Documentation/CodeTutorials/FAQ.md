@@ -263,7 +263,7 @@ Encryption uses 4096 bit RSA encryption.  Encrypted strings are decrypted prior 
 
 This will generate a file on disk that contains the private key.  Access to the key file allows decrypting passwords and so only RDMP users with file read access to the certificate can use them.  The private key file must be stored securely and access granted only to users who require to use the encrypted passwords.  
 
-If you loose the private key file then encrypted passwords will be irretrievable (lost forever).
+If you lose the private key file then encrypted passwords will be irretrievable (lost forever).
 
 <a name="connectionStringKeywords"></a>
 ### How do I set a custom port / SSL certificate / connection string option?
