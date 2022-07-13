@@ -28,7 +28,7 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
         {
             return new DleOptions()
             {
-                LoadMetadata = lmd.ID,
+                LoadMetadata = lmd.ID.ToString(),
                 Iterative = false,
             };
         }
@@ -43,7 +43,7 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
                 if (lp == null)
                     return;
 
-                opts.LoadProgress = lp.ID;
+                opts.LoadProgress = lp.ID.ToString();
 
                 if (BasicActivator.SelectValueType("Days to Load", typeof(int), lp.DefaultNumberOfDaysToLoadEachTime, out object chosen))
                     opts.DaysToLoad = (int)chosen;

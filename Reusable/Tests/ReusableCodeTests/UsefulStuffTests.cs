@@ -83,5 +83,6 @@ namespace ReusableCodeTests
             Assert.AreEqual("test String", UsefulStuff.PascalCaseStringToHumanReadable("_testString"));
             Assert.AreEqual("test String", UsefulStuff.PascalCaseStringToHumanReadable("_testString_"));
         }
+
     }
 }

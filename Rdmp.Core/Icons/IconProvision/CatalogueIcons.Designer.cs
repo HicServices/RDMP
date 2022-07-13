@@ -283,6 +283,16 @@ namespace Rdmp.Core.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap AllTemplateAggregateConfigurationsNode
+        {
+            get {
+                object obj = ResourceManager.GetObject("AllTemplateAggregateConfigurationsNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap AllPipelinesNode {
             get {
                 object obj = ResourceManager.GetObject("AllPipelinesNode", resourceCulture);

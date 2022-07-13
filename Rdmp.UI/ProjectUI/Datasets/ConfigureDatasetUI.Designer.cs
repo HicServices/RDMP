@@ -33,6 +33,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigureDatasetUI));
             this.label1 = new System.Windows.Forms.Label();
+            this.cbShowProjectSpecific = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
             this.btnExcludeAll = new System.Windows.Forms.Button();
             this.btnExclude = new System.Windows.Forms.Button();
@@ -80,6 +81,15 @@ namespace Rdmp.UI.ProjectUI.Datasets
             this.label1.Size = new System.Drawing.Size(96, 13);
             this.label1.TabIndex = 1;
             this.label1.Text = "Available Columns:";
+            // 
+            // cbShowProjectSpecific
+            // 
+            this.cbShowProjectSpecific.Location = new System.Drawing.Point(337, 240);
+            this.cbShowProjectSpecific.Name = "cbShowProjectSpecific";
+            this.cbShowProjectSpecific.Size = new System.Drawing.Size(96, 30);
+            this.cbShowProjectSpecific.TabIndex = 38;
+            this.cbShowProjectSpecific.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            this.cbShowProjectSpecific.Text = "Show Project Specific";
             // 
             // label2
             // 
@@ -136,6 +146,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
             this.splitContainer1.Panel1.Controls.Add(this.label3);
             this.splitContainer1.Panel1.Controls.Add(this.olvAvailable);
             this.splitContainer1.Panel1.Controls.Add(this.btnSelectCore);
+            this.splitContainer1.Panel1.Controls.Add(this.cbShowProjectSpecific);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
             this.splitContainer1.Panel1.Controls.Add(this.btnInclude);
             this.splitContainer1.Panel1.Controls.Add(this.btnExclude);
@@ -450,7 +461,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
         }
 
         #endregion
-
+        private System.Windows.Forms.CheckBox cbShowProjectSpecific;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnExcludeAll;

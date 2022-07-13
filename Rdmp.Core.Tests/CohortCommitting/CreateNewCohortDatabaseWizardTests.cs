@@ -103,6 +103,29 @@ namespace Rdmp.Core.Tests.CohortCommitting
             Assert.IsTrue(candidate.MatchingExtractionInformations.Single().ID== _extractionInfo1.ID);
         }
 
+        [TestCase("text")]
+        //[TestCase("ntext")] // TODO: FAnsiSql doesn't know that this is max width
+        [TestCase("varchar(max)")]
+        [TestCase("nvarchar(max)")]
+        public void TestVarcharMaxNotAllowed(string term)
+        {
+            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+
+            CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(db, CatalogueRepository, DataExportRepository, false);
+
+            _extractionInfo2.IsExtractionIdentifier = true;
+            _c2.Data_type = term;
+            _c2.SaveToDatabase();
+
+            _extractionInfo2.SaveToDatabase();
+
+            var candidate = wizard.GetPrivateIdentifierCandidates().Single(c => c.RuntimeName.Equals("PrivateIdentifierB"));
+            var ex = Assert.Throws<Exception>(()=>wizard.CreateDatabase(
+                candidate,
+                new ThrowImmediatelyCheckNotifier()));
+            Assert.AreEqual("Private identifier datatype cannot be varchar(max) style as this prevents Primary Key creation on the table", ex.Message);
+        }
+
         [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void TestActuallyCreatingIt(DatabaseType type)
         {

@@ -4,10 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
@@ -17,6 +20,25 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
     /// </summary>
     public class ExecuteCommandAlterTableCreatePrimaryKey : AlterTableCommandExecution
     {
+        private ColumnInfo[] _columnInfos;
+
+        [UseWithCommandLine( ParameterHelpList = "<TableInfo> <ColumnInfo1> <ColumnInfo2> etc",
+            ParameterHelpBreakdown = @"TableInfo    The table you want to create a primary key on e.g. TableInfo:*Biochem*
+ColumnInfos List of columns that should form the primary key (1 for simple primary key, 2+ for composite primary key)")]
+        public ExecuteCommandAlterTableCreatePrimaryKey(IBasicActivateItems activator, CommandLineObjectPicker picker) :
+            this(activator, (TableInfo)picker[0].GetValueForParameterOfType(typeof(TableInfo)))
+        {
+            if (IsImpossible)
+                return;
+
+            var pick = new List<ColumnInfo>();
+            for (int i = 1; i < picker.Length; i++)
+            {
+                pick.Add((ColumnInfo)picker[i].GetValueForParameterOfType(typeof(ColumnInfo)));
+            }
+
+            _columnInfos = pick.ToArray();
+        }
         public ExecuteCommandAlterTableCreatePrimaryKey(IBasicActivateItems activator, TableInfo tableInfo):base(activator,tableInfo)
         {
             if(IsImpossible)
@@ -35,19 +57,23 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
 
             Synchronize();
 
-            if (SelectMany(TableInfo.ColumnInfos, out ColumnInfo[] selected))
-            {
-                var cts = new CancellationTokenSource();
+            var cols = _columnInfos;
 
-                var task = Task.Run(() =>
-                    Table.CreatePrimaryKey(selected.Select(c => c.Discover(DataAccessContext.DataLoad)).ToArray()));
-                
-                Wait("Creating Primary Key...",task, cts);
+            if (cols == null && SelectMany(TableInfo.ColumnInfos, out ColumnInfo[] selected))
+                cols = selected;
 
-                if(task.IsFaulted)
-                    ShowException("Create Primary Key Failed",task.Exception);
-            }
+            if (cols == null || cols.Length == 0)
+                return;
+            
+            var cts = new CancellationTokenSource();
+
+            var task = Task.Run(() =>
+                Table.CreatePrimaryKey(cols.Select(c => c.Discover(DataAccessContext.DataLoad)).ToArray()));
                 
+            Wait("Creating Primary Key...",task, cts);
+
+            if(task.IsFaulted)
+                ShowException("Create Primary Key Failed",task.Exception);
             
             Synchronize();
 

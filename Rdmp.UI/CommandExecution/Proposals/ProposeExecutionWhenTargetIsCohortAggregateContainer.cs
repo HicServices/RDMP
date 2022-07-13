@@ -28,7 +28,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
 
         public override void Activate(CohortAggregateContainer target)
         {
-            var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, target);
+            var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, target,null);
             if(!cmd.IsImpossible)
                 cmd.Execute();
         }

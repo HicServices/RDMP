@@ -219,6 +219,23 @@ namespace Rdmp.Core.CommandExecution
                 if(ac.IsCohortIdentificationAggregate)
                 {
                     yield return new ExecuteCommandSetAggregateDimension(_activator, ac);
+                    
+                    if(_activator.RepositoryLocator.CatalogueRepository.GetExtendedProperties(ExtendedProperty.IsTemplate,ac)
+                        .Any(v=>v.Value.Equals("true")))
+                    {
+                        yield return new ExecuteCommandSetExtendedProperty(_activator, new[] { ac }, ExtendedProperty.IsTemplate, null)
+                        {
+                            OverrideCommandName = "Make Non Template"
+                        };
+                    }
+                    else
+                    {
+                        yield return new ExecuteCommandSetExtendedProperty(_activator, new[] { ac }, ExtendedProperty.IsTemplate, "true")
+                        {
+                            OverrideCommandName = "Make Reusable Template"
+                        };
+                    }
+                    
                 }
 
                 // graph options
@@ -701,7 +718,7 @@ namespace Rdmp.Core.CommandExecution
 
             if (Is(o, out CohortAggregateContainer cohortAggregateContainer))
             {
-                yield return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator, cohortAggregateContainer) { SuggestedCategory = Add, OverrideCommandName = "Catalogue" };
+                yield return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator, cohortAggregateContainer,null,null) { SuggestedCategory = Add, OverrideCommandName = "Catalogue" };
                 yield return new ExecuteCommandAddCohortSubContainer(_activator, cohortAggregateContainer) { SuggestedCategory = Add,  OverrideCommandName = "Sub Container" };
                 yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator, cohortAggregateContainer, true) { SuggestedCategory = Add, OverrideCommandName = "Existing Cohort Set (copy of)" };
                 yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator, cohortAggregateContainer, false) { SuggestedCategory = Add, OverrideCommandName = "Aggregate" };

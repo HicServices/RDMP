@@ -13,4 +13,5 @@ The schema is documented in an [ExternalCohortTable]
 ## Example Tests
 
 [Create Cohort](../../Rdmp.Core.Tests/CohortCommitting/CommitCohortExample.cs)
+
 [ExternalCohortTable]: ../../Documentation/CodeTutorials/Glossary.md#ExternalCohortTable

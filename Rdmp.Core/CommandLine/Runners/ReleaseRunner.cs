@@ -44,25 +44,29 @@ namespace Rdmp.Core.CommandLine.Runners
 
         protected override void Initialize()
         {
-            _pipeline = RepositoryLocator.CatalogueRepository.GetObjectByID<Pipeline>(_options.Pipeline);
+            _pipeline = GetObjectFromCommandLineString<Pipeline>(RepositoryLocator, _options.Pipeline);
                         
             //get all configurations user has picked
-            HashSet<int> configurations = new HashSet<int>(_options.Configurations);
-            _configurations = RepositoryLocator.DataExportRepository.GetAllObjectsInIDList<ExtractionConfiguration>(configurations).ToArray();
+            _configurations = GetObjectsFromCommandLineString<IExtractionConfiguration>(RepositoryLocator,_options.Configurations).ToArray();
 
             //some datasets only
             if(_options.SelectedDataSets != null && _options.SelectedDataSets.Any())
             {
-                _selectedDatasets = RepositoryLocator.DataExportRepository.GetAllObjectsInIDList<SelectedDataSets>(_options.SelectedDataSets).ToArray();
-                
+                _selectedDatasets = GetObjectsFromCommandLineString<SelectedDataSets>(RepositoryLocator, _options.SelectedDataSets).ToArray();
+
+                var configurationIds = _configurations.Select(c => c.ID).ToArray();
+
                 //if user has specified some selected datasets that do not belong to configurations they specified then we will need to include
                 //those configurations as well
-                foreach(var s in _selectedDatasets)
-                    if(!configurations.Contains(s.ExtractionConfiguration_ID))
+                foreach (var s in _selectedDatasets)
+                {
+                    if (!configurationIds.Contains(s.ExtractionConfiguration_ID))
                     {
                         //add the config since it's not included in _options.Configurations
-                        _configurations = _configurations.ToList().Union(new []{s.ExtractionConfiguration }).ToArray();
+                        _configurations = _configurations.ToList().Union(new[] { s.ExtractionConfiguration }).ToArray();
                     }
+                }
+                    
             }
             else
                 _selectedDatasets = _configurations.SelectMany(c=>c.SelectedDataSets).ToArray();
@@ -72,6 +76,7 @@ namespace Rdmp.Core.CommandLine.Runners
 
             _project = _configurations.Select(c => c.Project).Distinct().Single();
         }
+
 
         protected override void AfterRun()
         {

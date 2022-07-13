@@ -19,7 +19,7 @@ namespace Rdmp.Core.CommandLine.Runners
     /// <summary>
     /// Runner for Cohort Creation Tasks.
     /// </summary>
-    public class CohortCreationRunner : IRunner
+    public class CohortCreationRunner : Runner
     {
         private readonly CohortCreationOptions _options;
         private ExtractionConfiguration _configuration;
@@ -27,10 +27,10 @@ namespace Rdmp.Core.CommandLine.Runners
         public CohortCreationRunner(CohortCreationOptions options)
         {
             _options = options;
-            _configuration = _options.GetRepositoryLocator().DataExportRepository.GetObjectByID<ExtractionConfiguration>(_options.ExtractionConfiguration);
+            _configuration = GetObjectFromCommandLineString<ExtractionConfiguration>(_options.GetRepositoryLocator(),_options.ExtractionConfiguration);
         }
 
-        public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
+        public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
         {
             if (HasConfigurationPreviouslyBeenReleased())
                 throw new Exception("Extraction Configuration has already been released");

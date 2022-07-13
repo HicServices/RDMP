@@ -18,7 +18,7 @@ jobs:
         shell: bash
         run: touch package-lock.json
       - name: Install Node for coverage reporting
-        uses: actions/setup-node@v3.3.0
+        uses: actions/setup-node@v3.4.0
         with:
           node-version: '16.x'
           cache: 'npm'
@@ -55,6 +55,25 @@ jobs:
         run: dotnet build --configuration Release --nologo --verbosity minimal
       - name: Initialise RDMP
         run: dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- install --createdatabasetimeout 180 "(localdb)\MSSQLLocalDB" TEST_ -e
+      - name: Populate Databases.yaml 
+        shell: bash
+        run: |
+          cat > ./Tools/rdmp/Databases.yaml << EOF
+          CatalogueConnectionString: Server=(localdb)\MSSQLLocalDB;Database=TEST_Catalogue;Trusted_Connection=True;TrustServerCertificate=true;
+          DataExportConnectionString: Server=(localdb)\MSSQLLocalDB;Database=TEST_DataExport;Trusted_Connection=True;TrustServerCertificate=true;
+          EOF
+      - name: Run integration test scripts
+        run: dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_list_destroy_catalogue.yaml
+      - name: Run integration script create_cohort.yaml
+        run: dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_cohort.yaml&&
+           dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- extract -e "ExtractionConfiguration:My First Extraction" -p "Pipeline:DATA EXPORT*CSV" --command check &&
+           dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- extract -e "ExtractionConfiguration:My First Extraction" -p "Pipeline:DATA EXPORT*CSV" --command run
+      - name: Run integration script create_dataload.yaml
+        run: |
+           dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_dataload.yaml &&
+           dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- dle -l "LoadMetadata:*Biochemistry" --command check &&
+           dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- dle -l "LoadMetadata:*Biochemistry" --command run
+
       - name: Test Reusable code
         shell: bash
         run: |
@@ -71,7 +90,6 @@ jobs:
         run: |
           dotnet test "./Rdmp.UI.Tests/Rdmp.UI.Tests.csproj" --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -r coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           mv `find coverage -type f` ui.lcov
-
       - name: Test with local file system
         shell: bash
         run:  |

@@ -63,6 +63,8 @@ namespace Rdmp.UI.ExtractionUIs
 
             RDMPCollectionCommonFunctionality.SetupColumnTracking(olvExtractionInformations,olvColumns, new Guid("35946a6e-ebe4-496a-a944-1ddb10b5f8c5"));
             RDMPCollectionCommonFunctionality.SetupColumnTracking(olvExtractionInformations, olvOrder, new Guid("d11d4b84-2464-4254-a3cb-b656c55dd0fc"));
+
+            lbDesiredOrder.SelectedIndexChanged += (s,e)=>lbDesiredOrder.Refresh();
         }
 
         public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
@@ -93,8 +95,10 @@ namespace Rdmp.UI.ExtractionUIs
             {
                 lock (oDrawLock)
                 {
-                    if(lbDesiredOrder.SelectedItem != null)
-                        lbDesiredOrder.Items.Remove(lbDesiredOrder.SelectedItem);
+                    var toDelete = lbDesiredOrder.SelectedIndices.Cast<int>().OrderByDescending(i=>i).ToArray();
+
+                    foreach (var r in toDelete)
+                        lbDesiredOrder.Items.RemoveAt(r);
 
                     RecomputeOrderAndHighlight();
                 }

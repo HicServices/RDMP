@@ -114,6 +114,8 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
             if (toProcess == null)
                 return null;
 
+            RemoveInvalidCharactersInSchema(toProcess);
+
             IDatabaseColumnRequestAdjuster adjuster = null;
             if (Adjuster != null)
             {
@@ -217,6 +219,30 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
             }
 
             return null;
+        }
+
+        private void RemoveInvalidCharactersInSchema(DataTable toProcess)
+        {
+            char[] invalidSymbols = new[] { '.'} ;
+
+            if(!string.IsNullOrWhiteSpace(toProcess.TableName) && invalidSymbols.Any(c=>toProcess.TableName.Contains(c)))
+            {
+                foreach (var symbol in invalidSymbols)
+                {
+                    toProcess.TableName = toProcess.TableName.Replace(symbol.ToString(), "");
+                }   
+            }
+
+            foreach(DataColumn col in toProcess.Columns)
+            {
+                if (!string.IsNullOrWhiteSpace(col.ColumnName) && invalidSymbols.Any(c => col.ColumnName.Contains(c)))
+                {
+                    foreach (var symbol in invalidSymbols)
+                    {
+                        col.ColumnName = col.ColumnName.Replace(symbol.ToString(), "");
+                    }
+                }
+            }
         }
 
 

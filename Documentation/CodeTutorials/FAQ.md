@@ -4,13 +4,15 @@
 1. Compatibility
    1. [What System Requirements does RDMP have?](#reqs)
    1. [Does RDMP have a Command Line Interface?](#cli)
-   1. [Does RDMP run under Linux](#linux)
+   1. [Does RDMP run under Linux?](#linux)
    1. [Does RDMP have an API?](#api)
    1. [Does RDMP Support Plugins?](#plugins)
    4. [How is RDMP versioned?](#how-is-rdmp-versioned)
    7. [Updating the CLI](#updating-the-cli)
 1. Database Compatibility
    1. [What databases does RDMP support?](#databases)
+   1. [What database permissions does RDMP need?](#database-permissions)
+   1. [How does RDMP RSA encryption work?](#encryption)
    1. [How do I set a custom port / SSL certificate / connection string option?](#connectionStringKeywords)
    1. [When I connect to MySql it says 'The host localhost does not support SSL connections'](#disableSSL)
    1. [Does RDMP Support Schemas?](#schemas)
@@ -92,11 +94,11 @@ The RDMP command line client can be used to run unattended jobs (such as overnig
 
    
 <a name="cli"></a>
-### Does RDMP have a Command Line Interface (CLI)
+### Does RDMP have a Command Line Interface? (CLI)
 Yes, read all about it in [CommandLine](./RdmpCommandLine.md)
 
 <a name="linux"></a>
-### Does RDMP run under Linux
+### Does RDMP run under Linux?
 
 The [RDMP CLI](#cli) runs natively under linux.
 
@@ -184,8 +186,84 @@ Ensure all your plugins are uptodate, you can check compatiblity with:
 ## Database Compatibility
 
 <a name="databases"></a>
-### What databases does RDMP support
+### What databases does RDMP support?
 RDMP uses [FAnsiSql](https://github.com/HicServices/FAnsiSql) to discover, query and connect to databases.  Currently this includes support for Sql Server, MySql, PostgreSQL and Oracle.
+
+<a name="database-permissions"></a>
+### What database permissions does RDMP need?
+
+#### Installation/Patching user permissions
+Installing RDMP will create a number of 'platform' databases e.g.:
+
+- RDMP_Catalogue
+- RDMP_DataExport
+- RDMP_Logging
+- RDMP_DQE
+
+Installation requires 'CREATE DATABASE' permissions.  The user that installs RDMP will be the `db_owner` of the platform databases.  This can be changed to the following if desired:
+
+- db_datareader
+- db_datawriter
+- db_ddladmin
+- [db_executor]
+
+For an indepth discussion of the implications of this change see [DDL_admin vs db_owner permissions](https://dba.stackexchange.com/a/121235).
+
+This account should be used for patching when a new version of RDMP is released that includes a database patch (Any database patches are always clearly marked in bold in the [change log](../../CHANGELOG.md)).
+
+The same user permissions and processes should be followed when creating [cohort databases]/[query cache] etc.
+
+#### Regular user permissions
+
+After installation RDMP users require `db_datareader` and `db_datawriter` permissions on the core platform databases:
+
+- RDMP_Catalogue
+- RDMP_DataExport
+- RDMP_Logging
+- RDMP_DQE
+
+Committing cohort lists requires `db_datareader` and `db_datawriter` to the target [cohort database].  If you are using a plugin for cohort identifier allocation then additional permissions may be required (e.g. [db_executor]).
+
+The [query cache] database requires `db_ddladmin` in addition to  `db_datareader` and `db_datawriter` because caching involves creating and dropping new tables.
+
+RDMP can be configured to use seperate credentials for each [cohort databases]/[query cache] databases.  These credentials can be encrypted with an [RSA private key](#encryption).
+ 
+#### Data Load Permissions
+
+The [Data Load Engine] includes support for pluggable modules (CSV Reader, FTP Downloader etc) and so may require any number of permissions.  Each module should clearly articulate what permissions are required (e.g. file read access for `DelimitedFlatFileAttacher`).  But common to all RDMP data loads are the following.
+
+Running the DLE requires the following permissions for the database being loaded (your data repository):
+
+- db_datareader
+- db_datawriter
+- [db_executor] (required for archiving)
+
+Creating new data loads and changing the schema of live tables (e.g. adding a new column / changing primary key) requires `db_ddladmin`.
+
+In addition the DLE requires 2 databases the [RAW and DLE_STAGING databases](#vsssis).
+
+The RAW database is created at the begining of a load and is the first place where unconstrained data is loaded.  The DLE runner requires `CREATE DATABASE` and `DROP DATABASE` permissions on this server.  For this reason it is recommended to use a seperate RAW server (or seperate [named instance](https://help.looker.com/hc/en-us/articles/360024102414-Connecting-an-MS-SQL-named-instance-)) from your live data repository.
+
+The final stage of DLE execution requires a database called `DLE_STAGING`.  This database should be created by a user with `CREATE DATABASE` permissions but after it is created once it will remain and not be dropped (like RAW is).  When running the DLE requires the following permissions on `DLE_STAGING`
+
+- db_ddladmin
+- db_datareader
+- db_datawriter
+
+The [Data Load Engine] supports loading other DBMS than sql server (e.g. MySql, Postgress, Oracle).  When loading an alternate DBMS you will need to translate the above roles (e.g. `db_datawriter`) into the appropriate permissions for the DBMS you are targetting.
+
+<a name="encryption"></a>
+### How does RDMP RSA encryption work?
+
+The recommended approach to managing permissions is to use domain authentication (integrated security) where possible.  However sometimes credentials need to be stored (e.g. for a remote web service) or sql authentication is desired.  In these cases RDMP supports storing encrypted credentials.
+
+Encryption uses 4096 bit RSA encryption.  Encrypted strings are decrypted prior to sending use (e.g. to send to a web service) so runtime protections such as HTTPS should still be used.  To generate an encryption certificate go to 'Tables (Advanced)' and open the 'Decryption Certificate' node (under 'Data Access Credentials').
+
+![Creating RSA private key](Images/FAQ/rsaencryption.png)
+
+This will generate a file on disk that contains the private key.  Access to the key file allows decrypting passwords and so only RDMP users with file read access to the certificate can use them.  The private key file must be stored securely and access granted only to users who require to use the encrypted passwords.  
+
+If you lose the private key file then encrypted passwords will be irretrievable (lost forever).
 
 <a name="connectionStringKeywords"></a>
 ### How do I set a custom port / SSL certificate / connection string option?
@@ -218,7 +296,7 @@ When importing a table RDMP will record the schema it came from and fully qualif
 
 Yes, when importing a table from a database to create a [Catalogue] any views in the database will also be shown.  These are interacted with in exactly the same manner as regular tables.
 
-You cannot load a view with data using the Data Load Engine.
+You cannot load a view with data using the [Data Load Engine].
 
 <a name="tvf"></a>
 ### Does RDMP Support Table Valued Functions?
@@ -669,7 +747,10 @@ If you think the problem is more widespread then you can also use the [`IInjectK
 ### Are there Unit/Integration Tests?
 Yes there are over 1,000 unit and integration tests, this is covered in [Tests](Tests.md)
 
-
+[Data Load Engine]: #data-load-engine
+[db_executor]: https://www.sqlmatters.com/Articles/Adding%20a%20db_executor%20role.aspx
+[cohort databases]: ../../Rdmp.Core/CohortCommitting/Readme.md
+[cohort database]: ../../Rdmp.Core/CohortCommitting/Readme.md
 [query cache]: ../../Rdmp.Core/CohortCreation/Readme.md
 [UNION]: ./Glossary.md#UNION
 [EXCEPT]: ./Glossary.md#EXCEPT

@@ -88,6 +88,20 @@ namespace Rdmp.Core.DataExport.Checks
                 .Select(c => c.CatalogueExtractionInformation)
                 .ToArray();
 
+            var orphans = selectedcols
+                .OfType<ExtractableColumn>()
+                .Where(c => c.CatalogueExtractionInformation == null)
+                .ToArray();
+
+            if(orphans.Any())
+            {
+                notifier.OnCheckPerformed(
+                    new CheckEventArgs("The following columns no longer map to an ExtractionInformation (it may have been deleted)" + Environment.NewLine
+                    + string.Join(Environment.NewLine, orphans.Select(o => o.GetRuntimeName()).ToArray()),
+                    CheckResult.Warning));
+            }
+            
+
             WarnAboutExtractionCategory(notifier, config, ds,eis, ErrorCodes.ExtractionContainsSpecialApprovalRequired, ExtractionCategory.SpecialApprovalRequired);
             WarnAboutExtractionCategory(notifier, config, ds, eis, ErrorCodes.ExtractionContainsInternal, ExtractionCategory.Internal);
             WarnAboutExtractionCategory(notifier, config, ds, eis, ErrorCodes.ExtractionContainsDeprecated, ExtractionCategory.Deprecated);
@@ -284,7 +298,7 @@ namespace Rdmp.Core.DataExport.Checks
         /// <param name="category"></param>
         public static void WarnAboutExtractionCategory(ICheckNotifier notifier, IExtractionConfiguration configuration, IExtractableDataSet dataset, ExtractionInformation[] cols, ErrorCode errorCode, ExtractionCategory category)
         {
-            if (cols.Any(c => c.ExtractionCategory == category))
+            if (cols.Any(c => c?.ExtractionCategory == category))
             {
                 notifier.OnCheckPerformed(new CheckEventArgs(errorCode, configuration, dataset,
                     String.Join(",", cols.Where(c => c.ExtractionCategory == category)

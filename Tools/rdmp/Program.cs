@@ -271,7 +271,7 @@ namespace Rdmp.Core
                 {
                     try
                     {
-                        c.DiscoveredServer.TestConnection();
+                        c.DiscoveredServer.TestConnection(15_000);
                     }
                     catch (Exception ex)
                     {
