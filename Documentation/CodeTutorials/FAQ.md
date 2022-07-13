@@ -11,7 +11,7 @@
    7. [Updating the CLI](#updating-the-cli)
 1. Database Compatibility
    1. [What databases does RDMP support?](#databases)
-   1. [What database permissions does RDMP need](#database-permissions)
+   1. [What database permissions does RDMP need?](#database-permissions)
    1. [How does RDMP RSA encryption work](#encryption)
    1. [How do I set a custom port / SSL certificate / connection string option?](#connectionStringKeywords)
    1. [When I connect to MySql it says 'The host localhost does not support SSL connections'](#disableSSL)
@@ -190,7 +190,7 @@ Ensure all your plugins are uptodate, you can check compatiblity with:
 RDMP uses [FAnsiSql](https://github.com/HicServices/FAnsiSql) to discover, query and connect to databases.  Currently this includes support for Sql Server, MySql, PostgreSQL and Oracle.
 
 <a name="database-permissions"></a>
-### What database permissions does RDMP need
+### What database permissions does RDMP need?
 
 #### Installation/Patching user permissions
 Installing RDMP will create a number of 'platform' databases e.g.:
