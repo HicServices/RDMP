@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed null reference in extraction checks when extracting a dataset where the original [ExtractionInformation] has been deleted [#1253](https://github.com/HicServices/RDMP/issues/1253)
 - Added an error provider message for when too many characters are entered in UIs with databindings [#1268](https://github.com/HicServices/RDMP/issues/1268).
 - Fixed running on command line with `-f somefile.yaml` being considered 'interactive' (i.e. RDMP would pause to ask you questions like 'are you sure?')
+- Fixed issue where DataTableUploadDestination pipeline component would refuse to load tables (e.g. from CSV) where the column has a full stop in it (e.g. `"mycol."`) [1269](https://github.com/HicServices/RDMP/issues/1269)
 
 ## [7.0.14] - 2022-06-27
 
