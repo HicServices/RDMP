@@ -6,11 +6,14 @@
 
 using System;
 using System.Drawing;
+using System.Linq;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
@@ -22,15 +25,27 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private IRootFilterContainerHost _host;
         private const float DEFAULT_WEIGHT = 0.1f;
 
-        public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, IRootFilterContainerHost host):base(activator)
+        public IFilter BasedOn { get; private set; }
+        public ExtractionFilterParameterSet ParameterSet { get; private set; }
+
+        [UseWithObjectConstructor]
+        public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, 
+            IRootFilterContainerHost host,
+            [DemandsInitialization("Optional. A filter to clone as the new filter instead of new being blank")]
+            IFilter basedOn = null,
+            [DemandsInitialization("Optional. Parameter set to populate parameter values in the new filter instead of being blank.  Requires basedOn to be populated")]
+            string valueSetName = null):base(activator)
         {
             Weight = DEFAULT_WEIGHT;
 
             _factory = host.GetFilterFactory();
             _container = host.RootFilterContainer;
             _host = host;
-
-
+            
+            SetBasedOn(host.GetCatalogue(),basedOn,valueSetName);
+            
+            if (IsImpossible)
+                return;
 
             if (_container == null && _host is AggregateConfiguration ac)
             {
@@ -64,7 +79,55 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _container = container;
 
             SetImpossibleIfReadonly(container);
-            
+        }
+        public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, IContainer container, IFilter basedOn) : base(activator)
+        {
+            Weight = DEFAULT_WEIGHT;
+
+            _container = container;
+            BasedOn = basedOn;
+
+            SetBasedOn(container.GetCatalogueIfAny(), basedOn, null);
+
+            SetImpossibleIfReadonly(container);
+        }
+
+        private void SetBasedOn(ICatalogue targetCatalogue, IFilter basedOn, string valueSetName)
+        {
+            BasedOn = basedOn;
+
+            if (BasedOn != null)
+            {
+                //if source catalogue is known
+                var sourceCatalogue = BasedOn.GetCatalogue();
+                if (sourceCatalogue != null)
+                {
+                    if (targetCatalogue != null && !sourceCatalogue.Equals(targetCatalogue))
+                    {
+                        SetImpossible("Cannot Import Filter from '" + sourceCatalogue + "' into '" + targetCatalogue + "'");
+                        return;
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(valueSetName))
+                {
+                    if (BasedOn is not ExtractionFilter f)
+                    {
+                        SetImpossible($"Cannot specify parameter value sets when filter is not a '{nameof(ExtractionFilter)}'.  Filter was a '{BasedOn.GetType().Name}'");
+                        return;
+                    }
+
+                    var match = f.ExtractionFilterParameterSets.FirstOrDefault(s => s.Name.Equals(valueSetName));
+                    if (match == null)
+                    {
+                        SetImpossible($"Could not find a value set called '{valueSetName}'. Declared value sets are:{Environment.NewLine}{string.Join(Environment.NewLine, f.ExtractionFilterParameterSets.Select(p => p.Name).ToArray())}");
+                        return;
+                    }
+
+                    ParameterSet = match;
+                }
+
+            }
         }
 
         public override Image GetImage(IIconProvider iconProvider)
@@ -76,26 +139,38 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var f = (DatabaseEntity)_factory.CreateNewFilter("New Filter " + Guid.NewGuid());
+            IFilter f;
+            IContainer container = _container;
 
-            if(_host != null && _container == null)
+            if (_host != null && container == null)
             {
-                if(_host.RootFilterContainer_ID == null)
+                if (_host.RootFilterContainer_ID == null)
                     _host.CreateRootContainerIfNotExists();
-                
-                _container = _host.RootFilterContainer;       
+
+                container = _host.RootFilterContainer;
             }
 
-            if (_container != null)
-                _container.AddChild((IFilter)f);
+            // if importing an existing filter instead of creating blank
+            if (BasedOn != null)
+            {
+                var wizard = new FilterImportWizard(BasicActivator);
+                f = wizard.Import(container, BasedOn, ParameterSet);
+            }
+            else
+            {
+                f = _factory.CreateNewFilter("New Filter " + Guid.NewGuid());
+            }
+
+            if (container != null)
+                container.AddChild(f);
 
             if (f is ExtractionFilter ef)
                 Publish(ef.ExtractionInformation);
             else
-                Publish((DatabaseEntity) _container ?? f);
+                Publish((DatabaseEntity) container ?? (DatabaseEntity)f);
 
             Emphasise(f);
-            Activate(f);
+            Activate((DatabaseEntity)f);
         }
     }
 }

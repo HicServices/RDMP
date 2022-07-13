@@ -15,6 +15,8 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
+    // TODO: Why isn't this just ExecuteCommandCreateNewFilter
+
     public class ExecuteCommandCreateNewFilterFromCatalogue : BasicCommandExecution, IAtomicCommand
     {
         private IContainer _container;
@@ -72,7 +74,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             var wizard = new FilterImportWizard(BasicActivator);
 
-
+            
             var import = wizard.ImportManyFromSelection(_container, _filters).ToArray();
 
             foreach (var f in import)

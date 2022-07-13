@@ -79,6 +79,9 @@ namespace Rdmp.UI.Copying
             var pipeline = modelObject as Pipeline;
             if (pipeline != null)
                 return new PipelineCombineable(pipeline);
+                       
+            if (modelObject is  ExtractionFilterParameterSet efps)
+                return new ExtractionFilterParameterSetCombineable(efps);
 
             if (modelObject is CatalogueItem ci)
                 return new CatalogueItemCombineable(ci);

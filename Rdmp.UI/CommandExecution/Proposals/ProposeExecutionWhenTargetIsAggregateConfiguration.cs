@@ -61,6 +61,12 @@ namespace Rdmp.UI.CommandExecution.Proposals
                 if (insertOption != InsertOption.Default)
                     return new ExecuteCommandReOrderAggregateContainer(ItemActivator, sourceCohortAggregateContainerCommand, targetAggregateConfiguration, insertOption);
             }
+
+            if(cmd is ExtractionFilterParameterSetCombineable efps)
+            {
+                return new ExecuteCommandCreateNewFilter(ItemActivator,targetAggregateConfiguration, efps.ParameterSet.ExtractionFilter, efps.ParameterSet.Name);
+            }
+
             return null;
         }
     }
