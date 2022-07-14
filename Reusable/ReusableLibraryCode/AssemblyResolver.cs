@@ -41,18 +41,13 @@ namespace ReusableLibraryCode
                     if(dll != null)
                         return assemblyResolveAttempts[assemblyInfo] = LoadFile(dll); //cache and return answer
                 }
-
                 
-
-                var assembly = Assembly.GetExecutingAssembly().Location;
-                if (String.IsNullOrWhiteSpace(assembly))
+                var assembly = System.AppContext.BaseDirectory;
+                if (string.IsNullOrWhiteSpace(assembly))
                     return null;
 
-                var directoryInfo = new FileInfo(assembly).Directory;
-                if (directoryInfo == null)
-                    return null;
-
-                var file = directoryInfo.EnumerateFiles(name + ".dll").FirstOrDefault();
+                var directoryInfo = new DirectoryInfo(assembly);
+                var file = directoryInfo?.EnumerateFiles(name + ".dll").FirstOrDefault();
                 if (file == null)
                     return null;
 

@@ -41,8 +41,7 @@ namespace Rdmp.Core
         {
             try
             {    
-                string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                var nlog = Path.Combine(assemblyFolder ,"NLog.config");
+                var nlog = Path.Combine(AppContext.BaseDirectory ,"NLog.config");
 
                 if (File.Exists(nlog))
                 {
