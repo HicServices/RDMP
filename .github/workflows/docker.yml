@@ -1,6 +1,8 @@
 name: Build RDMP Docker Image
 on:
   push:
+    tags:
+      - '*'
 
 jobs:
   build:
