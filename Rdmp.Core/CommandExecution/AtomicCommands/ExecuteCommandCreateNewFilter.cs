@@ -26,8 +26,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private IRootFilterContainerHost _host;
         private const float DEFAULT_WEIGHT = 0.1f;
 
-        public IFilter BasedOn { get; private set; }
-        public ExtractionFilterParameterSet ParameterSet { get; private set; }
+        public IFilter BasedOn { get; set; }
+        public ExtractionFilterParameterSet ParameterSet { get; set; }
         public string Name { get; }
         public string WhereSQL { get; }
 

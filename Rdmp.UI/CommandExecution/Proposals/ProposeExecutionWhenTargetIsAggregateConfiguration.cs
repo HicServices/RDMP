@@ -64,7 +64,10 @@ namespace Rdmp.UI.CommandExecution.Proposals
 
             if(cmd is ExtractionFilterParameterSetCombineable efps)
             {
-                return new ExecuteCommandCreateNewFilter(ItemActivator,targetAggregateConfiguration, efps.ParameterSet.ExtractionFilter, efps.ParameterSet.Name);
+                return new ExecuteCommandCreateNewFilter(ItemActivator,targetAggregateConfiguration){
+                    BasedOn = efps.ParameterSet.ExtractionFilter,
+                    ParameterSet = efps.ParameterSet
+                };
             }
 
             return null;
