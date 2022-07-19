@@ -11,6 +11,9 @@ using Rdmp.Core.Curation.Data.Aggregation;
 
 namespace Rdmp.Core.Tests.CommandExecution
 {
+    /// <summary>
+    /// Tests for <see cref="ExecuteCommandCreateNewFilter">
+    /// </summary>
     class ExecuteCommandCreateNewFilterCliTests : CommandCliTests
     {
         [Test]
