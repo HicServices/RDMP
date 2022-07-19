@@ -10,18 +10,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added checkbox for show/hide ProjectSpecific Catalogue columns in extraction configuration UI [#1265](https://github.com/HicServices/RDMP/issues/1265)
+- Integration tests and example scripts that can be run using RDMP command line `-f` option
+- The `Set` command no longer cares about property capitalization
+- Command line engines (e.g. `dle`) now optionally support specifying objects in command notation e.g. `-l "LoadMetadata:Load*Frank"` instead of `-l 1232`
+
+### Fixed
+
+- Fixed multiple calls to Refresh in DataExportPropertyManager causing Exception in extraction checks [#1274](https://github.com/HicServices/RDMP/issues/1274)
+- Fixed issues with Advanced column reorder dialog [#1273](https://github.com/HicServices/RDMP/issues/1273)
+  - Row size no longer cuts off bottom pixels of column name(s)
+  - Multi delete is now supported
+  - Pasted column name(s) with spaces e.g. `[my cool col]` now work
+- Fixed null reference in extraction checks when extracting a dataset where the original [ExtractionInformation] has been deleted [#1253](https://github.com/HicServices/RDMP/issues/1253)
+- Added an error provider message for when too many characters are entered in UIs with databindings [#1268](https://github.com/HicServices/RDMP/issues/1268).
+- Fixed running on command line with `-f somefile.yaml` being considered 'interactive' (i.e. RDMP would pause to ask you questions like 'are you sure?')
+- Fixed issue where DataTableUploadDestination pipeline component would refuse to load tables (e.g. from CSV) where the column has a full stop in it (e.g. `"mycol."`) [1269](https://github.com/HicServices/RDMP/issues/1269)
+
+## [7.0.14] - 2022-06-27
+
+### Added
+
 - Added 'Run Detached' (run task in subprocess).  Uses [ConsoleControl](https://github.com/dwmkerr/consolecontrol).
 - Added toFile option to all CLI 'View Data' commands
 - When calling commands on the RDMP command line the 'cmd' verb is now optional e.g. you can now enter just `./rdmp list Catalogue`
 - Added `-q` option to suppress console logging.  Allows better piping of commands e.g. to file etc
+- ProblemProvider can now detect unquoted dates in parameter values [#1197](https://github.com/HicServices/RDMP/issues/1197)
+- Added a `NLog.template.config` file to releases for easily enabling diagnostics logging to disk (NLog logging is still disabled by default for the windows client)
+- Performance metrics (refresh time, menu building times) are now passed to NLog logging when enabled in windows client [#1227](https://github.com/HicServices/RDMP/issues/1227)
+- Plugin UploadFileUseCase pipeline components can now declare `IPipelineRequirement<IBasicActivateItems>`
+- Added ability to link deprecated objects to a new version [#949](https://github.com/HicServices/RDMP/issues/949)
+- Deprecate command now supports deprecating multiple objects at once on CLI
+- Made "Could not reach cohort..." warning suppressible [#1243](https://github.com/HicServices/RDMP/issues/1243)
+- SetUserSetting now works for error codes e.g. `SetUserSetting R011 Success` [#1242](https://github.com/HicServices/RDMP/issues/1242)
+- Describe command now shows syntaxes that should be used to satisfy parameters on command line
+- Made 'Failed to execute Top 1' error when checking a dataset extraction a user configurable error (i.e. user can now set that to ignore)
+- Added a warning for when columns in an [ExtractionConfiguration] are 'text' or 'ntext' [#1255](https://github.com/HicServices/RDMP/issues/1255)
 
 ### Changed
 
-- The following commands have been removed and are now supported with `ViewData` directly e.g. `./rdmp ViewData Catalogue:1`
+- The following console commands have been removed and __are instead now supported with `ViewData` command directly__ e.g. `./rdmp ViewData Catalogue:1`
   - ViewCatalogueData
   - ViewCohortIdentificationConfiguration
   - ViewCohortSample
   - ViewSample
+- Removed the DescribeCommand CLI command.  Now you can just use 'Describe' e.g. `./rdmp describe Deprecate`
+
+### Fixed
+
+- Fixed user being able to edit filters of a frozen [ExtractionConfiguration]/[CohortIdentificationConfiguration]
+- Fixed bug with `ExecuteCrossServerDatasetExtractionSource` guid table name pattern [#1256](https://github.com/HicServices/RDMP/issues/1256)
 
 ## [7.0.13] - 2022-05-30
 
@@ -31,6 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New CatalogueItems are now always marked Core (affects drag and drop and new Catalogue creation) - [#1165](https://github.com/HicServices/RDMP/issues/1165),[#1164](https://github.com/HicServices/RDMP/issues/1164)
 - If a Catalogue is defined for a Lookup TableInfo then only Core extractable columns will be released (previously all columns were released) [#692](https://github.com/HicServices/RDMP/issues/692)
 - Sql Parameters with no value defined are no longer flagged as Problem by ProblemProvider if they have value sets defined [#1180](https://github.com/HicServices/RDMP/issues/1180)
+- CatalogueItems now appear in specific folders by Extraction Category [#1112](https://github.com/HicServices/RDMP/issues/1112).
 
 ### Added
 
@@ -40,6 +79,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added UserSettings editing UI to Console Gui
 - Added ability to suppress tree expansion when opening Cohort Builder configurations
 - Added a loading spinner for when find is still searching
+- Adding a parameter to a filter now shows its initial value [#1201](https://github.com/HicServices/RDMP/issues/1201)
+- ProblemProvider now indicates a problem when no ExtractionDirectory is set on a Project in its directory node [#1254](https://github.com/HicServices/RDMP/issues/1254)
 
 ### Removed
 
@@ -1110,7 +1151,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Orphan cohort sets (do not belong to any Cohort Identification Configuration) now appear under a top level folder in 'Cohort Builder' collection
 - Extraction Category can now be changed directly from a CatalogueItem, [ExtractionInformation] 
 - Extraction Category can be changed for all columns in a [Catalogue] at once by right clicking the or the CatalogueItemsNode (folder under a Catalogue)
-- Right clicking a column allows you to Alter it's type e.g. increase the size of a varchar field
+- Right clicking a column allows you to Alter its type e.g. increase the size of a varchar field
 
 ### Changed
 
@@ -1118,13 +1159,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Extraction source component `ExecuteCrossServerDatasetExtractionSource` now never drops the temporary cohort database (previously it would drop it if it created it and CreateTemporaryDatabaseIfNotExists was true)
 - Updated to latest version of [FAnsiSql] (0.10.4) for better Oracle, localization and type estimation
 - Dashboards now appear in tree view instead of application tool strip and are searchable
-- [CatalogueItem] descriptions pie chart has flags for including internal/project specific etc in it's counts
+- [CatalogueItem] descriptions pie chart has flags for including internal/project specific etc in its counts
 - [CatalogueItem] descriptions pie chart now lets you navigate directly to problem objects rather than showing a data table
 
 ### Fixed 
 - Deleting an object now clears the selection in tree views (previously selection would become an arbitrary object).
 - Fixed bug where adding/moving cohort sets between containers ([INTERSECT]/[UNION]/[EXCEPT]) could result in 2 objects with the same Order in the same container (resulting in ambiguous order of execution).
-- Fixed UI bug where selecting an extractable [Catalogue] would hide it's extractable (small green e) icon overlay
+- Fixed UI bug where selecting an extractable [Catalogue] would hide its extractable (small green e) icon overlay
 - Fixed bug where deleting a Pinned object would not unpin the object
 - Fixed bug where database tables with brackets in the name could break synchronization (these tables are now ignored by RDMP and cannot be imported).
 - Fixed bug deleting multiple objects at once when some objects are parents of others (and cause implicit delete).
@@ -1252,7 +1293,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.13...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.14...develop
+[7.0.14]: https://github.com/HicServices/RDMP/compare/v7.0.13...v7.0.14
 [7.0.13]: https://github.com/HicServices/RDMP/compare/v7.0.12...v7.0.13
 [7.0.12]: https://github.com/HicServices/RDMP/compare/v7.0.11...v7.0.12
 [7.0.11]: https://github.com/HicServices/RDMP/compare/v7.0.10...v7.0.11

@@ -314,7 +314,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             //if the window is already open
             if (PopExisting(typeof(T), collection, out var existingHostedControlInstance))
             {
-                //just update it's state
+                //just update its state
                 var existing = (T) existingHostedControlInstance;
                 existing.SetCollection(this,collection);
 

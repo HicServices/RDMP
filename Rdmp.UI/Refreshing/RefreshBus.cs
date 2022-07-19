@@ -79,7 +79,7 @@ namespace Rdmp.UI.Refreshing
         public void Subscribe(IRefreshBusSubscriber subscriber)
         {
             if (subscribers.Contains(subscriber))
-                throw new SubscriptionException("You cannot subscribe to the RefreshBus more than once. Subscriber '" + subscriber + "' just attempted to register a second time it's type was(" + subscriber.GetType().Name + ")");
+                throw new SubscriptionException("You cannot subscribe to the RefreshBus more than once. Subscriber '" + subscriber + "' just attempted to register a second time its type was(" + subscriber.GetType().Name + ")");
             
             RefreshObject += subscriber.RefreshBus_RefreshObject;
 
@@ -89,7 +89,7 @@ namespace Rdmp.UI.Refreshing
         public void Unsubscribe(IRefreshBusSubscriber unsubscriber)
         {
             if(!subscribers.Contains(unsubscriber))
-                throw new SubscriptionException("You cannot unsubscribe from the RefreshBus if never subscribed in the first place. '" + unsubscriber + "' just attempted to unsubscribe when it wasn't subscribed in the first place it's type was (" + unsubscriber.GetType().Name + ")");
+                throw new SubscriptionException("You cannot unsubscribe from the RefreshBus if never subscribed in the first place. '" + unsubscriber + "' just attempted to unsubscribe when it wasn't subscribed in the first place its type was (" + unsubscriber.GetType().Name + ")");
 
             RefreshObject -= unsubscriber.RefreshBus_RefreshObject;
             subscribers.Remove(unsubscriber);

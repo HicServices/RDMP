@@ -56,7 +56,7 @@ namespace Rdmp.Core.Curation.FilterImporting
 
 
         /// <summary>
-        /// Creates all the <see cref="ISqlParameter"/> required for the given <paramref name="filterToCreateFor"/> (based on it's WHERE Sql).  Will perform rename operations
+        /// Creates all the <see cref="ISqlParameter"/> required for the given <paramref name="filterToCreateFor"/> (based on its WHERE Sql).  Will perform rename operations
         /// where there is already a conflicting <see cref="ISqlParameter"/> declared in the same scope (See <paramref name="existingParametersInScope"/>)
         /// </summary>
         /// <param name="filterToCreateFor"></param>

@@ -30,7 +30,7 @@ namespace Rdmp.Core.Tests.CommandExecution
         [Timeout(5000)]
         public void Test_ListSupportedCommands_NoPicker()
         {
-            var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
+            var mgr =  GetActivator();
             var invoker = new CommandInvoker(mgr);
             
             invoker.ExecuteCommand(typeof(ExecuteCommandListSupportedCommands),null);
@@ -53,7 +53,7 @@ namespace Rdmp.Core.Tests.CommandExecution
         [Timeout(5000)]
         public void Test_Generic_WithPicker()
         {
-            var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
+            var mgr = GetActivator();
             var invoker = new CommandInvoker(mgr);
 
             WhenIHaveA<Catalogue>();

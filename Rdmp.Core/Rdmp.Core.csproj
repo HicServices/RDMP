@@ -6,7 +6,7 @@
     
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 	<NoWarn>1701;1702;CS1591;SCS0018</NoWarn>
-    <DebugType>full</DebugType>
+    <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup>
@@ -265,7 +265,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ExcelNumberFormat" Version="1.1.0" />
-    <PackageReference Include="HIC.BadMedicine" Version="1.0.1" />
+    <PackageReference Include="HIC.BadMedicine" Version="1.1.0" />
     <PackageReference Include="NPOI" Version="2.5.5" />
     <PackageReference Include="ReadLine" Version="2.0.1" />
     <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />

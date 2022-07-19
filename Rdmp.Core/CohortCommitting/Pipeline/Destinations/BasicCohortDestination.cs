@@ -154,7 +154,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations
                     Request.PushToServer(connection);
 
                     if(Request.NewCohortDefinition.ID == null)
-                        throw new Exception("We pushed the new cohort from the request object to the server (within transaction) but it's ID was not populated");
+                        throw new Exception("We pushed the new cohort from the request object to the server (within transaction) but its ID was not populated");
 
                     var tbl = Request.NewCohortDefinition.LocationOfCohort.DiscoverCohortTable();
 

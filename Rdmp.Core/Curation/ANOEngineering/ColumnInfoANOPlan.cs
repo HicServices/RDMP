@@ -112,7 +112,7 @@ namespace Rdmp.Core.Curation.ANOEngineering
 
         public void SetToRecommendedPlan()
         {
-            //get an extraction category based on it's current extractability
+            //get an extraction category based on its current extractability
             ExtractionCategoryIfAny = GetMaxExtractionCategoryIfAny();
             
             if (SpecialFieldNames.IsHicPrefixed(ColumnInfo))
@@ -215,7 +215,7 @@ namespace Rdmp.Core.Curation.ANOEngineering
             if (ExtractionCategoryIfAny != null && Plan != Plan.Drop)
                 if (_allCatalogueItems.All(ci => ci.ColumnInfo_ID != ColumnInfo.ID))
                     notifier.OnCheckPerformed(
-                        new CheckEventArgs("There are no CatalogueItems configured for ColumnInfo '" + ColumnInfo + "' but it's PlannedExtractionCategory is '" + ExtractionCategoryIfAny + "'", CheckResult.Fail));
+                        new CheckEventArgs("There are no CatalogueItems configured for ColumnInfo '" + ColumnInfo + "' but its PlannedExtractionCategory is '" + ExtractionCategoryIfAny + "'", CheckResult.Fail));
 
             //Will there be conflicts on name?
             if (_planManager.TargetDatabase != null && Plan != Plan.Drop)

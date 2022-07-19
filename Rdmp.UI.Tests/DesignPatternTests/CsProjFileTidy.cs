@@ -95,7 +95,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                 string actualNamespace = namespaces[0].Groups[1].Value;
 
                 if(!actualNamespace.Equals(expectedNamespace))
-                    UntidyMessages.Add("Expected file " + csFile.FullName + " to have namespace " + expectedNamespace + " but it's listed namespace is " + actualNamespace);
+                    UntidyMessages.Add("Expected file " + csFile.FullName + " to have namespace " + expectedNamespace + " but its listed namespace is " + actualNamespace);
 
             }
             

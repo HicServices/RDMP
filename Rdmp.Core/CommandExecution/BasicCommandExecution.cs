@@ -22,6 +22,7 @@ using Rdmp.Core.DataViewing;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Icons.IconProvision;
 
@@ -86,6 +87,16 @@ namespace Rdmp.Core.CommandExecution
         /// <inheritdoc/>
         public float Weight { get; set; }
 
+        protected void SetImpossibleIfReadonly(IMightBeReadOnly m)
+        {
+            if (m == null)
+                return;
+
+            if (m.ShouldBeReadOnly(out string reason))
+            {
+                SetImpossible($"{(m is IContainer ? "Container" : ('\'' + m.ToString() + '\''))} is readonly beacause:{reason}");
+            }
+        }
         public BasicCommandExecution()
         {
 
@@ -499,5 +510,28 @@ namespace Rdmp.Core.CommandExecution
         {
             return GetCommandName();
         }
+
+        protected CommentStore CreateCommentStore()
+        {
+            var help = new CommentStore();
+            help.ReadComments(Environment.CurrentDirectory);
+            return help;
+        }
+
+        /// <summary>
+        /// Returns true if the supplied command Type is known (directly or via alias)
+        /// as <paramref name="name"/>
+        /// </summary>
+        public static bool HasCommandNameOrAlias(Type commandType, string name)
+        {
+            return 
+                    commandType.Name.Equals(BasicCommandExecution.ExecuteCommandPrefix + name,StringComparison.InvariantCultureIgnoreCase) 
+                    || 
+                    commandType.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase) 
+                    || 
+                    commandType.GetCustomAttributes<AliasAttribute>(false)
+                    .Any(a=>a.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase));
+        }
+
     }
 }

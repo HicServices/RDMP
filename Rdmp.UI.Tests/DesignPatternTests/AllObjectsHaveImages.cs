@@ -36,7 +36,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                 //handled by CatalogueIconProvider just like AnyTableSqlParameter by looking for the ISqlParameter classes
 
                 "StackFrame"
-                //not required , it's only ever dependent on itself and it doesnt have any visualisation on Catalogue / Export
+                //not required , it's only ever dependent on itself and it doesn't have any visualisation on Catalogue / Export
 
             };
 

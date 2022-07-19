@@ -9,7 +9,7 @@ namespace Rdmp.Core.QueryCaching.Aggregation
     /// <summary>
     /// Describes the role of an <see cref="Rdmp.Core.Curation.Data.Aggregation.AggregateConfiguration"/> being cached by a
     /// <see cref="Rdmp.Core.QueryCaching.Aggregation.CachedAggregateConfigurationResultsManager"/>.  This indicates what values
-    /// are cached and it's role in the RDMP (e.g. to build cohorts, to visualize data etc).
+    /// are cached and its role in the RDMP (e.g. to build cohorts, to visualize data etc).
     /// </summary>
     public enum AggregateOperation
     {

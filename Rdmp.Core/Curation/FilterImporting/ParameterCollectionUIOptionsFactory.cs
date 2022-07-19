@@ -23,7 +23,7 @@ namespace Rdmp.Core.Curation.FilterImporting
     public class ParameterCollectionUIOptionsFactory
     {
         private const string UseCaseIFilter =
-            "You are editing a filter which will be used in a WHERE SQL statement.  This control will let you view which higher level parameters (if any) you can use in your query.  It also lets you change the values/datatypes of any parameters you have used in your Filter. To create a new Parameter just type it's name as you normally would into the Filter dialog (above).";
+            "You are editing a filter which will be used in a WHERE SQL statement.  This control will let you view which higher level parameters (if any) you can use in your query.  It also lets you change the values/datatypes of any parameters you have used in your Filter. To create a new Parameter just type its name as you normally would into the Filter dialog (above).";
 
         private const string UseCaseTableInfo =
             "You are viewing the SQL parameters associated with a Table Valued Function.  You should ONLY change comment/value on these parameters. If you have changed the underlying database implementation of your TableValuedFunction and want to adjust parameters here accordingly then you should instead use the 'Synchronize TableInfo' command.";

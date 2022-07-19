@@ -105,6 +105,9 @@ namespace Rdmp.UI.Collections
             if(tlvCatalogues.ModelFilter is CatalogueCollectionFilter f)
                 f.ChildProvider = Activator.CoreChildProvider;
 
+            if (oRefreshFrom is ExtractionInformation ei)
+                tlvCatalogues.RefreshObject(ei.CatalogueItem.Catalogue);
+
             //if there are new catalogues we don't already have in our tree
             if (_allCatalogues != null)
             {

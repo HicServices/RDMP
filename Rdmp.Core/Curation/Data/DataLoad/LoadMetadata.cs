@@ -241,7 +241,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             ICatalogue[] catalogue = GetAllCatalogues().ToArray();
 
             if (!catalogue.Any())
-                throw new NotSupportedException("LoadMetaData '" + ToString() + " (ID=" + ID + ") does not have any Catalogues associated with it so it is not possible to fetch it's LoggingDatabaseSettings");
+                throw new NotSupportedException("LoadMetaData '" + ToString() + " (ID=" + ID + ") does not have any Catalogues associated with it so it is not possible to fetch its LoggingDatabaseSettings");
 
             return catalogue.Select(c => c.LiveLoggingServer).ToArray();
         }
@@ -369,7 +369,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         }
 
         /// <summary>
-        /// Returns all runs since each LoadMetadata has it's own task and all runs apply to that task and hence this object
+        /// Returns all runs since each LoadMetadata has its own task and all runs apply to that task and hence this object
         /// </summary>
         /// <param name="runs"></param>
         /// <returns></returns>

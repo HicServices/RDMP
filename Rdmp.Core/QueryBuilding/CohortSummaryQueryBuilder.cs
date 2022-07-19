@@ -137,7 +137,7 @@ namespace Rdmp.Core.QueryBuilding
             //Get a builder for creating the basic aggregate graph 
             var summaryBuilder = _summary.GetQueryBuilder();
 
-            //Find it's root container if it has one
+            //Find its root container if it has one
             var summaryRootContainer = summaryBuilder.RootFilterContainer;
 
             //work out a filter SQL that will restrict the graph generated only to the cohort 
@@ -203,7 +203,7 @@ namespace Rdmp.Core.QueryBuilding
             //Get a builder for creating the basic aggregate graph 
             var builder = _summary.GetQueryBuilder();
 
-            //Find it's root container if it has one
+            //Find its root container if it has one
             var oldRootContainer = builder.RootFilterContainer;
 
             //Create a new spontaneous container (virtual memory only container, this will include an in line filter that restricts the graph to match the cohort and then include a subcontainer with the old root container - if there was one)
@@ -265,7 +265,7 @@ namespace Rdmp.Core.QueryBuilding
         private static void ThrowIfNotCohort(AggregateConfiguration cohort)
         {
             if (!cohort.IsCohortIdentificationAggregate)
-                throw new ArgumentException("AggregateConfiguration " + cohort + " was a not a cohort identification configuration aggregate It's name didn't start with '" + CohortIdentificationConfiguration.CICPrefix + "', this is not allowed, the second argument must always be a cohort specific aggregate with only a single column marked IsExtractionIdentifier etc");
+                throw new ArgumentException("AggregateConfiguration " + cohort + " was a not a cohort identification configuration aggregate its name didn't start with '" + CohortIdentificationConfiguration.CICPrefix + "', this is not allowed, the second argument must always be a cohort specific aggregate with only a single column marked IsExtractionIdentifier etc");
 
             if(cohort.AggregateDimensions.Count(d=>d.IsExtractionIdentifier) != 1)
                 throw new Exception("Expected cohort " + cohort + " to have exactly 1 column which would be an IsExtractionIdentifier");

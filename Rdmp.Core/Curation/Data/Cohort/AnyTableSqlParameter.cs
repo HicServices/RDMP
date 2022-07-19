@@ -151,7 +151,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
         }
 
         /// <summary>
-        /// Returns true if the Type (which should implement <see cref="IMapsDirectlyToDatabaseTable"/>) is one which is designed to store it's <see cref="ISqlParameter"/>
+        /// Returns true if the Type (which should implement <see cref="IMapsDirectlyToDatabaseTable"/>) is one which is designed to store its <see cref="ISqlParameter"/>
         /// in this table.  Only supported objects will have parameters sought here by <see cref="QueryBuilding.ISqlQueryBuilder"/>s.
         /// </summary>
         /// <param name="type"></param>

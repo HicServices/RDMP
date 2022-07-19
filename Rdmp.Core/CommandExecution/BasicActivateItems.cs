@@ -528,7 +528,7 @@ namespace Rdmp.Core.CommandExecution
 
                 if (databaseObject == null)
                     throw new NotSupportedException("IDeletable " + deleteable +
-                                                    " was not a DatabaseObject and it did not have a Parent in it's tree which was a DatabaseObject (DescendancyList)");
+                                                    " was not a DatabaseObject and it did not have a Parent in its tree which was a DatabaseObject (DescendancyList)");
                 return true;
             }
 

@@ -40,7 +40,7 @@ namespace Rdmp.Core.QueryBuilding.Options
 
         /// <summary>
         /// Indicates whether a given part of functionality in <see cref="AggregateBuilder"/> is compatible with the <see cref="AggregateConfiguration"/> given 
-        /// it's current state and role it is playing e.g. as a graph, cohort set etc
+        /// its current state and role it is playing e.g. as a graph, cohort set etc
         /// </summary>
         /// <param name="section">The functionality you want to know if is supported</param>
         /// <param name="aggregate"></param>

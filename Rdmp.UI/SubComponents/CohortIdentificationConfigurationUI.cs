@@ -57,7 +57,7 @@ namespace Rdmp.UI.SubComponents
     /// 
     /// <para>    Filter 1 - Prescription is for a diabetic medication</para>
     /// 
-    /// <para>    Filter 2 - Prescription is the first prescription of it's type for the patient</para>
+    /// <para>    Filter 2 - Prescription is the first prescription of its type for the patient</para>
     /// 
     /// <para>    Filter 3 - Patient died within 6 months of prescription</para>
     /// 

@@ -26,7 +26,9 @@ namespace Rdmp.Core.Tests.CommandExecution
         /// <param name="forCommand"></param>
         private void AssertHelpIs(string expectedHelp, Type forCommand)
         {
-            var cmd = new ExecuteCommandDescribeCommand(GetMockActivator().Object, forCommand);
+            var activator = GetMockActivator().Object;
+
+            var cmd = new ExecuteCommandDescribe(activator, new CommandLineObjectPicker(new []{forCommand.Name},activator));
             Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
 
             cmd.Execute();
@@ -36,8 +38,7 @@ namespace Rdmp.Core.Tests.CommandExecution
         [Test]
         public void Test_DescribeDeleteCommand()
         {
-            AssertHelpIs(@"USAGE: 
-./rdmp.exe Delete <deletables> <deleteMany> 
+            AssertHelpIs(@" Delete <deletables> <deleteMany> 
 
 PARAMETERS:
 deletables	IDeleteable[]	The object(s) you want to delete.  If multiple you must set deleteMany to true", typeof(ExecuteCommandDelete));

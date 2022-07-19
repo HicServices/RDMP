@@ -288,6 +288,8 @@ namespace Rdmp.UI.SimpleDialogs
                 olv.CellToolTip.InitialDelay = UserSettings.TooltipAppearDelay;
                 olv.CellToolTipShowing += (s, e) => RDMPCollectionCommonFunctionality.Tree_CellToolTipShowing(activator, e);
             }
+
+            pbLoading.Visible = IsDatabaseObjects();
         }
 
         private void AddUsefulPropertiesIfHomogeneousTypes(T[] mapsDirectlyToDatabaseTables)

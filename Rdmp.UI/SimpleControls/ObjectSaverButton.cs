@@ -68,7 +68,7 @@ namespace Rdmp.UI.SimpleControls
             Form f = control as Form ?? ((Control)control).FindForm();
 
             if (f == null)
-                throw new NotSupportedException("Cannot call SetupFor before the control has been added to it's parent form");
+                throw new NotSupportedException("Cannot call SetupFor before the control has been added to its parent form");
 
             _parent = control;
 

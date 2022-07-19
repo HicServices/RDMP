@@ -239,9 +239,10 @@ namespace Rdmp.UI.ProjectUI
                 Command = activityRequested,
                 ExtractGlobals = tlvDatasets.IsChecked(_globalsFolder),
                 MaxConcurrentExtractions = max,
-                ExtractionConfiguration = _extractionConfiguration.ID,
-                Pipeline = _pipelineSelectionUI1.Pipeline == null? 0 : _pipelineSelectionUI1.Pipeline.ID,
-                Datasets = _datasets.All(tlvDatasets.IsChecked) ? new int[0] : _datasets.Where(tlvDatasets.IsChecked).Select(sds => sds.ExtractableDataSet.ID).ToArray()
+                ExtractionConfiguration = _extractionConfiguration.ID.ToString(),
+                Pipeline = _pipelineSelectionUI1.Pipeline == null? "0" : _pipelineSelectionUI1.Pipeline.ID.ToString(),
+                Datasets = _datasets.All(tlvDatasets.IsChecked) ? "" : 
+                    string.Join(",",_datasets.Where(tlvDatasets.IsChecked).Select(sds => sds.ExtractableDataSet.ID.ToString()).ToArray())
             };
         }
 

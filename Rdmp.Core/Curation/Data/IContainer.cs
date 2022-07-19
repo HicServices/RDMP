@@ -85,12 +85,12 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         void MakeIntoAnOrphan();
 
-        //ContainerHelper implements these if you are writting a sane IContainer you can instantiate the helper and use it's methods
+        //ContainerHelper implements these if you are writting a sane IContainer you can instantiate the helper and use its methods
 
 
         /// <summary>
         /// Returns the absolute top level root IContainer of the hierarchy that the container is a part of.  If the specified container is already a root level container
-        /// or it is an orphan or part of it's hierarchy going upwards is an orphan then the same container reference will be returned.
+        /// or it is an orphan or part of its hierarchy going upwards is an orphan then the same container reference will be returned.
         /// </summary>
         /// <returns></returns>
         IContainer GetRootContainerOrSelf();
@@ -102,7 +102,7 @@ namespace Rdmp.Core.Curation.Data
         List<IContainer> GetAllSubContainersRecursively();
 
         /// <summary>
-        /// Returns all IFilters that are declared in the current container or any of it's subcontainers (recursively).  This includes children of children 
+        /// Returns all IFilters that are declared in the current container or any of its subcontainers (recursively).  This includes children of children 
         /// etc down the tree.
         /// </summary>
         /// <returns></returns>

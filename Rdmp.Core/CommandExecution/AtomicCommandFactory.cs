@@ -61,6 +61,7 @@ namespace Rdmp.Core.CommandExecution
         public const string Dimensions = "Dimensions";
         public const string Advanced = "Advanced";
         public const string View = "View";
+        public const string Deprecation = "Deprecation";
 
         public AtomicCommandFactory(IBasicActivateItems activator)
         {
@@ -158,7 +159,7 @@ namespace Rdmp.Core.CommandExecution
             {
                 yield return new ExecuteCommandCreateNewFilter(_activator, new ExtractionFilterFactory(ei)) { OverrideCommandName = "Add New Filter"};
                 yield return new ExecuteCommandCreateNewCohortFromCatalogue(_activator, ei);
-                yield return new ExecuteCommandChangeExtractionCategory(_activator, ei);
+                yield return new ExecuteCommandChangeExtractionCategory(_activator, new[] { ei });
 
                 yield return new ExecuteCommandViewData(_activator, ViewType.TOP_100, ei) { SuggestedCategory = View };
                 yield return new ExecuteCommandViewData(_activator, ViewType.Aggregate, ei) { SuggestedCategory = View };
@@ -186,7 +187,7 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandCreateNewFilter(_activator, ci) { OverrideCommandName = "Add New Filter" };
                 yield return new ExecuteCommandLinkCatalogueItemToColumnInfo(_activator, ci);
                 yield return new ExecuteCommandMakeCatalogueItemExtractable(_activator, ci);
-                yield return new ExecuteCommandChangeExtractionCategory(_activator, ci.ExtractionInformation);
+                yield return new ExecuteCommandChangeExtractionCategory(_activator, new[] { ci.ExtractionInformation });
                 yield return new ExecuteCommandImportCatalogueItemDescription(_activator, ci){SuggestedShortcut= "I",Ctrl=true };
 
                 var ciExtractionInfo = ci.ExtractionInformation;
@@ -218,6 +219,23 @@ namespace Rdmp.Core.CommandExecution
                 if(ac.IsCohortIdentificationAggregate)
                 {
                     yield return new ExecuteCommandSetAggregateDimension(_activator, ac);
+                    
+                    if(_activator.RepositoryLocator.CatalogueRepository.GetExtendedProperties(ExtendedProperty.IsTemplate,ac)
+                        .Any(v=>v.Value.Equals("true")))
+                    {
+                        yield return new ExecuteCommandSetExtendedProperty(_activator, new[] { ac }, ExtendedProperty.IsTemplate, null)
+                        {
+                            OverrideCommandName = "Make Non Template"
+                        };
+                    }
+                    else
+                    {
+                        yield return new ExecuteCommandSetExtendedProperty(_activator, new[] { ac }, ExtendedProperty.IsTemplate, "true")
+                        {
+                            OverrideCommandName = "Make Reusable Template"
+                        };
+                    }
+                    
                 }
 
                 // graph options
@@ -679,16 +697,28 @@ namespace Rdmp.Core.CommandExecution
                     CohortIfAny = cohort,
                     OverrideCommandName = "New Extraction Configuration using Cohort",
                 };
-                yield return new ExecuteCommandDeprecate(_activator, cohort, !cohort.IsDeprecated)
+            }
+
+            if (Is(o, out IMightBeDeprecated d))
+            {
+                yield return new ExecuteCommandDeprecate(_activator, new[] { d }, !d.IsDeprecated)
                 {
-                    OverrideCommandName = cohort.IsDeprecated ? "Undeprecate Cohort": "Deprecate Cohort",
+                    OverrideCommandName = d.IsDeprecated ? "Un Deprecate" : "Deprecate",
+                    SuggestedCategory = Deprecation,
                     Weight = -99.7f
+                };
+                yield return new ExecuteCommandReplacedBy(_activator, d, null)
+                {
+                    PromptToPickReplacement = true,
+                    SuggestedCategory = Deprecation,
+                    Weight = -99.6f,
+                    OverrideCommandName = "Set Replaced By"
                 };
             }
 
             if (Is(o, out CohortAggregateContainer cohortAggregateContainer))
             {
-                yield return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator, cohortAggregateContainer) { SuggestedCategory = Add, OverrideCommandName = "Catalogue" };
+                yield return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator, cohortAggregateContainer,null,null) { SuggestedCategory = Add, OverrideCommandName = "Catalogue" };
                 yield return new ExecuteCommandAddCohortSubContainer(_activator, cohortAggregateContainer) { SuggestedCategory = Add,  OverrideCommandName = "Sub Container" };
                 yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator, cohortAggregateContainer, true) { SuggestedCategory = Add, OverrideCommandName = "Existing Cohort Set (copy of)" };
                 yield return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator, cohortAggregateContainer, false) { SuggestedCategory = Add, OverrideCommandName = "Aggregate" };
@@ -746,6 +776,13 @@ namespace Rdmp.Core.CommandExecution
             if(many.Cast<object>().All(t=>t is TableInfo))
             {
                 yield return new ExecuteCommandScriptTables(_activator, many.Cast<TableInfo>().ToArray(), null, null, null);
+            }
+            if (many.Cast<object>().All(t => t is CatalogueItem))
+            {
+                yield return new ExecuteCommandChangeExtractionCategory(_activator, 
+                    many.Cast<CatalogueItem>()
+                    .Select(ci=>ci.ExtractionInformation)
+                    .Where(ei=>ei != null).ToArray(),null);
             }
 
             if (many.Cast<object>().All(d => d is IDeleteable))

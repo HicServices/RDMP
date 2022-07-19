@@ -48,7 +48,7 @@ namespace Rdmp.Core.DataExport.Data
 
         /// <summary>
         /// The dataset as it is selected in an <see cref="ExtractionConfiguration"/> for which this class
-        /// documents the progress of it's batch extraction
+        /// documents the progress of its batch extraction
         /// </summary>
         int SelectedDataSets_ID { get; set; }
 

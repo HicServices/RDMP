@@ -252,7 +252,6 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             "MSBuild15CMD",
             "SetupLazy",
             "TestCaseSourceAttribute",
-            "DescribeCommand", //aka ExecuteCommandDescribeCommand
             "MySqlConnector",
             "DoSomething",
             "MyTest",
@@ -261,7 +260,8 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             "SelectIMapsDirectlyToDatabaseTableDialog",
             "NuGet",
             "MyPluginClass",
-            "SubContainer"
+            "SubContainer",
+            "DescribeCommand" // this class has now been removed from RDMP codebase, don't complain if you see it in docs (e.g. CHANGELOG.md).
         };
         #endregion
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)

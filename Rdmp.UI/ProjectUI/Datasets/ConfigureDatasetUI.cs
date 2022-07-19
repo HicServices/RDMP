@@ -29,8 +29,7 @@ using Rdmp.UI.ProjectUI.Datasets.Node;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-
-
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.ProjectUI.Datasets
 {
@@ -55,6 +54,8 @@ namespace Rdmp.UI.ProjectUI.Datasets
         public ConfigureDatasetUI()
         {
             InitializeComponent();
+
+            cbShowProjectSpecific.Checked = UserSettings.ShowProjectSpecificColumns;
 
             olvAvailableColumnName.ImageGetter += ImageGetter;
             olvSelectedColumnName.ImageGetter += ImageGetter;
@@ -103,7 +104,8 @@ namespace Rdmp.UI.ProjectUI.Datasets
             RDMPCollectionCommonFunctionality.SetupColumnTracking(olvSelected, olvSelectedColumnOrder, new Guid("2b4db0ee-3768-4e0e-a62b-e5a9b19e91a7"));
             
             RDMPCollectionCommonFunctionality.SetupColumnTracking(olvSelected, olvIssues, new Guid("741f0cff-1d2e-46a7-a5da-9ce13e0960cf"));
-            
+
+            this.cbShowProjectSpecific.CheckedChanged += CbShowProjectSpecific_CheckedChanged;
         }
 
         void olvSelected_CellRightClick(object sender, CellRightClickEventArgs e)
@@ -220,9 +222,12 @@ namespace Rdmp.UI.ProjectUI.Datasets
             foreach (ExtractionInformation e in cata.GetAllExtractionInformation(ExtractionCategory.Any))
                 toAdd.Add(e);
 
-            //plus all the Project Specific columns
-            foreach (ExtractionInformation e in _config.Project.GetAllProjectCatalogueColumns(Activator.CoreChildProvider,ExtractionCategory.ProjectSpecific))
-                toAdd.Add(e);
+            if(UserSettings.ShowProjectSpecificColumns)
+            {
+                //plus all the Project Specific columns
+                foreach (ExtractionInformation e in _config.Project.GetAllProjectCatalogueColumns(Activator.CoreChildProvider, ExtractionCategory.ProjectSpecific))
+                    toAdd.Add(e);
+            }
 
 
             // Tell our columns about their CatalogueItems/ColumnInfos by using CoreChildProvider
@@ -817,6 +822,12 @@ namespace Rdmp.UI.ProjectUI.Datasets
             }
 
             UpdateJoins();
+        }
+
+        private void CbShowProjectSpecific_CheckedChanged(object sender, System.EventArgs e)
+        {
+            UserSettings.ShowProjectSpecificColumns = cbShowProjectSpecific.Checked;
+            SetupUserInterface();            
         }
 
     }

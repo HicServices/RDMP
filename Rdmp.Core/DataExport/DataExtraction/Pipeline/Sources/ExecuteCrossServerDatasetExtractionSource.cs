@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text.RegularExpressions;
 using System.Threading;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
@@ -139,9 +140,10 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
                 if (string.IsNullOrWhiteSpace(TemporaryTableName))
                     return null;
 
-                var guid = Guid.NewGuid();
+                // add a g to avoid creating a table name that starts with a number (can cause problems and always requires wrapping etc... just bad)
+                var guid = "g" + Guid.NewGuid().ToString("N");                
 
-                return _tablename = TemporaryTableName.Replace("$g", guid.ToString("N"));
+                return _tablename = TemporaryTableName.Replace("$g", guid);
             }
         }
 

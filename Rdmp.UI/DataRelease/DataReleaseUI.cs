@@ -37,7 +37,7 @@ namespace Rdmp.UI.DataRelease
     /// (e.g. in a free text field) then you are in big trouble.  For this reason the 'Release' process is a tightly controlled sequence which the RDMP undertakes to try to reduce error.
     /// 
     /// <para>In this control you will see all the currently selected datasets in a project's configuration(s) and the state of the dataset extraction (from the RDMP's perspective) as well 
-    /// as the status of the 'Environment' (Ticketing System).  Right clicking on a dataset will give you options appropriate to it's state.</para>
+    /// as the status of the 'Environment' (Ticketing System).  Right clicking on a dataset will give you options appropriate to its state.</para>
     /// 
     /// <para>Extraction of large datasets can take days or weeks and a project extraction is an ongoing exercise.  It is possible that by the time you come to release a project some of the
     /// early datasets have been changed or the files deleted etc.  The status of each extracted dataset is shown in the list box.  You can only do an extraction once all the datasets in
@@ -150,12 +150,21 @@ namespace Rdmp.UI.DataRelease
         {
             return new ReleaseOptions()
             {
-                Pipeline = _pipelineSelectionUI1.Pipeline == null ? 0 : _pipelineSelectionUI1.Pipeline.ID,
-                Configurations = _configurations.Where(c=>tlvReleasePotentials.IsChecked(c) || tlvReleasePotentials.IsCheckedIndeterminate(c)).Select(ec => ec.ID).ToArray(),
-                SelectedDataSets = _selectedDataSets.All(tlvReleasePotentials.IsChecked)?new int[0]: tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray(),
+                Pipeline = _pipelineSelectionUI1.Pipeline == null ? "0" : _pipelineSelectionUI1.Pipeline.ID.ToString(),
+                Configurations = ToIdList(
+                    _configurations.Where(c => tlvReleasePotentials.IsChecked(c) || tlvReleasePotentials.IsCheckedIndeterminate(c)).Select(ec => ec.ID).ToArray()
+                    ),
+                SelectedDataSets = ToIdList(
+                    _selectedDataSets.All(tlvReleasePotentials.IsChecked) ? new int[0] : tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray()
+                    ),
                 Command = activityRequested,
                 ReleaseGlobals = tlvReleasePotentials.IsChecked(_globalsNode),
             };
+        }
+
+        private string ToIdList(int[] ints)
+        {
+            return string.Join(",", ints.Select(i => i.ToString()).ToArray());
         }
 
         private IEnumerable ChildrenGetter(object model)

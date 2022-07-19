@@ -25,10 +25,11 @@ using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.CommandLine.Runners
 {
+
     /// <summary>
     /// <see cref="IRunner"/> for the Data Load Engine.  Supports both check and execute commands.
     /// </summary>
-    public class DleRunner:IRunner
+    public class DleRunner:Runner
     {
         private readonly DleOptions _options;
 
@@ -37,10 +38,10 @@ namespace Rdmp.Core.CommandLine.Runners
             _options = options;
         }
         
-        public int Run(IRDMPPlatformRepositoryServiceLocator locator, IDataLoadEventListener listener, ICheckNotifier checkNotifier,GracefulCancellationToken token)
+        public override int Run(IRDMPPlatformRepositoryServiceLocator locator, IDataLoadEventListener listener, ICheckNotifier checkNotifier,GracefulCancellationToken token)
         {
-            ILoadProgress loadProgress = locator.CatalogueRepository.GetObjectByID<LoadProgress>(_options.LoadProgress);
-            ILoadMetadata loadMetadata = locator.CatalogueRepository.GetObjectByID<LoadMetadata>(_options.LoadMetadata);
+            ILoadProgress loadProgress = GetObjectFromCommandLineString<LoadProgress>(locator, _options.LoadProgress);
+            ILoadMetadata loadMetadata = GetObjectFromCommandLineString<LoadMetadata>(locator,_options.LoadMetadata);
 
             if (loadMetadata == null && loadProgress != null)
                     loadMetadata = loadProgress.LoadMetadata;
@@ -102,5 +103,7 @@ namespace Rdmp.Core.CommandLine.Runners
                     throw new ArgumentOutOfRangeException();
             }
         }
+
+        
     }
 }

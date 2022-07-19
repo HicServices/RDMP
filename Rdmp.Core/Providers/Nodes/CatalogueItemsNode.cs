@@ -5,31 +5,53 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Rdmp.Core.Providers.Nodes
 {
     /// <summary>
     /// Collection of all the virtual columns (<see cref="CatalogueItem"/>) in a dataset (<see cref="Curation.Data.Catalogue"/>)
     /// </summary>
-    public class CatalogueItemsNode:Node
+    public class CatalogueItemsNode : Node, IOrderable
     {
-        public Catalogue Catalogue { get; set; }
+        public Catalogue Catalogue { get; }
         public CatalogueItem[] CatalogueItems { get; }
 
-        public CatalogueItemsNode(Catalogue catalogue, CatalogueItem[] cis)
+        public ExtractionCategory? Category { get; }
+        public int Order
+        {
+            get { return Category.HasValue ? (int)Category +1: 20; }
+            set { } // no setter, we are orderable to enforce specific order in tree
+        }
+
+        public CatalogueItemsNode(Catalogue catalogue, IEnumerable<CatalogueItem> cis, ExtractionCategory? category)
         {
             Catalogue = catalogue;
-            CatalogueItems = cis;
+            CatalogueItems = cis.ToArray();
+            Category = category;
         }
 
         public override string ToString()
         {
-            return "Catalogue Items";
+            if(Category == null)
+                return "Non Extractable";
+
+            return Category switch
+            {
+                ExtractionCategory.Core => "Core Items",
+                ExtractionCategory.Supplemental => "Supplemental Items",
+                ExtractionCategory.SpecialApprovalRequired => "Special Approval Items",
+                ExtractionCategory.Internal => "Internal Items",
+                ExtractionCategory.Deprecated => "Deprecated Items",
+                _ => "Catalogue Items"
+            };
         }
 
         protected bool Equals(CatalogueItemsNode other)
         {
-            return Catalogue.Equals(other.Catalogue);
+            return Catalogue.Equals(other.Catalogue) && Equals(Category,other.Category);
         }
 
         public override bool Equals(object obj)
@@ -42,7 +64,10 @@ namespace Rdmp.Core.Providers.Nodes
 
         public override int GetHashCode()
         {
-            return Catalogue.GetHashCode();
+            unchecked
+            {
+                return Catalogue.GetHashCode() * (Category?.GetHashCode() ?? -12342);
+            }
         }
     }
 }

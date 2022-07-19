@@ -46,7 +46,7 @@ namespace Rdmp.UI.DataQualityUIs
 
         private RDMPCommandLineOptions CommandGetter(CommandLineActivity commandLineActivity)
         {
-            return new DqeOptions() { Catalogue = _catalogue.ID, Command = commandLineActivity };
+            return new DqeOptions() { Catalogue = _catalogue.ID.ToString(), Command = commandLineActivity };
         }
 
         public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)

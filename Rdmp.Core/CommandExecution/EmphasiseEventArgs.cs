@@ -14,7 +14,7 @@ namespace Rdmp.Core.CommandExecution
     public class EmphasiseEventArgs:EventArgs
     {
         /// <summary>
-        /// The object to show and how much of it's child objects to show
+        /// The object to show and how much of its child objects to show
         /// </summary>
         public EmphasiseRequest Request { get; set; }
         

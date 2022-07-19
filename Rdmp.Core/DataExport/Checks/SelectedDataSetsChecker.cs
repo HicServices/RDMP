@@ -88,6 +88,20 @@ namespace Rdmp.Core.DataExport.Checks
                 .Select(c => c.CatalogueExtractionInformation)
                 .ToArray();
 
+            var orphans = selectedcols
+                .OfType<ExtractableColumn>()
+                .Where(c => c.CatalogueExtractionInformation == null)
+                .ToArray();
+
+            if(orphans.Any())
+            {
+                notifier.OnCheckPerformed(
+                    new CheckEventArgs("The following columns no longer map to an ExtractionInformation (it may have been deleted)" + Environment.NewLine
+                    + string.Join(Environment.NewLine, orphans.Select(o => o.GetRuntimeName()).ToArray()),
+                    CheckResult.Warning));
+            }
+            
+
             WarnAboutExtractionCategory(notifier, config, ds,eis, ErrorCodes.ExtractionContainsSpecialApprovalRequired, ExtractionCategory.SpecialApprovalRequired);
             WarnAboutExtractionCategory(notifier, config, ds, eis, ErrorCodes.ExtractionContainsInternal, ExtractionCategory.Internal);
             WarnAboutExtractionCategory(notifier, config, ds, eis, ErrorCodes.ExtractionContainsDeprecated, ExtractionCategory.Deprecated);
@@ -141,6 +155,14 @@ namespace Rdmp.Core.DataExport.Checks
             //when 2+ columns have the same Name it's a problem
             foreach (IGrouping<string, IColumn> grouping in request.ColumnsToExtract.GroupBy(c=>c.GetRuntimeName()).Where(g=>g.Count()>1))
                 notifier.OnCheckPerformed(new CheckEventArgs($"There are { grouping.Count() } columns in the extract ({request.DatasetBundle?.DataSet}) called '{ grouping.Key }'",CheckResult.Fail));
+
+
+            // ntext and text columns don't play nicely with DISTINCT, so warn user
+            var textCols = request.ColumnsToExtract.Where(IsTextDatatype).ToArray();
+            if(textCols.Any())
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.TextColumnsInExtraction, string.Join(",", textCols.Select(c=>c.GetRuntimeName()).ToArray())));
+            }
 
             //when 2+ columns have the same Order it's a problem because
             foreach (IGrouping<int, IColumn> grouping in request.ColumnsToExtract.GroupBy(c=>c.Order).Where(g=>g.Count()>1))
@@ -215,7 +237,7 @@ namespace Rdmp.Core.DataExport.Checks
                                 notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractTimeoutChecking,e,timeout));
                             }
                             else
-                                notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute the query (See below for query)", CheckResult.Fail, e));
+                                notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractionFailedToExecuteTop1, e,ds));
                         }
 
                         con.ManagedTransaction.AbandonAndCloseConnection();
@@ -223,7 +245,7 @@ namespace Rdmp.Core.DataExport.Checks
                 }
                 catch (Exception e)
                 {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute Top 1 on dataset " + ds, CheckResult.Fail, e));
+                    notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractionFailedToExecuteTop1,e,ds));
                 }
             }
 
@@ -245,6 +267,26 @@ namespace Rdmp.Core.DataExport.Checks
         }
 
         /// <summary>
+        /// Returns true if the <paramref name="arg"/> column is ntext or text
+        /// </summary>
+        /// <param name="arg"></param>
+        /// <returns></returns>
+        private bool IsTextDatatype(IColumn arg)
+        {
+            if (arg.ColumnInfo == null)
+                return false;
+
+            var type = arg.ColumnInfo.Data_type;
+
+            if (string.IsNullOrEmpty(type))
+                return false;
+
+            type = type.Trim();
+
+            return type.Equals("text", StringComparison.CurrentCultureIgnoreCase) || type.Equals("ntext", StringComparison.CurrentCultureIgnoreCase);
+        }
+
+        /// <summary>
         /// Warns the <paramref name="notifier"/> that one or more of the <paramref name="cols"/> have the sensitive <paramref name="category"/>
         /// and should be warned/failed about (depending on user settings).
         /// </summary>
@@ -256,7 +298,7 @@ namespace Rdmp.Core.DataExport.Checks
         /// <param name="category"></param>
         public static void WarnAboutExtractionCategory(ICheckNotifier notifier, IExtractionConfiguration configuration, IExtractableDataSet dataset, ExtractionInformation[] cols, ErrorCode errorCode, ExtractionCategory category)
         {
-            if (cols.Any(c => c.ExtractionCategory == category))
+            if (cols.Any(c => c?.ExtractionCategory == category))
             {
                 notifier.OnCheckPerformed(new CheckEventArgs(errorCode, configuration, dataset,
                     String.Join(",", cols.Where(c => c.ExtractionCategory == category)

@@ -47,7 +47,7 @@ namespace Rdmp.Core.Providers
     /// 2. Create a method overload AddChildren that takes the object
     /// 3. Create a new HashSet containing all the child objects (regardless of mixed Type)
     /// 4. Call AddToDictionaries with a new DescendancyList containing the parent object
-    /// 5. For each of the objects added that has children of it's own repeat the above (Except call DescendancyList.Add instead of creating a new one)</para>
+    /// 5. For each of the objects added that has children of its own repeat the above (Except call DescendancyList.Add instead of creating a new one)</para>
     ///  
     /// </summary>
     public class CatalogueChildProvider : ICoreChildProvider
@@ -199,10 +199,12 @@ namespace Rdmp.Core.Providers
         /// </summary>
         protected object WriteLock = new object();
 
-        public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get;set; } = new AllOrphanAggregateConfigurationsNode();
-        
+        public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get;set; } = new ();
+        public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; set; } = new ();
 
         public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
+        public AggregateConfiguration[] TemplateAggregateConfigurations;
+
 
         protected Stopwatch ProgressStopwatch = Stopwatch.StartNew();
         private int _progress = 0;
@@ -364,6 +366,9 @@ namespace Rdmp.Core.Providers
             
             ReportProgress("BuildServerNodes");
 
+            //add a new CatalogueItemNodes
+            InjectCatalogueItems();
+
             AddChildren(CatalogueFolder.Root,new DescendancyList(CatalogueFolder.Root));
 
             ReportProgress("Build Catalogue Folder Root");
@@ -374,8 +379,21 @@ namespace Rdmp.Core.Providers
             foreach (CohortIdentificationConfiguration cic in AllCohortIdentificationConfigurations)
                 AddChildren(cic);
 
+            var templateAggregateConfigurationIds =
+                new HashSet<int>(
+                    repository.GetExtendedProperties(ExtendedProperty.IsTemplate)
+                    .Where(p => p.ReferencedObjectType.Equals(nameof(AggregateConfiguration)))
+                         .Select(r => r.ReferencedObjectID));
+
+            TemplateAggregateConfigurations = AllAggregateConfigurations.Where(ac => templateAggregateConfigurationIds.Contains(ac.ID)).ToArray();
+
             //add the orphans under the orphan folder
             AddToDictionaries(new HashSet<object>(OrphanAggregateConfigurations),new DescendancyList(OrphanAggregateConfigurationsNode));
+
+            var dec = new DescendancyList(TemplateAggregateConfigurationsNode);
+            dec.SetBetterRouteExists();
+            AddToDictionaries(new HashSet<object>(TemplateAggregateConfigurations), dec);
+            
 
             //Some AggregateConfigurations are 'Patient Index Tables', this happens when there is an existing JoinableCohortAggregateConfiguration declared where
             //the AggregateConfiguration_ID is the AggregateConfiguration.ID.  We can inject this knowledge now so to avoid database lookups later (e.g. at icon provision time)
@@ -966,21 +984,30 @@ namespace Rdmp.Core.Providers
             //tell the CatalogueItems that we are are their parent
             foreach (CatalogueItem ci in cis)
                 ci.InjectKnown(c);
-            
-            //add a new CatalogueItemNode (can be empty)
-            var catalogueItemsNode = new CatalogueItemsNode(c, cis);
 
-            //if there are at least 1 catalogue items inject them into Catalogue and add a recording that the CatalogueItemsNode has these children (otherwise node has no children)
-            if (cis.Any())
-            {
-                c.InjectKnown(cis);
+            // core includes project specific which basically means the same thing
+            var core = new CatalogueItemsNode(c, 
+                cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.Core ||
+                ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.ProjectSpecific)
+                , ExtractionCategory.Core);
 
-                var ciNodeDescendancy = descendancy.Add(catalogueItemsNode);
-                AddToDictionaries(new HashSet<object>(cis), ciNodeDescendancy);
+            c.InjectKnown(cis);
 
-                for (var index = 0; index < cis.Length; index++)
-                    AddChildren(cis[index], ciNodeDescendancy.Add(cis[index]));
-            }
+            var deprecated = new CatalogueItemsNode(c, cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.Deprecated), ExtractionCategory.Deprecated);
+            var special = new CatalogueItemsNode(c, cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.SpecialApprovalRequired), ExtractionCategory.SpecialApprovalRequired);
+            var intern = new CatalogueItemsNode(c, cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.Internal), ExtractionCategory.Internal);
+            var supplemental = new CatalogueItemsNode(c, cis.Where(ci => ci.ExtractionInformation?.ExtractionCategory == ExtractionCategory.Supplemental), ExtractionCategory.Supplemental);
+            var notExtractable = new CatalogueItemsNode(c, cis.Where(ci => ci.ExtractionInformation == null), null);
+
+            AddChildren(core, descendancy.Add(core));
+            childObjects.Add(core);
+
+            foreach(var optional in new[] { deprecated,special,intern,supplemental,notExtractable})
+                if(optional.CatalogueItems.Any())
+                {
+                    AddChildren(optional, descendancy.Add(optional));
+                    childObjects.Add(optional);
+                }
 
             //do we have any foreign key fields into this lookup table
             var lookups = AllLookups.Where(l => c.CatalogueItems.Any(ci => ci.ColumnInfo_ID == l.ForeignKey_ID)).ToArray();
@@ -1023,12 +1050,28 @@ namespace Rdmp.Core.Providers
                 foreach (AggregateConfiguration regularAggregate in regularAggregates)
                     AddChildren(regularAggregate, nodeDescendancy.Add(regularAggregate));
             }
-            
-            childObjects.Add(catalogueItemsNode);
-
-            
+                        
             //finalise
             AddToDictionaries(new HashSet<object>(childObjects),descendancy);
+        }
+
+        private void InjectCatalogueItems()
+        {
+            foreach(var ci in AllCatalogueItems)
+            {
+                if (_extractionInformationsByCatalogueItem.TryGetValue(ci.ID, out ExtractionInformation ei))
+                    ci.InjectKnown(ei);
+                else
+                    ci.InjectKnown((ExtractionInformation)null);
+            }
+        }
+
+        private void AddChildren(CatalogueItemsNode node, DescendancyList descendancyList)
+        {
+            AddToDictionaries(new HashSet<object>(node.CatalogueItems), descendancyList);
+
+            foreach (var ci in node.CatalogueItems)
+                AddChildren(ci, descendancyList.Add(ci));
         }
 
         private void AddChildren(AggregateConfiguration aggregateConfiguration, DescendancyList descendancy)
@@ -1103,9 +1146,9 @@ namespace Rdmp.Core.Providers
         {
             List<object> childObjects = new List<object>();
 
-            if(_extractionInformationsByCatalogueItem.TryGetValue(ci.ID,out ExtractionInformation ei))
+            var ei = ci.ExtractionInformation;
+            if (ei != null)
             {
-                ci.InjectKnown(ei);
                 childObjects.Add(ei);
                 AddChildren(ei, descendancy.Add(ei));
             }
@@ -1516,7 +1559,7 @@ namespace Rdmp.Core.Providers
                             try
                             {
                                 sw.Restart();
-                                //otherwise ask plugin what it's children are
+                                //otherwise ask plugin what its children are
                                 var pluginChildren = plugin.GetChildren(o);
 
                                 //if the plugin takes too long to respond we need to stop
@@ -1677,6 +1720,7 @@ namespace Rdmp.Core.Providers
             AllCompatiblePlugins = otherCat.AllCompatiblePlugins;
             PipelineUseCases = otherCat.PipelineUseCases;
             OrphanAggregateConfigurationsNode = otherCat.OrphanAggregateConfigurationsNode;
+            TemplateAggregateConfigurationsNode = otherCat.TemplateAggregateConfigurationsNode;
             AllCatalogueParameters = otherCat.AllCatalogueParameters;  
             AllCatalogueValueSets = otherCat.AllCatalogueValueSets;
             AllCatalogueValueSetValues = otherCat.AllCatalogueValueSetValues ;
@@ -1714,12 +1758,28 @@ namespace Rdmp.Core.Providers
         public bool SelectiveRefresh(ExtractionInformation ei)
         {
             var descendancy = GetDescendancyListIfAnyFor(ei);
-            var last = (CatalogueItem)descendancy?.Last();
-            if (last == null) return false;
+            var cata = descendancy?.Parents.OfType<Catalogue>().LastOrDefault() ?? ei.CatalogueItem.Catalogue;
+
+            if (cata == null)
+                return false;
+
+            var cataDescendancy = GetDescendancyListIfAnyFor(cata);
+
+            if (cataDescendancy == null)
+                return false;
+            
+            FetchCatalogueItems();
+
+            foreach(var ci in AllCatalogueItems.Where(ci=>ci.ID == ei.CatalogueItem_ID))
+            {
+                ci.ClearAllInjections();
+            }
 
             // property changes or deleting the ExtractionInformation
             FetchExtractionInformations();
-            AddChildren(last, descendancy);
+
+            // refresh the Catalogue
+            AddChildren(cata, cataDescendancy.Add(cata));
             return true;
         }
         public bool SelectiveRefresh(CohortAggregateContainer container)

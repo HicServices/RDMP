@@ -57,6 +57,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if(inConfiguration != null)
             {
+                SetImpossibleIfReadonly(_inConfiguration);
+
                 var allEds = inConfiguration.GetAllExtractableDataSets();
                 var eds = allEds.FirstOrDefault(sds => sds.Catalogue_ID == _catalogue.ID);
                 if(eds == null)

@@ -16,7 +16,7 @@ namespace ReusableLibraryCode.Checks
     };
 
     /// <summary>
-    /// An object that can check it's own state for problems and summarise this through the Checking Events system (See CheckEventArgs)
+    /// An object that can check its own state for problems and summarise this through the Checking Events system (See CheckEventArgs)
     /// </summary>
     public interface ICheckable
     {

@@ -116,7 +116,7 @@ namespace Rdmp.Core.CommandExecution
                     new DialogArgs
                     {
                         WindowTitle = GetPromptFor(p),
-                        InitialObjectSelection = p.DefaultValue == null ? null :
+                        InitialObjectSelection = p.DefaultValue == null || p.DefaultValue == DBNull.Value ? null :
                                 ((IEnumerable<IMapsDirectlyToDatabaseTable>)p.DefaultValue).ToArray()
                     },p.Type.GetElementType(), available);
                 
@@ -247,7 +247,7 @@ namespace Rdmp.Core.CommandExecution
 
                     parameterValues.Add(picker);
                     
-                    //the parameters are expected to be consumed by the target constructors so it's not really a problem if there are extra
+                    //the parameters are expected to be consumed by the target constructors so its not really a problem if there are extra
                     complainAboutExtraParameters = false;
                     continue;
                 }
@@ -351,13 +351,19 @@ namespace Rdmp.Core.CommandExecution
             var match =  _argumentDelegates.FirstOrDefault(k=>k.CanHandle(required.Type));
 
             if(match != null)
-                return match;
+            {
+                // prefer delegate if no user input required or running in interactive mode
+                if(match.IsAuto || _basicActivator.IsInteractive)
+                    return match;
+            }
 
-            if(required.HasDefaultValue && required.DefaultValue != null)
-                return new CommandInvokerFixedValueDelegate(required.DefaultValue);
 
-            return null;
+            // use the default value (preferred if non interactive)
+            if(required.HasDefaultValue)
+                return new CommandInvokerFixedValueDelegate(required.Type, required.DefaultValue);
 
+            // return delegate anyway (could be null)
+            return match;
         }
         public bool IsSupported(Type t)
         {

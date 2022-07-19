@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Reflection;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -22,6 +23,33 @@ namespace Rdmp.Core.Curation.Data
     /// </summary>
     public class ExtendedProperty  : Argument,IReferenceOtherObjectWithPersist, IInjectKnown<IMapsDirectlyToDatabaseTable>, INamed
     {
+
+        /// <summary>
+        /// Key for <see cref="ExtendedProperty"/> that indicates an object is replaced by another
+        /// </summary>
+        public const  string ReplacedBy = "ReplacedBy";
+
+        /// <summary>
+        /// Key for <see cref="ExtendedProperty"/> that indicates an object is a reusable curated template
+        /// that can be reused in subsequently created configurations
+        /// </summary>
+        public const string IsTemplate = "IsTemplate";
+
+        /// <summary>
+        /// Collection of all known property names.  Plugins are free to add to these if desired but must do so pre startup
+        /// </summary>
+        public static List<string> KnownProperties = new();
+
+        static ExtendedProperty()
+        {
+            var fields = typeof(ExtendedProperty).GetFields(BindingFlags.Public | BindingFlags.Static).Where(p => p.FieldType == typeof(string));
+
+            foreach (var field in fields)
+            {
+                KnownProperties.Add((string)field.GetValue(null));
+            }
+        }
+
         #region Database Properties
         private string _referencedObjectType;
         private int _referencedObjectID;

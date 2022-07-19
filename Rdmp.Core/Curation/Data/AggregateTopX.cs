@@ -16,7 +16,7 @@ namespace Rdmp.Core.Curation.Data
 {
     /// <summary>
     /// Allows you to limit the number of rows returned by an aggregate graph built by AggregateBuilder (or the number of PIVOT lines in a graph).  If your AggregateConfiguration has no pivot
-    /// (and no axis) then the SELECT query that is generated will have a 'TOP X' and it's 'ORDER BY' will be decided by this class.  The most common use of this is to limit the results according
+    /// (and no axis) then the SELECT query that is generated will have a 'TOP X' and its 'ORDER BY' will be decided by this class.  The most common use of this is to limit the results according
     /// to the count column e.g. 'Only graph the top 10 most prescribed drugs'.  You can change the direction of the TopX to turn it into 'Only graph the 10 LEAST prescribed drugs' or you can
     /// change your count(*) SQL on the Aggregate to AVERAGE(dose) and then you would have 'Top 10 most prescribed drugs by average prescription amount... or something like that anyway'.
     /// 

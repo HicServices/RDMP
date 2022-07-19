@@ -44,7 +44,7 @@ namespace Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents
             base.OnPaintBackground(e);
             
             //Control looks like this:
-            //note that because null count is completely separate from consequence it has it's own microbar
+            //note that because null count is completely separate from consequence it has its own microbar
 
             /*****************************************************************/
             //        |.............................|################|,,,,,,,,|

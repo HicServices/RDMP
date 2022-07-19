@@ -268,7 +268,7 @@ FROM
             //get it to create the parameters for us
             new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(filter, null);
 
-            //get the parameter it just created, set it's value and save it
+            //get the parameter it just created, set its value and save it
             var param = (AggregateFilterParameter) filter.GetAllParameters().Single();
             param.Value = "1";
             param.ParameterSQL = "DECLARE @abracadabra AS int;";
@@ -652,7 +652,7 @@ string.Format(
                 //get it to create the parameters for us
                 new ParameterCreator(new AggregateFilterFactory(repo), null, null).CreateAll(filter, null);
                 
-                //get the parameter it just created, set it's value and save it
+                //get the parameter it just created, set its value and save it
                 var param = (AggregateFilterParameter) filter.GetAllParameters().Single();
                 param.Value = "'Boom!'";
                 param.ParameterSQL = "DECLARE @bob AS varchar(10);";
@@ -857,7 +857,7 @@ SET @bob_2='Boom!';
                 //get it to create the parameters for us
                 new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(filter, null);
 
-                //get the parameter it just created, set it's value and save it
+                //get the parameter it just created, set its value and save it
                 var param = (AggregateFilterParameter)filter.GetAllParameters().Single();
                 param.Value = "'Boom!'";
                 param.ParameterSQL = "DECLARE @bob AS varchar(10);";

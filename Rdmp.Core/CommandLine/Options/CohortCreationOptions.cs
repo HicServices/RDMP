@@ -16,7 +16,7 @@ namespace Rdmp.Core.CommandLine.Options
     {
         // Used for refreshes:
         [Option('e', "ExtractionConfiguration", HelpText = "The ExtractionConfiguration ID to extract", Required = true)]
-        public int ExtractionConfiguration { get; set; }
+        public string ExtractionConfiguration { get; set; }
 
         // Other Options:
         /*

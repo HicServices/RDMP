@@ -105,7 +105,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
         {
             //check state
             if (_state != State.Start)
-                throw new Exception("Illegal state, headers cannot be read at state " + _state);
+                throw new Exception($"Illegal state, headers cannot be read at state {_state}");
 
             _state = State.AfterHeadersRead;
 
@@ -170,7 +170,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
         public DataTable GetDataTableWithHeaders(IDataLoadEventListener listener)
         {
             if (_state != State.AfterHeadersRead)
-                throw new Exception("Illegal state, data table cannot be created at state " + _state);
+                throw new Exception($"Illegal state, data table cannot be created at state {_state}");
 
             _state = State.AfterTableGenerated;
 
@@ -218,7 +218,8 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
             UnamedColumns = new ReadOnlyCollection<DataColumn>(unamedColumns);
 
             if (duplicateHeaders.Any())
-                throw new FlatFileLoadException("Found the following duplicate headers in file '" + _toLoad.File + "':" + string.Join(",", duplicateHeaders));
+                throw new FlatFileLoadException(
+                    $"Found the following duplicate headers in file '{_toLoad.File}':{string.Join(",", duplicateHeaders)}");
 
             return dt;
         }
@@ -233,7 +234,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
         public void MakeDataTableFitHeaders(DataTable dt, IDataLoadEventListener listener)
         {
             if (_state != State.AfterHeadersRead)
-                throw new Exception("Illegal state, data table cannot be created at state " + _state);
+                throw new Exception($"Illegal state, data table cannot be created at state {_state}");
 
             _state = State.AfterTableGenerated;
 
@@ -243,11 +244,11 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
            
             for (int index = 0; index < _headers.Length; index++)
             {
-                ASCIIArt.Append("[" + index + "]");
+                ASCIIArt.Append($"[{index}]");
                 
                 if (dt.Columns.Contains(_headers[index]))    //exact match
                 {
-                    ASCIIArt.AppendLine(_headers[index] + ">>>" + _headers[index]);
+                    ASCIIArt.AppendLine($"{_headers[index]}>>>{_headers[index]}");
                     continue;
                 }
 
@@ -260,7 +261,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
                 //if we are ignoring the header
                 if (IgnoreColumnsList.Contains(_headers[index]))
                 {
-                    ASCIIArt.AppendLine(_headers[index] + ">>>IGNORED");
+                    ASCIIArt.AppendLine($"{_headers[index]}>>>IGNORED");
                     continue;
                 }
 
@@ -270,7 +271,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
                     string before = _headers[index];
                     _headers[index] = _headers[index].Replace(" ", "_");
 
-                    ASCIIArt.AppendLine(before + ">>>" + _headers[index]);
+                    ASCIIArt.AppendLine($"{before}>>>{_headers[index]}");
                     continue;
                 }
 
@@ -280,11 +281,11 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
                     string before = _headers[index];
                     _headers[index] = _headers[index].Replace(" ", "");
 
-                    ASCIIArt.AppendLine(before + ">>>" + _headers[index]);
+                    ASCIIArt.AppendLine($"{before}>>>{_headers[index]}");
                     continue;
                 }
 
-                ASCIIArt.AppendLine(_headers[index] + ">>>" + UnmatchedText);
+                ASCIIArt.AppendLine($"{_headers[index]}>>>{UnmatchedText}");
                 headersNotFound.Add(_headers[index]);
             }
 
@@ -296,22 +297,24 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
                     .ToArray();
 
             if (unmatchedColumns.Any())
-                ASCIIArt.AppendLine(Environment.NewLine + "Unmatched Columns In DataTable:" + Environment.NewLine +
-                                    string.Join(Environment.NewLine, unmatchedColumns));
+                ASCIIArt.AppendLine(
+                    $"{Environment.NewLine}Unmatched Columns In DataTable:{Environment.NewLine}{string.Join(Environment.NewLine, unmatchedColumns)}");
 
             //if there is exactly 1 column found by the program and there are unmatched columns it is likely the user has selected the wrong separator
             if (_headers.Length == 1 && unmatchedColumns.Any())
                 foreach (string commonSeparator in _commonSeparators)
                     if(_headers[0].Contains(commonSeparator))
-                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Your separator does not appear in the headers line of your file ("+_toLoad.File.Name+") but the separator '"+commonSeparator+"' does... did you mean to set the Separator to '"+commonSeparator+"'? The headers line is:\"" + _headers[0] +"\""));
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                            $"Your separator does not appear in the headers line of your file ({_toLoad.File.Name}) but the separator '{commonSeparator}' does... did you mean to set the Separator to '{commonSeparator}'? The headers line is:\"{_headers[0]}\""));
             
             listener.OnNotify(this, new NotifyEventArgs(
                 headersNotFound.Any()?ProgressEventType.Error : ProgressEventType.Information, //information or warning if there are unrecognised field names
-                "I will now tell you about how the columns in your file do or do not match the columns in your database, Matching flat file columns (or forced replacement headers) against database headers resulted in:" + Environment.NewLine + ASCIIArt)); //tell them about what columns match what
+                $"I will now tell you about how the columns in your file do or do not match the columns in your database, Matching flat file columns (or forced replacement headers) against database headers resulted in:{Environment.NewLine}{ASCIIArt}")); //tell them about what columns match what
 
 
             if(headersNotFound.Any())
-                throw new Exception("Could not find a suitable target column for flat file columns " +string.Join(",",headersNotFound)+ " amongst database data table columns (" + string.Join(",",from DataColumn col in dt.Columns select col.ColumnName) + ")");
+                throw new Exception(
+                    $"Could not find a suitable target column for flat file columns {string.Join(",", headersNotFound)} amongst database data table columns ({string.Join(",", from DataColumn col in dt.Columns select col.ColumnName)})");
         }
 
         public static string MakeHeaderUnique(string newColumnName, DataColumnCollection columnsSoFar, IDataLoadEventListener listener, object sender)
@@ -322,26 +325,27 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
 
             //otherwise issue a rename
             int number = 2;
-            while (columnsSoFar.Contains(newColumnName + "_" + number))
+            while (columnsSoFar.Contains($"{newColumnName}_{number}"))
                 number++;
 
-            var newName = newColumnName + "_" + number;
+            var newName = $"{newColumnName}_{number}";
 
             //found a novel number
-            listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Warning, "Renamed duplicate column '" + newColumnName + "' to '" + newName + "'"));
+            listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Warning,
+                $"Renamed duplicate column '{newColumnName}' to '{newName}'"));
             return newName;
         }
 
         /// <summary>
         /// Use only when ForceHeaders is on and ForceHeadersReplacesFirstLineInFile is true.  Pass the header line that was read from the file
-        /// that will be ignored (<paramref name="strings"/>).  This method will show the user what replacements were made.
+        /// that will be ignored (<paramref name="row"/>).  This method will show the user what replacements were made.
         /// </summary>
-        /// <param name="strings"></param>
+        /// <param name="row"></param>
         /// <param name="listener"></param>
-        public void ShowForceHeadersAsciiArt(string[] strings,IDataLoadEventListener listener)
+        public void ShowForceHeadersAsciiArt(IReaderRow row,IDataLoadEventListener listener)
         {
             if(_state < State.AfterHeadersRead)
-                throw new Exception("Illegal state:" + _state);
+                throw new Exception($"Illegal state:{_state}");
 
             if(string.IsNullOrWhiteSpace(_forceHeaders))
                 throw new Exception("There are no force headers! how did we get here");
@@ -354,19 +358,28 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
             StringBuilder asciiArt = new StringBuilder();
             for (int i = 0; i < _headers.Length; i++)
             {
-                asciiArt.Append("[" + i + "]" + _headers[i] + ">>>");
-                asciiArt.AppendLine(i < strings.Length ? strings[i] : "???");
+                asciiArt.Append($"[{i}]{_headers[i]}>>>");
+                asciiArt.AppendLine(i < row.ColumnCount ? row[i] : "???");
             }
 
-            for (int i = _headers.Length; i < strings.Length; i++)
-                asciiArt.AppendLine("[" + i + "]???>>>" + strings[i]);
+            for (int i = _headers.Length; i < row.ColumnCount; i++)
+                asciiArt.AppendLine($"[{i}]???>>>{row[i]}");
 
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Your attacher has ForceHeaders and ForceHeadersReplacesFirstLineInFile=true, I will now tell you about the first line of data in the file that you skipped (and how it related to your forced headers).  Replacement headers are " + Environment.NewLine + Environment.NewLine + asciiArt));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"Your attacher has ForceHeaders and ForceHeadersReplacesFirstLineInFile=true, I will now tell you about the first line of data in the file that you skipped (and how it related to your forced headers).  Replacement headers are {Environment.NewLine}{Environment.NewLine}{asciiArt}"));
 
-            if (strings.Length != _headers.Length)
+            if (row.ColumnCount != _headers.Length)
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "The number of ForceHeader replacement headers specified does not match the number of headers in the file (being replaced)"));
 
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Skipped first line of file because there are forced replacement headers, we discarded" + string.Join(",", strings)));
+            StringBuilder discarded = new();
+            for (int i = 0; i < row.ColumnCount; i++)
+            {
+                if (i > 0)
+                    discarded.Append(',');
+                discarded.Append(row[i]);
+            }
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"Skipped first line of file because there are forced replacement headers, we discarded: {discarded}"));
         }
     }
 }

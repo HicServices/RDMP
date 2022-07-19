@@ -119,7 +119,7 @@ namespace Rdmp.Core.Curation.Data.Cache
         /// <summary>
         /// String representation of the CacheLagPeriod.  This should be a valid serialization such that it can be loaded by the internal constructor.
         /// </summary>
-        /// <remarks>Do not change this without good reason because it's implementation is tied to the internal constructor</remarks>
+        /// <remarks>Do not change this without good reason because its implementation is tied to the internal constructor</remarks>
         /// <returns></returns>
         public override string ToString()
         {
@@ -159,7 +159,7 @@ namespace Rdmp.Core.Curation.Data.Cache
 
         /// <summary>
         /// Pass the date you are about to create a cache fetch request for.  Returns true if the date is outside (i.e. older than) the lag period.  E.g. if you have a lag period of 
-        /// 6 months then any date before 6 months is valid for fetching since the remote endpoint is likely to have had it's data stabalised.
+        /// 6 months then any date before 6 months is valid for fetching since the remote endpoint is likely to have had its data stabilised.
         /// </summary>
         /// <seealso cref="Duration"/>
         /// <param name="time"></param>

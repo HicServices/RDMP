@@ -11,6 +11,7 @@ using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 
@@ -21,6 +22,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         private Catalogue _catalogue;
         private ColumnInfo[] _columnInfos;
         private HashSet<int> _existingColumnInfos;
+
+        /// <summary>
+        /// The category to assign for newly created <see cref="ExtractionInformation"/>.
+        /// Defaults to <see cref="ExtractionCategory.Core"/>.  Set to null to make them non extractable
+        /// </summary>
+        public ExtractionCategory? Category { get; set; } = ExtractionCategory.Core;
 
         public ExecuteCommandAddNewCatalogueItem(IBasicActivateItems activator, Catalogue catalogue,ColumnInfoCombineable colInfo) : this(activator,catalogue,colInfo.ColumnInfos)
         {
@@ -106,8 +113,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     if(columnInfo != null)
                     {
                         ci.SetColumnInfo(columnInfo);
-                        // also make extractable
-                        new ExtractionInformation(repo, ci, columnInfo, columnInfo.GetFullyQualifiedName());
+                        CreateExtractionInformation(repo,ci,columnInfo);                        
                     }
 
                     ci.SaveToDatabase();
@@ -128,10 +134,25 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     ci.SaveToDatabase();
 
                     // also make extractable
-                    new ExtractionInformation(repo, ci, columnInfo, columnInfo.GetFullyQualifiedName());
+                    CreateExtractionInformation(repo, ci, columnInfo);
                 }
 
                 Publish(c);
+            }
+        }
+
+        private void CreateExtractionInformation(ICatalogueRepository repo, CatalogueItem ci, ColumnInfo columnInfo)
+        {
+            // also make extractable
+            if (Category != null)
+            {
+                var ei = new ExtractionInformation(repo, ci, columnInfo, columnInfo.GetFullyQualifiedName());
+
+                if (ei.ExtractionCategory != Category)
+                {
+                    ei.ExtractionCategory = Category.Value;
+                    ei.SaveToDatabase();
+                }
             }
         }
 

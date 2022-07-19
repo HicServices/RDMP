@@ -31,7 +31,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void AllTablesDescribed()
         {
-            //ensures the DQERepository gets a chance to add it's help text
+            //ensures the DQERepository gets a chance to add its help text
             new DQERepository(CatalogueRepository);
 
             List<string> problems = new List<string>();
@@ -57,7 +57,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
         {
             List<string> allKeys = new List<string>();
 
-            //ensures the DQERepository gets a chance to add it's help text
+            //ensures the DQERepository gets a chance to add its help text
             new DQERepository(CatalogueRepository);
 
             allKeys.AddRange(GetForeignKeys(CatalogueTableRepository.DiscoveredServer));
@@ -82,7 +82,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
         {
             List<string> allIndexes = new List<string>();
 
-            //ensures the DQERepository gets a chance to add it's help text
+            //ensures the DQERepository gets a chance to add its help text
             new DQERepository(CatalogueRepository);
 
             allIndexes.AddRange(GetIndexes(CatalogueTableRepository.DiscoveredServer));

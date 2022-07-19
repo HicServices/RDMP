@@ -31,7 +31,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         void SetCollection(IActivateItems activator, IPersistableObjectCollection collection);
 
         /// <summary>
-        /// Used to serialize the control for later use e.g. on application exit, you must only return your collection, the rest is handled by the IPersistableObjectCollection it'self or
+        /// Used to serialize the control for later use e.g. on application exit, you must only return your collection, the rest is handled by the IPersistableObjectCollection itself or
         /// the PersistableObjectCollectionDockContent
         /// </summary>
         /// <returns></returns>

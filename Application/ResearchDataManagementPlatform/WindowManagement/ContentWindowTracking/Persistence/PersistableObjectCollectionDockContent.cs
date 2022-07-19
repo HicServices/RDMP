@@ -39,7 +39,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
             _control = control;
             Control = (Control)control;
 
-            //tell the control what it's collection is
+            //tell the control what its collection is
             control.SetCollection(activator, collection);
             
             //ask the control what it wants its name to be

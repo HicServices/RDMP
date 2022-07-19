@@ -67,7 +67,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
         /// <para>1.We run the extraction.
         /// 2.We create a cohort refresh query that pulls the 1 dude from the above single row table
         /// 3.We configure a query caching server which the cohort query is setup to use so that after executing the sql to identify the person it will cache the identifier list (of 1)
-        /// 4.We then the ExtractionConfiguration that it's refresh pipeline is a cohort query builder query and build a pipeline for executing the cic and using basic cohort destination
+        /// 4.We then the ExtractionConfiguration that its refresh pipeline is a cohort query builder query and build a pipeline for executing the cic and using basic cohort destination
         /// 5.We then run the refresh pipeline which should execute the cic and cache the record and commit it as a new version of cohort for the ExtractionConfiguration
         /// 6.We then truncate the live table, this will result in the cic returning nobody 
         /// 7.Without touching the cache we run the cohort refresh pipeline again</para>

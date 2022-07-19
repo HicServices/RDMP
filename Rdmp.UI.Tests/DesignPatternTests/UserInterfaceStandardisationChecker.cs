@@ -100,7 +100,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                 {
 
                     if(!nodeClass.Name.StartsWith("All"))
-                        problems.Add("Class '" + nodeClass.Name+ "' is a SingletonNode but it's name doesn't start with All");
+                        problems.Add("Class '" + nodeClass.Name+ "' is a SingletonNode but its name doesn't start with All");
                     
                     continue;
                 }
@@ -117,7 +117,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                 //We are looking at something like AutomationServerSlotsMenu
                 if (!menuClass.Name.EndsWith("Menu"))
                 {
-                    problems.Add("Class '" + menuClass + "' is a RDMPContextMenuStrip but it's name doesn't end with Menu");
+                    problems.Add("Class '" + menuClass + "' is a RDMPContextMenuStrip but its name doesn't end with Menu");
                     continue;
                 }
 
@@ -163,7 +163,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                 //We are looking at something like AutomationServerSlotsMenu
                 if (!proposalClass.Name.StartsWith("ProposeExecutionWhenTargetIs"))
                 {
-                    problems.Add("Class '" + proposalClass + "' is a ICommandExecutionProposal but it's name doesn't start with ProposeExecutionWhenTargetIs");
+                    problems.Add("Class '" + proposalClass + "' is a ICommandExecutionProposal but its name doesn't start with ProposeExecutionWhenTargetIs");
                     continue;
                 }
 

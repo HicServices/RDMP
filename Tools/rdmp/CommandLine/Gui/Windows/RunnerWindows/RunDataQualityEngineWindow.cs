@@ -20,7 +20,7 @@ namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
 
         private static DqeOptions GetCommand(Catalogue c)
         {
-            return new DqeOptions { Catalogue = c.ID };
+            return new DqeOptions { Catalogue = c.ID.ToString() };
         }
     }
 }
