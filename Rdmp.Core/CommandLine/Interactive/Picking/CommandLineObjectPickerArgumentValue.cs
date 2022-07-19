@@ -219,8 +219,9 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
 
                 if (ExplicitNull && canBeNull)
                     return true;
+                var val = GetValueForParameterOfType(paramType);
 
-                return GetValueForParameterOfType(paramType) != null;
+                return val != null && paramType.IsAssignableFrom(val.GetType());
             }
             catch (Exception e)
             {

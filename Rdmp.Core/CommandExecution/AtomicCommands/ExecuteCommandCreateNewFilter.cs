@@ -7,6 +7,7 @@
 using System;
 using System.Drawing;
 using System.Linq;
+using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -27,26 +28,91 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         public IFilter BasedOn { get; private set; }
         public ExtractionFilterParameterSet ParameterSet { get; private set; }
+        public string Name { get; }
+        public string WhereSQL { get; }
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, 
-            IRootFilterContainerHost host,
-            [DemandsInitialization("Optional. A filter to clone as the new filter instead of new being blank")]
-            IFilter basedOn = null,
-            [DemandsInitialization("Optional. Parameter set to populate parameter values in the new filter instead of being blank.  Requires basedOn to be populated")]
-            string valueSetName = null):base(activator)
+        private ExecuteCommandCreateNewFilter(IBasicActivateItems activator) : base(activator)
         {
+
             Weight = DEFAULT_WEIGHT;
+        }
+
+        [UseWithCommandLine(
+            ParameterHelpList = "<into> <basedOn> <name> <where>", 
+            ParameterHelpBreakdown = @"into	A WHERE filter container or IRootFilterContainerHost (e.g. AggregateConfiguration)
+basedOn    ExtractionFilter to copy or ExtractionFilterParameterSet
+name    Optional name to set for the new filter
+where    Optional SQL to set for the filter.  If <basedOn> is not null this will overwrite it")]
+        public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, 
+            CommandLineObjectPicker picker):this(activator)
+        {
+            if(picker.Length == 0)
+                throw new ArgumentException("You must supply at least one argument to this command (where you want to create the filter)");
+
+            if(picker.Length > 0)
+            {
+                if(picker[0].HasValueOfType(typeof(IContainer)))
+                {
+                    _container = (IContainer)picker[0].GetValueForParameterOfType(typeof(IContainer));
+                    SetImpossibleIfReadonly(_container);
+                }
+                else
+                if(picker[0].HasValueOfType(typeof(IRootFilterContainerHost)))
+                {
+                    _host = (IRootFilterContainerHost)picker[0].GetValueForParameterOfType(typeof(IRootFilterContainerHost));
+                    SetImpossibleIfReadonly(_host);
+                }
+                else
+                {
+                    throw new ArgumentException($"First argument must be {nameof(IContainer)} or  {nameof(IRootFilterContainerHost)} but it was '{picker[0].RawValue}'");
+                }
+
+
+                _factory = _container?.GetFilterFactory() ?? _host?.GetFilterFactory();
+
+                if(_factory == null)
+                    throw new Exception("It was not possible to work out a FilterFactory from the container/host");
+
+            }
+
+
+            if(picker.Length > 1)
+            {
+                if (IsImpossible)
+                    return;
+
+                if(picker[1].HasValueOfType(typeof(IFilter)))
+                {
+                    BasedOn = (IFilter)picker[1].GetValueForParameterOfType(typeof(IFilter));
+                }
+                else
+                if(picker[1].HasValueOfType(typeof(ExtractionFilterParameterSet)))
+                {
+                    ParameterSet = (ExtractionFilterParameterSet)picker[1].GetValueForParameterOfType(typeof(ExtractionFilterParameterSet));
+                }
+                else if (!picker[1].ExplicitNull)
+                {
+                    throw new ArgumentException($"Second argument must be {nameof(IFilter)} or  {nameof(ExtractionFilterParameterSet)} or null but it was '{picker[1].RawValue}'");
+                }
+            }
+            if(picker.Length > 2)
+            {
+                Name = picker[2].RawValue;
+            }
+            if(picker.Length > 3)
+            {
+                WhereSQL = picker[3].RawValue;
+            }
+        }
+
+
+        public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, IRootFilterContainerHost host):this(activator)
+        {
 
             _factory = host.GetFilterFactory();
             _container = host.RootFilterContainer;
             _host = host;
             
-            SetBasedOn(host.GetCatalogue(),basedOn,valueSetName);
-            
-            if (IsImpossible)
-                return;
-
             if (_container == null && _host is AggregateConfiguration ac)
             {
                 if (ac.Catalogue.IsApiCall())
@@ -59,9 +125,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             SetImpossibleIfReadonly(host);
         }
 
-        public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, CatalogueItem ci) : base(activator)
+        
+        public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, CatalogueItem ci) : this(activator)
         {
-            Weight = DEFAULT_WEIGHT;
 
             if(ci.ExtractionInformation == null)
             {
@@ -71,65 +137,24 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             _factory = new ExtractionFilterFactory(ci.ExtractionInformation);
         }
-        public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, IFilterFactory factory, IContainer container = null):base(activator)
+        public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, IFilterFactory factory, IContainer container = null)
+            :this(activator)
         {
-            Weight = DEFAULT_WEIGHT;
 
             _factory = factory;
             _container = container;
 
             SetImpossibleIfReadonly(container);
         }
-        public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, IContainer container, IFilter basedOn) : base(activator)
+        public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, IContainer container, IFilter basedOn) : this(activator)
         {
-            Weight = DEFAULT_WEIGHT;
-
             _container = container;
             BasedOn = basedOn;
-
-            SetBasedOn(container.GetCatalogueIfAny(), basedOn, null);
 
             SetImpossibleIfReadonly(container);
         }
 
-        private void SetBasedOn(ICatalogue targetCatalogue, IFilter basedOn, string valueSetName)
-        {
-            BasedOn = basedOn;
-
-            if (BasedOn != null)
-            {
-                //if source catalogue is known
-                var sourceCatalogue = BasedOn.GetCatalogue();
-                if (sourceCatalogue != null)
-                {
-                    if (targetCatalogue != null && !sourceCatalogue.Equals(targetCatalogue))
-                    {
-                        SetImpossible("Cannot Import Filter from '" + sourceCatalogue + "' into '" + targetCatalogue + "'");
-                        return;
-                    }
-                }
-
-                if (!string.IsNullOrWhiteSpace(valueSetName))
-                {
-                    if (BasedOn is not ExtractionFilter f)
-                    {
-                        SetImpossible($"Cannot specify parameter value sets when filter is not a '{nameof(ExtractionFilter)}'.  Filter was a '{BasedOn.GetType().Name}'");
-                        return;
-                    }
-
-                    var match = f.ExtractionFilterParameterSets.FirstOrDefault(s => s.Name.Equals(valueSetName));
-                    if (match == null)
-                    {
-                        SetImpossible($"Could not find a value set called '{valueSetName}'. Declared value sets are:{Environment.NewLine}{string.Join(Environment.NewLine, f.ExtractionFilterParameterSets.Select(p => p.Name).ToArray())}");
-                        return;
-                    }
-
-                    ParameterSet = match;
-                }
-
-            }
-        }
-
+        
         public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Filter, OverlayKind.Add);
@@ -163,6 +188,17 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             if (container != null)
                 container.AddChild(f);
+
+            if(!string.IsNullOrWhiteSpace(Name))
+            {
+                f.Name = Name;
+            }
+            if(!string.IsNullOrWhiteSpace(WhereSQL))
+            {
+                f.WhereSQL = WhereSQL;
+            }
+
+            f.SaveToDatabase();
 
             if (f is ExtractionFilter ef)
                 Publish(ef.ExtractionInformation);
