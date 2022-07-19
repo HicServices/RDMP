@@ -91,7 +91,6 @@ namespace Rdmp.Core.Tests.CommandExecution
         [TestCase(typeof(ExecuteCommandCreateNewExtractionConfigurationForProject))]
         [TestCase(typeof(ExecuteCommandCreateNewFileBasedProcessTask))]
         [TestCase(typeof(ExecuteCommandCreateNewFilter))]
-        [TestCase(typeof(ExecuteCommandCreateNewFilterFromCatalogue))]
         [TestCase(typeof(ExecuteCommandCreateNewGovernancePeriod))]
         [TestCase(typeof(ExecuteCommandCreateNewLoadMetadata))]
         [TestCase(typeof(ExecuteCommandCreateNewLoadProgress))]

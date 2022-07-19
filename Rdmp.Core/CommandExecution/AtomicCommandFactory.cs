@@ -207,7 +207,7 @@ namespace Rdmp.Core.CommandExecution
             if(Is(o,out  AggregateConfiguration ac) && !ac.Catalogue.IsApiCall())
             {
                 yield return new ExecuteCommandCreateNewFilter(_activator, ac) { SuggestedCategory = Add, OverrideCommandName = "New Filter" };
-                yield return new ExecuteCommandCreateNewFilterFromCatalogue(_activator, ac) { SuggestedCategory = Add, OverrideCommandName = "Existing Filter" };
+                yield return new ExecuteCommandCreateNewFilter(_activator, ac) { OfferCatalogueFilters=true, SuggestedCategory = Add, OverrideCommandName = "Existing Filter" };
 
                 yield return new ExecuteCommandAddNewFilterContainer(_activator,ac) { SuggestedCategory = Add, OverrideCommandName = "New Filter Container" };
                 yield return new ExecuteCommandImportFilterContainerTree(_activator, ac) { SuggestedCategory = Add, OverrideCommandName = "Existing Filter Container (copy of)" };
@@ -268,7 +268,7 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandSet(_activator,container,nameof(IContainer.Operation),targetOperation){OverrideCommandName = $"Set Operation to {targetOperation}" };               
 
                 yield return new ExecuteCommandCreateNewFilter(_activator,container.GetFilterFactory(),container) { SuggestedCategory = Add, OverrideCommandName = "New Filter" };
-                yield return new ExecuteCommandCreateNewFilterFromCatalogue(_activator, container) { SuggestedCategory = Add, OverrideCommandName = "Existing Filter" };
+                yield return new ExecuteCommandCreateNewFilter(_activator, container,null) {OfferCatalogueFilters = true, SuggestedCategory = Add, OverrideCommandName = "Existing Filter" };
                 yield return new ExecuteCommandAddNewFilterContainer(_activator,container){ SuggestedCategory = Add, OverrideCommandName = "Sub Container" };
                
                 yield return new ExecuteCommandViewFilterMatchData(_activator, container, ViewType.TOP_100);
@@ -561,8 +561,8 @@ namespace Rdmp.Core.CommandExecution
 
                 yield return new ExecuteCommandCreateNewFilter(_activator,sds)
                     { OverrideCommandName = "New Filter", SuggestedCategory = Add};
-                yield return new ExecuteCommandCreateNewFilterFromCatalogue(_activator, sds)
-                    { OverrideCommandName = "Existing Filter (copy of)", SuggestedCategory = Add};
+                yield return new ExecuteCommandCreateNewFilter(_activator, sds)
+                    { OfferCatalogueFilters = true, OverrideCommandName = "Existing Filter (copy of)", SuggestedCategory = Add};
 
                 yield return new ExecuteCommandAddNewFilterContainer(_activator,sds)
                     {OverrideCommandName = "New Filter Container", SuggestedCategory = Add};

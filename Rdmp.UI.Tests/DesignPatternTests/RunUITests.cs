@@ -43,7 +43,6 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                 typeof(ExecuteCommandAddNewCatalogueItem),
 
                 typeof(ExecuteCommandCreateNewFilter),
-                typeof(ExecuteCommandCreateNewFilterFromCatalogue),
 
                 //requires a use case
                 typeof(ExecuteCommandCreateNewPipeline),
