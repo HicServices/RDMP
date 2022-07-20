@@ -154,8 +154,8 @@ namespace Rdmp.Core.Tests.CommandLine
             var results = r.GetObjectsFromCommandLineString<Catalogue>(RepositoryLocator, "Catalogue:*go*").ToArray();
 
             Assert.AreEqual(2, results.Length);
-            Assert.AreSame(c, results[0]);
-            Assert.AreSame(c2, results[1]);
+            Assert.Contains(c,results);
+            Assert.Contains(c2, results);
         }
 
         class TestRunner : Runner
