@@ -65,7 +65,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         [UseWithCommandLine(
             ParameterHelpList = "<into> <basedOn> <name> <where>",
             ParameterHelpBreakdown = @"into	A WHERE filter container or IRootFilterContainerHost (e.g. AggregateConfiguration)
-basedOn    ExtractionFilter to copy or ExtractionFilterParameterSet
+basedOn    Optional ExtractionFilter to copy or ExtractionFilterParameterSet
 name    Optional name to set for the new filter
 where    Optional SQL to set for the filter.  If <basedOn> is not null this will overwrite it")]
         public ExecuteCommandCreateNewFilter(IBasicActivateItems activator,
@@ -76,14 +76,23 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
 
             if (picker.Length > 0)
             {
+                if (picker[0].HasValueOfType(typeof(ExtractionInformation)))
+                {
+                    // create a top level Catalogue level filter for reuse later on
+                    var ei = (ExtractionInformation)picker[0].GetValueForParameterOfType(typeof(ExtractionInformation));
+                    _factory = new ExtractionFilterFactory(ei);
+                }
+                else
                 if (picker[0].HasValueOfType(typeof(IContainer)))
                 {
+                    // create a filter in this container
                     _container = (IContainer)picker[0].GetValueForParameterOfType(typeof(IContainer));
                     SetImpossibleIfReadonly(_container);
                 }
                 else
                 if (picker[0].HasValueOfType(typeof(IRootFilterContainerHost)))
                 {
+                    // create a container (if none) then add filter to root container of the object
                     _host = (IRootFilterContainerHost)picker[0].GetValueForParameterOfType(typeof(IRootFilterContainerHost));
                     SetImpossibleIfReadonly(_host);
                 }
@@ -93,13 +102,15 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
                 }
 
 
-                _factory = _container?.GetFilterFactory() ?? _host?.GetFilterFactory();
+                _factory ??= _container?.GetFilterFactory() ?? _host?.GetFilterFactory();
 
                 if (_factory == null)
                     throw new Exception("It was not possible to work out a FilterFactory from the container/host");
 
             }
 
+            // the index that string arguments begin at (Name and WhereSql)
+            int stringArgsStartAt = 2;
 
             if (picker.Length > 1)
             {
@@ -117,16 +128,17 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
                 }
                 else if (!picker[1].ExplicitNull)
                 {
-                    throw new ArgumentException($"Second argument must be {nameof(IFilter)} or  {nameof(ExtractionFilterParameterSet)} or null but it was '{picker[1].RawValue}'");
+                    stringArgsStartAt = 1;
                 }
             }
-            if (picker.Length > 2)
+
+            if (picker.Length > stringArgsStartAt)
             {
-                Name = picker[2].RawValue;
+                Name = picker[stringArgsStartAt].RawValue;
             }
-            if (picker.Length > 3)
+            if (picker.Length > stringArgsStartAt+1)
             {
-                WhereSQL = picker[3].RawValue;
+                WhereSQL = picker[stringArgsStartAt+1].RawValue;
             }
         }
 
