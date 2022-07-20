@@ -48,7 +48,7 @@ namespace Rdmp.UI.TestsAndSetup
             if(_startup == null)
                 return;
 
-            Text = "RDMP - v" + FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
+            Text = $"RDMP - v{typeof(Rdmp.Core.PluginUserInterface).Assembly.GetName().Version}";// + FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
             
             _startup.DatabaseFound += StartupDatabaseFound;
             _startup.MEFFileDownloaded += StartupMEFFileDownloaded;
