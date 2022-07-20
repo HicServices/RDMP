@@ -43,7 +43,6 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                 typeof(ExecuteCommandAddNewCatalogueItem),
 
                 typeof(ExecuteCommandCreateNewFilter),
-                typeof(ExecuteCommandCreateNewFilterFromCatalogue),
 
                 //requires a use case
                 typeof(ExecuteCommandCreateNewPipeline),
@@ -64,7 +63,6 @@ typeof(ExecuteCommandAddCatalogueToCohortIdentificationSetContainer),
 typeof(ExecuteCommandAddCohortToExtractionConfiguration),
 typeof(ExecuteCommandAddDatasetsToConfiguration),
 typeof(ExecuteCommandConvertAggregateConfigurationToPatientIndexTable),
-typeof(ExecuteCommandImportNewCopyOfFilterIntoContainer),
 typeof(ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain),
 typeof(ExecuteCommandMoveAggregateIntoContainer),
 typeof(ExecuteCommandMoveCohortAggregateContainerIntoSubContainer),

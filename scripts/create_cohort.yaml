@@ -1,4 +1,8 @@
 Commands:
+  
+  # Create Catalogue level filter on Healthboard in Biochemistry
+  - CreateNewFilter ExtractionInformation:Healthboard "Tayside Patients Only" "Healthboard='T'"
+
   # Create a new cohort builder query with a single inclusion criteria
   - CreateNewCohortIdentificationConfiguration "My cic"
   - AddCatalogueToCohortIdentificationSetContainer "CohortAggregateContainer:Inclusion Criteria" Catalogue:Biochemistry
@@ -6,10 +10,8 @@ Commands:
   # Ignore this warning
   - SetUserSetting StrictValidationForCohortBuilderContainers false
 
-  # Create a filter on Healthboard='T'
-  - CreateNewFilter AggregateConfiguration:*Biochemistry
-  - Set AggregateFilter Name "Tayside Patients Only"
-  - Set AggregateFilter WhereSql "Healthboard='T'"
+  # Deploy the catalogue level filter for tayside only patients
+  - CreateNewFilter AggregateConfiguration:*Biochemistry "ExtractionFilter:Tayside Patients Only"
   - ViewData "CohortIdentificationConfiguration:My cic" All
 
   # Create a Project for extracting data/storing cohort lists
