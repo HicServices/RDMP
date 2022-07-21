@@ -32,6 +32,7 @@ namespace ReusableLibraryCode.Checks
         public static ErrorCode ExtractionFailedToExecuteTop1 = new ErrorCode("R012", "Failed to execute Top 1 on dataset '{0}'", CheckResult.Warning);
         public static ErrorCode TextColumnsInExtraction = new ErrorCode("R013", "The following columns are data type ntext or text and so may be incompatible with the DISTINCT keyword({0}).  Ensure that PipelineSources are set to use extraction strategy 'OrderByAndDistinctInMemory' (ignore this message if you have already enabled this setting)", CheckResult.Warning);
 
+        public static ErrorCode ExtractionInformationMissing = new ErrorCode("R014", "The following columns no longer map to an ExtractionInformation(it may have been deleted){0}", CheckResult.Warning);
         static ErrorCodes()
         {
             var fields = typeof(ErrorCodes).GetFields(BindingFlags.Public | BindingFlags.Static).Where(p => p.FieldType == typeof(ErrorCode));
@@ -46,6 +47,5 @@ namespace ReusableLibraryCode.Checks
         /// Collection of all known error codes.  Plugins are free to add to these if desired but must do so pre startup
         /// </summary>
         public static List<ErrorCode> KnownCodes = new List<ErrorCode>();
-
     }
 }

@@ -96,9 +96,11 @@ namespace Rdmp.Core.DataExport.Checks
             if(orphans.Any())
             {
                 notifier.OnCheckPerformed(
-                    new CheckEventArgs("The following columns no longer map to an ExtractionInformation (it may have been deleted)" + Environment.NewLine
-                    + string.Join(Environment.NewLine, orphans.Select(o => o.GetRuntimeName()).ToArray()),
-                    CheckResult.Warning));
+                    new CheckEventArgs(
+                        ErrorCodes.ExtractionInformationMissing,
+                        Environment.NewLine + 
+                        string.Join(Environment.NewLine, orphans.Select(o => o.GetRuntimeName()).ToArray()))
+                    );
             }
             
 
