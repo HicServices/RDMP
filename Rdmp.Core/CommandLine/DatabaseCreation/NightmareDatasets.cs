@@ -16,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation
 {
@@ -141,7 +140,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             {
                 // each project
                 Project p = new Project(_repos.DataExportRepository, $"Project {i}");
-                p.ProjectNumber = r.Next(50) == 0 ? 5:i;  // its ok for some projects to have the same number
+                p.ProjectNumber = r.Next(50) == 0 ? 5:i;  // it's ok for some projects to have the same number
                 p.ExtractionDirectory = extractionDir;
                 p.SaveToDatabase();
                 Projects.Add(1, p);

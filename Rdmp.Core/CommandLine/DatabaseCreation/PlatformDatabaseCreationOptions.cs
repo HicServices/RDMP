@@ -50,10 +50,10 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
         [Option("NumberOfRowsPerDataset", Default = ExampleDatasetsCreation.NumberOfRowsPerDataset, HelpText = "When ExampleDatasets is set this is the number of rows to create in each dataset")]
         public int NumberOfRowsPerDataset { get; set; } = ExampleDatasetsCreation.NumberOfRowsPerDataset;
 
-        [Option("Nightmare", Default = false, HelpText = "Create a 100,000+ objects in the Catalogue database")]
+        [Option("Nightmare", Default = false, HelpText = "Create 100,000+ objects in the Catalogue database")]
         public bool Nightmare { get; set; }
 
-        [Option("NightmareFactor", Default = 1, HelpText = "Set to 2 (or more) to double the volume of Nightmare data generated")]
+        [Option("NightmareFactor", Default = 1, HelpText = "Set to 2 (or more) to multiply the volume of Nightmare data generated")]
         public int NightmareFactor { get; set; } = 1;
 
         [Option(Required = false, Default = false, HelpText = "Set to true to validate the SSL certificate of the server you are installing into")]
