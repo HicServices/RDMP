@@ -194,8 +194,15 @@ namespace Rdmp.Core.CommandLine.Runners
                 {
                     try
                     {
-                        var cmd = GetCommandAndPickerFromLine(s, out _picker, repositoryLocator);
-                        RunCommand(cmd);
+                        if(StartsWithEngineVerb(s))
+                        {
+                            RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(SplitCommandLine(s).ToArray(), LogManager.GetCurrentClassLogger(), repositoryLocator);
+                        }
+                        else
+                        {
+                            var cmd = GetCommandAndPickerFromLine(s, out _picker, repositoryLocator);
+                            RunCommand(cmd);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -206,6 +213,18 @@ namespace Rdmp.Core.CommandLine.Runners
                 
         }
 
+        private bool StartsWithEngineVerb(string s)
+        {
+            var verbs = new[] { "cache", "cohort", "dle", "dqe", "extract", "release" };
+            return verbs.Any(v => s.TrimStart().StartsWith(v, StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        /// <summary>
+        /// Splits a command line string into a sequence of discrete arguments as you would get in Program.cs main
+        /// string[] args.  Includes support for wrapping arguments in spaces and escaping etc
+        /// </summary>
+        /// <param name="commandLine"></param>
+        /// <returns></returns>
         public static IEnumerable<string> SplitCommandLine(string commandLine)
         {
             char? inQuotes = null;
