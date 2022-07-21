@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.32112.339
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31729.503
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReusableLibraryCode", "Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj", "{5AD03B2F-232A-4E0B-86FF-DC7F49146962}"
 EndProject
@@ -82,6 +82,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{B010
 		scripts\create_cohort.yaml = scripts\create_cohort.yaml
 		scripts\create_dataload.yaml = scripts\create_dataload.yaml
 		scripts\create_list_destroy_catalogue.yaml = scripts\create_list_destroy_catalogue.yaml
+		scripts\orphan_extractable_column.yaml = scripts\orphan_extractable_column.yaml
 	EndProjectSection
 EndProject
 Global
