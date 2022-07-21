@@ -22,7 +22,7 @@ namespace Rdmp.Core.CommandLine.Options
         [Option('e',"ExtractionConfiguration",HelpText = "The ExtractionConfiguration ID to extract",Required = true)]
         public string ExtractionConfiguration { get; set; }
 
-        [Option('p', "Pipeline", HelpText = "The ID of the extraction Pipeline to use")]
+        [Option('p', "Pipeline", HelpText = "The ID of the extraction Pipeline to use", Required = true)]
         public string Pipeline { get; set; }
 
         [Option('s', "Datasets", HelpText = "Restrict extraction to only those ExtractableDatasets that have the provided list of IDs (must be part of the ExtractionConfiguration)")]

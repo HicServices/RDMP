@@ -196,7 +196,9 @@ namespace Rdmp.Core.CommandLine.Runners
                     {
                         if(StartsWithEngineVerb(s))
                         {
-                            RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(SplitCommandLine(s).ToArray(), LogManager.GetCurrentClassLogger(), repositoryLocator);
+                            var exitCode = RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(SplitCommandLine(s).ToArray(), LogManager.GetCurrentClassLogger(), repositoryLocator);
+                            if (exitCode != 0)
+                                throw new Exception("Exit code from runner was non zero");
                         }
                         else
                         {

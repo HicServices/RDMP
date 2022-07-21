@@ -23,6 +23,6 @@ Commands:
   - SetArgument ProcessTask FilePattern "*.csv"
   - SetArgument ProcessTask TableToLoad TableInfo:*Biochemistry*
 
-  # Chekc and run the load
+  # Check and run the load
   - dle -l "LoadMetadata:*Biochemistry" --command check
   - dle -l "LoadMetadata:*Biochemistry" --command run
