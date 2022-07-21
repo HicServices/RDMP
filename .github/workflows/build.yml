@@ -63,15 +63,10 @@ jobs:
           DataExportConnectionString: Server=(localdb)\MSSQLLocalDB;Database=TEST_DataExport;Trusted_Connection=True;TrustServerCertificate=true;
           EOF
       - name: Run integration test scripts
-        run: dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_list_destroy_catalogue.yaml
-      - name: Run integration script create_cohort.yaml
-        run: dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_cohort.yaml
-      - name: Run integration script create_dataload.yaml
         run: |
-           dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_dataload.yaml &&
-           dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- dle -l "LoadMetadata:*Biochemistry" --command check &&
-           dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- dle -l "LoadMetadata:*Biochemistry" --command run
-
+            dotnet run -c Release --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_list_destroy_catalogue.yaml &&
+            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_cohort.yaml &&
+            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_dataload.yaml && 
       - name: Test Reusable code
         shell: bash
         run: |
