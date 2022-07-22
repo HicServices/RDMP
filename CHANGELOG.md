@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [7.0.15] - 2022-07-22
+
 ### Added
 
 - Added checkbox for show/hide ProjectSpecific Catalogue columns in extraction configuration UI [#1265](https://github.com/HicServices/RDMP/issues/1265)
@@ -1293,7 +1295,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.14...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v7.0.15...develop
+[7.0.15]: https://github.com/HicServices/RDMP/compare/v7.0.14...v7.0.15
 [7.0.14]: https://github.com/HicServices/RDMP/compare/v7.0.13...v7.0.14
 [7.0.13]: https://github.com/HicServices/RDMP/compare/v7.0.12...v7.0.13
 [7.0.12]: https://github.com/HicServices/RDMP/compare/v7.0.11...v7.0.12
