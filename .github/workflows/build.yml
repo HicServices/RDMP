@@ -14,6 +14,9 @@ jobs:
     runs-on: windows-latest
 
     steps:
+      - name: Determine RDMP build version
+        id: version
+        run: perl -ne "print \"::set-output name=rdmpversion::$1\" if /AssemblyVersion\(\"([0-9.]+)\"\)/;" SharedAssemblyInfo.cs
       - name: Stub Node dependencies
         shell: bash
         run: touch package-lock.json
@@ -126,14 +129,8 @@ jobs:
           echo "dir /s/b *.cs *.xml > srcbitsa.txt" | cmd
           perl -pe '$_=reverse' < srcbitsa.txt | sort -t'\' -k1,1 -u | perl -pe '$_=reverse' > srcbits.txt
           echo 7z a -mx=9 Tools/BundleUpSourceIntoZip/output/SourceCodeForSelfAwareness.zip @srcbits.txt | cmd
-      - name: Get the version
-        id: get_version
-        # Get the tag name e.g. v5.0.0 but skip the 'v'
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\/v/}
-        shell: bash
 
       - name: Sign
-        if: contains(github.ref, 'refs/tags/v')
         shell: bash
         run: |
           signtool=(/c/Program\ Files\ \(x86\)/Windows\ Kits/10/bin/*/x64/signtool.exe)
@@ -142,7 +139,7 @@ jobs:
           echo ${{ secrets.DIGICERT_PFX }} | base64 --decode > GitHubActionsWorkflow.pfx
           echo '"'$signtool'"' 'Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p ${{ secrets.DIGICERT_PASSWORD }} PublishWindows/*.exe PublishLinux/rdmp PublishWinForms/*.exe PublishWinForms/Hunspell*.dll' | cmd
           mkdir -p dist
-          cmd /c wix\\build.cmd ${{ steps.get_version.outputs.VERSION }}
+          cmd /c wix\\build.cmd ${{ steps.version.outputs.rdmpversion }}
           echo '"'$signtool'"' 'Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p ${{ secrets.DIGICERT_PASSWORD }} dist/rdmp.msi' | cmd
           (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-cli-win-x64.zip . | cmd)
           (cd PublishLinux ; echo 7z a -mx=9 ../dist/rdmp-cli-linux-x64.zip . | cmd)
@@ -154,17 +151,17 @@ jobs:
 
       - name: Build Nuget packages
         run: |
-          nuget pack Plugins/Plugin/Plugin.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version ${{ steps.get_version.outputs.VERSION }}
-          nuget pack Plugins/Plugin.UI/Plugin.UI.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version ${{ steps.get_version.outputs.VERSION }}
-          nuget pack Plugins/Plugin.Test/Plugin.Test.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version ${{ steps.get_version.outputs.VERSION }}
-          nuget pack Application/ResearchDataManagementPlatform/RDMP.nuspec -Properties Configuration=Release -Version ${{ steps.get_version.outputs.VERSION }}
+          nuget pack Plugins/Plugin/Plugin.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version ${{ steps.version.outputs.rdmpversion }}
+          nuget pack Plugins/Plugin.UI/Plugin.UI.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version ${{ steps.version.outputs.rdmpversion }}
+          nuget pack Plugins/Plugin.Test/Plugin.Test.nuspec -Properties Configuration=Release -IncludeReferencedProjects -Symbols -Version ${{ steps.version.outputs.rdmpversion }}
+          nuget pack Application/ResearchDataManagementPlatform/RDMP.nuspec -Properties Configuration=Release -Version ${{ steps.version.outputs.rdmpversion }}
 
       - name: Push Nuget packages
         if: contains(github.ref, 'refs/tags/v')
         run: |
-          nuget push HIC.RDMP.Plugin.${{ steps.get_version.outputs.VERSION }}.nupkg -skipDuplicate -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_KEY }}
-          nuget push HIC.RDMP.Plugin.UI.${{ steps.get_version.outputs.VERSION }}.nupkg -skipDuplicate -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_KEY }}
-          nuget push HIC.RDMP.Plugin.Test.${{ steps.get_version.outputs.VERSION }}.nupkg -skipDuplicate -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_KEY }}
+          nuget push HIC.RDMP.Plugin.${{ steps.version.outputs.rdmpversion }}.nupkg -skipDuplicate -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_KEY }}
+          nuget push HIC.RDMP.Plugin.UI.${{ steps.version.outputs.rdmpversion }}.nupkg -skipDuplicate -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_KEY }}
+          nuget push HIC.RDMP.Plugin.Test.${{ steps.version.outputs.rdmpversion }}.nupkg -skipDuplicate -Source https://api.nuget.org/v3/index.json -ApiKey ${{ secrets.NUGET_KEY }}
           
       - name: Archive production artifacts
         uses: actions/upload-artifact@v3
