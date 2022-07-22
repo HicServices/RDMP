@@ -63,7 +63,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             if(toAddTo != null)
             {
                 //see if there is one with the same name that for some reason we are not known to be a child of already
-                var duplicate = toAddTo.ExtractionFilters.SingleOrDefault(f => f.Name.Equals(_filter.Name));
+                var duplicate = toAddTo.ExtractionFilters.FirstOrDefault(f => f.Name.Equals(_filter.Name));
 
                 if (duplicate != null)
                 {
