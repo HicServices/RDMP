@@ -12,7 +12,7 @@
     <RootNamespace>Rdmp.Core</RootNamespace>
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
-    <PublishSingleFile>true</PublishSingleFile>
+    <PublishSingleFile>false</PublishSingleFile>
   </PropertyGroup>
   <PropertyGroup>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -43,7 +43,7 @@
     </PackageReference>
     <PackageReference Include="Terminal.Gui" Version="1.6.4" />
     <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
-    <PackageReference Include="YamlDotNet" Version="11.2.1" />
+    <PackageReference Include="YamlDotNet" Version="12.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Rdmp.Core\Rdmp.Core.csproj" />
