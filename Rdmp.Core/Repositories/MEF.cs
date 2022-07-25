@@ -70,7 +70,7 @@ namespace Rdmp.Core.Repositories
         public Type GetType(string type)
         {            
             if(string.IsNullOrWhiteSpace(type))
-                throw new ArgumentNullException("type");
+                throw new ArgumentNullException(nameof(type));
 
             if(TypeNotKnown.Contains(type))
                 return null;
