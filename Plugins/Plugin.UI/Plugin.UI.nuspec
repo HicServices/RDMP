@@ -43,7 +43,7 @@
             <dependency id="HIC.System.Windows.Forms.DataVisualization" version="1.0.1" />
             <dependency id="ReadLine" version="2.0.1" />
             <dependency id="System.DirectoryServices.Protocols" version="6.0.1" />
-            <dependency id="YamlDotNet" version="11.2.1" />
+            <dependency id="YamlDotNet" version="12.0.0" />
         </dependencies>
     </metadata>
   <files>
