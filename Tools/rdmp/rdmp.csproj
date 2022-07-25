@@ -12,7 +12,7 @@
     <RootNamespace>Rdmp.Core</RootNamespace>
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
-    <PublishSingleFile>false>true</PublishSingleFile>false>
+    <PublishSingleFile>false</PublishSingleFile>
   </PropertyGroup>
   <PropertyGroup>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
