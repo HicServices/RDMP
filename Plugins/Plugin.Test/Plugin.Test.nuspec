@@ -22,7 +22,7 @@
             <dependency id="NUnit" version="3.13.3" />
             <dependency id="Moq" version="4.18.1" />
             <dependency id="NLog" version="5.0.1" />
-            <dependency id="YamlDotNet" version="11.2.1" />
+            <dependency id="YamlDotNet" version="12.0.0" />
             <dependency id="Microsoft.NET.Test.Sdk" version="17.2.0" />
             <dependency id="ExcelNumberFormat" version="1.1.0" />
             <dependency id="NPOI" version="2.5.5" />
@@ -44,16 +44,12 @@
     </metadata>
     <files>
 		<file src="bin\$configuration$\net6.0\MapsDirectlyToDatabaseTable.dll" target="lib\net6.0"/>
-		<file src="bin\$configuration$\net6.0\MapsDirectlyToDatabaseTable.pdb" target="lib\net6.0"/>
 		<file src="bin\$configuration$\net6.0\MapsDirectlyToDatabaseTable.xml" target="lib\net6.0"/>
 		<file src="bin\$configuration$\net6.0\Rdmp.Core.dll" target="lib\net6.0"/>
-		<file src="bin\$configuration$\net6.0\Rdmp.Core.pdb" target="lib\net6.0"/>
 		<file src="bin\$configuration$\net6.0\Rdmp.Core.xml" target="lib\net6.0"/>
 		<file src="bin\$configuration$\net6.0\ReusableLibraryCode.dll" target="lib\net6.0"/>
-		<file src="bin\$configuration$\net6.0\ReusableLibraryCode.pdb" target="lib\net6.0"/>
 		<file src="bin\$configuration$\net6.0\ReusableLibraryCode.xml" target="lib\net6.0"/>
 		<file src="bin\$configuration$\net6.0\Tests.Common.dll" target="lib\net6.0"/>
-		<file src="bin\$configuration$\net6.0\Tests.Common.pdb" target="lib\net6.0"/>
 		<file src="bin\$configuration$\net6.0\Tests.Common.xml" target="lib\net6.0"/>
 		<file src="bin\$configuration$\net6.0\TestDatabases.txt" target="content"/>
     </files>

@@ -43,21 +43,17 @@
             <dependency id="HIC.System.Windows.Forms.DataVisualization" version="1.0.1" />
             <dependency id="ReadLine" version="2.0.1" />
             <dependency id="System.DirectoryServices.Protocols" version="6.0.1" />
-            <dependency id="YamlDotNet" version="11.2.1" />
+            <dependency id="YamlDotNet" version="12.0.0" />
         </dependencies>
     </metadata>
   <files>
     <file src="bin\$configuration$\net6.0-windows7.0\MapsDirectlyToDatabaseTable.dll" target="lib\net6.0-windows7.0"/>
-    <file src="bin\$configuration$\net6.0-windows7.0\MapsDirectlyToDatabaseTable.pdb" target="lib\net6.0-windows7.0"/>
     <file src="bin\$configuration$\net6.0-windows7.0\MapsDirectlyToDatabaseTable.xml" target="lib\net6.0-windows7.0"/>
     <file src="bin\$configuration$\net6.0-windows7.0\Rdmp.Core.dll" target="lib\net6.0-windows7.0"/>
-    <file src="bin\$configuration$\net6.0-windows7.0\Rdmp.Core.pdb" target="lib\net6.0-windows7.0"/>
     <file src="bin\$configuration$\net6.0-windows7.0\Rdmp.Core.xml" target="lib\net6.0-windows7.0"/>
     <file src="bin\$configuration$\net6.0-windows7.0\Rdmp.UI.dll" target="lib\net6.0-windows7.0"/>
-    <file src="bin\$configuration$\net6.0-windows7.0\Rdmp.UI.pdb" target="lib\net6.0-windows7.0"/>
     <file src="bin\$configuration$\net6.0-windows7.0\Rdmp.UI.xml" target="lib\net6.0-windows7.0"/>
     <file src="bin\$configuration$\net6.0-windows7.0\ReusableLibraryCode.dll" target="lib\net6.0-windows7.0"/>
-    <file src="bin\$configuration$\net6.0-windows7.0\ReusableLibraryCode.pdb" target="lib\net6.0-windows7.0"/>
     <file src="bin\$configuration$\net6.0-windows7.0\ReusableLibraryCode.xml" target="lib\net6.0-windows7.0"/>
   </files>
 </package>

@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+## [7.0.16] - 2022-07-25
+
+- Bugfix release due to build issues in releasing 7.0.15
+- Bump YamlDotNet from 11.2.1 to 12.0.0
+
 ## [7.0.15] - 2022-07-22
 
 ### Added
