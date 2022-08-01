@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Icons in 'edit extraction columns' window now shows IsExtractionIdentifier and Extraction Primary Key status [#1312](https://github.com/HicServices/RDMP/issues/1312).
+
 ## [7.0.16] - 2022-07-25
 
 - Bugfix release due to build issues in releasing 7.0.15
