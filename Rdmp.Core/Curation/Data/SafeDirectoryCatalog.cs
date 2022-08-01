@@ -226,7 +226,8 @@ namespace Rdmp.Core.Curation.Data
 
         private void AddTypes(FileInfo f, Assembly ass, Type[] types, ICheckNotifier listener)
         {
-            TypesByAssembly.TryAdd(ass,types.Where(t=>t != null).ToArray());
+            types = types.Where(t => t != null).ToArray();
+            TypesByAssembly.TryAdd(ass,types);
             
             foreach(var t in types)
                 if(t.FullName != null && !TypesByName.ContainsKey(t.FullName))
