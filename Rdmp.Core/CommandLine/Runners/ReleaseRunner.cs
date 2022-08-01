@@ -47,7 +47,7 @@ namespace Rdmp.Core.CommandLine.Runners
             _pipeline = GetObjectFromCommandLineString<Pipeline>(RepositoryLocator, _options.Pipeline);
                         
             //get all configurations user has picked
-            _configurations = GetObjectsFromCommandLineString<IExtractionConfiguration>(RepositoryLocator,_options.Configurations).ToArray();
+            _configurations = GetObjectsFromCommandLineString<ExtractionConfiguration>(RepositoryLocator,_options.Configurations).ToArray();
 
             //some datasets only
             if(_options.SelectedDataSets != null && _options.SelectedDataSets.Any())
