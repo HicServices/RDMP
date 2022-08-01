@@ -37,7 +37,12 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
             //if the current state is to hash add the overlay
             if (col.HashOnDataRelease) 
                 toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Hashed);
-            
+
+            if (col.CatalogueExtractionInformation?.IsPrimaryKey ?? false)
+                toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Key);
+            if (col.CatalogueExtractionInformation?.IsExtractionIdentifier ?? false)
+                toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.IsExtractionIdentifier);
+
             var ei = col.CatalogueExtractionInformation;
 
             //its parent ExtractionInformation still exists then we can determine its category
