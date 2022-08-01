@@ -54,7 +54,7 @@ namespace Rdmp.Core.CommandLine.Options
             var deserializer = new Deserializer();
             var toReturn = deserializer.Deserialize<ConnectionStringsYamlFile>(File.ReadAllText(f.FullName));
 
-            if(string.IsNullOrWhiteSpace(toReturn.CatalogueConnectionString))
+            if(toReturn == null || string.IsNullOrWhiteSpace(toReturn.CatalogueConnectionString))
             {
                 throw new Exception($"{nameof(CatalogueConnectionString)} is missing from the RDMP connection strings file: '{f.FullName}'");
             }
