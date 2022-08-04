@@ -204,8 +204,10 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandRunSupportingSql(_activator,sqlTable,null);
             }
 
-            if(Is(o,out  AggregateConfiguration ac) && !ac.Catalogue.IsApiCall())
+            if(Is(o,out AggregateConfiguration ac) && !ac.Catalogue.IsApiCall())
             {
+                yield return new ExecuteCommandSet(_activator, ac, typeof(AggregateConfiguration).GetProperty(nameof(AggregateConfiguration.Description)));
+
                 yield return new ExecuteCommandCreateNewFilter(_activator, ac) { SuggestedCategory = Add, OverrideCommandName = "New Filter" };
                 yield return new ExecuteCommandCreateNewFilter(_activator, ac) { OfferCatalogueFilters=true, SuggestedCategory = Add, OverrideCommandName = "Existing Filter" };
 
