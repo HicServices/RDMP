@@ -360,7 +360,11 @@ namespace Rdmp.Core.Tests.Providers
             
             var ci2 = WhenIHaveA<ExtractionInformation>().CatalogueItem;
 
-            var join = new JoinInfo((ICatalogueRepository)ci1.Repository, ci2.ColumnInfo, ci1.ColumnInfo, ExtractionJoinType.Right, nullCollationExpression);
+            _=new JoinInfo((ICatalogueRepository)ci1.Repository,
+                ci2.ColumnInfo,
+                ci1.ColumnInfo,
+                ExtractionJoinType.Right,
+                nullCollationExpression);
 
             var pp = new CatalogueProblemProvider();
             var childProvider = GetActivator().CoreChildProvider;
@@ -392,7 +396,7 @@ namespace Rdmp.Core.Tests.Providers
 
             var ci2 = WhenIHaveA<ExtractionInformation>().CatalogueItem;
 
-            var join = new JoinInfo((ICatalogueRepository)ci1.Repository,
+            _ = new JoinInfo((ICatalogueRepository)ci1.Repository,
                 ci2.ColumnInfo,
                 ci1.ColumnInfo,
                 ExtractionJoinType.Right,
