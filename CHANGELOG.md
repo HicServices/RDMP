@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Added
+
+- Template cohort builder aggregates can be dragged onto extraction datasets to import the container tree [#1307](https://github.com/HicServices/RDMP/issues/1307)
+
 ## [7.0.17] - 2022-08-01
 
 ### Added
