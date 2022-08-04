@@ -524,7 +524,7 @@ namespace Rdmp.Core.QueryBuilding
              * When using a transform as the SELECT column, different DBMS expect different values in the ORDER/GROUP by bit
              * 
              * For this explanation, consider the transform "UPPER(mycol) as mytransform".  This is a select line 
-             * composed of "UPPER(mycol)" and it's alias "mytransform"
+             * composed of "UPPER(mycol)" and its alias "mytransform"
              * 
              * Microsoft Sql Server expects:
              *   select 
