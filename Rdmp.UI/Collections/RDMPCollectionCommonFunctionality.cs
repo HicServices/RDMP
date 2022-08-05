@@ -297,41 +297,62 @@ namespace Rdmp.UI.Collections
 
             e.AutoPopDelay = 32767;
 
-            string problem = activator.DescribeProblemIfAny(model);
-
-            if (!string.IsNullOrWhiteSpace(problem))
+            if(GetToolTip(activator, model,out string title, out string body, out bool isBad))
             {
-                e.StandardIcon = ToolTipControl.StandardIcons.Error;
-                e.Title = model.ToString();
-
-                e.Text = problem;
-                e.IsBalloon = true;
-
-            }
-            else
-            if (model is ICanBeSummarised sum)
-            {
-                e.StandardIcon = ToolTipControl.StandardIcons.Info;
-                
-                if(model is IMapsDirectlyToDatabaseTable d)
-                {
-                    e.Title = $"{model} (ID: {d.ID})";
-                }
-                else
-                {
-                    e.Title = model.ToString();
-                }
-
-                e.Text = GenerateSummary(activator,sum);
+                e.StandardIcon = isBad ? ToolTipControl.StandardIcons.Error : ToolTipControl.StandardIcons.Info;
+                e.Title = title;
+                e.Text = body;
                 e.IsBalloon = true;
             }
 
         }
 
+        /// <summary>
+        /// Returns true if it is possible to generate tool tip style info on the given <paramref name="model"/>
+        /// </summary>
+        /// <param name="activator"></param>
+        /// <param name="model"></param>
+        /// <param name="title"></param>
+        /// <param name="body"></param>
+        /// <param name="isBad"></param>
+        /// <returns></returns>
+        public static bool GetToolTip(IActivateItems activator, object model, out string title, out string body, out bool isBad)
+        {
+            string problem = activator.DescribeProblemIfAny(model);
+            title = GetToolTipTitle(model);
+
+            if (!string.IsNullOrWhiteSpace(problem))
+            {
+                isBad = true;
+                body = problem;
+                return true;
+            }
+            else
+            if (model is ICanBeSummarised sum)
+            {
+                isBad = false;
+                body = GetToolTipBody(activator, sum);
+                return true;
+            }
+
+
+            // not possible to show any kind of tooltip for this object
+            body = null;
+            isBad = false;
+            return false;
+        }
+
+        private static string GetToolTipTitle(object model)
+        {
+            return model is IMapsDirectlyToDatabaseTable d ?
+                $"{model} (ID: {d.ID})" :
+                model.ToString();
+        }
+
         static DateTime lastInvalidatedCache = DateTime.Now;
         static Dictionary<object, string> cache = new Dictionary<object, string>();
 
-        private static string GenerateSummary(IActivateItems activator, ICanBeSummarised sum)
+        private static string GetToolTipBody(IActivateItems activator, ICanBeSummarised sum)
         {
             if(DateTime.Now.Subtract(lastInvalidatedCache).TotalSeconds > 10)
             {

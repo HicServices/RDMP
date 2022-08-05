@@ -327,7 +327,8 @@ namespace Rdmp.UI.ProjectUI
 
             checkAndExecuteUI1.SetItemActivator(activator);
 
-            tlvDatasets.ExpandAll();
+            foreach(var o in new[] { _globalsFolder, _coreDatasetsFolder, _projectSpecificDatasetsFolder})
+                tlvDatasets.Expand(o);
 
             if (_isFirstTime)
             {
