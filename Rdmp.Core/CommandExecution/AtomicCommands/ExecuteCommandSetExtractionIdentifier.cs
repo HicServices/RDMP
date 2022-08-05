@@ -144,7 +144,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     if (selected.Length == 0)
                         if (!YesNo($"Do you want to clear the {_commandProperty}?", $"Clear {_commandProperty}?"))
                             return;
-                    if(!ValidateSelection(selected))
+                    if(!IsValidSelection(selected))
                         return;
                 }
                 else
@@ -182,7 +182,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         /// </summary>
         /// <param name="selected"></param>
         /// <returns></returns>
-        protected abstract bool ValidateSelection(ConcreteColumn[] selected);
+        protected abstract bool IsValidSelection(ConcreteColumn[] selected);
     }
 
     public class ExecuteCommandSetExtractionPrimaryKeys : ExecuteCommandSetColumnSettingBase, IAtomicCommand
@@ -217,7 +217,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             return "Change which column(s) should be marked as primary key if extracting to database";
         }
 
-        protected override bool ValidateSelection(ConcreteColumn[] selected)
+        protected override bool IsValidSelection(ConcreteColumn[] selected)
         {
             return true;
         }
@@ -271,11 +271,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             return "Change which column(s) contain the patient id / linkage column e.g. CHI";
         }
 
-        protected override bool ValidateSelection(ConcreteColumn[] selected)
+        protected override bool IsValidSelection(ConcreteColumn[] selected)
         {
             // if multiple selected warn user
             if (selected.Length > 1)
-                return !YesNo("Are you sure you want multiple linkable extraction identifier columns (most datasets only have 1 person ID column in them)?", "Multiple IsExtractionIdentifier columns?");
+                return YesNo("Are you sure you want multiple linkable extraction identifier columns (most datasets only have 1 person ID column in them)?", "Multiple IsExtractionIdentifier columns?");
 
             return true;
         }
