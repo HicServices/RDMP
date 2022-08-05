@@ -155,7 +155,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
             foreach (var ec in allColumns)
             {
-                bool newValue = selected.Contains(ec);
+                bool newValue = selected != null && selected.Contains(ec);
 
                 if (Getter(ec) != newValue)
                 {
