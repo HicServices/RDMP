@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added 'Set Description' command to [AggregateConfiguration] context menu
 - Template cohort builder aggregates can be dragged onto extraction datasets to import the container tree [#1307](https://github.com/HicServices/RDMP/issues/1307)
 - Having a JoinInfo between 2 columns that have different collations is now flagged by ProblemProvider [#1288](https://github.com/HicServices/RDMP/issues/1288)
+- Added ability to pop out tooltips/problems into modal popup [#1334](https://github.com/HicServices/RDMP/issues/1334)
 
 ## [7.0.17] - 2022-08-01
 
