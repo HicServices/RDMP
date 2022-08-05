@@ -139,9 +139,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
             else
             {
-                if (SelectMany(allColumns, out selected, initialSearchText))
+                if (SelectMany(new DialogArgs { 
+                    InitialObjectSelection = _alreadyMarked ?? _alreadyMarkedInConfiguration,
+                    AllowSelectingNull = true,
+                    WindowTitle = $"Set {_commandProperty}",
+                    TaskDescription = $"Choose which columns will make up the new {_commandProperty}.  Or select null to clear"
+                }, allColumns, out selected))
                 {
-                    if (selected.Length == 0)
+                    if (selected == null || selected.Length == 0)
                         if (!YesNo($"Do you want to clear the {_commandProperty}?", $"Clear {_commandProperty}?"))
                             return;
                     if(!IsValidSelection(selected))
@@ -155,7 +160,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             {
                 bool newValue = selected.Contains(ec);
 
-                if (ec.IsExtractionIdentifier != newValue)
+                if (Getter(ec) != newValue)
                 {
                     Setter(ec,newValue);
                     ec.SaveToDatabase();
@@ -273,6 +278,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
 
         protected override bool IsValidSelection(ConcreteColumn[] selected)
         {
+            if (selected == null)
+                return true;
+
             // if multiple selected warn user
             if (selected.Length > 1)
                 return YesNo("Are you sure you want multiple linkable extraction identifier columns (most datasets only have 1 person ID column in them)?", "Multiple IsExtractionIdentifier columns?");
