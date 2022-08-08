@@ -832,7 +832,7 @@ namespace Rdmp.UI.SimpleDialogs
         private void btnSelectNULL_Click(object sender, EventArgs e)
         {
             Selected = default(T);
-            MultiSelected = null;
+            MultiSelected = new HashSet<T>();
             DialogResult = DialogResult.OK;
             this.Close();
         }
@@ -840,7 +840,7 @@ namespace Rdmp.UI.SimpleDialogs
         private void btnCancel_Click(object sender, EventArgs e)
         {
             Selected = default(T);
-            MultiSelected = null;
+            MultiSelected = new HashSet<T>();
             DialogResult = DialogResult.Cancel;
             this.Close();
         }
