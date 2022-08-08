@@ -34,6 +34,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                 typeof(ExecuteCommandSetDataAccessContextForCredentials),
                 typeof(ExecuteCommandActivate),
                 typeof(ExecuteCommandCreateNewExternalDatabaseServer),
+                typeof(ExecuteCommandShowTooltip),
                 typeof(ExecuteCommandShowKeywordHelp),
                 typeof(ExecuteCommandCollapseChildNodes),
                 typeof(ExecuteCommandExpandAllNodes),
