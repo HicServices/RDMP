@@ -22,6 +22,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Datasets in extraction UI are no longer expanded by default (i.e. to show Supporting Documents/Sql) [#1264](https://github.com/HicServices/RDMP/issues/1264)
 
+### Fixed
+
+- Running RDMP cli without supplying repository connection details (and after deleting `Databases.yaml`) now results in a specific error message instead of null reference [#1346]https://github.com/HicServices/RDMP/issues/1346
+
 ## [7.0.17] - 2022-08-01
 
 ### Added
