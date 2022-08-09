@@ -203,15 +203,15 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 if(composite != null)
                     composite.DeleteInDatabase();
     
-                lookup.DeleteInDatabase();
+                lookup?.DeleteInDatabase();
 
-                desc.DeleteInDatabase();
-                fk.DeleteInDatabase();
-                pk.DeleteInDatabase();
-                fk2.DeleteInDatabase(); 
-                pk2.DeleteInDatabase();
-                fkTable.DeleteInDatabase(); 
-                pkTable.DeleteInDatabase();
+                desc?.DeleteInDatabase();
+                fk?.DeleteInDatabase();
+                pk?.DeleteInDatabase();
+                fk2?.DeleteInDatabase(); 
+                pk2?.DeleteInDatabase();
+                fkTable?.DeleteInDatabase(); 
+                pkTable?.DeleteInDatabase();
             }
         }
 
@@ -273,15 +273,15 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 if (composite != null)
                     composite.DeleteInDatabase();
 
-                lookup.DeleteInDatabase();
+                lookup?.DeleteInDatabase();
 
-                desc.DeleteInDatabase();
-                fk.DeleteInDatabase();
-                pk.DeleteInDatabase();
-                fk2.DeleteInDatabase();
-                pk2.DeleteInDatabase();
-                fkTable.DeleteInDatabase();
-                pkTable.DeleteInDatabase();
+                desc?.DeleteInDatabase();
+                fk?.DeleteInDatabase();
+                pk?.DeleteInDatabase();
+                fk2?.DeleteInDatabase();
+                pk2?.DeleteInDatabase();
+                fkTable?.DeleteInDatabase();
+                pkTable?.DeleteInDatabase();
             }
         }
 
@@ -347,15 +347,15 @@ namespace Rdmp.Core.Tests.Curation.Integration
             }
             finally
             {
-                lookup.DeleteInDatabase();
+                lookup?.DeleteInDatabase();
 
-                desc.DeleteInDatabase();
-                fk.DeleteInDatabase();
-                pk.DeleteInDatabase();
-                fk2.DeleteInDatabase();
-                pk2.DeleteInDatabase();
-                fkTable.DeleteInDatabase();
-                pkTable.DeleteInDatabase();
+                desc?.DeleteInDatabase();
+                fk?.DeleteInDatabase();
+                pk?.DeleteInDatabase();
+                fk2?.DeleteInDatabase();
+                pk2?.DeleteInDatabase();
+                fkTable?.DeleteInDatabase();
+                pkTable?.DeleteInDatabase();
             }
         }
 
