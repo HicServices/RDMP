@@ -9,6 +9,7 @@ using System.Data;
 using System.Linq;
 using FAnsi;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper;
@@ -202,15 +203,15 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 if(composite != null)
                     composite.DeleteInDatabase();
     
-                lookup.DeleteInDatabase();
+                lookup?.DeleteInDatabase();
 
-                desc.DeleteInDatabase();
-                fk.DeleteInDatabase();
-                pk.DeleteInDatabase();
-                fk2.DeleteInDatabase(); 
-                pk2.DeleteInDatabase();
-                fkTable.DeleteInDatabase(); 
-                pkTable.DeleteInDatabase();
+                desc?.DeleteInDatabase();
+                fk?.DeleteInDatabase();
+                pk?.DeleteInDatabase();
+                fk2?.DeleteInDatabase(); 
+                pk2?.DeleteInDatabase();
+                fkTable?.DeleteInDatabase(); 
+                pkTable?.DeleteInDatabase();
             }
         }
 
@@ -272,15 +273,89 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 if (composite != null)
                     composite.DeleteInDatabase();
 
-                lookup.DeleteInDatabase();
+                lookup?.DeleteInDatabase();
 
-                desc.DeleteInDatabase();
-                fk.DeleteInDatabase();
-                pk.DeleteInDatabase();
-                fk2.DeleteInDatabase();
-                pk2.DeleteInDatabase();
-                fkTable.DeleteInDatabase();
-                pkTable.DeleteInDatabase();
+                desc?.DeleteInDatabase();
+                fk?.DeleteInDatabase();
+                pk?.DeleteInDatabase();
+                fk2?.DeleteInDatabase();
+                pk2?.DeleteInDatabase();
+                fkTable?.DeleteInDatabase();
+                pkTable?.DeleteInDatabase();
+            }
+        }
+
+
+        [Test]
+        public void LookupTest_CustomSql()
+        {
+
+            //this only works for MSSQL Servers
+            if (CatalogueTableRepository.DiscoveredServer.DatabaseType != DatabaseType.MicrosoftSQLServer)
+                Assert.Ignore("This test only targets Microsft SQL Servers");
+
+            TableInfo fkTable = null;
+            TableInfo pkTable = null;
+            ColumnInfo desc = null;
+            ColumnInfo fk = null;
+            ColumnInfo pk = null;
+
+            ColumnInfo fk2 = null;
+            ColumnInfo pk2 = null;
+
+            Lookup lookup = null;
+
+            try
+            {
+
+                //table 1 - the dataset table, it has 2 foreign keys e.g. TestCode, Healthboard
+                fkTable = new TableInfo(CatalogueRepository, "UnitTest_Biochemistry");
+                fk = new ColumnInfo(CatalogueRepository, "One", "int", fkTable);
+                fk2 = new ColumnInfo(CatalogueRepository, "Two", "int", fkTable);
+
+                //table 2 - the lookup table, it has 2 primary keys e.g. TestCode,Healthboard and 1 description e.g. TestDescription (the Healthboard makes it a composite JOIN which allows for the same TestCode being mapped to a different discription in Tayside vs Fife (healthboard)
+                pkTable = new TableInfo(CatalogueRepository, "UnitTest_BiochemistryLookup");
+                pk = new ColumnInfo(CatalogueRepository, "One", "int", pkTable);
+                pk2 = new ColumnInfo(CatalogueRepository, "Two", "int", pkTable);
+                desc = new ColumnInfo(CatalogueRepository, "UnitTest_TestDescription", "int", pkTable);
+                lookup = new Lookup(CatalogueRepository, desc, fk, pk, ExtractionJoinType.Left, null);
+
+                string joinSQL = JoinHelper.GetJoinSQL(lookup);
+
+                Assert.AreEqual(joinSQL, "UnitTest_Biochemistry Left JOIN UnitTest_BiochemistryLookup ON One = One");
+
+                //Create the custom lookup
+                var cmd = new ExecuteCommandSetExtendedProperty(new ThrowImmediatelyActivator(RepositoryLocator),
+                    new[] { lookup },
+                    ExtendedProperty.CustomJoinSql,
+@"{0}.One={1}.One AND
+({0}.Two = {0}.Two OR 
+    ({0}.{Two} is null AND {1}.Two is null)
+)");
+                cmd.Execute();
+
+
+                string joinSQL_AfterAddingCompositeKey = JoinHelper.GetJoinSQL(lookup);
+
+                Assert.AreEqual(joinSQL_AfterAddingCompositeKey,
+                    "UnitTest_Biochemistry Left JOIN UnitTest_BiochemistryLookup ON UnitTest_Biochemistry.One=UnitTest_BiochemistryLookup.One AND (UnitTest_Biochemistry.Two = UnitTest_Biochemistry.Two OR      (UnitTest_Biochemistry.{Two} is null AND UnitTest_BiochemistryLookup.Two is null) )");
+            }
+            catch (Exception ex)
+            {
+                Console.Write(ex.ToString());
+                throw;
+            }
+            finally
+            {
+                lookup?.DeleteInDatabase();
+
+                desc?.DeleteInDatabase();
+                fk?.DeleteInDatabase();
+                pk?.DeleteInDatabase();
+                fk2?.DeleteInDatabase();
+                pk2?.DeleteInDatabase();
+                fkTable?.DeleteInDatabase();
+                pkTable?.DeleteInDatabase();
             }
         }
 
