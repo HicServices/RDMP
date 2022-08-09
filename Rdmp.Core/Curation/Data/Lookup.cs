@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
@@ -314,7 +315,12 @@ namespace Rdmp.Core.Curation.Data
             _primaryKey = primaryKey;
             _foreignKey = foreignKey;
             _description = descriptionColumn;
+        }
 
+        /// <inheritdoc/>
+        public string GetCustomJoinSql()
+        {
+            return CatalogueRepository.GetExtendedProperties(ExtendedProperty.CustomJoinSql,this).FirstOrDefault()?.Value;
         }
     }
 }

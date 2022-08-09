@@ -370,6 +370,23 @@ namespace Rdmp.Core.CommandExecution
                 yield return new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator) { PromptToPickAProject=true};
 
 
+            if (Is(o, out IJoin j))
+            {
+                yield return new ExecuteCommandSetExtendedProperty(_activator, new[] { (IMapsDirectlyToDatabaseTable)j }, ExtendedProperty.CustomJoinSql, null)
+                {
+                    OverrideCommandName = "Set CustomJoinSql",
+                    PromptForValue = true,
+                    PromptForValueTaskDescription = ExtendedProperty.CustomJoinSqlDescription,
+                    SuggestedCategory = "Custom Join"
+                };
+
+                yield return new ExecuteCommandSetExtendedProperty(_activator, new[] { (IMapsDirectlyToDatabaseTable)j }, ExtendedProperty.CustomJoinSql, null)
+                {
+                    OverrideCommandName = "Clear CustomJoinSql",
+                    SuggestedCategory = "Custom Join"
+                };
+            }
+
             CohortIdentificationConfiguration cic = null;
             if (Is(o, out ProjectCohortIdentificationConfigurationAssociation pcic) || Is(o,out cic))
             {
