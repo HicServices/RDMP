@@ -52,5 +52,12 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         /// <returns></returns>
         ExtractionJoinType GetInvertedJoinType();
+
+        /// <summary>
+        /// If you want to override the 'ON SQL' when using this join return the custom SQL here.  Normally SQL will be something like "table1.A = table2.A".  Use this method
+        /// to turn it into e.g. "table1.A = table2.A OR (table1.A is null AND table2.A is null)"
+        /// </summary>
+        /// <returns></returns>
+        string GetCustomJoinSql();
     }
 }

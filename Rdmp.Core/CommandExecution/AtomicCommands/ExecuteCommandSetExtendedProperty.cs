@@ -22,6 +22,17 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public string PropertyName { get; }
         public string Value { get; }
         public bool Strict { get; }
+        
+        /// <summary>
+        /// Set to true to prompt user for the <see cref="Value"/> at execution time (e.g. for interactive UIs)
+        /// </summary>
+        public bool PromptForValue { get; set; }
+
+        /// <summary>
+        /// If <see cref="PromptForValue"/> is set to true then this is the description to show to the user
+        /// that explains what they should be entering as a <see cref="Value"/>
+        /// </summary>
+        public string PromptForValueTaskDescription { get; set; }
 
         [UseWithObjectConstructor]
         public ExecuteCommandSetExtendedProperty(IBasicActivateItems activator,
@@ -59,20 +70,37 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             base.Execute();
 
             var cataRepo = BasicActivator.RepositoryLocator.CatalogueRepository;
+            string newValue = Value;
                         
             foreach(var o in SetOn)
             {
+                var props = cataRepo.GetExtendedProperties(PropertyName, o).ToArray();
+                string oldValue = props.FirstOrDefault()?.Value;
+
+                if (PromptForValue)
+                {
+                    if (!BasicActivator.TypeText(new DialogArgs
+                    {
+                        WindowTitle = PropertyName,
+                        TaskDescription = PromptForValueTaskDescription
+                    }, int.MaxValue, oldValue, out newValue, false))
+                    {
+                        // user cancelled entering some text
+                        return;
+                    }
+                }
+
                 // delete any old versions
-                foreach (var d in cataRepo.GetExtendedProperties(PropertyName, o))
+                foreach (var d in props)
                 {
                     d.DeleteInDatabase();
                 }
 
                 // Creates the new property into the db
                 // If the Value passed was null just leave it deleted
-                if(!string.IsNullOrWhiteSpace(Value))
+                if(!string.IsNullOrWhiteSpace(newValue))
                 {
-                    new ExtendedProperty(cataRepo, o, PropertyName, Value);
+                    new ExtendedProperty(cataRepo, o, PropertyName, newValue);
                 }
                     
             }
