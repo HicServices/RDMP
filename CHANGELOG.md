@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Changed
+- Removed restriction preventing [Lookup] requiring all foreign key columns being from the same table [#1331](https://github.com/HicServices/RDMP/issues/1307)
+
 ### Added
 - Added 'Set Description' command to [AggregateConfiguration] context menu
 - Template cohort builder aggregates can be dragged onto extraction datasets to import the container tree [#1307](https://github.com/HicServices/RDMP/issues/1307)
