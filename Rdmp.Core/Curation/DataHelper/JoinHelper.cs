@@ -4,8 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Text.RegularExpressions;
 using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.Curation.DataHelper
@@ -16,44 +18,6 @@ namespace Rdmp.Core.Curation.DataHelper
     public class JoinHelper
     {
         
-        #region ways to build up the JOIN Sql
-        /// <summary>
-        /// Static version lets you preview what the Lookup will look like without actually having to 
-        /// create one ( note that this method will not let you view Supplemental joins, these require 
-        /// GetJoinSQL(IJoin) to be used instead
-        /// </summary>
-        /// <returns></returns>
-        public static string GetJoinSQL(ColumnInfo ForeignKey, ColumnInfo PrimaryKey, ExtractionJoinType? type, string Collation)
-        {
-
-            TableInfo fkTable = null;
-            if (ForeignKey != null)
-                fkTable = ForeignKey.TableInfo;
-
-            TableInfo pkTable = null;
-            if (PrimaryKey != null)
-                pkTable = PrimaryKey.TableInfo;
-            
-            string foreignTable = fkTable == null ? "" : fkTable.Name;
-            string primaryTable = pkTable == null ? "" : pkTable.Name;
-
-            string key1 = ForeignKey == null ? "" : ForeignKey.Name;
-            string key2 = PrimaryKey == null ? "" : PrimaryKey.Name;
-
-            string joinType = "";
-
-            if (type != null)
-                joinType = type.ToString();
-
-            string SQL = null;
-            
-            SQL = foreignTable + " " + joinType + " JOIN " + primaryTable + " ON " + key1 + " = " + key2;
-
-            SQL = AppendCollation(SQL, Collation);
-            
-            return SQL;
-        }
-
         /// <summary>
         /// Assembles ANSI Sql for the JOIN section of a query including any supplemental join columns (e.g. T1 LEFT JOIN T2 on T1.A = T2.A AND T1.B = T2.B)
         /// </summary>
@@ -61,11 +25,53 @@ namespace Rdmp.Core.Curation.DataHelper
         /// <returns></returns>
         public static string GetJoinSQL(IJoin join)
         {
-            string SQL = GetJoinSQL(join.ForeignKey, join.PrimaryKey, join.ExtractionJoinType, join.Collation);
+            TableInfo fkTable = null;
+            if (join.ForeignKey != null)
+                fkTable = join.ForeignKey.TableInfo;
+
+            TableInfo pkTable = null;
+            if (join.PrimaryKey != null)
+                pkTable = join.PrimaryKey.TableInfo;
+
+            string foreignTable = fkTable == null ? "" : fkTable.Name;
+            string primaryTable = pkTable == null ? "" : pkTable.Name;
+
+            string key1 = join.ForeignKey == null ? "" : join.ForeignKey.Name;
+            string key2 = join.PrimaryKey == null ? "" : join.PrimaryKey.Name;
+
+            string joinType = join.ExtractionJoinType.ToString();
+
+            string SQL = foreignTable + " " + joinType + " JOIN " + primaryTable 
+                + GetOnSql(join, foreignTable, primaryTable, key1,key2, out var hasCustomSql);
+
+            SQL = AppendCollation(SQL, join.Collation);
+
+            if (hasCustomSql)
+                return SQL;
 
             SQL = AppendSupplementalJoins(SQL, join);
             
             return SQL;
+        }
+
+        private static string GetOnSql(IJoin join,string key1Table,string key2Table, string key1, string key2,out bool hasCustomSql)
+        {
+            var custom = join.GetCustomJoinSql();
+
+            if(!string.IsNullOrWhiteSpace(custom))
+            {
+                hasCustomSql = true;
+                custom = custom.Replace("{0}", key1Table);
+                custom = custom.Replace("{1}", key2Table);
+
+                // remove newlines in users SQL
+                custom = Regex.Replace(custom,"\r?\n", " ");
+
+                return " ON " + custom;
+            }
+            hasCustomSql = false;
+
+            return " ON " + key1 + " = " + key2;
         }
 
         /// <summary>
@@ -82,14 +88,24 @@ namespace Rdmp.Core.Curation.DataHelper
             if (join.ForeignKey != null)
                 fkTable = join.ForeignKey.TableInfo;
 
+            TableInfo pkTable = null;
+            if (join.PrimaryKey != null)
+                pkTable = join.PrimaryKey.TableInfo;
+
             string foreignTable = fkTable == null ? "" : fkTable.Name;
+            string primaryTable = pkTable == null ? "" : pkTable.Name;
 
             string key1 = join.ForeignKey == null ? "" : join.ForeignKey.Name;
             string key2 = join.PrimaryKey == null ? "" : join.PrimaryKey.Name;
 
-            string SQL = " " + join.GetInvertedJoinType() + " JOIN " + foreignTable + " ON " + key1 + " = " + key2;
+            string SQL = " " + join.GetInvertedJoinType() + " JOIN " + foreignTable 
+                + GetOnSql(join,foreignTable, primaryTable, key1,key2,out var hasCustomSql);
 
             SQL = AppendCollation(SQL, join);
+
+            if (hasCustomSql)
+                return SQL;
+
             SQL = AppendSupplementalJoins(SQL, join);
 
 
@@ -110,36 +126,50 @@ namespace Rdmp.Core.Curation.DataHelper
         /// <returns></returns>
         public static string GetJoinSQLPrimaryKeySideOnly(IJoin join, int aliasNumber = -1)
         {
+            TableInfo fkTable = null;
+            if (join.ForeignKey != null)
+                fkTable = join.ForeignKey.TableInfo;
+
             TableInfo pkTable = null;
             if (join.PrimaryKey != null)
                 pkTable = join.PrimaryKey.TableInfo;
 
+            string foreignTable = fkTable == null ? "" : fkTable.Name;
             string primaryTable = pkTable == null ? "" : pkTable.Name;
 
             //null check... could be required for display purposes where you have set up half the join when this is called
             string key1 = join.ForeignKey == null ? "" : join.ForeignKey.Name;
             string key2 = join.PrimaryKey == null ? "" : join.PrimaryKey.Name;
 
-            string toReturn = "";
+            string toReturn;
+            bool hasCustomSql;
 
             //The lookup table is not being assigned an alias
             if (aliasNumber == -1)
-                toReturn = " " + join.ExtractionJoinType + " JOIN " + primaryTable + " ON " + key1 + " = " + key2;
+            {
+                toReturn = " " + join.ExtractionJoinType + " JOIN " + primaryTable 
+                    + GetOnSql(join, foreignTable,primaryTable, key1, key2, out hasCustomSql);
+                
+            }   
             else
             {
+                var lookupAlias = GetLookupTableAlias(aliasNumber);
+
                 //the lookup table IS being assigned an alias so append As X after table name and change key2 of the join to X.col instead of tablename.col
                 toReturn = " " + join.ExtractionJoinType + " JOIN " + primaryTable
                            + GetLookupTableAlias(aliasNumber, true) +
-                           " ON " + key1 + " = " + key2.Replace(pkTable.Name, GetLookupTableAlias(aliasNumber));
-                
+                           GetOnSql(join,foreignTable, lookupAlias, key1, key2.Replace(pkTable.Name, lookupAlias),out hasCustomSql);
             }
 
             toReturn = AppendCollation(toReturn, join);
+
+            if (hasCustomSql)
+                return toReturn;
+
             toReturn = AppendSupplementalJoins(toReturn, join, aliasNumber);
             
             return toReturn;
         }
-        #endregion
 
         /// <summary>
         /// Gets the suffix for a given lookup table number
