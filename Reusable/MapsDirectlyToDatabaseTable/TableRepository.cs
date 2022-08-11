@@ -236,7 +236,7 @@ namespace MapsDirectlyToDatabaseTable
             if (id == 0)
                 return null;
 
-            string typename = type.Name;
+            string typename = Wrap(type.Name);
 
             using (var connection = GetConnection())
             using (DbCommand selectCommand = DatabaseCommandHelper.GetCommand("SELECT * FROM " + typename + " WHERE ID=" + id, connection.Connection, connection.Transaction))
@@ -244,7 +244,7 @@ namespace MapsDirectlyToDatabaseTable
                 using (DbDataReader r = selectCommand.ExecuteReader())
                 {
                     if (!r.HasRows)
-                        throw new KeyNotFoundException("Could not find " + typename + " with ID " + id);
+                        throw new KeyNotFoundException("Could not find " + type.Name + " with ID " + id);
 
                     r.Read();
                     
@@ -254,7 +254,12 @@ namespace MapsDirectlyToDatabaseTable
                 }
             }
         }
-        
+
+        private string Wrap(string name)
+        {
+            return DiscoveredServer.GetQuerySyntaxHelper().EnsureWrapped(name);
+        }
+
         protected abstract IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader);
 
         private T ConstructEntity<T>(DbDataReader reader) where T : IMapsDirectlyToDatabaseTable
@@ -280,7 +285,7 @@ namespace MapsDirectlyToDatabaseTable
 
         public T[] GetAllObjects<T>(string whereSQL) where T : IMapsDirectlyToDatabaseTable
         {
-            string typename = typeof (T).Name;
+            string typename = Wrap(typeof (T).Name);
 
             //if there is whereSQL make sure it is a legit SQL where
             if (!string.IsNullOrWhiteSpace(whereSQL))
@@ -288,7 +293,7 @@ namespace MapsDirectlyToDatabaseTable
                     throw new ArgumentException("whereSQL did not start with the word 'WHERE', it was:" + whereSQL);
 
             List<T> toReturn = new List<T>();
-
+            
             using (var opener = GetConnection())
             {
                 DbCommand selectCommand = DatabaseCommandHelper.GetCommand("SELECT * FROM " + typename, opener.Connection, opener.Transaction);
@@ -343,7 +348,7 @@ namespace MapsDirectlyToDatabaseTable
 
         public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t, string whereSQL, Dictionary<string, object> parameters = null)
         {
-            string typename = t.Name;
+            string typename = Wrap(t.Name);
 
             // if there is whereSQL make sure it is a legit SQL where
             if (!whereSQL.Trim().ToUpper().StartsWith("WHERE"))
@@ -363,7 +368,7 @@ namespace MapsDirectlyToDatabaseTable
         }
         public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t)
         {
-            string typename = t.Name;
+            string typename = Wrap(t.Name);
 
             List<IMapsDirectlyToDatabaseTable> toReturn = new List<IMapsDirectlyToDatabaseTable>();
 
@@ -633,7 +638,7 @@ namespace MapsDirectlyToDatabaseTable
         {
             _logger.Info("Created New," + typeof(T).Name);
             
-            var query = @"INSERT INTO " + typeof (T).Name;
+            var query = @"INSERT INTO [" + typeof (T).Name +"]";
             if (parameters != null && parameters.Any())
             {
                 if (parameters.Any(kvp => kvp.Key.StartsWith("@")))

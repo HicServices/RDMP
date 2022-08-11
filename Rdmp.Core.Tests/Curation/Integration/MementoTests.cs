@@ -17,8 +17,11 @@ namespace Rdmp.Core.Tests.Curation.Integration
         public void CreateAFakeMementoCatalogue()
         {
             var c = new Catalogue(CatalogueRepository,"Hey");
+
             var g = Guid.NewGuid();
-            var mem = new Memento(CatalogueRepository,g,c,"yar","blerg");
+            var commit = new Commit(CatalogueRepository, g, "Breaking stuff!");
+
+            var mem = new Memento(CatalogueRepository,commit,c,"yar","blerg");
             mem.SaveToDatabase();
 
             mem.BeforeYaml = "haha";
@@ -28,10 +31,10 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             var mem2 = CatalogueRepository.GetObjectByID<Memento>(mem.ID);
 
-            Assert.AreEqual(g, mem2.Transaction);
+            Assert.AreEqual(g, mem2.Commit.Transaction);
             Assert.AreEqual("blerg", mem2.AfterYaml);
             Assert.AreEqual("yar", mem2.BeforeYaml);
-            Assert.AreEqual(Environment.UserName, mem2.Username);
+            Assert.AreEqual(Environment.UserName, mem2.Commit.Username);
             Assert.AreEqual(c, mem2.GetReferencedObject(RepositoryLocator)); 
 
         }

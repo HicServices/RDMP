@@ -4,9 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data.Referencing;
 using Rdmp.Core.Repositories;
-using System;
 using System.Collections.Generic;
 using System.Data.Common;
 
@@ -21,28 +21,10 @@ namespace Rdmp.Core.Curation.Data
     {
 
         #region Database Properties
-        private string _username;
-        private DateTime _date;
-        private Guid _transaction;
         private string _beforeYaml;
         private string _afterYaml;
+        private int _commit_ID;
 
-        public string Username
-        {
-            get { return _username; }
-            set { SetField(ref _username, value); }
-        }
-
-        public DateTime Date
-        {
-            get { return _date; }
-            set { SetField(ref _date, value); }
-        }
-        public Guid Transaction
-        {
-            get { return _transaction; }
-            set { SetField(ref _transaction, value); }
-        }
         public string BeforeYaml
         {
             get { return _beforeYaml; }
@@ -53,7 +35,15 @@ namespace Rdmp.Core.Curation.Data
             get { return _afterYaml; }
             set { SetField(ref _afterYaml, value); }
         }
+        public int Commit_ID
+        {
+            get { return _commit_ID; }
+            set { SetField(ref _commit_ID, value); }
+        }
         #endregion
+
+        [NoMappingToDatabase]
+        public Commit Commit { get => Repository.GetObjectByID<Commit>(Commit_ID); }
 
 
         public Memento()
@@ -62,22 +52,18 @@ namespace Rdmp.Core.Curation.Data
         }
         public Memento(ICatalogueRepository repo,DbDataReader r) : base(repo, r)
         {
-            Transaction = new Guid(r["Transaction"].ToString());
-            Username = r["Username"].ToString();
-            Date = Convert.ToDateTime(r["Date"]);
             BeforeYaml = r["BeforeYaml"].ToString();
             AfterYaml = r["AfterYaml"].ToString();
+            Commit_ID = (int)r["Commit_ID"];
         }
-        public Memento(ICatalogueRepository repository, Guid transaction, DatabaseEntity entity,string beforeYaml, string afterYaml)
+        public Memento(ICatalogueRepository repository, Commit commit, DatabaseEntity entity,string beforeYaml, string afterYaml)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
                 {"ReferencedObjectID",entity.ID},
                 {"ReferencedObjectType",entity.GetType().Name},
                 {"ReferencedObjectRepositoryType",entity.Repository.GetType().Name},
-                {"Username", Environment.UserName},
-                {"Date", DateTime.Now},
-                {"Transaction",transaction.ToString("N")},
+                {"Commit_ID",commit.ID},
                 {"BeforeYaml",beforeYaml},
                 {"AfterYaml",afterYaml},
             });
