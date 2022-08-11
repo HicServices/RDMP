@@ -21,6 +21,7 @@ using Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Progress;
 

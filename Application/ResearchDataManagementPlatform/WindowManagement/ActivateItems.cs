@@ -405,7 +405,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 if (databaseObject == null)
                     return null;
 
-                DockContent floatable = WindowFactory.Create(this,RefreshBus, uiInstance,CoreIconProvider.GetImage(databaseObject), databaseObject);
+                DockContent floatable = WindowFactory.Create(this,RefreshBus, uiInstance,CoreIconProvider.GetImage(databaseObject).ToBitmap(), databaseObject);
 
                 floatable.Show(_mainDockPanel, DockState.Document);
                 try
@@ -709,7 +709,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             var panel = WindowFactory.Create(this,new SessionCollectionUI(),new SessionCollection(sessionName)
             {
                 DatabaseObjects = initialObjects.ToList()
-            },CatalogueIcons.WindowLayout);
+            },CatalogueIcons.WindowLayout.ToBitmap());
             panel.Show(_mainDockPanel,DockState.DockLeft);
         }
 

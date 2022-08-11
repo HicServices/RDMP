@@ -122,7 +122,7 @@ namespace Rdmp.UI.DataViewing
             btnExecuteSql.Image = activator.CoreIconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute).ToBitmap();
 
             var overlayer = new IconOverlayProvider();
-            btnResetSql.Image = overlayer.GetOverlay(FamFamFamIcons.text_align_left, OverlayKind.Problem);
+            btnResetSql.Image = overlayer.GetOverlay(FamFamFamIcons.text_align_left, OverlayKind.Problem).ToBitmap();
 
             if (_scintilla == null)
             {

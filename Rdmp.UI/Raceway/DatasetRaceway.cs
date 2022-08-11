@@ -44,7 +44,7 @@ namespace Rdmp.UI.Raceway
     public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
     {
         private ToolStripButton btnAddCatalogue = new ToolStripButton("Add Catalogue"){Name= "btnAddCatalogue" };
-        private ToolStripButton btnRemoveAll = new ToolStripButton("Clear",FamFamFamIcons.delete_multi) { Name = "btnRemoveAll" };
+        private ToolStripButton btnRemoveAll = new ToolStripButton("Clear",FamFamFamIcons.delete_multi.ToBitmap()) { Name = "btnRemoveAll" };
         private ToolStripButton btnAddExtractableDatasetPackage = new ToolStripButton("Add Package") { Name = "btnAddExtractableDatasetPackage" };
         private ToolStripLabel toolStripLabel1 = new ToolStripLabel("Show Period") { Name = "toolStripLabel1" };
         private ToolStripComboBox ddShowPeriod = new ToolStripComboBox() { Name = "ddShowPeriod", Size = new Size(121, 25) };

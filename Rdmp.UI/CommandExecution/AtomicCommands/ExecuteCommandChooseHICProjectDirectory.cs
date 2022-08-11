@@ -11,6 +11,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
