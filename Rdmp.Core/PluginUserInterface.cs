@@ -4,14 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Generic;
 using SixLabors.ImageSharp;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.Curation.Data.Aggregation;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core
 {
@@ -19,7 +18,7 @@ namespace Rdmp.Core
     {
         protected readonly IBasicActivateItems BasicActivator;
 
-        public Image ImageUnknown => BasicActivator.CoreIconProvider.ImageUnknown;
+        public Image<Argb32> ImageUnknown => BasicActivator.CoreIconProvider.ImageUnknown;
 
         /// <summary>
         /// Creates a new instance of your plugin UI.  See notes on <paramref name="itemActivator"/>
@@ -47,7 +46,7 @@ namespace Rdmp.Core
             yield break;
         }
 
-        public virtual Image GetImage(object concept, OverlayKind kind = OverlayKind.None)
+        public virtual Image<Argb32> GetImage(object concept, OverlayKind kind = OverlayKind.None)
         {
             return null;
         }

@@ -53,11 +53,11 @@ namespace Rdmp.UI.ChecksUI
             olvResult.ImageGetter += ImageGetter;
             olvChecks.RowHeight = 19;
 
-            _tick = ChecksAndProgressIcons.Tick;
-            _warning = ChecksAndProgressIcons.Warning;
-            _warningEx = ChecksAndProgressIcons.WarningEx;
-            _fail = ChecksAndProgressIcons.Fail;
-            _failEx = ChecksAndProgressIcons.FailEx;
+            _tick = ChecksAndProgressIcons.Tick.ImageToBitmap();
+            _warning = ChecksAndProgressIcons.Warning.ImageToBitmap();
+            _warningEx = ChecksAndProgressIcons.WarningEx.ImageToBitmap();
+            _fail = ChecksAndProgressIcons.Fail.ImageToBitmap();
+            _failEx = ChecksAndProgressIcons.FailEx.ImageToBitmap();
 
             olvChecks.PrimarySortOrder = SortOrder.Descending;
 

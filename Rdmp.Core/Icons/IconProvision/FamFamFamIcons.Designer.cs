@@ -8,6 +8,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+
 namespace Rdmp.Core.Icons.IconProvision {
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
@@ -80,7 +83,7 @@ namespace Rdmp.Core.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image arrow_refresh {
+        public static Image<Argb32> arrow_refresh {
             get {
                 object obj = ResourceManager.GetObject("arrow_refresh", resourceCulture);
                 return ((SixLabors.ImageSharp.Image)(obj));
@@ -350,7 +353,7 @@ namespace Rdmp.Core.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image wand {
+        public static Image<Argb32> wand {
             get {
                 object obj = ResourceManager.GetObject("wand", resourceCulture);
                 return ((SixLabors.ImageSharp.Image)(obj));

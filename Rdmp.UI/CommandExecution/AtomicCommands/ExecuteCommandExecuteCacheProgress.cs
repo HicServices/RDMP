@@ -13,6 +13,7 @@ using Rdmp.Core.Repositories.Construction;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.LoadExecutionUIs;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
@@ -37,7 +38,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return "Runs the caching activity.  This usually involves long term incremental fetching and storing data ready for load";
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.CacheProgress, OverlayKind.Execute);
         }

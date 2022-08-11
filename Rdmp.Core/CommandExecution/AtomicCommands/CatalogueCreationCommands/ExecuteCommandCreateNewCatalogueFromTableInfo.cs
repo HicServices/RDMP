@@ -10,6 +10,7 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
 {
@@ -39,7 +40,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands
             }
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Shortcut);
         }

@@ -261,11 +261,11 @@ namespace Rdmp.UI.AggregationUIs.Advanced
         private void SetNameText()
         {
             if (_aggregate.IsJoinablePatientIndexTable())
-                pictureBox1.Image = CatalogueIcons.BigPatientIndexTable;
+                pictureBox1.Image = CatalogueIcons.BigPatientIndexTable.ImageToBitmap();
             else if (_aggregate.IsCohortIdentificationAggregate)
-                pictureBox1.Image = CatalogueIcons.BigCohort;
+                pictureBox1.Image = CatalogueIcons.BigCohort.ImageToBitmap();
             else
-                pictureBox1.Image = CatalogueIcons.BigGraph;
+                pictureBox1.Image = CatalogueIcons.BigGraph.ImageToBitmap();
 
             //set the name to the tostring not the .Name so that we ignore the cic prefix
             tbName.Text = _aggregate.ToString();

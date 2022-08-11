@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.UI;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus;
@@ -49,9 +50,9 @@ namespace ResearchDataManagementPlatform.WindowManagement.TabPageContextMenus
                 RDMPContextMenuStrip.RegisterFetchGoToObjecstCallback(gotoMenu);
             }
 
-            Items.Add("Refresh", FamFamFamIcons.arrow_refresh, (s, e) => _tab.HandleUserRequestingTabRefresh(activator));
+            Items.Add("Refresh", FamFamFamIcons.arrow_refresh.ImageToBitmap(), (s, e) => _tab.HandleUserRequestingTabRefresh(activator));
 
-            var help = new ToolStripMenuItem("Help", FamFamFamIcons.help, (s, e) => _tab.ShowHelp(activator));
+            var help = new ToolStripMenuItem("Help", FamFamFamIcons.help.ImageToBitmap(), (s, e) => _tab.ShowHelp(activator));
             help.ShortcutKeys = Keys.F1;
             Items.Add(help);
         }

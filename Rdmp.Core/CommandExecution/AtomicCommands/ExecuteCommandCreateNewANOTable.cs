@@ -10,6 +10,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -30,7 +31,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             return "Create a table for storing anonymous identifier mappings for a given type of code e.g. 'PatientId' / 'GP Codes' etc";
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ANOTable, OverlayKind.Add);
         }

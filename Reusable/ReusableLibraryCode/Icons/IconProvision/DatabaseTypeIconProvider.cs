@@ -7,6 +7,7 @@
 using System;
 using SixLabors.ImageSharp;
 using FAnsi;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace ReusableLibraryCode.Icons.IconProvision
 {
@@ -15,20 +16,20 @@ namespace ReusableLibraryCode.Icons.IconProvision
     /// </summary>
     public class DatabaseTypeIconProvider
     {
-        private Image _msBig;
-        private Image _msOverlay;
+        private Image<Argb32> _msBig;
+        private Image<Argb32> _msOverlay;
 
-        private Image _oraBig;
-        private Image _oraOverlay;
+        private Image<Argb32> _oraBig;
+        private Image<Argb32> _oraOverlay;
 
-        private Image _mysBig;
-        private Image _mysOverlay;
+        private Image<Argb32> _mysBig;
+        private Image<Argb32> _mysOverlay;
 
-        private Image _postgresBig;
-        private Image _postgresOverlay;
+        private Image<Argb32> _postgresBig;
+        private Image<Argb32> _postgresOverlay;
         
-        private Image _unknownBig;
-        private Image _unknownOverlay;
+        private Image<Argb32> _unknownBig;
+        private Image<Argb32> _unknownOverlay;
         
         public DatabaseTypeIconProvider()
         {
@@ -50,36 +51,26 @@ namespace ReusableLibraryCode.Icons.IconProvision
 
         public Image GetOverlay(DatabaseType type)
         {
-            switch (type)
+            return type switch
             {
-                case DatabaseType.MicrosoftSQLServer:
-                    return _msOverlay;
-                case DatabaseType.MySql:
-                    return _mysOverlay;
-                case DatabaseType.Oracle:
-                    return _oraOverlay;
-                case DatabaseType.PostgreSql:
-                        return _postgresOverlay;
-                default:
-                    return _unknownOverlay;
-            }
+                DatabaseType.MicrosoftSQLServer => _msOverlay,
+                DatabaseType.MySql => _mysOverlay,
+                DatabaseType.Oracle => _oraOverlay,
+                DatabaseType.PostgreSql => _postgresOverlay,
+                _ => _unknownOverlay
+            };
         }
 
-        public Image GetImage(DatabaseType type)
+        public Image<Argb32> GetImage(DatabaseType type)
         {
-            switch (type)
+            return type switch
             {
-                case DatabaseType.MicrosoftSQLServer:
-                    return _msBig;
-                case DatabaseType.MySql:
-                    return _mysBig;
-                case DatabaseType.Oracle:
-                    return _oraBig;
-                case DatabaseType.PostgreSql:
-                    return _postgresBig;
-                default:
-                    return _unknownBig;
-            }
+                DatabaseType.MicrosoftSQLServer => _msBig,
+                DatabaseType.MySql => _mysBig,
+                DatabaseType.Oracle => _oraBig,
+                DatabaseType.PostgreSql => _postgresBig,
+                _ => _unknownBig
+            };
         }
     }
 }

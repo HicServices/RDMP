@@ -13,6 +13,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
@@ -81,7 +82,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 provides a description for (a given TableInfo can be a Lookup for many columns in many datasets).";
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Lookup, OverlayKind.Add);
         }

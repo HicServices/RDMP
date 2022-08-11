@@ -14,6 +14,7 @@ using Rdmp.Core.Repositories.Construction;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ProjectUI;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
@@ -51,7 +52,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return "Extract all the datasets in the configuration linking each against the configuration's cohort";
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ExtractionConfiguration,OverlayKind.Execute);
         }

@@ -6,6 +6,7 @@
 
 using SixLabors.ImageSharp;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -15,7 +16,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     /// </summary>
     public interface IAtomicCommand : ICommandExecution
     {
-        Image GetImage(IIconProvider iconProvider);
+        Image<Argb32> GetImage(IIconProvider iconProvider);
 
 
         /// <summary>

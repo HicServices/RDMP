@@ -7,6 +7,7 @@
 using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -38,7 +39,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             Weight = -99.99999f;
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             if (_o == null)
                 return null;

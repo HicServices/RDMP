@@ -10,6 +10,7 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using System.Linq;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -43,7 +44,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             // 'more choices to come' suffix
             UseTripleDotSuffix = ToImport == null;
         }
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration,OverlayKind.Add);
         }

@@ -13,6 +13,7 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
 using System;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -39,7 +40,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             this._autoYes = autoYes;
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return CatalogueIcons.Sync;
         }

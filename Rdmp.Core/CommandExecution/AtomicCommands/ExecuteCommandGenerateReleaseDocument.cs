@@ -14,6 +14,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Reports.ExtractionTime;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
@@ -85,7 +86,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return FamFamFamIcons.page_white_word;
         }

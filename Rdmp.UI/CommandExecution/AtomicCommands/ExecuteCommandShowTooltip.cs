@@ -11,6 +11,7 @@ using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 using System;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
@@ -34,9 +35,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             return _isBad ? "Show Problem" : "Show Tooltip";
         }
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
-            return _isBad ? FamFamFamIcons.flag_red : iconProvider.GetImage(RDMPConcept.Help);
+            return (Image<Argb32>)(_isBad ? FamFamFamIcons.flag_red : iconProvider.GetImage(RDMPConcept.Help));
         }
 
 

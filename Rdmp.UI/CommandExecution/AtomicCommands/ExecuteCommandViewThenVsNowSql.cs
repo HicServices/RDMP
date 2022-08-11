@@ -15,6 +15,7 @@ using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.SimpleDialogs.SqlDialogs;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
@@ -55,7 +56,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             dialog.Show();
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Diff);
         }

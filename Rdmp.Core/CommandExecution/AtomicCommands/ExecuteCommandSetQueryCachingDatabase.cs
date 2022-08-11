@@ -11,6 +11,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -51,7 +52,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             return _cic.QueryCachingServer_ID == null ? "Set Query Cache":"Change Query Cache";
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer,OverlayKind.Link);
         }

@@ -12,6 +12,7 @@ using Rdmp.Core.Repositories.Construction;
 using Rdmp.UI.DataQualityUIs;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
@@ -34,7 +35,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return "Runs the data quality engine on the dataset using the currently configured validation rules and stores the results in the default DQE results database";
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Execute);
         }

@@ -12,6 +12,7 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -160,7 +161,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             return "Opens the containing toolbox collection and shows the object";
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             if (OverrideIcon != null)
                 return base.GetImage(iconProvider);

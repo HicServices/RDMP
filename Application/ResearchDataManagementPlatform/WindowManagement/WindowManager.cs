@@ -157,9 +157,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         
 
-        private PersistableToolboxDockContent Show(RDMPCollection collection,RDMPCollectionUI control, string label, Bitmap image)
+        private PersistableToolboxDockContent Show(RDMPCollection collection,RDMPCollectionUI control, string label, SixLabors.ImageSharp.Image image)
         {
-            BackColorProvider c = new BackColorProvider();
+            var c = new BackColorProvider();
             image = c.DrawBottomBar(image, collection);
             
             var content = _windowFactory.Create(ActivateItems,control, label, image, collection);//these are collections so are not tracked with a window tracker.

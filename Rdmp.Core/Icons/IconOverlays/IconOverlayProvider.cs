@@ -4,22 +4,25 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using Image = SixLabors.ImageSharp.Image;
 
 namespace Rdmp.Core.Icons.IconOverlays
 {
     public class IconOverlayProvider
     {
-        readonly Dictionary<Image,List<CachedOverlayResult>> _resultCache = new Dictionary<Image, List<CachedOverlayResult>>();
+        readonly Dictionary<ValueTuple<Image<Argb32>,OverlayKind>,Image<Argb32>> _cache=new ();
 
         readonly Dictionary<Image, Dictionary<Image,Image>>  _resultCacheCustom = new Dictionary<Image, Dictionary<Image, Image>>();
 
-        readonly Dictionary<Image,Image> _greyscaleCache = new Dictionary<Image, Image>();
+        readonly Dictionary<Image<Argb32>, Image<Argb32>> _greyscaleCache = new();
 
         private readonly EnumImageCollection<OverlayKind> _images;
 
@@ -28,26 +31,18 @@ namespace Rdmp.Core.Icons.IconOverlays
             _images = new EnumImageCollection<OverlayKind>(Overlays.ResourceManager);
         }
 
-        public Image GetOverlay(Image forImage, OverlayKind overlayKind)
+        public Image<Argb32> GetOverlay(Image<Argb32> forImage, OverlayKind overlayKind)
         {
-            //make sure the input image is added to the cache if it is novel
-            if(!_resultCache.ContainsKey(forImage))
-                _resultCache.Add(forImage,new List<CachedOverlayResult>());
+            var key = (forImage, overlayKind);
 
-            //is there a cached image for this overlay ?
-            var cachedResult = _resultCache[forImage].SingleOrDefault(c => c.Kind == overlayKind);
-                
-            //yes
-            if (cachedResult != null)
-                return cachedResult.Result;
+            //make sure the input image is added to the cache if it is novel
+            if (_cache.TryGetValue(key, out var hit))
+                return hit;
             
             var clone = GetOverlayNoCache(forImage, overlayKind);
+            _cache.Add(key,clone);
 
-            //and cache it
-            var newCacheEntry = new CachedOverlayResult(overlayKind, clone);
-            _resultCache[forImage].Add(newCacheEntry);
-
-            return newCacheEntry.Result;
+            return clone;
         }
 
 
@@ -63,10 +58,8 @@ namespace Rdmp.Core.Icons.IconOverlays
                 //no
 
                 //draw it
-                var clone = (Image)forImage.CloneAs<Rgba32>();
-
-                var graphics = Graphics.FromImage(clone);
-                graphics.DrawImage(customOverlay, new Rectangle(0, 0, clone.Width, clone.Height));
+                var clone = forImage.CloneAs<Rgba32>();
+                clone.Mutate(x=>x.DrawImage(customOverlay,1.0f));
 
                 //and cache it
                 _resultCacheCustom[forImage].Add(customOverlay,clone);
@@ -77,7 +70,7 @@ namespace Rdmp.Core.Icons.IconOverlays
             return _resultCacheCustom[forImage][customOverlay];
         }
 
-        public Image GetGrayscale(Image forImage)
+        public Image<Argb32> GetGrayscale(Image<Argb32> forImage)
         {
             if (!_greyscaleCache.ContainsKey(forImage))
                 _greyscaleCache.Add(forImage, MakeGrayscale(forImage));
@@ -86,55 +79,21 @@ namespace Rdmp.Core.Icons.IconOverlays
         }
 
         /// <summary>
-        /// From https://stackoverflow.com/a/2265990/4824531
+        /// Use ImageSharp's grayscale converter
         /// </summary>
         /// <param name="original"></param>
         /// <returns></returns>
-        private static Image MakeGrayscale(Image original)
+        private static Image<Argb32> MakeGrayscale(Image<Argb32> original)
         {
-            //create a blank Image the same size as original
-            Image newBitmap = new Image<Rgba32>(original.Width, original.Height);
-
-            //get a graphics object from the new image
-            Graphics g = Graphics.FromImage(newImage);
-
-            //create the grayscale ColorMatrix
-            ColorMatrix colorMatrix = new ColorMatrix(
-               new float[][] 
-      {
-         new float[] {.3f, .3f, .3f, 0, 0},
-         new float[] {.59f, .59f, .59f, 0, 0},
-         new float[] {.11f, .11f, .11f, 0, 0},
-         new float[] {0, 0, 0, 1, 0},
-         new float[] {0, 0, 0, 0, 1}
-      });
-
-            //create some image attributes
-            ImageAttributes attributes = new ImageAttributes();
-
-            //set the color matrix attribute
-            attributes.SetColorMatrix(colorMatrix);
-
-            //draw the original image on the new image
-            //using the grayscale color matrix
-            g.DrawImage(original, new Rectangle(0, 0, original.Width, original.Height),
-               0, 0, original.Width, original.Height, GraphicsUnit.Pixel, attributes);
-
-            //dispose the Graphics object
-            g.Dispose();
-            return newBitmap;
+            return original.Clone(x=>x.Grayscale());
         }
 
-        public Image GetOverlayNoCache(Image forImage, OverlayKind overlayKind)
+        public Image<Argb32> GetOverlayNoCache(Image forImage, OverlayKind overlayKind)
         {
             //cached result does not exist so we must draw it
             var overlay = _images[overlayKind];
-
-            var clone = (Image)forImage.CloneAs<Rgba32>();
-            
-            var graphics = Graphics.FromImage(clone);
-            graphics.DrawImage(overlay, new Rectangle(0, 0, clone.Width, clone.Height));
-
+            var clone = forImage.CloneAs<Argb32>();
+            clone.Mutate(x=>x.DrawImage(overlay,1.0f));
             return clone;
         }
     }

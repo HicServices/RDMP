@@ -23,10 +23,10 @@ namespace Rdmp.UI.Menus
             _dataset = dataset;
 
             if (_dataset.DisableExtraction)
-                Items.Add("ReEnable Extraction", _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSet),
+                Items.Add("ReEnable Extraction", _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSet).ImageToBitmap(),
                     (s, e) => SetDisabled(false));
             else
-                Items.Add("Disable Extraction (temporarily)", CatalogueIcons.ExtractableDataSetDisabled,
+                Items.Add("Disable Extraction (temporarily)", CatalogueIcons.ExtractableDataSetDisabled.ImageToBitmap(),
                     (s, e) => SetDisabled(true));
         }
 

@@ -12,6 +12,7 @@ using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation
 {
@@ -38,7 +39,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation
             return "Generates the execute command line invocation (including arguments)";
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return CatalogueIcons.Exe;
         }

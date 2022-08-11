@@ -76,8 +76,8 @@ namespace Rdmp.UI.ANOEngineeringUIs
 
             AssociatedCollection = RDMPCollection.Catalogue;
 
-            btnLoadPlan.Image = FamFamFamIcons.page_white_get;
-            btnSavePlan.Image = FamFamFamIcons.page_white_put;
+            btnLoadPlan.Image = FamFamFamIcons.page_white_get.ImageToBitmap();
+            btnSavePlan.Image = FamFamFamIcons.page_white_put.ImageToBitmap();
         }
 
         #region Aspect Getters and Setters

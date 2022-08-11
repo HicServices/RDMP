@@ -10,8 +10,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Icons.IconProvision;
-
-
+using SixLabors.ImageSharp.PixelFormats;
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
@@ -35,7 +34,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             if(string.IsNullOrWhiteSpace(_help))
                 SetImpossible("No help available for keyword '" + classOrProperty+"'");
         }
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Help);
         }

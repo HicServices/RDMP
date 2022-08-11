@@ -16,6 +16,7 @@ using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -196,7 +197,7 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
         {
             return _host?.GetCatalogue() ?? _container?.GetCatalogueIfAny();
         }
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             
             return OfferCatalogueFilters ?

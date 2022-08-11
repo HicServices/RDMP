@@ -13,6 +13,7 @@ using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -115,7 +116,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             }
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             if(_taskType == ProcessTaskType.SQLFile)
                 return iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Add);

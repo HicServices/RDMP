@@ -8,6 +8,7 @@ using SixLabors.ImageSharp;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -33,7 +34,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         }
 
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return CatalogueIcons.TinyYellow;
         }

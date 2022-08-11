@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Drawing;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core;
@@ -20,8 +19,8 @@ using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.TabPageContextMenus;
-using ReusableLibraryCode.Icons;
 using WeifenLuo.WinFormsUI.Docking;
+using Image = SixLabors.ImageSharp.Image;
 
 namespace ResearchDataManagementPlatform.WindowManagement
 {
@@ -38,7 +37,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         /// </summary>
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
 
-        private readonly IconFactory _iconFactory = new IconFactory();
+        private readonly IconFactory _iconFactory = IconFactory.Instance;
 
         
         public WindowFactory(IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowManager windowManager)
@@ -47,7 +46,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             RepositoryLocator = repositoryLocator;
         }
 
-        public PersistableToolboxDockContent Create(IActivateItems activator,Control control, string label, Bitmap image, RDMPCollection collection)
+        public PersistableToolboxDockContent Create(IActivateItems activator,Control control, string label, Image image, RDMPCollection collection)
         {
             var content = new PersistableToolboxDockContent(collection);
             
@@ -56,7 +55,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return content;
         }
         
-        public PersistableSingleDatabaseObjectDockContent Create(IActivateItems activator, RefreshBus refreshBus,IRDMPSingleDatabaseObjectControl control, Bitmap image, IMapsDirectlyToDatabaseTable databaseObject)
+        public PersistableSingleDatabaseObjectDockContent Create(IActivateItems activator, RefreshBus refreshBus,IRDMPSingleDatabaseObjectControl control, Image image, IMapsDirectlyToDatabaseTable databaseObject)
         {
             var content = new PersistableSingleDatabaseObjectDockContent(control, databaseObject,refreshBus);
             _windowManager.AddWindow(content);
@@ -69,7 +68,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return content;
         }
 
-        public PersistableObjectCollectionDockContent Create(IActivateItems activator, IObjectCollectionControl control, IPersistableObjectCollection objectCollection, Bitmap image)
+        public PersistableObjectCollectionDockContent Create(IActivateItems activator, IObjectCollectionControl control, IPersistableObjectCollection objectCollection, Image image)
         {
             //create a new persistable docking tab
             var content = new PersistableObjectCollectionDockContent(activator,control,objectCollection);
@@ -89,7 +88,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             var content = new PersistableSingleDatabaseObjectDockContent(control, entity, activator.RefreshBus);
 
             var img = activator.CoreIconProvider.GetImage(entity);
-            AddControlToDockContent(activator, (Control)control, content, entity.ToString(), img.ToBitmap());
+            AddControlToDockContent(activator, (Control)control, content, entity.ToString(), img);
 
             if (!RDMPMainForm.Loading)
                 activator.HistoryProvider.Add(entity);
@@ -98,7 +97,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
 
 
-        public DockContent Create(IActivateItems activator, Control control, string label, Bitmap image)
+        public DockContent Create(IActivateItems activator, Control control, string label, Image image)
         {
             DockContent content = new RDMPSingleControlTab(activator.RefreshBus,control);
             
@@ -109,7 +108,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return content;
         }
 
-        private void AddControlToDockContent(IActivateItems activator, Control control,DockContent content, string label, Bitmap image)
+        private void AddControlToDockContent(IActivateItems activator, Control control,DockContent content, string label, Image image)
         {
             control.Dock = DockStyle.Fill;
             content.Controls.Add(control);

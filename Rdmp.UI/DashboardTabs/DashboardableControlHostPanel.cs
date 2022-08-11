@@ -37,7 +37,7 @@ namespace Rdmp.UI.DashboardTabs
             HostedControl = hostedControl;
             InitializeComponent();
             
-            pbDelete.Image = FamFamFamIcons.delete;
+            pbDelete.Image = FamFamFamIcons.delete.ImageToBitmap();
 
             Margin = Padding.Empty;
 

@@ -6,9 +6,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using SixLabors.ImageSharp;
 using System.Drawing;
-
+using System.IO;
 using Image = SixLabors.ImageSharp.Image;
 using ReusableLibraryCode.Icons;
 
@@ -21,6 +22,12 @@ namespace Rdmp.UI
     public class IconFactory
     {
         private readonly Dictionary<Image, Icon> _iconDictionary = new Dictionary<Image, Icon>();
+
+        public static IconFactory Instance=new();
+        private IconFactory()
+        {
+
+        }
 
         /// <summary>
         /// Returns an <see cref="Icon"/> depicting the provided <paramref name="bmp"/>.  Calling this
@@ -49,6 +56,5 @@ namespace Rdmp.UI
 
             return newIcon;
         }
-
     }
 }

@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace ReusableLibraryCode.Icons.IconProvision
 {
@@ -13,8 +14,8 @@ namespace ReusableLibraryCode.Icons.IconProvision
     /// </summary>
     public interface IIconProvider
     {
-        Image ImageUnknown { get; }
+        Image<Argb32> ImageUnknown { get; }
 
-        Image GetImage(object concept, OverlayKind kind = OverlayKind.None);
+        Image<Argb32> GetImage(object concept, OverlayKind kind = OverlayKind.None);
     }
 }

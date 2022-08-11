@@ -7,6 +7,10 @@
 using System;
 using System.Drawing;
 using Rdmp.Core;
+using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using SolidBrush = System.Drawing.SolidBrush;
 
 namespace Rdmp.UI.Theme
 {
@@ -15,42 +19,34 @@ namespace Rdmp.UI.Theme
     /// </summary>
     public class BackColorProvider
     {
-        public const int IndiciatorBarSuggestedHeight = 4;
+        public const int IndicatorBarSuggestedHeight = 4;
 
         public Color GetColor(RDMPCollection collection)
         {
-            switch (collection)
+            return collection switch
             {
-                case RDMPCollection.None:
-                    return SystemColors.Control;
-                case RDMPCollection.Tables:
-                    return Color.FromArgb(255, 220, 255);
-                case RDMPCollection.Catalogue:
-                    return Color.FromArgb(255, 255, 220);
-                case RDMPCollection.DataExport:
-                    return Color.FromArgb(200,255,220);
-                case RDMPCollection.SavedCohorts:
-                    return Color.FromArgb(255, 220, 220);
-                case RDMPCollection.Favourites:
-                    return SystemColors.Control;
-                case RDMPCollection.Cohort:
-                    return Color.FromArgb(210, 240, 255);
-                case RDMPCollection.DataLoad:
-                    return Color.DarkGray;
-                default:
-                    throw new ArgumentOutOfRangeException("collection");
-            }
+                RDMPCollection.None => SystemColors.Control,
+                RDMPCollection.Tables => Color.FromArgb(255, 220, 255),
+                RDMPCollection.Catalogue => Color.FromArgb(255, 255, 220),
+                RDMPCollection.DataExport => Color.FromArgb(200, 255, 220),
+                RDMPCollection.SavedCohorts => Color.FromArgb(255, 220, 220),
+                RDMPCollection.Favourites => SystemColors.Control,
+                RDMPCollection.Cohort => Color.FromArgb(210, 240, 255),
+                RDMPCollection.DataLoad => Color.DarkGray,
+                _ => throw new ArgumentOutOfRangeException(nameof(collection))
+            };
         }
 
-        public Bitmap DrawBottomBar(Bitmap image,RDMPCollection collection)
+        private SixLabors.ImageSharp.Color LegacyToNewColor(Color l)
         {
-            var newImage = new Bitmap(image.Width, image.Height);
-            using (var g = Graphics.FromImage(newImage))
-            {
-                g.FillRectangle(new SolidBrush(GetColor(collection)), 0, 0, newImage.Width, newImage.Height);
-                g.DrawImage(image,0,0);
-            }
+            return new SixLabors.ImageSharp.Color(new Argb32(l.R, l.G, l.B));
+        }
 
+        public SixLabors.ImageSharp.Image DrawBottomBar(SixLabors.ImageSharp.Image image,RDMPCollection collection)
+        {
+            var color = LegacyToNewColor(GetColor(collection));
+            var newImage = image.Clone(x => FillRectangleExtensions.Fill(x,color,
+                new SixLabors.ImageSharp.RectangleF(0.0f, 0.0f, image.Width * 1.0f, image.Height * 1.0f)));
             return newImage;
         }
 
@@ -60,7 +56,7 @@ namespace Rdmp.UI.Theme
             var bmp = new Bitmap(size.Width, size.Height);
 
             using (var g = Graphics.FromImage(bmp))
-                g.FillRectangle(new SolidBrush(GetColor(collection)),2, size.Height - IndiciatorBarSuggestedHeight, size.Width - 4, IndiciatorBarSuggestedHeight);
+                g.FillRectangle(new SolidBrush(GetColor(collection)),2, size.Height - IndicatorBarSuggestedHeight, size.Width - 4, IndicatorBarSuggestedHeight);
 
             return bmp;
         }

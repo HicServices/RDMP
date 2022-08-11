@@ -10,6 +10,7 @@ using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
@@ -28,7 +29,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             Activator.Activate<CacheProgressUI, CacheProgress>(_cacheProgress);
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(_cacheProgress);
         }

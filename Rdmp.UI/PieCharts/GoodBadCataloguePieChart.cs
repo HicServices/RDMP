@@ -34,11 +34,11 @@ namespace Rdmp.UI.PieCharts
     /// </summary>
     public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableControl
     {
-        private ToolStripButton btnSingleCatalogue = new ToolStripButton("Single",CatalogueIcons.Catalogue) { Name = "btnSingleCatalogue" };
-        private ToolStripButton btnAllCatalogues = new ToolStripButton("All",CatalogueIcons.AllCataloguesUsedByLoadMetadataNode){Name= "btnAllCatalogues" };
-        private ToolStripButton btnRefresh = new ToolStripButton("Refresh",FamFamFamIcons.text_list_bullets) { Name = "btnRefresh" };
+        private ToolStripButton btnSingleCatalogue = new ToolStripButton("Single",CatalogueIcons.Catalogue.ImageToBitmap()) { Name = "btnSingleCatalogue" };
+        private ToolStripButton btnAllCatalogues = new ToolStripButton("All",CatalogueIcons.AllCataloguesUsedByLoadMetadataNode.ImageToBitmap()){Name= "btnAllCatalogues" };
+        private ToolStripButton btnRefresh = new ToolStripButton("Refresh",FamFamFamIcons.text_list_bullets.ImageToBitmap()) { Name = "btnRefresh" };
         private ToolStripLabel toolStripLabel1 = new ToolStripLabel("Type:"){Name= "toolStripLabel1" };
-        private ToolStripButton btnShowLabels = new ToolStripButton("Labels",FamFamFamIcons.text_align_left) { Name = "btnShowLabels", CheckOnClick = true };
+        private ToolStripButton btnShowLabels = new ToolStripButton("Labels",FamFamFamIcons.text_align_left.ImageToBitmap()) { Name = "btnShowLabels", CheckOnClick = true };
 
         private List<ToolStripMenuItem> _flagOptions = new List<ToolStripMenuItem>();
 
@@ -46,7 +46,7 @@ namespace Rdmp.UI.PieCharts
         {
             InitializeComponent();
 
-            btnViewDataTable.Image = CatalogueIcons.TableInfo;
+            btnViewDataTable.Image = CatalogueIcons.TableInfo.ImageToBitmap();
 
             this.btnAllCatalogues.Click += new System.EventHandler(this.btnAllCatalogues_Click);
             this.btnSingleCatalogue.Click += new System.EventHandler(this.btnSingleCatalogue_Click);

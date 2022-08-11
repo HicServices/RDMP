@@ -70,7 +70,7 @@ namespace Rdmp.UI.Wizard
             InitializeComponent();
 
             lblFilterName.Text = filter.Name;
-            pbFlter.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Filter).ToBitmap();
+            pbFlter.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Filter).ImageToBitmap();
 
             var parameters = filter.ExtractionFilterParameters.ToArray();
 
@@ -118,7 +118,8 @@ namespace Rdmp.UI.Wizard
                 l.AddRange(knownGoodValues);
 
                 ddKnownGoodValues.DataSource = l;
-                pbKnownValueSets.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionFilterParameterSet).ToBitmap();
+                pbKnownValueSets.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionFilterParameterSet)
+                    .ImageToBitmap();
                 
                 pbKnownValueSets.Left = lblFilterName.Right;
                 ddKnownGoodValues.Left = pbKnownValueSets.Right;

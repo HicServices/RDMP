@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using SixLabors.ImageSharp;
 using System.Linq;
 using System.Reflection;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -48,7 +49,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _useCaseIfAny = useCaseIfAny;
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.PipelineComponent,OverlayKind.Add);
         }

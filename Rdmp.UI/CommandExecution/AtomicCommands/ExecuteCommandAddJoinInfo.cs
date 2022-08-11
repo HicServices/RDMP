@@ -11,6 +11,7 @@ using Rdmp.UI.ExtractionUIs.JoinsAndLookups;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
@@ -34,7 +35,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return "Tells RDMP that two TableInfos can be joined together (including the direction LEFT/RIGHT/INNER, collation etc)";
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return Activator.CoreIconProvider.GetImage(RDMPConcept.JoinInfo, OverlayKind.Add);
         }

@@ -14,6 +14,7 @@ using Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
@@ -47,7 +48,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             Activator.Activate<ColumnInfoToANOTableConverterUI, ColumnInfo>(_columnInfo);
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ANOColumnInfo);
         }

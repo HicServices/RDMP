@@ -13,6 +13,7 @@ using Rdmp.UI.ANOEngineeringUIs;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
@@ -28,7 +29,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             UseTripleDotSuffix = true;
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ANOTable);
         }

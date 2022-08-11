@@ -11,6 +11,7 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -58,7 +59,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 SetImpossible("There are no cohorts currently configured with ProjectNumber " + project.ProjectNumber.Value);
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Link);
         }

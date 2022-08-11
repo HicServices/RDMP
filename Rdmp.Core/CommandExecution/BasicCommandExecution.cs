@@ -21,6 +21,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution
 {
@@ -155,7 +156,7 @@ namespace Rdmp.Core.CommandExecution
             return String.Empty;
         }
 
-        public virtual Image GetImage(IIconProvider iconProvider)
+        public virtual Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return OverrideIcon;
         }

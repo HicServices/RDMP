@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.Tests
 {
@@ -65,10 +66,10 @@ namespace Rdmp.UI.Tests
 
             var ac = WhenIHaveA<AggregateConfiguration>();
 
-            Assert.IsFalse(IsBlackAndWhite(provider.GetImage(ac, OverlayKind.None)),"Image was unexpectedly Grayscale");
+            Assert.IsFalse(IsBlackAndWhite(provider.GetImage(ac)),"Image was unexpectedly Grayscale");
 
             ac.IsDisabled = true;
-            Assert.IsTrue(IsBlackAndWhite(provider.GetImage(ac, OverlayKind.None)),"Image was expected to be Grayscale but wasn't'");
+            Assert.IsTrue(IsBlackAndWhite(provider.GetImage(ac)),"Image was expected to be Grayscale but wasn't'");
         }
 
         
@@ -94,20 +95,23 @@ namespace Rdmp.UI.Tests
         }
 
 
-        private bool IsBlackAndWhite(Bitmap img)
+        private bool IsBlackAndWhite(SixLabors.ImageSharp.Image<Argb32> img)
         {
-            bool foundColoured = false;
-
-            for (int x = 0; x < img.Width; x++)
+            var foundColoured = false;
+            img.ProcessPixelRows(pixels =>
             {
-                for (int y = 0; y < img.Height; y++)
+                for (var y = 0; y < pixels.Height; y++)
                 {
-                    var pixel = img.GetPixel(x, y);
-
-                    foundColoured = foundColoured || (pixel.R != pixel.G || pixel.G != pixel.B || pixel.R != pixel.B);
+                    foreach (ref var pixel in pixels.GetRowSpan(y))
+                    {
+                        if (pixel.R != pixel.G || pixel.G != pixel.B)
+                        {
+                            foundColoured = true;
+                            return;
+                        }
+                    }
                 }
-            }
-
+            });
             return !foundColoured;
         }
 

@@ -8,6 +8,7 @@ using SixLabors.ImageSharp;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -23,7 +24,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 SetImpossible("ExtractionConfiguration is already released)");
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return CatalogueIcons.FrozenExtractionConfiguration;
         }

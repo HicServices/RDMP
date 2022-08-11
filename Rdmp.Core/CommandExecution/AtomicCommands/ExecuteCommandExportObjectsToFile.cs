@@ -17,6 +17,7 @@ using Rdmp.Core.Repositories;
 using Rdmp.Core.Sharing.Dependency.Gathering;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -74,7 +75,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             return "Creates a share file with definitions for the supplied objects and all children";
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return FamFamFamIcons.page_white_put;
         }

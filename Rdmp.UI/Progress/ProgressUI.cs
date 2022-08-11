@@ -68,23 +68,27 @@ namespace Rdmp.UI.Progress
             progress.Columns.Add("Unit");
             progress.Columns.Add("Processing Time",typeof(TimeSpan));
 
-            Timer t = new Timer();
-            t.Interval = 3000;//every 3 seconds
+            var t = new Timer
+            {
+                Interval = 3000 //every 3 seconds
+            };
             t.Tick += ProcessAndClearQueuedProgressMessages;
             t.Start();
 
-            DataGridViewCellStyle style = new DataGridViewCellStyle();
-            style.Format = "N0";
+            var style = new DataGridViewCellStyle
+            {
+                Format = "N0"
+            };
             dataGridView1.Columns["Count"].DefaultCellStyle = style;
 
             dataGridView1.CellFormatting += dataGridView1_CellFormatting;
             _processingTimeColIndex = dataGridView1.Columns["Processing Time"].Index;
 
-            _information = ChecksAndProgressIcons.Information;
-            _warning = ChecksAndProgressIcons.Warning;
-            _warningEx = ChecksAndProgressIcons.WarningEx;
-            _fail = ChecksAndProgressIcons.Fail;
-            _failEx = ChecksAndProgressIcons.FailEx;
+            _information = ChecksAndProgressIcons.Information.ImageToBitmap();
+            _warning = ChecksAndProgressIcons.Warning.ImageToBitmap();
+            _warningEx = ChecksAndProgressIcons.WarningEx.ImageToBitmap();
+            _fail = ChecksAndProgressIcons.Fail.ImageToBitmap();
+            _failEx = ChecksAndProgressIcons.FailEx.ImageToBitmap();
 
             olvMessage.ImageGetter += ImageGetter;
             olvProgressEvents.ItemActivate += olvProgressEvents_ItemActivate;

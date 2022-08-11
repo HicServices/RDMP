@@ -17,6 +17,7 @@ using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -122,7 +123,7 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
                 : base.GetCommandName();
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Logging);
         }

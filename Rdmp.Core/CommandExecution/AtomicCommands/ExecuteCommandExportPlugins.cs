@@ -11,6 +11,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.Repositories.Managers;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 using Plugin = Rdmp.Core.Curation.Data.Plugin;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
@@ -37,7 +38,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         }
 
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Plugin, OverlayKind.Shortcut);
         }

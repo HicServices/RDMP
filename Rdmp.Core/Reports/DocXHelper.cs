@@ -115,7 +115,7 @@ namespace Rdmp.Core.Reports
         {
             using (var ms = new MemoryStream())
             {
-                bmp.Save(ms,ImageFormat.Png);
+                bmp.SaveAsPng(ms);
                 
                 ms.Seek(0, 0);
                 

@@ -13,6 +13,7 @@ using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using System.Linq;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -105,7 +106,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 SetImpossible("Catalogue " + catalogueCombineable.Catalogue + " does not contain any IsExtractionIdentifier columns");
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Catalogue,OverlayKind.Add);
         }

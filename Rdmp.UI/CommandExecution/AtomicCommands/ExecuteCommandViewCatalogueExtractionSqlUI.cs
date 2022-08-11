@@ -13,6 +13,7 @@ using Rdmp.Core.Repositories.Construction;
 using Rdmp.UI.ExtractionUIs;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
@@ -35,7 +36,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return "View the query that would be executed during extraction of the dataset with the current extractable columns/transforms";
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.SQL);
         }

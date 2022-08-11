@@ -18,6 +18,7 @@ using Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -113,7 +114,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             Activate(ServerCreatedIfAny);
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             if (_patcher != null)
             {

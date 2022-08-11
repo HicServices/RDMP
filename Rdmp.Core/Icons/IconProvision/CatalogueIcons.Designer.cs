@@ -8,10 +8,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Rdmp.Core.Icons.IconProvision {
-    using System;
-    
-    
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+
+namespace Rdmp.Core.Icons.IconProvision
+{
+
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -61,2098 +64,2098 @@ namespace Rdmp.Core.Icons.IconProvision {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AggregateContinuousDateAxis {
+        public static Image<Argb32> AggregateContinuousDateAxis {
             get {
                 object obj = ResourceManager.GetObject("AggregateContinuousDateAxis", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AggregateDimension {
+        public static Image<Argb32> AggregateDimension {
             get {
                 object obj = ResourceManager.GetObject("AggregateDimension", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AggregateGraph {
+        public static Image<Argb32> AggregateGraph {
             get {
                 object obj = ResourceManager.GetObject("AggregateGraph", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AggregatesNode {
+        public static Image<Argb32> AggregatesNode {
             get {
                 object obj = ResourceManager.GetObject("AggregatesNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AggregateTopX {
+        public static Image<Argb32> AggregateTopX {
             get {
                 object obj = ResourceManager.GetObject("AggregateTopX", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllANOTablesNode {
+        public static Image<Argb32> AllANOTablesNode {
             get {
                 object obj = ResourceManager.GetObject("AllANOTablesNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllAutomationServerSlotsNode {
+        public static Image<Argb32> AllAutomationServerSlotsNode {
             get {
                 object obj = ResourceManager.GetObject("AllAutomationServerSlotsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllCataloguesUsedByLoadMetadataNode {
+        public static Image<Argb32> AllCataloguesUsedByLoadMetadataNode {
             get {
                 object obj = ResourceManager.GetObject("AllCataloguesUsedByLoadMetadataNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllCohortsNode {
+        public static Image<Argb32> AllCohortsNode {
             get {
                 object obj = ResourceManager.GetObject("AllCohortsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllConnectionStringKeywordsNode {
+        public static Image<Argb32> AllConnectionStringKeywordsNode {
             get {
                 object obj = ResourceManager.GetObject("AllConnectionStringKeywordsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllDashboardsNode {
+        public static Image<Argb32> AllDashboardsNode {
             get {
                 object obj = ResourceManager.GetObject("AllDashboardsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllDataAccessCredentialsNode {
+        public static Image<Argb32> AllDataAccessCredentialsNode {
             get {
                 object obj = ResourceManager.GetObject("AllDataAccessCredentialsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllExpiredPluginsNode {
+        public static Image<Argb32> AllExpiredPluginsNode {
             get {
                 object obj = ResourceManager.GetObject("AllExpiredPluginsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllExternalServersNode {
+        public static Image<Argb32> AllExternalServersNode {
             get {
                 object obj = ResourceManager.GetObject("AllExternalServersNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllFreeCohortIdentificationConfigurationsNode {
+        public static Image<Argb32> AllFreeCohortIdentificationConfigurationsNode {
             get {
                 object obj = ResourceManager.GetObject("AllFreeCohortIdentificationConfigurationsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllGovernanceNode {
+        public static Image<Argb32> AllGovernanceNode {
             get {
                 object obj = ResourceManager.GetObject("AllGovernanceNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllLoadMetadatasNode {
+        public static Image<Argb32> AllLoadMetadatasNode {
             get {
                 object obj = ResourceManager.GetObject("AllLoadMetadatasNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllObjectExportsNode {
+        public static Image<Argb32> AllObjectExportsNode {
             get {
                 object obj = ResourceManager.GetObject("AllObjectExportsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllObjectImportsNode {
+        public static Image<Argb32> AllObjectImportsNode {
             get {
                 object obj = ResourceManager.GetObject("AllObjectImportsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllObjectSharingNode {
+        public static Image<Argb32> AllObjectSharingNode {
             get {
                 object obj = ResourceManager.GetObject("AllObjectSharingNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllOrphanAggregateConfigurationsNode {
+        public static Image<Argb32> AllOrphanAggregateConfigurationsNode {
             get {
                 object obj = ResourceManager.GetObject("AllOrphanAggregateConfigurationsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllPermissionWindowsNode {
+        public static Image<Argb32> AllPermissionWindowsNode {
             get {
                 object obj = ResourceManager.GetObject("AllPermissionWindowsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllTemplateAggregateConfigurationsNode
+        public static Image<Argb32> AllTemplateAggregateConfigurationsNode
         {
             get {
                 object obj = ResourceManager.GetObject("AllTemplateAggregateConfigurationsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllPipelinesNode {
+        public static Image<Argb32> AllPipelinesNode {
             get {
                 object obj = ResourceManager.GetObject("AllPipelinesNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllPluginsNode {
+        public static Image<Argb32> AllPluginsNode {
             get {
                 object obj = ResourceManager.GetObject("AllPluginsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllProcessTasksUsedByLoadMetadataNode {
+        public static Image<Argb32> AllProcessTasksUsedByLoadMetadataNode {
             get {
                 object obj = ResourceManager.GetObject("AllProcessTasksUsedByLoadMetadataNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllProjectCohortIdentificationConfigurationsNode {
+        public static Image<Argb32> AllProjectCohortIdentificationConfigurationsNode {
             get {
                 object obj = ResourceManager.GetObject("AllProjectCohortIdentificationConfigurationsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllRDMPRemotesNode {
+        public static Image<Argb32> AllRDMPRemotesNode {
             get {
                 object obj = ResourceManager.GetObject("AllRDMPRemotesNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllServersNode {
+        public static Image<Argb32> AllServersNode {
             get {
                 object obj = ResourceManager.GetObject("AllServersNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AllStandardRegexesNode {
+        public static Image<Argb32> AllStandardRegexesNode {
             get {
                 object obj = ResourceManager.GetObject("AllStandardRegexesNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ANOColumnInfo {
+        public static Image<Argb32> ANOColumnInfo {
             get {
                 object obj = ResourceManager.GetObject("ANOColumnInfo", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ANOTable {
+        public static Image<Argb32> ANOTable {
             get {
                 object obj = ResourceManager.GetObject("ANOTable", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AutomateablePipeline {
+        public static Image<Argb32> AutomateablePipeline {
             get {
                 object obj = ResourceManager.GetObject("AutomateablePipeline", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AutomationServiceException {
+        public static Image<Argb32> AutomationServiceException {
             get {
                 object obj = ResourceManager.GetObject("AutomationServiceException", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image AutomationServiceSlot {
+        public static Image<Argb32> AutomationServiceSlot {
             get {
                 object obj = ResourceManager.GetObject("AutomationServiceSlot", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Backup {
+        public static Image<Argb32> Backup {
             get {
                 object obj = ResourceManager.GetObject("Backup", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image BigCohort {
+        public static Image<Argb32> BigCohort {
             get {
                 object obj = ResourceManager.GetObject("BigCohort", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image BigGraph {
+        public static Image<Argb32> BigGraph {
             get {
                 object obj = ResourceManager.GetObject("BigGraph", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image BigPatientIndexTable {
+        public static Image<Argb32> BigPatientIndexTable {
             get {
                 object obj = ResourceManager.GetObject("BigPatientIndexTable", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image CacheFetchFailure {
+        public static Image<Argb32> CacheFetchFailure {
             get {
                 object obj = ResourceManager.GetObject("CacheFetchFailure", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image CacheProgress {
+        public static Image<Argb32> CacheProgress {
             get {
                 object obj = ResourceManager.GetObject("CacheProgress", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Catalogue {
+        public static Image<Argb32> Catalogue {
             get {
                 object obj = ResourceManager.GetObject("Catalogue", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image CatalogueFolder {
+        public static Image<Argb32> CatalogueFolder {
             get {
                 object obj = ResourceManager.GetObject("CatalogueFolder", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image CatalogueItem {
+        public static Image<Argb32> CatalogueItem {
             get {
                 object obj = ResourceManager.GetObject("CatalogueItem", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
 
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image CatalogueItemTransform
+        public static Image<Argb32> CatalogueItemTransform
         {
             get
             {
                 object obj = ResourceManager.GetObject("CatalogueItemTransform", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
 
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image CatalogueItemIssue {
+        public static Image<Argb32> CatalogueItemIssue {
             get {
                 object obj = ResourceManager.GetObject("CatalogueItemIssue", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image CatalogueItemsNode {
+        public static Image<Argb32> CatalogueItemsNode {
             get {
                 object obj = ResourceManager.GetObject("CatalogueItemsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image CatalogueLookupsNode {
+        public static Image<Argb32> CatalogueLookupsNode {
             get {
                 object obj = ResourceManager.GetObject("CatalogueLookupsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Clipboard {
+        public static Image<Argb32> Clipboard {
             get {
                 object obj = ResourceManager.GetObject("Clipboard", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image CloneExtractionConfiguration {
+        public static Image<Argb32> CloneExtractionConfiguration {
             get {
                 object obj = ResourceManager.GetObject("CloneExtractionConfiguration", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image CohortAggregate {
+        public static Image<Argb32> CohortAggregate {
             get {
                 object obj = ResourceManager.GetObject("CohortAggregate", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image CohortAggregateContainer {
+        public static Image<Argb32> CohortAggregateContainer {
             get {
                 object obj = ResourceManager.GetObject("CohortAggregateContainer", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image CohortCustomColumn {
+        public static Image<Argb32> CohortCustomColumn {
             get {
                 object obj = ResourceManager.GetObject("CohortCustomColumn", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image CohortIdentificationConfiguration {
+        public static Image<Argb32> CohortIdentificationConfiguration {
             get {
                 object obj = ResourceManager.GetObject("CohortIdentificationConfiguration", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image collapseAllNodes {
+        public static Image<Argb32> collapseAllNodes {
             get {
                 object obj = ResourceManager.GetObject("collapseAllNodes", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return (Image<Argb32>)obj;
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image CollisionResolution {
+        public static Image<Argb32> CollisionResolution {
             get {
                 object obj = ResourceManager.GetObject("CollisionResolution", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return (Image<Argb32>)obj;
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ColumnInfo {
+        public static Image<Argb32> ColumnInfo {
             get {
                 object obj = ResourceManager.GetObject("ColumnInfo", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ConnectionStringKeyword {
+        public static Image<Argb32> ConnectionStringKeyword {
             get {
                 object obj = ResourceManager.GetObject("ConnectionStringKeyword", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image CumulativeExtractionResults {
+        public static Image<Argb32> CumulativeExtractionResults {
             get {
                 object obj = ResourceManager.GetObject("CumulativeExtractionResults", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image DashboardControl {
+        public static Image<Argb32> DashboardControl {
             get {
                 object obj = ResourceManager.GetObject("DashboardControl", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image DashboardLayout {
+        public static Image<Argb32> DashboardLayout {
             get {
                 object obj = ResourceManager.GetObject("DashboardLayout", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image DataAccessCredentials {
+        public static Image<Argb32> DataAccessCredentials {
             get {
                 object obj = ResourceManager.GetObject("DataAccessCredentials", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Database {
+        public static Image<Argb32> Database {
             get {
                 object obj = ResourceManager.GetObject("Database", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image DatabaseRefresh {
+        public static Image<Argb32> DatabaseRefresh {
             get {
                 object obj = ResourceManager.GetObject("DatabaseRefresh", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image DecryptionPrivateKeyNode {
+        public static Image<Argb32> DecryptionPrivateKeyNode {
             get {
                 object obj = ResourceManager.GetObject("DecryptionPrivateKeyNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Diff {
+        public static Image<Argb32> Diff {
             get {
                 object obj = ResourceManager.GetObject("Diff", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image DocumentationNode {
+        public static Image<Argb32> DocumentationNode {
             get {
                 object obj = ResourceManager.GetObject("DocumentationNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image DQE {
+        public static Image<Argb32> DQE {
             get {
                 object obj = ResourceManager.GetObject("DQE", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return (Image<Argb32>)obj;
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image DQEGraphAnnotation {
+        public static Image<Argb32> DQEGraphAnnotation {
             get {
                 object obj = ResourceManager.GetObject("DQEGraphAnnotation", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return (Image<Argb32>)obj;
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image DropHere {
+        public static Image<Argb32> DropHere {
             get {
                 object obj = ResourceManager.GetObject("DropHere", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image EmptyProject {
+        public static Image<Argb32> EmptyProject {
             get {
                 object obj = ResourceManager.GetObject("EmptyProject", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Evaluation {
+        public static Image<Argb32> Evaluation {
             get {
                 object obj = ResourceManager.GetObject("Evaluation", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image EXCEPT {
+        public static Image<Argb32> EXCEPT {
             get {
                 object obj = ResourceManager.GetObject("EXCEPT", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image EXCEPTCohortAggregate {
+        public static Image<Argb32> EXCEPTCohortAggregate {
             get {
                 object obj = ResourceManager.GetObject("EXCEPTCohortAggregate", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Exe {
+        public static Image<Argb32> Exe {
             get {
                 object obj = ResourceManager.GetObject("Exe", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExecuteArrow {
+        public static Image<Argb32> ExecuteArrow {
             get {
                 object obj = ResourceManager.GetObject("ExecuteArrow", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExecuteArrowWithTickOverlay {
+        public static Image<Argb32> ExecuteArrowWithTickOverlay {
             get {
                 object obj = ResourceManager.GetObject("ExecuteArrowWithTickOverlay", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExpandAllNodes {
+        public static Image<Argb32> ExpandAllNodes {
             get {
                 object obj = ResourceManager.GetObject("ExpandAllNodes", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExtendedProperty {
+        public static Image<Argb32> ExtendedProperty {
             get {
                 object obj = ResourceManager.GetObject("ExtendedProperty", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExternalCohortTable {
+        public static Image<Argb32> ExternalCohortTable {
             get {
                 object obj = ResourceManager.GetObject("ExternalCohortTable", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExternalDatabaseServer {
+        public static Image<Argb32> ExternalDatabaseServer {
             get {
                 object obj = ResourceManager.GetObject("ExternalDatabaseServer", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExternalDatabaseServer_ANO {
+        public static Image<Argb32> ExternalDatabaseServer_ANO {
             get {
                 object obj = ResourceManager.GetObject("ExternalDatabaseServer_ANO", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExternalDatabaseServer_Cache {
+        public static Image<Argb32> ExternalDatabaseServer_Cache {
             get {
                 object obj = ResourceManager.GetObject("ExternalDatabaseServer_Cache", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExternalDatabaseServer_DQE {
+        public static Image<Argb32> ExternalDatabaseServer_DQE {
             get {
                 object obj = ResourceManager.GetObject("ExternalDatabaseServer_DQE", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExternalDatabaseServer_IdentifierDump {
+        public static Image<Argb32> ExternalDatabaseServer_IdentifierDump {
             get {
                 object obj = ResourceManager.GetObject("ExternalDatabaseServer_IdentifierDump", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExternalDatabaseServer_Logging {
+        public static Image<Argb32> ExternalDatabaseServer_Logging {
             get {
                 object obj = ResourceManager.GetObject("ExternalDatabaseServer_Logging", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExtractableCohort {
+        public static Image<Argb32> ExtractableCohort {
             get {
                 object obj = ResourceManager.GetObject("ExtractableCohort", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExtractableColumn {
+        public static Image<Argb32> ExtractableColumn {
             get {
                 object obj = ResourceManager.GetObject("ExtractableColumn", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExtractableDataSet {
+        public static Image<Argb32> ExtractableDataSet {
             get {
                 object obj = ResourceManager.GetObject("ExtractableDataSet", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExtractableDataSetDisabled {
+        public static Image<Argb32> ExtractableDataSetDisabled {
             get {
                 object obj = ResourceManager.GetObject("ExtractableDataSetDisabled", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExtractableDataSetPackage {
+        public static Image<Argb32> ExtractableDataSetPackage {
             get {
                 object obj = ResourceManager.GetObject("ExtractableDataSetPackage", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExtractableDataSetsNode {
+        public static Image<Argb32> ExtractableDataSetsNode {
             get {
                 object obj = ResourceManager.GetObject("ExtractableDataSetsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExtractionConfiguration {
+        public static Image<Argb32> ExtractionConfiguration {
             get {
                 object obj = ResourceManager.GetObject("ExtractionConfiguration", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExtractionConfigurationsNode {
+        public static Image<Argb32> ExtractionConfigurationsNode {
             get {
                 object obj = ResourceManager.GetObject("ExtractionConfigurationsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExtractionDirectoryNode {
+        public static Image<Argb32> ExtractionDirectoryNode {
             get {
                 object obj = ResourceManager.GetObject("ExtractionDirectoryNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExtractionFilterParameterSet {
+        public static Image<Argb32> ExtractionFilterParameterSet {
             get {
                 object obj = ResourceManager.GetObject("ExtractionFilterParameterSet", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExtractionInformation {
+        public static Image<Argb32> ExtractionInformation {
             get {
                 object obj = ResourceManager.GetObject("ExtractionInformation", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExtractionInformation_ProjectSpecific {
+        public static Image<Argb32> ExtractionInformation_ProjectSpecific {
             get {
                 object obj = ResourceManager.GetObject("ExtractionInformation_ProjectSpecific", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExtractionInformation_SpecialApproval {
+        public static Image<Argb32> ExtractionInformation_SpecialApproval {
             get {
                 object obj = ResourceManager.GetObject("ExtractionInformation_SpecialApproval", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ExtractionInformation_Supplemental {
+        public static Image<Argb32> ExtractionInformation_Supplemental {
             get {
                 object obj = ResourceManager.GetObject("ExtractionInformation_Supplemental", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Failed {
+        public static Image<Argb32> Failed {
             get {
                 object obj = ResourceManager.GetObject("Failed", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Favourite {
+        public static Image<Argb32> Favourite {
             get {
                 object obj = ResourceManager.GetObject("Favourite", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image File {
+        public static Image<Argb32> File {
             get {
                 object obj = ResourceManager.GetObject("File", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image FileMissing {
+        public static Image<Argb32> FileMissing {
             get {
                 object obj = ResourceManager.GetObject("FileMissing", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Filter {
+        public static Image<Argb32> Filter {
             get {
                 object obj = ResourceManager.GetObject("Filter", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image FilterContainer {
+        public static Image<Argb32> FilterContainer {
             get {
                 object obj = ResourceManager.GetObject("FilterContainer", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image FrozenCohortIdentificationConfiguration {
+        public static Image<Argb32> FrozenCohortIdentificationConfiguration {
             get {
                 object obj = ResourceManager.GetObject("FrozenCohortIdentificationConfiguration", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image FrozenExtractionConfiguration {
+        public static Image<Argb32> FrozenExtractionConfiguration {
             get {
                 object obj = ResourceManager.GetObject("FrozenExtractionConfiguration", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image FrozenExtractionConfigurationsNode {
+        public static Image<Argb32> FrozenExtractionConfigurationsNode {
             get {
                 object obj = ResourceManager.GetObject("FrozenExtractionConfigurationsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image GetFilesStage {
+        public static Image<Argb32> GetFilesStage {
             get {
                 object obj = ResourceManager.GetObject("GetFilesStage", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image GovernanceDocument {
+        public static Image<Argb32> GovernanceDocument {
             get {
                 object obj = ResourceManager.GetObject("GovernanceDocument", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image GovernancePeriod {
+        public static Image<Argb32> GovernancePeriod {
             get {
                 object obj = ResourceManager.GetObject("GovernancePeriod", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Graph {
+        public static Image<Argb32> Graph {
             get {
                 object obj = ResourceManager.GetObject("Graph", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image GreenIssue {
+        public static Image<Argb32> GreenIssue {
             get {
                 object obj = ResourceManager.GetObject("GreenIssue", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Help {
+        public static Image<Argb32> Help {
             get {
                 object obj = ResourceManager.GetObject("Help", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ImportFile {
+        public static Image<Argb32> ImportFile {
             get {
                 object obj = ResourceManager.GetObject("ImportFile", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image INTERSECT {
+        public static Image<Argb32> INTERSECT {
             get {
                 object obj = ResourceManager.GetObject("INTERSECT", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image INTERSECTCohortAggregate {
+        public static Image<Argb32> INTERSECTCohortAggregate {
             get {
                 object obj = ResourceManager.GetObject("INTERSECTCohortAggregate", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image JoinableCollectionNode {
+        public static Image<Argb32> JoinableCollectionNode {
             get {
                 object obj = ResourceManager.GetObject("JoinableCollectionNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image JoinInfo {
+        public static Image<Argb32> JoinInfo {
             get {
                 object obj = ResourceManager.GetObject("JoinInfo", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Kill {
+        public static Image<Argb32> Kill {
             get {
                 object obj = ResourceManager.GetObject("Kill", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image LoadBubble {
+        public static Image<Argb32> LoadBubble {
             get {
                 object obj = ResourceManager.GetObject("LoadBubble", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image LoadBubbleMounting {
+        public static Image<Argb32> LoadBubbleMounting {
             get {
                 object obj = ResourceManager.GetObject("LoadBubbleMounting", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image LoadDirectoryNode {
+        public static Image<Argb32> LoadDirectoryNode {
             get {
                 object obj = ResourceManager.GetObject("LoadDirectoryNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image LoadFinalDatabase {
+        public static Image<Argb32> LoadFinalDatabase {
             get {
                 object obj = ResourceManager.GetObject("LoadFinalDatabase", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image LoadMetadata {
+        public static Image<Argb32> LoadMetadata {
             get {
                 object obj = ResourceManager.GetObject("LoadMetadata", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image LoadMetadataScheduleNode {
+        public static Image<Argb32> LoadMetadataScheduleNode {
             get {
                 object obj = ResourceManager.GetObject("LoadMetadataScheduleNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image LoadModuleAssembly {
+        public static Image<Argb32> LoadModuleAssembly {
             get {
                 object obj = ResourceManager.GetObject("LoadModuleAssembly", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image LoadPeriodically {
+        public static Image<Argb32> LoadPeriodically {
             get {
                 object obj = ResourceManager.GetObject("LoadPeriodically", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image LoadProgress {
+        public static Image<Argb32> LoadProgress {
             get {
                 object obj = ResourceManager.GetObject("LoadProgress", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Logging {
+        public static Image<Argb32> Logging {
             get {
                 object obj = ResourceManager.GetObject("Logging", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Lookup {
+        public static Image<Argb32> Lookup {
             get {
                 object obj = ResourceManager.GetObject("Lookup", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image LookupCompositeJoinInfo {
+        public static Image<Argb32> LookupCompositeJoinInfo {
             get {
                 object obj = ResourceManager.GetObject("LookupCompositeJoinInfo", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Main {
+        public static Image<Argb32> Main {
             get {
                 object obj = ResourceManager.GetObject("Main", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image MakeProjectSpecificCatalogueNormalAgain {
+        public static Image<Argb32> MakeProjectSpecificCatalogueNormalAgain {
             get {
                 object obj = ResourceManager.GetObject("MakeProjectSpecificCatalogueNormalAgain", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Menu {
+        public static Image<Argb32> Menu {
             get {
                 object obj = ResourceManager.GetObject("Menu", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image NoIconAvailable {
+        public static Image<Argb32> NoIconAvailable {
             get {
                 object obj = ResourceManager.GetObject("NoIconAvailable", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ObjectExport {
+        public static Image<Argb32> ObjectExport {
             get {
                 object obj = ResourceManager.GetObject("ObjectExport", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ObjectImport {
+        public static Image<Argb32> ObjectImport {
             get {
                 object obj = ResourceManager.GetObject("ObjectImport", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image OrangeIssue {
+        public static Image<Argb32> OrangeIssue {
             get {
                 object obj = ResourceManager.GetObject("OrangeIssue", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image OtherPipelinesNode {
+        public static Image<Argb32> OtherPipelinesNode {
             get {
                 object obj = ResourceManager.GetObject("OtherPipelinesNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ParametersNode {
+        public static Image<Argb32> ParametersNode {
             get {
                 object obj = ResourceManager.GetObject("ParametersNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image PatientIndexTable {
+        public static Image<Argb32> PatientIndexTable {
             get {
                 object obj = ResourceManager.GetObject("PatientIndexTable", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image PermissionWindow {
+        public static Image<Argb32> PermissionWindow {
             get {
                 object obj = ResourceManager.GetObject("PermissionWindow", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Pipeline {
+        public static Image<Argb32> Pipeline {
             get {
                 object obj = ResourceManager.GetObject("Pipeline", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image PipelineComponent {
+        public static Image<Argb32> PipelineComponent {
             get {
                 object obj = ResourceManager.GetObject("PipelineComponent", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image PipelineComponentArgument {
+        public static Image<Argb32> PipelineComponentArgument {
             get {
                 object obj = ResourceManager.GetObject("PipelineComponentArgument", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image PipelineComponentDestination {
+        public static Image<Argb32> PipelineComponentDestination {
             get {
                 object obj = ResourceManager.GetObject("PipelineComponentDestination", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image PipelineComponentSource {
+        public static Image<Argb32> PipelineComponentSource {
             get {
                 object obj = ResourceManager.GetObject("PipelineComponentSource", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image PivotField {
+        public static Image<Argb32> PivotField {
             get {
                 object obj = ResourceManager.GetObject("PivotField", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Plugin {
+        public static Image<Argb32> Plugin {
             get {
                 object obj = ResourceManager.GetObject("Plugin", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image PreLoadDiscardedColumn {
+        public static Image<Argb32> PreLoadDiscardedColumn {
             get {
                 object obj = ResourceManager.GetObject("PreLoadDiscardedColumn", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image PreLoadDiscardedColumnsNode {
+        public static Image<Argb32> PreLoadDiscardedColumnsNode {
             get {
                 object obj = ResourceManager.GetObject("PreLoadDiscardedColumnsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ProcessTask {
+        public static Image<Argb32> ProcessTask {
             get {
                 object obj = ResourceManager.GetObject("ProcessTask", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ProcessTaskArgument {
+        public static Image<Argb32> ProcessTaskArgument {
             get {
                 object obj = ResourceManager.GetObject("ProcessTaskArgument", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Project {
+        public static Image<Argb32> Project {
             get {
                 object obj = ResourceManager.GetObject("Project", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ProjectCatalogue {
+        public static Image<Argb32> ProjectCatalogue {
             get {
                 object obj = ResourceManager.GetObject("ProjectCatalogue", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ProjectCataloguesNode {
+        public static Image<Argb32> ProjectCataloguesNode {
             get {
                 object obj = ResourceManager.GetObject("ProjectCataloguesNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ProjectCohortIdentificationConfigurationAssociation {
+        public static Image<Argb32> ProjectCohortIdentificationConfigurationAssociation {
             get {
                 object obj = ResourceManager.GetObject("ProjectCohortIdentificationConfigurationAssociation", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ProjectCohortIdentificationConfigurationAssociationsNode {
+        public static Image<Argb32> ProjectCohortIdentificationConfigurationAssociationsNode {
             get {
                 object obj = ResourceManager.GetObject("ProjectCohortIdentificationConfigurationAssociationsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ProjectCohortsNode {
+        public static Image<Argb32> ProjectCohortsNode {
             get {
                 object obj = ResourceManager.GetObject("ProjectCohortsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ProjectSavedCohortsNode {
+        public static Image<Argb32> ProjectSavedCohortsNode {
             get {
                 object obj = ResourceManager.GetObject("ProjectSavedCohortsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ProjectsNode {
+        public static Image<Argb32> ProjectsNode {
             get {
                 object obj = ResourceManager.GetObject("ProjectsNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image RedIssue {
+        public static Image<Argb32> RedIssue {
             get {
                 object obj = ResourceManager.GetObject("RedIssue", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Release {
+        public static Image<Argb32> Release {
             get {
                 object obj = ResourceManager.GetObject("Release", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ReleaseLog {
+        public static Image<Argb32> ReleaseLog {
             get {
                 object obj = ResourceManager.GetObject("ReleaseLog", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image RemoteRDMP {
+        public static Image<Argb32> RemoteRDMP {
             get {
                 object obj = ResourceManager.GetObject("RemoteRDMP", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image ReOrder {
+        public static Image<Argb32> ReOrder {
             get {
                 object obj = ResourceManager.GetObject("ReOrder", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image RowCounts_Ignore {
+        public static Image<Argb32> RowCounts_Ignore {
             get {
                 object obj = ResourceManager.GetObject("RowCounts_Ignore", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image RowCounts_Respect {
+        public static Image<Argb32> RowCounts_Respect {
             get {
                 object obj = ResourceManager.GetObject("RowCounts_Respect", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image SelectedDataSetsForcedJoin {
+        public static Image<Argb32> SelectedDataSetsForcedJoin {
             get {
                 object obj = ResourceManager.GetObject("SelectedDataSetsForcedJoin", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Spanner {
+        public static Image<Argb32> Spanner {
             get {
                 object obj = ResourceManager.GetObject("Spanner", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image SpontaneouslyInventedColumn {
+        public static Image<Argb32> SpontaneouslyInventedColumn {
             get {
                 object obj = ResourceManager.GetObject("SpontaneouslyInventedColumn", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image SQL {
+        public static Image<Argb32> SQL {
             get {
                 object obj = ResourceManager.GetObject("SQL", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image SqlThenVSNow {
+        public static Image<Argb32> SqlThenVSNow {
             get {
                 object obj = ResourceManager.GetObject("SqlThenVSNow", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image StandardPipelineUseCaseNode {
+        public static Image<Argb32> StandardPipelineUseCaseNode {
             get {
                 object obj = ResourceManager.GetObject("StandardPipelineUseCaseNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image StandardRegex {
+        public static Image<Argb32> StandardRegex {
             get {
                 object obj = ResourceManager.GetObject("StandardRegex", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image StarHollow {
+        public static Image<Argb32> StarHollow {
             get {
                 object obj = ResourceManager.GetObject("StarHollow", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image SupplementalExtractionResults {
+        public static Image<Argb32> SupplementalExtractionResults {
             get {
                 object obj = ResourceManager.GetObject("SupplementalExtractionResults", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image SupportingDocument {
+        public static Image<Argb32> SupportingDocument {
             get {
                 object obj = ResourceManager.GetObject("SupportingDocument", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image SupportingDocumentExtractable {
+        public static Image<Argb32> SupportingDocumentExtractable {
             get {
                 object obj = ResourceManager.GetObject("SupportingDocumentExtractable", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image SupportingDocumentExtractableGlobal {
+        public static Image<Argb32> SupportingDocumentExtractableGlobal {
             get {
                 object obj = ResourceManager.GetObject("SupportingDocumentExtractableGlobal", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image SupportingDocumentGlobal {
+        public static Image<Argb32> SupportingDocumentGlobal {
             get {
                 object obj = ResourceManager.GetObject("SupportingDocumentGlobal", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image SupportingSqlExtractable {
+        public static Image<Argb32> SupportingSqlExtractable {
             get {
                 object obj = ResourceManager.GetObject("SupportingSqlExtractable", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image SupportingSqlExtractableGlobal {
+        public static Image<Argb32> SupportingSqlExtractableGlobal {
             get {
                 object obj = ResourceManager.GetObject("SupportingSqlExtractableGlobal", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image SupportingSqlGlobal {
+        public static Image<Argb32> SupportingSqlGlobal {
             get {
                 object obj = ResourceManager.GetObject("SupportingSqlGlobal", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image SupportingSQLTable {
+        public static Image<Argb32> SupportingSQLTable {
             get {
                 object obj = ResourceManager.GetObject("SupportingSQLTable", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Sync {
+        public static Image<Argb32> Sync {
             get {
                 object obj = ResourceManager.GetObject("Sync", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image TableInfo {
+        public static Image<Argb32> TableInfo {
             get {
                 object obj = ResourceManager.GetObject("TableInfo", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image TableInfoServerNode {
+        public static Image<Argb32> TableInfoServerNode {
             get {
                 object obj = ResourceManager.GetObject("TableInfoServerNode", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image TableInfoTableValuedFunction {
+        public static Image<Argb32> TableInfoTableValuedFunction {
             get {
                 object obj = ResourceManager.GetObject("TableInfoTableValuedFunction", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Tick {
+        public static Image<Argb32> Tick {
             get {
                 object obj = ResourceManager.GetObject("Tick", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image TicketingSystemConfiguration {
+        public static Image<Argb32> TicketingSystemConfiguration {
             get {
                 object obj = ResourceManager.GetObject("TicketingSystemConfiguration", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image TimeCoverageField {
+        public static Image<Argb32> TimeCoverageField {
             get {
                 object obj = ResourceManager.GetObject("TimeCoverageField", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image TinyGreen {
+        public static Image<Argb32> TinyGreen {
             get {
                 object obj = ResourceManager.GetObject("TinyGreen", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image TinyRed {
+        public static Image<Argb32> TinyRed {
             get {
                 object obj = ResourceManager.GetObject("TinyRed", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image TinyYellow {
+        public static Image<Argb32> TinyYellow {
             get {
                 object obj = ResourceManager.GetObject("TinyYellow", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image UnfreezeExtractionConfiguration {
+        public static Image<Argb32> UnfreezeExtractionConfiguration {
             get {
                 object obj = ResourceManager.GetObject("UnfreezeExtractionConfiguration", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image UNION {
+        public static Image<Argb32> UNION {
             get {
                 object obj = ResourceManager.GetObject("UNION", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image UNIONCohortAggregate {
+        public static Image<Argb32> UNIONCohortAggregate {
             get {
                 object obj = ResourceManager.GetObject("UNIONCohortAggregate", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Waiting {
+        public static Image<Argb32> Waiting {
             get {
                 object obj = ResourceManager.GetObject("Waiting", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image WaitingForDatabase {
+        public static Image<Argb32> WaitingForDatabase {
             get {
                 object obj = ResourceManager.GetObject("WaitingForDatabase", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Warning {
+        public static Image<Argb32> Warning {
             get {
                 object obj = ResourceManager.GetObject("Warning", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image WhatIsACohort {
+        public static Image<Argb32> WhatIsACohort {
             get {
                 object obj = ResourceManager.GetObject("WhatIsACohort", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image WindowLayout {
+        public static Image<Argb32> WindowLayout {
             get {
                 object obj = ResourceManager.GetObject("WindowLayout", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Writing {
+        public static Image<Argb32> Writing {
             get {
                 object obj = ResourceManager.GetObject("Writing", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
 
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Attacher
+        public static Image<Argb32> Attacher
         {
             get
             {
                 object obj = ResourceManager.GetObject("Attacher", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image DataProvider
+        public static Image<Argb32> DataProvider
         {
             get
             {
                 object obj = ResourceManager.GetObject("DataProvider", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
         /// <summary>
-        ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
+        ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image MutilateDataTables
+        public static Image<Argb32> MutilateDataTables
         {
             get
             {
                 object obj = ResourceManager.GetObject("MutilateDataTables", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return ((Image<Argb32>)(obj));
             }
         }
     }

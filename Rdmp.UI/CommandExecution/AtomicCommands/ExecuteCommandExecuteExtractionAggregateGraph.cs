@@ -10,6 +10,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ProjectUI.Graphs;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
@@ -30,7 +31,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return "Shows a subset of the main graph as it applies to the records that will be extracted";
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.AggregateGraph);
         }

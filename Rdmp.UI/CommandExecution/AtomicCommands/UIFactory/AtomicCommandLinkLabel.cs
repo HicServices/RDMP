@@ -25,7 +25,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory
             _command = command;
             InitializeComponent();
 
-            pbCommandIcon.Image = command.GetImage(iconProvider);
+            pbCommandIcon.Image = command.GetImage(iconProvider).ImageToBitmap();
             var name = command.GetCommandName();
             lblName.Text = name;
 

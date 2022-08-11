@@ -51,7 +51,7 @@ namespace Rdmp.UI.ExtractionUIs
         ToolStripButton rbSpecialApproval = new ToolStripButton("Special Approval");
         ToolStripButton rbInternal = new ToolStripButton("Internal");
 
-        ToolStripButton btnRun = new ToolStripButton("Run",CatalogueIcons.ExecuteArrow);
+        ToolStripButton btnRun = new ToolStripButton("Run",CatalogueIcons.ExecuteArrow.ImageToBitmap());
         
         private Scintilla QueryPreview;
         public ViewExtractionSqlUI()

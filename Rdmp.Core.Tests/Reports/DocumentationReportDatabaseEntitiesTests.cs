@@ -4,14 +4,18 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Drawing;
 using Moq;
 using NUnit.Framework;
 using Rdmp.Core.Reports;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Drawing.Processing;
+using SixLabors.ImageSharp.Processing;
 using Tests.Common;
+using Color = SixLabors.ImageSharp.Color;
 
 namespace Rdmp.Core.Tests.Reports
 {
@@ -27,11 +31,10 @@ namespace Rdmp.Core.Tests.Reports
 
             var reporter = new DocumentationReportDatabaseEntities();
 
-            Bitmap bmp = new Bitmap(19,19);
-            using(var g =Graphics.FromImage(bmp))
-                g.DrawRectangle(new Pen(Color.DarkMagenta),5,5,5,5 );
+            Image img = new Image<Argb32>(19, 19);
+            img.Mutate(x=>x.Fill(Color.DarkMagenta));
 
-            var iconProvider = Mock.Of<IIconProvider>(m=>m.GetImage(It.IsAny<object>(),It.IsAny<OverlayKind>()) == bmp);
+            var iconProvider = Mock.Of<IIconProvider>(m=>m.GetImage(It.IsAny<object>(),It.IsAny<OverlayKind>()) == img);
 
             reporter.GenerateReport(store, new ThrowImmediatelyCheckNotifier(), iconProvider, MEF,false);
 

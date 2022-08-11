@@ -8,10 +8,13 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ReusableLibraryCode.Icons {
-    using System;
-    
-    
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+
+namespace ReusableLibraryCode.Icons
+{
+
+
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -63,100 +66,100 @@ namespace ReusableLibraryCode.Icons {
         /// <summary>
         ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Microsoft {
+        public static Image<Argb32> Microsoft {
             get {
                 object obj = ResourceManager.GetObject("Microsoft", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return (Image<Argb32>)(obj);
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image MicrosoftOverlay {
+        public static Image<Argb32> MicrosoftOverlay {
             get {
                 object obj = ResourceManager.GetObject("MicrosoftOverlay", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return (Image<Argb32>)(obj);
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image MySql {
+        public static Image<Argb32> MySql {
             get {
                 object obj = ResourceManager.GetObject("MySql", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return (Image<Argb32>)(obj);
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image MySqlOverlay {
+        public static Image<Argb32> MySqlOverlay {
             get {
                 object obj = ResourceManager.GetObject("MySqlOverlay", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return (Image<Argb32>)(obj);
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Oracle {
+        public static Image<Argb32> Oracle {
             get {
                 object obj = ResourceManager.GetObject("Oracle", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return (Image<Argb32>)(obj);
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image OracleOverlay {
+        public static Image<Argb32> OracleOverlay {
             get {
                 object obj = ResourceManager.GetObject("OracleOverlay", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return (Image<Argb32>)(obj);
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image PostgreSql {
+        public static Image<Argb32> PostgreSql {
             get {
                 object obj = ResourceManager.GetObject("PostgreSql", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return (Image<Argb32>)(obj);
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image PostgreSqlOverlay {
+        public static Image<Argb32> PostgreSqlOverlay {
             get {
                 object obj = ResourceManager.GetObject("PostgreSqlOverlay", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return (Image<Argb32>)(obj);
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image Unknown {
+        public static Image<Argb32> Unknown {
             get {
                 object obj = ResourceManager.GetObject("Unknown", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return (Image<Argb32>)(obj);
             }
         }
         
         /// <summary>
         ///   Looks up a localized resource of type SixLabors.ImageSharp.Image.
         /// </summary>
-        public static SixLabors.ImageSharp.Image UnknownOverlay {
+        public static Image<Argb32> UnknownOverlay {
             get {
                 object obj = ResourceManager.GetObject("UnknownOverlay", resourceCulture);
-                return ((SixLabors.ImageSharp.Image)(obj));
+                return (Image<Argb32>)(obj);
             }
         }
     }

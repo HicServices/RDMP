@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using SixLabors.ImageSharp;
 using System.Linq;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -113,7 +114,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _explicitChoice = explicitChoice;
 
         }
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.FilterContainer, OverlayKind.Import);
         }

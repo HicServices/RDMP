@@ -13,6 +13,7 @@ using SixLabors.ImageSharp;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -44,7 +45,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             Publish(_filter);
             Activate(parameterSet);            
         }
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ExtractionFilterParameterSet, OverlayKind.Add);
         }

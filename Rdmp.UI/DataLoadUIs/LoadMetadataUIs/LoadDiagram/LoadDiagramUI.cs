@@ -56,7 +56,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 
         readonly RDMPCollectionCommonFunctionality _collectionCommonFunctionality = new RDMPCollectionCommonFunctionality();
 
-        readonly ToolStripButton _btnFetchData = new ToolStripButton("Fetch State",CatalogueIcons.DatabaseRefresh)
+        readonly ToolStripButton _btnFetchData = new ToolStripButton("Fetch State",CatalogueIcons.DatabaseRefresh.ImageToBitmap())
         {
             DisplayStyle = ToolStripItemDisplayStyle.ImageAndText
         };

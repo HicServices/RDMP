@@ -9,6 +9,7 @@ using System.IO;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -65,7 +66,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             Activate(doc);
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.GovernanceDocument, OverlayKind.Add);
         }

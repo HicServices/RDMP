@@ -12,6 +12,7 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
 {
@@ -92,7 +93,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands
             configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import);
         }

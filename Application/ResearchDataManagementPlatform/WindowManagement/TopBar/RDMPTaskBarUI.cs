@@ -37,27 +37,27 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             InitializeComponent();
             BackColorProvider provider = new BackColorProvider();
 
-            btnHome.Image = FamFamFamIcons.application_home;
-            btnCatalogues.Image = CatalogueIcons.Catalogue;
+            btnHome.Image = FamFamFamIcons.application_home.ImageToBitmap();
+            btnCatalogues.Image = CatalogueIcons.Catalogue.ImageToBitmap();
             btnCatalogues.BackgroundImage = provider.GetBackgroundImage(btnCatalogues.Size, RDMPCollection.Catalogue);
 
-            btnCohorts.Image = CatalogueIcons.CohortIdentificationConfiguration;
+            btnCohorts.Image = CatalogueIcons.CohortIdentificationConfiguration.ImageToBitmap();
             btnCohorts.BackgroundImage = provider.GetBackgroundImage(btnCohorts.Size, RDMPCollection.Cohort);
 
-            btnSavedCohorts.Image = CatalogueIcons.AllCohortsNode;
+            btnSavedCohorts.Image = CatalogueIcons.AllCohortsNode.ImageToBitmap();
             btnSavedCohorts.BackgroundImage = provider.GetBackgroundImage(btnSavedCohorts.Size, RDMPCollection.SavedCohorts);
 
-            btnDataExport.Image = CatalogueIcons.Project;
+            btnDataExport.Image = CatalogueIcons.Project.ImageToBitmap();
             btnDataExport.BackgroundImage = provider.GetBackgroundImage(btnDataExport.Size, RDMPCollection.DataExport);
 
-            btnTables.Image = CatalogueIcons.TableInfo;
+            btnTables.Image = CatalogueIcons.TableInfo.ImageToBitmap();
             btnTables.BackgroundImage = provider.GetBackgroundImage(btnTables.Size, RDMPCollection.Tables);
 
-            btnLoad.Image = CatalogueIcons.LoadMetadata;
+            btnLoad.Image = CatalogueIcons.LoadMetadata.ImageToBitmap();
             btnLoad.BackgroundImage = provider.GetBackgroundImage(btnLoad.Size, RDMPCollection.DataLoad);
             
-            btnFavourites.Image = CatalogueIcons.Favourite;
-            btnDeleteLayout.Image = FamFamFamIcons.delete;
+            btnFavourites.Image = CatalogueIcons.Favourite.ImageToBitmap();
+            btnDeleteLayout.Image = FamFamFamIcons.delete.ImageToBitmap();
         }
 
         public void SetWindowManager(WindowManager manager)

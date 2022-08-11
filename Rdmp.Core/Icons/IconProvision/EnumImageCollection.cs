@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using SixLabors.ImageSharp;
 using System.Linq;
 using System.Resources;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision
 {
@@ -33,11 +35,11 @@ namespace Rdmp.Core.Icons.IconProvision
             }
 
             if(missingImages.Any())
-                throw new IconProvisionException("The following expected images were missing from " + resourceManager.BaseName + ".resx" + Environment.NewLine + 
-                    string.Join("," + Environment.NewLine,missingImages));
+                throw new IconProvisionException(
+                    $"The following expected images were missing from {resourceManager.BaseName}.resx{Environment.NewLine}{string.Join("," + Environment.NewLine, missingImages)}");
         }
 
-        public Image this[T index]
+        public Image<Argb32> this[T index]
         {
             get { return _images[index]; }
         }
@@ -56,10 +58,9 @@ namespace Rdmp.Core.Icons.IconProvision
         {
             foreach (var k in dictionary.Keys.ToArray())
             {
-                var bmp = new Bitmap(newSizeInPixels, newSizeInPixels);
-                var g = Graphics.FromImage(bmp);
-                g.DrawImage(dictionary[k],0,0,newSizeInPixels,newSizeInPixels);
-                dictionary[k] = bmp;
+                var img = dictionary[k].CloneAs<Argb32>();
+                img.Mutate(x=>x.Resize(newSizeInPixels,newSizeInPixels));
+                dictionary[k] = img;
             }
 
             return dictionary;

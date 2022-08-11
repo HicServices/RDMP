@@ -11,6 +11,7 @@ using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision
 {
@@ -23,7 +24,7 @@ namespace Rdmp.Core.Icons.IconProvision
             StateBasedIconProviders.Add(new ExtractionConfigurationStateBasedIconProvider(this));
         }
 
-        protected override Image GetImageImpl(object concept, OverlayKind kind = OverlayKind.None)
+        protected override Image<Argb32> GetImageImpl(object concept, OverlayKind kind = OverlayKind.None)
         {
             if (concept is LinkedCohortNode)
                 return base.GetImageImpl(RDMPConcept.ExtractableCohort, OverlayKind.Link);

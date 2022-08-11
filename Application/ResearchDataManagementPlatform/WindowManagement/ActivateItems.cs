@@ -70,6 +70,7 @@ using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Settings;
 using WeifenLuo.WinFormsUI.Docking;
+using Image = SixLabors.ImageSharp.Image;
 
 namespace ResearchDataManagementPlatform.WindowManagement
 {
@@ -305,7 +306,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             where T : RDMPSingleDatabaseObjectControl<T2>, new()
             where T2 : DatabaseEntity
         {
-            return Activate<T, T2>(databaseObject, CoreIconProvider.GetImage(databaseObject).ToBitmap());
+            return Activate<T, T2>(databaseObject, CoreIconProvider.GetImage(databaseObject));
         }
         
         public T Activate<T>(IPersistableObjectCollection collection)
@@ -329,7 +330,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
 
 
-        private T Activate<T, T2>(T2 databaseObject, Bitmap tabImage)
+        private T Activate<T, T2>(T2 databaseObject, Image tabImage)
             where T : RDMPSingleDatabaseObjectControl<T2>, new()
             where T2 : DatabaseEntity
         {
@@ -405,7 +406,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 if (databaseObject == null)
                     return null;
 
-                DockContent floatable = WindowFactory.Create(this,RefreshBus, uiInstance,CoreIconProvider.GetImage(databaseObject).ToBitmap(), databaseObject);
+                DockContent floatable = WindowFactory.Create(this,RefreshBus, uiInstance,CoreIconProvider.GetImage(databaseObject), databaseObject);
 
                 floatable.Show(_mainDockPanel, DockState.Document);
                 try
@@ -709,7 +710,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             var panel = WindowFactory.Create(this,new SessionCollectionUI(),new SessionCollection(sessionName)
             {
                 DatabaseObjects = initialObjects.ToList()
-            },CatalogueIcons.WindowLayout.ToBitmap());
+            },CatalogueIcons.WindowLayout);
             panel.Show(_mainDockPanel,DockState.DockLeft);
         }
 

@@ -409,7 +409,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         /// <param name="showIcon">True to add the text icon next to the text</param>
         public void Add(string label, bool showIcon = true)
         {
-            Add(new ToolStripLabel(label, showIcon ? FamFamFamIcons.text_align_left : null));
+            Add(new ToolStripLabel(label, showIcon ? FamFamFamIcons.text_align_left.ImageToBitmap() : null));
         }
 
         /// <summary>

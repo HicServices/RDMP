@@ -86,14 +86,14 @@ namespace Rdmp.UI.AggregationUIs
 
         private AggregateConfiguration _aggregateConfiguration;
 
-        ToolStripMenuItem miSaveImages = new ToolStripMenuItem("Save Image", FamFamFamIcons.disk);
+        ToolStripMenuItem miSaveImages = new ToolStripMenuItem("Save Image", FamFamFamIcons.disk.ImageToBitmap());
 
-        ToolStripMenuItem miCopyToClipboard = new ToolStripMenuItem("Copy to Clipboard", CatalogueIcons.Clipboard);
+        ToolStripMenuItem miCopyToClipboard = new ToolStripMenuItem("Copy to Clipboard", CatalogueIcons.Clipboard.ImageToBitmap());
         ToolStripMenuItem miClipboardWord = new ToolStripMenuItem("Word Format");
         ToolStripMenuItem miClipboardCsv = new ToolStripMenuItem("Comma Separated Format");
-        ToolStripMenuItem btnCache = new ToolStripMenuItem("Cache", FamFamFamIcons.picture_save);
+        ToolStripMenuItem btnCache = new ToolStripMenuItem("Cache", FamFamFamIcons.picture_save.ImageToBitmap());
 
-        ToolStripButton btnResendQuery = new ToolStripButton("Send Query", FamFamFamIcons.arrow_refresh);
+        ToolStripButton btnResendQuery = new ToolStripButton("Send Query", FamFamFamIcons.arrow_refresh.ImageToBitmap());
 
         readonly ToolStripTimeout _timeoutControls = new ToolStripTimeout();
         
@@ -775,14 +775,18 @@ namespace Rdmp.UI.AggregationUIs
 
             foreach (var o in GetRibbonObjects())
             {
-                if (o is string)
-                    CommonFunctionality.Add((string)o);
-                else if (o is DatabaseEntity)
-                    CommonFunctionality.AddToMenu(new ExecuteCommandShow(Activator, (DatabaseEntity)o, 0, true));
-                else
-                    throw new NotSupportedException(
-                        "GetRibbonObjects can only return strings or DatabaseEntity objects, object '" + o +
-                        "' is not valid because it is a '" + o.GetType().Name + "'");
+                switch (o)
+                {
+                    case string s:
+                        CommonFunctionality.Add(s);
+                        break;
+                    case DatabaseEntity entity:
+                        CommonFunctionality.AddToMenu(new ExecuteCommandShow(Activator, entity, 0, true));
+                        break;
+                    default:
+                        throw new NotSupportedException(
+                            $"GetRibbonObjects can only return strings or DatabaseEntity objects, object '{o}' is not valid because it is a '{o.GetType().Name}'");
+                }
             }
             
         }
@@ -790,7 +794,7 @@ namespace Rdmp.UI.AggregationUIs
 
         protected virtual object[] GetRibbonObjects()
         {
-            return new object[0];
+            return Array.Empty<object>();
         }
 
 
@@ -799,10 +803,10 @@ namespace Rdmp.UI.AggregationUIs
             var b = new Bitmap(chart1.Width, chart1.Height);
             chart1.DrawToBitmap(b, new Rectangle(new Point(0, 0), new Size(chart1.Width, chart1.Height)));
             
-            yield return new BitmapWithDescription(b,AggregateConfiguration.Name,AggregateConfiguration.Description);
+            yield return new BitmapWithDescription(b.LegacyToImage(),AggregateConfiguration.Name,AggregateConfiguration.Description);
 
             if (heatmapUI.HasDataTable())
-                yield return new BitmapWithDescription(heatmapUI.GetImage(800),null,null);
+                yield return new BitmapWithDescription(heatmapUI.GetImage(800).LegacyToImage(),null,null);
         }
         
         private void MiSaveImagesClick(object sender, EventArgs e)

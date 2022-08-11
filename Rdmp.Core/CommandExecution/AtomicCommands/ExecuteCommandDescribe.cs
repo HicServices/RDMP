@@ -17,6 +17,7 @@ using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.Startup;
 using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -72,7 +73,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _nonDatabaseObjectToDescribe = randomThing;
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             if (_nonDatabaseObjectToDescribe != null)
                 return iconProvider.GetImage(_nonDatabaseObjectToDescribe);

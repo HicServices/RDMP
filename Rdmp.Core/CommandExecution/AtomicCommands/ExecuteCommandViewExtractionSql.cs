@@ -13,6 +13,7 @@ using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -69,7 +70,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             return "Shows the SQL that will be executed for the given dataset when it is extracted including the linkage with the cohort table";
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute);
         }

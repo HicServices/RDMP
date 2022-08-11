@@ -51,8 +51,8 @@ namespace Rdmp.UI.Menus
                     }
 
                     //and offer graph generation for the cohort subsets
-                    var matchRecords = new ToolStripMenuItem("Graph Matching Records Only",_activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph));
-                    var matchIdentifiers = new ToolStripMenuItem("Graph All Records For Matching Patients",_activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph));
+                    var matchRecords = new ToolStripMenuItem("Graph Matching Records Only",_activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph).ImageToBitmap());
+                    var matchIdentifiers = new ToolStripMenuItem("Graph All Records For Matching Patients",_activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph).ImageToBitmap());
 
                     matchRecords.Enabled = graphsAvailableInCatalogue.Any();
                     matchIdentifiers.Enabled = graphsAvailableInCatalogue.Any() && cic.QueryCachingServer_ID != null;

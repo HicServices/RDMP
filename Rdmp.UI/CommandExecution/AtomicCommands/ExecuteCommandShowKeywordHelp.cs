@@ -14,7 +14,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
-
+using SixLabors.ImageSharp.PixelFormats;
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
@@ -35,7 +35,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return "What is this?";
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Help);
         }

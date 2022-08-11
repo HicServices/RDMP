@@ -12,6 +12,7 @@ using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
 
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
@@ -51,7 +52,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             Activator.ShowWindow(ui, true);
         }
 
-        public override Image GetImage(IIconProvider iconProvider)
+        public override Image<Argb32> GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(_cacheProgress);
         }

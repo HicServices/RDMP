@@ -427,7 +427,7 @@ namespace Rdmp.UI.Collections
             if(Tree.Parent == null || collection == RDMPCollection.None)
                 return;
 
-            var indicatorHeight = BackColorProvider.IndiciatorBarSuggestedHeight;
+            var indicatorHeight = BackColorProvider.IndicatorBarSuggestedHeight;
 
             BackColorProvider p = new BackColorProvider();
             var ctrl = new Control();
