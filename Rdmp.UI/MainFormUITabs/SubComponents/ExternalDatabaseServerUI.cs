@@ -16,7 +16,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-
+using ReusableLibraryCode.Icons;
 
 namespace Rdmp.UI.MainFormUITabs.SubComponents
 {
@@ -54,9 +54,9 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
 
                 tbPassword.Text = _server.GetDecryptedPassword();
                 ddDatabaseType.SelectedItem = _server.DatabaseType;
-                pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(_server.DatabaseType);
+                pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(_server.DatabaseType).ToBitmap();
 
-                pbServer.Image = Activator.CoreIconProvider.GetImage(_server);
+                pbServer.Image = Activator.CoreIconProvider.GetImage(_server).ToBitmap();
 
                 CommonFunctionality.AddChecks(databaseObject);
             }
@@ -111,7 +111,7 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
 
             var type = (DatabaseType)ddDatabaseType.SelectedValue;
             _server.DatabaseType = type;
-            pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(type);
+            pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(type).ToBitmap();
         }
     }
 

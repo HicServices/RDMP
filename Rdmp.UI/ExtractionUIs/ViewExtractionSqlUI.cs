@@ -25,6 +25,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Icons.IconProvision;
 
 using ScintillaNET;
@@ -203,10 +204,10 @@ namespace Rdmp.UI.ExtractionUIs
             _catalogue = databaseObject;
             RefreshUIFromDatabase();
 
-            rbCore.Image = CatalogueIcons.ExtractionInformation;
-            rbSupplemental.Image = CatalogueIcons.ExtractionInformation_Supplemental;
-            rbSpecialApproval.Image = CatalogueIcons.ExtractionInformation_SpecialApproval;
-            rbInternal.Image = activator.CoreIconProvider.GetImage(CatalogueIcons.ExtractionInformation_SpecialApproval, OverlayKind.Internal);
+            rbCore.Image = CatalogueIcons.ExtractionInformation.ToBitmap();
+            rbSupplemental.Image = CatalogueIcons.ExtractionInformation_Supplemental.ToBitmap();
+            rbSpecialApproval.Image = CatalogueIcons.ExtractionInformation_SpecialApproval.ToBitmap();
+            rbInternal.Image = activator.CoreIconProvider.GetImage(CatalogueIcons.ExtractionInformation_SpecialApproval, OverlayKind.Internal).ToBitmap();
 
             CommonFunctionality.Add(rbCore);
             CommonFunctionality.Add(rbSupplemental);

@@ -28,6 +28,7 @@ using Rdmp.UI.Refreshing;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Settings;
 using ScintillaNET;
@@ -118,7 +119,7 @@ namespace Rdmp.UI.DataViewing
 
             CommonFunctionality.ClearToolStrip();
 
-            btnExecuteSql.Image = activator.CoreIconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute);
+            btnExecuteSql.Image = activator.CoreIconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute).ToBitmap();
 
             var overlayer = new IconOverlayProvider();
             btnResetSql.Image = overlayer.GetOverlay(FamFamFamIcons.text_align_left, OverlayKind.Problem);
@@ -159,7 +160,7 @@ namespace Rdmp.UI.DataViewing
             {
                 var dap = _collection.GetDataAccessPoint();
                 _serverHeader.Text = $"Server: {dap.Server} Database: {dap.Database}";
-                _serverHeader.Image = _databaseTypeIconProvider.GetImage(dap.DatabaseType);
+                _serverHeader.Image = _databaseTypeIconProvider.GetImage(dap.DatabaseType).ToBitmap();
             }
             catch (Exception)
             {

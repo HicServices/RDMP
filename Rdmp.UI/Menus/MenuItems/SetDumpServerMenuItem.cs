@@ -34,7 +34,7 @@ namespace Rdmp.UI.Menus.MenuItems
 
             //cannot set server if we already have one
             Enabled = tableInfo.IdentifierDumpServer_ID == null;
-            Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add);
+            Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add).ToBitmap();
 
             var img = CatalogueIcons.ExternalDatabaseServer_IdentifierDump;
             var overlay = new IconOverlayProvider();

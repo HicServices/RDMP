@@ -6,7 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
+using SixLabors.ImageSharp;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -22,6 +22,9 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 using ScintillaNET;
 using HelpIcon = Rdmp.UI.SimpleControls.HelpIcon;
+using Point = System.Drawing.Point;
+using ReusableLibraryCode.Icons;
+using Color = System.Drawing.Color;
 
 namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 {
@@ -59,7 +62,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         private AtomicCommandUIFactory atomicCommandUIFactory;
         
         private readonly RAGSmileyToolStrip _ragSmileyToolStrip;
-        private readonly ToolStripButton _runChecksToolStripButton = new ToolStripButton("Run Checks", FamFamFamIcons.arrow_refresh);
+        private readonly ToolStripButton _runChecksToolStripButton = new ToolStripButton("Run Checks", FamFamFamIcons.arrow_refresh.ToBitmap());
         private ICheckable _checkable;
         private IActivateItems _activator;
 
@@ -77,7 +80,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 
             //Add the three lines dropdown for seldom used options (See AddToMenu). This starts disabled.
             _menuDropDown = new ToolStripMenuItem();
-            _menuDropDown.Image = CatalogueIcons.Menu;
+            _menuDropDown.Image = CatalogueIcons.Menu.ToBitmap();
             _menuDropDown.Visible = false;
             ToolStrip.Items.Add(_menuDropDown);
                         
@@ -125,7 +128,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
                 button.Text = overrideCommandName;
 
             if (overrideImage != null)
-                button.Image = overrideImage;
+                button.Image = overrideImage.ToBitmap();
 
             Add(button,underMenu);
         }
@@ -357,7 +360,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
                 menuItem.Text = overrideCommandName;
 
             if (overrideImage != null)
-                menuItem.Image = overrideImage;
+                menuItem.Image = overrideImage.ToBitmap();
 
             AddToMenu(menuItem,underMenu);
         }

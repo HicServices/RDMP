@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
+using ReusableLibraryCode.Icons;
 
 namespace Rdmp.UI.Wizard
 {
@@ -29,7 +30,7 @@ namespace Rdmp.UI.Wizard
             InitializeComponent();
 
             lblParameterName.Text = parameter.ParameterName.TrimStart('@');
-            pbParameter.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.ParametersNode);
+            pbParameter.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.ParametersNode).ToBitmap();
 
             tbValue.Text = parameter.Value;
 

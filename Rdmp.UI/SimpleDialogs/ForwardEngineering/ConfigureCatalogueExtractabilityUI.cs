@@ -30,6 +30,7 @@ using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.TransparentHelpSystem;
 using Rdmp.UI.Tutorials;
+using ReusableLibraryCode.Icons;
 
 namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 {
@@ -169,7 +170,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             else
             {
                 SelectProject(projectSpecificIfAny);
-                pbProject.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Project);
+                pbProject.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Project).ToBitmap();
             }
 
             ddIsExtractionIdentifier.Items.Add(None);

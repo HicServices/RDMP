@@ -15,7 +15,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-
+using ReusableLibraryCode.Icons;
 
 namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
 {
@@ -42,9 +42,9 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
 
             _lookup = databaseObject;
 
-            pbColumnInfo1.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo);
-            pbColumnInfo2.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo);
-            pbTable.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo);
+            pbColumnInfo1.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo).ToBitmap();
+            pbColumnInfo2.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo).ToBitmap();
+            pbTable.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo).ToBitmap();
 
 
             tbFk.Text = databaseObject.ForeignKey.Name;

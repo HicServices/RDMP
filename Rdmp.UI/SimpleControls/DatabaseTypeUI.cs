@@ -7,6 +7,7 @@
 using System;
 using System.Windows.Forms;
 using FAnsi;
+using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.SimpleControls
@@ -28,7 +29,7 @@ namespace Rdmp.UI.SimpleControls
                     return;
 
                 ddDatabaseType.SelectedItem = value;
-                pbDatabaseProvider.Image = _databaseIconProvider.GetImage(value);
+                pbDatabaseProvider.Image = _databaseIconProvider.GetImage(value).ToBitmap();
                 
             }
         }
@@ -40,7 +41,7 @@ namespace Rdmp.UI.SimpleControls
             ddDatabaseType.DataSource = Enum.GetValues(typeof(DatabaseType));
 
             _databaseIconProvider = new DatabaseTypeIconProvider();
-            pbDatabaseProvider.Image = _databaseIconProvider.GetImage(DatabaseType.MicrosoftSQLServer);
+            pbDatabaseProvider.Image = _databaseIconProvider.GetImage(DatabaseType.MicrosoftSQLServer).ToBitmap();
 
             bLoading = false;
 

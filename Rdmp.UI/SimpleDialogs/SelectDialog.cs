@@ -20,6 +20,7 @@ using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Theme;
+using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Settings;
 using System;
 using System.Collections;
@@ -358,7 +359,7 @@ namespace Rdmp.UI.SimpleDialogs
                     if (parent == null)
                         return null;
 
-                    return provider.GetGrayscale(_activator.CoreIconProvider.GetImage(parent));
+                    return provider.GetGrayscale(_activator.CoreIconProvider.GetImage(parent)).ToBitmap();
                 }
             }
 
@@ -408,7 +409,7 @@ namespace Rdmp.UI.SimpleDialogs
                 foreach (Type t in EasyFilterTypesAndAssociatedCollections.Keys)
                 {
                     var b = new ToolStripButton();
-                    b.Image = _activator.CoreIconProvider.GetImage(t);
+                    b.Image = _activator.CoreIconProvider.GetImage(t).ToBitmap();
                     b.CheckOnClick = true;
                     b.Tag = t;
                     b.DisplayStyle = ToolStripItemDisplayStyle.Image;
@@ -472,7 +473,7 @@ namespace Rdmp.UI.SimpleDialogs
         public Bitmap GetImage(object model)
         {
             var bmp = _activator.CoreIconProvider.GetImage(model);
-            return bmp == _activator.CoreIconProvider.ImageUnknown ? null : bmp;
+            return bmp == _activator.CoreIconProvider.ImageUnknown ? null : bmp.ToBitmap();
         }
 
 

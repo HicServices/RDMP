@@ -24,6 +24,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using ReusableLibraryCode.Icons;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.Raceway
@@ -63,9 +64,9 @@ namespace Rdmp.UI.Raceway
             
             ddShowPeriod.ComboBox.DataSource = Enum.GetValues(typeof (RacewayShowPeriod));
             
-            btnRemoveAll.Image = FamFamFamIcons.delete_multi;
-            _ignoreRowCounts = CatalogueIcons.RowCounts_Ignore;
-            _respectRowCounts = CatalogueIcons.RowCounts_Respect;
+            btnRemoveAll.Image = FamFamFamIcons.delete_multi.ToBitmap();
+            _ignoreRowCounts = CatalogueIcons.RowCounts_Ignore.ToBitmap();
+            _respectRowCounts = CatalogueIcons.RowCounts_Respect.ToBitmap();
         }
 
         private DashboardControl _dashboardControlDatabaseRecord;
@@ -175,8 +176,8 @@ namespace Rdmp.UI.Raceway
 
             SetItemActivator(activator);
 
-            btnAddCatalogue.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Import);
-            btnAddExtractableDatasetPackage.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage, OverlayKind.Import);
+            btnAddCatalogue.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Import).ToBitmap();
+            btnAddExtractableDatasetPackage.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage, OverlayKind.Import).ToBitmap();
             
             ddShowPeriod.ComboBox.SelectedItem = _collection.ShowPeriod;
             cbIgnoreRowCounts.Checked = _collection.IgnoreRows;

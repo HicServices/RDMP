@@ -28,7 +28,7 @@ namespace Rdmp.UI.Menus.MenuItems
 
             _dqeServer = activator.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults.DQE);
 
-            Image = activator.CoreIconProvider.GetImage(RDMPConcept.DQE);
+            Image = activator.CoreIconProvider.GetImage(RDMPConcept.DQE).ToBitmap();
 
             Text = _dqeServer == null ? "Create DQE Database..." : "Data Quality Engine...";
         }

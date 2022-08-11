@@ -4,21 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
-using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
 
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands

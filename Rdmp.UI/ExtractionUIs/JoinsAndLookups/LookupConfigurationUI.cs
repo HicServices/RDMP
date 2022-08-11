@@ -131,12 +131,12 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             olvExtractionInformations.ClearObjects();
             olvExtractionInformations.AddObjects(allExtractionInformationFromCatalogue.ToArray());
             
-            btnImportNewTableInfo.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import);
+            btnImportNewTableInfo.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import).ToBitmap();
             toolTip.SetToolTip(btnImportNewTableInfo, "Import new...");
 
-            btnPrimaryKeyCompositeHelp.Image = FamFamFamIcons.help;
+            btnPrimaryKeyCompositeHelp.Image = FamFamFamIcons.help.ToBitmap();
             
-            pictureBox1.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue);
+            pictureBox1.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue).ToBitmap();
             tbCatalogue.Text = databaseObject.ToString();
 
             cbxLookup.SetUp(activator.CoreChildProvider.AllTableInfos);

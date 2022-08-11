@@ -10,7 +10,7 @@ using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 using System;
-using System.Drawing;
+using SixLabors.ImageSharp;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {

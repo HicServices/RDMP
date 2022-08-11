@@ -14,7 +14,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-
+using ReusableLibraryCode.Icons;
 
 namespace Rdmp.UI.MainFormUITabs
 {
@@ -44,7 +44,7 @@ namespace Rdmp.UI.MainFormUITabs
             tbValue.Text = _keyword.Value;
             tbID.Text = _keyword.ID.ToString();
 
-            pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(_keyword.DatabaseType);
+            pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(_keyword.DatabaseType).ToBitmap();
 
             tbCommandToDelete.Text = "DELETE FROM ConnectionStringKeyword";
 
@@ -68,7 +68,7 @@ namespace Rdmp.UI.MainFormUITabs
                 return;
             
             var type = (DatabaseType)ddDatabaseType.SelectedValue;
-            pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(type);
+            pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(type).ToBitmap();
         }
     }
 

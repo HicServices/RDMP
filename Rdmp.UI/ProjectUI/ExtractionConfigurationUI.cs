@@ -101,7 +101,7 @@ namespace Rdmp.UI.ProjectUI
             SetupPipelineSelectionExtraction();
             SetupPipelineSelectionCohortRefresh();
             
-            pbCic.Image = activator.CoreIconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration,OverlayKind.Link);
+            pbCic.Image = activator.CoreIconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration,OverlayKind.Link).ToBitmap();
             
             tbCreated.Text = _extractionConfiguration.dtCreated.ToString();
             tcRelease.TicketText = _extractionConfiguration.ReleaseTicket;
