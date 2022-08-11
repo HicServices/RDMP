@@ -33,7 +33,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 Assert.IsTrue(cata.Name.Equals("Fish"));
 
                 var commands = pCounter.DictionaryOfQueries.Values.ToArray();
-                Assert.IsTrue(commands.Any(c => c.QueryText.Contains("SELECT * FROM Catalogue WHERE ID=")));
+                Assert.IsTrue(commands.Any(c => c.QueryText.Contains("SELECT * FROM [Catalogue] WHERE ID=")));
                 
                 cata.DeleteInDatabase();
             }
