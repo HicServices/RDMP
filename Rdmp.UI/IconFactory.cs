@@ -7,9 +7,14 @@
 using System;
 using System.Collections.Generic;
 using SixLabors.ImageSharp;
+using System.Drawing;
 
-namespace Rdmp.Core.Icons.IconProvision
+using Image = SixLabors.ImageSharp.Image;
+using ReusableLibraryCode.Icons;
+
+namespace Rdmp.UI
 {
+    
     /// <summary>
     /// Creates <see cref="Icon"/> instances based on provided <see cref="Bitmap"/> (with support for caching).
     /// </summary>
@@ -34,7 +39,7 @@ namespace Rdmp.Core.Icons.IconProvision
         private Icon CreateIcon(Image bmp)
         {
             // Get an Hicon for myBitmap.
-            IntPtr Hicon = bmp.GetHicon();
+            IntPtr Hicon = bmp.ToBitmap().GetHicon();
 
             // Create a new icon from the handle. 
             Icon newIcon = Icon.FromHandle(Hicon);
