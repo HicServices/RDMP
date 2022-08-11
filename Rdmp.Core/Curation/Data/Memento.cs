@@ -14,17 +14,6 @@ using System.Data.Common;
 namespace Rdmp.Core.Curation.Data
 {
     /// <summary>
-    /// Describes the operation that is stored in a
-    /// <see cref="Memento"/> (A/M/D)
-    /// </summary>
-    public enum MementoType
-    {
-        Add,
-        Modify,
-        Delete,
-    }
-
-    /// <summary>
     /// Describes a point in time state of another <see cref="DatabaseEntity"/>.  Note that the state may be invalid if other
     /// objects have been since deleted.  e.g. if user updates the <see cref="Catalogue.TimeCoverage_ExtractionInformation_ID"/> 
     /// the memento would point to an old <see cref="ExtractionInformation"/> which may be subsequently deleted

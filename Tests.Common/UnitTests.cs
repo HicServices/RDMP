@@ -583,7 +583,22 @@ namespace Tests.Common
 
                 return (T)(object)new ExtractionProgress(repository, sds);
             }
-            
+
+
+            if (typeof(T) == typeof(Commit))
+            {
+                return (T)(object)new Commit(repository, Guid.NewGuid(),"Breaking stuff");
+            }
+
+            if (typeof(T) == typeof(Memento))
+            {
+                var commit = WhenIHaveA<Commit>(repository);
+                var cata = WhenIHaveA<Catalogue>(repository);
+
+                return (T)(object)new Memento(repository, commit, MementoType.Add, cata, null, "placeholder");
+            }
+
+
             throw new TestCaseNotWrittenYetException(typeof(T));
         }
 

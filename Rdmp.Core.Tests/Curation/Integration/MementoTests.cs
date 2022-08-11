@@ -31,7 +31,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             var mem2 = CatalogueRepository.GetObjectByID<Memento>(mem.ID);
 
-            Assert.AreEqual(g, mem2.Commit.Transaction);
+            Assert.AreEqual(g, new Guid(mem2.Commit.Transaction));
             Assert.AreEqual("blerg", mem2.AfterYaml);
             Assert.AreEqual("yar", mem2.BeforeYaml);
             Assert.AreEqual(MementoType.Modify, mem2.Type);
@@ -54,7 +54,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             foreach(var check in new[] { mem, CatalogueRepository.GetObjectByID<Memento>(mem.ID) })
             {
                 Assert.IsNull(check.BeforeYaml);
-                Assert.AreEqual(g, check.Commit.Transaction);
+                Assert.AreEqual(g, new Guid(check.Commit.Transaction));
                 Assert.AreEqual("blerg", check.AfterYaml);
                 Assert.AreEqual(MementoType.Add, check.Type);
                 Assert.AreEqual(Environment.UserName, check.Commit.Username);
@@ -76,7 +76,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             foreach (var check in new[] { mem, CatalogueRepository.GetObjectByID<Memento>(mem.ID) })
             {
                 Assert.IsNull(check.AfterYaml);
-                Assert.AreEqual(g, check.Commit.Transaction);
+                Assert.AreEqual(g, new Guid(check.Commit.Transaction));
                 Assert.AreEqual("blah", check.BeforeYaml);
                 Assert.AreEqual(MementoType.Delete, check.Type);
                 Assert.AreEqual(Environment.UserName, check.Commit.Username);

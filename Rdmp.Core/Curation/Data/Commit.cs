@@ -20,7 +20,7 @@ namespace Rdmp.Core.Curation.Data
         #region Database Properties
         private string _username;
         private DateTime _date;
-        private Guid _transaction;
+        private string _transaction;
         private string _description;
 
         public string Username
@@ -34,7 +34,7 @@ namespace Rdmp.Core.Curation.Data
             get { return _date; }
             set { SetField(ref _date, value); }
         }
-        public Guid Transaction
+        public string Transaction
         {
             get { return _transaction; }
             set { SetField(ref _transaction, value); }
@@ -53,7 +53,7 @@ namespace Rdmp.Core.Curation.Data
         }
         public Commit(ICatalogueRepository repo, DbDataReader r) : base(repo, r)
         {
-            Transaction = new Guid(r["Transaction"].ToString());
+            Transaction = r["Transaction"].ToString();
             Username = r["Username"].ToString();
             Date = Convert.ToDateTime(r["Date"]);
             Description = r["Description"].ToString();
