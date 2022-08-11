@@ -7,11 +7,23 @@
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data.Referencing;
 using Rdmp.Core.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 
 namespace Rdmp.Core.Curation.Data
 {
+    /// <summary>
+    /// Describes the operation that is stored in a
+    /// <see cref="Memento"/> (A/M/D)
+    /// </summary>
+    public enum MementoType
+    {
+        Add,
+        Modify,
+        Delete,
+    }
+
     /// <summary>
     /// Describes a point in time state of another <see cref="DatabaseEntity"/>.  Note that the state may be invalid if other
     /// objects have been since deleted.  e.g. if user updates the <see cref="Catalogue.TimeCoverage_ExtractionInformation_ID"/> 
@@ -19,11 +31,11 @@ namespace Rdmp.Core.Curation.Data
     /// </summary>
     public class Memento : ReferenceOtherObjectDatabaseEntity
     {
-
         #region Database Properties
         private string _beforeYaml;
         private string _afterYaml;
         private int _commit_ID;
+        private MementoType _type;
 
         public string BeforeYaml
         {
@@ -40,6 +52,11 @@ namespace Rdmp.Core.Curation.Data
             get { return _commit_ID; }
             set { SetField(ref _commit_ID, value); }
         }
+        public MementoType Type
+        {
+            get { return _type; }
+            set { SetField(ref _type, value); }
+        }
         #endregion
 
         [NoMappingToDatabase]
@@ -55,8 +72,10 @@ namespace Rdmp.Core.Curation.Data
             BeforeYaml = r["BeforeYaml"].ToString();
             AfterYaml = r["AfterYaml"].ToString();
             Commit_ID = (int)r["Commit_ID"];
+            Type = (MementoType)Enum.Parse<MementoType>(r["Type"].ToString());
         }
-        public Memento(ICatalogueRepository repository, Commit commit, DatabaseEntity entity,string beforeYaml, string afterYaml)
+
+        public Memento(ICatalogueRepository repository, Commit commit, MementoType type, DatabaseEntity entity,string beforeYaml, string afterYaml)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
@@ -66,6 +85,7 @@ namespace Rdmp.Core.Curation.Data
                 {"Commit_ID",commit.ID},
                 {"BeforeYaml",beforeYaml},
                 {"AfterYaml",afterYaml},
+                {"Type",type},
             });
         }
     }

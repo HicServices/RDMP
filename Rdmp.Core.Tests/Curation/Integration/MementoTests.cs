@@ -14,14 +14,14 @@ namespace Rdmp.Core.Tests.Curation.Integration
     public class MementoTests : DatabaseTests
     {
         [Test]
-        public void CreateAFakeMementoCatalogue()
+        public void FakeMemento_Catalogue_Modify()
         {
             var c = new Catalogue(CatalogueRepository,"Hey");
 
             var g = Guid.NewGuid();
             var commit = new Commit(CatalogueRepository, g, "Breaking stuff!");
 
-            var mem = new Memento(CatalogueRepository,commit,c,"yar","blerg");
+            var mem = new Memento(CatalogueRepository,commit,MementoType.Modify,c,"yar","blerg");
             mem.SaveToDatabase();
 
             mem.BeforeYaml = "haha";
@@ -34,9 +34,54 @@ namespace Rdmp.Core.Tests.Curation.Integration
             Assert.AreEqual(g, mem2.Commit.Transaction);
             Assert.AreEqual("blerg", mem2.AfterYaml);
             Assert.AreEqual("yar", mem2.BeforeYaml);
+            Assert.AreEqual(MementoType.Modify, mem2.Type);
             Assert.AreEqual(Environment.UserName, mem2.Commit.Username);
             Assert.AreEqual(c, mem2.GetReferencedObject(RepositoryLocator)); 
+        }
 
+
+        [Test]
+        public void FakeMemento_Catalogue_Add()
+        {
+            var c = new Catalogue(CatalogueRepository, "Hey");
+
+            var g = Guid.NewGuid();
+            var commit = new Commit(CatalogueRepository, g, "Breaking stuff!");
+
+            var mem = new Memento(CatalogueRepository, commit, MementoType.Add, c, null, "blerg");
+            mem.SaveToDatabase();
+
+            foreach(var check in new[] { mem, CatalogueRepository.GetObjectByID<Memento>(mem.ID) })
+            {
+                Assert.IsNull(check.BeforeYaml);
+                Assert.AreEqual(g, check.Commit.Transaction);
+                Assert.AreEqual("blerg", check.AfterYaml);
+                Assert.AreEqual(MementoType.Add, check.Type);
+                Assert.AreEqual(Environment.UserName, check.Commit.Username);
+                Assert.AreEqual(c, check.GetReferencedObject(RepositoryLocator));
+            }
+        }
+
+        [Test]
+        public void FakeMemento_Catalogue_Delete()
+        {
+            var c = new Catalogue(CatalogueRepository, "Hey");
+
+            var g = Guid.NewGuid();
+            var commit = new Commit(CatalogueRepository, g, "Breaking stuff!");
+
+            var mem = new Memento(CatalogueRepository, commit, MementoType.Delete, c, "blah", null);
+            mem.SaveToDatabase();
+
+            foreach (var check in new[] { mem, CatalogueRepository.GetObjectByID<Memento>(mem.ID) })
+            {
+                Assert.IsNull(check.AfterYaml);
+                Assert.AreEqual(g, check.Commit.Transaction);
+                Assert.AreEqual("blah", check.BeforeYaml);
+                Assert.AreEqual(MementoType.Delete, check.Type);
+                Assert.AreEqual(Environment.UserName, check.Commit.Username);
+                Assert.AreEqual(c, check.GetReferencedObject(RepositoryLocator));
+            }
         }
     }
 }
