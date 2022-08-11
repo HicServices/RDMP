@@ -96,6 +96,7 @@
     <None Remove="Databases\CatalogueDatabase\up\072_ExtendedProperties.sql" />
     <None Remove="Databases\CatalogueDatabase\up\073_WiderCatalogueColumns.sql" />
     <None Remove="Databases\CatalogueDatabase\up\074_ColumnForbidderRename.sql" />
+    <None Remove="Databases\CatalogueDatabase\up\075_Memento.sql" />
     <None Remove="Databases\DataExportDatabase\runAfterCreateDatabase\CreateDataExportManager.sql" />
     <None Remove="Databases\DataExportDatabase\up\001_AddUsernamePasswordFieldsToExternalCohortTable.sql" />
     <None Remove="Databases\DataExportDatabase\up\002_FixServerAndDatabaseNameOnExternalCohort.sql" />
@@ -215,6 +216,7 @@
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\064_FAnsiSupport.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\065_IsDisabledSupport.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\066_NamesMustNotBeNull.sql" />
+    <EmbeddedResource Include="Databases\CatalogueDatabase\up\075_Memento.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\074_ColumnForbidderRename.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\073_WiderCatalogueColumns.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\072_ExtendedProperties.sql" />
